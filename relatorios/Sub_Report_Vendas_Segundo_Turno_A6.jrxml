@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Sub_Report_Vendas_Primeiro_Turno" language="groovy" pageWidth="200" pageHeight="440" columnWidth="200" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="22a2c396-a66a-4c6e-b230-8a4c2a651138">
+	<property name="ireport.zoom" value="4.105264945845653"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="DATA_ACTUAL" class="java.util.Date"/>
+	<parameter name="CODIGO_USUARIO" class="java.lang.Integer"/>
+	<parameter name="HORA_ABERTURA" class="java.lang.String"/>
+	<parameter name="HORA_FECHO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+     tb_venda.`dataVenda` AS tb_venda_dataVenda,
+     tb_venda.`codigo` AS tb_venda_codigo,
+     tb_venda.`total_venda` AS tb_venda_total_venda,
+     tb_usuario.`nome` AS tb_usuario_nome,
+     tb_usuario.`codigo` AS tb_usuario_codigo,
+     tb_venda.`hora` AS tb_venda_hora,
+     tb_venda.`status_eliminado` AS tb_venda_status_eliminado,
+     tb_venda.`nome_cliente` AS tb_venda_nome_cliente
+     
+
+FROM
+     `tb_usuario` tb_usuario INNER JOIN `tb_venda` tb_venda ON tb_usuario.`codigo` = tb_venda.`codigo_usuario`
+    
+WHERE DATE(tb_venda.`dataVenda`) = $P{DATA_ACTUAL}
+AND tb_usuario.`codigo` = $P{CODIGO_USUARIO} AND tb_venda.`hora` BETWEEN $P{HORA_ABERTURA} AND $P{HORA_FECHO}
+AND tb_venda.`fk_documento` = 1]]>
+	</queryString>
+	<field name="tb_venda_dataVenda" class="java.sql.Timestamp"/>
+	<field name="tb_venda_codigo" class="java.lang.Integer"/>
+	<field name="tb_venda_total_venda" class="java.lang.Float"/>
+	<field name="tb_usuario_nome" class="java.lang.String"/>
+	<field name="tb_usuario_codigo" class="java.lang.Integer"/>
+	<field name="tb_venda_hora" class="java.sql.Time"/>
+	<field name="tb_venda_status_eliminado" class="java.lang.String"/>
+	<field name="tb_venda_nome_cliente" class="java.lang.String"/>
+	<variable name="SOMA_VENDA" class="java.lang.Float" calculation="Sum">
+		<variableExpression><![CDATA[$F{tb_venda_total_venda}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="12" splitType="Stretch">
+			<textField>
+				<reportElement uuid="cd3af1c7-66f5-49be-ba61-e286c60c1979" key="staticText" x="0" y="1" width="200" height="11"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_usuario_nome}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="10" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="e490a72b-1169-47cf-a622-3e0a7ffe5be9" key="element-90" mode="Opaque" x="111" y="0" width="28" height="10" forecolor="#000000" backcolor="#CCCCCC"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hora]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="303e0f7c-3061-4561-bc45-b8bcb1d28289" key="element-92" mode="Opaque" x="-2" y="0" width="28" height="10" forecolor="#000000" backcolor="#CCCCCC"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ NºFact]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4588ef8e-cd79-4883-92c5-dc847c3769ac" key="element-90" mode="Opaque" x="139" y="0" width="33" height="10" forecolor="#000000" backcolor="#CCCCCC"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b06e59e3-8f2d-4a34-b20d-0a8a24305cd7" key="element-90" mode="Opaque" x="172" y="0" width="28" height="10" forecolor="#000000" backcolor="#CCCCCC"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2485b777-33d6-4ca7-96e3-79b857a14d75" key="element-90" mode="Opaque" x="26" y="0" width="85" height="10" forecolor="#000000" backcolor="#CCCCCC"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cliente]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="7" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="HH.mm.ss" isBlankWhenNull="true">
+				<reportElement uuid="76f02ce9-16e9-4a57-a0de-7ed6722bc62c" key="textField" x="111" y="0" width="28" height="7"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_venda_hora}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="74ff6916-22ee-45b9-85b0-0e1f25ed0c97" key="textField-1" x="0" y="0" width="26" height="7"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_venda_codigo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="5feb9cf2-be71-43bd-b7e7-24c245985855" key="textField" x="26" y="0" width="85" height="7"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_venda_nome_cliente}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="e608efe0-92f5-4201-b373-635150f477d4" key="textField" x="172" y="0" width="28" height="7"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Times New Roman" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_venda_total_venda}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="658c48da-b457-4065-a9b4-d79d50a5fe8d" key="textField" x="139" y="0" width="33" height="7"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_venda_dataVenda}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="7" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="83fcf22b-9d31-4bd4-9532-4794666e5d94" key="element-92" mode="Opaque" x="0" y="0" width="49" height="7" forecolor="#000000" backcolor="#CCCCCC"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineColor="#000000"/>
+					<rightPen lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL GERAL]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="9ff21501-85c5-42e6-b19b-473db64aab50" key="textField" mode="Opaque" x="49" y="0" width="151" height="7" backcolor="#CCCCCC"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineColor="#000000"/>
+					<rightPen lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Times New Roman" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SOMA_VENDA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

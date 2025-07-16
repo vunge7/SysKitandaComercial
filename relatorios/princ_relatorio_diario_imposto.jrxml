@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lista_venda_order_usuario" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="40dde087-8caf-478c-8694-d691de8f2f21">
+	<property name="ireport.zoom" value="1.5026296018031553"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<parameter name="PARM_DATA_1" class="java.util.Date"/>
+	<parameter name="PARM_DATA_2" class="java.util.Date"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["../relatorios/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PARM_LUCRO" class="java.lang.Double"/>
+	<queryString>
+		<![CDATA[SELECT
+     tb_dados_instituicao.`nome` AS tb_dados_instituicao_nome,
+     tb_dados_instituicao.`enderecos` AS tb_dados_instituicao_enderecos,
+     tb_banco.`idBanco` AS tb_banco_idBanco,
+     tb_banco.`descrisao` AS tb_banco_descrisao,
+     tb_banco.`numero` AS tb_banco_numero,
+     tb_banco.`saldo_banco` AS tb_banco_saldo_banco
+FROM
+     `tb_dados_instituicao` tb_dados_instituicao,
+     `tb_banco` tb_banco]]>
+	</queryString>
+	<field name="tb_dados_instituicao_nome" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_enderecos" class="java.lang.String"/>
+	<field name="tb_banco_idBanco" class="java.lang.Integer"/>
+	<field name="tb_banco_descrisao" class="java.lang.String"/>
+	<field name="tb_banco_numero" class="java.lang.String"/>
+	<field name="tb_banco_saldo_banco" class="java.lang.Double"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="81" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="bd9e6209-57f6-4ed0-b6b6-d44800f08fc8" key="staticText" x="1" y="32" width="535" height="19"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[RELATÓRIO DE VENDAS POR FORMAS DE PAGAMENTOS]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="80f546db-af4c-448e-922f-d1c9ea283373" x="1" y="8" width="532" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="269f1013-5f3e-4b9f-93ea-1c87ae954d15" x="1" y="22" width="283" height="10"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_enderecos}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="562a51d1-b5f6-4542-a09f-eec96b143eb6" x="19" y="53" width="55" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{PARM_DATA_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="6d5961ff-6361-479e-a8d7-fb2d687f43d4" x="90" y="53" width="100" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{PARM_DATA_2}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="426f648a-d5d7-4b13-ad88-d9a5b95a3371" x="-1" y="53" width="23" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[De]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="14f2b5a7-47d6-4c47-ac35-6d6d5fbbf88c" x="69" y="53" width="23" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[à]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="7c8e6f94-deed-49e3-b648-8c55559f0858" x="1" y="73" width="535" height="1"/>
+			</line>
+		</band>
+	</title>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<subreport>
+				<reportElement uuid="55a4eee1-2931-44ba-98c1-3c588b8a5149" x="1" y="0" width="534" height="15"/>
+				<subreportParameter name="PARM_DATA_1">
+					<subreportParameterExpression><![CDATA[$P{PARM_DATA_1}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PARM_DATA_2">
+					<subreportParameterExpression><![CDATA[$P{PARM_DATA_2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PARM_ID_USUARIO">
+					<subreportParameterExpression><![CDATA[$F{tb_banco_idBanco}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_relatorio_diario_imposto.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="78" splitType="Stretch">
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement uuid="2daaf8f7-79d6-4176-a3fc-ee1dfb26dd5d" key="textField" x="325" y="25" width="170" height="19"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
+				<reportElement uuid="f48319df-4700-4ef4-aa72-a6908c12e990" key="textField" x="499" y="25" width="36" height="19" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement uuid="0f7972bb-5007-4a56-8ec8-6c0fa34bb691" key="textField" x="1" y="27" width="209" height="19"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="32a34856-e6db-4c55-aa6c-a38008920bc8" key="staticText-1" x="1" y="61" width="532" height="16"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isItalic="false" pdfFontName="Helvetica-Oblique"/>
+				</textElement>
+				<text><![CDATA[email:  dvml.comercial@gmail.com]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b8760ab3-4f8e-4ac3-b978-af01736c481e" key="staticText-2" x="1" y="50" width="532" height="16"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isItalic="false" pdfFontName="Helvetica-Oblique"/>
+				</textElement>
+				<text><![CDATA[Software desenvolvido pela DVML-COMERCIAL, Lda/Contactos: 940537124/923409284]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="17">
+			<subreport>
+				<reportElement uuid="b7fb5255-91ca-4f5a-a813-83f666bfa1e0" x="1" y="0" width="535" height="16"/>
+				<subreportParameter name="PARM_DATA_1">
+					<subreportParameterExpression><![CDATA[$P{PARM_DATA_1}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PARM_DATA_2">
+					<subreportParameterExpression><![CDATA[$P{PARM_DATA_2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SUB_PARM_LUCRO">
+					<subreportParameterExpression><![CDATA[$P{PARM_LUCRO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PARM_ID_USUARIO">
+					<subreportParameterExpression><![CDATA[$F{tb_banco_idBanco}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_relatorio_resumo_diario_imposto.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
+</jasperReport>

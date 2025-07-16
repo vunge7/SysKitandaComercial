@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<AuditFile  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:OECD:StandardAuditFile-Tax:AO_1.01_01 SAFTAO1.01_01.xsd" xmlns="urn:OECD:StandardAuditFile-Tax:AO_1.01_01">
+    <Header>
+        <AuditFileVersion>1.04_01</AuditFileVersion>
+        <CompanyID>5417221951</CompanyID>
+        <TaxRegistrationNumber>5417221951</TaxRegistrationNumber>
+        <TaxAccountingBasis>F</TaxAccountingBasis>
+        <CompanyName>DVML-COMERCIAL , LDA</CompanyName>
+        <BusinessName>DVML-COMERCIAL , LDA</BusinessName>
+        <CompanyAddress>
+            <AddressDetail>Luanda/Talatona/Rua do MAT</AddressDetail>
+            <City>Luanda</City>
+            <Country>AO</Country>
+        </CompanyAddress>
+        <FiscalYear>2020</FiscalYear>
+        <StartDate>2020-01-01</StartDate>
+        <EndDate>2020-12-31</EndDate>
+        <CurrencyCode>AOA</CurrencyCode>
+        <DateCreated>2020-03-18</DateCreated>
+        <TaxEntity>Global</TaxEntity>
+        <ProductCompanyTaxID>5417221951</ProductCompanyTaxID>
+        <SoftwareValidationNumber>0300</SoftwareValidationNumber>
+        <ProductID>Kitanda</ProductID>
+        <ProductVersion>1.1</ProductVersion>
+        <Telephone>923409284-940537124</Telephone>
+        <Fax>0000000</Fax>
+        <Email>dvml.comercial@gmail.com</Email>
+        <Website></Website>
+    </Header>
+    <MasterFiles>
+        <Customer>
+            <CustomerID>4</CustomerID>
+            <AccountID>Desconhecido</AccountID>
+            <CustomerTaxID>1234567890</CustomerTaxID>
+            <CompanyName>CMB</CompanyName>
+            <BillingAddress>
+                <AddressDetail>Rua da missão, 84</AddressDetail>
+                <City>Luanda</City>
+                <PostalCode>*</PostalCode>
+                <Country>AO</Country>
+            </BillingAddress>
+            <SelfBillingIndicator>0</SelfBillingIndicator>
+        </Customer>
+        <Product>
+            <ProductType>P</ProductType>
+            <ProductCode>4435</ProductCode>
+            <ProductGroup>Diversos</ProductGroup>
+            <ProductDescription>Produto 5</ProductDescription>
+            <ProductNumberCode>8</ProductNumberCode>
+        </Product>
+        <Product>
+            <ProductType>P</ProductType>
+            <ProductCode>4434</ProductCode>
+            <ProductGroup>Diversos</ProductGroup>
+            <ProductDescription>Produto 4</ProductDescription>
+            <ProductNumberCode>7</ProductNumberCode>
+        </Product>
+        <Product>
+            <ProductType>P</ProductType>
+            <ProductCode>4438</ProductCode>
+            <ProductGroup>Diversos</ProductGroup>
+            <ProductDescription>Produto 8</ProductDescription>
+            <ProductNumberCode>11</ProductNumberCode>
+        </Product>
+        <Product>
+            <ProductType>P</ProductType>
+            <ProductCode>4447</ProductCode>
+            <ProductGroup>Diversos</ProductGroup>
+            <ProductDescription>Produto 17</ProductDescription>
+            <ProductNumberCode>20</ProductNumberCode>
+        </Product>
+        <TaxTable>
+            <TaxTableEntry>
+                <TaxType>IVA</TaxType>
+                <TaxCountryRegion>AO</TaxCountryRegion>
+                <TaxCode>NOR</TaxCode>
+                <Description>IMPOSTO SOBRE VALOR ACRESCENTADO</Description>
+                <TaxPercentage>14</TaxPercentage>
+            </TaxTableEntry>
+        </TaxTable>
+    </MasterFiles>
+    <SourceDocuments>
+        <SalesInvoices>
+
+            <NumberOfEntries>3</NumberOfEntries>
+            <TotalDebit>1800.00</TotalDebit>
+            <TotalCredit>21700.00</TotalCredit>
+            <Invoice>
+                <InvoiceNo>FR 2020/1</InvoiceNo>
+                <DocumentStatus>
+                    <InvoiceStatus>N</InvoiceStatus>
+                    <InvoiceStatusDate>2020-03-18T00:00:00</InvoiceStatusDate>
+                    <SourceID>root DVML</SourceID>
+                    <SourceBilling>P</SourceBilling>
+
+                </DocumentStatus>
+                <Hash>a2005cd674a0d818e9837dae62f2803c7c586bd076bd2090d48fb2f262f4cec3d36a0989b26f6e6cb9e7e2d43df4cf0e1625cd074346efe3f713d9a3f6155dba</Hash>
+                <HashControl>1.0</HashControl>
+                <Period>10</Period>
+                <InvoiceDate>2020-03-18</InvoiceDate>
+                <InvoiceType>FR</InvoiceType>
+
+                <SpecialRegimes>
+                    <SelfBillingIndicator>0</SelfBillingIndicator>
+                    <CashVATSchemeIndicator>0</CashVATSchemeIndicator>
+                    <ThirdPartiesBillingIndicator>0</ThirdPartiesBillingIndicator>
+
+                </SpecialRegimes>
+                <SourceID>root DVML</SourceID>
+                <SystemEntryDate>2020-03-18T00:00:00</SystemEntryDate>
+                <CustomerID>4</CustomerID>
+                <Line>
+                    <LineNumber>1</LineNumber>
+                    <ProductCode>4435</ProductCode>
+                    <ProductDescription>Produto 5</ProductDescription>
+                    <Quantity>10</Quantity>
+                    <UnitOfMeasure>Un</UnitOfMeasure>
+                    <UnitPrice>900.00</UnitPrice>
+                    <TaxPointDate>2020-03-03</TaxPointDate>
+                    <Description>Produto 5</Description>
+                    <CreditAmount>9000.00</CreditAmount>
+                    <Tax>
+                        <TaxType>IVA</TaxType>
+                        <TaxCountryRegion>AO</TaxCountryRegion>
+                        <TaxCode>NOR</TaxCode>
+                        <TaxPercentage>14.0</TaxPercentage>
+                    </Tax>
+                    <SettlementAmount>0.00</SettlementAmount>
+                </Line>
+                <Line>
+                    <LineNumber>2</LineNumber>
+                    <ProductCode>4434</ProductCode>
+                    <ProductDescription>Produto 4</ProductDescription>
+                    <Quantity>9</Quantity>
+                    <UnitOfMeasure>Un</UnitOfMeasure>
+                    <UnitPrice>800.00</UnitPrice>
+                    <TaxPointDate>2020-03-03</TaxPointDate>
+                    <Description>Produto 4</Description>
+                    <CreditAmount>7200.00</CreditAmount>
+                    <Tax>
+                        <TaxType>IVA</TaxType>
+                        <TaxCountryRegion>AO</TaxCountryRegion>
+                        <TaxCode>NOR</TaxCode>
+                        <TaxPercentage>14.0</TaxPercentage>
+                    </Tax>
+                    <SettlementAmount>0.00</SettlementAmount>
+                </Line>
+                <DocumentTotals>
+                    <TaxPayable>2268.00</TaxPayable>
+                    <NetTotal>16200.00</NetTotal>
+                    <GrossTotal>18468.00</GrossTotal>
+                    <Settlement>
+                        <SettlementAmount>0.00</SettlementAmount>
+                    </Settlement>
+                </DocumentTotals>
+            </Invoice>
+
+            <Invoice>
+                <InvoiceNo>FR 2020/2</InvoiceNo>
+                <DocumentStatus>
+                    <InvoiceStatus>N</InvoiceStatus>
+                    <InvoiceStatusDate>2020-03-18T00:00:00</InvoiceStatusDate>
+                    <SourceID>root DVML</SourceID>
+                    <SourceBilling>P</SourceBilling>
+
+                </DocumentStatus>
+                <Hash>6d4ed0ee1c1ab395d554ccc708db286f73ceb4f05ada16dabe4fd83d26810bd1f1934bafdbc7a8dba3ca72de176dda9caacecd5f9a4d854e9f2fc52d58427509</Hash>
+                <HashControl>1.0</HashControl>
+                <Period>10</Period>
+                <InvoiceDate>2020-03-18</InvoiceDate>
+                <InvoiceType>FR</InvoiceType>
+
+                <SpecialRegimes>
+                    <SelfBillingIndicator>0</SelfBillingIndicator>
+                    <CashVATSchemeIndicator>0</CashVATSchemeIndicator>
+                    <ThirdPartiesBillingIndicator>0</ThirdPartiesBillingIndicator>
+
+                </SpecialRegimes>
+                <SourceID>root DVML</SourceID>
+                <SystemEntryDate>2020-03-18T00:00:00</SystemEntryDate>
+                <CustomerID>4</CustomerID>
+                <Line>
+                    <LineNumber>1</LineNumber>
+                    <ProductCode>4438</ProductCode>
+                    <ProductDescription>Produto 8</ProductDescription>
+                    <Quantity>4</Quantity>
+                    <UnitOfMeasure>Un</UnitOfMeasure>
+                    <UnitPrice>250.00</UnitPrice>
+                    <TaxPointDate>2020-03-03</TaxPointDate>
+                    <Description>Produto 8</Description>
+                    <CreditAmount>1000.00</CreditAmount>
+                    <Tax>
+                        <TaxType>IVA</TaxType>
+                        <TaxCountryRegion>AO</TaxCountryRegion>
+                        <TaxCode>NOR</TaxCode>
+                        <TaxPercentage>14.0</TaxPercentage>
+                    </Tax>
+                    <SettlementAmount>0.00</SettlementAmount>
+                </Line>
+                <Line>
+                    <LineNumber>2</LineNumber>
+                    <ProductCode>4447</ProductCode>
+                    <ProductDescription>Produto 17</ProductDescription>
+                    <Quantity>9</Quantity>
+                    <UnitOfMeasure>Un</UnitOfMeasure>
+                    <UnitPrice>500.00</UnitPrice>
+                    <TaxPointDate>2020-03-03</TaxPointDate>
+                    <Description>Produto 17</Description>
+                    <CreditAmount>4500.00</CreditAmount>
+                    <Tax>
+                        <TaxType>NS</TaxType>
+                        <TaxCountryRegion>AO</TaxCountryRegion>
+                        <TaxCode>NS</TaxCode>
+                        <TaxPercentage>0.0</TaxPercentage>
+                    </Tax>
+                    <TaxExemptionReason>Isento com base no artigo nº 12º. b) do CIVA</TaxExemptionReason>
+                    <TaxExemptionCode>M11</TaxExemptionCode>
+                    <SettlementAmount>0.00</SettlementAmount>
+                </Line>
+                <DocumentTotals>
+                    <TaxPayable>140.00</TaxPayable>
+                    <NetTotal>5500.00</NetTotal>
+                    <GrossTotal>5640.00</GrossTotal>
+                    <Settlement>
+                        <SettlementAmount>0.00</SettlementAmount>
+                    </Settlement>
+                </DocumentTotals>
+            </Invoice>
+
+            <Invoice>
+                <InvoiceNo> NC 2020/1</InvoiceNo>
+                <DocumentStatus>
+                    <InvoiceStatus>N</InvoiceStatus>
+                    <InvoiceStatusDate>2020-03-18T12:48:37</InvoiceStatusDate>
+                    <SourceID>root DVML</SourceID>
+                    <SourceBilling>P</SourceBilling>
+
+                </DocumentStatus>
+                <Hash>e88ae8423e2edb9463de5946cf0306e0b3fb8a9ecc94a553e02941b42f33c464c26b3f1dda9eb50cc4c878ff8f0afbccd13f9eabb25d29b59972801804ea2b25</Hash>
+                <HashControl>1.0</HashControl>
+                <Period>10</Period>
+                <InvoiceDate>2020-03-18</InvoiceDate>
+                <InvoiceType>NC</InvoiceType>
+
+                <SpecialRegimes>
+                    <SelfBillingIndicator>0</SelfBillingIndicator>
+                    <CashVATSchemeIndicator>0</CashVATSchemeIndicator>
+                    <ThirdPartiesBillingIndicator>0</ThirdPartiesBillingIndicator>
+
+                </SpecialRegimes>
+                <SourceID>root DVML</SourceID>
+                <SystemEntryDate>2020-03-18T12:48:37</SystemEntryDate>
+                <CustomerID>4</CustomerID>
+                <Line>
+                    <LineNumber>1</LineNumber>
+                    <OrderReferences>
+                        <OriginatingON>FR 2020/1</OriginatingON>
+                        <OrderDate>2020-03-18</OrderDate>
+                    </OrderReferences>
+                    <ProductCode>4435</ProductCode>
+                    <ProductDescription>Produto 5</ProductDescription>
+                    <Quantity>1</Quantity>
+                    <UnitOfMeasure>Un</UnitOfMeasure>
+                    <UnitPrice>800.00</UnitPrice>
+                    <TaxPointDate>2020-03-03</TaxPointDate>
+                    <Description>Rectificação</Description>
+                    <DebitAmount>800.00</DebitAmount>
+                    <Tax>
+                        <TaxType>IVA</TaxType>
+                        <TaxCountryRegion>AO</TaxCountryRegion>
+                        <TaxCode>NOR</TaxCode>
+                        <TaxPercentage>14.0</TaxPercentage>
+                    </Tax>
+                    <SettlementAmount>0.00</SettlementAmount>
+                </Line>
+                <Line>
+                    <LineNumber>2</LineNumber>
+                    <OrderReferences>
+                        <OriginatingON>FR 2020/1</OriginatingON>
+                        <OrderDate>2020-03-18</OrderDate>
+                    </OrderReferences>
+                    <ProductCode>4434</ProductCode>
+                    <ProductDescription>Produto 4</ProductDescription>
+                    <Quantity>1</Quantity>
+                    <UnitOfMeasure>Un</UnitOfMeasure>
+                    <UnitPrice>800.00</UnitPrice>
+                    <TaxPointDate>2020-03-03</TaxPointDate>
+                    <Description>Rectificação</Description>
+                    <DebitAmount>800.00</DebitAmount>
+                    <Tax>
+                        <TaxType>IVA</TaxType>
+                        <TaxCountryRegion>AO</TaxCountryRegion>
+                        <TaxCode>NOR</TaxCode>
+                        <TaxPercentage>14.0</TaxPercentage>
+                    </Tax>
+                    <SettlementAmount>0.00</SettlementAmount>
+                </Line>
+                <DocumentTotals>
+                    <TaxPayable>224.00</TaxPayable>
+                    <NetTotal>1600.00</NetTotal>
+                    <GrossTotal>1824.00</GrossTotal>
+                </DocumentTotals>
+            </Invoice>
+
+        </SalesInvoices>
+        <Payments>
+            <NumberOfEntries>0</NumberOfEntries>
+            <TotalDebit>0</TotalDebit>
+            <TotalCredit>0.00</TotalCredit>
+        </Payments>
+    </SourceDocuments>
+</AuditFile>

@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!-- was: <?xml version="1.0" encoding="windows-1252"?> -->
+<AuditFile  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:OECD:StandardAuditFile-Tax:AO_1.01_01 SAFTAO1.01_01.xsd" xmlns="urn:OECD:StandardAuditFile-Tax:AO_1.01_01">
+    <Header>
+        <AuditFileVersion>1.04_01</AuditFileVersion>
+        <CompanyID>5417221951</CompanyID>
+        <TaxRegistrationNumber>5417221951</TaxRegistrationNumber>
+        <TaxAccountingBasis>F</TaxAccountingBasis>
+        <CompanyName>DVML-COMERCIAL , LDA</CompanyName>
+        <BusinessName>DVML-COMERCIAL , LDA</BusinessName>
+        <CompanyAddress>
+            <AddressDetail>Luanda/Talatona/</AddressDetail>
+            <City>Luanda</City>
+            <Country>AO</Country>
+        </CompanyAddress>
+        <FiscalYear>2020</FiscalYear>
+        <StartDate>2020-03-02</StartDate>
+        <EndDate>2020-03-02</EndDate>
+        <CurrencyCode>AOA</CurrencyCode>
+        <DateCreated>2020-03-02</DateCreated>
+        <TaxEntity>Global</TaxEntity>
+        <ProductCompanyTaxID>5417221951</ProductCompanyTaxID>
+        <SoftwareValidationNumber>0300</SoftwareValidationNumber>
+        <ProductID>Kitanda</ProductID>
+        <ProductVersion>1.1</ProductVersion>
+        <Telephone>923409284-940537124</Telephone>
+        <Fax>0000000</Fax>
+        <Email>dvml.comercial@gmail.com</Email>
+        <Website></Website>
+    </Header>
+    <MasterFiles>
+        <Customer>
+            <CustomerID>1</CustomerID>
+            <AccountID>Desconhecido</AccountID>
+            <CustomerTaxID>Consumidor Final</CustomerTaxID>
+            <CompanyName>Consumidor Final</CompanyName>
+            <BillingAddress>
+                <AddressDetail>N/A</AddressDetail>
+                <City>Luanda</City>
+                <PostalCode>*</PostalCode>
+                <Country>AO</Country>
+            </BillingAddress>
+            <SelfBillingIndicator>0</SelfBillingIndicator>
+        </Customer>
+        <Product>
+            <ProductType>P</ProductType>
+            <ProductCode>4428</ProductCode>
+            <ProductGroup>Ãgua</ProductGroup>
+            <ProductDescription>Ãgua Pura pq</ProductDescription>
+            <ProductNumberCode>1</ProductNumberCode>
+        </Product>
+        <TaxTable>
+            <TaxTableEntry>
+                <TaxType>IVA</TaxType>
+                <TaxCountryRegion>AO</TaxCountryRegion>
+                <TaxCode>NOR</TaxCode>
+                <Description>IMPOSTO SOBRE VALOR ACRESCENTADO</Description>
+                <TaxPercentage>0.14</TaxPercentage>
+            </TaxTableEntry>
+        </TaxTable>
+    </MasterFiles>
+    <SourceDocuments>
+        <SalesInvoices>
+
+            <NumberOfEntries>1</NumberOfEntries>
+            <TotalDebit>0.00</TotalDebit>
+            <TotalCredit>110.00</TotalCredit>
+            <Invoice>
+                <InvoiceNo>FR 2020/1</InvoiceNo>
+                <DocumentStatus>
+                    <InvoiceStatus>N</InvoiceStatus>
+                    <InvoiceStatusDate>2020-03-02T00:00:00</InvoiceStatusDate>
+                    <SourceID>root DVML</SourceID>
+                    <SourceBilling>P</SourceBilling>
+
+                </DocumentStatus>
+                <Hash>9B8FD33F6F8318E28261B8D70A05F61FD4E36C6643B70CF23719B1BF4DA5806E5DD07FC5E60DEF45AAEB439DB1D0F27C5A12C0E82CEF6FCAC237D55391587F93</Hash>
+                <HashControl>1.0</HashControl>
+                <Period>10</Period>
+                <InvoiceDate>2020-03-02</InvoiceDate>
+                <InvoiceType>FR</InvoiceType>
+
+                <SpecialRegimes>
+                    <SelfBillingIndicator>0</SelfBillingIndicator>
+                    <CashVATSchemeIndicator>0</CashVATSchemeIndicator>
+                    <ThirdPartiesBillingIndicator>0</ThirdPartiesBillingIndicator>
+
+                </SpecialRegimes>
+                <SourceID>root DVML</SourceID>
+                <SystemEntryDate>2020-03-02T00:00:00</SystemEntryDate>
+                <CustomerID>1</CustomerID>
+                <Line>
+                    <LineNumber>1</LineNumber>
+                    <ProductCode>4428</ProductCode>
+                    <ProductDescription>Ãgua Pura pq</ProductDescription>
+                    <Quantity>1</Quantity>
+                    <UnitOfMeasure>Un</UnitOfMeasure>
+                    <UnitPrice>110.00</UnitPrice>
+                    <TaxPointDate>2020-03-02</TaxPointDate>
+                    <Description>Ãgua Pura pq</Description>
+                    <CreditAmount>110.00</CreditAmount>
+                    <Tax>
+                        <TaxType>IVA</TaxType>
+                        <TaxCountryRegion>AO</TaxCountryRegion>
+                        <TaxCode>NOR</TaxCode>
+                        <TaxPercentage>14.0</TaxPercentage>
+                    </Tax>
+                    <SettlementAmount>0.00</SettlementAmount>
+                </Line>
+                <DocumentTotals>
+                    <TaxPayable>15.40</TaxPayable>
+                    <NetTotal>110.00</NetTotal>
+                    <GrossTotal>125.40</GrossTotal>
+                    <Settlement>
+                        <SettlementAmount>0.00</SettlementAmount>
+                    </Settlement>
+                </DocumentTotals>
+            </Invoice>
+
+        </SalesInvoices>
+    </SourceDocuments>
+</AuditFile>

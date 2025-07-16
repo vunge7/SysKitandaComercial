@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="factura_A5_1" language="groovy" pageWidth="200" pageHeight="450" columnWidth="180" leftMargin="10" rightMargin="10" topMargin="2" bottomMargin="20" isIgnorePagination="true" uuid="b0b956b1-8a40-4e81-9057-e608c1e7811d">
+	<property name="ireport.zoom" value="3.897434200000003"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="61"/>
+	<parameter name="ID_PEDIDO" class="java.lang.Integer"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["../relatorios/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TotalPedido" class="java.lang.Double"/>
+	<queryString>
+		<![CDATA[SELECT
+     tb_dados_instituicao.`nome` AS tb_dados_instituicao_nome,
+     tb_dados_instituicao.`telefone` AS tb_dados_instituicao_telefone,
+     tb_dados_instituicao.`enderecos` AS tb_dados_instituicao_enderecos,
+     tb_dados_instituicao.`email` AS tb_dados_instituicao_email,
+     tb_dados_instituicao.`nif` AS tb_dados_instituicao_nif,
+     tb_produto.`designacao` AS tb_produto_designacao,
+     tb_pedido.`pk_pedido` AS tb_pedido_pk_pedido,
+     tb_pedido.`data_pedido` AS tb_pedido_data_pedido,
+     tb_pedido.`hora_pedido` AS tb_pedido_hora_pedido,
+     tb_pedido.`status_pedido` AS tb_pedido_status_pedido,
+     tb_mesas.`designacao` AS tb_mesas_designacao,
+     tb_item_pedidos.`pk_item_pedidos` AS tb_item_pedidos_pk_item_pedidos,
+     tb_item_pedidos.`fk_lugares` AS tb_item_pedidos_fk_lugares,
+     tb_item_pedidos.`fk_produtos` AS tb_item_pedidos_fk_produtos,
+     tb_item_pedidos.`fk_pedidos` AS tb_item_pedidos_fk_pedidos,
+     tb_item_pedidos.`total_item` AS tb_item_pedidos_total_item,
+     tb_lugares.`designacao` AS tb_lugares_designacao,
+     tb_lugares.`pk_lugares` AS tb_lugares_pk_lugares,
+     tb_mesas.`pk_mesas` AS tb_mesas_pk_mesas
+FROM
+     `tb_pedido` tb_pedido INNER JOIN `tb_mesas` tb_mesas ON tb_pedido.`fk_mesas` = tb_mesas.`pk_mesas`
+     INNER JOIN `tb_item_pedidos` tb_item_pedidos ON tb_pedido.`pk_pedido` = tb_item_pedidos.`fk_pedidos`
+     INNER JOIN `tb_produto` tb_produto ON tb_item_pedidos.`fk_produtos` = tb_produto.`codigo`
+     INNER JOIN `tb_lugares` tb_lugares ON tb_item_pedidos.`fk_lugares` = tb_lugares.`pk_lugares`,
+     `tb_dados_instituicao` tb_dados_instituicao
+WHERE
+     tb_pedido.`pk_pedido` = $P{ID_PEDIDO}
+
+GROUP BY  tb_lugares.`pk_lugares`]]>
+	</queryString>
+	<field name="tb_dados_instituicao_nome" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_telefone" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_enderecos" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_email" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_nif" class="java.lang.String"/>
+	<field name="tb_produto_designacao" class="java.lang.String"/>
+	<field name="tb_pedido_pk_pedido" class="java.lang.Long"/>
+	<field name="tb_pedido_data_pedido" class="java.sql.Date"/>
+	<field name="tb_pedido_hora_pedido" class="java.sql.Time"/>
+	<field name="tb_pedido_status_pedido" class="java.lang.Boolean"/>
+	<field name="tb_mesas_designacao" class="java.lang.String"/>
+	<field name="tb_item_pedidos_pk_item_pedidos" class="java.lang.Long"/>
+	<field name="tb_item_pedidos_fk_lugares" class="java.lang.Long"/>
+	<field name="tb_item_pedidos_fk_produtos" class="java.lang.Integer"/>
+	<field name="tb_item_pedidos_fk_pedidos" class="java.lang.Long"/>
+	<field name="tb_item_pedidos_total_item" class="java.lang.Double"/>
+	<field name="tb_lugares_designacao" class="java.lang.String"/>
+	<field name="tb_lugares_pk_lugares" class="java.lang.Long"/>
+	<field name="tb_mesas_pk_mesas" class="java.lang.Long"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="64">
+			<textField>
+				<reportElement uuid="fff28e17-f795-4913-bff3-1dfe26e6c6c5" x="0" y="2" width="180" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="00fff44a-65cd-46e6-a527-c045f4adb861" x="0" y="17" width="180" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_enderecos}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="2f9f053f-d568-459d-8cff-632d9c2277c3" x="0" y="26" width="180" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_nif}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="09bb03db-193a-4ef8-9007-c75c5da9cfb4" x="2" y="36" width="178" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_telefone}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="61b39239-7935-42ed-b131-2b94b84613bb" x="11" y="51" width="57" height="13"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_mesas_designacao}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="58" splitType="Stretch">
+			<rectangle radius="10">
+				<reportElement uuid="dabea11a-e30e-4c5a-aa05-cabde99ac89a" x="1" y="9" width="179" height="46"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="02a97203-c5bd-4206-adb8-6a8a5471a4ed" key="staticText-10" x="2" y="15" width="178" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="10" isBold="true" isItalic="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[CONSULTAS DE CONTAS]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="92fd7175-1471-4c11-837b-b4b9d82c8b05" x="2" y="32" width="178" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Double"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement uuid="9b5ba013-5f73-4c38-8694-9c3652d7b38f" x="75" y="33" width="1" height="22"/>
+			</line>
+			<textField>
+				<reportElement uuid="728fad04-004d-4e6d-af48-f503b4444fc8" x="45" y="34" width="29" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ID_PEDIDO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="33ce4be6-be7e-49e5-a6c2-48a44f556a8f" x="113" y="34" width="54" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_pedido_data_pedido}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="682a9d3c-4218-4661-b817-417a83eeb91a" x="5" y="34" width="40" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Nº.Pedido :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5fea4938-7aca-4670-99c7-16677d8c9ec1" x="87" y="34" width="25" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Data:]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="25" splitType="Stretch">
+			<subreport>
+				<reportElement uuid="89c03046-05e0-4518-8758-1143fb58bd9a" x="-8" y="0" width="200" height="25"/>
+				<subreportParameter name="PARM_MESA">
+					<subreportParameterExpression><![CDATA[$F{tb_mesas_pk_mesas}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PARM_LUGAR">
+					<subreportParameterExpression><![CDATA[$F{tb_lugares_pk_lugares}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="CODIGO_PEDIDO">
+					<subreportParameterExpression><![CDATA[$F{tb_item_pedidos_fk_pedidos}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_pedidos_A6.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<lastPageFooter>
+		<band height="61">
+			<staticText>
+				<reportElement uuid="2f86b778-eb84-48f7-986f-2c95e3d79057" key="staticText-9" x="0" y="44" width="180" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="6" isItalic="false" pdfFontName="Helvetica-Oblique"/>
+				</textElement>
+				<text><![CDATA[software desenvolvido pela DVML-COMERCIAL, Lda-921 734 126]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4ac29d35-e939-4d46-bd61-1c570d9d92a9" key="staticText-9" x="0" y="33" width="180" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="6" isBold="true" isItalic="false" pdfFontName="Helvetica-Oblique"/>
+				</textElement>
+				<text><![CDATA[OBRIGADO. VOLTE SEMPRE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ebf20f32-5b98-4cb6-b7df-5f09ec35cfdf" key="staticText-7" x="0" y="7" width="98" height="14"/>
+				<textElement textAlignment="Left">
+					<font fontName="Times New Roman" size="6" isItalic="true" pdfFontName="Helvetica-Oblique"/>
+				</textElement>
+				<text><![CDATA[Processado em:]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement uuid="31345533-2a69-4cd0-bdcd-e695396fe40d" key="textField" x="44" y="7" width="110" height="14"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font fontName="Times New Roman" size="6" isItalic="true" pdfFontName="Helvetica-Oblique"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band height="23" splitType="Stretch">
+			<line>
+				<reportElement uuid="8afacee0-d8c7-4343-b398-022e16c2d9f7" x="0" y="0" width="180" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineStyle="Double"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement uuid="8feff476-60b9-4aab-b48f-3b5a45b78d2a" x="63" y="7" width="53" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Geral :]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="3bdf8c73-e0de-4af4-b8e7-cbdb9d88b8fb" x="116" y="7" width="64" height="16"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TotalPedido}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

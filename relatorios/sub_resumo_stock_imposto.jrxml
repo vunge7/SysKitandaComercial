@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub1_stock" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="5" bottomMargin="5" uuid="f5ed5f19-bc51-4643-87cb-c4ae2db5fe87">
+	<property name="ireport.zoom" value="2.5937424601000143"/>
+	<property name="ireport.x" value="738"/>
+	<property name="ireport.y" value="137"/>
+	<parameter name="DES_ARMAZEM" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT DISTINCT
+     tb_produto.`designacao` AS tb_produto_designacao,
+     tb_stock.`quantidade_existente` AS tb_stock_quantidade_existente,
+     tb_tipo_produto.`codigo` AS tb_tipo_produto_codigo,
+     tb_tipo_produto.`designacao` AS tb_tipo_produto_designacao,
+     tb_produto.`codigo` AS tb_produto_codigo,
+     tb_armazem.`designacao` AS tb_armazem_designacao,
+     tb_produto.`preco` AS tb_produto_preco,
+     tb_produto.`data_fabrico` AS tb_produto_data_fabrico,
+     tb_produto.`data_expiracao` AS tb_produto_data_expiracao,
+     imposto.`pk_imposto` AS imposto_pk_imposto,
+     imposto.`descricao` AS imposto_descricao,
+     imposto.`taxa` AS imposto_taxa,
+     imposto.`data_hora` AS imposto_data_hora,
+     produto_imposto.`pk_produto_imposto` AS produto_imposto_pk_produto_imposto,
+     produto_imposto.`fk_produto` AS produto_imposto_fk_produto,
+     produto_imposto.`fk_imposto` AS produto_imposto_fk_imposto,
+     familia.`pk_familia` AS familia_pk_familia,
+     familia.`designacao` AS familia_designacao,
+      ( SELECT  MAX(tb_preco.`pk_preco`) AS MAX_PRECO FROM `tb_preco` tb_preco WHERE tb_preco.`fk_produto`  =  tb_produto.`codigo`)
+      AS MAX_COD_PRECO,
+
+     ( SELECT  tb_preco.`preco_compra` AS M_P FROM `tb_preco` tb_preco WHERE tb_preco.`pk_preco`  =  MAX_COD_PRECO)
+      AS MAX_PRECO_COMPRA,
+
+
+    ( SELECT  MAX(tb_preco.`preco_venda`) AS M_V FROM `tb_preco` tb_preco WHERE tb_preco.`pk_preco`  =  MAX_COD_PRECO)
+      AS MAX_PRECO_VENDA,
+
+
+    ( SELECT  MAX(tb_preco.`percentagem_ganho`) AS MAX_PRECO_COMPRA FROM `tb_preco` tb_preco WHERE tb_preco.`pk_preco`  =  MAX_COD_PRECO)
+      AS MAX_PERCENTAGEM_GANHO
+FROM
+     `tb_produto` tb_produto INNER JOIN `tb_stock` tb_stock ON tb_produto.`codigo` = tb_stock.`cod_produto_codigo`
+     INNER JOIN `tb_tipo_produto` tb_tipo_produto ON tb_produto.`cod_Tipo_Produto` = tb_tipo_produto.`codigo`
+     INNER JOIN `produto_imposto` produto_imposto ON tb_produto.`codigo` = produto_imposto.`fk_produto`
+     INNER JOIN `imposto` imposto ON produto_imposto.`fk_imposto` = imposto.`pk_imposto`
+     INNER JOIN `familia` familia ON tb_tipo_produto.`fk_familia` = familia.`pk_familia`
+     INNER JOIN `tb_armazem` tb_armazem ON tb_stock.`cod_armazem` = tb_armazem.`codigo`
+WHERE
+
+     tb_armazem.`designacao` = $P{DES_ARMAZEM}
+
+ORDER BY
+     tb_produto.`codigo` ASC]]>
+	</queryString>
+	<field name="tb_produto_designacao" class="java.lang.String"/>
+	<field name="tb_stock_quantidade_existente" class="java.lang.Double"/>
+	<field name="tb_tipo_produto_codigo" class="java.lang.Integer"/>
+	<field name="tb_tipo_produto_designacao" class="java.lang.String"/>
+	<field name="tb_produto_codigo" class="java.lang.Integer"/>
+	<field name="tb_armazem_designacao" class="java.lang.String"/>
+	<field name="tb_produto_preco" class="java.math.BigDecimal"/>
+	<field name="tb_produto_data_fabrico" class="java.sql.Date"/>
+	<field name="tb_produto_data_expiracao" class="java.sql.Date"/>
+	<field name="imposto_pk_imposto" class="java.lang.Integer"/>
+	<field name="imposto_descricao" class="java.lang.String"/>
+	<field name="imposto_taxa" class="java.lang.Double"/>
+	<field name="imposto_data_hora" class="java.sql.Timestamp"/>
+	<field name="produto_imposto_pk_produto_imposto" class="java.lang.Integer"/>
+	<field name="produto_imposto_fk_produto" class="java.lang.Integer"/>
+	<field name="produto_imposto_fk_imposto" class="java.lang.Integer"/>
+	<field name="familia_pk_familia" class="java.lang.Integer"/>
+	<field name="familia_designacao" class="java.lang.String"/>
+	<field name="MAX_COD_PRECO" class="java.math.BigInteger"/>
+	<field name="MAX_PRECO_COMPRA" class="java.math.BigDecimal"/>
+	<field name="MAX_PRECO_VENDA" class="java.math.BigDecimal"/>
+	<field name="MAX_PERCENTAGEM_GANHO" class="java.math.BigDecimal"/>
+	<variable name="SOMA_QUANTIDADES" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{tb_stock_quantidade_existente}]]></variableExpression>
+	</variable>
+	<variable name="SOMA_PRECO_COMPRA" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{tb_stock_quantidade_existente}*$F{MAX_PRECO_COMPRA}]]></variableExpression>
+	</variable>
+	<variable name="SOMA_PRECO_VENDA" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[($F{tb_stock_quantidade_existente})*($F{MAX_PRECO_VENDA}  +  (  $F{MAX_PRECO_VENDA} * ( $F{imposto_taxa} / 100 ) ) )]]></variableExpression>
+	</variable>
+	<variable name="SOMA_LUCRO" class="java.lang.Double"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="34">
+			<rectangle>
+				<reportElement uuid="f9239dac-7002-4cc7-a300-0897eb0c7a0a" x="0" y="0" width="555" height="34" forecolor="#666666" backcolor="#666666"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="e7213edc-0830-4166-8b20-771c6c7d9f98" x="11" y="0" width="498" height="34" forecolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="20" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RESUMO GERAL]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="27" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="3e986dee-f044-4d4f-86ba-d82e486dab6a" x="0" y="0" width="136" height="27" forecolor="#000000"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineColor="#666666"/>
+					<topPen lineWidth="0.0" lineColor="#666666"/>
+					<leftPen lineWidth="0.0" lineColor="#666666"/>
+					<bottomPen lineColor="#666666"/>
+					<rightPen lineWidth="0.0" lineColor="#666666"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Verdana" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LEGENDA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="18add72a-a529-4fb0-80f9-604091b0ead6" x="275" y="0" width="159" height="27" forecolor="#000000"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineColor="#666666"/>
+					<topPen lineWidth="0.0" lineColor="#666666"/>
+					<leftPen lineWidth="0.0" lineColor="#666666"/>
+					<bottomPen lineColor="#666666"/>
+					<rightPen lineWidth="0.0" lineColor="#666666"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Verdana" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAIS]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<summary>
+		<band height="180" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="bd59012b-ebde-4fdc-b956-fc0e892f1cb2" x="275" y="0" width="280" height="112" forecolor="#FFFFFF" backcolor="#CCCCCC"/>
+			</rectangle>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="dc2ccade-b8cb-43ba-9e69-712f1c480eee" x="310" y="23" width="199" height="19" forecolor="#006600"/>
+				<box leftPadding="2">
+					<pen lineStyle="Solid" lineColor="#666666"/>
+					<topPen lineStyle="Solid" lineColor="#666666"/>
+					<leftPen lineStyle="Solid" lineColor="#666666"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#666666"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#666666"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="15" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SOMA_QUANTIDADES}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="387eaa62-91cf-42a1-95f0-5a1c4dc0bdcc" x="311" y="79" width="198" height="18" forecolor="#0033CC"/>
+				<box leftPadding="2">
+					<pen lineStyle="Solid" lineColor="#666666"/>
+					<topPen lineStyle="Solid" lineColor="#666666"/>
+					<leftPen lineStyle="Solid" lineColor="#666666"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#666666"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#666666"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="15" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SOMA_PRECO_VENDA} - $V{SOMA_PRECO_COMPRA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="c155a7d9-1848-4cd7-86f0-2c4f1101e458" x="311" y="61" width="198" height="18" forecolor="#000000"/>
+				<box leftPadding="2">
+					<pen lineStyle="Solid" lineColor="#666666"/>
+					<topPen lineStyle="Solid" lineColor="#666666"/>
+					<leftPen lineStyle="Solid" lineColor="#666666"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#666666"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#666666"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="15" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SOMA_PRECO_VENDA}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement uuid="a10e7a04-1c2e-4540-af44-b1fb8b479a4b" x="0" y="0" width="265" height="130" forecolor="#FFFFFF" backcolor="#CCCCCC"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="2e61578f-7373-41b5-b0b7-72b8a3dc9a96" x="0" y="6" width="34" height="19" forecolor="#000000"/>
+				<box leftPadding="2">
+					<pen lineColor="#666666"/>
+					<topPen lineWidth="0.0" lineColor="#666666"/>
+					<leftPen lineWidth="0.0" lineColor="#666666"/>
+					<bottomPen lineColor="#666666"/>
+					<rightPen lineWidth="0.0" lineColor="#666666"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Qtd]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a6d1403b-59b9-4a81-a636-9c07d57589c0" x="0" y="25" width="34" height="19" forecolor="#000000"/>
+				<box leftPadding="2">
+					<pen lineColor="#666666"/>
+					<topPen lineWidth="0.0" lineColor="#666666"/>
+					<leftPen lineWidth="0.0" lineColor="#666666"/>
+					<bottomPen lineColor="#666666"/>
+					<rightPen lineWidth="0.0" lineColor="#666666"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="676bcb51-da7c-4958-b893-3ace436a6192" x="0" y="62" width="34" height="19" forecolor="#000000"/>
+				<box leftPadding="2">
+					<pen lineColor="#666666"/>
+					<topPen lineWidth="0.0" lineColor="#666666"/>
+					<leftPen lineWidth="0.0" lineColor="#666666"/>
+					<bottomPen lineColor="#666666"/>
+					<rightPen lineWidth="0.0" lineColor="#666666"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9d9bf27c-4b15-408c-ba1e-40f0b440a01b" x="0" y="80" width="34" height="19" forecolor="#000000"/>
+				<box leftPadding="2">
+					<pen lineColor="#666666"/>
+					<topPen lineWidth="0.0" lineColor="#666666"/>
+					<leftPen lineWidth="0.0" lineColor="#666666"/>
+					<bottomPen lineColor="#666666"/>
+					<rightPen lineWidth="0.0" lineColor="#666666"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TV]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="87edff57-f370-4deb-808e-8a5dd51cbf0d" x="0" y="100" width="34" height="19" forecolor="#000000"/>
+				<box leftPadding="2">
+					<pen lineColor="#666666"/>
+					<topPen lineWidth="0.0" lineColor="#666666"/>
+					<leftPen lineWidth="0.0" lineColor="#666666"/>
+					<bottomPen lineColor="#666666"/>
+					<rightPen lineWidth="0.0" lineColor="#666666"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="eb5a1307-f975-4e72-8f47-eafc0a129f6a" x="34" y="6" width="122" height="19" forecolor="#000000"/>
+				<box leftPadding="2">
+					<pen lineColor="#666666"/>
+					<topPen lineWidth="0.0" lineColor="#666666"/>
+					<leftPen lineWidth="0.0" lineColor="#666666"/>
+					<bottomPen lineColor="#666666"/>
+					<rightPen lineWidth="0.0" lineColor="#666666"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="false" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Quantidade]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f04f09ff-ae15-4521-b1c0-c06a52a70deb" x="34" y="25" width="122" height="19" forecolor="#000000"/>
+				<box leftPadding="2">
+					<pen lineColor="#666666"/>
+					<topPen lineWidth="0.0" lineColor="#666666"/>
+					<leftPen lineWidth="0.0" lineColor="#666666"/>
+					<bottomPen lineColor="#666666"/>
+					<rightPen lineWidth="0.0" lineColor="#666666"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="false" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Preço da Compra]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6bd8fe6c-44b2-4a7c-bd63-8b64174a59df" x="34" y="62" width="122" height="19" forecolor="#000000"/>
+				<box leftPadding="2">
+					<pen lineColor="#666666"/>
+					<topPen lineWidth="0.0" lineColor="#666666"/>
+					<leftPen lineWidth="0.0" lineColor="#666666"/>
+					<bottomPen lineColor="#666666"/>
+					<rightPen lineWidth="0.0" lineColor="#666666"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="false" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Total das Compras]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="925cd081-e09b-4382-b736-26551a0208b1" x="34" y="80" width="122" height="19" forecolor="#000000"/>
+				<box leftPadding="2">
+					<pen lineColor="#666666"/>
+					<topPen lineWidth="0.0" lineColor="#666666"/>
+					<leftPen lineWidth="0.0" lineColor="#666666"/>
+					<bottomPen lineColor="#666666"/>
+					<rightPen lineWidth="0.0" lineColor="#666666"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="false" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Total das Vendas]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="83ddac1c-4a0f-40f2-8df4-8aded028f6b7" x="34" y="100" width="122" height="19" forecolor="#000000"/>
+				<box leftPadding="2">
+					<pen lineColor="#666666"/>
+					<topPen lineWidth="0.0" lineColor="#666666"/>
+					<leftPen lineWidth="0.0" lineColor="#666666"/>
+					<bottomPen lineColor="#666666"/>
+					<rightPen lineWidth="0.0" lineColor="#666666"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="false" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Lucro Estimativo]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="4e50b6fc-6a7f-419a-8e5b-a87cc5d99a87" x="311" y="43" width="198" height="18" forecolor="#000000"/>
+				<box leftPadding="2">
+					<pen lineStyle="Solid" lineColor="#666666"/>
+					<topPen lineStyle="Solid" lineColor="#666666"/>
+					<leftPen lineStyle="Solid" lineColor="#666666"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#666666"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#666666"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="15" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SOMA_PRECO_COMPRA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="aaba9c66-c4db-4675-99d1-ea776c09bf00" x="276" y="23" width="34" height="19" forecolor="#000000"/>
+				<box leftPadding="2">
+					<pen lineColor="#666666"/>
+					<topPen lineWidth="0.0" lineColor="#666666"/>
+					<leftPen lineWidth="0.0" lineColor="#666666"/>
+					<bottomPen lineColor="#666666"/>
+					<rightPen lineWidth="0.0" lineColor="#666666"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Qtd]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="697f5768-7961-4062-b8ed-02ea6a23177c" x="276" y="42" width="35" height="19" forecolor="#000000"/>
+				<box leftPadding="2">
+					<pen lineColor="#666666"/>
+					<topPen lineWidth="0.0" lineColor="#666666"/>
+					<leftPen lineWidth="0.0" lineColor="#666666"/>
+					<bottomPen lineColor="#666666"/>
+					<rightPen lineWidth="0.0" lineColor="#666666"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e6976c65-ba44-42ce-a32e-5f07c990a857" x="277" y="61" width="34" height="19" forecolor="#000000"/>
+				<box leftPadding="2">
+					<pen lineColor="#666666"/>
+					<topPen lineWidth="0.0" lineColor="#666666"/>
+					<leftPen lineWidth="0.0" lineColor="#666666"/>
+					<bottomPen lineColor="#666666"/>
+					<rightPen lineWidth="0.0" lineColor="#666666"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TV]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5a287b2f-38e9-4cca-9473-350e35d11dd1" x="277" y="80" width="34" height="19" forecolor="#000000"/>
+				<box leftPadding="2">
+					<pen lineColor="#666666"/>
+					<topPen lineWidth="0.0" lineColor="#666666"/>
+					<leftPen lineWidth="0.0" lineColor="#666666"/>
+					<bottomPen lineColor="#666666"/>
+					<rightPen lineWidth="0.0" lineColor="#666666"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="96a638c7-4d2e-470a-a4c6-7c1b7b9173ba" x="0" y="44" width="34" height="19" forecolor="#000000"/>
+				<box leftPadding="2">
+					<pen lineColor="#666666"/>
+					<topPen lineWidth="0.0" lineColor="#666666"/>
+					<leftPen lineWidth="0.0" lineColor="#666666"/>
+					<bottomPen lineColor="#666666"/>
+					<rightPen lineWidth="0.0" lineColor="#666666"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PV]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7ca8ceed-bf7f-4fa8-a8f2-f93049ab6dfc" x="34" y="44" width="122" height="19" forecolor="#000000"/>
+				<box leftPadding="2">
+					<pen lineColor="#666666"/>
+					<topPen lineWidth="0.0" lineColor="#666666"/>
+					<leftPen lineWidth="0.0" lineColor="#666666"/>
+					<bottomPen lineColor="#666666"/>
+					<rightPen lineWidth="0.0" lineColor="#666666"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="false" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Preço de Venda]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

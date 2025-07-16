@@ -1,0 +1,8 @@
+VER OS SEGUINTES CASOS: 
+
+IVA
+01. ProdutoImposto
+02. ProdutoIsento
+
+RETENCAO
+01. ServicoRetencao

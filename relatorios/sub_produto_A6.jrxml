@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub1_stock" language="groovy" pageWidth="200" pageHeight="842" columnWidth="188" leftMargin="10" rightMargin="2" topMargin="2" bottomMargin="5" uuid="8edf8e18-cf8a-4127-8e5a-1365fe37f4cd">
+	<property name="ireport.zoom" value="3.8906136901500052"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="ID_TIPO_PRODUTO" class="java.lang.Integer"/>
+	<parameter name="PARM_ID_ARMAZEM" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[SELECT DISTINCT
+     tb_produto.`designacao` AS tb_produto_designacao,
+     tb_stock.`quantidade_existente` AS tb_stock_quantidade_existente,
+     tb_tipo_produto.`codigo` AS tb_tipo_produto_codigo,
+     tb_tipo_produto.`designacao` AS tb_tipo_produto_designacao,
+     tb_produto.`codigo` AS tb_produto_codigo,
+     tb_armazem.`designacao` AS tb_armazem_designacao,
+
+      ( SELECT  MAX(tb_preco.`pk_preco`) AS MAX_PRECO FROM `tb_preco` tb_preco WHERE tb_preco.`fk_produto`  =  tb_produto.`codigo`)
+      AS MAX_COD_PRECO,
+
+     ( SELECT  tb_preco.`preco_compra` AS M_P FROM `tb_preco` tb_preco WHERE tb_preco.`pk_preco`  =  MAX_COD_PRECO)
+      AS MAX_PRECO_COMPRA,
+
+
+    ( SELECT  MAX(tb_preco.`preco_venda`) AS M_V FROM `tb_preco` tb_preco WHERE tb_preco.`pk_preco`  =  MAX_COD_PRECO)
+      AS MAX_PRECO_VENDA,
+
+
+    ( SELECT  MAX(tb_preco.`percentagem_ganho`) AS MAX_PRECO_COMPRA FROM `tb_preco` tb_preco WHERE tb_preco.`pk_preco`  =  MAX_COD_PRECO)
+      AS MAX_PERCENTAGEM_GANHO
+
+FROM
+     `tb_produto` tb_produto INNER JOIN `tb_stock` tb_stock ON tb_produto.`codigo` = tb_stock.`cod_produto_codigo`
+     INNER JOIN `tb_tipo_produto` tb_tipo_produto ON tb_produto.`cod_Tipo_Produto` = tb_tipo_produto.`codigo`
+     INNER JOIN `tb_armazem` tb_armazem ON tb_stock.`cod_armazem` = tb_armazem.`codigo`
+WHERE
+     tb_tipo_produto.`codigo` = $P{ID_TIPO_PRODUTO} AND tb_armazem.`codigo` = $P{PARM_ID_ARMAZEM} AND tb_produto.`status` = 'Activo'
+
+ORDER BY
+     tb_produto.`codigo` ASC]]>
+	</queryString>
+	<field name="tb_produto_designacao" class="java.lang.String"/>
+	<field name="tb_stock_quantidade_existente" class="java.lang.Double"/>
+	<field name="tb_tipo_produto_codigo" class="java.lang.Integer"/>
+	<field name="tb_tipo_produto_designacao" class="java.lang.String"/>
+	<field name="tb_produto_codigo" class="java.lang.Integer"/>
+	<field name="tb_armazem_designacao" class="java.lang.String"/>
+	<field name="MAX_COD_PRECO" class="java.lang.Long"/>
+	<field name="MAX_PRECO_COMPRA" class="java.math.BigDecimal"/>
+	<field name="MAX_PRECO_VENDA" class="java.math.BigDecimal"/>
+	<field name="MAX_PERCENTAGEM_GANHO" class="java.math.BigDecimal"/>
+	<variable name="SOMA_QUANTIDADES" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{tb_stock_quantidade_existente}]]></variableExpression>
+	</variable>
+	<variable name="SOMA_PRECO_COMPRA" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{tb_stock_quantidade_existente}*$F{MAX_PRECO_COMPRA}]]></variableExpression>
+	</variable>
+	<variable name="SOMA_PRECO_VENDA" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{tb_stock_quantidade_existente}*$F{MAX_PRECO_VENDA}]]></variableExpression>
+	</variable>
+	<variable name="SOMA_LUCRO" class="java.lang.Double"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="10">
+			<textField>
+				<reportElement uuid="a22650f2-6abf-4eb6-b240-993d72e919b8" mode="Opaque" x="0" y="0" width="101" height="10" forecolor="#FFFFFF" backcolor="#000000"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_tipo_produto_designacao}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="11" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="5a113399-b909-4a07-8c16-fa4061277135" mode="Opaque" x="0" y="0" width="19" height="11" forecolor="#000000" backcolor="#CCCCCC"/>
+				<box leftPadding="2">
+					<pen lineColor="#666666"/>
+					<topPen lineWidth="0.5" lineColor="#666666"/>
+					<leftPen lineWidth="0.5" lineColor="#666666"/>
+					<bottomPen lineColor="#666666"/>
+					<rightPen lineWidth="0.5" lineColor="#666666"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cod. Prod.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7a74bbf4-0e50-4030-93ef-d9e7af396b47" mode="Opaque" x="19" y="0" width="114" height="11" forecolor="#000000" backcolor="#CCCCCC"/>
+				<box leftPadding="2">
+					<pen lineColor="#666666"/>
+					<topPen lineWidth="0.5" lineColor="#666666"/>
+					<leftPen lineWidth="0.5" lineColor="#666666"/>
+					<bottomPen lineColor="#666666"/>
+					<rightPen lineWidth="0.5" lineColor="#666666"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Designação]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b1124f08-9cce-40ca-a391-76461b211ac9" mode="Opaque" x="133" y="0" width="20" height="11" forecolor="#000000" backcolor="#CCCCCC"/>
+				<box leftPadding="2">
+					<pen lineColor="#666666"/>
+					<topPen lineWidth="0.5" lineColor="#666666"/>
+					<leftPen lineWidth="0.5" lineColor="#666666"/>
+					<bottomPen lineColor="#666666"/>
+					<rightPen lineWidth="0.5" lineColor="#666666"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Qtd]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0c3fc563-8a93-4e74-ad0b-650e36f0ff47" mode="Opaque" x="153" y="0" width="29" height="11" forecolor="#000000" backcolor="#CCCCCC"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineColor="#666666"/>
+					<topPen lineWidth="0.5" lineColor="#666666"/>
+					<leftPen lineWidth="0.5" lineColor="#666666"/>
+					<bottomPen lineColor="#666666"/>
+					<rightPen lineWidth="0.5" lineColor="#666666"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[P.V]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="10" splitType="Stretch">
+			<textField>
+				<reportElement uuid="8d9eea92-2194-4eb2-8887-8259dbcb0c6e" x="19" y="0" width="114" height="10"/>
+				<box leftPadding="2">
+					<pen lineStyle="Solid" lineColor="#666666"/>
+					<topPen lineStyle="Solid" lineColor="#666666"/>
+					<leftPen lineStyle="Solid" lineColor="#666666"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#666666"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#666666"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_produto_designacao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="28ad0cc5-8c02-45cd-9fdd-2f25ddd9d446" x="0" y="0" width="19" height="10"/>
+				<box leftPadding="2">
+					<pen lineStyle="Solid" lineColor="#666666"/>
+					<topPen lineStyle="Solid" lineColor="#666666"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#666666"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#666666"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#666666"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_produto_codigo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement uuid="2107bcfe-8a5c-435a-aafa-a6bd6da3d98a" x="133" y="0" width="20" height="10" forecolor="#000000"/>
+				<box leftPadding="2">
+					<pen lineStyle="Solid" lineColor="#666666"/>
+					<topPen lineStyle="Solid" lineColor="#666666"/>
+					<leftPen lineStyle="Solid" lineColor="#666666"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#666666"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#666666"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_stock_quantidade_existente}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement uuid="7ddca883-be63-4a5d-863a-fdc7bd3214d1" x="153" y="0" width="29" height="10"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineColor="#666666"/>
+					<topPen lineColor="#666666"/>
+					<leftPen lineColor="#666666"/>
+					<bottomPen lineWidth="0.25" lineColor="#666666"/>
+					<rightPen lineWidth="0.5" lineColor="#666666"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MAX_PRECO_VENDA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

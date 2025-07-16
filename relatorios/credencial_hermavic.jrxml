@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="credencial_hermavic" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString>
+		<![CDATA[SELECT
+     tb_dados_instituicao.`nome` AS tb_dados_instituicao_nome,
+     tb_dados_instituicao.`telefone` AS tb_dados_instituicao_telefone,
+     tb_dados_instituicao.`enderecos` AS tb_dados_instituicao_enderecos,
+     tb_dados_instituicao.`email` AS tb_dados_instituicao_email,
+     tb_dados_instituicao.`nif` AS tb_dados_instituicao_nif
+FROM
+     `tb_dados_instituicao` tb_dados_instituicao]]>
+	</queryString>
+	<field name="tb_dados_instituicao_nome" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_telefone" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_enderecos" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_email" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_nif" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="128" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="67" width="535" height="22"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="Times New Roman" size="16" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[CREDÊNCIAL]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="125" splitType="Stretch"/>
+	</detail>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+</jasperReport>

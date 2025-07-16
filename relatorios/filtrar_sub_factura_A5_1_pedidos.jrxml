@@ -1,0 +1,773 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="factura_A5_1" pageWidth="200" pageHeight="450" columnWidth="188" leftMargin="10" rightMargin="2" topMargin="2" bottomMargin="20" isIgnorePagination="true" uuid="37ff3973-3350-4cef-8a85-3942f8d386f1">
+	<property name="ireport.zoom" value="4.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="432"/>
+	<style name="cliente_style_gorjeta" mode="Transparent" forecolor="#000000">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{tb_venda_gorjeta} == 0d]]></conditionExpression>
+			<style mode="Opaque" forecolor="#FFFFFF" backcolor="#FFFFFF"/>
+		</conditionalStyle>
+	</style>
+	<style name="cliente_style_troco" mode="Transparent" forecolor="#000000">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{tb_venda_gorjeta} > 0d]]></conditionExpression>
+			<style mode="Opaque" forecolor="#FFFFFF" backcolor="#FFFFFF"/>
+		</conditionalStyle>
+	</style>
+	<style name="cliente_style" mode="Transparent" forecolor="#000000">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$P{NIF_CLIENTE_CONSOMIDOR_FINAL}.equals("Consumidor Final")]]></conditionExpression>
+			<style mode="Opaque" forecolor="#FFFFFF" backcolor="#FFFFFF"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="CODIGO_VENDA" class="java.lang.Integer"/>
+	<parameter name="PARM_MESA" class="java.lang.Integer"/>
+	<parameter name="PARM_LUGAR" class="java.lang.Integer"/>
+	<parameter name="NIF_CLIENTE_CONSOMIDOR_FINAL" class="java.lang.String"/>
+	<parameter name="MOTIVO_ISENCAO" class="java.lang.String"/>
+	<parameter name="IMPOSTO_IVA" class="java.lang.Double"/>
+	<parameter name="INCIDENCIA" class="java.lang.Double"/>
+	<parameter name="SOFTWARE_NAME" class="java.lang.String"/>
+	<parameter name="STATUS_DOCUMENTO" class="java.lang.String"/>
+	<parameter name="DOCUMENTO" class="java.lang.String"/>
+	<parameter name="SOFTWARE_VERSION" class="java.lang.String"/>
+	<parameter name="DESCRICAO_LOJA" class="java.lang.String"/>
+	<parameter name="TROCO" class="java.lang.Float"/>
+	<parameter name="VALOR_ENTREGUE" class="java.lang.Float"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["../relatorios/"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+     SUM(tb_item_venda.`quantidade`) AS tb_item_venda_quantidade,
+     tb_produto.`designacao` AS tb_produto_designacao,
+     tb_item_venda.`total` AS tb_item_venda_total,
+     tb_venda.`total_venda` AS tb_venda_total_venda,
+     tb_produto.`codigo` AS tb_produto_codigo,
+     tb_venda.`codigo` AS tb_venda_codigo,
+     tb_usuario.`nome` AS tb_usuario_nome,
+     tb_produto.`preco_venda` AS tb_produto_preco_venda,
+     tb_venda.`troco` AS tb_venda_troco,
+     tb_venda.`valor_entregue` AS tb_venda_valor_entregue,
+     tb_venda.`dataVenda` AS tb_venda_dataVenda,
+     tb_armazem.`codigo` AS tb_armazem_codigo,
+     tb_armazem.`designacao` AS tb_armazem_designacao,
+     tb_venda.`nome_cliente` AS tb_venda_nome_cliente,
+     tb_venda.`hora` AS tb_venda_hora,
+     tb_preco.`preco_venda` AS tb_preco_preco_venda,
+     tb_lugares.`designacao` AS tb_lugares_designacao,
+     tb_mesas.`designacao` AS tb_mesas_designacao,
+     tb_lugares.`pk_lugares` AS tb_lugares_pk_lugares,
+     tb_mesas.`pk_mesas` AS tb_mesas_pk_mesas,
+     tb_dados_instituicao.`nome` AS tb_dados_instituicao_nome,
+     tb_dados_instituicao.`telefone` AS tb_dados_instituicao_telefone,
+     tb_dados_instituicao.`enderecos` AS tb_dados_instituicao_enderecos,
+     tb_dados_instituicao.`email` AS tb_dados_instituicao_email,
+     tb_dados_instituicao.`nif` AS tb_dados_instituicao_nif,
+     tb_venda.`cod_fact` AS tb_venda_cod_fact,
+     tb_venda.`nome_consumidor_final` AS tb_venda_nome_consumidor_final,
+     tb_banco.`descrisao` AS tb_banco_descrisao,
+     documento.`designacao` AS documento_designacao,
+     documento.`abreviacao` AS documento_abreviacao,
+     documento.`cod_ultimo_doc` AS documento_cod_ultimo_doc,
+     documento.`descricao_ultimo_doc` AS documento_descricao_ultimo_doc,
+     tb_item_venda.`valor_iva` AS tb_item_venda_valor_iva,
+     tb_item_venda.`motivo_isensao` AS tb_item_venda_motivo_isensao,
+     tb_item_venda.`desconto` AS tb_item_venda_desconto,
+     tb_item_venda.`quantidade` AS tb_item_venda_quantidade,
+     tb_venda.`total_iva` AS tb_venda_total_iva,
+     tb_venda.`desconto_comercial` AS tb_venda_desconto_comercial,
+     tb_venda.`desconto_financeiro` AS tb_venda_desconto_financeiro,
+     tb_venda.`total_por_extenso` AS tb_venda_total_por_extenso,
+     tb_venda.`total_incidencia` AS tb_venda_total_incidencia,
+     tb_venda.`total_incidencia_isento` AS tb_venda_total_incidencia_isento,
+     tb_venda.`total_geral` AS tb_venda_total_geral,
+     tb_venda.`assinatura` AS tb_venda_assinatura,
+     tb_venda.`gorjeta` AS tb_venda_gorjeta
+FROM
+     `tb_produto` tb_produto INNER JOIN `tb_item_venda` tb_item_venda ON tb_produto.`codigo` = tb_item_venda.`codigo_produto`
+     INNER JOIN `tb_venda` tb_venda ON tb_item_venda.`codigo_venda` = tb_venda.`codigo`
+     INNER JOIN `tb_preco` tb_preco ON tb_item_venda.`fk_preco` = tb_preco.`pk_preco`
+     INNER JOIN `tb_lugares` tb_lugares ON tb_item_venda.`fk_lugares` = tb_lugares.`pk_lugares`
+     INNER JOIN `tb_mesas` tb_mesas ON tb_item_venda.`fk_mesas` = tb_mesas.`pk_mesas`
+     INNER JOIN `tb_usuario` tb_usuario ON tb_venda.`codigo_usuario` = tb_usuario.`codigo`
+     INNER JOIN `tb_armazem` tb_armazem ON tb_venda.`idArmazemFK` = tb_armazem.`codigo`
+     INNER JOIN `tb_banco` tb_banco ON tb_venda.`idBanco` = tb_banco.`idBanco`
+     INNER JOIN `documento` documento ON tb_venda.`fk_documento` = documento.`pk_documento`,
+     `tb_dados_instituicao` tb_dados_instituicao
+WHERE
+     tb_venda.`codigo` = $P{CODIGO_VENDA}
+ AND tb_mesas.`pk_mesas` = $P{PARM_MESA}
+ AND tb_lugares.`pk_lugares` = $P{PARM_LUGAR}
+GROUP BY
+     tb_produto.`codigo`]]>
+	</queryString>
+	<field name="tb_item_venda_quantidade" class="java.lang.Double"/>
+	<field name="tb_produto_designacao" class="java.lang.String"/>
+	<field name="tb_item_venda_total" class="java.math.BigDecimal"/>
+	<field name="tb_venda_total_venda" class="java.math.BigDecimal"/>
+	<field name="tb_produto_codigo" class="java.lang.Integer"/>
+	<field name="tb_venda_codigo" class="java.lang.Integer"/>
+	<field name="tb_usuario_nome" class="java.lang.String"/>
+	<field name="tb_produto_preco_venda" class="java.lang.Double"/>
+	<field name="tb_venda_troco" class="java.lang.Double"/>
+	<field name="tb_venda_valor_entregue" class="java.lang.Double"/>
+	<field name="tb_venda_dataVenda" class="java.sql.Timestamp"/>
+	<field name="tb_armazem_codigo" class="java.lang.Long"/>
+	<field name="tb_armazem_designacao" class="java.lang.String"/>
+	<field name="tb_venda_nome_cliente" class="java.lang.String"/>
+	<field name="tb_venda_hora" class="java.sql.Time"/>
+	<field name="tb_preco_preco_venda" class="java.math.BigDecimal"/>
+	<field name="tb_lugares_designacao" class="java.lang.String"/>
+	<field name="tb_mesas_designacao" class="java.lang.String"/>
+	<field name="tb_lugares_pk_lugares" class="java.lang.Long"/>
+	<field name="tb_mesas_pk_mesas" class="java.lang.Long"/>
+	<field name="tb_dados_instituicao_nome" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_telefone" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_enderecos" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_email" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_nif" class="java.lang.String"/>
+	<field name="tb_venda_cod_fact" class="java.lang.String"/>
+	<field name="tb_venda_nome_consumidor_final" class="java.lang.String"/>
+	<field name="tb_banco_descrisao" class="java.lang.String"/>
+	<field name="documento_designacao" class="java.lang.String"/>
+	<field name="documento_abreviacao" class="java.lang.String"/>
+	<field name="documento_cod_ultimo_doc" class="java.lang.Integer"/>
+	<field name="documento_descricao_ultimo_doc" class="java.lang.String"/>
+	<field name="tb_item_venda_valor_iva" class="java.lang.Double"/>
+	<field name="tb_item_venda_motivo_isensao" class="java.lang.String"/>
+	<field name="tb_item_venda_desconto" class="java.lang.Double"/>
+	<field name="tb_venda_total_iva" class="java.lang.Double"/>
+	<field name="tb_venda_desconto_comercial" class="java.lang.Double"/>
+	<field name="tb_venda_desconto_financeiro" class="java.lang.Double"/>
+	<field name="tb_venda_total_por_extenso" class="java.lang.String"/>
+	<field name="tb_venda_total_incidencia" class="java.lang.Double"/>
+	<field name="tb_venda_total_incidencia_isento" class="java.lang.Double"/>
+	<field name="tb_venda_total_geral" class="java.lang.Double"/>
+	<field name="tb_venda_assinatura" class="java.lang.String"/>
+	<field name="tb_venda_gorjeta" class="java.lang.Double"/>
+	<variable name="TOTAL" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{tb_item_venda_quantidade}*$F{tb_preco_preco_venda}.doubleValue()]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="57">
+			<image>
+				<reportElement uuid="6e8073f6-27c0-4248-abae-b87e1ed58142" x="74" y="-6" width="48" height="29"/>
+				<imageExpression><![CDATA["relatorios/logo_dvml.png"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement uuid="8cef4c2d-b0e3-43a1-aa0d-8c531fa68274" x="1" y="32" width="187" height="12"/>
+				<textElement textAlignment="Center" markup="html">
+					<font fontName="Times New Roman" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<b>NIF:</b> " +$F{tb_dados_instituicao_nif}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="6976aca6-5a7b-4ea7-ab0c-2a75234b4702" x="1" y="40" width="187" height="12"/>
+				<textElement textAlignment="Center" markup="html">
+					<font fontName="Times New Roman" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<b>Telefone:</b> " +$F{tb_dados_instituicao_telefone}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="28a40561-0f2d-4b12-9a10-9f7ee4964a36" x="0" y="14" width="187" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+					<font fontName="Times New Roman" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="c49b5537-5e6e-4f3a-8b51-5f78798b866b" x="1" y="45" width="187" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" markup="html">
+					<font fontName="Times New Roman" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<b>Email:</b> " +$F{tb_dados_instituicao_email}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="7ca1e775-ba36-45fe-8e76-26b16b828b10" x="1" y="25" width="187" height="12"/>
+				<textElement textAlignment="Center" markup="html">
+					<font fontName="Times New Roman" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<b>Endereço:</b> " +$F{tb_dados_instituicao_enderecos}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="74" splitType="Stretch">
+			<rectangle radius="10">
+				<reportElement uuid="db5995fc-d5e6-459a-8740-e4337630feaa" x="-1" y="2" width="189" height="53"/>
+				<graphicElement>
+					<pen lineStyle="Dotted"/>
+				</graphicElement>
+			</rectangle>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="c93b7669-b1aa-47ed-88b4-62f81013d2fe" key="textField-11" x="49" y="61" width="48" height="13"/>
+				<box topPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="true" isItalic="false" pdfFontName="Helvetica-Oblique"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_lugares_designacao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b2880ffe-8557-44fc-88cf-3964582aae21" x="1" y="61" width="48" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_mesas_designacao}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd-MM-yyyy">
+				<reportElement uuid="54997071-bf95-4a61-a90b-cecbeb253e95" key="element-95" x="81" y="11" width="48" height="13" forecolor="#000000"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_venda_dataVenda}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="afe94506-0811-4ba9-9690-688346e1a296" x="0" y="34" width="186" height="16"/>
+				<textElement markup="html">
+					<font fontName="Times New Roman" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<b>NIF:</b> "  +"<i>" +$P{NIF_CLIENTE_CONSOMIDOR_FINAL} +"</i>"]]></textFieldExpression>
+			</textField>
+			<textField pattern="HH:mm">
+				<reportElement uuid="c2f5b113-6588-467d-9223-fa12e0db0876" key="element-95" x="130" y="11" width="41" height="13" forecolor="#000000"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_venda_hora}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="cac7dc05-ec38-4062-bd51-f10a29c237df" x="-1" y="42" width="186" height="12"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{STATUS_DOCUMENTO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="4e7f29d1-1db8-4487-8792-0f4b58ddd5e9" key="textField-11" x="0" y="21" width="186" height="16"/>
+				<box topPadding="2"/>
+				<textElement verticalAlignment="Middle" markup="html">
+					<font fontName="Times New Roman" isItalic="false" pdfFontName="Helvetica-Oblique"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<b>Cliente:</b> " + "<i>" +$F{tb_venda_nome_cliente} +"</i>"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="7ebf6645-868d-4908-b163-8e52e984ede5" key="element-94" x="-1" y="11" width="82" height="13" forecolor="#000000"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Data de Emissão:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="ea8e034e-6401-4b14-b6d0-bf5f504860b9" key="element-91" x="1" y="2" width="186" height="13" forecolor="#000000"/>
+				<textElement markup="html">
+					<font fontName="Times New Roman" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{documento_designacao} +" <b>" +$F{tb_venda_cod_fact} +"</b>"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="12" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="a749e52f-af5f-41fe-bff6-371c61f85499" mode="Opaque" x="0" y="0" width="91" height="12" backcolor="#CCCCCC"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<text><![CDATA[Descrição]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1995244b-872e-408b-a03b-84c18aba55ac" mode="Opaque" x="68" y="0" width="32" height="12" backcolor="#CCCCCC"/>
+				<box leftPadding="1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9"/>
+				</textElement>
+				<text><![CDATA[Qtd]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bf6e07f8-a032-420e-acbd-15ac6002fbdf" mode="Opaque" x="145" y="0" width="43" height="12" backcolor="#CCCCCC"/>
+				<box leftPadding="1" rightPadding="1"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e14d8862-5069-4ac4-925f-8c123924224f" mode="Opaque" x="93" y="0" width="33" height="12" backcolor="#CCCCCC"/>
+				<box leftPadding="1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<text><![CDATA[P.U]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="66815bae-507b-499d-81a6-61f759b15692" mode="Opaque" x="125" y="0" width="31" height="12" backcolor="#CCCCCC"/>
+				<box leftPadding="1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<text><![CDATA[IVA%]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
+				<reportElement uuid="2526e030-0339-42f9-9f73-923f72e6c81a" key="textField-16" x="89" y="0" width="41" height="12"/>
+				<box rightPadding="1">
+					<topPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_preco_preco_venda}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
+				<reportElement uuid="2020bf5b-78a5-49f3-9a7a-48a15d19da3d" key="textField-18" x="143" y="0" width="45" height="12"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_item_venda_quantidade}*$F{tb_preco_preco_venda}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="424c0b42-dcc7-4c93-b8ea-b6dbdce5ff0f" key="textField-15" x="0" y="0" width="80" height="12"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_produto_designacao}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0" isBlankWhenNull="false">
+				<reportElement uuid="f6f4b17e-fb48-4011-9c99-85fe76836626" key="textField-16" x="129" y="0" width="16" height="12"/>
+				<box rightPadding="1">
+					<topPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_item_venda_valor_iva}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0">
+				<reportElement uuid="c935a564-dd82-4453-928b-058d97ca66d6" x="79" y="0" width="20" height="12"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_item_venda_quantidade}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="194" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="55a77ed5-fb9a-41f8-b839-662d45ce3277" key="staticText-11" mode="Opaque" x="0" y="0" width="50" height="12" backcolor="#CCCCCC"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Times New Roman" size="8" isBold="true" isItalic="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Incidência]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="77fa5a40-980e-49a3-bc29-d7905404e4af" key="staticText-11" mode="Opaque" x="37" y="0" width="45" height="12" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Times New Roman" size="8" isBold="true" isItalic="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Imposto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e99afe51-c998-44a6-aba6-2f2d89bcb488" key="staticText-11" mode="Opaque" x="82" y="0" width="106" height="12" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Times New Roman" size="8" isBold="true" isItalic="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Motivo de Isenção]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
+				<reportElement uuid="596fc025-62e3-49f4-9a37-b5ae098bdcbb" key="textField-20" x="133" y="50" width="54" height="9"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7" isBold="false"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_venda_desconto_financeiro}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="76d5b0e2-2a14-472a-be1e-215d3f1caf23" key="textField-20" x="133" y="32" width="54" height="9"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7" isBold="false"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_venda_total_geral}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
+				<reportElement uuid="966bfd9f-db6c-436c-ad91-1e5fa79ef17d" key="textField-20" x="133" y="41" width="54" height="9"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_venda_desconto_comercial}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="5d8c6314-e3b9-4176-b66c-56efe6e01c63" x="99" y="68" width="34" height="9"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="f7802223-539b-4f27-8422-1c08a7668ed7" key="staticText-11" x="38" y="32" width="61" height="9"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="7" isBold="false" isItalic="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Total Ilíquido:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b8385a07-8ebe-4762-80de-acdf2ffb769f" key="textField-20" x="133" y="68" width="54" height="9"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7" isBold="true"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_venda_total_venda}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="479620cd-b970-4a65-ba5a-93278261df5e" x="99" y="59" width="34" height="9"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="6a2b2d19-9081-44cb-bcbc-efd01216aa2d" x="99" y="32" width="34" height="9"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="9143704a-6724-4001-9789-d2efde5d4433" key="staticText-11" x="38" y="68" width="61" height="9"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="7" isBold="true" isItalic="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Total(AOA):]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="d06a9c37-620b-462b-9ea5-544dc9c158d1" key="textField-20" x="133" y="59" width="54" height="9"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_venda_total_iva}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="f7c81c53-6749-4eba-a423-3518b4b3e300" key="staticText-11" x="38" y="59" width="61" height="9"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="7" isBold="false" isItalic="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[IVA:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="fab73b07-9677-4178-ad45-f77f21724391" x="99" y="50" width="34" height="9"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement/>
+			</textField>
+			<staticText>
+				<reportElement uuid="169250e8-1662-4bc2-8bba-19c3da1c2725" key="staticText-11" x="38" y="41" width="61" height="9"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="7" isBold="false" isItalic="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Desc. Comercial:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d8cfbe0e-2293-422f-ad72-6f4c1f015d6c" key="staticText-11" x="38" y="50" width="61" height="9"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="7" isBold="false" isItalic="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Desc. Financeiro:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
+				<reportElement uuid="23a003f8-505a-48ad-b7d8-a3415858437e" key="textField-16" x="38" y="22" width="45" height="10"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[0.0]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
+				<reportElement uuid="91a3bde2-61a5-4148-8f1a-5323e97c724f" key="textField-16" x="38" y="12" width="45" height="10"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_venda_total_iva}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
+				<reportElement uuid="78a8acc1-a213-4874-9a51-db30e0a0bc97" key="textField-16" x="1" y="22" width="37" height="10"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_venda_total_incidencia_isento}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="6aeb22c0-2cab-44e4-8942-50a7c41f5130" key="textField-15" x="83" y="12" width="104" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Times New Roman" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
+				<reportElement uuid="c6f7cd82-9aa2-46a7-b7ca-57aaa75f186b" key="textField-16" x="1" y="12" width="37" height="10"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_venda_total_incidencia}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="d4fa8624-2288-4c10-9183-3c5083ea35aa" key="textField-15" x="83" y="22" width="104" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" markup="html">
+					<font fontName="Times New Roman" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{MOTIVO_ISENCAO}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement uuid="8035fd3e-c1e2-4d0a-acf9-08f9483a5c8c" x="38" y="77" width="136" height="25"/>
+				<subreportParameter name="CODIGO_VENDA">
+					<subreportParameterExpression><![CDATA[$P{CODIGO_VENDA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_factura_forma_pagamento_A6.jasper"]]></subreportExpression>
+			</subreport>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="628b5912-c9a8-41ee-b0e6-abc1da40ae8f" key="textField-20" style="cliente_style_troco" x="133" y="102" width="54" height="9"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_venda_troco}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="3cb704bd-ba5d-4b82-933c-ce2396b1d24f" key="staticText-11" style="cliente_style_troco" x="38" y="102" width="61" height="9"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="7" isBold="false" isItalic="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Troco:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="bb2d8bcd-9479-42ec-8111-a4447dd4c03b" style="cliente_style_troco" x="99" y="102" width="34" height="9"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="0c4af518-0f70-477d-9b18-8ee9436262cd" x="1" y="136" width="187" height="32"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Times New Roman" size="7" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["*Os bens ou serviços foram colocados à disposição do cliente no(a) "+$F{tb_armazem_designacao}+", aos "+$F{tb_venda_dataVenda}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="69336b16-0fa9-4a94-850c-3c0790a4267c" style="cliente_style_gorjeta" x="2" y="122" width="32" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[Gorjeta:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="fec9b8f5-f664-454f-9619-be480c808104" key="element-96" x="1" y="160" width="187" height="12" forecolor="#000000"/>
+				<textElement verticalAlignment="Bottom" markup="html">
+					<font fontName="Times New Roman" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<b>Operador(a):</b> " +$F{tb_usuario_nome}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="c8c6d6a6-44ac-42d8-8004-d63827e4923a" style="cliente_style_gorjeta" x="25" y="122" width="115" height="12"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="7" isBold="true" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_venda_gorjeta}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b9c62bf1-3d8e-4055-96f3-071c0558907c" x="0" y="112" width="187" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="7" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_venda_total_por_extenso}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="9968ee7f-344e-45cd-b8fc-62fcd5e642d2" x="1" y="168" width="187" height="26"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_venda_assinatura} + "-Processado por programa validado nº " + "258/AGT/2020 "+$P{SOFTWARE_NAME} + "/dvml"]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

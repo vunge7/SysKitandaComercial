@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_factura_forma_pagamento" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="d0550e29-e3bd-4496-b63f-968d0972a253">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="CODIGO_VENDA" class="java.lang.Integer"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["../relatorios/"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT DISTINCT
+     forma_pagamento.`pk_forma_pagamento` AS forma_pagamento_pk_forma_pagamento,
+     forma_pagamento.`designacao` AS forma_pagamento_designacao,
+     forma_pagamento_item.`pk_forma_pagamento_item` AS forma_pagamento_item_pk_forma_pagamento_item,
+     forma_pagamento_item.`valor` AS forma_pagamento_item_valor,
+     forma_pagamento_item.`referencia` AS forma_pagamento_item_referencia,
+     forma_pagamento_item.`fk_forma_pagamento` AS forma_pagamento_item_fk_forma_pagamento,
+     forma_pagamento_item.`fk_venda` AS forma_pagamento_item_fk_venda
+FROM
+     `forma_pagamento` forma_pagamento INNER JOIN `forma_pagamento_item` forma_pagamento_item ON forma_pagamento.`pk_forma_pagamento` = forma_pagamento_item.`fk_forma_pagamento`
+WHERE forma_pagamento_item.`fk_venda` = $P{CODIGO_VENDA}]]>
+	</queryString>
+	<field name="forma_pagamento_pk_forma_pagamento" class="java.lang.Integer"/>
+	<field name="forma_pagamento_designacao" class="java.lang.String"/>
+	<field name="forma_pagamento_item_pk_forma_pagamento_item" class="java.lang.Integer"/>
+	<field name="forma_pagamento_item_valor" class="java.math.BigDecimal"/>
+	<field name="forma_pagamento_item_referencia" class="java.lang.String"/>
+	<field name="forma_pagamento_item_fk_forma_pagamento" class="java.lang.Integer"/>
+	<field name="forma_pagamento_item_fk_venda" class="java.lang.Integer"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="7" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="203b17d8-6381-4890-9215-41512e8b15c1" mode="Opaque" x="0" y="0" width="56" height="7" backcolor="#CCCCCC"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Forma Pagamento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3b5f11cf-b4d3-4c83-aa25-a796709336c3" mode="Opaque" x="56" y="0" width="34" height="7" backcolor="#CCCCCC"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ref.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8550700c-b96a-478f-9b92-b42061bd0820" mode="Opaque" x="90" y="0" width="50" height="7" backcolor="#CCCCCC"/>
+				<box rightPadding="10">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Times New Roman" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="9" splitType="Stretch">
+			<textField>
+				<reportElement uuid="0f000c16-43b9-49f2-9684-c9344b531a9d" x="0" y="0" width="56" height="9"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{forma_pagamento_designacao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="2e3ae1bf-5025-4d73-a985-cd4b00b26735" x="56" y="0" width="34" height="9"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{forma_pagamento_item_referencia}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="cc644b6e-6d32-4a03-931e-3c3e539dba51" x="90" y="0" width="50" height="9"/>
+				<box rightPadding="6">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{forma_pagamento_item_valor}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

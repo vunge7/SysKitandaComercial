@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lista_venda_order_usuario" pageWidth="842" pageHeight="532" orientation="Landscape" columnWidth="782" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="7fab00b9-d949-40ca-a29c-cdd498698bc6">
+	<property name="ireport.zoom" value="2.3325369010486665"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="style_degradacao" mode="Opaque" backcolor="#FFFFFF">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{COLUMN_COUNT}%2==0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#CCEFFA"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="ID_DOCUMENTO" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DATA_1" class="java.sql.Timestamp">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DATA_2" class="java.sql.Timestamp">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["../relatorios/"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+   u.codigo ,
+   u.nome,
+   d.nome  as nome_instituicao,
+   d.nif  as nif_instituicao,
+   d.enderecos  as enderecos_inituicao
+from tb_venda v
+inner join tb_usuario u on u.codigo  = v.codigo_usuario
+inner join tb_dados_instituicao d
+where v.dataVenda between $P{DATA_1} and $P{DATA_2}
+	and  v.fk_documento = $P{ID_DOCUMENTO}
+	and  v.performance = 'false'
+	and  v.credito = 'false'
+	and  v.status_eliminado = 'false'
+group  by u.codigo;]]>
+	</queryString>
+	<field name="codigo" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nome_instituicao" class="java.lang.String"/>
+	<field name="nif_instituicao" class="java.lang.String"/>
+	<field name="enderecos_inituicao" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="142" splitType="Stretch">
+			<textField>
+				<reportElement key="staticText" mode="Opaque" x="0" y="105" width="752" height="17" forecolor="#FFFFFF" backcolor="#00ABE4" uuid="c319bda9-3a1f-4498-bc77-0aa8e84de66b"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["RELATÓRIO DIÁRIO "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="70" width="180" height="12" uuid="3a100458-ac46-48c7-96fa-6eadfd4fe3cb"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nif_instituicao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="57" width="180" height="16" uuid="b08f5237-6376-49e9-814c-89036fd51bee"/>
+				<textElement>
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome_instituicao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="80" width="445" height="12" uuid="7b130947-d9d1-40c4-bf2b-04accf9573ee"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{enderecos_inituicao}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="0" y="0" width="48" height="52" uuid="9b5e4077-1632-42c5-9037-71ec1b752cec"/>
+				<imageExpression><![CDATA["../relatorios/logo_dvml.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<subreport>
+				<reportElement x="-1" y="0" width="200" height="14" uuid="4756b57c-8ec1-4827-acb9-4dc472062f4d"/>
+				<subreportParameter name="SUBREPORT_DIR"/>
+				<subreportParameter name="ID_DOCUMENTO">
+					<subreportParameterExpression><![CDATA[$P{ID_DOCUMENTO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DATA_1">
+					<subreportParameterExpression><![CDATA[$P{DATA_1}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DATA_2">
+					<subreportParameterExpression><![CDATA[$P{DATA_2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_USUARIO">
+					<subreportParameterExpression><![CDATA[$F{codigo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NOME_USUARIO">
+					<subreportParameterExpression><![CDATA[$F{nome}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_reconciliacao_caixa_lavandaria_diario.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<summary>
+		<band height="24">
+			<subreport>
+				<reportElement x="-1" y="8" width="200" height="16" uuid="511f5c1f-d176-4819-8378-766b9bf4e996"/>
+				<subreportParameter name="DATA_1">
+					<subreportParameterExpression><![CDATA[$P{DATA_1}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DATA_2">
+					<subreportParameterExpression><![CDATA[$P{DATA_2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "forma_pagamento_by_datas.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_relatorio_resumo_diario_formas" pageWidth="494" pageHeight="802" columnWidth="494" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="3f0317fb-3d78-40c9-bac9-3bd6b8a152d2">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="PARM_DATA_2" class="java.util.Date"/>
+	<parameter name="PARM_DATA_1" class="java.util.Date"/>
+	<queryString>
+		<![CDATA[SELECT DISTINCT
+     SUM((forma_pagamento_item.`valor`)-tb_venda.`troco`)AS TOTAL_VENDA,
+     forma_pagamento.`pk_forma_pagamento` AS forma_pagamento_pk_forma_pagamento,
+     forma_pagamento.`designacao` AS forma_pagamento_designacao,
+     forma_pagamento_item.`pk_forma_pagamento_item` AS forma_pagamento_item_pk_forma_pagamento_item,
+     forma_pagamento_item.`valor` AS forma_pagamento_item_valor,
+     forma_pagamento_item.`fk_forma_pagamento` AS forma_pagamento_item_fk_forma_pagamento,
+     forma_pagamento_item.`fk_venda` AS forma_pagamento_item_fk_venda,
+     tb_venda.`codigo` AS tb_venda_codigo,
+     tb_venda.`total_venda` AS tb_venda_total_venda,
+     tb_venda.`performance` AS tb_venda_performance,
+     tb_venda.`credito` AS tb_venda_credito,
+     tb_venda.`troco` AS tb_venda_troco,
+     tb_venda.`status_eliminado` AS tb_venda_status_eliminado,
+     tb_venda.`total_geral` AS tb_venda_total_geral,
+     tb_venda.`status_recibo` AS tb_venda_status_recibo,
+     tb_venda.`gorjeta` AS tb_venda_gorjeta,
+     tb_venda.`dataVenda` AS tb_venda_dataVenda
+FROM
+     `forma_pagamento` forma_pagamento INNER JOIN `forma_pagamento_item` forma_pagamento_item ON forma_pagamento.`pk_forma_pagamento` = forma_pagamento_item.`fk_forma_pagamento`
+     INNER JOIN `tb_venda` tb_venda ON forma_pagamento_item.`fk_venda` = tb_venda.`codigo`]]>
+	</queryString>
+	<field name="TOTAL_VENDA" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="forma_pagamento_pk_forma_pagamento" class="java.lang.Integer"/>
+	<field name="forma_pagamento_designacao" class="java.lang.String"/>
+	<field name="forma_pagamento_item_pk_forma_pagamento_item" class="java.lang.Integer"/>
+	<field name="forma_pagamento_item_valor" class="java.math.BigDecimal"/>
+	<field name="forma_pagamento_item_fk_forma_pagamento" class="java.lang.Integer"/>
+	<field name="forma_pagamento_item_fk_venda" class="java.lang.Integer"/>
+	<field name="tb_venda_codigo" class="java.lang.Integer"/>
+	<field name="tb_venda_total_venda" class="java.math.BigDecimal"/>
+	<field name="tb_venda_performance" class="java.lang.String"/>
+	<field name="tb_venda_credito" class="java.lang.String"/>
+	<field name="tb_venda_troco" class="java.lang.Double"/>
+	<field name="tb_venda_status_eliminado" class="java.lang.String"/>
+	<field name="tb_venda_total_geral" class="java.lang.Double"/>
+	<field name="tb_venda_status_recibo" class="java.lang.Integer"/>
+	<field name="tb_venda_gorjeta" class="java.lang.Double"/>
+	<field name="tb_venda_dataVenda" class="java.sql.Timestamp"/>
+	<variable name="VAR_TOTAL_GERAL" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="16" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="bdb2be74-98e2-49fe-ad55-28a1889f81db" x="267" y="0" width="227" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RESUMO]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="18" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="3bdf6b78-3b96-406d-892b-63ea48cb54a8" key="element-90" x="376" y="1" width="117" height="17" forecolor="#000000"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<rectangle radius="0">
+				<reportElement uuid="9e17945f-3832-428c-bb62-42a73de1d38f" key="element-22" mode="Opaque" x="267" y="1" width="226" height="17" forecolor="#000000" backcolor="#999999"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineStyle="Solid"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="157b65a7-e25d-4ab1-bbb2-f67a66dbc085" key="element-92" x="267" y="1" width="109" height="17" forecolor="#000000"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Forma de Pagamento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e2b84e48-75c9-47a8-980c-576cd18a73cc" key="element-90" x="377" y="1" width="117" height="17" forecolor="#000000"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="17" splitType="Stretch">
+			<textField>
+				<reportElement uuid="093c4b56-f8ed-44cc-a20e-f38c03b661c4" x="267" y="0" width="109" height="17"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{forma_pagamento_designacao}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="e0ec99de-f855-4f24-a69f-61ca45cc5c1b" x="376" y="0" width="117" height="17"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL_VENDA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="48" splitType="Stretch"/>
+	</summary>
+</jasperReport>

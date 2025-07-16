@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="200" pageHeight="450" columnWidth="198" leftMargin="0" rightMargin="2" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="9fc5c7e7-6413-41ac-bcbc-bae395cf6f17">
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Kitanda_Connection"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value="dGJfdmVuZGEgLDUxNCwzMiw3ZGJlNDY0My1kODg1LTQ5YTctODFlYS0xY2YwOTNkOWQ2NDI7dGJf aXRlbV92ZW5kYSAsMjQzLDIwLDEzNGRhY2IwLThlM2YtNDNjNC04YzNmLTk4ZThjNzgwYzc1Zjt0 Yl9wcm9kdXRvICwyMCwxMjgsODJiMGY0MWItYWMzMC00NTJiLWEyNzEtMjdiOTRjZTgwODVhO3Ri X3VzdWFyaW8gLDcwMSwxMDQsYmM1N2M0MDMtZTYxZS00MzA4LTkzNTYtZGI4NDZhODlhZTIwO2tp dGFuZGFfZGIudGJfY2xpZW50ZSAsOTA4LDExNSw0ZTI2ZTcxOS0yMmQyLTRmYmEtYTI5NC05YzA2 NGU4ODhmODk7"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="272"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="723"/>
+	<parameter name="CodVenda" class="java.lang.Integer"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\_dvml_comercial_\\_projectos_\\_desktop's_\\_comercial_\\SYS_KITANDA_AGT_V_1_2_4_1\\relatorios\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[call proc_itens_ticket($P{CodVenda});]]>
+	</queryString>
+	<field name="designacao" class="java.lang.String"/>
+	<field name="designacao_pai" class="java.lang.String"/>
+	<field name="cod_fact" class="java.lang.String"/>
+	<field name="posicao" class="java.lang.Integer"/>
+	<field name="nome_cliente" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nome"/>
+		<property name="com.jaspersoft.studio.field.label" value="nome_cliente"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_cliente"/>
+	</field>
+	<field name="telefone_cliente" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="telefone"/>
+		<property name="com.jaspersoft.studio.field.label" value="telefone_cliente"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_cliente"/>
+	</field>
+	<field name="usuario" class="java.lang.String"/>
+	<field name="data_entrega" class="java.sql.Date"/>
+	<field name="obs" class="java.lang.String"/>
+	<field name="cod_venda" class="java.lang.Integer"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="74">
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="77bd874e-4794-4835-a2bb-35466805e84e" x="24" y="1" width="49" height="10"/>
+				<box leftPadding="0"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_entrega}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="75600447-7ea2-4642-98f2-72dc326fe47f" x="24" y="11" width="172" height="10"/>
+				<textElement>
+					<font fontName="Lucida Sans" size="8" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{designacao}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="ae25cff5-ae15-4bdf-8dfe-4f47c1dc2494" x="25" y="21" width="171" height="1"/>
+			</line>
+			<textField>
+				<reportElement uuid="3626a071-03b8-41f4-a8b2-b43cf3327706" x="24" y="21" width="153" height="9"/>
+				<textElement verticalAlignment="Middle" markup="html">
+					<font fontName="Lucida Sans" size="6" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cod_fact} + "," +$F{posicao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="4e7fd014-a810-49dc-b958-e160b63823a7" x="115" y="21" width="81" height="9"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{usuario}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="79a3d17b-e348-459f-83ce-2257519d7f04" x="25" y="65" width="171" height="9"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome_cliente} + "(" +$F{telefone_cliente} + ")"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="eaac940c-ce52-410c-842a-009cbd2a37ca" x="24" y="29" width="174" height="35"/>
+				<box topPadding="0" leftPadding="2">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{obs}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="f4023424-7c12-4cae-b038-8d4f28450949" x="73" y="1" width="123" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true" isItalic="true" isUnderline="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{designacao_pai}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="e1a76f42-95cb-47aa-862a-3f85db63c01b" x="0" y="73" width="198" height="0"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Dashed"/>
+					<topPen lineWidth="1.0" lineStyle="Dashed"/>
+					<leftPen lineWidth="1.0" lineStyle="Dashed"/>
+					<bottomPen lineWidth="1.0" lineStyle="Dashed"/>
+					<rightPen lineWidth="1.0" lineStyle="Dashed"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[Static text]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

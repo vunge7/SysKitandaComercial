@@ -1,0 +1,1204 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package visao;
+
+import comercial.controller.ArmazensController;
+import comercial.controller.DocumentosController;
+import comercial.controller.EntradasController;
+import comercial.controller.FamiliasController;
+import comercial.controller.FichaTecnicaController;
+import comercial.controller.ItemEntradasController;
+import comercial.controller.LinhaFichaTecnicaController;
+import comercial.controller.ProdutosController;
+import comercial.controller.StoksController;
+import comercial.controller.TipoProdutosController;
+import comercial.controller.UnidadesController;
+import comercial.controller.UsuariosController;
+import entity.Familia;
+import entity.FichaTecnica;
+import entity.LinhaFichaTecnica;
+import entity.TbArmazem;
+import entity.TbDadosInstituicao;
+import entity.TbEntrada;
+import entity.TbItemEntradas;
+import entity.TbProduto;
+import entity.TbStock;
+import entity.TbTipoProduto;
+import entity.TbUsuario;
+import entity.Unidade;
+import java.awt.HeadlessException;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import util.BDConexao;
+import util.DVML;
+import util.MetodosUtil;
+import static util.MetodosUtil.preparar_tabela;
+
+/**
+ *
+ * @author Domingos Dala Vunge
+ */
+public class EntradaPratosCompostosVisao extends javax.swing.JFrame
+{
+
+    private static FamiliasController familiaController;
+    private static ProdutosController produtosController;
+    private static FichaTecnica fichaTecnica;
+    private static TbProduto produtos;
+    private static FichaTecnicaController fichaTecnicaController;
+    private static LinhaFichaTecnicaController linhafichaTecnicaController;
+    private static StoksController stocksController;
+    private static ArmazensController armazensController;
+    private static TipoProdutosController tipoProdutoController;
+    private static EntradasController entradasController;
+    private static ItemEntradasController itemEntradasController;
+    private static UsuariosController usuariosController;
+    private static UnidadesController unidadesController;
+    private static BDConexao conexaoTransaction;
+    private static BDConexao conexao;
+    private static int cod_usuario;
+    private static TbUsuario usuario;
+    private static int linha = 0, doc_prox_cod = 0;
+    private static int linha_actual = -1;
+    private static DVML.Abreviacao abreviacao;
+    private static double total_iliquido = 0, total_desconto_linha = 0;
+    private static boolean aviso_continuar_documento = false;
+    private static String prox_doc;
+    private static TbDadosInstituicao dadosInstituicao;
+    private static DefaultTableModel modeloIngredientes;
+
+    public EntradaPratosCompostosVisao( int cod_usuario, BDConexao conexao ) throws SQLException
+    {
+        this.conexao = conexao;
+        this.cod_usuario = cod_usuario;
+        initComponents();
+        setLocationRelativeTo( null );
+
+        produtosController = new ProdutosController( EntradaPratosCompostosVisao.conexao );
+        stocksController = new StoksController( EntradaPratosCompostosVisao.conexao );
+        tipoProdutoController = new TipoProdutosController( EntradaPratosCompostosVisao.conexao );
+        familiaController = new FamiliasController( EntradaPratosCompostosVisao.conexao );
+        armazensController = new ArmazensController( EntradaPratosCompostosVisao.conexao );
+        usuariosController = new UsuariosController( EntradaPratosCompostosVisao.conexao );
+        entradasController = new EntradasController( EntradaPratosCompostosVisao.conexao );
+        itemEntradasController = new ItemEntradasController( EntradaPratosCompostosVisao.conexao );
+        unidadesController = new UnidadesController( EntradaPratosCompostosVisao.conexao );
+        fichaTecnicaController = new FichaTecnicaController( EntradaPratosCompostosVisao.conexao );
+        linhafichaTecnicaController = new LinhaFichaTecnicaController( EntradaPratosCompostosVisao.conexao );
+
+//        cmbSubFamilia.setModel( new DefaultComboBoxModel( tipoProdutoController.getVector() ) );
+        cmbSubFamilia.setModel( new DefaultComboBoxModel( fichaTecnicaController.getVectorFichaTecnicaCategoria() ) );
+        cmbProduto.setModel( new DefaultComboBoxModel( fichaTecnicaController.getVectorFichaTecnica() ) );
+//        cmbProduto.setModel( new DefaultComboBoxModel( produtosController.getVector() ) );
+
+//        cmbProduto.setModel( new DefaultComboBoxModel( fichaTecnicaController.getVector() ) );
+//        cmbFamilia.setModel( new DefaultComboBoxModel( familiaController.getVector() ) );
+        cmbArmazem.setModel( new DefaultComboBoxModel( armazensController.getVectorArmazemVenda() ) );
+//        setArmazem( dadosInstituicao.getConfigArmazens() );
+
+        modeloIngredientes = (DefaultTableModel) tabelaIngredientes.getModel();
+        modeloIngredientes.setRowCount( 0 );
+    }
+
+//    private void setArmazem( String armazem )
+//    {
+//        if ( armazem.equalsIgnoreCase( "Multi_armazem" ) )
+//        {
+//            rbArmazem.setSelected( true );
+//            rbArmazem1.setSelected( false );
+//
+//        }
+//        else
+//        {
+//            rbArmazem.setSelected( false );
+//            rbArmazem1.setSelected( true );
+//        }
+//    }
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings( "unchecked" )
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents()
+    {
+
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tabelaPratos = new javax.swing.JTable();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tabelaIngredientes = new javax.swing.JTable();
+        jPanel5 = new javax.swing.JPanel();
+        btn_imprimir_factura = new javax.swing.JButton();
+        btnCancelar = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
+        jPanel4 = new javax.swing.JPanel();
+        lbCodigoProduto = new javax.swing.JLabel();
+        txtCodigoProduto = new javax.swing.JTextField();
+        lbQuantidade = new javax.swing.JLabel();
+        txtQuatindade = new javax.swing.JTextField();
+        btn_remover = new javax.swing.JButton();
+        btn_adicionar = new javax.swing.JButton();
+        cmbArmazem = new javax.swing.JComboBox();
+        lbPreco1 = new javax.swing.JLabel();
+        lbCodigoProduto1 = new javax.swing.JLabel();
+        txtCodigoBarra = new javax.swing.JTextField();
+        lbCategoria2 = new javax.swing.JLabel();
+        cmbSubFamilia = new javax.swing.JComboBox();
+        lbProduto1 = new javax.swing.JLabel();
+        cmbProduto = new javax.swing.JComboBox();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("...:::::  KITANDA - ENTRADAS DE PRATOS ::::...");
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        jPanel1.setFont(new java.awt.Font("Showcard Gothic", 0, 24)); // NOI18N
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Entradas de Pratos"));
+
+        tabelaPratos.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+        tabelaPratos.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][]
+            {
+
+            },
+            new String []
+            {
+                "Cod Prod", "Designacao", "Qtd.", "FichaId"
+            }
+        )
+        {
+            Class[] types = new Class []
+            {
+                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Object.class
+            };
+            boolean[] canEdit = new boolean []
+            {
+                false, false, true, false
+            };
+
+            public Class getColumnClass(int columnIndex)
+            {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex)
+            {
+                return canEdit [columnIndex];
+            }
+        });
+        tabelaPratos.setCellSelectionEnabled(true);
+        tabelaPratos.setGridColor(new java.awt.Color(51, 153, 0));
+        tabelaPratos.addPropertyChangeListener(new java.beans.PropertyChangeListener()
+        {
+            public void propertyChange(java.beans.PropertyChangeEvent evt)
+            {
+                tabelaPratosPropertyChange(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tabelaPratos);
+        tabelaPratos.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        if (tabelaPratos.getColumnModel().getColumnCount() > 0)
+        {
+            tabelaPratos.getColumnModel().getColumn(0).setPreferredWidth(100);
+            tabelaPratos.getColumnModel().getColumn(1).setPreferredWidth(600);
+            tabelaPratos.getColumnModel().getColumn(2).setPreferredWidth(100);
+        }
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 967, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        tabelaIngredientes.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][]
+            {
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
+            },
+            new String []
+            {
+                "Ficha", "Id", "Ingrediente", "Unidade", "Qtd.Exist", "Qtd. Bruta", "Qtd.Total", "Qtd. Final"
+            }
+        )
+        {
+            boolean[] canEdit = new boolean []
+            {
+                false, false, false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex)
+            {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane2.setViewportView(tabelaIngredientes);
+
+        btn_imprimir_factura.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagem/salvar/save_32x32.png"))); // NOI18N
+        btn_imprimir_factura.setText("Efectuar Entrada");
+        btn_imprimir_factura.setAlignmentX(0.5F);
+        btn_imprimir_factura.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                btn_imprimir_facturaActionPerformed(evt);
+            }
+        });
+
+        btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LOGOUT - VERMELHO/Logout 32x32.png"))); // NOI18N
+        btnCancelar.setAlignmentX(0.5F);
+        btnCancelar.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                btnCancelarActionPerformed(evt);
+            }
+        });
+
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagem/calendario 32x32.png"))); // NOI18N
+        jButton1.setText("Ficha Técnica");
+        jButton1.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btn_imprimir_factura, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnCancelar)
+                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton1)
+                        .addComponent(btn_imprimir_factura, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Entradas", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 15), new java.awt.Color(51, 153, 0))); // NOI18N
+        jPanel4.setForeground(new java.awt.Color(102, 153, 0));
+        jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lbCodigoProduto.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
+        lbCodigoProduto.setText("CodProd:");
+        jPanel4.add(lbCodigoProduto, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 60, -1, 20));
+
+        txtCodigoProduto.setBackground(new java.awt.Color(51, 153, 0));
+        txtCodigoProduto.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        txtCodigoProduto.setForeground(new java.awt.Color(255, 255, 255));
+        txtCodigoProduto.setCaretColor(new java.awt.Color(255, 255, 255));
+        txtCodigoProduto.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                txtCodigoProdutoActionPerformed(evt);
+            }
+        });
+        jPanel4.add(txtCodigoProduto, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 60, 50, -1));
+
+        lbQuantidade.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
+        lbQuantidade.setText("Qtd:");
+        jPanel4.add(lbQuantidade, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 60, 30, 30));
+
+        txtQuatindade.setBackground(new java.awt.Color(51, 153, 0));
+        txtQuatindade.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
+        txtQuatindade.setForeground(new java.awt.Color(255, 255, 255));
+        txtQuatindade.setText("1");
+        txtQuatindade.setCaretColor(new java.awt.Color(255, 255, 255));
+        txtQuatindade.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                txtQuatindadeActionPerformed(evt);
+            }
+        });
+        jPanel4.add(txtQuatindade, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 60, 60, -1));
+
+        btn_remover.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/2934_32x32.png"))); // NOI18N
+        btn_remover.setToolTipText("click para remover produtos do carrinho");
+        btn_remover.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                btn_removerActionPerformed(evt);
+            }
+        });
+        jPanel4.add(btn_remover, new org.netbeans.lib.awtextra.AbsoluteConstraints(820, 70, 70, 50));
+
+        btn_adicionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Button-Add-icon.png"))); // NOI18N
+        btn_adicionar.setToolTipText("click para adicionar no carrinho");
+        btn_adicionar.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                btn_adicionarActionPerformed(evt);
+            }
+        });
+        jPanel4.add(btn_adicionar, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 70, 70, 50));
+
+        cmbArmazem.setBackground(new java.awt.Color(51, 153, 0));
+        cmbArmazem.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
+        cmbArmazem.setEnabled(false);
+        cmbArmazem.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                cmbArmazemActionPerformed(evt);
+            }
+        });
+        jPanel4.add(cmbArmazem, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 30, 220, -1));
+
+        lbPreco1.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
+        lbPreco1.setText("Armzém:");
+        jPanel4.add(lbPreco1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 30, 70, 20));
+
+        lbCodigoProduto1.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
+        lbCodigoProduto1.setText("CodBarra:");
+        jPanel4.add(lbCodigoProduto1, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 100, 70, -1));
+
+        txtCodigoBarra.setBackground(new java.awt.Color(51, 153, 0));
+        txtCodigoBarra.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        txtCodigoBarra.setForeground(new java.awt.Color(255, 255, 255));
+        txtCodigoBarra.setCaretColor(new java.awt.Color(255, 255, 255));
+        txtCodigoBarra.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                txtCodigoBarraActionPerformed(evt);
+            }
+        });
+        jPanel4.add(txtCodigoBarra, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 100, 180, -1));
+
+        lbCategoria2.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        lbCategoria2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lbCategoria2.setText("Sub Família:");
+        jPanel4.add(lbCategoria2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, 100, -1));
+
+        cmbSubFamilia.setBackground(new java.awt.Color(4, 154, 3));
+        cmbSubFamilia.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        cmbSubFamilia.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbSubFamilia.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                cmbSubFamiliaActionPerformed(evt);
+            }
+        });
+        jPanel4.add(cmbSubFamilia, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 60, 300, 31));
+
+        lbProduto1.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        lbProduto1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lbProduto1.setText("Artigo:");
+        jPanel4.add(lbProduto1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 100, 60, 30));
+
+        cmbProduto.setBackground(new java.awt.Color(4, 154, 3));
+        cmbProduto.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        cmbProduto.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbProduto.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                cmbProdutoActionPerformed(evt);
+            }
+        });
+        jPanel4.add(cmbProduto, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 100, 340, 30));
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 986, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        getAccessibleContext().setAccessibleName("...:::::  KITANDA - FACTURAÃO ::::...");
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+
+    private void btn_removerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_removerActionPerformed
+
+        procRemoverLinhaRefeicao();
+    }//GEN-LAST:event_btn_removerActionPerformed
+
+    private void btn_adicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_adicionarActionPerformed
+
+        criarStockPrato();
+        adicionarProdutoATabelaPrincipalPeloBotao();
+        scrolltable();
+
+    }//GEN-LAST:event_btn_adicionarActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        // TODO add your handling code here:
+        dispose();
+    }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void txtCodigoProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigoProdutoActionPerformed
+        // TODO add your handling code here:
+//        txtCodigoProduto.requestFocus();
+
+    }//GEN-LAST:event_txtCodigoProdutoActionPerformed
+
+    private void cmbArmazemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbArmazemActionPerformed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_cmbArmazemActionPerformed
+
+    private void txtCodigoBarraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigoBarraActionPerformed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_txtCodigoBarraActionPerformed
+
+    private void txtQuatindadeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtQuatindadeActionPerformed
+//        procedimento_adicionar();
+
+    }//GEN-LAST:event_txtQuatindadeActionPerformed
+
+    private void btn_imprimir_facturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_imprimir_facturaActionPerformed
+        procedimento_salvar_entradas();
+
+    }//GEN-LAST:event_btn_imprimir_facturaActionPerformed
+
+    private void cmbSubFamiliaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbSubFamiliaActionPerformed
+    {//GEN-HEADEREND:event_cmbSubFamiliaActionPerformed
+
+        cmbProduto.setModel( new DefaultComboBoxModel( ( fichaTecnicaController.getVectorByIdTipoProduto( getIdTipoProduto() ) ) ) );
+    }//GEN-LAST:event_cmbSubFamiliaActionPerformed
+
+    private void cmbProdutoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbProdutoActionPerformed
+    {//GEN-HEADEREND:event_cmbProdutoActionPerformed
+
+    }//GEN-LAST:event_cmbProdutoActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
+    {//GEN-HEADEREND:event_jButton1ActionPerformed
+        try
+        {
+            dispose();
+            new FichaTecnicaVisao( cod_usuario, this.conexao ).show();
+
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void tabelaPratosPropertyChange(java.beans.PropertyChangeEvent evt)//GEN-FIRST:event_tabelaPratosPropertyChange
+    {//GEN-HEADEREND:event_tabelaPratosPropertyChange
+        if ( tabelaPratos.getSelectedColumn() == 2 )
+        {
+            actualizarQtd();
+        }
+    }//GEN-LAST:event_tabelaPratosPropertyChange
+
+    public void adicionarProdutoATabelaPrincipalPeloBotao()
+    {
+        adicionar_produto();
+    }
+
+    public static void adicionar_produto()
+    {
+
+        if ( !existePratoTabela( getIdProduto() ) )
+        {
+            FichaTecnica ficha_local = fichaTecnicaController.getFichaByRefeicao( getIdProduto() );
+            DefaultTableModel modelo = (DefaultTableModel) tabelaPratos.getModel();
+            modelo.addRow( new Object[]
+            {
+                getIdProduto(),
+                cmbProduto.getSelectedItem(),
+                txtQuatindade.getText(),
+                ficha_local.getId(),
+
+            } );
+            adicionarItensIngrediente( ficha_local, Double.parseDouble( txtQuatindade.getText() ) );
+        }
+    }
+
+    private static boolean existePratoTabela( int id )
+    {
+        DefaultTableModel modelo = (DefaultTableModel) tabelaPratos.getModel();
+        for ( int i = 0; i < modelo.getRowCount(); i++ )
+        {
+            int idPrato = Integer.parseInt( modelo.getValueAt( i, 0 ).toString() );
+            if ( idPrato == id )
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void procedimento_salvar_entradas()
+    {
+        if ( !MetodosUtil.tabela_vazia( tabelaPratos ) )
+        {
+            try
+            {
+                salvar_entradas();
+            }
+            catch ( HeadlessException e )
+            {
+                JOptionPane.showMessageDialog( null, "Falha ao criar a entrada", "Falha", JOptionPane.ERROR_MESSAGE );
+            }
+        }
+        else
+        {
+            JOptionPane.showMessageDialog( null, "Caro usuário adiciona item na tabela", "Aviso", JOptionPane.WARNING_MESSAGE );
+        }
+    }
+
+    public static boolean salvar_entradas()
+    {
+        conexaoTransaction = new BDConexao();
+        DocumentosController.startTransaction( conexaoTransaction );
+
+        Date data_entrada = new Date();
+
+        TbEntrada entradalocal = new TbEntrada();
+        entradalocal.setDataEntrada( data_entrada );
+        entradalocal.setIdUsuario( new TbUsuario( cod_usuario ) );
+        entradalocal.setIdArmazemFK( (TbArmazem) armazensController.findById( DVML.ARMAZEM_LOJA ) );
+        entradalocal.setStatusEliminado( "false" );
+
+        try
+        {
+
+            if ( entradasController.salvar( entradalocal ) )
+            {
+//                System.err.println( "Entrei no salvar" );
+                Integer last_entrada = entradasController.getLastEntrada().getIdEntrada();
+
+                if ( Objects.isNull( last_entrada ) || last_entrada == 0 )
+                {
+                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    conexaoTransaction.close();
+                    return false;
+                }
+                if ( !Objects.isNull( last_entrada ) )
+                {
+                    return salvar_item_entrada( last_entrada );
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+            else
+            {
+                System.out.println( "ERROR: Já existe entrada relacionada." );
+            }
+
+            return true;
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+            System.err.println( "STATUS: falha ao actualizar a entrada" );
+            e.printStackTrace();
+            JOptionPane.showMessageDialog( null, "Falha ao Processar a Entrada", "FALHA", JOptionPane.ERROR_MESSAGE );
+            DocumentosController.rollBackTransaction( conexaoTransaction );
+            conexaoTransaction.close();
+
+        }
+        return false;
+
+    }
+
+    private static boolean salvar_item_entrada( Integer cod_entrada )
+    {
+        System.out.println( "Cod entrada no Item" + cod_entrada );
+        boolean sucesso = false;
+        if ( !MetodosUtil.tabela_vazia( tabelaPratos ) )
+        {
+            ItemEntradasController itemEntradasControllerLocal = new ItemEntradasController( conexaoTransaction );
+            TbItemEntradas itemEntradas;
+            for ( int i = 0; i < tabelaPratos.getRowCount(); i++ )
+            {
+                try
+                {
+                    double qtd = Double.parseDouble( String.valueOf( tabelaPratos.getModel().getValueAt( i, 2 ) ) );
+                    TbProduto produto_local = (TbProduto) produtosController
+                            .findById( Integer.parseInt( String.valueOf( tabelaPratos.getModel().getValueAt( i, 0 ) ) )
+                            );
+
+                    int fichaId = Integer.parseInt( tabelaPratos.getValueAt( i, 3 ).toString() );
+
+                    itemEntradas = new TbItemEntradas();
+                    itemEntradas.setIdProduto( produto_local );
+                    itemEntradas.setQuantidade( qtd );
+                    itemEntradas.setFkEntradas( new TbEntrada( cod_entrada ) );
+
+                    try
+                    {
+                        sucesso = sucesso || actualizarQtdIngredienteStock( fichaId );
+                        if ( sucesso )
+                        {
+                            //cria o item entrada
+                            if ( !itemEntradasController.salvar( itemEntradas ) )
+                            {
+                                DocumentosController.rollBackTransaction( conexaoTransaction );
+                                conexaoTransaction.close();
+                                return false;
+                            }
+                            else
+                            {
+                                StoksController.adicionar_quantidades( produto_local.getCodigo(), qtd, DVML.ARMAZEM_LOJA, conexaoTransaction );
+                            }
+                        }
+
+                    }
+                    catch ( Exception e )
+                    {
+                        e.printStackTrace();
+                        DocumentosController.rollBackTransaction( conexaoTransaction );
+                        conexaoTransaction.close();
+                        return false;
+                    }
+
+                }
+                catch ( Exception e )
+                {
+                    sucesso = false;
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog( null, "Falha ao registrar a entrada", "Falha", JOptionPane.ERROR_MESSAGE );
+                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    conexaoTransaction.close();
+                    return false;
+                }
+            }
+            if ( sucesso )
+            {
+                DocumentosController.commitTransaction( conexaoTransaction );
+                esvaziar_tabela();
+                esvaziar_tabela_ingrediente();
+                fichaTecnica = null;
+                JOptionPane.showMessageDialog( null, "Entrada efectuada com sucesso!.." );
+                // exibirRecibo();
+                conexaoTransaction.close();
+                return true;
+            }
+            else
+            {
+
+                JOptionPane.showMessageDialog( null, "Impossivel registrar a entrada", "Falha", JOptionPane.ERROR_MESSAGE );
+                DocumentosController.rollBackTransaction( conexaoTransaction );
+                conexaoTransaction.close();
+
+            }
+        }
+        else
+        {
+            JOptionPane.showMessageDialog( null, "Adiciona itens na tabela caro usuário", "AVISO", JOptionPane.WARNING_MESSAGE );
+        }
+        return false;
+    }
+
+    public static boolean tabela_vazia( JTable tabela )
+    {
+        DefaultTableModel modelo = preparar_tabela( tabela );
+        return modelo.getRowCount() == 0;
+    }
+
+    private boolean tabela_vazia()
+    {
+        DefaultTableModel modelo = (DefaultTableModel) tabelaPratos.getModel();
+        return modelo.getRowCount() == 0;
+
+    }
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCancelar;
+    public static javax.swing.JButton btn_adicionar;
+    public static javax.swing.JButton btn_imprimir_factura;
+    public static javax.swing.JButton btn_remover;
+    private javax.swing.ButtonGroup buttonGroup1;
+    private static javax.swing.JComboBox cmbArmazem;
+    public static javax.swing.JComboBox cmbProduto;
+    public static javax.swing.JComboBox cmbSubFamilia;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel lbCategoria2;
+    private javax.swing.JLabel lbCodigoProduto;
+    private javax.swing.JLabel lbCodigoProduto1;
+    private javax.swing.JLabel lbPreco1;
+    private javax.swing.JLabel lbProduto1;
+    private javax.swing.JLabel lbQuantidade;
+    private static javax.swing.JTable tabelaIngredientes;
+    private static javax.swing.JTable tabelaPratos;
+    public static javax.swing.JTextField txtCodigoBarra;
+    public static javax.swing.JTextField txtCodigoProduto;
+    public static javax.swing.JTextField txtQuatindade;
+    // End of variables declaration//GEN-END:variables
+
+    private static void procedimentoAdicionarTabela( TbProduto produto )
+    {
+        try
+        {
+            if ( !Objects.isNull( produto ) )
+            {
+                Integer codTipoProduto = produto.getCodTipoProduto().getCodigo();
+                TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById( codTipoProduto );
+                Integer codFamilia = tipoProduto.getFkFamilia().getPkFamilia();
+//                Familia familia = (Familia) familiaController.findById( codFamilia );
+//                cmbFamilia.setSelectedItem( familia.getDesignacao() );
+                cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
+
+                txtCodigoProduto.setText( "" );
+                txtCodigoBarra.setText( "" );
+                txtQuatindade.setText( "1" );
+                txtQuatindade.requestFocus();
+
+            }
+            else
+            {
+                JOptionPane.showMessageDialog( null, "Nao existe produto/servico relacionado a esta referencia" );
+            }
+
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+
+        }
+
+    }
+
+    public static void procedimento_adicionar()
+    {
+
+        try
+        {
+            adicionar_produto();
+        }
+        catch ( Exception e )
+        {
+        }
+    }
+
+    public static int getIdProduto()
+    {
+        try
+        {
+            TbProduto produto_local = produtosController.getProdutoByDesignacao( cmbProduto.getSelectedItem().toString() );
+            return produto_local.getCodigo();
+        }
+        catch ( Exception e )
+        {
+            return 0;
+        }
+
+    }
+
+    public void scrolltable()
+    {
+
+        tabelaPratos.scrollRectToVisible( tabelaPratos.getCellRect( tabelaPratos.getRowCount() - 1, tabelaPratos.getColumnCount(), true ) );
+
+    }
+
+    public static int getCodigoIdProduto()
+    {
+//        TbProduto produto_local = new TbProduto();
+        produtos = (TbProduto) produtosController.findById( getIdProduto() );
+//        FichaTecnica fichaTecnica_local = (FichaTecnica) fichaTecnicaController.findByCodigo( Integer.parseInt( cmbProduto.getSelectedItem().toString() ));
+        FichaTecnica fichaTecnica_local = (FichaTecnica) fichaTecnicaController.findByCodigo( produtos.getCodigo() );
+//        return produtosController.findByDesignacao( cmbProduto.getSelectedItem().toString() ).getCodigo(); 
+//        return fichaTecnicaController.findByDesignacao( cmbProduto.getSelectedItem().toString() ).getProdutoId();
+        return fichaTecnica_local.getProdutoId();
+
+    }
+
+    public static String getUnidade_Produto()
+    {
+        TbProduto produto = (TbProduto) produtosController.findById( getCodigoIdProduto() );
+        Unidade unidade = (Unidade) unidadesController.findById( produto.getCodUnidade().getPkUnidade() );
+        return unidade.getAbreviacao();
+    }
+
+    public static boolean validar_zero()
+    {
+        return Double.parseDouble( txtQuatindade.getText() ) == 0;
+    }
+
+    private static boolean exist_produto_tabela_formulario( int codigo )
+    {
+
+        DefaultTableModel modelo = (DefaultTableModel) tabelaPratos.getModel();
+
+        for ( int i = 0; i < modelo.getRowCount(); i++ )
+        {
+            if ( Integer.parseInt( String.valueOf( tabelaPratos.getValueAt( i, 0 ) ) ) == codigo )
+            {
+                linha_actual = i;
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    public static void accao_codigo_interno_enter_busca_exterior( int codigo )
+    {
+
+        try
+        {
+            System.out.println( "ID PRODUTO EXTERIOR: " + codigo );
+            TbProduto produtoLocal = (TbProduto) produtosController.findById( codigo );
+            procedimentoAdicionarTabela( produtoLocal );
+        }
+        catch ( Exception ex )
+        {
+            ex.printStackTrace();
+            Logger.getLogger( EntradaPratosCompostosVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+        }
+
+    }
+//
+//    private int getIdFamilia()
+//    {
+//        try
+//        {
+//            return familiaController.getFamiliaByDesignacao( String.valueOf( cmbFamilia.getSelectedItem() ) ).getPkFamilia();
+//
+//        }
+//        catch ( Exception e )
+//        {
+//            return 0;
+//        }
+//    }
+
+    private int getIdTipoProduto1()
+    {
+        try
+        {
+            return fichaTecnicaController.getTipoFamiliaByDesignacao( String.valueOf( cmbSubFamilia.getSelectedItem() ) ).getId();
+
+        }
+        catch ( Exception e )
+        {
+            return 0;
+        }
+
+    }
+
+    private int getIdTipoProduto()
+    {
+        try
+        {
+            return tipoProdutoController.getTipoFamiliaByDesignacao( String.valueOf( cmbSubFamilia.getSelectedItem() ) ).getCodigo();
+
+        }
+        catch ( Exception e )
+        {
+            return 0;
+        }
+
+    }
+
+    public static void adicionarItensIngrediente( FichaTecnica fichaTecnica, double qtd )
+    {
+
+        try
+        {
+
+            List<LinhaFichaTecnica> lista = linhafichaTecnicaController.listarTodosByCodigoFichaTecnica( fichaTecnica.getId() );
+
+            for ( LinhaFichaTecnica linha : lista )
+            {
+                adicionarItemTabelaIngrediente( qtd, fichaTecnica.getId(), linha );
+            }
+
+        }
+        catch ( Exception ex )
+        {
+            ex.printStackTrace();
+            Logger.getLogger( EntradaPratosCompostosVisao.class.getName() ).log( Level.SEVERE, null, ex );
+        }
+
+    }
+
+    private static void adicionarItemTabelaIngrediente( double qtdRefeicao, int fichaId, LinhaFichaTecnica linha )
+    {
+
+        double qtdExistente = stocksController.getQuantidadeProduto( linha.getIgrendienteId(), DVML.ARMAZEM_DEFAUTL );
+
+        double qtdBrutaFinal = ( linha.getQtdBruto() * qtdRefeicao );
+        double qtdFinal = qtdExistente - qtdBrutaFinal;
+
+        modeloIngredientes.addRow( new Object[]
+        {
+            fichaId,
+            linha.getIgrendienteId(),
+            linha.getIgrendienteDesignacao(),
+            linha.getUnidade(),
+            qtdExistente,
+            linha.getQtdBruto(),
+            qtdBrutaFinal,
+            qtdFinal
+
+        } );
+    }
+
+//    public void adicionarItensIngrediente()
+//    {
+//
+//        try
+//        {
+////            produtos = produtosController.findByCod( getCodigoIdProduto() );
+//            FichaTecnica ficha_local = fichaTecnicaController.getFichaByRefeicao( getIdProdutos() );
+////            System.out.println( "Meu IdProdutoFicha: " + ficha_local.getProdutoId() );
+//
+//            FichaTecnica produtoFichaLocal = (FichaTecnica) fichaTecnicaController.findByIdProduto( Integer.parseInt( String.valueOf( ficha_local.getProdutoId() ) ) );
+//            System.out.println( "Meu IdProdutoFicha: " + produtoFichaLocal.getProdutoId() );
+//            FichaTecnica stockFichaLocal = fichaTecnicaController.getStockFichaTecnicaByIdProduto( Integer.parseInt( String.valueOf( ficha_local.getProdutoId() ) ) );
+//            System.out.println( "Meu IdStockFicha: " + stockFichaLocal.getProdutoId() );
+//            txtCodigoProduto.setText( String.valueOf( produtoFichaLocal.getProdutoId() ) );
+////            txtCodigoBarra.setText( String.valueOf( produtoFichaLocal.getProdutoId() ) );
+//        }
+//        catch ( Exception ex )
+//        {
+//            ex.printStackTrace();
+//            Logger.getLogger( EntradaPratosCompostosVisao.class.getName() ).log( Level.SEVERE, null, ex );
+//        }
+//
+//    }
+//    
+    public static int getCodigoArmazem()
+    {
+        return armazensController.getArmazemByDesignacao( cmbArmazem.getSelectedItem().toString() ).getCodigo();
+    }
+
+    public static void main( String[] args )
+    {
+        try
+        {
+            new EntradaPratosCompostosVisao( 15, new BDConexao() ).setVisible( true );
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private static void esvaziar_tabela()
+    {
+        DefaultTableModel modelo = (DefaultTableModel) tabelaPratos.getModel();
+        modelo.setRowCount( 0 );
+
+    }
+
+    private static void esvaziar_tabela_ingrediente()
+    {
+        modeloIngredientes.setRowCount( 0 );
+
+    }
+
+    private static void procRemoverLinhaRefeicao()
+    {
+        DefaultTableModel modelo = (DefaultTableModel) tabelaPratos.getModel();
+        int linhaSelecionada = tabelaPratos.getSelectedRow();
+        int fichaId = Integer.valueOf( tabelaPratos.getValueAt( linhaSelecionada, 3 ).toString() );
+
+        modelo.removeRow( linhaSelecionada );
+
+        int i = 0;
+        while ( i < modeloIngredientes.getRowCount() )
+        {
+            int idLinhaIngredienteFihcaId = Integer.valueOf( modeloIngredientes.getValueAt( i, 0 ).toString() );
+            if ( idLinhaIngredienteFihcaId == fichaId )
+            {
+//                DefaultTableModel modeloLocal = (DefaultTableModel) tabelaIngredientes.getModel();
+                modeloIngredientes.removeRow( i );
+            }
+            else
+            {
+                i++;
+            }
+
+            System.err.println( "SIZE ACTUAL = " + modeloIngredientes.getRowCount() );
+
+        }
+    }
+
+    private void actualizarQtd()
+    {
+        DefaultTableModel modeloPrato = (DefaultTableModel) tabelaPratos.getModel();
+
+        double qtdPrato = Double.parseDouble( modeloPrato.getValueAt( tabelaPratos.getSelectedRow(), 2 ).toString() );
+        int fichaId = Integer.parseInt( modeloPrato.getValueAt( tabelaPratos.getSelectedRow(), 3 ).toString() );
+
+        for ( int i = 0; i < modeloIngredientes.getRowCount(); i++ )
+        {
+            int fichaIdIngrediente = Integer.parseInt( modeloIngredientes.getValueAt( i, 0 ).toString() );
+
+            if ( fichaIdIngrediente == fichaId )
+            {
+
+                double qtdExistente = Double.parseDouble( modeloIngredientes.getValueAt( i, 4 ).toString() );
+                double qdBruto = Double.parseDouble( modeloIngredientes.getValueAt( i, 5 ).toString() );
+                double qtdBrutaTotal = ( qdBruto * qtdPrato );
+                double qtdFinal = qtdExistente - qtdBrutaTotal;
+                modeloIngredientes.setValueAt( qtdBrutaTotal, i, 6 );
+                modeloIngredientes.setValueAt( qtdFinal, i, 7 );
+            }
+        }
+
+    }
+
+    private static boolean actualizarQtdIngredienteStock( int fichaId )
+    {
+
+        int i = 0;
+        boolean sucesso = false;
+        while ( i < modeloIngredientes.getRowCount() )
+        {
+            int idLinhaIngredienteFihcaId = Integer.valueOf( modeloIngredientes.getValueAt( i, 0 ).toString() );
+            if ( idLinhaIngredienteFihcaId == fichaId )
+            {
+//                DefaultTableModel modeloLocal = (DefaultTableModel) tabelaIngredientes.getModel();
+//                modeloIngredientes.removeRow( i );
+
+                int ingredienteId = Integer.parseInt( modeloIngredientes.getValueAt( i, 1 ).toString() );
+                String ingredeinte = modeloIngredientes.getValueAt( i, 2 ).toString();
+                double qtdTotal = Double.parseDouble( modeloIngredientes.getValueAt( i, 6 ).toString() );
+                double qtdFinal = Double.parseDouble( modeloIngredientes.getValueAt( i, 7 ).toString() );
+
+                if ( qtdFinal <= 0 )
+                {
+                    int opcao = JOptionPane.showConfirmDialog( null, "Caro usuário o ingrediente " + ingredeinte + " não possui stock sufuente para dar entrada.\nAinda assim desejas continuar?Obs:O Stock estará negativo" );
+                    if ( opcao == JOptionPane.YES_OPTION )
+                    {
+                        sucesso = ( sucesso || true );
+                        StoksController.subtrair_quantidades( ingredienteId, qtdTotal, DVML.ARMAZEM_DEFAUTL, conexaoTransaction );
+                    }
+                    else
+                    {
+                        sucesso = ( sucesso || false );
+                    }
+                }
+                else
+                {
+//                    sucesso = ( sucesso || false );
+                    StoksController.subtrair_quantidades( ingredienteId, qtdTotal, DVML.ARMAZEM_DEFAUTL, conexaoTransaction );
+                }
+            }
+            i++;
+        }
+
+        return sucesso;
+
+    }
+
+    private static void criarStockPrato()
+    {
+        if ( !stocksController.existe_stock( getCodigoIdProduto(), DVML.ARMAZEM_LOJA ) )
+        {
+            TbStock stockLocal = new TbStock();
+            stockLocal.setDataEntrada( new Date() );
+            stockLocal.setQuantidadeExistente( 0d );
+            stockLocal.setStatus( "true" );
+            stockLocal.setPrecoVenda( new BigDecimal( MetodosUtil.convertToDouble( "0.0" ) ) );
+            stockLocal.setPrecoVendaGrosso( new BigDecimal( stockLocal.getPrecoVenda().doubleValue() ) );
+            stockLocal.setQtdGrosso( DVML.QTD_DEFAULT );
+            stockLocal.setQuantCritica( 0 );
+            stockLocal.setQuantBaixa( 0 );
+            stockLocal.setQuantidadeAntiga( 0d );
+            stockLocal.setCodArmazem( new TbArmazem( DVML.ARMAZEM_LOJA ) );
+            stockLocal.setCodProdutoCodigo( new TbProduto( getCodigoIdProduto() ) );
+            stocksController.salvar( stockLocal );
+        }
+    }
+
+}

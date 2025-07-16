@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reconciliacao_caixa" pageWidth="200" pageHeight="450" columnWidth="185" leftMargin="10" rightMargin="5" topMargin="2" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" uuid="0de43986-9be5-410e-aaa3-7f1419d0abca">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="5.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="807"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="CONN_KIT"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value="Y2FpeGEgLDE1LDE1LDlkZTFiNWE3LWZhYjgtNGY1OS1hYzJiLTg4MDhmMmFiOGQyNDtpdGVtX2Nh aXhhICwxODUsNTYsOGU2YjEwYTYtZGNmMi00YzNhLTlhNDYtNTlhZTBiOTZiNzA0O3RiX2JhbmNv ICwzNTksOTYsOTg2OGVhMjAtYjRkYy00NWY3LWE4NTgtY2I5M2E5ZjEzOTE4Ow== "/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="cliente_style" mode="Transparent" forecolor="#000000">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$P{NIF_CLIENTE_CONSOMIDOR_FINAL}.equals("Consumidor Final")]]></conditionExpression>
+			<style mode="Opaque" forecolor="#FFFFFF" backcolor="#FFFFFF"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="LOCAL_VENDA" class="java.lang.String"/>
+	<parameter name="ID_CAIXA" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[SELECT
+     caixa.`pk_caixa` AS caixa_pk_caixa,
+     caixa.`data_abertura` AS caixa_data_abertura,
+     caixa.`data_fecho` AS caixa_data_fecho,
+     caixa.`total_vendas` AS caixa_total_vendas,
+     caixa.`numero_vendas` AS caixa_numero_vendas,
+     caixa.`valor_inicial` AS caixa_valor_inicial,
+     caixa.`usuario_fecho` AS caixa_usuario_fecho,
+     caixa.`usuario_abertura` AS caixa_usuario_abertura,
+     item_caixa.`pk_item_caixa` AS item_caixa_pk_item_caixa,
+     item_caixa.`valor_declarado` AS item_caixa_valor_declarado,
+     item_caixa.`valor_real` AS item_caixa_valor_real,
+     forma_pagamento.`designacao` AS forma_pagamento_designacao
+FROM
+     `caixa` caixa INNER JOIN `item_caixa` item_caixa ON caixa.`pk_caixa` = item_caixa.`fk_caixa`
+     INNER JOIN `forma_pagamento` forma_pagamento ON item_caixa.`fk_forma_pagamento` = forma_pagamento.`pk_forma_pagamento`
+WHERE
+     caixa.pk_caixa = $P{ID_CAIXA}]]>
+	</queryString>
+	<field name="caixa_pk_caixa" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="caixa_pk_caixa"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="caixa"/>
+	</field>
+	<field name="caixa_data_abertura" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.label" value="caixa_data_abertura"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="caixa"/>
+	</field>
+	<field name="caixa_data_fecho" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.label" value="caixa_data_fecho"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="caixa"/>
+	</field>
+	<field name="caixa_total_vendas" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="caixa_total_vendas"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="caixa"/>
+	</field>
+	<field name="caixa_numero_vendas" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="caixa_numero_vendas"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="caixa"/>
+	</field>
+	<field name="caixa_valor_inicial" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="caixa_valor_inicial"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="caixa"/>
+	</field>
+	<field name="caixa_usuario_fecho" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="caixa_usuario_fecho"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="caixa"/>
+	</field>
+	<field name="caixa_usuario_abertura" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="caixa_usuario_abertura"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="caixa"/>
+	</field>
+	<field name="item_caixa_pk_item_caixa" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="item_caixa_pk_item_caixa"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="item_caixa"/>
+	</field>
+	<field name="item_caixa_valor_declarado" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="item_caixa_valor_declarado"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="item_caixa"/>
+	</field>
+	<field name="item_caixa_valor_real" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="item_caixa_valor_real"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="item_caixa"/>
+	</field>
+	<field name="forma_pagamento_designacao" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="173">
+			<staticText>
+				<reportElement uuid="d59033bf-8b14-41eb-b928-091115e0f323" x="0" y="5" width="184" height="26"/>
+				<box leftPadding="2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Reconciliação de Caixa]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="14cc1197-b709-4f4f-afd7-6178d45e5b0c" x="10" y="67" width="79" height="14"/>
+				<box leftPadding="0" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Resp. Caixa:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5b1d56af-4f45-440b-84f2-f3eefadfb126" x="9" y="103" width="80" height="14"/>
+				<box leftPadding="0" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Data de abertura:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3025939f-bc16-4809-bda0-719c2cb73c05" x="9" y="117" width="80" height="14"/>
+				<box leftPadding="0" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Hora de abertura:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="757f5f77-519e-4a38-9d7b-234e2c65646b" x="8" y="138" width="80" height="14"/>
+				<box leftPadding="0" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Data de fecho:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="08705624-d952-4a3d-9ede-e4e270138977" x="8" y="152" width="80" height="14"/>
+				<box leftPadding="0" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Hora de fecho:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="6f8837f9-45d1-4d79-80fe-48d57b92fb80" x="91" y="67" width="80" height="36"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{caixa_usuario_fecho}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd-MM-yyyy">
+				<reportElement uuid="341ce4b3-6d4a-455f-9630-7321b9fa32c2" x="91" y="103" width="81" height="14"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{caixa_data_abertura}]]></textFieldExpression>
+			</textField>
+			<textField pattern="HH:mm:ss">
+				<reportElement uuid="6a628986-044e-472c-8431-49918a1c95a3" x="91" y="117" width="81" height="14"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{caixa_data_abertura}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd-MM-yyyy">
+				<reportElement uuid="56772c9d-f5ed-48e6-83cd-f92394a16df7" x="91" y="138" width="79" height="14"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{caixa_data_fecho}]]></textFieldExpression>
+			</textField>
+			<textField pattern="HH:mm:ss">
+				<reportElement uuid="b3fccaae-23f7-4bf4-9649-0220abf6345c" x="91" y="152" width="79" height="14"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{caixa_data_fecho}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="2748dc10-9592-4f1a-a498-51709822467f" x="9" y="31" width="80" height="21"/>
+				<box leftPadding="0" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Nº de Caixa:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="cbd47269-c68c-4c51-a0a0-87130fa59456" x="90" y="31" width="80" height="21"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{caixa_pk_caixa}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="36a95c97-9d52-4c53-8a96-dd2ae517a4df" x="9" y="52" width="80" height="15"/>
+				<box leftPadding="0" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Nº de Vendas(Talões):]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="54fb2c39-db64-47e9-8cf1-62004308cada" x="90" y="52" width="80" height="14"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{caixa_numero_vendas}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="19" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="c1e2789b-cf31-4ced-8e23-3a6286cd96ce" x="0" y="0" width="54" height="19"/>
+				<box leftPadding="2" rightPadding="0"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Vendas]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bda7ae44-3b8f-48f0-a7d4-065bfc301373" x="54" y="0" width="44" height="19"/>
+				<box leftPadding="0" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor Declarado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="babffab3-5a25-4eac-a7e3-e43af78f109a" x="97" y="0" width="40" height="19"/>
+				<box leftPadding="0" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor Sistema]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e6019458-fc5a-4e91-a7be-a5e1d7b7832a" x="137" y="0" width="47" height="19"/>
+				<box leftPadding="0" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Diferênça]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="17" splitType="Stretch">
+			<textField pattern="#,##0.00">
+				<reportElement uuid="d0351c73-83dc-4283-b5ff-b6b0940a2ee1" x="97" y="0" width="40" height="17"/>
+				<box rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{item_caixa_valor_real}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="427b40fa-2066-4033-aa9f-230d109f62a9" x="54" y="0" width="44" height="17"/>
+				<box rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{item_caixa_valor_declarado}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="00c70211-0722-408b-a165-705a40a27c15" x="0" y="0" width="54" height="17"/>
+				<box leftPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{forma_pagamento_designacao}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="529accbe-d3d9-489d-be8f-c35804523ce1" x="137" y="0" width="47" height="17"/>
+				<box rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{item_caixa_valor_declarado} - $F{item_caixa_valor_real}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<summary>
+		<band height="75">
+			<staticText>
+				<reportElement uuid="b02001d6-648f-4b84-812a-94c84937bd43" x="13" y="11" width="159" height="14"/>
+				<box leftPadding="2" rightPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Resumo]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="ffccc2b7-928e-4e9b-94b4-8aca9573f71a" x="96" y="25" width="76" height="14"/>
+				<box leftPadding="0" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{caixa_valor_inicial}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="17d3e341-5737-4a6b-b039-546da8125c25" x="13" y="25" width="83" height="14"/>
+				<box leftPadding="0" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Saldo inicial]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0581d899-983c-402e-8fe0-21f2bd7c6624" x="13" y="39" width="83" height="14"/>
+				<box leftPadding="0" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Total de Vendas]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="3532b43f-e827-4735-adb0-4cddb163ec87" x="96" y="39" width="76" height="14"/>
+				<box leftPadding="0" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{caixa_total_vendas}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="f0601c44-db5f-4f0e-a5e7-dee40855939c" x="13" y="53" width="83" height="14"/>
+				<box leftPadding="0" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Total das Saidas]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="84401034-3c8b-4c11-9634-95319b2f71da" x="96" y="53" width="76" height="14"/>
+				<box leftPadding="0" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{item_caixa_valor_real}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>
