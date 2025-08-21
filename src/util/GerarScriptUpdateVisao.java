@@ -23,7 +23,7 @@ public class GerarScriptUpdateVisao extends javax.swing.JFrame
         initComponents();
         setLocationRelativeTo( null );
         this.conexao = conexao;
-        txtNomeBdPadrao.setText( "kitanda_clinica_db_c");
+        txtNomeBdPadrao.setText( "kitanda_hotel_db_malas");
 //        txtNomeBdPadrao.setText( "kitanda_db");
         txtNomeBdCliente.requestFocus();
     }

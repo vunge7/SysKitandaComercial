@@ -4288,7 +4288,6 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         {
 
             DocumentosController.rollBackTransaction( conexaoTransactionLocal );
-            e.printStackTrace();
             JOptionPane.showMessageDialog( null, "Erro ao processar a venda: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE );
         }
         finally

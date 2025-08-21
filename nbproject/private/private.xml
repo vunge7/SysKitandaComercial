@@ -18,14 +18,12 @@
             <file>file:/Users/macpro/Desktop/SYS_KITANDA_AGT_V_1_1_9/src/dao/StockDao.java</file>
         </group>
         <group>
-            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SYS_KITANDA_AGT_V_1_2_4_1/src/visao/VendaUsuarioVisao.java</file>
-            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SYS_KITANDA_AGT_V_1_2_4_1/src/visao/FormaPagamentoVisao.java</file>
-            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SYS_KITANDA_AGT_V_1_2_4_1/src/comercial/controller/VendasController.java</file>
-            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SYS_KITANDA_AGT_V_1_2_4_1/src/util/JPAEntityMannagerFactoryUtil.java</file>
-            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SYS_KITANDA_AGT_V_1_2_4_1/src/util/BDConexao.java</file>
-            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SYS_KITANDA_AGT_V_1_2_4_1/src/visao/NotasCreditoDebitoAnulacaoVisao.java</file>
-            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SYS_KITANDA_AGT_V_1_2_4_1/src/dao/VendaDao.java</file>
-            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SYS_KITANDA_AGT_V_1_2_4_1/src/util/DVML.java</file>
+            <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/visao/RootVisao.java</file>
+            <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/visao/FicheiroSAFTVisao.java</file>
+            <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/util/DVML.java</file>
+            <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/util/GerarScriptUpdateVisao.java</file>
+            <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/util/BDConexao.java</file>
+            <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/util/JPAEntityMannagerFactoryUtil.java</file>
         </group>
     </open-files>
 </project-private>
