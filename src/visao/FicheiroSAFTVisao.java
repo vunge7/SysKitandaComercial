@@ -84,14 +84,12 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame
         setLocationRelativeTo( null );
         this.conexao = conexao;
         amortizacaoDividasController = new AmortizacaoDividasController( conexao );
-
         popularComponentes();
-
         saftDataMinimaJDateChoose.setDate( new Date() );
         saftDataMaximaJDateChooser.setDate( new Date() );
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "unchecked" )
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents()
     {
@@ -444,8 +442,8 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame
         StringBuilder buffer = new StringBuilder();
 //encoding="utf-8"
         //ADICIONAR LINHAS AO FICHEIRO SAFT
-        buffer.append( "<?xml version=\"1.0\" encoding=\"windows-1252\"?>" );
-//        buffer.append( "<?xml version=\"1.0\" encoding=\"utf-8\"?>" );
+//        buffer.append( "<?xml version=\"1.0\" encoding=\"windows-1252\"?>" );
+        buffer.append( "<?xml version=\"1.0\" encoding=\"utf-8\"?>" );
         buffer.append( "\n" );
         buffer.append( "<AuditFile  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"urn:OECD:StandardAuditFile-Tax:AO_1.01_01 SAFTAO1.01_01.xsd\" xmlns=\"urn:OECD:StandardAuditFile-Tax:AO_1.01_01\">" );
         {
@@ -778,7 +776,8 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame
                                 AGT_SAFT_LINE_TAX_PERCENTAGE = String.valueOf( item_venda.getValorIva() );
                                 //AGT_SAFT_LINE_SETTLEMENT_AMOUNT = String.valueOf(getValorCasasDecimais((item_venda.getDesconto() * item_venda.getQuantidade()), CASAS_DECIMAIS));
                                 AGT_SAFT_LINE_SETTLEMENT_AMOUNT = String.valueOf( getValorCasasDecimais( item_venda.getDesconto(), CASAS_DECIMAIS ) );
-                                AGT_SAFT_LINE_TAX_EXEMPTION_REASON = getStringValida( getMotivoIsensao( item_venda.getCodigoProduto().getCodigo() ) );
+                                AGT_SAFT_LINE_TAX_EXEMPTION_REASON = getMotivoIsensao( item_venda.getCodigoProduto().getCodigo() );
+//                                AGT_SAFT_LINE_TAX_EXEMPTION_REASON = getStringValida( getMotivoIsensao( item_venda.getCodigoProduto().getCodigo() ) );
                                 AGT_SAFT_LINE_TAX_TAX_EXEMPTION_CODE = getCodigoRegime( item_venda.getCodigoProduto().getCodigo() );
 
                                 if ( item_venda.getCodigoVenda().getFkDocumento().getPkDocumento() == DVML.DOC_NOTA_CREDITO_NC )
@@ -851,7 +850,9 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame
                                     }
                                     buffer.append( "</Tax>" );
                                     buffer.append( "\n" );
-                                    if ( !AGT_SAFT_LINE_TAX_EXEMPTION_REASON.isEmpty() )
+
+                                    double TAX_PERCENTAGE = Double.parseDouble( AGT_SAFT_LINE_TAX_PERCENTAGE );
+                                    if ( TAX_PERCENTAGE == 0 )
                                     {
                                         buffer.append( "<TaxExemptionReason>" ).append( AGT_SAFT_LINE_TAX_EXEMPTION_REASON ).append( "</TaxExemptionReason>" );
                                         buffer.append( "\n" );
@@ -1067,7 +1068,8 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame
                                     AGT_SAFT_LINE_TAX_PERCENTAGE = String.valueOf( getTaxaPercantagem( item_proforma.getCodigoProduto().getCodigo() ) );
                                     System.err.println( "DESCONTO PROFORMA: " + item_proforma.getDesconto() );
                                     AGT_SAFT_LINE_SETTLEMENT_AMOUNT = String.valueOf( getValorCasasDecimais( ( item_proforma.getDesconto() * item_proforma.getQuantidade() ), CASAS_DECIMAIS ) );
-                                    AGT_SAFT_LINE_TAX_EXEMPTION_REASON = getStringValida( getMotivoIsensao( item_proforma.getCodigoProduto().getCodigo() ) );
+                                    //AGT_SAFT_LINE_TAX_EXEMPTION_REASON = getStringValida( getMotivoIsensao( item_proforma.getCodigoProduto().getCodigo() ) );
+                                    AGT_SAFT_LINE_TAX_EXEMPTION_REASON = getMotivoIsensao( item_proforma.getCodigoProduto().getCodigo() );
                                     AGT_SAFT_LINE_TAX_TAX_EXEMPTION_CODE = getCodigoRegime( item_proforma.getCodigoProduto().getCodigo() );
 
                                     buffer.append( "<Line>" );
@@ -1107,7 +1109,9 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame
                                         }
                                         buffer.append( "</Tax>" );
                                         buffer.append( "\n" );
-                                        if ( !AGT_SAFT_LINE_TAX_EXEMPTION_REASON.isEmpty() )
+                                        double TAX_PERCENTAGE = Double.parseDouble( AGT_SAFT_LINE_TAX_PERCENTAGE );
+
+                                        if ( TAX_PERCENTAGE == 0 )
                                         {
                                             buffer.append( "<TaxExemptionReason>" ).append( AGT_SAFT_LINE_TAX_EXEMPTION_REASON ).append( "</TaxExemptionReason>" );
                                             buffer.append( "\n" );
@@ -1172,7 +1176,7 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame
 
                         AGT_SAFT_NUMBER_OF_ENTRIES = String.valueOf( list_recibo.size() );
                         AGT_SAFT_TOTAL_DEBIT = "0";
-                        System.out.println( "CONTROLLER: " +  Objects.nonNull(  amortizacaoDividasController ));
+                        System.out.println( "CONTROLLER: " + Objects.nonNull( amortizacaoDividasController ) );
                         AGT_SAFT_TOTAL_CREDIT = String.valueOf( MetodosUtil.getTotalSemIvaForPayment( list_recibo, DOC_RECIBO_RC, amortizacaoDividasController ) );
 
                         buffer.append( "\n" );
@@ -1403,7 +1407,7 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame
 
             notasItem.setFkProduto( linha.getCodigoProduto() );
             notasItem.setFkNota( null );
-            notasItem.setQuantidade( ( double ) linha.getQuantidade() );
+            notasItem.setQuantidade( (double) linha.getQuantidade() );
             notasItem.setDesconto( linha.getDesconto() );
             notasItem.setValorIva( linha.getValorIva() );
             notasItem.setMotivoIsensao( linha.getMotivoIsensao() );
