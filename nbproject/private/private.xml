@@ -18,12 +18,11 @@
             <file>file:/Users/macpro/Desktop/SYS_KITANDA_AGT_V_1_1_9/src/dao/StockDao.java</file>
         </group>
         <group>
-            <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/visao/RootVisao.java</file>
+            <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/util/JPAEntityMannagerFactoryUtil.java</file>
+            <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/visao/MenuPrincipalVisao.java</file>
             <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/visao/FicheiroSAFTVisao.java</file>
             <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/util/DVML.java</file>
-            <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/util/GerarScriptUpdateVisao.java</file>
             <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/util/BDConexao.java</file>
-            <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/util/JPAEntityMannagerFactoryUtil.java</file>
         </group>
     </open-files>
 </project-private>
