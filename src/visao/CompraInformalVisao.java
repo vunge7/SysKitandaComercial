@@ -97,7 +97,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
     private boolean aviso_continuar_documento = false;
     public static int linha_actual = -1;
     private static int AREA = 0;
-    private Thread t;
+     private Thread t;
     private static String prox_doc;
 
     public CompraInformalVisao( int cod_usuario, BDConexao conexao )
