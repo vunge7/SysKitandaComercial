@@ -238,7 +238,7 @@ public class VendaDao extends TbVendaJpaController
 //                .setParameter( "data_inicio", data_inicio )
 //                .setParameter( "data_fim", data_fim );
 
-        String sql = "SELECT DISTINCT c.* FROM tb_venda v , tb_cliente c where  v.codigo_cliente = c.codigo AND  DATE(dataVenda)      between '" + MetodosUtil.getDataBanco( data_inicio ) + "' AND '" + MetodosUtil.getDataBanco( data_fim ) + "' AND fk_documento IN(1,2,3,6)";
+        String sql = "SELECT DISTINCT c.* FROM tb_venda v , tb_cliente c where  v.codigo_cliente = c.codigo AND  DATE(dataVenda)      between '" + MetodosUtil.getDataBanco( data_inicio ) + "' AND '" + MetodosUtil.getDataBanco( data_fim ) + "' AND fk_documento IN(1,2,6)";
 
         Query query = em.createNativeQuery( sql, TbCliente.class );
         List<TbCliente> result = query.getResultList();
@@ -446,7 +446,7 @@ public class VendaDao extends TbVendaJpaController
                 + " '%s', %d, '%d',"
                 + " %d,  %d, %d,  %d,"
                 + " '%s',  '%s', %s, '%s', '%s', '%s') "
-                //                + " '%s',  '%s', %s, '%s', '%s', '%s', %s, %s , '%s') "
+//                + " '%s',  '%s', %s, '%s', '%s', '%s', %s, %s , '%s') "
                 + "as ID",
                 0,
                 new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( venda.getDataVenda() ),
@@ -507,7 +507,6 @@ public class VendaDao extends TbVendaJpaController
         return null;
 
     }
-
     public static Integer criarVendaComProceduAnulacao2( TbVenda venda, BDConexao conexao )
     {
         System.err.println( "Total: " + venda.getTotalVenda() );
@@ -522,7 +521,7 @@ public class VendaDao extends TbVendaJpaController
                 + " '%s', %d, '%d',"
                 + " %d,  %d, %d,  %d,"
                 + " '%s',  '%s', %s, '%s', '%s', '%s') "
-                //                + " '%s',  '%s', %s, '%s', '%s', '%s', %s, %s , '%s') "
+//                + " '%s',  '%s', %s, '%s', '%s', '%s', %s, %s , '%s') "
                 + "as ID",
                 0,
                 new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( venda.getDataVenda() ),
@@ -1041,7 +1040,7 @@ public class VendaDao extends TbVendaJpaController
 //                .setParameter( "data_inicio", data_inicio )
 //                .setParameter( "data_fim", data_fim );
 
-        String sql = "SELECT DISTINCT p.* FROM tb_item_venda i, tb_produto p , tb_venda v WHERE i.codigo_produto = p.codigo AND i.codigo_venda =  v.codigo AND DATE(v.dataVenda) BETWEEN '" + MetodosUtil.getDataBanco( data_inicio ) + "' AND '" + MetodosUtil.getDataBanco( data_fim ) + "' AND v.fk_documento IN(1,2,3)";
+        String sql = "SELECT DISTINCT p.* FROM tb_item_venda i, tb_produto p , tb_venda v WHERE i.codigo_produto = p.codigo AND i.codigo_venda =  v.codigo AND DATE(v.dataVenda) BETWEEN '" + MetodosUtil.getDataBanco( data_inicio ) + "' AND '" + MetodosUtil.getDataBanco( data_fim ) + "' AND v.fk_documento IN(1,2)";
         Query query = em.createNativeQuery( sql, TbProduto.class );
 
         List<TbProduto> result = query.getResultList();

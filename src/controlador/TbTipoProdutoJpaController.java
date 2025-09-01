@@ -20,7 +20,7 @@ import javax.persistence.EntityManagerFactory;
 
 /**
  *
- * @author lenovo
+ * @author marti
  */
 public class TbTipoProdutoJpaController implements Serializable
 {
@@ -264,7 +264,7 @@ public class TbTipoProdutoJpaController implements Serializable
             Root<TbTipoProduto> rt = cq.from( TbTipoProduto.class );
             cq.select( em.getCriteriaBuilder().count( rt ) );
             Query q = em.createQuery( cq );
-            return ( ( Long ) q.getSingleResult() ).intValue();
+            return ( (Long) q.getSingleResult() ).intValue();
         }
         finally
         {

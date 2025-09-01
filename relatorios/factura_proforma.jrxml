@@ -2,9 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="factura" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" uuid="0de43986-9be5-410e-aaa3-7f1419d0abca">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="240"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="60"/>
+	<property name="ireport.y" value="384"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -690,7 +690,7 @@ WHERE
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_conta_bancaria2}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="42607151-1fec-4937-953e-1f2d7ef67251" x="2" y="160" width="278" height="10"/>
+				<reportElement uuid="42607151-1fec-4937-953e-1f2d7ef67251" x="43" y="160" width="278" height="10"/>
 				<textElement>
 					<font fontName="Times New Roman" size="6"/>
 				</textElement>
@@ -873,7 +873,7 @@ WHERE
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_conta_bancaria1}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="f8f34724-f5a3-4f74-af6d-9698c6c7ca44" x="0" y="149" width="534" height="11"/>
+				<reportElement uuid="f8f34724-f5a3-4f74-af6d-9698c6c7ca44" x="41" y="149" width="534" height="11"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font fontName="Arial" size="8"/>
 				</textElement>

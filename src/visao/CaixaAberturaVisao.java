@@ -28,6 +28,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.swing.JOptionPane;
 import static kitanda.util.CfConstantes.YYYYMMDD_HHMMSS;
 import util.BDConexao;
+import util.BackupUsb;
 import util.DVML;
 import util.JPAEntityMannagerFactoryUtil;
 import static util.MetodosUtil.rodarComandoWindows;
@@ -111,7 +112,7 @@ public class CaixaAberturaVisao extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(lbAberturaCaixa, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(10, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         txtValorInicial.setFont(new java.awt.Font("Lucida Grande", 0, 50)); // NOI18N
@@ -178,9 +179,9 @@ public class CaixaAberturaVisao extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(27, 27, 27)
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(21, 21, 21))
         );
         jPanel3Layout.setVerticalGroup(
@@ -223,7 +224,7 @@ public class CaixaAberturaVisao extends javax.swing.JFrame {
     {//GEN-HEADEREND:event_jButton1ActionPerformed
         // TODO add your handling code here:
         procedimento_abrir_caixa();
-        fazerBackupAgora();
+//        fazerBackupAgora();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton2ActionPerformed
@@ -235,7 +236,7 @@ public class CaixaAberturaVisao extends javax.swing.JFrame {
     private void txtValorInicialActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtValorInicialActionPerformed
     {//GEN-HEADEREND:event_txtValorInicialActionPerformed
         procedimento_abrir_caixa();
-        fazerBackupAgora();
+//        fazerBackupAgora();
 
     }//GEN-LAST:event_txtValorInicialActionPerformed
 
@@ -418,6 +419,9 @@ public class CaixaAberturaVisao extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Caixa aberto com sucesso!");
                 DocumentosController.commitTransaction(conexaoTransaction);
                 conexaoTransaction.close();
+
+            BackupUsb.realizarBackup();
+
                 dispose();
             } else {
                 JOptionPane.showMessageDialog(null, "Falha ao abrir o caixa", "Aviso", JOptionPane.WARNING_MESSAGE);

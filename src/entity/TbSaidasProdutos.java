@@ -65,6 +65,8 @@ public class TbSaidasProdutos implements Serializable
     @Basic(optional = false)
     @Column(name = "obs")
     private String obs;
+    @Column(name = "documento")
+    private String documento;
     @Basic(optional = false)
     @Column(name = "nome_funcionario")
     private String nomeFuncionario;
@@ -104,6 +106,16 @@ public class TbSaidasProdutos implements Serializable
     public void setPkSaidasProdutos( Integer pkSaidasProdutos )
     {
         this.pkSaidasProdutos = pkSaidasProdutos;
+    }
+
+    public String getDocumento()
+    {
+        return documento;
+    }
+
+    public void setDocumento( String documento )
+    {
+        this.documento = documento;
     }
 
     public Date getDataSaida()

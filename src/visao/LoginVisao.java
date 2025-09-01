@@ -42,11 +42,14 @@ import javax.swing.UIManager;
 import static kitanda.util.CfConstantes.YYYYMMDD_HHMMSS;
 import modelo.Log;
 import util.BDConexao;
+import util.BackupUsb;
+import util.BackupUtil;
 import util.JPAEntityMannagerFactoryUtil;
 //import util.LicensaUtil;
 import util.MetodosUtil;
 import static util.MetodosUtil.rodarComandoWindows;
 import static util.MetodosUtil.startBackGroundProcesses;
+import util.SingleInstanceLock;
 import util.cronjob.QuartzApp;
 import util.cronjob.ValidadorJob;
 
@@ -74,7 +77,7 @@ public class LoginVisao extends javax.swing.JFrame
     private Timer logoutTimer;
     private final int TIMEOUT = 60 * 60 * 1000; // 60 minutos em milissegundos
     private int id_user, id_empresa;
-    private javax.swing.Timer piscarTimer; 
+    private javax.swing.Timer piscarTimer;
 
     public LoginVisao()
     {
@@ -90,7 +93,7 @@ public class LoginVisao extends javax.swing.JFrame
 //        }
         conexao = new BDConexao();
 
-        registerLog( conexao );
+//        registerLog( conexao );
         dadosInstituicaoController = new DadosInstituicaoController( LoginVisao.conexao );
         d = (TbDadosInstituicao) dadosInstituicaoController.findById( 1 );
         horaTerminoVenda = d.getHoraTerminoVenda();
@@ -123,31 +126,38 @@ public class LoginVisao extends javax.swing.JFrame
         iniciarPiscarLabelJLDataFecho();
 
     }
-    
-    public void iniciarPiscarLabelJLDataFecho() {
-    piscarTimer = new javax.swing.Timer(500, new ActionListener() {
-        private boolean ligado = false;
 
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (ligado) {
-                JLDataFecho.setForeground(Color.BLACK);
-            } else {
-                JLDataFecho.setForeground(Color.RED);
+    public void iniciarPiscarLabelJLDataFecho()
+    {
+        piscarTimer = new javax.swing.Timer( 500, new ActionListener()
+        {
+            private boolean ligado = false;
+
+            @Override
+            public void actionPerformed( ActionEvent e )
+            {
+                if ( ligado )
+                {
+                    JLDataFecho.setForeground( Color.BLACK );
+                }
+                else
+                {
+                    JLDataFecho.setForeground( Color.RED );
+                }
+                ligado = !ligado;
             }
-            ligado = !ligado;
-        }
-    });
-    piscarTimer.start();
-}
-
-public void pararPiscarLabelJLDataFecho() {
-    if (piscarTimer != null && piscarTimer.isRunning()) {
-        piscarTimer.stop();
-        JLDataFecho.setForeground(Color.BLACK);  // Garante a cor normal
+        } );
+        piscarTimer.start();
     }
-}
 
+    public void pararPiscarLabelJLDataFecho()
+    {
+        if ( piscarTimer != null && piscarTimer.isRunning() )
+        {
+            piscarTimer.stop();
+            JLDataFecho.setForeground( Color.BLACK );  // Garante a cor normal
+        }
+    }
 
     public LoginVisao( int idUser )
     {
@@ -168,7 +178,7 @@ public void pararPiscarLabelJLDataFecho() {
         horaTerminoVenda = d.getHoraTerminoVenda();
 //        this.idUser = idUser;
 //        licensaUtil = new LicensaUtil( conexao );
-        registerLog( conexao );
+//        registerLog( conexao );
         mostrar_empresas();
         prazo();
 
@@ -542,8 +552,14 @@ public void pararPiscarLabelJLDataFecho() {
 
     private void BTnSairActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BTnSairActionPerformed
     {//GEN-HEADEREND:event_BTnSairActionPerformed
-        // TODO add your handling code here:
-        MetodosUtil.actualizarEstadoLog( "OFF" );
+        try
+        {
+            BackupUsb.realizarBackup();
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
         System.exit( 0 );
     }//GEN-LAST:event_BTnSairActionPerformed
 
@@ -581,8 +597,17 @@ public void pararPiscarLabelJLDataFecho() {
 
                 id_user = usuario.getCodigo();
                 id_empresa = getIdEmpresa();
+                try
+                {
+//                    BackupUtil.fazerBackupAgora();
+                }
+                catch ( Exception e )
+                {
+                    e.printStackTrace();
+                }
+
 //                dispose();
-                switch ( usuario.getIdTipoUsuario().getIdTipoUsuario() )
+                switch (usuario.getIdTipoUsuario().getIdTipoUsuario())
                 {
 
                     //1 - Administrador
@@ -665,10 +690,6 @@ public void pararPiscarLabelJLDataFecho() {
     public static void main( String args[] )
     {
         /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try
         {
             for ( javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels() )
@@ -680,68 +701,57 @@ public void pararPiscarLabelJLDataFecho() {
                 }
             }
         }
-        catch ( ClassNotFoundException ex )
+        catch ( Exception ex )
         {
-            java.util.logging.Logger.getLogger( LoginVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            java.util.logging.Logger.getLogger( LoginVisao.class.getName() )
+                    .log( java.util.logging.Level.SEVERE, null, ex );
         }
-        catch ( InstantiationException ex )
+
+        // 🔒 Verifica instância única ANTES de abrir interface
+        if ( SingleInstanceLock.isAlreadyRunning() )
         {
-            java.util.logging.Logger.getLogger( LoginVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            JOptionPane.showMessageDialog( null, "Atenção\nO sistema já está aberto!" );
+            System.exit( 0 );
         }
-        catch ( IllegalAccessException ex )
-        {
-            java.util.logging.Logger.getLogger( LoginVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }
-        catch ( javax.swing.UnsupportedLookAndFeelException ex )
-        {
-            java.util.logging.Logger.getLogger( LoginVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater( new Runnable()
         {
-
             public void run()
             {
-
                 try
                 {
                     UIManager.setLookAndFeel( new SyntheticaBlackStarLookAndFeel() );
-//                    UIManager.setLookAndFeel(new SyntheticaBlackEyeLookAndFeel() );
                 }
                 catch ( Exception e )
                 {
-                    JOptionPane.showMessageDialog( null, "Error en Look an Feel" + e.getMessage(), null, JOptionPane.ERROR_MESSAGE );
+                    JOptionPane.showMessageDialog( null, "Erro no Look and Feel: " + e.getMessage(),
+                            "Erro", JOptionPane.ERROR_MESSAGE );
                 }
 
-                //INICIAR PROCESSOS EM BACKGROUND
+                // INICIAR PROCESSOS EM BACKGROUND
                 if ( startBackGroundProcesses() )
                 {
                     if ( true )
-                    {
+                    { // <- aqui você pode colocar sua regra de licença
                         new LoginVisao().setVisible( true );
                     }
                     else
                     {
-                        JOptionPane.showMessageDialog( null, "A sua licença expirou.\nPor favor contacte a DVML-COMERCIAL, Lda\nContactos: 923409284 / 940537124", "AVISO", JOptionPane.WARNING_MESSAGE );
+                        JOptionPane.showMessageDialog( null,
+                                "A sua licença expirou.\nPor favor contacte a DVML-COMERCIAL, Lda\nContactos: 923409284 / 940537124",
+                                "AVISO", JOptionPane.WARNING_MESSAGE );
                     }
                 }
                 else
                 {
-                    JOptionPane.showMessageDialog( null, "NÃO FOI POSSÍVEL ACEDER A BASE DE DADOS", "ERRO NA BASE DE DADOS", JOptionPane.ERROR_MESSAGE );
+                    JOptionPane.showMessageDialog( null, "NÃO FOI POSSÍVEL ACEDER A BASE DE DADOS",
+                            "ERRO NA BASE DE DADOS", JOptionPane.ERROR_MESSAGE );
                 }
-
             }
         } );
     }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BTnSair;
     private javax.swing.JLabel JEmpresa;
@@ -804,79 +814,67 @@ public void pararPiscarLabelJLDataFecho() {
 
     }
 
-    public static void fazerBackupAgora()
-    {
-        String data = new SimpleDateFormat( YYYYMMDD_HHMMSS ).format( new Date() );
-//        String rodar_camando = "cmd /c mysqldump -uroot -pDoV90x?# --dump-date --triggers --tables --routines --skip-quote-names --compact --skip-opt --skip-set-charset --hex-blob kitanda_db > \"..\\BD_BACKUP\\_database_backup_" + data + ".sql\"";
-        String rodar_camando = "cmd /c mysqldump --single-transaction -uroot -pDoV90x?# --dump-date --triggers --add-drop-database --routines --skip-quote-names --skip-set-charset --add-locks --disable-keys --databases kitanda_db > \"..\\BD_BACKUP\\_database_backup_" + data + ".sql\"";
-//String rodar_camando = "cmd /c mysqldump --single-transaction=TRUE -uroot -pDoV90x?# --dump-date --triggers --add-drop-database  --routines --skip-quote-names --compact --skip-opt --skip-set-charset --hex-blob --add-locks --disable-keys --lock-tables  --databases kitanda_db > \"..\\BD_BACKUP\\_database_backup_" + data + ".sql\"";
-        Process rodarComandoWindows = rodarComandoWindows( rodar_camando, true );
-
-//        JOptionPane.showMessageDialog ( null, "Backup realizado com sucesso! ", "Notificação", JOptionPane.INFORMATION_MESSAGE );
-        System.err.println( "Backup realizado com sucesso! " );
-
-    }
-
-    private void registerLog( BDConexao conexao )
-    {
-        Log log = new Log();
-        String ipMaquina = MetodosUtil.getIpMaquina();
-        String nomeMaquina = MetodosUtil.getNomeMaquina();
-
-        log.setIpMaquina( ipMaquina );
-        log.setNomeMaquina( nomeMaquina );
-        log.setEstado( "ON" );
-
-        LogController logController = new LogController( conexao );
-
-        Log logByIpMaquina = logController.getLogByNomeMaquina( nomeMaquina );
-
-        if ( Objects.nonNull( logByIpMaquina ) )
-        {
-            System.out.println( "MAQUINA JA CADASTRAD" );
-            if ( "ON".equals( logByIpMaquina.getEstado() ) )
-            {
-
-//                                    if (true) {
-//                    int opcao = JOptionPane.showConfirmDialog(null, "O sistema já está em execução.");
+//    public static void fazerBackupAgora()
+//    {
+//        String data = new SimpleDateFormat( "yyyyMMdd_HHmmss" ).format( new Date() );
+//        String caminhoBackup = System.getProperty( "user.dir" ) + "\\BK\\_database_backup_" + data + ".sql";
+//        String rodar_comando = "cmd /c mysqldump --single-transaction -uroot -pDoV90x?# "
+//                + "--dump-date --triggers --add-drop-database --routines "
+//                + "--skip-quote-names --skip-set-charset --add-locks --disable-keys "
+//                + "--databases kitanda_db > \"" + caminhoBackup + "\"";
+//        Process rodarComandoWindows = rodarComandoWindows( caminhoBackup, true );
+//        System.err.println( "Backup realizado com sucesso! " );
+//    }
+//    private void registerLog( BDConexao conexao )
+//    {
+//        Log log = new Log();
+//        String ipMaquina = MetodosUtil.getIpMaquina();
+//        String nomeMaquina = MetodosUtil.getNomeMaquina();
 //
-//                    if (opcao == JOptionPane.YES_OPTION) {
+//        log.setIpMaquina( ipMaquina );
+//        log.setNomeMaquina( nomeMaquina );
+//        log.setEstado( "ON" );
 //
-//                        dispose();
+//        LogController logController = new LogController( conexao );
 //
-//                    } else if (opcao == JOptionPane.NO_OPTION) {
+//        Log logByIpMaquina = logController.getLogByNomeMaquina( nomeMaquina );
+//
+//        if ( Objects.nonNull( logByIpMaquina ) )
+//        {
+//            System.out.println( "MAQUINA JA CADASTRADA" );
+//            if ( "ON".equals( logByIpMaquina.getEstado() ) )
+//            {
+//                int opcao = JOptionPane.showConfirmDialog( null, "Provavelmente o sistema foi encerrado de forma inesperada. Clica em Sim para corrigir." );
+//
+//                if ( opcao == JOptionPane.YES_NO_OPTION )
+//                {
+//                    MetodosUtil.actualizarEstadoLog( "OFF" );
+//                    LoginVisao.conexao.close();
+//                    MetodosUtil.rodarComandoWindows( "taskkill /im javaw.exe -f", false );
+//                    System.exit( 0 );
 //                }
-                int opcao = JOptionPane.showConfirmDialog( null, "Provavelmente o sistema foi encerrado de forma inesperada. Clica em Sim para corrigir." );
-
-                if ( opcao == JOptionPane.YES_NO_OPTION )
-                {
-                    MetodosUtil.actualizarEstadoLog( "OFF" );
-                    LoginVisao.conexao.close();
-                    MetodosUtil.rodarComandoWindows( "taskkill /im javaw.exe -f", false );
-                    System.exit( 0 );
-                }
-                else
-                {
-                    MetodosUtil.rodarComandoWindows( "taskkill /im javaw.exe -f", false );
-                }
-
-            }
-            else
-            {
-                System.out.println( "ENTREI para actualizar o ON" );
-                MetodosUtil.actualizarEstadoLog( "ON" );
-            }
-        }
-        else
-        {
-            if ( !logController.existe( nomeMaquina ) )
-            {
-                logController.salvar( log );
-            }
-
-        }
-
-    }
+//                else
+//                {
+//                    MetodosUtil.rodarComandoWindows( "taskkill /im javaw.exe -f", false );
+//                }
+//
+//            }
+//            else
+//            {
+//                System.out.println( "ENTREI para actualizar o ON" );
+//                MetodosUtil.actualizarEstadoLog( "ON" );
+//            }
+//        }
+//        else
+//        {
+//            if ( !logController.existe( nomeMaquina ) )
+//            {
+//                logController.salvar( log );
+//            }
+//
+//        }
+//
+//    }
 
     private void iniciarMonitoramento()
     {
@@ -889,7 +887,7 @@ public void pararPiscarLabelJLDataFecho() {
             return false;
         } );
 
-        Toolkit.getDefaultToolkit().addAWTEventListener(( AWTEvent event ) ->
+        Toolkit.getDefaultToolkit().addAWTEventListener( ( AWTEvent event ) ->
         {
             if ( event.getID() == MouseEvent.MOUSE_MOVED
                     || event.getID() == MouseEvent.MOUSE_CLICKED
@@ -917,13 +915,13 @@ public void pararPiscarLabelJLDataFecho() {
                 {
                     //JOptionPane.showMessageDialog( null, "Sessão expirada! Voltando para o login." );
                     conexao.close();
-                    logo_out(  );
+                    logo_out();
                 } );
             }
         }, TIMEOUT );
     }
 
-    public static void logo_out( )
+    public static void logo_out()
     {
 //        EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
 //        UsuarioDao usuarioDao = new UsuarioDao( emf );

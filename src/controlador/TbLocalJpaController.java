@@ -20,7 +20,7 @@ import javax.persistence.EntityManagerFactory;
 
 /**
  *
- * @author lenovo
+ * @author marti
  */
 public class TbLocalJpaController implements Serializable
 {
@@ -246,7 +246,7 @@ public class TbLocalJpaController implements Serializable
             Root<TbLocal> rt = cq.from( TbLocal.class );
             cq.select( em.getCriteriaBuilder().count( rt ) );
             Query q = em.createQuery( cq );
-            return ( ( Long ) q.getSingleResult() ).intValue();
+            return ( (Long) q.getSingleResult() ).intValue();
         }
         finally
         {

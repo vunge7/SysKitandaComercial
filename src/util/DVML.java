@@ -210,7 +210,8 @@ public class DVML
     public static int COD_CATEGORIA_URGENCIA = 20;
     public static String TAXA_EXPRESSO_100 = "Taxa Expresso 100";
     public static String TAXA_URGENCIA_50 = "Taxa de Urgência 50";
-    public static String BD = "kitanda_db_grelha_douro";
+    public static String BD = "kitanda_db";
+//    public static String BD = "kitanda_db";
     public static int SEGUNDA_SEXTA_HORA = 11;
     public static int SEGUNDA_SEXTA_MINUTO = 56;
     public final static String STATUS_CONVERTIDO = "Convertido";
@@ -273,6 +274,7 @@ public class DVML
     public static double QTD_EXISTENTE_PADRAO_SERVICO = 1000000;
     public static double QTD_DEFAULT = 6;
     public static int JANELA_VENDA = 1;
+    public static int JANELA_SAIDA = 16;
     public static int JANELA_VENDA_POS = 13;
     public static int JANELA_VENDA_OFICINA = 12;
     public static int JANELA_COMPRA = 4;
@@ -324,7 +326,7 @@ public class DVML
     public static Abreviacao getAbreviacao( int doc )
     {
 
-        switch ( doc )
+        switch (doc)
         {
             case 1:
                 return Abreviacao.FR_A4;
@@ -750,7 +752,7 @@ public class DVML
         }
         else
         {
-            int meio = ( ( tamanho + posicao ) / 2 );
+            int meio = (( tamanho + posicao ) / 2);
             System.out.println( "MEIO:" + meio );
             return soma_dividir( posicao, meio, v ) + soma_dividir( meio, tamanho, v );
 
@@ -767,7 +769,7 @@ public class DVML
         }
         else
         {
-            int meio = ( ( tamanho + posicao ) / 2 );
+            int meio = (( tamanho + posicao ) / 2);
             return soma_dividir_vector( posicao, meio, vector ) + soma_dividir_vector( meio, tamanho, vector );
 
         }
@@ -785,7 +787,7 @@ public class DVML
         }
         else
         {
-            int meio = ( ( tamanho + posicao ) / 2 );
+            int meio = (( tamanho + posicao ) / 2);
             System.err.println( "MEIO: " + meio );
 
             return actualizar_vector_preco( meio, tamanho, vector );
@@ -810,7 +812,7 @@ public class DVML
         }
         else
         {
-            int meio = ( ( tamanho + posicao ) / 2 );
+            int meio = (( tamanho + posicao ) / 2);
             return soma_dividir_vector_preco( posicao, meio, vector ) + soma_dividir_vector_preco( meio, tamanho, vector );
 
         }
@@ -951,7 +953,7 @@ public class DVML
     private static int getDias( int mes, int ano )
     {
 
-        switch ( mes )
+        switch (mes)
         {
             case 0:
             case 2:
@@ -976,7 +978,7 @@ public class DVML
 
     private static int getDiaBissesto( int ano )
     {
-        switch ( ano )
+        switch (ano)
         {
             case 2016:
             case 2020:

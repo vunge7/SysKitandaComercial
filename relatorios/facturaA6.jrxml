@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="3.305785123966945"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="441"/>
+	<property name="ireport.y" value="153"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -628,7 +628,7 @@ WHERE
 				<text><![CDATA[Imposto]]></text>
 			</staticText>
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
-				<reportElement uuid="ff333d50-8165-40cd-bf82-69656d6660df" key="textField-16" x="40" y="10" width="45" height="10"/>
+				<reportElement uuid="ff333d50-8165-40cd-bf82-69656d6660df" key="textField-16" x="51" y="10" width="49" height="10"/>
 				<box leftPadding="2"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="8"/>
@@ -636,7 +636,7 @@ WHERE
 				<textFieldExpression><![CDATA[$F{tb_venda_total_iva}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="a0ea3f10-be53-44d1-a5f5-1cddef96b8e3" key="textField-15" x="65" y="10" width="124" height="10"/>
+				<reportElement uuid="a0ea3f10-be53-44d1-a5f5-1cddef96b8e3" key="textField-15" x="182" y="10" width="7" height="10"/>
 				<textElement textAlignment="Right">
 					<font fontName="Times New Roman" size="8"/>
 				</textElement>
@@ -661,8 +661,9 @@ WHERE
 				<text><![CDATA[Incidência]]></text>
 			</staticText>
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
-				<reportElement uuid="596f9f5f-b381-4d53-ad31-267250ad5fc7" key="textField-16" x="-1" y="10" width="42" height="10"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<reportElement uuid="596f9f5f-b381-4d53-ad31-267250ad5fc7" key="textField-16" x="-1" y="10" width="52" height="10"/>
+				<box leftPadding="6"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_venda_total_incidencia}]]></textFieldExpression>
@@ -794,7 +795,7 @@ WHERE
 				<textFieldExpression><![CDATA[$F{tb_venda_troco}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="186479ab-bac8-4973-af4a-590edf5777f6" x="84" y="19" width="105" height="10"/>
+				<reportElement uuid="186479ab-bac8-4973-af4a-590edf5777f6" x="99" y="10" width="83" height="10"/>
 				<box leftPadding="4"/>
 				<textElement>
 					<font fontName="Times New Roman" size="8"/>

@@ -21,6 +21,7 @@ import static util.JPAEntityMannagerFactoryUtil.leituraFicheiro;
 
 public class BDConexao
 {
+
     private  Connection connection;
     private Statement statement;
     private static EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;

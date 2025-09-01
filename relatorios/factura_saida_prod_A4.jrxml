@@ -2,12 +2,12 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="factura" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="4e46d387-0c6c-4a45-bb3e-9f070c59d6d9">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="15"/>
-	<property name="ireport.y" value="0"/>
-	<import value="net.sf.jasperreports.engine.data.*"/>
-	<import value="java.util.*"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="24"/>
+	<property name="ireport.y" value="209"/>
 	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="COD_SAIDA" class="java.lang.Integer"/>
 	<queryString>
 		<![CDATA[SELECT
@@ -24,7 +24,8 @@
      tb_saidas_produtos.`hora_saida` AS tb_saidas_produtos_hora_saida,
      tb_produto.`designacao` AS tb_produto_designacao,
      tb_usuario.`nome` AS tb_usuario_nome,
-     tb_produto.`codigo` AS tb_produto_codigo
+     tb_produto.`codigo` AS tb_produto_codigo,
+     tb_saidas_produtos.`documento` AS tb_saidas_produtos_documento
 FROM
      `tb_produto` tb_produto INNER JOIN `tb_item_saidas` tb_item_saidas ON tb_produto.`codigo` = tb_item_saidas.`fk_produtos`
      INNER JOIN `tb_saidas_produtos` tb_saidas_produtos ON tb_item_saidas.`fk_saidas_produtos` = tb_saidas_produtos.`pk_saidas_produtos`
@@ -39,7 +40,7 @@ WHERE
 	<field name="tb_dados_instituicao_enderecos" class="java.lang.String"/>
 	<field name="tb_dados_instituicao_email" class="java.lang.String"/>
 	<field name="tb_dados_instituicao_nif" class="java.lang.String"/>
-	<field name="tb_saidas_produtos_pk_saidas_produtos" class="java.lang.Integer"/>
+	<field name="tb_saidas_produtos_pk_saidas_produtos" class="java.lang.Long"/>
 	<field name="tb_saidas_produtos_data_saida" class="java.sql.Date"/>
 	<field name="tb_saidas_produtos_obs" class="java.lang.String"/>
 	<field name="tb_saidas_produtos_nome_funcionario" class="java.lang.String"/>
@@ -47,6 +48,7 @@ WHERE
 	<field name="tb_produto_designacao" class="java.lang.String"/>
 	<field name="tb_usuario_nome" class="java.lang.String"/>
 	<field name="tb_produto_codigo" class="java.lang.Integer"/>
+	<field name="tb_saidas_produtos_documento" class="java.lang.String"/>
 	<variable name="SOMA_TOTAL" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[]]></variableExpression>
 	</variable>
@@ -132,6 +134,21 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_nif}]]></textFieldExpression>
 			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="e00b72d7-b7e6-4d33-a4d3-98973e2a6fa4" key="textField-19" x="348" y="109" width="122" height="31"/>
+				<box topPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true" isItalic="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_saidas_produtos_documento}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="20a4f00b-7667-4dfa-b266-5e4f43f47f38" key="staticText-5" x="213" y="109" width="135" height="31"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Referência Documento: ]]></text>
+			</staticText>
 		</band>
 	</pageHeader>
 	<columnHeader>
@@ -293,20 +310,6 @@ WHERE
 				<textFieldExpression><![CDATA[$F{tb_saidas_produtos_hora_saida}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="559f3ea3-31fa-43a3-a0b9-2db9d8a477be" key="staticText-2" x="1" y="82" width="533" height="16"/>
-				<textElement textAlignment="Center">
-					<font fontName="Arial" size="8" isBold="true" isItalic="false" pdfFontName="Helvetica-Oblique"/>
-				</textElement>
-				<text><![CDATA[email:  dvml.comercial@gmail.com]]></text>
-			</staticText>
-			<staticText>
-				<reportElement uuid="569cab1f-20c2-422c-819d-bad3f8071672" key="staticText-3" x="1" y="72" width="533" height="16"/>
-				<textElement textAlignment="Center">
-					<font fontName="Arial" size="8" isBold="true" isItalic="false" pdfFontName="Helvetica-Oblique"/>
-				</textElement>
-				<text><![CDATA[Software desenvolvido pela DVML - COMERCIAL, LDA Contactos: 940537124 - 923409284]]></text>
-			</staticText>
-			<staticText>
 				<reportElement uuid="179a37b0-f5aa-4458-b5ee-21cae69c62d9" key="staticText-5" x="320" y="43" width="85" height="18"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
@@ -320,6 +323,20 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_saidas_produtos_nome_funcionario}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement uuid="45f1d90d-3c31-48b0-8da9-1601361537aa" x="1" y="68" width="534" height="21"/>
+				<textElement textAlignment="Justified" verticalAlignment="Bottom" markup="none">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Processado por programa validado nº 258/AGT/2020 Kitanda / dvml]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6daf76af-21f9-406d-a51a-6bad8ac1fe71" x="3" y="89" width="345" height="10"/>
+				<textElement>
+					<font fontName="Times New Roman" size="8"/>
+				</textElement>
+				<text><![CDATA[Software de gestão comercial, desenvolvido e assistido pela dvml comercial, lda. Tel: 921734126]]></text>
+			</staticText>
 		</band>
 	</pageFooter>
 </jasperReport>

@@ -588,6 +588,8 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jMenu1 = new javax.swing.JMenu();
         jmVenda = new javax.swing.JMenuItem();
         jmFrontOffice = new javax.swing.JMenuItem();
+        jmSaidasProdutos = new javax.swing.JMenuItem();
+        jMenuItem5 = new javax.swing.JMenuItem();
         jmConverterProforma = new javax.swing.JMenuItem();
         jmProcessarRecibo = new javax.swing.JMenuItem();
         jmNotas = new javax.swing.JMenu();
@@ -596,7 +598,6 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jmNotaLevantamento = new javax.swing.JMenuItem();
         jMenuItem12 = new javax.swing.JMenuItem();
         jMenuItemGestaoCreditos = new javax.swing.JMenuItem();
-        jmSaidasProdutos = new javax.swing.JMenuItem();
         jmEstornos = new javax.swing.JMenuItem();
         jMenuItemAlteracaoGuia = new javax.swing.JMenuItem();
         jMenuItemConverterGuia = new javax.swing.JMenuItem();
@@ -738,6 +739,26 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         });
         jMenu1.add(jmFrontOffice);
 
+        jmSaidasProdutos.setText("Saidas Produtos");
+        jmSaidasProdutos.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jmSaidasProdutosActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jmSaidasProdutos);
+
+        jMenuItem5.setText("Entradas Produtos");
+        jMenuItem5.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jMenuItem5ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem5);
+
         jmConverterProforma.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jmConverterProforma.setText("Converter Proformas em Facturas");
         jmConverterProforma.addActionListener(new java.awt.event.ActionListener()
@@ -815,16 +836,6 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
             }
         });
         jMenu1.add(jMenuItemGestaoCreditos);
-
-        jmSaidasProdutos.setText("Saidas Produtos");
-        jmSaidasProdutos.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                jmSaidasProdutosActionPerformed(evt);
-            }
-        });
-        jMenu1.add(jmSaidasProdutos);
 
         jmEstornos.setText("Quebras");
         jmEstornos.addActionListener(new java.awt.event.ActionListener()
@@ -2312,9 +2323,23 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
     private void jMenuItemRelatorioMensal1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemRelatorioMensal1ActionPerformed
     {//GEN-HEADEREND:event_jMenuItemRelatorioMensal1ActionPerformed
+        
         // TODO add your handling code here:
 
     }//GEN-LAST:event_jMenuItemRelatorioMensal1ActionPerformed
+
+    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem5ActionPerformed
+    {//GEN-HEADEREND:event_jMenuItem5ActionPerformed
+        try
+        {
+            //        ( java.awt.Frame parent, boolean modal, int idUser, String codigo, BDConexao conexao, String armazem, int chamada )
+            new EntradaVisao(this, true, cod_utilizador, "", conexao).setVisible( true);
+        }
+        catch ( SQLException ex )
+        {
+            Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( Level.SEVERE, null, ex );
+        }
+    }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -2398,6 +2423,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
+    private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenuItem jMenuItem8;

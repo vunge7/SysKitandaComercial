@@ -38,13 +38,14 @@ import entity.TbEntrada;
 import entity.TbStock;
 import entity.NotasItem;
 import entity.NotasItemCompras;
+import entity.TbItemEntradas;
 import entity.TbProduto;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 /**
  *
- * @author lenovo
+ * @author marti
  */
 public class TbProdutoJpaController implements Serializable
 {
@@ -137,6 +138,10 @@ public class TbProdutoJpaController implements Serializable
         if ( tbProduto.getNotasItemComprasList() == null )
         {
             tbProduto.setNotasItemComprasList( new ArrayList<NotasItemCompras>() );
+        }
+        if ( tbProduto.getTbItemEntradasList() == null )
+        {
+            tbProduto.setTbItemEntradasList( new ArrayList<TbItemEntradas>() );
         }
         EntityManager em = null;
         try
@@ -312,6 +317,13 @@ public class TbProdutoJpaController implements Serializable
                 attachedNotasItemComprasList.add( notasItemComprasListNotasItemComprasToAttach );
             }
             tbProduto.setNotasItemComprasList( attachedNotasItemComprasList );
+            List<TbItemEntradas> attachedTbItemEntradasList = new ArrayList<TbItemEntradas>();
+            for ( TbItemEntradas tbItemEntradasListTbItemEntradasToAttach : tbProduto.getTbItemEntradasList() )
+            {
+                tbItemEntradasListTbItemEntradasToAttach = em.getReference( tbItemEntradasListTbItemEntradasToAttach.getClass(), tbItemEntradasListTbItemEntradasToAttach.getIdItemEntradas() );
+                attachedTbItemEntradasList.add( tbItemEntradasListTbItemEntradasToAttach );
+            }
+            tbProduto.setTbItemEntradasList( attachedTbItemEntradasList );
             em.persist( tbProduto );
             if ( fkGrupo != null )
             {
@@ -552,6 +564,17 @@ public class TbProdutoJpaController implements Serializable
                     oldFkProdutoOfNotasItemComprasListNotasItemCompras = em.merge( oldFkProdutoOfNotasItemComprasListNotasItemCompras );
                 }
             }
+            for ( TbItemEntradas tbItemEntradasListTbItemEntradas : tbProduto.getTbItemEntradasList() )
+            {
+                TbProduto oldIdProdutoOfTbItemEntradasListTbItemEntradas = tbItemEntradasListTbItemEntradas.getIdProduto();
+                tbItemEntradasListTbItemEntradas.setIdProduto( tbProduto );
+                tbItemEntradasListTbItemEntradas = em.merge( tbItemEntradasListTbItemEntradas );
+                if ( oldIdProdutoOfTbItemEntradasListTbItemEntradas != null )
+                {
+                    oldIdProdutoOfTbItemEntradasListTbItemEntradas.getTbItemEntradasList().remove( tbItemEntradasListTbItemEntradas );
+                    oldIdProdutoOfTbItemEntradasListTbItemEntradas = em.merge( oldIdProdutoOfTbItemEntradasListTbItemEntradas );
+                }
+            }
             em.getTransaction().commit();
         }
         finally
@@ -621,6 +644,8 @@ public class TbProdutoJpaController implements Serializable
             List<NotasItem> notasItemListNew = tbProduto.getNotasItemList();
             List<NotasItemCompras> notasItemComprasListOld = persistentTbProduto.getNotasItemComprasList();
             List<NotasItemCompras> notasItemComprasListNew = tbProduto.getNotasItemComprasList();
+            List<TbItemEntradas> tbItemEntradasListOld = persistentTbProduto.getTbItemEntradasList();
+            List<TbItemEntradas> tbItemEntradasListNew = tbProduto.getTbItemEntradasList();
             List<String> illegalOrphanMessages = null;
             for ( ProdutoIsento produtoIsentoListOldProdutoIsento : produtoIsentoListOld )
             {
@@ -763,6 +788,17 @@ public class TbProdutoJpaController implements Serializable
                         illegalOrphanMessages = new ArrayList<String>();
                     }
                     illegalOrphanMessages.add( "You must retain TbStock " + tbStockListOldTbStock + " since its codProdutoCodigo field is not nullable." );
+                }
+            }
+            for ( TbItemEntradas tbItemEntradasListOldTbItemEntradas : tbItemEntradasListOld )
+            {
+                if ( !tbItemEntradasListNew.contains( tbItemEntradasListOldTbItemEntradas ) )
+                {
+                    if ( illegalOrphanMessages == null )
+                    {
+                        illegalOrphanMessages = new ArrayList<String>();
+                    }
+                    illegalOrphanMessages.add( "You must retain TbItemEntradas " + tbItemEntradasListOldTbItemEntradas + " since its idProduto field is not nullable." );
                 }
             }
             if ( illegalOrphanMessages != null )
@@ -951,6 +987,14 @@ public class TbProdutoJpaController implements Serializable
             }
             notasItemComprasListNew = attachedNotasItemComprasListNew;
             tbProduto.setNotasItemComprasList( notasItemComprasListNew );
+            List<TbItemEntradas> attachedTbItemEntradasListNew = new ArrayList<TbItemEntradas>();
+            for ( TbItemEntradas tbItemEntradasListNewTbItemEntradasToAttach : tbItemEntradasListNew )
+            {
+                tbItemEntradasListNewTbItemEntradasToAttach = em.getReference( tbItemEntradasListNewTbItemEntradasToAttach.getClass(), tbItemEntradasListNewTbItemEntradasToAttach.getIdItemEntradas() );
+                attachedTbItemEntradasListNew.add( tbItemEntradasListNewTbItemEntradasToAttach );
+            }
+            tbItemEntradasListNew = attachedTbItemEntradasListNew;
+            tbProduto.setTbItemEntradasList( tbItemEntradasListNew );
             tbProduto = em.merge( tbProduto );
             if ( fkGrupoOld != null && !fkGrupoOld.equals( fkGrupoNew ) )
             {
@@ -1326,6 +1370,20 @@ public class TbProdutoJpaController implements Serializable
                     }
                 }
             }
+            for ( TbItemEntradas tbItemEntradasListNewTbItemEntradas : tbItemEntradasListNew )
+            {
+                if ( !tbItemEntradasListOld.contains( tbItemEntradasListNewTbItemEntradas ) )
+                {
+                    TbProduto oldIdProdutoOfTbItemEntradasListNewTbItemEntradas = tbItemEntradasListNewTbItemEntradas.getIdProduto();
+                    tbItemEntradasListNewTbItemEntradas.setIdProduto( tbProduto );
+                    tbItemEntradasListNewTbItemEntradas = em.merge( tbItemEntradasListNewTbItemEntradas );
+                    if ( oldIdProdutoOfTbItemEntradasListNewTbItemEntradas != null && !oldIdProdutoOfTbItemEntradasListNewTbItemEntradas.equals( tbProduto ) )
+                    {
+                        oldIdProdutoOfTbItemEntradasListNewTbItemEntradas.getTbItemEntradasList().remove( tbItemEntradasListNewTbItemEntradas );
+                        oldIdProdutoOfTbItemEntradasListNewTbItemEntradas = em.merge( oldIdProdutoOfTbItemEntradasListNewTbItemEntradas );
+                    }
+                }
+            }
             em.getTransaction().commit();
         }
         catch ( Exception ex )
@@ -1485,6 +1543,15 @@ public class TbProdutoJpaController implements Serializable
                 }
                 illegalOrphanMessages.add( "This TbProduto (" + tbProduto + ") cannot be destroyed since the TbStock " + tbStockListOrphanCheckTbStock + " in its tbStockList field has a non-nullable codProdutoCodigo field." );
             }
+            List<TbItemEntradas> tbItemEntradasListOrphanCheck = tbProduto.getTbItemEntradasList();
+            for ( TbItemEntradas tbItemEntradasListOrphanCheckTbItemEntradas : tbItemEntradasListOrphanCheck )
+            {
+                if ( illegalOrphanMessages == null )
+                {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add( "This TbProduto (" + tbProduto + ") cannot be destroyed since the TbItemEntradas " + tbItemEntradasListOrphanCheckTbItemEntradas + " in its tbItemEntradasList field has a non-nullable idProduto field." );
+            }
             if ( illegalOrphanMessages != null )
             {
                 throw new IllegalOrphanException( illegalOrphanMessages );
@@ -1626,7 +1693,7 @@ public class TbProdutoJpaController implements Serializable
             Root<TbProduto> rt = cq.from( TbProduto.class );
             cq.select( em.getCriteriaBuilder().count( rt ) );
             Query q = em.createQuery( cq );
-            return ( ( Long ) q.getSingleResult() ).intValue();
+            return ( (Long) q.getSingleResult() ).intValue();
         }
         finally
         {
