@@ -5,13 +5,12 @@
 package controlador;
 
 import controlador.exceptions.NonexistentEntityException;
+import entity.Grupo;
 import java.io.Serializable;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import entity.Marca;
-import entity.Modelo;
 import entity.TbProduto;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +21,10 @@ import javax.persistence.EntityManagerFactory;
  *
  * @author marti
  */
-public class ModeloJpaController implements Serializable
+public class GrupoJpaController1 implements Serializable
 {
 
-    public ModeloJpaController( EntityManagerFactory emf )
+    public GrupoJpaController1( EntityManagerFactory emf )
     {
         this.emf = emf;
     }
@@ -36,45 +35,34 @@ public class ModeloJpaController implements Serializable
         return emf.createEntityManager();
     }
 
-    public void create( Modelo modelo )
+    public void create( Grupo grupo )
     {
-        if ( modelo.getTbProdutoList() == null )
+        if ( grupo.getTbProdutoList() == null )
         {
-            modelo.setTbProdutoList( new ArrayList<TbProduto>() );
+            grupo.setTbProdutoList( new ArrayList<TbProduto>() );
         }
         EntityManager em = null;
         try
         {
             em = getEntityManager();
             em.getTransaction().begin();
-            Marca fkMarca = modelo.getFkMarca();
-            if ( fkMarca != null )
-            {
-                fkMarca = em.getReference( fkMarca.getClass(), fkMarca.getPkMarca() );
-                modelo.setFkMarca( fkMarca );
-            }
             List<TbProduto> attachedTbProdutoList = new ArrayList<TbProduto>();
-            for ( TbProduto tbProdutoListTbProdutoToAttach : modelo.getTbProdutoList() )
+            for ( TbProduto tbProdutoListTbProdutoToAttach : grupo.getTbProdutoList() )
             {
                 tbProdutoListTbProdutoToAttach = em.getReference( tbProdutoListTbProdutoToAttach.getClass(), tbProdutoListTbProdutoToAttach.getCodigo() );
                 attachedTbProdutoList.add( tbProdutoListTbProdutoToAttach );
             }
-            modelo.setTbProdutoList( attachedTbProdutoList );
-            em.persist( modelo );
-            if ( fkMarca != null )
+            grupo.setTbProdutoList( attachedTbProdutoList );
+            em.persist( grupo );
+            for ( TbProduto tbProdutoListTbProduto : grupo.getTbProdutoList() )
             {
-                fkMarca.getModeloList().add( modelo );
-                fkMarca = em.merge( fkMarca );
-            }
-            for ( TbProduto tbProdutoListTbProduto : modelo.getTbProdutoList() )
-            {
-                Modelo oldFkModeloOfTbProdutoListTbProduto = tbProdutoListTbProduto.getFkModelo();
-                tbProdutoListTbProduto.setFkModelo( modelo );
+                Grupo oldFkGrupoOfTbProdutoListTbProduto = tbProdutoListTbProduto.getFkGrupo();
+                tbProdutoListTbProduto.setFkGrupo( grupo );
                 tbProdutoListTbProduto = em.merge( tbProdutoListTbProduto );
-                if ( oldFkModeloOfTbProdutoListTbProduto != null )
+                if ( oldFkGrupoOfTbProdutoListTbProduto != null )
                 {
-                    oldFkModeloOfTbProdutoListTbProduto.getTbProdutoList().remove( tbProdutoListTbProduto );
-                    oldFkModeloOfTbProdutoListTbProduto = em.merge( oldFkModeloOfTbProdutoListTbProduto );
+                    oldFkGrupoOfTbProdutoListTbProduto.getTbProdutoList().remove( tbProdutoListTbProduto );
+                    oldFkGrupoOfTbProdutoListTbProduto = em.merge( oldFkGrupoOfTbProdutoListTbProduto );
                 }
             }
             em.getTransaction().commit();
@@ -88,23 +76,16 @@ public class ModeloJpaController implements Serializable
         }
     }
 
-    public void edit( Modelo modelo ) throws NonexistentEntityException, Exception
+    public void edit( Grupo grupo ) throws NonexistentEntityException, Exception
     {
         EntityManager em = null;
         try
         {
             em = getEntityManager();
             em.getTransaction().begin();
-            Modelo persistentModelo = em.find( Modelo.class, modelo.getPkModelo() );
-            Marca fkMarcaOld = persistentModelo.getFkMarca();
-            Marca fkMarcaNew = modelo.getFkMarca();
-            List<TbProduto> tbProdutoListOld = persistentModelo.getTbProdutoList();
-            List<TbProduto> tbProdutoListNew = modelo.getTbProdutoList();
-            if ( fkMarcaNew != null )
-            {
-                fkMarcaNew = em.getReference( fkMarcaNew.getClass(), fkMarcaNew.getPkMarca() );
-                modelo.setFkMarca( fkMarcaNew );
-            }
+            Grupo persistentGrupo = em.find( Grupo.class, grupo.getPkGrupo() );
+            List<TbProduto> tbProdutoListOld = persistentGrupo.getTbProdutoList();
+            List<TbProduto> tbProdutoListNew = grupo.getTbProdutoList();
             List<TbProduto> attachedTbProdutoListNew = new ArrayList<TbProduto>();
             for ( TbProduto tbProdutoListNewTbProdutoToAttach : tbProdutoListNew )
             {
@@ -112,23 +93,13 @@ public class ModeloJpaController implements Serializable
                 attachedTbProdutoListNew.add( tbProdutoListNewTbProdutoToAttach );
             }
             tbProdutoListNew = attachedTbProdutoListNew;
-            modelo.setTbProdutoList( tbProdutoListNew );
-            modelo = em.merge( modelo );
-            if ( fkMarcaOld != null && !fkMarcaOld.equals( fkMarcaNew ) )
-            {
-                fkMarcaOld.getModeloList().remove( modelo );
-                fkMarcaOld = em.merge( fkMarcaOld );
-            }
-            if ( fkMarcaNew != null && !fkMarcaNew.equals( fkMarcaOld ) )
-            {
-                fkMarcaNew.getModeloList().add( modelo );
-                fkMarcaNew = em.merge( fkMarcaNew );
-            }
+            grupo.setTbProdutoList( tbProdutoListNew );
+            grupo = em.merge( grupo );
             for ( TbProduto tbProdutoListOldTbProduto : tbProdutoListOld )
             {
                 if ( !tbProdutoListNew.contains( tbProdutoListOldTbProduto ) )
                 {
-                    tbProdutoListOldTbProduto.setFkModelo( null );
+                    tbProdutoListOldTbProduto.setFkGrupo( null );
                     tbProdutoListOldTbProduto = em.merge( tbProdutoListOldTbProduto );
                 }
             }
@@ -136,13 +107,13 @@ public class ModeloJpaController implements Serializable
             {
                 if ( !tbProdutoListOld.contains( tbProdutoListNewTbProduto ) )
                 {
-                    Modelo oldFkModeloOfTbProdutoListNewTbProduto = tbProdutoListNewTbProduto.getFkModelo();
-                    tbProdutoListNewTbProduto.setFkModelo( modelo );
+                    Grupo oldFkGrupoOfTbProdutoListNewTbProduto = tbProdutoListNewTbProduto.getFkGrupo();
+                    tbProdutoListNewTbProduto.setFkGrupo( grupo );
                     tbProdutoListNewTbProduto = em.merge( tbProdutoListNewTbProduto );
-                    if ( oldFkModeloOfTbProdutoListNewTbProduto != null && !oldFkModeloOfTbProdutoListNewTbProduto.equals( modelo ) )
+                    if ( oldFkGrupoOfTbProdutoListNewTbProduto != null && !oldFkGrupoOfTbProdutoListNewTbProduto.equals( grupo ) )
                     {
-                        oldFkModeloOfTbProdutoListNewTbProduto.getTbProdutoList().remove( tbProdutoListNewTbProduto );
-                        oldFkModeloOfTbProdutoListNewTbProduto = em.merge( oldFkModeloOfTbProdutoListNewTbProduto );
+                        oldFkGrupoOfTbProdutoListNewTbProduto.getTbProdutoList().remove( tbProdutoListNewTbProduto );
+                        oldFkGrupoOfTbProdutoListNewTbProduto = em.merge( oldFkGrupoOfTbProdutoListNewTbProduto );
                     }
                 }
             }
@@ -153,10 +124,10 @@ public class ModeloJpaController implements Serializable
             String msg = ex.getLocalizedMessage();
             if ( msg == null || msg.length() == 0 )
             {
-                Integer id = modelo.getPkModelo();
-                if ( findModelo( id ) == null )
+                Integer id = grupo.getPkGrupo();
+                if ( findGrupo( id ) == null )
                 {
-                    throw new NonexistentEntityException( "The modelo with id " + id + " no longer exists." );
+                    throw new NonexistentEntityException( "The grupo with id " + id + " no longer exists." );
                 }
             }
             throw ex;
@@ -177,29 +148,23 @@ public class ModeloJpaController implements Serializable
         {
             em = getEntityManager();
             em.getTransaction().begin();
-            Modelo modelo;
+            Grupo grupo;
             try
             {
-                modelo = em.getReference( Modelo.class, id );
-                modelo.getPkModelo();
+                grupo = em.getReference( Grupo.class, id );
+                grupo.getPkGrupo();
             }
             catch ( EntityNotFoundException enfe )
             {
-                throw new NonexistentEntityException( "The modelo with id " + id + " no longer exists.", enfe );
+                throw new NonexistentEntityException( "The grupo with id " + id + " no longer exists.", enfe );
             }
-            Marca fkMarca = modelo.getFkMarca();
-            if ( fkMarca != null )
-            {
-                fkMarca.getModeloList().remove( modelo );
-                fkMarca = em.merge( fkMarca );
-            }
-            List<TbProduto> tbProdutoList = modelo.getTbProdutoList();
+            List<TbProduto> tbProdutoList = grupo.getTbProdutoList();
             for ( TbProduto tbProdutoListTbProduto : tbProdutoList )
             {
-                tbProdutoListTbProduto.setFkModelo( null );
+                tbProdutoListTbProduto.setFkGrupo( null );
                 tbProdutoListTbProduto = em.merge( tbProdutoListTbProduto );
             }
-            em.remove( modelo );
+            em.remove( grupo );
             em.getTransaction().commit();
         }
         finally
@@ -211,23 +176,23 @@ public class ModeloJpaController implements Serializable
         }
     }
 
-    public List<Modelo> findModeloEntities()
+    public List<Grupo> findGrupoEntities()
     {
-        return findModeloEntities( true, -1, -1 );
+        return findGrupoEntities( true, -1, -1 );
     }
 
-    public List<Modelo> findModeloEntities( int maxResults, int firstResult )
+    public List<Grupo> findGrupoEntities( int maxResults, int firstResult )
     {
-        return findModeloEntities( false, maxResults, firstResult );
+        return findGrupoEntities( false, maxResults, firstResult );
     }
 
-    private List<Modelo> findModeloEntities( boolean all, int maxResults, int firstResult )
+    private List<Grupo> findGrupoEntities( boolean all, int maxResults, int firstResult )
     {
         EntityManager em = getEntityManager();
         try
         {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select( cq.from( Modelo.class ) );
+            cq.select( cq.from( Grupo.class ) );
             Query q = em.createQuery( cq );
             if ( !all )
             {
@@ -242,12 +207,12 @@ public class ModeloJpaController implements Serializable
         }
     }
 
-    public Modelo findModelo( Integer id )
+    public Grupo findGrupo( Integer id )
     {
         EntityManager em = getEntityManager();
         try
         {
-            return em.find( Modelo.class, id );
+            return em.find( Grupo.class, id );
         }
         finally
         {
@@ -255,13 +220,13 @@ public class ModeloJpaController implements Serializable
         }
     }
 
-    public int getModeloCount()
+    public int getGrupoCount()
     {
         EntityManager em = getEntityManager();
         try
         {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<Modelo> rt = cq.from( Modelo.class );
+            Root<Grupo> rt = cq.from( Grupo.class );
             cq.select( em.getCriteriaBuilder().count( rt ) );
             Query q = em.createQuery( cq );
             return ( (Long) q.getSingleResult() ).intValue();

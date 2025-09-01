@@ -33,7 +33,7 @@ import javax.persistence.EntityManagerFactory;
 
 /**
  *
- * @author lenovo
+ * @author marti
  */
 public class TbArmazemJpaController implements Serializable
 {
@@ -1093,7 +1093,7 @@ public class TbArmazemJpaController implements Serializable
             Root<TbArmazem> rt = cq.from( TbArmazem.class );
             cq.select( em.getCriteriaBuilder().count( rt ) );
             Query q = em.createQuery( cq );
-            return ( ( Long ) q.getSingleResult() ).intValue();
+            return ( (Long) q.getSingleResult() ).intValue();
         }
         finally
         {

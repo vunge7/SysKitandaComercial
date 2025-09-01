@@ -10,9 +10,12 @@ import dao.PrecoDao;
 import dao.SaidasProdutosDao;
 import dao.UsuarioDao;
 import dao.VendaDao;
+import entity.TbProduto;
 import entity.TbSaidasProdutos;
 import entity.TbVenda;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,42 +26,42 @@ import javax.swing.table.DefaultTableModel;
 import util.BDConexao;
 import util.DVML;
 import util.JPAEntityMannagerFactoryUtil;
+import util.MetodosUtil;
 
 /**
  *
  * @author Martinho Luis
  */
-public class ListarRelatorioSaidaByIntervalo extends javax.swing.JFrame {
+public class ListarRelatorioSaidaByIntervalo extends javax.swing.JFrame
+{
 
     /**
      * Creates new form ListaUsuarioVisao
      */
-    
-
     private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
-    private SaidasProdutosDao saidasProdutosDao = new SaidasProdutosDao(emf);
-    private UsuarioDao usuarioDao = new UsuarioDao(emf);    
-    private ArmazemDao armazemDao = new ArmazemDao(emf);
-    private  double total_geral = 0;
+    private SaidasProdutosDao saidasProdutosDao = new SaidasProdutosDao( emf );
+    private UsuarioDao usuarioDao = new UsuarioDao( emf );
+    private ArmazemDao armazemDao = new ArmazemDao( emf );
+    private double total_geral = 0;
     private BDConexao conexao;
-    public ListarRelatorioSaidaByIntervalo(BDConexao conexao)  {
-        
+
+    public ListarRelatorioSaidaByIntervalo( BDConexao conexao )
+    {
+
         this.conexao = conexao;
         initComponents();
-        setResizable(false);
-        setLocationRelativeTo(null);
+        setResizable( false );
+        setLocationRelativeTo( null );
         dcDataInicio.setDate( new Date() );
         dcDataFim.setDate( new Date() );
 //        cmbArmazem.setModel(new DefaultComboBoxModel(armazemDao.buscaTodos()));
-        
-       
+
     }
 
-    
-    
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "unchecked" )
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+    private void initComponents()
+    {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
@@ -87,8 +90,10 @@ public class ListarRelatorioSaidaByIntervalo extends javax.swing.JFrame {
         lbData1.setText("à");
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/actualizar_1_32x32.png"))); // NOI18N
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jButton1.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 jButton1ActionPerformed(evt);
             }
         });
@@ -136,8 +141,10 @@ public class ListarRelatorioSaidaByIntervalo extends javax.swing.JFrame {
         btnSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/impressora1.png"))); // NOI18N
         btnSalvar.setText("Imprimir");
         btnSalvar.setAlignmentX(0.5F);
-        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnSalvar.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 btnSalvarActionPerformed(evt);
             }
         });
@@ -145,8 +152,10 @@ public class ListarRelatorioSaidaByIntervalo extends javax.swing.JFrame {
         btnCancelar1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LOGOUT - VERMELHO/Logout 32x32.png"))); // NOI18N
         btnCancelar1.setText("Sair");
         btnCancelar1.setAlignmentX(0.5F);
-        btnCancelar1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnCancelar1.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 btnCancelar1ActionPerformed(evt);
             }
         });
@@ -156,8 +165,8 @@ public class ListarRelatorioSaidaByIntervalo extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(907, Short.MAX_VALUE)
-                .addComponent(btnSalvar)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnCancelar1)
                 .addContainerGap())
@@ -175,32 +184,47 @@ public class ListarRelatorioSaidaByIntervalo extends javax.swing.JFrame {
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+            new Object [][]
+            {
 
             },
-            new String [] {
-                "Saida Nº", "Solicitante ", "Motivo", "Data", "Hora", "Armazem", "Usuário"
+            new String []
+            {
+                "Ref.Doc", "Saida Nº", "Solicitante ", "Motivo", "Data", "Hora", "Armazem", "Usuário"
             }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+        )
+        {
+            Class[] types = new Class []
+            {
+                java.lang.Object.class, java.lang.Object.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
+            boolean[] canEdit = new boolean []
+            {
+                false, false, false, false, false, false, false, false
             };
 
-            public Class getColumnClass(int columnIndex) {
+            public Class getColumnClass(int columnIndex)
+            {
                 return types [columnIndex];
             }
 
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
+            public boolean isCellEditable(int rowIndex, int columnIndex)
+            {
                 return canEdit [columnIndex];
             }
         });
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter()
+        {
+            public void mouseClicked(java.awt.event.MouseEvent evt)
+            {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setMinWidth(0);
-            jTable1.getColumnModel().getColumn(0).setMaxWidth(100);
+        if (jTable1.getColumnModel().getColumnCount() > 0)
+        {
+            jTable1.getColumnModel().getColumn(1).setMinWidth(0);
+            jTable1.getColumnModel().getColumn(1).setMaxWidth(100);
         }
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -227,7 +251,7 @@ public class ListarRelatorioSaidaByIntervalo extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(lbData2, javax.swing.GroupLayout.DEFAULT_SIZE, 1093, Short.MAX_VALUE)
+                    .addComponent(lbData2, javax.swing.GroupLayout.DEFAULT_SIZE, 1136, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -256,10 +280,10 @@ public class ListarRelatorioSaidaByIntervalo extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCancelar1ActionPerformed
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-      
+
         //procedimento_imprimir();
 //        new ResumoSaidasByIntervalo(dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem());
-        new ResumoSaidasByIntervalo(dcDataInicio.getDate(), dcDataFim.getDate());
+        new ResumoSaidasByIntervalo( dcDataInicio.getDate(), dcDataFim.getDate() );
 
     }//GEN-LAST:event_btnSalvarActionPerformed
 
@@ -268,30 +292,87 @@ public class ListarRelatorioSaidaByIntervalo extends javax.swing.JFrame {
         adicionar_tabela();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_jTable1MouseClicked
+    {//GEN-HEADEREND:event_jTable1MouseClicked
+        if ( evt.getClickCount() > 1 )
+        {
+
+            reimprimir_FR();
+
+        }
+    }//GEN-LAST:event_jTable1MouseClicked
+
+    private void reimprimir_FR()
+    {
+        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        int selectedRow = jTable1.getSelectedRow();
+        String codRef = modelo.getValueAt( selectedRow, 0 ).toString();
+
+        procedimento_reimprimir_FR( codRef );
+    }
+
+    private void procedimento_reimprimir_FR( String ref_doc )
+    {
+
+        HashMap hashMap = new HashMap();
+        TbSaidasProdutos saida = saidasProdutosDao.findByCodFactReemprensao( ref_doc );
+
+        if ( saida != null )
+        {
+
+//            Abreviacao abreviacao = DVML.getAbreviacao( venda.getFkDocumento().getPkDocumento() );
+//            abreviacao = DVML.Abreviacao.FR_A4;
+            List<TbProduto> lista_produto_isentos = new ArrayList<>();
+//            lista_produto_isentos = MetodosUtil.getProdutosIsentos( venda.getTbItemSaidaList() );
+//            String motivos_isentos = MetodosUtil.getMotivoIsensaoProdutos( lista_produto_isentos );
+//            ListaVenda1 original = new ListaVenda1( cod_venda, abreviacao, false, ck_simplificada.isSelected(), "Original", motivos_isentos );
+            ListaSaidaProdutos listaSaidas = new ListaSaidaProdutos( saida.getPkSaidasProdutos() );
+//            ListaVenda2 listaVenda2 = new ListaVenda2( venda.getCodigo(), abreviacao, false, false, DVML.SEGUNDA_VIA_CONFORMIDADE_COM_ORIGINAL, motivos_isentos );
+//            ListaVenda2 listaVenda2 = new ListaVenda2( venda.getCodigo(), abreviacao, false, false, DVML.SEGUNDA_VIA_CONFORMIDADE_COM_ORIGINAL, motivos_isentos );
+        }
+        else
+        {
+            JOptionPane.showMessageDialog( null, "Atenção\nO Documento não existe na base de dados. \nObs: Verifique a referência. " );
+        }
+
+    }
+
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main( String args[] )
+    {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Windows".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+        try
+        {
+            for ( javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels() )
+            {
+                if ( "Windows".equals( info.getName() ) )
+                {
+                    javax.swing.UIManager.setLookAndFeel( info.getClassName() );
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ListarRelatorioSaidaByIntervalo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ListarRelatorioSaidaByIntervalo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ListarRelatorioSaidaByIntervalo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ListarRelatorioSaidaByIntervalo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        catch ( ClassNotFoundException ex )
+        {
+            java.util.logging.Logger.getLogger( ListarRelatorioSaidaByIntervalo.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+        }
+        catch ( InstantiationException ex )
+        {
+            java.util.logging.Logger.getLogger( ListarRelatorioSaidaByIntervalo.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+        }
+        catch ( IllegalAccessException ex )
+        {
+            java.util.logging.Logger.getLogger( ListarRelatorioSaidaByIntervalo.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+        }
+        catch ( javax.swing.UnsupportedLookAndFeelException ex )
+        {
+            java.util.logging.Logger.getLogger( ListarRelatorioSaidaByIntervalo.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
         //</editor-fold>
         //</editor-fold>
@@ -299,15 +380,20 @@ public class ListarRelatorioSaidaByIntervalo extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    new ListarRelatorioSaidaByIntervalo(new BDConexao()).setVisible(true);
-                } catch (Exception ex) {
-                    Logger.getLogger(ListarRelatorioSaidaByIntervalo.class.getName()).log(Level.SEVERE, null, ex);
+        java.awt.EventQueue.invokeLater( new Runnable()
+        {
+            public void run()
+            {
+                try
+                {
+                    new ListarRelatorioSaidaByIntervalo( new BDConexao() ).setVisible( true );
+                }
+                catch ( Exception ex )
+                {
+                    Logger.getLogger( ListarRelatorioSaidaByIntervalo.class.getName() ).log( Level.SEVERE, null, ex );
                 }
             }
-        });
+        } );
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar1;
@@ -326,76 +412,72 @@ public class ListarRelatorioSaidaByIntervalo extends javax.swing.JFrame {
     private javax.swing.JLabel lbData2;
     // End of variables declaration//GEN-END:variables
 
-
-    
     private void adicionar_tabela()
     {
-         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
-         modelo.setRowCount(0);
-         
-         
-         try {
-             
-//            List<SaidasProdutos> lista = saidasProdutosDao.getAllSaidaByBetweenDataAndArmazem(dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem() );
-            List<TbSaidasProdutos> lista = saidasProdutosDao.getAllSaidaByBetweenData(dcDataInicio.getDate(), dcDataFim.getDate() );
-            
-             for (TbSaidasProdutos object : lista) {
-                 
-                    modelo.addRow( new Object[]{
-                        
-                        object.getPkSaidasProdutos(),
-                        object.getNomeFuncionario(),
-                        object.getObs(),
-                        getData( object.getDataSaida()),
-                        getHora( object.getHoraSaida()),
-                        object.getIdArmazemFK().getDesignacao(),
-                        object.getFkUsuario().getNome()
-                                
-                    });
-                    
-                 
-             }
+        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        modelo.setRowCount( 0 );
 
-            
-        } catch (Exception e) {
-             JOptionPane.showMessageDialog(null, "Não há registro para este intervalo de datas", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
+        try
+        {
+
+//            List<SaidasProdutos> lista = saidasProdutosDao.getAllSaidaByBetweenDataAndArmazem(dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem() );
+            List<TbSaidasProdutos> lista = saidasProdutosDao.getAllSaidaByBetweenData( dcDataInicio.getDate(), dcDataFim.getDate() );
+
+            for ( TbSaidasProdutos object : lista )
+            {
+
+                modelo.addRow( new Object[]
+                {
+
+                    object.getDocumento(),
+                    object.getPkSaidasProdutos(),
+                    object.getNomeFuncionario(),
+                    object.getObs(),
+                    getData( object.getDataSaida() ),
+                    getHora( object.getHoraSaida() ),
+                    object.getIdArmazemFK().getDesignacao(),
+                    object.getFkUsuario().getNome()
+
+                } );
+
+            }
+
         }
-    
-    
+        catch ( Exception e )
+        {
+            JOptionPane.showMessageDialog( null, "Não há registro para este intervalo de datas", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+        }
+
     }
 
-    
 //    public int getCodigoArmazem() {
 //        return armazemDao.getArmazemByDescricao(cmbArmazem.getSelectedItem().toString()).getCodigo();
 //    }
+    private String getData( Date date )
+    {
+        return getNumeroDoisDigitos( date.getDate() )
+                + "/" + ( getNumeroDoisDigitos( date.getMonth() + 1 ) )
+                + "/" + ( date.getYear() + 1900 );
 
-    
-    
-    private String getData(Date date)
-    {
-          return   getNumeroDoisDigitos(date.getDate()) 
-                  +"/" + (   getNumeroDoisDigitos( date.getMonth() + 1 )  )
-                  +"/" + (date.getYear() + 1900);
-    
-    }
-    
-    private String getHora(Date date)
-    {
-          return   getNumeroDoisDigitos(  date.getHours() ) +":" 
-                  + getNumeroDoisDigitos ( date.getMinutes() ) +":"
-                  +getNumeroDoisDigitos(  date.getSeconds() );
-    
     }
 
-    private String getNumeroDoisDigitos(int  numero)
+    private String getHora( Date date )
     {
-        if (numero<10) {
-              return "0" +numero;
+        return getNumeroDoisDigitos( date.getHours() ) + ":"
+                + getNumeroDoisDigitos( date.getMinutes() ) + ":"
+                + getNumeroDoisDigitos( date.getSeconds() );
+
+    }
+
+    private String getNumeroDoisDigitos( int numero )
+    {
+        if ( numero < 10 )
+        {
+            return "0" + numero;
         }
-     
-        return  String.valueOf(numero);
-    
-    }
 
+        return String.valueOf( numero );
+
+    }
 
 }

@@ -6,7 +6,7 @@ package controlador;
 
 import controlador.exceptions.IllegalOrphanException;
 import controlador.exceptions.NonexistentEntityException;
-import entity.TbSexo;
+import entity.TbTipoUsuario;
 import java.io.Serializable;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
@@ -22,10 +22,10 @@ import javax.persistence.EntityManagerFactory;
  *
  * @author marti
  */
-public class TbSexoJpaController implements Serializable
+public class TbTipoUsuarioJpaController1 implements Serializable
 {
 
-    public TbSexoJpaController( EntityManagerFactory emf )
+    public TbTipoUsuarioJpaController1( EntityManagerFactory emf )
     {
         this.emf = emf;
     }
@@ -36,11 +36,11 @@ public class TbSexoJpaController implements Serializable
         return emf.createEntityManager();
     }
 
-    public void create( TbSexo tbSexo )
+    public void create( TbTipoUsuario tbTipoUsuario )
     {
-        if ( tbSexo.getTbUsuarioList() == null )
+        if ( tbTipoUsuario.getTbUsuarioList() == null )
         {
-            tbSexo.setTbUsuarioList( new ArrayList<TbUsuario>() );
+            tbTipoUsuario.setTbUsuarioList( new ArrayList<TbUsuario>() );
         }
         EntityManager em = null;
         try
@@ -48,22 +48,22 @@ public class TbSexoJpaController implements Serializable
             em = getEntityManager();
             em.getTransaction().begin();
             List<TbUsuario> attachedTbUsuarioList = new ArrayList<TbUsuario>();
-            for ( TbUsuario tbUsuarioListTbUsuarioToAttach : tbSexo.getTbUsuarioList() )
+            for ( TbUsuario tbUsuarioListTbUsuarioToAttach : tbTipoUsuario.getTbUsuarioList() )
             {
                 tbUsuarioListTbUsuarioToAttach = em.getReference( tbUsuarioListTbUsuarioToAttach.getClass(), tbUsuarioListTbUsuarioToAttach.getCodigo() );
                 attachedTbUsuarioList.add( tbUsuarioListTbUsuarioToAttach );
             }
-            tbSexo.setTbUsuarioList( attachedTbUsuarioList );
-            em.persist( tbSexo );
-            for ( TbUsuario tbUsuarioListTbUsuario : tbSexo.getTbUsuarioList() )
+            tbTipoUsuario.setTbUsuarioList( attachedTbUsuarioList );
+            em.persist( tbTipoUsuario );
+            for ( TbUsuario tbUsuarioListTbUsuario : tbTipoUsuario.getTbUsuarioList() )
             {
-                TbSexo oldCodigoSexoOfTbUsuarioListTbUsuario = tbUsuarioListTbUsuario.getCodigoSexo();
-                tbUsuarioListTbUsuario.setCodigoSexo( tbSexo );
+                TbTipoUsuario oldIdTipoUsuarioOfTbUsuarioListTbUsuario = tbUsuarioListTbUsuario.getIdTipoUsuario();
+                tbUsuarioListTbUsuario.setIdTipoUsuario( tbTipoUsuario );
                 tbUsuarioListTbUsuario = em.merge( tbUsuarioListTbUsuario );
-                if ( oldCodigoSexoOfTbUsuarioListTbUsuario != null )
+                if ( oldIdTipoUsuarioOfTbUsuarioListTbUsuario != null )
                 {
-                    oldCodigoSexoOfTbUsuarioListTbUsuario.getTbUsuarioList().remove( tbUsuarioListTbUsuario );
-                    oldCodigoSexoOfTbUsuarioListTbUsuario = em.merge( oldCodigoSexoOfTbUsuarioListTbUsuario );
+                    oldIdTipoUsuarioOfTbUsuarioListTbUsuario.getTbUsuarioList().remove( tbUsuarioListTbUsuario );
+                    oldIdTipoUsuarioOfTbUsuarioListTbUsuario = em.merge( oldIdTipoUsuarioOfTbUsuarioListTbUsuario );
                 }
             }
             em.getTransaction().commit();
@@ -77,16 +77,16 @@ public class TbSexoJpaController implements Serializable
         }
     }
 
-    public void edit( TbSexo tbSexo ) throws IllegalOrphanException, NonexistentEntityException, Exception
+    public void edit( TbTipoUsuario tbTipoUsuario ) throws IllegalOrphanException, NonexistentEntityException, Exception
     {
         EntityManager em = null;
         try
         {
             em = getEntityManager();
             em.getTransaction().begin();
-            TbSexo persistentTbSexo = em.find( TbSexo.class, tbSexo.getCodigo() );
-            List<TbUsuario> tbUsuarioListOld = persistentTbSexo.getTbUsuarioList();
-            List<TbUsuario> tbUsuarioListNew = tbSexo.getTbUsuarioList();
+            TbTipoUsuario persistentTbTipoUsuario = em.find( TbTipoUsuario.class, tbTipoUsuario.getIdTipoUsuario() );
+            List<TbUsuario> tbUsuarioListOld = persistentTbTipoUsuario.getTbUsuarioList();
+            List<TbUsuario> tbUsuarioListNew = tbTipoUsuario.getTbUsuarioList();
             List<String> illegalOrphanMessages = null;
             for ( TbUsuario tbUsuarioListOldTbUsuario : tbUsuarioListOld )
             {
@@ -96,7 +96,7 @@ public class TbSexoJpaController implements Serializable
                     {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add( "You must retain TbUsuario " + tbUsuarioListOldTbUsuario + " since its codigoSexo field is not nullable." );
+                    illegalOrphanMessages.add( "You must retain TbUsuario " + tbUsuarioListOldTbUsuario + " since its idTipoUsuario field is not nullable." );
                 }
             }
             if ( illegalOrphanMessages != null )
@@ -110,19 +110,19 @@ public class TbSexoJpaController implements Serializable
                 attachedTbUsuarioListNew.add( tbUsuarioListNewTbUsuarioToAttach );
             }
             tbUsuarioListNew = attachedTbUsuarioListNew;
-            tbSexo.setTbUsuarioList( tbUsuarioListNew );
-            tbSexo = em.merge( tbSexo );
+            tbTipoUsuario.setTbUsuarioList( tbUsuarioListNew );
+            tbTipoUsuario = em.merge( tbTipoUsuario );
             for ( TbUsuario tbUsuarioListNewTbUsuario : tbUsuarioListNew )
             {
                 if ( !tbUsuarioListOld.contains( tbUsuarioListNewTbUsuario ) )
                 {
-                    TbSexo oldCodigoSexoOfTbUsuarioListNewTbUsuario = tbUsuarioListNewTbUsuario.getCodigoSexo();
-                    tbUsuarioListNewTbUsuario.setCodigoSexo( tbSexo );
+                    TbTipoUsuario oldIdTipoUsuarioOfTbUsuarioListNewTbUsuario = tbUsuarioListNewTbUsuario.getIdTipoUsuario();
+                    tbUsuarioListNewTbUsuario.setIdTipoUsuario( tbTipoUsuario );
                     tbUsuarioListNewTbUsuario = em.merge( tbUsuarioListNewTbUsuario );
-                    if ( oldCodigoSexoOfTbUsuarioListNewTbUsuario != null && !oldCodigoSexoOfTbUsuarioListNewTbUsuario.equals( tbSexo ) )
+                    if ( oldIdTipoUsuarioOfTbUsuarioListNewTbUsuario != null && !oldIdTipoUsuarioOfTbUsuarioListNewTbUsuario.equals( tbTipoUsuario ) )
                     {
-                        oldCodigoSexoOfTbUsuarioListNewTbUsuario.getTbUsuarioList().remove( tbUsuarioListNewTbUsuario );
-                        oldCodigoSexoOfTbUsuarioListNewTbUsuario = em.merge( oldCodigoSexoOfTbUsuarioListNewTbUsuario );
+                        oldIdTipoUsuarioOfTbUsuarioListNewTbUsuario.getTbUsuarioList().remove( tbUsuarioListNewTbUsuario );
+                        oldIdTipoUsuarioOfTbUsuarioListNewTbUsuario = em.merge( oldIdTipoUsuarioOfTbUsuarioListNewTbUsuario );
                     }
                 }
             }
@@ -133,10 +133,10 @@ public class TbSexoJpaController implements Serializable
             String msg = ex.getLocalizedMessage();
             if ( msg == null || msg.length() == 0 )
             {
-                Integer id = tbSexo.getCodigo();
-                if ( findTbSexo( id ) == null )
+                Integer id = tbTipoUsuario.getIdTipoUsuario();
+                if ( findTbTipoUsuario( id ) == null )
                 {
-                    throw new NonexistentEntityException( "The tbSexo with id " + id + " no longer exists." );
+                    throw new NonexistentEntityException( "The tbTipoUsuario with id " + id + " no longer exists." );
                 }
             }
             throw ex;
@@ -157,31 +157,31 @@ public class TbSexoJpaController implements Serializable
         {
             em = getEntityManager();
             em.getTransaction().begin();
-            TbSexo tbSexo;
+            TbTipoUsuario tbTipoUsuario;
             try
             {
-                tbSexo = em.getReference( TbSexo.class, id );
-                tbSexo.getCodigo();
+                tbTipoUsuario = em.getReference( TbTipoUsuario.class, id );
+                tbTipoUsuario.getIdTipoUsuario();
             }
             catch ( EntityNotFoundException enfe )
             {
-                throw new NonexistentEntityException( "The tbSexo with id " + id + " no longer exists.", enfe );
+                throw new NonexistentEntityException( "The tbTipoUsuario with id " + id + " no longer exists.", enfe );
             }
             List<String> illegalOrphanMessages = null;
-            List<TbUsuario> tbUsuarioListOrphanCheck = tbSexo.getTbUsuarioList();
+            List<TbUsuario> tbUsuarioListOrphanCheck = tbTipoUsuario.getTbUsuarioList();
             for ( TbUsuario tbUsuarioListOrphanCheckTbUsuario : tbUsuarioListOrphanCheck )
             {
                 if ( illegalOrphanMessages == null )
                 {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add( "This TbSexo (" + tbSexo + ") cannot be destroyed since the TbUsuario " + tbUsuarioListOrphanCheckTbUsuario + " in its tbUsuarioList field has a non-nullable codigoSexo field." );
+                illegalOrphanMessages.add( "This TbTipoUsuario (" + tbTipoUsuario + ") cannot be destroyed since the TbUsuario " + tbUsuarioListOrphanCheckTbUsuario + " in its tbUsuarioList field has a non-nullable idTipoUsuario field." );
             }
             if ( illegalOrphanMessages != null )
             {
                 throw new IllegalOrphanException( illegalOrphanMessages );
             }
-            em.remove( tbSexo );
+            em.remove( tbTipoUsuario );
             em.getTransaction().commit();
         }
         finally
@@ -193,23 +193,23 @@ public class TbSexoJpaController implements Serializable
         }
     }
 
-    public List<TbSexo> findTbSexoEntities()
+    public List<TbTipoUsuario> findTbTipoUsuarioEntities()
     {
-        return findTbSexoEntities( true, -1, -1 );
+        return findTbTipoUsuarioEntities( true, -1, -1 );
     }
 
-    public List<TbSexo> findTbSexoEntities( int maxResults, int firstResult )
+    public List<TbTipoUsuario> findTbTipoUsuarioEntities( int maxResults, int firstResult )
     {
-        return findTbSexoEntities( false, maxResults, firstResult );
+        return findTbTipoUsuarioEntities( false, maxResults, firstResult );
     }
 
-    private List<TbSexo> findTbSexoEntities( boolean all, int maxResults, int firstResult )
+    private List<TbTipoUsuario> findTbTipoUsuarioEntities( boolean all, int maxResults, int firstResult )
     {
         EntityManager em = getEntityManager();
         try
         {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select( cq.from( TbSexo.class ) );
+            cq.select( cq.from( TbTipoUsuario.class ) );
             Query q = em.createQuery( cq );
             if ( !all )
             {
@@ -224,12 +224,12 @@ public class TbSexoJpaController implements Serializable
         }
     }
 
-    public TbSexo findTbSexo( Integer id )
+    public TbTipoUsuario findTbTipoUsuario( Integer id )
     {
         EntityManager em = getEntityManager();
         try
         {
-            return em.find( TbSexo.class, id );
+            return em.find( TbTipoUsuario.class, id );
         }
         finally
         {
@@ -237,13 +237,13 @@ public class TbSexoJpaController implements Serializable
         }
     }
 
-    public int getTbSexoCount()
+    public int getTbTipoUsuarioCount()
     {
         EntityManager em = getEntityManager();
         try
         {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<TbSexo> rt = cq.from( TbSexo.class );
+            Root<TbTipoUsuario> rt = cq.from( TbTipoUsuario.class );
             cq.select( em.getCriteriaBuilder().count( rt ) );
             Query q = em.createQuery( cq );
             return ( (Long) q.getSingleResult() ).intValue();

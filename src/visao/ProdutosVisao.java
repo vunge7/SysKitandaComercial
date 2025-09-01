@@ -1477,8 +1477,9 @@ public class ProdutosVisao extends javax.swing.JFrame
     private void txtCodigoManualProcuraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigoManualProcuraActionPerformed
         btnSalvar.setEnabled( false );
         btnAlterar2.setEnabled( true );
-        buscar_by_cod_manual();
-        txtCodigoManualProcura.setText( "" );
+        buscar_by_cod_manual1();
+//        buscar_by_cod_manual();
+//        txtCodigoManualProcura.setText( "" );
     }//GEN-LAST:event_txtCodigoManualProcuraActionPerformed
 
     private void ck_servicoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ck_servicoActionPerformed
@@ -2133,47 +2134,84 @@ public class ProdutosVisao extends javax.swing.JFrame
         }
 
     }
-
+    
     private void preparar_produto()
-    {
+{
+    boolean isStocavel = ck_produto.isSelected();
 
-        boolean isStocavel = ck_produto.isSelected();
+    String designacao_produto = getDesignacaoText();
+    produto.setDesignacao(designacao_produto);
+    produto.setPreco(new BigDecimal(MetodosUtil.convertToDouble(txtPrecoCompra.getText())));
+    produto.setDataFabrico(isStocavel ? jcDataFabrico.getDate() : new Date());
+    produto.setDataExpiracao(isStocavel ? jcDataExpiracao.getDate() : new Date());
+    produto.setCodBarra(isStocavel ? txtCodigoBarra.getText().trim() : "2147483647");
+    produto.setStatus("Activo");
+    produto.setDataEntrada(new Date());
+    produto.setStocavel(isStocavel ? "true" : "false");
+    produto.setPrecoVenda(MetodosUtil.convertToDouble(txtPrecoCompra.getText()));
+    produto.setQuantidadeDesconto(0);
+    produto.setCodigoManual(isStocavel ? txtCodigoManual.getText() : "");
+    produto.setCodUnidade(new Unidade(getIdUnidade()));
+    produto.setCodLocal(new TbLocal(getIdLocal()));
+    produto.setCodFornecedores(new TbFornecedor(1));
+    produto.setCodTipoProduto(new TbTipoProduto(getIdTipoPrdouto()));
+    produto.setFkModelo(new Modelo(getIdModelo()));
+    produto.setFkGrupo(new Grupo(getIdGrupo()));
+    produto.setStatusIva(ivaAplicarJRadioButton.isSelected() ? "true" : "false");
+    produto.setCozinha(getCozinha());
 
-        String designacao_produto = getDesignacaoText();
-        produto.setDesignacao( designacao_produto );
-        produto.setPreco( new BigDecimal( MetodosUtil.convertToDouble( txtPrecoCompra.getText() ) ) );
-        produto.setDataFabrico( isStocavel ? jcDataFabrico.getDate() : new Date() );
-        produto.setDataExpiracao( isStocavel ? jcDataExpiracao.getDate() : new Date() );
-        produto.setCodBarra( isStocavel ? txtCodigoBarra.getText().trim() : "2147483647" );
-        produto.setStatus( "Activo" );
-        produto.setDataEntrada( new Date() );
-        produto.setStocavel( isStocavel ? "true" : "false" );
-        produto.setPrecoVenda( MetodosUtil.convertToDouble( txtPrecoCompra.getText() ) );
-        produto.setQuantidadeDesconto( 0 );
-        produto.setCodigoManual( isStocavel ? txtCodigoManual.getText() : "" );
-        produto.setCodUnidade( new Unidade( getIdUnidade() ) );
-        produto.setCodLocal( new TbLocal( getIdLocal() ) );
-        produto.setCodFornecedores( new TbFornecedor( 1 ) );
-        produto.setCodTipoProduto( new TbTipoProduto( getIdTipoPrdouto() ) );
-        produto.setFkModelo( new Modelo( getIdModelo() ) );
-        produto.setFkGrupo( new Grupo( getIdGrupo() ) );
-        produto.setStatusIva( ivaAplicarJRadioButton.isSelected() ? "true" : "false" );
-//        produto.setPercentagemDesconto( 0d );
-        produto.setCozinha( getCozinha() );
-        produto.setUnidadeCompra( Double.valueOf( txtUnidadeCompra.getText() ) );
+    // 🔹 Sempre grava 1 na unidade de compra
+    produto.setUnidadeCompra(1.0);
 
-        try
-        {
-            if ( Objects.nonNull( image_View.getBystebyteImg() ) )
-            {
-                produto.setPhoto( image_View.getBystebyteImg() );
-            }
+    try {
+        if (Objects.nonNull(image_View.getBystebyteImg())) {
+            produto.setPhoto(image_View.getBystebyteImg());
         }
-        catch ( Exception e )
-        {
-        }
-
+    } catch (Exception e) {
     }
+}
+
+
+//    private void preparar_produto()
+//    {
+//
+//        boolean isStocavel = ck_produto.isSelected();
+//
+//        String designacao_produto = getDesignacaoText();
+//        produto.setDesignacao( designacao_produto );
+//        produto.setPreco( new BigDecimal( MetodosUtil.convertToDouble( txtPrecoCompra.getText() ) ) );
+//        produto.setDataFabrico( isStocavel ? jcDataFabrico.getDate() : new Date() );
+//        produto.setDataExpiracao( isStocavel ? jcDataExpiracao.getDate() : new Date() );
+//        produto.setCodBarra( isStocavel ? txtCodigoBarra.getText().trim() : "2147483647" );
+//        produto.setStatus( "Activo" );
+//        produto.setDataEntrada( new Date() );
+//        produto.setStocavel( isStocavel ? "true" : "false" );
+//        produto.setPrecoVenda( MetodosUtil.convertToDouble( txtPrecoCompra.getText() ) );
+//        produto.setQuantidadeDesconto( 0 );
+//        produto.setCodigoManual( isStocavel ? txtCodigoManual.getText() : "" );
+//        produto.setCodUnidade( new Unidade( getIdUnidade() ) );
+//        produto.setCodLocal( new TbLocal( getIdLocal() ) );
+//        produto.setCodFornecedores( new TbFornecedor( 1 ) );
+//        produto.setCodTipoProduto( new TbTipoProduto( getIdTipoPrdouto() ) );
+//        produto.setFkModelo( new Modelo( getIdModelo() ) );
+//        produto.setFkGrupo( new Grupo( getIdGrupo() ) );
+//        produto.setStatusIva( ivaAplicarJRadioButton.isSelected() ? "true" : "false" );
+////        produto.setPercentagemDesconto( 0d );
+//        produto.setCozinha( getCozinha() );
+//        produto.setUnidadeCompra( Double.valueOf( txtUnidadeCompra.getText() ) );
+//
+//        try
+//        {
+//            if ( Objects.nonNull( image_View.getBystebyteImg() ) )
+//            {
+//                produto.setPhoto( image_View.getBystebyteImg() );
+//            }
+//        }
+//        catch ( Exception e )
+//        {
+//        }
+//
+//    }
 
     private void set_dados_produto()
     {
@@ -2963,6 +3001,35 @@ public class ProdutosVisao extends javax.swing.JFrame
             procedimento_limpar();
         }
     }
+    private void buscar_by_cod_manual1()
+    {
+
+        TbProduto produto_local = produtosController.findByCodManual1( txtCodigoManualProcura.getText().trim() );
+        if ( !Objects.isNull( produto_local ) )
+        {
+            ver_dados( produto_local.getCodigo() );
+            txtCodigoManualProcura.requestFocus();
+            if ( ivaAplicarJRadioButton.isSelected() )
+            {
+                calcularTotalComIva();
+            }
+            else
+            {
+                txtPrecoDeVendaComIva.setVisible( false );
+                ivaTaxaJLabel.setVisible( false );
+
+            }
+//            
+//            mostrar_cod_dados_stock_armazem1cb( produto_local );
+//            mostrar_cod_dados_stock_armazem2ci( produto_local );
+//            mostrar_cod_dados_stock_armazem3ci( produto_local );
+//            mostrar_cod_dados_stock_armazem4ci( produto_local );
+        }
+        else
+        {
+            procedimento_limpar();
+        }
+    }
 
     private void detalhe_produto()
     {
@@ -3042,9 +3109,16 @@ public class ProdutosVisao extends javax.swing.JFrame
         }
         else if ( produtosController.existProdutoByCodigoBarra( txtCodigoBarra.getText() ) && isProduto )
         {
-            JOptionPane.showMessageDialog( null, "Este codigo de barra ja existe!!!", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+            JOptionPane.showMessageDialog( null, "Este codigo de barra já existe!!!", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
             txtCodigoBarra.requestFocus();
-            txtCodigoBarra.setBackground( Color.YELLOW );
+//            txtCodigoBarra.setBackground( Color.YELLOW );
+            return false;
+        }
+        else if ( produtosController.existProdutoByCodigoManual(txtCodigoManual.getText() ) && isProduto )
+        {
+            JOptionPane.showMessageDialog( null, "Este codigo manual já existe!!!", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+            txtCodigoManual.requestFocus();
+//            txtCodigoManual.setBackground( Color.YELLOW );
             return false;
         }
         else if ( txtPrecoCompra.getText().equals( "" ) )

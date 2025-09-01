@@ -20,7 +20,7 @@ import javax.persistence.EntityManagerFactory;
 
 /**
  *
- * @author lenovo
+ * @author marti
  */
 public class FamiliaJpaController implements Serializable
 {
@@ -246,7 +246,7 @@ public class FamiliaJpaController implements Serializable
             Root<Familia> rt = cq.from( Familia.class );
             cq.select( em.getCriteriaBuilder().count( rt ) );
             Query q = em.createQuery( cq );
-            return ( ( Long ) q.getSingleResult() ).intValue();
+            return ( (Long) q.getSingleResult() ).intValue();
         }
         finally
         {

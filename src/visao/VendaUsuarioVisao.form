@@ -1371,7 +1371,7 @@
                               </Group>
                               <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="dc_data_documento" max="32767" attributes="0"/>
+                                  <Component id="dc_data_documento" pref="117" max="32767" attributes="0"/>
                                   <Component id="dc_data_vencimento" max="32767" attributes="0"/>
                               </Group>
                           </Group>
@@ -1438,23 +1438,21 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="txtIniciaisCliente" min="-2" pref="59" max="-2" attributes="0"/>
-                          <Group type="102" attributes="0">
-                              <Component id="lbCliente" max="32767" attributes="0"/>
-                              <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="lbCliente1" min="-2" pref="93" max="-2" attributes="0"/>
-                          <Component id="txtNomeConsumidorFinal" min="-2" pref="145" max="-2" attributes="0"/>
+                          <Component id="txtIniciaisCliente" min="-2" pref="88" max="-2" attributes="0"/>
+                          <Component id="lbCliente" max="32767" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="txtNomeConsumidorFinal" min="-2" pref="110" max="-2" attributes="0"/>
+                          <Component id="lbCliente1" min="-2" pref="87" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                               <Component id="lbClienteConsumidorFinal" min="-2" pref="64" max="-2" attributes="0"/>
-                              <EmptySpace max="32767" attributes="0"/>
+                              <EmptySpace pref="31" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="txtNifClientePesquisa" max="32767" attributes="0"/>

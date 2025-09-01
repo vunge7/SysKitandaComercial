@@ -255,6 +255,26 @@ public class TipoProdutosController implements EntidadeFactory
         return lista;
 
     }
+    
+    public Vector<String> getVector1()
+    {
+        String FIND_ALL = "SELECT designacao FROM tb_tipo_produto WHERE fk_familia <> 1 ORDER BY designacao ASC";
+        ResultSet result = conexao.executeQuery( FIND_ALL );
+        Vector<String> lista = new Vector<>();
+        try
+        {
+            while ( result.next() )
+            {
+                lista.add( result.getString( "designacao" ) );
+            }
+        }
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
+        }
+        return lista;
+
+    }
 
     public Vector<String> getVectorDesignacao()
     {

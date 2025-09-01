@@ -19,7 +19,7 @@ import javax.persistence.EntityManagerFactory;
 
 /**
  *
- * @author lenovo
+ * @author marti
  */
 public class RegimeJpaController implements Serializable
 {
@@ -229,7 +229,7 @@ public class RegimeJpaController implements Serializable
             Root<Regime> rt = cq.from( Regime.class );
             cq.select( em.getCriteriaBuilder().count( rt ) );
             Query q = em.createQuery( cq );
-            return ( ( Long ) q.getSingleResult() ).intValue();
+            return ( (Long) q.getSingleResult() ).intValue();
         }
         finally
         {

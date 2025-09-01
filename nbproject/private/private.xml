@@ -17,6 +17,7 @@
             <file>file:/Users/macpro/Desktop/SYS_KITANDA_AGT_V_1_1_9/src/visao/ProdutoVisao.java</file>
             <file>file:/Users/macpro/Desktop/SYS_KITANDA_AGT_V_1_1_9/src/dao/StockDao.java</file>
         </group>
+<<<<<<< HEAD
         <group>
             <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/util/JPAEntityMannagerFactoryUtil.java</file>
             <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/visao/MenuPrincipalVisao.java</file>
@@ -24,5 +25,8 @@
             <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/util/DVML.java</file>
             <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/util/BDConexao.java</file>
         </group>
+=======
+        <group/>
+>>>>>>> 97627d5f4cb82e96180510ee8635bbbf7daac1b1
     </open-files>
 </project-private>

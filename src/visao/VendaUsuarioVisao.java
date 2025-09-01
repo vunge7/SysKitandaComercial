@@ -1124,20 +1124,19 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtIniciaisCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(lbCliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(6, 6, 6)))
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbCliente1, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtNomeConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtIniciaisCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbCliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtNomeConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbCliente1, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addGap(6, 6, 6)
                         .addComponent(lbClienteConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE))
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addComponent(txtNifClientePesquisa)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
@@ -4249,9 +4248,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             // Salvar a venda e obter o ID
             idVendaGerada = vendasController.salvarRetornaID( venda );
 //            venda.setHashCod( MetodosUtil.criptografia_hash( vendasController.findById( idVendaGerada), getGrossTotal().doubleValue(), conexaoTransaction ) );
-
-            vendasController.actualizar_hash_and_assinatura( idVendaGerada, getGrossTotal().doubleValue() );
-
+           
+            vendasController.actualizar_hash_and_assinatura( idVendaGerada, getGrossTotal().doubleValue());
+            
             if ( idVendaGerada == null || idVendaGerada == 0 )
             {
                 throw new Exception( "Falha ao obter o ID da venda gravada." );
@@ -4280,14 +4279,16 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
             // Finaliza transação
             DocumentosController.commitTransaction( conexaoTransactionLocal );
+
             JOptionPane.showMessageDialog( null, "Factura efectuada com sucesso!" );
-            imprimir_factura( idVendaGerada, conexaoTransactionLocal ); // Imprime a factura
+//            imprimir_factura( idVendaGerada ); // Imprime a factura
 
         }
         catch ( Exception e )
         {
 
             DocumentosController.rollBackTransaction( conexaoTransactionLocal );
+            e.printStackTrace();
             JOptionPane.showMessageDialog( null, "Erro ao processar a venda: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE );
         }
         finally
@@ -4295,6 +4296,16 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             conexaoTransactionLocal.close();
         }
 
+        // fora do try-catch da transação
+        try
+        {
+            imprimir_factura( idVendaGerada );
+        }
+        catch ( Exception ex )
+        {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog( null, "Erro ao imprimir factura: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE );
+        }
     }
 
 //    private static TbVenda construirVenda()
@@ -4365,19 +4376,16 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //
 //        return venda;
 //    }
-    private static Date getDataVencimentoFr()
-    {
-
-        if ( ( getIdDocumento() == DVML.DOC_FACTURA_PROFORMA_PP ) || ( getIdDocumento() == DVML.DOC_FACTURA_FT ) )
-        {
-            return dc_data_vencimento.getDate();
-        }
-        else
-        {
+    
+    private static Date getDataVencimentoFr(){
+        
+        if((getIdDocumento() == DVML.DOC_FACTURA_PROFORMA_PP ) ||( getIdDocumento() == DVML.DOC_FACTURA_FT)){
+        return dc_data_vencimento.getDate();}
+        else {
             return new Date();
         }
     }
-
+    
     private static TbVenda construirVenda()
     {
         TbVenda venda = new TbVenda();
@@ -4618,24 +4626,28 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         }
     }
 
-    private static void imprimir_factura( int cod_venda, BDConexao conexaoParm )
+    private static void imprimir_factura( int cod_venda )
     {
 
+        BDConexao conexoaLocal = new BDConexao();
         limpar();
         remover_all_produto();
         accao_cliente();
         limpar_consumidor_final();
+
         txtQuatindade.setText( "1" );
         txtIniciaisCliente.requestFocus();
-        txtQuantidadeStock.setText( String.valueOf( conexaoParm.getQtdExistenteStock( getCodigoProduto(), getCodigoArmazem() ) ) );
+        txtQuantidadeStock.setText( String.valueOf( conexoaLocal.getQtdExistenteStock( getCodigoProduto(), getCodigoArmazem() ) ) );
+
         List<TbProduto> lista_produto_isentos = getProdutosIsentos();
         String motivos_isentos = MetodosUtil.getMotivoIsensaoProdutos( lista_produto_isentos );
+        conexoaLocal.close();
         int numeroVias = (int) Double.parseDouble( spnCopia.getValue().toString() );
 
         for ( int i = 1; i <= numeroVias; i++ )
         {
             String via;
-            switch ( i )
+            switch (i)
             {
                 case 1:
                     via = "Original";
@@ -5119,8 +5131,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getValorComImposto( double qtd, double taxa, double preco_venda, double desconto )
     {
-        double subtotal_linha = ( preco_venda * qtd );
-        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
+        double subtotal_linha = (preco_venda * qtd);
+        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
         double valor_iva = 1 + ( taxa / 100 );//
         return ( ( subtotal_linha - desconto_valor ) * valor_iva );
 
@@ -5134,16 +5146,16 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getValorIliquido( double qtd, double preco_venda, double desconto )
     {
-        double subtotal_linha = ( preco_venda * qtd );
-        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
+        double subtotal_linha = (preco_venda * qtd);
+        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
         return ( ( subtotal_linha - desconto_valor ) );
 
     }
 
     private static double getValorComImpostoIva( double qtd, double taxa, double preco_venda, double desconto )
     {
-        double subtotal_linha = ( preco_venda * qtd );
-        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
+        double subtotal_linha = (preco_venda * qtd);
+        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
         double valor_iva = 1 + ( taxa / 100 );//
         return ( ( subtotal_linha - desconto_valor ) * valor_iva );
 
@@ -5151,9 +5163,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getValorComRetencao( double qtd, double ret, double preco_venda, double desconto )
     {
-        double subtotal_linha = ( preco_venda * qtd );
-        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
-        double valor_ret = ( ( ( subtotal_linha - desconto_valor ) * ret ) / 100 );//
+        double subtotal_linha = (preco_venda * qtd);
+        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
+        double valor_ret = (( ( subtotal_linha - desconto_valor ) * ret ) / 100);//
         return ( valor_ret );
 
     }
@@ -5177,8 +5189,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getRET( double qtd, double taxa_r, double preco_venda, double desconto )
     {
-        double subtotal_linha = ( preco_venda * qtd );
-        double valor_ret = ( taxa_r / 100 );//
+        double subtotal_linha = (preco_venda * qtd);
+        double valor_ret = (taxa_r / 100);//
         return ( ( subtotal_linha - desconto ) * valor_ret );
 
     }
@@ -5207,7 +5219,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private void actualizar_abreviacao()
     {
 
-        switch ( getIdDocumento() )
+        switch (getIdDocumento())
         {
             case DVML.DOC_FACTURA_RECIBO_FR:
                 if ( ck_A4.isSelected() )
@@ -5590,7 +5602,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             if ( taxa != 0 )
             {
                 desconto_valor_linha = ( ( valor_percentagem ) / 100 );
-                double valor_unitario = ( preco_unitario * qtd );
+                double valor_unitario = (preco_unitario * qtd);
                 incidencia += ( ( valor_unitario ) - ( valor_unitario * desconto_valor_linha ) );
 
             }
@@ -5615,7 +5627,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             // a incidência só é aplicável ao produtos sujeitos a iva 
             if ( taxa != 0 )
             {
-                double valor_unitario = ( preco_unitario * qtd );
+                double valor_unitario = (preco_unitario * qtd);
                 desconto_valor_linha = valor_unitario * ( ( valor_percentagem ) / 100 );
                 imposto += ( ( valor_unitario - desconto_valor_linha ) * ( taxa / 100 ) );
 
@@ -5681,7 +5693,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             // a incidência só é aplicável ao produtos sujeitos a iva 
             if ( taxa != 0 )
             {
-                double valor_unitario = ( preco_unitario * qtd );
+                double valor_unitario = (preco_unitario * qtd);
 
                 desconto_valor_linha = valor_unitario * ( ( valor_percentagem ) / 100 );
                 valor_taxa = ( valor_unitario - desconto_valor_linha ) / taxa;
@@ -5710,7 +5722,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             if ( taxa == 0 )
             {
                 desconto_valor_linha = ( ( valor_percentagem ) / 100 );
-                double valor_unitario = ( preco_unitario * qtd );
+                double valor_unitario = (preco_unitario * qtd);
                 incidencia_isento += ( ( valor_unitario ) - ( valor_unitario * desconto_valor_linha ) );
 
             }
@@ -5732,7 +5744,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             qtd = Double.parseDouble( modelo.getValueAt( i, 4 ).toString() );
             double valor_percentagem = Double.parseDouble( modelo.getValueAt( i, 5 ).toString() );
             desconto_valor_linha = ( ( valor_percentagem ) / 100 );
-            double valor_unitario = ( preco_unitario * qtd );
+            double valor_unitario = (preco_unitario * qtd);
             desconto_comercial += ( valor_unitario * desconto_valor_linha );
 
         }
@@ -5749,7 +5761,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getTotalAOARetencoes()
     {
-        double valores = ( getTotalRetencao1() );
+        double valores = (getTotalRetencao1());
         return ( valores );
     }
 
@@ -5795,7 +5807,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         Documento documento_local = (Documento) documentosController.findById( getIdDocumento() );
         String abreviacao_local = documento_local.getAbreviacao();
 
-        switch ( abreviacao_local )
+        switch (abreviacao_local)
         {
             case "FT":
                 return "Facturamos o valor de: ";
@@ -6054,10 +6066,16 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             txtCodigoProduto.requestFocus();
 
         }
-        else
+        else if ( focus.equalsIgnoreCase( "Codigo de Barra" ) )
         {
 
             txtCodigoBarra.requestFocus();
+
+        }
+        else
+        {
+
+            txtCodigoManual.requestFocus();
 
         }
     }

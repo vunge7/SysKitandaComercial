@@ -123,6 +123,7 @@ public class ConfiguracoesVisao extends javax.swing.JDialog
         lbClienteConsumidorFinal6 = new javax.swing.JLabel();
         rbNao_lugar = new javax.swing.JRadioButton();
         rbSim_lugar = new javax.swing.JRadioButton();
+        rbCM = new javax.swing.JRadioButton();
         jPanel4 = new javax.swing.JPanel();
         lbClienteConsumidorFinal3 = new javax.swing.JLabel();
         rbMostrar = new javax.swing.JRadioButton();
@@ -218,7 +219,7 @@ public class ConfiguracoesVisao extends javax.swing.JDialog
         rbCB.setText("Codigo de Barra");
 
         jLabel16.setFont(new java.awt.Font("Lucida Grande", 1, 16)); // NOI18N
-        jLabel16.setText("Cod.Padrão:");
+        jLabel16.setText("C.Padrão:");
 
         buttonGroup3.add(rbFacturaRecibo);
         rbFacturaRecibo.setFont(new java.awt.Font("Lucida Sans Typewriter", 0, 12)); // NOI18N
@@ -356,6 +357,9 @@ public class ConfiguracoesVisao extends javax.swing.JDialog
             }
         });
 
+        buttonGroup2.add(rbCM);
+        rbCM.setText("Codigo Manual");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -368,9 +372,11 @@ public class ConfiguracoesVisao extends javax.swing.JDialog
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(jLabel16)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(rbCI, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(rbCI, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(rbCB, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(rbCB, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(rbCM, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(lbClienteConsumidorFinal2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -393,8 +399,8 @@ public class ConfiguracoesVisao extends javax.swing.JDialog
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(txtPrazoProforma)
-                                    .addComponent(jLabel32, javax.swing.GroupLayout.PREFERRED_SIZE, 98, Short.MAX_VALUE))))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(jLabel32, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE))))
+                        .addGap(24, 24, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -404,7 +410,7 @@ public class ConfiguracoesVisao extends javax.swing.JDialog
                                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel2)
                                     .addGroup(jPanel3Layout.createSequentialGroup()
-                                        .addGap(0, 0, Short.MAX_VALUE)
+                                        .addGap(0, 48, Short.MAX_VALUE)
                                         .addComponent(rbA4)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                         .addComponent(rbA6)
@@ -491,7 +497,8 @@ public class ConfiguracoesVisao extends javax.swing.JDialog
                                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(rbCI)
-                                    .addComponent(rbCB))))
+                                    .addComponent(rbCB)
+                                    .addComponent(rbCM))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel20)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -966,7 +973,7 @@ public class ConfiguracoesVisao extends javax.swing.JDialog
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 515, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -1228,6 +1235,7 @@ public class ConfiguracoesVisao extends javax.swing.JDialog
     public static javax.swing.JRadioButton rbActivo;
     private javax.swing.JRadioButton rbCB;
     private javax.swing.JRadioButton rbCI;
+    private javax.swing.JRadioButton rbCM;
     public static javax.swing.JRadioButton rbDesactivar;
     public static javax.swing.JRadioButton rbDesactivo;
     public static javax.swing.JRadioButton rbFactura;
@@ -1628,11 +1636,20 @@ public class ConfiguracoesVisao extends javax.swing.JDialog
         {
             rbCI.setSelected( true );
             rbCB.setSelected( false );
+            rbCM.setSelected( false );
+//            ProdutoVisao.bloquearCampoCodBarra();
+        }
+        else if ( focus.equalsIgnoreCase( "Codigo de Barra" ) )
+        {
+            rbCI.setSelected( false );
+            rbCB.setSelected( true );
+            rbCM.setSelected( false );
 //            ProdutoVisao.bloquearCampoCodBarra();
         }
         else
         {
-            rbCB.setSelected( true );
+            rbCM.setSelected( true );
+            rbCB.setSelected( false );
             rbCI.setSelected( false );
         }
     }

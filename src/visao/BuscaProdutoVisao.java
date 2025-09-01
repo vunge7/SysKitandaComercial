@@ -346,6 +346,16 @@ public class BuscaProdutoVisao extends javax.swing.JDialog
                 dispose();
 
             }
+            else if ( DVML.JANELA_SAIDA == cod_janela )
+            {
+
+                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
+                int linha = tabela_busca.getSelectedRow();
+                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
+                SaidaUsuarioVisao.accao_codigo_interno_enter_busca_exterior( codigo );
+                dispose();
+
+            }
             else if ( DVML.JANELA_VENDA_POS == cod_janela )
             {
 

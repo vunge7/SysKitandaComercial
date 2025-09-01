@@ -342,6 +342,25 @@ public class ProdutosController implements EntidadeFactory
         return lista_mesas;
 
     }
+    public Vector<String> getVectorStocavel()
+    {
+        String FIND_ALL = "SELECT designacao FROM tb_produto WHERE stocavel = true ORDER BY codigo ASC";
+        ResultSet result = conexao.executeQuery( FIND_ALL );
+        Vector<String> lista_mesas = new Vector<>();
+        try
+        {
+            while ( result.next() )
+            {
+                lista_mesas.add( result.getString( "designacao" ) );
+            }
+        }
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
+        }
+        return lista_mesas;
+
+    }
     public Vector<String> getVectorDesignacao()
     {
         String FIND_ALL = "SELECT designacao FROM tb_produto ORDER BY designacao ASC";
@@ -611,6 +630,28 @@ public class ProdutosController implements EntidadeFactory
         return produto;
 
     }
+    
+    public TbProduto findByCodManual1( String codigo_manual )
+    {
+
+        String FIND_BY_COD_BARRA = "SELECT * FROM tb_produto WHERE codigo_manual = '" + codigo_manual + "'";
+        ResultSet result = conexao.executeQuery( FIND_BY_COD_BARRA );
+        TbProduto produto = null;
+
+        try
+        {
+            if ( result.next() )
+            {
+                produto = new TbProduto();
+                setResultProduto( result, produto );
+            }
+        }
+        catch ( SQLException e )
+        {
+        }
+        return produto;
+
+    }
 
     public TbProduto findByCodBarra1( int codBarra )
     {
@@ -795,7 +836,6 @@ public class ProdutosController implements EntidadeFactory
 
     public boolean existProdutoByCodigoBarra( String codBarra )
     {
-
         String sql = "SELECT p.codigo FROM tb_produto p WHERE p.codBarra = '" + codBarra + "'";
         ResultSet rs = conexao.executeQuery( sql );
 
@@ -809,6 +849,36 @@ public class ProdutosController implements EntidadeFactory
 
         return false;
     }
+    
+//    public boolean existProdutoByCodigoManual( String codigo_manual )
+//    {
+//        String sql = "SELECT p.codigo FROM tb_produto p WHERE p.codigo_manual = " + codigo_manual + "";
+//        ResultSet rs = conexao.executeQuery( sql );
+//
+//        try
+//        {
+//            return rs.next();
+//        }
+//        catch ( SQLException e )
+//        {
+//        }
+//
+//        return false;
+//    }
+    
+    public boolean existProdutoByCodigoManual(String codigo_manual) {
+    String sql = "SELECT 1 FROM tb_produto p WHERE p.codigo_manual = ?";
+    try (PreparedStatement ps = conexao.getConnection().prepareStatement(sql)) {
+        ps.setString(1, codigo_manual);
+        try (ResultSet rs = ps.executeQuery()) {
+            return rs.next(); // true se encontrou
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+
 
     public boolean existProdutoByDesignacaoExcepto( int idProduto, String designacao )
     {
