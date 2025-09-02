@@ -145,6 +145,7 @@ public class ProdutosVisao extends javax.swing.JFrame
 //        servico_produto();
         actualizarRetencaoForm();
         proximo_codigo( produtosController );
+        proximo_codigo_manual(produtosController );
         busca_permissao();
         txtCodigoProduto.setDocument( new PermitirNumeros() );
         jcDataFabrico.setDate( new Date() );
@@ -1063,6 +1064,7 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         txtCodigoManual.setBackground(new java.awt.Color(4, 154, 3));
         txtCodigoManual.setForeground(new java.awt.Color(255, 255, 255));
+        txtCodigoManual.setText("0");
 
         lbPrecoVenda1.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         lbPrecoVenda1.setText("Preco Grosso:");
@@ -2316,6 +2318,7 @@ public class ProdutosVisao extends javax.swing.JFrame
                     produtosControllerLocal.actualizar( produto );
                     DocumentoDao.commitTransaction( conexaoTransaction );
                     proximo_codigo( produtosControllerLocal );
+                    proximo_codigo_manual(produtosControllerLocal );
                     conexaoTransaction.close();
                     JOptionPane.showMessageDialog( null, "Produto actualizado com sucesso!" );
 //                    procedimento_limpar();
@@ -2419,6 +2422,7 @@ public class ProdutosVisao extends javax.swing.JFrame
 
                         DocumentoDao.commitTransaction( conexaoTransaction );
                         proximo_codigo( produtosControllerLocal );
+                        proximo_codigo_manual( produtosControllerLocal );
 
                         conexaoTransaction.close();
                         JOptionPane.showMessageDialog( null, "Dados salvos com sucesso!", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
@@ -2489,6 +2493,7 @@ public class ProdutosVisao extends javax.swing.JFrame
                         DocumentoDao.commitTransaction( conexaoTransaction );
                         JOptionPane.showMessageDialog( null, "Dados alterados com sucesso!", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
                         proximo_codigo( produtosControllerLocal );
+                        proximo_codigo_manual( produtosControllerLocal );
                         conexaoTransaction.close();
                     }
                     else
@@ -3349,6 +3354,28 @@ public class ProdutosVisao extends javax.swing.JFrame
         {
             jLabelCodProduto.setText( "Cod. Prod: " );
             txtCodigoBarra.setText( "" );
+        }
+    }
+    
+    private void proximo_codigo_manual( ProdutosController produtosControllerLocal )
+    {
+        try
+        {
+            TbProduto lastProduto = produtosControllerLocal.getLastProduto();
+            int codProduto = 1;
+            if ( Objects.nonNull( lastProduto ) )
+            {
+                codProduto = produtosControllerLocal.getLastProduto().getCodigo() + 1;
+//                txtCodigoBarra.setText( String.valueOf( codProduto ) );
+            }
+
+            jLabelCodProduto.setText( "Cod. Prod: " + codProduto );
+            txtCodigoManual.setText( String.valueOf( codProduto ) );
+        }
+        catch ( Exception e )
+        {
+            jLabelCodProduto.setText( "Cod. Prod: " );
+            txtCodigoManual.setText( "" );
         }
     }
 
