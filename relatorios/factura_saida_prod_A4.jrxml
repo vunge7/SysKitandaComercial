@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="factura" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="4e46d387-0c6c-4a45-bb3e-9f070c59d6d9">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="24"/>
+	<property name="ireport.y" value="209"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="COD_SAIDA" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[SELECT
+     tb_item_saidas.`quantidade` AS tb_item_saidas_quantidade,
+     tb_dados_instituicao.`nome` AS tb_dados_instituicao_nome,
+     tb_dados_instituicao.`telefone` AS tb_dados_instituicao_telefone,
+     tb_dados_instituicao.`enderecos` AS tb_dados_instituicao_enderecos,
+     tb_dados_instituicao.`email` AS tb_dados_instituicao_email,
+     tb_dados_instituicao.`nif` AS tb_dados_instituicao_nif,
+     tb_saidas_produtos.`pk_saidas_produtos` AS tb_saidas_produtos_pk_saidas_produtos,
+     tb_saidas_produtos.`data_saida` AS tb_saidas_produtos_data_saida,
+     tb_saidas_produtos.`obs` AS tb_saidas_produtos_obs,
+     tb_saidas_produtos.`nome_funcionario` AS tb_saidas_produtos_nome_funcionario,
+     tb_saidas_produtos.`hora_saida` AS tb_saidas_produtos_hora_saida,
+     tb_produto.`designacao` AS tb_produto_designacao,
+     tb_usuario.`nome` AS tb_usuario_nome,
+     tb_produto.`codigo` AS tb_produto_codigo,
+     tb_saidas_produtos.`documento` AS tb_saidas_produtos_documento
+FROM
+     `tb_produto` tb_produto INNER JOIN `tb_item_saidas` tb_item_saidas ON tb_produto.`codigo` = tb_item_saidas.`fk_produtos`
+     INNER JOIN `tb_saidas_produtos` tb_saidas_produtos ON tb_item_saidas.`fk_saidas_produtos` = tb_saidas_produtos.`pk_saidas_produtos`
+     INNER JOIN `tb_usuario` tb_usuario ON tb_saidas_produtos.`fk_usuario` = tb_usuario.`codigo`,
+     `tb_dados_instituicao` tb_dados_instituicao
+WHERE
+     tb_saidas_produtos.`pk_saidas_produtos` = $P{COD_SAIDA}]]>
+	</queryString>
+	<field name="tb_item_saidas_quantidade" class="java.lang.Long"/>
+	<field name="tb_dados_instituicao_nome" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_telefone" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_enderecos" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_email" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_nif" class="java.lang.String"/>
+	<field name="tb_saidas_produtos_pk_saidas_produtos" class="java.lang.Long"/>
+	<field name="tb_saidas_produtos_data_saida" class="java.sql.Date"/>
+	<field name="tb_saidas_produtos_obs" class="java.lang.String"/>
+	<field name="tb_saidas_produtos_nome_funcionario" class="java.lang.String"/>
+	<field name="tb_saidas_produtos_hora_saida" class="java.sql.Time"/>
+	<field name="tb_produto_designacao" class="java.lang.String"/>
+	<field name="tb_usuario_nome" class="java.lang.String"/>
+	<field name="tb_produto_codigo" class="java.lang.Integer"/>
+	<field name="tb_saidas_produtos_documento" class="java.lang.String"/>
+	<variable name="SOMA_TOTAL" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<background>
+		<band height="687">
+			<staticText>
+				<reportElement uuid="2040b293-251f-4e62-8e1c-415db8f89356" x="-19" y="382" width="19" height="160"/>
+				<textElement rotation="Left">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[processado por computador ]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="bdfd60a1-bb90-4860-bce9-93df95a620e8" x="0" y="587" width="534" height="100"/>
+				<box leftPadding="10"/>
+				<textElement>
+					<font fontName="Times New Roman" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_saidas_produtos_obs}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="282620a3-cfd7-4b6b-bff9-811c864b4314" x="1" y="562" width="87" height="14"/>
+				<box leftPadding="2"/>
+				<textElement>
+					<font fontName="Times New Roman" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Motivo da Saída :]]></text>
+			</staticText>
+		</band>
+	</background>
+	<pageHeader>
+		<band height="170" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="120e976d-f835-43bf-964a-53b38f5e1918" key="staticText-5" x="1" y="145" width="73" height="20"/>
+				<textElement>
+					<font fontName="Times New Roman" size="12" isBold="true" isItalic="false" isStrikeThrough="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Original]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement uuid="47ced854-dec3-4415-9ef3-ad9e4abb0b43" key="rectangle-2" x="308" y="60" width="0" height="0"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="34709e4a-b1c5-44e3-bb6d-c808711d9e4f" key="staticText-5" x="1" y="109" width="87" height="31"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Cod. Saída Nº: ]]></text>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="4f5d373e-ee2d-4768-a773-0f88cd0dbe3b" key="textField-19" x="88" y="109" width="105" height="31"/>
+				<box topPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true" isItalic="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_saidas_produtos_pk_saidas_produtos}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="566b5312-5409-4ae7-93ea-acf636e4a452" x="12" y="31" width="535" height="26"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_enderecos}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="30640f26-6d2a-4f25-b399-4ea869beefb4" x="12" y="59" width="535" height="26"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_telefone}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="eac33a54-0eaa-4958-aebc-e599f8f82cd8" x="10" y="12" width="535" height="20"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="Times New Roman" size="17" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="be67fae4-7902-47af-93b6-f33a4b951810" x="12" y="45" width="535" height="27"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_nif}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="e00b72d7-b7e6-4d33-a4d3-98973e2a6fa4" key="textField-19" x="348" y="109" width="122" height="31"/>
+				<box topPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true" isItalic="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_saidas_produtos_documento}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="20a4f00b-7667-4dfa-b266-5e4f43f47f38" key="staticText-5" x="213" y="109" width="135" height="31"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Referência Documento: ]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<rectangle radius="0">
+				<reportElement uuid="ee104516-d53d-4600-88c4-1f917859c8b9" key="element-22" mode="Opaque" x="1" y="2" width="534" height="17" forecolor="#000000" backcolor="#000000"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineStyle="Solid"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="1b79783a-f931-4c3b-8de8-7e518d50a6ed" key="element-91" x="0" y="3" width="39" height="16" forecolor="#FFFFFF"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[N.º]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d457d5b0-d027-4536-b71b-01802ca4089d" key="element-94" x="112" y="3" width="358" height="16" forecolor="#FFFFFF"/>
+				<box leftPadding="10" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Produto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="260be4eb-d24a-4d7a-9d36-502bce442841" key="element-95" x="470" y="3" width="64" height="16" forecolor="#FFFFFF"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Qtd Saida]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d26ff60c-b9a1-4252-b1d6-6d5b803e645b" key="element-93" x="39" y="3" width="73" height="16" forecolor="#FFFFFF"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cod.Prod.]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="18" splitType="Stretch">
+			<line>
+				<reportElement uuid="3c950108-4039-46c8-8228-56b7c030af12" key="line" positionType="FixRelativeToBottom" x="0" y="17" width="535" height="1" forecolor="#808080"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="8989eb08-7f21-470d-865f-1514f788d8c6" key="textField-12" x="1" y="1" width="38" height="15"/>
+				<textElement textAlignment="Left">
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="false">
+				<reportElement uuid="a7e6e017-161e-418d-ad6b-cdf7ec462365" key="textField-16" x="112" y="1" width="358" height="15"/>
+				<box leftPadding="10"/>
+				<textElement textAlignment="Left">
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_produto_designacao}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0" isBlankWhenNull="false">
+				<reportElement uuid="77b3a188-cc4f-411b-be61-b45e05f8a2fa" key="textField-17" x="470" y="2" width="64" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_item_saidas_quantidade}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="63a6ca01-2734-4f3d-81c6-a213a9b4ee8b" key="textField-15" x="39" y="1" width="73" height="15"/>
+				<box leftPadding="15"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_produto_codigo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="114" splitType="Stretch">
+			<line>
+				<reportElement uuid="2d16d2f2-4906-4e8e-a190-beda1faf1d53" key="line" x="0" y="67" width="535" height="1" forecolor="#000000"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="a231f530-3677-422e-8c4e-24553845b94f" key="textField-13" x="91" y="44" width="137" height="17"/>
+				<box topPadding="2"/>
+				<textElement>
+					<font fontName="Times New Roman" isItalic="true" pdfFontName="Helvetica-Oblique"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_usuario_nome}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="7162e1f1-4aa9-4ab7-a689-5a8852237468" key="staticText-6" x="1" y="46" width="87" height="17"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[OPERADOR     ...:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b5b501ab-9df9-4916-9563-84f4eb20f4a7" key="staticText-6" x="1" y="11" width="87" height="17"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Data da Saida..:]]></text>
+			</staticText>
+			<textField pattern="d/M/yyyy" isBlankWhenNull="false">
+				<reportElement uuid="018cd024-8d8c-48b3-bafc-88d93349e900" key="textField-13" x="91" y="10" width="137" height="17"/>
+				<box topPadding="2"/>
+				<textElement>
+					<font fontName="Times New Roman" isItalic="false" pdfFontName="Helvetica-Oblique"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_saidas_produtos_data_saida}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="c83fd388-1662-41d9-a047-6795b594f4dd" key="staticText-6" x="1" y="28" width="87" height="17"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Hora...:]]></text>
+			</staticText>
+			<textField pattern="HH:mm:ss" isBlankWhenNull="false">
+				<reportElement uuid="1a4fac13-b394-4457-9676-c68d0eba32b1" key="textField-13" x="91" y="28" width="137" height="17"/>
+				<box topPadding="2"/>
+				<textElement>
+					<font fontName="Times New Roman" isItalic="false" pdfFontName="Helvetica-Oblique"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_saidas_produtos_hora_saida}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="179a37b0-f5aa-4458-b5ee-21cae69c62d9" key="staticText-5" x="320" y="43" width="85" height="18"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Responsável:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="b8c6b795-9603-4a88-808c-eb033ef38cab" x="389" y="43" width="145" height="18"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_saidas_produtos_nome_funcionario}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="45f1d90d-3c31-48b0-8da9-1601361537aa" x="1" y="68" width="534" height="21"/>
+				<textElement textAlignment="Justified" verticalAlignment="Bottom" markup="none">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Processado por programa validado nº 258/AGT/2020 Kitanda / dvml]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6daf76af-21f9-406d-a51a-6bad8ac1fe71" x="3" y="89" width="345" height="10"/>
+				<textElement>
+					<font fontName="Times New Roman" size="8"/>
+				</textElement>
+				<text><![CDATA[Software de gestão comercial, desenvolvido e assistido pela dvml comercial, lda. Tel: 921734126]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+</jasperReport>

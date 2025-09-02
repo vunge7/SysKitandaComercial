@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PRINC_RELATORIO_SAIDAS" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="323ca26f-bd01-440a-8503-e170caaea503">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUB_PARM_DATA_INICIO" class="java.util.Date"/>
+	<parameter name="SUB_PARM_DATA_FIM" class="java.util.Date"/>
+	<queryString>
+		<![CDATA[SELECT
+     deposito_bancario.`pk_deposito` AS deposito_bancario_pk_deposito,
+     deposito_bancario.`data` AS deposito_bancario_data,
+     deposito_bancario.`hora` AS deposito_bancario_hora,
+     deposito_bancario.`nborderaux` AS deposito_bancario_nborderaux,
+     deposito_bancario.`valor` AS deposito_bancario_valor,
+     deposito_bancario.`fk_banco` AS deposito_bancario_fk_banco,
+     deposito_bancario.`fk_usuario` AS deposito_bancario_fk_usuario,
+     deposito_bancario.`descricao` AS deposito_bancario_descricao,
+     tb_dados_instituicao.`idDadosInsitiuicao` AS tb_dados_instituicao_idDadosInsitiuicao,
+     tb_dados_instituicao.`nome` AS tb_dados_instituicao_nome,
+     tb_dados_instituicao.`telefone` AS tb_dados_instituicao_telefone,
+     tb_dados_instituicao.`enderecos` AS tb_dados_instituicao_enderecos,
+     tb_dados_instituicao.`email` AS tb_dados_instituicao_email,
+     tb_dados_instituicao.`nif` AS tb_dados_instituicao_nif,
+     tb_dados_instituicao.`cont` AS tb_dados_instituicao_cont,
+     tb_dados_instituicao.`conta_bancaria1` AS tb_dados_instituicao_conta_bancaria1,
+     tb_dados_instituicao.`conta_bancaria2` AS tb_dados_instituicao_conta_bancaria2,
+     tb_dados_instituicao.`conta_bancaria3` AS tb_dados_instituicao_conta_bancaria3,
+     tb_dados_instituicao.`conta_bancaria4` AS tb_dados_instituicao_conta_bancaria4,
+     tb_dados_instituicao.`conta_bancaria5` AS tb_dados_instituicao_conta_bancaria5,
+     tb_dados_instituicao.`conta_bancaria6` AS tb_dados_instituicao_conta_bancaria6,
+     tb_dados_instituicao.`director_geral` AS tb_dados_instituicao_director_geral,
+     tb_usuario.`codigo` AS tb_usuario_codigo,
+     tb_usuario.`nome` AS tb_usuario_nome,
+     tb_usuario.`senha` AS tb_usuario_senha,
+     tb_usuario.`status` AS tb_usuario_status,
+     tb_usuario.`dataNascimento` AS tb_usuario_dataNascimento,
+     tb_usuario.`telefone` AS tb_usuario_telefone,
+     tb_usuario.`email` AS tb_usuario_email,
+     tb_usuario.`endereco` AS tb_usuario_endereco,
+     tb_usuario.`codigo_sexo` AS tb_usuario_codigo_sexo,
+     tb_usuario.`userName` AS tb_usuario_userName,
+     tb_usuario.`idTipoUsuario` AS tb_usuario_idTipoUsuario,
+     tb_usuario.`sobreNome` AS tb_usuario_sobreNome,
+     tb_usuario.`idStatus` AS tb_usuario_idStatus,
+     tb_usuario.`dataUltimoAcesso` AS tb_usuario_dataUltimoAcesso,
+     tb_banco.`idBanco` AS tb_banco_idBanco,
+     tb_banco.`descrisao` AS tb_banco_descrisao,
+     tb_banco.`numero` AS tb_banco_numero,
+     tb_banco.`saldo_banco` AS tb_banco_saldo_banco
+FROM
+     `tb_usuario` tb_usuario INNER JOIN `deposito_bancario` deposito_bancario ON tb_usuario.`codigo` = deposito_bancario.`fk_usuario`
+     INNER JOIN `tb_banco` tb_banco ON deposito_bancario.`fk_banco` = tb_banco.`idBanco`,
+     `tb_dados_instituicao` tb_dados_instituicao
+WHERE
+     deposito_bancario.`data`  BETWEEN  $P{SUB_PARM_DATA_INICIO} AND  $P{SUB_PARM_DATA_FIM}]]>
+	</queryString>
+	<field name="deposito_bancario_pk_deposito" class="java.lang.Integer"/>
+	<field name="deposito_bancario_data" class="java.sql.Date"/>
+	<field name="deposito_bancario_hora" class="java.sql.Time"/>
+	<field name="deposito_bancario_nborderaux" class="java.lang.String"/>
+	<field name="deposito_bancario_valor" class="java.lang.Double"/>
+	<field name="deposito_bancario_fk_banco" class="java.lang.Integer"/>
+	<field name="deposito_bancario_fk_usuario" class="java.lang.Integer"/>
+	<field name="deposito_bancario_descricao" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_idDadosInsitiuicao" class="java.lang.Long"/>
+	<field name="tb_dados_instituicao_nome" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_telefone" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_enderecos" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_email" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_nif" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_cont" class="java.lang.Integer"/>
+	<field name="tb_dados_instituicao_conta_bancaria1" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_conta_bancaria2" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_conta_bancaria3" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_conta_bancaria4" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_conta_bancaria5" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_conta_bancaria6" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_director_geral" class="java.lang.String"/>
+	<field name="tb_usuario_codigo" class="java.lang.Integer"/>
+	<field name="tb_usuario_nome" class="java.lang.String"/>
+	<field name="tb_usuario_senha" class="java.lang.String"/>
+	<field name="tb_usuario_status" class="java.lang.String"/>
+	<field name="tb_usuario_dataNascimento" class="java.sql.Date"/>
+	<field name="tb_usuario_telefone" class="java.lang.String"/>
+	<field name="tb_usuario_email" class="java.lang.String"/>
+	<field name="tb_usuario_endereco" class="java.lang.String"/>
+	<field name="tb_usuario_codigo_sexo" class="java.lang.Integer"/>
+	<field name="tb_usuario_userName" class="java.lang.String"/>
+	<field name="tb_usuario_idTipoUsuario" class="java.lang.Long"/>
+	<field name="tb_usuario_sobreNome" class="java.lang.String"/>
+	<field name="tb_usuario_idStatus" class="java.lang.Integer"/>
+	<field name="tb_usuario_dataUltimoAcesso" class="java.sql.Timestamp"/>
+	<field name="tb_banco_idBanco" class="java.lang.Integer"/>
+	<field name="tb_banco_descrisao" class="java.lang.String"/>
+	<field name="tb_banco_numero" class="java.lang.String"/>
+	<field name="tb_banco_saldo_banco" class="java.lang.Double"/>
+	<variable name="SOMA_TOTAL" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{deposito_bancario_valor}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="166" splitType="Stretch">
+			<textField pattern="EEEEE dd MMMMM yyyy" isBlankWhenNull="false">
+				<reportElement uuid="720a9369-42bf-4e7c-a742-e62973f1538d" key="textField-17" x="10" y="149" width="129" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="12" isItalic="true" pdfFontName="Helvetica-Oblique"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="c981da20-dfe6-4dd0-9365-7c15adbfdab4" key="textField-16" x="184" y="9" width="618" height="26"/>
+				<textElement>
+					<font fontName="Times New Roman" size="18" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_nome}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="5cb91268-2f7a-4563-a0f7-42ff60519b7d" key="textField-16" x="184" y="75" width="618" height="26"/>
+				<textElement>
+					<font fontName="Times New Roman" size="16" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_telefone}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="9037485f-2acc-4290-9a0d-447a2eba245a" key="textField-16" x="184" y="55" width="618" height="26"/>
+				<textElement>
+					<font fontName="Times New Roman" size="16" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_email}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="ca4a1628-b5e3-4252-840a-25e2d6d0413d" key="staticText-17" x="184" y="104" width="618" height="39" forecolor="#FF0000" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="16" isBold="true" isItalic="false" pdfFontName="Helvetica-BoldOblique"/>
+				</textElement>
+				<text><![CDATA[RELATÓRIO GERAL DE DEPÓSITOS BANCÁRIOS]]></text>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="a5e3b561-29d8-4340-b53a-dc0d23a359c1" key="textField-16" x="184" y="35" width="618" height="26"/>
+				<textElement>
+					<font fontName="Times New Roman" size="16" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_enderecos}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="21" splitType="Stretch">
+			<line>
+				<reportElement uuid="5097e04c-a9f8-4a5c-bdf6-2ed19014c3aa" key="line-2" x="659" y="15" width="78" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Dotted"/>
+				</graphicElement>
+			</line>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="2231d507-eac1-45ba-9799-eaeb7f7bfc3a" x="112" y="1" width="100" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{SUB_PARM_DATA_FIM}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="cde658e6-3c6b-4f72-89a6-d2b7907bc3b0" x="100" y="1" width="10" height="20"/>
+				<textElement/>
+				<text><![CDATA[à]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0b246882-bf0d-45ce-822d-a86e1580083d" x="8" y="1" width="22" height="20"/>
+				<textElement/>
+				<text><![CDATA[De]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="7379727c-cd84-4b2f-9f39-702a101b8852" x="30" y="1" width="67" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{SUB_PARM_DATA_INICIO}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
+				<reportElement uuid="721910d2-60bc-4161-89a8-5e82c5852afa" key="textField-15" x="698" y="-1" width="40" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="8" isItalic="true" pdfFontName="Helvetica-Oblique"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement uuid="ce65f87c-666f-4147-aba2-fee471aef7ae" key="textField-14" x="609" y="-1" width="89" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Times New Roman" size="8" isItalic="true" pdfFontName="Helvetica-Oblique"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pag. " + $V{PAGE_NUMBER} + " de "]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="17" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="020543b6-7a79-4a72-9bd0-706e1c8b86bc" mode="Opaque" x="0" y="0" width="47" height="17" backcolor="#CCCCCC"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="14"/>
+				</textElement>
+				<text><![CDATA[Nº.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="261751c6-f39d-4e76-9048-30c380294e8c" mode="Opaque" x="47" y="0" width="345" height="17" backcolor="#CCCCCC"/>
+				<box leftPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="14"/>
+				</textElement>
+				<text><![CDATA[MOTIVO  DO DEPÓSITO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8a921cc4-ecd0-493b-8e72-7641f123bd66" mode="Opaque" x="392" y="0" width="82" height="17" backcolor="#CCCCCC"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="14"/>
+				</textElement>
+				<text><![CDATA[DATA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="75af8019-e983-4058-8267-12e701217065" mode="Opaque" x="474" y="0" width="47" height="17" backcolor="#CCCCCC"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="14"/>
+				</textElement>
+				<text><![CDATA[HORA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9ea9c289-6906-429f-b991-44e076671f61" mode="Opaque" x="521" y="0" width="165" height="17" backcolor="#CCCCCC"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="14"/>
+				</textElement>
+				<text><![CDATA[USUÁRIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2eb61f9a-179e-4e36-8680-d166e784b74a" mode="Opaque" x="686" y="0" width="116" height="17" backcolor="#CCCCCC"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="14"/>
+				</textElement>
+				<text><![CDATA[VALOR]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField>
+				<reportElement uuid="3db06037-b0f2-4e3c-807e-8933161ec715" x="0" y="0" width="47" height="15"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{deposito_bancario_pk_deposito}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="2edf7870-e3bb-4404-89ce-c92ed8e95e7b" x="47" y="0" width="345" height="15"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{deposito_bancario_descricao}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="8c8940d1-63a0-4d75-8c65-3784289492a1" x="392" y="0" width="82" height="15"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{deposito_bancario_data}]]></textFieldExpression>
+			</textField>
+			<textField pattern="HH.mm">
+				<reportElement uuid="8aaafc68-0da6-469c-b332-26940ce5166d" x="474" y="0" width="47" height="15"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{deposito_bancario_hora}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="ea873e16-0d09-41f4-91a3-b35b10d0de33" x="521" y="0" width="165" height="15"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_usuario_nome}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="83f140bb-0bdf-4160-8115-68a510ac5224" x="686" y="0" width="116" height="15"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{deposito_bancario_valor}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="27" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="b82a90fe-63d7-4e01-bec5-d4815d74b40e" mode="Opaque" x="521" y="0" width="165" height="27" backcolor="#CCCCCC"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL GERAL]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="c92b3109-2783-44dc-8742-2be6f3bdafc5" x="686" y="0" width="116" height="27" forecolor="#FF0000"/>
+				<box>
+					<pen lineWidth="0.25" lineColor="#000000"/>
+					<topPen lineWidth="0.25" lineColor="#000000"/>
+					<leftPen lineWidth="0.25" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SOMA_TOTAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

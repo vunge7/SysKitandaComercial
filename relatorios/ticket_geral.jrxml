@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="factura_A5_1" language="groovy" pageWidth="200" pageHeight="450" columnWidth="180" leftMargin="10" rightMargin="10" topMargin="2" bottomMargin="20" isIgnorePagination="true" uuid="b0b956b1-8a40-4e81-9057-e608c1e7811d">
+	<property name="ireport.zoom" value="3.897434200000003"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="ID_PEDIDO" class="java.lang.Integer"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["../relatorios/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="AREA_ENVIO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+     tb_dados_instituicao.`nome` AS tb_dados_instituicao_nome,
+     tb_dados_instituicao.`telefone` AS tb_dados_instituicao_telefone,
+     tb_dados_instituicao.`enderecos` AS tb_dados_instituicao_enderecos,
+     tb_dados_instituicao.`email` AS tb_dados_instituicao_email,
+     tb_dados_instituicao.`nif` AS tb_dados_instituicao_nif,
+     tb_produto.`designacao` AS tb_produto_designacao,
+     tb_pedido.`pk_pedido` AS tb_pedido_pk_pedido,
+     tb_pedido.`data_pedido` AS tb_pedido_data_pedido,
+     tb_pedido.`hora_pedido` AS tb_pedido_hora_pedido,
+     tb_pedido.`status_pedido` AS tb_pedido_status_pedido,
+     tb_mesas.`designacao` AS tb_mesas_designacao,
+     tb_item_pedidos.`pk_item_pedidos` AS tb_item_pedidos_pk_item_pedidos,
+     tb_item_pedidos.`fk_lugares` AS tb_item_pedidos_fk_lugares,
+     tb_item_pedidos.`fk_produtos` AS tb_item_pedidos_fk_produtos,
+     tb_item_pedidos.`fk_pedidos` AS tb_item_pedidos_fk_pedidos,
+     tb_item_pedidos.`total_item` AS tb_item_pedidos_total_item,
+     tb_lugares.`designacao` AS tb_lugares_designacao,
+     tb_lugares.`pk_lugares` AS tb_lugares_pk_lugares,
+     tb_mesas.`pk_mesas` AS tb_mesas_pk_mesas,
+     tb_produto.`cozinha` AS tb_produto_cozinha
+FROM
+     `tb_pedido` tb_pedido INNER JOIN `tb_mesas` tb_mesas ON tb_pedido.`fk_mesas` = tb_mesas.`pk_mesas`
+     INNER JOIN `tb_item_pedidos` tb_item_pedidos ON tb_pedido.`pk_pedido` = tb_item_pedidos.`fk_pedidos`
+     INNER JOIN `tb_produto` tb_produto ON tb_item_pedidos.`fk_produtos` = tb_produto.`codigo`
+     INNER JOIN `tb_lugares` tb_lugares ON tb_item_pedidos.`fk_lugares` = tb_lugares.`pk_lugares`,
+     `tb_dados_instituicao` tb_dados_instituicao
+WHERE
+     tb_pedido.`pk_pedido` = $P{ID_PEDIDO} AND tb_produto.`cozinha` =  $P{AREA_ENVIO}
+
+GROUP BY  tb_lugares.`pk_lugares`]]>
+	</queryString>
+	<field name="tb_dados_instituicao_nome" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_telefone" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_enderecos" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_email" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_nif" class="java.lang.String"/>
+	<field name="tb_produto_designacao" class="java.lang.String"/>
+	<field name="tb_pedido_pk_pedido" class="java.lang.Long"/>
+	<field name="tb_pedido_data_pedido" class="java.sql.Date"/>
+	<field name="tb_pedido_hora_pedido" class="java.sql.Time"/>
+	<field name="tb_pedido_status_pedido" class="java.lang.Boolean"/>
+	<field name="tb_mesas_designacao" class="java.lang.String"/>
+	<field name="tb_item_pedidos_pk_item_pedidos" class="java.lang.Long"/>
+	<field name="tb_item_pedidos_fk_lugares" class="java.lang.Long"/>
+	<field name="tb_item_pedidos_fk_produtos" class="java.lang.Integer"/>
+	<field name="tb_item_pedidos_fk_pedidos" class="java.lang.Long"/>
+	<field name="tb_item_pedidos_total_item" class="java.lang.Double"/>
+	<field name="tb_lugares_designacao" class="java.lang.String"/>
+	<field name="tb_lugares_pk_lugares" class="java.lang.Long"/>
+	<field name="tb_mesas_pk_mesas" class="java.lang.Long"/>
+	<field name="tb_produto_cozinha" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="27">
+			<textField>
+				<reportElement uuid="61b39239-7935-42ed-b131-2b94b84613bb" x="8" y="17" width="57" height="10"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_mesas_designacao}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="16e39558-5506-41a1-a568-08993c26b839" x="8" y="0" width="100" height="17"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Pedido: ACTIVO]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="25" splitType="Stretch">
+			<subreport>
+				<reportElement uuid="89c03046-05e0-4518-8758-1143fb58bd9a" x="-8" y="0" width="200" height="25"/>
+				<subreportParameter name="AREA_ENVIO">
+					<subreportParameterExpression><![CDATA[$P{AREA_ENVIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PARM_MESA">
+					<subreportParameterExpression><![CDATA[$F{tb_mesas_pk_mesas}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PARM_LUGAR">
+					<subreportParameterExpression><![CDATA[$F{tb_lugares_pk_lugares}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="CODIGO_PEDIDO">
+					<subreportParameterExpression><![CDATA[$F{tb_item_pedidos_fk_pedidos}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_ticket_geral.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<lastPageFooter>
+		<band height="14">
+			<staticText>
+				<reportElement uuid="9bd59cf3-8e2f-435e-878c-b9a4c010361e" key="staticText-7" x="0" y="0" width="17" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
+				</textElement>
+				<text><![CDATA[Data:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy HH:mm:ss" isBlankWhenNull="false">
+				<reportElement uuid="591f2bef-715e-4647-9e4c-fe3a4237c884" key="textField" x="18" y="0" width="66" height="14"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+</jasperReport>

@@ -1,0 +1,907 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a734e970-9de5-4181-ad79-283b5962a04d">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="73"/>
+	<parameter name="CODIGO_COMPRAS" class="java.lang.Integer"/>
+	<parameter name="SOFTWARE_VERSION" class="java.lang.String"/>
+	<parameter name="DOCUMENTO" class="java.lang.String"/>
+	<parameter name="STATUS_DOCUMENTO" class="java.lang.String"/>
+	<parameter name="SOFTWARE_NAME" class="java.lang.String"/>
+	<parameter name="INCIDENCIA" class="java.lang.Double"/>
+	<parameter name="IMPOSTO_IVA" class="java.lang.Double"/>
+	<parameter name="MOTIVO_ISENCAO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+     tb_produto.`codigo` AS tb_produto_codigo,
+     tb_produto.`designacao` AS tb_produto_designacao,
+     tb_produto.`preco` AS tb_produto_preco,
+     tb_produto.`data_fabrico` AS tb_produto_data_fabrico,
+     tb_produto.`data_expiracao` AS tb_produto_data_expiracao,
+     tb_produto.`codBarra` AS tb_produto_codBarra,
+     tb_produto.`status` AS tb_produto_status,
+     tb_produto.`data_entrada` AS tb_produto_data_entrada,
+     tb_produto.`stocavel` AS tb_produto_stocavel,
+     tb_produto.`preco_venda` AS tb_produto_preco_venda,
+     tb_produto.`percentagem_desconto` AS tb_produto_percentagem_desconto,
+     tb_produto.`quantidade_desconto` AS tb_produto_quantidade_desconto,
+     tb_produto.`codigo_manual` AS tb_produto_codigo_manual,
+     tb_produto.`cod_fornecedores` AS tb_produto_cod_fornecedores,
+     tb_produto.`cod_Tipo_Produto` AS tb_produto_cod_Tipo_Produto,
+     tb_produto.`cod_unidade` AS tb_produto_cod_unidade,
+     tb_produto.`cod_local` AS tb_produto_cod_local,
+     item_compras.`pk_itm_compras` AS item_compras_pk_itm_compras,
+     item_compras.`preco_compra` AS item_compras_preco_compra,
+     item_compras.`quantidade` AS item_compras_quantidade,
+     item_compras.`valor_iva` AS item_compras_valor_iva,
+     item_compras.`motivo_isensao` AS item_compras_motivo_isensao,
+     item_compras.`desconto` AS item_compras_desconto,
+     item_compras.`total` AS item_compras_total,
+     item_compras.`codigo_isensao` AS item_compras_codigo_isensao,
+     item_compras.`fk_produto` AS item_compras_fk_produto,
+     item_compras.`fk_compra` AS item_compras_fk_compra,
+     compras.`pk_compra` AS compras_pk_compra,
+     compras.`data_compra` AS compras_data_compra,
+     compras.`total_compra` AS compras_total_compra,
+     compras.`nome_fornecedor` AS compras_nome_fornecedor,
+     compras.`hash_cod` AS compras_hash_cod,
+     compras.`cod_fact` AS compras_cod_fact,
+     compras.`ref_cod_fact` AS compras_ref_cod_fact,
+     compras.`total_iva` AS compras_total_iva,
+     compras.`assinatura` AS compras_assinatura,
+     compras.`total_por_extenso` AS compras_total_por_extenso,
+     compras.`codigo_usuario` AS compras_codigo_usuario,
+     compras.`desconto_comercial` AS compras_desconto_comercial,
+     compras.`desconto_financeiro` AS compras_desconto_financeiro,
+     compras.`desconto_total` AS compras_desconto_total,
+     compras.`total_incidencia` AS compras_total_incidencia,
+     compras.`obs` AS compras_obs,
+     compras.`total_geral` AS compras_total_geral,
+     compras.`valor_entregue` AS compras_valor_entregue,
+     compras.`troco` AS compras_troco,
+     compras.`total_incidencia_isento` AS compras_total_incidencia_isento,
+     compras.`data_limite_levantamento` AS compras_data_limite_levantamento,
+     compras.`fk_documento` AS compras_fk_documento,
+     compras.`fk_fornecedor` AS compras_fk_fornecedor,
+     compras.`idArmazemFK` AS compras_idArmazemFK,
+     compras.`fornecedor_nif` AS compras_fornecedor_nif,
+     compras.`fk_ano_economico` AS compras_fk_ano_economico,
+     tb_fornecedor.`codigo` AS tb_fornecedor_codigo,
+     tb_fornecedor.`nome` AS tb_fornecedor_nome,
+     tb_fornecedor.`telefone` AS tb_fornecedor_telefone,
+     tb_fornecedor.`email` AS tb_fornecedor_email,
+     tb_fornecedor.`site` AS tb_fornecedor_site,
+     tb_fornecedor.`endereco` AS tb_fornecedor_endereco,
+     tb_fornecedor.`fk_regime` AS tb_fornecedor_fk_regime,
+     tb_fornecedor.`nif` AS tb_fornecedor_nif,
+     tb_usuario.`codigo` AS tb_usuario_codigo,
+     tb_usuario.`nome` AS tb_usuario_nome,
+     tb_usuario.`senha` AS tb_usuario_senha,
+     tb_usuario.`status` AS tb_usuario_status,
+     tb_usuario.`dataNascimento` AS tb_usuario_dataNascimento,
+     tb_usuario.`telefone` AS tb_usuario_telefone,
+     tb_usuario.`email` AS tb_usuario_email,
+     tb_usuario.`endereco` AS tb_usuario_endereco,
+     tb_usuario.`codigo_sexo` AS tb_usuario_codigo_sexo,
+     tb_usuario.`userName` AS tb_usuario_userName,
+     tb_usuario.`idTipoUsuario` AS tb_usuario_idTipoUsuario,
+     tb_usuario.`sobreNome` AS tb_usuario_sobreNome,
+     tb_usuario.`idStatus` AS tb_usuario_idStatus,
+     tb_usuario.`dataUltimoAcesso` AS tb_usuario_dataUltimoAcesso,
+     ano_economico.`pk_ano_economico` AS ano_economico_pk_ano_economico,
+     ano_economico.`designacao` AS ano_economico_designacao,
+     ano_economico.`serie` AS ano_economico_serie,
+     ano_economico.`data_inicio` AS ano_economico_data_inicio,
+     ano_economico.`data_fim` AS ano_economico_data_fim,
+     documento.`pk_documento` AS documento_pk_documento,
+     documento.`designacao` AS documento_designacao,
+     documento.`abreviacao` AS documento_abreviacao,
+     documento.`cod_ultimo_doc` AS documento_cod_ultimo_doc,
+     documento.`descricao_ultimo_doc` AS documento_descricao_ultimo_doc,
+     documento.`ultima_data` AS documento_ultima_data,
+     tb_dados_instituicao.`idDadosInsitiuicao` AS tb_dados_instituicao_idDadosInsitiuicao,
+     tb_dados_instituicao.`nome` AS tb_dados_instituicao_nome,
+     tb_dados_instituicao.`telefone` AS tb_dados_instituicao_telefone,
+     tb_dados_instituicao.`enderecos` AS tb_dados_instituicao_enderecos,
+     tb_dados_instituicao.`email` AS tb_dados_instituicao_email,
+     tb_dados_instituicao.`nif` AS tb_dados_instituicao_nif,
+     tb_dados_instituicao.`cont` AS tb_dados_instituicao_cont,
+     tb_dados_instituicao.`conta_bancaria1` AS tb_dados_instituicao_conta_bancaria1,
+     tb_dados_instituicao.`conta_bancaria2` AS tb_dados_instituicao_conta_bancaria2,
+     tb_dados_instituicao.`conta_bancaria3` AS tb_dados_instituicao_conta_bancaria3,
+     tb_dados_instituicao.`conta_bancaria4` AS tb_dados_instituicao_conta_bancaria4,
+     tb_dados_instituicao.`conta_bancaria5` AS tb_dados_instituicao_conta_bancaria5,
+     tb_dados_instituicao.`conta_bancaria6` AS tb_dados_instituicao_conta_bancaria6,
+     unidade.`pk_unidade` AS unidade_pk_unidade,
+     unidade.`descricao` AS unidade_descricao,
+     unidade.`abreviacao` AS unidade_abreviacao,
+     tb_dados_instituicao.`director_geral` AS tb_dados_instituicao_director_geral
+FROM
+     `tb_produto` tb_produto INNER JOIN `item_compras` item_compras ON tb_produto.`codigo` = item_compras.`fk_produto`
+     INNER JOIN `compras` compras ON item_compras.`fk_compra` = compras.`pk_compra`
+     INNER JOIN `tb_fornecedor` tb_fornecedor ON compras.`fk_fornecedor` = tb_fornecedor.`codigo`
+     INNER JOIN `tb_usuario` tb_usuario ON compras.`codigo_usuario` = tb_usuario.`codigo`
+     INNER JOIN `ano_economico` ano_economico ON compras.`fk_ano_economico` = ano_economico.`pk_ano_economico`
+     INNER JOIN `documento` documento ON compras.`fk_documento` = documento.`pk_documento`
+     INNER JOIN `unidade` unidade ON tb_produto.`cod_unidade` = unidade.`pk_unidade`,
+     `tb_dados_instituicao` tb_dados_instituicao
+WHERE
+     compras.`pk_compra` = $P{CODIGO_COMPRAS}]]>
+	</queryString>
+	<field name="tb_produto_codigo" class="java.lang.Integer"/>
+	<field name="tb_produto_designacao" class="java.lang.String"/>
+	<field name="tb_produto_preco" class="java.lang.Float"/>
+	<field name="tb_produto_data_fabrico" class="java.sql.Date"/>
+	<field name="tb_produto_data_expiracao" class="java.sql.Date"/>
+	<field name="tb_produto_codBarra" class="java.math.BigInteger"/>
+	<field name="tb_produto_status" class="java.lang.String"/>
+	<field name="tb_produto_data_entrada" class="java.sql.Date"/>
+	<field name="tb_produto_stocavel" class="java.lang.String"/>
+	<field name="tb_produto_preco_venda" class="java.lang.Double"/>
+	<field name="tb_produto_percentagem_desconto" class="java.lang.Double"/>
+	<field name="tb_produto_quantidade_desconto" class="java.lang.Long"/>
+	<field name="tb_produto_codigo_manual" class="java.lang.String"/>
+	<field name="tb_produto_cod_fornecedores" class="java.lang.Integer"/>
+	<field name="tb_produto_cod_Tipo_Produto" class="java.lang.Integer"/>
+	<field name="tb_produto_cod_unidade" class="java.lang.Integer"/>
+	<field name="tb_produto_cod_local" class="java.lang.Integer"/>
+	<field name="item_compras_pk_itm_compras" class="java.lang.Integer"/>
+	<field name="item_compras_preco_compra" class="java.lang.Double"/>
+	<field name="item_compras_quantidade" class="java.lang.Integer"/>
+	<field name="item_compras_valor_iva" class="java.lang.Double"/>
+	<field name="item_compras_motivo_isensao" class="java.lang.String"/>
+	<field name="item_compras_desconto" class="java.lang.Double"/>
+	<field name="item_compras_total" class="java.lang.Double"/>
+	<field name="item_compras_codigo_isensao" class="java.lang.String"/>
+	<field name="item_compras_fk_produto" class="java.lang.Integer"/>
+	<field name="item_compras_fk_compra" class="java.lang.Integer"/>
+	<field name="compras_pk_compra" class="java.lang.Integer"/>
+	<field name="compras_data_compra" class="java.sql.Timestamp"/>
+	<field name="compras_total_compra" class="java.lang.Double"/>
+	<field name="compras_nome_fornecedor" class="java.lang.String"/>
+	<field name="compras_hash_cod" class="java.lang.String"/>
+	<field name="compras_cod_fact" class="java.lang.String"/>
+	<field name="compras_ref_cod_fact" class="java.lang.String"/>
+	<field name="compras_total_iva" class="java.lang.Double"/>
+	<field name="compras_assinatura" class="java.lang.String"/>
+	<field name="compras_total_por_extenso" class="java.lang.String"/>
+	<field name="compras_codigo_usuario" class="java.lang.Integer"/>
+	<field name="compras_desconto_comercial" class="java.lang.Double"/>
+	<field name="compras_desconto_financeiro" class="java.lang.Double"/>
+	<field name="compras_desconto_total" class="java.lang.Double"/>
+	<field name="compras_total_incidencia" class="java.lang.Double"/>
+	<field name="compras_obs" class="java.lang.String"/>
+	<field name="compras_total_geral" class="java.lang.Double"/>
+	<field name="compras_valor_entregue" class="java.lang.Double"/>
+	<field name="compras_troco" class="java.lang.Double"/>
+	<field name="compras_total_incidencia_isento" class="java.lang.Double"/>
+	<field name="compras_data_limite_levantamento" class="java.sql.Date"/>
+	<field name="compras_fk_documento" class="java.lang.Integer"/>
+	<field name="compras_fk_fornecedor" class="java.lang.Integer"/>
+	<field name="compras_idArmazemFK" class="java.lang.Long"/>
+	<field name="compras_fornecedor_nif" class="java.lang.String"/>
+	<field name="compras_fk_ano_economico" class="java.lang.Integer"/>
+	<field name="tb_fornecedor_codigo" class="java.lang.Integer"/>
+	<field name="tb_fornecedor_nome" class="java.lang.String"/>
+	<field name="tb_fornecedor_telefone" class="java.lang.String"/>
+	<field name="tb_fornecedor_email" class="java.lang.String"/>
+	<field name="tb_fornecedor_site" class="java.lang.String"/>
+	<field name="tb_fornecedor_endereco" class="java.lang.String"/>
+	<field name="tb_fornecedor_fk_regime" class="java.lang.Integer"/>
+	<field name="tb_fornecedor_nif" class="java.lang.String"/>
+	<field name="tb_usuario_codigo" class="java.lang.Integer"/>
+	<field name="tb_usuario_nome" class="java.lang.String"/>
+	<field name="tb_usuario_senha" class="java.lang.String"/>
+	<field name="tb_usuario_status" class="java.lang.String"/>
+	<field name="tb_usuario_dataNascimento" class="java.sql.Date"/>
+	<field name="tb_usuario_telefone" class="java.lang.String"/>
+	<field name="tb_usuario_email" class="java.lang.String"/>
+	<field name="tb_usuario_endereco" class="java.lang.String"/>
+	<field name="tb_usuario_codigo_sexo" class="java.lang.Integer"/>
+	<field name="tb_usuario_userName" class="java.lang.String"/>
+	<field name="tb_usuario_idTipoUsuario" class="java.lang.Long"/>
+	<field name="tb_usuario_sobreNome" class="java.lang.String"/>
+	<field name="tb_usuario_idStatus" class="java.lang.Integer"/>
+	<field name="tb_usuario_dataUltimoAcesso" class="java.sql.Timestamp"/>
+	<field name="ano_economico_pk_ano_economico" class="java.lang.Integer"/>
+	<field name="ano_economico_designacao" class="java.lang.String"/>
+	<field name="ano_economico_serie" class="java.lang.String"/>
+	<field name="ano_economico_data_inicio" class="java.sql.Date"/>
+	<field name="ano_economico_data_fim" class="java.sql.Date"/>
+	<field name="documento_pk_documento" class="java.lang.Integer"/>
+	<field name="documento_designacao" class="java.lang.String"/>
+	<field name="documento_abreviacao" class="java.lang.String"/>
+	<field name="documento_cod_ultimo_doc" class="java.lang.Integer"/>
+	<field name="documento_descricao_ultimo_doc" class="java.lang.String"/>
+	<field name="documento_ultima_data" class="java.sql.Timestamp"/>
+	<field name="tb_dados_instituicao_idDadosInsitiuicao" class="java.lang.Long"/>
+	<field name="tb_dados_instituicao_nome" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_telefone" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_enderecos" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_email" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_nif" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_cont" class="java.lang.Integer"/>
+	<field name="tb_dados_instituicao_conta_bancaria1" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_conta_bancaria2" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_conta_bancaria3" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_conta_bancaria4" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_conta_bancaria5" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_conta_bancaria6" class="java.lang.String"/>
+	<field name="unidade_pk_unidade" class="java.lang.Integer"/>
+	<field name="unidade_descricao" class="java.lang.String"/>
+	<field name="unidade_abreviacao" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_director_geral" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="84" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="356" y="35" width="197" height="13" uuid="fdbc23de-e920-4499-a575-3ef025b7a604"/>
+				<box>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{compras_nome_fornecedor}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="388" y="50" width="99" height="13" uuid="71d7db81-6f75-4622-a2e1-5228eca38f90"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{compras_data_compra}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="356" y="50" width="32" height="13" uuid="34de7a66-a771-419f-9f42-397503d6382b"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="1" width="555" height="65" uuid="df141ed1-df5c-43a5-8831-e73624f7868f"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="356" y="22" width="80" height="13" uuid="d1780f80-1c20-4b01-8d8f-c0770dc2ff06"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fornecedor]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="50" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="38" y="1" width="259" height="49" backcolor="#CCCCCC" uuid="b36d314f-817d-4908-9a86-6882a5b556d1"/>
+				<box leftPadding="10">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Produtos (Especificação)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="1" width="38" height="49" backcolor="#CCCCCC" uuid="4e8b0ffd-cc53-4b05-b001-ce83578dcc82"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Itens]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="468" y="1" width="87" height="49" backcolor="#CCCCCC" uuid="06a78318-b37c-4d68-9905-d06729b5545c"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valores AOA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="297" y="1" width="28" height="49" backcolor="#CCCCCC" uuid="bc4db733-7d66-466a-8289-3c6845f8999a"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Qtd]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="325" y="1" width="28" height="49" backcolor="#CCCCCC" uuid="a4649eb1-9609-439e-87fe-552d17fac7c3"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Un]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="353" y="1" width="72" height="49" backcolor="#CCCCCC" uuid="26f032e9-cae1-4b80-9639-881c8b6fad67"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Preço Un]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="425" y="-49" width="43" height="49" backcolor="#CCCCCC" uuid="35efb614-30ae-41d2-b0b2-f167ed96d3b3"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[%Desc]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="436" y="-128" width="117" height="13" uuid="d42153eb-fc1d-4e83-b5be-5f9314ebc2d2"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{documento_designacao} +" <b>" +$F{compras_cod_fact} +"</b>"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="297" y="0" width="28" height="20" uuid="c2ff7c84-f542-40cc-969a-f4e6c39b744a"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{item_compras_quantidade}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="356" y="-128" width="118" height="13" uuid="03afd6d4-b9b6-41a5-877c-fdcb05da44c5"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nº da solicitação]]></text>
+			</staticText>
+			<image>
+				<reportElement x="8" y="-127" width="180" height="53" uuid="301d95a7-d9a6-4bec-a7d7-060186ca9af8"/>
+				<imageExpression><![CDATA["relatorios/logo_dvml.png"]]></imageExpression>
+			</image>
+			<textField pattern="#,##0.00">
+				<reportElement x="468" y="0" width="87" height="20" uuid="32faf324-d144-4b7e-85df-57216c907e4b"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{item_compras_total}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="425" y="0" width="43" height="20" uuid="a3f83c85-a1f1-45d5-ad00-a63c4767f13b"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{item_compras_desconto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="38" y="0" width="259" height="20" uuid="9ab43c6f-0c79-4839-a11e-5b531fd31c76"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_produto_designacao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="0" y="0" width="38" height="20" uuid="50530768-cc25-41ca-a590-2f55ddcfb416"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="325" y="0" width="28" height="20" uuid="7f9770f2-1fae-4292-91c1-fdf0362d20ed"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{unidade_abreviacao}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="353" y="0" width="72" height="20" uuid="44f77fbf-fdd6-4e69-b166-f55c581c0124"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{item_compras_preco_compra}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="216" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="19" width="38" height="19" uuid="c3b0a720-07b6-49a8-af4a-d88d5cbe9b8e"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="38" y="19" width="259" height="19" uuid="b256062e-24f5-4fbd-a3c8-89fc5382dc27"/>
+				<box leftPadding="3">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[VALOR TOTAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="38" y="0" width="259" height="19" uuid="60978c06-cf0e-4ade-969c-d881523e83ec"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="38" height="19" uuid="e1d2bef0-0975-4e52-858c-1f7d74325cfe"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="297" y="0" width="28" height="19" uuid="9a54e6d7-d97a-4743-8b25-0257408dc287"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="325" y="0" width="28" height="19" uuid="7a2dfff1-2985-497a-8436-a1aa68367227"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="353" y="0" width="72" height="19" uuid="4df088f7-75e7-4295-b7f4-141af2123320"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="425" y="0" width="43" height="19" uuid="ab0b4c04-ce40-4017-9fc1-df4c4f3294c4"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="468" y="0" width="87" height="19" uuid="5d1fc362-aceb-43a4-99c1-a097a6c2c2e6"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="297" y="19" width="28" height="19" uuid="4877c8a8-8d0e-415f-b2d6-57fb493df94d"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="325" y="19" width="28" height="20" uuid="975ecbc9-31aa-436a-b26d-6d69ffb57f87"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="353" y="19" width="72" height="19" uuid="e51fc16d-eda7-4a4b-93cf-d2296d54c718"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="425" y="19" width="43" height="19" uuid="f2e481af-bee2-4b1e-89f7-a35af852a42c"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{item_compras_desconto}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="468" y="19" width="87" height="19" backcolor="#CCCCCC" uuid="33122c99-7dea-4197-9e2b-6b2eee84bcf5"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{compras_total_compra}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="38" width="38" height="20" uuid="a02f6e43-f4ac-4ed0-83e4-9908483f0a5d"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[OBS]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="38" y="38" width="517" height="20" uuid="86a738b9-4dd5-4e48-9ab9-7ef26fbd191f"/>
+				<box leftPadding="2">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{compras_obs}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="425" y="58" width="129" height="17" uuid="551629ce-c3b6-4b7d-a81d-aea96100d2f1"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ASSINATURAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="325" y="58" width="100" height="17" uuid="4d67864e-a195-4d4f-b856-249c82cdb0ba"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DATA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="58" width="38" height="17" uuid="87f42e48-0728-4e27-aa94-2b60a219799d"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="38" y="58" width="287" height="17" uuid="77a0a3e2-232e-4967-a697-345533ad529c"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[APROVAÇÕES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="38" y="75" width="287" height="20" uuid="05d1f69c-a2b7-4642-8233-a4146ec46623"/>
+				<box leftPadding="3">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[O Director Geral]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="75" width="38" height="20" uuid="f9d19845-1df9-48d1-a1ae-0a9017489d27"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="95" width="38" height="20" uuid="83a02b21-e2cc-4c3d-8040-d00036d1c07c"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="38" y="95" width="287" height="20" uuid="8afb9aeb-9fe2-4e1b-a1ad-17918622e331"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="12" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_director_geral}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="38" y="115" width="287" height="20" uuid="da004536-c568-478c-a0cb-db0e90bbfcd4"/>
+				<box leftPadding="3">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[O Responsável pela solicitação]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="325" y="95" width="100" height="20" uuid="bb790054-98d9-4a4c-addf-416d8c45e393"/>
+				<box leftPadding="3">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{compras_data_compra}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="425" y="95" width="130" height="20" uuid="3d379406-f274-47f8-86cb-3727463170c4"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="135" width="38" height="20" uuid="ab3ed562-ca1b-4554-9382-d162698aafac"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="38" y="135" width="287" height="20" uuid="5c3ffefd-ae9f-480b-a987-44863851d0ed"/>
+				<box leftPadding="3">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="12" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_usuario_nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="325" y="135" width="100" height="20" uuid="7048604c-318b-4096-80aa-6360cf412cf9"/>
+				<box leftPadding="3">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{compras_data_compra}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="115" width="38" height="20" uuid="2ae0faf0-426e-40e5-8408-aaccd0fbe59b"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="325" y="115" width="230" height="20" uuid="d111f5bb-69cd-47ed-a98e-8f4172bf1000"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="425" y="135" width="130" height="20" uuid="13a46f7b-65ce-459c-ad47-abcf9fefe0de"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

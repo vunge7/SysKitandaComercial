@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="teste_preco" pageWidth="200" pageHeight="842" columnWidth="188" leftMargin="10" rightMargin="2" topMargin="2" bottomMargin="20" uuid="c4e999c4-b49c-4aa7-b091-dbf93f5cc20e">
+	<property name="ireport.zoom" value="4.177248169415656"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="144"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Kitanda_Connection"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<parameter name="BARRA" class="java.lang.Long"/>
+	<parameter name="CODIGO_VENDA" class="java.lang.Integer"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["../relatorios/ld/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SOFTWARE_VERSION" class="java.lang.String"/>
+	<parameter name="SOFTWARE_NAME" class="java.lang.String"/>
+	<parameter name="MOTIVO_ISENCAO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select 
+	 v.codigo as codigo,
+	 doc.designacao as documento_designacao,
+	 v.cod_fact as cod_fact,
+	 v.dataVenda  as data_venda,
+	 v.hora as hora_venda,
+	 v.total_iva as total_iva,
+	 v.total_geral  as total_geral,
+	 v.desconto_comercial  as desconto_comercial ,
+	 v.desconto_financeiro  as desconto_financeiro,
+	 v.total_iva  as total_iva ,
+	 v.total_venda as total_venda ,
+	 v.troco  as troco,
+	 v.assinatura as assinatura,
+	 v.total_incidencia  as total_incidencia,
+	 v.total_por_extenso as total_por_extenso,
+	 v.total_incidencia_isento as total_incidencia_isento,
+	 v.gorjeta  as gorjeta, 
+	 i.quantidade as qtd,
+	 i.valor_iva as valor_iva,
+	 i.total as total_linha,
+	 i.obs as obs,
+	 i.data_entrega ,
+	 d.nome as empresa_nome,
+	 d.nif as empresa_nif,
+	 d.telefone as empresa_telefone,
+	 d.enderecos as empresa_endereco,
+	 d.email as empresa_email,
+	 c.nome as cliente_nome,
+	 c.nif  as cliente_nif,
+     c.morada as cliente_endereco,
+	 u.nome as usuario_nome,
+	 p.designacao as peca,
+	 pre.preco_venda as preco_venda,
+	 a.designacao as armazem
+from tb_item_venda i
+inner join tb_venda v on v.codigo = i.codigo_venda
+inner join tb_cliente c on c.codigo = v.codigo_cliente
+inner join tb_produto p on p.codigo  = i.codigo_produto 
+inner join tb_usuario u  on u.codigo = v.codigo_usuario  
+inner join documento doc on doc.pk_documento  = v.fk_documento  
+inner join tb_preco pre on pre.pk_preco = i.fk_preco 
+inner join tb_armazem a on a.codigo = v.idArmazemFK 
+inner join tb_dados_instituicao d
+where v.codigo = $P{CODIGO_VENDA}]]>
+	</queryString>
+	<field name="codigo" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="codigo"/>
+		<property name="com.jaspersoft.studio.field.label" value="codigo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_venda"/>
+	</field>
+	<field name="documento_designacao" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="designacao"/>
+		<property name="com.jaspersoft.studio.field.label" value="documento_designacao"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="documento"/>
+	</field>
+	<field name="cod_fact" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cod_fact"/>
+		<property name="com.jaspersoft.studio.field.label" value="cod_fact"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_venda"/>
+	</field>
+	<field name="data_venda" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="dataVenda"/>
+		<property name="com.jaspersoft.studio.field.label" value="data_venda"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_venda"/>
+	</field>
+	<field name="hora_venda" class="java.sql.Time">
+		<property name="com.jaspersoft.studio.field.name" value="hora"/>
+		<property name="com.jaspersoft.studio.field.label" value="hora_venda"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_venda"/>
+	</field>
+	<field name="total_iva" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="total_iva"/>
+		<property name="com.jaspersoft.studio.field.label" value="total_iva"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_venda"/>
+		<fieldDescription><![CDATA[Total dos impostos (IVA)]]></fieldDescription>
+	</field>
+	<field name="total_geral" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="total_geral"/>
+		<property name="com.jaspersoft.studio.field.label" value="total_geral"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_venda"/>
+	</field>
+	<field name="desconto_comercial" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="desconto_comercial"/>
+		<property name="com.jaspersoft.studio.field.label" value="desconto_comercial"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_venda"/>
+	</field>
+	<field name="desconto_financeiro" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="desconto_financeiro"/>
+		<property name="com.jaspersoft.studio.field.label" value="desconto_financeiro"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_venda"/>
+	</field>
+	<field name="COLUMN_10" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="total_iva"/>
+		<property name="com.jaspersoft.studio.field.label" value="total_iva"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_venda"/>
+	</field>
+	<field name="total_venda" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="total_venda"/>
+		<property name="com.jaspersoft.studio.field.label" value="total_venda"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_venda"/>
+	</field>
+	<field name="troco" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="troco"/>
+		<property name="com.jaspersoft.studio.field.label" value="troco"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_venda"/>
+	</field>
+	<field name="assinatura" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="assinatura"/>
+		<property name="com.jaspersoft.studio.field.label" value="assinatura"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_venda"/>
+	</field>
+	<field name="total_incidencia" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="total_incidencia"/>
+		<property name="com.jaspersoft.studio.field.label" value="total_incidencia"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_venda"/>
+	</field>
+	<field name="total_por_extenso" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="total_por_extenso"/>
+		<property name="com.jaspersoft.studio.field.label" value="total_por_extenso"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_venda"/>
+	</field>
+	<field name="total_incidencia_isento" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="total_incidencia_isento"/>
+		<property name="com.jaspersoft.studio.field.label" value="total_incidencia_isento"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_venda"/>
+	</field>
+	<field name="gorjeta" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="gorjeta"/>
+		<property name="com.jaspersoft.studio.field.label" value="gorjeta"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_venda"/>
+	</field>
+	<field name="qtd" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="quantidade"/>
+		<property name="com.jaspersoft.studio.field.label" value="qtd"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_item_venda"/>
+	</field>
+	<field name="valor_iva" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="valor_iva"/>
+		<property name="com.jaspersoft.studio.field.label" value="valor_iva"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_item_venda"/>
+	</field>
+	<field name="total_linha" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="total"/>
+		<property name="com.jaspersoft.studio.field.label" value="total_linha"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_item_venda"/>
+	</field>
+	<field name="obs" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="obs"/>
+		<property name="com.jaspersoft.studio.field.label" value="obs"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_item_venda"/>
+	</field>
+	<field name="data_entrega" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="data_entrega"/>
+		<property name="com.jaspersoft.studio.field.label" value="data_entrega"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_item_venda"/>
+	</field>
+	<field name="empresa_nome" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nome"/>
+		<property name="com.jaspersoft.studio.field.label" value="empresa_nome"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_dados_instituicao"/>
+	</field>
+	<field name="empresa_nif" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nif"/>
+		<property name="com.jaspersoft.studio.field.label" value="empresa_nif"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_dados_instituicao"/>
+	</field>
+	<field name="empresa_telefone" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="telefone"/>
+		<property name="com.jaspersoft.studio.field.label" value="empresa_telefone"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_dados_instituicao"/>
+	</field>
+	<field name="empresa_endereco" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="enderecos"/>
+		<property name="com.jaspersoft.studio.field.label" value="empresa_endereco"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_dados_instituicao"/>
+	</field>
+	<field name="empresa_email" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="email"/>
+		<property name="com.jaspersoft.studio.field.label" value="empresa_email"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_dados_instituicao"/>
+	</field>
+	<field name="cliente_nome" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nome"/>
+		<property name="com.jaspersoft.studio.field.label" value="cliente_nome"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_cliente"/>
+	</field>
+	<field name="cliente_nif" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nif"/>
+		<property name="com.jaspersoft.studio.field.label" value="cliente_nif"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_cliente"/>
+	</field>
+	<field name="cliente_endereco" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="morada"/>
+		<property name="com.jaspersoft.studio.field.label" value="cliente_endereco"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_cliente"/>
+	</field>
+	<field name="usuario_nome" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nome"/>
+		<property name="com.jaspersoft.studio.field.label" value="usuario_nome"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_usuario"/>
+	</field>
+	<field name="peca" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="designacao"/>
+		<property name="com.jaspersoft.studio.field.label" value="peca"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_produto"/>
+	</field>
+	<field name="preco_venda" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="preco_venda"/>
+		<property name="com.jaspersoft.studio.field.label" value="preco_venda"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_preco"/>
+	</field>
+	<field name="armazem" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="designacao"/>
+		<property name="com.jaspersoft.studio.field.label" value="armazem"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_armazem"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="119">
+			<textField>
+				<reportElement uuid="44ff7eb9-52d9-459e-984d-f26c251af137" x="0" y="0" width="118" height="40"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" isBold="true" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{documento_designacao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="54b7255b-7f64-402a-b1b1-46e01cd290da" x="0" y="42" width="188" height="15"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
+					<font fontName="Times New Roman" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa_nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="55724dd7-7811-48d6-97e3-87f6363fd4fb" x="1" y="92" width="187" height="27"/>
+				<textElement textAlignment="Left" markup="html">
+					<font fontName="Times New Roman" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<b>Endereço:</b> " +$F{empresa_endereco}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="dc9c22cb-0f39-46bc-bae1-5e3fc768a307" x="1" y="57" width="187" height="11"/>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[$F{empresa_nif}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="43" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement uuid="2169b75e-5269-45ab-8af8-445206444c66" x="50" y="0" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{peca}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lista_venda_order_usuario" pageWidth="842" pageHeight="532" orientation="Landscape" columnWidth="782" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="56137f8b-777d-4095-8053-f59bd04e9bb5">
+	<property name="ireport.zoom" value="2.200000000000001"/>
+	<property name="ireport.x" value="389"/>
+	<property name="ireport.y" value="0"/>
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Kitanda_Clinica_Connection"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="style_degradacao" mode="Opaque" backcolor="#FFFFFF">
+		<paragraph lineSpacing="Single"/>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{COLUMN_COUNT}%2==0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#DCDCDC">
+				<paragraph lineSpacing="Single"/>
+			</style>
+		</conditionalStyle>
+	</style>
+	<parameter name="data_inicio" class="java.util.Date"/>
+	<parameter name="data_fim" class="java.util.Date"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["../relatorios/"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select l.*,  t.data_hora ,t.nome_usuario ,  d.nome ,   d.enderecos , d.nif , d.telefone  from linha_transferencia l
+inner join transferencia_armazem t on t.pk_transferencia_armazem = l.fk_transferencia_armazem 
+inner join tb_dados_instituicao d
+where  DATE(t.data_hora)  BETWEEN $P{data_inicio} AND $P{data_fim}]]>
+	</queryString>
+	<field name="pk_linha_transferencia" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="pk_linha_transferencia"/>
+		<property name="com.jaspersoft.studio.field.label" value="pk_linha_transferencia"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="linha_transferencia"/>
+	</field>
+	<field name="qtd_before" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="qtd_before"/>
+		<property name="com.jaspersoft.studio.field.label" value="qtd_before"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="linha_transferencia"/>
+	</field>
+	<field name="qtd" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="qtd"/>
+		<property name="com.jaspersoft.studio.field.label" value="qtd"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="linha_transferencia"/>
+	</field>
+	<field name="qtd_after" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="qtd_after"/>
+		<property name="com.jaspersoft.studio.field.label" value="qtd_after"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="linha_transferencia"/>
+	</field>
+	<field name="fk_armazem_origem" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="fk_armazem_origem"/>
+		<property name="com.jaspersoft.studio.field.label" value="fk_armazem_origem"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="linha_transferencia"/>
+	</field>
+	<field name="armazem_origem" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="armazem_origem"/>
+		<property name="com.jaspersoft.studio.field.label" value="armazem_origem"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="linha_transferencia"/>
+	</field>
+	<field name="fk_armazem_destino" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="fk_armazem_destino"/>
+		<property name="com.jaspersoft.studio.field.label" value="fk_armazem_destino"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="linha_transferencia"/>
+	</field>
+	<field name="armazem_destino" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="armazem_destino"/>
+		<property name="com.jaspersoft.studio.field.label" value="armazem_destino"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="linha_transferencia"/>
+	</field>
+	<field name="fk_transferencia_armazem" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="fk_transferencia_armazem"/>
+		<property name="com.jaspersoft.studio.field.label" value="fk_transferencia_armazem"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="linha_transferencia"/>
+	</field>
+	<field name="fk_produto" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="fk_produto"/>
+		<property name="com.jaspersoft.studio.field.label" value="fk_produto"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="linha_transferencia"/>
+	</field>
+	<field name="produto" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="produto"/>
+		<property name="com.jaspersoft.studio.field.label" value="produto"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="linha_transferencia"/>
+	</field>
+	<field name="data_hora" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="data_hora"/>
+		<property name="com.jaspersoft.studio.field.label" value="data_hora"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="transferencia_armazem"/>
+	</field>
+	<field name="nome_usuario" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nome_usuario"/>
+		<property name="com.jaspersoft.studio.field.label" value="nome_usuario"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="transferencia_armazem"/>
+	</field>
+	<field name="nome" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nome"/>
+		<property name="com.jaspersoft.studio.field.label" value="nome"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_dados_instituicao"/>
+	</field>
+	<field name="enderecos" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="enderecos"/>
+		<property name="com.jaspersoft.studio.field.label" value="enderecos"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_dados_instituicao"/>
+	</field>
+	<field name="nif" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nif"/>
+		<property name="com.jaspersoft.studio.field.label" value="nif"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_dados_instituicao"/>
+	</field>
+	<field name="telefone" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="telefone"/>
+		<property name="com.jaspersoft.studio.field.label" value="telefone"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_dados_instituicao"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="108" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="bc546a51-e6c0-47d1-8a23-44ab817b353d" key="staticText" x="0" y="41" width="373" height="12"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[RELATÓRIO DE TRANSFERÊNCIA DE ARMAZÉM]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="b6b3e9a2-11cd-40bc-94e5-6d83d5978121" x="0" y="16" width="373" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{enderecos}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="8bc66fd8-13d2-489e-9459-bfb7c34f4b47" x="0" y="6" width="472" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="114434c3-efb6-4bd3-b3d9-75bb6fd5d6aa" key="staticText" x="0" y="53" width="373" height="12"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[POR INTERVALO DE DATAS]]></text>
+			</staticText>
+			<textField pattern="&apos;&lt;b&gt;De&lt;/b&gt;&lt;i&gt; &apos; dd-MM-yyyy &apos;&lt;/i&gt;&lt;b&gt;à&lt;/b&gt; &apos;">
+				<reportElement uuid="a06fdda6-fb5b-43fa-8732-3f50850765c5" x="0" y="72" width="79" height="14"/>
+				<textElement verticalAlignment="Middle" markup="html">
+					<font fontName="Arial"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{data_inicio}]]></textFieldExpression>
+			</textField>
+			<textField pattern="&apos;&lt;i&gt;&apos;dd-MM-yyyy&apos;&lt;/i&gt;&apos;">
+				<reportElement uuid="70cc0928-05c6-44c9-a61c-1a1e5ff7087a" x="79" y="72" width="85" height="14"/>
+				<textElement verticalAlignment="Middle" markup="html">
+					<font fontName="Arial"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{data_fim}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="77671400-4156-4215-84f9-fc7e01d5e5de" x="351" y="83" width="80" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pág. "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement uuid="a3f43823-0b56-4cb4-ac07-088890042c35" x="431" y="83" width="40" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="17">
+			<staticText>
+				<reportElement uuid="fd8b63fe-7b1c-49a7-8279-51ea5d773739" mode="Opaque" x="167" y="0" width="249" height="17" backcolor="#CCCCCC"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Produto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2c34abb0-3a36-4dd5-bd9f-e2e920647c79" mode="Opaque" x="30" y="0" width="100" height="17" backcolor="#CCCCCC"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Usuário]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4e93569f-5c4c-49d8-98d0-0066ed4c6ff9" mode="Opaque" x="672" y="0" width="98" height="17" backcolor="#CCCCCC">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Destino]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d194b991-f410-4939-99da-7ec2bcc865bb" mode="Opaque" x="416" y="0" width="103" height="17" backcolor="#CCCCCC"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Data/Hora]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6503295e-2fac-456b-b369-089269184ae5" mode="Opaque" x="519" y="0" width="98" height="17" backcolor="#CCCCCC"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Origem]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f5c027f4-5dfc-4c76-9d7e-48a206c780ad" mode="Opaque" x="617" y="0" width="55" height="17" backcolor="#CCCCCC">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Qtd]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1730fa8b-d2b7-4983-8a53-6777571334b8" mode="Opaque" x="130" y="0" width="37" height="17" backcolor="#CCCCCC"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Ref.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2048978c-9d21-49ca-aef2-8e0d67c32873" mode="Opaque" x="0" y="0" width="30" height="17" backcolor="#CCCCCC"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Cod]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="12">
+			<textField>
+				<reportElement uuid="722f2b32-5b67-4d04-8b3e-7bd71686d325" style="style_degradacao" x="30" y="0" width="100" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="2">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome_usuario}.toLowerCase()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="2a964335-5205-4f5c-ab8c-bfc49d3e4de5" style="style_degradacao" x="130" y="0" width="37" height="12"/>
+				<box leftPadding="2">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fk_transferencia_armazem}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="f2fee059-c45c-4621-a59a-141032112911" style="style_degradacao" x="167" y="0" width="249" height="12"/>
+				<box leftPadding="2">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{produto}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH:mm:ss">
+				<reportElement uuid="248d904b-8b33-4029-b0d3-6e7ca1dd2a07" style="style_degradacao" x="416" y="0" width="103" height="12"/>
+				<box leftPadding="2">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_hora}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="25f6b632-b461-433f-96c2-95ed8e060f97" style="style_degradacao" x="519" y="0" width="98" height="12"/>
+				<box leftPadding="2">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{armazem_origem}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b63b83b7-febe-4f44-a758-473170351bf0" style="style_degradacao" x="672" y="0" width="98" height="12"/>
+				<box leftPadding="2">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{armazem_destino}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.###;(#,##0.###-)">
+				<reportElement uuid="79f8ff7f-178d-4b59-a201-08ecbeec8e75" style="style_degradacao" x="617" y="0" width="55" height="12">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="2">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtd}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="2197b488-c1a8-4d22-a029-df3b1442d641" key="textField-12" style="style_degradacao" x="0" y="0" width="30" height="12"/>
+				<box leftPadding="2">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="7"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<lastPageFooter>
+		<band height="50">
+			<textField pattern="EEEEE &apos;,&apos; dd &apos;de&apos; MMMMM &apos;de&apos; yyyy">
+				<reportElement uuid="62ca8bc3-3ffb-4cef-bce6-2b37d50c58f2" x="0" y="30" width="267" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+</jasperReport>

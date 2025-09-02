@@ -1,0 +1,815 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="5" bottomMargin="20" uuid="1ce9fc0b-ed40-4347-8476-bd1b341e5c1f">
+	<property name="ireport.zoom" value="0.9313819845887328"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="ID_FUNCIONARIO" class="java.lang.Integer"/>
+	<parameter name="ANO" class="java.lang.Integer"/>
+	<parameter name="PERIODO" class="java.lang.String"/>
+	<parameter name="SEGUNDA_VIA" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+     item_recibo_rh.`descricao` AS item_recibo_rh_descricao,
+     item_recibo_rh.`remuneracao` AS item_recibo_rh_remuneracao,
+     item_recibo_rh.`desconto` AS item_recibo_rh_desconto,
+     item_recibo_rh.`fk_recibo_rh` AS item_recibo_rh_fk_recibo_rh,
+     tb_funcionario.`numero_funcionario` AS tb_funcionario_numero_funcionario,
+     tb_funcionario.`nome` AS tb_funcionario_nome,
+     recibo_rh.`pk_recibo_rh` AS recibo_rh_pk_recibo_rh,
+     recibo_rh.`data_hora` AS recibo_rh_data_hora,
+     recibo_rh.`total_remuneracao` AS recibo_rh_total_remuneracao,
+     recibo_rh.`total_desconto` AS recibo_rh_total_desconto,
+     recibo_rh.`total_pago` AS recibo_rh_total_pago,
+     recibo_rh.`fk_funcionario` AS recibo_rh_fk_funcionario,
+     tb_funcao.`designacao` AS tb_funcao_designacao,
+     tb_funcionario.`n_seguranca_social` AS tb_funcionario_n_seguranca_social,
+     recibo_rh.`periodo` AS recibo_rh_periodo,
+     tb_dados_instituicao.`nome` AS tb_dados_instituicao_nome,
+     tb_dados_instituicao.`telefone` AS tb_dados_instituicao_telefone,
+     tb_dados_instituicao.`enderecos` AS tb_dados_instituicao_enderecos,
+     tb_dados_instituicao.`email` AS tb_dados_instituicao_email,
+     fecho_periodo.`pk_fecho_periodo` AS fecho_periodo_pk_fecho_periodo,
+     fecho_periodo.`data_abertura` AS fecho_periodo_data_abertura,
+     fecho_periodo.`data_fecho` AS fecho_periodo_data_fecho,
+     recibo_rh.`vencimento` AS recibo_rh_vencimento,
+     recibo_rh.`dias_trabalhado` AS recibo_rh_dias_trabalhado,
+     forma_pagamento.`designacao` AS forma_pagamento_designacao
+FROM
+     `tb_funcionario` tb_funcionario INNER JOIN `recibo_rh` recibo_rh ON tb_funcionario.`idFuncionario` = recibo_rh.`fk_funcionario`
+     INNER JOIN `item_recibo_rh` item_recibo_rh ON recibo_rh.`pk_recibo_rh` = item_recibo_rh.`fk_recibo_rh`
+     INNER JOIN `fecho_periodo` fecho_periodo ON recibo_rh.`fk_fecho_periodo` = fecho_periodo.`pk_fecho_periodo`
+     INNER JOIN `forma_pagamento` forma_pagamento ON recibo_rh.`fk_forma_pagamento` = forma_pagamento.`pk_forma_pagamento`
+     INNER JOIN `tb_funcao` tb_funcao ON tb_funcionario.`fk_funcao` = tb_funcao.`pk_funcao`
+     inner join tb_mes_rh m on m.pk_mes_rh = `fecho_periodo`.fk_periodo
+     inner join tb_ano a on a.idAno  = fecho_periodo.fk_ano
+     inner join `tb_dados_instituicao` tb_dados_instituicao
+where
+ a.descrisao  = $P{ANO} and
+ m.descricao  = $P{PERIODO} and
+ recibo_rh.`fk_funcionario` = $P{ID_FUNCIONARIO} ;]]>
+	</queryString>
+	<field name="item_recibo_rh_descricao" class="java.lang.String"/>
+	<field name="item_recibo_rh_remuneracao" class="java.lang.Double"/>
+	<field name="item_recibo_rh_desconto" class="java.lang.Double"/>
+	<field name="item_recibo_rh_fk_recibo_rh" class="java.lang.Integer"/>
+	<field name="tb_funcionario_numero_funcionario" class="java.lang.String"/>
+	<field name="tb_funcionario_nome" class="java.lang.String"/>
+	<field name="recibo_rh_pk_recibo_rh" class="java.lang.Integer"/>
+	<field name="recibo_rh_data_hora" class="java.sql.Timestamp"/>
+	<field name="recibo_rh_total_remuneracao" class="java.lang.Double"/>
+	<field name="recibo_rh_total_desconto" class="java.lang.Double"/>
+	<field name="recibo_rh_total_pago" class="java.lang.Double"/>
+	<field name="recibo_rh_fk_funcionario" class="java.lang.Integer"/>
+	<field name="tb_funcao_designacao" class="java.lang.String"/>
+	<field name="tb_funcionario_n_seguranca_social" class="java.lang.String"/>
+	<field name="recibo_rh_periodo" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_nome" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_telefone" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_enderecos" class="java.lang.String"/>
+	<field name="tb_dados_instituicao_email" class="java.lang.String"/>
+	<field name="fecho_periodo_pk_fecho_periodo" class="java.lang.Integer"/>
+	<field name="fecho_periodo_data_abertura" class="java.sql.Timestamp"/>
+	<field name="fecho_periodo_data_fecho" class="java.sql.Timestamp"/>
+	<field name="recibo_rh_vencimento" class="java.lang.Double"/>
+	<field name="recibo_rh_dias_trabalhado" class="java.lang.Double"/>
+	<field name="forma_pagamento_designacao" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="212" splitType="Stretch">
+			<staticText>
+				<reportElement x="3" y="125" width="141" height="20" uuid="603478a9-1c07-4cdf-a71c-e11b25f21cc8"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Recibo de Vencimento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="107" width="100" height="14" uuid="87d5bd71-c12a-4855-9bf7-40cab0451992"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Original]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="150" width="62" height="13" uuid="b4843ee3-bf67-472b-9eee-bcdd8c3eb3c6"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Nome]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="163" width="62" height="13" uuid="e67f43f4-e7f8-4c4a-a971-926a0d1873f7"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Nº Func.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="177" width="62" height="13" uuid="2d9a862b-8fc1-4472-8c91-e72d82927070"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Categoria]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="190" width="62" height="13" uuid="26415191-28f1-4ba4-afc1-1704a9123114"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Nº Segurado]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="67" y="150" width="207" height="12" uuid="73433df7-a8c7-49bc-a7e2-f84356e88862"/>
+				<textElement markup="none">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_funcionario_nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="67" y="177" width="207" height="13" uuid="7f6cff82-5201-44c4-a4f8-7075d2a7c164"/>
+				<textElement markup="none">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_funcao_designacao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="67" y="163" width="207" height="13" uuid="876c16a9-cec4-4be2-9fdb-5bd9d84b3f33"/>
+				<textElement markup="none">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_funcionario_numero_funcionario}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="67" y="190" width="207" height="13" uuid="a6ec778b-ab68-4520-8096-feb28f512f3d"/>
+				<textElement markup="none">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_funcionario_n_seguranca_social}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="265" y="150" width="74" height="13" uuid="682bffd8-9c6d-4391-9465-1094019aca2f"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Periodo]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="338" y="150" width="60" height="13" uuid="6e3f3b72-3aac-4677-8eb7-1168828d86f5"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PERIODO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="265" y="177" width="74" height="13" uuid="2c45b3b2-6fcd-4848-b935-1bdc52a3bdde"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Salário Base]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="338" y="190" width="60" height="13" uuid="e0e84ac2-e673-406c-bff2-6655a9acf592"/>
+				<textElement markup="none">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{recibo_rh_dias_trabalhado}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd-MM-yyyy">
+				<reportElement x="338" y="163" width="60" height="13" uuid="231021f2-c8bf-4cc4-b279-a687f114d027"/>
+				<textElement markup="none">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecho_periodo_data_fecho}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="265" y="163" width="74" height="13" uuid="efa09e8a-18da-49dc-9894-a277686a705c"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Data do Fecho]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="265" y="190" width="74" height="13" uuid="9dda5f6c-1c68-45e6-8d84-b3b25f7c4cc9"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Nº Dias Mês]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="338" y="177" width="60" height="13" uuid="8ebc7214-639e-43af-8030-e684f02e6c9e"/>
+				<textElement markup="none">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{recibo_rh_vencimento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="61" width="335" height="10" uuid="667f450b-c18f-4a32-bdd8-9fbd40bffa12"/>
+				<textElement markup="none">
+					<font fontName="Times New Roman" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_enderecos}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="71" width="335" height="10" uuid="9beb8f3c-ed51-42a6-b800-79eda29e2242"/>
+				<textElement markup="none">
+					<font fontName="Times New Roman" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_telefone}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="3" y="81" width="100" height="10" uuid="40c9995a-7c49-4256-b9eb-5c5ec56f8b7c"/>
+				<textElement>
+					<font fontName="Times New Roman" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Luanda - Angola]]></text>
+			</staticText>
+			<line>
+				<reportElement x="3" y="147" width="394" height="1" uuid="96a5d73e-0999-4be0-8af0-9fd317fac7e3"/>
+			</line>
+			<textField>
+				<reportElement x="409" y="61" width="335" height="10" uuid="c1fa17bf-0c2a-4967-a77a-f74ec9a99b03"/>
+				<textElement markup="none">
+					<font fontName="Times New Roman" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_enderecos}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="409" y="81" width="100" height="10" uuid="f429d11d-7627-43e9-b913-8699208f37fe"/>
+				<textElement>
+					<font fontName="Times New Roman" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Luanda - Angola]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="409" y="71" width="335" height="10" uuid="8b63cc46-0861-4387-bc6f-8c1845d6beaa"/>
+				<textElement markup="none">
+					<font fontName="Times New Roman" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_telefone}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="409" y="107" width="100" height="14" uuid="c6a7ca83-0d9c-4a05-b19e-f7b96e3ea496"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Duplicado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="409" y="125" width="141" height="20" uuid="d241907f-6450-4ba9-801f-2d6a0c2e009c"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Recibo de Vencimento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="407" y="190" width="62" height="13" uuid="fde1edc9-bc1b-4774-8a40-3110d06f9be1"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Nº Segurado]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="742" y="150" width="60" height="13" uuid="a40b31df-67cc-4112-94d7-38f90b90ba2b"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PERIODO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="471" y="163" width="207" height="13" uuid="ffa6be77-94a1-4441-8677-067800af3ab2"/>
+				<textElement markup="none">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_funcionario_numero_funcionario}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="407" y="163" width="62" height="13" uuid="78917d90-9552-434e-a176-e97b2312d4ee"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Nº Func.]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="742" y="190" width="60" height="13" uuid="115ddbc5-0444-4717-84bc-3641529f4a58"/>
+				<textElement markup="none">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{recibo_rh_dias_trabalhado}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd-MM-yyyy">
+				<reportElement x="742" y="163" width="60" height="13" uuid="d8bb781a-8ea0-4c30-adee-b3ea2891686c"/>
+				<textElement markup="none">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecho_periodo_data_fecho}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="669" y="190" width="74" height="13" uuid="1a4388ee-0395-48fd-a815-9a8e70c4aa00"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Nº Dias Mês]]></text>
+			</staticText>
+			<line>
+				<reportElement x="407" y="147" width="394" height="1" uuid="987054a3-1507-4bf2-a82d-a98428f5db6e"/>
+			</line>
+			<staticText>
+				<reportElement x="669" y="163" width="74" height="13" uuid="f54602b7-30d4-4a92-b148-393ec3bc1368"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Data do Fecho]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="742" y="177" width="60" height="13" uuid="f31eb9e7-2d30-4f4e-8571-716a174d9fdb"/>
+				<textElement markup="none">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{recibo_rh_vencimento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="471" y="150" width="207" height="12" uuid="e0169493-e2a7-49c2-ae89-e6cce0e9a2af"/>
+				<textElement markup="none">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_funcionario_nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="471" y="177" width="207" height="13" uuid="cee833e3-a7e7-4fda-8d1a-d7865dac9ebd"/>
+				<textElement markup="none">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_funcao_designacao}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="669" y="150" width="74" height="13" uuid="d77a2661-b873-47a6-bf47-37c9010bd32b"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Periodo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="407" y="150" width="62" height="13" uuid="a798f062-1b49-4ca1-93bb-afaeeda0b730"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Nome]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="669" y="177" width="74" height="13" uuid="d21b2110-e15d-490b-9711-0472bef8ab7a"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Salário Base]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="471" y="190" width="207" height="13" uuid="07ffe916-2c5a-4658-8618-b780ebfec687"/>
+				<textElement markup="none">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_funcionario_n_seguranca_social}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="407" y="177" width="62" height="13" uuid="352c2283-093e-4307-b400-d0a865f18078"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Categoria]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="180" y="11" width="217" height="12" uuid="6ac1beee-aa93-43fd-bec3-f3695269b47a"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{SEGUNDA_VIA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="585" y="10" width="217" height="12" uuid="d50d94b2-1df8-417b-ae36-fbd91efca93e"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{SEGUNDA_VIA}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="3" y="0" width="111" height="61" uuid="e2bec356-cb73-4a78-97e8-0ca19caaa689"/>
+				<imageExpression><![CDATA["../relatorios/logo_dvml.png"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="409" y="0" width="111" height="61" uuid="1025145a-e791-41b3-84df-487fc5d5d83b"/>
+				<imageExpression><![CDATA["relatorios/logo_dvml.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="12" splitType="Stretch">
+			<staticText>
+				<reportElement x="2" y="0" width="38" height="12" uuid="157c4893-ed20-4702-b363-30e0ed214316"/>
+				<box leftPadding="4">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cod.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="40" y="0" width="177" height="12" uuid="f64d9d31-2ae5-4ffc-a626-670e110aadac"/>
+				<box leftPadding="4">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descrição]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="217" y="0" width="90" height="12" uuid="cbc1c9f8-ab3a-4680-9590-bb04957ffe85"/>
+				<box leftPadding="4">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Remuneração]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="307" y="0" width="90" height="12" uuid="019b3c71-110c-412a-822d-65a60b8222d8"/>
+				<box leftPadding="4">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descontos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="406" y="0" width="38" height="12" uuid="5cc146d4-c104-4bc2-bf46-a34c11a5c6f0"/>
+				<box leftPadding="4">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cod.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="444" y="0" width="177" height="12" uuid="25e03dc4-38ab-498b-81d2-e1138ff58755"/>
+				<box leftPadding="4">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descrição]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="621" y="0" width="90" height="12" uuid="c0bc1823-3485-420b-b887-87b15a402f86"/>
+				<box leftPadding="4">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Remuneração]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="711" y="0" width="90" height="12" uuid="02b34e88-117e-4a25-95ec-7fab02dd0fd4"/>
+				<box leftPadding="4">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descontos]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField>
+				<reportElement x="40" y="0" width="177" height="12" uuid="e0fcab98-7e42-4b59-bfa4-dc0092f127c5"/>
+				<box leftPadding="4">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{item_recibo_rh_descricao}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="217" y="0" width="90" height="12" uuid="f5bf46e3-10e7-443f-bfad-ec717305ef84"/>
+				<box leftPadding="0" rightPadding="5">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Times New Roman" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{item_recibo_rh_remuneracao}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-12" x="2" y="0" width="38" height="12" uuid="1363cbb5-3407-46f9-bfc5-b9bbf6e6f838"/>
+				<box leftPadding="4">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font fontName="Times New Roman" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="307" y="0" width="90" height="12" uuid="70274dcb-6734-4cc5-b0e8-0250fa37e160"/>
+				<box leftPadding="0" rightPadding="5">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Times New Roman" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{item_recibo_rh_desconto}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-12" x="406" y="0" width="38" height="12" uuid="d3c801d2-5f8c-496d-a74a-1f270b4aca8d"/>
+				<box leftPadding="4">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font fontName="Times New Roman" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="621" y="0" width="90" height="12" uuid="42b49e5f-a994-4a4d-8579-cb6ec47021a1"/>
+				<box leftPadding="0" rightPadding="5">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Times New Roman" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{item_recibo_rh_remuneracao}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="711" y="0" width="90" height="12" uuid="ae3e1024-4c0a-44b2-9bad-13612b3869fe"/>
+				<box leftPadding="0" rightPadding="5">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Times New Roman" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{item_recibo_rh_desconto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="444" y="0" width="177" height="12" uuid="2f4709dd-df7a-40db-87a1-5dec20588f3c"/>
+				<box leftPadding="4">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{item_recibo_rh_descricao}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="86">
+			<staticText>
+				<reportElement x="3" y="40" width="190" height="14" uuid="51b3207b-922c-4cc5-a372-8aecee51d1fc"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="false" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Declaro que recebi a quantia constante neste recibo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="72" width="190" height="14" uuid="3b435009-03e5-49aa-b3c0-bbbf182d165b"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="false" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[(Assinatura do Funcionário)]]></text>
+			</staticText>
+			<line>
+				<reportElement x="4" y="71" width="189" height="1" uuid="b572d1d3-a9e9-47ef-9052-4d30ea2aec46"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="404" y="72" width="190" height="14" uuid="e47efc71-a88d-45b2-98da-2bc30e6fb026"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="false" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[(Assinatura do Funcionário)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="403" y="40" width="190" height="14" uuid="55fe13ed-effa-4d09-8207-1fa6eaed74c9"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="false" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Declaro que recebi a quantia constante neste recibo]]></text>
+			</staticText>
+			<line>
+				<reportElement x="404" y="71" width="189" height="1" uuid="cbd3e04c-e0e9-4f1c-b274-721d6303b12e"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="32" splitType="Stretch">
+			<textField pattern="#,##0.00">
+				<reportElement x="217" y="0" width="90" height="10" uuid="ed9319a3-6929-4b5b-b876-9b18e29e1f5b"/>
+				<box leftPadding="0" rightPadding="5">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{recibo_rh_total_remuneracao}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="307" y="0" width="90" height="10" uuid="d8190a5a-e458-44ee-ac3a-7227aa4775f7"/>
+				<box leftPadding="0" rightPadding="5">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{recibo_rh_total_desconto}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="307" y="19" width="90" height="13" uuid="e1e7afde-da8a-45b9-bf8d-a5a2a902f8c8"/>
+				<box leftPadding="0" rightPadding="5">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{recibo_rh_total_pago}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="229" y="19" width="78" height="13" uuid="5eaff57a-de78-4e59-8716-17560911a2cf"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Pago]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="711" y="0" width="90" height="10" uuid="2ce077be-2519-460a-a50a-7094855dbaa0"/>
+				<box leftPadding="0" rightPadding="5">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{recibo_rh_total_desconto}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="711" y="19" width="90" height="13" uuid="398a4d6b-d6bd-40f3-9a8e-2d1d621e6ec7"/>
+				<box leftPadding="0" rightPadding="5">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{recibo_rh_total_pago}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="621" y="0" width="90" height="10" uuid="45ca1e75-0195-46c1-84db-b0133d0d4605"/>
+				<box leftPadding="0" rightPadding="5">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{recibo_rh_total_remuneracao}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="633" y="19" width="78" height="13" uuid="8f5379b6-ab7b-4c34-b3b0-6f0125ec9ccb"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Pago]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="111" y="19" width="103" height="13" uuid="bb52e34a-62de-4700-bd91-58a27649df88"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{forma_pagamento_designacao}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="19" width="113" height="13" uuid="9fa858aa-a2a5-4b08-a65b-8914c7f09d4f"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Modalidade de Pagamento:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="405" y="19" width="115" height="13" uuid="8ab7d971-cae3-43cd-b689-abb631a20d05"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Modalidade de Pagamento:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="517" y="19" width="101" height="13" uuid="499d852a-3a4f-495a-ab7b-8a1e6abf97ff"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{forma_pagamento_designacao}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="teste_preco" pageWidth="220" pageHeight="842" columnWidth="210" leftMargin="5" rightMargin="5" topMargin="20" bottomMargin="20" uuid="724ede88-e533-493c-9181-852456be1b91">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<parameter name="BARRA" class="java.lang.Long"/>
+	<parameter name="PRECO_RETALHO" class="java.lang.Double"/>
+	<parameter name="PRECO_GROSSO" class="java.lang.Double"/>
+	<parameter name="COD_PRODUTO" class="java.lang.Integer"/>
+	<parameter name="DESIGNACAO" class="java.lang.String"/>
+	<parameter name="QTD" class="java.lang.Integer"/>
+	<parameter name="DADOS_INSTITUICAO" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT
+     tb_stock.`preco_venda` AS tb_stock_preco_venda,
+     tb_produto.`designacao` AS tb_produto_designacao,
+     tb_produto.`codigo` AS tb_produto_codigo,
+     tb_produto.`codBarra` AS tb_produto_codBarra,
+     tb_dados_instituicao.`nome` AS tb_dados_instituicao_nome,
+     tb_stock.`preco_venda_grosso` AS tb_stock_preco_venda_grosso,
+     tb_stock.`qtd_grosso` AS tb_stock_qtd_grosso
+FROM
+     `tb_produto` tb_produto INNER JOIN `tb_stock` tb_stock ON tb_produto.`codigo` = tb_stock.`cod_produto_codigo`,
+     `tb_dados_instituicao` tb_dados_instituicao
+WHERE
+     tb_produto.`codBarra` = $P{BARRA}]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="13" splitType="Stretch">
+			<textField>
+				<reportElement uuid="919c77b1-b20e-4fc0-ba62-28b37cd3808e" x="12" y="0" width="192" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{DADOS_INSTITUICAO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="108" splitType="Stretch">
+			<rectangle radius="10">
+				<reportElement uuid="8a8baef8-5400-405d-be29-99fd28ee8e99" x="12" y="1" width="192" height="94"/>
+			</rectangle>
+			<textField pattern="#,##0" isBlankWhenNull="false">
+				<reportElement uuid="8eb20043-121e-44f5-b449-304bf567e248" key="textField-17" x="17" y="5" width="178" height="12"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Times New Roman" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Cod. Interno: "+ $P{COD_PRODUTO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="802d3308-d8e8-4539-ad88-2efca867820b" key="textField-15" x="17" y="35" width="182" height="29"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{DESIGNACAO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="false">
+				<reportElement uuid="bd75cc11-e37a-435f-b1b9-93d68aac92ba" key="textField-17" x="17" y="18" width="182" height="17"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Cod. Barra:  " +$P{BARRA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+				<reportElement uuid="e57ee094-2f16-4754-97b3-295d574e7a04" key="textField-17" x="56" y="59" width="144" height="29"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="22" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PRECO_RETALHO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="56276a62-bc99-4170-909e-a30916ff2b66" x="12" y="95" width="192" height="13"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="644252a0-fe45-48bb-89d0-114331f6247f" key="textField-17" x="17" y="59" width="39" height="29"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Preço:]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

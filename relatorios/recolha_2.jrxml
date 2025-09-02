@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="recolha_2" pageWidth="254" pageHeight="275" columnWidth="214" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2de8de74-74ac-41d7-97b0-23abd0498857">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="CodItem" class="java.lang.Integer"/>
+	<parameter name="TotalPecas" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[SELECT tb_usuario.nome AS tb_usuario_nome,
+	tb_produto.designacao AS tb_produto_designacao,
+	tb_venda.cod_fact AS tb_venda_cod_fact,
+	tb_venda.codigo_cliente AS codigo_cliente,
+          tb_venda.`dataVencimento` AS tb_venda_dataVencimento,
+	tb_item_venda.codigo AS tb_item_venda_codigo,
+	tb_item_venda.quantidade AS tb_item_venda_quantidade,
+	tb_item_venda.posicao AS tb_item_venda_posicao,
+	tb_item_venda.status_entrega AS tb_item_venda_status_entrega,
+	tb_item_venda.data_entrega AS tb_item_venda_data_entrega,
+	tb_item_venda.obs AS tb_item_venda_obs,
+	tb_cliente.nome AS nome_cliente,
+	tb_cliente.telefone AS telefone_cliente
+FROM tb_produto tb_produto
+	INNER JOIN tb_item_venda tb_item_venda ON
+	 tb_produto.codigo = tb_item_venda.codigo_produto
+	INNER JOIN tb_venda tb_venda ON
+	 tb_item_venda.codigo_venda = tb_venda.codigo
+	INNER JOIN tb_usuario tb_usuario ON
+	 tb_venda.codigo_usuario = tb_usuario.codigo
+	INNER JOIN kitanda_db.tb_cliente ON
+	 tb_cliente.codigo = tb_venda.codigo_cliente
+WHERE
+	 tb_item_venda.codigo = $P{CodItem}]]>
+	</queryString>
+	<field name="tb_usuario_nome" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nome"/>
+		<property name="com.jaspersoft.studio.field.label" value="tb_usuario_nome"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_usuario"/>
+	</field>
+	<field name="tb_produto_designacao" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="designacao"/>
+		<property name="com.jaspersoft.studio.field.label" value="tb_produto_designacao"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_produto"/>
+	</field>
+	<field name="tb_venda_cod_fact" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cod_fact"/>
+		<property name="com.jaspersoft.studio.field.label" value="tb_venda_cod_fact"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_venda"/>
+	</field>
+	<field name="codigo_cliente" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="codigo_cliente"/>
+		<property name="com.jaspersoft.studio.field.label" value="codigo_cliente"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_venda"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tb_venda_dataVencimento" class="java.sql.Date"/>
+	<field name="tb_item_venda_codigo" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="codigo"/>
+		<property name="com.jaspersoft.studio.field.label" value="tb_item_venda_codigo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_item_venda"/>
+	</field>
+	<field name="tb_item_venda_quantidade" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="quantidade"/>
+		<property name="com.jaspersoft.studio.field.label" value="tb_item_venda_quantidade"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_item_venda"/>
+	</field>
+	<field name="tb_item_venda_posicao" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="posicao"/>
+		<property name="com.jaspersoft.studio.field.label" value="tb_item_venda_posicao"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_item_venda"/>
+	</field>
+	<field name="tb_item_venda_status_entrega" class="java.lang.Boolean">
+		<property name="com.jaspersoft.studio.field.name" value="status_entrega"/>
+		<property name="com.jaspersoft.studio.field.label" value="tb_item_venda_status_entrega"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_item_venda"/>
+	</field>
+	<field name="tb_item_venda_data_entrega" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="data_entrega"/>
+		<property name="com.jaspersoft.studio.field.label" value="tb_item_venda_data_entrega"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_item_venda"/>
+	</field>
+	<field name="tb_item_venda_obs" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="obs"/>
+		<property name="com.jaspersoft.studio.field.label" value="tb_item_venda_obs"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_item_venda"/>
+	</field>
+	<field name="nome_cliente" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nome"/>
+		<property name="com.jaspersoft.studio.field.label" value="nome_cliente"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_cliente"/>
+	</field>
+	<field name="telefone_cliente" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="telefone"/>
+		<property name="com.jaspersoft.studio.field.label" value="telefone_cliente"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tb_cliente"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<summary>
+		<band height="47" splitType="Stretch">
+			<textField>
+				<reportElement x="66" y="7" width="104" height="12" uuid="c3714abf-0748-4cb5-9cc0-bc8946690eb8"/>
+				<box leftPadding="2"/>
+				<textElement textAlignment="Right">
+					<font fontName="Times New Roman" size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_usuario_nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="35" width="170" height="12" uuid="549b1ac3-6106-4077-a5aa-a9bcb57ea6e5"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="10"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome_cliente} + "(" +$F{telefone_cliente} + ")"]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="5" width="170" height="1" uuid="1f489a91-22ce-41ff-a2ed-08c6907e44e4"/>
+			</line>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="-1" y="-21" width="170" height="12" uuid="b067c78e-5d11-4f39-a351-07dcd20cea39"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="10" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_venda_dataVencimento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="7" width="170" height="12" uuid="938766d0-9e26-4f10-84bd-6d310622d65e"/>
+				<box leftPadding="2"/>
+				<textElement markup="html">
+					<font fontName="Arial" size="8" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_venda_cod_fact} + "," +$F{tb_item_venda_posicao} + "  (<b> " +$P{TotalPecas}  +" </b>)"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="-9" width="170" height="12" uuid="26bea09c-384b-46fa-a63d-ffc415e62502"/>
+				<box leftPadding="2"/>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_produto_designacao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="18" width="170" height="18" uuid="bb77ab0b-7399-497a-a0dc-97c83683cc0a"/>
+				<box leftPadding="2"/>
+				<textElement>
+					<font fontName="Times New Roman" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_item_venda_obs}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

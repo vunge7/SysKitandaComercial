@@ -1,4 +1,7 @@
-/build/
-/dist/
-
-/Chaves/
+/nbproject/private/
+dist/
+build/
+Chaves/
+credencial/
+*.zip
+*.rar

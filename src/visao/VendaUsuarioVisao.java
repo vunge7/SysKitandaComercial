@@ -2035,20 +2035,16 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         double ret = Double.parseDouble( String.valueOf( modelo.getValueAt( linha_actual, 7 ) ) );
 
 //        double total_iliquido_linha = (( preco_venda * qtd ) - desconto);
-        String total_iliquido_linha = CfMethods.formatarComoMoeda( getValorIliquido(
-                qtd,
-                preco_venda,
-                desconto
+        String total_iliquido_linha = CfMethods.formatarComoMoeda( MetodosUtil.getValorIliquido(
+                new BigDecimal( qtd ),
+                new BigDecimal( preco_venda ),
+                new BigDecimal( desconto )
         ) );
 
-        String total_liquido_linha = CfMethods.formatarComoMoeda( getValorComImpostoIva(
-                qtd,
-                taxa,
-                preco_venda,
-                desconto
-        ) );
+        double totalComIva = MetodosUtil.getValorComIVA( qtd, taxa, preco_venda, desconto );
+        String total_liquido_linha = CfMethods.formatarComoMoeda( totalComIva );
 
-        retencao = getValorComRetencao( qtd, ret, preco_venda, desconto );
+        retencao = MetodosUtil.getValorComRetencao( qtd, ret, preco_venda, desconto );
 
         String total_retencao = CfMethods.formatarComoMoeda( retencao );
 
@@ -3530,29 +3526,28 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 BigDecimal descontoPercent = BigDecimal.valueOf( getDescontoPercentagem() );
                 BigDecimal taxaIva = BigDecimal.valueOf( getTaxaImpostoIva( codigo_produto ) );
                 BigDecimal taxaRet = BigDecimal.valueOf( getTaxaImpostoRet( codigo_produto ) );
+//       
+//                BigDecimal totalComDesconto = totalBruto.subtract( descontoValor ).setScale( 6, RoundingMode.HALF_UP );
+                BigDecimal valorIliquido = MetodosUtil.getValorIliquido( qtd, preco, descontoPercent );
 
-                // Total Bruto
-                BigDecimal totalBruto = preco.multiply( qtd ).setScale( 2, RoundingMode.HALF_UP );
+                double valorLiquido = MetodosUtil.getValorComIVA(
+                        qtd.doubleValue(),
+                        taxaIva.doubleValue(),
+                        preco.doubleValue(),
+                        descontoPercent.doubleValue()
+                );
 
-                // Aplicar Desconto
-                BigDecimal descontoValor = totalBruto.multiply( descontoPercent ).divide( BigDecimal.valueOf( 100 ) );
-                BigDecimal totalComDesconto = totalBruto.subtract( descontoValor ).setScale( 2, RoundingMode.HALF_UP );
-
-                // Valor com IVA
-                BigDecimal ivaValor = totalComDesconto.multiply( taxaIva ).divide( BigDecimal.valueOf( 100 ) );
-                BigDecimal totalComIva = totalComDesconto.add( ivaValor ).setScale( 2, RoundingMode.HALF_UP );
+                BigDecimal totalComIva = new BigDecimal( valorLiquido );
 
                 // Valor com Retenção
                 String total_linha_retencao = CfMethods.formatarComoMoeda(
-                        getValorComRetencao(
-                                qtd,
-                                taxaRet,
-                                preco,
-                                descontoPercent
+                        MetodosUtil.getValorComRetencao(
+                                qtd.doubleValue(),
+                                taxaRet.doubleValue(),
+                                preco.doubleValue(),
+                                descontoPercent.doubleValue()
                         )
                 );
-//                BigDecimal retencaoValor = totalComDesconto.multiply( taxaRet ).divide( BigDecimal.valueOf( 100 ) );
-//                BigDecimal totalComRet = totalComDesconto.subtract( retencaoValor ).setScale( 2, RoundingMode.HALF_UP );
 
                 // Adicionar à tabela
                 modelo.addRow( new Object[]
@@ -3566,7 +3561,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                     taxaIva,
                     taxaRet,
                     total_linha_retencao,
-                    CfMethods.formatarComoMoeda( totalComDesconto ),
+                    CfMethods.formatarComoMoeda( valorIliquido ),
                     CfMethods.formatarComoMoeda( totalComIva )
                 } );
 
@@ -3669,9 +3664,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         for ( int i = 0; i < modelo.getRowCount(); i++ )
         {
             // Coluna 3: Preço Unitário, Coluna 4: Quantidade
-            BigDecimal precoUnitario = BigDecimal.valueOf(
-                    CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 3 ).toString() )
-            );
+            BigDecimal precoUnitario = BigDecimal.valueOf( CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 3 ).toString() ) );
             BigDecimal quantidade = new BigDecimal( modelo.getValueAt( i, 4 ).toString() );
 
             BigDecimal subtotal = precoUnitario.multiply( quantidade );
@@ -4248,9 +4241,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             // Salvar a venda e obter o ID
             idVendaGerada = vendasController.salvarRetornaID( venda );
 //            venda.setHashCod( MetodosUtil.criptografia_hash( vendasController.findById( idVendaGerada), getGrossTotal().doubleValue(), conexaoTransaction ) );
-           
-            vendasController.actualizar_hash_and_assinatura( idVendaGerada, getGrossTotal().doubleValue());
-            
+
+            vendasController.actualizar_hash_and_assinatura( idVendaGerada, getGrossTotal().doubleValue() );
+
             if ( idVendaGerada == null || idVendaGerada == 0 )
             {
                 throw new Exception( "Falha ao obter o ID da venda gravada." );
@@ -4376,16 +4369,19 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //
 //        return venda;
 //    }
-    
-    private static Date getDataVencimentoFr(){
-        
-        if((getIdDocumento() == DVML.DOC_FACTURA_PROFORMA_PP ) ||( getIdDocumento() == DVML.DOC_FACTURA_FT)){
-        return dc_data_vencimento.getDate();}
-        else {
+    private static Date getDataVencimentoFr()
+    {
+
+        if ( ( getIdDocumento() == DVML.DOC_FACTURA_PROFORMA_PP ) || ( getIdDocumento() == DVML.DOC_FACTURA_FT ) )
+        {
+            return dc_data_vencimento.getDate();
+        }
+        else
+        {
             return new Date();
         }
     }
-    
+
     private static TbVenda construirVenda()
     {
         TbVenda venda = new TbVenda();
@@ -4647,7 +4643,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         for ( int i = 1; i <= numeroVias; i++ )
         {
             String via;
-            switch (i)
+            switch ( i )
             {
                 case 1:
                     via = "Original";
@@ -5131,8 +5127,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getValorComImposto( double qtd, double taxa, double preco_venda, double desconto )
     {
-        double subtotal_linha = (preco_venda * qtd);
-        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
+        double subtotal_linha = ( preco_venda * qtd );
+        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
         double valor_iva = 1 + ( taxa / 100 );//
         return ( ( subtotal_linha - desconto_valor ) * valor_iva );
 
@@ -5144,30 +5140,12 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //        return subtotal_linha;
     }
 
-    private static double getValorIliquido( double qtd, double preco_venda, double desconto )
-    {
-        double subtotal_linha = (preco_venda * qtd);
-        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
-        return ( ( subtotal_linha - desconto_valor ) );
-
-    }
-
-    private static double getValorComImpostoIva( double qtd, double taxa, double preco_venda, double desconto )
-    {
-        double subtotal_linha = (preco_venda * qtd);
-        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
-        double valor_iva = 1 + ( taxa / 100 );//
-        return ( ( subtotal_linha - desconto_valor ) * valor_iva );
-
-    }
-
     private static double getValorComRetencao( double qtd, double ret, double preco_venda, double desconto )
     {
-        double subtotal_linha = (preco_venda * qtd);
-        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
-        double valor_ret = (( ( subtotal_linha - desconto_valor ) * ret ) / 100);//
+        double subtotal_linha = ( preco_venda * qtd );
+        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
+        double valor_ret = ( ( ( subtotal_linha - desconto_valor ) * ret ) / 100 );//
         return ( valor_ret );
-
     }
 
     private static BigDecimal getIVA( BigDecimal qtd, BigDecimal taxa, BigDecimal precoVenda, BigDecimal desconto )
@@ -5189,8 +5167,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getRET( double qtd, double taxa_r, double preco_venda, double desconto )
     {
-        double subtotal_linha = (preco_venda * qtd);
-        double valor_ret = (taxa_r / 100);//
+        double subtotal_linha = ( preco_venda * qtd );
+        double valor_ret = ( taxa_r / 100 );//
         return ( ( subtotal_linha - desconto ) * valor_ret );
 
     }
@@ -5204,6 +5182,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             public void windowActivated( WindowEvent e )
             {
                 mostrar_proximo_codigo_documento();
+
                 MetodosUtil.verificarCaixa( caixasController,
                         cod_usuario,
                         RootVisao.btn_abertura_dia_root,
@@ -5219,7 +5198,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private void actualizar_abreviacao()
     {
 
-        switch (getIdDocumento())
+        switch ( getIdDocumento() )
         {
             case DVML.DOC_FACTURA_RECIBO_FR:
                 if ( ck_A4.isSelected() )
@@ -5602,7 +5581,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             if ( taxa != 0 )
             {
                 desconto_valor_linha = ( ( valor_percentagem ) / 100 );
-                double valor_unitario = (preco_unitario * qtd);
+                double valor_unitario = ( preco_unitario * qtd );
                 incidencia += ( ( valor_unitario ) - ( valor_unitario * desconto_valor_linha ) );
 
             }
@@ -5627,7 +5606,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             // a incidência só é aplicável ao produtos sujeitos a iva 
             if ( taxa != 0 )
             {
-                double valor_unitario = (preco_unitario * qtd);
+                double valor_unitario = ( preco_unitario * qtd );
                 desconto_valor_linha = valor_unitario * ( ( valor_percentagem ) / 100 );
                 imposto += ( ( valor_unitario - desconto_valor_linha ) * ( taxa / 100 ) );
 
@@ -5693,7 +5672,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             // a incidência só é aplicável ao produtos sujeitos a iva 
             if ( taxa != 0 )
             {
-                double valor_unitario = (preco_unitario * qtd);
+                double valor_unitario = ( preco_unitario * qtd );
 
                 desconto_valor_linha = valor_unitario * ( ( valor_percentagem ) / 100 );
                 valor_taxa = ( valor_unitario - desconto_valor_linha ) / taxa;
@@ -5722,7 +5701,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             if ( taxa == 0 )
             {
                 desconto_valor_linha = ( ( valor_percentagem ) / 100 );
-                double valor_unitario = (preco_unitario * qtd);
+                double valor_unitario = ( preco_unitario * qtd );
                 incidencia_isento += ( ( valor_unitario ) - ( valor_unitario * desconto_valor_linha ) );
 
             }
@@ -5744,7 +5723,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             qtd = Double.parseDouble( modelo.getValueAt( i, 4 ).toString() );
             double valor_percentagem = Double.parseDouble( modelo.getValueAt( i, 5 ).toString() );
             desconto_valor_linha = ( ( valor_percentagem ) / 100 );
-            double valor_unitario = (preco_unitario * qtd);
+            double valor_unitario = ( preco_unitario * qtd );
             desconto_comercial += ( valor_unitario * desconto_valor_linha );
 
         }
@@ -5761,7 +5740,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getTotalAOARetencoes()
     {
-        double valores = (getTotalRetencao1());
+        double valores = ( getTotalRetencao1() );
         return ( valores );
     }
 
@@ -5807,7 +5786,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         Documento documento_local = (Documento) documentosController.findById( getIdDocumento() );
         String abreviacao_local = documento_local.getAbreviacao();
 
-        switch (abreviacao_local)
+        switch ( abreviacao_local )
         {
             case "FT":
                 return "Facturamos o valor de: ";
@@ -6410,7 +6389,18 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             if ( qtd <= 0 )
             {
                 qtd = 1;
-                resetValue( "Quantidade não pode ser zero(0) ou número négativo", 4 );
+                resetValue( "Quantidade não pode ser zero(0) ou número negativo", 4 );
+            }
+
+            if ( desconto < 0 )
+            {
+                desconto = 0;
+                resetValue( "O desconto não deve ser um número negativo.", 4 );
+            }
+            else if ( desconto > 100 )
+            {
+                desconto = 0;
+                resetValue( "O desconto não deve ser maior do que 100%", 4 );
             }
 
             if ( possivel_quantidade( codProduto, qtd ) || tipoProduto.getFkFamilia().getPkFamilia() == DVML.COD_SERVICO )

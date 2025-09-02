@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="factura_A5_1" language="groovy" pageWidth="200" pageHeight="450" columnWidth="188" leftMargin="10" rightMargin="2" topMargin="2" bottomMargin="20" uuid="513e0fa2-1dee-416d-8546-f1c94bf9e5b8">
+	<property name="ireport.zoom" value="7.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="PARM_CODIGO_VENDA" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[SELECT
+     tb_produto.`designacao` AS tb_produto_designacao,
+     tb_item_venda.`total` AS tb_item_venda_total,
+     tb_produto.`codigo` AS tb_produto_codigo,
+     tb_item_venda.`quantidade` AS tb_item_venda_qauntidade,
+     tb_preco.`preco_venda` AS tb_preco_preco_venda,
+     tb_item_venda.`valor_iva` AS tb_item_venda_valor_iva,
+     tb_item_venda.`motivo_isensao` AS tb_item_venda_motivo_isensao,
+     tb_item_venda.`desconto` AS tb_item_venda_desconto,
+     tb_item_venda.`codigo_venda` AS tb_item_venda_codigo_venda
+FROM
+     `tb_produto` tb_produto INNER JOIN `tb_item_venda` tb_item_venda ON tb_produto.`codigo` = tb_item_venda.`codigo_produto`
+     INNER JOIN `tb_preco` tb_preco ON tb_item_venda.`fk_preco` = tb_preco.`pk_preco`
+WHERE
+     tb_item_venda.`codigo_venda` = $P{PARM_CODIGO_VENDA}]]>
+	</queryString>
+	<field name="tb_produto_designacao" class="java.lang.String"/>
+	<field name="tb_item_venda_total" class="java.lang.Double"/>
+	<field name="tb_produto_codigo" class="java.lang.Integer"/>
+	<field name="tb_item_venda_qauntidade" class="java.lang.Long"/>
+	<field name="tb_preco_preco_venda" class="java.lang.Double"/>
+	<field name="tb_item_venda_valor_iva" class="java.lang.Double"/>
+	<field name="tb_item_venda_motivo_isensao" class="java.lang.String"/>
+	<field name="tb_item_venda_desconto" class="java.lang.Double"/>
+	<field name="tb_item_venda_codigo_venda" class="java.lang.Integer"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="10" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="f492f41b-a471-4dc8-82ca-b35f5a051521" key="element-93" mode="Opaque" x="0" y="0" width="14" height="10" forecolor="#000000" backcolor="#CCCCCC"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineColor="#000000"/>
+					<rightPen lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="4" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Taxa]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="57332b03-f5bc-43c8-9166-3c48338910c2" key="element-93" mode="Opaque" x="38" y="0" width="25" height="10" forecolor="#000000" backcolor="#CCCCCC"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineColor="#000000"/>
+					<rightPen lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="4" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3e41a816-bd10-4d10-8851-a8338b860d76" key="element-96" mode="Opaque" x="63" y="0" width="125" height="10" forecolor="#000000" backcolor="#CCCCCC"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineColor="#000000"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="4" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Motivo Isensão]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0eaee136-5839-438e-ab34-9abaef784489" key="element-95" mode="Opaque" x="14" y="0" width="24" height="10" forecolor="#000000" backcolor="#CCCCCC"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineColor="#000000"/>
+					<rightPen lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="4" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Incid./Qtd]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="10" splitType="Stretch">
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="83efa81d-291f-460c-8065-6a68d22a569f" key="textField-18" x="14" y="0" width="24" height="10"/>
+				<box rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="5" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_preco_preco_venda}*$F{tb_item_venda_qauntidade}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="5b4bc9f6-48c5-4eac-bd6f-99b4c34cfc07" key="textField-15" x="0" y="0" width="14" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="5" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_item_venda_valor_iva}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="52cb67f7-5a4f-4342-b231-219fa534029b" key="textField-18" x="38" y="0" width="25" height="10"/>
+				<box rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{tb_preco_preco_venda}*$F{tb_item_venda_qauntidade}) * ($F{tb_item_venda_valor_iva}/100)]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="58e4abcc-daf8-4825-a52f-1d8d71d286cb" key="textField-18" x="63" y="0" width="125" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="5" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_item_venda_motivo_isensao}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="21" splitType="Stretch"/>
+	</summary>
+</jasperReport>

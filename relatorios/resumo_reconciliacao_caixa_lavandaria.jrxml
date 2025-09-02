@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reconciliacao_caixa" pageWidth="200" pageHeight="450" columnWidth="185" leftMargin="10" rightMargin="5" topMargin="15" bottomMargin="2" isSummaryWithPageHeaderAndFooter="true" uuid="0de43986-9be5-410e-aaa3-7f1419d0abca">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="4.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="CONN_KIT"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value="Y2FpeGEgLDE1LDE1LDlkZTFiNWE3LWZhYjgtNGY1OS1hYzJiLTg4MDhmMmFiOGQyNDtpdGVtX2Nh aXhhICwxODUsNTYsOGU2YjEwYTYtZGNmMi00YzNhLTlhNDYtNTlhZTBiOTZiNzA0O3RiX2JhbmNv ICwzNTksOTYsOTg2OGVhMjAtYjRkYy00NWY3LWE4NTgtY2I5M2E5ZjEzOTE4Ow== "/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="cliente_style" mode="Transparent" forecolor="#000000">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$P{NIF_CLIENTE_CONSOMIDOR_FINAL}.equals("Consumidor Final")]]></conditionExpression>
+			<style mode="Opaque" forecolor="#FFFFFF" backcolor="#FFFFFF"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="ID_CAIXA" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[SELECT
+     caixa.`pk_caixa` AS caixa_pk_caixa,
+     caixa.`total_vendas` AS caixa_total_vendas,
+     item_caixa.`pk_item_caixa` AS item_caixa_pk_item_caixa,
+     item_caixa.`valor_real` AS item_caixa_valor_real,
+     forma_pagamento.`designacao` AS forma_pagamento_designacao,
+     caixa.`data_abertura` AS caixa_data_abertura
+FROM
+     `caixa` caixa INNER JOIN `item_caixa` item_caixa ON caixa.`pk_caixa` = item_caixa.`fk_caixa`
+     INNER JOIN `forma_pagamento` forma_pagamento ON item_caixa.`fk_forma_pagamento` = forma_pagamento.`pk_forma_pagamento`
+WHERE
+     caixa.pk_caixa = $P{ID_CAIXA}]]>
+	</queryString>
+	<field name="caixa_pk_caixa" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="caixa_pk_caixa"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="caixa"/>
+	</field>
+	<field name="caixa_total_vendas" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="caixa_total_vendas"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="caixa"/>
+	</field>
+	<field name="item_caixa_pk_item_caixa" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="item_caixa_pk_item_caixa"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="item_caixa"/>
+	</field>
+	<field name="item_caixa_valor_real" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="item_caixa_valor_real"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="item_caixa"/>
+	</field>
+	<field name="forma_pagamento_designacao" class="java.lang.String"/>
+	<field name="caixa_data_abertura" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.label" value="caixa_data_abertura"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="caixa"/>
+	</field>
+	<variable name="TOTAL" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{item_caixa_valor_real}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="18">
+			<staticText>
+				<reportElement x="0" y="0" width="184" height="17" uuid="7f2bda7b-d313-4a3d-82f3-7d5d0755ba17"/>
+				<box leftPadding="2" rightPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RESUMO]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="12" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="97" height="12" uuid="c1e2789b-cf31-4ced-8e23-3a6286cd96ce"/>
+				<box leftPadding="2" rightPadding="0"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="false"/>
+				</textElement>
+				<text><![CDATA[F.Pagamento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="97" y="0" width="87" height="12" uuid="babffab3-5a25-4eac-a7e3-e43af78f109a"/>
+				<box leftPadding="0" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="17" splitType="Stretch">
+			<textField pattern="#,##0.00">
+				<reportElement x="97" y="0" width="87" height="17" uuid="d0351c73-83dc-4283-b5ff-b6b0940a2ee1"/>
+				<box rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{item_caixa_valor_real}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="97" height="17" uuid="00c70211-0722-408b-a165-705a40a27c15"/>
+				<box leftPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{forma_pagamento_designacao}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<summary>
+		<band height="17">
+			<textField pattern="#,##0.00">
+				<reportElement x="98" y="0" width="87" height="17" uuid="c2e564bb-ce22-4938-a50d-a31c26f3f6aa"/>
+				<box rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="0" width="97" height="17" uuid="d3cc73a3-eaa3-44a3-b792-1a6bc374b63a"/>
+				<box leftPadding="2" rightPadding="0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

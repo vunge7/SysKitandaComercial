@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="VendasPrimeiroTurno" language="groovy" pageWidth="200" pageHeight="450" columnWidth="160" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3f532599-1eca-42da-b7f4-f6f4da17ab26">
+	<property name="ireport.zoom" value="4.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="DATA_ACTUAL" class="java.util.Date"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["../relatorios/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="HORA_ABERTURA" class="java.lang.String"/>
+	<parameter name="HORA_FECHO" class="java.lang.String"/>
+	<parameter name="TOTAL_VENDAS_GEARAIS" class="java.lang.Double"/>
+	<queryString>
+		<![CDATA[SELECT
+     tb_venda.`codigo_usuario` AS tb_venda_codigo_usuario
+FROM
+     `tb_venda` tb_venda
+
+WHERE DATE(tb_venda.`dataVenda`) = $P{DATA_ACTUAL} AND tb_venda.`hora` BETWEEN $P{HORA_ABERTURA} AND $P{HORA_FECHO}
+AND tb_venda.`fk_documento` = 1
+GROUP BY tb_venda.`codigo_usuario`]]>
+	</queryString>
+	<field name="tb_venda_codigo_usuario" class="java.lang.Integer"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="31">
+			<staticText>
+				<reportElement uuid="de6faf3c-96f2-4593-b821-6ffa229157d7" key="staticText" x="1" y="4" width="160" height="23"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[RELATÓRIO DE VENDAS DO PRIMEIRO TURNO]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="9">
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement uuid="096a030b-8e79-48f7-a96d-e9abfb80b942" x="1" y="1" width="127" height="8"/>
+				<textElement>
+					<font fontName="Times New Roman" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{DATA_ACTUAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="40" splitType="Stretch">
+			<subreport>
+				<reportElement uuid="c0fb35f7-15b0-4ce3-91f7-ee226598b1b7" x="-19" y="0" width="92" height="40"/>
+				<subreportParameter name="CODIGO_USUARIO">
+					<subreportParameterExpression><![CDATA[$F{tb_venda_codigo_usuario}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="HORA_ABERTURA">
+					<subreportParameterExpression><![CDATA[$P{HORA_ABERTURA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="HORA_FECHO">
+					<subreportParameterExpression><![CDATA[$P{HORA_FECHO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DATA_ACTUAL">
+					<subreportParameterExpression><![CDATA[$P{DATA_ACTUAL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "Sub_Report_Vendas_Primeiro_Turno_A6.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="13" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="44" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="b9cb9bcb-bf54-4b7b-aafa-a302f24b9e25" key="staticText-2" x="1" y="28" width="159" height="8"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="6" isItalic="false" pdfFontName="Helvetica-Oblique"/>
+				</textElement>
+				<text><![CDATA[Software desenvolvido pela DVML-COMERCIAL, Lda/Contactos: 940537124/923409284]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement uuid="611447ff-acf3-4a4c-9d1d-0d5f5c59f89c" key="textField" x="84" y="4" width="53" height="19"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="5" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
+				<reportElement uuid="54f71f65-9bd8-4bd2-a630-589f2ee362e4" key="textField" x="137" y="4" width="22" height="19" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Arial" size="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement uuid="ee60f585-dcbd-4d68-b27c-bdbb8f7d4f7e" key="textField" x="1" y="4" width="83" height="19"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="5" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="43efa931-8f25-42ff-941c-17d0f89d4ee1" key="staticText-1" x="1" y="35" width="159" height="8"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="6" isItalic="false" pdfFontName="Helvetica-Oblique"/>
+				</textElement>
+				<text><![CDATA[email:  dvml.comercial@gmail.com]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

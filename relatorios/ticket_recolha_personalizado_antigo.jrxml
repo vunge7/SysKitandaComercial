@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="200" pageHeight="100" whenNoDataType="AllSectionsNoDetail" columnWidth="188" leftMargin="10" rightMargin="2" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="9fc5c7e7-6413-41ac-bcbc-bae395cf6f17">
+	<property name="ireport.zoom" value="5.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Kitanda_Connection"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value="dGJfdmVuZGEgLDUxNCwzMiw3ZGJlNDY0My1kODg1LTQ5YTctODFlYS0xY2YwOTNkOWQ2NDI7dGJf aXRlbV92ZW5kYSAsMjQzLDIwLDEzNGRhY2IwLThlM2YtNDNjNC04YzNmLTk4ZThjNzgwYzc1Zjt0 Yl9wcm9kdXRvICwyMCwxMjgsODJiMGY0MWItYWMzMC00NTJiLWEyNzEtMjdiOTRjZTgwODVhO3Ri X3VzdWFyaW8gLDcwMSwxMDQsYmM1N2M0MDMtZTYxZS00MzA4LTkzNTYtZGI4NDZhODlhZTIwO2tp dGFuZGFfZGIudGJfY2xpZW50ZSAsOTA4LDExNSw0ZTI2ZTcxOS0yMmQyLTRmYmEtYTI5NC05YzA2 NGU4ODhmODk7"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="272"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="723"/>
+	<parameter name="CodItem" class="java.lang.Integer"/>
+	<parameter name="TotalPecas" class="java.lang.Integer"/>
+	<parameter name="DataVencimento" class="java.lang.String"/>
+	<parameter name="Designacao" class="java.lang.String"/>
+	<parameter name="CodFact" class="java.lang.String"/>
+	<parameter name="Posicao" class="java.lang.Integer"/>
+	<parameter name="Obs" class="java.lang.String"/>
+	<parameter name="NomeCliente" class="java.lang.String"/>
+	<parameter name="TelefoneCliente" class="java.lang.String"/>
+	<parameter name="NomeUsuario" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="72">
+			<textField>
+				<reportElement uuid="75600447-7ea2-4642-98f2-72dc326fe47f" x="17" y="13" width="170" height="15"/>
+				<textElement>
+					<font fontName="Arial" size="12" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Designacao}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="ae25cff5-ae15-4bdf-8dfe-4f47c1dc2494" x="17" y="27" width="170" height="1"/>
+			</line>
+			<textField>
+				<reportElement uuid="3626a071-03b8-41f4-a8b2-b43cf3327706" x="17" y="28" width="170" height="12"/>
+				<textElement markup="html">
+					<font fontName="Arial" size="8" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CodFact} + "," +$P{Posicao} + "  (<b> " +$P{TotalPecas}  +" </b>)"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="4e7fd014-a810-49dc-b958-e160b63823a7" x="83" y="29" width="104" height="12"/>
+				<textElement textAlignment="Right">
+					<font fontName="Times New Roman" size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NomeUsuario}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="79a3d17b-e348-459f-83ce-2257519d7f04" x="17" y="60" width="170" height="12"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="10"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NomeCliente} + "(" +$P{TelefoneCliente} + ")"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="eaac940c-ce52-410c-842a-009cbd2a37ca" x="17" y="40" width="170" height="20"/>
+				<textElement>
+					<font fontName="Times New Roman" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Obs}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="420cdb2f-68a7-4125-800c-8486b7f54ca2" x="17" y="0" width="170" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{DataVencimento}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+</jasperReport>
