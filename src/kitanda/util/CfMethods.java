@@ -65,7 +65,7 @@ public class CfMethods
 
     public static String formatarComoMoeda( double valor, String moeda )
     {
-        DecimalFormat decimalFormat = new DecimalFormat( "###,###.## " + moeda );
+        DecimalFormat decimalFormat = new DecimalFormat( "###,###.##### " + moeda );
 
         decimalFormat.setGroupingSize( 3 );
         decimalFormat.setMinimumIntegerDigits( 1 );
@@ -79,12 +79,12 @@ public class CfMethods
 
     public static String formatarComoMoedaPreco( double valor, String moeda )
     {
-        DecimalFormat decimalFormat = new DecimalFormat( "###,###.## " + moeda );
+        DecimalFormat decimalFormat = new DecimalFormat( "###,###.###### " + moeda );
 
         decimalFormat.setGroupingSize( 3 );
         decimalFormat.setMinimumIntegerDigits( 1 );
         System.err.println( "VALOR: " + valor );
-        decimalFormat.setMinimumFractionDigits( 7 );
+        decimalFormat.setMinimumFractionDigits( 6 );
         decimalFormat.setDecimalSeparatorAlwaysShown( true );
         decimalFormat.setRoundingMode( RoundingMode.HALF_EVEN );
 
@@ -94,16 +94,16 @@ public class CfMethods
     public static Double parseMoedaFormatada( String valor )
     {
         Double d = null;
-
+//
         System.err.println( "valor: " + valor );
         try
         {
-            DecimalFormat decimalFormat = new DecimalFormat( "###,###.## " + MOEDA );
+            DecimalFormat decimalFormat = new DecimalFormat( "###,###.##### " + MOEDA );
 
             decimalFormat.setGroupingSize( 3 );
             decimalFormat.setMinimumIntegerDigits( 1 );
 
-            decimalFormat.setMinimumFractionDigits( 2 );
+            decimalFormat.setMinimumFractionDigits( 6 );
             decimalFormat.setDecimalSeparatorAlwaysShown( true );
             d = decimalFormat.parse( valor ).doubleValue();
 

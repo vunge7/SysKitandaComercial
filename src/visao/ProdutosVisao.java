@@ -19,6 +19,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -36,6 +37,7 @@ import util.MetodosUtil;
 import static util.MetodosUtil.rodarComandoWindows;
 import util.NumeroDocument;
 import util.PictureChooser;
+import util.TextFieldUtils;
 
 public class ProdutosVisao extends javax.swing.JFrame
 {
@@ -143,23 +145,20 @@ public class ProdutosVisao extends javax.swing.JFrame
 //        servico_produto();
         actualizarRetencaoForm();
         proximo_codigo( produtosController );
-        proximo_codigo_manual( produtosController );
         busca_permissao();
         txtCodigoProduto.setDocument( new PermitirNumeros() );
         jcDataFabrico.setDate( new Date() );
         jcDataExpiracao.setDate( new Date() );
-        txtPrecoCompra.addKeyListener( new PrecoCompraPercentagem() );
-        txtPrecoVendaRetalho.addKeyListener( new PrecoVendaPercentagem() );
+//        txtPrecoCompra.addKeyListener( new PrecoCompraPercentagem() );
+//        txtPrecoVendaRetalho.addKeyListener( new PrecoVendaPercentagem() );
         setFocus( dadosInstituicao.getFoco() );
-        txtPrecoCompra.setDocument( new NumeroDocument( 12, DVML.CASAS_DECIMAIS ) );
         txtPrecoCompra.setHorizontalAlignment( JTextField.RIGHT );
-        txtPrecoVendaRetalho.setDocument( new NumeroDocument( 12, DVML.CASAS_DECIMAIS ) );
         txtPrecoVendaRetalho.setHorizontalAlignment( JTextField.RIGHT );
 
         txtPercentagemGanhoRetalho.setDocument( new NumeroDocument( 12, DVML.CASAS_DECIMAIS ) );
         txtPercentagemGanhoRetalho.setHorizontalAlignment( JTextField.RIGHT );
 
-        txtPrecoVendaGrosso.setDocument( new NumeroDocument( 12, DVML.CASAS_DECIMAIS ) );
+//        txtPrecoVendaGrosso.setDocument( new NumeroDocument( 12, DVML.CASAS_DECIMAIS ) );
         txtPrecoVendaGrosso.setHorizontalAlignment( JTextField.RIGHT );
         popularComponentes();
         configurar_dois_precos();
@@ -195,9 +194,10 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         activarCampoPreco();
 
+        TextFieldUtils.configurarCampoDecimal( txtPrecoCompra, 7 );
+        TextFieldUtils.configurarCampoDecimal( txtPrecoVendaRetalho, 7 );
+
     }
-
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -289,8 +289,6 @@ public class ProdutosVisao extends javax.swing.JFrame
         ivaMotivoJComboBox = new javax.swing.JComboBox();
         ivaMotivoJLabel = new javax.swing.JLabel();
         ivaNaoAplicarJRadioButton = new javax.swing.JRadioButton();
-        txtPrecoDeVendaSemIva = new javax.swing.JTextField();
-        TotalIvaLabel1 = new javax.swing.JLabel();
         jPanel_retencao = new javax.swing.JPanel();
         retencaoAplicarJRadioButton = new javax.swing.JRadioButton();
         retencaoNaoAplicarJRadioButton = new javax.swing.JRadioButton();
@@ -503,7 +501,7 @@ public class ProdutosVisao extends javax.swing.JFrame
                 btnSalvarActionPerformed(evt);
             }
         });
-        jPanel5.add(btnSalvar, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 510, 110, 40));
+        jPanel5.add(btnSalvar, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 530, 110, 50));
 
         btnAlterar2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/alterar_16x16.png"))); // NOI18N
         btnAlterar2.setText("Alterar");
@@ -516,7 +514,7 @@ public class ProdutosVisao extends javax.swing.JFrame
                 btnAlterar2ActionPerformed(evt);
             }
         });
-        jPanel5.add(btnAlterar2, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 510, 110, 40));
+        jPanel5.add(btnAlterar2, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 530, 110, 50));
 
         btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LOGOUT - VERMELHO/Logout 32x32.png"))); // NOI18N
         btnCancelar.setText("Sair");
@@ -528,7 +526,7 @@ public class ProdutosVisao extends javax.swing.JFrame
                 btnCancelarActionPerformed(evt);
             }
         });
-        jPanel5.add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 510, 100, 40));
+        jPanel5.add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 530, 100, 50));
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Impostos"));
 
@@ -564,7 +562,7 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         txtPrecoDeVendaComIva.setEditable(false);
         txtPrecoDeVendaComIva.setBackground(new java.awt.Color(102, 102, 102));
-        txtPrecoDeVendaComIva.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
+        txtPrecoDeVendaComIva.setFont(new java.awt.Font("Lucida Grande", 1, 16)); // NOI18N
         txtPrecoDeVendaComIva.setForeground(new java.awt.Color(255, 255, 255));
 
         TotalIvaLabel.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
@@ -603,7 +601,7 @@ public class ProdutosVisao extends javax.swing.JFrame
                         .addComponent(cmbImposto, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(TotalIvaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 23, Short.MAX_VALUE)
+                        .addGap(18, 18, Short.MAX_VALUE)
                         .addComponent(txtPrecoDeVendaComIva, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -644,44 +642,31 @@ public class ProdutosVisao extends javax.swing.JFrame
             }
         });
 
-        txtPrecoDeVendaSemIva.setEditable(false);
-        txtPrecoDeVendaSemIva.setBackground(new java.awt.Color(102, 102, 102));
-        txtPrecoDeVendaSemIva.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
-        txtPrecoDeVendaSemIva.setForeground(new java.awt.Color(255, 255, 255));
-
-        TotalIvaLabel1.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
-        TotalIvaLabel1.setText("P.Venda Sem IVA");
-
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addGap(16, 16, 16)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(ivaMotivoJLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ivaMotivoJComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(ivaNaoAplicarJRadioButton, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtPrecoDeVendaSemIva, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
-                    .addComponent(TotalIvaLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE))
+                    .addComponent(ivaMotivoJComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(ivaMotivoJLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(ivaNaoAplicarJRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 126, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(ivaNaoAplicarJRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(TotalIvaLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(ivaNaoAplicarJRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 19, Short.MAX_VALUE)
                 .addGap(5, 5, 5)
                 .addComponent(ivaMotivoJLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(ivaMotivoJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtPrecoDeVendaSemIva, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(12, 12, 12))
+                .addComponent(ivaMotivoJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(13, 13, 13))
         );
 
         ivaJPanel.add(jPanel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 20, 400, 80));
@@ -789,7 +774,7 @@ public class ProdutosVisao extends javax.swing.JFrame
                 .addGap(14, 14, 14))
         );
 
-        jPanel5.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 320, 780, 190));
+        jPanel5.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 320, 780, 210));
 
         btnLimpar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/lixo.png"))); // NOI18N
         btnLimpar.setText("Limpar");
@@ -801,7 +786,7 @@ public class ProdutosVisao extends javax.swing.JFrame
                 btnLimparActionPerformed(evt);
             }
         });
-        jPanel5.add(btnLimpar, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 510, 130, 40));
+        jPanel5.add(btnLimpar, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 530, 130, 50));
 
         jButton1.setText("+");
         jButton1.addActionListener(new java.awt.event.ActionListener()
@@ -828,7 +813,7 @@ public class ProdutosVisao extends javax.swing.JFrame
                 jButton3ActionPerformed(evt);
             }
         });
-        jPanel5.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 510, 150, 40));
+        jPanel5.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 530, 150, 50));
 
         lbTipoProduto5.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         lbTipoProduto5.setText("Grupo:");
@@ -909,7 +894,7 @@ public class ProdutosVisao extends javax.swing.JFrame
                 jButton2ActionPerformed(evt);
             }
         });
-        jPanel5.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 510, -1, 40));
+        jPanel5.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 530, -1, 50));
 
         lbUnidade.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         lbUnidade.setText("Unidade:");
@@ -1056,7 +1041,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         lbStatus1.setText("%");
 
         lbPrecoVenda.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
-        lbPrecoVenda.setText("Preco Venda Ret:");
+        lbPrecoVenda.setText("Preco Venda Sem IVA (Ret):");
 
         txtPrecoVendaRetalho.setBackground(new java.awt.Color(4, 154, 3));
         txtPrecoVendaRetalho.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
@@ -1150,10 +1135,8 @@ public class ProdutosVisao extends javax.swing.JFrame
                                 .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(jcDataFabrico, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jcDataExpiracao, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(painel_stockLayout.createSequentialGroup()
-                                .addComponent(lbPrecoVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtPrecoVendaRetalho, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(txtPrecoVendaRetalho)
+                            .addComponent(lbPrecoVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 11, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -1181,13 +1164,11 @@ public class ProdutosVisao extends javax.swing.JFrame
                     .addComponent(lbPreco)
                     .addComponent(txtPercentagemGanhoRetalho, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbStatus1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtPrecoVendaRetalho, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(painel_stockLayout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(lbPrecoVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(28, 28, 28)
+                .addGap(18, 18, 18)
+                .addComponent(lbPrecoVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtPrecoVendaRetalho, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 84, Short.MAX_VALUE)
                 .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(txtQtdGrosso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1195,7 +1176,7 @@ public class ProdutosVisao extends javax.swing.JFrame
                 .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtPrecoVendaGrosso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbPrecoVenda1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(138, Short.MAX_VALUE))
+                .addGap(88, 88, 88))
         );
 
         txtArmazen1.setEditable(false);
@@ -1305,14 +1286,11 @@ public class ProdutosVisao extends javax.swing.JFrame
                         .addComponent(jButtonCompras)
                         .addComponent(cmbarmazem2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(cmbarmazem3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 563, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(32, 32, 32)
-                        .addComponent(painel_stock, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(40, 40, 40))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 597, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(painel_stock, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         pack();
@@ -1351,13 +1329,15 @@ public class ProdutosVisao extends javax.swing.JFrame
             btnSalvar.setEnabled( false );
             btnAlterar2.setEnabled( true );
             String codInternoString = txtCodigoProduto.getText();
-            Integer codigoInternoInt = (codInternoString.isEmpty() ? 0 : Integer.parseInt( codInternoString ));
+            Integer codigoInternoInt = ( codInternoString.isEmpty() ? 0 : Integer.parseInt( codInternoString ) );
             produto = (TbProduto) produtosController.findById( codigoInternoInt );
 
             ver_dados_produtos( codigoInternoInt );
             if ( ivaAplicarJRadioButton.isSelected() )
             {
-                calcularTotalComIva();
+//                calcularTotalComIva();
+
+                calcularIva();
 
             }
             else
@@ -1598,7 +1578,8 @@ public class ProdutosVisao extends javax.swing.JFrame
 
             if ( ivaAplicarJRadioButton.isSelected() )
             {
-                calcularTotalComIva();
+//                calcularTotalComIva();
+                calcularIva();
             }
             else
             {
@@ -1799,7 +1780,6 @@ public class ProdutosVisao extends javax.swing.JFrame
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private static javax.swing.JLabel TotalIvaLabel;
-    private static javax.swing.JLabel TotalIvaLabel1;
     private javax.swing.JButton btnAlterar2;
     public static javax.swing.JButton btnAssociar;
     private javax.swing.JButton btnCancelar;
@@ -1896,7 +1876,6 @@ public class ProdutosVisao extends javax.swing.JFrame
     public static javax.swing.JTextField txtPercentagemGanhoRetalho;
     public static javax.swing.JTextField txtPrecoCompra;
     private static javax.swing.JTextField txtPrecoDeVendaComIva;
-    private static javax.swing.JTextField txtPrecoDeVendaSemIva;
     public static javax.swing.JTextField txtPrecoVendaGrosso;
     public static javax.swing.JTextField txtPrecoVendaRetalho;
     public static javax.swing.JTextField txtQtdGrosso;
@@ -1955,7 +1934,7 @@ public class ProdutosVisao extends javax.swing.JFrame
     public Integer lastProduto()
     {
 
-        String sql = ("select MAX(codigo) from tb_produto");
+        String sql = ( "select MAX(codigo) from tb_produto" );
 
         ResultSet rs = conexao.executeQuery( sql );
 
@@ -2138,43 +2117,46 @@ public class ProdutosVisao extends javax.swing.JFrame
         }
 
     }
-    
+
     private void preparar_produto()
-{
-    boolean isStocavel = ck_produto.isSelected();
+    {
+        boolean isStocavel = ck_produto.isSelected();
 
-    String designacao_produto = getDesignacaoText();
-    produto.setDesignacao(designacao_produto);
-    produto.setPreco(new BigDecimal(MetodosUtil.convertToDouble(txtPrecoCompra.getText())));
-    produto.setDataFabrico(isStocavel ? jcDataFabrico.getDate() : new Date());
-    produto.setDataExpiracao(isStocavel ? jcDataExpiracao.getDate() : new Date());
-    produto.setCodBarra(isStocavel ? txtCodigoBarra.getText().trim() : "2147483647");
-    produto.setStatus("Activo");
-    produto.setDataEntrada(new Date());
-    produto.setStocavel(isStocavel ? "true" : "false");
-    produto.setPrecoVenda(MetodosUtil.convertToDouble(txtPrecoCompra.getText()));
-    produto.setQuantidadeDesconto(0);
-    produto.setCodigoManual(isStocavel ? txtCodigoManual.getText() : "");
-    produto.setCodUnidade(new Unidade(getIdUnidade()));
-    produto.setCodLocal(new TbLocal(getIdLocal()));
-    produto.setCodFornecedores(new TbFornecedor(1));
-    produto.setCodTipoProduto(new TbTipoProduto(getIdTipoPrdouto()));
-    produto.setFkModelo(new Modelo(getIdModelo()));
-    produto.setFkGrupo(new Grupo(getIdGrupo()));
-    produto.setStatusIva(ivaAplicarJRadioButton.isSelected() ? "true" : "false");
-    produto.setCozinha(getCozinha());
+        String designacao_produto = getDesignacaoText();
+        produto.setDesignacao( designacao_produto );
+        produto.setPreco( new BigDecimal( MetodosUtil.convertToDouble( txtPrecoCompra.getText() ) ) );
+        produto.setDataFabrico( isStocavel ? jcDataFabrico.getDate() : new Date() );
+        produto.setDataExpiracao( isStocavel ? jcDataExpiracao.getDate() : new Date() );
+        produto.setCodBarra( isStocavel ? txtCodigoBarra.getText().trim() : "2147483647" );
+        produto.setStatus( "Activo" );
+        produto.setDataEntrada( new Date() );
+        produto.setStocavel( isStocavel ? "true" : "false" );
+        produto.setPrecoVenda( MetodosUtil.convertToDouble( txtPrecoCompra.getText() ) );
+        produto.setQuantidadeDesconto( 0 );
+        produto.setCodigoManual( isStocavel ? txtCodigoManual.getText() : "" );
+        produto.setCodUnidade( new Unidade( getIdUnidade() ) );
+        produto.setCodLocal( new TbLocal( getIdLocal() ) );
+        produto.setCodFornecedores( new TbFornecedor( 1 ) );
+        produto.setCodTipoProduto( new TbTipoProduto( getIdTipoPrdouto() ) );
+        produto.setFkModelo( new Modelo( getIdModelo() ) );
+        produto.setFkGrupo( new Grupo( getIdGrupo() ) );
+        produto.setStatusIva( ivaAplicarJRadioButton.isSelected() ? "true" : "false" );
+        produto.setCozinha( getCozinha() );
 
-    // 🔹 Sempre grava 1 na unidade de compra
-    produto.setUnidadeCompra(1.0);
+        // 🔹 Sempre grava 1 na unidade de compra
+        produto.setUnidadeCompra( 1.0 );
 
-    try {
-        if (Objects.nonNull(image_View.getBystebyteImg())) {
-            produto.setPhoto(image_View.getBystebyteImg());
+        try
+        {
+            if ( Objects.nonNull( image_View.getBystebyteImg() ) )
+            {
+                produto.setPhoto( image_View.getBystebyteImg() );
+            }
         }
-    } catch (Exception e) {
+        catch ( Exception e )
+        {
+        }
     }
-}
-
 
 //    private void preparar_produto()
 //    {
@@ -2216,7 +2198,6 @@ public class ProdutosVisao extends javax.swing.JFrame
 //        }
 //
 //    }
-
     private void set_dados_produto()
     {
         try
@@ -2335,7 +2316,6 @@ public class ProdutosVisao extends javax.swing.JFrame
                     produtosControllerLocal.actualizar( produto );
                     DocumentoDao.commitTransaction( conexaoTransaction );
                     proximo_codigo( produtosControllerLocal );
-                    proximo_codigo_manual( produtosControllerLocal );
                     conexaoTransaction.close();
                     JOptionPane.showMessageDialog( null, "Produto actualizado com sucesso!" );
 //                    procedimento_limpar();
@@ -2439,7 +2419,6 @@ public class ProdutosVisao extends javax.swing.JFrame
 
                         DocumentoDao.commitTransaction( conexaoTransaction );
                         proximo_codigo( produtosControllerLocal );
-                        proximo_codigo_manual( produtosControllerLocal );
 
                         conexaoTransaction.close();
                         JOptionPane.showMessageDialog( null, "Dados salvos com sucesso!", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
@@ -2510,7 +2489,6 @@ public class ProdutosVisao extends javax.swing.JFrame
                         DocumentoDao.commitTransaction( conexaoTransaction );
                         JOptionPane.showMessageDialog( null, "Dados alterados com sucesso!", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
                         proximo_codigo( produtosControllerLocal );
-                        proximo_codigo_manual( produtosControllerLocal );
                         conexaoTransaction.close();
                     }
                     else
@@ -2808,7 +2786,8 @@ public class ProdutosVisao extends javax.swing.JFrame
 
             Double preco_compra = ( !Objects.isNull( preco ) ) ? preco.getPrecoCompra().doubleValue() : 0;
 
-            txtPrecoCompra.setText( CfMethods.formatarComoPorcoes( preco_compra ) );
+//            txtPrecoCompra.setText( CfMethods.formatarComoPorcoes( preco_compra ) );
+            txtPrecoCompra.setText( Double.toString( preco_compra ) );
 
             txtCodigoBarra.setText( String.valueOf( produto_local.getCodBarra() ) );
             txtCodigoManual.setText( String.valueOf( produto_local.getCodigoManual() ) );
@@ -2816,7 +2795,7 @@ public class ProdutosVisao extends javax.swing.JFrame
             txtCodigoManualProcura.setText( String.valueOf( produto_local.getCodigoManual() ) );
             jcDataExpiracao.setDate( produto_local.getDataExpiracao() );
             jcDataFabrico.setDate( produto_local.getDataFabrico() );
-            txtUnidadeCompra.setText( String.valueOf(produto_local.getUnidadeCompra() ));
+            txtUnidadeCompra.setText( String.valueOf( produto_local.getUnidadeCompra() ) );
 
             Integer pkProduto = produto_local.getCodigo();
             boolean temIva = produtosImpostoController.existeProdutoImposto( pkProduto );
@@ -2843,8 +2822,7 @@ public class ProdutosVisao extends javax.swing.JFrame
             retencaoAplicarJRadioButton.setSelected( temRetencao );
             retencaoNaoAplicarJRadioButton.setSelected( !temRetencao );
 
-            atualizarIvaForm();
-
+//            atualizarIvaForm();
             Double taxa = produtosImpostoController.getTaxaByIdProduto( pkProduto );
             cmbImposto.setSelectedItem( String.valueOf( taxa ) );
             System.out.println( "TAXA REAL: " + taxa );
@@ -2860,19 +2838,16 @@ public class ProdutosVisao extends javax.swing.JFrame
             double preco_venda_grosso = precoGrosso.getPrecoVenda().doubleValue();
             double percentagem_ganho = precoRetalhoLocal.getPercentagemGanho().doubleValue();
 
-            txtPrecoVendaRetalho.setText(
-                    String.valueOf( CfMethods.formatarComoPorcoes( preco_venda_retalho ) )
-            );
-            txtPrecoDeVendaSemIva.setText(
-                    String.valueOf( CfMethods.formatarComoPorcoes( preco_venda_retalho ) )
-            );
+//            txtPrecoVendaRetalho.setText( String.valueOf( CfMethods.formatarComoPorcoes( preco_venda_retalho ) ));
+            txtPrecoVendaRetalho.setText( Double.toString( preco_venda_retalho ) );
+//            txtPrecoDeVendaSemIva.setText(String.valueOf( CfMethods.formatarComoPorcoes( preco_venda_retalho ) ) );
 
             txtQtdGrosso.setText( String.valueOf( precoGrosso.getQtdBaixo() ) );
-            txtPrecoVendaGrosso.setText(
-                    String.valueOf( CfMethods.formatarComoPorcoes( preco_venda_grosso ) )
-            );
+//            txtPrecoVendaGrosso.setText(String.valueOf( CfMethods.formatarComoPorcoes( preco_venda_grosso ) )
+            txtPrecoVendaGrosso.setText( Double.toString( preco_venda_grosso ) );
 
-            txtPercentagemGanhoRetalho.setText( CfMethods.formatarComoPorcoes( percentagem_ganho ) );
+//            txtPercentagemGanhoRetalho.setText( CfMethods.formatarComoPorcoes( percentagem_ganho ) );
+            txtPercentagemGanhoRetalho.setText( Double.toString( percentagem_ganho ) );
             txtCodigoProduto.setText( String.valueOf( produto_local.getCodigo() ) );
 
             if ( produto_local.getStocavel().equals( "true" ) )
@@ -3008,6 +2983,7 @@ public class ProdutosVisao extends javax.swing.JFrame
             procedimento_limpar();
         }
     }
+
     private void buscar_by_cod_manual1()
     {
 
@@ -3068,7 +3044,8 @@ public class ProdutosVisao extends javax.swing.JFrame
     {
 
         preco = new TbPreco();
-        preco.setPrecoCompra( new BigDecimal( MetodosUtil.convertToDouble( txtPrecoCompra.getText() ) ) );
+//        preco.setPrecoCompra( new BigDecimal( MetodosUtil.convertToDouble( txtPrecoCompra.getText() ) ) );
+        preco.setPrecoCompra( new BigDecimal( Double.parseDouble( txtPrecoCompra.getText() ) ) );
 
         if ( ck_produto.isSelected() )
         {
@@ -3121,7 +3098,7 @@ public class ProdutosVisao extends javax.swing.JFrame
 //            txtCodigoBarra.setBackground( Color.YELLOW );
             return false;
         }
-        else if ( produtosController.existProdutoByCodigoManual(txtCodigoManual.getText() ) && isProduto )
+        else if ( produtosController.existProdutoByCodigoManual( txtCodigoManual.getText() ) && isProduto )
         {
             JOptionPane.showMessageDialog( null, "Este codigo manual já existe!!!", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
             txtCodigoManual.requestFocus();
@@ -3353,7 +3330,6 @@ public class ProdutosVisao extends javax.swing.JFrame
         return designacao_produto;
     }
 
-
     private void proximo_codigo( ProdutosController produtosControllerLocal )
     {
         try
@@ -3375,29 +3351,7 @@ public class ProdutosVisao extends javax.swing.JFrame
             txtCodigoBarra.setText( "" );
         }
     }
-    
-    private void proximo_codigo_manual( ProdutosController produtosControllerLocal )
-    {
-        try
-        {
-            TbProduto lastProduto = produtosControllerLocal.getLastProduto();
-            int codProduto = 1;
-            if ( Objects.nonNull( lastProduto ) )
-            {
-                codProduto = produtosControllerLocal.getLastProduto().getCodigo() + 1;
-//                txtCodigoBarra.setText( String.valueOf( codProduto ) );
-            }
 
-            jLabelCodProduto.setText( "Cod. Prod: " + codProduto );
-            txtCodigoManual.setText( String.valueOf( codProduto ) );
-        }
-        catch ( Exception e )
-        {
-            jLabelCodProduto.setText( "Cod. Prod: " );
-            txtCodigoManual.setText( "" );
-        }
-    }
-    
     private void setFocus( String focus )
     {
         if ( focus.equalsIgnoreCase( "Codigo Interno" ) )
@@ -3427,16 +3381,17 @@ public class ProdutosVisao extends javax.swing.JFrame
         setDadosPreco();
         preco.setQtdBaixo( 0 );
         preco.setQtdAlto( Integer.parseInt( txtQtdGrosso.getText() ) - 1 );
-        BigDecimal precoVenda = new BigDecimal( MetodosUtil.convertToDouble( isStocavel ? txtPrecoVendaRetalho.getText() : "0.0" ) );
-        BigDecimal precoVendaGrosso = new BigDecimal( MetodosUtil.convertToDouble( isStocavel ? txtPrecoVendaGrosso.getText() : "0.0" ) );
-        BigDecimal precoCompra = new BigDecimal( MetodosUtil.convertToDouble( txtPrecoCompra.getText() ) );
+//        BigDecimal precoVenda = new BigDecimal( MetodosUtil.convertToDouble( isStocavel ? txtPrecoVendaRetalho.getText() : "0.0" ) );
+        BigDecimal precoVenda = new BigDecimal( Double.parseDouble( isStocavel ? txtPrecoVendaRetalho.getText() : "0.0" ) );
+//        BigDecimal precoVendaGrosso = new BigDecimal( MetodosUtil.convertToDouble( isStocavel ? txtPrecoVendaGrosso.getText() : "0.0" ) );
+        BigDecimal precoVendaGrosso = new BigDecimal( Double.parseDouble( isStocavel ? txtPrecoVendaGrosso.getText() : "0.0" ) );
+//        BigDecimal precoCompra = new BigDecimal( MetodosUtil.convertToDouble( txtPrecoCompra.getText() ) );
+        BigDecimal precoCompra = new BigDecimal( Double.parseDouble( txtPrecoCompra.getText() ) );
 
         try
         {
-
             preco.setPrecoVenda( isStocavel ? precoVenda : precoCompra );
             precosControllerLocal.salvar( preco );
-
             /*SEGUNDO PRECO GROSSO*/
             setDadosPreco();
 //        preco.setQtdBaixo( (int) DVML.QTD_DEFAULT );
@@ -3461,12 +3416,18 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         if ( !txtPrecoCompra.getText().equals( "" ) )
         {
-
             try
             {
+                if ( ck_servico.isSelected() )
+                {
+                    txtPrecoVendaRetalho.setText( txtPrecoCompra.getText() );
+                }
+
                 double qtd = 1d;
                 double taxa = Double.parseDouble( cmbImposto.getSelectedItem().toString() );
-                double precoLocal = MetodosUtil.convertToDouble( txtPrecoVendaRetalho.getText() );
+//                double precoLocal = MetodosUtil.convertToDouble( txtPrecoVendaRetalho.getText() );
+
+                double precoLocal = Double.parseDouble( txtPrecoVendaRetalho.getText() );
                 double desconto = 0d;
                 double valorComIVA = MetodosUtil.getValorComIVA( qtd, taxa, precoLocal, desconto );
 
@@ -3474,6 +3435,7 @@ public class ProdutosVisao extends javax.swing.JFrame
             }
             catch ( Exception e )
             {
+                e.printStackTrace();
             }
 
         }
@@ -3485,14 +3447,12 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         if ( !txtPrecoCompra.getText().equals( "" ) )
         {
-
             try
             {
-                double qtd = 1d;
-                double taxa = Double.parseDouble( cmbImposto.getSelectedItem().toString() );
-                double precoLocal = MetodosUtil.convertToDouble( txtPrecoVendaRetalho.getText() );
+//                double precoLocal = MetodosUtil.convertToDouble( txtPrecoVendaRetalho.getText() );
+                double precoLocal = Double.parseDouble( txtPrecoVendaRetalho.getText() );
+                BigDecimal bd = new BigDecimal( precoLocal ).setScale( 2, RoundingMode.HALF_UP );
 
-                txtPrecoDeVendaSemIva.setText( String.valueOf( precoLocal ) );
             }
             catch ( Exception e )
             {

@@ -116,13 +116,11 @@ public class BDConexao
             /*Adicionar  Reservas */
             for ( int i = 0; i < 40; i++ )
             {
-
                 ProdutoModelo produto_reserva = new ProdutoModelo( 0, idCategoria, 1, "Reserva Neste  " + ( i + 1 ), "2014-01-01", "2014-01-01", "0", 0 );
                 produto_reserva.setData_entrada( "2014-01-01" );
                 produto_reserva.setStatus( "Activo" );
                 produto_reserva.setStocavel( "true" );
                 vector.add( produto_reserva );
-
             }
 
         }

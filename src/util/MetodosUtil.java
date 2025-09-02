@@ -112,6 +112,8 @@ import visao.BDBackupJFrame;
 import visao.CompraVisao;
 import visao.LoginVisao;
 import visao.RootVisao;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 //import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 //import org.apache.poi.xwpf.usermodel.XWPFRun;
 
@@ -145,7 +147,7 @@ public class MetodosUtil
         String final_hash = "";
         try
         {
-            System.out.println("Cheguei no invoice date");
+            System.out.println( "Cheguei no invoice date" );
             String invoiceDate = new SimpleDateFormat( CfConstantes.YYYY_MM_DD ).format( venda.getDataVenda() );
             String systemEntryDate = new SimpleDateFormat( CfConstantes.YYYY_MM_DD_T_HH_MM_SS ).format( venda.getDataVenda() );
             String invoiceNo = venda.getCodFact();
@@ -253,8 +255,7 @@ public class MetodosUtil
 //        total_iva = total_iva.setScale( 2, BigDecimal.ROUND_HALF_EVEN );
 //        return total_iva;
 //    }
-    
-        private static String criptografia_hash_venda2( TbVenda venda, double parmGrossTotal, BDConexao conexao )
+    private static String criptografia_hash_venda2( TbVenda venda, double parmGrossTotal, BDConexao conexao )
     {
 
         String final_hash = "";
@@ -343,6 +344,7 @@ public class MetodosUtil
         }
         return final_hash;
     }
+
     private static String criptografia_hash_nota( Notas notas, double parmGrossTotal, BDConexao conexao )
     {
         String final_hash = "";
@@ -563,7 +565,7 @@ public class MetodosUtil
 
         Vector vector = new Vector();
 
-        switch (mesesPagar)
+        switch ( mesesPagar )
         {
 
             case 0:
@@ -722,7 +724,7 @@ public class MetodosUtil
 
         Vector vector = new Vector();
 
-        switch (mesesPagar)
+        switch ( mesesPagar )
         {
 
             case "Janeiro":
@@ -868,7 +870,7 @@ public class MetodosUtil
     private int getDias( int mes, int ano )
     {
 
-        switch (mes)
+        switch ( mes )
         {
             case 0:
             case 2:
@@ -905,7 +907,7 @@ public class MetodosUtil
 
     private int getDiaBissesto( int ano )
     {
-        switch (ano)
+        switch ( ano )
         {
             case 2016:
             case 2020:
@@ -1271,144 +1273,190 @@ public class MetodosUtil
         return ( s );
     }
 
-    public static String valorPorExtensoBigDecima(BigDecimal valor, String moeda) {
-    if (valor.compareTo(BigDecimal.ZERO) == 0) {
-        return "zero";
-    }
-
-    // Arredonda para 2 casas decimais
-    valor = valor.setScale(2, RoundingMode.HALF_UP);
-
-    BigDecimal parteInteiraBD = valor.setScale(0, RoundingMode.DOWN);
-    BigDecimal parteFracionariaBD = valor.subtract(parteInteiraBD).multiply(BigDecimal.valueOf(100)).setScale(0, RoundingMode.HALF_UP);
-
-    long inteiro = parteInteiraBD.longValue();
-    int centavos = parteFracionariaBD.intValue();
-
-    String vlrS = String.valueOf(inteiro);
-    if (vlrS.length() > 15) {
-        return "Erro: valor superior a 999 trilhões.";
-    }
-
-    String s = "", saux, vlrP;
-    String[] unidade = {
-        "", "Um", "Dois", "Três", "Quatro", "Cinco",
-        "Seis", "Sete", "Oito", "Nove", "Dez", "Onze",
-        "Doze", "Treze", "Catorze", "Quinze", "Dezasseis",
-        "Dezassete", "Dezoito", "Dezanove"
-    };
-    String[] centena = {
-        "", "Cento", "Duzentos", "Trezentos",
-        "Quatrocentos", "Quinhentos", "Seiscentos",
-        "Setecentos", "Oitocentos", "Novecentos"
-    };
-    String[] dezena = {
-        "", "", "Vinte", "Trinta", "Quarenta", "Cinquenta",
-        "Sessenta", "Setenta", "Oitenta", "Noventa"
-    };
-    String[] qualificaS = {
-        "", "Mil", "Milhão", "Bilhão", "Trilhão"
-    };
-    String[] qualificaP = {
-        "", "Mil", "Milhões", "Bilhões", "Trilhões"
-    };
-
-    int n, unid, dez, cent, tam, i = 0;
-    boolean umReal = false, tem = false;
-
-    while (!vlrS.equals("0")) {
-        tam = vlrS.length();
-        if (tam > 3) {
-            vlrP = vlrS.substring(tam - 3);
-            vlrS = vlrS.substring(0, tam - 3);
-        } else {
-            vlrP = vlrS;
-            vlrS = "0";
+    public static String valorPorExtensoBigDecima( BigDecimal valor, String moeda )
+    {
+        if ( valor.compareTo( BigDecimal.ZERO ) == 0 )
+        {
+            return "zero";
         }
 
-        if (!vlrP.equals("000")) {
-            saux = "";
-            if (vlrP.equals("100")) {
-                saux = "Cem";
-            } else {
-                n = Integer.parseInt(vlrP);
-                cent = n / 100;
-                dez = (n % 100) / 10;
-                unid = n % 10;
+        // Arredonda para 2 casas decimais
+        valor = valor.setScale( 2, RoundingMode.HALF_UP );
 
-                if (cent != 0) {
-                    saux = centena[cent];
+        BigDecimal parteInteiraBD = valor.setScale( 0, RoundingMode.DOWN );
+        BigDecimal parteFracionariaBD = valor.subtract( parteInteiraBD ).multiply( BigDecimal.valueOf( 100 ) ).setScale( 0, RoundingMode.HALF_UP );
+
+        long inteiro = parteInteiraBD.longValue();
+        int centavos = parteFracionariaBD.intValue();
+
+        String vlrS = String.valueOf( inteiro );
+        if ( vlrS.length() > 15 )
+        {
+            return "Erro: valor superior a 999 trilhões.";
+        }
+
+        String s = "", saux, vlrP;
+        String[] unidade =
+        {
+            "", "Um", "Dois", "Três", "Quatro", "Cinco",
+            "Seis", "Sete", "Oito", "Nove", "Dez", "Onze",
+            "Doze", "Treze", "Catorze", "Quinze", "Dezasseis",
+            "Dezassete", "Dezoito", "Dezanove"
+        };
+        String[] centena =
+        {
+            "", "Cento", "Duzentos", "Trezentos",
+            "Quatrocentos", "Quinhentos", "Seiscentos",
+            "Setecentos", "Oitocentos", "Novecentos"
+        };
+        String[] dezena =
+        {
+            "", "", "Vinte", "Trinta", "Quarenta", "Cinquenta",
+            "Sessenta", "Setenta", "Oitenta", "Noventa"
+        };
+        String[] qualificaS =
+        {
+            "", "Mil", "Milhão", "Bilhão", "Trilhão"
+        };
+        String[] qualificaP =
+        {
+            "", "Mil", "Milhões", "Bilhões", "Trilhões"
+        };
+
+        int n, unid, dez, cent, tam, i = 0;
+        boolean umReal = false, tem = false;
+
+        while ( !vlrS.equals( "0" ) )
+        {
+            tam = vlrS.length();
+            if ( tam > 3 )
+            {
+                vlrP = vlrS.substring( tam - 3 );
+                vlrS = vlrS.substring( 0, tam - 3 );
+            }
+            else
+            {
+                vlrP = vlrS;
+                vlrS = "0";
+            }
+
+            if ( !vlrP.equals( "000" ) )
+            {
+                saux = "";
+                if ( vlrP.equals( "100" ) )
+                {
+                    saux = "Cem";
                 }
-                if ((n % 100) <= 19) {
-                    saux = (saux.length() > 0 ? saux + " e " : "") + unidade[n % 100];
-                } else {
-                    saux = (saux.length() > 0 ? saux + " e " : "") + dezena[dez];
-                    if (unid != 0) {
-                        saux = saux + " e " + unidade[unid];
+                else
+                {
+                    n = Integer.parseInt( vlrP );
+                    cent = n / 100;
+                    dez = ( n % 100 ) / 10;
+                    unid = n % 10;
+
+                    if ( cent != 0 )
+                    {
+                        saux = centena[ cent ];
+                    }
+                    if ( ( n % 100 ) <= 19 )
+                    {
+                        saux = ( saux.length() > 0 ? saux + " e " : "" ) + unidade[ n % 100 ];
+                    }
+                    else
+                    {
+                        saux = ( saux.length() > 0 ? saux + " e " : "" ) + dezena[ dez ];
+                        if ( unid != 0 )
+                        {
+                            saux = saux + " e " + unidade[ unid ];
+                        }
                     }
                 }
-            }
 
-            if (vlrP.equals("1") || vlrP.equals("001")) {
-                if (i == 0) {
-                    umReal = true;
-                } else {
-                    saux += " " + qualificaS[i];
+                if ( vlrP.equals( "1" ) || vlrP.equals( "001" ) )
+                {
+                    if ( i == 0 )
+                    {
+                        umReal = true;
+                    }
+                    else
+                    {
+                        saux += " " + qualificaS[ i ];
+                    }
                 }
-            } else if (i != 0) {
-                saux += " " + qualificaP[i];
-            }
+                else if ( i != 0 )
+                {
+                    saux += " " + qualificaP[ i ];
+                }
 
-            if (s.length() > 0) {
-                s = saux + ", " + s;
-            } else {
-                s = saux;
-            }
-        }
-
-        if ((i == 0 || i == 1) && s.length() > 0) {
-            tem = true;
-        }
-
-        i++;
-    }
-
-    if (s.length() > 0) {
-        if (umReal) {
-            s += " " + moeda;
-        } else if (tem) {
-            s += " " + moeda + "(s)";
-        } else {
-            s += " de " + moeda + "(s)";
-        }
-    }
-
-    // Centavos
-    if (centavos > 0) {
-        if (s.length() > 0) {
-            s += " e ";
-        }
-
-        if (centavos == 1) {
-            s += "Um Centimo";
-        } else {
-            if (centavos <= 19) {
-                s += unidade[centavos];
-            } else {
-                dez = centavos / 10;
-                unid = centavos % 10;
-                s += dezena[dez];
-                if (unid != 0) {
-                    s += " e " + unidade[unid];
+                if ( s.length() > 0 )
+                {
+                    s = saux + ", " + s;
+                }
+                else
+                {
+                    s = saux;
                 }
             }
-            s += " Centimos";
+
+            if ( ( i == 0 || i == 1 ) && s.length() > 0 )
+            {
+                tem = true;
+            }
+
+            i++;
         }
+
+        if ( s.length() > 0 )
+        {
+            if ( umReal )
+            {
+                s += " " + moeda;
+            }
+            else if ( tem )
+            {
+                s += " " + moeda + "(s)";
+            }
+            else
+            {
+                s += " de " + moeda + "(s)";
+            }
+        }
+
+        // Centavos
+        if ( centavos > 0 )
+        {
+            if ( s.length() > 0 )
+            {
+                s += " e ";
+            }
+
+            if ( centavos == 1 )
+            {
+                s += "Um Centimo";
+            }
+            else
+            {
+                if ( centavos <= 19 )
+                {
+                    s += unidade[ centavos ];
+                }
+                else
+                {
+                    dez = centavos / 10;
+                    unid = centavos % 10;
+                    s += dezena[ dez ];
+                    if ( unid != 0 )
+                    {
+                        s += " e " + unidade[ unid ];
+                    }
+                }
+                s += " Centimos";
+            }
+        }
+
+        return s;
     }
 
-    return s;
-}
-    
     public static String getValor( String valor )
     {
         JFormattedTextField valor_marcarado;
@@ -1492,7 +1540,7 @@ public class MetodosUtil
     public static String getMesPagarU( int id_mes )
     {
 
-        switch (id_mes)
+        switch ( id_mes )
         {
 
             case 1:
@@ -1671,15 +1719,15 @@ public class MetodosUtil
     {
 
         double salario_bruto = salario_base + getTotalSubsidio( subsidios );
-        double seguranca_social = (salario_bruto * 0.03);
+        double seguranca_social = ( salario_bruto * 0.03 );
         double material_coletavel = salario_base - seguranca_social + getTotalSubsidioTributavel( subsidios );
         //seta os dados de taxa de tributação
         DadosIrt taxas_tributacao = taxas_tributacao( material_coletavel );
 
         double parcela_fixa = taxas_tributacao.parcela_fixa;
         double excesso = taxas_tributacao.excesso;
-        double taxa = (taxas_tributacao.percentagem / 100);
-        double irt = (parcela_fixa + ( ( material_coletavel - excesso ) * taxa ));
+        double taxa = ( taxas_tributacao.percentagem / 100 );
+        double irt = ( parcela_fixa + ( ( material_coletavel - excesso ) * taxa ) );
 
         return irt;
 
@@ -2082,7 +2130,7 @@ public class MetodosUtil
     public static String getDescricaoMes( int codMes )
     {
 
-        switch (codMes)
+        switch ( codMes )
         {
             case 0:
                 return "Janeiro";
@@ -2406,8 +2454,8 @@ public class MetodosUtil
     public static String getDataString( Date date )
     {
         Integer dia = date.getDate();
-        Integer mes = (date.getMonth() + 1);
-        Integer ano = (date.getYear() + 1900);
+        Integer mes = ( date.getMonth() + 1 );
+        Integer ano = ( date.getYear() + 1900 );
 
         String data = "";
 
@@ -2696,15 +2744,15 @@ public class MetodosUtil
     public static double percentagem_ganho( double preco_compra, double preco_venda )
     {
 
-        double lucro = (preco_venda - preco_compra);
-        double percetagem = (( lucro * 100 ) / preco_compra);
+        double lucro = ( preco_venda - preco_compra );
+        double percetagem = ( ( lucro * 100 ) / preco_compra );
         return MetodosUtil.retirar_dizimas( percetagem );
 
     }
 
     public static double preco_venda( double percentagem_ganho, double preco_compra )
     {
-        double preco_venda = (( ( ( percentagem_ganho * preco_compra ) ) / 100 ) + preco_compra);
+        double preco_venda = ( ( ( ( percentagem_ganho * preco_compra ) ) / 100 ) + preco_compra );
         return MetodosUtil.retirar_dizimas( preco_venda );
     }
 
@@ -3177,7 +3225,7 @@ public class MetodosUtil
 
     public static double getTotalIVASobreTotalIliquido( List<TbItemVenda> list, double imposto )
     {
-        double taxa = (imposto / 100);
+        double taxa = ( imposto / 100 );
         return ( getTotalIliquido( list ) * taxa );
     }
 
@@ -3715,7 +3763,7 @@ public class MetodosUtil
     {
         AnoEconomico anoEconomico = anoEconomicoDao.getLastObject();
         int ano_economico = Integer.parseInt( anoEconomico.getDesignacao() );
-        int ano_sistema_operativo = (new Date().getYear() + 1900);
+        int ano_sistema_operativo = ( new Date().getYear() + 1900 );
 
         return ( ano_economico <= ano_sistema_operativo );
     }
@@ -3818,14 +3866,46 @@ public class MetodosUtil
 
     }
 
+//    public static double getValorComIVA( double qtd, double taxa, double preco, double desconto )
+//    {
+//        double subtotal_linha = (preco * qtd);
+//        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
+//        double valor_iva = 1 + ( taxa / 100 );//
+//        return ( ( subtotal_linha - desconto_valor ) * valor_iva );
+//    }
     public static double getValorComIVA( double qtd, double taxa, double preco, double desconto )
     {
+        BigDecimal precoBD = BigDecimal.valueOf( preco );
+        BigDecimal qtdBD = BigDecimal.valueOf( qtd );
+        BigDecimal subtotal = precoBD.multiply( qtdBD );
+        BigDecimal descontoBD = subtotal.multiply( BigDecimal.valueOf( desconto ).divide( BigDecimal.valueOf( 100 ) ) );
+        BigDecimal base = subtotal.subtract( descontoBD );
+        BigDecimal iva = BigDecimal.ONE.add( BigDecimal.valueOf( taxa ).divide( BigDecimal.valueOf( 100 ) ) );
+        BigDecimal total = base.multiply( iva );
+        return total.setScale( 2, RoundingMode.HALF_UP ).doubleValue();
+    }
 
-        double subtotal_linha = (preco * qtd);
-        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
-        double valor_iva = 1 + ( taxa / 100 );//
-        return ( ( subtotal_linha - desconto_valor ) * valor_iva );
+    public static BigDecimal getValorIliquido( BigDecimal qtd, BigDecimal precoVenda, BigDecimal desconto )
+    {
+        // subtotal = preço × quantidade
+        BigDecimal subtotal = precoVenda.multiply( qtd );
 
+        // desconto = subtotal × (desconto / 100)
+        BigDecimal descontoValor = subtotal.multiply( desconto )
+                .divide( BigDecimal.valueOf( 100 ), 2, RoundingMode.HALF_UP );
+
+        // valor ilíquido = subtotal - desconto
+        BigDecimal valorIliquido = subtotal.subtract( descontoValor );
+        // retorna com 2 casas decimais
+        return valorIliquido.setScale( 2, RoundingMode.HALF_UP );
+    }
+
+    public static double getValorComRetencao( double qtd, double ret, double preco_venda, double desconto )
+    {
+        double subtotal_linha = ( preco_venda * qtd );
+        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
+        double valor_ret = ( ( ( subtotal_linha - desconto_valor ) * ret ) / 100 );//
+        return ( valor_ret );
     }
 
     public static String iniciais_extenso( int idDocumento, DocumentoDao documentoDao )
@@ -3834,7 +3914,7 @@ public class MetodosUtil
         Documento documento_local = documentoDao.findDocumento( idDocumento );
         String abreviacao_local = documento_local.getAbreviacao();
 
-        switch (abreviacao_local)
+        switch ( abreviacao_local )
         {
             case "FT":
                 return "Facturamos o valor de: ";
@@ -3853,7 +3933,7 @@ public class MetodosUtil
         Documento documento_local = (Documento) documentosController.findById( idDocumento );
         String abreviacao_local = documento_local.getAbreviacao();
 
-        switch (abreviacao_local)
+        switch ( abreviacao_local )
         {
             case "FT":
                 return "Facturamos o valor de: ";
@@ -4156,7 +4236,7 @@ public class MetodosUtil
         while ( menor_data_1_data_2( dateInicio, dateFim ) || igual_data_1_data_2( dateInicio, dateFim ) )
         {
             calendar.setTime( dateInicio );
-            switch (idModalidade)
+            switch ( idModalidade )
             {
                 case 1:
                     if ( !( calendar.get( Calendar.DAY_OF_WEEK ) == Calendar.SATURDAY ) && !( calendar.get( Calendar.DAY_OF_WEEK ) == Calendar.SUNDAY ) )
@@ -4194,7 +4274,7 @@ public class MetodosUtil
         while ( menor_data_1_data_2( dateInicio, dateFim ) || igual_data_1_data_2( dateInicio, dateFim ) )
         {
             calendar.setTime( dateInicio );
-            switch (idModalidade)
+            switch ( idModalidade )
             {
                 case 1:
                     if ( !( calendar.get( Calendar.DAY_OF_WEEK ) == Calendar.SATURDAY ) && !( calendar.get( Calendar.DAY_OF_WEEK ) == Calendar.SUNDAY ) )
@@ -4309,8 +4389,8 @@ public class MetodosUtil
         else
         {
             Date dataContrato = funcionario.getDataContrato();
-            int anoActual = (dataActual.getYear() + 1900);
-            int anoContrato = (dataContrato.getYear() + 1900);
+            int anoActual = ( dataActual.getYear() + 1900 );
+            int anoContrato = ( dataContrato.getYear() + 1900 );
 
 //
             Date dataComeco = ( anoActual == anoContrato ) ? funcionario.getDataContrato() : stringToDate( "01/01/" + anoActual );
@@ -4340,9 +4420,9 @@ public class MetodosUtil
         //dias possíveis de trabalho do funcionário  na instituição.
         int diasPossiveisTrabalho = funcionario.getFkModalidade().getDiasUteisTrabalho();
         //valor a receber mensal 
-        double remunuracaoMensal = (salarioBase / 12);
+        double remunuracaoMensal = ( salarioBase / 12 );
         //valor a receber diário
-        double remuneracaoDiario = (remunuracaoMensal / diasPossiveisTrabalho);
+        double remuneracaoDiario = ( remunuracaoMensal / diasPossiveisTrabalho );
 
         return remuneracaoDiario;
 
@@ -4715,25 +4795,25 @@ public class MetodosUtil
 
     public static double percentagemGanho( double pc, double pv )
     {
-        double pg = (( pv - pc ) / ( pc * 0.01 ));
+        double pg = ( ( pv - pc ) / ( pc * 0.01 ) );
         return pg;
     }
 
     public static double precoVendaMargem( double pc, double mg )
     {
-        double pvm = (( pc / 100 + mg * 0.01 ));
+        double pvm = ( ( pc / 100 + mg * 0.01 ) );
         return pvm;
     }
 
     public static double factor_correcao( double qtd_bruto, double qtd_liquido )
     {
-        double fc = (qtd_bruto / qtd_liquido);
+        double fc = ( qtd_bruto / qtd_liquido );
         return fc;
     }
 
     public static double custo_total( double preco_compra, double qtd_bruto, double qtd_liquido, double unidade_compra )
     {
-        double custo = (qtd_bruto * preco_compra);
+        double custo = ( qtd_bruto * preco_compra );
         double custo_total = ( custo / unidade_compra ) * 0.1;
         return custo_total;
     }
@@ -4742,7 +4822,7 @@ public class MetodosUtil
     {
         System.out.println( "PC: " + pc );
         System.out.println( "PG: " + pg );
-        double pv = (pc + ( pc * pg * 0.01 ));
+        double pv = ( pc + ( pc * pg * 0.01 ) );
         System.out.println( "PV: " + pv );
         return pv;
     }
@@ -5018,7 +5098,7 @@ public class MetodosUtil
     {
 
         double taxaByIdProduto = produtoImpostoDao.getTaxaByIdProduto( idProduto );
-        double valor = (( preco * qtd ) - desconto);
+        double valor = ( ( preco * qtd ) - desconto );
         if ( taxaByIdProduto != 0 )
         {
             return ( valor * 1.14 );
@@ -5300,7 +5380,7 @@ public class MetodosUtil
         double abono_familia = ( agregado_familiar > ( salario_base * 0.05 ) ) ? 0 : agregado_familiar;
 
         double salario_iliquido = salario_base - valor_total_faltas + total_subsidios + remuneracoesEspecies;
-        double seguranca_social = (salario_iliquido * 0.03); //O agregado por lei nao poder ser adicionado para calcular o inss
+        double seguranca_social = ( salario_iliquido * 0.03 ); //O agregado por lei nao poder ser adicionado para calcular o inss
         salario_iliquido += agregado_familiar;
 //        double material_coletavel = salario_iliquido - seguranca_social - abono_familia + getTotalSubsidioTributavel( subsidios );
         double desconto_susidios_tributaveis = getDescontoSubsidiosTributavel( funcionario, subsidios ); //alimentacao e transporte
@@ -5313,7 +5393,7 @@ public class MetodosUtil
         double excesso = RecibosVisao.taxas_tributacao.excesso;
         double taxa = RecibosVisao.taxas_tributacao.percentagem;
         taxa = taxa / 100;
-        double irt = (parcela_fixa + ( ( material_coletavel - excesso ) * taxa ));
+        double irt = ( parcela_fixa + ( ( material_coletavel - excesso ) * taxa ) );
 
         System.out.println( "*** SALARIO BASE: " + salario_base );
         System.out.println( "*** ABONO DE FAMILIA: " + abono_familia );
@@ -5448,8 +5528,8 @@ public class MetodosUtil
         if ( taxaByIdProduto != 0 )
         {
 
-            double taxa = (MetodosUtil.getTaxaIva( regime ) / 100);
-            double valor_final = (preco + ( preco * taxa ));
+            double taxa = ( MetodosUtil.getTaxaIva( regime ) / 100 );
+            double valor_final = ( preco + ( preco * taxa ) );
             System.out.println( "TAXA: " + taxa );
             System.out.println( "VALOR FINAL: " + valor_final );
 //            return ( preco * taxa );
@@ -5982,104 +6062,119 @@ public class MetodosUtil
 //        }
 //
 //    }
+    public static void fechoAutomatico()
+    {
+        BDConexao conexaoTransaction = new BDConexao();
+        CaixasController caixa_controller = new CaixasController( conexaoTransaction );
+        VendasController vendasController = new VendasController( conexaoTransaction );
+        FormaPagamentoItemController formaPagamentoItemController = new FormaPagamentoItemController( conexaoTransaction );
+        FormaPagamentoController formaPagamentoController = new FormaPagamentoController( conexaoTransaction );
+        ItemCaixaController item_caixa_controller = new ItemCaixaController( conexaoTransaction );
 
-    public static void fechoAutomatico() {
-    BDConexao conexaoTransaction = new BDConexao();
-    CaixasController caixa_controller = new CaixasController(conexaoTransaction);
-    VendasController vendasController = new VendasController(conexaoTransaction);
-    FormaPagamentoItemController formaPagamentoItemController = new FormaPagamentoItemController(conexaoTransaction);
-    FormaPagamentoController formaPagamentoController = new FormaPagamentoController(conexaoTransaction);
-    ItemCaixaController item_caixa_controller = new ItemCaixaController(conexaoTransaction);
+        boolean sucesso = true;
 
-    boolean sucesso = true;
+        List<FormaPagamento> formasPagamentos = formaPagamentoController.listarTodosExeceptoOrdemSacEGorjet();
+        List<TbUsuario> usuarios = vendasController.listarUsuario( new Date() );
 
-    List<FormaPagamento> formasPagamentos = formaPagamentoController.listarTodosExeceptoOrdemSacEGorjet();
-    List<TbUsuario> usuarios = vendasController.listarUsuario(new Date());
+        for ( TbUsuario usuario : usuarios )
+        {
+            int idUser = usuario.getCodigo();
 
-    for (TbUsuario usuario : usuarios) {
-        int idUser = usuario.getCodigo();
+            if ( !caixa_controller.existe_fecho( idUser ) )
+            {
+                Caixa caixa_actual = caixa_controller.caixa_actual( idUser );
+                caixa_actual.setDataFecho( new Date() );
 
-        if (!caixa_controller.existe_fecho(idUser)) {
-            Caixa caixa_actual = caixa_controller.caixa_actual(idUser);
-            caixa_actual.setDataFecho(new Date());
+                Date dataAbertura = caixa_actual.getDataAbertura();
+                Date dataFecho = caixa_actual.getDataFecho();
 
-            Date dataAbertura = caixa_actual.getDataAbertura();
-            Date dataFecho = caixa_actual.getDataFecho();
+                caixa_actual.setUsuarioFecho( usuario.getNome() );
+                caixa_actual.setCodUsuarioFecho( idUser );
+                caixa_actual.setNumeroVendas(
+                        formaPagamentoItemController.getNumeroVendasDiario( conexaoTransaction, idUser, dataAbertura, dataFecho )
+                );
 
-            caixa_actual.setUsuarioFecho(usuario.getNome());
-            caixa_actual.setCodUsuarioFecho(idUser);
-            caixa_actual.setNumeroVendas(
-                formaPagamentoItemController.getNumeroVendasDiario(conexaoTransaction, idUser, dataAbertura, dataFecho)
-            );
+                BigDecimal valor = formaPagamentoItemController.getValorRealDiario( conexaoTransaction, idUser, dataAbertura, dataFecho );
+                BigDecimal troco = formaPagamentoItemController.getTrocoRealDiario( conexaoTransaction, idUser, dataAbertura, dataFecho );
+                BigDecimal totalDesconto = formaPagamentoItemController.getTotalDesconto( conexaoTransaction, idUser, dataAbertura, dataFecho );
+                BigDecimal totalIva = formaPagamentoItemController.getTotalIva( conexaoTransaction, idUser, dataAbertura, dataFecho );
+                BigDecimal totalIliquido = formaPagamentoItemController.getTotalIliquido( conexaoTransaction, idUser, dataAbertura, dataFecho );
 
-            BigDecimal valor = formaPagamentoItemController.getValorRealDiario(conexaoTransaction, idUser, dataAbertura, dataFecho);
-            BigDecimal troco = formaPagamentoItemController.getTrocoRealDiario(conexaoTransaction, idUser, dataAbertura, dataFecho);
-            BigDecimal totalDesconto = formaPagamentoItemController.getTotalDesconto(conexaoTransaction, idUser, dataAbertura, dataFecho);
-            BigDecimal totalIva = formaPagamentoItemController.getTotalIva(conexaoTransaction, idUser, dataAbertura, dataFecho);
-            BigDecimal totalIliquido = formaPagamentoItemController.getTotalIliquido(conexaoTransaction, idUser, dataAbertura, dataFecho);
+                BigDecimal totalVendas = valor.subtract( troco );
 
-            BigDecimal totalVendas = valor.subtract(troco);
+                caixa_actual.setTotalVendas( totalVendas.doubleValue() );
 
-            caixa_actual.setTotalVendas(totalVendas.doubleValue());
+                caixa_actual.setTotalDesconto( totalDesconto );
+                caixa_actual.setTotalIva( totalIva );
+                caixa_actual.setTotaIIliquido( totalIliquido );
 
-            caixa_actual.setTotalDesconto(totalDesconto);
-            caixa_actual.setTotalIva(totalIva);
-            caixa_actual.setTotaIIliquido(totalIliquido);
+                try
+                {
+                    caixa_controller.actualizar( caixa_actual );
 
-            try {
-                caixa_controller.actualizar(caixa_actual);
+                    for ( FormaPagamento formaPagamento : formasPagamentos )
+                    {
+                        int idFormaPagamento = formaPagamento.getPkFormaPagamento();
 
-                for (FormaPagamento formaPagamento : formasPagamentos) {
-                    int idFormaPagamento = formaPagamento.getPkFormaPagamento();
+                        if ( formaPagamentoItemController.existeVendaDiarioByFormaPagamento(
+                                idUser, idFormaPagamento, dataAbertura, dataFecho, conexaoTransaction ) )
+                        {
 
-                    if (formaPagamentoItemController.existeVendaDiarioByFormaPagamento(
-                            idUser, idFormaPagamento, dataAbertura, dataFecho, conexaoTransaction)) {
+                            BigDecimal valor_declarado = BigDecimal.ZERO;
+                            BigDecimal valor_real = formaPagamentoItemController.getValorRealDiarioByFormaPagamento(
+                                    idUser, idFormaPagamento, dataAbertura, dataFecho, conexaoTransaction );
 
-                        BigDecimal valor_declarado = BigDecimal.ZERO;
-                        BigDecimal valor_real = formaPagamentoItemController.getValorRealDiarioByFormaPagamento(
-                                idUser, idFormaPagamento, dataAbertura, dataFecho, conexaoTransaction);
+                            ItemCaixa itemCaixa = new ItemCaixa();
+                            itemCaixa.setValorDeclarado( valor_declarado.doubleValue() );
+                            itemCaixa.setValorReal( valor_real.doubleValue() );
+                            itemCaixa.setFkFormaPagamento( formaPagamentoController.findByCodigo( idFormaPagamento ) );
+                            itemCaixa.setFkCaixa( caixa_actual );
 
-                        ItemCaixa itemCaixa = new ItemCaixa();
-                        itemCaixa.setValorDeclarado(valor_declarado.doubleValue());
-                        itemCaixa.setValorReal(valor_real.doubleValue());
-                        itemCaixa.setFkFormaPagamento(formaPagamentoController.findByCodigo(idFormaPagamento));
-                        itemCaixa.setFkCaixa(caixa_actual);
-
-                        try {
-                            item_caixa_controller.salvar(itemCaixa);
-                        } catch (Exception e) {
-                            sucesso = false;
-                            System.out.println("Erro ao salvar ItemCaixa: " + e.getLocalizedMessage());
-                            DocumentosController.rollBackTransaction(conexaoTransaction);
-                            break;
+                            try
+                            {
+                                item_caixa_controller.salvar( itemCaixa );
+                            }
+                            catch ( Exception e )
+                            {
+                                sucesso = false;
+                                System.out.println( "Erro ao salvar ItemCaixa: " + e.getLocalizedMessage() );
+                                DocumentosController.rollBackTransaction( conexaoTransaction );
+                                break;
+                            }
                         }
                     }
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                sucesso = false;
+                catch ( Exception e )
+                {
+                    e.printStackTrace();
+                    sucesso = false;
+                }
             }
         }
-    }
 
-    if (sucesso) {
-        try {
-            DocumentosController.commitTransaction(conexaoTransaction);
-            NLExporToPdfForSandEmailReport exporToPdf = new NLExporToPdfForSandEmailReport(conexaoTransaction);
-            conexaoTransaction.close();
-            System.out.println("Fecho realizado com sucesso!...");
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Falha ao processar os relatórios.\nFalha: " + e.getLocalizedMessage(),
-                    "Falha", JOptionPane.ERROR_MESSAGE);
-            DocumentosController.rollBackTransaction(conexaoTransaction);
+        if ( sucesso )
+        {
+            try
+            {
+                DocumentosController.commitTransaction( conexaoTransaction );
+                NLExporToPdfForSandEmailReport exporToPdf = new NLExporToPdfForSandEmailReport( conexaoTransaction );
+                conexaoTransaction.close();
+                System.out.println( "Fecho realizado com sucesso!..." );
+            }
+            catch ( Exception e )
+            {
+                JOptionPane.showMessageDialog( null, "Falha ao processar os relatórios.\nFalha: " + e.getLocalizedMessage(),
+                        "Falha", JOptionPane.ERROR_MESSAGE );
+                DocumentosController.rollBackTransaction( conexaoTransaction );
+                conexaoTransaction.close();
+            }
+        }
+        else
+        {
             conexaoTransaction.close();
         }
-    } else {
-        conexaoTransaction.close();
     }
-}
 
-    
     public static String getIpMaquina()
     {
 
