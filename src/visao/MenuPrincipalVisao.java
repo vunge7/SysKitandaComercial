@@ -152,6 +152,10 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
             {
                 jmReactivarProdutos.setEnabled( true );
             }
+            else if ( permissao.equals( jmReactivarProdutos.getText() ) )
+            {
+                jmReactivarProdutos.setEnabled( true );
+            }
             else if ( permissao.equals( jMenuItemRelatorioQuebras.getText() ) )
             {
                 jMenuItemRelatorioQuebras.setEnabled( true );
@@ -167,6 +171,10 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
             else if ( permissao.equals( jmListagemVasilhames.getText() ) )
             {
                 jmListagemVasilhames.setEnabled( true );
+            }
+            else if ( permissao.equals( jMenuItemCancelamentoEntradas.getText() ) )
+            {
+                jMenuItemCancelamentoEntradas.setEnabled( true );
             }
             else if ( permissao.equals( jmTodasVendas.getText() ) )
             {
@@ -194,6 +202,10 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
             else if ( permissao.equals( jmRelatorioDiario.getText() ) )
             {
                 jmRelatorioDiario.setEnabled( true );
+            }
+            else if ( permissao.equals( jMenuItemEntradasProdutos.getText() ) )
+            {
+                jMenuItemEntradasProdutos.setEnabled( true );
             }
             else if ( permissao.equals( jmListagensTodosProdutos.getText() ) )
             {
@@ -455,6 +467,10 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
             {
                 jMenuConfiguracoesSistema.setEnabled( true );
             }
+            else if ( permissao.equals( jMenuItemRelatorioDeEntradas.getText() ) )
+            {
+                jMenuItemRelatorioDeEntradas.setEnabled( true );
+            }
 
             else if ( permissao.equals( jMenuRelatorioTransferencia.getText() ) )
             {
@@ -482,42 +498,27 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jmListagemVasilhames.setEnabled( status );
         jmTodasVendas.setEnabled( status );
         jmReactivarProdutos.setEnabled( status );
-//        jmRelatorioVendasPorUsuarioData.setEnabled( status );
-//        jmVendaPorUsuario.setEnabled ( status );
-//        jmVendaCredito.setEnabled ( status );
-//        jmRelatorioPreForma.setEnabled ( status );
-//        jmRegistroEntradas.setEnabled ( status );
+        jMenuItemEntradasProdutos.setEnabled( status );
         jmRelatorioDiario.setEnabled( status );
         jmListagensTodosProdutos.setEnabled( status );
         jmListagensTodosProdutoComDesconto.setEnabled( status );
         jmProdutosActualizar.setEnabled( status );
         jmVenda.setEnabled( status );
-//        jmEstornos.setEnabled(status);
 
         //SISTEMA      
         jmTurno.setEnabled( status );
         jmCadastroUsuario.setEnabled( status );
         jmListagensTodosProdutos.setEnabled( status );
-//        jmAnulamentoFactura.setEnabled ( status );
-//        jmReciclagem.setEnabled ( status );
-//        jmAnulamentoEntradaProdutos.setEnabled( status );
-        //jmStock.setEnabled(status);
         jmProduto.setEnabled( status );
         jmCadastroArmazem.setEnabled( status );
-//        jmFornecedor.setEnabled( status );
         jmReeprmirFacura.setEnabled( status );
-        //jmPagamentoCredito.setEnabled(status);
-//        jmEntradaProdutos.setEnabled ( status );
         jmPermissao.setEnabled( status );
         jPercentagemDesconto.setEnabled( status );
         jDadosEmpresa.setEnabled( status );
         jmCadastroCliente.setEnabled( status );
         jmVasilhame.setEnabled( status );
         jmImprimirPrecos.setEnabled( status );
-//        jmPrecosPorPercentagem.setEnabled( status );
-//        jmRelatorioPreForma.setEnabled ( status );
         jmVendaDetalhadasUsuarios.setEnabled( status );
-//        jmPromocao.setEnabled ( status );
         jmConverterProforma.setEnabled( status );
         jmProcessarRecibo.setEnabled( status );
         jmNotas.setEnabled( status );
@@ -564,9 +565,10 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jmReeprmirNota.setEnabled( status );
         jmListaClientes.setEnabled( status );
         jMenuConfiguracoesSistema.setEnabled( status );
-//        jmenuRelatorios.setEnabled( status );
         jMenuRelatorioTransferencia.setEnabled( status );
         jMenuItemRelatorioMensal.setEnabled( status );
+        jMenuItemRelatorioDeEntradas.setEnabled( status );
+        jMenuItemCancelamentoEntradas.setEnabled( status );
 
     }
 
@@ -589,7 +591,8 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jmVenda = new javax.swing.JMenuItem();
         jmFrontOffice = new javax.swing.JMenuItem();
         jmSaidasProdutos = new javax.swing.JMenuItem();
-        jMenuItem5 = new javax.swing.JMenuItem();
+        jMenuItemEntradasProdutos = new javax.swing.JMenuItem();
+        jMenuItemCancelamentoEntradas = new javax.swing.JMenuItem();
         jmConverterProforma = new javax.swing.JMenuItem();
         jmProcessarRecibo = new javax.swing.JMenuItem();
         jmNotas = new javax.swing.JMenu();
@@ -635,6 +638,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jMenuItemRelatorioQuebras = new javax.swing.JMenuItem();
         jMenuItemRelatorioMensal = new javax.swing.JMenuItem();
         jMenuItemRelatorioMensal1 = new javax.swing.JMenuItem();
+        jMenuItemRelatorioDeEntradas = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jmTurno = new javax.swing.JMenuItem();
         jmCadastroUsuario = new javax.swing.JMenuItem();
@@ -652,6 +656,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jmListagemVasilhames = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
         jmAnulamentoSaidasProdutos = new javax.swing.JMenuItem();
+        jmAnulamentoSaidasProdutos1 = new javax.swing.JMenuItem();
         jMenu5 = new javax.swing.JMenu();
         jmSolicitacaoCompras = new javax.swing.JMenuItem();
         jmAutorizacaoCompras = new javax.swing.JMenuItem();
@@ -679,6 +684,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jmMarca = new javax.swing.JMenuItem();
         jmModelo = new javax.swing.JMenuItem();
         jmGrupo = new javax.swing.JMenuItem();
+        jMenuItemConsultas = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
         jMenuItem9 = new javax.swing.JMenuItem();
 
@@ -749,15 +755,25 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         });
         jMenu1.add(jmSaidasProdutos);
 
-        jMenuItem5.setText("Entradas Produtos");
-        jMenuItem5.addActionListener(new java.awt.event.ActionListener()
+        jMenuItemEntradasProdutos.setText("Entrada de Produtos");
+        jMenuItemEntradasProdutos.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                jMenuItem5ActionPerformed(evt);
+                jMenuItemEntradasProdutosActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem5);
+        jMenu1.add(jMenuItemEntradasProdutos);
+
+        jMenuItemCancelamentoEntradas.setText("Cancelamento de Entrada");
+        jMenuItemCancelamentoEntradas.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jMenuItemCancelamentoEntradasActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItemCancelamentoEntradas);
 
         jmConverterProforma.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jmConverterProforma.setText("Converter Proformas em Facturas");
@@ -1203,6 +1219,16 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         });
         jmenuRelatorios.add(jMenuItemRelatorioMensal1);
 
+        jMenuItemRelatorioDeEntradas.setText("Relatorio de Entradas");
+        jMenuItemRelatorioDeEntradas.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jMenuItemRelatorioDeEntradasActionPerformed(evt);
+            }
+        });
+        jmenuRelatorios.add(jMenuItemRelatorioDeEntradas);
+
         jMenuBar1.add(jmenuRelatorios);
 
         jMenu3.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -1364,6 +1390,16 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
             }
         });
         jMenu3.add(jmAnulamentoSaidasProdutos);
+
+        jmAnulamentoSaidasProdutos1.setText("Anulamentos Entradas Produtos");
+        jmAnulamentoSaidasProdutos1.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jmAnulamentoSaidasProdutos1ActionPerformed(evt);
+            }
+        });
+        jMenu3.add(jmAnulamentoSaidasProdutos1);
 
         jMenuBar1.add(jMenu3);
 
@@ -1615,6 +1651,16 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
             }
         });
         jMenu7.add(jmGrupo);
+
+        jMenuItemConsultas.setText("Consultas");
+        jMenuItemConsultas.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jMenuItemConsultasActionPerformed(evt);
+            }
+        });
+        jMenu7.add(jMenuItemConsultas);
 
         jMenuBar1.add(jMenu7);
 
@@ -2323,23 +2369,50 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
     private void jMenuItemRelatorioMensal1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemRelatorioMensal1ActionPerformed
     {//GEN-HEADEREND:event_jMenuItemRelatorioMensal1ActionPerformed
-        
+
         // TODO add your handling code here:
 
     }//GEN-LAST:event_jMenuItemRelatorioMensal1ActionPerformed
 
-    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem5ActionPerformed
-    {//GEN-HEADEREND:event_jMenuItem5ActionPerformed
+    private void jMenuItemEntradasProdutosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemEntradasProdutosActionPerformed
+    {//GEN-HEADEREND:event_jMenuItemEntradasProdutosActionPerformed
         try
         {
             //        ( java.awt.Frame parent, boolean modal, int idUser, String codigo, BDConexao conexao, String armazem, int chamada )
-            new EntradaVisao(this, true, cod_utilizador, "", conexao).setVisible( true);
+            new EntradaVisao( this, true, cod_utilizador, "", conexao ).setVisible( true );
         }
         catch ( SQLException ex )
         {
             Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( Level.SEVERE, null, ex );
         }
-    }//GEN-LAST:event_jMenuItem5ActionPerformed
+    }//GEN-LAST:event_jMenuItemEntradasProdutosActionPerformed
+
+    private void jMenuItemConsultasActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemConsultasActionPerformed
+    {//GEN-HEADEREND:event_jMenuItemConsultasActionPerformed
+        new ListarRelatorioVendaConsultaRestaurante( conexao ).setVisible( true );
+    }//GEN-LAST:event_jMenuItemConsultasActionPerformed
+
+    private void jmAnulamentoSaidasProdutos1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmAnulamentoSaidasProdutos1ActionPerformed
+    {//GEN-HEADEREND:event_jmAnulamentoSaidasProdutos1ActionPerformed
+        new AnulamentoEntradaVisao( this, administrador ).setVisible( true );
+    }//GEN-LAST:event_jmAnulamentoSaidasProdutos1ActionPerformed
+
+    private void jMenuItemRelatorioDeEntradasActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemRelatorioDeEntradasActionPerformed
+    {//GEN-HEADEREND:event_jMenuItemRelatorioDeEntradasActionPerformed
+        try
+        {
+            new ListarEntradasProdutosPorEntervaloData( cod_utilizador ).setVisible( true );
+        }
+        catch ( SQLException ex )
+        {
+            Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( Level.SEVERE, null, ex );
+        }
+    }//GEN-LAST:event_jMenuItemRelatorioDeEntradasActionPerformed
+
+    private void jMenuItemCancelamentoEntradasActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemCancelamentoEntradasActionPerformed
+    {//GEN-HEADEREND:event_jMenuItemCancelamentoEntradasActionPerformed
+        new AnulamentoEntradaVisao(this, administrador ).setVisible( true);
+    }//GEN-LAST:event_jMenuItemCancelamentoEntradasActionPerformed
 
     /**
      * @param args the command line arguments
@@ -2423,15 +2496,18 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
-    private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenuItem jMenuItem8;
     private javax.swing.JMenuItem jMenuItem9;
     private javax.swing.JMenuItem jMenuItemAlteracaoGuia;
+    private javax.swing.JMenuItem jMenuItemCancelamentoEntradas;
+    private javax.swing.JMenuItem jMenuItemConsultas;
     private javax.swing.JMenuItem jMenuItemConverterGuia;
+    private javax.swing.JMenuItem jMenuItemEntradasProdutos;
     private javax.swing.JMenuItem jMenuItemGestaoCreditos;
     private javax.swing.JMenuItem jMenuItemRectificacao;
+    private javax.swing.JMenuItem jMenuItemRelatorioDeEntradas;
     private javax.swing.JMenuItem jMenuItemRelatorioMensal;
     private javax.swing.JMenuItem jMenuItemRelatorioMensal1;
     private javax.swing.JMenuItem jMenuItemRelatorioQtdDetalhado;
@@ -2441,6 +2517,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     private javax.swing.JPopupMenu.Separator jSeparator9;
     private javax.swing.JMenuItem jmAcertoStock;
     private javax.swing.JMenuItem jmAnulamentoSaidasProdutos;
+    private javax.swing.JMenuItem jmAnulamentoSaidasProdutos1;
     private javax.swing.JMenuItem jmAutorizacaoCompras;
     private javax.swing.JMenuItem jmCadastroArmazem;
     private javax.swing.JMenuItem jmCadastroCliente;

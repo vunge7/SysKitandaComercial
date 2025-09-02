@@ -88,6 +88,15 @@ public class ArmazemDao extends TbArmazemJpaController
 //           result.add(0, "--Seleccione--");
         return result;
     }
+    public Vector<String> buscaTodos5()
+    {
+        EntityManager em = getEntityManager();
+
+        Query query = em.createQuery( "SELECT a.designacao FROM TbArmazem a  " );
+        Vector<String> result = ( Vector ) query.getResultList();
+           result.add(0, "--Seleccione--");
+        return result;
+    }
 
     public Vector<String> buscaTodosExceptoEconomato()
     {

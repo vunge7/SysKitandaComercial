@@ -74,7 +74,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="32767" attributes="0"/>
-                  <Component id="btn_eliminar" min="-2" pref="116" max="-2" attributes="0"/>
+                  <Component id="btn_eliminar" min="-2" pref="162" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="jButton2" min="-2" pref="114" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
@@ -111,7 +111,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="jButton2">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Cancelar"/>
+            <Property name="text" type="java.lang.String" value="Sair"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton2ActionPerformed"/>
@@ -132,48 +132,44 @@
           <Font name="Showcard Gothic" size="24" style="0"/>
         </Property>
       </Properties>
+      <AccessibilityProperties>
+        <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="CANCELAMENTO DE ENTRADA"/>
+      </AccessibilityProperties>
 
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace min="-2" pref="165" max="-2" attributes="0"/>
-                          <Component id="txtQtdEntrada" min="-2" pref="174" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="lbFactura" alignment="0" min="-2" pref="114" max="-2" attributes="0"/>
+                              <Component id="lbProduto" alignment="0" min="-2" pref="114" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="txtProduto" min="-2" pref="234" max="-2" attributes="0"/>
+                              <Component id="txtCodigoEntrada" min="-2" pref="64" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
-                      <Group type="102" attributes="0">
-                          <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                      <Component id="lbTotalVenda" max="32767" attributes="0"/>
-                                      <Component id="lbDataVenda" max="32767" attributes="0"/>
-                                      <Component id="lbCliente" alignment="1" max="32767" attributes="0"/>
-                                      <Component id="lbUsuario" max="32767" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace min="27" pref="27" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="txtArmazem" min="-2" pref="174" max="-2" attributes="0"/>
-                                      <Component id="txtDataEntrada" min="-2" pref="174" max="-2" attributes="0"/>
-                                      <Component id="txtUsuario" min="-2" pref="174" max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="lbFactura" alignment="0" min="-2" pref="114" max="-2" attributes="0"/>
-                                      <Component id="lbProduto" alignment="0" min="-2" pref="114" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace min="-2" pref="43" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="txtProduto" max="32767" attributes="0"/>
-                                      <Component id="txtCodigoEntrada" max="32767" attributes="0"/>
-                                  </Group>
-                              </Group>
+                              <Component id="lbTotalVenda" max="32767" attributes="0"/>
+                              <Component id="lbDataVenda" max="32767" attributes="0"/>
+                              <Component id="lbCliente" alignment="1" max="32767" attributes="0"/>
+                              <Component id="lbUsuario" max="32767" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="27" pref="27" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="txtArmazem" min="-2" pref="174" max="-2" attributes="0"/>
+                              <Component id="txtUsuario" min="-2" pref="174" max="-2" attributes="0"/>
+                              <Component id="txtQtdEntrada" alignment="0" min="-2" pref="65" max="-2" attributes="0"/>
+                              <Component id="txtDataEntrada" alignment="0" min="-2" pref="114" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
-                  <EmptySpace pref="190" max="32767" attributes="0"/>
+                  <EmptySpace pref="138" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

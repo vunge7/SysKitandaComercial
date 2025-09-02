@@ -80,7 +80,7 @@ public class OperacaoSistemaUtil implements Runnable
             EntradaVisao.txtCodigoProduto.setEnabled ( status );
             EntradaVisao.txtCodigoManual.setEnabled ( status );
             EntradaVisao.txtCodigoBarra.setEnabled ( status );
-            EntradaVisao.txtQuantidadeEntrar.setEnabled ( status );
+            EntradaVisao.txtQuatindade.setEnabled ( status );
             EntradaVisao.btn_adicionar.setEnabled ( status );
             EntradaVisao.btn_remover.setEnabled ( status );
             EntradaVisao.btn_salvar.setEnabled ( status );

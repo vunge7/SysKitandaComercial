@@ -195,13 +195,13 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
+                      <Component id="jPanel2" min="-2" pref="384" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jPanel4" min="-2" pref="273" max="-2" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jPanel5" max="32767" attributes="0"/>
-                          <Component id="jPanel9" alignment="0" pref="203" max="32767" attributes="0"/>
+                          <Component id="jPanel9" alignment="0" max="32767" attributes="0"/>
                           <Component id="jPanel3" alignment="1" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -216,7 +216,7 @@
                           <Group type="102" attributes="0">
                               <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jPanel5" min="-2" pref="181" max="-2" attributes="0"/>
+                              <Component id="jPanel5" min="-2" pref="150" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jPanel9" pref="0" max="32767" attributes="0"/>
                           </Group>
@@ -224,7 +224,7 @@
                           <Component id="jPanel2" alignment="0" max="32767" attributes="0"/>
                           <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="29" max="32767" attributes="0"/>
+                      <EmptySpace pref="78" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -456,7 +456,10 @@
                       <Group type="102" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jcbRelatorioQuantidadeProdutosVendidos" alignment="1" max="32767" attributes="0"/>
+                              <Group type="102" alignment="1" attributes="0">
+                                  <Component id="jcbRelatorioQuantidadeProdutosVendidos" max="32767" attributes="0"/>
+                                  <EmptySpace min="-2" pref="104" max="-2" attributes="0"/>
+                              </Group>
                               <Component id="jcbListagensDeTodosProdutosComDesconto" alignment="0" max="32767" attributes="0"/>
                               <Component id="jcbRelatorioVendasIntervaloDatas" alignment="0" max="32767" attributes="0"/>
                               <Component id="jcbListarVendasPorUsuario" alignment="0" max="32767" attributes="0"/>
@@ -715,7 +718,6 @@
                       <Group type="102" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jcbUnidades" alignment="0" max="32767" attributes="0"/>
                               <Component id="jcbQuebras" alignment="0" max="32767" attributes="0"/>
                               <Component id="jcbSaidasProdutos" alignment="0" max="32767" attributes="0"/>
                               <Component id="jcbGestaoMesas" alignment="0" max="32767" attributes="0"/>
@@ -723,6 +725,8 @@
                               <Component id="jcbRelatoriosSaidasProdutosDatas" alignment="0" max="32767" attributes="0"/>
                               <Component id="jcbMapaExistencia" alignment="0" max="32767" attributes="0"/>
                               <Component id="jcbGavetasPrateleiras" alignment="0" max="32767" attributes="0"/>
+                              <Component id="jcbNotaLevantamento" alignment="0" max="32767" attributes="0"/>
+                              <Component id="jcbReemprimirCompra" alignment="0" max="32767" attributes="0"/>
                               <Group type="102" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -731,18 +735,19 @@
                                           <Component id="jcbProcessarRecibos" min="-2" max="-2" attributes="0"/>
                                           <Component id="jcbNotasCreditoDebito" max="32767" attributes="0"/>
                                       </Group>
-                                      <Component id="jcbRelatorioVendaCredito" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jcbListagensVasilhames" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jcbListagensUsuarios" alignment="0" min="-2" pref="157" max="-2" attributes="0"/>
+                                      <Component id="jcbRelatorioEntradas" alignment="0" min="-2" max="-2" attributes="0"/>
                                       <Group type="103" alignment="0" groupAlignment="1" attributes="0">
                                           <Component id="jcbActivarDesconto" min="-2" pref="43" max="-2" attributes="0"/>
                                           <Component id="jcbFrontOffice" min="-2" pref="191" max="-2" attributes="0"/>
                                       </Group>
+                                      <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                                          <Component id="jcbEntradas" alignment="0" max="32767" attributes="0"/>
+                                          <Component id="jcbListagensUsuarios" alignment="0" pref="157" max="32767" attributes="0"/>
+                                      </Group>
+                                      <Component id="jcbCancelamentoEntradas" alignment="0" min="-2" pref="203" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                               </Group>
-                              <Component id="jcbNotaLevantamento" alignment="0" max="32767" attributes="0"/>
-                              <Component id="jcbReemprimirCompra" alignment="0" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -768,9 +773,9 @@
                           <Component id="jcbNotasCreditoDebito" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="jcbNotaLevantamento" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="jcbUnidades" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
+                          <Component id="jcbCancelamentoEntradas" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                           <Component id="jcbQuebras" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="jcbSaidasProdutos" min="-2" max="-2" attributes="0"/>
@@ -785,9 +790,9 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jcbGavetasPrateleiras" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jcbRelatorioVendaCredito" min="-2" max="-2" attributes="0"/>
+                          <Component id="jcbRelatorioEntradas" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jcbListagensVasilhames" min="-2" max="-2" attributes="0"/>
+                          <Component id="jcbEntradas" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jcbListagensUsuarios" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="32767" attributes="0"/>
@@ -815,11 +820,6 @@
                 <Component class="javax.swing.JCheckBox" name="jcbNotasCreditoDebito">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Notas de Credito e Debito"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JCheckBox" name="jcbUnidades">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Unidades"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="jcbQuebras">
@@ -860,20 +860,20 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jcbGavetasPrateleirasActionPerformed"/>
                   </Events>
                 </Component>
-                <Component class="javax.swing.JCheckBox" name="jcbRelatorioVendaCredito">
+                <Component class="javax.swing.JCheckBox" name="jcbRelatorioEntradas">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Relatorio de Venda a Credito"/>
+                    <Property name="text" type="java.lang.String" value="Relatorio de Entradas"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jcbRelatorioVendaCreditoActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jcbRelatorioEntradasActionPerformed"/>
                   </Events>
                 </Component>
-                <Component class="javax.swing.JCheckBox" name="jcbListagensVasilhames">
+                <Component class="javax.swing.JCheckBox" name="jcbEntradas">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Listar Vasilhames"/>
+                    <Property name="text" type="java.lang.String" value="Entrada de Produtos"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jcbListagensVasilhamesActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jcbEntradasActionPerformed"/>
                   </Events>
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="jcbListagensUsuarios">
@@ -902,6 +902,11 @@
                     <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                 </Component>
+                <Component class="javax.swing.JCheckBox" name="jcbCancelamentoEntradas">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Cancelamento de Entrada"/>
+                  </Properties>
+                </Component>
               </SubComponents>
             </Container>
             <Container class="javax.swing.JPanel" name="jPanel3">
@@ -925,7 +930,7 @@
                                       <Component id="jcbCompras" alignment="0" min="-2" pref="167" max="-2" attributes="0"/>
                                       <Component id="jcbEncomendas" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                  <EmptySpace min="0" pref="94" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -987,7 +992,9 @@
                                       <Component id="jcbMarca" alignment="0" min="-2" max="-2" attributes="0"/>
                                       <Component id="jcbModelo" alignment="0" min="-2" pref="100" max="-2" attributes="0"/>
                                   </Group>
-                                  <EmptySpace min="0" pref="84" max="32767" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
+                                  <Component id="jcbUnidades" min="-2" pref="98" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -997,7 +1004,10 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="32767" attributes="0"/>
-                          <Component id="jcbSubFamilia" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="jcbSubFamilia" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jcbUnidades" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="jcbMarca" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -1028,6 +1038,11 @@
                 <Component class="javax.swing.JCheckBox" name="jcbGrupo">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Grupo"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="jcbUnidades">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Unidades"/>
                   </Properties>
                 </Component>
               </SubComponents>

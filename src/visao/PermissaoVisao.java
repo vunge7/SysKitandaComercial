@@ -128,7 +128,6 @@ public class PermissaoVisao extends javax.swing.JFrame
         jcbConverterProforma = new javax.swing.JCheckBox();
         jcbProcessarRecibos = new javax.swing.JCheckBox();
         jcbNotasCreditoDebito = new javax.swing.JCheckBox();
-        jcbUnidades = new javax.swing.JCheckBox();
         jcbQuebras = new javax.swing.JCheckBox();
         jcbSaidasProdutos = new javax.swing.JCheckBox();
         jcbGestaoMesas = new javax.swing.JCheckBox();
@@ -136,13 +135,14 @@ public class PermissaoVisao extends javax.swing.JFrame
         jcbRelatoriosSaidasProdutosDatas = new javax.swing.JCheckBox();
         jcbMapaExistencia = new javax.swing.JCheckBox();
         jcbGavetasPrateleiras = new javax.swing.JCheckBox();
-        jcbRelatorioVendaCredito = new javax.swing.JCheckBox();
-        jcbListagensVasilhames = new javax.swing.JCheckBox();
+        jcbRelatorioEntradas = new javax.swing.JCheckBox();
+        jcbEntradas = new javax.swing.JCheckBox();
         jcbListagensUsuarios = new javax.swing.JCheckBox();
         jcbFrontOffice = new javax.swing.JCheckBox();
         jcbNotaLevantamento = new javax.swing.JCheckBox();
         jcbReemprimirCompra = new javax.swing.JCheckBox();
         jcbActivarDesconto = new javax.swing.JCheckBox();
+        jcbCancelamentoEntradas = new javax.swing.JCheckBox();
         jPanel3 = new javax.swing.JPanel();
         jcbEncomendas = new javax.swing.JCheckBox();
         jcbCompras = new javax.swing.JCheckBox();
@@ -152,6 +152,7 @@ public class PermissaoVisao extends javax.swing.JFrame
         jcbMarca = new javax.swing.JCheckBox();
         jcbModelo = new javax.swing.JCheckBox();
         jcbGrupo = new javax.swing.JCheckBox();
+        jcbUnidades = new javax.swing.JCheckBox();
         jPanel9 = new javax.swing.JPanel();
         jcbGerarSaftVendas = new javax.swing.JCheckBox();
         jcbConfiguracaoSistema = new javax.swing.JCheckBox();
@@ -590,7 +591,9 @@ public class PermissaoVisao extends javax.swing.JFrame
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jcbRelatorioQuantidadeProdutosVendidos, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(jcbRelatorioQuantidadeProdutosVendidos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(104, 104, 104))
                     .addComponent(jcbListagensDeTodosProdutosComDesconto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jcbRelatorioVendasIntervaloDatas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jcbListarVendasPorUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -677,8 +680,6 @@ public class PermissaoVisao extends javax.swing.JFrame
 
         jcbNotasCreditoDebito.setText("Notas de Credito e Debito");
 
-        jcbUnidades.setText("Unidades");
-
         jcbQuebras.setText("Quebras");
 
         jcbSaidasProdutos.setText("Saidas Produtos");
@@ -700,21 +701,21 @@ public class PermissaoVisao extends javax.swing.JFrame
             }
         });
 
-        jcbRelatorioVendaCredito.setText("Relatorio de Venda a Credito");
-        jcbRelatorioVendaCredito.addActionListener(new java.awt.event.ActionListener()
+        jcbRelatorioEntradas.setText("Relatorio de Entradas");
+        jcbRelatorioEntradas.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                jcbRelatorioVendaCreditoActionPerformed(evt);
+                jcbRelatorioEntradasActionPerformed(evt);
             }
         });
 
-        jcbListagensVasilhames.setText("Listar Vasilhames");
-        jcbListagensVasilhames.addActionListener(new java.awt.event.ActionListener()
+        jcbEntradas.setText("Entrada de Produtos");
+        jcbEntradas.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                jcbListagensVasilhamesActionPerformed(evt);
+                jcbEntradasActionPerformed(evt);
             }
         });
 
@@ -729,6 +730,8 @@ public class PermissaoVisao extends javax.swing.JFrame
         jcbActivarDesconto.setText("Activar Desconto");
         jcbActivarDesconto.setEnabled(false);
 
+        jcbCancelamentoEntradas.setText("Cancelamento de Entrada");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -736,7 +739,6 @@ public class PermissaoVisao extends javax.swing.JFrame
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jcbUnidades, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jcbQuebras, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jcbSaidasProdutos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jcbGestaoMesas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -744,6 +746,8 @@ public class PermissaoVisao extends javax.swing.JFrame
                     .addComponent(jcbRelatoriosSaidasProdutosDatas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jcbMapaExistencia, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jcbGavetasPrateleiras, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jcbNotaLevantamento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jcbReemprimirCompra, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -751,15 +755,15 @@ public class PermissaoVisao extends javax.swing.JFrame
                                 .addComponent(jcbConverterProforma)
                                 .addComponent(jcbProcessarRecibos)
                                 .addComponent(jcbNotasCreditoDebito, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(jcbRelatorioVendaCredito)
-                            .addComponent(jcbListagensVasilhames)
-                            .addComponent(jcbListagensUsuarios, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jcbRelatorioEntradas)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                 .addComponent(jcbActivarDesconto, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jcbFrontOffice, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jcbNotaLevantamento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jcbReemprimirCompra, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(jcbFrontOffice, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(jcbEntradas, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jcbListagensUsuarios, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE))
+                            .addComponent(jcbCancelamentoEntradas, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -780,9 +784,9 @@ public class PermissaoVisao extends javax.swing.JFrame
                 .addComponent(jcbNotasCreditoDebito)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jcbNotaLevantamento)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jcbUnidades)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jcbCancelamentoEntradas)
+                .addGap(12, 12, 12)
                 .addComponent(jcbQuebras)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jcbSaidasProdutos)
@@ -797,9 +801,9 @@ public class PermissaoVisao extends javax.swing.JFrame
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jcbGavetasPrateleiras)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jcbRelatorioVendaCredito)
+                .addComponent(jcbRelatorioEntradas)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jcbListagensVasilhames)
+                .addComponent(jcbEntradas)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jcbListagensUsuarios)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -833,7 +837,7 @@ public class PermissaoVisao extends javax.swing.JFrame
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jcbCompras, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jcbEncomendas))
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                        .addGap(0, 94, Short.MAX_VALUE))))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -856,6 +860,8 @@ public class PermissaoVisao extends javax.swing.JFrame
 
         jcbGrupo.setText("Grupo");
 
+        jcbUnidades.setText("Unidades");
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -869,13 +875,17 @@ public class PermissaoVisao extends javax.swing.JFrame
                             .addComponent(jcbSubFamilia)
                             .addComponent(jcbMarca)
                             .addComponent(jcbModelo, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 84, Short.MAX_VALUE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jcbUnidades, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(36, 36, 36))))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jcbSubFamilia)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jcbSubFamilia)
+                    .addComponent(jcbUnidades))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jcbMarca)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -955,13 +965,13 @@ public class PermissaoVisao extends javax.swing.JFrame
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 384, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 273, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, 203, Short.MAX_VALUE)
+                    .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -973,13 +983,13 @@ public class PermissaoVisao extends javax.swing.JFrame
                     .addGroup(jPanel7Layout.createSequentialGroup()
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(29, Short.MAX_VALUE))
+                .addContainerGap(78, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("P-1", jPanel7);
@@ -1168,9 +1178,9 @@ public class PermissaoVisao extends javax.swing.JFrame
         // TODO add your handling code here:
     }//GEN-LAST:event_jcbListarVendasPorUsuarioActionPerformed
 
-    private void jcbListagensVasilhamesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcbListagensVasilhamesActionPerformed
+    private void jcbEntradasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcbEntradasActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jcbListagensVasilhamesActionPerformed
+    }//GEN-LAST:event_jcbEntradasActionPerformed
 
     private void rdSelecionarTodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdSelecionarTodosActionPerformed
         // TODO add your handling code here:
@@ -1180,9 +1190,9 @@ public class PermissaoVisao extends javax.swing.JFrame
         // TODO add your handling code here:
     }//GEN-LAST:event_jcbListagensDeTodosProdutosComDescontoActionPerformed
 
-    private void jcbRelatorioVendaCreditoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcbRelatorioVendaCreditoActionPerformed
+    private void jcbRelatorioEntradasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcbRelatorioEntradasActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jcbRelatorioVendaCreditoActionPerformed
+    }//GEN-LAST:event_jcbRelatorioEntradasActionPerformed
 
     private void jcbCadastroDeArmazemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcbCadastroDeArmazemActionPerformed
         // TODO add your handling code here:
@@ -1375,6 +1385,7 @@ public class PermissaoVisao extends javax.swing.JFrame
     private javax.swing.JCheckBox jcbCadastrarUsuario;
     private javax.swing.JCheckBox jcbCadastroCliente;
     private javax.swing.JCheckBox jcbCadastroDeArmazem;
+    private javax.swing.JCheckBox jcbCancelamentoEntradas;
     private javax.swing.JCheckBox jcbCompraPorFazer;
     private javax.swing.JCheckBox jcbCompras;
     private javax.swing.JCheckBox jcbConfiguracaoSistema;
@@ -1383,6 +1394,7 @@ public class PermissaoVisao extends javax.swing.JFrame
     private javax.swing.JCheckBox jcbConverterProforma;
     private javax.swing.JCheckBox jcbDadosEmpresa;
     private javax.swing.JCheckBox jcbEncomendas;
+    private javax.swing.JCheckBox jcbEntradas;
     private javax.swing.JCheckBox jcbFechoCaixa;
     private javax.swing.JCheckBox jcbFornencedor;
     private javax.swing.JCheckBox jcbFrontOffice;
@@ -1397,7 +1409,6 @@ public class PermissaoVisao extends javax.swing.JFrame
     private javax.swing.JCheckBox jcbListagensDeTodosProdutosComDesconto;
     private javax.swing.JCheckBox jcbListagensTodosProdutos;
     private javax.swing.JCheckBox jcbListagensUsuarios;
-    private javax.swing.JCheckBox jcbListagensVasilhames;
     private javax.swing.JCheckBox jcbListarClientes;
     private javax.swing.JCheckBox jcbListarVendasPorUsuario;
     private javax.swing.JCheckBox jcbMapaExistencia;
@@ -1420,6 +1431,7 @@ public class PermissaoVisao extends javax.swing.JFrame
     private javax.swing.JCheckBox jcbReimprimirSaidasProdutos;
     private javax.swing.JCheckBox jcbRelatorioAcertoStock;
     private javax.swing.JCheckBox jcbRelatorioComprasFornecedores;
+    private javax.swing.JCheckBox jcbRelatorioEntradas;
     private javax.swing.JCheckBox jcbRelatorioFornecedor;
     private javax.swing.JCheckBox jcbRelatorioMensal;
     private javax.swing.JCheckBox jcbRelatorioNotasCredito;
@@ -1427,7 +1439,6 @@ public class PermissaoVisao extends javax.swing.JFrame
     private javax.swing.JCheckBox jcbRelatorioQuantidadeProdutosVendidos;
     private javax.swing.JCheckBox jcbRelatorioTodosServicos;
     private javax.swing.JCheckBox jcbRelatorioTransferencia;
-    private javax.swing.JCheckBox jcbRelatorioVendaCredito;
     private javax.swing.JCheckBox jcbRelatorioVendaFormaPagamento;
     private javax.swing.JCheckBox jcbRelatorioVendasIntervaloDatas;
     private javax.swing.JCheckBox jcbRelatorioVendasPorClienteData;
@@ -1537,6 +1548,11 @@ public class PermissaoVisao extends javax.swing.JFrame
         {
             vector.add(jcbGerarSaftCompras.getText() );
         }
+        
+        if ( jcbEntradas.isSelected() )
+        {
+            vector.add(jcbEntradas.getText() );
+        }
 
         //LISTAGENS    
         if ( jcbListagensUsuarios.isSelected() )
@@ -1554,9 +1570,9 @@ public class PermissaoVisao extends javax.swing.JFrame
             vector.add( jcbIventario.getText() );
         }
 
-        if ( jcbListagensVasilhames.isSelected() )
+        if ( jcbEntradas.isSelected() )
         {
-            vector.add( jcbListagensVasilhames.getText() );
+            vector.add(jcbEntradas.getText() );
         }
 
         if ( jcbRelatorioVendasIntervaloDatas.isSelected() )
@@ -1574,9 +1590,9 @@ public class PermissaoVisao extends javax.swing.JFrame
             vector.add( jcbListarVendasPorUsuario.getText() );
         }
 
-        if ( jcbRelatorioVendaCredito.isSelected() )
+        if ( jcbRelatorioEntradas.isSelected())
         {
-            vector.add( jcbRelatorioVendaCredito.getText() );
+            vector.add( jcbRelatorioEntradas.getText() );
         }
 
 //            if(jcbRegistroEntradaStock.isSelected())
@@ -1826,6 +1842,10 @@ public class PermissaoVisao extends javax.swing.JFrame
         {
             vector.add( jcbRelatoriosSaidasProdutosDatas.getText() );
         }
+        if ( jcbCancelamentoEntradas.isSelected() )
+        {
+            vector.add( jcbCancelamentoEntradas.getText() );
+        }
         if ( jcbMapaExistencia.isSelected() )
         {
             vector.add( jcbMapaExistencia.getText() );
@@ -1907,11 +1927,12 @@ public class PermissaoVisao extends javax.swing.JFrame
         jcbListagensUsuarios.setSelected( status );
         jcbRelatorioFornecedor.setSelected( status );
         jcbIventario.setSelected( status );
-        jcbListagensVasilhames.setSelected( status );
+        jcbEntradas.setSelected( status );
         jcbRelatorioVendasIntervaloDatas.setSelected( status );
         jcbListarVendasPorUsuario.setSelected( status );
         jcbRelatorioVendasTempoReal.setSelected( status );
-        jcbRelatorioVendaCredito.setSelected( status );
+        jcbRelatorioEntradas.setSelected(status );
+        jcbCancelamentoEntradas.setSelected(status );
 //                jcbRegistroEntradaStock.setSelected(status);
         jcbRelatorioQuantidadeProdutosVendidos.setSelected( status );
         jcbListagensTodosProdutos.setSelected( status );
@@ -2050,9 +2071,9 @@ public class PermissaoVisao extends javax.swing.JFrame
             {
                 jcbIventario.setSelected( true );
             }
-            else if ( permissao.equals( jcbListagensVasilhames.getText() ) )
+            else if ( permissao.equals(jcbEntradas.getText() ) )
             {
-                jcbListagensVasilhames.setSelected( true );
+                jcbEntradas.setSelected( true );
             }
             else if ( permissao.equals( jcbRelatorioVendasIntervaloDatas.getText() ) )
             {
@@ -2066,12 +2087,15 @@ public class PermissaoVisao extends javax.swing.JFrame
             {
                 jcbListarVendasPorUsuario.setSelected( true );
             }
-            else if ( permissao.equals( jcbRelatorioVendaCredito.getText() ) )
+            else if ( permissao.equals( jcbRelatorioEntradas.getText( )) )
             {
-                jcbRelatorioVendaCredito.setSelected( true );
+                jcbRelatorioEntradas.setSelected( true );
             }
-//               else if(permissao.equals(jcbRegistroEntradaStock.getText()))
-//                      jcbRegistroEntradaStock.setSelected(true);              
+            else if ( permissao.equals( jcbCancelamentoEntradas.getText( )) )
+            {
+                jcbCancelamentoEntradas.setSelected( true );
+            }
+            
             else if ( permissao.equals( jcbRelatorioQuantidadeProdutosVendidos.getText() ) )
             {
                 jcbRelatorioQuantidadeProdutosVendidos.setSelected( true );
@@ -2218,20 +2242,6 @@ public class PermissaoVisao extends javax.swing.JFrame
             {
                 jcbRelatorioMensal.setSelected( true );
             }
-//
-//                else if(permissao.equals(jcbPromocao.getText()))
-//                  jcbPromocao.setSelected(true);
-//                
-            //LOGISTICA
-//            else if ( permissao.equals( jcbSolicitacaoCompras.getText() ) )
-//            {
-//                jcbSolicitacaoCompras.setSelected( true );
-//            }
-//
-//            else if ( permissao.equals( jcbAutorizacaoCompras.getText() ) )
-//            {
-//                jcbAutorizacaoCompras.setSelected( true );
-//            }
 
             else if ( permissao.equals( jcbEncomendas.getText() ) )
             {
@@ -2242,12 +2252,6 @@ public class PermissaoVisao extends javax.swing.JFrame
             {
                 jcbCompras.setSelected( true );
             }
-
-            //TABELAS
-//            else if ( permissao.equals( jcbFamilia.getText() ) )
-//            {
-//                jcbFamilia.setSelected( true );
-//            }
 
             else if ( permissao.equals( jcbSubFamilia.getText() ) )
             {

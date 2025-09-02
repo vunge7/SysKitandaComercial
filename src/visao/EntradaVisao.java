@@ -4,6 +4,9 @@
  */
 package visao;
 
+import comercial.controller.ProdutosController;
+import comercial.controller.StoksController;
+import comercial.controller.TipoProdutosController;
 import controller.TipoProdutoController;
 import dao.ArmazemDao;
 import dao.EntradaDao;
@@ -11,15 +14,20 @@ import dao.ProdutoDao;
 import dao.StockDao;
 import dao.TipoProdutoDao;
 import dao.UsuarioDao;
+import entity.TbArmazem;
 import entity.TbEntrada;
+import entity.TbProduto;
 import entity.TbStock;
+import entity.TbTipoProduto;
 import exemplos.PermitirNumeros;
 import java.awt.Frame;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManagerFactory;
@@ -45,13 +53,18 @@ public class EntradaVisao extends javax.swing.JFrame
     private TbEntrada entrada;
     private static BDConexao conexao;
     private String armazem = "";
-    private int codigo = 0;
+    private static int codigo = 0;
     private Frame parent;
     private boolean stocavel = true;
     private int idUser;
     private static int id_armzem = 1;
     private int linha_actual = -1;
     private String cod_barra, cod_produto;
+    private static ProdutosController produtosController;
+//    private static ArmazensController armazensController;
+    private static TipoProdutosController tipoProdutoController;
+    private static StoksController stoksController;
+    private static TbProduto produto;
     // private OperacaoSistemaUtil osu =  new OperacaoSistemaUtil();
 
     public EntradaVisao( java.awt.Frame parent, boolean modal, int idUser, String cod_barra, BDConexao conexao ) throws SQLException
@@ -62,16 +75,21 @@ public class EntradaVisao extends javax.swing.JFrame
         setLocationRelativeTo( null );
         this.conexao = conexao;
         this.idUser = idUser;
+        produtosController = new ProdutosController( EntradaVisao.conexao );
+        tipoProdutoController = new TipoProdutosController( EntradaVisao.conexao );
+        stoksController = new StoksController( EntradaVisao.conexao );
         cmbArmazem.setModel( new DefaultComboBoxModel( armazemDao.buscaTodos1() ) );
 //        DVML.activar_cmb_armazem(cmbArmazem);
-        cmbCategoria.setModel( new DefaultComboBoxModel( tipoProdutoDao.getAllCategoria() ) );
+        cmbSubFamilia.setModel( new DefaultComboBoxModel( tipoProdutoDao.getAllCategoria() ) );
         cmbProduto.setModel( new DefaultComboBoxModel( produtoDao.getAllDesingnacaoProduto() ) );
         txtCodigoProduto.setDocument( new PermitirNumeros() );
-        txtQuantidadeEntrar.setDocument( new PermitirNumeros() );
+        txtQuatindade.setDocument( new PermitirNumeros() );
         txtCodigoBarra.setText( cod_barra );
         accao_combo_categoria();
         lbFornecedor.setVisible( false );
+        txtQuatidadeExistente.setText( String.valueOf( conexao.getQtdExistenteStock( getCodigoProduto(), getIdArmazem() ) ) );
         MetodosUtil.FUNCAO_F1( this, modal, getCodigoArmazem(), DVML.JANELA_ENTRADA );
+        MetodosUtil.setArmazemByCampoConfigArmazem( cmbArmazem, conexao, idUser );
     }
 
     public EntradaVisao( java.awt.Frame parent, boolean modal, int idUser, String codigo, BDConexao conexao, String armazem, int chamada )
@@ -84,34 +102,35 @@ public class EntradaVisao extends javax.swing.JFrame
         this.idUser = idUser;
         this.cod_produto = codigo;
 
-        cmbCategoria.setModel( new DefaultComboBoxModel( tipoProdutoDao.getAllCategoria() ) );
+        cmbSubFamilia.setModel( new DefaultComboBoxModel( tipoProdutoDao.getAllCategoria() ) );
         cmbProduto.setModel( new DefaultComboBoxModel( produtoDao.getAllDesingnacaoProduto() ) );
         if ( chamada == 1 )
         {
             txtCodigoBarra.setText( codigo );
-            cmbCategoria.setSelectedItem( produtoDao.getProdutoByCodigoBarra( codigo  ).getCodTipoProduto().getDesignacao() );
-            cmbProduto.setSelectedItem( produtoDao.getProdutoByCodigoBarra(  codigo  ).getDesignacao() );
+            cmbSubFamilia.setSelectedItem( produtoDao.getProdutoByCodigoBarra( codigo ).getCodTipoProduto().getDesignacao() );
+            cmbProduto.setSelectedItem( produtoDao.getProdutoByCodigoBarra( codigo ).getDesignacao() );
             accao_enter_cod_barra();
-            txtQuantidadeEntrar.requestFocus();
+            txtQuatindade.requestFocus();
         }
         else
         {
             System.out.println( "CHEGUEI AQUI 1111111" );
             //System.out.println("CODIGO: ++++++++ = " +cod_produto);
             //txtCodigoProduto.setText("22222");
-            cmbCategoria.setSelectedItem( produtoDao.getProdutoByCodigoProduto( Integer.parseInt( codigo ) ).getCodTipoProduto().getDesignacao() );
+            cmbSubFamilia.setSelectedItem( produtoDao.getProdutoByCodigoProduto( Integer.parseInt( codigo ) ).getCodTipoProduto().getDesignacao() );
             cmbProduto.setSelectedItem( produtoDao.getProdutoByCodigoProduto( Integer.parseInt( codigo ) ).getDesignacao() );
 
-            txtQuantidadeEntrar.requestFocus();
+            txtQuatindade.requestFocus();
 
         }
         cmbArmazem.setModel( new DefaultComboBoxModel( armazemDao.buscaTodos1() ) );
 
         txtQuatidadeExistente.setText( String.valueOf( conexao.getQtdExistenteStock( getCodigoProduto(), getIdArmazem() ) ) );
         txtCodigoProduto.setDocument( new PermitirNumeros() );
-        txtQuantidadeEntrar.setDocument( new PermitirNumeros() );
+        txtQuatindade.setDocument( new PermitirNumeros() );
 
         MetodosUtil.FUNCAO_F1( this, modal, getCodigoArmazem(), DVML.JANELA_ENTRADA );
+        MetodosUtil.setArmazemByCampoConfigArmazem( cmbArmazem, conexao, idUser );
 
     }
 
@@ -132,7 +151,7 @@ public class EntradaVisao extends javax.swing.JFrame
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "unchecked" )
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents()
     {
@@ -148,12 +167,12 @@ public class EntradaVisao extends javax.swing.JFrame
         lbProduto = new javax.swing.JLabel();
         cmbArmazem = new javax.swing.JComboBox();
         txtCodigoProduto = new javax.swing.JTextField();
-        cmbCategoria = new javax.swing.JComboBox();
+        cmbSubFamilia = new javax.swing.JComboBox();
         cmbProduto = new javax.swing.JComboBox();
         txtQuatidadeExistente = new javax.swing.JTextField();
         lbQuantidadeExistente = new javax.swing.JLabel();
         lbQuantidadeEntrar = new javax.swing.JLabel();
-        txtQuantidadeEntrar = new javax.swing.JTextField();
+        txtQuatindade = new javax.swing.JTextField();
         btn_adicionar = new javax.swing.JButton();
         btn_remover = new javax.swing.JButton();
         txtCodigoBarra = new javax.swing.JTextField();
@@ -225,7 +244,7 @@ public class EntradaVisao extends javax.swing.JFrame
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 13), new java.awt.Color(51, 153, 0))); // NOI18N
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 12), new java.awt.Color(51, 153, 0))); // NOI18N
         jPanel1.setFont(new java.awt.Font("Showcard Gothic", 0, 24)); // NOI18N
 
         lbArmazem.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
@@ -264,14 +283,14 @@ public class EntradaVisao extends javax.swing.JFrame
             }
         });
 
-        cmbCategoria.setBackground(new java.awt.Color(51, 153, 0));
-        cmbCategoria.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
-        cmbCategoria.setEnabled(false);
-        cmbCategoria.addActionListener(new java.awt.event.ActionListener()
+        cmbSubFamilia.setBackground(new java.awt.Color(51, 153, 0));
+        cmbSubFamilia.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
+        cmbSubFamilia.setEnabled(false);
+        cmbSubFamilia.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                cmbCategoriaActionPerformed(evt);
+                cmbSubFamiliaActionPerformed(evt);
             }
         });
 
@@ -296,14 +315,14 @@ public class EntradaVisao extends javax.swing.JFrame
         lbQuantidadeEntrar.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         lbQuantidadeEntrar.setText("Qtd. a entrar");
 
-        txtQuantidadeEntrar.setBackground(new java.awt.Color(51, 153, 0));
-        txtQuantidadeEntrar.setForeground(new java.awt.Color(255, 255, 255));
-        txtQuantidadeEntrar.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtQuantidadeEntrar.addActionListener(new java.awt.event.ActionListener()
+        txtQuatindade.setBackground(new java.awt.Color(51, 153, 0));
+        txtQuatindade.setForeground(new java.awt.Color(255, 255, 255));
+        txtQuatindade.setCaretColor(new java.awt.Color(255, 255, 255));
+        txtQuatindade.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                txtQuantidadeEntrarActionPerformed(evt);
+                txtQuatindadeActionPerformed(evt);
             }
         });
 
@@ -389,7 +408,7 @@ public class EntradaVisao extends javax.swing.JFrame
                                         .addGap(60, 60, 60)))
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(lbQuantidadeEntrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(txtQuantidadeEntrar))
+                                    .addComponent(txtQuatindade))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 235, Short.MAX_VALUE)
                                 .addComponent(btn_adicionar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
@@ -419,7 +438,7 @@ public class EntradaVisao extends javax.swing.JFrame
                             .addComponent(lbArmazem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(cmbCategoria, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cmbSubFamilia, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(cmbProduto, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addComponent(lbFornecedor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -437,7 +456,7 @@ public class EntradaVisao extends javax.swing.JFrame
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(cmbCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(cmbSubFamilia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(lbCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -471,7 +490,7 @@ public class EntradaVisao extends javax.swing.JFrame
                             .addComponent(lbCategoria2))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtQuantidadeEntrar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtQuatindade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtCodigoBarra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addComponent(btn_adicionar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -568,12 +587,12 @@ public class EntradaVisao extends javax.swing.JFrame
         dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
-    private void cmbCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbCategoriaActionPerformed
+    private void cmbSubFamiliaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbSubFamiliaActionPerformed
 
 //      accao_combo_categoria();
 //         accao_codigo_produto(getIdCodigoProduto());
 
-    }//GEN-LAST:event_cmbCategoriaActionPerformed
+    }//GEN-LAST:event_cmbSubFamiliaActionPerformed
 
     private void cmbProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbProdutoActionPerformed
 
@@ -586,6 +605,11 @@ public class EntradaVisao extends javax.swing.JFrame
     }//GEN-LAST:event_cmbArmazemActionPerformed
 
     private void btn_adicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_adicionarActionPerformed
+        //verifca se existe o produto no stock caso nao registra.
+        if ( !stoksController.existe_stock( produto.getCodigo(), getIdArmazem() ) )
+        {
+            boolean registrar_stock = registrar_stock( produto, 0, 0, 0, stoksController );
+        }
         adicionar_produto();
     }//GEN-LAST:event_btn_adicionarActionPerformed
 
@@ -611,15 +635,20 @@ public class EntradaVisao extends javax.swing.JFrame
 
     }//GEN-LAST:event_txtCodigoBarraActionPerformed
 
-    private void txtQuantidadeEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtQuantidadeEntrarActionPerformed
-        // TODO add your handling code here:
-        txtCodigoProduto.requestFocus();
+    private void txtQuatindadeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtQuatindadeActionPerformed
+        //verifca se existe o produto no stock caso nao registra.
+        if ( !stoksController.existe_stock( produto.getCodigo(), getIdArmazem() ) )
+        {
+            boolean registrar_stock = registrar_stock( produto, 0, 0, 0, stoksController );
+        }
         adicionar_produto();
-    }//GEN-LAST:event_txtQuantidadeEntrarActionPerformed
+    }//GEN-LAST:event_txtQuatindadeActionPerformed
 
     private void txtCodigoProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigoProdutoActionPerformed
         // TODO add your handling code here:
-        accao_key_pressed_codigo_produto();
+//        accao_key_pressed_codigo_produto();
+        busca_produto_by_cod_interno();
+        txtQuatindade.requestFocus();
     }//GEN-LAST:event_txtCodigoProdutoActionPerformed
 
     private void txtCodigoManualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigoManualActionPerformed
@@ -628,7 +657,17 @@ public class EntradaVisao extends javax.swing.JFrame
     }//GEN-LAST:event_txtCodigoManualActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_ENTRADA, conexao ).show();
+//        new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_ENTRADA, conexao ).show();
+        try
+        {
+
+            System.out.println( "Codigo do Armazem em questão: " + getCodigoArmazem() );
+            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_ENTRADA_STOCK, conexao ).show();
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_jButton4ActionPerformed
 
     /**
@@ -716,7 +755,7 @@ public class EntradaVisao extends javax.swing.JFrame
 
     public int getCodigoTipoProduto() throws SQLException
     {
-        return BDConexao.getCodigo( "tb_tipo_produto", String.valueOf( cmbCategoria.getSelectedItem() ) );
+        return BDConexao.getCodigo( "tb_tipo_produto", String.valueOf( cmbSubFamilia.getSelectedItem() ) );
     }
 
     public int getCodigoFornecedor() throws SQLException
@@ -807,22 +846,22 @@ public class EntradaVisao extends javax.swing.JFrame
                         getCodigoProduto(),
                         stock.getCodProdutoCodigo().getDesignacao(),
                         getQuantidadeProduto( getCodigoProduto() ),
-                        txtQuantidadeEntrar.getText(),
+                        txtQuatindade.getText(),
                         cmbArmazem.getSelectedItem().toString(),
                         //                        stock.getQuantidadeExistente()
                         //                        + Integer.parseInt(txtQuantidadeEntrar.getText())
 
                         conexao.getQtdExistenteStock( getCodigoProduto(), getIdArmazem() )
-                        + Integer.parseInt( txtQuantidadeEntrar.getText() ),
+                        + Integer.parseInt( txtQuatindade.getText() ),
 
                     } );
                 }
                 else
                 {
-                    actuazlizar_quantidade( txtQuantidadeEntrar.getText() );
+                    actuazlizar_quantidade( txtQuatindade.getText() );
                 }
 
-                txtQuantidadeEntrar.setText( "" );
+                txtQuatindade.setText( "" );
                 txtCodigoProduto.setText( "" );
 
             }
@@ -945,8 +984,8 @@ public class EntradaVisao extends javax.swing.JFrame
     public static javax.swing.JButton btn_remover;
     public static javax.swing.JButton btn_salvar;
     public static javax.swing.JComboBox cmbArmazem;
-    public static javax.swing.JComboBox cmbCategoria;
     public static javax.swing.JComboBox cmbProduto;
+    public static javax.swing.JComboBox cmbSubFamilia;
     private javax.swing.JButton jButton4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -967,8 +1006,8 @@ public class EntradaVisao extends javax.swing.JFrame
     public static javax.swing.JTextField txtCodigoBarra;
     public static javax.swing.JTextField txtCodigoManual;
     public static javax.swing.JTextField txtCodigoProduto;
-    public static javax.swing.JTextField txtQuantidadeEntrar;
     public static javax.swing.JTextField txtQuatidadeExistente;
+    public static javax.swing.JTextField txtQuatindade;
     // End of variables declaration//GEN-END:variables
 
     private static int getIdArmazem()
@@ -1016,27 +1055,19 @@ public class EntradaVisao extends javax.swing.JFrame
             id_armzem = getIdArmazem();
             System.err.println( "ACCAO CODIGO PRODUTO ID ARMAZEM : " + id_armzem );
             System.err.println( "ACCAO CODIGO PRODUTO FORA" );
-            if ( stockDao.exist_produto_stock( parm_codigo, id_armzem ) )
-            {
-                System.err.println( "ACCAO CODIGO PRODUTO DENTRO" );
-                TbStock stock = stockDao.get_stock_by_id_produto_and_id_armazem( parm_codigo, id_armzem );
-                cmbCategoria.setSelectedItem( stock.getCodProdutoCodigo().getCodTipoProduto().getDesignacao() );
-                accao_combo_categoria();
-                cmbProduto.setSelectedItem( stock.getCodProdutoCodigo().getDesignacao() );
-                txtCodigoProduto.setText( String.valueOf( stock.getCodProdutoCodigo().getCodigo() ) );
-                //txtQuatidadeExistente.setText(String.valueOf(stock.getQuantidadeExistente()));
-                lbFornecedor.setText( "FORNECEDOR: " + stock.getCodProdutoCodigo().getCodFornecedores().getNome() );
 
-                procedimento_actualizar_quantidade();
+            System.err.println( "ACCAO CODIGO PRODUTO DENTRO" );
+            TbStock stock = stockDao.get_stock_by_id_produto_and_id_armazem( parm_codigo, id_armzem );
+            cmbSubFamilia.setSelectedItem( stock.getCodProdutoCodigo().getCodTipoProduto().getDesignacao() );
+            accao_combo_categoria();
+            cmbProduto.setSelectedItem( stock.getCodProdutoCodigo().getDesignacao() );
+            txtCodigoProduto.setText( String.valueOf( stock.getCodProdutoCodigo().getCodigo() ) );
+            //txtQuatidadeExistente.setText(String.valueOf(stock.getQuantidadeExistente()));
+            lbFornecedor.setText( "FORNECEDOR: " + stock.getCodProdutoCodigo().getCodFornecedores().getNome() );
 
-                txtQuantidadeEntrar.requestFocus();
+            procedimento_actualizar_quantidade();
 
-            }
-            else
-            {
-                txtQuatidadeExistente.setText( "" );
-                JOptionPane.showMessageDialog( null, "O Produto selecionado ainda nao se encontra no  " + cmbArmazem.getSelectedItem().toString() + "\n convem cadastrar!...", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
-            }
+            txtQuatindade.requestFocus();
 
         }
         catch ( Exception ex )
@@ -1052,7 +1083,7 @@ public class EntradaVisao extends javax.swing.JFrame
         try
         {
 
-            String codigo_barra =  txtCodigoBarra.getText().trim();
+            String codigo_barra = txtCodigoBarra.getText().trim();
             TbStock stock_local = stockDao.getStockByCodBarra( codigo_barra, getIdArmazem() );
             System.err.println( " ******** COD PRODUTO :  " + stock_local.getCodProdutoCodigo().getCodigo() );
             accao_codigo_produto( stock_local.getCodProdutoCodigo().getCodigo() );
@@ -1130,7 +1161,7 @@ public class EntradaVisao extends javax.swing.JFrame
         {
             TbStock stock = stockDao.get_stock_by_id_produto_and_id_armazem( codigo, id_armzem );
             cmbProduto.setSelectedItem( stock.getCodProdutoCodigo().getDesignacao() );
-            txtQuantidadeEntrar.requestFocus();
+            txtQuatindade.requestFocus();
 
         }
         else
@@ -1145,7 +1176,7 @@ public class EntradaVisao extends javax.swing.JFrame
         try
         {
 
-            cmbProduto.setModel( new DefaultComboBoxModel( produtoDao.getProdutoByCategoria( cmbCategoria.getSelectedItem().toString() ) ) );
+            cmbProduto.setModel( new DefaultComboBoxModel( produtoDao.getProdutoByCategoria( cmbSubFamilia.getSelectedItem().toString() ) ) );
 
         }
         catch ( Exception ex )
@@ -1155,7 +1186,7 @@ public class EntradaVisao extends javax.swing.JFrame
 
     }
 
-    private void accao_key_pressed_codigo_produto()
+    private static void accao_key_pressed_codigo_produto()
     {
         try
         {
@@ -1187,6 +1218,7 @@ public class EntradaVisao extends javax.swing.JFrame
         this.entrada.setIdProduto( produtoDao.findTbProduto( pk_codigo ) );
         this.entrada.setQuantidade( qtd );
         this.entrada.setIdArmazemFK( armazemDao.findTbArmazem( pk_armazem ) );
+        this.entrada.setStatusEliminado("false" );
         this.entrada.setIdUsuario( usuarioDao.findTbUsuario( this.idUser ) );
     }
 
@@ -1217,6 +1249,155 @@ public class EntradaVisao extends javax.swing.JFrame
         }
 
         return 0;
+    }
+
+    public static void accao_codigo_interno_enter_busca_exterior( int codigo )
+    {
+
+        try
+        {
+            System.out.println( "ID PRODUTO EXTERIOR: " + codigo );
+            TbProduto produtoLocal = (TbProduto) produtosController.findById( codigo );
+            procedimento_actualizar_quantidade();
+            procedimentoAdicionarTabela( produtoLocal );
+        }
+        catch ( Exception ex )
+        {
+            ex.printStackTrace();
+            Logger.getLogger( EntradaVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+        }
+
+    }
+
+    private static void procedimentoAdicionarTabela( TbProduto produto )
+    {
+        try
+        {
+            if ( txtQuatindade.getText().isEmpty() )
+            {
+//                JOptionPane.showMessageDialog( null, "Não informou a quantidade, por favor informe a quantidade!" );
+                txtQuatindade.requestFocus();
+            }
+            else if ( !Objects.isNull( produto ) )
+            {
+                Integer codTipoProduto = produto.getCodTipoProduto().getCodigo();
+                TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById( codTipoProduto );
+                cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
+                cmbProduto.setModel( new DefaultComboBoxModel( produtosController.getVector() ) );
+                cmbProduto.setSelectedItem( produto.getDesignacao() );
+//                adicionar_preco_quantidade_anitgo();
+//                if ( rbTranstorno.isSelected() )
+//                {
+//                    procedimento_adicionar_sem_transtorno();
+//                }
+//                else
+//                {
+//                procedimento_adicionar();
+                busca_produto_by_cod_interno();
+//                accao_key_pressed_codigo_produto();
+//                }
+                txtCodigoProduto.setText( "" );
+                txtCodigoBarra.setText( "" );
+//                txtQuatindade.setText( "1" );
+                txtQuatindade.requestFocus();
+
+            }
+            else
+            {
+                JOptionPane.showMessageDialog( null, "Não existe produto relacionado a esta referência" );
+            }
+
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+
+        }
+
+    }
+
+    private static void busca_produto_by_cod_interno()
+    {
+
+        String codInternoString = txtCodigoProduto.getText();
+        Integer codigoInternoInt = (codInternoString.isEmpty() ? 0 : Integer.parseInt( codInternoString ));
+        System.err.println( "busca_produto_by_cod_barra: " );
+//        preco = precosController.getLastIdPrecoByIdProdutos( codigoInternoInt );
+        System.err.println( "codInternoString: " + codInternoString );
+        produto = (TbProduto) produtosController.findById( codigoInternoInt );
+        if ( produto.getCodigo() != 0 )
+        {
+            cmbProduto.setSelectedItem( produto.getDesignacao() );
+            txtCodigoBarra.setText( String.valueOf( produto.getCodBarra() ) );
+            txtCodigoManual.setText( String.valueOf( produto.getCodigoManual() ) );
+        }
+        else
+        {
+            cmbProduto.setSelectedIndex( 0 );
+            txtCodigoBarra.requestFocus();
+            txtCodigoManual.requestFocus();
+        }
+
+        mostrar_dados_stock( produto );
+    }
+
+    private static void mostrar_dados_stock( TbProduto produto_parm )
+    {
+//        TbStock stockByCodBarra = stockDao.getStockByCodBarra(produto_parm.getCodBarra(), getIdArmazem());
+        TbStock stockByCodBarra = stoksController.getStockByCodBarraAndIdArmazem( produto_parm.getCodBarra(), getIdArmazem() );
+        if ( !Objects.isNull( stockByCodBarra ) )
+        {
+            txtQuatidadeExistente.setText( String.valueOf( stockByCodBarra.getQuantidadeExistente() ) );
+        }
+        else
+        {
+
+            txtQuatidadeExistente.setText( "0" );
+        }
+    }
+
+    public static void busca_produto_by_cod_interno_entrada( int codProduto )
+    {
+        produto = (TbProduto) produtosController.findById( codProduto );
+        if ( produto.getCodigo() != 0 )
+        {
+            cmbProduto.setSelectedItem( produto.getDesignacao() );
+            txtCodigoBarra.setText( produto.getCodBarra() );
+            txtCodigoProduto.setText( String.valueOf( produto.getCodigo() ) );
+            txtCodigoManual.setText( produto.getCodigoManual() );
+        }
+        else
+        {
+
+            txtCodigoBarra.setText( "" );
+            txtCodigoProduto.setText( "" );
+            txtCodigoManual.setText( "" );
+        }
+        mostrar_dados_stock( produto );
+
+    }
+
+    private static boolean registrar_stock( TbProduto produto_local, double qtd, double qtdCritica, double qtdbaixa, StoksController stocksControllerLocal )
+    {
+
+        TbStock stockLocal = new TbStock();
+
+        stockLocal.setDataEntrada( new Date() );
+//        stockLocal.setQuantidadeExistente( 0d );
+        stockLocal.setQuantidadeExistente( qtd );
+        stockLocal.setStatus( "true" );
+        stockLocal.setPrecoVenda( new BigDecimal( MetodosUtil.convertToDouble( "0.0" ) ) );
+        stockLocal.setPrecoVendaGrosso( new BigDecimal( stockLocal.getPrecoVenda().doubleValue() ) );
+        stockLocal.setQtdGrosso( DVML.QTD_DEFAULT );
+        stockLocal.setQuantCritica( (int) qtdCritica );
+        stockLocal.setQuantBaixa( (int) qtdbaixa );
+        stockLocal.setQuantidadeAntiga( 0d );
+        stockLocal.setCodArmazem( new TbArmazem( getIdArmazem() ) );
+        stockLocal.setCodProdutoCodigo( new TbProduto( produto_local.getCodigo() ) );
+        System.out.println( "Produto Registrado no Stock." );
+        return stocksControllerLocal.salvar( stockLocal );
+
     }
 
 }

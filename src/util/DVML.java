@@ -282,6 +282,7 @@ public class DVML
     public static int ACERTO_STOCK = 7;
     public static int IMPRIMIR_PRECOS = 8;
     public static int JANELA_ENTRADA = 2;
+    public static int JANELA_ENTRADA_STOCK = 17;
     public static int JANELA_PRODUTO = 3;
     public static int JANELA_ESTORNO = 9;
     public static int JANELA_ALOJAMENTO_RETAURANTE = 5;

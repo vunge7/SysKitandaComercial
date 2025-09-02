@@ -202,6 +202,7 @@ public class ListaVenda1
                         }
                     }
                     break;
+                    case CM:
                     case FR_S_A6:
                     case FR_S_A6_O:
                     case FR_A4:

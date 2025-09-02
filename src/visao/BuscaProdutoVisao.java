@@ -336,6 +336,16 @@ public class BuscaProdutoVisao extends javax.swing.JDialog
                 dispose();
 
             }
+            else if ( DVML.JANELA_ENTRADA_STOCK == cod_janela )
+            {
+
+                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
+                int linha = tabela_busca.getSelectedRow();
+                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
+                EntradaVisao.busca_produto_by_cod_interno_entrada(codigo );
+                dispose();
+
+            }
             else if ( DVML.JANELA_VENDA == cod_janela )
             {
 

@@ -59,6 +59,8 @@ import static kitanda.util.CfConstantes.YYYYMMDD_HHMMSS;
 import kitanda.util.CfMethods;
 import kitanda.util.CfMethodsSwing;
 import lista.ListaVenda1;
+import lista.ListaVendaConsultas;
+import lista.ListaVendaPorMesas;
 import tesouraria.novo.controller.ContaController;
 import tesouraria.novo.controller.ContaMovimentosController;
 import tesouraria.novo.util.MetodosUtilTS;
@@ -66,8 +68,10 @@ import util.BDConexao;
 import util.DVML;
 import util.DVML.Abreviacao;
 import static util.DVML.CASAS_DECIMAIS;
+import static util.DVML.DOC_FACTURA_CONSULTA_MESA;
 import static util.DVML.DOC_FACTURA_RECIBO_FR;
 import static util.DVML.DOC_FACTURA_FT;
+import static util.DVML.DOC_FACTURA_PROFORMA_PP;
 import util.MetodosUtil;
 import static util.MetodosUtil.rodarComandoWindows;
 
@@ -4248,9 +4252,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             // Salvar a venda e obter o ID
             idVendaGerada = vendasController.salvarRetornaID( venda );
 //            venda.setHashCod( MetodosUtil.criptografia_hash( vendasController.findById( idVendaGerada), getGrossTotal().doubleValue(), conexaoTransaction ) );
-           
-            vendasController.actualizar_hash_and_assinatura( idVendaGerada, getGrossTotal().doubleValue());
-            
+
+            vendasController.actualizar_hash_and_assinatura( idVendaGerada, getGrossTotal().doubleValue() );
+
             if ( idVendaGerada == null || idVendaGerada == 0 )
             {
                 throw new Exception( "Falha ao obter o ID da venda gravada." );
@@ -4376,16 +4380,19 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //
 //        return venda;
 //    }
-    
-    private static Date getDataVencimentoFr(){
-        
-        if((getIdDocumento() == DVML.DOC_FACTURA_PROFORMA_PP ) ||( getIdDocumento() == DVML.DOC_FACTURA_FT)){
-        return dc_data_vencimento.getDate();}
-        else {
+    private static Date getDataVencimentoFr()
+    {
+
+        if ( ( getIdDocumento() == DVML.DOC_FACTURA_PROFORMA_PP ) || ( getIdDocumento() == DVML.DOC_FACTURA_FT ) )
+        {
+            return dc_data_vencimento.getDate();
+        }
+        else
+        {
             return new Date();
         }
     }
-    
+
     private static TbVenda construirVenda()
     {
         TbVenda venda = new TbVenda();
@@ -4497,7 +4504,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 {
                     TbStock stock_local_local = stoksControllerLocal.getStockByIdProdutoAndIdArmazem( idProduto, getCodigoArmazem() );
 
-                    if ( ( getIdDocumento() == DOC_FACTURA_RECIBO_FR || getIdDocumento() == DOC_FACTURA_FT || getIdDocumento() == DVML.DOC_GUIA_TRANSPORTE_GT ) && stock_local_local != null )
+                    if ( ( getIdDocumento() == DOC_FACTURA_RECIBO_FR || getIdDocumento() == DOC_FACTURA_FT || getIdDocumento() == DOC_FACTURA_CONSULTA_MESA || getIdDocumento() == DVML.DOC_GUIA_TRANSPORTE_GT ) && stock_local_local != null )
                     {
                         actualizar_quantidade( idProduto, item.getQuantidade(), conexaoLocal );
                     }
@@ -4661,7 +4668,15 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 default:
                     via = "Cópia";
             }
+            
+           if ( ( getIdDocumento() == DOC_FACTURA_RECIBO_FR || getIdDocumento() == DOC_FACTURA_FT || getIdDocumento() == DOC_FACTURA_PROFORMA_PP || getIdDocumento() == DVML.DOC_GUIA_TRANSPORTE_GT )  ){
+                
             ListaVenda1 listaVenda1 = new ListaVenda1( cod_venda, abreviacao, false, ck_simplificada.isSelected(), via, motivos_isentos );
+            
+            }else{
+                ListaVendaConsultas listaVenda1 = new ListaVendaConsultas( cod_venda, abreviacao, false, true, via );
+            }
+        
         }
     }
 
@@ -5276,6 +5291,10 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
                 break;
 
+            case DVML.DOC_FACTURA_CONSULTA_MESA:
+                this.abreviacao = Abreviacao.CM;
+                break;
+
             case DVML.DOC_FACTURA_PROFORMA_PP:
                 this.abreviacao = Abreviacao.PP;
                 break;
@@ -5297,12 +5316,13 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
         boolean documentoIsFA = DVML.DOC_FACTURA_FT == getIdDocumento();
         boolean documentoIsPP = DVML.DOC_FACTURA_PROFORMA_PP == getIdDocumento();
+        boolean documentoIsCM = DVML.DOC_FACTURA_CONSULTA_MESA == getIdDocumento();
         boolean documentoIsGT = DVML.DOC_GUIA_TRANSPORTE_GT == getIdDocumento();
         System.err.println( "documentoIsFA: " + documentoIsFA );
         System.err.println( "documentoIsPP: " + documentoIsPP );
         ck_A4.setSelected( !documentoIsFA && !documentoIsPP && !documentoIsGT );
-        btnProcessar.setVisible( documentoIsPP || documentoIsFA || documentoIsGT );
-        btnFormaPagamento.setVisible( !documentoIsFA && !documentoIsPP && !documentoIsGT );
+        btnProcessar.setVisible( documentoIsPP || documentoIsFA || documentoIsGT || documentoIsCM );
+        btnFormaPagamento.setVisible( !documentoIsFA && !documentoIsPP && !documentoIsGT && !documentoIsCM);
     }
 
     private static Moeda getMoeda()
@@ -6234,11 +6254,16 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             cmbTipoDocumento.setSelectedIndex( 3 );
 
         }
-        else if ( documentos.equalsIgnoreCase( "Guia de Transporte" ) )
-        {
-            cmbTipoDocumento.setSelectedIndex( 4 );
-
-        }
+//        else if ( documentos.equalsIgnoreCase( "Guia de Transporte" ) )
+//        {
+//            cmbTipoDocumento.setSelectedIndex( 7 );
+//
+//        }
+//        else if ( documentos.equalsIgnoreCase( "Consulta Mesa" ) )
+//        {
+//            cmbTipoDocumento.setSelectedIndex( 13 );
+//
+//        }
     }
 
 //    public static void verificarCaixa()

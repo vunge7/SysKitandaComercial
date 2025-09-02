@@ -177,7 +177,7 @@
                                   </Group>
                                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                       <Component id="lbQuantidadeEntrar" max="32767" attributes="0"/>
-                                      <Component id="txtQuantidadeEntrar" max="32767" attributes="0"/>
+                                      <Component id="txtQuatindade" max="32767" attributes="0"/>
                                   </Group>
                                   <EmptySpace pref="235" max="32767" attributes="0"/>
                                   <Component id="btn_adicionar" min="-2" pref="50" max="-2" attributes="0"/>
@@ -217,7 +217,7 @@
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="cmbCategoria" alignment="0" max="32767" attributes="0"/>
+                              <Component id="cmbSubFamilia" alignment="0" max="32767" attributes="0"/>
                               <Component id="cmbProduto" alignment="1" min="-2" pref="250" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -240,7 +240,7 @@
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Group type="102" attributes="0">
                                   <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="cmbCategoria" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="cmbSubFamilia" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="lbCategoria" alignment="3" min="-2" pref="22" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -286,7 +286,7 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="txtQuantidadeEntrar" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="txtQuatindade" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="txtCodigoBarra" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -377,7 +377,7 @@
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="9"/>
           </AuxValues>
         </Component>
-        <Component class="javax.swing.JComboBox" name="cmbCategoria">
+        <Component class="javax.swing.JComboBox" name="cmbSubFamilia">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="0" green="99" red="33" type="rgb"/>
@@ -391,7 +391,7 @@
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmbCategoriaActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmbSubFamiliaActionPerformed"/>
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="9"/>
@@ -449,7 +449,7 @@
             <Property name="text" type="java.lang.String" value="Qtd. a entrar"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="txtQuantidadeEntrar">
+        <Component class="javax.swing.JTextField" name="txtQuatindade">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="0" green="99" red="33" type="rgb"/>
@@ -462,7 +462,7 @@
             </Property>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtQuantidadeEntrarActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtQuatindadeActionPerformed"/>
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="9"/>
