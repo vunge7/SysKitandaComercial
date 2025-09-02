@@ -155,11 +155,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         setFocus( dadosInstituicao.getFoco() );
         txtPrecoCompra.setHorizontalAlignment( JTextField.RIGHT );
         txtPrecoVendaRetalho.setHorizontalAlignment( JTextField.RIGHT );
-
-        txtPercentagemGanhoRetalho.setDocument( new NumeroDocument( 12, DVML.CASAS_DECIMAIS ) );
         txtPercentagemGanhoRetalho.setHorizontalAlignment( JTextField.RIGHT );
-
-//        txtPrecoVendaGrosso.setDocument( new NumeroDocument( 12, DVML.CASAS_DECIMAIS ) );
         txtPrecoVendaGrosso.setHorizontalAlignment( JTextField.RIGHT );
         popularComponentes();
         configurar_dois_precos();
@@ -197,6 +193,7 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         TextFieldUtils.configurarCampoDecimal( txtPrecoCompra, 7 );
         TextFieldUtils.configurarCampoDecimal( txtPrecoVendaRetalho, 7 );
+        TextFieldUtils.configurarCampoDecimal( txtPercentagemGanhoRetalho, 7 );
 
     }
 
@@ -2925,7 +2922,7 @@ public class ProdutosVisao extends javax.swing.JFrame
 
 //        txtCodigoBarra.setText( "0" );
         txtPrecoVendaRetalho.setText( "" );
-        txtPercentagemGanhoRetalho.setText( "" );
+        txtPercentagemGanhoRetalho.setText( "0" );
         txtCodigoManual.setText( "" );
         txtPrecoVendaGrosso.setText( "" );
         txtQtdGrosso.setText( "" );
@@ -2940,7 +2937,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         txtPrecoVendaRetalho.setText( "" );
         txtCodigoProduto.setText( "" );
         txtCodigoBarraProcura.setText( "" );
-        txtPercentagemGanhoRetalho.setText( "" );
+        txtPercentagemGanhoRetalho.setText( "0" );
         txtPrecoDeVendaComIva.setText( "" );
         txtCodigoManual.setText( "" );
         txtUnidadeCompra.setText( "" );
@@ -3054,7 +3051,7 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         if ( ck_produto.isSelected() )
         {
-            preco.setPercentagemGanho( new BigDecimal( MetodosUtil.convertToDouble( txtPercentagemGanhoRetalho.getText() ) ) );
+            preco.setPercentagemGanho( new BigDecimal( txtPercentagemGanhoRetalho.getText() ) );
 
         }
         else
