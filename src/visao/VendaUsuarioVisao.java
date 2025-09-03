@@ -68,6 +68,7 @@ import util.DVML.Abreviacao;
 import static util.DVML.CASAS_DECIMAIS;
 import static util.DVML.DOC_FACTURA_RECIBO_FR;
 import static util.DVML.DOC_FACTURA_FT;
+import util.FinanceUtils;
 import util.MetodosUtil;
 import static util.MetodosUtil.rodarComandoWindows;
 
@@ -133,6 +134,11 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     public static double gorjeta = 0;
     private static TbDadosInstituicao dadosInstituicao;
     private static BDConexao conexaoTransaction;
+
+    private static final int INDEX_TABLE_PRECO = 3;
+    private static final int INDEX_TABLE_QTD = 4;
+    private static final int INDEX_TABLE_DESCONTO = 5;
+    private static final int INDEX_TABLE_TAXA_IVA = 6;
 
     public VendaUsuarioVisao( int cod_usuario, BDConexao conexao ) throws SQLException
     {
@@ -2035,13 +2041,13 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         double ret = Double.parseDouble( String.valueOf( modelo.getValueAt( linha_actual, 7 ) ) );
 
 //        double total_iliquido_linha = (( preco_venda * qtd ) - desconto);
-        String total_iliquido_linha = CfMethods.formatarComoMoeda( MetodosUtil.getValorIliquido(
+        String total_iliquido_linha = CfMethods.formatarComoMoeda( FinanceUtils.getValorIliquido(
                 new BigDecimal( qtd ),
                 new BigDecimal( preco_venda ),
                 new BigDecimal( desconto )
         ) );
 
-        double totalComIva = MetodosUtil.getValorComIVA( qtd, taxa, preco_venda, desconto );
+        double totalComIva = FinanceUtils.getValorComIVA( qtd, taxa, preco_venda, desconto );
         String total_liquido_linha = CfMethods.formatarComoMoeda( totalComIva );
 
         retencao = MetodosUtil.getValorComRetencao( qtd, ret, preco_venda, desconto );
@@ -3528,9 +3534,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 BigDecimal taxaRet = BigDecimal.valueOf( getTaxaImpostoRet( codigo_produto ) );
 //       
 //                BigDecimal totalComDesconto = totalBruto.subtract( descontoValor ).setScale( 6, RoundingMode.HALF_UP );
-                BigDecimal valorIliquido = MetodosUtil.getValorIliquido( qtd, preco, descontoPercent );
+                BigDecimal valorIliquido = FinanceUtils.getValorIliquido( qtd, preco, descontoPercent );
 
-                double valorLiquido = MetodosUtil.getValorComIVA(
+                double valorLiquido = FinanceUtils.getValorComIVA(
                         qtd.doubleValue(),
                         taxaIva.doubleValue(),
                         preco.doubleValue(),
@@ -3656,29 +3662,28 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         return valorRet.setScale( 2, RoundingMode.HALF_UP );
     }
 
-    private static BigDecimal getTotalIliquido()
-    {
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
-        BigDecimal totalIliquido = BigDecimal.ZERO;
-
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-            // Coluna 3: Preço Unitário, Coluna 4: Quantidade
-            BigDecimal precoUnitario = BigDecimal.valueOf( CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 3 ).toString() ) );
-            BigDecimal quantidade = new BigDecimal( modelo.getValueAt( i, 4 ).toString() );
-
-            BigDecimal subtotal = precoUnitario.multiply( quantidade );
-            totalIliquido = totalIliquido.add( subtotal );
-        }
-
-        return totalIliquido.setScale( 2, RoundingMode.HALF_UP );
-    }
-
+//    private static BigDecimal getTotalIliquido()
+//    {
+//        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+//        BigDecimal totalIliquido = BigDecimal.ZERO;
+//
+//        for ( int i = 0; i < modelo.getRowCount(); i++ )
+//        {
+//            // Coluna 3: Preço Unitário, Coluna 4: Quantidade
+//            BigDecimal precoUnitario = BigDecimal.valueOf( CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 3 ).toString() ) );
+//            BigDecimal quantidade = new BigDecimal( modelo.getValueAt( i, 4 ).toString() );
+//
+//            BigDecimal subtotal = precoUnitario.multiply( quantidade );
+//            totalIliquido = totalIliquido.add( subtotal );
+//        }
+//
+//        return totalIliquido.setScale( 2, RoundingMode.HALF_UP );
+//    }
     private static BigDecimal getTotalAOALiquido()
     {
-        BigDecimal totalIliquido = getTotalIliquido();
-        BigDecimal totalImposto = BigDecimal.valueOf( getTotalImposto() );
-        BigDecimal descontoComercial = BigDecimal.valueOf( getDescontoComercial() );
+        BigDecimal totalIliquido = FinanceUtils.getTotalIliquidoTable( INDEX_TABLE_PRECO, INDEX_TABLE_QTD, table );
+        BigDecimal totalImposto = BigDecimal.valueOf( FinanceUtils.getTotalImpostoTable( INDEX_TABLE_PRECO, INDEX_TABLE_QTD, INDEX_TABLE_DESCONTO, INDEX_TABLE_TAXA_IVA, table ) );
+        BigDecimal descontoComercial = FinanceUtils.getDescontoComercial( INDEX_TABLE_PRECO, INDEX_TABLE_QTD, INDEX_TABLE_DESCONTO, table );
         BigDecimal descontoFinanceiro = BigDecimal.valueOf( getDescontoFinanceiro() );
 
         return totalIliquido
@@ -4397,13 +4402,37 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         venda.setTotalVenda( getTotalAOALiquido() );
         venda.setValorEntregue( getValor_entregue() );
         venda.setTroco( new BigDecimal( getTroco() ) );
-        venda.setDescontoTotal( new BigDecimal( getDescontoComercial() + getDescontoFinanceiro() ) );
-        venda.setDescontoComercial( new BigDecimal( getDescontoComercial() ) );
+        venda.setDescontoTotal( FinanceUtils.getDescontoComercial( INDEX_TABLE_PRECO, INDEX_TABLE_QTD, INDEX_TABLE_DESCONTO, table )
+                .add( BigDecimal.valueOf( getDescontoFinanceiro() ) ) );
+
+        venda.setDescontoComercial(
+                FinanceUtils.getDescontoComercial( INDEX_TABLE_PRECO, INDEX_TABLE_QTD, INDEX_TABLE_DESCONTO, table ) );
         venda.setDescontoFinanceiro( new BigDecimal( getDescontoFinanceiro() ) );
-        venda.setTotalIva( new BigDecimal( getTotalImposto() ) );
-        venda.setTotalGeral( getTotalIliquido() );
-        venda.setTotalIncidencia( new BigDecimal( getTotalIncidencia() ) );
-        venda.setTotalIncidenciaIsento( new BigDecimal( getTotalIncidenciaIsento() ) );
+        venda.setTotalIva( new BigDecimal(
+                FinanceUtils.getTotalImpostoTable(
+                        INDEX_TABLE_PRECO,
+                        INDEX_TABLE_QTD,
+                        INDEX_TABLE_DESCONTO,
+                        INDEX_TABLE_TAXA_IVA, table ) )
+        );
+        venda.setTotalGeral(
+                FinanceUtils.getTotalIliquidoTable(
+                        INDEX_TABLE_PRECO,
+                        INDEX_TABLE_QTD,
+                        table ) );
+
+        venda.setTotalIncidencia( new BigDecimal( FinanceUtils.getTotalIncidenciaTable(
+                INDEX_TABLE_PRECO,
+                INDEX_TABLE_QTD,
+                INDEX_TABLE_DESCONTO,
+                INDEX_TABLE_TAXA_IVA,
+                table ) )
+        );
+
+        venda.setTotalIncidenciaIsento( FinanceUtils.getTotalIncidenciaIsento(
+                INDEX_TABLE_PRECO,
+                INDEX_TABLE_QTD,
+                INDEX_TABLE_DESCONTO, INDEX_TABLE_TAXA_IVA, table ) );
         venda.setTotalRetencao( getTotalRetencaoLiquido() );
         venda.setGorjeta( new BigDecimal( gorjeta ) );
         venda.setTotalPorExtenso( iniciais_extenso() + lbValorPorExtenco.getText() );
@@ -5565,58 +5594,56 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //        txtValorEntregue.setText( "" );
     }
 
-    private static double getTotalIncidencia()
-    {
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
-        double qtd = 0;
-        double incidencia = 0d, preco_unitario = 0d, desconto_valor_linha = 0;
-
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-            preco_unitario = CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 3 ).toString() );
-            qtd = Double.parseDouble( modelo.getValueAt( i, 4 ).toString() );
-            double valor_percentagem = Double.parseDouble( modelo.getValueAt( i, 5 ).toString() );
-            double taxa = Double.parseDouble( modelo.getValueAt( i, 6 ).toString() );
-            // a incidência só é aplicável ao produtos sujeitos a iva 
-            if ( taxa != 0 )
-            {
-                desconto_valor_linha = ( ( valor_percentagem ) / 100 );
-                double valor_unitario = ( preco_unitario * qtd );
-                incidencia += ( ( valor_unitario ) - ( valor_unitario * desconto_valor_linha ) );
-
-            }
-
-        }
-
-        return incidencia;
-    }
-
-    private static double getTotalImposto()
-    {
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
-        double qtd = 0d;
-        double imposto = 0d, preco_unitario = 0d, desconto_valor_linha = 0d;
-
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-            preco_unitario = CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 3 ).toString() );
-            qtd = Double.parseDouble( modelo.getValueAt( i, 4 ).toString() );
-            double valor_percentagem = Double.parseDouble( modelo.getValueAt( i, 5 ).toString() );
-            double taxa = Double.parseDouble( modelo.getValueAt( i, 6 ).toString() );
-            // a incidência só é aplicável ao produtos sujeitos a iva 
-            if ( taxa != 0 )
-            {
-                double valor_unitario = ( preco_unitario * qtd );
-                desconto_valor_linha = valor_unitario * ( ( valor_percentagem ) / 100 );
-                imposto += ( ( valor_unitario - desconto_valor_linha ) * ( taxa / 100 ) );
-
-            }
-
-        }
-
-        return imposto;
-    }
-
+//    private static double getTotalIncidencia()
+//    {
+//        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+//        double qtd = 0;
+//        double incidencia = 0d, preco_unitario = 0d, desconto_valor_linha = 0;
+//
+//        for ( int i = 0; i < modelo.getRowCount(); i++ )
+//        {
+//            preco_unitario = CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 3 ).toString() );
+//            qtd = Double.parseDouble( modelo.getValueAt( i, 4 ).toString() );
+//            double valor_percentagem = Double.parseDouble( modelo.getValueAt( i, 5 ).toString() );
+//            double taxa = Double.parseDouble( modelo.getValueAt( i, 6 ).toString() );
+//            // a incidência só é aplicável ao produtos sujeitos a iva 
+//            if ( taxa != 0 )
+//            {
+//                desconto_valor_linha = ( ( valor_percentagem ) / 100 );
+//                double valor_unitario = ( preco_unitario * qtd );
+//                incidencia += ( ( valor_unitario ) - ( valor_unitario * desconto_valor_linha ) );
+//
+//            }
+//
+//        }
+//
+//        return incidencia;
+//    }
+//    private static double getTotalImposto()
+//    {
+//        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+//        double qtd = 0d;
+//        double imposto = 0d, preco_unitario = 0d, desconto_valor_linha = 0d;
+//
+//        for ( int i = 0; i < modelo.getRowCount(); i++ )
+//        {
+//            preco_unitario = CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 3 ).toString() );
+//            qtd = Double.parseDouble( modelo.getValueAt( i, 4 ).toString() );
+//            double valor_percentagem = Double.parseDouble( modelo.getValueAt( i, 5 ).toString() );
+//            double taxa = Double.parseDouble( modelo.getValueAt( i, 6 ).toString() );
+//            // a incidência só é aplicável ao produtos sujeitos a iva 
+//            if ( taxa != 0 )
+//            {
+//                double valor_unitario = ( preco_unitario * qtd );
+//                desconto_valor_linha = valor_unitario * ( ( valor_percentagem ) / 100 );
+//                imposto += ( ( valor_unitario - desconto_valor_linha ) * ( taxa / 100 ) );
+//
+//            }
+//
+//        }
+//
+//        return imposto;
+//    }
     private static double getTotalRetencao()
     {
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
@@ -5685,52 +5712,50 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         return valor_taxa;
     }
 
-    private static double getTotalIncidenciaIsento()
-    {
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
-        double qtd = 0d;
-        double incidencia_isento = 0d, preco_unitario = 0d, desconto_valor_linha = 0;
-
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-            preco_unitario = CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 3 ).toString() );
-            qtd = Double.parseDouble( modelo.getValueAt( i, 4 ).toString() );
-            double valor_percentagem = Double.parseDouble( modelo.getValueAt( i, 5 ).toString() );
-            double taxa = Double.parseDouble( modelo.getValueAt( i, 6 ).toString() );
-            // a incidência também é aplicável à produtos isentos do iva 
-            if ( taxa == 0 )
-            {
-                desconto_valor_linha = ( ( valor_percentagem ) / 100 );
-                double valor_unitario = ( preco_unitario * qtd );
-                incidencia_isento += ( ( valor_unitario ) - ( valor_unitario * desconto_valor_linha ) );
-
-            }
-
-        }
-
-        return incidencia_isento;
-    }
-
-    private static double getDescontoComercial()
-    {
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
-        double qtd = 0d;
-        double desconto_comercial = 0d, preco_unitario = 0d, desconto_valor_linha = 0d;
-
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-            preco_unitario = CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 3 ).toString() );
-            qtd = Double.parseDouble( modelo.getValueAt( i, 4 ).toString() );
-            double valor_percentagem = Double.parseDouble( modelo.getValueAt( i, 5 ).toString() );
-            desconto_valor_linha = ( ( valor_percentagem ) / 100 );
-            double valor_unitario = ( preco_unitario * qtd );
-            desconto_comercial += ( valor_unitario * desconto_valor_linha );
-
-        }
-
-        return desconto_comercial;
-    }
-
+//    private static double getTotalIncidenciaIsento()
+//    {
+//        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+//        double qtd = 0d;
+//        double incidencia_isento = 0d, preco_unitario = 0d, desconto_valor_linha = 0;
+//
+//        for ( int i = 0; i < modelo.getRowCount(); i++ )
+//        {
+//            preco_unitario = CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 3 ).toString() );
+//            qtd = Double.parseDouble( modelo.getValueAt( i, 4 ).toString() );
+//            double valor_percentagem = Double.parseDouble( modelo.getValueAt( i, 5 ).toString() );
+//            double taxa = Double.parseDouble( modelo.getValueAt( i, 6 ).toString() );
+//            // a incidência também é aplicável à produtos isentos do iva 
+//            if ( taxa == 0 )
+//            {
+//                desconto_valor_linha = ( ( valor_percentagem ) / 100 );
+//                double valor_unitario = ( preco_unitario * qtd );
+//                incidencia_isento += ( ( valor_unitario ) - ( valor_unitario * desconto_valor_linha ) );
+//
+//            }
+//
+//        }
+//
+//        return incidencia_isento;
+//    }
+//    private static double getDescontoComercial()
+//    {
+//        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+//        double qtd = 0d;
+//        double desconto_comercial = 0d, preco_unitario = 0d, desconto_valor_linha = 0d;
+//
+//        for ( int i = 0; i < modelo.getRowCount(); i++ )
+//        {
+//            preco_unitario = CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 3 ).toString() );
+//            qtd = Double.parseDouble( modelo.getValueAt( i, 4 ).toString() );
+//            double valor_percentagem = Double.parseDouble( modelo.getValueAt( i, 5 ).toString() );
+//            desconto_valor_linha = ( ( valor_percentagem ) / 100 );
+//            double valor_unitario = ( preco_unitario * qtd );
+//            desconto_comercial += ( valor_unitario * desconto_valor_linha );
+//
+//        }
+//
+//        return desconto_comercial;
+//    }
     private static double getDescontoFinanceiro()
     {
         double desconto_economico = 0d;
@@ -5778,7 +5803,11 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static BigDecimal getGrossTotal()
     {
-        return getTotalIliquido().add( getTotalVendaIVASemIncluirDesconto() ).setScale( 2, RoundingMode.HALF_UP );
+        return FinanceUtils.getTotalIliquidoTable(
+                INDEX_TABLE_PRECO,
+                INDEX_TABLE_QTD, table )
+                .add( getTotalVendaIVASemIncluirDesconto() )
+                .setScale( 2, RoundingMode.HALF_UP );
     }
 
     private static String iniciais_extenso()

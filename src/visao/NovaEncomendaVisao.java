@@ -50,6 +50,7 @@ import net.sf.jasperreports.view.JasperViewer;
 import util.BDConexao;
 import util.DVML;
 import static util.DVML.CAMINHO_REPORT;
+import util.FinanceUtils;
 import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
 import static util.MetodosUtil.getMotivoIsensao;
@@ -1687,7 +1688,7 @@ public class NovaEncomendaVisao extends javax.swing.JFrame implements Runnable
                     0,
                     getTaxaImposto(),
                     getQuantidade() * getPrecoCompra(),
-                    MetodosUtil.getValorComIVA(
+                    FinanceUtils.getValorComIVA(
                     getQuantidade(),
                     getTaxaImposto(),
                     getPrecoCompra(),
@@ -1822,7 +1823,7 @@ public class NovaEncomendaVisao extends javax.swing.JFrame implements Runnable
             Integer quantidade = Integer.parseInt( qtd );
             double taxa = Double.parseDouble( String.valueOf( modelo.getValueAt( linha_actual, 6 ) ) );
             double total_item = preco_compra * quantidade;
-            double total_item_com_iva = MetodosUtil.getValorComIVA( quantidade, taxa, preco_compra, desconto );
+            double total_item_com_iva = FinanceUtils.getValorComIVA( quantidade, taxa, preco_compra, desconto );
 
             modelo.setValueAt( preco_compra, linha_actual, 2 );
             modelo.setValueAt( quantidade, linha_actual, 3 );
@@ -2153,7 +2154,7 @@ public class NovaEncomendaVisao extends javax.swing.JFrame implements Runnable
         /**
          * produto.getCodigo(), produto.getDesignacao(), getPrecoCompra(),
          * getQuantidade(), getUnidade_Produto(), 0, getTaxaImposto(),
-         * getQuantidade() * getPrecoCompra(), MetodosUtil.getValorComIVA(
+         * getQuantidade() * getPrecoCompra(), FinanceUtils.getValorComIVA(
          * getQuantidade(), getTaxaImposto(), getPrecoCompra(), 0 )
          */
         double preco_compra = Double.parseDouble( String.valueOf( modelo.getValueAt( linha_actual, 2 ) ) );
@@ -2167,7 +2168,7 @@ public class NovaEncomendaVisao extends javax.swing.JFrame implements Runnable
                 double taxa = Double.parseDouble( String.valueOf( modelo.getValueAt( linha_actual, 6 ) ) );
 
                 double total_item = preco_compra * quantidade;
-                double total_item_com_iva = MetodosUtil.getValorComIVA( quantidade, taxa, preco_compra, desconto );
+                double total_item_com_iva = FinanceUtils.getValorComIVA( quantidade, taxa, preco_compra, desconto );
 
                 modelo.setValueAt( preco_compra, linha_actual, 2 );
                 modelo.setValueAt( quantidade, linha_actual, 3 );
@@ -2200,7 +2201,7 @@ public class NovaEncomendaVisao extends javax.swing.JFrame implements Runnable
         /**
          * produto.getCodigo(), produto.getDesignacao(), getPrecoCompra(),
          * getQuantidade(), getUnidade_Produto(), 0, getTaxaImposto(),
-         * getQuantidade() * getPrecoCompra(), MetodosUtil.getValorComIVA(
+         * getQuantidade() * getPrecoCompra(), FinanceUtils.getValorComIVA(
          * getQuantidade(), getTaxaImposto(), getPrecoCompra(), 0 )
          */
         DefaultTableModel modelo = ( DefaultTableModel ) tableCompra.getModel();

@@ -43,6 +43,7 @@ import net.sf.jasperreports.view.JasperViewer;
 import util.BDConexao;
 import util.DVML;
 import static util.DVML.CAMINHO_REPORT;
+import util.FinanceUtils;
 import util.MetodosUtil;
 import static util.MetodosUtil.getMotivoIsensao;
 import static util.MetodosUtil.rodarComandoWindows;
@@ -1919,7 +1920,7 @@ public class ConverterEncomendasCompraVisao extends javax.swing.JFrame implement
                 double taxa = Double.parseDouble( String.valueOf( modelo.getValueAt( linha_actual, 7 ) ) );
 
                 double total_item = preco_compra * quantidade;
-                double total_item_com_iva = MetodosUtil.getValorComIVA( quantidade, taxa, preco_compra, desconto );
+                double total_item_com_iva = FinanceUtils.getValorComIVA( quantidade, taxa, preco_compra, desconto );
 
                 modelo.setValueAt( preco_compra, linha_actual, 3 );
                 modelo.setValueAt( quantidade, linha_actual, 4 );

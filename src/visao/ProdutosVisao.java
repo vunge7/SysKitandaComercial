@@ -32,10 +32,10 @@ import static kitanda.util.CfConstantes.YYYYMMDD_HHMMSS;
 import kitanda.util.CfMethods;
 import util.BDConexao;
 import util.DVML;
+import util.FinanceUtils;
 import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
 import static util.MetodosUtil.rodarComandoWindows;
-import util.NumeroDocument;
 import util.PictureChooser;
 import util.TextFieldUtils;
 
@@ -193,6 +193,12 @@ public class ProdutosVisao extends javax.swing.JFrame
         TextFieldUtils.configurarCampoDecimal( txtPrecoCompra, 7 );
         TextFieldUtils.configurarCampoDecimal( txtPrecoVendaRetalho, 7 );
         TextFieldUtils.configurarCampoDecimal( txtPercentagemGanhoRetalho, 7 );
+
+//        // Aqui passo os campos para a classe helper
+//        CalculadoraPrecoHelper helper = new CalculadoraPrecoHelper( txtPrecoCompra, 
+//                txtPrecoVendaRetalho, txtPercentagemGanhoRetalho , 7
+//        );
+//        helper.inicializar();
 
     }
 
@@ -3426,7 +3432,7 @@ public class ProdutosVisao extends javax.swing.JFrame
 
                 double precoLocal = Double.parseDouble( txtPrecoVendaRetalho.getText() );
                 double desconto = 0d;
-                double valorComIVA = MetodosUtil.getValorComIVA( qtd, taxa, precoLocal, desconto );
+                double valorComIVA = FinanceUtils.getValorComIVA( qtd, taxa, precoLocal, desconto );
 
                 txtPrecoDeVendaComIva.setText( String.valueOf( valorComIVA ) );
             }

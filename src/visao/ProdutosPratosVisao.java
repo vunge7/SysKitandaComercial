@@ -32,6 +32,7 @@ import static kitanda.util.CfConstantes.YYYYMMDD_HHMMSS;
 import kitanda.util.CfMethods;
 import util.BDConexao;
 import util.DVML;
+import util.FinanceUtils;
 import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
 import static util.MetodosUtil.rodarComandoWindows;
@@ -3406,7 +3407,7 @@ public class ProdutosPratosVisao extends javax.swing.JFrame
                 double taxa = Double.parseDouble( cmbImposto.getSelectedItem().toString() );
                 double precoLocal = MetodosUtil.convertToDouble( txtPrecoVendaRetalho.getText() );
                 double desconto = 0d;
-                double valorComIVA = MetodosUtil.getValorComIVA( qtd, taxa, precoLocal, desconto );
+                double valorComIVA = FinanceUtils.getValorComIVA( qtd, taxa, precoLocal, desconto );
 
                 txtPrecoDeVendaComIva.setText( String.valueOf( valorComIVA ) );
             }

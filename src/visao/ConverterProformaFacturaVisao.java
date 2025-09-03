@@ -92,6 +92,7 @@ import util.MetodosUtil;
 import static util.MetodosUtil.esvaziar_tabela;
 import static visao.VendaUsuarioVisao.table;
 import static util.DVML.DOC_FACTURA_FT;
+import util.FinanceUtils;
 
 /**
  *
@@ -2872,7 +2873,7 @@ public class ConverterProformaFacturaVisao extends javax.swing.JFrame implements
                 double taxa = Double.parseDouble( String.valueOf( modelo.getValueAt( linha_actual, 5 ) ) );
 
                 double total_item = preco_venda * quantidade;
-                double total_item_com_iva = MetodosUtil.getValorComIVA( quantidade, taxa, preco_venda, desconto );
+                double total_item_com_iva = FinanceUtils.getValorComIVA( quantidade, taxa, preco_venda, desconto );
 
                 modelo.setValueAt( preco_venda, linha_actual, 2 );
                 modelo.setValueAt( quantidade, linha_actual, 3 );

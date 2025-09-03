@@ -114,6 +114,7 @@ import visao.LoginVisao;
 import visao.RootVisao;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import kitanda.util.CfMethods;
 //import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 //import org.apache.poi.xwpf.usermodel.XWPFRun;
 
@@ -3873,32 +3874,7 @@ public class MetodosUtil
 //        double valor_iva = 1 + ( taxa / 100 );//
 //        return ( ( subtotal_linha - desconto_valor ) * valor_iva );
 //    }
-    public static double getValorComIVA( double qtd, double taxa, double preco, double desconto )
-    {
-        BigDecimal precoBD = BigDecimal.valueOf( preco );
-        BigDecimal qtdBD = BigDecimal.valueOf( qtd );
-        BigDecimal subtotal = precoBD.multiply( qtdBD );
-        BigDecimal descontoBD = subtotal.multiply( BigDecimal.valueOf( desconto ).divide( BigDecimal.valueOf( 100 ) ) );
-        BigDecimal base = subtotal.subtract( descontoBD );
-        BigDecimal iva = BigDecimal.ONE.add( BigDecimal.valueOf( taxa ).divide( BigDecimal.valueOf( 100 ) ) );
-        BigDecimal total = base.multiply( iva );
-        return total.setScale( 2, RoundingMode.HALF_UP ).doubleValue();
-    }
-
-    public static BigDecimal getValorIliquido( BigDecimal qtd, BigDecimal precoVenda, BigDecimal desconto )
-    {
-        // subtotal = preço × quantidade
-        BigDecimal subtotal = precoVenda.multiply( qtd );
-
-        // desconto = subtotal × (desconto / 100)
-        BigDecimal descontoValor = subtotal.multiply( desconto )
-                .divide( BigDecimal.valueOf( 100 ), 2, RoundingMode.HALF_UP );
-
-        // valor ilíquido = subtotal - desconto
-        BigDecimal valorIliquido = subtotal.subtract( descontoValor );
-        // retorna com 2 casas decimais
-        return valorIliquido.setScale( 2, RoundingMode.HALF_UP );
-    }
+    
 
     public static double getValorComRetencao( double qtd, double ret, double preco_venda, double desconto )
     {
@@ -6223,5 +6199,7 @@ public class MetodosUtil
         conexaoLocal.close();
 
     }
+
+   
 
 }

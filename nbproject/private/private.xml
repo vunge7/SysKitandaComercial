@@ -1,40 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="1">
-        <file>
-            <url>src/rh/visao/RecibosVisao.java</url>
-            <bookmark id="1">
-                <name/>
-                <line>1073</line>
-                <key/>
-            </bookmark>
-        </file>
-    </editor-bookmarks>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group name="Projetos de teste"/>
-        <group name="Group 20171208-08:14:51">
-            <file>file:/Users/macpro/Desktop/SYS_KITANDA_AGT_V_1_1_9/src/visao/EntradaVisao.java</file>
-            <file>file:/Users/macpro/Desktop/SYS_KITANDA_AGT_V_1_1_9/src/visao/ProdutoVisao.java</file>
-            <file>file:/Users/macpro/Desktop/SYS_KITANDA_AGT_V_1_1_9/src/dao/StockDao.java</file>
-        </group>
-<<<<<<< HEAD
         <group>
-            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/visao/MenuPrincipalVisao.java</file>
-            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/visao/PermissaoVisao.java</file>
-            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/visao/AnulamentoEntradaVisao.java</file>
-        </group>
-=======
-<<<<<<< HEAD
-        <group>
-            <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/util/JPAEntityMannagerFactoryUtil.java</file>
-            <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/visao/MenuPrincipalVisao.java</file>
-            <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/visao/FicheiroSAFTVisao.java</file>
+            <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/util/CalculadoraPrecoHelper.java</file>
             <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/util/DVML.java</file>
+            <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/visao/BuscaProdutoVisao.java</file>
+            <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/visao/VendaUsuarioVisao.java</file>
+            <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/util/JPAEntityMannagerFactoryUtil.java</file>
+            <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/util/FinanceUtils.java</file>
             <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/util/BDConexao.java</file>
+            <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/visao/ProdutosVisao.java</file>
+            <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/util/MetodosUtil.java</file>
         </group>
-=======
-        <group/>
->>>>>>> 97627d5f4cb82e96180510ee8635bbbf7daac1b1
->>>>>>> ec3e8d38f813545e45c306169e615b08571a1f3d
     </open-files>
 </project-private>

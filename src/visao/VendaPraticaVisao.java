@@ -87,6 +87,7 @@ import util.DVML;
 import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
 import static util.DVML.*;
+import util.FinanceUtils;
 import static util.MetodosUtil.rodarComandoWindows;
 import static visao.PrincipalPedidosVisao.procedimento_mesas_livre;
 
@@ -2869,7 +2870,7 @@ public class VendaPraticaVisao extends javax.swing.JFrame
                         qtd,
                         //                        CfMethods.formatarComoMoeda(MetodosUtil.getValorComIVA( qtd, taxa, preco, desconto ))
                         //                        MetodosUtil.getValorComIVA( qtd, taxa, preco, desconto )
-                        CfMethods.formatarComoMoeda( MetodosUtil.getValorComIVA( qtd, taxa, preco, desconto ) )
+                        CfMethods.formatarComoMoeda( FinanceUtils.getValorComIVA( qtd, taxa, preco, desconto ) )
                     //itemPedidos.get( i ).getQtd() * precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( itemPedidos.get( i ).getFkProdutos().getCodigo() ) ).getPrecoVenda()
                     } );
                 }
@@ -2930,7 +2931,7 @@ public class VendaPraticaVisao extends javax.swing.JFrame
                         qtd,
                         //                        CfMethods.formatarComoMoeda(MetodosUtil.getValorComIVA( qtd, taxa, preco, desconto ))
                         //                        MetodosUtil.getValorComIVA( qtd, taxa, preco, desconto )
-                        CfMethods.formatarComoMoeda( MetodosUtil.getValorComIVA( qtd, taxa, preco, desconto ) )
+                        CfMethods.formatarComoMoeda( FinanceUtils.getValorComIVA( qtd, taxa, preco, desconto ) )
                     //itemPedidos.get( i ).getQtd() * precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( itemPedidos.get( i ).getFkProdutos().getCodigo() ) ).getPrecoVenda()
                     } );
                 }
@@ -4423,7 +4424,7 @@ public class VendaPraticaVisao extends javax.swing.JFrame
                     double preco_unitario = precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( idProduto, qtd ) ).getPrecoVenda().doubleValue();
                     double taxa = MetodosUtil.getTaxaPercantagem( idProduto );
                     double desconto = 0d;
-                    double sub_total_iliquido = MetodosUtil.getValorComIVA( qtd, taxa, preco_unitario, desconto );
+                    double sub_total_iliquido = FinanceUtils.getValorComIVA( qtd, taxa, preco_unitario, desconto );
 
                     itemVenda.setCodigoProduto( produtosController.findByCod( idProduto ) );
                     itemVenda.setCodigoVenda( venda_local );
