@@ -97,35 +97,13 @@ public class EntradaPratosCompostosVisao extends javax.swing.JFrame
         unidadesController = new UnidadesController( EntradaPratosCompostosVisao.conexao );
         fichaTecnicaController = new FichaTecnicaController( EntradaPratosCompostosVisao.conexao );
         linhafichaTecnicaController = new LinhaFichaTecnicaController( EntradaPratosCompostosVisao.conexao );
-
-//        cmbSubFamilia.setModel( new DefaultComboBoxModel( tipoProdutoController.getVector() ) );
         cmbSubFamilia.setModel( new DefaultComboBoxModel( fichaTecnicaController.getVectorFichaTecnicaCategoria() ) );
         cmbProduto.setModel( new DefaultComboBoxModel( fichaTecnicaController.getVectorFichaTecnica() ) );
-//        cmbProduto.setModel( new DefaultComboBoxModel( produtosController.getVector() ) );
-
-//        cmbProduto.setModel( new DefaultComboBoxModel( fichaTecnicaController.getVector() ) );
-//        cmbFamilia.setModel( new DefaultComboBoxModel( familiaController.getVector() ) );
         cmbArmazem.setModel( new DefaultComboBoxModel( armazensController.getVectorArmazemVenda() ) );
-//        setArmazem( dadosInstituicao.getConfigArmazens() );
-
         modeloIngredientes = (DefaultTableModel) tabelaIngredientes.getModel();
         modeloIngredientes.setRowCount( 0 );
     }
 
-//    private void setArmazem( String armazem )
-//    {
-//        if ( armazem.equalsIgnoreCase( "Multi_armazem" ) )
-//        {
-//            rbArmazem.setSelected( true );
-//            rbArmazem1.setSelected( false );
-//
-//        }
-//        else
-//        {
-//            rbArmazem.setSelected( false );
-//            rbArmazem1.setSelected( true );
-//        }
-//    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

@@ -74,6 +74,7 @@ public class ListarEntradasProdutosPorEntervaloData extends javax.swing.JFrame
         conexao = new BDConexao();
         this.idUser = idUser;
         cmbArmazem.setModel( new DefaultComboBoxModel( (Vector) armazemDao.buscaTodos5() ) );
+        MetodosUtil.setArmazemByCampoConfigArmazem( cmbArmazem, conexao, idUser );
 //        accao_mostar_campo_fornecedor(false);
 //        cmbFornecedor.setModel(new DefaultComboBoxModel(fornecedorDao.buscaTodos()));
 //        id_armzem = getCodigoArmazem();
@@ -351,11 +352,10 @@ public class ListarEntradasProdutosPorEntervaloData extends javax.swing.JFrame
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(dcDataInicio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lbData, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -364,8 +364,10 @@ public class ListarEntradasProdutosPorEntervaloData extends javax.swing.JFrame
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(lbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(47, 47, 47)))
-                .addGap(40, 40, 40))
+                        .addGap(87, 87, 87))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(70, 70, 70))))
         );
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -375,13 +377,13 @@ public class ListarEntradasProdutosPorEntervaloData extends javax.swing.JFrame
             },
             new String []
             {
-                "Cod. Entrada", "Produto", "Qtd", "Data Entrada", "Usuario"
+                "Cod. Entrada", "Data Entrada", "Usuario"
             }
         )
         {
             boolean[] canEdit = new boolean []
             {
-                false, false, false, false, false
+                false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex)
@@ -494,13 +496,16 @@ public class ListarEntradasProdutosPorEntervaloData extends javax.swing.JFrame
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
-        if(cmbArmazem.getSelectedIndex() == 0){
-              JOptionPane.showMessageDialog( null, "Por favor\nSeleccione um armazém válido!");
-        }else{
-            
-        adicionar_tabela( entradaDao.getAllEntradasByIdArmazem( id_armzem, dcDataInicio.getDate(), dcDataFim.getDate() ) );
-            
-        }
+//        if ( cmbArmazem.getSelectedIndex() == 0 )
+//        {
+//            JOptionPane.showMessageDialog( null, "Por favor\nSeleccione um armazém válido!" );
+//        }
+//        else
+//        {
+
+            adicionar_tabela( entradaDao.getAllEntradasByIdArmazem( getIdArmazem(), dcDataInicio.getDate(), dcDataFim.getDate() ) );
+
+//        }
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -602,8 +607,6 @@ public class ListarEntradasProdutosPorEntervaloData extends javax.swing.JFrame
                 modelo.addRow( new Object[]
                 {
                     lista_entrada.get( i ).getIdEntrada(),
-                    lista_entrada.get( i ).getIdProduto().getDesignacao(),
-                    lista_entrada.get( i ).getQuantidade(),
                     lista_entrada.get( i ).getDataEntrada().getDate() + "/" + ( lista_entrada.get( i ).getDataEntrada().getMonth() + 1 ) + "/" + ( lista_entrada.get( i ).getDataEntrada().getYear() + 1900 ),
                     lista_entrada.get( i ).getIdUsuario().getNome()
 
@@ -703,6 +706,13 @@ public class ListarEntradasProdutosPorEntervaloData extends javax.swing.JFrame
             e.printStackTrace();
 
         }
+
+    }
+
+    private int getIdArmazem()
+    {
+
+        return armazemDao.getArmazemByDescricao( cmbArmazem.getSelectedItem().toString() ).getCodigo();
 
     }
 

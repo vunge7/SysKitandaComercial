@@ -381,14 +381,6 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jmReimprimirSaidasProdutosActionPerformed"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="jmRelatoriosSaidasProdutosPorDatas">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Relatorios Saidas de Produtos por Datas"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jmRelatoriosSaidasProdutosPorDatasActionPerformed"/>
-              </Events>
-            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jmRelatorioNotasCredito">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Relatorio de Notas de Creditos"/>
@@ -484,6 +476,14 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemRelatorioMensal1ActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jmRelatoriosSaidasProdutosPorDatas">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Relatorios Saidas de Produtos por Datas"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jmRelatoriosSaidasProdutosPorDatasActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemRelatorioDeEntradas">
