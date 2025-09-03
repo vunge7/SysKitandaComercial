@@ -59,6 +59,7 @@ import static kitanda.util.CfConstantes.YYYYMMDD_HHMMSS;
 import kitanda.util.CfMethods;
 import kitanda.util.CfMethodsSwing;
 import lista.ListaVenda1;
+import lista.ListaVendaConsultas;
 import tesouraria.novo.controller.ContaController;
 import tesouraria.novo.controller.ContaMovimentosController;
 import tesouraria.novo.util.MetodosUtilTS;
@@ -66,6 +67,7 @@ import util.BDConexao;
 import util.DVML;
 import util.DVML.Abreviacao;
 import static util.DVML.CASAS_DECIMAIS;
+import static util.DVML.DOC_FACTURA_CONSULTA_MESA;
 import static util.DVML.DOC_FACTURA_RECIBO_FR;
 import static util.DVML.DOC_FACTURA_FT;
 import util.FinanceUtils;
@@ -4451,7 +4453,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 {
                     TbStock stock_local_local = stoksControllerLocal.getStockByIdProdutoAndIdArmazem( idProduto, getCodigoArmazem() );
 
-                    if ( ( getIdDocumento() == DOC_FACTURA_RECIBO_FR || getIdDocumento() == DOC_FACTURA_FT || getIdDocumento() == DVML.DOC_GUIA_TRANSPORTE_GT ) && stock_local_local != null )
+                    if ( ( getIdDocumento() == DOC_FACTURA_RECIBO_FR || getIdDocumento() == DOC_FACTURA_FT || getIdDocumento() == DOC_FACTURA_CONSULTA_MESA || getIdDocumento() == DVML.DOC_GUIA_TRANSPORTE_GT ) && stock_local_local != null )
                     {
                         actualizar_quantidade( idProduto, item.getQuantidade(), conexaoLocal );
                     }
@@ -4601,7 +4603,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         for ( int i = 1; i <= numeroVias; i++ )
         {
             String via;
-            switch ( i )
+            switch (i)
             {
                 case 1:
                     via = "Original";
@@ -4615,7 +4617,15 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 default:
                     via = "Cópia";
             }
-            ListaVenda1 listaVenda1 = new ListaVenda1( cod_venda, abreviacao, false, ck_simplificada.isSelected(), via, motivos_isentos );
+            if ( ( getIdDocumento() == DOC_FACTURA_RECIBO_FR || getIdDocumento() == DOC_FACTURA_FT || getIdDocumento() == DVML.DOC_FACTURA_PROFORMA_PP ) )
+            {
+
+                ListaVenda1 listaVenda1 = new ListaVenda1( cod_venda, abreviacao, false, ck_simplificada.isSelected(), via, motivos_isentos );
+            }
+            else
+            {
+                ListaVendaConsultas listaVenda1 = new ListaVendaConsultas( cod_venda, abreviacao, false, ck_simplificada.isSelected(), via );
+            }
         }
     }
 
@@ -5085,8 +5095,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getValorComImposto( double qtd, double taxa, double preco_venda, double desconto )
     {
-        double subtotal_linha = ( preco_venda * qtd );
-        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
+        double subtotal_linha = (preco_venda * qtd);
+        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
         double valor_iva = 1 + ( taxa / 100 );//
         return ( ( subtotal_linha - desconto_valor ) * valor_iva );
 
@@ -5100,9 +5110,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getValorComRetencao( double qtd, double ret, double preco_venda, double desconto )
     {
-        double subtotal_linha = ( preco_venda * qtd );
-        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
-        double valor_ret = ( ( ( subtotal_linha - desconto_valor ) * ret ) / 100 );//
+        double subtotal_linha = (preco_venda * qtd);
+        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
+        double valor_ret = (( ( subtotal_linha - desconto_valor ) * ret ) / 100);//
         return ( valor_ret );
     }
 
@@ -5125,8 +5135,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getRET( double qtd, double taxa_r, double preco_venda, double desconto )
     {
-        double subtotal_linha = ( preco_venda * qtd );
-        double valor_ret = ( taxa_r / 100 );//
+        double subtotal_linha = (preco_venda * qtd);
+        double valor_ret = (taxa_r / 100);//
         return ( ( subtotal_linha - desconto ) * valor_ret );
 
     }
@@ -5156,7 +5166,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private void actualizar_abreviacao()
     {
 
-        switch ( getIdDocumento() )
+        switch (getIdDocumento())
         {
             case DVML.DOC_FACTURA_RECIBO_FR:
                 if ( ck_A4.isSelected() )
@@ -5217,6 +5227,10 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 this.abreviacao = Abreviacao.PP;
                 break;
 
+            case DVML.DOC_FACTURA_CONSULTA_MESA:
+                this.abreviacao = Abreviacao.CM;
+                break;
+
             case DVML.DOC_GUIA_TRANSPORTE_GT:
                 this.abreviacao = Abreviacao.GT;
                 break;
@@ -5235,11 +5249,12 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         boolean documentoIsFA = DVML.DOC_FACTURA_FT == getIdDocumento();
         boolean documentoIsPP = DVML.DOC_FACTURA_PROFORMA_PP == getIdDocumento();
         boolean documentoIsGT = DVML.DOC_GUIA_TRANSPORTE_GT == getIdDocumento();
+        boolean documentoIsCM = DVML.DOC_FACTURA_CONSULTA_MESA == getIdDocumento();
         System.err.println( "documentoIsFA: " + documentoIsFA );
         System.err.println( "documentoIsPP: " + documentoIsPP );
         ck_A4.setSelected( !documentoIsFA && !documentoIsPP && !documentoIsGT );
-        btnProcessar.setVisible( documentoIsPP || documentoIsFA || documentoIsGT );
-        btnFormaPagamento.setVisible( !documentoIsFA && !documentoIsPP && !documentoIsGT );
+        btnProcessar.setVisible( documentoIsPP || documentoIsFA || documentoIsGT || documentoIsCM );
+        btnFormaPagamento.setVisible( !documentoIsFA && !documentoIsPP && !documentoIsGT && !documentoIsCM );
     }
 
     private static Moeda getMoeda()
@@ -5628,7 +5643,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             // a incidência só é aplicável ao produtos sujeitos a iva 
             if ( taxa != 0 )
             {
-                double valor_unitario = ( preco_unitario * qtd );
+                double valor_unitario = (preco_unitario * qtd);
 
                 desconto_valor_linha = valor_unitario * ( ( valor_percentagem ) / 100 );
                 valor_taxa = ( valor_unitario - desconto_valor_linha ) / taxa;
@@ -5694,7 +5709,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getTotalAOARetencoes()
     {
-        double valores = ( getTotalRetencao1() );
+        double valores = (getTotalRetencao1());
         return ( valores );
     }
 
@@ -5744,7 +5759,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         Documento documento_local = (Documento) documentosController.findById( getIdDocumento() );
         String abreviacao_local = documento_local.getAbreviacao();
 
-        switch ( abreviacao_local )
+        switch (abreviacao_local)
         {
             case "FT":
                 return "Facturamos o valor de: ";
