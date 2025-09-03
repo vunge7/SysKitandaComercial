@@ -1112,16 +1112,17 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
     private boolean validar_campo()
     {
 
-        if ( txtCodigoDoc.getText().trim().equalsIgnoreCase( "" ) )
-        {
-            txtCodigoDoc.requestFocus();
-            txtCodigoDoc.setBackground( Color.YELLOW );
-            txtCodigoDoc.setForeground( Color.BLACK );
-            JOptionPane.showMessageDialog( null, "Pf. Digite codigo do documento para validar a saida deste(s) Produtos(s)!...", "AVISO", JOptionPane.WARNING_MESSAGE );
-            txtCodigoDoc.setBackground( Color.WHITE );
-            return true;
-        }
-        else if ( txtAreaOBS.getText().trim().equalsIgnoreCase( "" ) )
+//        if ( txtCodigoDoc.getText().trim().equalsIgnoreCase( "" ) )
+//        {
+//            txtCodigoDoc.requestFocus();
+//            txtCodigoDoc.setBackground( Color.YELLOW );
+//            txtCodigoDoc.setForeground( Color.BLACK );
+//            JOptionPane.showMessageDialog( null, "Pf. Digite codigo do documento para validar a saida deste(s) Produtos(s)!...", "AVISO", JOptionPane.WARNING_MESSAGE );
+//            txtCodigoDoc.setBackground( Color.WHITE );
+//            return true;
+//        }
+//        else
+        if ( txtAreaOBS.getText().trim().equalsIgnoreCase( "" ) )
         {
             txtAreaOBS.requestFocus();
             txtAreaOBS.setBackground( Color.YELLOW );

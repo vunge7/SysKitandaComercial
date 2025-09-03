@@ -4,6 +4,10 @@
  */
 package visao;
 
+import comercial.controller.ArmazensController;
+import comercial.controller.DocumentosController;
+import comercial.controller.EntradasController;
+import comercial.controller.ItemEntradasController;
 import comercial.controller.ProdutosController;
 import comercial.controller.StoksController;
 import comercial.controller.TipoProdutosController;
@@ -16,9 +20,11 @@ import dao.TipoProdutoDao;
 import dao.UsuarioDao;
 import entity.TbArmazem;
 import entity.TbEntrada;
+import entity.TbItemEntradas;
 import entity.TbProduto;
 import entity.TbStock;
 import entity.TbTipoProduto;
+import entity.TbUsuario;
 import exemplos.PermitirNumeros;
 import java.awt.Frame;
 import java.awt.event.KeyEvent;
@@ -34,7 +40,9 @@ import javax.persistence.EntityManagerFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import lista.ListaEntradaProdutos;
 import util.BDConexao;
 import util.DVML;
 import util.JPAEntityMannagerFactoryUtil;
@@ -51,12 +59,11 @@ public class EntradaVisao extends javax.swing.JFrame
     private static ArmazemDao armazemDao = new ArmazemDao( emf );
     private UsuarioDao usuarioDao = new UsuarioDao( emf );
     private TbEntrada entrada;
-    private static BDConexao conexao;
     private String armazem = "";
     private static int codigo = 0;
     private Frame parent;
     private boolean stocavel = true;
-    private int idUser;
+    private static int idUser;
     private static int id_armzem = 1;
     private int linha_actual = -1;
     private String cod_barra, cod_produto;
@@ -65,6 +72,12 @@ public class EntradaVisao extends javax.swing.JFrame
     private static TipoProdutosController tipoProdutoController;
     private static StoksController stoksController;
     private static TbProduto produto;
+    private static ItemEntradasController itemEntradasController;
+    private static EntradasController entradasController;
+    private static BDConexao conexaoTransaction;
+    private static BDConexao conexao;
+    private static DocumentosController documentosController;
+    private static ArmazensController armazensController;
     // private OperacaoSistemaUtil osu =  new OperacaoSistemaUtil();
 
     public EntradaVisao( java.awt.Frame parent, boolean modal, int idUser, String cod_barra, BDConexao conexao ) throws SQLException
@@ -76,8 +89,12 @@ public class EntradaVisao extends javax.swing.JFrame
         this.conexao = conexao;
         this.idUser = idUser;
         produtosController = new ProdutosController( EntradaVisao.conexao );
+        documentosController = new DocumentosController( EntradaVisao.conexao );
         tipoProdutoController = new TipoProdutosController( EntradaVisao.conexao );
+        entradasController = new EntradasController( EntradaVisao.conexao );
+        itemEntradasController = new ItemEntradasController( EntradaVisao.conexao );
         stoksController = new StoksController( EntradaVisao.conexao );
+        armazensController = new ArmazensController( EntradaVisao.conexao );
         cmbArmazem.setModel( new DefaultComboBoxModel( armazemDao.buscaTodos1() ) );
 //        DVML.activar_cmb_armazem(cmbArmazem);
         cmbSubFamilia.setModel( new DefaultComboBoxModel( tipoProdutoDao.getAllCategoria() ) );
@@ -229,10 +246,10 @@ public class EntradaVisao extends javax.swing.JFrame
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btn_salvar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addComponent(btn_salvar, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(39, 39, 39))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -579,7 +596,15 @@ public class EntradaVisao extends javax.swing.JFrame
 
     private void btn_salvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_salvarActionPerformed
 
-        procedimento_salvar();
+//        procedimento_salvar();
+        try
+        {
+            salvar_entradas();
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_btn_salvarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
@@ -1002,7 +1027,7 @@ public class EntradaVisao extends javax.swing.JFrame
     private javax.swing.JLabel lbQuantidadeExistente;
     public static javax.swing.JLabel status_mensagem_primaria;
     public static javax.swing.JLabel status_mensagem_secundaria;
-    private javax.swing.JTable table;
+    private static javax.swing.JTable table;
     public static javax.swing.JTextField txtCodigoBarra;
     public static javax.swing.JTextField txtCodigoManual;
     public static javax.swing.JTextField txtCodigoProduto;
@@ -1218,7 +1243,7 @@ public class EntradaVisao extends javax.swing.JFrame
         this.entrada.setIdProduto( produtoDao.findTbProduto( pk_codigo ) );
         this.entrada.setQuantidade( qtd );
         this.entrada.setIdArmazemFK( armazemDao.findTbArmazem( pk_armazem ) );
-        this.entrada.setStatusEliminado("false" );
+        this.entrada.setStatusEliminado( "false" );
         this.entrada.setIdUsuario( usuarioDao.findTbUsuario( this.idUser ) );
     }
 
@@ -1276,7 +1301,6 @@ public class EntradaVisao extends javax.swing.JFrame
         {
             if ( txtQuatindade.getText().isEmpty() )
             {
-//                JOptionPane.showMessageDialog( null, "Não informou a quantidade, por favor informe a quantidade!" );
                 txtQuatindade.requestFocus();
             }
             else if ( !Objects.isNull( produto ) )
@@ -1286,20 +1310,10 @@ public class EntradaVisao extends javax.swing.JFrame
                 cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
                 cmbProduto.setModel( new DefaultComboBoxModel( produtosController.getVector() ) );
                 cmbProduto.setSelectedItem( produto.getDesignacao() );
-//                adicionar_preco_quantidade_anitgo();
-//                if ( rbTranstorno.isSelected() )
-//                {
-//                    procedimento_adicionar_sem_transtorno();
-//                }
-//                else
-//                {
-//                procedimento_adicionar();
                 busca_produto_by_cod_interno();
-//                accao_key_pressed_codigo_produto();
-//                }
                 txtCodigoProduto.setText( "" );
                 txtCodigoBarra.setText( "" );
-//                txtQuatindade.setText( "1" );
+                txtCodigoManual.setText( "" );
                 txtQuatindade.requestFocus();
 
             }
@@ -1400,4 +1414,160 @@ public class EntradaVisao extends javax.swing.JFrame
 
     }
 
+    public static boolean salvar_entradas()
+    {
+        conexaoTransaction = new BDConexao();
+        DocumentosController.startTransaction( conexaoTransaction );
+
+        Date data_entrada = new Date();
+
+        TbEntrada entradalocal = new TbEntrada();
+        entradalocal.setDataEntrada( data_entrada );
+        entradalocal.setIdUsuario( new TbUsuario( idUser ) );
+        entradalocal.setIdArmazemFK( (TbArmazem) armazensController.findById( getCodigoArmazem() ) );
+        entradalocal.setStatusEliminado( "false" );
+
+        try
+        {
+
+            if ( entradasController.salvar( entradalocal ) )
+            {
+//                System.err.println( "Entrei no salvar" );
+                Integer last_entrada = entradasController.getLastEntrada().getIdEntrada();
+
+                if ( Objects.isNull( last_entrada ) || last_entrada == 0 )
+                {
+                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    conexaoTransaction.close();
+                    return false;
+                }
+                if ( !Objects.isNull( last_entrada ) )
+                {
+                    return salvar_item_entrada( last_entrada );
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+            else
+            {
+                System.out.println( "ERROR: Já existe entrada relacionada." );
+            }
+
+            return true;
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+            System.err.println( "STATUS: falha ao actualizar a entrada" );
+            e.printStackTrace();
+            JOptionPane.showMessageDialog( null, "Falha ao Processar a Entrada", "FALHA", JOptionPane.ERROR_MESSAGE );
+            DocumentosController.rollBackTransaction( conexaoTransaction );
+            conexaoTransaction.close();
+
+        }
+        return false;
+
+    }
+
+    private static boolean salvar_item_entrada( Integer cod_entrada )
+    {
+        System.out.println( "Cod entrada no Item" + cod_entrada );
+//        boolean sucesso = false;
+        if ( !MetodosUtil.tabela_vazia( table ) )
+        {
+            ItemEntradasController itemEntradasControllerLocal = new ItemEntradasController( conexaoTransaction );
+            TbItemEntradas itemEntradas;
+            for ( int i = 0; i < table.getRowCount(); i++ )
+            {
+                try
+                {
+                    double qtd = Double.parseDouble( String.valueOf( table.getModel().getValueAt( i, 3 ) ) );
+                    TbProduto produto_local = (TbProduto) produtosController
+                            .findById( Integer.parseInt( String.valueOf( table.getModel().getValueAt( i, 0 ) ) )
+                            );
+
+//                    int fichaId = Integer.parseInt( table.getValueAt( i, 3 ).toString() );
+                    itemEntradas = new TbItemEntradas();
+                    itemEntradas.setIdProduto( produto_local );
+                    itemEntradas.setQuantidade( qtd );
+                    itemEntradas.setFkEntradas( new TbEntrada( cod_entrada ) );
+
+//                    try
+//                    {
+//                        sucesso = sucesso || actualizarQtdIngredienteStock( fichaId );
+//                        if ( sucesso )
+//                        {
+                        //cria o item entrada
+                        if ( !itemEntradasController.salvar( itemEntradas ) )
+                        {
+                            DocumentosController.rollBackTransaction( conexaoTransaction );
+                            conexaoTransaction.close();
+                            return false;
+                        }
+                        else
+                        {
+                            StoksController.adicionar_quantidades( produto_local.getCodigo(), qtd, getIdArmazem(), conexaoTransaction );
+                        }
+//                        }
+
+//                    }
+//                    catch ( Exception e )
+//                    {
+//                        e.printStackTrace();
+//                        DocumentosController.rollBackTransaction( conexaoTransaction );
+//                        conexaoTransaction.close();
+//                        return false;
+//                    }
+
+                }
+                catch ( Exception e )
+                {
+//                    sucesso = false;
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog( null, "Falha ao registrar a entrada", "Falha", JOptionPane.ERROR_MESSAGE );
+                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    conexaoTransaction.close();
+                    return false;
+                }
+            }
+            if ( true )
+            {
+                DocumentosController.commitTransaction( conexaoTransaction );
+                esvaziar_tabela();
+                JOptionPane.showMessageDialog( null, "Entrada efectuada com sucesso!.." );
+                 ListaEntradaProdutos listaEntrada = new ListaEntradaProdutos( cod_entrada );
+                conexaoTransaction.close();
+                return true;
+            }
+            else
+            {
+
+                JOptionPane.showMessageDialog( null, "Impossivel registrar a entrada", "Falha", JOptionPane.ERROR_MESSAGE );
+                DocumentosController.rollBackTransaction( conexaoTransaction );
+                conexaoTransaction.close();
+
+            }
+        }
+        else
+        {
+            JOptionPane.showMessageDialog( null, "Adiciona itens na tabela caro usuário", "AVISO", JOptionPane.WARNING_MESSAGE );
+        }
+        return false;
+    }
+
+    private static void esvaziar_tabela()
+    {
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        modelo.setRowCount( 0 );
+
+    }
+
+//    public static boolean tabela_vazia( JTable tabela )
+//    {
+//        DefaultTableModel modelo = preparar_tabela( tabela );
+//        return modelo.getRowCount() == 0;
+//    }
 }

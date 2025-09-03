@@ -626,7 +626,6 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jmReeprmirFacura = new javax.swing.JMenuItem();
         jmReeprmirNota = new javax.swing.JMenuItem();
         jmReimprimirSaidasProdutos = new javax.swing.JMenuItem();
-        jmRelatoriosSaidasProdutosPorDatas = new javax.swing.JMenuItem();
         jmRelatorioNotasCredito = new javax.swing.JMenuItem();
         jmMapaExistencia = new javax.swing.JMenuItem();
         jmRelatorioAcertoStock = new javax.swing.JMenuItem();
@@ -638,6 +637,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jMenuItemRelatorioQuebras = new javax.swing.JMenuItem();
         jMenuItemRelatorioMensal = new javax.swing.JMenuItem();
         jMenuItemRelatorioMensal1 = new javax.swing.JMenuItem();
+        jmRelatoriosSaidasProdutosPorDatas = new javax.swing.JMenuItem();
         jMenuItemRelatorioDeEntradas = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jmTurno = new javax.swing.JMenuItem();
@@ -1096,16 +1096,6 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         });
         jmenuRelatorios.add(jmReimprimirSaidasProdutos);
 
-        jmRelatoriosSaidasProdutosPorDatas.setText("Relatorios Saidas de Produtos por Datas");
-        jmRelatoriosSaidasProdutosPorDatas.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                jmRelatoriosSaidasProdutosPorDatasActionPerformed(evt);
-            }
-        });
-        jmenuRelatorios.add(jmRelatoriosSaidasProdutosPorDatas);
-
         jmRelatorioNotasCredito.setText("Relatorio de Notas de Creditos");
         jmRelatorioNotasCredito.addActionListener(new java.awt.event.ActionListener()
         {
@@ -1218,6 +1208,16 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
             }
         });
         jmenuRelatorios.add(jMenuItemRelatorioMensal1);
+
+        jmRelatoriosSaidasProdutosPorDatas.setText("Relatorios Saidas de Produtos por Datas");
+        jmRelatoriosSaidasProdutosPorDatas.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jmRelatoriosSaidasProdutosPorDatasActionPerformed(evt);
+            }
+        });
+        jmenuRelatorios.add(jmRelatoriosSaidasProdutosPorDatas);
 
         jMenuItemRelatorioDeEntradas.setText("Relatorio de Entradas");
         jMenuItemRelatorioDeEntradas.addActionListener(new java.awt.event.ActionListener()
@@ -2101,7 +2101,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     private void jmRelatoriosSaidasProdutosPorDatasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmRelatoriosSaidasProdutosPorDatasActionPerformed
         // TODO add your handling code here:
         //        new ListarSaidasByUsuarios().show();
-        new ListarRelatorioSaidaByIntervalo( this.conexao ).show();
+        new ListarRelatorioSaidaByIntervalo( this.conexao ).setVisible( true );
     }//GEN-LAST:event_jmRelatoriosSaidasProdutosPorDatasActionPerformed
 
     private void jmAnulamentoSaidasProdutosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmAnulamentoSaidasProdutosActionPerformed
@@ -2399,14 +2399,15 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
     private void jMenuItemRelatorioDeEntradasActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemRelatorioDeEntradasActionPerformed
     {//GEN-HEADEREND:event_jMenuItemRelatorioDeEntradasActionPerformed
-        try
-        {
-            new ListarEntradasProdutosPorEntervaloData( cod_utilizador ).setVisible( true );
-        }
-        catch ( SQLException ex )
-        {
-            Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( Level.SEVERE, null, ex );
-        }
+//        try
+//        {
+            new ListarRelatorioEntradaByIntervalo( this.conexao ).setVisible( true );
+//            new ListarEntradasProdutosPorEntervaloData( cod_utilizador ).setVisible( true );
+//        }
+//        catch ( SQLException ex )
+//        {
+//            Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( Level.SEVERE, null, ex );
+//        }
     }//GEN-LAST:event_jMenuItemRelatorioDeEntradasActionPerformed
 
     private void jMenuItemCancelamentoEntradasActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemCancelamentoEntradasActionPerformed

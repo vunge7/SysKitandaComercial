@@ -8,47 +8,99 @@
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<parameter name="COD_SAIDA" class="java.lang.Integer"/>
+	<parameter name="COD_ENTRADA" class="java.lang.Integer"/>
 	<queryString>
-		<![CDATA[SELECT
-     tb_item_saidas.`quantidade` AS tb_item_saidas_quantidade,
+		<![CDATA[SELECT DISTINCT
+     tb_entrada.`idEntrada` AS tb_entrada_idEntrada,
+     tb_entrada.`data_entrada` AS tb_entrada_data_entrada,
+     tb_entrada.`idUsuario` AS tb_entrada_idUsuario,
+     tb_entrada.`idArmazemFK` AS tb_entrada_idArmazemFK,
+     tb_entrada.`status_eliminado` AS tb_entrada_status_eliminado,
+     tb_item_entradas.`id_item_entradas` AS tb_item_entradas_id_item_entradas,
+     tb_item_entradas.`id_produto` AS tb_item_entradas_id_produto,
+     tb_item_entradas.`quantidade` AS tb_item_entradas_quantidade,
+     tb_item_entradas.`fk_entradas` AS tb_item_entradas_fk_entradas,
+     tb_usuario.`codigo` AS tb_usuario_codigo,
+     tb_usuario.`nome` AS tb_usuario_nome,
+     tb_usuario.`senha` AS tb_usuario_senha,
      tb_dados_instituicao.`nome` AS tb_dados_instituicao_nome,
      tb_dados_instituicao.`telefone` AS tb_dados_instituicao_telefone,
      tb_dados_instituicao.`enderecos` AS tb_dados_instituicao_enderecos,
      tb_dados_instituicao.`email` AS tb_dados_instituicao_email,
      tb_dados_instituicao.`nif` AS tb_dados_instituicao_nif,
-     tb_saidas_produtos.`pk_saidas_produtos` AS tb_saidas_produtos_pk_saidas_produtos,
-     tb_saidas_produtos.`data_saida` AS tb_saidas_produtos_data_saida,
-     tb_saidas_produtos.`obs` AS tb_saidas_produtos_obs,
-     tb_saidas_produtos.`nome_funcionario` AS tb_saidas_produtos_nome_funcionario,
-     tb_saidas_produtos.`hora_saida` AS tb_saidas_produtos_hora_saida,
-     tb_produto.`designacao` AS tb_produto_designacao,
-     tb_usuario.`nome` AS tb_usuario_nome,
      tb_produto.`codigo` AS tb_produto_codigo,
-     tb_saidas_produtos.`documento` AS tb_saidas_produtos_documento
+     tb_produto.`designacao` AS tb_produto_designacao,
+     tb_produto.`preco` AS tb_produto_preco,
+     tb_produto.`data_fabrico` AS tb_produto_data_fabrico,
+     tb_produto.`data_expiracao` AS tb_produto_data_expiracao,
+     tb_produto.`codBarra` AS tb_produto_codBarra,
+     tb_produto.`status` AS tb_produto_status,
+     tb_produto.`data_entrada` AS tb_produto_data_entrada,
+     tb_produto.`stocavel` AS tb_produto_stocavel,
+     tb_produto.`preco_venda` AS tb_produto_preco_venda,
+     tb_produto.`percentagem_desconto` AS tb_produto_percentagem_desconto,
+     tb_produto.`quantidade_desconto` AS tb_produto_quantidade_desconto,
+     tb_produto.`codigo_manual` AS tb_produto_codigo_manual,
+     tb_produto.`cod_unidade` AS tb_produto_cod_unidade,
+     tb_produto.`cod_local` AS tb_produto_cod_local,
+     tb_produto.`cod_fornecedores` AS tb_produto_cod_fornecedores,
+     tb_produto.`cod_Tipo_Produto` AS tb_produto_cod_Tipo_Produto,
+     tb_produto.`fk_modelo` AS tb_produto_fk_modelo,
+     tb_produto.`fk_grupo` AS tb_produto_fk_grupo,
+     tb_produto.`photo` AS tb_produto_photo,
+     tb_produto.`status_iva` AS tb_produto_status_iva,
+     tb_produto.`cozinha` AS tb_produto_cozinha,
+     tb_produto.`cod_pai` AS tb_produto_cod_pai,
+     tb_produto.`unidade_compra` AS tb_produto_unidade_compra
 FROM
-     `tb_produto` tb_produto INNER JOIN `tb_item_saidas` tb_item_saidas ON tb_produto.`codigo` = tb_item_saidas.`fk_produtos`
-     INNER JOIN `tb_saidas_produtos` tb_saidas_produtos ON tb_item_saidas.`fk_saidas_produtos` = tb_saidas_produtos.`pk_saidas_produtos`
-     INNER JOIN `tb_usuario` tb_usuario ON tb_saidas_produtos.`fk_usuario` = tb_usuario.`codigo`,
+     `tb_entrada` tb_entrada INNER JOIN `tb_item_entradas` tb_item_entradas ON tb_entrada.`idEntrada` = tb_item_entradas.`fk_entradas`
+     INNER JOIN `tb_usuario` tb_usuario ON tb_entrada.`idUsuario` = tb_usuario.`codigo`
+     INNER JOIN `tb_produto` tb_produto ON tb_item_entradas.`id_produto` = tb_produto.`codigo`,
      `tb_dados_instituicao` tb_dados_instituicao
 WHERE
-     tb_saidas_produtos.`pk_saidas_produtos` = $P{COD_SAIDA}]]>
+     tb_entrada.`idEntrada` = $P{COD_ENTRADA}]]>
 	</queryString>
-	<field name="tb_item_saidas_quantidade" class="java.lang.Long"/>
+	<field name="tb_entrada_idEntrada" class="java.lang.Long"/>
+	<field name="tb_entrada_data_entrada" class="java.sql.Date"/>
+	<field name="tb_entrada_idUsuario" class="java.lang.Integer"/>
+	<field name="tb_entrada_idArmazemFK" class="java.lang.Long"/>
+	<field name="tb_entrada_status_eliminado" class="java.lang.String"/>
+	<field name="tb_item_entradas_id_item_entradas" class="java.lang.Long"/>
+	<field name="tb_item_entradas_id_produto" class="java.lang.Integer"/>
+	<field name="tb_item_entradas_quantidade" class="java.lang.Double"/>
+	<field name="tb_item_entradas_fk_entradas" class="java.lang.Long"/>
+	<field name="tb_usuario_codigo" class="java.lang.Integer"/>
+	<field name="tb_usuario_nome" class="java.lang.String"/>
+	<field name="tb_usuario_senha" class="java.lang.String"/>
 	<field name="tb_dados_instituicao_nome" class="java.lang.String"/>
 	<field name="tb_dados_instituicao_telefone" class="java.lang.String"/>
 	<field name="tb_dados_instituicao_enderecos" class="java.lang.String"/>
 	<field name="tb_dados_instituicao_email" class="java.lang.String"/>
 	<field name="tb_dados_instituicao_nif" class="java.lang.String"/>
-	<field name="tb_saidas_produtos_pk_saidas_produtos" class="java.lang.Long"/>
-	<field name="tb_saidas_produtos_data_saida" class="java.sql.Date"/>
-	<field name="tb_saidas_produtos_obs" class="java.lang.String"/>
-	<field name="tb_saidas_produtos_nome_funcionario" class="java.lang.String"/>
-	<field name="tb_saidas_produtos_hora_saida" class="java.sql.Time"/>
-	<field name="tb_produto_designacao" class="java.lang.String"/>
-	<field name="tb_usuario_nome" class="java.lang.String"/>
 	<field name="tb_produto_codigo" class="java.lang.Integer"/>
-	<field name="tb_saidas_produtos_documento" class="java.lang.String"/>
+	<field name="tb_produto_designacao" class="java.lang.String"/>
+	<field name="tb_produto_preco" class="java.math.BigDecimal"/>
+	<field name="tb_produto_data_fabrico" class="java.sql.Date"/>
+	<field name="tb_produto_data_expiracao" class="java.sql.Date"/>
+	<field name="tb_produto_codBarra" class="java.lang.String"/>
+	<field name="tb_produto_status" class="java.lang.String"/>
+	<field name="tb_produto_data_entrada" class="java.sql.Date"/>
+	<field name="tb_produto_stocavel" class="java.lang.String"/>
+	<field name="tb_produto_preco_venda" class="java.lang.Double"/>
+	<field name="tb_produto_percentagem_desconto" class="java.lang.Double"/>
+	<field name="tb_produto_quantidade_desconto" class="java.lang.Long"/>
+	<field name="tb_produto_codigo_manual" class="java.lang.String"/>
+	<field name="tb_produto_cod_unidade" class="java.lang.Integer"/>
+	<field name="tb_produto_cod_local" class="java.lang.Integer"/>
+	<field name="tb_produto_cod_fornecedores" class="java.lang.Integer"/>
+	<field name="tb_produto_cod_Tipo_Produto" class="java.lang.Integer"/>
+	<field name="tb_produto_fk_modelo" class="java.lang.Integer"/>
+	<field name="tb_produto_fk_grupo" class="java.lang.Integer"/>
+	<field name="tb_produto_photo" class="java.lang.Object"/>
+	<field name="tb_produto_status_iva" class="java.lang.String"/>
+	<field name="tb_produto_cozinha" class="java.lang.String"/>
+	<field name="tb_produto_cod_pai" class="java.lang.Long"/>
+	<field name="tb_produto_unidade_compra" class="java.lang.Double"/>
 	<variable name="SOMA_TOTAL" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[]]></variableExpression>
 	</variable>
@@ -60,22 +112,6 @@ WHERE
 					<font fontName="Arial"/>
 				</textElement>
 				<text><![CDATA[processado por computador ]]></text>
-			</staticText>
-			<textField>
-				<reportElement uuid="bdfd60a1-bb90-4860-bce9-93df95a620e8" x="0" y="587" width="534" height="100"/>
-				<box leftPadding="10"/>
-				<textElement>
-					<font fontName="Times New Roman" isItalic="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_saidas_produtos_obs}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement uuid="282620a3-cfd7-4b6b-bff9-811c864b4314" x="1" y="562" width="87" height="14"/>
-				<box leftPadding="2"/>
-				<textElement>
-					<font fontName="Times New Roman" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Motivo da Saída :]]></text>
 			</staticText>
 		</band>
 	</background>
@@ -96,61 +132,46 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[Cod. Saída Nº: ]]></text>
+				<text><![CDATA[Entrada Nº: ]]></text>
 			</staticText>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="4f5d373e-ee2d-4768-a773-0f88cd0dbe3b" key="textField-19" x="88" y="109" width="105" height="31"/>
+				<reportElement uuid="4f5d373e-ee2d-4768-a773-0f88cd0dbe3b" key="textField-19" x="67" y="109" width="105" height="31"/>
 				<box topPadding="2"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="12" isBold="true" isItalic="true" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_saidas_produtos_pk_saidas_produtos}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tb_entrada_idEntrada}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="566b5312-5409-4ae7-93ea-acf636e4a452" x="93" y="31" width="454" height="26"/>
+				<reportElement uuid="566b5312-5409-4ae7-93ea-acf636e4a452" x="87" y="31" width="454" height="26"/>
 				<textElement textAlignment="Center">
 					<font fontName="Times New Roman" size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_enderecos}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="30640f26-6d2a-4f25-b399-4ea869beefb4" x="93" y="59" width="454" height="26"/>
+				<reportElement uuid="30640f26-6d2a-4f25-b399-4ea869beefb4" x="87" y="59" width="454" height="26"/>
 				<textElement textAlignment="Center">
 					<font fontName="Times New Roman" size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_telefone}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="eac33a54-0eaa-4958-aebc-e599f8f82cd8" x="93" y="12" width="452" height="20"/>
+				<reportElement uuid="eac33a54-0eaa-4958-aebc-e599f8f82cd8" x="87" y="12" width="454" height="20"/>
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Times New Roman" size="17" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_nome}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="be67fae4-7902-47af-93b6-f33a4b951810" x="93" y="45" width="454" height="27"/>
+				<reportElement uuid="be67fae4-7902-47af-93b6-f33a4b951810" x="87" y="45" width="454" height="27"/>
 				<textElement textAlignment="Center">
 					<font fontName="Times New Roman" size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_nif}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement uuid="e00b72d7-b7e6-4d33-a4d3-98973e2a6fa4" key="textField-19" x="348" y="109" width="122" height="31"/>
-				<box topPadding="2"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="12" isBold="true" isItalic="true" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_saidas_produtos_documento}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement uuid="20a4f00b-7667-4dfa-b266-5e4f43f47f38" key="staticText-5" x="213" y="109" width="135" height="31"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<text><![CDATA[Referência Documento: ]]></text>
-			</staticText>
 			<image scaleImage="FillFrame">
-				<reportElement uuid="adb431c9-0be6-419d-b03f-2d254c38f493" x="-14" y="-4" width="126" height="97"/>
+				<reportElement uuid="70ca66c8-88f3-43ae-9511-68431e41ebff" x="-17" y="-8" width="126" height="97"/>
 				<imageExpression><![CDATA["relatorios/logo_dvml.png"]]></imageExpression>
 			</image>
 		</band>
@@ -177,7 +198,7 @@ WHERE
 				<text><![CDATA[N.º]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="d457d5b0-d027-4536-b71b-01802ca4089d" key="element-94" x="112" y="3" width="358" height="16" forecolor="#FFFFFF"/>
+				<reportElement uuid="d457d5b0-d027-4536-b71b-01802ca4089d" key="element-94" x="112" y="3" width="336" height="16" forecolor="#FFFFFF"/>
 				<box leftPadding="10" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -190,17 +211,17 @@ WHERE
 				<text><![CDATA[Produto]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="260be4eb-d24a-4d7a-9d36-502bce442841" key="element-95" x="470" y="3" width="64" height="16" forecolor="#FFFFFF"/>
+				<reportElement uuid="260be4eb-d24a-4d7a-9d36-502bce442841" key="element-95" x="448" y="3" width="86" height="16" forecolor="#FFFFFF"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement>
+				<textElement textAlignment="Justified">
 					<font fontName="Times New Roman" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Qtd Saida]]></text>
+				<text><![CDATA[    Qtd Entrada]]></text>
 			</staticText>
 			<staticText>
 				<reportElement uuid="d26ff60c-b9a1-4252-b1d6-6d5b803e645b" key="element-93" x="39" y="3" width="73" height="16" forecolor="#FFFFFF"/>
@@ -233,7 +254,7 @@ WHERE
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00" isBlankWhenNull="false">
-				<reportElement uuid="a7e6e017-161e-418d-ad6b-cdf7ec462365" key="textField-16" x="112" y="1" width="358" height="15"/>
+				<reportElement uuid="a7e6e017-161e-418d-ad6b-cdf7ec462365" key="textField-16" x="112" y="1" width="336" height="15"/>
 				<box leftPadding="10"/>
 				<textElement textAlignment="Left">
 					<font fontName="Times New Roman"/>
@@ -241,11 +262,11 @@ WHERE
 				<textFieldExpression><![CDATA[$F{tb_produto_designacao}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0" isBlankWhenNull="false">
-				<reportElement uuid="77b3a188-cc4f-411b-be61-b45e05f8a2fa" key="textField-17" x="470" y="2" width="64" height="15"/>
+				<reportElement uuid="77b3a188-cc4f-411b-be61-b45e05f8a2fa" key="textField-17" x="448" y="1" width="86" height="15"/>
 				<textElement textAlignment="Center">
 					<font fontName="Times New Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_item_saidas_quantidade}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tb_item_entradas_quantidade}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement uuid="63a6ca01-2734-4f3d-81c6-a213a9b4ee8b" key="textField-15" x="39" y="1" width="73" height="15"/>
@@ -269,7 +290,7 @@ WHERE
 				</graphicElement>
 			</line>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="a231f530-3677-422e-8c4e-24553845b94f" key="textField-13" x="91" y="44" width="137" height="17"/>
+				<reportElement uuid="a231f530-3677-422e-8c4e-24553845b94f" key="textField-13" x="383" y="44" width="137" height="17"/>
 				<box topPadding="2"/>
 				<textElement>
 					<font fontName="Times New Roman" isItalic="true" pdfFontName="Helvetica-Oblique"/>
@@ -277,7 +298,7 @@ WHERE
 				<textFieldExpression><![CDATA[$F{tb_usuario_nome}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="7162e1f1-4aa9-4ab7-a689-5a8852237468" key="staticText-6" x="1" y="46" width="87" height="17"/>
+				<reportElement uuid="7162e1f1-4aa9-4ab7-a689-5a8852237468" key="staticText-6" x="293" y="46" width="87" height="17"/>
 				<textElement>
 					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
@@ -288,7 +309,7 @@ WHERE
 				<textElement>
 					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[Data da Saida..:]]></text>
+				<text><![CDATA[Data da Entrada..:]]></text>
 			</staticText>
 			<textField pattern="d/M/yyyy" isBlankWhenNull="false">
 				<reportElement uuid="018cd024-8d8c-48b3-bafc-88d93349e900" key="textField-13" x="91" y="10" width="137" height="17"/>
@@ -296,36 +317,7 @@ WHERE
 				<textElement>
 					<font fontName="Times New Roman" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_saidas_produtos_data_saida}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement uuid="c83fd388-1662-41d9-a047-6795b594f4dd" key="staticText-6" x="1" y="28" width="87" height="17"/>
-				<textElement>
-					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<text><![CDATA[Hora...:]]></text>
-			</staticText>
-			<textField pattern="HH:mm:ss" isBlankWhenNull="false">
-				<reportElement uuid="1a4fac13-b394-4457-9676-c68d0eba32b1" key="textField-13" x="91" y="28" width="137" height="17"/>
-				<box topPadding="2"/>
-				<textElement>
-					<font fontName="Times New Roman" isItalic="false" pdfFontName="Helvetica-Oblique"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_saidas_produtos_hora_saida}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement uuid="179a37b0-f5aa-4458-b5ee-21cae69c62d9" key="staticText-5" x="320" y="43" width="85" height="18"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<text><![CDATA[Responsável:]]></text>
-			</staticText>
-			<textField>
-				<reportElement uuid="b8c6b795-9603-4a88-808c-eb033ef38cab" x="389" y="43" width="145" height="18"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Arial"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_saidas_produtos_nome_funcionario}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tb_entrada_data_entrada}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement uuid="45f1d90d-3c31-48b0-8da9-1601361537aa" x="1" y="68" width="534" height="21"/>

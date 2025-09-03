@@ -1142,7 +1142,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addGap(6, 6, 6)
                         .addComponent(lbClienteConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addComponent(txtNifClientePesquisa)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
@@ -1418,7 +1418,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                                     .addComponent(jLabel9)))
                             .addGap(10, 10, 10)
                             .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(dc_data_documento, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
+                                .addComponent(dc_data_documento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(dc_data_vencimento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                     .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -1486,6 +1486,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         getAccessibleContext().setAccessibleName("...:::::  KITANDA - FACTURAÃO ::::...");
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void mostra_consumidor_final()
@@ -4218,16 +4219,12 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static void salvar_venda_comercial()
     {
-
-//        JOptionPane.showMessageDialog( null, "Estou dentro" );
         BDConexao conexaoTransactionLocal = new BDConexao();
         vendasController = new VendasController( conexaoTransactionLocal );
         itemVendasController = new ItemVendasController( conexaoTransactionLocal );
         formaPagamentoItemController = new FormaPagamentoItemController( conexaoTransactionLocal );
         StoksController stocksControllerLocal = new StoksController( conexaoTransactionLocal );
-
         DocumentosController.startTransaction( conexaoTransactionLocal ); // Inicia a transação
-
         try
         {
             System.out.println( "AutoCommit após iniciar transação? " + conexaoTransactionLocal.getConnection1().getAutoCommit() );
@@ -4306,74 +4303,6 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         }
     }
 
-//    private static TbVenda construirVenda()
-//    {
-//        TbVenda venda = new TbVenda();
-//        venda.setDataVenda( dc_data_documento.getDate() );
-//        venda.setDataVencimento( dc_data_vencimento.getDate() );
-//        venda.setRefDataFact( dc_data_documento.getDate() );
-//        venda.setHora( dc_data_documento.getDate() );
-//        venda.setNomeCliente( txtNomeConsumidorFinal.getText() );
-//        venda.setClienteNif( txtNifClientePesquisa.getText() );
-//        venda.setTotalGeral( getTotalIliquido() );
-//        venda.setDescontoComercial( new BigDecimal( getDescontoComercial() ) );
-//        venda.setTotalIva( new BigDecimal( getTotalImposto() ) );
-//        venda.setTotalRetencao( getTotalRetencaoLiquido() );
-//        venda.setDescontoFinanceiro( new BigDecimal( getDescontoFinanceiro() ) );
-//// getTotalAOALiquido() já retorna BigDecimal
-//        venda.setTotalVenda( getTotalAOALiquido() );
-//
-//// getValor_entregue() também já retorna BigDecimal (você ajustou anteriormente)
-//        venda.setValorEntregue( getValor_entregue() );
-//
-//        venda.setTroco( new BigDecimal( getTroco() ) );
-//        venda.setTotalIncidencia( new BigDecimal( getTotalIncidencia() ) );
-//        venda.setTotalIncidenciaIsento( new BigDecimal( getTotalIncidenciaIsento() ) );
-//        venda.setDescontoTotal( new BigDecimal( getDescontoComercial() + getDescontoFinanceiro() ) );
-//
-//        venda.setIdBanco( new TbBanco( 1 ) );
-//        venda.setIdArmazemFK( new TbArmazem( getCodigoArmazem() ) );
-//        venda.setCodigoUsuario( new TbUsuario( cod_usuario ) );
-//        venda.setCodigoCliente( new TbCliente( getIdCliente() ) );
-//        venda.setFkAnoEconomico( anoEconomico );
-//        venda.setReferencia( txtReferencia.getText() );
-//        venda.setNomeConsumidorFinal( txtNomeConsumidorFinal.getText() );
-//        venda.setFkDocumento( documento );
-//        venda.setCodFact( prox_doc );
-//        venda.setCont( 0 );
-//
-//        venda.setHashCod( MetodosUtil.criptografia_hash( venda, getGrossTotal().doubleValue(), conexao ) );
-//        venda.setAssinatura( MetodosUtil.assinatura_doc( venda.getHashCod() ) );
-//        venda.setTotalPorExtenso( iniciais_extenso() + lbValorPorExtenco.getText() );
-//
-//        venda.setModelo( txtMotorista.getText() );
-//        venda.setNumMotor( txtMatricula.getText() );
-//        venda.setNomeMotorista( txtMotorista.getText() );
-//        venda.setMatricula( txtMatricula.getText() );
-//        venda.setMarcaCarro( txtMarca.getText() );
-//        venda.setKilometro( txtKilometragem.getText() );
-//        venda.setNumChassi( txtNumeroCarta.getText() );
-//        venda.setObs( txtObs.getText() );
-//        venda.setCorCarro( "" );
-//        venda.setNDocMotorista( txtNumeroCarta.getText() );
-//
-//        if ( getMoeda().getAbreviacao().equals( DVML.MOEDA_KWANZA ) )
-//        {
-//            int id = cambiosController.getLastId( getIdMoeda() );
-//            venda.setFkCambio( new Cambio( id ) );
-//        }
-//        else
-//        {
-//            venda.setFkCambio( cambiosController.getLastObject( getIdMoeda() ) );
-//        }
-//
-//        venda.setStatusEliminado( "false" );
-//        venda.setPerformance( "false" );
-//        venda.setCredito( "false" );
-//        venda.setGorjeta( new BigDecimal( gorjeta ) );
-//
-//        return venda;
-//    }
     private static Date getDataVencimentoFr()
     {
 
