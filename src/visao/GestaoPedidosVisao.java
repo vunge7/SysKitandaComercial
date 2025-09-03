@@ -68,6 +68,7 @@ import util.DVML;
 import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
 import static util.DVML.*;
+import util.FinanceUtils;
 import static util.MetodosUtil.rodarComandoWindows;
 
 /**
@@ -1897,9 +1898,9 @@ public class GestaoPedidosVisao extends javax.swing.JFrame
                         itemPedidos_list.get( i ).getFkLugares().getDesignacao(),
                         itemPedidos_list.get( i ).getFkProdutos().getDesignacao(),
                         qtd,
-                        //                        CfMethods.formatarComoMoeda(MetodosUtil.getValorComIVA( qtd, taxa, preco, desconto ))
-                        //                        MetodosUtil.getValorComIVA( qtd, taxa, preco, desconto )
-                        CfMethods.formatarComoMoeda( MetodosUtil.getValorComIVA( qtd, taxa, preco, desconto ) )
+                        //                        CfMethods.formatarComoMoeda(FinanceUtils.getValorComIVA( qtd, taxa, preco, desconto ))
+                        //                        FinanceUtils.getValorComIVA( qtd, taxa, preco, desconto )
+                        CfMethods.formatarComoMoeda( FinanceUtils.getValorComIVA( qtd, taxa, preco, desconto ) )
                     //itemPedidos.get( i ).getQtd() * precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( itemPedidos.get( i ).getFkProdutos().getCodigo() ) ).getPrecoVenda()
                     } );
                 }
@@ -1957,9 +1958,9 @@ public class GestaoPedidosVisao extends javax.swing.JFrame
                         itemPedidos_list.get( i ).getFkLugares().getDesignacao(),
                         itemPedidos_list.get( i ).getFkProdutos().getDesignacao(),
                         qtd,
-                        //                        CfMethods.formatarComoMoeda(MetodosUtil.getValorComIVA( qtd, taxa, preco, desconto ))
-                        //                        MetodosUtil.getValorComIVA( qtd, taxa, preco, desconto )
-                        CfMethods.formatarComoMoeda( MetodosUtil.getValorComIVA( qtd, taxa, preco, desconto ) )
+                        //                        CfMethods.formatarComoMoeda(FinanceUtils.getValorComIVA( qtd, taxa, preco, desconto ))
+                        //                        FinanceUtils.getValorComIVA( qtd, taxa, preco, desconto )
+                        CfMethods.formatarComoMoeda( FinanceUtils.getValorComIVA( qtd, taxa, preco, desconto ) )
                     //itemPedidos.get( i ).getQtd() * precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( itemPedidos.get( i ).getFkProdutos().getCodigo() ) ).getPrecoVenda()
                     } );
                 }
@@ -2460,7 +2461,7 @@ public class GestaoPedidosVisao extends javax.swing.JFrame
                 idProduto = produtoDao.getProdutoByDescricao( modelo.getValueAt( i, 2 ).toString() ).getCodigo();
                 qtd = Double.parseDouble( modelo.getValueAt( i, 3 ).toString() );
                 preco_unitario = precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( idProduto, qtd ) ).getPrecoVenda().doubleValue();
-                sub_total_iliquido = MetodosUtil.getValorComIVA( qtd, taxa, preco_unitario, desconto );
+                sub_total_iliquido = FinanceUtils.getValorComIVA( qtd, taxa, preco_unitario, desconto );
                 taxa = MetodosUtil.getTaxaPercantagem( idProduto );
 
                 itemVenda.setCodigoProduto( produtoDao.findTbProduto( idProduto ) );
@@ -3089,7 +3090,7 @@ public class GestaoPedidosVisao extends javax.swing.JFrame
                     double preco_unitario = precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( idProduto, qtd ) ).getPrecoVenda().doubleValue();
                     double taxa = MetodosUtil.getTaxaPercantagem( idProduto );
                     double desconto = 0d;
-                    double sub_total_iliquido = MetodosUtil.getValorComIVA( qtd, taxa, preco_unitario, desconto );
+                    double sub_total_iliquido = FinanceUtils.getValorComIVA( qtd, taxa, preco_unitario, desconto );
 
                     itemVenda.setCodigoProduto( produtoDao.findTbProduto( idProduto ) );
                     itemVenda.setCodigoVenda( venda_local );

@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import util.DVML;
+import util.FinanceUtils;
 import util.MetodosUtil;
 import static visao.FormaPagamentoVisao.tabela_forma_pagamento;
 
@@ -600,7 +601,7 @@ public class TecladoLugarVisao extends javax.swing.JDialog
         double total_linha = 0;
         double preco_linha = Double.parseDouble( tabela.getValueAt( linha, 3 ).toString() );
         double taxa = Double.parseDouble( tabela.getValueAt( linha, 5 ).toString() );
-        total_linha = MetodosUtil.getValorComIVA( qtd, taxa, preco_linha, desconto );
+        total_linha = FinanceUtils.getValorComIVA( qtd, taxa, preco_linha, desconto );
         tabela.setValueAt( total_linha, linha, 7 );
     }
 

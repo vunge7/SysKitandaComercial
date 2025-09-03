@@ -32,10 +32,10 @@ import static kitanda.util.CfConstantes.YYYYMMDD_HHMMSS;
 import kitanda.util.CfMethods;
 import util.BDConexao;
 import util.DVML;
+import util.FinanceUtils;
 import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
 import static util.MetodosUtil.rodarComandoWindows;
-import util.NumeroDocument;
 import util.PictureChooser;
 import util.TextFieldUtils;
 
@@ -159,7 +159,6 @@ public class ProdutosVisao extends javax.swing.JFrame
         txtPrecoVendaGrosso.setHorizontalAlignment( JTextField.RIGHT );
         popularComponentes();
         configurar_dois_precos();
-
         KeyboardFocusManager.getCurrentKeyboardFocusManager()
                 .addKeyEventDispatcher( new KeyEventDispatcher()
                 {
@@ -194,6 +193,12 @@ public class ProdutosVisao extends javax.swing.JFrame
         TextFieldUtils.configurarCampoDecimal( txtPrecoCompra, 7 );
         TextFieldUtils.configurarCampoDecimal( txtPrecoVendaRetalho, 7 );
         TextFieldUtils.configurarCampoDecimal( txtPercentagemGanhoRetalho, 7 );
+
+//        // Aqui passo os campos para a classe helper
+//        CalculadoraPrecoHelper helper = new CalculadoraPrecoHelper( txtPrecoCompra, 
+//                txtPrecoVendaRetalho, txtPercentagemGanhoRetalho , 7
+//        );
+//        helper.inicializar();
 
     }
 
@@ -1339,7 +1344,6 @@ public class ProdutosVisao extends javax.swing.JFrame
             if ( ivaAplicarJRadioButton.isSelected() )
             {
 //                calcularTotalComIva();
-
                 calcularIva();
 
             }
@@ -1427,10 +1431,7 @@ public class ProdutosVisao extends javax.swing.JFrame
     private void txtPrecoVendaRetalhoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPrecoVendaRetalhoActionPerformed
         // TODO add your handling code here:
         //txtQtdGrosso.requestFocus();
-
         procedimento_salvar_produto();
-
-
     }//GEN-LAST:event_txtPrecoVendaRetalhoActionPerformed
 
     private void ivaMotivoJComboBoxItemStateChanged(java.awt.event.ItemEvent evt)//GEN-FIRST:event_ivaMotivoJComboBoxItemStateChanged
@@ -3457,7 +3458,7 @@ public class ProdutosVisao extends javax.swing.JFrame
 
                 double precoLocal = Double.parseDouble( txtPrecoVendaRetalho.getText() );
                 double desconto = 0d;
-                double valorComIVA = MetodosUtil.getValorComIVA( qtd, taxa, precoLocal, desconto );
+                double valorComIVA = FinanceUtils.getValorComIVA( qtd, taxa, precoLocal, desconto );
 
                 txtPrecoDeVendaComIva.setText( String.valueOf( valorComIVA ) );
             }

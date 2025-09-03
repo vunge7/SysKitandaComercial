@@ -83,6 +83,7 @@ import util.DVML;
 import util.DVML.Abreviacao;
 import static util.DVML.DOC_FACTURA_FT;
 import static util.DVML.DOC_FACTURA_RECIBO_FR;
+import util.FinanceUtils;
 import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
 import static util.MetodosUtil.rodarComandoWindows;
@@ -1105,7 +1106,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
                         }
 
                         taxa = getTaxaImposto( cod_interno );
-                        total_linha = MetodosUtil.getValorComIVA( qtd, taxa, preco_linha, desconto );
+                        total_linha = FinanceUtils.getValorComIVA( qtd, taxa, preco_linha, desconto );
 
                         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
 
@@ -1149,7 +1150,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
                 if ( possivel_quantidade( cod_interno, qtd ) )
                 {
                     modelo.setValueAt( qtd, linha_existente_produto, 4 );
-                    modelo.setValueAt( MetodosUtil.getValorComIVA( qtd, taxa, preco, desconto ), linha_existente_produto, 7 );
+                    modelo.setValueAt( FinanceUtils.getValorComIVA( qtd, taxa, preco, desconto ), linha_existente_produto, 7 );
 
                 }
                 else
@@ -1202,7 +1203,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
                         }
 
                         taxa = getTaxaImposto( cod_interno );
-                        total_linha = MetodosUtil.getValorComIVA( qtd, taxa, preco_linha, desconto );
+                        total_linha = FinanceUtils.getValorComIVA( qtd, taxa, preco_linha, desconto );
 
                         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
 
@@ -1246,7 +1247,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
                 if ( possivel_quantidade( cod_interno, qtd ) )
                 {
                     modelo.setValueAt( qtd, linha_existente_produto, 4 );
-                    modelo.setValueAt( MetodosUtil.getValorComIVA( qtd, taxa, preco, desconto ), linha_existente_produto, 7 );
+                    modelo.setValueAt( FinanceUtils.getValorComIVA( qtd, taxa, preco, desconto ), linha_existente_produto, 7 );
 
                 }
                 else

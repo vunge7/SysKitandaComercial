@@ -92,6 +92,7 @@ import util.DVML;
 import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
 import static util.DVML.*;
+import util.FinanceUtils;
 import static util.MetodosUtil.rodarComandoWindows;
 import static visao.PrincipalPedidosVisao.procedimento_mesas_livre;
 import static visao.VendaUsuarioVisao.txtCodigoBarra;
@@ -2448,7 +2449,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
             double taxa = MetodosUtil.getTaxaPercantagem( idProduto );
             double desconto = 0;
 //            double total = itemPedidosLocal.getQtd() * preco;
-            double total = MetodosUtil.getValorComIVA( qtd, taxa, preco, desconto );
+            double total = FinanceUtils.getValorComIVA( qtd, taxa, preco, desconto );
 //            double total = itemPedidosLocal.getQtd() * precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( idProduto ) ).getPrecoVenda().doubleValue();
 //            itemPedidosLocal.setPreco( preco );
 //            
@@ -2646,7 +2647,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
             double taxa = MetodosUtil.getTaxaPercantagem( idProduto );
             double desconto = 0;
 //            double total = itemPedidosLocal.getQtd() * preco;
-            double total = MetodosUtil.getValorComIVA( qtd, taxa, preco, desconto );
+            double total = FinanceUtils.getValorComIVA( qtd, taxa, preco, desconto );
 //            double total = itemPedidosLocal.getQtd() * precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( idProduto ) ).getPrecoVenda().doubleValue();
 
 //            itemPedidosLocal.setTotalItem( total );
@@ -3068,9 +3069,9 @@ public class VendasPraticasVisao extends javax.swing.JFrame
                         itemPedidos_list.get( i ).getFkLugares().getDesignacao(),
                         itemPedidos_list.get( i ).getFkProdutos().getDesignacao(),
                         (int) qtd,
-                        //                        CfMethods.formatarComoMoeda(MetodosUtil.getValorComIVA( qtd, taxa, preco, desconto ))
-                        //                        MetodosUtil.getValorComIVA( qtd, taxa, preco, desconto )
-                        CfMethods.formatarComoMoeda( MetodosUtil.getValorComIVA( qtd, taxa, preco, desconto ) )
+                        //                        CfMethods.formatarComoMoeda(FinanceUtils.getValorComIVA( qtd, taxa, preco, desconto ))
+                        //                        FinanceUtils.getValorComIVA( qtd, taxa, preco, desconto )
+                        CfMethods.formatarComoMoeda( FinanceUtils.getValorComIVA( qtd, taxa, preco, desconto ) )
                     //itemPedidos.get( i ).getQtd() * precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( itemPedidos.get( i ).getFkProdutos().getCodigo() ) ).getPrecoVenda()
                     } );
                 }
@@ -3123,9 +3124,9 @@ public class VendasPraticasVisao extends javax.swing.JFrame
 //                        itemPedidos_list.get( i ).getFkLugares().getDesignacao(),
 //                        itemPedidos_list.get( i ).getFkProdutos().getDesignacao(),
 //                        qtd,
-//                        //                        CfMethods.formatarComoMoeda(MetodosUtil.getValorComIVA( qtd, taxa, preco, desconto ))
-//                        //                        MetodosUtil.getValorComIVA( qtd, taxa, preco, desconto )
-//                        CfMethods.formatarComoMoeda( MetodosUtil.getValorComIVA( qtd, taxa, preco, desconto ) )
+//                        //                        CfMethods.formatarComoMoeda(FinanceUtils.getValorComIVA( qtd, taxa, preco, desconto ))
+//                        //                        FinanceUtils.getValorComIVA( qtd, taxa, preco, desconto )
+//                        CfMethods.formatarComoMoeda( FinanceUtils.getValorComIVA( qtd, taxa, preco, desconto ) )
 //                    //itemPedidos.get( i ).getQtd() * precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( itemPedidos.get( i ).getFkProdutos().getCodigo() ) ).getPrecoVenda()
 //                    } );
 //                }
@@ -3184,9 +3185,9 @@ public class VendasPraticasVisao extends javax.swing.JFrame
                         itemPedidos_list.get( i ).getFkLugares().getDesignacao(),
                         itemPedidos_list.get( i ).getFkProdutos().getDesignacao(),
                         qtd,
-                        //                        CfMethods.formatarComoMoeda(MetodosUtil.getValorComIVA( qtd, taxa, preco, desconto ))
-                        //                        MetodosUtil.getValorComIVA( qtd, taxa, preco, desconto )
-                        CfMethods.formatarComoMoeda( MetodosUtil.getValorComIVA( qtd, taxa, preco, desconto ) )
+                        //                        CfMethods.formatarComoMoeda(FinanceUtils.getValorComIVA( qtd, taxa, preco, desconto ))
+                        //                        FinanceUtils.getValorComIVA( qtd, taxa, preco, desconto )
+                        CfMethods.formatarComoMoeda( FinanceUtils.getValorComIVA( qtd, taxa, preco, desconto ) )
                     //itemPedidos.get( i ).getQtd() * precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( itemPedidos.get( i ).getFkProdutos().getCodigo() ) ).getPrecoVenda()
                     } );
                 }
@@ -3983,7 +3984,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
                 preco_unitario = precosController.getLastIdPrecoByIdProduto( idProduto, qtd ).getPrecoVenda().doubleValue();
 //                preco_unitario = precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( idProduto, qtd ) ).getPrecoVenda().doubleValue();
                 taxa = MetodosUtil.getTaxaPercantagem( idProduto );
-//                sub_total_iliquido = MetodosUtil.getValorComIVA( qtd, taxa, preco_unitario, desconto );
+//                sub_total_iliquido = FinanceUtils.getValorComIVA( qtd, taxa, preco_unitario, desconto );
                 sub_total_iliquido = CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 4 ).toString() );
 
                 itemVenda.setCodigoProduto( produtosController.findByCod( idProduto ) );
@@ -4713,7 +4714,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
                     double preco_unitario = precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( idProduto, qtd ) ).getPrecoVenda().doubleValue();
                     double taxa = MetodosUtil.getTaxaPercantagem( idProduto );
                     double desconto = 0d;
-                    double sub_total_iliquido = MetodosUtil.getValorComIVA( qtd, taxa, preco_unitario, desconto );
+                    double sub_total_iliquido = FinanceUtils.getValorComIVA( qtd, taxa, preco_unitario, desconto );
 
                     itemVenda.setCodigoProduto( produtosController.findByCod( idProduto ) );
                     itemVenda.setCodigoVenda( venda_local );
@@ -7040,7 +7041,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
 
                 double taxa = MetodosUtil.getTaxaPercantagem( idProduto );
                 double desconto = 0;
-                double total = MetodosUtil.getValorComIVA( qtd, taxa, preco, desconto );
+                double total = FinanceUtils.getValorComIVA( qtd, taxa, preco, desconto );
                 itemPedidosLocal.setQtd( qtd );
                 itemPedidosLocal.setTotalItem( total );
                 try
