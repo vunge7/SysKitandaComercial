@@ -2,38 +2,8 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-<<<<<<< HEAD
         <group>
-            <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/util/CalculadoraPrecoHelper.java</file>
-            <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/util/DVML.java</file>
-            <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/visao/BuscaProdutoVisao.java</file>
             <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/visao/VendaUsuarioVisao.java</file>
-            <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/util/JPAEntityMannagerFactoryUtil.java</file>
-            <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/util/FinanceUtils.java</file>
-            <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/util/BDConexao.java</file>
-            <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/visao/ProdutosVisao.java</file>
-            <file>file:/C:/dvml/_Projectos_/_desktop_/_Gestao_Comercial_/SysKitandaComercial/src/util/MetodosUtil.java</file>
-=======
-        <group name="Projetos de teste"/>
-        <group name="Group 20171208-08:14:51">
-            <file>file:/Users/macpro/Desktop/SYS_KITANDA_AGT_V_1_1_9/src/visao/EntradaVisao.java</file>
-            <file>file:/Users/macpro/Desktop/SYS_KITANDA_AGT_V_1_1_9/src/visao/ProdutoVisao.java</file>
-            <file>file:/Users/macpro/Desktop/SYS_KITANDA_AGT_V_1_1_9/src/dao/StockDao.java</file>
-        </group>
-        <group>
-            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/dao/SaidasProdutosDao.java</file>
-            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/visao/MenuPrincipalVisao.java</file>
-            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/lista/ListarEntradasProdutosPorEntervaloData.java</file>
-            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/lista/ListaSaidaProdutos.java</file>
-            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/visao/EntradaPratosCompostosVisao.java</file>
-            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/visao/VendaUsuarioVisao.java</file>
-            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/lista/ListaVenda1.java</file>
-            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/lista/ListarRelatorioEntradaByIntervalo.java</file>
-            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/lista/ResumoEntradasByIntervalo.java</file>
-            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/visao/EntradaVisao.java</file>
-            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/visao/SaidaUsuarioVisao.java</file>
-            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/lista/ListaEntradaProdutos.java</file>
->>>>>>> 65fd8e12674bbb58563690bee982de1a1e28fe11
         </group>
     </open-files>
 </project-private>
