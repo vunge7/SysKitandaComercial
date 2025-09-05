@@ -901,7 +901,7 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         lbUnidade.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         lbUnidade.setText("Unidade:");
-        jPanel5.add(lbUnidade, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 240, 120, 20));
+        jPanel5.add(lbUnidade, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 240, 100, 20));
 
         txtUnidadeCompra.setBackground(new java.awt.Color(4, 154, 3));
         txtUnidadeCompra.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
@@ -2821,6 +2821,7 @@ public class ProdutosVisao extends javax.swing.JFrame
 
             if ( !temRetencao )
             {
+                
                 String retencao = servicosRetencaoController.getRetensaoByIdProduto( pkProduto );
                 ivaMotivoJComboBox.setSelectedItem( retencao );
 
