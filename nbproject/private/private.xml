@@ -18,10 +18,25 @@
             <file>file:/Users/macpro/Desktop/SYS_KITANDA_AGT_V_1_1_9/src/dao/StockDao.java</file>
         </group>
         <group>
-            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/visao/BuscaProdutoComprasVisao.java</file>
             <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/visao/ProdutosVisao.java</file>
+            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/entity/ProdutoImposto.java</file>
+            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/util/excel/AbrirExcelUtil.java</file>
+            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/util/excel/GerarExcelUtil.java</file>
             <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/visao/CompraInformalVisao.java</file>
+            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/entity/Imposto.java</file>
+            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/visao/VendaUsuarioVisao.java</file>
             <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/visao/BuscaProdutoVisao.java</file>
+            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/util/excel/LerUtil.java</file>
+            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/visao/BuscaProdutoComprasVisao.java</file>
+            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/entity/ProdutoIsento.java</file>
+            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/entity/ProdutosMotivosIsensao.java</file>
+            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/util/FinanceUtils.java</file>
+            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/entity/TbProduto.java</file>
+            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/comercial/controller/ImpostosController.java</file>
+            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/entity/TbPreco.java</file>
+            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/util/DVML.java</file>
+            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/util/excel/DadosUtil.java</file>
+            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/entity/Unidade.java</file>
         </group>
     </open-files>
 </project-private>

@@ -6,6 +6,7 @@
 package comercial.controller;
 
 import entity.Imposto;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -150,6 +151,29 @@ public class ImpostosController implements EntidadeFactory
         return imposto;
 
     }
+    
+    public Imposto getImpostoByTaxa(double taxa) {
+    System.out.println("Procurando imposto pela taxa: " + taxa);
+    Imposto imposto = null;
+
+    String sql = "SELECT * FROM imposto WHERE ABS(taxa - ?) < 0.000001"; // tolerância numérica
+
+    try (PreparedStatement ps = conexao.getConnection().prepareStatement(sql)) {
+        ps.setDouble(1, taxa);
+
+        try (ResultSet result = ps.executeQuery()) {
+            if (result.next()) {
+                imposto = new Imposto();
+                setResultSetImposto(result, imposto); // mesmo método que já usas
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return imposto;
+}
+
 
     public Imposto getImpostoByDesignacao( String taxa )
     {

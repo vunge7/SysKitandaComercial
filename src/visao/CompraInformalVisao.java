@@ -310,7 +310,6 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
         txtCodBarra = new javax.swing.JTextField();
         lb_produto = new javax.swing.JLabel();
         jButton_eliminar = new javax.swing.JButton();
-        jButton_inserir = new javax.swing.JButton();
         cmbFornecedor = new javax.swing.JComboBox<>();
         lb_data_apuramento5 = new javax.swing.JLabel();
         txtCodigoProduto = new javax.swing.JTextField();
@@ -343,6 +342,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
         lbCusto = new javax.swing.JLabel();
         lbUnidade = new javax.swing.JLabel();
         cmbUnidade = new javax.swing.JComboBox<>();
+        jButton_inserir = new javax.swing.JButton();
         jPanel8 = new javax.swing.JPanel();
         lbTotalPagar = new javax.swing.JLabel();
         txtTotal_AOA_Iliquido = new javax.swing.JTextField();
@@ -481,17 +481,17 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
             },
             new String []
             {
-                "Cod.Art", "Descrição", "Preço", "Qtd.", "Unidade", "Desconto(%)", "Taxa ", "Valor", "Valor C/ Imposto", "Critica", "Baixa"
+                "Cod.", "Descrição", "Pr. Compra", "Qtd.", "Unidade", "Desc(%)", "Taxa CP", "Val. Compra", "Valor C. IVA", "Critica", "Baixa", "Taxa VD", "Pr. Venda", "Valor V. IVA"
             }
         )
         {
             Class[] types = new Class []
             {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Object.class, java.lang.Object.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean []
             {
-                false, false, true, true, false, true, true, false, false, true, true
+                false, false, true, true, false, true, true, false, false, true, true, true, true, true
             };
 
             public Class getColumnClass(int columnIndex)
@@ -517,17 +517,24 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
         tableCompra.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         if (tableCompra.getColumnModel().getColumnCount() > 0)
         {
-            tableCompra.getColumnModel().getColumn(0).setPreferredWidth(10);
-            tableCompra.getColumnModel().getColumn(1).setPreferredWidth(240);
-            tableCompra.getColumnModel().getColumn(2).setPreferredWidth(20);
+            tableCompra.getColumnModel().getColumn(0).setPreferredWidth(4);
+            tableCompra.getColumnModel().getColumn(1).setPreferredWidth(160);
+            tableCompra.getColumnModel().getColumn(2).setPreferredWidth(30);
             tableCompra.getColumnModel().getColumn(3).setPreferredWidth(5);
-            tableCompra.getColumnModel().getColumn(6).setPreferredWidth(5);
+            tableCompra.getColumnModel().getColumn(4).setPreferredWidth(12);
+            tableCompra.getColumnModel().getColumn(5).setPreferredWidth(8);
+            tableCompra.getColumnModel().getColumn(6).setPreferredWidth(2);
+            tableCompra.getColumnModel().getColumn(7).setPreferredWidth(30);
+            tableCompra.getColumnModel().getColumn(8).setPreferredWidth(25);
             tableCompra.getColumnModel().getColumn(9).setResizable(false);
             tableCompra.getColumnModel().getColumn(9).setPreferredWidth(5);
             tableCompra.getColumnModel().getColumn(10).setPreferredWidth(5);
+            tableCompra.getColumnModel().getColumn(11).setPreferredWidth(2);
+            tableCompra.getColumnModel().getColumn(12).setPreferredWidth(20);
+            tableCompra.getColumnModel().getColumn(13).setPreferredWidth(25);
         }
 
-        jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 1130, 210));
+        jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 1150, 210));
 
         jPanel6.setBackground(new java.awt.Color(0, 51, 102));
         jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
@@ -660,16 +667,6 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
         });
         jPanel3.add(jButton_eliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(1000, 220, 50, -1));
 
-        jButton_inserir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Button-Add-icon.png"))); // NOI18N
-        jButton_inserir.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                jButton_inserirActionPerformed(evt);
-            }
-        });
-        jPanel3.add(jButton_inserir, new org.netbeans.lib.awtextra.AbsoluteConstraints(950, 220, 50, -1));
-
         cmbFornecedor.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cmbFornecedor.addActionListener(new java.awt.event.ActionListener()
         {
@@ -751,7 +748,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
             }
         });
         jPanel3.add(jButtonLupa, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 80, 40, 50));
-        jPanel3.add(txtPrecoVendaRetalho, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 140, 200, 30));
+        jPanel3.add(txtPrecoVendaRetalho, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 140, 190, 30));
 
         txtCodManual.setFont(new java.awt.Font("SansSerif", 0, 16)); // NOI18N
         txtCodManual.addActionListener(new java.awt.event.ActionListener()
@@ -932,6 +929,16 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
             }
         });
         jPanel3.add(cmbUnidade, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 140, 100, -1));
+
+        jButton_inserir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Button-Add-icon.png"))); // NOI18N
+        jButton_inserir.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButton_inserirActionPerformed(evt);
+            }
+        });
+        jPanel3.add(jButton_inserir, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 220, 50, -1));
 
         jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
         jPanel8.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -1535,116 +1542,776 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
         return total_iliquido_local;
     }
 
-    private static boolean salvar_item_compra_comercial( Integer cod_compras )
-    {
+//    private static boolean salvar_item_compra_comercial( Integer cod_compras )
+//    {
+//
+//        System.out.println( "Cod Compra no Item" + cod_compras );
+//        boolean sucesso = true;
+//        if ( !MetodosUtil.tabela_vazia( tableCompra ) )
+//        {
+//            StoksController stocksControllerLocal = new StoksController( conexaoTransaction );
+//            PrecosController precosControllerLocal = new PrecosController( conexaoTransaction );
+//            ItemComprasController itemComprasControllerLocal = new ItemComprasController( conexaoTransaction );
+//            ItemCompras itemCompraLocal;
+//            for ( int i = 0; i < tableCompra.getRowCount(); i++ )
+//            {
+//                try
+//                {
+//
+//                    double qtd = Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 3 ) ) );
+//                    TbProduto produto_local = (TbProduto) produtosController
+//                            .findById( Integer.parseInt( String.valueOf( tableCompra.getModel().getValueAt( i, 0 ) ) )
+//                            );
+//
+//                    itemCompraLocal = new ItemCompras();
+//                    itemCompraLocal.setFkProduto( produto_local );
+//                    itemCompraLocal.setFkCompra( new Compras( cod_compras ) );
+//                    itemCompraLocal.setPrecoCompra( Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 2 ) ) ) );
+//                    itemCompraLocal.setQuantidade( Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 3 ) ) ) );
+//                    itemCompraLocal.setDesconto( Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 5 ) ) ) );
+//                    itemCompraLocal.setValorIva( Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 6 ) ) ) );
+//                    itemCompraLocal.setTotal( Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 8 ) ) ) );
+//
+//                    itemCompraLocal.setMotivoIsensao( getMotivoIsensao( itemCompraLocal.getFkProduto().getCodigo() ) );
+//                    itemCompraLocal.setCodigoIsensao( MetodosUtil.getCodigoRegime( itemCompraLocal.getFkProduto().getCodigo() ) );
+//
+//                    double qtdCritica = Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 9 ) ) );
+//                    double qtdBaixa = Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 10 ) ) );
+//
+//                    //cria o item compra
+//                    if ( !itemComprasControllerLocal.salvar( itemCompraLocal ) )
+//                    {
+//                        DocumentosController.rollBackTransaction( conexaoTransaction );
+//                        conexaoTransaction.close();
+//                        return false;
+//                    }
+//
+//                    //verifca se existe o produto no stock caso nao registra.
+//                    if ( !stocksControllerLocal.existe_stock( produto_local.getCodigo(), getIdArmazens() ) )
+//                    {
+//                        boolean registrar_stock = registrar_stock( produto_local, itemCompraLocal.getQuantidade(), qtdCritica, qtdBaixa, stocksControllerLocal );
+//                        System.err.println( "Registro no Stock pela primeira vez: " + registrar_stock );
+//                        if ( !registrar_stock )
+//                        {
+//                            sucesso = false;
+//                            DocumentosController.rollBackTransaction( conexaoTransaction );
+//                            conexaoTransaction.close();
+//                            return false;
+//                        }
+//                    }
+//                    else
+//                    {
+//                        actualizar_dados_stock( produto_local.getCodigo(),
+//                                qtd,
+//                                qtdCritica,
+//                                qtdBaixa, stocksControllerLocal );
+//
+//                    }
+//
+//                    double precoMedio = getPrecoCompraMedio( produto_local.getCodigo(), itemCompraLocal.getQuantidade(), itemCompraLocal.getPrecoCompra() );
+//                    actualizarPreco( itemCompraLocal.getFkProduto().getCodigo(), precoMedio, precosControllerLocal );
+////                    actualizarPreco( produto_local.getCodigo(), precoMedio, precosControllerLocal );
+//                    //System.out.println( "Item Produto Codigo#" + itemCompraLocal.getFkProduto().getCodigo() );
+//                    System.out.println( "Preco Medio#" + precoMedio );
+//
+//                }
+//                catch ( Exception e )
+//                {
+//                    sucesso = false;
+//                    e.printStackTrace();
+//                    JOptionPane.showMessageDialog( null, "Falha ao registrar a compra", "Falha", JOptionPane.ERROR_MESSAGE );
+//                    DocumentosController.rollBackTransaction( conexaoTransaction );
+//                    conexaoTransaction.close();
+//                    return false;
+//
+//                }
+//
+//            }
+//
+//            if ( sucesso )
+//            {
+//
+//                DocumentosController.commitTransaction( conexaoTransaction );
+//                limpar_cabecario();
+//                limpar_rodape();
+//                esvaziar_tabela();
+//                compra = null;
+//                fornecedor = null;
+//                JOptionPane.showMessageDialog( null, "Compra efectuada com sucesso!.." );
+//                exibirReciboDeCompras();
+//                conexaoTransaction.close();
+//                return true;
+//
+//            }
+//
+//        }
+//        else
+//        {
+//            JOptionPane.showMessageDialog( null, "Adiciona itens na tabela caro usuário", "AVISO", JOptionPane.WARNING_MESSAGE );
+//        }
+//        return false;
+//    }
 
-        System.out.println( "Cod Compra no Item" + cod_compras );
-        boolean sucesso = true;
-        if ( !MetodosUtil.tabela_vazia( tableCompra ) )
-        {
-            StoksController stocksControllerLocal = new StoksController( conexaoTransaction );
-            PrecosController precosControllerLocal = new PrecosController( conexaoTransaction );
-            ItemComprasController itemComprasControllerLocal = new ItemComprasController( conexaoTransaction );
-            ItemCompras itemCompraLocal;
-            for ( int i = 0; i < tableCompra.getRowCount(); i++ )
-            {
-                try
-                {
+//    private static boolean salvar_item_compra_comercial(Integer cod_compras) {
+//    System.out.println("Cod Compra no Item: " + cod_compras);
+//    boolean sucesso = true;
+//
+//    if (!MetodosUtil.tabela_vazia(tableCompra)) {
+//        StoksController stocksControllerLocal = new StoksController(conexaoTransaction);
+//        PrecosController precosControllerLocal = new PrecosController(conexaoTransaction);
+//        ItemComprasController itemComprasControllerLocal = new ItemComprasController(conexaoTransaction);
+//        ItemCompras itemCompraLocal;
+//
+//        for (int i = 0; i < tableCompra.getRowCount(); i++) {
+//            try {
+//                double qtd = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 3)));
+//
+//                TbProduto produto_local = (TbProduto) produtosController.findById(
+//                        Integer.parseInt(String.valueOf(tableCompra.getModel().getValueAt(i, 0))));
+//
+//                itemCompraLocal = new ItemCompras();
+//                itemCompraLocal.setFkProduto(produto_local);
+//                itemCompraLocal.setFkCompra(new Compras(cod_compras));
+//                itemCompraLocal.setPrecoCompra(Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 2))));
+//                itemCompraLocal.setQuantidade(qtd);
+//                itemCompraLocal.setDesconto(Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 5))));
+//                itemCompraLocal.setValorIva(Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 6))));
+//                itemCompraLocal.setTotal(Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 8))));
+//
+//                itemCompraLocal.setMotivoIsensao(getMotivoIsensao(itemCompraLocal.getFkProduto().getCodigo()));
+//                itemCompraLocal.setCodigoIsensao(MetodosUtil.getCodigoRegime(itemCompraLocal.getFkProduto().getCodigo()));
+//
+//                double qtdCritica = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 9)));
+//                double qtdBaixa = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 10)));
+//
+//                // Cria o item compra
+//                if (!itemComprasControllerLocal.salvar(itemCompraLocal)) {
+//                    DocumentosController.rollBackTransaction(conexaoTransaction);
+//                    conexaoTransaction.close();
+//                    return false;
+//                }
+//
+//                // Verifica se existe o produto no stock
+//                if (!stocksControllerLocal.existe_stock(produto_local.getCodigo(), getIdArmazens())) {
+//                    boolean registrar_stock = registrar_stock(produto_local, itemCompraLocal.getQuantidade(),
+//                            qtdCritica, qtdBaixa, stocksControllerLocal);
+//
+//                    System.err.println("Registro no Stock pela primeira vez: " + registrar_stock);
+//                    if (!registrar_stock) {
+//                        sucesso = false;
+//                        DocumentosController.rollBackTransaction(conexaoTransaction);
+//                        conexaoTransaction.close();
+//                        return false;
+//                    }
+//                } else {
+//                    actualizar_dados_stock(produto_local.getCodigo(), qtd, qtdCritica, qtdBaixa,
+//                            stocksControllerLocal);
+//                }
+//
+//                // Calcula o preço médio da compra
+//                double precoMedio = getPrecoCompraMedio(produto_local.getCodigo(),
+//                        itemCompraLocal.getQuantidade(), itemCompraLocal.getPrecoCompra());
+//
+//                // 🔹 Recupera o preço de venda digitado na penúltima coluna da tabela
+//                double precoVenda = 0.0;
+//                Object valorColuna = tableCompra.getModel().getValueAt(i, tableCompra.getColumnCount() - 2);
+//
+//                if (valorColuna != null && !valorColuna.toString().trim().isEmpty()) {
+//                    try {
+//                        precoVenda = Double.parseDouble(valorColuna.toString());
+//                    } catch (NumberFormatException e) {
+//                        precoVenda = 0.0;
+//                    }
+//                }
+//
+//                // 🔹 Atualiza preço do produto no banco (preço médio + preço de venda)
+//                actualizarPreco(produto_local.getCodigo(), precoMedio, precoVenda, precosControllerLocal);
+//
+//                System.out.println("Preco Medio #" + precoMedio + " | Preco Venda #" + precoVenda);
+//
+//            } catch (Exception e) {
+//                sucesso = false;
+//                e.printStackTrace();
+//                JOptionPane.showMessageDialog(null, "Falha ao registrar a compra", "Falha",
+//                        JOptionPane.ERROR_MESSAGE);
+//                DocumentosController.rollBackTransaction(conexaoTransaction);
+//                conexaoTransaction.close();
+//                return false;
+//            }
+//        }
+//
+//        if (sucesso) {
+//            DocumentosController.commitTransaction(conexaoTransaction);
+//            limpar_cabecario();
+//            limpar_rodape();
+//            esvaziar_tabela();
+//            compra = null;
+//            fornecedor = null;
+//            JOptionPane.showMessageDialog(null, "Compra efectuada com sucesso!..");
+//            exibirReciboDeCompras();
+//            conexaoTransaction.close();
+//            return true;
+//        }
+//
+//    } else {
+//        JOptionPane.showMessageDialog(null, "Adiciona itens na tabela caro usuário", "AVISO",
+//                JOptionPane.WARNING_MESSAGE);
+//    }
+//    return false;
+//}
+    
+private static boolean salvar_item_compra_comercial(Integer cod_compras) {
+    System.out.println("Cod Compra no Item: " + cod_compras);
+    boolean sucesso = true;
 
-                    double qtd = Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 3 ) ) );
-                    TbProduto produto_local = (TbProduto) produtosController
-                            .findById( Integer.parseInt( String.valueOf( tableCompra.getModel().getValueAt( i, 0 ) ) )
-                            );
+    if (!MetodosUtil.tabela_vazia(tableCompra)) {
+        StoksController stocksControllerLocal = new StoksController(conexaoTransaction);
+        PrecosController precosControllerLocal = new PrecosController(conexaoTransaction);
+        ItemComprasController itemComprasControllerLocal = new ItemComprasController(conexaoTransaction);
+        ProdutosImpostoController produtosImpostoControllerLocal = new ProdutosImpostoController(conexaoTransaction);
+        ProdutosIsentoController produtosIsentoControllerLocal = new ProdutosIsentoController(conexaoTransaction);
+        ProdutosMotivosIsensaoController motivosController = new ProdutosMotivosIsensaoController(conexaoTransaction);
 
-                    itemCompraLocal = new ItemCompras();
-                    itemCompraLocal.setFkProduto( produto_local );
-                    itemCompraLocal.setFkCompra( new Compras( cod_compras ) );
-                    itemCompraLocal.setPrecoCompra( Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 2 ) ) ) );
-                    itemCompraLocal.setQuantidade( Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 3 ) ) ) );
-                    itemCompraLocal.setDesconto( Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 5 ) ) ) );
-                    itemCompraLocal.setValorIva( Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 6 ) ) ) );
-                    itemCompraLocal.setTotal( Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 8 ) ) ) );
+        for (int i = 0; i < tableCompra.getRowCount(); i++) {
+            try {
+                double qtd = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 3)));
 
-                    itemCompraLocal.setMotivoIsensao( getMotivoIsensao( itemCompraLocal.getFkProduto().getCodigo() ) );
-                    itemCompraLocal.setCodigoIsensao( MetodosUtil.getCodigoRegime( itemCompraLocal.getFkProduto().getCodigo() ) );
+                TbProduto produto_local = (TbProduto) produtosController.findById(
+                        Integer.parseInt(String.valueOf(tableCompra.getModel().getValueAt(i, 0))));
 
-                    double qtdCritica = Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 9 ) ) );
-                    double qtdBaixa = Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 10 ) ) );
+                // Pega exatamente o preço digitado pelo usuário
+                double precoCompraDigitado = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 2)));
 
-                    //cria o item compra
-                    if ( !itemComprasControllerLocal.salvar( itemCompraLocal ) )
-                    {
-                        DocumentosController.rollBackTransaction( conexaoTransaction );
+                ItemCompras itemCompraLocal = new ItemCompras();
+                itemCompraLocal.setFkProduto(produto_local);
+                itemCompraLocal.setFkCompra(new Compras(cod_compras));
+                itemCompraLocal.setPrecoCompra(precoCompraDigitado); // preço exato
+                itemCompraLocal.setQuantidade(qtd);
+                itemCompraLocal.setDesconto(Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 5))));
+                itemCompraLocal.setValorIva(Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 6))));
+                itemCompraLocal.setTotal(Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 8))));
+
+                itemCompraLocal.setMotivoIsensao(getMotivoIsensao(itemCompraLocal.getFkProduto().getCodigo()));
+                itemCompraLocal.setCodigoIsensao(MetodosUtil.getCodigoRegime(itemCompraLocal.getFkProduto().getCodigo()));
+
+                double qtdCritica = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 9)));
+                double qtdBaixa = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 10)));
+
+                // Salvar o item compra
+                if (!itemComprasControllerLocal.salvar(itemCompraLocal)) {
+                    DocumentosController.rollBackTransaction(conexaoTransaction);
+                    conexaoTransaction.close();
+                    return false;
+                }
+
+                // Atualizar estoque
+                if (!stocksControllerLocal.existe_stock(produto_local.getCodigo(), getIdArmazens())) {
+                    boolean registrar_stock = registrar_stock(produto_local, itemCompraLocal.getQuantidade(),
+                            qtdCritica, qtdBaixa, stocksControllerLocal);
+                    if (!registrar_stock) {
+                        sucesso = false;
+                        DocumentosController.rollBackTransaction(conexaoTransaction);
+                        conexaoTransaction.close();
+                        return false;
+                    }
+                } else {
+                    actualizar_dados_stock(produto_local.getCodigo(), qtd, qtdCritica, qtdBaixa, stocksControllerLocal);
+                }
+
+                // Atualizar preço médio e preço de referência do produto (NUNCA sobrescrever o item)
+                double precoMedio = getPrecoCompraMedio(produto_local.getCodigo(), qtd, precoCompraDigitado);
+                double precoVenda = 0.0;
+                Object valorColuna = tableCompra.getModel().getValueAt(i, tableCompra.getColumnCount() - 2);
+                if (valorColuna != null && !valorColuna.toString().trim().isEmpty()) {
+                    try { precoVenda = Double.parseDouble(valorColuna.toString()); } catch (NumberFormatException ignore) {}
+                }
+
+                // Atualiza apenas a referência do produto
+                actualizarPreco(produto_local.getCodigo(), precoMedio, precoVenda, precosControllerLocal);
+
+                // =========================
+                // IMPOSTO (antepenúltima coluna) vs ISENÇÃO
+                // =========================
+                Object valorImposto = tableCompra.getModel().getValueAt(i, tableCompra.getColumnCount() - 3);
+                double taxaIva = 0.0;
+                if (valorImposto != null && !valorImposto.toString().trim().isEmpty()
+                        && !valorImposto.toString().equalsIgnoreCase("--SELECIONE--")) {
+                    try { taxaIva = Double.parseDouble(valorImposto.toString()); } catch (NumberFormatException ignore) {}
+                }
+
+                if (taxaIva > 0) {
+                    // Produto tributado
+                    Imposto impostoSelecionado = null;
+                    try {
+                        impostoSelecionado = impostosController.getImpostoByTaxa(taxaIva);
+                    } catch (Exception ignore) {}
+
+                    if (impostoSelecionado == null) {
+                        JOptionPane.showMessageDialog(null,
+                                "Taxa > 0 mas nenhum imposto válido foi identificado.\n" +
+                                        "Cadastre o imposto com taxa " + taxaIva + ".",
+                                "Imposto não encontrado", JOptionPane.ERROR_MESSAGE);
+                        DocumentosController.rollBackTransaction(conexaoTransaction);
                         conexaoTransaction.close();
                         return false;
                     }
 
-                    //verifca se existe o produto no stock caso nao registra.
-                    if ( !stocksControllerLocal.existe_stock( produto_local.getCodigo(), getIdArmazens() ) )
-                    {
-                        boolean registrar_stock = registrar_stock( produto_local, itemCompraLocal.getQuantidade(), qtdCritica, qtdBaixa, stocksControllerLocal );
-                        System.err.println( "Registro no Stock pela primeira vez: " + registrar_stock );
-                        if ( !registrar_stock )
-                        {
-                            sucesso = false;
-                            DocumentosController.rollBackTransaction( conexaoTransaction );
-                            conexaoTransaction.close();
-                            return false;
+                    ProdutoImposto produtoImposto = new ProdutoImposto();
+                    produtoImposto.setFkProduto(produto_local);
+                    produtoImposto.setFkImposto(impostoSelecionado);
+
+                    if (!produtosImpostoControllerLocal.salvar(produtoImposto)) {
+                        DocumentosController.rollBackTransaction(conexaoTransaction);
+                        conexaoTransaction.close();
+                        JOptionPane.showMessageDialog(null,
+                                "Falha ao registrar o imposto do produto",
+                                "Falha", JOptionPane.WARNING_MESSAGE);
+                        return false;
+                    }
+
+                } else {
+                    // Produto isento
+                    ProdutosMotivosIsensao isensaoSelecionado = null;
+                    Object itemMotivo = ivaMotivoJComboBox.getSelectedItem();
+
+                    if (itemMotivo instanceof ProdutosMotivosIsensao) {
+                        isensaoSelecionado = (ProdutosMotivosIsensao) itemMotivo;
+                    } else if (itemMotivo instanceof String) {
+                        String txt = ((String) itemMotivo).trim();
+                        if (!txt.isEmpty() && !txt.equalsIgnoreCase("--SELECIONE--")) {
+                            try {
+                                isensaoSelecionado = motivosController.getRegime(txt);
+                            } catch (Exception ignore) {}
                         }
                     }
-                    else
-                    {
-                        actualizar_dados_stock( produto_local.getCodigo(),
-                                qtd,
-                                qtdCritica,
-                                qtdBaixa, stocksControllerLocal );
 
+                    // fallback: motivo padrão (M00 - Outros)
+                    if (isensaoSelecionado == null) {
+                        try {
+                            isensaoSelecionado = motivosController.getRegime("M00");
+                        } catch (Exception ignore) {}
                     }
 
-                    double precoMedio = getPrecoCompraMedio( produto_local.getCodigo(), itemCompraLocal.getQuantidade(), itemCompraLocal.getPrecoCompra() );
-                    actualizarPreco( itemCompraLocal.getFkProduto().getCodigo(), precoMedio, precosControllerLocal );
-//                    actualizarPreco( produto_local.getCodigo(), precoMedio, precosControllerLocal );
-                    //System.out.println( "Item Produto Codigo#" + itemCompraLocal.getFkProduto().getCodigo() );
-                    System.out.println( "Preco Medio#" + precoMedio );
+                    ProdutoIsento produtoIsento = new ProdutoIsento();
+                    produtoIsento.setFkProduto(produto_local);
+                    produtoIsento.setFkProdutosMotivosIsensao(isensaoSelecionado);
 
-                }
-                catch ( Exception e )
-                {
-                    sucesso = false;
-                    e.printStackTrace();
-                    JOptionPane.showMessageDialog( null, "Falha ao registrar a compra", "Falha", JOptionPane.ERROR_MESSAGE );
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
-                    conexaoTransaction.close();
-                    return false;
-
+                    if (!produtosIsentoControllerLocal.salvar(produtoIsento)) {
+                        DocumentosController.rollBackTransaction(conexaoTransaction);
+                        conexaoTransaction.close();
+                        JOptionPane.showMessageDialog(null,
+                                "Falha ao registrar o produto isento",
+                                "Falha", JOptionPane.WARNING_MESSAGE);
+                        return false;
+                    }
                 }
 
-            }
+                System.out.println("Produto #" + produto_local.getCodigo()
+                        + " salvo | Preço Digitado: " + precoCompraDigitado
+                        + " | Preço Médio: " + precoMedio
+                        + " | Preço Venda: " + precoVenda
+                        + " | Taxa IVA: " + taxaIva);
 
-            if ( sucesso )
-            {
-
-                DocumentosController.commitTransaction( conexaoTransaction );
-                limpar_cabecario();
-                limpar_rodape();
-                esvaziar_tabela();
-                compra = null;
-                fornecedor = null;
-                JOptionPane.showMessageDialog( null, "Compra efectuada com sucesso!.." );
-                exibirReciboDeCompras();
+            } catch (Exception e) {
+                sucesso = false;
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Falha ao registrar a compra", "Falha",
+                        JOptionPane.ERROR_MESSAGE);
+                DocumentosController.rollBackTransaction(conexaoTransaction);
                 conexaoTransaction.close();
-                return true;
-
+                return false;
             }
+        }
 
+        if (sucesso) {
+            DocumentosController.commitTransaction(conexaoTransaction);
+            limpar_cabecario();
+            limpar_rodape();
+            esvaziar_tabela();
+            compra = null;
+            fornecedor = null;
+            JOptionPane.showMessageDialog(null, "Compra efectuada com sucesso!..");
+            exibirReciboDeCompras();
+            conexaoTransaction.close();
+            return true;
         }
-        else
-        {
-            JOptionPane.showMessageDialog( null, "Adiciona itens na tabela caro usuário", "AVISO", JOptionPane.WARNING_MESSAGE );
-        }
-        return false;
+
+    } else {
+        JOptionPane.showMessageDialog(null, "Adiciona itens na tabela caro usuário", "AVISO",
+                JOptionPane.WARNING_MESSAGE);
     }
+    return false;
+}
 
+
+    
+    private static double getPrecoUltimaCompra(int codProduto) {
+    TbPreco preco = precosController.getLastIdPrecoByIdProdutos(codProduto);
+    return (preco != null) ? preco.getPrecoCompra().doubleValue() : 0.0;
+}
+
+
+
+    
+//    private static boolean salvar_item_compra_comercial(Integer cod_compras) {
+//    System.out.println("Cod Compra no Item: " + cod_compras);
+//    boolean sucesso = true;
+//
+//    if (!MetodosUtil.tabela_vazia(tableCompra)) {
+//        StoksController stocksControllerLocal = new StoksController(conexaoTransaction);
+//        PrecosController precosControllerLocal = new PrecosController(conexaoTransaction);
+//        ItemComprasController itemComprasControllerLocal = new ItemComprasController(conexaoTransaction);
+//        ProdutosImpostoController produtosImpostoControllerLocal = new ProdutosImpostoController(conexaoTransaction);
+//        ProdutosIsentoController produtosIsentoControllerLocal = new ProdutosIsentoController(conexaoTransaction);
+//
+//        for (int i = 0; i < tableCompra.getRowCount(); i++) {
+//            try {
+//                double qtd = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 3)));
+//
+//                TbProduto produto_local = (TbProduto) produtosController.findById(
+//                        Integer.parseInt(String.valueOf(tableCompra.getModel().getValueAt(i, 0))));
+//
+//                ItemCompras itemCompraLocal = new ItemCompras();
+//                itemCompraLocal.setFkProduto(produto_local);
+//                itemCompraLocal.setFkCompra(new Compras(cod_compras));
+//                itemCompraLocal.setPrecoCompra(Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 2))));
+//                itemCompraLocal.setQuantidade(qtd);
+//                itemCompraLocal.setDesconto(Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 5))));
+//                itemCompraLocal.setValorIva(Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 6))));
+//                itemCompraLocal.setTotal(Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 8))));
+//
+//                itemCompraLocal.setMotivoIsensao(getMotivoIsensao(itemCompraLocal.getFkProduto().getCodigo()));
+//                itemCompraLocal.setCodigoIsensao(MetodosUtil.getCodigoRegime(itemCompraLocal.getFkProduto().getCodigo()));
+//
+//                double qtdCritica = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 9)));
+//                double qtdBaixa = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 10)));
+//
+//                // Salvar o item compra
+//                if (!itemComprasControllerLocal.salvar(itemCompraLocal)) {
+//                    DocumentosController.rollBackTransaction(conexaoTransaction);
+//                    conexaoTransaction.close();
+//                    return false;
+//                }
+//
+//                // Stock
+//                if (!stocksControllerLocal.existe_stock(produto_local.getCodigo(), getIdArmazens())) {
+//                    boolean registrar_stock = registrar_stock(produto_local, itemCompraLocal.getQuantidade(),
+//                            qtdCritica, qtdBaixa, stocksControllerLocal);
+//                    if (!registrar_stock) {
+//                        sucesso = false;
+//                        DocumentosController.rollBackTransaction(conexaoTransaction);
+//                        conexaoTransaction.close();
+//                        return false;
+//                    }
+//                } else {
+//                    actualizar_dados_stock(produto_local.getCodigo(), qtd, qtdCritica, qtdBaixa, stocksControllerLocal);
+//                }
+//
+//                // Preço médio e preço venda (penúltima coluna)
+//                double precoMedio = getPrecoCompraMedio(produto_local.getCodigo(),
+//                        itemCompraLocal.getQuantidade(), itemCompraLocal.getPrecoCompra());
+//
+//                double precoVenda = 0.0;
+//                Object valorColuna = tableCompra.getModel().getValueAt(i, tableCompra.getColumnCount() - 2);
+//                if (valorColuna != null && !valorColuna.toString().trim().isEmpty()) {
+//                    try { precoVenda = Double.parseDouble(valorColuna.toString()); } catch (NumberFormatException ignore) {}
+//                }
+//
+//                actualizarPreco(produto_local.getCodigo(), precoMedio, precoVenda, precosControllerLocal);
+//
+//                // =========================
+//                // IMPOSTO (antepenúltima coluna) vs ISENÇÃO
+//                // =========================
+//                Object valorImposto = tableCompra.getModel().getValueAt(i, tableCompra.getColumnCount() - 3);
+//                double taxaIva = 0.0;
+//                if (valorImposto != null && !valorImposto.toString().trim().isEmpty()) {
+//                    try { taxaIva = Double.parseDouble(valorImposto.toString()); } catch (NumberFormatException ignore) {}
+//                }
+//
+//                if (taxaIva > 0) {
+//                    // Produto tributado → salvar em ProdutoImposto
+//                    Imposto impostoSelecionado = null;
+//
+//                    Object comboItem = cmbImposto.getSelectedItem();
+//                    if (comboItem instanceof Imposto) {
+//                        impostoSelecionado = (Imposto) comboItem;
+//                    } else if (comboItem instanceof String) {
+//                        String txt = ((String) comboItem).trim();
+//                        if (!txt.isEmpty() && !txt.equalsIgnoreCase("--SELECIONE--")) {
+//                            try {
+//                                impostoSelecionado = impostosController.getImpostoByDesignacao(txt);
+//                            } catch (Exception ignore) {}
+//                        }
+//                    }
+//
+//                    // Fallback: tenta identificar pelo valor da taxa
+//                    if (impostoSelecionado == null) {
+//                        try {
+//                            impostoSelecionado = impostosController.getImpostoByTaxa(taxaIva);
+//                        } catch (Exception ignore) {}
+//                    }
+//
+//                    if (impostoSelecionado == null) {
+//                        JOptionPane.showMessageDialog(null,
+//                                "Taxa > 0 mas nenhum imposto válido foi identificado.\n" +
+//                                "Cadastre o imposto com taxa " + taxaIva + ".",
+//                                "Imposto não encontrado", JOptionPane.ERROR_MESSAGE);
+//                        DocumentosController.rollBackTransaction(conexaoTransaction);
+//                        conexaoTransaction.close();
+//                        return false;
+//                    }
+//
+//                    ProdutoImposto produtoImposto = new ProdutoImposto();
+//                    produtoImposto.setFkProduto(produto_local);
+//                    produtoImposto.setFkImposto(impostoSelecionado);
+//
+//                    if (!produtosImpostoControllerLocal.salvar(produtoImposto)) {
+//                        DocumentosController.rollBackTransaction(conexaoTransaction);
+//                        conexaoTransaction.close();
+//                        JOptionPane.showMessageDialog(null,
+//                                "Falha ao registrar o imposto do produto",
+//                                "Falha", JOptionPane.WARNING_MESSAGE);
+//                        return false;
+//                    }
+//
+//                } else {
+//                    // Produto isento → salva em ProdutoIsento
+//                    ProdutosMotivosIsensao isensaoSelecionado = null;
+//                    Object itemMotivo = ivaMotivoJComboBox.getSelectedItem();
+//                    if (itemMotivo instanceof ProdutosMotivosIsensao) {
+//                        isensaoSelecionado = (ProdutosMotivosIsensao) itemMotivo;
+//                    }
+//
+//                    if (isensaoSelecionado == null) {
+//                        JOptionPane.showMessageDialog(null,
+//                                "Produto isento: selecione um motivo de isenção válido.",
+//                                "Motivo de Isenção", JOptionPane.ERROR_MESSAGE);
+//                        DocumentosController.rollBackTransaction(conexaoTransaction);
+//                        conexaoTransaction.close();
+//                        return false;
+//                    }
+//
+//                    ProdutoIsento produtoIsento = new ProdutoIsento();
+//                    produtoIsento.setFkProduto(produto_local);
+//                    produtoIsento.setFkProdutosMotivosIsensao(isensaoSelecionado);
+//
+//                    if (!produtosIsentoControllerLocal.salvar(produtoIsento)) {
+//                        DocumentosController.rollBackTransaction(conexaoTransaction);
+//                        conexaoTransaction.close();
+//                        JOptionPane.showMessageDialog(null,
+//                                "Falha ao registrar o produto isento",
+//                                "Falha", JOptionPane.WARNING_MESSAGE);
+//                        return false;
+//                    }
+//                }
+//
+//                System.out.println("Produto #" + produto_local.getCodigo()
+//                        + " salvo | Preço Médio: " + precoMedio
+//                        + " | Preço Venda: " + precoVenda
+//                        + " | Taxa IVA: " + taxaIva);
+//
+//            } catch (Exception e) {
+//                sucesso = false;
+//                e.printStackTrace();
+//                JOptionPane.showMessageDialog(null, "Falha ao registrar a compra", "Falha",
+//                        JOptionPane.ERROR_MESSAGE);
+//                DocumentosController.rollBackTransaction(conexaoTransaction);
+//                conexaoTransaction.close();
+//                return false;
+//            }
+//        }
+//
+//        if (sucesso) {
+//            DocumentosController.commitTransaction(conexaoTransaction);
+//            limpar_cabecario();
+//            limpar_rodape();
+//            esvaziar_tabela();
+//            compra = null;
+//            fornecedor = null;
+//            JOptionPane.showMessageDialog(null, "Compra efectuada com sucesso!..");
+//            exibirReciboDeCompras();
+//            conexaoTransaction.close();
+//            return true;
+//        }
+//
+//    } else {
+//        JOptionPane.showMessageDialog(null, "Adiciona itens na tabela caro usuário", "AVISO",
+//                JOptionPane.WARNING_MESSAGE);
+//    }
+//    return false;
+//}
+
+
+//    private static boolean salvar_item_compra_comercial(Integer cod_compras) {
+//    System.out.println("Cod Compra no Item: " + cod_compras);
+//    boolean sucesso = true;
+//
+//    if (!MetodosUtil.tabela_vazia(tableCompra)) {
+//        StoksController stocksControllerLocal = new StoksController(conexaoTransaction);
+//        PrecosController precosControllerLocal = new PrecosController(conexaoTransaction);
+//        ItemComprasController itemComprasControllerLocal = new ItemComprasController(conexaoTransaction);
+//        ProdutosImpostoController produtosImpostoControllerLocal = new ProdutosImpostoController(conexaoTransaction);
+//        ProdutosIsentoController produtosIsentoControllerLocal = new ProdutosIsentoController(conexaoTransaction);
+//
+//        for (int i = 0; i < tableCompra.getRowCount(); i++) {
+//            try {
+//                double qtd = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 3)));
+//
+//                TbProduto produto_local = (TbProduto) produtosController.findById(
+//                        Integer.parseInt(String.valueOf(tableCompra.getModel().getValueAt(i, 0))));
+//
+//                ItemCompras itemCompraLocal = new ItemCompras();
+//                itemCompraLocal.setFkProduto(produto_local);
+//                itemCompraLocal.setFkCompra(new Compras(cod_compras));
+//                itemCompraLocal.setPrecoCompra(Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 2))));
+//                itemCompraLocal.setQuantidade(qtd);
+//                itemCompraLocal.setDesconto(Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 5))));
+//                itemCompraLocal.setValorIva(Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 6))));
+//                itemCompraLocal.setTotal(Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 8))));
+//
+//                itemCompraLocal.setMotivoIsensao(getMotivoIsensao(itemCompraLocal.getFkProduto().getCodigo()));
+//                itemCompraLocal.setCodigoIsensao(MetodosUtil.getCodigoRegime(itemCompraLocal.getFkProduto().getCodigo()));
+//
+//                double qtdCritica = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 9)));
+//                double qtdBaixa = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 10)));
+//
+//                // Salvar o item compra
+//                if (!itemComprasControllerLocal.salvar(itemCompraLocal)) {
+//                    DocumentosController.rollBackTransaction(conexaoTransaction);
+//                    conexaoTransaction.close();
+//                    return false;
+//                }
+//
+//                // Atualiza ou cria stock
+//                if (!stocksControllerLocal.existe_stock(produto_local.getCodigo(), getIdArmazens())) {
+//                    boolean registrar_stock = registrar_stock(produto_local, itemCompraLocal.getQuantidade(),
+//                            qtdCritica, qtdBaixa, stocksControllerLocal);
+//
+//                    if (!registrar_stock) {
+//                        sucesso = false;
+//                        DocumentosController.rollBackTransaction(conexaoTransaction);
+//                        conexaoTransaction.close();
+//                        return false;
+//                    }
+//                } else {
+//                    actualizar_dados_stock(produto_local.getCodigo(), qtd, qtdCritica, qtdBaixa,
+//                            stocksControllerLocal);
+//                }
+//
+//                // Calcula preço médio
+//                double precoMedio = getPrecoCompraMedio(produto_local.getCodigo(),
+//                        itemCompraLocal.getQuantidade(), itemCompraLocal.getPrecoCompra());
+//
+//                // Preço de venda (penúltima coluna)
+//                double precoVenda = 0.0;
+//                Object valorColuna = tableCompra.getModel().getValueAt(i, tableCompra.getColumnCount() - 2);
+//                if (valorColuna != null && !valorColuna.toString().trim().isEmpty()) {
+//                    try {
+//                        precoVenda = Double.parseDouble(valorColuna.toString());
+//                    } catch (NumberFormatException e) {
+//                        precoVenda = 0.0;
+//                    }
+//                }
+//
+//                actualizarPreco(produto_local.getCodigo(), precoMedio, precoVenda, precosControllerLocal);
+//
+//                // =========================
+//                // Tratamento do IMPOSTO/ISENÇÃO
+//                // =========================
+//                Object valorImposto = tableCompra.getModel().getValueAt(i, tableCompra.getColumnCount() - 3);
+//                double taxaIva = 0.0;
+//                if (valorImposto != null && !valorImposto.toString().trim().isEmpty()) {
+//                    try {
+//                        taxaIva = Double.parseDouble(valorImposto.toString());
+//                    } catch (NumberFormatException e) {
+//                        taxaIva = 0.0;
+//                    }
+//                }
+//
+//                if (taxaIva > 0) {
+//                    // Produto tributado
+//                    Imposto impostoSelecionado = (Imposto) cmbImposto.getSelectedItem();
+//                    if (impostoSelecionado == null) {
+//                        JOptionPane.showMessageDialog(null,
+//                                "Selecione o imposto antes de salvar.",
+//                                "Erro", JOptionPane.ERROR_MESSAGE);
+//                        return false;
+//                    }
+//
+//                    ProdutoImposto produtoImposto = new ProdutoImposto();
+//                    produtoImposto.setFkProduto(produto_local);
+//                    produtoImposto.setFkImposto(impostoSelecionado);
+//
+//                    if (!produtosImpostoControllerLocal.salvar(produtoImposto)) {
+//                        DocumentosController.rollBackTransaction(conexaoTransaction);
+//                        conexaoTransaction.close();
+//                        JOptionPane.showMessageDialog(null,
+//                                "Falha ao registrar o imposto do produto",
+//                                "Falha", JOptionPane.WARNING_MESSAGE);
+//                        return false;
+//                    }
+//                } else {
+//                    // Produto isento
+//                    ProdutosMotivosIsensao isensaoSelecionado = (ProdutosMotivosIsensao) ivaMotivoJComboBox.getSelectedItem();
+//                    if (isensaoSelecionado == null) {
+//                        JOptionPane.showMessageDialog(null,
+//                                "Selecione o motivo de isenção antes de salvar.",
+//                                "Erro", JOptionPane.ERROR_MESSAGE);
+//                        return false;
+//                    }
+//
+//                    ProdutoIsento produtoIsento = new ProdutoIsento();
+//                    produtoIsento.setFkProduto(produto_local);
+//                    produtoIsento.setFkProdutosMotivosIsensao(isensaoSelecionado);
+//
+//                    if (!produtosIsentoControllerLocal.salvar(produtoIsento)) {
+//                        DocumentosController.rollBackTransaction(conexaoTransaction);
+//                        conexaoTransaction.close();
+//                        JOptionPane.showMessageDialog(null,
+//                                "Falha ao registrar o produto isento",
+//                                "Falha", JOptionPane.WARNING_MESSAGE);
+//                        return false;
+//                    }
+//                }
+//
+//                System.out.println("Produto #" + produto_local.getCodigo()
+//                        + " salvo | Preço Médio: " + precoMedio
+//                        + " | Preço Venda: " + precoVenda
+//                        + " | Taxa IVA: " + taxaIva);
+//
+//            } catch (Exception e) {
+//                sucesso = false;
+//                e.printStackTrace();
+//                JOptionPane.showMessageDialog(null, "Falha ao registrar a compra", "Falha",
+//                        JOptionPane.ERROR_MESSAGE);
+//                DocumentosController.rollBackTransaction(conexaoTransaction);
+//                conexaoTransaction.close();
+//                return false;
+//            }
+//        }
+//
+//        if (sucesso) {
+//            DocumentosController.commitTransaction(conexaoTransaction);
+//            limpar_cabecario();
+//            limpar_rodape();
+//            esvaziar_tabela();
+//            compra = null;
+//            fornecedor = null;
+//            JOptionPane.showMessageDialog(null, "Compra efectuada com sucesso!..");
+//            exibirReciboDeCompras();
+//            conexaoTransaction.close();
+//            return true;
+//        }
+//
+//    } else {
+//        JOptionPane.showMessageDialog(null, "Adiciona itens na tabela caro usuário", "AVISO",
+//                JOptionPane.WARNING_MESSAGE);
+//    }
+//    return false;
+//}
+
+
+    
     private static void esvaziar_tabela()
     {
         DefaultTableModel modelo = (DefaultTableModel) tableCompra.getModel();
@@ -1896,62 +2563,184 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
 
     }
 
-    public static void adicionar_produto( TbProduto produto_tabela )
-    {
+//    public static void adicionar_produto( TbProduto produto_tabela )
+//    {
+//        String unidade = getUnidade_Produto();
+//        System.err.println( "Adicionar: " + produto_tabela.getCodigo() );
+//        System.err.println( "produto: " + produto_tabela.getDesignacao() );
+//        DefaultTableModel modelo = (DefaultTableModel) tableCompra.getModel();
+//        double qtdCritica = Double.parseDouble( txtQtdCritica.getText() );
+//        double qtdBaixa = Double.parseDouble( txtQtdBaixa.getText() );
+//        String item = (String) cmbImposto.getSelectedItem();
+//        Double impostoSelecionado = Double.parseDouble(item);
+//        
+//        String venda_iva = (String) txtPrecoDeVendaComIva.getText();
+//        Double precoVendaComIva = Double.parseDouble(venda_iva);
+//
+////        double total_deconto = 0d;
+//        if ( !exist_produto_tabela_formulario( tableCompra, produto_tabela.getCodigo() ) )
+//        {
+//            System.err.println( "ProdutoExiste" );
+////            if ( !validar_zero() && validar_zero_preco() )
+//            if ( validar_zero_qtd_preco() )
+//            {
+//                modelo.addRow( new Object[]
+//                {
+//                    produto_tabela.getCodigo(),
+//                    produto_tabela.getDesignacao(),
+//                    getPrecoCompra(),
+//                    getQuantidade(),
+//                    unidade,
+//                    0,
+//                    getTaxaImposto(),
+//                    getQuantidade() * getPrecoCompra(),
+//                    FinanceUtils.getValorComIVA(
+//                    getQuantidade(),
+//                    getTaxaImposto(),
+//                    getPrecoCompra(),
+//                    0
+//                    ),
+//                    qtdCritica,
+//                    qtdBaixa,
+//                    impostoSelecionado,
+//                    getPrecoVenda(),
+//                    precoVendaComIva,
+//                    
+//
+//                } );
+//
+//            }
+//
+//        }
+//        else
+//        {
+//            actuazlizar_quantidade_tabela_formulario( String.valueOf( getQuantidade() ), 0.0 );
+//        }
+//
+//        actualizar_total();
+//        txtCodigoProduto.setText( "" );
+//        txtCodBarra.setText( "" );
+//        txtQtdEntrar.setText( "" );
+//        txtPrecoCompra.setText( "0" );
+//        txtPrecoVendaRetalho.setText( "0" );
+//        txtCodBarra.requestFocus();
+//
+//    }
 
-        System.err.println( "Adicionar: " + produto_tabela.getCodigo() );
-        System.err.println( "produto: " + produto_tabela.getDesignacao() );
-        DefaultTableModel modelo = (DefaultTableModel) tableCompra.getModel();
-        double qtdCritica = Double.parseDouble( txtQtdCritica.getText() );
-        double qtdBaixa = Double.parseDouble( txtQtdBaixa.getText() );
+public static void adicionar_produto(TbProduto produto_tabela) {
+    String unidade = getUnidade_Produto();
+        Unidade unidadeLocal = (Unidade) unidadesController.findById(produto.getCodUnidade().getPkUnidade());
+    cmbUnidade.setSelectedItem(unidadeLocal.getDescricao());
+    System.err.println("Adicionar: " + produto_tabela.getCodigo());
+    System.err.println("produto: " + produto_tabela.getDesignacao());
 
-//        double total_deconto = 0d;
-        if ( !exist_produto_tabela_formulario( tableCompra, produto_tabela.getCodigo() ) )
-        {
-            System.err.println( "ProdutoExiste" );
-//            if ( !validar_zero() && validar_zero_preco() )
-            if ( validar_zero_qtd_preco() )
-            {
-                modelo.addRow( new Object[]
-                {
-                    produto_tabela.getCodigo(),
-                    produto_tabela.getDesignacao(),
-                    getPrecoCompra(),
-                    getQuantidade(),
-                    "Un",
-//                    produto_tabela.getCodUnidade().getAbreviacao(),
-                    0,
-                    getTaxaImposto(),
-                    getQuantidade() * getPrecoCompra(),
-                    FinanceUtils.getValorComIVA(
-                    getQuantidade(),
-                    getTaxaImposto(),
-                    getPrecoCompra(),
-                    0
-                    ),
-                    qtdCritica,
-                    qtdBaixa
+    DefaultTableModel modelo = (DefaultTableModel) tableCompra.getModel();
 
-                } );
-
-            }
-
+    // -------- Proteção contra campos vazios --------
+    double qtdCritica = 0.0;
+    try {
+        if (txtQtdCritica.getText() != null && !txtQtdCritica.getText().trim().isEmpty()) {
+            qtdCritica = Double.parseDouble(txtQtdCritica.getText());
         }
-        else
-        {
-            actuazlizar_quantidade_tabela_formulario( String.valueOf( getQuantidade() ), 0.0 );
-        }
-
-        actualizar_total();
-        txtCodigoProduto.setText( "" );
-        txtCodBarra.setText( "" );
-        txtQtdEntrar.setText( "" );
-        txtPrecoCompra.setText( "0" );
-        txtPrecoVendaRetalho.setText( "0" );
-        txtCodBarra.requestFocus();
-
+    } catch (NumberFormatException e) {
+        qtdCritica = 0.0;
     }
 
+    double qtdBaixa = 0.0;
+    try {
+        if (txtQtdBaixa.getText() != null && !txtQtdBaixa.getText().trim().isEmpty()) {
+            qtdBaixa = Double.parseDouble(txtQtdBaixa.getText());
+        }
+    } catch (NumberFormatException e) {
+        qtdBaixa = 0.0;
+    }
+
+    double precoVendaComIva = 0.0;
+    try {
+        if (txtPrecoDeVendaComIva.getText() != null && !txtPrecoDeVendaComIva.getText().trim().isEmpty()) {
+            precoVendaComIva = Double.parseDouble(txtPrecoDeVendaComIva.getText());
+        }
+    } catch (NumberFormatException e) {
+        precoVendaComIva = 0.0;
+    }
+
+    // -------- Definir imposto selecionado --------
+    double impostoSelecionado = 0.0;
+    if (ivaAplicarJRadioButton.isSelected()) {
+        Object item = cmbImposto.getSelectedItem();
+        if (item != null) {
+            try {
+                impostoSelecionado = Double.parseDouble(item.toString());
+            } catch (NumberFormatException e) {
+                impostoSelecionado = 0.0;
+            }
+        }
+    }
+
+    // -------- Calcular valor com IVA --------
+    Double valorComIva = FinanceUtils.getValorComIVA(
+        getQuantidade(),
+        getTaxaImposto(),
+        getPrecoCompra(),
+        0
+    );
+
+    // -------- Definir valores finais --------
+    Double taxaFinal;
+    Double precoVendaFinal = getPrecoVenda();
+    Double ultimaColuna;
+
+    if (ivaAplicarJRadioButton.isSelected()) {
+        // aplica IVA normalmente
+        taxaFinal = impostoSelecionado;
+        ultimaColuna = precoVendaComIva;
+    } else if (ivaNaoAplicarJRadioButton.isSelected()) {
+        // não aplica IVA
+        taxaFinal = 0.0;
+        ultimaColuna = precoVendaFinal; // última coluna recebe penúltima
+    } else {
+        // fallback (nenhum selecionado)
+        taxaFinal = impostoSelecionado;
+        ultimaColuna = precoVendaComIva;
+    }
+
+    // -------- Adicionar produto --------
+    if (!exist_produto_tabela_formulario(tableCompra, produto_tabela.getCodigo())) {
+        System.err.println("ProdutoExiste");
+        if (validar_zero_qtd_preco()) {
+            modelo.addRow(new Object[]{
+                produto_tabela.getCodigo(),
+                produto_tabela.getDesignacao(),
+                getPrecoCompra(),
+                getQuantidade(),
+                unidadeLocal.getAbreviacao(),
+//                unidade,
+                0,
+                getTaxaImposto(),
+                getQuantidade() * getPrecoCompra(),
+                valorComIva,       // coluna 8
+                qtdCritica,
+                qtdBaixa,
+                taxaFinal,         // coluna 9 (taxa imposto ou 0)
+                precoVendaFinal,   // penúltima
+                ultimaColuna       // última
+            });
+        }
+    } else {
+        actuazlizar_quantidade_tabela_formulario(String.valueOf(getQuantidade()), 0.0);
+    }
+
+    // -------- Reset campos --------
+    actualizar_total();
+    txtCodigoProduto.setText("");
+    txtCodBarra.setText("");
+    txtQtdEntrar.setText("");
+    txtPrecoCompra.setText("0");
+    txtPrecoVendaRetalho.setText("0");
+    txtCodBarra.requestFocus();
+}
+
+    
     public void adicionar_produto_a_busca( TbStock stock )
     {
 
@@ -2037,11 +2826,26 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
     {
         return produto.getCodUnidade().getAbreviacao();
     }
+    
+//    public static Double getTaxaIvaVenda()
+//    {
+//        return cmbImposto.getSelectedItem().toString();
+//    }
+    
+    
 
     public static double getQuantidade()
     {
         return Double.parseDouble( txtQtdEntrar.getText() );
     }
+    
+    public static String getUnidade_Produto(TbProduto produto) {
+    if (produto != null && produto.getCodUnidade() != null) {
+        return produto.getCodUnidade().getAbreviacao();
+    }
+    return "";
+}
+
 
     public static double getQuantidade_critica()
     {
@@ -2051,6 +2855,11 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
     private static double getPrecoCompra()
     {
         return Double.parseDouble( txtPrecoCompra.getText().toString() );
+    }
+
+    private static double getPrecoVenda()
+    {
+        return Double.parseDouble( txtPrecoVendaRetalho.getText().toString() );
     }
 
     private static void actuazlizar_quantidade_tabela_formulario( String qtd, double desconto )
@@ -2729,8 +3538,8 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
             txtPrecoVendaRetalho.setText( "" );
             txtCodBarra.requestFocus();
         }
-        
-                Integer pkProduto = produto.getCodigo();
+
+        Integer pkProduto = produto.getCodigo();
         boolean temIva = produtosImpostoController.existeProdutoImposto( pkProduto );
 
         if ( !temIva )
@@ -2779,84 +3588,154 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
         return this;
     }
 
-    private static void actualizarPreco( int idProduto, Double precoCompra, PrecosController precosControllerLocal )
-    {
-        System.out.println( "ID PRODUTO: " + idProduto );
+//    private static void actualizarPreco( int idProduto, Double precoCompra, PrecosController precosControllerLocal )
+//    {
+//        System.out.println( "ID PRODUTO: " + idProduto );
+//
+//        int idPrecoRetalho = PrecosController.getLastIdPrecoByIdProdutoIntAndQTD( idProduto, 0d, conexao );
+//        System.out.println( "ID RETALHO: " + idPrecoRetalho );
+//        TbPreco precoAntigoRetalho = (TbPreco) precosControllerLocal.findById( idPrecoRetalho );
+//        System.out.println( "PRECO RETALHO: " + precoAntigoRetalho );
+//
+//        int idPrecoGrosso = PrecosController.getLastIdPrecoByIdProdutoIntAndPrecoAntigoQtdAlto( idProduto, precoAntigoRetalho.getQtdAlto() + 1, conexao );
+//        TbPreco precoAntigoGrosso = (TbPreco) precosControllerLocal.findById( idPrecoGrosso );
+//
+////        System.out.println( "ID GROSSO: " + idPrecoGrosso );
+//        System.out.println( "PRECO GROSSO: " + precoAntigoGrosso );
+//
+//        TbPreco preco_novo_retalho = new TbPreco();
+//
+//        preco_novo_retalho.setData( precoAntigoRetalho.getData() );
+//        preco_novo_retalho.setHora( precoAntigoRetalho.getHora() );
+//        preco_novo_retalho.setPercentagemGanho( precoAntigoRetalho.getPercentagemGanho() );
+//
+//        preco_novo_retalho.setFkProduto( precoAntigoRetalho.getFkProduto() );
+//        preco_novo_retalho.setFkUsuario( precoAntigoRetalho.getFkUsuario() );
+//        preco_novo_retalho.setPrecoCompra( new BigDecimal( precoCompra ) );
+//        preco_novo_retalho.setPrecoVenda( precoAntigoRetalho.getPrecoVenda() );
+//        preco_novo_retalho.setQtdBaixo( precoAntigoRetalho.getQtdBaixo() );
+//        preco_novo_retalho.setQtdAlto( precoAntigoRetalho.getQtdAlto() );
+//        preco_novo_retalho.setPrecoAnterior( precoAntigoRetalho.getPrecoAnterior() );
+//        preco_novo_retalho.setRetalho( precoAntigoRetalho.getRetalho() );
+//
+//        System.out.println( "HORA RETALHO: " + preco_novo_retalho.getHora() );
+//        System.out.println( "DATA RETAHO: " + preco_novo_retalho.getData() );
+//
+//        try
+//        {
+//            precosControllerLocal.salvar( preco_novo_retalho );
+////            precoDao.create(preco_novo_retalho);
+//            System.out.println( "Preco de compra retalho actualizado na compra" );
+//        }
+//        catch ( Exception e )
+//        {
+//            e.printStackTrace();
+//            System.err.println( "Falha ao actualizar o preço retalho na compra" );
+//        }
+//
+//        try
+//        {
+//            //        preco_novo_grosso = precoAntigoGrosso;
+//            TbPreco preco_novo_grosso = new TbPreco();
+//
+//            preco_novo_grosso.setData( precoAntigoGrosso.getData() );
+//            preco_novo_grosso.setHora( precoAntigoGrosso.getHora() );
+//            preco_novo_grosso.setPercentagemGanho( precoAntigoGrosso.getPercentagemGanho() );
+//
+//            preco_novo_grosso.setFkProduto( precoAntigoGrosso.getFkProduto() );
+//            preco_novo_grosso.setFkUsuario( precoAntigoGrosso.getFkUsuario() );
+//            preco_novo_grosso.setPrecoCompra( new BigDecimal( precoCompra ) );
+//            preco_novo_grosso.setPrecoVenda( precoAntigoGrosso.getPrecoVenda() );
+//            preco_novo_grosso.setQtdBaixo( precoAntigoGrosso.getQtdBaixo() );
+//            preco_novo_grosso.setQtdAlto( precoAntigoGrosso.getQtdAlto() );
+//            preco_novo_grosso.setPrecoAnterior( precoAntigoGrosso.getPrecoAnterior() );
+//            preco_novo_grosso.setRetalho( precoAntigoGrosso.getRetalho() );
+//
+//            System.out.println( "HORA GROSSO: " + precoAntigoGrosso.getHora() );
+//            System.out.println( "DATA GROSSO: " + precoAntigoGrosso.getData() );
+//
+//            precosControllerLocal.salvar( preco_novo_grosso );
+////            precoDao.create(preco_novo_grosso);
+//            System.out.println( "Preco de compra grosso actualizado na compra" );
+//        }
+//        catch ( Exception e )
+//        {
+//            e.printStackTrace();
+//            System.err.println( "Falha ao actualizar o preço grosso na compra" );
+//        }
+//
+//    }
 
-        int idPrecoRetalho = PrecosController.getLastIdPrecoByIdProdutoIntAndQTD( idProduto, 0d, conexao );
-        System.out.println( "ID RETALHO: " + idPrecoRetalho );
-        TbPreco precoAntigoRetalho = (TbPreco) precosControllerLocal.findById( idPrecoRetalho );
-        System.out.println( "PRECO RETALHO: " + precoAntigoRetalho );
+    private static void actualizarPreco(int idProduto, Double precoCompra, Double precoVenda, PrecosController precosControllerLocal) {
+    System.out.println("ID PRODUTO: " + idProduto);
 
-        int idPrecoGrosso = PrecosController.getLastIdPrecoByIdProdutoIntAndPrecoAntigoQtdAlto( idProduto, precoAntigoRetalho.getQtdAlto() + 1, conexao );
-        TbPreco precoAntigoGrosso = (TbPreco) precosControllerLocal.findById( idPrecoGrosso );
+    int idPrecoRetalho = PrecosController.getLastIdPrecoByIdProdutoIntAndQTD(idProduto, 0d, conexao);
+    TbPreco precoAntigoRetalho = (TbPreco) precosControllerLocal.findById(idPrecoRetalho);
 
-//        System.out.println( "ID GROSSO: " + idPrecoGrosso );
-        System.out.println( "PRECO GROSSO: " + precoAntigoGrosso );
+    int idPrecoGrosso = PrecosController.getLastIdPrecoByIdProdutoIntAndPrecoAntigoQtdAlto(
+            idProduto, precoAntigoRetalho.getQtdAlto() + 1, conexao);
+    TbPreco precoAntigoGrosso = (TbPreco) precosControllerLocal.findById(idPrecoGrosso);
 
-        TbPreco preco_novo_retalho = new TbPreco();
+    // ---------------- RETALHO ----------------
+    TbPreco preco_novo_retalho = new TbPreco();
+    preco_novo_retalho.setData(new Date());
+    preco_novo_retalho.setHora(new Date());
+    preco_novo_retalho.setPercentagemGanho(precoAntigoRetalho.getPercentagemGanho());
+    preco_novo_retalho.setFkProduto(precoAntigoRetalho.getFkProduto());
+    preco_novo_retalho.setFkUsuario(precoAntigoRetalho.getFkUsuario());
+    preco_novo_retalho.setPrecoCompra(new BigDecimal(precoCompra));
+    preco_novo_retalho.setPrecoVenda(new BigDecimal(precoVenda)); // ✅ novo preço de venda
+    preco_novo_retalho.setQtdBaixo(precoAntigoRetalho.getQtdBaixo());
+    preco_novo_retalho.setQtdAlto(precoAntigoRetalho.getQtdAlto());
+    preco_novo_retalho.setPrecoAnterior(precoAntigoRetalho.getPrecoAnterior());
+    preco_novo_retalho.setRetalho(precoAntigoRetalho.getRetalho());
 
-        preco_novo_retalho.setData( precoAntigoRetalho.getData() );
-        preco_novo_retalho.setHora( precoAntigoRetalho.getHora() );
-        preco_novo_retalho.setPercentagemGanho( precoAntigoRetalho.getPercentagemGanho() );
-
-        preco_novo_retalho.setFkProduto( precoAntigoRetalho.getFkProduto() );
-        preco_novo_retalho.setFkUsuario( precoAntigoRetalho.getFkUsuario() );
-        preco_novo_retalho.setPrecoCompra( new BigDecimal( precoCompra ) );
-        preco_novo_retalho.setPrecoVenda( precoAntigoRetalho.getPrecoVenda() );
-        preco_novo_retalho.setQtdBaixo( precoAntigoRetalho.getQtdBaixo() );
-        preco_novo_retalho.setQtdAlto( precoAntigoRetalho.getQtdAlto() );
-        preco_novo_retalho.setPrecoAnterior( precoAntigoRetalho.getPrecoAnterior() );
-        preco_novo_retalho.setRetalho( precoAntigoRetalho.getRetalho() );
-
-        System.out.println( "HORA RETALHO: " + preco_novo_retalho.getHora() );
-        System.out.println( "DATA RETAHO: " + preco_novo_retalho.getData() );
-
-        try
-        {
-            precosControllerLocal.salvar( preco_novo_retalho );
-//            precoDao.create(preco_novo_retalho);
-            System.out.println( "Preco de compra retalho actualizado na compra" );
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace();
-            System.err.println( "Falha ao actualizar o preço retalho na compra" );
-        }
-
-        try
-        {
-            //        preco_novo_grosso = precoAntigoGrosso;
-            TbPreco preco_novo_grosso = new TbPreco();
-
-            preco_novo_grosso.setData( precoAntigoGrosso.getData() );
-            preco_novo_grosso.setHora( precoAntigoGrosso.getHora() );
-            preco_novo_grosso.setPercentagemGanho( precoAntigoGrosso.getPercentagemGanho() );
-
-            preco_novo_grosso.setFkProduto( precoAntigoGrosso.getFkProduto() );
-            preco_novo_grosso.setFkUsuario( precoAntigoGrosso.getFkUsuario() );
-            preco_novo_grosso.setPrecoCompra( new BigDecimal( precoCompra ) );
-            preco_novo_grosso.setPrecoVenda( precoAntigoGrosso.getPrecoVenda() );
-            preco_novo_grosso.setQtdBaixo( precoAntigoGrosso.getQtdBaixo() );
-            preco_novo_grosso.setQtdAlto( precoAntigoGrosso.getQtdAlto() );
-            preco_novo_grosso.setPrecoAnterior( precoAntigoGrosso.getPrecoAnterior() );
-            preco_novo_grosso.setRetalho( precoAntigoGrosso.getRetalho() );
-
-            System.out.println( "HORA GROSSO: " + precoAntigoGrosso.getHora() );
-            System.out.println( "DATA GROSSO: " + precoAntigoGrosso.getData() );
-
-            precosControllerLocal.salvar( preco_novo_grosso );
-//            precoDao.create(preco_novo_grosso);
-            System.out.println( "Preco de compra grosso actualizado na compra" );
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace();
-            System.err.println( "Falha ao actualizar o preço grosso na compra" );
-        }
-
+    try {
+        precosControllerLocal.salvar(preco_novo_retalho);
+        System.out.println("Preco de compra/venda retalho atualizado na compra");
+    } catch (Exception e) {
+        e.printStackTrace();
+        System.err.println("Falha ao atualizar o preço retalho na compra");
     }
 
+    // ---------------- GROSSO ----------------
+    try {
+        TbPreco preco_novo_grosso = new TbPreco();
+        preco_novo_grosso.setData(new Date());
+        preco_novo_grosso.setHora(new Date());
+        preco_novo_grosso.setPercentagemGanho(precoAntigoGrosso.getPercentagemGanho());
+        preco_novo_grosso.setFkProduto(precoAntigoGrosso.getFkProduto());
+        preco_novo_grosso.setFkUsuario(precoAntigoGrosso.getFkUsuario());
+        preco_novo_grosso.setPrecoCompra(new BigDecimal(precoCompra));
+        preco_novo_grosso.setPrecoVenda(new BigDecimal(precoVenda)); // ✅ novo preço de venda
+        preco_novo_grosso.setQtdBaixo(precoAntigoGrosso.getQtdBaixo());
+        preco_novo_grosso.setQtdAlto(precoAntigoGrosso.getQtdAlto());
+        preco_novo_grosso.setPrecoAnterior(precoAntigoGrosso.getPrecoAnterior());
+        preco_novo_grosso.setRetalho(precoAntigoGrosso.getRetalho());
+
+        precosControllerLocal.salvar(preco_novo_grosso);
+        System.out.println("Preco de compra/venda grosso atualizado na compra");
+    } catch (Exception e) {
+        e.printStackTrace();
+        System.err.println("Falha ao atualizar o preço grosso na compra");
+    }
+}
+
+    private void salvarPreco() {
+    try {
+        int idProduto = produto.getCodigo();
+        Double precoCompra = Double.parseDouble(txtPrecoCompra.getText().replace(",", "."));
+        Double precoVenda = Double.parseDouble(txtPrecoVendaRetalho.getText().replace(",", "."));
+
+        actualizarPreco(idProduto, precoCompra, precoVenda, precosController);
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Erro ao salvar preço: " + e.getMessage());
+    }
+}
+
+    
     private static boolean registrar_stock( TbProduto produto_local, double qtd, double qtdCritica, double qtdbaixa, StoksController stocksControllerLocal )
     {
 
@@ -3020,6 +3899,20 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
 
     }
 
+//    private static double getPrecoCompraMedio( int codProduto, double qtdEntrada, double precoNovo )
+//    {
+//
+//        preco = (TbPreco) precosController.getLastIdPrecoByIdProdutos( codProduto );
+//        double precoActual = preco.getPrecoCompra().doubleValue();
+//        double qtdExistenteActual = stocksController.getQuantidadeProduto( codProduto, getIdArmazens() );
+//        System.err.println( "Preco Antigo: " + precoActual );
+//        System.err.println( "Preco Novo: " + precoNovo );
+//        double precoMedio = ( ( qtdExistenteActual * precoActual ) + ( qtdEntrada * precoNovo ) ) / ( qtdExistenteActual + qtdEntrada );
+//        System.err.println( "Preco Médio: " + precoMedio );
+//        return precoMedio;
+//
+//    }
+    
     private static double getPrecoCompraMedio( int codProduto, double qtdEntrada, double precoNovo )
     {
 
@@ -3033,6 +3926,37 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
         return precoMedio;
 
     }
+
+    
+//    private static double getPrecoCompraMedio(int codProduto, double qtdEntrada, double precoCompraNovo) {
+//    TbPreco preco = (TbPreco) precosController.getLastIdPrecoByIdProdutos(codProduto);
+//
+//    double precoActual = 0.0;
+//    if (preco != null && preco.getPrecoCompra() != null) {
+//        precoActual = preco.getPrecoCompra().doubleValue();
+//    }
+//
+//    double qtdExistenteActual = stocksController.getQuantidadeProduto(codProduto, getIdArmazens());
+//
+//    System.err.println("Preco Antigo: " + precoActual);
+//    System.err.println("Preco Novo (Compra): " + precoCompraNovo);
+//    System.err.println("Qtd Existente: " + qtdExistenteActual);
+//    System.err.println("Qtd Entrada: " + qtdEntrada);
+//
+//    double precoMedio;
+//    if (qtdExistenteActual + qtdEntrada > 0) {
+//        precoMedio = ((qtdExistenteActual * precoActual) + (qtdEntrada * precoCompraNovo))
+//                / (qtdExistenteActual + qtdEntrada);
+//    } else {
+//        precoMedio = precoCompraNovo;
+//    }
+//
+//    System.err.println("Preco Médio: " + precoMedio);
+//
+//    return precoMedio;
+//}
+
+    
 //    private static double getPrecoCompraMedio( int codProduto, double precoNovo )
 //    {
 //
@@ -3078,36 +4002,92 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
         return 0;
     }
 
-    private void calcularIva()
-    {
+    private void calcularIva() {
+    if (!txtPrecoCompra.getText().trim().isEmpty()) {
+        try {
+            double qtd = 1d;
 
-        if ( !txtPrecoCompra.getText().equals( "" ) )
-        {
-            try
-            {
-//                if ( ck_servico.isSelected() )
-//                {
-//                    txtPrecoVendaRetalho.setText( txtPrecoCompra.getText() );
-//                }
+            // 🔹 Pega o valor selecionado no combo
+            Object itemSelecionado = cmbImposto.getSelectedItem();
+            double taxa = 0.0;
 
-                double qtd = 1d;
-                double taxa = Double.parseDouble( cmbImposto.getSelectedItem().toString() );
-//                double precoLocal = MetodosUtil.convertToDouble( txtPrecoVendaRetalho.getText() );
+            if (itemSelecionado != null) {
+                String valor = itemSelecionado.toString().trim();
 
-                double precoLocal = Double.parseDouble( txtPrecoVendaRetalho.getText() );
-                double desconto = 0d;
-                double valorComIVA = FinanceUtils.getValorComIVA( qtd, taxa, precoLocal, desconto );
-
-                txtPrecoDeVendaComIva.setText( String.valueOf( valorComIVA ) );
-            }
-            catch ( Exception e )
-            {
-                e.printStackTrace();
+                // Ignora "--SELECIONE--" ou vazio
+                if (!valor.isEmpty() && !valor.equalsIgnoreCase("--SELECIONE--")) {
+                    try {
+                        taxa = Double.parseDouble(valor);
+                    } catch (NumberFormatException nfe) {
+                        taxa = 0.0; // fallback seguro
+                    }
+                }
             }
 
+            // 🔹 Preço local
+            double precoLocal = 0.0;
+            if (!txtPrecoVendaRetalho.getText().trim().isEmpty()) {
+                precoLocal = Double.parseDouble(txtPrecoVendaRetalho.getText().trim());
+            }
+
+            double desconto = 0d;
+            double valorComIVA = FinanceUtils.getValorComIVA(qtd, taxa, precoLocal, desconto);
+
+            txtPrecoDeVendaComIva.setText(String.valueOf(valorComIVA));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null,
+                "Erro ao calcular IVA. Verifique os valores.",
+                "Erro",
+                JOptionPane.ERROR_MESSAGE);
         }
-
     }
+}
+
+    
+    private double parseDoubleSafe(Object valor) {
+    if (valor == null) return 0.0;
+    String txt = valor.toString().trim();
+
+    if (txt.isEmpty() || txt.equalsIgnoreCase("--SELECIONE--")) {
+        return 0.0; // Produto isento → retorna zero
+    }
+
+    try {
+        return Double.parseDouble(txt);
+    } catch (NumberFormatException e) {
+        return 0.0; // fallback seguro
+    }
+}
+
+//private void calcularIva() {
+//    try {
+//        for (int i = 0; i < tableCompra.getRowCount(); i++) {
+//            // Valor base (coluna do preço ou subtotal)
+//            double valorBase = parseDoubleSafe(tableCompra.getValueAt(i, 2)); 
+//
+//            // Quantidade
+//            double qtd = parseDoubleSafe(tableCompra.getValueAt(i, 3));
+//
+//            // Taxa IVA (antepenúltima coluna)
+//            double taxaIva = parseDoubleSafe(tableCompra.getValueAt(i, tableCompra.getColumnCount() - 3));
+//
+//            // Valor do IVA = base * qtd * (taxa/100)
+//            double valorIva = valorBase * qtd * (taxaIva / 100);
+//
+//            // Atualiza a coluna do IVA (ajusta o índice conforme tua JTable)
+//            tableCompra.setValueAt(valorIva, i, 6);
+//        }
+//    } catch (Exception e) {
+//        e.printStackTrace();
+//        JOptionPane.showMessageDialog(null, 
+//            "Erro ao calcular o IVA", 
+//            "Erro", 
+//            JOptionPane.ERROR_MESSAGE);
+//    }
+//}
+
 
     private void calcularSemIva()
     {
@@ -3252,6 +4232,13 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
             txtCodBarra.requestFocus();
 
         }
+    }
+
+    public static String getUnidade_Produtos()
+    {
+        TbProduto produto = (TbProduto) produtosController.findById( getCodigoProduto() );
+        Unidade unidade = (Unidade) unidadesController.findById( produto.getCodUnidade().getPkUnidade() );
+        return unidade.getAbreviacao();
     }
 
 }

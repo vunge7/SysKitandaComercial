@@ -48,7 +48,7 @@ public class LerUtil
     {
 
         System.out.println( "inciar: " );
-        String file = DVML.CAMINHO_DOCUMENTO + "/novo_file.xls";
+        String file = DVML.CAMINHO_DOCUMENTO + "/TABELA_SERVICOS_SAUDE_VIDA.xls";
         File arquivoAnalistas = new File( file );
 
         List<DadosUtil> listaItem = new ArrayList<>();
@@ -163,10 +163,12 @@ public class LerUtil
         produto.setCodTipoProduto( new TbTipoProduto( idTipoProduto ) );
         produto.setFkModelo( new Modelo( 1 ) );
         produto.setFkGrupo( new Grupo( 1 ) );
-        produto.setStatusIva( "false" );
+        produto.setStatusIva( "true" );
 //        produto.setPercentagemDesconto( 0d );
         produto.setCozinha( "Nao Enviar Ticket" );
         produto.setPhoto( null );
+        produto.setCodPai(0 );
+        produto.setUnidadeCompra(0d );
 
     }
 
