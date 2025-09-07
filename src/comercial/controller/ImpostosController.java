@@ -179,7 +179,7 @@ public class ImpostosController implements EntidadeFactory
     {
 
         System.out.println( "TAXA IMPOSTO : " + taxa );
-        String sql = "SELECT *  FROM imposto  WHERE taxa = " + taxa;
+        String sql = "SELECT * FROM imposto  WHERE taxa = " + taxa;
         ResultSet result = conexao.executeQuery( sql );
         Imposto imposto = null;
         try
