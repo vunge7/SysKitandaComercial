@@ -25,53 +25,53 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author lenovo
  */
 @Entity
-@Table(name = "tb_armazem")
+@Table( name = "tb_armazem" )
 @XmlRootElement
 @NamedQueries(
-{
-    @NamedQuery(name = "TbArmazem.findAll", query = "SELECT t FROM TbArmazem t"),
-    @NamedQuery(name = "TbArmazem.findByCodigo", query = "SELECT t FROM TbArmazem t WHERE t.codigo = :codigo"),
-    @NamedQuery(name = "TbArmazem.findByDesignacao", query = "SELECT t FROM TbArmazem t WHERE t.designacao = :designacao")
-})
+                {
+            @NamedQuery( name = "TbArmazem.findAll", query = "SELECT t FROM TbArmazem t" ),
+            @NamedQuery( name = "TbArmazem.findByCodigo", query = "SELECT t FROM TbArmazem t WHERE t.codigo = :codigo" ),
+            @NamedQuery( name = "TbArmazem.findByDesignacao", query = "SELECT t FROM TbArmazem t WHERE t.designacao = :designacao" )
+        } )
 public class TbArmazem implements Serializable
 {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "codigo")
+    @GeneratedValue( strategy = GenerationType.IDENTITY )
+    @Basic( optional = false )
+    @Column( name = "codigo" )
     private Integer codigo;
-    @Basic(optional = false)
-    @Column(name = "designacao")
+    @Basic( optional = false )
+    @Column( name = "designacao" )
     private String designacao;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "codArmazem")
+    @OneToMany( cascade = CascadeType.ALL, mappedBy = "codArmazem" )
     private List<TbStockMirrow> tbStockMirrowList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idArmazemFK")
+    @OneToMany( cascade = CascadeType.ALL, mappedBy = "idArmazemFK" )
     private List<NotasCompras> notasComprasList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idArmazemFK")
+    @OneToMany( cascade = CascadeType.ALL, mappedBy = "idArmazemFK" )
     private List<Notas> notasList;
-    @OneToMany(mappedBy = "idArmazemFK")
+    @OneToMany( mappedBy = "idArmazemFK" )
     private List<Compras> comprasList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idArmazemFK")
+    @OneToMany( cascade = CascadeType.ALL, mappedBy = "idArmazemFK" )
     private List<TbEstorno> tbEstornoList;
-    @OneToMany(mappedBy = "idArmazemFK")
+    @OneToMany( mappedBy = "idArmazemFK" )
     private List<TbAcerto> tbAcertoList;
-    @OneToMany(mappedBy = "fkArmazem")
+    @OneToMany( mappedBy = "fkArmazem" )
     private List<TbVasilhame> tbVasilhameList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idArmazemFK")
+    @OneToMany( cascade = CascadeType.ALL, mappedBy = "idArmazemFK" )
     private List<TbSaidasProdutos> tbSaidasProdutosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idArmazemFK")
+    @OneToMany( cascade = CascadeType.ALL, mappedBy = "idArmazemFK" )
     private List<TbEntrada> tbEntradaList;
-    @OneToMany(mappedBy = "fkAmazem")
+    @OneToMany( mappedBy = "fkAmazem" )
     private List<TbEntradaVasilhame> tbEntradaVasilhameList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idArmazemFK")
+    @OneToMany( cascade = CascadeType.ALL, mappedBy = "idArmazemFK" )
     private List<TbVenda> tbVendaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "codArmazem")
+    @OneToMany( cascade = CascadeType.ALL, mappedBy = "codArmazem" )
     private List<TbStock> tbStockList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkArmazem")
+    @OneToMany( cascade = CascadeType.ALL, mappedBy = "fkArmazem" )
     private List<AccessoArmazem> accessoArmazemList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkArmazem")
+    @OneToMany( cascade = CascadeType.ALL, mappedBy = "fkArmazem" )
     private List<TbSaidaVasilhame> tbSaidaVasilhameList;
 
     public TbArmazem()
@@ -87,6 +87,11 @@ public class TbArmazem implements Serializable
     {
         this.codigo = codigo;
         this.designacao = designacao;
+    }
+
+    public String getDisplayName()
+    {
+        return this.designacao; // ou getNome()
     }
 
     public Integer getCodigo()
@@ -279,7 +284,7 @@ public class TbArmazem implements Serializable
         {
             return false;
         }
-        TbArmazem other = ( TbArmazem ) object;
+        TbArmazem other = (TbArmazem) object;
         if ( ( this.codigo == null && other.codigo != null ) || ( this.codigo != null && !this.codigo.equals( other.codigo ) ) )
         {
             return false;
@@ -292,5 +297,5 @@ public class TbArmazem implements Serializable
     {
         return "entity.TbArmazem[ codigo=" + codigo + " ]";
     }
-    
+
 }

@@ -6,6 +6,7 @@
 package comercial.controller;
 
 import entity.TbArmazem;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -336,5 +337,24 @@ public class ArmazensController implements EntidadeFactory
         return armazem;
 
     }
+    
+    public int getCodigoPorDesignacao(String nomeArmazem) {
+    int codigo = -1;
+    String sql = "SELECT codigo FROM tb_armazem WHERE designacao = ?";
+
+    try (PreparedStatement ps = conexao.getConnection().prepareStatement(sql)) {
+        ps.setString(1, nomeArmazem);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                codigo = rs.getInt("codigo");
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return codigo;
+}
+
 
 }
