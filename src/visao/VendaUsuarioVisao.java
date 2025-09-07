@@ -4364,6 +4364,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 INDEX_TABLE_PRECO,
                 INDEX_TABLE_QTD,
                 INDEX_TABLE_DESCONTO, INDEX_TABLE_TAXA_IVA, table ) );
+        
+        
         venda.setTotalRetencao( getTotalRetencaoLiquido() );
         venda.setGorjeta( new BigDecimal( gorjeta ) );
         venda.setTotalPorExtenso( iniciais_extenso() + lbValorPorExtenco.getText() );
@@ -6539,4 +6541,15 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     }
 
+    
+    /**
+     *
+     * @author Engº Domingos Dala Vunge
+     * @created date
+     * @lastModified date
+     * @param
+     * @return
+     */
+    private void teste(){
+    }
 }
