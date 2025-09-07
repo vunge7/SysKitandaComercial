@@ -671,6 +671,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jmUnidades = new javax.swing.JMenuItem();
         jmGavetasPrateleiras = new javax.swing.JMenuItem();
         jmAcertoStock = new javax.swing.JMenuItem();
+        jMenuItem5 = new javax.swing.JMenuItem();
         jmReactivarProdutos = new javax.swing.JMenuItem();
         jmPermissao = new javax.swing.JMenuItem();
         jMenuItem8 = new javax.swing.JMenuItem();
@@ -1525,6 +1526,16 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
             }
         });
         jMenu6.add(jmAcertoStock);
+
+        jMenuItem5.setText("Acerto Stock Em Massa");
+        jMenuItem5.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jMenuItem5ActionPerformed(evt);
+            }
+        });
+        jMenu6.add(jMenuItem5);
 
         jmReactivarProdutos.setText("Reactivar Produtos");
         jmReactivarProdutos.addActionListener(new java.awt.event.ActionListener()
@@ -2401,7 +2412,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jMenuItemRelatorioDeEntradasActionPerformed
 //        try
 //        {
-            new ListarRelatorioEntradaByIntervalo( this.conexao ).setVisible( true );
+        new ListarRelatorioEntradaByIntervalo( this.conexao ).setVisible( true );
 //            new ListarEntradasProdutosPorEntervaloData( cod_utilizador ).setVisible( true );
 //        }
 //        catch ( SQLException ex )
@@ -2412,8 +2423,16 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
     private void jMenuItemCancelamentoEntradasActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemCancelamentoEntradasActionPerformed
     {//GEN-HEADEREND:event_jMenuItemCancelamentoEntradasActionPerformed
-        new AnulamentoEntradaVisao(this, administrador ).setVisible( true);
+        new AnulamentoEntradaVisao( this, administrador ).setVisible( true );
     }//GEN-LAST:event_jMenuItemCancelamentoEntradasActionPerformed
+
+    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem5ActionPerformed
+    {//GEN-HEADEREND:event_jMenuItem5ActionPerformed
+//        int idDoUsuarioLogado = usuarioLogado.getCodigo(); // obténs do objecto de login
+//        AcertoStockEmMassaVisao dlg = new AcertoStockEmMassaVisao( mainFrame, true, idDoUsuarioLogado );
+//        dlg.setVisible( true );
+        new AcertoStockEmMassaVisao(this, administrador, ERROR, YYYYMMDD_HHMMSS ).setVisible( true);
+    }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -2497,6 +2516,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
+    private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenuItem jMenuItem8;

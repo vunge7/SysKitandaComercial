@@ -15,6 +15,8 @@ import entity.TbProduto;
 import entity.TbStock;
 import entity.TbTipoProduto;
 import entity.Unidade;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -1105,23 +1107,156 @@ public class StoksController implements EntidadeFactory
         return 0;
     }
 
-//    public double getQuantidadeProduto( int cod_produto, int idArmazem )
-//    {
-//        String sql = "SELECT quantidade_existente FROM  tb_stock WHERE  cod_produto_codigo = " + cod_produto + " AND cod_armazem = " + idArmazem;
-//        ResultSet rs = conexao.executeQuery( sql );
-//        try
-//        {
-//            if ( rs.next() )
-//            {
-//                return rs.getDouble( "quantidade_existente" );
-//            }
-//        }
-//        catch ( SQLException ex )
-//        {
-//            ex.printStackTrace();
-//            return 0;
-//        }
+public void salvarAcertos(Connection conn, int codArmazem, List<Object[]> linhas, int usuarioId) throws SQLException {
+    String updateStock = "UPDATE tb_stock SET quantidade_existente = ? WHERE cod_produto_codigo = ? AND cod_armazem = ?";
+    String insertAcerto = "INSERT INTO acerto_stock (cod_produto, cod_armazem, quantidade_antes, quantidade_acerto, quantidade_depois, usuario_id, data, hora) VALUES (?, ?, ?, ?, ?, ?, CURRENT_DATE, CURRENT_TIME)";
+
+    try (
+        PreparedStatement pstUpdate = conn.prepareStatement(updateStock);
+        PreparedStatement pstInsert = conn.prepareStatement(insertAcerto)
+    ) {
+        conn.setAutoCommit(false); // Início da transação
+
+        for (Object[] linha : linhas) {
+            int codProduto = (Integer) linha[0];
+            double qtdAntes   = Double.parseDouble(linha[5].toString());
+            double qtdAcerto  = Double.parseDouble(linha[6].toString());
+            double qtdDepois  = Double.parseDouble(linha[7].toString());
+
+            if (qtdAcerto != 0) {
+                // Atualiza tb_stock
+                pstUpdate.setDouble(1, qtdDepois);
+                pstUpdate.setInt(2, codProduto);
+                pstUpdate.setInt(3, codArmazem);
+                pstUpdate.addBatch();
+
+                // Insere histórico em acerto_stock
+                pstInsert.setInt(1, codProduto);
+                pstInsert.setInt(2, codArmazem);
+                pstInsert.setDouble(3, qtdAntes);
+                pstInsert.setDouble(4, qtdAcerto);
+                pstInsert.setDouble(5, qtdDepois);
+                pstInsert.setInt(6, usuarioId);
+                pstInsert.addBatch();
+            }
+        }
+
+        pstUpdate.executeBatch();
+        pstInsert.executeBatch();
+
+        conn.commit(); // Confirma tudo
+    } catch (SQLException e) {
+        conn.rollback(); // Desfaz tudo em caso de erro
+        throw e;
+    } finally {
+        conn.setAutoCommit(true);
+    }
+}
+
+//public void salvarAcertoLinha(Connection conn, int codProduto, int codArmazem, int usuarioId,
+//                              String nomeUsuario, String designacaoProduto, String designacaoArmazem,
+//                              double qtdAntes, double qtdAcerto, double qtdDepois) throws SQLException {
 //
-//        return 0;
+//    String sqlUpdateStock = "UPDATE tb_stock SET quantidade_existente = ? WHERE cod_produto_codigo = ? AND cod_armazem = ?";
+//    String sqlInsertAcerto = "INSERT INTO acerto_stock (data_hora, cod_produto, designacao_produto, cod_usuario, nome_usuario, qtd_anterior, qtd_acerto, qtd_depois, cod_armazem, designcao_armazem) "
+//                           + "VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+//
+//    try {
+//        conn.setAutoCommit(false); // iniciar transação
+//
+//        try (PreparedStatement psUpdate = conn.prepareStatement(sqlUpdateStock);
+//             PreparedStatement psInsert = conn.prepareStatement(sqlInsertAcerto)) {
+//
+//            // --- Atualiza tb_stock ---
+//            psUpdate.setDouble(1, qtdDepois);
+//            psUpdate.setInt(2, codProduto);
+//            psUpdate.setInt(3, codArmazem);
+//            psUpdate.executeUpdate();
+//
+//            // --- Insere histórico acerto_stock ---
+//            psInsert.setInt(1, codProduto);
+//            psInsert.setString(2, designacaoProduto);
+//            psInsert.setInt(3, usuarioId);
+//            psInsert.setString(4, nomeUsuario);
+//            psInsert.setDouble(5, qtdAntes);
+//            psInsert.setDouble(6, qtdAcerto);
+//            psInsert.setDouble(7, qtdDepois);
+//            psInsert.setInt(8, codArmazem);
+//            psInsert.setString(9, designacaoArmazem);
+//            psInsert.executeUpdate();
+//
+//            conn.commit(); // commit transação
+//        } catch (SQLException e) {
+//            conn.rollback();
+//            throw e;
+//        } finally {
+//            conn.setAutoCommit(true);
+//        }
+//    } catch (SQLException e) {
+//        throw e;
 //    }
+//}
+
+public void salvarAcertoLinha(Connection conn,
+                              int codProduto,
+                              int codArmazem,
+                              int usuarioId,
+                              String nomeUsuario,
+                              String designacaoProduto,
+                              String designacaoArmazem,
+                              double qtdAntes,
+                              double qtdAcerto,
+                              double qtdDepois) throws SQLException {
+
+    String sqlAcerto = "INSERT INTO acerto_stock "
+            + "(data_hora, cod_produto, designacao_produto, cod_usuario, nome_usuario, "
+            + "qtd_anterior, qtd_acerto, qtd_depois, cod_armazem, designcao_armazem) "
+            + "VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    String sqlStock = "UPDATE tb_stock "
+            + "SET quantidade_existente = ? "
+            + "WHERE cod_produto_codigo = ? AND cod_armazem = ?";
+
+    // inicia transação
+    boolean autoCommit = conn.getAutoCommit();
+    conn.setAutoCommit(false);
+
+    try (
+        PreparedStatement psAcerto = conn.prepareStatement(sqlAcerto);
+        PreparedStatement psStock = conn.prepareStatement(sqlStock)
+    ) {
+        // --- grava acerto_stock ---
+        psAcerto.setInt(1, codProduto);
+        psAcerto.setString(2, designacaoProduto);
+        psAcerto.setInt(3, usuarioId);
+        psAcerto.setString(4, nomeUsuario);
+        psAcerto.setDouble(5, qtdAntes);
+        psAcerto.setDouble(6, qtdAcerto);
+        psAcerto.setDouble(7, qtdDepois);
+        psAcerto.setInt(8, codArmazem);
+        psAcerto.setString(9, designacaoArmazem);
+        psAcerto.executeUpdate();
+
+        // --- atualiza tb_stock ---
+        psStock.setDouble(1, qtdDepois);
+        psStock.setInt(2, codProduto);
+        psStock.setInt(3, codArmazem);
+        psStock.executeUpdate();
+
+        // confirma transação
+        conn.commit();
+
+    } catch (SQLException ex) {
+        conn.rollback();
+        throw ex;
+    } finally {
+        // restaura autoCommit
+        conn.setAutoCommit(autoCommit);
+    }
+}
+
+
+
+
+
 }

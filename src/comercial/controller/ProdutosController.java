@@ -12,6 +12,7 @@ import entity.TbLocal;
 import entity.TbProduto;
 import entity.TbTipoProduto;
 import entity.Unidade;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -1037,6 +1038,169 @@ public class ProdutosController implements EntidadeFactory
         return produtos;
 
     }
+
+//    public List<Object[]> listarStockPorArmazem(Connection conn, int codArmazem) {
+//        List<Object[]> lista = new ArrayList<>();
+//
+//        String sql = "SELECT p.codigo, p.designacao, tp.designacao AS tipo, " +
+//                     "       pr.preco_compra, pr.preco_venda, " +
+//                     "       s.quantidade_existente " +
+//                     "FROM tb_produto p " +
+//                     "JOIN tb_tipo_produto tp ON p.cod_Tipo_Produto = tp.codigo " +
+//                     "JOIN tb_stock s ON s.cod_produto_codigo = p.codigo " +
+//                     "JOIN tb_preco pr ON pr.fk_produto = p.codigo " +
+//                     "WHERE s.cod_armazem = ? " +
+//                     "  AND pr.data = ( " +
+//                     "      SELECT MAX(p2.data) " +
+//                     "      FROM tb_preco p2 " +
+//                     "      WHERE p2.fk_produto = p.codigo " +
+//                     "  ) " +
+//                     "ORDER BY p.designacao ASC";
+//
+//        try (PreparedStatement pst = conn.prepareStatement(sql)) {
+//            pst.setInt(1, codArmazem);
+//            ResultSet rs = pst.executeQuery();
+//
+//            while (rs.next()) {
+//                Object[] linha = new Object[]{
+//                    rs.getInt("codigo"),
+//                    rs.getString("designacao"),
+//                    rs.getString("tipo"),
+//                    rs.getBigDecimal("preco_compra"),
+//                    rs.getBigDecimal("preco_venda"),
+//                    rs.getDouble("quantidade_existente"),
+//                    0.0, // quantidade de acerto
+//                    rs.getDouble("quantidade_existente") // quantidade final
+//                };
+//                lista.add(linha);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        return lista;
+//    }
+    
+    public List<Object[]> listarStockPorArmazem(Connection conn, int codArmazem) {
+    List<Object[]> lista = new ArrayList<>();
+
+    String sql =
+        "SELECT p.codigo, p.designacao, tp.designacao AS tipo_produto, " +
+        "       (SELECT AVG(pr.preco_compra) FROM tb_preco pr WHERE pr.fk_produto = p.codigo) AS preco_medio_compra, " +
+        "       (SELECT pr2.preco_venda FROM tb_preco pr2 WHERE pr2.fk_produto = p.codigo " +
+        "            ORDER BY pr2.data DESC, pr2.hora DESC LIMIT 1) AS preco_venda_atual, " +
+        "       (SELECT COALESCE(SUM(s.quantidade_existente),0) FROM tb_stock s " +
+        "            WHERE s.cod_produto_codigo = p.codigo AND s.cod_armazem = ?) AS qtd_existente " +
+        "FROM tb_produto p " +
+        "JOIN tb_tipo_produto tp ON tp.codigo = p.cod_Tipo_Produto " +
+        "WHERE EXISTS (SELECT 1 FROM tb_stock s2 WHERE s2.cod_produto_codigo = p.codigo AND s2.cod_armazem = ?) " +
+        "ORDER BY p.designacao ASC";
+
+    try (PreparedStatement pst = conn.prepareStatement(sql)) {
+        pst.setInt(1, codArmazem);
+        pst.setInt(2, codArmazem);
+
+        try (ResultSet rs = pst.executeQuery()) {
+            while (rs.next()) {
+                Object[] linha = new Object[] {
+                    rs.getInt("codigo"),
+                    rs.getString("designacao"),
+                    rs.getString("tipo_produto"),
+                    rs.getBigDecimal("preco_medio_compra"),
+                    rs.getBigDecimal("preco_venda_atual"),
+                    rs.getDouble("qtd_existente"),
+                    0.0,                         // qtd acerto (editável)
+                    rs.getDouble("qtd_existente")// existência total inicial
+                };
+                lista.add(linha);
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return lista;
+}
+
+
+//    public List<Object[]> listarStockPorArmazem(Connection conn, int codArmazem) {
+//    List<Object[]> lista = new ArrayList<>();
+//
+//    String sql = "SELECT p.codigo, "
+//               + "       p.designacao, "
+//               + "       t.designacao AS tipo_produto, "
+//               + "       COALESCE(AVG(pr.preco_compra), 0) AS preco_medio_compra, "
+//               + "       (SELECT pr2.preco_venda "
+//               + "        FROM tb_preco pr2 "
+//               + "        WHERE pr2.fk_produto = p.codigo "
+//               + "        ORDER BY pr2.data DESC, pr2.hora DESC "
+//               + "        LIMIT 1) AS preco_venda_atual, "
+//               + "       SUM(s.quantidade_existente) AS qtd_existente "
+//               + "FROM tb_stock s "
+//               + "JOIN tb_produto p ON p.codigo = s.cod_produto_codigo "
+//               + "JOIN tb_tipo_produto t ON t.codigo = p.cod_Tipo_Produto "
+//               + "LEFT JOIN tb_preco pr ON pr.fk_produto = p.codigo "
+//               + "WHERE s.cod_armazem = ? "
+//               + "GROUP BY p.codigo, p.designacao, t.designacao "
+//               + "ORDER BY p.designacao ASC";
+//
+//    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+//        ps.setInt(1, codArmazem);
+//        try (ResultSet rs = ps.executeQuery()) {
+//            while (rs.next()) {
+//                Object[] linha = {
+//                    rs.getInt("codigo"),
+//                    rs.getString("designacao"),
+//                    rs.getString("tipo_produto"),
+//                    rs.getBigDecimal("preco_medio_compra"),
+//                    rs.getBigDecimal("preco_venda_atual"),
+//                    rs.getDouble("qtd_existente"),
+//                    null, // quantidade a acertar (editável no JTable)
+//                    null  // existência total (calculada no JTable)
+//                };
+//                lista.add(linha);
+//            }
+//        }
+//    } catch (SQLException e) {
+//        e.printStackTrace();
+//    }
+//
+//    return lista;
+//}
+
+    
+//public List<Object[]> listarStockPorArmazem(Connection conn, int codArmazem) {
+//    List<Object[]> lista = new ArrayList<>();
+//
+//    String sql = "SELECT DISTINCT p.codigo, p.designacao, SUM(s.quantidade_existente) AS quantidade, pr.preco_venda "
+//               + "FROM tb_stock s "
+//               + "JOIN tb_produto p ON p.codigo = s.cod_produto_codigo "
+//               + "JOIN tb_preco pr ON pr.fk_produto = p.codigo "
+//               + "WHERE s.cod_armazem = ? "
+//               + "GROUP BY p.codigo, p.designacao, pr.preco_venda "
+//               + "ORDER BY p.designacao ASC";
+//
+//    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+//        ps.setInt(1, codArmazem);
+//        try (ResultSet rs = ps.executeQuery()) {
+//            while (rs.next()) {
+//                Object[] linha = {
+//                    rs.getInt("codigo"),
+//                    rs.getString("designacao"),
+//                    rs.getInt("quantidade"),
+//                    rs.getBigDecimal("preco_venda")
+//                };
+//                lista.add(linha);
+//            }
+//        }
+//    } catch (SQLException e) {
+//        e.printStackTrace();
+//    }
+//
+//    return lista;
+//}
+
+
 
     public static void main( String[] args )
     {
