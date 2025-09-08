@@ -2442,12 +2442,13 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 //        int idDoUsuarioLogado = usuarioLogado.getCodigo(); // obténs do objecto de login
 //        AcertoStockEmMassaVisao dlg = new AcertoStockEmMassaVisao( mainFrame, true, idDoUsuarioLogado );
 //        dlg.setVisible( true );
-        new AcertoStockEmMassaVisao(this, administrador, ERROR, YYYYMMDD_HHMMSS ).setVisible( true);
+        new AcertoStockEmMassaVisao( this, administrador, ERROR, YYYYMMDD_HHMMSS ).setVisible( true );
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem10ActionPerformed
     {//GEN-HEADEREND:event_jMenuItem10ActionPerformed
         // TODO add your handling code here:
+        new DefinirPrecoEmMassaVisao( this, administrador, cod_utilizador, YYYYMMDD_HHMMSS ).setVisible( true );
     }//GEN-LAST:event_jMenuItem10ActionPerformed
 
     /**

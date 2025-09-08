@@ -8,7 +8,11 @@ package util;
  *
  * @author Domingos Dala Vunge
  */
+import java.awt.Component;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import javax.swing.*;
+import javax.swing.table.TableColumn;
 import javax.swing.text.*;
 
 public class TextFieldUtils
@@ -84,4 +88,66 @@ public class TextFieldUtils
             }
         } );
     }
+
+    public static void configurarColunaDecimal( JTable tabela, int colIndex, int casasDecimais )
+    {
+        TableColumn coluna = tabela.getColumnModel().getColumn( colIndex );
+
+        DefaultCellEditor editor = new DefaultCellEditor( new JTextField() )
+        {
+            {
+                JTextField textField = (JTextField) getComponent();
+                TextFieldUtils.configurarCampoDecimal( textField, casasDecimais );
+            }
+
+            @Override
+            public Component getTableCellEditorComponent( JTable table, Object value,
+                    boolean isSelected, int row, int column )
+            {
+                JTextField textField = (JTextField) getComponent();
+
+                // 🔹 sempre inicializar limpo
+                textField.setText( "" );
+
+                // 🔹 carregar o valor atual da célula
+                if ( value != null )
+                {
+                    textField.setText( value.toString().trim() );
+                }
+
+                // 🔹 se continuar vazio → mostrar "0"
+                if ( textField.getText().isEmpty() )
+                {
+                    textField.setText( "0" );
+                }
+
+                return textField;
+            }
+
+            @Override
+            public Object getCellEditorValue()
+            {
+                String text = ( (JTextField) getComponent() ).getText();
+
+                if ( text == null || text.trim().isEmpty() )
+                {
+                    return BigDecimal.ZERO.setScale( casasDecimais, RoundingMode.HALF_UP );
+                }
+
+                try
+                {
+                    text = text.replace( ",", "." );
+                    BigDecimal valor = new BigDecimal( text );
+                    return valor.setScale( casasDecimais, RoundingMode.HALF_UP );
+                }
+                catch ( NumberFormatException e )
+                {
+                    return BigDecimal.ZERO.setScale( casasDecimais, RoundingMode.HALF_UP );
+                }
+            }
+        };
+
+        coluna.setCellEditor( editor );
+    }
+
 }

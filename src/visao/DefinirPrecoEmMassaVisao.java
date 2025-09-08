@@ -39,6 +39,7 @@ import javax.swing.table.DefaultTableModel;
 import util.BDConexao;
 import util.FinanceUtils;
 import util.PrecosUtil;
+import util.TextFieldUtils;
 
 /**
  *
@@ -101,22 +102,21 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
 
         init();
 
-        cmbCategoria.setRenderer( new DefaultListCellRenderer()
-        {
-            @Override
-            public Component getListCellRendererComponent( JList<?> list, Object value, int index,
-                    boolean isSelected, boolean cellHasFocus )
-            {
-                super.getListCellRendererComponent( list, value, index, isSelected, cellHasFocus );
-                if ( value instanceof TbArmazem )
-                {
-                    TbArmazem armazem = (TbArmazem) value;
-                    setText( armazem.getDesignacao() ); // mostra só o nome
-                }
-                return this;
-            }
-        } );
-
+//        cmbCategoria.setRenderer( new DefaultListCellRenderer()
+//        {
+//            @Override
+//            public Component getListCellRendererComponent( JList<?> list, Object value, int index,
+//                    boolean isSelected, boolean cellHasFocus )
+//            {
+//                super.getListCellRendererComponent( list, value, index, isSelected, cellHasFocus );
+//                if ( value instanceof TbArmazem )
+//                {
+//                    TbArmazem armazem = (TbArmazem) value;
+//                    setText( armazem.getDesignacao() ); // mostra só o nome
+//                }
+//                return this;
+//            }
+//        } );
         carregarTipoProduto();
         tabela.setRowHeight( 30 );
 
@@ -345,10 +345,19 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
 
         try
         {
-            System.err.println( "INIT" );
-            List<Object[]> listaPorCategoria = produtosController.listarProdutosByCategoria( BDConexao.conectar(), cmbCategoria.getSelectedItem().toString() );
-            System.err.println( "LISTA SIZE : " + listaPorCategoria.size() );
-            carregarProdutos( listaPorCategoria );
+
+            if ( cmbCategoria.getSelectedIndex() == 0 )
+            {
+                carregarProdutos();
+            }
+            else
+            {
+                System.err.println( "INIT" );
+                List<Object[]> listaPorCategoria = produtosController.listarProdutosByCategoria( BDConexao.conectar(), cmbCategoria.getSelectedItem().toString() );
+                System.err.println( "LISTA SIZE : " + listaPorCategoria.size() );
+                carregarProdutos( listaPorCategoria );
+            }
+
         }
         catch ( Exception e )
         {
@@ -436,6 +445,7 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
     {
         Vector<String> lista = tipoProdutosController.getVector();
         cmbCategoria.removeAllItems();
+        lista.add( 0, "--TODOS--" );
         for ( String nome : lista )
         {
             cmbCategoria.addItem( nome );
@@ -479,9 +489,9 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
     {
         double taxa = Double.parseDouble( cmbImposto.getSelectedItem().toString() );
         double qtd = 1;
-        double precoCompra = Double.parseDouble( modelo.getValueAt( linha, COL_PRECO_VENDA ).toString() );
+        double precoVenda = Double.parseDouble( modelo.getValueAt( linha, COL_PRECO_VENDA ).toString() );
         double desconto = 0;
-        double valorComIVA = FinanceUtils.getValorComIVA( qtd, taxa, precoCompra, desconto );
+        double valorComIVA = FinanceUtils.getValorComIVA( qtd, taxa, precoVenda, desconto );
         modelo.setValueAt( taxa, linha, COL_IVA );
         modelo.setValueAt( valorComIVA, linha, COL_PRECO_COM_IVA );
     }
@@ -590,6 +600,10 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
                 actualizarENTER( modelo, linha, COL_IVA, COL_PRECO_COM_IVA );
             }
         } );
+
+        TextFieldUtils.configurarColunaDecimal( tabela, COL_PRECO_COMPRA, 6 );
+        TextFieldUtils.configurarColunaDecimal( tabela, COL_PRECO_VENDA, 6 );
+
     }
 
     private void aplicarIvaMassa( int idProduto, String iva )

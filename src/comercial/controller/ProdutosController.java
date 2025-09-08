@@ -1185,6 +1185,8 @@ public class ProdutosController implements EntidadeFactory
         {
             e.printStackTrace();
         }
+        
+        
 
         return lista;
     }
