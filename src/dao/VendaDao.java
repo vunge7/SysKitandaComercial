@@ -933,16 +933,15 @@ public class VendaDao extends TbVendaJpaController
     public TbVenda findByCodFactReemprensao( String codFact )
     {
         EntityManager em = getEntityManager();
-//        Query query = em.createQuery("SELECT DISTINCT v  FROM TbVenda  v WHERE V.codFact = :COD_FACT AND V.statusEliminado = 'false' ");
         Query query = em.createQuery( "SELECT DISTINCT v  FROM TbVenda  v WHERE V.codFact = :COD_FACT " );
         query.setParameter( "COD_FACT", codFact );
 
-        List<TbVenda> documentos = query.getResultList();
+        List<TbVenda> vendas = query.getResultList();
         em.close();
 
-        if ( !documentos.isEmpty() )
+        if ( !vendas.isEmpty() )
         {
-            return documentos.get( 0 );
+            return vendas.get( 0 );
         }
 
         return null;

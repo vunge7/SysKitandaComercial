@@ -548,15 +548,15 @@ public class UsuariosController implements EntidadeFactory
 
         String FIND__BY_CODIGO = "SELECT *  FROM tb_usuario a WHERE nome = '" + nome + "'";
         ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
-        TbUsuario armazem = null;
+        TbUsuario usuario = null;
         try
         {
 
             if ( result.next() )
             {
-                armazem = new TbUsuario();
-                armazem.setCodigo( result.getInt( "codigo" ) );
-                armazem.setNome( result.getString( "nome" ) );
+                usuario = new TbUsuario();
+                usuario.setCodigo( result.getInt( "codigo" ) );
+                usuario.setNome( result.getString( "nome" ) );
 
             }
 
@@ -565,7 +565,7 @@ public class UsuariosController implements EntidadeFactory
         {
             e.printStackTrace();
         }
-        return armazem;
+        return usuario;
 
     }
 

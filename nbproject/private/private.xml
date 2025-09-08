@@ -18,12 +18,12 @@
             <file>file:/Users/macpro/Desktop/SYS_KITANDA_AGT_V_1_1_9/src/dao/StockDao.java</file>
         </group>
         <group>
-            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/comercial/controller/UsuariosController.java</file>
-            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/comercial/controller/StoksController.java</file>
             <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/visao/MenuPrincipalVisao.java</file>
-            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/comercial/controller/ArmazensController.java</file>
-            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/visao/AcertoStockEmMassaVisao.java</file>
-            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/comercial/controller/ProdutosController.java</file>
+            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/lista/ResumoVendasByUsuarioByIntervalo.java</file>
+            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/relatorios/sub_report8.jrxml</file>
+            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/lista/ListarRelatorioVendaByIntervalo.java</file>
+            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/entity/TbPreco.java</file>
+            <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/relatorios/report8.jrxml</file>
         </group>
     </open-files>
 </project-private>

@@ -2329,7 +2329,6 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jMenuItemAlteracaoGuiaActionPerformed
         try
         {
-            // TODO add your handling code here:
             new AlteracaoGuiaTransporteVisao( this.cod_utilizador, this.conexao ).show();
         }
         catch ( SQLException ex )
@@ -2342,7 +2341,6 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jMenuItemConverterGuiaActionPerformed
         try
         {
-            // TODO add your handling code here:
             new ConverterGuiaFacturaVisao( this.cod_utilizador, this.conexao ).show();
         }
         catch ( SQLException ex )
@@ -2389,7 +2387,6 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jMenuItemEntradasProdutosActionPerformed
         try
         {
-            //        ( java.awt.Frame parent, boolean modal, int idUser, String codigo, BDConexao conexao, String armazem, int chamada )
             new EntradaVisao( this, true, cod_utilizador, "", conexao ).setVisible( true );
         }
         catch ( SQLException ex )
@@ -2410,15 +2407,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
     private void jMenuItemRelatorioDeEntradasActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemRelatorioDeEntradasActionPerformed
     {//GEN-HEADEREND:event_jMenuItemRelatorioDeEntradasActionPerformed
-//        try
-//        {
         new ListarRelatorioEntradaByIntervalo( this.conexao ).setVisible( true );
-//            new ListarEntradasProdutosPorEntervaloData( cod_utilizador ).setVisible( true );
-//        }
-//        catch ( SQLException ex )
-//        {
-//            Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( Level.SEVERE, null, ex );
-//        }
     }//GEN-LAST:event_jMenuItemRelatorioDeEntradasActionPerformed
 
     private void jMenuItemCancelamentoEntradasActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemCancelamentoEntradasActionPerformed
@@ -2428,9 +2417,6 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem5ActionPerformed
     {//GEN-HEADEREND:event_jMenuItem5ActionPerformed
-//        int idDoUsuarioLogado = usuarioLogado.getCodigo(); // obténs do objecto de login
-//        AcertoStockEmMassaVisao dlg = new AcertoStockEmMassaVisao( mainFrame, true, idDoUsuarioLogado );
-//        dlg.setVisible( true );
         new AcertoStockEmMassaVisao(this, administrador, ERROR, YYYYMMDD_HHMMSS ).setVisible( true);
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 

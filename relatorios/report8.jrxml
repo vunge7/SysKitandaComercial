@@ -3,11 +3,11 @@
 	<property name="ireport.zoom" value="1.4641000000000015"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<parameter name="NOME_USUARIO" class="java.lang.String"/>
-	<parameter name="DATA_VENDA" class="java.util.Date"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["../relatorios/"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="PARM_DATA_2" class="java.util.Date"/>
+	<parameter name="PARM_DATA_1" class="java.util.Date"/>
 	<queryString>
 		<![CDATA[SELECT DISTINCT
      tb_venda.`codigo` AS tb_venda_codigo,
@@ -24,16 +24,14 @@ WHERE
      tb_usuario.`nome` = $P{NOME_USUARIO}
  AND tb_venda.`performance` = 'false'
  AND tb_venda.`status_eliminado` = 'false'
- AND DATE(tb_venda.`dataVenda`) = $P{DATA_VENDA}
- AND tb_venda.`fk_documento` = 1]]>
+ AND tb_venda.`dataVenda` BETWEEN $P{PARM_DATA_1} AND $P{PARM_DATA_2}]]>
 	</queryString>
 	<field name="tb_venda_codigo" class="java.lang.Integer"/>
 	<field name="tb_venda_dataVenda" class="java.sql.Timestamp"/>
-	<field name="tb_venda_total_venda" class="java.lang.Float"/>
+	<field name="tb_venda_total_venda" class="java.math.BigDecimal"/>
 	<field name="tb_usuario_nome" class="java.lang.String"/>
 	<field name="tb_dados_instituicao_nome" class="java.lang.String"/>
-	<field name="tb_venda_total_geral" class="java.lang.Double"/>
-	<field name="tb_venda_fk_documento" class="java.lang.Integer"/>
+	<field name="tb_venda_total_geral" class="java.math.BigDecimal"/>
 	<variable name="SOMA_VENDA" class="java.lang.Float" calculation="Sum">
 		<variableExpression><![CDATA[$F{tb_venda_total_venda}]]></variableExpression>
 	</variable>
@@ -42,58 +40,6 @@ WHERE
 	</background>
 	<title>
 		<band height="95" splitType="Stretch">
-			<staticText>
-				<reportElement uuid="d439cc17-80db-4265-970f-b967424ad93e" key="staticText-4" mode="Transparent" x="-1" y="76" width="68" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
-				<box topPadding="4">
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement>
-					<font fontName="Arial" size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<text><![CDATA[Data da Venda:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement uuid="1b20313e-844d-4942-b0a6-d10aa566daeb" key="staticText" mode="Transparent" x="-1" y="57" width="58" height="19" forecolor="#000000" backcolor="#FFFFFF"/>
-				<box topPadding="4">
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement>
-					<font fontName="Arial" size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<text><![CDATA[Funcionario:]]></text>
-			</staticText>
-			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement uuid="ba977b37-34f4-4fdf-8f78-4c9fe8e2aa2c" key="textField-4" x="67" y="76" width="109" height="16"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="9" isBold="false" isItalic="false" pdfFontName="Helvetica-BoldOblique"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{DATA_VENDA}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement uuid="ed83c186-7269-46ac-be00-488cf9624cf6" key="textField" x="57" y="57" width="180" height="19"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="9" isBold="false" isItalic="false" pdfFontName="Helvetica-BoldOblique"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_usuario_nome}]]></textFieldExpression>
-			</textField>
 			<staticText>
 				<reportElement uuid="8ebf3b09-e71a-4bb5-9498-5e488330bc34" key="textField" x="0" y="24" width="369" height="18"/>
 				<textElement verticalAlignment="Middle" markup="none">
@@ -113,6 +59,34 @@ WHERE
 					<font fontName="Arial" size="8" isBold="true" isItalic="false" pdfFontName="Helvetica-BoldOblique"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_nome}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="5a8a2512-ec40-4997-919b-0af34d26f837" x="102" y="76" width="9" height="19"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<text><![CDATA[à:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b4dcc4b6-5be4-4ec6-91c4-e68e3907b224" x="18" y="77" width="52" height="18"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<text><![CDATA[          De: ]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="3f03ec4b-80d1-451b-98a3-4b35bd7e904d" x="64" y="78" width="39" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PARM_DATA_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="a93a0c05-eeee-412f-b647-f9459e1b75dd" x="111" y="78" width="57" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PARM_DATA_2}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
