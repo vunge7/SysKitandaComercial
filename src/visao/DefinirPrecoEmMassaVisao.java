@@ -24,8 +24,10 @@ import entity.TbTipoProduto;
 import entity.TbUsuario;
 import java.awt.Component;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+import java.util.stream.Collectors;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
@@ -45,9 +47,12 @@ import util.PrecosUtil;
 public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
 {
 
-    private final int COL_PRECO_VENDA = 5;
-    private final int COL_IVA = 6;
-    private final int COL_PRECO_COM_IVA = 7;
+    final int COL_ID_PRODUTO = 0;
+    final int COL_PRECO_COMPRA = 3;
+    final int COL_PRECO_MEDIO = 4;
+    final int COL_PRECO_VENDA = 5;
+    final int COL_IVA = 6;
+    final int COL_PRECO_COM_IVA = 7;
 
     private static PrecosController precosController;
     private static ProdutosController produtosController;
@@ -264,6 +269,13 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
         });
 
         btnAplicar.setText("Aplicar");
+        btnAplicar.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                btnAplicarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -331,6 +343,16 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
     private void cmbCategoriaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbCategoriaActionPerformed
     {//GEN-HEADEREND:event_cmbCategoriaActionPerformed
 
+        try
+        {
+            System.err.println( "INIT" );
+            List<Object[]> listaPorCategoria = produtosController.listarProdutosByCategoria( BDConexao.conectar(), cmbCategoria.getSelectedItem().toString() );
+            System.err.println( "LISTA SIZE : " + listaPorCategoria.size() );
+            carregarProdutos( listaPorCategoria );
+        }
+        catch ( Exception e )
+        {
+        }
 
     }//GEN-LAST:event_cmbCategoriaActionPerformed
 
@@ -340,6 +362,11 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
         prepararUpdateIva();
 
     }//GEN-LAST:event_cmbImpostoActionPerformed
+
+    private void btnAplicarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnAplicarActionPerformed
+    {//GEN-HEADEREND:event_btnAplicarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAplicarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -427,24 +454,36 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
         }
     }
 
+    private void carregarProdutos( List<Object[]> listaParm )
+    {
+        DefaultTableModel model = (DefaultTableModel) tabela.getModel();
+        model.setRowCount( 0 ); // limpa a tabela
+
+        for ( Object[] linha : listaParm )
+        {
+            model.addRow( linha );
+        }
+    }
+
     private void prepararUpdateIva()
     {
         DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
         for ( int i = 0; i < modelo.getRowCount(); i++ )
         {
-            actualizar( modelo, i, COL_IVA, COL_PRECO_COM_IVA );
+            actualizar( modelo, i );
+
         }
     }
 
-    private void actualizar( DefaultTableModel modelo, int linha, int colunaIva, int colunaPrecoComIva )
+    private void actualizar( DefaultTableModel modelo, int linha )
     {
         double taxa = Double.parseDouble( cmbImposto.getSelectedItem().toString() );
         double qtd = 1;
-        double precoSemIva = Double.parseDouble( modelo.getValueAt( linha, COL_PRECO_VENDA ).toString() );
+        double precoCompra = Double.parseDouble( modelo.getValueAt( linha, COL_PRECO_VENDA ).toString() );
         double desconto = 0;
-        double valorComIVA = FinanceUtils.getValorComIVA( qtd, taxa, precoSemIva, desconto );
-        modelo.setValueAt( taxa, linha, colunaIva );
-        modelo.setValueAt( valorComIVA, linha, colunaPrecoComIva );
+        double valorComIVA = FinanceUtils.getValorComIVA( qtd, taxa, precoCompra, desconto );
+        modelo.setValueAt( taxa, linha, COL_IVA );
+        modelo.setValueAt( valorComIVA, linha, COL_PRECO_COM_IVA );
     }
 
     private void actualizarENTER( DefaultTableModel modelo, int linha, int colunaIva, int colunaPrecoComIva )
@@ -480,12 +519,6 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
 
     private void initTable()
     {
-        final int COL_ID_PRODUTO = 0;
-        final int COL_PRECO_COMPRA = 3;
-        final int COL_PRECO_MEDIO = 4;
-        final int COL_PRECO_VENDA = 5;
-        final int COL_IVA = 6;
-        final int COL_PRECO_COM_IVA = 7;
 
         DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
 
@@ -587,12 +620,57 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
         {
             int idProduto = Integer.parseInt( modelo.getValueAt( i, 0 ).toString() );
             String taxa = modelo.getValueAt( i, COL_IVA ).toString();
+            BigDecimal precoCompra = new BigDecimal( modelo.getValueAt( i, COL_PRECO_COMPRA ).toString() );
+            BigDecimal precoVenda = new BigDecimal( modelo.getValueAt( i, COL_PRECO_VENDA ).toString() );
             if ( Double.parseDouble( taxa ) > 0 )
             {
                 aplicarIvaMassa( idProduto, taxa );
+                PrecosUtil.actualizarPreco(
+                        usuarioId,
+                        idProduto,
+                        precoCompra,
+                        precoVenda,
+                        precosController, conexao );
             }
         }
         JOptionPane.showMessageDialog( null, "IVA aplicado com sucesso!..." );
+    }
+
+// Método usando Java 8+ streams
+    public List<Object[]> getListaPorCategoria( String categoria )
+    {
+        if ( categoria == null || categoria.isEmpty() )
+        {
+            return new ArrayList<>(); // retorna lista vazia se categoria inválida
+        }
+
+        final int COL_CATEGORIA = 2; // índice da coluna categoria
+
+        return lista.stream()
+                .filter( arr -> arr[ COL_CATEGORIA ] != null
+                && categoria.equals( arr[ COL_CATEGORIA ].toString() ) )
+                .collect( Collectors.toList() );
+    }
+
+// Alternativa usando loop tradicional
+    public List<Object[]> getListaPorCategoriaLoop( String categoria )
+    {
+        List<Object[]> resultado = new ArrayList<>();
+        final int COL_CATEGORIA = 2;
+
+        if ( categoria == null || categoria.isEmpty() )
+        {
+            return resultado;
+        }
+
+        for ( Object[] item : lista )
+        {
+            if ( item[ COL_CATEGORIA ] != null && categoria.equals( item[ COL_CATEGORIA ].toString() ) )
+            {
+                resultado.add( item );
+            }
+        }
+        return resultado;
     }
 
 }

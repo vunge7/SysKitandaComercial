@@ -6,8 +6,9 @@ package util;
 
 import comercial.controller.PrecosController;
 import comercial.controller.StoksController;
-import controller.StockController;
 import entity.TbPreco;
+import entity.TbProduto;
+import entity.TbUsuario;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
@@ -25,34 +26,32 @@ import java.util.Date;
 public class PrecosUtil
 {
 
-    public static void actualizarPreco( int idProduto,
-            Double precoCompra,
-            Double precoVenda,
+    public static void actualizarPreco( int idUsuario, int idProduto,
+            BigDecimal precoCompra,
+            BigDecimal precoVenda,
             PrecosController precosControllerLocal,
             BDConexao conexao )
     {
         System.out.println( "ID PRODUTO: " + idProduto );
 
-        int idPrecoRetalho = PrecosController.getLastIdPrecoByIdProdutoIntAndQTD( idProduto, 0d, conexao );
-        TbPreco precoAntigoRetalho = (TbPreco) precosControllerLocal.findById( idPrecoRetalho );
+        // Função auxiliar para garantir que percentagemGanho não seja null
+        BigDecimal ganhoRetalho = BigDecimal.ZERO;
 
-        int idPrecoGrosso = PrecosController.getLastIdPrecoByIdProdutoIntAndPrecoAntigoQtdAlto(
-                idProduto, precoAntigoRetalho.getQtdAlto() + 1, conexao );
-        TbPreco precoAntigoGrosso = (TbPreco) precosControllerLocal.findById( idPrecoGrosso );
+        BigDecimal ganhoGrosso = BigDecimal.ZERO;
 
         // ---------------- RETALHO ----------------
         TbPreco preco_novo_retalho = new TbPreco();
         preco_novo_retalho.setData( new Date() );
         preco_novo_retalho.setHora( new Date() );
-        preco_novo_retalho.setPercentagemGanho( precoAntigoRetalho.getPercentagemGanho() );
-        preco_novo_retalho.setFkProduto( precoAntigoRetalho.getFkProduto() );
-        preco_novo_retalho.setFkUsuario( precoAntigoRetalho.getFkUsuario() );
-        preco_novo_retalho.setPrecoCompra( new BigDecimal( precoCompra ) );
-        preco_novo_retalho.setPrecoVenda( new BigDecimal( precoVenda ) ); // ✅ novo preço de venda
-        preco_novo_retalho.setQtdBaixo( precoAntigoRetalho.getQtdBaixo() );
-        preco_novo_retalho.setQtdAlto( precoAntigoRetalho.getQtdAlto() );
-        preco_novo_retalho.setPrecoAnterior( precoAntigoRetalho.getPrecoAnterior() );
-        preco_novo_retalho.setRetalho( precoAntigoRetalho.getRetalho() );
+        preco_novo_retalho.setPercentagemGanho( ganhoRetalho );
+        preco_novo_retalho.setFkProduto( new TbProduto( idProduto ) );
+        preco_novo_retalho.setFkUsuario( new TbUsuario( idUsuario ) );
+        preco_novo_retalho.setPrecoCompra( precoCompra );
+        preco_novo_retalho.setPrecoVenda( precoVenda );
+        preco_novo_retalho.setQtdBaixo( 0 );
+        preco_novo_retalho.setQtdAlto( (int) DVML.QTD_DEFAULT - 1 );
+        preco_novo_retalho.setPrecoAnterior( 0d );
+        preco_novo_retalho.setRetalho( true );
 
         try
         {
@@ -71,15 +70,15 @@ public class PrecosUtil
             TbPreco preco_novo_grosso = new TbPreco();
             preco_novo_grosso.setData( new Date() );
             preco_novo_grosso.setHora( new Date() );
-            preco_novo_grosso.setPercentagemGanho( precoAntigoGrosso.getPercentagemGanho() );
-            preco_novo_grosso.setFkProduto( precoAntigoGrosso.getFkProduto() );
-            preco_novo_grosso.setFkUsuario( precoAntigoGrosso.getFkUsuario() );
-            preco_novo_grosso.setPrecoCompra( new BigDecimal( precoCompra ) );
-            preco_novo_grosso.setPrecoVenda( new BigDecimal( precoVenda ) ); // ✅ novo preço de venda
-            preco_novo_grosso.setQtdBaixo( precoAntigoGrosso.getQtdBaixo() );
-            preco_novo_grosso.setQtdAlto( precoAntigoGrosso.getQtdAlto() );
-            preco_novo_grosso.setPrecoAnterior( precoAntigoGrosso.getPrecoAnterior() );
-            preco_novo_grosso.setRetalho( precoAntigoGrosso.getRetalho() );
+            preco_novo_grosso.setPercentagemGanho( ganhoRetalho );
+            preco_novo_grosso.setFkProduto( new TbProduto( idProduto ) );
+            preco_novo_grosso.setFkUsuario( new TbUsuario( idUsuario ) );
+            preco_novo_grosso.setPrecoCompra( precoCompra );
+            preco_novo_grosso.setPrecoVenda( precoVenda );
+            preco_novo_grosso.setQtdBaixo( (int) DVML.QTD_DEFAULT );
+            preco_novo_grosso.setQtdAlto( 214748364 );
+            preco_novo_grosso.setPrecoAnterior( 0d );
+            preco_novo_grosso.setRetalho( true );
 
             precosControllerLocal.salvar( preco_novo_grosso );
             System.out.println( "Preco de compra/venda grosso atualizado na compra" );
