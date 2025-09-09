@@ -202,6 +202,8 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
         cmbArmazem = new javax.swing.JComboBox<>();
         txtIniciais = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
+        txtCodigoManual = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("...:::::ACERTO STOCK::::...");
@@ -294,14 +296,20 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
 
         jLabel2.setText("Digite as Inicais do Artigo");
 
+        txtCodigoManual.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                txtCodigoManualActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setText("Digite o Código Manual");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(txtIniciais, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -311,11 +319,19 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
                         .addGap(14, 14, 14)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(txtIniciais, javax.swing.GroupLayout.PREFERRED_SIZE, 360, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(42, 42, 42)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
+                            .addComponent(txtCodigoManual))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -329,9 +345,13 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
                         .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel2)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(txtIniciais, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtIniciais, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 497, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -372,6 +392,12 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_txtIniciaisActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtIniciaisActionPerformed
+
+    private void txtCodigoManualActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtCodigoManualActionPerformed
+    {//GEN-HEADEREND:event_txtCodigoManualActionPerformed
+    
+        carregarTabelaPorCodigoManual(txtCodigoManual.getText().trim(), getIdArmazem());
+    }//GEN-LAST:event_txtCodigoManualActionPerformed
 
     /**
      * @param args the command line arguments
@@ -428,9 +454,11 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
     private javax.swing.JComboBox<String> cmbArmazem;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tabela_acerto;
+    private javax.swing.JTextField txtCodigoManual;
     private javax.swing.JTextField txtIniciais;
     // End of variables declaration//GEN-END:variables
 
@@ -1184,14 +1212,6 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
     // Método para carregar com filtro (por ocorrência)
     private void carregarTabelaStockFiltrado( int codArmazem, String filtro )
     {
-
-//
-//        // Obter lista completa só se ainda não foi carregada
-//        if ( listaFonte == null || listaFonte.isEmpty() )
-//        {
-//            listaFonte = produtosController.listarStockPorArmazem( conexao.getConnection1(), codArmazem );
-//        }
-        // Modelo da tabela
         DefaultTableModel model = (DefaultTableModel) tabela_acerto.getModel();
         model.setRowCount( 0 ); // limpa antes de preencher
 
@@ -1210,6 +1230,35 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
             }
         }
     }
+    
+    private void carregarTabelaPorCodigoManual(String codigoManual, int codArmazem) {
+    if (codigoManual.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Digite o código manual do produto!",
+                                      "Aviso", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    // Obter lista do controller
+    List<Object[]> lista = produtosController.listarStockPorCodigoManual(conn, codigoManual, codArmazem);
+
+    DefaultTableModel model = (DefaultTableModel) tabela_acerto.getModel();
+    model.setRowCount(0); // limpa tabela antes de preencher
+
+    if (lista.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Nenhum produto encontrado com o código manual: " + codigoManual,
+                                      "Aviso", JOptionPane.INFORMATION_MESSAGE);
+        return;
+    }
+
+    for (Object[] linha : lista) {
+        // Penúltima coluna (acerto) começa vazia
+        if (linha.length > 6) {
+            linha[6] = null;
+        }
+        model.addRow(linha);
+    }
+}
+
 
     private int getIdArmazem()
     {

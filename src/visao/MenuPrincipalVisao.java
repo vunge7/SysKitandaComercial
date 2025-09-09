@@ -1525,7 +1525,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         });
         jMenu6.add(jMenuItem5);
 
-        jMenuItem10.setText("Actualizção de Preços");
+        jMenuItem10.setText("Actualização de Preços");
         jMenuItem10.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -2406,14 +2406,12 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem5ActionPerformed
     {//GEN-HEADEREND:event_jMenuItem5ActionPerformed
-<<<<<<< HEAD
-        new AcertoStockEmMassaVisao(this, administrador, ERROR, YYYYMMDD_HHMMSS ).setVisible( true);
-=======
+
 //        int idDoUsuarioLogado = usuarioLogado.getCodigo(); // obténs do objecto de login
 //        AcertoStockEmMassaVisao dlg = new AcertoStockEmMassaVisao( mainFrame, true, idDoUsuarioLogado );
 //        dlg.setVisible( true );
         new AcertoStockEmMassaVisao( this, administrador, ERROR, YYYYMMDD_HHMMSS, conexao ).setVisible( true );
->>>>>>> 59a0e80917aaeae5dc9e7f4575d1581329a4450f
+
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem10ActionPerformed

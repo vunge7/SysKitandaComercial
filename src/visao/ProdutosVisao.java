@@ -1067,6 +1067,13 @@ public class ProdutosVisao extends javax.swing.JFrame
         txtCodigoManual.setBackground(new java.awt.Color(4, 154, 3));
         txtCodigoManual.setForeground(new java.awt.Color(255, 255, 255));
         txtCodigoManual.setText("0");
+        txtCodigoManual.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                txtCodigoManualActionPerformed(evt);
+            }
+        });
 
         lbPrecoVenda1.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         lbPrecoVenda1.setText("Preco Grosso:");
@@ -1699,6 +1706,11 @@ public class ProdutosVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_txtUnidadeCompraActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtUnidadeCompraActionPerformed
+
+    private void txtCodigoManualActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtCodigoManualActionPerformed
+    {//GEN-HEADEREND:event_txtCodigoManualActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCodigoManualActionPerformed
 
     /**
      * @param args the command line arguments
@@ -3015,11 +3027,7 @@ public class ProdutosVisao extends javax.swing.JFrame
                 ivaTaxaJLabel.setVisible( false );
 
             }
-//            
-//            mostrar_cod_dados_stock_armazem1cb( produto_local );
-//            mostrar_cod_dados_stock_armazem2ci( produto_local );
-//            mostrar_cod_dados_stock_armazem3ci( produto_local );
-//            mostrar_cod_dados_stock_armazem4ci( produto_local );
+
         }
         else
         {
