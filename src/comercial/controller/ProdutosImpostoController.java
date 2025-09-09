@@ -30,7 +30,7 @@ public class ProdutosImpostoController implements EntidadeFactory
     @Override
     public boolean salvar( Object object )
     {
-        ProdutoImposto item = ( ProdutoImposto ) object;
+        ProdutoImposto item = (ProdutoImposto) object;
         System.out.println( "ID IMPOSTO CONTROLLER: " + item.getFkImposto().getPkImposto() );
         String INSERT = "INSERT INTO produto_imposto( fk_produto , fk_imposto"
                 + ")"
@@ -46,7 +46,10 @@ public class ProdutosImpostoController implements EntidadeFactory
     @Override
     public boolean actualizar( Object object )
     {
-        return true;
+        ProdutoImposto produtoImposto = (ProdutoImposto) object;
+        String sql = "UPDATE produto_imposto SET fk_imposto = "
+                + produtoImposto.getFkImposto().getPkImposto() + " WHERE fk_produto = " + produtoImposto.getFkProduto().getCodigo();
+        return conexao.executeUpdate( sql );
     }
 
     @Override

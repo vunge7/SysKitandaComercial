@@ -8,6 +8,8 @@ package comercial.controller;
 import entity.TbPreco;
 import entity.TbProduto;
 import entity.TbUsuario;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -33,7 +35,7 @@ public class PrecosController implements EntidadeFactory
     @Override
     public boolean salvar( Object object )
     {
-        TbPreco preco = ( TbPreco ) object;
+        TbPreco preco = (TbPreco) object;
         String INSERT = "INSERT INTO tb_preco( data  ,  preco_compra , percentagem_ganho , fk_produto , fk_usuario , preco_venda , qtd_baixo , qtd_alto , preco_anterior , retalho "
                 + ")"
                 + " VALUES("
@@ -305,6 +307,47 @@ public class PrecosController implements EntidadeFactory
         {
         }
 
+    }
+
+    /**
+     * Retorna o preço médio dos últimos 5 registros de um produto com base no
+     * preco_compra
+     *
+     * @param idProduto o código do produto
+     * @return preço médio dos últimos 5 registros como BigDecimal, ou
+     * BigDecimal.ZERO se não houver registros
+     */
+    public BigDecimal getPrecoMedioUltimos10( int idProduto, BigDecimal precoCompraAtual )
+    {
+        String sql = "SELECT AVG(preco_compra) AS pm FROM ("
+                + "    SELECT preco_compra FROM tb_preco "
+                + "    WHERE fk_produto = " + idProduto + " AND qtd_alto = 5"
+                + "    ORDER BY pk_preco DESC LIMIT 4" // pega 4 do banco
+                + ") AS ultimos";
+
+        ResultSet result = conexao.executeQuery( sql );
+        BigDecimal soma = precoCompraAtual != null ? precoCompraAtual : BigDecimal.ZERO;
+        int count = precoCompraAtual != null ? 1 : 0;
+
+        try
+        {
+            if ( result.next() )
+            {
+                BigDecimal ultimo = result.getBigDecimal( "pm" );
+                if ( ultimo != null )
+                {
+                    // média ponderando o valor atual + últimos 4 do banco
+                    soma = soma.add( ultimo.multiply( BigDecimal.valueOf( 4 ) ) );
+                    count += 4;
+                }
+            }
+        }
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
+        }
+
+        return count > 0 ? soma.divide( BigDecimal.valueOf( count ), 2, RoundingMode.HALF_UP ) : BigDecimal.ZERO;
     }
 
 }

@@ -222,13 +222,10 @@ public class GerarScriptUpdateVisao extends javax.swing.JFrame
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable()
+        java.awt.EventQueue.invokeLater(() ->
         {
-            public void run()
-            {
-                new GerarScriptUpdateVisao( new BDConexao() ).setVisible( true );
-            }
-        } );
+            new GerarScriptUpdateVisao( new BDConexao() ).setVisible( true );
+        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -3,20 +3,16 @@
  * and open the template in the editor.
  */
 package visao;
+
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import comercial.controller.ArmazensController;
-import comercial.controller.LugaresController;
 import comercial.controller.PrecosController;
 import comercial.controller.ProdutosController;
 import comercial.controller.StoksController;
 import comercial.controller.TipoProdutosController;
-import comercial.controller.UnidadesController;
 import comercial.controller.UsuariosController;
-import controller.TipoProdutoController;
-import entity.AnoEconomico;
 import entity.Compras;
-import entity.Documento;
 import entity.TbArmazem;
 import entity.TbDadosInstituicao;
 import entity.TbPreco;
@@ -24,12 +20,10 @@ import entity.TbProduto;
 import entity.TbStock;
 import entity.TbTipoProduto;
 import entity.TbUsuario;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Toolkit;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -38,7 +32,6 @@ import java.util.logging.Logger;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.JFormattedTextField;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -47,16 +40,12 @@ import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
-import javax.swing.text.NumberFormatter;
-import modelo.TipoProdutoModelo;
 import util.BDConexao;
-import util.DVML;
 
 /**
  *
@@ -86,8 +75,7 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
     private String usuarioNome;
 
     private final int usuarioId;
-   
-    
+
     public AcertoStockEmMassaVisao( java.awt.Frame parent, boolean modal, int usuarioId, String usuarioNome )
     {
         {
@@ -138,24 +126,22 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
 //        configurarColunaAcerto();
 //        configurarEditorColunaAcertoFluido();
         // Define altura de 30 pixels para todas as linhas
-tabela_acerto.setRowHeight(30);
+        tabela_acerto.setRowHeight( 30 );
 
-DefaultTableModel model = (DefaultTableModel) tabela_acerto.getModel();
-model.setRowCount(0); // limpa a tabela
+        DefaultTableModel model = (DefaultTableModel) tabela_acerto.getModel();
+        model.setRowCount( 0 ); // limpa a tabela
 
-int codArmazem = armazensController.getCodigoPorDesignacao(
-    cmbArmazem.getSelectedItem().toString()
-);
+        int codArmazem = armazensController.getCodigoPorDesignacao(
+                cmbArmazem.getSelectedItem().toString()
+        );
 
+        List<Object[]> lista = produtosController.listarStockPorArmazem( BDConexao.getConnection(), codArmazem ); // <-- preencher a lista
 
-List<Object[]> lista = produtosController.listarStockPorArmazem(BDConexao.getConnection(), codArmazem); // <-- preencher a lista
-
-for (Object[] linha : lista) {
-    linha[6] = null; // penúltima coluna (acerto) vazia
-    model.addRow(linha);
-}
-
-
+        for ( Object[] linha : lista )
+        {
+            linha[ 6 ] = null; // penúltima coluna (acerto) vazia
+            model.addRow( linha );
+        }
 
     }
 
@@ -371,7 +357,7 @@ for (Object[] linha : lista) {
         {
             public void run()
             {
-                new AcertoStockEmMassaVisao( null, true, 15 , "").setVisible( true );
+                new AcertoStockEmMassaVisao( null, true, 15, "" ).setVisible( true );
             }
         } );
     }
@@ -400,28 +386,29 @@ for (Object[] linha : lista) {
 //            model.addRow( linha );
 //        }
 //    }
+    private void carregarTabelaStock( int codArmazem )
+    {
+        BDConexao bd = BDConexao.getBDConetion();
+        Connection conn = bd.getConnection();
 
-    private void carregarTabelaStock(int codArmazem) {
-    BDConexao bd = BDConexao.getBDConetion();
-    Connection conn = bd.getConnection();
+        // Obter lista do controller
+        List<Object[]> lista = produtosController.listarStockPorArmazem( conn, codArmazem );
 
-    // Obter lista do controller
-    List<Object[]> lista = produtosController.listarStockPorArmazem(conn, codArmazem);
+        // Obter modelo da tabela
+        DefaultTableModel model = (DefaultTableModel) tabela_acerto.getModel();
+        model.setRowCount( 0 ); // limpa tabela antes de preencher
 
-    // Obter modelo da tabela
-    DefaultTableModel model = (DefaultTableModel) tabela_acerto.getModel();
-    model.setRowCount(0); // limpa tabela antes de preencher
-
-    for (Object[] linha : lista) {
-        // Deixar a penúltima coluna (acerto) vazia
-        if (linha.length > 6) { // garante que existe a coluna 6
-            linha[6] = null;
+        for ( Object[] linha : lista )
+        {
+            // Deixar a penúltima coluna (acerto) vazia
+            if ( linha.length > 6 )
+            { // garante que existe a coluna 6
+                linha[ 6 ] = null;
+            }
+            model.addRow( linha );
         }
-        model.addRow(linha);
     }
-}
 
-    
     private void carregarArmazens()
     {
         Vector<String> lista = armazensController.getVector();
@@ -644,74 +631,92 @@ for (Object[] linha : lista) {
 
         tabela_acerto.getColumnModel().getColumn( 6 ).setCellEditor( editor );
     }
-    
-  private void configurarAcertoCellEditor() {
-    int colAcerto = 6; // coluna da quantidade a acertar
 
-    TableColumn column = tabela_acerto.getColumnModel().getColumn(colAcerto);
-    JTextField textField = new JTextField();
-    column.setCellEditor(new DefaultCellEditor(textField));
+    private void configurarAcertoCellEditor()
+    {
+        int colAcerto = 6; // coluna da quantidade a acertar
 
-    textField.addKeyListener(new KeyAdapter() {
-        @Override
-        public void keyPressed(KeyEvent e) {
-            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                int row = tabela_acerto.getEditingRow();
-                if (row == -1) return;
+        TableColumn column = tabela_acerto.getColumnModel().getColumn( colAcerto );
+        JTextField textField = new JTextField();
+        column.setCellEditor( new DefaultCellEditor( textField ) );
 
-                SwingUtilities.invokeLater(() -> {
-                    try {
-                        String valorStr = textField.getText().trim();
-                        if (valorStr.isEmpty()) return;
-
-                        double acerto = Double.parseDouble(valorStr);
-                        double qtdAntes = Double.parseDouble(tabela_acerto.getValueAt(row, 5).toString());
-                        double qtdDepois = qtdAntes + acerto;
-
-                        if (qtdDepois < 0) {
-                            JOptionPane.showMessageDialog(null, "O stock final não pode ser negativo!");
-                            tabela_acerto.setValueAt(0, row, colAcerto);
-                            tabela_acerto.setValueAt(qtdAntes, row, 7);
-                        } else {
-                            tabela_acerto.setValueAt(acerto, row, colAcerto);
-                            tabela_acerto.setValueAt(qtdDepois, row, 7);
-
-                            // salvar no banco
-                            int codProduto = Integer.parseInt(tabela_acerto.getValueAt(row, 0).toString());
-                            int codArmazem = armazensController.getCodigoPorDesignacao(
-                                    cmbArmazem.getSelectedItem().toString()
-                            );
-                            stocksController.salvarAcertoLinha(
-                                    BDConexao.getBDConetion().getConnection(),
-                                    codProduto, codArmazem, usuarioId, usuarioNome,
-                                    tabela_acerto.getValueAt(row, 1).toString(),
-                                    cmbArmazem.getSelectedItem().toString(),
-                                    qtdAntes, acerto, qtdDepois
-                            );
-                        }
-
-                        // mover foco para próxima linha
-                        int nextRow = row + 1;
-                        if (nextRow < tabela_acerto.getRowCount()) {
-                            tabela_acerto.changeSelection(nextRow, colAcerto, false, false);
-                            tabela_acerto.editCellAt(nextRow, colAcerto);
-                            Component comp = tabela_acerto.getEditorComponent();
-                            if (comp != null) comp.requestFocusInWindow();
-                        }
-
-                    } catch (NumberFormatException | SQLException ex) {
-                        JOptionPane.showMessageDialog(null, "Erro ao processar acerto: " + ex.getMessage());
-                        tabela_acerto.setValueAt(0, row, colAcerto);
-                        tabela_acerto.setValueAt(Double.parseDouble(tabela_acerto.getValueAt(row, 5).toString()), row, 7);
+        textField.addKeyListener( new KeyAdapter()
+        {
+            @Override
+            public void keyPressed( KeyEvent e )
+            {
+                if ( e.getKeyCode() == KeyEvent.VK_ENTER )
+                {
+                    int row = tabela_acerto.getEditingRow();
+                    if ( row == -1 )
+                    {
+                        return;
                     }
-                });
+
+                    SwingUtilities.invokeLater( () ->
+                    {
+                        try
+                        {
+                            String valorStr = textField.getText().trim();
+                            if ( valorStr.isEmpty() )
+                            {
+                                return;
+                            }
+
+                            double acerto = Double.parseDouble( valorStr );
+                            double qtdAntes = Double.parseDouble( tabela_acerto.getValueAt( row, 5 ).toString() );
+                            double qtdDepois = qtdAntes + acerto;
+
+                            if ( qtdDepois < 0 )
+                            {
+                                JOptionPane.showMessageDialog( null, "O stock final não pode ser negativo!" );
+                                tabela_acerto.setValueAt( 0, row, colAcerto );
+                                tabela_acerto.setValueAt( qtdAntes, row, 7 );
+                            }
+                            else
+                            {
+                                tabela_acerto.setValueAt( acerto, row, colAcerto );
+                                tabela_acerto.setValueAt( qtdDepois, row, 7 );
+
+                                // salvar no banco
+                                int codProduto = Integer.parseInt( tabela_acerto.getValueAt( row, 0 ).toString() );
+                                int codArmazem = armazensController.getCodigoPorDesignacao(
+                                        cmbArmazem.getSelectedItem().toString()
+                                );
+                                stocksController.salvarAcertoLinha(
+                                        BDConexao.getBDConetion().getConnection(),
+                                        codProduto, codArmazem, usuarioId, usuarioNome,
+                                        tabela_acerto.getValueAt( row, 1 ).toString(),
+                                        cmbArmazem.getSelectedItem().toString(),
+                                        qtdAntes, acerto, qtdDepois
+                                );
+                            }
+
+                            // mover foco para próxima linha
+                            int nextRow = row + 1;
+                            if ( nextRow < tabela_acerto.getRowCount() )
+                            {
+                                tabela_acerto.changeSelection( nextRow, colAcerto, false, false );
+                                tabela_acerto.editCellAt( nextRow, colAcerto );
+                                Component comp = tabela_acerto.getEditorComponent();
+                                if ( comp != null )
+                                {
+                                    comp.requestFocusInWindow();
+                                }
+                            }
+
+                        }
+                        catch ( NumberFormatException | SQLException ex )
+                        {
+                            JOptionPane.showMessageDialog( null, "Erro ao processar acerto: " + ex.getMessage() );
+                            tabela_acerto.setValueAt( 0, row, colAcerto );
+                            tabela_acerto.setValueAt( Double.parseDouble( tabela_acerto.getValueAt( row, 5 ).toString() ), row, 7 );
+                        }
+                    } );
+                }
             }
-        }
-    });
-}
-
-
-
+        } );
+    }
 
     private void calcular_qtd()
     {
@@ -858,204 +863,260 @@ for (Object[] linha : lista) {
             }
         } );
     }
-    
-    private void configurarEditorJTable() {
-    // Obtém o editor da coluna de acerto (coluna 6)
-    TableColumn acertoColumn = tabela_acerto.getColumnModel().getColumn(6);
-    JTextField editor = new JTextField();
 
-    // Aceita apenas números positivos/negativos e ponto
-    ((AbstractDocument) editor.getDocument()).setDocumentFilter(new DocumentFilter() {
-        @Override
-        public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
-            if (string.matches("[0-9\\-\\.]+")) {
-                super.insertString(fb, offset, string, attr);
-            } else {
-                Toolkit.getDefaultToolkit().beep();
+    private void configurarEditorJTable()
+    {
+        // Obtém o editor da coluna de acerto (coluna 6)
+        TableColumn acertoColumn = tabela_acerto.getColumnModel().getColumn( 6 );
+        JTextField editor = new JTextField();
+
+        // Aceita apenas números positivos/negativos e ponto
+        ( (AbstractDocument) editor.getDocument() ).setDocumentFilter( new DocumentFilter()
+        {
+            @Override
+            public void insertString( FilterBypass fb, int offset, String string, AttributeSet attr ) throws BadLocationException
+            {
+                if ( string.matches( "[0-9\\-\\.]+" ) )
+                {
+                    super.insertString( fb, offset, string, attr );
+                }
+                else
+                {
+                    Toolkit.getDefaultToolkit().beep();
+                }
             }
-        }
 
-        @Override
-        public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
-            if (text.matches("[0-9\\-\\.]+")) {
-                super.replace(fb, offset, length, text, attrs);
-            } else {
-                Toolkit.getDefaultToolkit().beep();
+            @Override
+            public void replace( FilterBypass fb, int offset, int length, String text, AttributeSet attrs ) throws BadLocationException
+            {
+                if ( text.matches( "[0-9\\-\\.]+" ) )
+                {
+                    super.replace( fb, offset, length, text, attrs );
+                }
+                else
+                {
+                    Toolkit.getDefaultToolkit().beep();
+                }
             }
-        }
-    });
+        } );
 
-    acertoColumn.setCellEditor(new DefaultCellEditor(editor));
+        acertoColumn.setCellEditor( new DefaultCellEditor( editor ) );
 
-    acertoColumn.getCellEditor().addCellEditorListener(new CellEditorListener() {
-        @Override
-        public void editingStopped(ChangeEvent e) {
-            int row = tabela_acerto.getSelectedRow();
-            int col = 6; // coluna de acerto
+        acertoColumn.getCellEditor().addCellEditorListener( new CellEditorListener()
+        {
+            @Override
+            public void editingStopped( ChangeEvent e )
+            {
+                int row = tabela_acerto.getSelectedRow();
+                int col = 6; // coluna de acerto
 
-            Object value = tabela_acerto.getValueAt(row, col);
-            try {
-                double acerto = Double.parseDouble(value.toString());
-                double qtdAntes = Double.parseDouble(tabela_acerto.getValueAt(row, 5).toString());
+                Object value = tabela_acerto.getValueAt( row, col );
+                try
+                {
+                    double acerto = Double.parseDouble( value.toString() );
+                    double qtdAntes = Double.parseDouble( tabela_acerto.getValueAt( row, 5 ).toString() );
+                    double qtdDepois = qtdAntes + acerto;
+
+                    if ( qtdDepois < 0 )
+                    {
+                        JOptionPane.showMessageDialog( null, "O stock final não pode ser negativo!" );
+                        tabela_acerto.setValueAt( 0, row, col );
+                        tabela_acerto.setValueAt( qtdAntes, row, 7 );
+                        return;
+                    }
+                    else
+                    {
+                        tabela_acerto.setValueAt( qtdDepois, row, 7 );
+                    }
+
+                    // --- SALVA NA BASE DE DADOS ---
+                    int codProduto = Integer.parseInt( tabela_acerto.getValueAt( row, 0 ).toString() );
+                    int codArmazem = armazensController.getCodigoPorDesignacao( cmbArmazem.getSelectedItem().toString() );
+                    String designacaoProduto = tabela_acerto.getValueAt( row, 1 ).toString();
+                    String designacaoArmazem = cmbArmazem.getSelectedItem().toString();
+
+                    BDConexao bd = BDConexao.getBDConetion();
+                    try ( Connection conn = bd.getConnection() )
+                    {
+                        stocksController.salvarAcertoLinha( conn,
+                                codProduto,
+                                codArmazem,
+                                usuarioId, // passado no construtor do formulário
+                                usuarioNome, // passado no construtor do formulário
+                                designacaoProduto,
+                                designacaoArmazem,
+                                qtdAntes,
+                                acerto,
+                                qtdDepois
+                        );
+                    }
+
+                    // Move foco para próxima linha
+                    int nextRow = row + 1;
+                    if ( nextRow < tabela_acerto.getRowCount() )
+                    {
+                        tabela_acerto.changeSelection( nextRow, col, false, false );
+                        tabela_acerto.editCellAt( nextRow, col );
+                        Component comp = tabela_acerto.getEditorComponent();
+                        if ( comp != null )
+                        {
+                            comp.requestFocusInWindow();
+                        }
+                    }
+
+                }
+                catch ( NumberFormatException ex )
+                {
+                    JOptionPane.showMessageDialog( null, "Digite apenas números!" );
+                    tabela_acerto.setValueAt( 0, row, col );
+                    tabela_acerto.setValueAt( Double.parseDouble( tabela_acerto.getValueAt( row, 5 ).toString() ), row, 7 );
+                }
+                catch ( SQLException ex )
+                {
+                    JOptionPane.showMessageDialog( null, "Erro ao salvar acerto: " + ex.getMessage() );
+                }
+            }
+
+            @Override
+            public void editingCanceled( ChangeEvent e )
+            {
+            }
+        } );
+    }
+
+    private void configurarColunaAcerto()
+    {
+        TableColumn column = tabela_acerto.getColumnModel().getColumn( 6 ); // coluna QtdAcerto
+        JTextField textField = new JTextField();
+
+        column.setCellEditor( new DefaultCellEditor( textField )
+        {
+            @Override
+            public boolean stopCellEditing()
+            {
+                String value = (String) getCellEditorValue();
+                try
+                {
+                    if ( value != null && !value.trim().isEmpty() )
+                    {
+                        Double.parseDouble( value ); // tenta converter
+                    }
+                    return super.stopCellEditing();
+                }
+                catch ( NumberFormatException e )
+                {
+                    // valor inválido, resetar e manter foco
+                    SwingUtilities.invokeLater( () ->
+                    {
+                        tabela_acerto.setValueAt( 0, tabela_acerto.getSelectedRow(), 6 );
+                        tabela_acerto.editCellAt( tabela_acerto.getSelectedRow(), 6 );
+                        Component comp = tabela_acerto.getEditorComponent();
+                        if ( comp != null )
+                        {
+                            comp.requestFocusInWindow();
+                        }
+                    } );
+                    return false; // não permite sair da edição
+                }
+            }
+        } );
+    }
+
+    private void configurarEditorColunaAcertoFluido()
+    {
+        int colAcerto = 6; // coluna de QtdAcerto
+        TableColumn column = tabela_acerto.getColumnModel().getColumn( colAcerto );
+        JTextField tf = new JTextField();
+
+        // Permitir apenas números, +, -, e .
+        tf.addKeyListener( new KeyAdapter()
+        {
+            @Override
+            public void keyTyped( KeyEvent e )
+            {
+                char c = e.getKeyChar();
+                if ( !Character.isDigit( c ) && c != KeyEvent.VK_BACK_SPACE
+                        && c != KeyEvent.VK_DELETE && c != '-' && c != '.' )
+                {
+                    e.consume(); // ignora tecla inválida
+                }
+            }
+        } );
+
+        column.setCellEditor( new DefaultCellEditor( tf )
+        {
+            @Override
+            public boolean stopCellEditing()
+            {
+                int row = tabela_acerto.getSelectedRow();
+                String val = (String) getCellEditorValue();
+                double acerto = 0;
+
+                try
+                {
+                    if ( val != null && !val.trim().isEmpty() )
+                    {
+                        acerto = Double.parseDouble( val );
+                    }
+                }
+                catch ( NumberFormatException ex )
+                {
+                    acerto = 0; // reseta valor inválido
+                }
+
+                double qtdAntes = 0;
+                Object objQtdAntes = tabela_acerto.getValueAt( row, 5 );
+                if ( objQtdAntes != null )
+                {
+                    qtdAntes = Double.parseDouble( objQtdAntes.toString() );
+                }
+
                 double qtdDepois = qtdAntes + acerto;
 
-                if (qtdDepois < 0) {
-                    JOptionPane.showMessageDialog(null, "O stock final não pode ser negativo!");
-                    tabela_acerto.setValueAt(0, row, col);
-                    tabela_acerto.setValueAt(qtdAntes, row, 7);
-                    return;
-                } else {
-                    tabela_acerto.setValueAt(qtdDepois, row, 7);
+                // Impede stock negativo
+                if ( qtdDepois < 0 )
+                {
+                    acerto = 0;
+                    qtdDepois = qtdAntes;
                 }
 
-                // --- SALVA NA BASE DE DADOS ---
-                int codProduto = Integer.parseInt(tabela_acerto.getValueAt(row, 0).toString());
-                int codArmazem = armazensController.getCodigoPorDesignacao(cmbArmazem.getSelectedItem().toString());
-                String designacaoProduto = tabela_acerto.getValueAt(row, 1).toString();
-                String designacaoArmazem = cmbArmazem.getSelectedItem().toString();
+                // Atualiza a tabela
+                tabela_acerto.setValueAt( acerto, row, colAcerto );
+                tabela_acerto.setValueAt( qtdDepois, row, 7 );
 
-                BDConexao bd = BDConexao.getBDConetion();
-                try (Connection conn = bd.getConnection()) {
-                    stocksController.salvarAcertoLinha(conn,
-                        codProduto,
-                        codArmazem,
-                        usuarioId,       // passado no construtor do formulário
-                        usuarioNome,     // passado no construtor do formulário
-                        designacaoProduto,
-                        designacaoArmazem,
-                        qtdAntes,
-                        acerto,
-                        qtdDepois
-                    );
+                // Salvar automaticamente
+                try
+                {
+                    int codProduto = Integer.parseInt( tabela_acerto.getValueAt( row, 0 ).toString() );
+                    int codArmazem = armazensController.getCodigoPorDesignacao(
+                            cmbArmazem.getSelectedItem().toString() );
+                    stocksController.salvarAcertoLinha( conexao.getConnection1(), codProduto, codArmazem,
+                            usuarioId, usuarioNome,
+                            tabela_acerto.getValueAt( row, 1 ).toString(),
+                            cmbArmazem.getSelectedItem().toString(),
+                            qtdAntes, acerto, qtdDepois );
+                }
+                catch ( SQLException e )
+                {
+                    e.printStackTrace();
                 }
 
-                // Move foco para próxima linha
+                // Move o foco para a próxima linha na mesma coluna
                 int nextRow = row + 1;
-                if (nextRow < tabela_acerto.getRowCount()) {
-                    tabela_acerto.changeSelection(nextRow, col, false, false);
-                    tabela_acerto.editCellAt(nextRow, col);
+                if ( nextRow < tabela_acerto.getRowCount() )
+                {
+                    tabela_acerto.changeSelection( nextRow, colAcerto, false, false );
+                    tabela_acerto.editCellAt( nextRow, colAcerto );
                     Component comp = tabela_acerto.getEditorComponent();
-                    if (comp != null) comp.requestFocusInWindow();
+                    if ( comp != null )
+                    {
+                        comp.requestFocusInWindow();
+                    }
                 }
 
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(null, "Digite apenas números!");
-                tabela_acerto.setValueAt(0, row, col);
-                tabela_acerto.setValueAt(Double.parseDouble(tabela_acerto.getValueAt(row, 5).toString()), row, 7);
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(null, "Erro ao salvar acerto: " + ex.getMessage());
-            }
-        }
-
-        @Override
-        public void editingCanceled(ChangeEvent e) {}
-    });
-}
-    
-    private void configurarColunaAcerto() {
-    TableColumn column = tabela_acerto.getColumnModel().getColumn(6); // coluna QtdAcerto
-    JTextField textField = new JTextField();
-    
-    column.setCellEditor(new DefaultCellEditor(textField) {
-        @Override
-        public boolean stopCellEditing() {
-            String value = (String) getCellEditorValue();
-            try {
-                if (value != null && !value.trim().isEmpty()) {
-                    Double.parseDouble(value); // tenta converter
-                }
                 return super.stopCellEditing();
-            } catch (NumberFormatException e) {
-                // valor inválido, resetar e manter foco
-                SwingUtilities.invokeLater(() -> {
-                    tabela_acerto.setValueAt(0, tabela_acerto.getSelectedRow(), 6);
-                    tabela_acerto.editCellAt(tabela_acerto.getSelectedRow(), 6);
-                    Component comp = tabela_acerto.getEditorComponent();
-                    if (comp != null) comp.requestFocusInWindow();
-                });
-                return false; // não permite sair da edição
             }
-        }
-    });
-}
-    
-    private void configurarEditorColunaAcertoFluido() {
-    int colAcerto = 6; // coluna de QtdAcerto
-    TableColumn column = tabela_acerto.getColumnModel().getColumn(colAcerto);
-    JTextField tf = new JTextField();
-
-    // Permitir apenas números, +, -, e .
-    tf.addKeyListener(new KeyAdapter() {
-        @Override
-        public void keyTyped(KeyEvent e) {
-            char c = e.getKeyChar();
-            if (!Character.isDigit(c) && c != KeyEvent.VK_BACK_SPACE
-                    && c != KeyEvent.VK_DELETE && c != '-' && c != '.') {
-                e.consume(); // ignora tecla inválida
-            }
-        }
-    });
-
-    column.setCellEditor(new DefaultCellEditor(tf) {
-        @Override
-        public boolean stopCellEditing() {
-            int row = tabela_acerto.getSelectedRow();
-            String val = (String) getCellEditorValue();
-            double acerto = 0;
-
-            try {
-                if (val != null && !val.trim().isEmpty()) {
-                    acerto = Double.parseDouble(val);
-                }
-            } catch (NumberFormatException ex) {
-                acerto = 0; // reseta valor inválido
-            }
-
-            double qtdAntes = 0;
-            Object objQtdAntes = tabela_acerto.getValueAt(row, 5);
-            if (objQtdAntes != null) qtdAntes = Double.parseDouble(objQtdAntes.toString());
-
-            double qtdDepois = qtdAntes + acerto;
-
-            // Impede stock negativo
-            if (qtdDepois < 0) {
-                acerto = 0;
-                qtdDepois = qtdAntes;
-            }
-
-            // Atualiza a tabela
-            tabela_acerto.setValueAt(acerto, row, colAcerto);
-            tabela_acerto.setValueAt(qtdDepois, row, 7);
-
-            // Salvar automaticamente
-            try {
-                int codProduto = Integer.parseInt(tabela_acerto.getValueAt(row, 0).toString());
-                int codArmazem = armazensController.getCodigoPorDesignacao(
-                        cmbArmazem.getSelectedItem().toString());
-                stocksController.salvarAcertoLinha(conexao.getConnection1(), codProduto, codArmazem,
-                        usuarioId, usuarioNome,
-                        tabela_acerto.getValueAt(row, 1).toString(),
-                        cmbArmazem.getSelectedItem().toString(),
-                        qtdAntes, acerto, qtdDepois);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
-            // Move o foco para a próxima linha na mesma coluna
-            int nextRow = row + 1;
-            if (nextRow < tabela_acerto.getRowCount()) {
-                tabela_acerto.changeSelection(nextRow, colAcerto, false, false);
-                tabela_acerto.editCellAt(nextRow, colAcerto);
-                Component comp = tabela_acerto.getEditorComponent();
-                if (comp != null) comp.requestFocusInWindow();
-            }
-
-            return super.stopCellEditing();
-        }
-    });
-}
-
-
-
+        } );
+    }
 
 }

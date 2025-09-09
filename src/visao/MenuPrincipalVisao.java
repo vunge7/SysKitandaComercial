@@ -672,6 +672,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jmGavetasPrateleiras = new javax.swing.JMenuItem();
         jmAcertoStock = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
+        jMenuItem10 = new javax.swing.JMenuItem();
         jmReactivarProdutos = new javax.swing.JMenuItem();
         jmPermissao = new javax.swing.JMenuItem();
         jMenuItem8 = new javax.swing.JMenuItem();
@@ -1536,6 +1537,16 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
             }
         });
         jMenu6.add(jMenuItem5);
+
+        jMenuItem10.setText("Definir IVA em Massa");
+        jMenuItem10.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jMenuItem10ActionPerformed(evt);
+            }
+        });
+        jMenu6.add(jMenuItem10);
 
         jmReactivarProdutos.setText("Reactivar Produtos");
         jmReactivarProdutos.addActionListener(new java.awt.event.ActionListener()
@@ -2420,6 +2431,11 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         new AcertoStockEmMassaVisao(this, administrador, ERROR, YYYYMMDD_HHMMSS ).setVisible( true);
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
+    private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem10ActionPerformed
+    {//GEN-HEADEREND:event_jMenuItem10ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItem10ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -2497,6 +2513,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuConfiguracoesSistema;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem10;
     private javax.swing.JMenuItem jMenuItem12;
     private javax.swing.JMenuItem jMenuItem13;
     private javax.swing.JMenuItem jMenuItem2;
