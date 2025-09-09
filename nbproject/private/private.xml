@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+<<<<<<< HEAD
         <group>
             <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/lista/ResumoVendasByUsuarioByIntervalo.java</file>
             <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/entity/TbPreco.java</file>
             <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/visao/MenuPrincipalVisao.java</file>
             <file>file:/C:/Users/marti/Documents/Projectos_2025/DeskTop/Comercial/SysKitandaComercial/src/lista/ListarRelatorioVendaByIntervalo.java</file>
         </group>
+=======
+        <group/>
+>>>>>>> 59a0e80917aaeae5dc9e7f4575d1581329a4450f
     </open-files>
 </project-private>

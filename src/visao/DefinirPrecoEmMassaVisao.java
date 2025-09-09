@@ -24,19 +24,22 @@ import entity.TbTipoProduto;
 import entity.TbUsuario;
 import java.awt.Component;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+import java.util.stream.Collectors;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import util.BDConexao;
 import util.FinanceUtils;
 import util.PrecosUtil;
+import util.TextFieldUtils;
 
 /**
  *
@@ -45,9 +48,12 @@ import util.PrecosUtil;
 public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
 {
 
-    private final int COL_PRECO_VENDA = 5;
-    private final int COL_IVA = 6;
-    private final int COL_PRECO_COM_IVA = 7;
+    final int COL_ID_PRODUTO = 0;
+    final int COL_PRECO_COMPRA = 3;
+    final int COL_PRECO_MEDIO = 4;
+    final int COL_PRECO_VENDA = 5;
+    final int COL_IVA = 6;
+    final int COL_PRECO_COM_IVA = 7;
 
     private static PrecosController precosController;
     private static ProdutosController produtosController;
@@ -71,7 +77,7 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
     private TbTipoProduto tipoProduto;
     private int codigo = 0;
     private String usuarioNome;
-    private List<Object[]> lista;
+    private List<Object[]> listaFonte;
 
     private final int usuarioId;
 
@@ -96,26 +102,23 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
 
         init();
 
-        cmbCategoria.setRenderer( new DefaultListCellRenderer()
-        {
-            @Override
-            public Component getListCellRendererComponent( JList<?> list, Object value, int index,
-                    boolean isSelected, boolean cellHasFocus )
-            {
-                super.getListCellRendererComponent( list, value, index, isSelected, cellHasFocus );
-                if ( value instanceof TbArmazem )
-                {
-                    TbArmazem armazem = (TbArmazem) value;
-                    setText( armazem.getDesignacao() ); // mostra só o nome
-                }
-                return this;
-            }
-        } );
-
+//        cmbCategoria.setRenderer( new DefaultListCellRenderer()
+//        {
+//            @Override
+//            public Component getListCellRendererComponent( JList<?> list, Object value, int index,
+//                    boolean isSelected, boolean cellHasFocus )
+//            {
+//                super.getListCellRendererComponent( list, value, index, isSelected, cellHasFocus );
+//                if ( value instanceof TbArmazem )
+//                {
+//                    TbArmazem armazem = (TbArmazem) value;
+//                    setText( armazem.getDesignacao() ); // mostra só o nome
+//                }
+//                return this;
+//            }
+//        } );
         carregarTipoProduto();
         tabela.setRowHeight( 30 );
-
-        carregarProdutos();
 
         initTable();
 
@@ -124,12 +127,15 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
     private void init()
     {
         cmbCategoria.setModel( new DefaultComboBoxModel<>( tipoProdutosController.getVector() ) );
-        cmbImposto.setModel( new DefaultComboBoxModel( impostosController.getVector() ) );
 
-        btnAplicar.addActionListener( e ->
+        Vector<String> vector = impostosController.getVector();
+        vector.add( 1, "0.0" );
+        cmbImposto.setModel( new DefaultComboBoxModel( vector ) );
+
+        btnActualizar.addActionListener( e ->
         {
             // Desativa o botão imediatamente
-            btnAplicar.setEnabled( false );
+            btnActualizar.setEnabled( false );
 
             // Executa em outra thread para não travar a interface
             new Thread( () ->
@@ -141,10 +147,35 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
                 finally
                 {
                     // Reativa o botão no EDT (Event Dispatch Thread)
-                    SwingUtilities.invokeLater( () -> btnAplicar.setEnabled( true ) );
+                    SwingUtilities.invokeLater( () -> btnActualizar.setEnabled( true ) );
                 }
             } ).start();
         } );
+
+        txtIniciais.getDocument().addDocumentListener( new DocumentListener()
+        {
+            @Override
+            public void insertUpdate( DocumentEvent e )
+            {
+                filtrarPorOcorrencia();
+            }
+
+            @Override
+            public void removeUpdate( DocumentEvent e )
+            {
+                filtrarPorOcorrencia();
+            }
+
+            @Override
+            public void changedUpdate( DocumentEvent e )
+            {
+                filtrarPorOcorrencia();
+            }
+        } );
+
+        listaFonte = produtosController.listarProdutos( BDConexao.conectar() );
+        carregarProdutos( listaFonte );
+
     }
 
     /**
@@ -165,10 +196,12 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
         cmbCategoria = new javax.swing.JComboBox<>();
         ivaTaxaJLabel = new javax.swing.JLabel();
         cmbImposto = new javax.swing.JComboBox<>();
-        btnAplicar = new javax.swing.JButton();
+        btnActualizar = new javax.swing.JButton();
+        txtIniciais = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("...:::::ACERTO STOCK::::...");
+        setTitle("...:::::ACTUALIZAÇÃO DE PREÇOS::::...");
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
@@ -233,7 +266,6 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
         {
             tabela.getColumnModel().getColumn(0).setMaxWidth(35);
             tabela.getColumnModel().getColumn(1).setPreferredWidth(120);
-            tabela.getColumnModel().getColumn(3).setMaxWidth(75);
             tabela.getColumnModel().getColumn(5).setPreferredWidth(75);
             tabela.getColumnModel().getColumn(6).setPreferredWidth(50);
             tabela.getColumnModel().getColumn(7).setPreferredWidth(75);
@@ -263,57 +295,79 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
             }
         });
 
-        btnAplicar.setText("Aplicar");
+        btnActualizar.setText("Actualizar");
+        btnActualizar.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                btnActualizarActionPerformed(evt);
+            }
+        });
+
+        txtIniciais.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                txtIniciaisActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Digite as Inicais do Artigo");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(14, 14, 14)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 914, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(14, 14, 14)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(cmbCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(22, 22, 22)
                                 .addComponent(ivaTaxaJLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(cmbImposto, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(26, 26, 26)
-                                .addComponent(btnAplicar, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(18, 18, 18)
+                                .addComponent(btnActualizar, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 378, Short.MAX_VALUE)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtIniciais, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(14, 14, 14)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cmbCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(ivaTaxaJLabel)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE, false)
                                     .addComponent(cmbImposto)
-                                    .addComponent(btnAplicar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 530, Short.MAX_VALUE)
+                                    .addComponent(btnActualizar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cmbCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(15, 15, 15)
+                        .addComponent(jLabel2))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(txtIniciais, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 493, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -331,6 +385,18 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
     private void cmbCategoriaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbCategoriaActionPerformed
     {//GEN-HEADEREND:event_cmbCategoriaActionPerformed
 
+        try
+        {
+
+            System.err.println( "INIT" );
+            List<Object[]> listaPorCategoria = produtosController.listarProdutosByCategoria( BDConexao.conectar(), cmbCategoria.getSelectedItem().toString() );
+            System.err.println( "LISTA SIZE : " + listaPorCategoria.size() );
+            carregarProdutos( listaPorCategoria );
+
+        }
+        catch ( Exception e )
+        {
+        }
 
     }//GEN-LAST:event_cmbCategoriaActionPerformed
 
@@ -340,6 +406,16 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
         prepararUpdateIva();
 
     }//GEN-LAST:event_cmbImpostoActionPerformed
+
+    private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnActualizarActionPerformed
+    {//GEN-HEADEREND:event_btnActualizarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnActualizarActionPerformed
+
+    private void txtIniciaisActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtIniciaisActionPerformed
+    {//GEN-HEADEREND:event_txtIniciaisActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtIniciaisActionPerformed
 
     /**
      * @param args the command line arguments
@@ -394,34 +470,36 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAplicar;
+    private javax.swing.JButton btnActualizar;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JComboBox<String> cmbCategoria;
     private static javax.swing.JComboBox<String> cmbImposto;
     private static javax.swing.JLabel ivaTaxaJLabel;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tabela;
+    private javax.swing.JTextField txtIniciais;
     // End of variables declaration//GEN-END:variables
 
     private void carregarTipoProduto()
     {
         Vector<String> lista = tipoProdutosController.getVector();
         cmbCategoria.removeAllItems();
+        lista.add( 0, "--SELECCIONE--" );
         for ( String nome : lista )
         {
             cmbCategoria.addItem( nome );
         }
     }
 
-    private void carregarProdutos()
+    private void carregarProdutos( List<Object[]> listaParm )
     {
         DefaultTableModel model = (DefaultTableModel) tabela.getModel();
         model.setRowCount( 0 ); // limpa a tabela
 
-        List<Object[]> lista = produtosController.listarProdutos( BDConexao.getConnection() ); // <-- preencher a lista
-        for ( Object[] linha : lista )
+        for ( Object[] linha : listaParm )
         {
             model.addRow( linha );
         }
@@ -432,19 +510,20 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
         DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
         for ( int i = 0; i < modelo.getRowCount(); i++ )
         {
-            actualizar( modelo, i, COL_IVA, COL_PRECO_COM_IVA );
+            actualizar( modelo, i );
+
         }
     }
 
-    private void actualizar( DefaultTableModel modelo, int linha, int colunaIva, int colunaPrecoComIva )
+    private void actualizar( DefaultTableModel modelo, int linha )
     {
         double taxa = Double.parseDouble( cmbImposto.getSelectedItem().toString() );
         double qtd = 1;
-        double precoSemIva = Double.parseDouble( modelo.getValueAt( linha, COL_PRECO_VENDA ).toString() );
+        double precoVenda = Double.parseDouble( modelo.getValueAt( linha, COL_PRECO_VENDA ).toString() );
         double desconto = 0;
-        double valorComIVA = FinanceUtils.getValorComIVA( qtd, taxa, precoSemIva, desconto );
-        modelo.setValueAt( taxa, linha, colunaIva );
-        modelo.setValueAt( valorComIVA, linha, colunaPrecoComIva );
+        double valorComIVA = FinanceUtils.getValorComIVA( qtd, taxa, precoVenda, desconto );
+        modelo.setValueAt( taxa, linha, COL_IVA );
+        modelo.setValueAt( valorComIVA, linha, COL_PRECO_COM_IVA );
     }
 
     private void actualizarENTER( DefaultTableModel modelo, int linha, int colunaIva, int colunaPrecoComIva )
@@ -478,54 +557,109 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
         }
     }
 
+    private void aplicarIvaMassa( int idProduto, String iva )
+    {
+        try
+        {
+            int idImposto = impostosController.getImpostoByDesignacao( iva ).getPkImposto();
+            ProdutoImposto produtoImposto = new ProdutoImposto();
+            produtoImposto.setFkProduto( new TbProduto( idProduto ) );
+            produtoImposto.setFkImposto( new Imposto( idImposto ) );
+
+            if ( !produtosImpostoController.salvar( produtoImposto ) )
+            {
+                JOptionPane.showMessageDialog( null, "Falha ao registrar o produto", "Falha", JOptionPane.WARNING_MESSAGE );
+                return;
+            }
+        }
+        catch ( Exception e )
+        {
+            JOptionPane.showMessageDialog( null, "Taxa inexistente", "AVISO", JOptionPane.WARNING_MESSAGE );
+            return;
+        }
+
+    }
+
+    private void procedimentoAplicar()
+    {
+        DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
+        for ( int i = 0; i < modelo.getRowCount(); i++ )
+        {
+            int idProduto = Integer.parseInt( modelo.getValueAt( i, 0 ).toString() );
+            String taxa = modelo.getValueAt( i, COL_IVA ).toString();
+            BigDecimal precoCompra = new BigDecimal( modelo.getValueAt( i, COL_PRECO_COMPRA ).toString() );
+            BigDecimal precoVenda = new BigDecimal( modelo.getValueAt( i, COL_PRECO_VENDA ).toString() );
+
+            produtosImpostoController.deleteProdutoImposto( idProduto );
+            if ( Double.parseDouble( taxa ) > 0 )
+            {
+                aplicarIvaMassa( idProduto, taxa );
+            }
+
+            if ( !( precoCompra.doubleValue() == 0 && precoVenda.doubleValue() == 0 ) )
+            {
+                PrecosUtil.actualizarPreco(
+                        usuarioId,
+                        idProduto,
+                        precoCompra,
+                        precoVenda,
+                        precosController, conexao );
+            }
+
+        }
+
+        listaFonte = produtosController.listarProdutos( BDConexao.conectar() );
+        JOptionPane.showMessageDialog( null, "Operação efectuada com sucesso!..." );
+    }
+
+// Método usando Java 8+ streams
+    public List<Object[]> getListaPorCategoria( String categoria )
+    {
+        if ( categoria == null || categoria.isEmpty() )
+        {
+            return new ArrayList<>(); // retorna lista vazia se categoria inválida
+        }
+
+        final int COL_CATEGORIA = 2; // índice da coluna categoria
+
+        return listaFonte.stream()
+                .filter( arr -> arr[ COL_CATEGORIA ] != null
+                && categoria.equals( arr[ COL_CATEGORIA ].toString() ) )
+                .collect( Collectors.toList() );
+    }
+
+// Alternativa usando loop tradicional
+    public List<Object[]> getListaPorCategoriaLoop( String categoria )
+    {
+        List<Object[]> resultado = new ArrayList<>();
+        final int COL_CATEGORIA = 2;
+
+        if ( categoria == null || categoria.isEmpty() )
+        {
+            return resultado;
+        }
+
+        for ( Object[] item : listaFonte )
+        {
+            if ( item[ COL_CATEGORIA ] != null && categoria.equals( item[ COL_CATEGORIA ].toString() ) )
+            {
+                resultado.add( item );
+            }
+        }
+        return resultado;
+    }
+
     private void initTable()
     {
-        final int COL_ID_PRODUTO = 0;
-        final int COL_PRECO_COMPRA = 3;
-        final int COL_PRECO_MEDIO = 4;
-        final int COL_PRECO_VENDA = 5;
-        final int COL_IVA = 6;
-        final int COL_PRECO_COM_IVA = 7;
-
         DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
-
-        // Editor customizado para IVA
-        JTextField editorIvaField = new JTextField();
-        DefaultCellEditor editorIva = new DefaultCellEditor( editorIvaField );
-        editorIva.setClickCountToStart( 1 );
-        tabela.getColumnModel().getColumn( COL_IVA ).setCellEditor( editorIva );
         tabela.putClientProperty( "terminateEditOnFocusLost", Boolean.TRUE );
 
-        // Salto de linha no IVA
-        editorIva.addCellEditorListener( new javax.swing.event.CellEditorListener()
-        {
-            @Override
-            public void editingStopped( javax.swing.event.ChangeEvent e )
-            {
-                int linha = tabela.getSelectedRow();
-                if ( linha >= 0 )
-                {
-                    int proximaLinha = linha + 1;
-                    if ( proximaLinha < tabela.getRowCount() )
-                    {
-                        tabela.changeSelection( proximaLinha, COL_IVA, false, false );
-                        tabela.editCellAt( proximaLinha, COL_IVA );
-                        Component editor = tabela.getEditorComponent();
-                        if ( editor != null )
-                        {
-                            editor.requestFocus();
-                        }
-                    }
-                }
-            }
+        // depois configura a navegação (assim não serão sobrescritos)
+        configurarNavegacaoEntreColunas();
+        TextFieldUtils.configurarColunaDecimal( tabela, COL_PRECO_COMPRA, 6 );
+        TextFieldUtils.configurarColunaDecimal( tabela, COL_PRECO_VENDA, 6 );
 
-            @Override
-            public void editingCanceled( javax.swing.event.ChangeEvent e )
-            {
-            }
-        } );
-
-        // TableModelListener
+        // TableModelListener (mantive o teu código)
         modelo.addTableModelListener( ev ->
         {
             if ( ev.getType() != javax.swing.event.TableModelEvent.UPDATE )
@@ -543,56 +677,183 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
             int idProduto = (int) modelo.getValueAt( linha, COL_ID_PRODUTO );
             BigDecimal precoCompra = new BigDecimal( modelo.getValueAt( linha, COL_PRECO_COMPRA ).toString() );
 
-            // Atualiza Preço Médio se preco_compra mudou
             if ( coluna == COL_PRECO_COMPRA )
             {
                 BigDecimal precoMedio = PrecosUtil.calculaPrecoMedio( idProduto, precoCompra, 0 );
-
                 modelo.setValueAt( precoMedio, linha, COL_PRECO_MEDIO );
             }
 
-            // Atualiza Preço + IVA se preco_compra, preco_venda ou IVA mudou
             if ( coluna == COL_PRECO_COMPRA || coluna == COL_PRECO_VENDA || coluna == COL_IVA )
             {
                 actualizarENTER( modelo, linha, COL_IVA, COL_PRECO_COM_IVA );
             }
         } );
+        // Método que configura a navegação automática
+
+        // primeiro aplica os utils que configuram editores (se existir)
     }
 
-    private void aplicarIvaMassa( int idProduto, String iva )
+    private void configurarNavegacaoEntreColunas()
     {
-        int idImposto = impostosController.getImpostoByDesignacao( iva ).getPkImposto();
-        ProdutoImposto produtoImposto = new ProdutoImposto();
-        produtoImposto.setFkProduto( new TbProduto( idProduto ) );
-        produtoImposto.setFkImposto( new Imposto( idImposto ) );
-        if ( produtosImpostoController.existeProdutoImposto( idProduto ) )
-        {
-            if ( !produtosImpostoController.actualizar( produtoImposto ) )
-            {
-                JOptionPane.showMessageDialog( null, "Falha ao actualizar o IVA no produto", "Falha", JOptionPane.WARNING_MESSAGE );
-                return;
-            }
-        }
-        else if ( !produtosImpostoController.salvar( produtoImposto ) )
-        {
-            JOptionPane.showMessageDialog( null, "Falha ao registrar o produto", "Falha", JOptionPane.WARNING_MESSAGE );
-            return;
-        }
+        // Preço Compra -> Preço Venda
+        adicionarNavegacaoComEnter( COL_PRECO_COMPRA, COL_PRECO_VENDA );
+
+        // Preço Venda -> IVA
+        adicionarNavegacaoComEnter( COL_PRECO_VENDA, COL_IVA );
+
+        // IVA -> próxima linha (Preço Compra)
+        configurarEditorIva();
     }
 
-    private void procedimentoAplicar()
+// Navegação normal: de colunaOrigem -> colunaDestino (somente com Enter)
+    private void adicionarNavegacaoComEnter( int colunaOrigem, int colunaDestino )
     {
-        DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
+        JTextField f = new JTextField();
+        DefaultCellEditor editor = new DefaultCellEditor( f );
+        editor.setClickCountToStart( 1 );
+
+        final boolean[] confirmadoComEnter =
         {
-            int idProduto = Integer.parseInt( modelo.getValueAt( i, 0 ).toString() );
-            String taxa = modelo.getValueAt( i, COL_IVA ).toString();
-            if ( Double.parseDouble( taxa ) > 0 )
+            false
+        };
+
+        f.addKeyListener( new java.awt.event.KeyAdapter()
+        {
+            @Override
+            public void keyPressed( java.awt.event.KeyEvent e )
             {
-                aplicarIvaMassa( idProduto, taxa );
+                if ( e.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER )
+                {
+                    confirmadoComEnter[ 0 ] = true;
+                }
+            }
+        } );
+
+        editor.addCellEditorListener( new javax.swing.event.CellEditorListener()
+        {
+            @Override
+            public void editingStopped( javax.swing.event.ChangeEvent e )
+            {
+                if ( confirmadoComEnter[ 0 ] )
+                {
+                    confirmadoComEnter[ 0 ] = false;
+                    int linha = tabela.getSelectedRow();
+                    if ( linha >= 0 )
+                    {
+                        focusEditorAt( linha, colunaDestino );
+                    }
+                }
+            }
+
+            @Override
+            public void editingCanceled( javax.swing.event.ChangeEvent e )
+            {
+                confirmadoComEnter[ 0 ] = false;
+            }
+        } );
+
+        tabela.getColumnModel().getColumn( colunaOrigem ).setCellEditor( editor );
+    }
+
+// Editor especial para IVA -> próxima linha (somente com Enter)
+    private void configurarEditorIva()
+    {
+        JTextField ivaField = new JTextField();
+        DefaultCellEditor editorIva = new DefaultCellEditor( ivaField );
+        editorIva.setClickCountToStart( 1 );
+
+        final boolean[] confirmadoComEnter =
+        {
+            false
+        };
+
+        ivaField.addKeyListener( new java.awt.event.KeyAdapter()
+        {
+            @Override
+            public void keyPressed( java.awt.event.KeyEvent e )
+            {
+                if ( e.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER )
+                {
+                    confirmadoComEnter[ 0 ] = true;
+                }
+            }
+        } );
+
+        editorIva.addCellEditorListener( new javax.swing.event.CellEditorListener()
+        {
+            @Override
+            public void editingStopped( javax.swing.event.ChangeEvent e )
+            {
+                if ( confirmadoComEnter[ 0 ] )
+                {
+                    confirmadoComEnter[ 0 ] = false;
+                    int linha = tabela.getSelectedRow();
+                    if ( linha >= 0 )
+                    {
+                        int proximaLinha = linha + 1;
+                        if ( proximaLinha < tabela.getRowCount() )
+                        {
+                            focusEditorAt( proximaLinha, COL_PRECO_COMPRA );
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void editingCanceled( javax.swing.event.ChangeEvent e )
+            {
+                confirmadoComEnter[ 0 ] = false;
+            }
+        } );
+
+        tabela.getColumnModel().getColumn( COL_IVA ).setCellEditor( editorIva );
+    }
+
+// Move foco para uma célula, abre edição e coloca caret piscando
+    private void focusEditorAt( int row, int col )
+    {
+        SwingUtilities.invokeLater( () ->
+        {
+            tabela.requestFocusInWindow();
+            tabela.changeSelection( row, col, false, false );
+
+            if ( tabela.editCellAt( row, col ) )
+            {
+                Component editor = tabela.getEditorComponent();
+                if ( editor != null )
+                {
+                    editor.requestFocusInWindow();
+                    if ( editor instanceof javax.swing.text.JTextComponent )
+                    {
+                        javax.swing.text.JTextComponent tc = (javax.swing.text.JTextComponent) editor;
+                        tc.selectAll(); // cursor pisca e texto selecionado
+                    }
+                }
+            }
+        } );
+    }
+
+    // Filtro
+    // Filtro por ocorrência em qualquer parte
+    private void filtrarPorOcorrencia()
+    {
+        String filtro = txtIniciais.getText().trim().toLowerCase();
+
+        List<Object[]> filtrados = new ArrayList<>();
+
+        for ( Object[] linha : listaFonte )
+        {
+            if ( linha[ 1 ] != null )
+            {
+                String designacao = linha[ 1 ].toString().toLowerCase();
+                if ( designacao.contains( filtro ) )
+                {
+                    filtrados.add( linha );
+                }
             }
         }
-        JOptionPane.showMessageDialog( null, "IVA aplicado com sucesso!..." );
+
+        carregarProdutos( filtrados );
     }
 
 }

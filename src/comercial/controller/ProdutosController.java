@@ -12,6 +12,7 @@ import entity.TbLocal;
 import entity.TbProduto;
 import entity.TbTipoProduto;
 import entity.Unidade;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -1137,28 +1138,50 @@ public class ProdutosController implements EntidadeFactory
     {
         List<Object[]> lista = new ArrayList<>();
 
+//        String sql = "SELECT p.codigo AS codigo, "
+//                + "p.designacao AS designacao, "
+//                + "t.designacao AS categoria, "
+//                + "COALESCE(pr.preco_venda, 0) AS preco_compra, "
+//                + "COALESCE(pr.preco_medio, 0) AS preco_medio, " // <-- acrescentado
+//                + "COALESCE(pr.preco_venda, 0) AS preco_venda, "
+//                + "COALESCE(SUM(i.taxa), 0) AS iva, "
+//                + "ROUND(COALESCE(pr.preco_venda, 0) * (1 + COALESCE(SUM(i.taxa), 0) / 100.0), 2) AS preco_com_iva "
+//                + "FROM tb_produto p "
+//                + "INNER JOIN tb_tipo_produto t ON t.codigo = p.cod_Tipo_Produto "
+//                + "LEFT JOIN ( "
+//                + "   SELECT pr1.fk_produto, pr1.preco_venda, pr1.preco_medio "
+//                + "   FROM tb_preco pr1 "
+//                + "   INNER JOIN ( "
+//                + "       SELECT fk_produto, MAX(pk_preco) AS max_preco "
+//                + "       FROM tb_preco "
+//                + "       GROUP BY fk_produto "
+//                + "   ) pr2 ON pr1.fk_produto = pr2.fk_produto AND pr1.pk_preco = pr2.max_preco "
+//                + ") pr ON pr.fk_produto = p.codigo "
+//                + "LEFT JOIN produto_imposto pi ON pi.fk_produto = p.codigo "
+//                + "LEFT JOIN imposto i ON i.pk_imposto = pi.fk_imposto "
+//                + "GROUP BY p.codigo, p.designacao, t.designacao, pr.preco_venda, pr.preco_medio;";
         String sql = "SELECT p.codigo AS codigo, "
                 + "p.designacao AS designacao, "
                 + "t.designacao AS categoria, "
-                + "COALESCE(pr.preco_venda, 0) AS preco_compra, "
-                + "COALESCE(pr.preco_medio, 0) AS preco_medio, " // <-- acrescentado
+                + "COALESCE(pr.preco_compra, 0) AS preco_compra, "
                 + "COALESCE(pr.preco_venda, 0) AS preco_venda, "
+                + "COALESCE(pr.preco_medio, 0) AS preco_medio, "
                 + "COALESCE(SUM(i.taxa), 0) AS iva, "
-                + "ROUND(COALESCE(pr.preco_venda, 0) * (1 + COALESCE(SUM(i.taxa), 0) / 100.0), 6) AS preco_com_iva "
+                + "ROUND(COALESCE(pr.preco_venda, 0) * (1 + COALESCE(SUM(i.taxa), 0) / 100.0), 2) AS preco_com_iva "
                 + "FROM tb_produto p "
-                + "INNER JOIN tb_tipo_produto t ON t.codigo = p.cod_Tipo_Produto "
+                + "INNER JOIN tb_tipo_produto t ON t.codigo = p.cod_tipo_produto "
                 + "LEFT JOIN ( "
-                + "   SELECT pr1.fk_produto, pr1.preco_venda, pr1.preco_medio "
-                + "   FROM tb_preco pr1 "
-                + "   INNER JOIN ( "
-                + "       SELECT fk_produto, MAX(pk_preco) AS max_preco "
-                + "       FROM tb_preco "
-                + "       GROUP BY fk_produto "
-                + "   ) pr2 ON pr1.fk_produto = pr2.fk_produto AND pr1.pk_preco = pr2.max_preco "
+                + "    SELECT pr1.fk_produto, pr1.preco_compra, pr1.preco_venda, pr1.preco_medio "
+                + "    FROM tb_preco pr1 "
+                + "    INNER JOIN ( "
+                + "        SELECT fk_produto, MAX(pk_preco) AS max_preco "
+                + "        FROM tb_preco "
+                + "        GROUP BY fk_produto "
+                + "    ) pr2 ON pr1.fk_produto = pr2.fk_produto AND pr1.pk_preco = pr2.max_preco "
                 + ") pr ON pr.fk_produto = p.codigo "
                 + "LEFT JOIN produto_imposto pi ON pi.fk_produto = p.codigo "
                 + "LEFT JOIN imposto i ON i.pk_imposto = pi.fk_imposto "
-                + "GROUP BY p.codigo, p.designacao, t.designacao, pr.preco_venda, pr.preco_medio;";
+                + "GROUP BY p.codigo, p.designacao, t.designacao, pr.preco_compra, pr.preco_venda, pr.preco_medio;";
 
         try ( PreparedStatement pst = conn.prepareStatement( sql ) )
         {
@@ -1189,80 +1212,65 @@ public class ProdutosController implements EntidadeFactory
         return lista;
     }
 
-//    public List<Object[]> listarStockPorArmazem(Connection conn, int codArmazem) {
-//    List<Object[]> lista = new ArrayList<>();
-//
-//    String sql = "SELECT p.codigo, "
-//               + "       p.designacao, "
-//               + "       t.designacao AS tipo_produto, "
-//               + "       COALESCE(AVG(pr.preco_compra), 0) AS preco_medio_compra, "
-//               + "       (SELECT pr2.preco_venda "
-//               + "        FROM tb_preco pr2 "
-//               + "        WHERE pr2.fk_produto = p.codigo "
-//               + "        ORDER BY pr2.data DESC, pr2.hora DESC "
-//               + "        LIMIT 1) AS preco_venda_atual, "
-//               + "       SUM(s.quantidade_existente) AS qtd_existente "
-//               + "FROM tb_stock s "
-//               + "JOIN tb_produto p ON p.codigo = s.cod_produto_codigo "
-//               + "JOIN tb_tipo_produto t ON t.codigo = p.cod_Tipo_Produto "
-//               + "LEFT JOIN tb_preco pr ON pr.fk_produto = p.codigo "
-//               + "WHERE s.cod_armazem = ? "
-//               + "GROUP BY p.codigo, p.designacao, t.designacao "
-//               + "ORDER BY p.designacao ASC";
-//
-//    try (PreparedStatement ps = conn.prepareStatement(sql)) {
-//        ps.setInt(1, codArmazem);
-//        try (ResultSet rs = ps.executeQuery()) {
-//            while (rs.next()) {
-//                Object[] linha = {
-//                    rs.getInt("codigo"),
-//                    rs.getString("designacao"),
-//                    rs.getString("tipo_produto"),
-//                    rs.getBigDecimal("preco_medio_compra"),
-//                    rs.getBigDecimal("preco_venda_atual"),
-//                    rs.getDouble("qtd_existente"),
-//                    null, // quantidade a acertar (editável no JTable)
-//                    null  // existência total (calculada no JTable)
-//                };
-//                lista.add(linha);
-//            }
-//        }
-//    } catch (SQLException e) {
-//        e.printStackTrace();
-//    }
-//
-//    return lista;
-//}
-//public List<Object[]> listarStockPorArmazem(Connection conn, int codArmazem) {
-//    List<Object[]> lista = new ArrayList<>();
-//
-//    String sql = "SELECT DISTINCT p.codigo, p.designacao, SUM(s.quantidade_existente) AS quantidade, pr.preco_venda "
-//               + "FROM tb_stock s "
-//               + "JOIN tb_produto p ON p.codigo = s.cod_produto_codigo "
-//               + "JOIN tb_preco pr ON pr.fk_produto = p.codigo "
-//               + "WHERE s.cod_armazem = ? "
-//               + "GROUP BY p.codigo, p.designacao, pr.preco_venda "
-//               + "ORDER BY p.designacao ASC";
-//
-//    try (PreparedStatement ps = conn.prepareStatement(sql)) {
-//        ps.setInt(1, codArmazem);
-//        try (ResultSet rs = ps.executeQuery()) {
-//            while (rs.next()) {
-//                Object[] linha = {
-//                    rs.getInt("codigo"),
-//                    rs.getString("designacao"),
-//                    rs.getInt("quantidade"),
-//                    rs.getBigDecimal("preco_venda")
-//                };
-//                lista.add(linha);
-//            }
-//        }
-//    } catch (SQLException e) {
-//        e.printStackTrace();
-//    }
-//
-//    return lista;
-//}
+    public List<Object[]> listarProdutosByCategoria( Connection conn, String categoria )
+    {
+        List<Object[]> lista = new ArrayList<>();
+
+        String sql = "SELECT p.codigo AS codigo, "
+                + "p.designacao AS designacao, "
+                + "t.designacao AS categoria, "
+                + "COALESCE(pr.preco_compra, 0) AS preco_compra, "
+                + "COALESCE(pr.preco_venda, 0) AS preco_venda, "
+                + "COALESCE(pr.preco_medio, 0) AS preco_medio, "
+                + "COALESCE(SUM(i.taxa), 0) AS iva, "
+                + "ROUND(COALESCE(pr.preco_venda, 0) * (1 + COALESCE(SUM(i.taxa), 0) / 100.0), 2) AS preco_com_iva "
+                + "FROM tb_produto p "
+                + "INNER JOIN tb_tipo_produto t ON t.codigo = p.cod_tipo_produto "
+                + "LEFT JOIN ( "
+                + "    SELECT pr1.fk_produto, pr1.preco_compra, pr1.preco_venda, pr1.preco_medio "
+                + "    FROM tb_preco pr1 "
+                + "    INNER JOIN ( "
+                + "        SELECT fk_produto, MAX(pk_preco) AS max_preco "
+                + "        FROM tb_preco "
+                + "        GROUP BY fk_produto "
+                + "    ) pr2 ON pr1.fk_produto = pr2.fk_produto AND pr1.pk_preco = pr2.max_preco "
+                + ") pr ON pr.fk_produto = p.codigo "
+                + "LEFT JOIN produto_imposto pi ON pi.fk_produto = p.codigo "
+                + "LEFT JOIN imposto i ON i.pk_imposto = pi.fk_imposto "
+                + "WHERE t.designacao = ? "
+                + "GROUP BY p.codigo, p.designacao, t.designacao, pr.preco_compra, pr.preco_venda, pr.preco_medio;";
+
+        try ( PreparedStatement pst = conn.prepareStatement( sql ) )
+        {
+            pst.setString( 1, categoria ); // parâmetro seguro
+
+            try ( ResultSet rs = pst.executeQuery() )
+            {
+                while ( rs.next() )
+                {
+                    Object[] linha = new Object[]
+                    {
+                        rs.getInt( "codigo" ),
+                        rs.getString( "designacao" ),
+                        rs.getString( "categoria" ),
+                        rs.getBigDecimal( "preco_compra" ),
+                        rs.getBigDecimal( "preco_medio" ),
+                        rs.getBigDecimal( "preco_venda" ),
+                        rs.getBigDecimal( "iva" ),
+                        rs.getBigDecimal( "preco_com_iva" )
+                    };
+                    lista.add( linha );
+                }
+            }
+        }
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
+        }
+
+        return lista;
+    }
+
     public static void main( String[] args )
     {
         BDConexao conexao = new BDConexao();

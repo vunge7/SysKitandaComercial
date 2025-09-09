@@ -62,7 +62,7 @@ public class ImpostosController implements EntidadeFactory
     public List<Imposto> listarTodos()
     {
 
-        String FIND_ALL = "SELECT * FROM imposto ORDER BY pk_imposto ASC";
+        String FIND_ALL = "SELECT * FROM imposto ORDER BY pk_imposto DESC";
         ResultSet result = conexao.executeQuery( FIND_ALL );
         List<Imposto> lista_impostos = new ArrayList<>();
         Imposto imposto;

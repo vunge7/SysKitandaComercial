@@ -554,6 +554,7 @@ public class LoginVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_BTnSairActionPerformed
         try
         {
+            dispose();
             BackupUsb.realizarBackup();
         }
         catch ( Exception e )
@@ -607,7 +608,7 @@ public class LoginVisao extends javax.swing.JFrame
                 }
 
 //                dispose();
-                switch (usuario.getIdTipoUsuario().getIdTipoUsuario())
+                switch ( usuario.getIdTipoUsuario().getIdTipoUsuario() )
                 {
 
                     //1 - Administrador
@@ -875,7 +876,6 @@ public class LoginVisao extends javax.swing.JFrame
 //        }
 //
 //    }
-
     private void iniciarMonitoramento()
     {
         resetTimer();

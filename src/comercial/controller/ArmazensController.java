@@ -31,7 +31,7 @@ public class ArmazensController implements EntidadeFactory
     @Override
     public boolean salvar( Object object )
     {
-        TbArmazem armazem = ( TbArmazem ) object;
+        TbArmazem armazem = (TbArmazem) object;
         String INSERT = "INSERT INTO tb_armazem( designacao , "
                 + ")"
                 + " VALUES("
@@ -109,7 +109,7 @@ public class ArmazensController implements EntidadeFactory
             return lista_armazens;
         }
     }
-    
+
     public Vector<String> getVectorArmazemVenda()
     {
         {
@@ -135,8 +135,6 @@ public class ArmazensController implements EntidadeFactory
             return lista_armazens;
         }
     }
-    
-
 
     public Vector<String> getVector( int id )
     {
@@ -268,15 +266,12 @@ public class ArmazensController implements EntidadeFactory
         TbArmazem armazem = null;
         try
         {
-
             if ( result.next() )
             {
                 armazem = new TbArmazem();
                 armazem.setCodigo( result.getInt( "codigo" ) );
                 armazem.setDesignacao( result.getString( "designacao" ) );
-
             }
-
         }
         catch ( SQLException e )
         {
@@ -337,24 +332,29 @@ public class ArmazensController implements EntidadeFactory
         return armazem;
 
     }
-    
-    public int getCodigoPorDesignacao(String nomeArmazem) {
-    int codigo = -1;
-    String sql = "SELECT codigo FROM tb_armazem WHERE designacao = ?";
 
-    try (PreparedStatement ps = conexao.getConnection().prepareStatement(sql)) {
-        ps.setString(1, nomeArmazem);
-        try (ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                codigo = rs.getInt("codigo");
+    public int getCodigoPorDesignacao( String nomeArmazem )
+    {
+        int codigo = -1;
+        String sql = "SELECT codigo FROM tb_armazem WHERE designacao = ?";
+
+        try ( PreparedStatement ps = conexao.getConnection1().prepareStatement( sql ) )
+        {
+            ps.setString( 1, nomeArmazem );
+            try ( ResultSet rs = ps.executeQuery() )
+            {
+                if ( rs.next() )
+                {
+                    codigo = rs.getInt( "codigo" );
+                }
             }
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
+        }
+
+        return codigo;
     }
-
-    return codigo;
-}
-
 
 }
