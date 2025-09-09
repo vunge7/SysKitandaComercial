@@ -606,7 +606,6 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jMenuItemConverterGuia = new javax.swing.JMenuItem();
         jSeparator9 = new javax.swing.JPopupMenu.Separator();
         jMenuItem3 = new javax.swing.JMenuItem();
-        jMenuItem1 = new javax.swing.JMenuItem();
         jmenuRelatorios = new javax.swing.JMenu();
         jmListarProdutosStock = new javax.swing.JMenuItem();
         jmTodasVendas = new javax.swing.JMenuItem();
@@ -886,7 +885,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jMenu1.add(jMenuItemConverterGuia);
         jMenu1.add(jSeparator9);
 
-        jMenuItem3.setText("Log Out");
+        jMenuItem3.setText("Sair");
         jMenuItem3.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -895,18 +894,6 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
             }
         });
         jMenu1.add(jMenuItem3);
-
-        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_DOWN_MASK));
-        jMenuItem1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LOGOUT - VERMELHO/Logout 16x16.png"))); // NOI18N
-        jMenuItem1.setText("Sair");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                jMenuItem1ActionPerformed(evt);
-            }
-        });
-        jMenu1.add(jMenuItem1);
 
         jMenuBar1.add(jMenu1);
 
@@ -1538,7 +1525,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         });
         jMenu6.add(jMenuItem5);
 
-        jMenuItem10.setText("Definir IVA em Massa");
+        jMenuItem10.setText("Actualizção de Preços");
         jMenuItem10.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -1722,15 +1709,6 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         }
 
     }//GEN-LAST:event_jmVendaActionPerformed
-
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        // TODO add your handling code here:
-
-        MetodosUtil.actualizarEstadoLog( "OFF" );
-        System.exit( 0 );
-        fazerBackupAgora();
-
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jDadosEmpresaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jDadosEmpresaActionPerformed
         // TODO add your handling code here:
@@ -2442,7 +2420,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 //        int idDoUsuarioLogado = usuarioLogado.getCodigo(); // obténs do objecto de login
 //        AcertoStockEmMassaVisao dlg = new AcertoStockEmMassaVisao( mainFrame, true, idDoUsuarioLogado );
 //        dlg.setVisible( true );
-        new AcertoStockEmMassaVisao( this, administrador, ERROR, YYYYMMDD_HHMMSS ).setVisible( true );
+        new AcertoStockEmMassaVisao( this, administrador, ERROR, YYYYMMDD_HHMMSS, conexao ).setVisible( true );
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem10ActionPerformed
@@ -2527,7 +2505,6 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     private javax.swing.JMenu jMenu7;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuConfiguracoesSistema;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem10;
     private javax.swing.JMenuItem jMenuItem12;
     private javax.swing.JMenuItem jMenuItem13;

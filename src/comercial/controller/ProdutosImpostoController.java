@@ -158,5 +158,12 @@ public class ProdutosImpostoController implements EntidadeFactory
         return false;
 
     }
+    public boolean deleteProdutoImposto( int codProduto )
+    {
+        String query = "DELETE FROM produto_imposto  WHERE fk_produto  = " + codProduto;
+        return conexao.executeUpdate(query );
+       
+
+    }
 
 }

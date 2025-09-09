@@ -145,7 +145,7 @@ public class ProdutosVisao extends javax.swing.JFrame
 //        servico_produto();
         actualizarRetencaoForm();
         proximo_codigo( produtosController );
-        proximo_codigo_manual(produtosController );
+        proximo_codigo_manual( produtosController );
         busca_permissao();
         txtCodigoProduto.setDocument( new PermitirNumeros() );
         jcDataFabrico.setDate( new Date() );
@@ -199,7 +199,6 @@ public class ProdutosVisao extends javax.swing.JFrame
 //                txtPrecoVendaRetalho, txtPercentagemGanhoRetalho , 7
 //        );
 //        helper.inicializar();
-
     }
 
     /**
@@ -2320,7 +2319,7 @@ public class ProdutosVisao extends javax.swing.JFrame
                     produtosControllerLocal.actualizar( produto );
                     DocumentoDao.commitTransaction( conexaoTransaction );
                     proximo_codigo( produtosControllerLocal );
-                    proximo_codigo_manual(produtosControllerLocal );
+                    proximo_codigo_manual( produtosControllerLocal );
                     conexaoTransaction.close();
                     JOptionPane.showMessageDialog( null, "Produto actualizado com sucesso!" );
 //                    procedimento_limpar();
@@ -2419,6 +2418,18 @@ public class ProdutosVisao extends javax.swing.JFrame
 
                     }
 
+                    //Adicionar no stock caso o artigo for stocável
+                    if ( produto.getStocavel().equals( "true" ) )
+                    {
+
+                        Vector<String> armazens = armazensController.getVector();
+                        for ( String designacaoArmazem : armazens )
+                        {
+                            TbArmazem armazem = (TbArmazem) armazensController.findByName( designacaoArmazem );
+                            procedimento_registrar_stock( produto.getCodigo(), armazem.getCodigo() );
+                        }
+                    }
+
                     if ( registrar_preco( precosControllerLocal ) )
                     {
 
@@ -2443,15 +2454,9 @@ public class ProdutosVisao extends javax.swing.JFrame
                         }
 
                         servico_produto();
-
                     }
                     detalhe_produto();
 
-//                        procedimento_limpar();
-//                        txtDesignacao.requestFocus();
-//                        txtCodigoBarra.setText( String.valueOf( produtosController.getLastProduto().getCodigo() + 1 ) );
-//
-//                    }
                 }
                 else
                 {
@@ -2821,7 +2826,7 @@ public class ProdutosVisao extends javax.swing.JFrame
 
             if ( !temRetencao )
             {
-                
+
                 String retencao = servicosRetencaoController.getRetensaoByIdProduto( pkProduto );
                 ivaMotivoJComboBox.setSelectedItem( retencao );
 
@@ -3359,7 +3364,7 @@ public class ProdutosVisao extends javax.swing.JFrame
             txtCodigoBarra.setText( "" );
         }
     }
-    
+
     private void proximo_codigo_manual( ProdutosController produtosControllerLocal )
     {
         try
@@ -4075,6 +4080,46 @@ public class ProdutosVisao extends javax.swing.JFrame
             txtPrecoVendaRetalho.setEnabled( false );
             txtPrecoVendaGrosso.setEnabled( false );
         }
+    }
+
+    private static void procedimento_registrar_stock( int idProduto, int idArmazem )
+    {
+        if ( !stoksController.existe_stock( idProduto, idArmazem ) )
+        {
+            TbProduto produto_local = produtosController.findByCod( idProduto );
+            registrar_stock( idArmazem,
+                    produto_local,
+                    0,
+                    0,
+                    0,
+                    stoksController );
+
+        }
+    }
+
+    private static boolean registrar_stock( int idArmazem,
+            TbProduto produto_local,
+            double qtd,
+            double qtdCritica,
+            double qtdbaixa,
+            StoksController stocksControllerLocal
+    )
+    {
+        TbStock stockLocal = new TbStock();
+        stockLocal.setDataEntrada( new Date() );
+        stockLocal.setQuantidadeExistente( qtd );
+        stockLocal.setStatus( "true" );
+        stockLocal.setPrecoVenda( new BigDecimal( MetodosUtil.convertToDouble( "0.0" ) ) );
+        stockLocal.setPrecoVendaGrosso( new BigDecimal( stockLocal.getPrecoVenda().doubleValue() ) );
+        stockLocal.setQtdGrosso( DVML.QTD_DEFAULT );
+        stockLocal.setQuantCritica( (int) qtdCritica );
+        stockLocal.setQuantBaixa( (int) qtdbaixa );
+        stockLocal.setQuantidadeAntiga( 0d );
+        stockLocal.setCodArmazem( new TbArmazem( idArmazem ) );
+        stockLocal.setCodProdutoCodigo( new TbProduto( produto_local.getCodigo() ) );
+        System.out.println( "Produto Registrado no Stock." );
+        return stocksControllerLocal.salvar( stockLocal );
+
     }
 
 }

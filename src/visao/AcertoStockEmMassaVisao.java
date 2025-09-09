@@ -38,6 +38,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
@@ -73,17 +75,20 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
     private TbTipoProduto tipoProduto;
     private int codigo = 0;
     private String usuarioNome;
+    private List<Object[]> listaFonte;
+    private Connection conn = null;
 
     private final int usuarioId;
 
-    public AcertoStockEmMassaVisao( java.awt.Frame parent, boolean modal, int usuarioId, String usuarioNome )
+    public AcertoStockEmMassaVisao( java.awt.Frame parent, boolean modal, int usuarioId, String usuarioNome, BDConexao conexao )
     {
         {
 
             initComponents();
             configurarEditorNumerico();
             setLocationRelativeTo( null );
-            conexao = new BDConexao();
+            this.conexao = conexao;
+            conn = conexao.getConnection();
             this.usuarioId = usuarioId;
             this.usuarioNome = usuarioNome;
             cmbArmazem.setModel( new DefaultComboBoxModel<>() );
@@ -149,6 +154,34 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
     {
         cmbArmazem.setModel( new DefaultComboBoxModel<>( armazensController.getVector() ) );
 
+        txtIniciais.getDocument().addDocumentListener( new DocumentListener()
+        {
+
+            public void insertUpdate( DocumentEvent e )
+            {
+                filtrar();
+            }
+
+            public void removeUpdate( DocumentEvent e )
+            {
+                filtrar();
+            }
+
+            public void changedUpdate( DocumentEvent e )
+            {
+                filtrar();
+            }
+
+            private void filtrar()
+            {
+                String texto = txtIniciais.getText().trim();
+                int codArmazem = armazensController.getCodigoPorDesignacao( cmbArmazem.getSelectedItem().toString() ); // 👈 aqui
+                carregarTabelaStockFiltrado( codArmazem, texto );
+            }
+        } );
+
+        listaFonte = produtosController.listarStockPorArmazem( conexao.getConnection1(), getIdArmazem() );
+
     }
 
     /**
@@ -167,6 +200,8 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
         tabela_acerto = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         cmbArmazem = new javax.swing.JComboBox<>();
+        txtIniciais = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("...:::::ACERTO STOCK::::...");
@@ -249,22 +284,39 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
             }
         });
 
+        txtIniciais.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                txtIniciaisActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Digite as Inicais do Artigo");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(txtIniciais, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 720, Short.MAX_VALUE))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 895, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(14, 14, 14)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -276,8 +328,12 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
                         .addComponent(jLabel1)
                         .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(27, 27, 27)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 528, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(txtIniciais, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 497, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -311,6 +367,11 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
         }
 
     }//GEN-LAST:event_cmbArmazemActionPerformed
+
+    private void txtIniciaisActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtIniciaisActionPerformed
+    {//GEN-HEADEREND:event_txtIniciaisActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtIniciaisActionPerformed
 
     /**
      * @param args the command line arguments
@@ -357,7 +418,7 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new AcertoStockEmMassaVisao( null, true, 15, "" ).setVisible( true );
+                new AcertoStockEmMassaVisao( null, true, 15, "", new BDConexao() ).setVisible( true );
             }
         } );
     }
@@ -366,9 +427,11 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
     private javax.swing.JButton btnCancelar;
     private javax.swing.JComboBox<String> cmbArmazem;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tabela_acerto;
+    private javax.swing.JTextField txtIniciais;
     // End of variables declaration//GEN-END:variables
 
 //    private void carregarTabelaStock( int codArmazem )
@@ -388,17 +451,15 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
 //    }
     private void carregarTabelaStock( int codArmazem )
     {
-        BDConexao bd = BDConexao.getBDConetion();
-        Connection conn = bd.getConnection();
 
         // Obter lista do controller
-        List<Object[]> lista = produtosController.listarStockPorArmazem( conn, codArmazem );
+        listaFonte = produtosController.listarStockPorArmazem( conn, codArmazem );
 
         // Obter modelo da tabela
         DefaultTableModel model = (DefaultTableModel) tabela_acerto.getModel();
         model.setRowCount( 0 ); // limpa tabela antes de preencher
 
-        for ( Object[] linha : lista )
+        for ( Object[] linha : listaFonte )
         {
             // Deixar a penúltima coluna (acerto) vazia
             if ( linha.length > 6 )
@@ -690,6 +751,7 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
                                         cmbArmazem.getSelectedItem().toString(),
                                         qtdAntes, acerto, qtdDepois
                                 );
+                                listaFonte = produtosController.listarStockPorArmazem( conexao.getConnection1(), getIdArmazem() );
                             }
 
                             // mover foco para próxima linha
@@ -1117,6 +1179,42 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
                 return super.stopCellEditing();
             }
         } );
+    }
+
+    // Método para carregar com filtro (por ocorrência)
+    private void carregarTabelaStockFiltrado( int codArmazem, String filtro )
+    {
+
+//
+//        // Obter lista completa só se ainda não foi carregada
+//        if ( listaFonte == null || listaFonte.isEmpty() )
+//        {
+//            listaFonte = produtosController.listarStockPorArmazem( conexao.getConnection1(), codArmazem );
+//        }
+        // Modelo da tabela
+        DefaultTableModel model = (DefaultTableModel) tabela_acerto.getModel();
+        model.setRowCount( 0 ); // limpa antes de preencher
+
+        for ( Object[] linha : listaFonte )
+        {
+            String designacao = linha[ 1 ].toString(); // coluna 1 = designação
+
+            if ( filtro == null || filtro.isEmpty() || designacao.toLowerCase().contains( filtro.toLowerCase() ) )
+            {
+                // Penúltima coluna (acerto) vazia
+                if ( linha.length > 6 )
+                {
+                    linha[ 6 ] = null;
+                }
+                model.addRow( linha );
+            }
+        }
+    }
+
+    private int getIdArmazem()
+    {
+        String nomeArmazem = (String) cmbArmazem.getSelectedItem();
+        return armazensController.getCodigoPorDesignacao( nomeArmazem ); // 👈 aqui
     }
 
 }
