@@ -199,6 +199,8 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
         btnActualizar = new javax.swing.JButton();
         txtIniciais = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        txtCodigoManual = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("...:::::ACTUALIZAÇÃO DE PREÇOS::::...");
@@ -314,6 +316,16 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
 
         jLabel2.setText("Digite as Inicais do Artigo");
 
+        jLabel3.setText("Digite o Código Manual");
+
+        txtCodigoManual.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                txtCodigoManualActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -340,6 +352,10 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtIniciais, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel2))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
             .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -349,6 +365,10 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txtIniciais, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
@@ -361,11 +381,15 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
                                 .addComponent(jLabel1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(cmbCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(15, 15, 15)
-                        .addComponent(jLabel2))
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(txtIniciais, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(15, 15, 15)
+                                .addComponent(jLabel2))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(21, 21, 21)
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addGap(12, 12, 12)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 493, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -416,6 +440,32 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_txtIniciaisActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtIniciaisActionPerformed
+
+    private void txtCodigoManualActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtCodigoManualActionPerformed
+    {//GEN-HEADEREND:event_txtCodigoManualActionPerformed
+
+        try {
+            String codigoManual = txtCodigoManual.getText().trim();
+
+            if (codigoManual.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Digite o código manual do produto!",
+                                              "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            List<Object[]> listaPorCodigo = produtosController.listarProdutosByCodigoManual(
+                    BDConexao.conectar(), codigoManual);
+
+            carregarProdutos(listaPorCodigo); // reutiliza o mesmo método
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Erro ao pesquisar produto: " + ex.getMessage(),
+                                          "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    
+
+
+    }//GEN-LAST:event_txtCodigoManualActionPerformed
 
     /**
      * @param args the command line arguments
@@ -477,9 +527,11 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
     private static javax.swing.JLabel ivaTaxaJLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tabela;
+    private javax.swing.JTextField txtCodigoManual;
     private javax.swing.JTextField txtIniciais;
     // End of variables declaration//GEN-END:variables
 
@@ -855,5 +907,11 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
 
         carregarProdutos( filtrados );
     }
+
+//    private int getIdArmazem()
+//    {
+//        String nomeArmazem = (String) cmbArmazem.getSelectedItem();
+//        return armazensController.getCodigoPorDesignacao( nomeArmazem ); // 👈 aqui
+//    }
 
 }

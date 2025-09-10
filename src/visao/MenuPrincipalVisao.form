@@ -764,7 +764,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItem10">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Actualiz&#xe7;&#xe3;o de Pre&#xe7;os"/>
+                <Property name="text" type="java.lang.String" value="Actualiza&#xe7;&#xe3;o de Pre&#xe7;os"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem10ActionPerformed"/>

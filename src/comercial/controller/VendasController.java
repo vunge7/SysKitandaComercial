@@ -15,6 +15,7 @@ import entity.TbCliente;
 import entity.TbVenda;
 import entity.TbUsuario;
 import java.math.BigDecimal;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -1660,6 +1661,141 @@ public class VendasController implements EntidadeFactory
         }
 
     }
+    
+   public TbVenda findByCodFactReemprensao(String codFact) {
+    TbVenda venda = null;
+    String sql = "SELECT * FROM tb_venda WHERE cod_fact = ?"; // ajuste conforme o nome real da tabela
+
+    BDConexao bd = new BDConexao(); // cria a conexão
+
+    try (Connection conn = bd.getConnection1();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setString(1, codFact); // define o parâmetro
+
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                venda = new TbVenda();
+
+                // Mapeando os campos do ResultSet para o objeto TbVenda
+                venda.setCodigo(rs.getInt("codigo")); // exemplo
+                venda.setCodFact(rs.getString("cod_fact"));
+                venda.setDataVenda(rs.getDate("dataVenda"));
+                venda.setTotalVenda(rs.getBigDecimal("total_venda"));
+                // mapeie todos os outros campos que existirem
+            }
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace(); // ou use logging
+    }
+
+    return venda;
+}
+
+   
+//   public List<TbVenda> getAllFRVendaByBetweenDataAndArmazemAndDocumento(
+//        Date data_inicio, Date data_fim, int codigo_usuario) {
+//
+//    List<TbVenda> vendas = new ArrayList<>();
+//    String sql = "SELECT * FROM tb_venda "
+//               + "WHERE DATE(dataVenda) BETWEEN ? AND ? "
+//               + "AND status_eliminado = false "
+//               + "AND credito = false "
+//               + "AND codigo_usuario = ?"; // novo filtro
+//
+//    BDConexao bd = new BDConexao();
+//
+//    try (Connection conn = bd.getConnection1();
+//         PreparedStatement ps = conn.prepareStatement(sql)) {
+//
+//        // Definindo os parâmetros do PreparedStatement
+//        ps.setDate(1, new java.sql.Date(data_inicio.getTime()));
+//        ps.setDate(2, new java.sql.Date(data_fim.getTime()));
+//        ps.setInt(3, codigo_usuario);
+//
+//        try (ResultSet result = ps.executeQuery()) {
+//            while (result.next()) {
+//                TbVenda venda = new TbVenda();
+//
+//                // Mapear todos os campos necessários da tabela para a entidade
+//                venda.setCodigo(result.getInt("codigo"));
+//                venda.setCodFact(result.getString("cod_fact"));
+//                venda.setDataVenda(result.getDate("dataVenda"));
+//                venda.setHora(result.getTime("hora"));
+//
+////                venda.setHora(result.getDate("hora"));
+//                venda.setTotalVenda(result.getBigDecimal("total_venda"));
+//                venda.setIdArmazemFK( new TbArmazem( result.getInt( "idArmazemFK" ) ) );
+//                venda.setFkDocumento( new Documento( result.getInt( "fk_documento" ) ) );
+//                venda.setCodigoUsuario( new TbUsuario( result.getInt( "codigo_usuario" ) ) );
+//                venda.setCodigoCliente(new TbCliente( result.getInt( "codigo_cliente" ) ) );
+//                // adicione outros campos conforme necessário
+//
+//                vendas.add(venda);
+//            }
+//        }
+//
+//    } catch (SQLException e) {
+//        e.printStackTrace(); // ou use logger apropriado
+//    }
+//
+//    return vendas;
+//}
+
+public List<TbVenda> getAllFRVendaByBetweenDataAndArmazemAndDocumento(
+        Date data_inicio, Date data_fim, int codigo_usuario) {
+
+    List<TbVenda> vendas = new ArrayList<>();
+
+    String sql = "SELECT v.*, c.nome AS nome_cliente "
+               + "FROM tb_venda v "
+               + "JOIN tb_cliente c ON v.codigo_cliente = c.codigo "
+               + "WHERE DATE(v.dataVenda) BETWEEN ? AND ? "
+               + "AND v.status_eliminado = false "
+               + "AND v.credito = false "
+               + "AND v.codigo_usuario = ?";
+
+    BDConexao bd = new BDConexao();
+
+    try (Connection conn = bd.getConnection1();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        // Definindo os parâmetros do PreparedStatement
+        ps.setDate(1, new java.sql.Date(data_inicio.getTime()));
+        ps.setDate(2, new java.sql.Date(data_fim.getTime()));
+        ps.setInt(3, codigo_usuario);
+
+        try (ResultSet result = ps.executeQuery()) {
+            while (result.next()) {
+                TbVenda venda = new TbVenda();
+
+                // Mapear todos os campos da tabela tb_venda
+                venda.setCodigo(result.getInt("codigo"));
+                venda.setCodFact(result.getString("cod_fact"));
+                venda.setDataVenda(result.getDate("dataVenda"));
+                venda.setHora(result.getTime("hora"));
+                venda.setTotalVenda(result.getBigDecimal("total_venda"));
+                venda.setIdArmazemFK(new TbArmazem(result.getInt("idArmazemFK")));
+                venda.setFkDocumento(new Documento(result.getInt("fk_documento")));
+                venda.setCodigoUsuario(new TbUsuario(result.getInt("codigo_usuario")));
+
+                // Cliente com ID e nome
+                TbCliente cliente = new TbCliente(result.getInt("codigo_cliente"));
+                cliente.setNome(result.getString("nome_cliente"));
+                venda.setCodigoCliente(cliente);
+
+                vendas.add(venda);
+            }
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace(); // ou usa logger apropriado
+    }
+
+    return vendas;
+}
+
 
     public static void main( String[] args )
     {
