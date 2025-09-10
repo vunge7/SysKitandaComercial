@@ -69,6 +69,7 @@ public class CardexVisao extends javax.swing.JFrame
     private List<Object[]> listaFonte;
 
     private final int usuarioId;
+    private TbProduto produtoLocal;
 
     public CardexVisao( java.awt.Frame parent, boolean modal, int usuarioId, String usuarioNome, BDConexao conexao )
     {
@@ -113,7 +114,7 @@ public class CardexVisao extends javax.swing.JFrame
     {
 
         jPanel2 = new javax.swing.JPanel();
-        txtCodigoManual1 = new javax.swing.JTextField();
+        txtCodigoBarra = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         txtCodigoManual = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
@@ -138,12 +139,12 @@ public class CardexVisao extends javax.swing.JFrame
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
-        txtCodigoManual1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        txtCodigoManual1.addActionListener(new java.awt.event.ActionListener()
+        txtCodigoBarra.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        txtCodigoBarra.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                txtCodigoManual1ActionPerformed(evt);
+                txtCodigoBarraActionPerformed(evt);
             }
         });
 
@@ -278,7 +279,7 @@ public class CardexVisao extends javax.swing.JFrame
                             .addComponent(dcDataFim, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtCodigoManual1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtCodigoBarra, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -311,7 +312,7 @@ public class CardexVisao extends javax.swing.JFrame
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtCodigoManual1)
+                    .addComponent(txtCodigoBarra)
                     .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(2, 2, 2)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -383,32 +384,36 @@ public class CardexVisao extends javax.swing.JFrame
     private void txtCodigoManualActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtCodigoManualActionPerformed
     {//GEN-HEADEREND:event_txtCodigoManualActionPerformed
 
-        procedimentoBuscaCodManual();
+        procedimentoBusca();
 
 
     }//GEN-LAST:event_txtCodigoManualActionPerformed
 
-    private void txtCodigoManual1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtCodigoManual1ActionPerformed
-    {//GEN-HEADEREND:event_txtCodigoManual1ActionPerformed
+    private void txtCodigoBarraActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtCodigoBarraActionPerformed
+    {//GEN-HEADEREND:event_txtCodigoBarraActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtCodigoManual1ActionPerformed
+        procedimentoBusca();
+    }//GEN-LAST:event_txtCodigoBarraActionPerformed
 
     private void cmbArmazemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbArmazemActionPerformed
     {//GEN-HEADEREND:event_cmbArmazemActionPerformed
-        procedimentoBuscaCodManual();
+        busca();
+
 
     }//GEN-LAST:event_cmbArmazemActionPerformed
 
     private void dcDataInicioPropertyChange(java.beans.PropertyChangeEvent evt)//GEN-FIRST:event_dcDataInicioPropertyChange
     {//GEN-HEADEREND:event_dcDataInicioPropertyChange
         // TODO add your handling code here:
-        procedimentoBuscaCodManual();
+        busca();
+
     }//GEN-LAST:event_dcDataInicioPropertyChange
 
     private void dcDataFimPropertyChange(java.beans.PropertyChangeEvent evt)//GEN-FIRST:event_dcDataFimPropertyChange
     {//GEN-HEADEREND:event_dcDataFimPropertyChange
         // TODO add your handling code here:
-        procedimentoBuscaCodManual();
+        busca();
+
     }//GEN-LAST:event_dcDataFimPropertyChange
 
     /**
@@ -491,8 +496,8 @@ public class CardexVisao extends javax.swing.JFrame
     private javax.swing.JLabel lbArtigo;
     private javax.swing.JLabel lbQtd;
     private javax.swing.JTable tabela;
+    private javax.swing.JTextField txtCodigoBarra;
     private javax.swing.JTextField txtCodigoManual;
-    private javax.swing.JTextField txtCodigoManual1;
     // End of variables declaration//GEN-END:variables
 
     public void carregarTabelaMovimentacoes( int produtoId, int armazemId, Date dataInicio, Date dataFim )
@@ -544,47 +549,22 @@ public class CardexVisao extends javax.swing.JFrame
                         cmbArmazem.getSelectedItem().toString() );
     }
 
-    private void procedimentoBuscaCodManual()
+    private void procedimentoBusca()
     {
         try
         {
             if ( !txtCodigoManual.getText().equals( "" ) )
             {
-                TbProduto produto_local = produtosController.findByCodManual1(
+                produtoLocal = produtosController.findByCodManual1(
                         txtCodigoManual.getText().trim() );
-                if ( Objects.nonNull( produto_local ) )
-                {
-                    lbArtigo.setText( produto_local.getDesignacao() );
-
-                    double quantidadeProduto = stocksController.getQuantidadeProduto( produto_local.getCodigo(), getIdArmazem() );
-                    lbQtd.setText( String.valueOf( quantidadeProduto ) );
-                    Calendar cal = Calendar.getInstance();
-
-// Data Início -> 00:00:00
-                    cal.setTime( dcDataInicio.getDate() );
-                    cal.set( Calendar.HOUR_OF_DAY, 0 );
-                    cal.set( Calendar.MINUTE, 0 );
-                    cal.set( Calendar.SECOND, 0 );
-                    cal.set( Calendar.MILLISECOND, 0 );
-                    Date dataInicio = cal.getTime();
-
-// Data Fim -> 23:59:59
-                    cal.setTime( dcDataFim.getDate() );
-                    cal.set( Calendar.HOUR_OF_DAY, 23 );
-                    cal.set( Calendar.MINUTE, 59 );
-                    cal.set( Calendar.SECOND, 59 );
-                    cal.set( Calendar.MILLISECOND, 999 );
-                    Date dataFim = cal.getTime();
-
-                    carregarTabelaMovimentacoes( produto_local.getCodigo(),
-                            getIdArmazem(), dataInicio,
-                            dataFim );
-                }
-                else
-                {
-                    lbArtigo.setText( "" );
-                }
-
+                busca();
+                txtCodigoManual.setText( "" );
+            }
+            else if ( !txtCodigoBarra.getText().equals( "" ) )
+            {
+                produtoLocal = produtosController.findByCodBarra( txtCodigoBarra.getText().trim() );
+                busca();
+                txtCodigoBarra.setText( "" );
             }
 
         }
@@ -593,6 +573,42 @@ public class CardexVisao extends javax.swing.JFrame
             ex.printStackTrace();
 //            JOptionPane.showMessageDialog( null, "Erro ao pesquisar produto: " + ex.getMessage(),
 //                    "Erro", JOptionPane.ERROR_MESSAGE );
+        }
+    }
+
+    private void busca()
+    {
+        if ( Objects.nonNull( produtoLocal ) )
+        {
+            lbArtigo.setText( produtoLocal.getDesignacao() );
+
+            double quantidadeProduto = stocksController.getQuantidadeProduto( produtoLocal.getCodigo(), getIdArmazem() );
+            lbQtd.setText( String.valueOf( quantidadeProduto ) );
+            Calendar cal = Calendar.getInstance();
+
+// Data Início -> 00:00:00
+            cal.setTime( dcDataInicio.getDate() );
+            cal.set( Calendar.HOUR_OF_DAY, 0 );
+            cal.set( Calendar.MINUTE, 0 );
+            cal.set( Calendar.SECOND, 0 );
+            cal.set( Calendar.MILLISECOND, 0 );
+            Date dataInicio = cal.getTime();
+
+// Data Fim -> 23:59:59
+            cal.setTime( dcDataFim.getDate() );
+            cal.set( Calendar.HOUR_OF_DAY, 23 );
+            cal.set( Calendar.MINUTE, 59 );
+            cal.set( Calendar.SECOND, 59 );
+            cal.set( Calendar.MILLISECOND, 999 );
+            Date dataFim = cal.getTime();
+
+            carregarTabelaMovimentacoes( produtoLocal.getCodigo(),
+                    getIdArmazem(), dataInicio,
+                    dataFim );
+        }
+        else
+        {
+            lbArtigo.setText( "" );
         }
     }
 

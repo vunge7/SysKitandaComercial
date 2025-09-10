@@ -922,9 +922,9 @@ public class ProdutosVisao extends javax.swing.JFrame
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("BUSCA DO SERVIÇO/PRODUTO"));
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        txtCodigoProduto.setBackground(new java.awt.Color(4, 154, 3));
+        txtCodigoProduto.setBackground(new java.awt.Color(0, 255, 255));
         txtCodigoProduto.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        txtCodigoProduto.setForeground(new java.awt.Color(255, 255, 255));
+        txtCodigoProduto.setForeground(new java.awt.Color(0, 51, 102));
         txtCodigoProduto.setCaretColor(new java.awt.Color(255, 255, 255));
         txtCodigoProduto.addActionListener(new java.awt.event.ActionListener()
         {
@@ -939,9 +939,10 @@ public class ProdutosVisao extends javax.swing.JFrame
         lbProdutos2.setText("Cód. Interno:");
         jPanel3.add(lbProdutos2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, -1, 30));
 
-        txtCodigoBarraProcura.setBackground(new java.awt.Color(4, 154, 3));
+        txtCodigoBarraProcura.setBackground(new java.awt.Color(0, 255, 255));
         txtCodigoBarraProcura.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        txtCodigoBarraProcura.setForeground(new java.awt.Color(255, 255, 255));
+        txtCodigoBarraProcura.setForeground(new java.awt.Color(0, 51, 102));
+        txtCodigoBarraProcura.setText("2");
         txtCodigoBarraProcura.setCaretColor(new java.awt.Color(255, 255, 255));
         txtCodigoBarraProcura.addActionListener(new java.awt.event.ActionListener()
         {
@@ -960,9 +961,9 @@ public class ProdutosVisao extends javax.swing.JFrame
         lbProdutos4.setText("Cód. Manual:");
         jPanel3.add(lbProdutos4, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 20, 100, 30));
 
-        txtCodigoManualProcura.setBackground(new java.awt.Color(4, 154, 3));
+        txtCodigoManualProcura.setBackground(new java.awt.Color(0, 255, 255));
         txtCodigoManualProcura.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        txtCodigoManualProcura.setForeground(new java.awt.Color(255, 255, 255));
+        txtCodigoManualProcura.setForeground(new java.awt.Color(0, 51, 102));
         txtCodigoManualProcura.setCaretColor(new java.awt.Color(255, 255, 255));
         txtCodigoManualProcura.addActionListener(new java.awt.event.ActionListener()
         {
