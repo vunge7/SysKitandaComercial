@@ -4095,13 +4095,25 @@ public class ProdutosVisao extends javax.swing.JFrame
         if ( !stoksController.existe_stock( idProduto, idArmazem ) )
         {
             TbProduto produto_local = produtosController.findByCod( idProduto );
-            registrar_stock( idArmazem,
+            boolean registrar_stock = registrar_stock( idArmazem,
                     produto_local,
                     0,
                     0,
                     0,
                     stoksController );
+            if ( registrar_stock )
+            {
+                MovimentacaoController.registrarMovimento(
+                        idProduto,
+                        idArmazem,
+                        idUser,
+                        new BigDecimal( 0 ),
+                        "CRIAÇÃO DE ARTIGO",
+                        "ENTRADA",
+                        conexao
+                );
 
+            }
         }
     }
 

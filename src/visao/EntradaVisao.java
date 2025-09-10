@@ -8,6 +8,7 @@ import comercial.controller.ArmazensController;
 import comercial.controller.DocumentosController;
 import comercial.controller.EntradasController;
 import comercial.controller.ItemEntradasController;
+import comercial.controller.MovimentacaoController;
 import comercial.controller.ProdutosController;
 import comercial.controller.StoksController;
 import comercial.controller.TipoProdutosController;
@@ -1335,7 +1336,7 @@ public class EntradaVisao extends javax.swing.JFrame
     {
 
         String codInternoString = txtCodigoProduto.getText();
-        Integer codigoInternoInt = (codInternoString.isEmpty() ? 0 : Integer.parseInt( codInternoString ));
+        Integer codigoInternoInt = ( codInternoString.isEmpty() ? 0 : Integer.parseInt( codInternoString ) );
         System.err.println( "busca_produto_by_cod_barra: " );
 //        preco = precosController.getLastIdPrecoByIdProdutos( codigoInternoInt );
         System.err.println( "codInternoString: " + codInternoString );
@@ -1495,11 +1496,15 @@ public class EntradaVisao extends javax.swing.JFrame
                     itemEntradas.setQuantidade( qtd );
                     itemEntradas.setFkEntradas( new TbEntrada( cod_entrada ) );
 
-//                    try
-//                    {
-//                        sucesso = sucesso || actualizarQtdIngredienteStock( fichaId );
-//                        if ( sucesso )
-//                        {
+                    if ( MovimentacaoController.registrarMovimento(
+                            produto_local.getCodigo(),
+                            getCodigoArmazem(),
+                            idUser,
+                            new BigDecimal( qtd ),
+                            "ENTRADA " + cod_entrada,
+                            "ENTRADA",
+                            conexao ) )
+                    {
                         //cria o item entrada
                         if ( !itemEntradasController.salvar( itemEntradas ) )
                         {
@@ -1511,21 +1516,11 @@ public class EntradaVisao extends javax.swing.JFrame
                         {
                             StoksController.adicionar_quantidades( produto_local.getCodigo(), qtd, getIdArmazem(), conexaoTransaction );
                         }
-//                        }
-
-//                    }
-//                    catch ( Exception e )
-//                    {
-//                        e.printStackTrace();
-//                        DocumentosController.rollBackTransaction( conexaoTransaction );
-//                        conexaoTransaction.close();
-//                        return false;
-//                    }
+                    }
 
                 }
                 catch ( Exception e )
                 {
-//                    sucesso = false;
                     e.printStackTrace();
                     JOptionPane.showMessageDialog( null, "Falha ao registrar a entrada", "Falha", JOptionPane.ERROR_MESSAGE );
                     DocumentosController.rollBackTransaction( conexaoTransaction );
@@ -1538,7 +1533,7 @@ public class EntradaVisao extends javax.swing.JFrame
                 DocumentosController.commitTransaction( conexaoTransaction );
                 esvaziar_tabela();
                 JOptionPane.showMessageDialog( null, "Entrada efectuada com sucesso!.." );
-                 ListaEntradaProdutos listaEntrada = new ListaEntradaProdutos( cod_entrada );
+                ListaEntradaProdutos listaEntrada = new ListaEntradaProdutos( cod_entrada );
                 conexaoTransaction.close();
                 return true;
             }

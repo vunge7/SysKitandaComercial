@@ -13,6 +13,7 @@ import comercial.controller.DocumentosController;
 import comercial.controller.FornecedoresController;
 import comercial.controller.ItemComprasController;
 import comercial.controller.LugaresController;
+import comercial.controller.MovimentacaoController;
 import comercial.controller.PrecosController;
 import comercial.controller.ProdutosController;
 import comercial.controller.StoksController;
@@ -89,7 +90,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
     private static BDConexao conexaoTransaction;
     private static Documento documento;
     private static TbStock stock;
-    private int cod_usuario;
+    private static int cod_usuario;
     private static int linha = 0, coordenada = 1, doc_prox_cod = 0;
     private double soma_total = 0;
     private static double total_iva = 0;
@@ -1306,10 +1307,22 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
                     }
                     else
                     {
-                        actualizar_dados_stock( produto_local.getCodigo(),
-                                qtd,
-                                qtdCritica,
-                                qtdBaixa, stocksControllerLocal );
+
+                        if ( MovimentacaoController.registrarMovimento(
+                                produto_local.getCodigo(),
+                                getIdArmazens(),
+                                cod_usuario,
+                                new BigDecimal( itemCompraLocal.getQuantidade() ),
+                                prox_doc,
+                                "ENTRADA",
+                                conexao
+                        ) )
+                        {
+                            actualizar_dados_stock( produto_local.getCodigo(),
+                                    qtd,
+                                    qtdCritica,
+                                    qtdBaixa, stocksControllerLocal );
+                        }
 
                     }
 

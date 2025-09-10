@@ -5,6 +5,7 @@
 package visao;
 
 import comercial.controller.ArmazensController;
+import comercial.controller.MovimentacaoController;
 import comercial.controller.PrecosController;
 import comercial.controller.ProdutosController;
 import comercial.controller.TipoProdutosController;
@@ -37,6 +38,7 @@ import exemplos.PermitirNumeros;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
@@ -66,6 +68,7 @@ import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
 import util.OperacaoSistemaUtil;
 import static visao.EntradaVisao.cmbArmazem;
+import static visao.EntradaVisao.getCodigoArmazem;
 
 /**
  *
@@ -1444,13 +1447,24 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
                 //so retirar caso existir mesmo no armazém em questão.
                 if ( stock_local.getCodigo() != 0 )
                 {
-                    actualizar_quantidade( itemSaidas.getFkProdutos().getCodigo(), itemSaidas.getQuantidade(), getCodigoArmazem() );
-                }
-                if ( vasilhameDao.exist_vasilhame( itemSaidas.getFkProdutos().getCodigo(), getCodigoArmazem() ) )
-                {
-                    actualizar_vasilhame( vasilhameDao.getVasilhameByIdProdutoAndIdArmazem( itemSaidas.getFkProdutos().getCodigo(), getCodigoArmazem() ), itemSaidas.getQuantidade() );
-                }
+                    if ( MovimentacaoController.registrarMovimento(
+                            itemSaidas.getFkProdutos().getCodigo(),
+                            getCodigoArmazem(),
+                            cod_usuario,
+                            new BigDecimal( itemSaidas.getQuantidade() ),
+                            "SAIDA " + saidasProdutos.getPkSaidasProdutos(),
+                            "SAIDA",
+                            conexao ) )
+                    {
 
+                        actualizar_quantidade( itemSaidas.getFkProdutos().getCodigo(), itemSaidas.getQuantidade(), getCodigoArmazem() );
+                    }
+                    if ( vasilhameDao.exist_vasilhame( itemSaidas.getFkProdutos().getCodigo(), getCodigoArmazem() ) )
+                    {
+                        actualizar_vasilhame( vasilhameDao.getVasilhameByIdProdutoAndIdArmazem( itemSaidas.getFkProdutos().getCodigo(), getCodigoArmazem() ), itemSaidas.getQuantidade() );
+                    }
+
+                }
             }
             catch ( Exception e )
             {

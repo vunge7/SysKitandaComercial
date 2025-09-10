@@ -7,12 +7,14 @@ package visao;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import comercial.controller.ArmazensController;
+import comercial.controller.MovimentacaoController;
 import comercial.controller.PrecosController;
 import comercial.controller.ProdutosController;
 import comercial.controller.StoksController;
 import comercial.controller.TipoProdutosController;
 import comercial.controller.UsuariosController;
 import entity.Compras;
+import entity.Movimentacao;
 import entity.TbArmazem;
 import entity.TbDadosInstituicao;
 import entity.TbPreco;
@@ -22,10 +24,12 @@ import entity.TbTipoProduto;
 import entity.TbUsuario;
 import java.awt.Component;
 import java.awt.Toolkit;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -77,6 +81,7 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
     private String usuarioNome;
     private List<Object[]> listaFonte;
     private Connection conn = null;
+    private MovimentacaoController movimentacaoController;
 
     private final int usuarioId;
 
@@ -98,6 +103,7 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
             stocksController = new StoksController( conexao );
             armazensController = new ArmazensController( conexao );
             usuariosController = new UsuariosController( conexao );
+            movimentacaoController = new MovimentacaoController( conn );
 
             init();
 
@@ -395,8 +401,8 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
 
     private void txtCodigoManualActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtCodigoManualActionPerformed
     {//GEN-HEADEREND:event_txtCodigoManualActionPerformed
-    
-        carregarTabelaPorCodigoManual(txtCodigoManual.getText().trim(), getIdArmazem());
+
+        carregarTabelaPorCodigoManual( txtCodigoManual.getText().trim(), getIdArmazem() );
     }//GEN-LAST:event_txtCodigoManualActionPerformed
 
     /**
@@ -772,13 +778,25 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
                                 int codArmazem = armazensController.getCodigoPorDesignacao(
                                         cmbArmazem.getSelectedItem().toString()
                                 );
-                                stocksController.salvarAcertoLinha(
-                                        BDConexao.getBDConetion().getConnection(),
-                                        codProduto, codArmazem, usuarioId, usuarioNome,
-                                        tabela_acerto.getValueAt( row, 1 ).toString(),
-                                        cmbArmazem.getSelectedItem().toString(),
-                                        qtdAntes, acerto, qtdDepois
-                                );
+
+                                if ( MovimentacaoController.registrarMovimento(
+                                        codProduto,
+                                        codArmazem,
+                                        usuarioId,
+                                        new BigDecimal( acerto ),
+                                        "ACERTO",
+                                        "ENTRADA",
+                                        conexao ) )
+                                {
+                                    stocksController.salvarAcertoLinha(
+                                            BDConexao.getBDConetion().getConnection(),
+                                            codProduto, codArmazem, usuarioId, usuarioNome,
+                                            tabela_acerto.getValueAt( row, 1 ).toString(),
+                                            cmbArmazem.getSelectedItem().toString(),
+                                            qtdAntes, acerto, qtdDepois
+                                    );
+                                }
+
                                 listaFonte = produtosController.listarStockPorArmazem( conexao.getConnection1(), getIdArmazem() );
                             }
 
@@ -1230,35 +1248,39 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
             }
         }
     }
-    
-    private void carregarTabelaPorCodigoManual(String codigoManual, int codArmazem) {
-    if (codigoManual.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Digite o código manual do produto!",
-                                      "Aviso", JOptionPane.WARNING_MESSAGE);
-        return;
-    }
 
-    // Obter lista do controller
-    List<Object[]> lista = produtosController.listarStockPorCodigoManual(conn, codigoManual, codArmazem);
-
-    DefaultTableModel model = (DefaultTableModel) tabela_acerto.getModel();
-    model.setRowCount(0); // limpa tabela antes de preencher
-
-    if (lista.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Nenhum produto encontrado com o código manual: " + codigoManual,
-                                      "Aviso", JOptionPane.INFORMATION_MESSAGE);
-        return;
-    }
-
-    for (Object[] linha : lista) {
-        // Penúltima coluna (acerto) começa vazia
-        if (linha.length > 6) {
-            linha[6] = null;
+    private void carregarTabelaPorCodigoManual( String codigoManual, int codArmazem )
+    {
+        if ( codigoManual.isEmpty() )
+        {
+            JOptionPane.showMessageDialog( this, "Digite o código manual do produto!",
+                    "Aviso", JOptionPane.WARNING_MESSAGE );
+            return;
         }
-        model.addRow(linha);
-    }
-}
 
+        // Obter lista do controller
+        List<Object[]> lista = produtosController.listarStockPorCodigoManual( conn, codigoManual, codArmazem );
+
+        DefaultTableModel model = (DefaultTableModel) tabela_acerto.getModel();
+        model.setRowCount( 0 ); // limpa tabela antes de preencher
+
+        if ( lista.isEmpty() )
+        {
+            JOptionPane.showMessageDialog( this, "Nenhum produto encontrado com o código manual: " + codigoManual,
+                    "Aviso", JOptionPane.INFORMATION_MESSAGE );
+            return;
+        }
+
+        for ( Object[] linha : lista )
+        {
+            // Penúltima coluna (acerto) começa vazia
+            if ( linha.length > 6 )
+            {
+                linha[ 6 ] = null;
+            }
+            model.addRow( linha );
+        }
+    }
 
     private int getIdArmazem()
     {

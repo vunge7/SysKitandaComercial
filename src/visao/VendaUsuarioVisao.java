@@ -17,6 +17,7 @@ import entity.FormaPagamento;
 import entity.FormaPagamentoItem;
 import entity.TbItemVenda;
 import entity.Moeda;
+import entity.Movimentacao;
 import entity.TbArmazem;
 import entity.TbBanco;
 import entity.TbCliente;
@@ -112,6 +113,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private static FormaPagamentoItemController formaPagamentoItemController;
     private static FormaPagamentoController formaPagamentoController;
     private static ContaController contaController;
+    private static MovimentacaoController movimentacaoController;
     private static ContaMovimentosController cmc;
     private static TbPreco precoUnitario;
 
@@ -141,6 +143,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private static final int INDEX_TABLE_QTD = 4;
     private static final int INDEX_TABLE_DESCONTO = 5;
     private static final int INDEX_TABLE_TAXA_IVA = 6;
+    private String doc = "";
 
     public VendaUsuarioVisao( int cod_usuario, BDConexao conexao ) throws SQLException
     {
@@ -185,6 +188,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         formaPagamentoItemController = new FormaPagamentoItemController( VendaUsuarioVisao.conexao );
         servicosRetencaoController = new ServicosRetencaoController( VendaUsuarioVisao.conexao );
         contaController = new ContaController( VendaUsuarioVisao.conexao );
+        movimentacaoController = new MovimentacaoController( conexao.getConnection1() );
         dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById( 1 );
         cmc = new ContaMovimentosController( conexao );
         txtQuatindade.setText( "1" );
@@ -495,7 +499,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         lbTotalPagar2.setText("Total a Pagar :");
         jPanel8.add(lbTotalPagar2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, 130, 20));
 
-        cmbMoeda.setBackground(new java.awt.Color(4, 154, 3));
+        cmbMoeda.setBackground(new java.awt.Color(0, 255, 255));
         cmbMoeda.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
         cmbMoeda.addActionListener(new java.awt.event.ActionListener()
         {
@@ -626,7 +630,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 12), new java.awt.Color(4, 154, 3))); // NOI18N
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 15), new java.awt.Color(4, 154, 3))); // NOI18N
         jPanel4.setForeground(new java.awt.Color(102, 153, 0));
         jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -639,9 +643,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         lbCodigoProduto.setText("CodArt:");
         jPanel4.add(lbCodigoProduto, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 180, 60, 30));
 
-        txtCodigoProduto.setBackground(new java.awt.Color(4, 154, 3));
+        txtCodigoProduto.setBackground(new java.awt.Color(0, 255, 255));
         txtCodigoProduto.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        txtCodigoProduto.setForeground(new java.awt.Color(255, 255, 255));
+        txtCodigoProduto.setForeground(new java.awt.Color(0, 0, 51));
         txtCodigoProduto.setCaretColor(new java.awt.Color(255, 255, 255));
         txtCodigoProduto.addActionListener(new java.awt.event.ActionListener()
         {
@@ -680,9 +684,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         lbCodigoProduto1.setText("CodBarra:");
         jPanel4.add(lbCodigoProduto1, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 210, 100, 33));
 
-        txtCodigoBarra.setBackground(new java.awt.Color(4, 154, 3));
+        txtCodigoBarra.setBackground(new java.awt.Color(0, 255, 255));
         txtCodigoBarra.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        txtCodigoBarra.setForeground(new java.awt.Color(255, 255, 255));
+        txtCodigoBarra.setForeground(new java.awt.Color(0, 0, 51));
         txtCodigoBarra.setCaretColor(new java.awt.Color(255, 255, 255));
         txtCodigoBarra.addActionListener(new java.awt.event.ActionListener()
         {
@@ -693,8 +697,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         });
         jPanel4.add(txtCodigoBarra, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 210, 180, 33));
 
-        cmbSubFamilia.setBackground(new java.awt.Color(4, 154, 3));
+        cmbSubFamilia.setBackground(new java.awt.Color(0, 255, 255));
         cmbSubFamilia.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        cmbSubFamilia.setForeground(new java.awt.Color(0, 0, 51));
         cmbSubFamilia.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cmbSubFamilia.addActionListener(new java.awt.event.ActionListener()
         {
@@ -705,8 +710,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         });
         jPanel4.add(cmbSubFamilia, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 80, 360, 31));
 
-        cmbProduto.setBackground(new java.awt.Color(4, 154, 3));
+        cmbProduto.setBackground(new java.awt.Color(0, 255, 255));
         cmbProduto.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        cmbProduto.setForeground(new java.awt.Color(0, 0, 51));
         cmbProduto.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cmbProduto.addActionListener(new java.awt.event.ActionListener()
         {
@@ -732,15 +738,15 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         jPanel4.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 200, 40, 40));
 
         txtPreco.setEditable(false);
-        txtPreco.setBackground(new java.awt.Color(4, 154, 3));
+        txtPreco.setBackground(new java.awt.Color(0, 255, 255));
         txtPreco.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        txtPreco.setForeground(new java.awt.Color(255, 255, 255));
+        txtPreco.setForeground(new java.awt.Color(0, 0, 51));
         txtPreco.setCaretColor(new java.awt.Color(255, 255, 255));
         jPanel4.add(txtPreco, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 140, 130, 30));
 
-        txtQuatindade.setBackground(new java.awt.Color(4, 154, 3));
+        txtQuatindade.setBackground(new java.awt.Color(0, 255, 255));
         txtQuatindade.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        txtQuatindade.setForeground(new java.awt.Color(255, 255, 255));
+        txtQuatindade.setForeground(new java.awt.Color(0, 0, 51));
         txtQuatindade.setText("1");
         txtQuatindade.setCaretColor(new java.awt.Color(255, 255, 255));
         txtQuatindade.addActionListener(new java.awt.event.ActionListener()
@@ -756,9 +762,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         lbCodigoProduto2.setText("CodManual:");
         jPanel4.add(lbCodigoProduto2, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 240, 90, 33));
 
-        txtCodigoManual.setBackground(new java.awt.Color(4, 154, 3));
+        txtCodigoManual.setBackground(new java.awt.Color(0, 255, 255));
         txtCodigoManual.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        txtCodigoManual.setForeground(new java.awt.Color(255, 255, 255));
+        txtCodigoManual.setForeground(new java.awt.Color(0, 0, 51));
         txtCodigoManual.setCaretColor(new java.awt.Color(255, 255, 255));
         txtCodigoManual.addActionListener(new java.awt.event.ActionListener()
         {
@@ -801,7 +807,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
         jPanelData.setBorder(javax.swing.BorderFactory.createTitledBorder("-"));
 
-        cmbArmazem.setBackground(new java.awt.Color(4, 154, 3));
+        cmbArmazem.setBackground(new java.awt.Color(0, 255, 255));
         cmbArmazem.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 1, 10)); // NOI18N
         cmbArmazem.addActionListener(new java.awt.event.ActionListener()
         {
@@ -1058,8 +1064,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         lbCliente.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         lbCliente.setText("Iniciais:");
 
-        cmbCliente.setBackground(new java.awt.Color(4, 154, 3));
+        cmbCliente.setBackground(new java.awt.Color(0, 255, 255));
         cmbCliente.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        cmbCliente.setForeground(new java.awt.Color(0, 0, 51));
         cmbCliente.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cmbCliente.addActionListener(new java.awt.event.ActionListener()
         {
@@ -1184,7 +1191,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         );
 
         jLabel1.setFont(new java.awt.Font("Superclarendon", 1, 24)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(4, 154, 3));
+        jLabel1.setForeground(new java.awt.Color(0, 0, 51));
         jLabel1.setText("KITANDA v1.1");
 
         lbVias.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
@@ -1208,7 +1215,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         lb_proximo_documento.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
         lb_proximo_documento.setText("PRÓX. DOC. : XX PP/A1");
 
-        jPanelCaracteristicas.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Características", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 12), new java.awt.Color(204, 0, 0))); // NOI18N
+        jPanelCaracteristicas.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Características", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 15), new java.awt.Color(204, 0, 0))); // NOI18N
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel3.setText("Marca:");
@@ -1331,7 +1338,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         lbPreco3.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         lbPreco3.setText("Doc.");
 
-        cmbTipoDocumento.setBackground(new java.awt.Color(4, 154, 3));
+        cmbTipoDocumento.setBackground(new java.awt.Color(0, 255, 255));
         cmbTipoDocumento.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
         cmbTipoDocumento.addActionListener(new java.awt.event.ActionListener()
         {
@@ -4364,8 +4371,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 INDEX_TABLE_PRECO,
                 INDEX_TABLE_QTD,
                 INDEX_TABLE_DESCONTO, INDEX_TABLE_TAXA_IVA, table ) );
-        
-        
+
         venda.setTotalRetencao( getTotalRetencaoLiquido() );
         venda.setGorjeta( new BigDecimal( gorjeta ) );
         venda.setTotalPorExtenso( iniciais_extenso() + lbValorPorExtenco.getText() );
@@ -4435,6 +4441,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 item.setDesconto( Double.parseDouble( table.getModel().getValueAt( i, 5 ).toString() ) );
                 item.setValorIva( Double.parseDouble( table.getModel().getValueAt( i, 6 ).toString() ) );
                 item.setValorRetencao( Double.parseDouble( table.getModel().getValueAt( i, 7 ).toString() ) );
+                TbPreco precoProduto = precosController.getLastIdPrecoByIdProduto( idProduto, item.getQuantidade() );
                 item.setMotivoIsensao( getMotivoIsensao( idProduto ) );
                 item.setCodigoIsensao( MetodosUtil.getCodigoRegime( idProduto ) );
                 item.setTotal( new BigDecimal( CfMethods.parseMoedaFormatada( table.getModel().getValueAt( i, 10 ).toString() ) ) );
@@ -4449,14 +4456,30 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                     throw new Exception( "Erro ao salvar item da venda. Produto: " + produto.getDesignacao() );
                 }
 
+                int idArmazem = getCodigoArmazem();
                 // Controle de stock (se for estocável)
                 boolean isStocavel = "true".equalsIgnoreCase( produto.getStocavel() );
                 if ( isStocavel )
                 {
-                    TbStock stock_local_local = stoksControllerLocal.getStockByIdProdutoAndIdArmazem( idProduto, getCodigoArmazem() );
 
-                    if ( ( getIdDocumento() == DOC_FACTURA_RECIBO_FR || getIdDocumento() == DOC_FACTURA_FT || getIdDocumento() == DOC_FACTURA_CONSULTA_MESA || getIdDocumento() == DVML.DOC_GUIA_TRANSPORTE_GT ) && stock_local_local != null )
+                    TbStock stock_local_local = stoksControllerLocal.getStockByIdProdutoAndIdArmazem( idProduto, idArmazem );
+
+                    if ( ( getIdDocumento() == DOC_FACTURA_RECIBO_FR
+                            || getIdDocumento() == DOC_FACTURA_FT
+                            || getIdDocumento() == DOC_FACTURA_CONSULTA_MESA
+                            || getIdDocumento() == DVML.DOC_GUIA_TRANSPORTE_GT ) && stock_local_local != null )
                     {
+
+                        MovimentacaoController.registrarMovimento(
+                                idProduto,
+                                idArmazem,
+                                cod_usuario,
+                                new BigDecimal( item.getQuantidade() ),
+                                prox_doc,
+                                "SAIDA",
+                                conexao
+                        );
+
                         actualizar_quantidade( idProduto, item.getQuantidade(), conexaoLocal );
                     }
                 }
@@ -4605,7 +4628,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         for ( int i = 1; i <= numeroVias; i++ )
         {
             String via;
-            switch (i)
+            switch ( i )
             {
                 case 1:
                     via = "Original";
@@ -5097,8 +5120,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getValorComImposto( double qtd, double taxa, double preco_venda, double desconto )
     {
-        double subtotal_linha = (preco_venda * qtd);
-        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
+        double subtotal_linha = ( preco_venda * qtd );
+        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
         double valor_iva = 1 + ( taxa / 100 );//
         return ( ( subtotal_linha - desconto_valor ) * valor_iva );
 
@@ -5112,9 +5135,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getValorComRetencao( double qtd, double ret, double preco_venda, double desconto )
     {
-        double subtotal_linha = (preco_venda * qtd);
-        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
-        double valor_ret = (( ( subtotal_linha - desconto_valor ) * ret ) / 100);//
+        double subtotal_linha = ( preco_venda * qtd );
+        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
+        double valor_ret = ( ( ( subtotal_linha - desconto_valor ) * ret ) / 100 );//
         return ( valor_ret );
     }
 
@@ -5137,8 +5160,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getRET( double qtd, double taxa_r, double preco_venda, double desconto )
     {
-        double subtotal_linha = (preco_venda * qtd);
-        double valor_ret = (taxa_r / 100);//
+        double subtotal_linha = ( preco_venda * qtd );
+        double valor_ret = ( taxa_r / 100 );//
         return ( ( subtotal_linha - desconto ) * valor_ret );
 
     }
@@ -5168,7 +5191,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private void actualizar_abreviacao()
     {
 
-        switch (getIdDocumento())
+        switch ( getIdDocumento() )
         {
             case DVML.DOC_FACTURA_RECIBO_FR:
                 if ( ck_A4.isSelected() )
@@ -5645,7 +5668,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             // a incidência só é aplicável ao produtos sujeitos a iva 
             if ( taxa != 0 )
             {
-                double valor_unitario = (preco_unitario * qtd);
+                double valor_unitario = ( preco_unitario * qtd );
 
                 desconto_valor_linha = valor_unitario * ( ( valor_percentagem ) / 100 );
                 valor_taxa = ( valor_unitario - desconto_valor_linha ) / taxa;
@@ -5711,7 +5734,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getTotalAOARetencoes()
     {
-        double valores = (getTotalRetencao1());
+        double valores = ( getTotalRetencao1() );
         return ( valores );
     }
 
@@ -5761,7 +5784,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         Documento documento_local = (Documento) documentosController.findById( getIdDocumento() );
         String abreviacao_local = documento_local.getAbreviacao();
 
-        switch (abreviacao_local)
+        switch ( abreviacao_local )
         {
             case "FT":
                 return "Facturamos o valor de: ";
@@ -6541,15 +6564,4 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     }
 
-    
-    /**
-     *
-     * @author Engº Domingos Dala Vunge
-     * @created date
-     * @lastModified date
-     * @param
-     * @return
-     */
-    private void teste(){
-    }
 }

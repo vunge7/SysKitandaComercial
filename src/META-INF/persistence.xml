@@ -130,6 +130,7 @@
     <class>entity.LinhaFichaTecnica</class>
     <class>entity.FichaTecnica</class>
     <class>entity.TbItemEntradas</class>
+    <class>entity.Movimentacao</class>
     <shared-cache-mode>NONE</shared-cache-mode>
     <properties>
       <property name="javax.persistence.jdbc.url" value=""/>
