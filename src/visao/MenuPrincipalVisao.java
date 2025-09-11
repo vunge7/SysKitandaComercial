@@ -609,13 +609,13 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jmenuRelatorios = new javax.swing.JMenu();
         jmListarProdutosStock = new javax.swing.JMenuItem();
         jmTodasVendas = new javax.swing.JMenuItem();
+        jmVendaDetalhadasUsuarios = new javax.swing.JMenuItem();
         jmRelatorioVendasPorUsuarioData = new javax.swing.JMenuItem();
         jmRelatorioVendasPorClienteData = new javax.swing.JMenuItem();
         jmRelatorioDiario = new javax.swing.JMenuItem();
         jMenuItemRelatorioQtdDetalhado = new javax.swing.JMenuItem();
         jmRelatorioFormaPagamento = new javax.swing.JMenuItem();
         jmVendaDetalhadasClientes = new javax.swing.JMenuItem();
-        jmVendaDetalhadasUsuarios = new javax.swing.JMenuItem();
         jmRelatorioDiarioTodasVendasTempoReal = new javax.swing.JMenuItem();
         jmListagensTodosProdutos = new javax.swing.JMenuItem();
         jmRelatorioTodosServicos = new javax.swing.JMenuItem();
@@ -924,6 +924,16 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         });
         jmenuRelatorios.add(jmTodasVendas);
 
+        jmVendaDetalhadasUsuarios.setText("Vendas Detalhadas por Usuarios");
+        jmVendaDetalhadasUsuarios.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jmVendaDetalhadasUsuariosActionPerformed(evt);
+            }
+        });
+        jmenuRelatorios.add(jmVendaDetalhadasUsuarios);
+
         jmRelatorioVendasPorUsuarioData.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jmRelatorioVendasPorUsuarioData.setText("Relatorio de Vendas Por Usuario e Data");
         jmRelatorioVendasPorUsuarioData.addActionListener(new java.awt.event.ActionListener()
@@ -985,16 +995,6 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
             }
         });
         jmenuRelatorios.add(jmVendaDetalhadasClientes);
-
-        jmVendaDetalhadasUsuarios.setText("Vendas Detalhadas por Usuarios");
-        jmVendaDetalhadasUsuarios.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                jmVendaDetalhadasUsuariosActionPerformed(evt);
-            }
-        });
-        jmenuRelatorios.add(jmVendaDetalhadasUsuarios);
 
         jmRelatorioDiarioTodasVendasTempoReal.setText("Relatorio Diario de Todas Vendas em Tempo Real");
         jmRelatorioDiarioTodasVendasTempoReal.addActionListener(new java.awt.event.ActionListener()
@@ -2015,7 +2015,8 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
     private void jmVendaDetalhadasUsuariosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmVendaDetalhadasUsuariosActionPerformed
     {//GEN-HEADEREND:event_jmVendaDetalhadasUsuariosActionPerformed
-        new ListarVendasDetalhadas( this.conexao ).show();
+//        new ListarVendasDetalhadas( this.conexao ).show();
+        new ListarRelatorioVendaByIntervalo(this.conexao ).setVisible( true);
     }//GEN-LAST:event_jmVendaDetalhadasUsuariosActionPerformed
 
     private void jmListarUsuarioActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmListarUsuarioActionPerformed

@@ -223,7 +223,7 @@ WHERE
 			</textField>
 			<image>
 				<reportElement uuid="aa9cd883-fead-4701-92a6-11bfeed32d87" x="71" y="0" width="48" height="29"/>
-				<imageExpression><![CDATA["relatorios/logo_dvml.png"]]></imageExpression>
+				<imageExpression><![CDATA["logo/logo_dvml.png"]]></imageExpression>
 			</image>
 			<rectangle radius="10">
 				<reportElement uuid="7c54c3aa-0480-4947-97cb-14f56c38f800" x="-2" y="70" width="187" height="47"/>

@@ -263,7 +263,7 @@ public class EncomendaVisao extends javax.swing.JFrame implements Runnable
                 jButton1ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(751, 174, 134, 53));
+        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(675, 174, 210, 53));
 
         btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LOGOUT - VERMELHO/Logout 32x32.png"))); // NOI18N
         btnCancelar.setAlignmentX(0.5F);

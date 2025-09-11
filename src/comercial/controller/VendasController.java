@@ -1779,7 +1779,6 @@ public List<TbVenda> getAllFRVendaByBetweenDataAndArmazemAndDocumento(
                 venda.setIdArmazemFK(new TbArmazem(result.getInt("idArmazemFK")));
                 venda.setFkDocumento(new Documento(result.getInt("fk_documento")));
                 venda.setCodigoUsuario(new TbUsuario(result.getInt("codigo_usuario")));
-
                 // Cliente com ID e nome
                 TbCliente cliente = new TbCliente(result.getInt("codigo_cliente"));
                 cliente.setNome(result.getString("nome_cliente"));

@@ -285,7 +285,7 @@ WHERE
 			</textField>
 			<image scaleImage="FillFrame">
 				<reportElement uuid="1fd15c7f-cbc0-4c0d-9848-5dd28d654566" x="0" y="0" width="83" height="63"/>
-				<imageExpression><![CDATA["relatorios/logo_dvml.png"]]></imageExpression>
+				<imageExpression><![CDATA["logo/logo_dvml.png"]]></imageExpression>
 			</image>
 		</band>
 	</title>

@@ -320,7 +320,7 @@ WHERE
 			</textField>
 			<image>
 				<reportElement uuid="aa9cd883-fead-4701-92a6-11bfeed32d87" x="0" y="-12" width="216" height="97"/>
-				<imageExpression><![CDATA["relatorios/logo_dvml.png"]]></imageExpression>
+				<imageExpression><![CDATA["logo/logo_dvml.png"]]></imageExpression>
 			</image>
 			<textField>
 				<reportElement uuid="5be15091-64e8-4c95-a321-fa7fc79d18d4" x="1" y="109" width="146" height="12"/>
@@ -382,7 +382,7 @@ WHERE
 			</textField>
 			<image>
 				<reportElement uuid="7526f37b-8d00-48cc-b222-70a7fe0a5827" x="395" y="-12" width="216" height="97"/>
-				<imageExpression><![CDATA["relatorios/logo_dvml.png"]]></imageExpression>
+				<imageExpression><![CDATA["logo/logo_dvml.png"]]></imageExpression>
 			</image>
 			<textField>
 				<reportElement uuid="4df7a682-5c6a-4ca1-b01b-ebb261098772" x="394" y="98" width="217" height="12"/>

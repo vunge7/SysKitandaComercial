@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a324e3e4-0754-4ede-83c0-92dc73708a0e">
 	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="252"/>
-	<property name="ireport.y" value="721"/>
+	<property name="ireport.x" value="38"/>
+	<property name="ireport.y" value="49"/>
 	<style name="cliente_style" mode="Transparent" forecolor="#000000">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$P{NIF_CLIENTE_CONSOMIDOR_FINAL}.equals("Consumidor Final")]]></conditionExpression>
@@ -272,7 +272,7 @@ WHERE
 			</textField>
 			<image>
 				<reportElement uuid="2195d0b4-e893-4c10-b340-0c988501d1d7" x="0" y="3" width="186" height="72"/>
-				<imageExpression><![CDATA["relatorios/logo_dvml.png"]]></imageExpression>
+				<imageExpression><![CDATA["logo/logo_dvml.png"]]></imageExpression>
 			</image>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="de1f93e8-b055-4e09-a164-eef00065f7c6" key="staticText-5" style="cliente_style" x="293" y="175" width="260" height="13"/>

@@ -151,7 +151,7 @@ WHERE
 			</staticText>
 			<image scaleImage="FillFrame">
 				<reportElement uuid="adb431c9-0be6-419d-b03f-2d254c38f493" x="-14" y="-4" width="126" height="97"/>
-				<imageExpression><![CDATA["relatorios/logo_dvml.png"]]></imageExpression>
+				<imageExpression><![CDATA["logo/logo_dvml.png"]]></imageExpression>
 			</image>
 		</band>
 	</pageHeader>
