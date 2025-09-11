@@ -364,7 +364,6 @@ public class ProdutosVisao extends javax.swing.JFrame
         lbTipoProduto.setText("Sub Família:");
         jPanel5.add(lbTipoProduto, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 80, 90, 22));
 
-        cmbTipoProduto.setBackground(new java.awt.Color(4, 154, 3));
         cmbTipoProduto.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
         cmbTipoProduto.addActionListener(new java.awt.event.ActionListener()
         {
@@ -383,9 +382,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         lbCusto.setText("Preço Compra Retalho:");
         jPanel5.add(lbCusto, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 240, 180, 20));
 
-        txtPrecoCompra.setBackground(new java.awt.Color(4, 154, 3));
         txtPrecoCompra.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
-        txtPrecoCompra.setForeground(new java.awt.Color(255, 255, 255));
         txtPrecoCompra.setCaretColor(new java.awt.Color(255, 255, 255));
         txtPrecoCompra.addActionListener(new java.awt.event.ActionListener()
         {
@@ -453,7 +450,6 @@ public class ProdutosVisao extends javax.swing.JFrame
         lbTipoProduto3.setText("Modelo:");
         jPanel5.add(lbTipoProduto3, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 40, 90, 22));
 
-        cmbModelo.setBackground(new java.awt.Color(4, 154, 3));
         cmbModelo.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
         cmbModelo.addActionListener(new java.awt.event.ActionListener()
         {
@@ -479,9 +475,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         lbBarra.setText("Cod Barra:");
         jPanel5.add(lbBarra, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 120, 80, 20));
 
-        txtCodigoBarra.setBackground(new java.awt.Color(4, 154, 3));
         txtCodigoBarra.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        txtCodigoBarra.setForeground(new java.awt.Color(255, 255, 255));
         txtCodigoBarra.setText("0");
         txtCodigoBarra.setCaretColor(new java.awt.Color(255, 255, 255));
         txtCodigoBarra.addActionListener(new java.awt.event.ActionListener()
@@ -563,9 +557,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         });
 
         txtPrecoDeVendaComIva.setEditable(false);
-        txtPrecoDeVendaComIva.setBackground(new java.awt.Color(102, 102, 102));
         txtPrecoDeVendaComIva.setFont(new java.awt.Font("Lucida Grande", 1, 16)); // NOI18N
-        txtPrecoDeVendaComIva.setForeground(new java.awt.Color(255, 255, 255));
 
         TotalIvaLabel.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         TotalIvaLabel.setText("P.Venda Com IVA");
@@ -699,9 +691,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         });
 
         retencaoTaxaJTextField.setEditable(false);
-        retencaoTaxaJTextField.setBackground(new java.awt.Color(4, 154, 3));
         retencaoTaxaJTextField.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
-        retencaoTaxaJTextField.setForeground(new java.awt.Color(255, 255, 255));
         retencaoTaxaJTextField.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -713,9 +703,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         retencaoTaxaJLabel.setText("Retenção");
 
         retencaoZeroTaxaJTextField.setEditable(false);
-        retencaoZeroTaxaJTextField.setBackground(new java.awt.Color(4, 154, 3));
         retencaoZeroTaxaJTextField.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
-        retencaoZeroTaxaJTextField.setForeground(new java.awt.Color(255, 255, 255));
         retencaoZeroTaxaJTextField.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -902,9 +890,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         lbUnidade.setText("Unidade:");
         jPanel5.add(lbUnidade, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 240, 100, 20));
 
-        txtUnidadeCompra.setBackground(new java.awt.Color(4, 154, 3));
         txtUnidadeCompra.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
-        txtUnidadeCompra.setForeground(new java.awt.Color(255, 255, 255));
         txtUnidadeCompra.setText("1");
         txtUnidadeCompra.addActionListener(new java.awt.event.ActionListener()
         {
@@ -922,9 +908,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("BUSCA DO SERVIÇO/PRODUTO"));
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        txtCodigoProduto.setBackground(new java.awt.Color(0, 255, 255));
         txtCodigoProduto.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        txtCodigoProduto.setForeground(new java.awt.Color(0, 51, 102));
         txtCodigoProduto.setCaretColor(new java.awt.Color(255, 255, 255));
         txtCodigoProduto.addActionListener(new java.awt.event.ActionListener()
         {
@@ -939,9 +923,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         lbProdutos2.setText("Cód. Interno:");
         jPanel3.add(lbProdutos2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, -1, 30));
 
-        txtCodigoBarraProcura.setBackground(new java.awt.Color(0, 255, 255));
         txtCodigoBarraProcura.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        txtCodigoBarraProcura.setForeground(new java.awt.Color(0, 51, 102));
         txtCodigoBarraProcura.setCaretColor(new java.awt.Color(255, 255, 255));
         txtCodigoBarraProcura.addActionListener(new java.awt.event.ActionListener()
         {
@@ -960,9 +942,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         lbProdutos4.setText("Cód. Manual:");
         jPanel3.add(lbProdutos4, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 20, 100, 30));
 
-        txtCodigoManualProcura.setBackground(new java.awt.Color(0, 255, 255));
         txtCodigoManualProcura.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        txtCodigoManualProcura.setForeground(new java.awt.Color(0, 51, 102));
         txtCodigoManualProcura.setCaretColor(new java.awt.Color(255, 255, 255));
         txtCodigoManualProcura.addActionListener(new java.awt.event.ActionListener()
         {
@@ -1026,9 +1006,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         lbPreco.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         lbPreco.setText("Percent. Ganho:");
 
-        txtPercentagemGanhoRetalho.setBackground(new java.awt.Color(4, 154, 3));
         txtPercentagemGanhoRetalho.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
-        txtPercentagemGanhoRetalho.setForeground(new java.awt.Color(255, 255, 255));
         txtPercentagemGanhoRetalho.setText("0");
         txtPercentagemGanhoRetalho.setCaretColor(new java.awt.Color(255, 255, 255));
         txtPercentagemGanhoRetalho.setEnabled(false);
@@ -1046,9 +1024,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         lbPrecoVenda.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         lbPrecoVenda.setText("Preco Venda Sem IVA (Ret):");
 
-        txtPrecoVendaRetalho.setBackground(new java.awt.Color(4, 154, 3));
         txtPrecoVendaRetalho.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
-        txtPrecoVendaRetalho.setForeground(new java.awt.Color(255, 255, 255));
         txtPrecoVendaRetalho.setCaretColor(new java.awt.Color(255, 255, 255));
         txtPrecoVendaRetalho.addActionListener(new java.awt.event.ActionListener()
         {
@@ -1064,8 +1040,6 @@ public class ProdutosVisao extends javax.swing.JFrame
         lbBarra1.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         lbBarra1.setText("Cod Manual:");
 
-        txtCodigoManual.setBackground(new java.awt.Color(4, 154, 3));
-        txtCodigoManual.setForeground(new java.awt.Color(255, 255, 255));
         txtCodigoManual.setText("0");
         txtCodigoManual.addActionListener(new java.awt.event.ActionListener()
         {
@@ -1078,9 +1052,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         lbPrecoVenda1.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         lbPrecoVenda1.setText("Preco Grosso:");
 
-        txtPrecoVendaGrosso.setBackground(new java.awt.Color(4, 154, 3));
         txtPrecoVendaGrosso.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
-        txtPrecoVendaGrosso.setForeground(new java.awt.Color(255, 255, 255));
         txtPrecoVendaGrosso.setCaretColor(new java.awt.Color(255, 255, 255));
         txtPrecoVendaGrosso.addActionListener(new java.awt.event.ActionListener()
         {
@@ -1093,9 +1065,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         jLabel1.setFont(new java.awt.Font("Tw Cen MT Condensed", 1, 16)); // NOI18N
         jLabel1.setText("Qtd Grosso:");
 
-        txtQtdGrosso.setBackground(new java.awt.Color(4, 154, 3));
         txtQtdGrosso.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
-        txtQtdGrosso.setForeground(new java.awt.Color(255, 255, 255));
         txtQtdGrosso.setCaretColor(new java.awt.Color(255, 255, 255));
         txtQtdGrosso.addActionListener(new java.awt.event.ActionListener()
         {
@@ -1191,24 +1161,16 @@ public class ProdutosVisao extends javax.swing.JFrame
         );
 
         txtArmazen1.setEditable(false);
-        txtArmazen1.setBackground(new java.awt.Color(4, 154, 3));
         txtArmazen1.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        txtArmazen1.setForeground(new java.awt.Color(255, 255, 255));
 
         txtArmazen2.setEditable(false);
-        txtArmazen2.setBackground(new java.awt.Color(4, 154, 3));
         txtArmazen2.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        txtArmazen2.setForeground(new java.awt.Color(255, 255, 255));
 
         txtArmazen3.setEditable(false);
-        txtArmazen3.setBackground(new java.awt.Color(4, 154, 3));
         txtArmazen3.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
-        txtArmazen3.setForeground(new java.awt.Color(255, 255, 255));
 
         txtArmazen4.setEditable(false);
-        txtArmazen4.setBackground(new java.awt.Color(4, 154, 3));
         txtArmazen4.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
-        txtArmazen4.setForeground(new java.awt.Color(255, 255, 255));
         txtArmazen4.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -1217,19 +1179,15 @@ public class ProdutosVisao extends javax.swing.JFrame
             }
         });
 
-        cmbarmazem1.setBackground(new java.awt.Color(4, 154, 3));
         cmbarmazem1.setFont(new java.awt.Font("Times New Roman", 1, 13)); // NOI18N
         cmbarmazem1.setEnabled(false);
 
-        cmbarmazem2.setBackground(new java.awt.Color(4, 154, 3));
         cmbarmazem2.setFont(new java.awt.Font("Times New Roman", 1, 13)); // NOI18N
         cmbarmazem2.setEnabled(false);
 
-        cmbarmazem3.setBackground(new java.awt.Color(4, 154, 3));
         cmbarmazem3.setFont(new java.awt.Font("Times New Roman", 1, 13)); // NOI18N
         cmbarmazem3.setEnabled(false);
 
-        cmbarmazem4.setBackground(new java.awt.Color(4, 154, 3));
         cmbarmazem4.setFont(new java.awt.Font("Times New Roman", 1, 13)); // NOI18N
         cmbarmazem4.setEnabled(false);
 

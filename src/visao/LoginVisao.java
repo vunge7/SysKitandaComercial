@@ -4,6 +4,13 @@
  */
 package visao;
 
+import com.formdev.flatlaf.intellijthemes.FlatCyanLightIJTheme;
+import com.formdev.flatlaf.intellijthemes.FlatDarkFlatIJTheme;
+import com.formdev.flatlaf.intellijthemes.FlatNordIJTheme;
+import com.formdev.flatlaf.intellijthemes.FlatOneDarkIJTheme;
+import com.formdev.flatlaf.intellijthemes.FlatVuesionIJTheme;
+import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialLighterIJTheme;
+import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialOceanicIJTheme;
 import comercial.controller.DadosInstituicaoController;
 import dao.CaixaDao;
 import dao.DadosInstituicaoDao;
@@ -11,6 +18,8 @@ import dao.DocumentoDao;
 import dao.EmpresaDao;
 import dao.UsuarioDao;
 import de.javasoft.plaf.synthetica.SyntheticaBlackStarLookAndFeel;
+import de.javasoft.plaf.synthetica.SyntheticaLookAndFeel;
+import de.javasoft.plaf.synthetica.SyntheticaStandardLookAndFeel;
 //import de.javasoft.plaf.synthetica.SyntheticaBlackStarLookAndFeel;
 import entity.TbDadosInstituicao;
 import entity.TbUsuario;
@@ -715,7 +724,8 @@ public class LoginVisao extends javax.swing.JFrame
                 {
 
                     UIManager.setLookAndFeel( new SyntheticaBlackStarLookAndFeel() );
-
+//                    UIManager.setLookAndFeel("com.jtattoo.plaf.acryl.AcrylLookAndFeel");
+//                    FlatMTMaterialOceanicIJTheme.setup();
                     // JTextField
                     UIManager.put( "TextField.background", new Color( 0, 255, 255 ) ); // fundo
                     UIManager.put( "TextField.foreground", new Color( 0, 51, 102 ) );  // texto
@@ -723,13 +733,13 @@ public class LoginVisao extends javax.swing.JFrame
                     UIManager.put( "TextField.selectionBackground", Color.YELLOW );  // seleção (amarelo só no JTextField)
                     UIManager.put( "TextField.selectionForeground", Color.BLUE );    // texto selecionado
 
-// JComboBox
+                    //JComboBox
                     UIManager.put( "ComboBox.background", new Color( 0, 255, 255 ) );
                     UIManager.put( "ComboBox.foreground", new Color( 0, 51, 102 ) );
                     UIManager.put( "ComboBox.selectionBackground", new Color( 173, 216, 230 ) ); // azul claro
                     UIManager.put( "ComboBox.selectionForeground", Color.BLACK );
 
-// JTable
+                    //JTable
                     UIManager.put( "Table.background", new Color( 0, 255, 255 ) );
                     UIManager.put( "Table.foreground", new Color( 0, 51, 102 ) );
                     UIManager.put( "Table.selectionBackground", new Color( 0, 120, 215 ) ); // azul estilo Windows

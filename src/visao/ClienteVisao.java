@@ -195,14 +195,12 @@ public class ClienteVisao extends javax.swing.JDialog
                 .addContainerGap())
         );
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Cadastro de Cliente", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 15), new java.awt.Color(51, 153, 0))); // NOI18N
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Cadastro de Cliente", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 12), new java.awt.Color(51, 153, 0))); // NOI18N
         jPanel1.setFont(new java.awt.Font("Showcard Gothic", 0, 24)); // NOI18N
 
         lbTipoProduto.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         lbTipoProduto.setText("Nome do Cliente:");
 
-        txtNomeCliente.setBackground(new java.awt.Color(51, 153, 0));
-        txtNomeCliente.setForeground(new java.awt.Color(255, 255, 255));
         txtNomeCliente.setCaretColor(new java.awt.Color(255, 255, 255));
         txtNomeCliente.addActionListener(new java.awt.event.ActionListener()
         {
@@ -215,8 +213,6 @@ public class ClienteVisao extends javax.swing.JDialog
         jLabel1.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         jLabel1.setText("Endereço:");
 
-        txtEndereco.setBackground(new java.awt.Color(51, 153, 0));
-        txtEndereco.setForeground(new java.awt.Color(255, 255, 255));
         txtEndereco.setCaretColor(new java.awt.Color(255, 255, 255));
         txtEndereco.addActionListener(new java.awt.event.ActionListener()
         {
@@ -229,8 +225,6 @@ public class ClienteVisao extends javax.swing.JDialog
         jLabel2.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         jLabel2.setText("Tel:");
 
-        txtContactos.setBackground(new java.awt.Color(51, 153, 0));
-        txtContactos.setForeground(new java.awt.Color(255, 255, 255));
         txtContactos.setCaretColor(new java.awt.Color(255, 255, 255));
         txtContactos.addActionListener(new java.awt.event.ActionListener()
         {
@@ -243,8 +237,6 @@ public class ClienteVisao extends javax.swing.JDialog
         jLabel3.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         jLabel3.setText("Nif:");
 
-        txtNif.setBackground(new java.awt.Color(51, 153, 0));
-        txtNif.setForeground(new java.awt.Color(255, 255, 255));
         txtNif.setCaretColor(new java.awt.Color(255, 255, 255));
         txtNif.addActionListener(new java.awt.event.ActionListener()
         {
@@ -257,8 +249,6 @@ public class ClienteVisao extends javax.swing.JDialog
         jLabel4.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         jLabel4.setText("Email:");
 
-        txtEmail.setBackground(new java.awt.Color(51, 153, 0));
-        txtEmail.setForeground(new java.awt.Color(255, 255, 255));
         txtEmail.setCaretColor(new java.awt.Color(255, 255, 255));
         txtEmail.addActionListener(new java.awt.event.ActionListener()
         {
@@ -365,8 +355,6 @@ public class ClienteVisao extends javax.swing.JDialog
             tabela_cliente.getColumnModel().getColumn(0).setMaxWidth(50);
         }
 
-        txtInicias.setBackground(new java.awt.Color(51, 153, 0));
-        txtInicias.setForeground(new java.awt.Color(255, 255, 255));
         txtInicias.setCaretColor(new java.awt.Color(255, 255, 255));
 
         lbTipoProduto1.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
