@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="3.305785123966945"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="153"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -247,7 +247,7 @@ WHERE
 			</textField>
 			<image>
 				<reportElement uuid="aa9cd883-fead-4701-92a6-11bfeed32d87" x="61" y="-10" width="78" height="38"/>
-				<imageExpression><![CDATA["relatorios/logo_dvml.png"]]></imageExpression>
+				<imageExpression><![CDATA["logo/logo_dvml.png"]]></imageExpression>
 			</image>
 			<rectangle radius="10">
 				<reportElement uuid="7c54c3aa-0480-4947-97cb-14f56c38f800" x="-2" y="70" width="187" height="48"/>

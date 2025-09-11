@@ -46,13 +46,13 @@ public class ListaEntradaProdutos {
   
         this.codigo = codigo;
        
-        mostrarVenda();
+        mostrarEntrada();
     
     }
 
     
     
-    public void mostrarVenda(){
+    public void mostrarEntrada(){
         
         Connection connection = (Connection) conexao.conectar();
         HashMap hashMap = new HashMap();

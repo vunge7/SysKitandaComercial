@@ -5,9 +5,9 @@
 	<property name="ireport.y" value="0"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<import value="net.sf.jasperreports.engine.*"/>
 	<style name="style_degradacao" mode="Opaque" backcolor="#FFFFFF">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$V{COLUMN_COUNT}%2==0]]></conditionExpression>
@@ -114,21 +114,25 @@ WHERE
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="28" splitType="Stretch">
+		<band height="87" splitType="Stretch">
 			<textField>
-				<reportElement uuid="b52d0795-a364-490d-954a-53349b2c3577" x="0" y="8" width="363" height="11"/>
+				<reportElement uuid="b52d0795-a364-490d-954a-53349b2c3577" x="103" y="3" width="363" height="11"/>
 				<textElement>
 					<font fontName="Arial" size="7" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_nome}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="40be37b7-5b61-43a6-a2c0-e0c9cc676f29" x="0" y="14" width="284" height="10"/>
+				<reportElement uuid="40be37b7-5b61-43a6-a2c0-e0c9cc676f29" x="103" y="9" width="284" height="10"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_enderecos}]]></textFieldExpression>
 			</textField>
+			<image scaleImage="FillFrame">
+				<reportElement uuid="43ead956-6927-4206-88fe-cedaaccc05d5" x="-24" y="-10" width="126" height="97"/>
+				<imageExpression><![CDATA["logo/logo_dvml.png"]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>

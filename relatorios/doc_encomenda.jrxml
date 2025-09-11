@@ -3,8 +3,8 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="3.2210200000000015"/>
-	<property name="ireport.x" value="1132"/>
-	<property name="ireport.y" value="295"/>
+	<property name="ireport.x" value="536"/>
+	<property name="ireport.y" value="3120"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -361,7 +361,7 @@ WHERE compras.`pk_compra` = $P{CODIGO_COMPRA}]]>
 			</textField>
 			<image>
 				<reportElement uuid="88d75e90-9362-4321-9420-5aa0dca5dd44" x="1" y="1" width="216" height="99"/>
-				<imageExpression><![CDATA["relatorios/logo_dvml.png"]]></imageExpression>
+				<imageExpression><![CDATA["logo/logo_dvml.png"]]></imageExpression>
 			</image>
 			<textField>
 				<reportElement uuid="1bce4df5-1dcc-4811-a0f2-dc8ab79f46ca" x="280" y="56" width="254" height="20"/>

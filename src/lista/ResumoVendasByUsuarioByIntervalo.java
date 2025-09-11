@@ -33,15 +33,14 @@ public  class ResumoVendasByUsuarioByIntervalo {
     private ItemVendaDao itemVendaDao = new ItemVendaDao(emf);
     private ArmazemDao armazemDao = new ArmazemDao(emf);
     private Date data_incio, data_fim;
-//    private int  pk_armazem;
+    private int  id_usuario;
 
-//    public ResumoSaidasByIntervalo(Date data_incio,Date data_fim, int pk_armazem) 
-    public ResumoVendasByUsuarioByIntervalo(Date data_incio,Date data_fim) 
+    public ResumoVendasByUsuarioByIntervalo(Date data_incio,Date data_fim, int id_usuario) 
     {
     
         this.data_incio = data_incio;
         this.data_fim = data_fim;
-//        this.pk_armazem = pk_armazem;
+        this.id_usuario = id_usuario;
         
         try {
             mostrar();
@@ -58,10 +57,10 @@ public  class ResumoVendasByUsuarioByIntervalo {
      
         hashMap.put("PARM_DATA_1", this.data_incio);      
         hashMap.put("PARM_DATA_2", this.data_fim); 
-//        hashMap.put("ID_ARMAZEM", this.pk_armazem);      
+        hashMap.put("ID_USUARIO", this.id_usuario);      
           
         //obter o path do relatorio
-        String relatorio = "relatorios/report8.jasper";
+        String relatorio = "relatorios/reporte_vendas_detalhadas.jasper";
 
         File file = new File(relatorio).getAbsoluteFile();
         String obterCaminho = file.getAbsolutePath();
@@ -87,10 +86,12 @@ public  class ResumoVendasByUsuarioByIntervalo {
         }
 
         }
+    
+    
 
     public static void main(String[] args){
         
-//        new ResumoSaidasByIntervalo(2017,2017, 1);
+        new ResumoVendasByUsuarioByIntervalo(new Date(),new Date(), 15);
         
     }
 

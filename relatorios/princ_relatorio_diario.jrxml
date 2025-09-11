@@ -96,7 +96,7 @@ FROM
 			</textField>
 			<image scaleImage="FillFrame">
 				<reportElement uuid="bd70c009-4972-47a4-8149-d76fed7c5f7f" x="-27" y="-25" width="126" height="97"/>
-				<imageExpression><![CDATA["relatorios/logo_dvml.png"]]></imageExpression>
+				<imageExpression><![CDATA["logo/logo_dvml.png"]]></imageExpression>
 			</image>
 		</band>
 	</title>

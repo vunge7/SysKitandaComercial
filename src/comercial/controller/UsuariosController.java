@@ -387,7 +387,7 @@ public class UsuariosController implements EntidadeFactory
         {
             e.printStackTrace();
         }
-        vector.add( 0, "--Seleccione o Cliente--" );
+        vector.add( 0, "--Seleccione o Usuario--" );
 
         return vector;
     }
@@ -543,10 +543,10 @@ public class UsuariosController implements EntidadeFactory
 
     }
 
-    public TbUsuario getClienteByNome( String nome )
+    public TbUsuario getUsuarioByNome( String nome )
     {
 
-        String FIND__BY_CODIGO = "SELECT *  FROM tb_usuario a WHERE nome = '" + nome + "'";
+        String FIND__BY_CODIGO = "SELECT * FROM tb_usuario a WHERE nome = '" + nome + "'";
         ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
         TbUsuario usuario = null;
         try

@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="48"/>
+	<property name="ireport.y" value="672"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -216,7 +216,7 @@ WHERE
 		<band height="802" splitType="Stretch">
 			<image>
 				<reportElement uuid="03bc880e-c834-49b4-be59-b84dcc935bd4" x="20" y="210" width="528" height="407"/>
-				<imageExpression><![CDATA["relatorios/fundo.png"]]></imageExpression>
+				<imageExpression><![CDATA["logo/fundo.png"]]></imageExpression>
 			</image>
 		</band>
 	</background>
@@ -311,7 +311,7 @@ WHERE
 			</textField>
 			<image scaleImage="FillFrame">
 				<reportElement uuid="20ec1823-c902-430d-a5e6-c9a34547ccd5" x="-22" y="-15" width="136" height="97"/>
-				<imageExpression><![CDATA["relatorios/logo_dvml.png"]]></imageExpression>
+				<imageExpression><![CDATA["logo/logo_dvml.png"]]></imageExpression>
 			</image>
 			<textField>
 				<reportElement uuid="21065baa-a51f-4d7d-b3e7-547c79d4a38b" x="301" y="56" width="234" height="20"/>

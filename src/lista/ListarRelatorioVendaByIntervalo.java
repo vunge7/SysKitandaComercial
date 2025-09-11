@@ -12,6 +12,7 @@ import comercial.controller.StoksController;
 import comercial.controller.TipoProdutosController;
 import comercial.controller.UsuariosController;
 import comercial.controller.VendasController;
+import dao.VendaDao;
 import entity.Compras;
 import entity.TbArmazem;
 import entity.TbDadosInstituicao;
@@ -33,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.persistence.EntityManagerFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -46,6 +48,7 @@ import util.DVML;
 import util.MetodosUtil;
 import static visao.VendaUsuarioVisao.formatarComoMoeda;
 import util.DVML.Abreviacao;
+import util.JPAEntityMannagerFactoryUtil;
 
 /**
  *
@@ -57,6 +60,8 @@ public class ListarRelatorioVendaByIntervalo extends javax.swing.JFrame
     /**
      * Creates new form ListaUsuarioVisao
      */
+    private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
+    private VendaDao vendaDao = new VendaDao( emf );
     private static PrecosController precosController;
     private static ProdutosController produtosController;
     private static TipoProdutosController tipoProdutosController;
@@ -105,6 +110,14 @@ public class ListarRelatorioVendaByIntervalo extends javax.swing.JFrame
     {
         cmbUsuario.setModel( new DefaultComboBoxModel<>( usuariosController.getVector() ) );
 
+        try
+        {
+            setFolhaImpressora( dadosInstituicao.getImpressora() );
+        }
+        catch ( Exception e )
+        {
+        }
+
     }
 
     @SuppressWarnings( "unchecked" )
@@ -113,6 +126,7 @@ public class ListarRelatorioVendaByIntervalo extends javax.swing.JFrame
     {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
+        buttonGroup2 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         lbData = new javax.swing.JLabel();
         dcDataInicio = new com.toedter.calendar.JDateChooser();
@@ -122,6 +136,7 @@ public class ListarRelatorioVendaByIntervalo extends javax.swing.JFrame
         jLabel1 = new javax.swing.JLabel();
         cmbUsuario = new javax.swing.JComboBox<>();
         lb_total = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
         lbData2 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         btnSalvar = new javax.swing.JButton();
@@ -129,9 +144,17 @@ public class ListarRelatorioVendaByIntervalo extends javax.swing.JFrame
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        ck_A4 = new javax.swing.JCheckBox();
+        ck_Duplicada = new javax.swing.JCheckBox();
+        ck_simplificada = new javax.swing.JCheckBox();
+        ck_simplificada_O = new javax.swing.JCheckBox();
+        ck_simplificada_OS_A6 = new javax.swing.JCheckBox();
+        ck_ComVirgula = new javax.swing.JCheckBox();
+        ck_S_A6 = new javax.swing.JCheckBox();
+        ck_A7 = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("...:::: DVML - RELATORIO DIARIO::...");
+        setTitle("...:::: DVML - VENDAS DETALHADAS POR USUÁRIO::...");
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
@@ -152,7 +175,19 @@ public class ListarRelatorioVendaByIntervalo extends javax.swing.JFrame
 
         jLabel1.setText("Usuário:");
 
+        cmbUsuario.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                cmbUsuarioActionPerformed(evt);
+            }
+        });
+
+        lb_total.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         lb_total.setText(".");
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel2.setText("TOTAL GERAL:");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -161,9 +196,9 @@ public class ListarRelatorioVendaByIntervalo extends javax.swing.JFrame
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(27, 27, 27)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(42, 42, 42)
-                .addComponent(cmbUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(cmbUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbData, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(dcDataInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -173,15 +208,19 @@ public class ListarRelatorioVendaByIntervalo extends javax.swing.JFrame
                 .addComponent(dcDataFim, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lb_total, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lb_total, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(23, 23, 23))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lb_total)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lb_total)
+                    .addComponent(jLabel2))
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
@@ -234,8 +273,8 @@ public class ListarRelatorioVendaByIntervalo extends javax.swing.JFrame
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(btnCancelar1)
                 .addContainerGap())
         );
@@ -290,19 +329,136 @@ public class ListarRelatorioVendaByIntervalo extends javax.swing.JFrame
         });
         jScrollPane1.setViewportView(jTable1);
 
+        buttonGroup2.add(ck_A4);
+        ck_A4.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
+        ck_A4.setSelected(true);
+        ck_A4.setText("A4");
+        ck_A4.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                ck_A4ActionPerformed(evt);
+            }
+        });
+
+        buttonGroup2.add(ck_Duplicada);
+        ck_Duplicada.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
+        ck_Duplicada.setText("A5");
+        ck_Duplicada.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                ck_DuplicadaActionPerformed(evt);
+            }
+        });
+
+        buttonGroup2.add(ck_simplificada);
+        ck_simplificada.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
+        ck_simplificada.setText("A6");
+        ck_simplificada.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                ck_simplificadaActionPerformed(evt);
+            }
+        });
+
+        buttonGroup2.add(ck_simplificada_O);
+        ck_simplificada_O.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
+        ck_simplificada_O.setText("A6_O");
+        ck_simplificada_O.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                ck_simplificada_OActionPerformed(evt);
+            }
+        });
+
+        buttonGroup2.add(ck_simplificada_OS_A6);
+        ck_simplificada_OS_A6.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
+        ck_simplificada_OS_A6.setText("S_A6_O");
+        ck_simplificada_OS_A6.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                ck_simplificada_OS_A6ActionPerformed(evt);
+            }
+        });
+
+        buttonGroup2.add(ck_ComVirgula);
+        ck_ComVirgula.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
+        ck_ComVirgula.setText("A6V");
+        ck_ComVirgula.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                ck_ComVirgulaActionPerformed(evt);
+            }
+        });
+
+        buttonGroup2.add(ck_S_A6);
+        ck_S_A6.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
+        ck_S_A6.setText("S_A6");
+        ck_S_A6.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                ck_S_A6ActionPerformed(evt);
+            }
+        });
+
+        buttonGroup2.add(ck_A7);
+        ck_A7.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
+        ck_A7.setText("A7");
+        ck_A7.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                ck_A7ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+            .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1128, Short.MAX_VALUE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1128, Short.MAX_VALUE)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(ck_A4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ck_Duplicada)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ck_simplificada)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ck_simplificada_O)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ck_simplificada_OS_A6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ck_ComVirgula, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ck_S_A6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ck_A7)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 468, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ck_Duplicada)
+                    .addComponent(ck_simplificada)
+                    .addComponent(ck_simplificada_O)
+                    .addComponent(ck_ComVirgula)
+                    .addComponent(ck_S_A6)
+                    .addComponent(ck_A7)
+                    .addComponent(ck_A4)
+                    .addComponent(ck_simplificada_OS_A6))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -343,13 +499,28 @@ public class ListarRelatorioVendaByIntervalo extends javax.swing.JFrame
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
 
-            new ResumoVendasByUsuarioByIntervalo( dcDataInicio.getDate(), dcDataFim.getDate() );
+        try
+        {
+            new ResumoVendasByUsuarioByIntervalo( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoUsuario() );
+        }
+        catch ( Exception e )
+        {
+        }
+        ;
 
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        adicionar_tabela();
+        if ( cmbUsuario.getSelectedIndex() == 0 )
+        {
+            JOptionPane.showMessageDialog( null, "Por favor, Seleccione o Usuário!" );
+        }
+        else
+        {
+
+            adicionar_tabela();
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_jTable1MouseClicked
@@ -361,6 +532,56 @@ public class ListarRelatorioVendaByIntervalo extends javax.swing.JFrame
 
         }
     }//GEN-LAST:event_jTable1MouseClicked
+
+    private void cmbUsuarioActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbUsuarioActionPerformed
+    {//GEN-HEADEREND:event_cmbUsuarioActionPerformed
+        adicionar_tabela();
+        
+    }//GEN-LAST:event_cmbUsuarioActionPerformed
+
+    private void ck_A4ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ck_A4ActionPerformed
+    {//GEN-HEADEREND:event_ck_A4ActionPerformed
+        // TODO add your handling code here:
+        actualizar_abreviacao();
+    }//GEN-LAST:event_ck_A4ActionPerformed
+
+    private void ck_DuplicadaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ck_DuplicadaActionPerformed
+    {//GEN-HEADEREND:event_ck_DuplicadaActionPerformed
+        // TODO add your handling code here:
+        actualizar_abreviacao();
+    }//GEN-LAST:event_ck_DuplicadaActionPerformed
+
+    private void ck_simplificadaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ck_simplificadaActionPerformed
+    {//GEN-HEADEREND:event_ck_simplificadaActionPerformed
+        // TODO add your handling code here:
+        actualizar_abreviacao();
+    }//GEN-LAST:event_ck_simplificadaActionPerformed
+
+    private void ck_simplificada_OActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ck_simplificada_OActionPerformed
+    {//GEN-HEADEREND:event_ck_simplificada_OActionPerformed
+        actualizar_abreviacao();
+    }//GEN-LAST:event_ck_simplificada_OActionPerformed
+
+    private void ck_simplificada_OS_A6ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ck_simplificada_OS_A6ActionPerformed
+    {//GEN-HEADEREND:event_ck_simplificada_OS_A6ActionPerformed
+        actualizar_abreviacao();
+    }//GEN-LAST:event_ck_simplificada_OS_A6ActionPerformed
+
+    private void ck_ComVirgulaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ck_ComVirgulaActionPerformed
+    {//GEN-HEADEREND:event_ck_ComVirgulaActionPerformed
+        actualizar_abreviacao();
+    }//GEN-LAST:event_ck_ComVirgulaActionPerformed
+
+    private void ck_S_A6ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ck_S_A6ActionPerformed
+    {//GEN-HEADEREND:event_ck_S_A6ActionPerformed
+        actualizar_abreviacao();
+    }//GEN-LAST:event_ck_S_A6ActionPerformed
+
+    private void ck_A7ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ck_A7ActionPerformed
+    {//GEN-HEADEREND:event_ck_A7ActionPerformed
+        // TODO add your handling code here:
+        actualizar_abreviacao();
+    }//GEN-LAST:event_ck_A7ActionPerformed
 
 //    private void reimprimir_FR()
 //    {
@@ -383,14 +604,20 @@ public class ListarRelatorioVendaByIntervalo extends javax.swing.JFrame
     {
 
         HashMap hashMap = new HashMap();
-        TbVenda venda = vendasController.findByCodFactReemprensao( ref_doc );
+        TbVenda venda = vendaDao.findByCodFactReemprensao( ref_doc );
 
         if ( venda != null )
         {
+
+//            Abreviacao abreviacao = DVML.getAbreviacao( venda.getFkDocumento().getPkDocumento() );
+//            abreviacao = DVML.Abreviacao.FR_A4;
             List<TbProduto> lista_produto_isentos = new ArrayList<>();
             lista_produto_isentos = MetodosUtil.getProdutosIsentos( venda.getTbItemVendaList() );
             String motivos_isentos = MetodosUtil.getMotivoIsensaoProdutos( lista_produto_isentos );
+//            ListaVenda1 original = new ListaVenda1( cod_venda, abreviacao, false, ck_simplificada.isSelected(), "Original", motivos_isentos );
+
             ListaVenda2 listaVenda2 = new ListaVenda2( venda.getCodigo(), abreviacao, false, false, DVML.SEGUNDA_VIA_CONFORMIDADE_COM_ORIGINAL, motivos_isentos );
+//            ListaVenda2 listaVenda2 = new ListaVenda2( venda.getCodigo(), abreviacao, false, false, DVML.SEGUNDA_VIA_CONFORMIDADE_COM_ORIGINAL, motivos_isentos );
         }
         else
         {
@@ -465,11 +692,21 @@ public class ListarRelatorioVendaByIntervalo extends javax.swing.JFrame
     private javax.swing.JButton btnCancelar1;
     private javax.swing.JButton btnSalvar;
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.ButtonGroup buttonGroup2;
+    private javax.swing.JCheckBox ck_A4;
+    public static javax.swing.JCheckBox ck_A7;
+    public static javax.swing.JCheckBox ck_ComVirgula;
+    private javax.swing.JCheckBox ck_Duplicada;
+    public static javax.swing.JCheckBox ck_S_A6;
+    public static javax.swing.JCheckBox ck_simplificada;
+    public static javax.swing.JCheckBox ck_simplificada_O;
+    public static javax.swing.JCheckBox ck_simplificada_OS_A6;
     private static javax.swing.JComboBox<String> cmbUsuario;
     private com.toedter.calendar.JDateChooser dcDataFim;
     private com.toedter.calendar.JDateChooser dcDataInicio;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -485,6 +722,7 @@ public class ListarRelatorioVendaByIntervalo extends javax.swing.JFrame
     {
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
         modelo.setRowCount( 0 );
+        
 
         try
         {
@@ -516,6 +754,7 @@ public class ListarRelatorioVendaByIntervalo extends javax.swing.JFrame
             e.printStackTrace();
 //            JOptionPane.showMessageDialog( null, "Não há registro para este intervalo de datas", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
         }
+        
 
     }
 
@@ -563,7 +802,7 @@ public class ListarRelatorioVendaByIntervalo extends javax.swing.JFrame
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
         {
-            total = total.add( new BigDecimal( tabela.getValueAt( i, 5 ).toString() ) ).setScale( 2, RoundingMode.CEILING );
+            total = total.add( new BigDecimal( tabela.getValueAt( i, 4 ).toString() ) ).setScale( 2, RoundingMode.CEILING );
 
         }
         System.out.println( "Total: " + total.doubleValue() );
@@ -571,7 +810,7 @@ public class ListarRelatorioVendaByIntervalo extends javax.swing.JFrame
         return total;
 
     }
-    
+
 //    
 //
 //    public void mostrarUsuarios() throws SQLException
@@ -646,25 +885,163 @@ public class ListarRelatorioVendaByIntervalo extends javax.swing.JFrame
 //        return 0;
 //
 //    }
-        
-        
-        public String getUsuario()
+    public String getUsuario()
     {
         return String.valueOf( cmbUsuario.getSelectedItem() );
 
     }
-    
 
-    public String getCaminho()
-    {
-
-        return "relatorios/report8.jasper";
-
-    }
-
+//    public String getCaminho()
+//    {
+//
+//        return "relatorios/report8.jasper";
+//
+//    }
     public static int getCodigoUsuario()
     {
-        return usuariosController.getClienteByNome( cmbUsuario.getSelectedItem().toString() ).getCodigo();
+        return usuariosController.getUsuarioByNome( cmbUsuario.getSelectedItem().toString() ).getCodigo();
+    }
+
+    private void setFolhaImpressora( String folha )
+    {
+        if ( folha.equalsIgnoreCase( "A6" ) )
+        {
+            ck_simplificada.setSelected( true );
+            ck_A7.setSelected( false );
+            ck_A4.setSelected( false );
+            ck_Duplicada.setSelected( false );
+            ck_S_A6.setSelected( false );
+            ck_ComVirgula.setSelected( false );
+            ck_simplificada_O.setSelected( false );
+            ck_simplificada_OS_A6.setSelected( false );
+            this.abreviacao = Abreviacao.FR_A6;
+        }
+        if ( folha.equalsIgnoreCase( "A6_O" ) )
+        {
+            ck_simplificada_O.setSelected( true );
+            ck_A7.setSelected( false );
+            ck_A4.setSelected( false );
+            ck_Duplicada.setSelected( false );
+            ck_S_A6.setSelected( false );
+            ck_ComVirgula.setSelected( false );
+            ck_simplificada.setSelected( false );
+            ck_simplificada_OS_A6.setSelected( false );
+            this.abreviacao = Abreviacao.FR_A6_O;
+        }
+        if ( folha.equalsIgnoreCase( "S_A6_O" ) )
+        {
+            ck_simplificada_OS_A6.setSelected( true );
+            ck_simplificada_O.setSelected( false );
+            ck_A7.setSelected( false );
+            ck_A4.setSelected( false );
+            ck_Duplicada.setSelected( false );
+            ck_S_A6.setSelected( false );
+            ck_ComVirgula.setSelected( false );
+            ck_simplificada.setSelected( false );
+            this.abreviacao = Abreviacao.FR_A6_O;
+        }
+        else if ( folha.equalsIgnoreCase( "A7" ) )
+        {
+            ck_A7.setSelected( true );
+            ck_simplificada_OS_A6.setSelected( false );
+            ck_simplificada.setSelected( false );
+            ck_A4.setSelected( false );
+            ck_Duplicada.setSelected( false );
+            ck_S_A6.setSelected( false );
+            ck_ComVirgula.setSelected( false );
+            ck_simplificada_O.setSelected( false );
+            this.abreviacao = Abreviacao.FR_SA7;
+        }
+        else if ( folha.equalsIgnoreCase( "A5" ) )
+        {
+            ck_Duplicada.setSelected( true );
+            ck_simplificada_OS_A6.setSelected( false );
+            ck_simplificada.setSelected( false );
+            ck_A4.setSelected( false );
+            ck_A7.setSelected( false );
+            ck_S_A6.setSelected( false );
+            ck_ComVirgula.setSelected( false );
+            ck_simplificada_O.setSelected( false );
+            this.abreviacao = Abreviacao.FT_A4_Duplicado;
+        }
+        else if ( folha.equalsIgnoreCase( "S_A6" ) )
+        {
+            ck_S_A6.setSelected( true );
+            ck_simplificada_OS_A6.setSelected( false );
+            ck_simplificada.setSelected( false );
+            ck_A7.setSelected( false );
+            ck_A4.setSelected( false );
+            ck_Duplicada.setSelected( false );
+            ck_ComVirgula.setSelected( false );
+            ck_simplificada_O.setSelected( false );
+            this.abreviacao = Abreviacao.FR_S_A6;
+        }
+        else if ( folha.equalsIgnoreCase( "A6V" ) )
+        {
+            ck_ComVirgula.setSelected( true );
+            ck_simplificada_OS_A6.setSelected( false );
+            ck_simplificada.setSelected( false );
+            ck_A7.setSelected( false );
+            ck_A4.setSelected( false );
+            ck_Duplicada.setSelected( false );
+            ck_S_A6.setSelected( false );
+            ck_simplificada_O.setSelected( false );
+            this.abreviacao = Abreviacao.FR_A6_Com_Virgula;
+        }
+
+        else
+        {
+            ck_A4.setSelected( true );
+            ck_simplificada_OS_A6.setSelected( false );
+            ck_simplificada.setSelected( false );
+            ck_A7.setSelected( false );
+            ck_Duplicada.setSelected( false );
+            ck_S_A6.setSelected( false );
+            ck_ComVirgula.setSelected( false );
+            ck_simplificada_O.setSelected( false );
+            this.abreviacao = Abreviacao.FR_A4;
+        }
+    }
+
+    private void actualizar_abreviacao()
+    {
+
+//        switch ( getIdDocumento() )
+//        {
+//            case DVML.DOC_FACTURA_RECIBO_FR:
+        if ( ck_A4.isSelected() )
+        {
+            this.abreviacao = Abreviacao.FR_A4;
+        }
+        else if ( ck_simplificada.isSelected() )
+        {
+            this.abreviacao = Abreviacao.FR_A6;
+        }
+        else if ( ck_simplificada_O.isSelected() )
+        {
+            this.abreviacao = Abreviacao.FR_A6_O;
+        }
+        else if ( ck_simplificada_OS_A6.isSelected() )
+        {
+            this.abreviacao = Abreviacao.FR_S_A6_O;
+        }
+        else if ( ck_A7.isSelected() )
+        {
+            this.abreviacao = Abreviacao.FR_SA7;
+        }
+        else if ( ck_S_A6.isSelected() )
+        {
+            this.abreviacao = Abreviacao.FR_S_A6;
+        }
+        else if ( ck_ComVirgula.isSelected() )
+        {
+            this.abreviacao = Abreviacao.FR_A6_Com_Virgula;
+        }
+        else
+        {
+            this.abreviacao = Abreviacao.FR_A4_Duplicado;
+        }
+
     }
 
 }

@@ -158,7 +158,7 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
 
     private void init()
     {
-        cmbArmazem.setModel( new DefaultComboBoxModel<>( armazensController.getVector() ) );
+        cmbArmazem.setModel( new DefaultComboBoxModel<>( armazensController.getVectorArmazemVenda() ) );
 
         txtIniciais.getDocument().addDocumentListener( new DocumentListener()
         {
@@ -506,7 +506,7 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
 
     private void carregarArmazens()
     {
-        Vector<String> lista = armazensController.getVector();
+        Vector<String> lista = armazensController.getVectorArmazemVenda();
 
         cmbArmazem.removeAllItems();
         for ( String nome : lista )
