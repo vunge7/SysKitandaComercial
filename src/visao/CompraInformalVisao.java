@@ -1295,15 +1295,32 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
                     //verifca se existe o produto no stock caso nao registra.
                     if ( !stocksControllerLocal.existe_stock( produto_local.getCodigo(), getIdArmazens() ) )
                     {
-                        boolean registrar_stock = registrar_stock( produto_local, itemCompraLocal.getQuantidade(), qtdCritica, qtdBaixa, stocksControllerLocal );
-                        System.err.println( "Registro no Stock pela primeira vez: " + registrar_stock );
-                        if ( !registrar_stock )
+
+                        if ( MovimentacaoController.registrarMovimento(
+                                produto_local.getCodigo(),
+                                getIdArmazens(),
+                                cod_usuario,
+                                new BigDecimal( itemCompraLocal.getQuantidade() ),
+                                prox_doc,
+                                "ENTRADA",
+                                conexao
+                        ) )
                         {
-                            sucesso = false;
-                            DocumentosController.rollBackTransaction( conexaoTransaction );
-                            conexaoTransaction.close();
-                            return false;
+                            boolean registrar_stock = registrar_stock( produto_local, 
+                                    itemCompraLocal.getQuantidade(),
+                                    qtdCritica, qtdBaixa,
+                                    stocksControllerLocal );
+                            System.err.println( "Registro no Stock pela primeira vez: " + registrar_stock );
+                            if ( !registrar_stock )
+                            {
+                                sucesso = false;
+                                DocumentosController.rollBackTransaction( conexaoTransaction );
+                                conexaoTransaction.close();
+                                return false;
+                            }
+
                         }
+
                     }
                     else
                     {

@@ -942,7 +942,6 @@ public class ProdutosVisao extends javax.swing.JFrame
         txtCodigoBarraProcura.setBackground(new java.awt.Color(0, 255, 255));
         txtCodigoBarraProcura.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         txtCodigoBarraProcura.setForeground(new java.awt.Color(0, 51, 102));
-        txtCodigoBarraProcura.setText("2");
         txtCodigoBarraProcura.setCaretColor(new java.awt.Color(255, 255, 255));
         txtCodigoBarraProcura.addActionListener(new java.awt.event.ActionListener()
         {

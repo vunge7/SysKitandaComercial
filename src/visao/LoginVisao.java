@@ -5,14 +5,12 @@
 package visao;
 
 import comercial.controller.DadosInstituicaoController;
-import comercial.controller.LogController;
 import dao.CaixaDao;
 import dao.DadosInstituicaoDao;
 import dao.DocumentoDao;
 import dao.EmpresaDao;
 import dao.UsuarioDao;
 import de.javasoft.plaf.synthetica.SyntheticaBlackStarLookAndFeel;
-import entity.Empresa;
 //import de.javasoft.plaf.synthetica.SyntheticaBlackStarLookAndFeel;
 import entity.TbDadosInstituicao;
 import entity.TbUsuario;
@@ -20,16 +18,13 @@ import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
-import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
@@ -39,15 +34,11 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 //import javax.swing.UIManager;
-import static kitanda.util.CfConstantes.YYYYMMDD_HHMMSS;
-import modelo.Log;
 import util.BDConexao;
 import util.BackupUsb;
-import util.BackupUtil;
 import util.JPAEntityMannagerFactoryUtil;
 //import util.LicensaUtil;
 import util.MetodosUtil;
-import static util.MetodosUtil.rodarComandoWindows;
 import static util.MetodosUtil.startBackGroundProcesses;
 import util.SingleInstanceLock;
 import util.cronjob.QuartzApp;
@@ -722,7 +713,31 @@ public class LoginVisao extends javax.swing.JFrame
             {
                 try
                 {
+
                     UIManager.setLookAndFeel( new SyntheticaBlackStarLookAndFeel() );
+
+                    // JTextField
+                    UIManager.put( "TextField.background", new Color( 0, 255, 255 ) ); // fundo
+                    UIManager.put( "TextField.foreground", new Color( 0, 51, 102 ) );  // texto
+                    UIManager.put( "TextField.caretForeground", Color.RED );         // cursor
+                    UIManager.put( "TextField.selectionBackground", Color.YELLOW );  // seleção (amarelo só no JTextField)
+                    UIManager.put( "TextField.selectionForeground", Color.BLUE );    // texto selecionado
+
+// JComboBox
+                    UIManager.put( "ComboBox.background", new Color( 0, 255, 255 ) );
+                    UIManager.put( "ComboBox.foreground", new Color( 0, 51, 102 ) );
+                    UIManager.put( "ComboBox.selectionBackground", new Color( 173, 216, 230 ) ); // azul claro
+                    UIManager.put( "ComboBox.selectionForeground", Color.BLACK );
+
+// JTable
+                    UIManager.put( "Table.background", new Color( 0, 255, 255 ) );
+                    UIManager.put( "Table.foreground", new Color( 0, 51, 102 ) );
+                    UIManager.put( "Table.selectionBackground", new Color( 0, 120, 215 ) ); // azul estilo Windows
+                    UIManager.put( "Table.selectionForeground", Color.WHITE );      // texto branco na seleção
+                    UIManager.put( "Table.gridColor", Color.GRAY );
+                    UIManager.put( "TableHeader.background", new Color( 0, 200, 200 ) );
+                    UIManager.put( "TableHeader.foreground", Color.BLACK );
+
                 }
                 catch ( Exception e )
                 {
