@@ -98,7 +98,7 @@ public class OperacaoSistemaUtil implements Runnable
             SaidaUsuarioVisao.txtQuatindade.setEnabled ( status );
             SaidaUsuarioVisao.btn_adicionar.setEnabled ( status );
             SaidaUsuarioVisao.btn_remover.setEnabled ( status );
-            SaidaUsuarioVisao.btn_imprimir_factura.setEnabled ( status );
+            SaidaUsuarioVisao.btnFinalizar.setEnabled ( status );
 
         }
         catch ( Exception e )

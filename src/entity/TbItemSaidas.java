@@ -5,6 +5,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,31 +24,34 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author lenovo
  */
 @Entity
-@Table(name = "tb_item_saidas")
+@Table( name = "tb_item_saidas" )
 @XmlRootElement
 @NamedQueries(
-{
-    @NamedQuery(name = "TbItemSaidas.findAll", query = "SELECT t FROM TbItemSaidas t"),
-    @NamedQuery(name = "TbItemSaidas.findByCodigo", query = "SELECT t FROM TbItemSaidas t WHERE t.codigo = :codigo"),
-    @NamedQuery(name = "TbItemSaidas.findByQuantidade", query = "SELECT t FROM TbItemSaidas t WHERE t.quantidade = :quantidade")
-})
+                {
+            @NamedQuery( name = "TbItemSaidas.findAll", query = "SELECT t FROM TbItemSaidas t" ),
+            @NamedQuery( name = "TbItemSaidas.findByCodigo", query = "SELECT t FROM TbItemSaidas t WHERE t.codigo = :codigo" ),
+            @NamedQuery( name = "TbItemSaidas.findByQuantidade", query = "SELECT t FROM TbItemSaidas t WHERE t.quantidade = :quantidade" )
+        } )
 public class TbItemSaidas implements Serializable
 {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "codigo")
+    @GeneratedValue( strategy = GenerationType.IDENTITY )
+    @Basic( optional = false )
+    @Column( name = "codigo" )
     private Integer codigo;
-    @Basic(optional = false)
-    @Column(name = "quantidade")
+    @Basic( optional = false )
+    @Column( name = "quantidade" )
     private double quantidade;
-    @JoinColumn(name = "fk_produtos", referencedColumnName = "codigo")
-    @ManyToOne(optional = false)
+    @Basic( optional = false )
+    @Column( name = "preco_compra" )
+    private BigDecimal precoCompra;
+    @JoinColumn( name = "fk_produtos", referencedColumnName = "codigo" )
+    @ManyToOne( optional = false )
     private TbProduto fkProdutos;
-    @JoinColumn(name = "fk_saidas_produtos", referencedColumnName = "pk_saidas_produtos")
-    @ManyToOne(optional = false)
+    @JoinColumn( name = "fk_saidas_produtos", referencedColumnName = "pk_saidas_produtos" )
+    @ManyToOne( optional = false )
     private TbSaidasProdutos fkSaidasProdutos;
 
     public TbItemSaidas()
@@ -105,6 +109,16 @@ public class TbItemSaidas implements Serializable
         this.fkSaidasProdutos = fkSaidasProdutos;
     }
 
+    public BigDecimal getPrecoCompra()
+    {
+        return precoCompra;
+    }
+
+    public void setPrecoCompra( BigDecimal precoCompra )
+    {
+        this.precoCompra = precoCompra;
+    }
+
     @Override
     public int hashCode()
     {
@@ -121,7 +135,7 @@ public class TbItemSaidas implements Serializable
         {
             return false;
         }
-        TbItemSaidas other = ( TbItemSaidas ) object;
+        TbItemSaidas other = (TbItemSaidas) object;
         if ( ( this.codigo == null && other.codigo != null ) || ( this.codigo != null && !this.codigo.equals( other.codigo ) ) )
         {
             return false;
@@ -134,5 +148,5 @@ public class TbItemSaidas implements Serializable
     {
         return "entity.TbItemSaidas[ codigo=" + codigo + " ]";
     }
-    
+
 }

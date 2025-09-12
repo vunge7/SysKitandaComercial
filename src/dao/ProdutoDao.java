@@ -92,6 +92,21 @@ public class ProdutoDao extends TbProdutoJpaController
         TbProduto produto = new TbProduto( 0 );
         return produto;
     }
+    public static TbProduto getProdutoByCodigoManual( String codigoManual )
+    {
+
+        Query query = UtilDao.getEntityManager1().createQuery( "SELECT p FROM TbProduto  p WHERE p.codigoManual = :codigoManual" )
+                .setParameter( "codigoManual", codigoManual );
+
+        List<TbProduto> result = query.getResultList();
+
+        if ( !result.isEmpty() )
+        {
+            return result.get( 0 );
+        }
+        TbProduto produto = new TbProduto( 0 );
+        return produto;
+    }
 
     public int getUltimaCodProduto()
     {

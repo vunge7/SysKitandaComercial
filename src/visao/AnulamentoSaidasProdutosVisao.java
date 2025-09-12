@@ -648,7 +648,7 @@ public class AnulamentoSaidasProdutosVisao extends javax.swing.JDialog
     private void procedimento_eliminar()
     {
 
-        List<TbItemSaidas> lista = itemSaidaDao.getAllItemSaidasByIdSaidaa( this.saidasProdutos.getPkSaidasProdutos() );
+        List<TbItemSaidas> lista = itemSaidaDao.getAllItemSaidasByIdSaida( this.saidasProdutos.getPkSaidasProdutos() );
         TbItemSaidas itemSaidas;
         TbStock stock_local;
         int quantidade = 0;
@@ -758,7 +758,7 @@ public class AnulamentoSaidasProdutosVisao extends javax.swing.JDialog
     {
 
         DefaultTableModel modelo = ( DefaultTableModel ) table_item_saidas.getModel();
-        List<TbItemSaidas> list_iten = itemSaidaDao.getAllItemSaidasByIdSaidaa( this.saidasProdutos.getPkSaidasProdutos() );
+        List<TbItemSaidas> list_iten = itemSaidaDao.getAllItemSaidasByIdSaida( this.saidasProdutos.getPkSaidasProdutos() );
 
         modelo.setRowCount( 0 );
         for ( int i = 0; i < list_iten.size(); i++ )
