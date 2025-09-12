@@ -1,0 +1,409 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
+package visao;
+
+import java.awt.FlowLayout;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+
+/**
+ *
+ * @author marti
+ */
+public class BackupRestoreJDBC extends javax.swing.JFrame
+{
+
+    private JTextField txtLocalBackup, txtArquivoRestore;
+    private JButton btnEscolherBackup, btnFazerBackup, btnEscolherRestore, btnFazerRestore;
+    private JPanel painelBackup;
+private JPanel painelRestore;
+
+
+    // outros atributos...
+    private String ultimoBackup;  // <<--- declara aqui
+
+    // Configurações da BD
+    private final String url = "jdbc:mysql://localhost:3306/kitanda_db?useSSL=false";
+    private final String usuario = "root";
+    private final String senha = "DoV90x?#";
+
+    /**
+     * Creates new form BackupRestoreJDBC
+     */
+    public BackupRestoreJDBC()
+    {
+
+//        initComponents();
+        setTitle( "Backup e Restore de Registros - JDBC" );
+        setSize( 600, 250 );
+//        setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+            setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+    // ❗ Adiciona listener para mostrar aviso ao usuário
+    addWindowListener(new java.awt.event.WindowAdapter() {
+        @Override
+        public void windowClosing(java.awt.event.WindowEvent e) {
+            JOptionPane.showMessageDialog(null, "Use o botão 'Sair' para fechar o formulário.");
+        }
+    });
+        setLocationRelativeTo( null );
+
+        JTabbedPane abas = new JTabbedPane();
+        painelBackup = new JPanel(new FlowLayout());
+painelRestore = new JPanel(new FlowLayout());
+
+        // Aba Backup
+        JPanel painelBackup = new JPanel( new FlowLayout() );
+        txtLocalBackup = new JTextField( 25 );
+        btnEscolherBackup = new JButton( "Selecionar Diretório" );
+        btnFazerBackup = new JButton( "Fazer Backup" );
+
+        painelBackup.add( new JLabel( "Diretório:" ) );
+        painelBackup.add( txtLocalBackup );
+        painelBackup.add( btnEscolherBackup );
+        painelBackup.add( btnFazerBackup );
+        
+        JButton btnSairBackup = new JButton("Sair");
+btnSairBackup.addActionListener(e -> this.dispose()); // fecha a janela atual
+painelBackup.add(btnSairBackup);
+
+
+
+
+        btnEscolherBackup.addActionListener( e -> escolherLocalBackup() );
+
+        btnFazerBackup.addActionListener( e ->
+        {
+            String nomeBanco = "kitanda_db"; // define aqui o nome do banco
+            String caminhoArquivo = txtLocalBackup.getText().trim(); // diretório escolhido pelo usuário
+
+            if ( caminhoArquivo.isEmpty() )
+            {
+                JOptionPane.showMessageDialog( this, "Escolha o diretório para salvar o backup." );
+                return;
+            }
+
+            // acrescenta o nome do arquivo ao diretório
+            String arquivoCompleto = caminhoArquivo + File.separator + "backup.sql";
+
+            fazerBackup( nomeBanco, arquivoCompleto );
+
+        } );
+
+        abas.addTab( "Backup", painelBackup );
+
+        // Aba Restore
+        JPanel painelRestore = new JPanel( new FlowLayout() );
+        txtArquivoRestore = new JTextField( 25 );
+        btnEscolherRestore = new JButton( "Selecionar Arquivo" );
+        btnFazerRestore = new JButton( "Fazer Restore" );
+
+        painelRestore.add( new JLabel( "Arquivo:" ) );
+        painelRestore.add( txtArquivoRestore );
+        painelRestore.add( btnEscolherRestore );
+        painelRestore.add( btnFazerRestore );
+        JButton btnSairRestore = new JButton("Sair");
+btnSairRestore.addActionListener(e -> this.dispose()); // fecha a janela atual
+painelRestore.add(btnSairRestore);
+        btnEscolherRestore.addActionListener( e -> escolherArquivoRestore() );
+        btnFazerRestore.addActionListener( e -> fazerRestore() );
+
+        abas.addTab( "Restore", painelRestore );
+
+        add( abas );
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings( "unchecked" )
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents()
+    {
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 300, Short.MAX_VALUE)
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main( String args[] )
+    {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try
+        {
+            for ( javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels() )
+            {
+                if ( "Nimbus".equals( info.getName() ) )
+                {
+                    javax.swing.UIManager.setLookAndFeel( info.getClassName() );
+                    break;
+                }
+            }
+        }
+        catch ( ClassNotFoundException ex )
+        {
+            java.util.logging.Logger.getLogger( BackupRestoreJDBC.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+        }
+        catch ( InstantiationException ex )
+        {
+            java.util.logging.Logger.getLogger( BackupRestoreJDBC.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+        }
+        catch ( IllegalAccessException ex )
+        {
+            java.util.logging.Logger.getLogger( BackupRestoreJDBC.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+        }
+        catch ( javax.swing.UnsupportedLookAndFeelException ex )
+        {
+            java.util.logging.Logger.getLogger( BackupRestoreJDBC.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        SwingUtilities.invokeLater( () -> new BackupRestoreJDBC().setVisible( true ) );
+
+    }
+
+    private void escolherLocalBackup()
+    {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setFileSelectionMode( JFileChooser.DIRECTORIES_ONLY );
+        if ( chooser.showSaveDialog( this ) == JFileChooser.APPROVE_OPTION )
+        {
+            txtLocalBackup.setText( chooser.getSelectedFile().getAbsolutePath() );
+        }
+    }
+
+    public void fazerBackup( String nomeBanco, String caminhoArquivo )
+    {
+        try ( Connection conn = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/" + nomeBanco + "?zeroDateTimeBehavior=convertToNull",
+                "root", "DoV90x?#" ) )
+        {
+
+            Statement stmt = conn.createStatement();
+            DatabaseMetaData meta = conn.getMetaData();
+
+            // Pega todas as tabelas existentes no schema
+            ResultSet tabelas = meta.getTables( nomeBanco, null, "%", new String[]
+            {
+                "TABLE"
+            } );
+
+            try ( BufferedWriter bw = new BufferedWriter( new FileWriter( caminhoArquivo ) ) )
+            {
+                while ( tabelas.next() )
+                {
+                    String tabela = tabelas.getString( "TABLE_NAME" );
+
+                    ResultSet rs = stmt.executeQuery( "SELECT * FROM `" + tabela + "`" );
+                    ResultSetMetaData rsmd = rs.getMetaData();
+                    int colunas = rsmd.getColumnCount();
+
+                    while ( rs.next() )
+                    {
+                        StringBuilder linha = new StringBuilder( "INSERT INTO `" + tabela + "` VALUES(" );
+                        for ( int i = 1; i <= colunas; i++ )
+                        {
+                            Object valor = rs.getObject( i );
+
+                            if ( valor == null )
+                            {
+                                linha.append( "NULL" );
+                            }
+                            else if ( valor instanceof Number )
+                            {
+                                // números não precisam de aspas
+                                linha.append( valor.toString() );
+                            }
+                            else if ( valor instanceof Boolean )
+                            {
+                                // true/false para 1/0
+                                linha.append( (Boolean) valor ? 1 : 0 );
+                            }
+                            else if ( valor instanceof java.sql.Timestamp || valor instanceof java.sql.Date )
+                            {
+                                linha.append( "'" ).append( valor.toString() ).append( "'" );
+                            }
+                            else
+                            {
+                                // strings: escapa aspas simples
+                                String str = valor.toString().replace( "'", "''" );
+                                linha.append( "'" ).append( str ).append( "'" );
+                            }
+
+                            if ( i < colunas )
+                            {
+                                linha.append( ", " );
+                            }
+                        }
+                        linha.append( ");" );
+                        bw.write( linha.toString() );
+                        bw.newLine();
+                    }
+                    rs.close(); // fecha o ResultSet de cada tabela
+                }
+            }
+
+            // Atualiza variável do último backup
+            ultimoBackup = caminhoArquivo;
+
+            JOptionPane.showMessageDialog( null, "✅ Backup concluído com sucesso!" );
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog( null, "❌ Erro no backup: " + e.getMessage() );
+        }
+    }
+
+    private void escolherArquivoRestore()
+    {
+        JFileChooser chooser = new JFileChooser();
+        if ( chooser.showOpenDialog( this ) == JFileChooser.APPROVE_OPTION )
+        {
+            txtArquivoRestore.setText( chooser.getSelectedFile().getAbsolutePath() );
+        }
+    }
+
+    private void fazerRestore()
+    {
+        // 🔹 Define a pasta onde ficam os backups
+        File pastaBackup = new File( "C:\\Kitanda\\Backups" ); // altere para a sua pasta
+        if ( !pastaBackup.exists() || !pastaBackup.isDirectory() )
+        {
+            JOptionPane.showMessageDialog( this, "A pasta de backups não existe: " + pastaBackup.getAbsolutePath() );
+            return;
+        }
+
+        // 🔹 Lista os arquivos SQL e pega o mais recente
+        File[] arquivos = pastaBackup.listFiles( ( dir, name ) -> name.toLowerCase().endsWith( ".sql" ) );
+        if ( arquivos == null || arquivos.length == 0 )
+        {
+            JOptionPane.showMessageDialog( this, "Ainda não existe backup para restaurar!" );
+            return;
+        }
+
+        Arrays.sort( arquivos, Comparator.comparingLong( File::lastModified ).reversed() );
+        File ultimoBackup = arquivos[ 0 ]; // backup mais recente
+        System.out.println( "🔹 Último backup encontrado: " + ultimoBackup.getAbsolutePath() );
+
+        // 🔹 Restaura o backup
+        try ( Connection conn = DriverManager.getConnection( url, usuario, senha ); BufferedReader reader = new BufferedReader( new FileReader( ultimoBackup ) ) )
+        {
+
+            Statement st = conn.createStatement();
+            int count = 0;
+
+            // 🔹 Desativa temporariamente as foreign keys
+            st.execute( "SET FOREIGN_KEY_CHECKS=0" );
+
+            // 🔹 Descobre tabelas e trunca
+            Set<String> tabelas = new HashSet<>();
+            try ( BufferedReader reader2 = new BufferedReader( new FileReader( ultimoBackup ) ) )
+            {
+                String linha;
+                while ( ( linha = reader2.readLine() ) != null )
+                {
+                    linha = linha.trim();
+                    if ( linha.startsWith( "INSERT INTO" ) )
+                    {
+                        String nomeTabela = linha.split( "`" )[ 1 ];
+                        if ( !tabelas.contains( nomeTabela ) )
+                        {
+                            try
+                            {
+                                st.execute( "TRUNCATE TABLE `" + nomeTabela + "`" );
+                                tabelas.add( nomeTabela );
+                                System.out.println( "Tabela " + nomeTabela + " truncada antes do restore." );
+                            }
+                            catch ( Exception e )
+                            {
+                                System.err.println( "⚠️ Falha ao truncar tabela " + nomeTabela + ": " + e.getMessage() );
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 🔹 Executa os INSERTs
+            String linha;
+            while ( ( linha = reader.readLine() ) != null )
+            {
+                linha = linha.trim();
+                if ( !linha.isEmpty() && linha.startsWith( "INSERT INTO" ) )
+                {
+                    try
+                    {
+                        st.executeUpdate( linha );
+                        count++;
+                    }
+                    catch ( Exception e )
+                    {
+                        System.err.println( "⚠️ Falha ao executar INSERT: " + e.getMessage() );
+                    }
+                }
+            }
+
+            // 🔹 Reativa as foreign keys
+            st.execute( "SET FOREIGN_KEY_CHECKS=1" );
+
+            JOptionPane.showMessageDialog( this, "✅ Restore concluído! " + count + " registros restaurados." );
+
+        }
+        catch ( Exception ex )
+        {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog( this, "❌ Erro no restore: " + ex.getMessage() );
+        }
+    }
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    // End of variables declaration//GEN-END:variables
+}
