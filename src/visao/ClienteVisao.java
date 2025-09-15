@@ -917,7 +917,6 @@ public class ClienteVisao extends javax.swing.JDialog
 
     private void procedimento_alterar()
     {
-
         if ( valido() )
         {
             this.cliente = clienteDao.findTbCliente( this.codigo );
@@ -943,7 +942,6 @@ public class ClienteVisao extends javax.swing.JDialog
             }
 
         }
-
     }
 
     private void procedimento_eliminar()
