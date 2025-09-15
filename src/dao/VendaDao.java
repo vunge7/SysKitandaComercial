@@ -582,6 +582,174 @@ public class VendaDao extends TbVendaJpaController
         return null;
 
     }
+    public static Integer criarVendaComProceduAnulacao3( TbVenda venda, BDConexao conexao )
+    {
+        System.err.println( "Total: " + venda.getTotalVenda() );
+
+        String inserirVendaQuery = String.format( "select NOTA_VENDA_CRIAR ( "
+                + "%d, '%s', %s, '%s', "
+                + "'%s', %s, %s, '%s',"
+                + " '%s', '%s',  %s, %s,"
+                + " %s, '%s',  '%s', '%s',"
+                + " '%s', '%s',  '%s', %d,"
+                + " %s, %s,  %s, '%s',"
+                + " '%s', %d, '%d',"
+                + " %d,  %d, %d,  %d,"
+                + " '%s',  '%s', %s, '%s', '%s', '%s') "
+                + " '%s',  '%s', %s, '%s', '%s', '%s') "
+                + " '%s',  '%s', %s, '%s', %s ) "
+//                + " '%s',  '%s', %s, '%s', '%s', '%s', %s, %s , '%s') "
+                + "as ID",
+                0,
+                new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( venda.getDataVenda() ),
+                venda.getTotalVenda(),
+                venda.getPerformance(),
+                venda.getCredito(),
+                venda.getValorEntregue(),
+                venda.getTroco(),
+                new SimpleDateFormat( "HH:mm:ss" ).format( venda.getHora() ),
+                venda.getNomeCliente(),
+                venda.getStatusEliminado(),
+                venda.getDescontoTotal(),
+                venda.getTotalIva(),
+                venda.getTotalGeral(),
+                venda.getCodFact(),
+                venda.getAssinatura(),
+                venda.getHashCod(),
+                venda.getObs(),
+                venda.getRefCodFact(),
+                venda.getTotalPorExtenso(),
+                venda.getStatusRecibo(),
+                venda.getDescontoComercial(),
+                venda.getDescontoFinanceiro(),
+                venda.getTotalIncidencia(),
+                venda.getLocalCarga(),
+                venda.getLocalDescarga(),
+                venda.getCodigoUsuario().getCodigo(),
+                venda.getCodigoCliente().getCodigo(),
+                venda.getIdArmazemFK().getCodigo(),
+                venda.getFkDocumento().getPkDocumento(),
+                venda.getFkAnoEconomico().getPkAnoEconomico(),
+                venda.getFkCambio().getPkCambio(),
+                new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( venda.getDataVencimento() ),
+                venda.getClienteNif(),
+                venda.getTotalIncidenciaIsento(),
+                ( venda.getRefDataFact() != null ? new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( venda.getRefDataFact() ) : new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( new Date() ) ),
+                venda.getNomeConsumidorFinal(),
+                venda.getReferencia(),
+                venda.getMatricula(),
+                venda.getModelo(),
+                venda.getNumChassi(),
+                venda.getNumMotor(),
+                venda.getKilometro(),
+                venda.getNomeMotorista(),
+                venda.getCorCarro(),
+                venda.getNDocMotorista(),
+                venda.getTotalRetencao(),
+                venda.getGorjeta()
+        );
+
+        System.out.println( inserirVendaQuery );
+        ResultSet resultSet = conexao.executeQuery( inserirVendaQuery );
+
+        try
+        {
+            if ( resultSet.next() )
+            {
+                return resultSet.getInt( "ID" );
+
+            }
+        }
+        catch ( SQLException ex )
+        {
+
+            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+        }
+
+        return null;
+
+    }
+    
+    public static Integer criarVendaComProceduAnulacaoFinal(TbVenda venda, BDConexao conexao) {
+    System.err.println("Total: " + venda.getTotalVenda());
+
+    // Formata datas uma vez
+    String dataVendaStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(venda.getDataVenda());
+    String horaStr = new SimpleDateFormat("HH:mm:ss").format(venda.getHora());
+    String dataVencimentoStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(venda.getDataVencimento());
+    String refDataFactStr = venda.getRefDataFact() != null
+            ? new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(venda.getRefDataFact())
+            : new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+
+    // Monta a query de forma organizada
+    String inserirVendaQuery = String.format(
+        "SELECT NOTA_VENDA_CRIAR ("
+        + "%d, '%s', %s, '%s', '%s', %s, %s, '%s', '%s', '%s', %s, %s, "
+        + "%s, '%s', '%s', '%s', '%s', '%s', '%s', %d, %s, %s, %s, '%s', "
+        + "'%s', %d, %d, %d, %d, %d, %d, '%s', '%s', %s, '%s', '%s', '%s'"
+        + ") AS ID",
+        0,
+        dataVendaStr,
+        venda.getTotalVenda(),
+        venda.getPerformance(),
+        venda.getCredito(),
+        venda.getValorEntregue(),
+        venda.getTroco(),
+        horaStr,
+        venda.getNomeCliente(),
+        venda.getStatusEliminado(),
+        venda.getDescontoTotal(),
+        venda.getTotalIva(),
+        venda.getTotalGeral(),
+        venda.getCodFact(),
+        venda.getAssinatura(),
+        venda.getHashCod(),
+        venda.getObs(),
+        venda.getRefCodFact(),
+        venda.getTotalPorExtenso(),
+        venda.getStatusRecibo(),
+        venda.getDescontoComercial(),
+        venda.getDescontoFinanceiro(),
+        venda.getTotalIncidencia(),
+        venda.getLocalCarga(),
+        venda.getLocalDescarga(),
+        venda.getCodigoUsuario().getCodigo(),
+        venda.getCodigoCliente().getCodigo(),
+        venda.getIdArmazemFK().getCodigo(),
+        venda.getFkDocumento().getPkDocumento(),
+        venda.getFkAnoEconomico().getPkAnoEconomico(),
+        venda.getFkCambio().getPkCambio(),
+        dataVencimentoStr,
+        venda.getClienteNif(),
+        venda.getTotalIncidenciaIsento(),
+        refDataFactStr,
+        venda.getNomeConsumidorFinal(),
+        venda.getReferencia(),
+        venda.getMatricula(),
+        venda.getModelo(),
+        venda.getNumChassi(),
+        venda.getNumMotor(),
+        venda.getKilometro(),
+        venda.getNomeMotorista(),
+        venda.getCorCarro(),
+        venda.getNDocMotorista(),
+        venda.getTotalRetencao(),
+        venda.getGorjeta()
+    );
+
+    System.out.println(inserirVendaQuery);
+
+    try (ResultSet resultSet = conexao.executeQuery(inserirVendaQuery)) {
+        if (resultSet.next()) {
+            return resultSet.getInt("ID");
+        }
+    } catch (SQLException ex) {
+        Logger.getLogger(VendaDao.class.getName()).log(Level.SEVERE, null, ex);
+    }
+
+    return null;
+}
+
 
     public List<TbVenda> getAllFRVendaByBetweenDataAndArmazemAndDocumentoRecolha1( Date data_inicio, Date data_fim, int pk_documento )
     {

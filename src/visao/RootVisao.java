@@ -917,6 +917,11 @@ public class RootVisao extends javax.swing.JFrame
     {
         btnEsvaziaBD.setVisible( ( DVML.ID_USUARIO_FORNECEDOR_SOFTWARE == idUser ) );
     }
+    
+    private void mostrarBotaoBACKUPr()
+    {
+        bdBackupJButton.setVisible( ( DVML.ID_USUARIO_FORNECEDOR_SOFTWARE == idUser ) );
+    }
 
     private void mostrarBotaoActualizaHash()
     {
@@ -933,6 +938,7 @@ public class RootVisao extends javax.swing.JFrame
             btn_actualiza_hash.setVisible( true );
             btnGerarScriptActualizacao.setVisible( true );
             bt_desencriptar.setVisible( true );
+     
         }
         else
         {

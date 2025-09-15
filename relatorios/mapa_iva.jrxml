@@ -40,18 +40,19 @@ FROM
 WHERE
           DATE(tb_venda.`dataVenda`) BETWEEN $P{PARM_DATA_1} AND $P{PARM_DATA_2}
 	AND credito = 'false'
+          AND status_eliminado = 'false'
 	AND documento.`pk_documento` = $P{PARM_DOCUMENTO}]]>
 	</queryString>
 	<field name="tb_venda_dataVenda" class="java.sql.Timestamp"/>
 	<field name="tb_venda_codigo" class="java.lang.Integer"/>
-	<field name="tb_venda_total_venda" class="java.lang.Double"/>
+	<field name="tb_venda_total_venda" class="java.math.BigDecimal"/>
 	<field name="tb_venda_hora" class="java.sql.Time"/>
 	<field name="tb_venda_nome_cliente" class="java.lang.String"/>
-	<field name="tb_venda_desconto_total" class="java.lang.Double"/>
-	<field name="tb_venda_total_geral" class="java.lang.Double"/>
+	<field name="tb_venda_desconto_total" class="java.math.BigDecimal"/>
+	<field name="tb_venda_total_geral" class="java.math.BigDecimal"/>
 	<field name="documento_pk_documento" class="java.lang.Integer"/>
 	<field name="tb_venda_cod_fact" class="java.lang.String"/>
-	<field name="tb_venda_total_iva" class="java.lang.Double"/>
+	<field name="tb_venda_total_iva" class="java.math.BigDecimal"/>
 	<field name="tb_venda_nome_consumidor_final" class="java.lang.String"/>
 	<field name="tb_dados_instituicao_nome" class="java.lang.String"/>
 	<field name="tb_dados_instituicao_enderecos" class="java.lang.String"/>

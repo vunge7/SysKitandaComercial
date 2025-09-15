@@ -35,7 +35,6 @@ public class BDConexao
 
         try
         {
-            //Class.forName(JDBC_DRIVER);  
             Vector<String> informacao = leituraFicheiro();
 
             String ip = informacao.get( 0 );

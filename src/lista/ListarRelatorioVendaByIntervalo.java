@@ -583,14 +583,6 @@ public class ListarRelatorioVendaByIntervalo extends javax.swing.JFrame
         actualizar_abreviacao();
     }//GEN-LAST:event_ck_A7ActionPerformed
 
-//    private void reimprimir_FR()
-//    {
-//        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
-//        int selectedRow = jTable1.getSelectedRow();
-//        String codRef = modelo.getValueAt( selectedRow, 0 ).toString();
-//
-//        procedimento_reimprimir_FR( codRef );
-//    }
     private void reimprimir_FR()
     {
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
@@ -608,16 +600,12 @@ public class ListarRelatorioVendaByIntervalo extends javax.swing.JFrame
 
         if ( venda != null )
         {
-
-//            Abreviacao abreviacao = DVML.getAbreviacao( venda.getFkDocumento().getPkDocumento() );
-//            abreviacao = DVML.Abreviacao.FR_A4;
             List<TbProduto> lista_produto_isentos = new ArrayList<>();
             lista_produto_isentos = MetodosUtil.getProdutosIsentos( venda.getTbItemVendaList() );
             String motivos_isentos = MetodosUtil.getMotivoIsensaoProdutos( lista_produto_isentos );
-//            ListaVenda1 original = new ListaVenda1( cod_venda, abreviacao, false, ck_simplificada.isSelected(), "Original", motivos_isentos );
 
             ListaVenda2 listaVenda2 = new ListaVenda2( venda.getCodigo(), abreviacao, false, false, DVML.SEGUNDA_VIA_CONFORMIDADE_COM_ORIGINAL, motivos_isentos );
-//            ListaVenda2 listaVenda2 = new ListaVenda2( venda.getCodigo(), abreviacao, false, false, DVML.SEGUNDA_VIA_CONFORMIDADE_COM_ORIGINAL, motivos_isentos );
+
         }
         else
         {
@@ -727,7 +715,7 @@ public class ListarRelatorioVendaByIntervalo extends javax.swing.JFrame
         try
         {
 
-            lista = vendasController.getAllFRVendaByBetweenDataAndArmazemAndDocumento( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoUsuario() );
+            lista = vendasController.getAllFRVendaByBetweenDataAndArmazemAndDocumentos( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoUsuario());
 
             if ( lista != null )
             {
@@ -752,15 +740,12 @@ public class ListarRelatorioVendaByIntervalo extends javax.swing.JFrame
         catch ( Exception e )
         {
             e.printStackTrace();
-//            JOptionPane.showMessageDialog( null, "Não há registro para este intervalo de datas", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+
         }
         
 
     }
 
-//    public int getCodigoArmazem() {
-//        return armazemDao.getArmazemByDescricao(cmbArmazem.getSelectedItem().toString()).getCodigo();
-//    }
     private String getData( Date date )
     {
         return getNumeroDoisDigitos( date.getDate() )
@@ -811,92 +796,12 @@ public class ListarRelatorioVendaByIntervalo extends javax.swing.JFrame
 
     }
 
-//    
-//
-//    public void mostrarUsuarios() throws SQLException
-//    {
-//
-//        Connection connection = (Connection) conexao.conectar();
-//        HashMap hashMap = new HashMap();
-//
-//        hashMap.put( "NOME_USUARIO", getUsuario() );
-//        hashMap.put( "DATA", dcDataInicio.getDate() );
-//        hashMap.put( "DATA_VENDA", dcDataInicio.getDate() );
-//        hashMap.put( "TOTAL_USUARIO", getTotal(getUsuario ) );
-////        hashMap.put( "TOTAL_USUARIO", getTotal(getUsuario ) );
-//
-//        String relatorio = getCaminho();
-//
-//        File file = new File( relatorio ).getAbsoluteFile();
-//
-//        String obterCaminho = file.getAbsolutePath();
-//
-//        try
-//        {
-//
-//            JasperFillManager.fillReport( obterCaminho, hashMap, connection );
-//
-//            JasperPrint jasperPrint = JasperFillManager.fillReport( obterCaminho, hashMap, connection );
-//
-//            if ( jasperPrint.getPages().size() >= 1 )
-//            {
-//
-//                JasperViewer jasperViewer = new JasperViewer( jasperPrint, false );
-//                jasperViewer.setVisible( true );
-//
-//            }
-//            else
-//            {
-//                JOptionPane.showMessageDialog( null, "Atenção: Não existem vendas deste usuário(a) para esta data!..." );
-//            }
-//        }
-//        catch ( JRException jex )
-//        {
-//            jex.printStackTrace();
-//            JOptionPane.showMessageDialog( null, "FALHA AO TENTAR MOSTRAR OS USUARIOS!..." );
-//        }
-//        catch ( Exception ex )
-//        {
-//            ex.printStackTrace();
-//            JOptionPane.showMessageDialog( null, "ERRO AO TENTAR OS USUARIOS!..." );
-//        }
-//    }
-//    
-//        public double getTotalValor( int codUtilizdor )
-//    {
-//        // SELECT distinct  SUM(total_venda) as soma FROM tb_venda WHERE codigo_usuario = 15 AND dataVenda LIKE '2013-04-05%'
-//        //String sql = "SELECT  SUM(total_venda) as soma FROM tb_venda WHERE codigo_usuario = "  +codUtilizdor+" AND dataVenda LIKE '" +getDataSelecionadaString() +"%'";
-//        String sql = "SELECT  SUM(total_venda) as soma FROM tb_venda WHERE codigo_usuario = " + codUtilizdor + "  AND performance = 'false'  AND status_eliminado = 'false'  AND dataVenda = '" + getDataSelecionadaString() + "'";
-//        System.out.println( sql );
-//        ResultSet rs = conexao.executeQuery( sql );
-//
-//        try
-//        {
-//            if ( rs.next() )
-//            {
-//                return rs.getDouble( "soma" );
-//            }
-//        }
-//        catch ( SQLException ex )
-//        {
-//            return 0;
-//        }
-//
-//        return 0;
-//
-//    }
     public String getUsuario()
     {
         return String.valueOf( cmbUsuario.getSelectedItem() );
 
     }
 
-//    public String getCaminho()
-//    {
-//
-//        return "relatorios/report8.jasper";
-//
-//    }
     public static int getCodigoUsuario()
     {
         return usuariosController.getUsuarioByNome( cmbUsuario.getSelectedItem().toString() ).getCodigo();

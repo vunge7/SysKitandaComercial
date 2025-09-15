@@ -10,6 +10,7 @@ import entity.TbSexo;
 import entity.TbStatus;
 import entity.TbTipoUsuario;
 import entity.TbUsuario;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,6 +21,7 @@ import modelo.UsuarioModelo;
 import util.BDConexao;
 import static util.JPAEntityMannagerFactoryUtil.em;
 import util.MetodosUtil;
+import static util.MetodosUtil.normalizarNome;
 
 /**
  *
@@ -35,34 +37,34 @@ public class UsuariosController implements EntidadeFactory
     {
         this.conexao = conexao;
     }
-    
-    public boolean exist ( String userName, String senha ) throws SQLException
+
+    public boolean exist( String userName, String senha ) throws SQLException
     {
         ResultSet rs = null;
-        StringBuffer sql = new StringBuffer ();
+        StringBuffer sql = new StringBuffer();
 
-        sql.append ( "CALL DM_EXIST_LOGIN('" );
-        sql.append ( userName );
-        sql.append ( "','" );
-        sql.append ( senha );
-        sql.append ( "')" );
+        sql.append( "CALL DM_EXIST_LOGIN('" );
+        sql.append( userName );
+        sql.append( "','" );
+        sql.append( senha );
+        sql.append( "')" );
 
-        rs = conexao.executeQuery ( sql.toString () );
+        rs = conexao.executeQuery( sql.toString() );
 
-        return rs.next ();
+        return rs.next();
 
     }
 
-    public boolean isAdmintrador ( String userName, String senha ) throws SQLException
+    public boolean isAdmintrador( String userName, String senha ) throws SQLException
     {
         ResultSet rs = null;
-        String sql = "SELECT * FROM tb_usuario WHERE userName = '" + userName.toUpperCase () + "' AND senha = '" + senha + "' AND idTipoUsuario = 1   ";
+        String sql = "SELECT * FROM tb_usuario WHERE userName = '" + userName.toUpperCase() + "' AND senha = '" + senha + "' AND idTipoUsuario = 1   ";
         //String sql = "SELECT * FROM tb_usuario WHERE userName = '" +userName +"' AND senha = '" +senha +"' AND idTipoUsuario = 1";
 
-        System.out.println ( sql );
-        rs = conexao.executeQuery ( sql );
+        System.out.println( sql );
+        rs = conexao.executeQuery( sql );
 
-        if ( rs.next () )
+        if ( rs.next() )
         {
             return true;
         }
@@ -71,14 +73,14 @@ public class UsuariosController implements EntidadeFactory
 
     }
 
-    public boolean exist_senha ( String senha ) throws SQLException
+    public boolean exist_senha( String senha ) throws SQLException
     {
         ResultSet rs = null;
         String sql = "SELECT * FROM tb_usuario WHERE senha = '" + senha + "'";
 
-        rs = conexao.executeQuery ( sql );
+        rs = conexao.executeQuery( sql );
 
-        if ( rs.next () )
+        if ( rs.next() )
         {
             return true;
         }
@@ -87,140 +89,140 @@ public class UsuariosController implements EntidadeFactory
 
     }
 
-    public TbUsuario createNewUsuarioInstance ( int operacao, UsuarioModelo usuarioModelo )
+    public TbUsuario createNewUsuarioInstance( int operacao, UsuarioModelo usuarioModelo )
     {
-        String encriptedPass = new UsuarioDao (em ).encriptPass ( usuarioModelo.getSenha ());
-        sql = new StringBuffer ();
-        sql.append ( " CALL DM_PROCEDIMENTO_USUARIO('" );
-        sql.append ( usuarioModelo.getNome () );
-        sql.append ( "','" );
+        String encriptedPass = new UsuarioDao( em ).encriptPass( usuarioModelo.getSenha() );
+        sql = new StringBuffer();
+        sql.append( " CALL DM_PROCEDIMENTO_USUARIO('" );
+        sql.append( usuarioModelo.getNome() );
+        sql.append( "','" );
 
-        sql.append ( encriptedPass );
-        sql.append ( "','" );
-        sql.append ( usuarioModelo.getStatus () );
-        sql.append ( "','" );
-        sql.append ( usuarioModelo.getDataNascimento () );
-        sql.append ( "','" );
+        sql.append( encriptedPass );
+        sql.append( "','" );
+        sql.append( usuarioModelo.getStatus() );
+        sql.append( "','" );
+        sql.append( usuarioModelo.getDataNascimento() );
+        sql.append( "','" );
 
-        sql.append ( usuarioModelo.getTelefone () );
-        sql.append ( "','" );
-        sql.append ( usuarioModelo.getEmail () );
-        sql.append ( "','" );
-        sql.append ( usuarioModelo.getEndereco () );
-        sql.append ( "'," );
+        sql.append( usuarioModelo.getTelefone() );
+        sql.append( "','" );
+        sql.append( usuarioModelo.getEmail() );
+        sql.append( "','" );
+        sql.append( usuarioModelo.getEndereco() );
+        sql.append( "'," );
 
-        sql.append ( usuarioModelo.getCodigo_sexo () );
-        sql.append ( ",'" );
+        sql.append( usuarioModelo.getCodigo_sexo() );
+        sql.append( ",'" );
 
-        sql.append ( usuarioModelo.getUserName () );
-        sql.append ( "'," );
+        sql.append( usuarioModelo.getUserName() );
+        sql.append( "'," );
 
-        sql.append ( usuarioModelo.getIdTipousuario () );
-        sql.append ( "," );
+        sql.append( usuarioModelo.getIdTipousuario() );
+        sql.append( "," );
 
-        sql.append ( usuarioModelo.getCodigo () );
-        sql.append ( "," );
+        sql.append( usuarioModelo.getCodigo() );
+        sql.append( "," );
 
-        sql.append ( operacao );
-        sql.append ( ")" );
+        sql.append( operacao );
+        sql.append( ")" );
 
-        System.out.println ( sql );
-        conexao.executeUpdate ( sql.toString () );
+        System.out.println( sql );
+        conexao.executeUpdate( sql.toString() );
 
-        return new UsuarioDao ( em ).getLastInsertedRow ();
+        return new UsuarioDao( em ).getLastInsertedRow();
 
     }
 
-    public boolean operacao ( int operacao, UsuarioModelo usuarioModelo )
+    public boolean operacao( int operacao, UsuarioModelo usuarioModelo )
     {
-        sql = new StringBuffer ();
-        sql.append ( " CALL DM_PROCEDIMENTO_USUARIO('" );
-        sql.append ( usuarioModelo.getNome () );
-        sql.append ( "','" );
+        sql = new StringBuffer();
+        sql.append( " CALL DM_PROCEDIMENTO_USUARIO('" );
+        sql.append( usuarioModelo.getNome() );
+        sql.append( "','" );
 
-        sql.append ( usuarioModelo.getSenha () );
-        sql.append ( "','" );
-        sql.append ( usuarioModelo.getStatus () );
-        sql.append ( "','" );
-        sql.append ( usuarioModelo.getDataNascimento () );
-        sql.append ( "','" );
+        sql.append( usuarioModelo.getSenha() );
+        sql.append( "','" );
+        sql.append( usuarioModelo.getStatus() );
+        sql.append( "','" );
+        sql.append( usuarioModelo.getDataNascimento() );
+        sql.append( "','" );
 
-        sql.append ( usuarioModelo.getTelefone () );
-        sql.append ( "','" );
-        sql.append ( usuarioModelo.getEmail () );
-        sql.append ( "','" );
-        sql.append ( usuarioModelo.getEndereco () );
-        sql.append ( "'," );
+        sql.append( usuarioModelo.getTelefone() );
+        sql.append( "','" );
+        sql.append( usuarioModelo.getEmail() );
+        sql.append( "','" );
+        sql.append( usuarioModelo.getEndereco() );
+        sql.append( "'," );
 
-        sql.append ( usuarioModelo.getCodigo_sexo () );
-        sql.append ( ",'" );
+        sql.append( usuarioModelo.getCodigo_sexo() );
+        sql.append( ",'" );
 
-        sql.append ( usuarioModelo.getUserName () );
-        sql.append ( "'," );
+        sql.append( usuarioModelo.getUserName() );
+        sql.append( "'," );
 
-        sql.append ( usuarioModelo.getIdTipousuario () );
-        sql.append ( "," );
+        sql.append( usuarioModelo.getIdTipousuario() );
+        sql.append( "," );
 
-        sql.append ( usuarioModelo.getCodigo () );
-        sql.append ( "," );
+        sql.append( usuarioModelo.getCodigo() );
+        sql.append( "," );
 
-        sql.append ( operacao );
-        sql.append ( ")" );
+        sql.append( operacao );
+        sql.append( ")" );
 
-        System.out.println ( sql );
+        System.out.println( sql );
 
-        return conexao.executeUpdate ( sql.toString () );
+        return conexao.executeUpdate( sql.toString() );
 
     }
 
-    public int getCodigo ( String nome ) throws SQLException
+    public int getCodigo( String nome ) throws SQLException
     {
-        sql = new StringBuffer ();
+        sql = new StringBuffer();
 
-        sql.append ( "CALL DM_PROCEDIMENTO_GET_ID_BY_NAME('" );
-        sql.append ( nome );
-        sql.append ( "')" );
+        sql.append( "CALL DM_PROCEDIMENTO_GET_ID_BY_NAME('" );
+        sql.append( nome );
+        sql.append( "')" );
 
-        ResultSet rs = conexao.executeQuery ( sql.toString () );
+        ResultSet rs = conexao.executeQuery( sql.toString() );
 
         int codigo = 0;
 
-        if ( rs.next () )
+        if ( rs.next() )
         {
-            codigo = rs.getInt ( "codigo" );
+            codigo = rs.getInt( "codigo" );
         }
 
         return codigo;
 
     }
 
-    public UsuarioModelo getUsuario ( int codigo ) throws SQLException
+    public UsuarioModelo getUsuario( int codigo ) throws SQLException
     {
 
-        UsuarioModelo modelo = new UsuarioModelo ();
+        UsuarioModelo modelo = new UsuarioModelo();
         ResultSet rs = null;
 
-        sql = new StringBuffer ();
-        sql.append ( " CALL DM_PROCEDIMENTO_GET_USERS(" );
-        sql.append ( codigo );
-        sql.append ( ")" );
+        sql = new StringBuffer();
+        sql.append( " CALL DM_PROCEDIMENTO_GET_USERS(" );
+        sql.append( codigo );
+        sql.append( ")" );
 
-        System.out.println ( sql );
+        System.out.println( sql );
 
-        rs = conexao.executeQuery ( sql.toString () );
+        rs = conexao.executeQuery( sql.toString() );
 
-        if ( rs.next () )
+        if ( rs.next() )
         {
-            modelo.setNome ( rs.getString ( "nome" ) );
-            modelo.setSenha ( rs.getString ( "senha" ) );
-            modelo.setStatus ( rs.getString ( "status" ) );
-            modelo.setDataNascimento ( rs.getString ( "dataNascimento" ) );
-            modelo.setTelefone ( rs.getString ( "telefone" ) );
-            modelo.setEmail ( rs.getString ( "email" ) );
-            modelo.setEndereco ( rs.getString ( "endereco" ) );
-            modelo.setUserName ( rs.getString ( "userName" ) );
-            modelo.setCodigo_sexo ( rs.getInt ( "codigo_sexo" ) );
-            modelo.setIdTipousuario ( rs.getInt ( "idTipoUsuario" ) );
+            modelo.setNome( rs.getString( "nome" ) );
+            modelo.setSenha( rs.getString( "senha" ) );
+            modelo.setStatus( rs.getString( "status" ) );
+            modelo.setDataNascimento( rs.getString( "dataNascimento" ) );
+            modelo.setTelefone( rs.getString( "telefone" ) );
+            modelo.setEmail( rs.getString( "email" ) );
+            modelo.setEndereco( rs.getString( "endereco" ) );
+            modelo.setUserName( rs.getString( "userName" ) );
+            modelo.setCodigo_sexo( rs.getInt( "codigo_sexo" ) );
+            modelo.setIdTipousuario( rs.getInt( "idTipoUsuario" ) );
         }
         return modelo;
     }
@@ -228,7 +230,7 @@ public class UsuariosController implements EntidadeFactory
     @Override
     public boolean salvar( Object object )
     {
-        TbUsuario clientes = ( TbUsuario ) object;
+        TbUsuario clientes = (TbUsuario) object;
         String INSERT = "INSERT INTO tb_usuario( nome , senha , status , dataNascimento , telefone, email, endereco, "
                 + ")"
                 + " VALUES("
@@ -246,7 +248,7 @@ public class UsuariosController implements EntidadeFactory
     @Override
     public boolean actualizar( Object object )
     {
-                TbUsuario usuario = ( TbUsuario ) object;
+        TbUsuario usuario = (TbUsuario) object;
         PreparedStatement stmt;
         String UPDATE = "UPDATE tb_usuario SET "
                 + " nome = ?, "
@@ -270,21 +272,21 @@ public class UsuariosController implements EntidadeFactory
             stmt = conexao.getConnection().prepareStatement( UPDATE );
 
             int cod = 1;
-            System.out.println( "Nome UsuarioController: "+usuario.getNome() );
-            stmt.setString(cod++, usuario.getNome() );
-            stmt.setString(cod++, usuario.getSenha() );
-            stmt.setString(cod++, usuario.getStatus() );
-            stmt.setString(cod++, MetodosUtil.getDataBanco(usuario.getDataNascimento() ) );
-            stmt.setString(cod++, usuario.getTelefone() );
-            stmt.setString(cod++, usuario.getEmail() );
-            stmt.setString(cod++, usuario.getEndereco() );
-            stmt.setInt(cod++, usuario.getCodigoSexo().getCodigo() );
-            stmt.setString(cod++, usuario.getUserName() );
-            stmt.setInt(cod++, usuario.getIdTipoUsuario().getIdTipoUsuario() );
-            stmt.setString(cod++, usuario.getSobreNome() );
-            stmt.setInt(cod++, usuario.getIdStatus().getIdStatus() );
-            stmt.setString(cod++, MetodosUtil.getDataBanco(usuario.getDataUltimoAcesso() ) );
-            stmt.setInt(cod++, usuario.getCodigo() );
+            System.out.println( "Nome UsuarioController: " + usuario.getNome() );
+            stmt.setString( cod++, usuario.getNome() );
+            stmt.setString( cod++, usuario.getSenha() );
+            stmt.setString( cod++, usuario.getStatus() );
+            stmt.setString( cod++, MetodosUtil.getDataBanco( usuario.getDataNascimento() ) );
+            stmt.setString( cod++, usuario.getTelefone() );
+            stmt.setString( cod++, usuario.getEmail() );
+            stmt.setString( cod++, usuario.getEndereco() );
+            stmt.setInt( cod++, usuario.getCodigoSexo().getCodigo() );
+            stmt.setString( cod++, usuario.getUserName() );
+            stmt.setInt( cod++, usuario.getIdTipoUsuario().getIdTipoUsuario() );
+            stmt.setString( cod++, usuario.getSobreNome() );
+            stmt.setInt( cod++, usuario.getIdStatus().getIdStatus() );
+            stmt.setString( cod++, MetodosUtil.getDataBanco( usuario.getDataUltimoAcesso() ) );
+            stmt.setInt( cod++, usuario.getCodigo() );
             stmt.executeUpdate();
             stmt.close();
             return true;
@@ -457,7 +459,7 @@ public class UsuariosController implements EntidadeFactory
                 usuario.setUserName( result.getString( "userName" ) );
                 usuario.setIdStatus( new TbStatus( result.getInt( "idStatus" ) ) );
                 usuario.setDataUltimoAcesso( result.getDate( "dataUltimoAcesso" ) );
-                usuario.setIdTipoUsuario( new TbTipoUsuario(result.getInt( "idTipoUsuario" )));
+                usuario.setIdTipoUsuario( new TbTipoUsuario( result.getInt( "idTipoUsuario" ) ) );
 
             }
 
@@ -469,7 +471,7 @@ public class UsuariosController implements EntidadeFactory
         return usuario;
 
     }
-    
+
     public Object findByName( String nome )
     {
 
@@ -494,7 +496,7 @@ public class UsuariosController implements EntidadeFactory
                 usuario.setUserName( result.getString( "userName" ) );
                 usuario.setIdStatus( new TbStatus( result.getInt( "idStatus" ) ) );
                 usuario.setDataUltimoAcesso( result.getDate( "dataUltimoAcesso" ) );
-                usuario.setIdTipoUsuario( new TbTipoUsuario(result.getInt( "idTipoUsuario" )));
+                usuario.setIdTipoUsuario( new TbTipoUsuario( result.getInt( "idTipoUsuario" ) ) );
 
             }
 
@@ -567,6 +569,63 @@ public class UsuariosController implements EntidadeFactory
         }
         return usuario;
 
+    }
+
+    public boolean exist_usuario( String nome )
+    {
+
+        String sql = "SELECT u.codigo FROM tb_usuario u WHERE u.nome = '" + nome + "'";
+        ResultSet rs = conexao.executeQuery( sql );
+
+        try
+        {
+            return rs.next();
+        }
+        catch ( SQLException e )
+        {
+        }
+
+        return false;
+    }
+    
+public boolean existeUsuario(String nome, String telefone, Connection conexao) {
+    // Normaliza o nome (remove espaços extras, traços etc.)
+    nome = normalizarNome(nome);
+
+    String sql = "SELECT COUNT(*) FROM tb_usuario WHERE nome = ? OR telefone = ?";
+    try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+        stmt.setString(1, nome);
+        stmt.setString(2, telefone);
+
+        try (ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                return count > 0; // true se já existe
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace(); // ou log
+    }
+    return false;
+}
+
+
+    
+    public boolean exist_usuario1( String nome , String telefone)
+    {
+
+        String sql = "SELECT u.codigo FROM tb_usuario u WHERE u.nome = '" + nome + "' OR u.telefone = '" + telefone + "'";
+        ResultSet rs = conexao.executeQuery( sql );
+
+        try
+        {
+            return rs.next();
+        }
+        catch ( SQLException e )
+        {
+        }
+
+        return false;
     }
 
 }

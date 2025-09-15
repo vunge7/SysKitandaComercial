@@ -6199,6 +6199,72 @@ public class MetodosUtil
         conexaoLocal.close();
 
     }
+    
+    public static String normalizarNome(String nome) {
+    if (nome == null) {
+        return null;
+    }
+    // Remove espaços no início e fim
+    // Substitui múltiplos espaços no meio por apenas 1
+    return nome.trim().replaceAll("\\s+", " ");
+}
+    public static String normalizarUserName(String userName) {
+    if (userName == null) {
+        return null;
+    }
+    // Remove espaços no início e fim
+    // Substitui múltiplos espaços no meio por apenas 1
+    return userName.trim().replaceAll("\\s+", " ");
+}
+
+public static String normalizarDesignacao(String designacao) {
+    if (designacao == null) {
+        return null;
+    }
+    return designacao
+            .replaceAll("-", " ")          // transforma traços em espaço
+            .replaceAll("[\\u00A0\\s]+", " ") // remove espaços invisíveis e múltiplos
+            .trim();                       // remove espaços no início e fim
+}
+
+public static String normalizarCodigoBarra(String codBarra) {
+    if (codBarra == null) {
+        return null;
+    }
+    return codBarra
+            .replaceAll("-", " ")   // transforma traços em espaço
+            .trim()                 // remove espaços no início e fim
+            .replaceAll("\\s+", " "); // reduz múltiplos espaços para 1
+}
+public static String normalizarCodigoManual(String codigo_manual) {
+    if (codigo_manual == null) {
+        return null;
+    }
+    return codigo_manual
+            .replaceAll("-", " ")   // transforma traços em espaço
+            .trim()                 // remove espaços no início e fim
+            .replaceAll("\\s+", " "); // reduz múltiplos espaços para 1
+}
+
+    
+    public static String normalizarNif(String nif) {
+    if (nif == null) {
+        return null;
+    }
+    // Remove espaços no início e fim
+    // Substitui múltiplos espaços no meio por apenas 1
+    return nif.trim().replaceAll("\\s+", " ");
+}
+    
+    public static String normalizarEndereco(String nif) {
+    if (nif == null) {
+        return null;
+    }
+    // Remove espaços no início e fim
+    // Substitui múltiplos espaços no meio por apenas 1
+    return nif.trim().replaceAll("\\s+", " ");
+}
+
 
    
 

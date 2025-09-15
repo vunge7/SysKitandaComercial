@@ -25,6 +25,7 @@ import java.util.Vector;
 import util.BDConexao;
 import util.DVML;
 import util.MetodosUtil;
+import static util.MetodosUtil.normalizarDesignacao;
 
 /**
  *
@@ -656,6 +657,28 @@ public class ProdutosController implements EntidadeFactory
         return produto;
 
     }
+    
+    public TbProduto findByCodInterno( int codigo )
+    {
+
+        String FIND_BY_CODIGO = "SELECT * FROM tb_produto WHERE codigo = " + codigo;
+        ResultSet result = conexao.executeQuery( FIND_BY_CODIGO );
+        TbProduto produto = null;
+
+        try
+        {
+            if ( result.next() )
+            {
+                produto = new TbProduto();
+                setResultProduto( result, produto );
+            }
+        }
+        catch ( SQLException e )
+        {
+        }
+        return produto;
+
+    }
 
     public TbProduto findByCodBarra1( int codBarra )
     {
@@ -701,27 +724,25 @@ public class ProdutosController implements EntidadeFactory
 
     }
 
-    public TbProduto findByDesignacao( String designacao )
-    {
+   public TbProduto findByDesignacao(String designacao) {
+    String sql = "SELECT * FROM tb_produto WHERE designacao = ?";
+    TbProduto produto = null;
 
-        String FIND__BY_CODIGO = "SELECT * FROM tb_produto WHERE designacao = '" + designacao + "'";
-        ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
-        TbProduto produto = null;
+    try (PreparedStatement stmt = conexao.getConnection().prepareStatement(sql)) {
+        stmt.setString(1, designacao);
+        ResultSet rs = stmt.executeQuery();
 
-        try
-        {
-            if ( result.next() )
-            {
-                produto = new TbProduto();
-                setResultProduto( result, produto );
-            }
+        if (rs.next()) {
+            produto = new TbProduto();
+            setResultProduto(rs, produto);
         }
-        catch ( SQLException e )
-        {
-        }
-        return produto;
-
+    } catch (SQLException e) {
+        e.printStackTrace(); // ou use um logger
     }
+
+    return produto;
+}
+
 
     public TbProduto getLastProduto()
     {
@@ -902,20 +923,19 @@ public class ProdutosController implements EntidadeFactory
         return false;
     }
 
-    public boolean exist_designacao_produto( String designacao )
-    {
-        String sql = "SELECT p.codigo FROM tb_produto p WHERE p.designacao = '" + designacao + "'";
-        ResultSet rs = conexao.executeQuery( sql );
-        try
-        {
-            return rs.next();
-        }
-        catch ( SQLException e )
-        {
-        }
-
-        return false;
+public boolean exist_designacao_produto(String designacao) {
+    designacao = normalizarDesignacao(designacao);
+    String sql = "SELECT p.codigo FROM tb_produto p WHERE p.designacao = ?";
+    try (PreparedStatement ps = BDConexao.conectar().prepareStatement(sql)) {
+        ps.setString(1, designacao);
+        ResultSet rs = ps.executeQuery();
+        return rs.next();
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+    return false;
+}
+
 
     public Object findByName( String designacao )
     {

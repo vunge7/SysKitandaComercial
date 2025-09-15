@@ -5,9 +5,9 @@
 	<property name="ireport.y" value="0"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<import value="net.sf.jasperreports.engine.*"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["../relatorios/"]]></defaultValueExpression>
 	</parameter>
@@ -38,7 +38,7 @@ ORDER BY
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="132" splitType="Stretch">
+		<band height="94" splitType="Stretch">
 			<textField>
 				<reportElement uuid="7cbe433c-af15-437d-bd59-8b89f30a3cf2" key="staticText" x="0" y="0" width="535" height="34"/>
 				<textElement verticalAlignment="Middle" markup="none">
@@ -47,9 +47,9 @@ ORDER BY
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_nome}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="22044775-91ea-45e1-9be0-4d07a08ddadf" key="staticText" x="1" y="74" width="535" height="18"/>
+				<reportElement uuid="22044775-91ea-45e1-9be0-4d07a08ddadf" key="staticText" x="1" y="56" width="535" height="18"/>
 				<textElement textAlignment="Center" markup="none">
-					<font fontName="Times New Roman" size="14" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font fontName="Times New Roman" size="14" isBold="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<text><![CDATA[LISTA DE TODOS PRODUTOS]]></text>
 			</staticText>
@@ -61,16 +61,18 @@ ORDER BY
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_enderecos}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="3728fe37-fe5d-4094-9ef2-10bca2dc4722" x="225" y="92" width="100" height="20"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<reportElement uuid="3728fe37-fe5d-4094-9ef2-10bca2dc4722" x="178" y="74" width="185" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{ARMAZEM}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
 	<detail>
-		<band height="33" splitType="Stretch">
+		<band height="23" splitType="Stretch">
 			<subreport>
-				<reportElement uuid="a8b7f803-47c0-4587-85a3-8bfbd0247b82" x="-29" y="0" width="295" height="33"/>
+				<reportElement uuid="a8b7f803-47c0-4587-85a3-8bfbd0247b82" x="-13" y="0" width="295" height="23"/>
 				<subreportParameter name="ID_TIPO_PRODUTO">
 					<subreportParameterExpression><![CDATA[$F{tb_tipo_produto_codigo}]]></subreportParameterExpression>
 				</subreportParameter>

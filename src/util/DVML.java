@@ -210,7 +210,7 @@ public class DVML
     public static int COD_CATEGORIA_URGENCIA = 20;
     public static String TAXA_EXPRESSO_100 = "Taxa Expresso 100";
     public static String TAXA_URGENCIA_50 = "Taxa de Urgência 50";
-    public static String BD = "kitanda_db";
+    public static String BD = "kitanda_db_moys";
     public static int SEGUNDA_SEXTA_HORA = 11;
     public static int SEGUNDA_SEXTA_MINUTO = 56;
     public final static String STATUS_CONVERTIDO = "Convertido";
@@ -277,6 +277,7 @@ public class DVML
     public static int JANELA_VENDA_POS = 13;
     public static int JANELA_VENDA_OFICINA = 12;
     public static int JANELA_COMPRA = 4;
+    public static int JANELA_CARDEX = 18;
     public static int JANELA_TRANSFERENCIA = 6;
     public static int ACERTO_STOCK = 7;
     public static int IMPRIMIR_PRECOS = 8;

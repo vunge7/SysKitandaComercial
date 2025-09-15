@@ -35,9 +35,14 @@ import util.DVML;
 import util.FinanceUtils;
 import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
+import static util.MetodosUtil.normalizarCodigoBarra;
+import static util.MetodosUtil.normalizarCodigoManual;
+import static util.MetodosUtil.normalizarDesignacao;
 import static util.MetodosUtil.rodarComandoWindows;
 import util.PictureChooser;
 import util.TextFieldUtils;
+import static visao.ProdutosPratosVisao.txtCodigoBarra;
+import static visao.ProdutosPratosVisao.txtCodigoManual;
 
 public class ProdutosVisao extends javax.swing.JFrame
 {
@@ -2095,18 +2100,23 @@ public class ProdutosVisao extends javax.swing.JFrame
     {
         boolean isStocavel = ck_produto.isSelected();
 
-        String designacao_produto = getDesignacaoText();
+        String designacao_produto = normalizarDesignacao( txtDesignacao.getText() );
         produto.setDesignacao( designacao_produto );
+
         produto.setPreco( new BigDecimal( MetodosUtil.convertToDouble( txtPrecoCompra.getText() ) ) );
         produto.setDataFabrico( isStocavel ? jcDataFabrico.getDate() : new Date() );
         produto.setDataExpiracao( isStocavel ? jcDataExpiracao.getDate() : new Date() );
-        produto.setCodBarra( isStocavel ? txtCodigoBarra.getText().trim() : "2147483647" );
+        
+        String codBarra = normalizarCodigoBarra( txtCodigoBarra.getText() );
+        produto.setCodBarra( isStocavel ? codBarra : "2147483647" );
         produto.setStatus( "Activo" );
         produto.setDataEntrada( new Date() );
         produto.setStocavel( isStocavel ? "true" : "false" );
         produto.setPrecoVenda( MetodosUtil.convertToDouble( txtPrecoCompra.getText() ) );
         produto.setQuantidadeDesconto( 0 );
-        produto.setCodigoManual( isStocavel ? txtCodigoManual.getText() : "" );
+        
+        String codigoManual = normalizarCodigoManual( txtCodigoManual.getText() );
+        produto.setCodigoManual( isStocavel ? codigoManual : "" );
         produto.setCodUnidade( new Unidade( getIdUnidade() ) );
         produto.setCodLocal( new TbLocal( getIdLocal() ) );
         produto.setCodFornecedores( new TbFornecedor( 1 ) );

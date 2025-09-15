@@ -31,6 +31,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.table.DefaultTableModel;
 import tesouraria.novo.util.AnyReport;
 import util.BDConexao;
+import util.DVML;
 
 /**
  *
@@ -71,13 +72,15 @@ public class CardexVisao extends javax.swing.JFrame
     private List<Object[]> listaFonte;
 
     private final int usuarioId;
-    private TbProduto produtoLocal;
+    private static TbProduto produtoLocal;
 
     public CardexVisao( java.awt.Frame parent, boolean modal, int usuarioId, String usuarioNome, BDConexao conexao )
     {
 
         initComponents();
         setLocationRelativeTo( null );
+        bt_imprimir.setEnabled( false);
+        txtCodigoManual.requestFocus();
         this.conexao = conexao;
         this.usuarioId = usuarioId;
         this.usuarioNome = usuarioNome;
@@ -99,7 +102,7 @@ public class CardexVisao extends javax.swing.JFrame
     private void init()
     {
 
-        cmbArmazem.setModel( new DefaultComboBoxModel<>( armazensController.getVector() ) );
+        cmbArmazem.setModel( new DefaultComboBoxModel<>( armazensController.getVectorArmazemVenda() ) );
         dcDataInicio.setDate( new Date() );
         dcDataFim.setDate( new Date() );
 
@@ -128,12 +131,15 @@ public class CardexVisao extends javax.swing.JFrame
         cmbArmazem = new javax.swing.JComboBox<>();
         jPanel1 = new javax.swing.JPanel();
         btnCancelar = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        bt_imprimir = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         lbArtigo = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         lbQtd = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
+        txtCodigoInterno = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabela = new javax.swing.JTable();
 
@@ -207,12 +213,12 @@ public class CardexVisao extends javax.swing.JFrame
             }
         });
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/proucura.png"))); // NOI18N
-        jButton1.addActionListener(new java.awt.event.ActionListener()
+        bt_imprimir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/impressora1.png"))); // NOI18N
+        bt_imprimir.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                jButton1ActionPerformed(evt);
+                bt_imprimirActionPerformed(evt);
             }
         });
 
@@ -222,18 +228,16 @@ public class CardexVisao extends javax.swing.JFrame
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(btnCancelar)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(bt_imprimir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(33, 33, 33)
+                .addComponent(bt_imprimir)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnCancelar)
                 .addContainerGap())
@@ -281,6 +285,25 @@ public class CardexVisao extends javax.swing.JFrame
                 .addGap(34, 34, 34))
         );
 
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/proucura.png"))); // NOI18N
+        jButton1.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        txtCodigoInterno.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                txtCodigoInternoActionPerformed(evt);
+            }
+        });
+
+        jLabel8.setText("CodInterno");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -300,11 +323,21 @@ public class CardexVisao extends javax.swing.JFrame
                             .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtCodigoBarra, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(81, 81, 81))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(81, 81, 81))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(33, 33, 33)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(txtCodigoInterno))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
@@ -331,13 +364,25 @@ public class CardexVisao extends javax.swing.JFrame
                                     .addComponent(dcDataFim, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel3))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtCodigoBarra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                            .addComponent(jLabel4)
+                                            .addComponent(jLabel3))
+                                        .addGap(9, 9, 9))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                        .addComponent(jLabel8)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(txtCodigoBarra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(txtCodigoInterno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(3, 3, 3)
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -449,10 +494,33 @@ public class CardexVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jButton1ActionPerformed
         // TODO add your handling code here:
 
-        procedimentoVisualizacao();
+        try
+        {
 
+            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getIdArmazem(), DVML.JANELA_CARDEX, conexao ).setVisible( true );
+//            chamar_acerto( true );
+//            TbStock stockByCodBarra = stocksController.getStockByCodBarraAndIdArmazem( txt_cod_barra.getText().trim(), getCodigoArmazem() );
+//            txtQuatidadeExistente.setText( String.valueOf( stockByCodBarra.getQuantidadeExistente() ) );
+//            txtQtdEntrar.requestFocus();
+            bt_imprimir.setEnabled( true);
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
 
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void bt_imprimirActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bt_imprimirActionPerformed
+    {//GEN-HEADEREND:event_bt_imprimirActionPerformed
+        procedimentoVisualizacao();
+
+    }//GEN-LAST:event_bt_imprimirActionPerformed
+
+    private void txtCodigoInternoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtCodigoInternoActionPerformed
+    {//GEN-HEADEREND:event_txtCodigoInternoActionPerformed
+        procedimentoBusca();
+    }//GEN-LAST:event_txtCodigoInternoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -516,8 +584,9 @@ public class CardexVisao extends javax.swing.JFrame
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton bt_imprimir;
     private javax.swing.JButton btnCancelar;
-    private javax.swing.JComboBox<String> cmbArmazem;
+    private static javax.swing.JComboBox<String> cmbArmazem;
     public static com.toedter.calendar.JDateChooser dcDataFim;
     public static com.toedter.calendar.JDateChooser dcDataInicio;
     private javax.swing.JButton jButton1;
@@ -528,18 +597,20 @@ public class CardexVisao extends javax.swing.JFrame
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
+    private static javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel lbArtigo;
-    private javax.swing.JLabel lbQtd;
-    private javax.swing.JTable tabela;
-    private javax.swing.JTextField txtCodigoBarra;
-    private javax.swing.JTextField txtCodigoManual;
+    private static javax.swing.JLabel lbArtigo;
+    private static javax.swing.JLabel lbQtd;
+    private static javax.swing.JTable tabela;
+    private static javax.swing.JTextField txtCodigoBarra;
+    private javax.swing.JTextField txtCodigoInterno;
+    private static javax.swing.JTextField txtCodigoManual;
     // End of variables declaration//GEN-END:variables
 
-    public void carregarTabelaMovimentacoes( int produtoId, int armazemId, Date dataInicio, Date dataFim )
+    public static void carregarTabelaMovimentacoes( int produtoId, int armazemId, Date dataInicio, Date dataFim )
     {
         try
         {
@@ -581,7 +652,7 @@ public class CardexVisao extends javax.swing.JFrame
         }
     }
 
-    private int getIdArmazem()
+    private static int getIdArmazem()
     {
         return armazensController
                 .getCodigoPorDesignacao(
@@ -605,17 +676,65 @@ public class CardexVisao extends javax.swing.JFrame
                 busca();
                 txtCodigoBarra.setText( "" );
             }
+            else if ( !txtCodigoInterno.getText().equals( "" ) )
+            {
+                produtoLocal = produtosController.findByCodInterno(
+                        Integer.parseInt( txtCodigoInterno.getText().trim() ) );
+                busca();
+                txtCodigoInterno.setText( "" );
+            }
 
         }
         catch ( Exception ex )
         {
             ex.printStackTrace();
-//            JOptionPane.showMessageDialog( null, "Erro ao pesquisar produto: " + ex.getMessage(),
-//                    "Erro", JOptionPane.ERROR_MESSAGE );
+
         }
     }
+    
+//    private void procedimentoBusca(int codigo) {
+//    try {
+//        // Busca o produto pelo código interno recebido como parâmetro
+//        produtoLocal = produtosController.findByCodInterno(codigo);
+//        
+//        // Chama o método que atualiza a interface com os dados do produto
+//        busca();
+//        
+//    } catch (Exception ex) {
+//        ex.printStackTrace();
+//    }
+//}
+    
+    public static void procedimentoBusca(int codigo) {
+    try {
+        produtoLocal = produtosController.findByCodInterno(codigo);
+        busca();
+    } catch (Exception ex) {
+        ex.printStackTrace();
+    }
+}
 
-    private void busca()
+
+
+
+//    public static void accao_codigo_interno_enter_busca_exterior( int codigo )
+//    {
+//
+//        try
+//        {
+//            System.out.println( "ID PRODUTO EXTERIOR: " + codigo );
+//            TbProduto produtoLocal = (TbProduto) produtosController.findById( codigo );
+//            procedimentoAdicionarTabela( produtoLocal );
+//        }
+//        catch ( Exception ex )
+//        {
+//            ex.printStackTrace();
+//            Logger.getLogger( VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
+//            JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+//        }
+//
+//    }
+    private static void busca()
     {
         if ( Objects.nonNull( produtoLocal ) )
         {

@@ -6,6 +6,8 @@
 package comercial.controller;
 
 import entity.TbCliente;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -32,7 +34,7 @@ public class ClientesController implements EntidadeFactory
     @Override
     public boolean salvar( Object object )
     {
-        TbCliente clientes = ( TbCliente ) object;
+        TbCliente clientes = (TbCliente) object;
         String INSERT = "INSERT INTO tb_cliente( nome , morada , telefone , nif , email"
                 + ")"
                 + " VALUES("
@@ -40,7 +42,7 @@ public class ClientesController implements EntidadeFactory
                 + "'" + clientes.getMorada() + "' , "
                 + "'" + clientes.getTelefone() + "' , "
                 + "'" + clientes.getNif() + "' , "
-                + "'" + clientes.getEmail()
+                + "'" + clientes.getEmail() + "'"
                 + " ) ";
 
         return conexao.executeUpdate( INSERT );
@@ -122,8 +124,8 @@ public class ClientesController implements EntidadeFactory
 
         return lista_clientes;
     }
-    
-         public TbCliente findByCodigo( int codigo )
+
+    public TbCliente findByCodigo( int codigo )
     {
 
         String FIND_BY_NOME = "SELECT * FROM tb_cliente WHERE codigo = " + codigo;
@@ -305,6 +307,7 @@ public class ClientesController implements EntidadeFactory
         return clientes;
 
     }
+
     public TbCliente getClienteByNifOrberByTelefone( String telefone )
     {
 
@@ -389,6 +392,53 @@ public class ClientesController implements EntidadeFactory
         }
         return armazem;
 
+    }
+
+    public boolean existeClienteNome( String nome, Connection conexao )
+    {
+        String sql = "SELECT COUNT(*) FROM tb_cliente WHERE nome = ?";
+        try ( PreparedStatement stmt = conexao.prepareStatement( sql ) )
+        {
+            stmt.setString( 1, nome );
+
+            try ( ResultSet rs = stmt.executeQuery() )
+            {
+                if ( rs.next() )
+                {
+                    int count = rs.getInt( 1 );
+                    return count > 0; // true se já existe
+                }
+            }
+        }
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    public boolean existeClienteNIF( String nif, Connection conexao )
+    {
+        String sql = "SELECT COUNT(*) FROM tb_cliente WHERE nif = ?";
+        try ( PreparedStatement stmt = conexao.prepareStatement( sql ) )
+        {
+
+            stmt.setString( 1, nif );
+
+            try ( ResultSet rs = stmt.executeQuery() )
+            {
+                if ( rs.next() )
+                {
+                    int count = rs.getInt( 1 );
+                    return count > 0; // true se já existe
+                }
+            }
+        }
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }
