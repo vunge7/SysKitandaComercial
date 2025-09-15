@@ -416,7 +416,7 @@ public class ClientesController implements EntidadeFactory
         }
         return false;
     }
-    
+
     public boolean existeClienteNIF( String nif, Connection conexao )
     {
         String sql = "SELECT COUNT(*) FROM tb_cliente WHERE nif = ?";
@@ -431,6 +431,30 @@ public class ClientesController implements EntidadeFactory
                 {
                     int count = rs.getInt( 1 );
                     return count > 0; // true se já existe
+                }
+            }
+        }
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean existeClienteNIFParaOutroCliente( String nif, int codigo, Connection connection )
+    {
+        String sql = "SELECT COUNT(*) FROM tb_cliente WHERE nif = ? AND codigo <> ?";
+        try ( PreparedStatement stmt = connection.prepareStatement( sql ) )
+        {
+            stmt.setString( 1, nif );
+            stmt.setInt( 2, codigo );
+
+            try ( ResultSet rs = stmt.executeQuery() )
+            {
+                if ( rs.next() )
+                {
+                    int count = rs.getInt( 1 );
+                    return count > 0; // true se já existe em outro cliente
                 }
             }
         }

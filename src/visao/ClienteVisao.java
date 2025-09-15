@@ -8,7 +8,6 @@ import comercial.controller.ClientesController;
 import controller.TipoClienteController;
 import dao.ClienteDao;
 import entity.TbCliente;
-import hotel.controller.ClienteController;
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.event.KeyEvent;
@@ -31,7 +30,6 @@ import util.DVML;
 import util.JPAEntityMannagerFactoryUtil;
 import static util.MetodosUtil.normalizarEndereco;
 import static util.MetodosUtil.normalizarNif;
-import static util.MetodosUtil.normalizarNome;
 
 /**
  *
@@ -686,62 +684,63 @@ public class ClienteVisao extends javax.swing.JDialog
             {
                 if ( !clientesController.existeClienteNome( txtNomeCliente.getText(), BDConexao.getConexao() ) )
                 {
-                    
-                if ( !clientesController.existeClienteNIF(  txtNif.getText(), BDConexao.getConexao() ) )
-                {
-                    this.cliente = new TbCliente();
-                    setDados();
-                    try
-                    {
-                        clientesController.salvar( cliente );
-                        limpar();
-                        adicionar();
-                        scrolltable();
-                        btnNovo.setEnabled( true );
-                        JOptionPane.showMessageDialog( null, "Cliente salvo com sucesso!...", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
-                        txtNomeCliente.requestFocus();
-                        if ( !Objects.isNull( VendaUsuarioVisao.cmbCliente ) )
-                        {
-                            VendaUsuarioVisao.cmbCliente.setModel( new DefaultComboBoxModel( clienteDao.buscaTodos() ) );
-                            VendaUsuarioVisao.cmbCliente.setSelectedItem( cliente.getNome() );
-                            dispose();
-                        }
-                        if ( !Objects.isNull( RecolhaPedidosVisao.cmbCliente ) )
-                        {
-                            RecolhaPedidosVisao.cmbCliente.setModel( new DefaultComboBoxModel( clienteDao.buscaTodos() ) );
-                            RecolhaPedidosVisao.cmbCliente.setSelectedItem( cliente.getNome() );
-                            dispose();
-                        }
-                        if ( !Objects.isNull( VendaPOSVisao.cmbCliente ) )
-                        {
-                            VendaPOSVisao.cmbCliente.setModel( new DefaultComboBoxModel( clienteDao.buscaTodos() ) );
-                            VendaPOSVisao.cmbCliente.setSelectedItem( cliente.getNome() );
-                            dispose();
-                        }
-                        if ( !Objects.isNull( VendasPraticasVisao.cmbCliente ) )
-                        {
-                            VendasPraticasVisao.cmbCliente.setModel( new DefaultComboBoxModel( clienteDao.buscaTodos() ) );
-                            VendasPraticasVisao.cmbCliente.setSelectedItem( cliente.getNome() );
-                            dispose();
-                        }
 
-                    }
-                    catch ( Exception e )
+                    if ( !clientesController.existeClienteNIF( txtNif.getText(), BDConexao.getConexao() ) )
                     {
-                        e.printStackTrace();
-                        JOptionPane.showMessageDialog( null, "Erro ao salvar o cliente", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
-                    }
+                        this.cliente = new TbCliente();
+                        setDados();
+                        try
+                        {
+                            clientesController.salvar( cliente );
+                            limpar();
+                            adicionar();
+                            scrolltable();
+                            btnNovo.setEnabled( true );
+                            JOptionPane.showMessageDialog( null, "Cliente salvo com sucesso!...", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
+                            txtNomeCliente.requestFocus();
+                            if ( !Objects.isNull( VendaUsuarioVisao.cmbCliente ) )
+                            {
+//                            VendaUsuarioVisao.cmbCliente.setModel( new DefaultComboBoxModel( clienteDao.buscaTodos() ) );
+                                VendaUsuarioVisao.cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );
+                                VendaUsuarioVisao.cmbCliente.setSelectedItem( cliente.getNome() );
+                                dispose();
+                            }
+                            if ( !Objects.isNull( RecolhaPedidosVisao.cmbCliente ) )
+                            {
+                                RecolhaPedidosVisao.cmbCliente.setModel( new DefaultComboBoxModel( clienteDao.buscaTodos() ) );
+                                RecolhaPedidosVisao.cmbCliente.setSelectedItem( cliente.getNome() );
+                                dispose();
+                            }
+                            if ( !Objects.isNull( VendaPOSVisao.cmbCliente ) )
+                            {
+                                VendaPOSVisao.cmbCliente.setModel( new DefaultComboBoxModel( clienteDao.buscaTodos() ) );
+                                VendaPOSVisao.cmbCliente.setSelectedItem( cliente.getNome() );
+                                dispose();
+                            }
+                            if ( !Objects.isNull( VendasPraticasVisao.cmbCliente ) )
+                            {
+                                VendasPraticasVisao.cmbCliente.setModel( new DefaultComboBoxModel( clienteDao.buscaTodos() ) );
+                                VendasPraticasVisao.cmbCliente.setSelectedItem( cliente.getNome() );
+                                dispose();
+                            }
+
+                        }
+                        catch ( Exception e )
+                        {
+                            e.printStackTrace();
+                            JOptionPane.showMessageDialog( null, "Erro ao salvar o cliente", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+                        }
 //                }
 //                else
 //                {
 //                    JOptionPane.showMessageDialog( null, "Aviso: Nif já existente", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
 //                }
 
-                }
-                else
-                {
-                    JOptionPane.showMessageDialog( null, "Este NIF já existe.", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
-                }
+                    }
+                    else
+                    {
+                        JOptionPane.showMessageDialog( null, "Este NIF já existe.", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+                    }
                 }
                 else
                 {
@@ -840,10 +839,12 @@ public class ClienteVisao extends javax.swing.JDialog
     private void setDados()
     {
 
-        String nomeMorada = normalizarEndereco(txtEndereco.getText());
-        cliente.setMorada(nomeMorada);
-        String nif = normalizarNif(txtNif.getText());
-        cliente.setNif(nif);
+        String nomeMorada = normalizarEndereco( txtEndereco.getText() );
+        String nif = normalizarNif( txtNif.getText() );
+
+        cliente.setNome( txtNomeCliente.getText() );
+        cliente.setMorada( nomeMorada );
+        cliente.setNif( nif );
         this.cliente.setTelefone( txtContactos.getText() );
         this.cliente.setEmail( txtEmail.getText().trim() );
 
@@ -919,19 +920,26 @@ public class ClienteVisao extends javax.swing.JDialog
 
         if ( valido() )
         {
-
             this.cliente = clienteDao.findTbCliente( this.codigo );
-            setDados();
-            try
+            if ( !clientesController.existeClienteNIFParaOutroCliente( txtNif.getText(), codigo, conexao.getConnection1() ) )
             {
-                clienteDao.edit( cliente );
-                limpar();
-                adicionar();
-                JOptionPane.showMessageDialog( null, "Dados alterados com sucesso!...", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
+                setDados();
+                try
+                {
+                    clienteDao.edit( cliente );
+                    limpar();
+                    adicionar();
+                    JOptionPane.showMessageDialog( null, "Dados alterados com sucesso!...", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
+                }
+                catch ( Exception e )
+                {
+                    JOptionPane.showMessageDialog( null, "Erro ao alteraer os dados", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+                }
+
             }
-            catch ( Exception e )
+            else
             {
-                JOptionPane.showMessageDialog( null, "Erro ao alteraer os dados", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+                JOptionPane.showMessageDialog( null, "Já existe um cliente com este NIF na base de dados", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
             }
 
         }
