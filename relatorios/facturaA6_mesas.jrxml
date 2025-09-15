@@ -2,9 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="factura" pageWidth="200" pageHeight="842" columnWidth="188" leftMargin="10" rightMargin="2" topMargin="2" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" isIgnorePagination="true" uuid="0de43986-9be5-410e-aaa3-7f1419d0abca">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.zoom" value="3.993000000000001"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="136"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -16,13 +16,13 @@
 	</style>
 	<style name="cliente_style_troco" mode="Transparent" forecolor="#000000">
 		<conditionalStyle>
-			<conditionExpression><![CDATA[$F{tb_venda_gorjeta} > 0d]]></conditionExpression>
+			<conditionExpression><![CDATA[$F{tb_venda_gorjeta}.doubleValue() > 0d]]></conditionExpression>
 			<style mode="Opaque" forecolor="#FFFFFF" backcolor="#FFFFFF"/>
 		</conditionalStyle>
 	</style>
 	<style name="cliente_style_gorjeta" mode="Transparent" forecolor="#000000">
 		<conditionalStyle>
-			<conditionExpression><![CDATA[$F{tb_venda_gorjeta} == 0d]]></conditionExpression>
+			<conditionExpression><![CDATA[$F{tb_venda_gorjeta}.doubleValue() == 0d]]></conditionExpression>
 			<style mode="Opaque" forecolor="#FFFFFF" backcolor="#FFFFFF"/>
 		</conditionalStyle>
 	</style>
@@ -109,7 +109,8 @@
      tb_item_venda.`fk_mesas` AS tb_item_venda_fk_mesas,
      tb_item_venda.`fk_lugares` AS tb_item_venda_fk_lugares,
      tb_mesas.`designacao` AS tb_mesas_designacao,
-     tb_venda.`gorjeta` AS tb_venda_gorjeta
+     tb_venda.`gorjeta` AS tb_venda_gorjeta,
+     tb_venda.`cont` AS tb_venda_cont
 FROM
      `tb_venda` tb_venda INNER JOIN `tb_cliente` tb_cliente ON tb_venda.`codigo_cliente` = tb_cliente.`codigo`
      INNER JOIN `tb_usuario` tb_usuario ON tb_venda.`codigo_usuario` = tb_usuario.`codigo`
@@ -125,7 +126,8 @@ FROM
      `tb_dados_instituicao` tb_dados_instituicao
 WHERE
      tb_venda.`codigo` = $P{CODIGO_VENDA}
-GROUP BY tb_item_venda.`fk_lugares`]]>
+GROUP BY
+     tb_item_venda.`fk_lugares`]]>
 	</queryString>
 	<field name="tb_cliente_nome" class="java.lang.String"/>
 	<field name="tb_produto_designacao" class="java.lang.String"/>
@@ -138,8 +140,8 @@ GROUP BY tb_item_venda.`fk_lugares`]]>
 	<field name="tb_dados_instituicao_enderecos" class="java.lang.String"/>
 	<field name="tb_dados_instituicao_email" class="java.lang.String"/>
 	<field name="tb_produto_preco_venda" class="java.lang.Double"/>
-	<field name="tb_venda_troco" class="java.lang.Double"/>
-	<field name="tb_venda_valor_entregue" class="java.lang.Double"/>
+	<field name="tb_venda_troco" class="java.math.BigDecimal"/>
+	<field name="tb_venda_valor_entregue" class="java.math.BigDecimal"/>
 	<field name="tb_venda_dataVenda" class="java.sql.Timestamp"/>
 	<field name="tb_dados_instituicao_nif" class="java.lang.String"/>
 	<field name="tb_armazem_codigo" class="java.lang.Long"/>
@@ -147,8 +149,8 @@ GROUP BY tb_item_venda.`fk_lugares`]]>
 	<field name="tb_venda_nome_cliente" class="java.lang.String"/>
 	<field name="tb_venda_hora" class="java.sql.Time"/>
 	<field name="tb_preco_preco_venda" class="java.math.BigDecimal"/>
-	<field name="tb_venda_desconto_total" class="java.lang.Double"/>
-	<field name="tb_venda_total_geral" class="java.lang.Double"/>
+	<field name="tb_venda_desconto_total" class="java.math.BigDecimal"/>
+	<field name="tb_venda_total_geral" class="java.math.BigDecimal"/>
 	<field name="tb_cliente_morada" class="java.lang.String"/>
 	<field name="tb_cliente_telefone" class="java.lang.String"/>
 	<field name="tb_cliente_nif" class="java.lang.String"/>
@@ -156,7 +158,7 @@ GROUP BY tb_item_venda.`fk_lugares`]]>
 	<field name="tb_venda_assinatura" class="java.lang.String"/>
 	<field name="tb_venda_obs" class="java.lang.String"/>
 	<field name="tb_venda_hash_cod" class="java.lang.String"/>
-	<field name="tb_venda_total_iva" class="java.lang.Double"/>
+	<field name="tb_venda_total_iva" class="java.math.BigDecimal"/>
 	<field name="tb_venda_performance" class="java.lang.String"/>
 	<field name="cambio_pk_cambio" class="java.lang.Integer"/>
 	<field name="cambio_valor" class="java.lang.Double"/>
@@ -178,10 +180,10 @@ GROUP BY tb_item_venda.`fk_lugares`]]>
 	<field name="documento_cod_ultimo_doc" class="java.lang.Integer"/>
 	<field name="documento_descricao_ultimo_doc" class="java.lang.String"/>
 	<field name="documento_ultima_data" class="java.sql.Timestamp"/>
-	<field name="tb_venda_desconto_comercial" class="java.lang.Double"/>
-	<field name="tb_venda_desconto_financeiro" class="java.lang.Double"/>
-	<field name="tb_venda_total_incidencia" class="java.lang.Double"/>
-	<field name="tb_venda_total_incidencia_isento" class="java.lang.Double"/>
+	<field name="tb_venda_desconto_comercial" class="java.math.BigDecimal"/>
+	<field name="tb_venda_desconto_financeiro" class="java.math.BigDecimal"/>
+	<field name="tb_venda_total_incidencia" class="java.math.BigDecimal"/>
+	<field name="tb_venda_total_incidencia_isento" class="java.math.BigDecimal"/>
 	<field name="tb_venda_nome_consumidor_final" class="java.lang.String"/>
 	<field name="tb_item_venda_quantidade" class="java.lang.Double"/>
 	<field name="tb_item_venda_valor_iva" class="java.lang.Double"/>
@@ -191,7 +193,8 @@ GROUP BY tb_item_venda.`fk_lugares`]]>
 	<field name="tb_item_venda_fk_mesas" class="java.lang.Long"/>
 	<field name="tb_item_venda_fk_lugares" class="java.lang.Long"/>
 	<field name="tb_mesas_designacao" class="java.lang.String"/>
-	<field name="tb_venda_gorjeta" class="java.lang.Double"/>
+	<field name="tb_venda_gorjeta" class="java.math.BigDecimal"/>
+	<field name="tb_venda_cont" class="java.lang.Integer"/>
 	<variable name="SOMA_2" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{tb_preco_preco_venda}.doubleValue()*$F{tb_item_venda_quantidade}]]></variableExpression>
 	</variable>
@@ -331,6 +334,24 @@ GROUP BY tb_item_venda.`fk_lugares`]]>
 	<columnFooter>
 		<band splitType="Stretch"/>
 	</columnFooter>
+	<lastPageFooter>
+		<band height="35">
+			<textField>
+				<reportElement uuid="54bc27bf-7fa9-4128-87c1-3654af47d451" key="element-96" x="0" y="0" width="188" height="35" forecolor="#000000"/>
+				<box>
+					<pen lineStyle="Dotted"/>
+					<topPen lineWidth="1.0" lineStyle="Dotted"/>
+					<leftPen lineWidth="1.0" lineStyle="Dotted"/>
+					<bottomPen lineWidth="1.0" lineStyle="Dotted"/>
+					<rightPen lineWidth="1.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+					<font fontName="Times New Roman" size="19" isBold="true" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_venda_cont}]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
 	<summary>
 		<band height="195">
 			<textField>

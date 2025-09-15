@@ -19,15 +19,12 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperPrintManager;
 import net.sf.jasperreports.view.JasperViewer;
-import static org.eclipse.persistence.config.ParameterDelimiterType.Hash;
 import util.BDConexao;
 import util.DVML.Abreviacao;
 import static util.DVML.CAMINHO_REPORT;
 import static util.DVML.VERSION_SOFTWARE;
 import static util.DVML.NAME_SOFTWARE;
 import util.JPAEntityMannagerFactoryUtil;
-import util.MetodosUtil;
-import util.email.EnvioEmailUtil;
 import static visao.NotaLevantamentoVisao.btnProcessar;
 
 /**
@@ -184,7 +181,7 @@ public class ListaVenda1
                     break;
                     case FR_A6_Com_Virgula:
                     {
-                        jasperViewer.setVisible( false );
+                        jasperViewer.setVisible( true );
                         //Imprime directamente
                         if ( !performance )
                         {
@@ -264,11 +261,11 @@ public class ListaVenda1
                     case FR_A6:
                     {
                         jasperViewer.setVisible( true );
-                        //Imprime directamente
-//                        if ( !performance )
-//                        {
-//                            JasperPrintManager.printReport( jasperPrint, false );
-//                        }
+                      // Imprime directamente
+                        if ( !performance )
+                        {
+                            JasperPrintManager.printReport( jasperPrint, false );
+                        }
                     }
                     break;
                     case FR_A6_O:

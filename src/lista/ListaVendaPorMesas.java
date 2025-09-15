@@ -122,7 +122,7 @@ public class ListaVendaPorMesas
     private void printReportToPrinter( String report, String impressora ) throws JRException
     {
         /*obtendo a conexão*/
-        Connection connection = ( Connection ) conexao.conectar();
+        Connection connection = (Connection) conexao.conectar();
         /*configurando os parametros para a submisão no ficheiro*/
         Map parameters = new HashMap();
 
@@ -196,7 +196,7 @@ public class ListaVendaPorMesas
     private void printReportToPrinterFILTRAR( String report, String impressora, HashMap parameters ) throws JRException
     {
         /*obtendo a conexão*/
-        Connection connection = ( Connection ) conexao.conectar();
+        Connection connection = (Connection) conexao.conectar();
         /*configurando os parametros para a submisão no ficheiro*/
 
 //        parameters.put ( "CODIGO_VENDA", this.codigo );
@@ -283,7 +283,7 @@ public class ListaVendaPorMesas
     public void mostrarVendaFiltrada()
     {
 
-        Connection connection = ( Connection ) conexao.conectar();
+        Connection connection = (Connection) conexao.conectar();
         HashMap hashMap = new HashMap();
 
         hashMap.put( "CODIGO_VENDA", this.codigo );
@@ -350,7 +350,7 @@ public class ListaVendaPorMesas
 
         System.err.println( "COD VENDA: " + this.codigo );
 
-        Connection connection = ( Connection ) conexao.conectar();
+        Connection connection = (Connection) conexao.conectar();
         HashMap hashMap = new HashMap();
 
         hashMap.put( "CODIGO_VENDA", this.codigo );
@@ -386,7 +386,7 @@ public class ListaVendaPorMesas
                     case FR_A6:
                     {
                         jasperViewer.setVisible( false );
-                        //Imprime directamente
+                       // Imprime directamente
                         if ( !performance )
                         {
                             JasperPrintManager.printReport( jasperPrint, false );
