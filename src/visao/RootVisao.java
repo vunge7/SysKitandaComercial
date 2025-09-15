@@ -260,6 +260,7 @@ public class RootVisao extends javax.swing.JFrame
         btConfiguracaoSistema = new javax.swing.JButton();
         btnGerarScriptActualizacao = new javax.swing.JButton();
         bt_desencriptar = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         jMenuItem6.setText("jMenuItem6");
 
@@ -428,6 +429,15 @@ public class RootVisao extends javax.swing.JFrame
             }
         });
 
+        jButton1.setText("BK");
+        jButton1.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout fundo_principalLayout = new javax.swing.GroupLayout(fundo_principal);
         fundo_principal.setLayout(fundo_principalLayout);
         fundo_principalLayout.setHorizontalGroup(
@@ -437,25 +447,28 @@ public class RootVisao extends javax.swing.JFrame
                 .addGroup(fundo_principalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 618, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(fundo_principalLayout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 710, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(fundo_principalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 710, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(fundo_principalLayout.createSequentialGroup()
+                                .addGap(8, 8, 8)
+                                .addComponent(btn_actualiza_hash, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnEsvaziaBD, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(19, 19, 19)
+                                .addComponent(jButton1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnGerarScriptActualizacao, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(bdBackupJButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(bt_desencriptar)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(fundo_principalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btn_abertura_dia_root, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
-                            .addComponent(btn_feicho_dia_root, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btConfiguracaoSistema, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(fundo_principalLayout.createSequentialGroup()
-                        .addGap(8, 8, 8)
-                        .addComponent(btn_actualiza_hash, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnEsvaziaBD, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(31, 31, 31)
-                        .addComponent(btnGerarScriptActualizacao, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(bdBackupJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(bt_desencriptar, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(fundo_principalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(fundo_principalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(btn_abertura_dia_root, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
+                                .addComponent(btn_feicho_dia_root, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btConfiguracaoSistema, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                 .addContainerGap(135, Short.MAX_VALUE))
         );
         fundo_principalLayout.setVerticalGroup(
@@ -485,7 +498,10 @@ public class RootVisao extends javax.swing.JFrame
                         .addGap(32, 32, 32)
                         .addGroup(fundo_principalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jButton4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 51, Short.MAX_VALUE)
-                            .addComponent(bt_desencriptar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(bt_desencriptar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fundo_principalLayout.createSequentialGroup()
+                        .addGap(31, 31, 31)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(232, 288, Short.MAX_VALUE))
         );
 
@@ -644,6 +660,11 @@ public class RootVisao extends javax.swing.JFrame
         backupService.restaurarBackup(); // aqui pedirá a senha
     }//GEN-LAST:event_bt_desencriptarActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
+    {//GEN-HEADEREND:event_jButton1ActionPerformed
+        new BackupRestoreJDBC().setVisible( true);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -771,6 +792,7 @@ public class RootVisao extends javax.swing.JFrame
     private javax.swing.JButton btn_actualiza_hash;
     public static javax.swing.JButton btn_feicho_dia_root;
     private javax.swing.JPanel fundo_principal;
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JMenu jMenu5;
@@ -895,6 +917,11 @@ public class RootVisao extends javax.swing.JFrame
     {
         btnEsvaziaBD.setVisible( ( DVML.ID_USUARIO_FORNECEDOR_SOFTWARE == idUser ) );
     }
+    
+    private void mostrarBotaoBACKUPr()
+    {
+        bdBackupJButton.setVisible( ( DVML.ID_USUARIO_FORNECEDOR_SOFTWARE == idUser ) );
+    }
 
     private void mostrarBotaoActualizaHash()
     {
@@ -911,6 +938,7 @@ public class RootVisao extends javax.swing.JFrame
             btn_actualiza_hash.setVisible( true );
             btnGerarScriptActualizacao.setVisible( true );
             bt_desencriptar.setVisible( true );
+     
         }
         else
         {

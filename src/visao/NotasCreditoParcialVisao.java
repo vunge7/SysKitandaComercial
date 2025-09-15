@@ -1433,7 +1433,8 @@ table.getModel().addTableModelListener(e -> {
 
                 try
                 {
-                    Integer last_nota = VendaDao.criarVendaComProceduAnulacao( nota_local, conexao );
+//                    Integer last_nota = VendaDao.criarVendaComProceduAnulacao( nota_local, conexao );
+                    Integer last_nota = VendaDao.criarVendaComProceduAnulacaoFinal(nota_local, conexao );
 
                     System.out.println( "STATUS:factura criada com sucesso." );
                     boolean documentosalvoComSucesso = salvarItemNotaAnulamento( last_nota, venda_ref );

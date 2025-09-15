@@ -35,6 +35,9 @@ import util.DVML;
 import util.FinanceUtils;
 import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
+import static util.MetodosUtil.normalizarCodigoBarra;
+import static util.MetodosUtil.normalizarCodigoManual;
+import static util.MetodosUtil.normalizarDesignacao;
 import static util.MetodosUtil.rodarComandoWindows;
 import util.NumeroDocument;
 import util.PictureChooser;
@@ -147,12 +150,12 @@ public class ProdutosPratosVisao extends javax.swing.JFrame
         this.conexao = conexao;
         jPanel_retencao.setVisible( true );
         ck_produto.setSelected( true );
-        
-        txtUnidadeCompra.setText( "1");
+
+        txtUnidadeCompra.setText( "1" );
 //        JTextField txtPrecoCompra = new JTextField();
-        txtPrecoCompra.setText("0,00");
-        txtPercentagemGanhoRetalho.setText( "0");
-        txtPrecoVendaRetalho.setText( "0");
+        txtPrecoCompra.setText( "0,00" );
+        txtPercentagemGanhoRetalho.setText( "0" );
+        txtPrecoVendaRetalho.setText( "0" );
 //        servico_produto();
         actualizarRetencaoForm();
         proximo_codigo( produtosController );
@@ -208,8 +211,6 @@ public class ProdutosPratosVisao extends javax.swing.JFrame
         activarCampoPreco();
 
     }
-
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -1338,7 +1339,7 @@ public class ProdutosPratosVisao extends javax.swing.JFrame
         }
         catch ( SQLException ex )
         {
-            Logger.getLogger(ProdutosPratosVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger( ProdutosPratosVisao.class.getName() ).log( Level.SEVERE, null, ex );
         }
 
 
@@ -1492,7 +1493,7 @@ public class ProdutosPratosVisao extends javax.swing.JFrame
 //        cmbFamilia.setSelectedIndex(1);
         rbJanelaServico.setSelected( false );
         procedimento_limpar1();
-        txtUnidadeCompra.setText( "1");
+        txtUnidadeCompra.setText( "1" );
         ver_retencao();
         actualizarRetencaoForm();
         servico_produto();
@@ -1709,19 +1710,19 @@ public class ProdutosPratosVisao extends javax.swing.JFrame
         }
         catch ( ClassNotFoundException ex )
         {
-            java.util.logging.Logger.getLogger(ProdutosPratosVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            java.util.logging.Logger.getLogger( ProdutosPratosVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
         catch ( InstantiationException ex )
         {
-            java.util.logging.Logger.getLogger(ProdutosPratosVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            java.util.logging.Logger.getLogger( ProdutosPratosVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
         catch ( IllegalAccessException ex )
         {
-            java.util.logging.Logger.getLogger(ProdutosPratosVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            java.util.logging.Logger.getLogger( ProdutosPratosVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
         catch ( javax.swing.UnsupportedLookAndFeelException ex )
         {
-            java.util.logging.Logger.getLogger(ProdutosPratosVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            java.util.logging.Logger.getLogger( ProdutosPratosVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
         //</editor-fold>
         //</editor-fold>
@@ -1789,7 +1790,7 @@ public class ProdutosPratosVisao extends javax.swing.JFrame
         //</editor-fold>
 
         /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable()
+        java.awt.EventQueue.invokeLater( new Runnable()
         {
             public void run()
             {
@@ -1808,7 +1809,7 @@ public class ProdutosPratosVisao extends javax.swing.JFrame
                 }
                 catch ( Exception ex )
                 {
-                    Logger.getLogger(ProdutosPratosVisao.class.getName() ).log( Level.SEVERE, null, ex );
+                    Logger.getLogger( ProdutosPratosVisao.class.getName() ).log( Level.SEVERE, null, ex );
                 }
             }
         } );
@@ -2163,18 +2164,22 @@ public class ProdutosPratosVisao extends javax.swing.JFrame
 
         boolean isStocavel = ck_produto.isSelected();
 
-        String designacao_produto = getDesignacaoText();
+        String designacao_produto = normalizarDesignacao( txtDesignacao.getText() );
         produto.setDesignacao( designacao_produto );
         produto.setPreco( new BigDecimal( MetodosUtil.convertToDouble( txtPrecoCompra.getText() ) ) );
         produto.setDataFabrico( isStocavel ? jcDataFabrico.getDate() : new Date() );
         produto.setDataExpiracao( isStocavel ? jcDataExpiracao.getDate() : new Date() );
-        produto.setCodBarra( isStocavel ? txtCodigoBarra.getText().trim() : "2147483647" );
+
+        String codBarra = normalizarCodigoBarra( txtCodigoBarra.getText() );
+        produto.setCodBarra( isStocavel ? codBarra : "2147483647" );
         produto.setStatus( "Activo" );
         produto.setDataEntrada( new Date() );
         produto.setStocavel( isStocavel ? "true" : "false" );
         produto.setPrecoVenda( MetodosUtil.convertToDouble( txtPrecoCompra.getText() ) );
         produto.setQuantidadeDesconto( 0 );
-        produto.setCodigoManual( isStocavel ? txtCodigoManual.getText() : "" );
+
+        String codigoManual = normalizarCodigoManual( txtCodigoManual.getText() );
+        produto.setCodigoManual( isStocavel ? codigoManual : "" );
         produto.setCodUnidade( new Unidade( getIdUnidade() ) );
         produto.setCodLocal( new TbLocal( getIdLocal() ) );
         produto.setCodFornecedores( new TbFornecedor( 1 ) );
@@ -2381,22 +2386,6 @@ public class ProdutosPratosVisao extends javax.swing.JFrame
 
                     }
 
-//                    if ( !retencaoAplicarJRadioButton.isSelected() && ck_servico.isSelected() )
-//                    if ( !retencaoAplicarJRadioButton.isSelected() )
-//                    {
-//                        ServicoRetencao produtoRetencao = new ServicoRetencao();
-//                        produtoRetencao.setFkProduto( new TbProduto( produto.getCodigo() ) );
-//                        produtoRetencao.setFkRetencao( new Retencao( 2 ) );
-//                        if ( !servicosRetencaoControllerLocal.salvar( produtoRetencao ) )
-//                        {
-//                            DocumentoDao.rollBackTransaction( conexaoTransaction );
-//                            conexaoTransaction.close();
-//                            JOptionPane.showMessageDialog( null, "Falha ao registrar o produto", "Falha", JOptionPane.WARNING_MESSAGE );
-//                            return;
-//                        }
-//
-//                    }
-//                    else 
                     //APLICAR RETENCAO
                     if ( retencaoAplicarJRadioButton.isSelected() )
                     {
@@ -2442,11 +2431,6 @@ public class ProdutosPratosVisao extends javax.swing.JFrame
                     }
                     detalhe_produto();
 
-//                        procedimento_limpar();
-//                        txtDesignacao.requestFocus();
-//                        txtCodigoBarra.setText( String.valueOf( produtosController.getLastProduto().getCodigo() + 1 ) );
-//
-//                    }
                 }
                 else
                 {
@@ -2795,7 +2779,7 @@ public class ProdutosPratosVisao extends javax.swing.JFrame
             txtCodigoManualProcura.setText( String.valueOf( produto_local.getCodigoManual() ) );
             jcDataExpiracao.setDate( produto_local.getDataExpiracao() );
             jcDataFabrico.setDate( produto_local.getDataFabrico() );
-            txtUnidadeCompra.setText( String.valueOf(produto_local.getUnidadeCompra() ));
+            txtUnidadeCompra.setText( String.valueOf( produto_local.getUnidadeCompra() ) );
 
             Integer pkProduto = produto_local.getCodigo();
             boolean temIva = produtosImpostoController.existeProdutoImposto( pkProduto );
@@ -2884,7 +2868,7 @@ public class ProdutosPratosVisao extends javax.swing.JFrame
 //        ck_produto.setSelected( true );
 
     }
-    
+
     private static void procedimento_limpar()
     {
         limpar_esquerdo();
@@ -2929,7 +2913,7 @@ public class ProdutosPratosVisao extends javax.swing.JFrame
         txtPrecoCompra.setText( "" );
 
     }
-    
+
     private static void limpar_1()
     {
 //        lbPhoto.setIcon( null );
@@ -3042,7 +3026,7 @@ public class ProdutosPratosVisao extends javax.swing.JFrame
         if ( ck_produto.isSelected() )
         {
             preco.setPercentagemGanho( new BigDecimal( MetodosUtil.convertToDouble( txtPercentagemGanhoRetalho.getText() ) ) );
-            
+
         }
         else
         {
@@ -3072,14 +3056,14 @@ public class ProdutosPratosVisao extends javax.swing.JFrame
         if ( designacao_produto.equals( "" ) )
         {
 
-            JOptionPane.showMessageDialog( null, "Caro usuário " + usuarioLocal.getNome() + " " + usuarioLocal.getSobreNome() + " por favor digite a designação do proato" );
-            txtPrecoCompra.requestFocus();
+            JOptionPane.showMessageDialog( null, "Caro usuário " + usuarioLocal.getNome() + " por favor digite a designação do produto" );
+            txtDesignacao.requestFocus();
             return false;
 
         }
         else if ( produtosController.exist_designacao_produto( getDesignacaoText() ) )
         {
-            JOptionPane.showMessageDialog( null, "Já existe um prato com esta designação!!!", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+            JOptionPane.showMessageDialog( null, "Já existe um produto com esta designação!!!", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
             txtDesignacao.requestFocus();
             return false;
         }
@@ -3088,6 +3072,13 @@ public class ProdutosPratosVisao extends javax.swing.JFrame
             JOptionPane.showMessageDialog( null, "Este codigo de barra já existe!!!", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
             txtCodigoBarra.requestFocus();
             txtCodigoBarra.setBackground( Color.YELLOW );
+            return false;
+        }
+        else if ( produtosController.existProdutoByCodigoManual( txtCodigoManual.getText() ) && isProduto )
+        {
+            JOptionPane.showMessageDialog( null, "Este codigo Manual já existe!!!", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+            txtCodigoManual.requestFocus();
+            txtCodigoManual.setBackground( Color.YELLOW );
             return false;
         }
 //        else if ( txtPrecoCompra.getText().equals( "" ) )
@@ -3305,14 +3296,7 @@ public class ProdutosPratosVisao extends javax.swing.JFrame
 
     private String getDesignacaoText()
     {
-
-        String designacao_produto = txtDesignacao.getText();
-
-        if ( designacao_produto.contains( "-" ) )
-        {
-            return designacao_produto.replaceAll( "-", " " );
-        }
-        return designacao_produto;
+        return normalizarDesignacao( txtDesignacao.getText() );
     }
 
     private void proximo_codigo( ProdutosController produtosControllerLocal )

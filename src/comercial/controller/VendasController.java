@@ -1743,8 +1743,8 @@ public class VendasController implements EntidadeFactory
 //    return vendas;
 //}
 
-public List<TbVenda> getAllFRVendaByBetweenDataAndArmazemAndDocumento(
-        Date data_inicio, Date data_fim, int codigo_usuario) {
+public List<TbVenda> getAllFRVendaByBetweenDataAndArmazemAndDocumentos(
+        Date data_inicio, Date data_fim, int codigo_usuario ) {
 
     List<TbVenda> vendas = new ArrayList<>();
 
@@ -1752,8 +1752,9 @@ public List<TbVenda> getAllFRVendaByBetweenDataAndArmazemAndDocumento(
                + "FROM tb_venda v "
                + "JOIN tb_cliente c ON v.codigo_cliente = c.codigo "
                + "WHERE DATE(v.dataVenda) BETWEEN ? AND ? "
-               + "AND v.status_eliminado = false "
+               + "AND v.status_eliminado = 'false' "
                + "AND v.credito = false "
+               + "AND v.fk_documento = 1 "
                + "AND v.codigo_usuario = ?";
 
     BDConexao bd = new BDConexao();
@@ -1765,6 +1766,7 @@ public List<TbVenda> getAllFRVendaByBetweenDataAndArmazemAndDocumento(
         ps.setDate(1, new java.sql.Date(data_inicio.getTime()));
         ps.setDate(2, new java.sql.Date(data_fim.getTime()));
         ps.setInt(3, codigo_usuario);
+//        ps.setInt(4, pk_documento);
 
         try (ResultSet result = ps.executeQuery()) {
             while (result.next()) {
