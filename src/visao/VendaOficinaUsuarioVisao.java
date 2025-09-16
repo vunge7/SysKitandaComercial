@@ -3163,7 +3163,7 @@ public class VendaOficinaUsuarioVisao extends javax.swing.JFrame
         if ( documentoIsFA || documentoIsPP || documentoIsGT )
         {
             //EXCLUIR CONSUMIDOR FINAL
-            cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVectorExecptoConsumidorFinal() ) );
+            cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVectorExcetoConsumidorFinal() ) );
         }
         else
         {

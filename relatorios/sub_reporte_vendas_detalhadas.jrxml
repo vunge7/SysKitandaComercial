@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report8" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="2" bottomMargin="2" uuid="14a5c603-3910-4354-a13b-9ffd737cdff8">
 	<property name="ireport.zoom" value="4.0"/>
-	<property name="ireport.x" value="1375"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="PARM_COD_VENDA" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -82,16 +82,16 @@ WHERE
 	<pageHeader>
 		<band height="11">
 			<textField>
-				<reportElement uuid="48fd5603-0067-4d14-b9c4-042042ff2bd9" x="8" y="0" width="93" height="11"/>
+				<reportElement uuid="48fd5603-0067-4d14-b9c4-042042ff2bd9" x="9" y="0" width="93" height="11"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="9" isBold="true" isItalic="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_venda_cod_fact}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="8448c854-f856-46bb-8c6a-6ee6f1dab93c" x="208" y="0" width="283" height="11"/>
+				<reportElement uuid="8448c854-f856-46bb-8c6a-6ee6f1dab93c" x="233" y="0" width="258" height="11"/>
 				<textElement>
-					<font fontName="Times New Roman" size="9"/>
+					<font fontName="Times New Roman" size="8" isBold="true" isItalic="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_cliente_nome}]]></textFieldExpression>
 			</textField>
@@ -110,12 +110,12 @@ WHERE
 				<textFieldExpression><![CDATA[$F{tb_produto_designacao}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="96d6a283-2508-464b-a9bd-6aaf779408f5" x="75" y="0" width="26" height="9"/>
+				<reportElement uuid="96d6a283-2508-464b-a9bd-6aaf779408f5" x="82" y="0" width="19" height="9"/>
 				<box>
 					<bottomPen lineWidth="0.0"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="7" isBold="false"/>
+					<font fontName="Arial" size="7" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_item_venda_quantidade}]]></textFieldExpression>
 			</textField>

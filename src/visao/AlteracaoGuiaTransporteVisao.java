@@ -2830,7 +2830,7 @@ public class AlteracaoGuiaTransporteVisao extends javax.swing.JFrame implements 
         if ( documentoIsFA || documentoIsPP )
         {
             //EXCLUIR CONSUMIDOR FINAL
-            cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVectorExecptoConsumidorFinal() ) );
+            cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVectorExcetoConsumidorFinal() ) );
         }
         else
         {

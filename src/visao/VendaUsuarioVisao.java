@@ -52,6 +52,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -3114,6 +3115,74 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         }
     }
 
+//private void atualizarCliente2()
+//{
+//    boolean documentoIsFA = DVML.DOC_FACTURA_FT == getIdDocumento();
+//    boolean documentoIsPP = DVML.DOC_FACTURA_PROFORMA_PP == getIdDocumento();
+//    boolean documentoIsGT = DVML.DOC_GUIA_TRANSPORTE_GT == getIdDocumento();
+//
+//    // Carrega todos os clientes como objetos TbCliente
+//    Vector<TbCliente> clientes = clientesController.getVectorClientes();
+//
+//    if (documentoIsFA || documentoIsPP || documentoIsGT)
+//    {
+//        // Remove o cliente com ID=1 (Consumidor Final)
+//        Vector<TbCliente> clientesFiltrados = new Vector<>();
+//        for (TbCliente c : clientes) {
+//            if (c.getCodigo() != 1) { // excluir o "Consumidor Final"
+//                clientesFiltrados.add(c);
+//            }
+//        }
+//
+//        cmbCliente.setModel(new DefaultComboBoxModel<>(clientesFiltrados));
+//        cmbCliente.setSelectedIndex(-1); // nenhum selecionado por padrão
+//    }
+//    else
+//    {
+//        cmbCliente.setModel(new DefaultComboBoxModel<>(clientes));
+//
+//        // Seleciona o consumidor final (ID=1) como padrão
+//        for (TbCliente c : clientes) {
+//            if (c.getCodigo() == 1) {
+//                cmbCliente.setSelectedItem(c);
+//                break;
+//            }
+//        }
+//    }
+//}
+//   private void atualizarCliente1()
+//{
+//    boolean documentoIsFA = DVML.DOC_FACTURA_FT == getIdDocumento();
+//    boolean documentoIsPP = DVML.DOC_FACTURA_PROFORMA_PP == getIdDocumento();
+//    boolean documentoIsGT = DVML.DOC_GUIA_TRANSPORTE_GT == getIdDocumento();
+//
+//    // Carrega todos os clientes
+//    Vector<TbCliente> clientes = clientesController.getVector();
+//
+//    if (documentoIsFA || documentoIsPP || documentoIsGT)
+//    {
+//        // Remove o cliente com ID=1 (Consumidor Final)
+//        Vector<TbCliente> clientesFiltrados = new Vector<>();
+//        for (TbCliente c : clientes) {
+//            if (c.getCodigo() != 1) {   // aqui sim usamos getId() no objeto Cliente
+//                clientesFiltrados.add(c);
+//            }
+//        }
+//
+//        cmbCliente.setModel(new DefaultComboBoxModel<>(clientesFiltrados));
+//
+//        // Nenhum selecionado por padrão
+//        cmbCliente.setSelectedIndex(-1);
+//    }
+//    else
+//    {
+//        // Pode incluir todos os clientes
+//        cmbCliente.setModel(new DefaultComboBoxModel<>(clientes));
+//
+//        // Seleciona consumidor final como padrão
+//        cmbCliente.setSelectedItem(DVML._CLIENTE_CONSUMIDOR_FINAL);
+//    }
+//}
     private void atualizarDataVencimentoFA()
     {
         boolean documentoIsFA = DVML.DOC_FACTURA_FT == getIdDocumento();
@@ -4377,8 +4446,24 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         venda.setTotalPorExtenso( iniciais_extenso() + lbValorPorExtenco.getText() );
 
         // Strings
-        venda.setNomeCliente( txtNomeConsumidorFinal.getText().trim() );
-        venda.setClienteNif( txtNifClientePesquisa.getText().trim() );
+        if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR && getIdCliente() == 1 )
+        {
+
+            venda.setNomeCliente( txtNomeConsumidorFinal.getText().trim() );
+            venda.setClienteNif( txtNifClientePesquisa.getText().trim() );
+        }
+        else if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR && getIdCliente() > 1 )
+        {
+
+            venda.setNomeCliente( getNomeCliente() );
+            venda.setClienteNif( getClienteNif() );
+        }
+        else if ( getIdDocumento() != DOC_FACTURA_RECIBO_FR && getIdCliente() > 1 )
+        {
+            venda.setNomeCliente( getNomeCliente() );
+            venda.setClienteNif( getClienteNif() );
+        }
+
         venda.setCodFact( prox_doc );
 //    venda.setRefCodFact(txtRefCodFact.getText());
         venda.setPerformance( "false" ); // ou pegar de um campo
@@ -4628,7 +4713,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         for ( int i = 1; i <= numeroVias; i++ )
         {
             String via;
-            switch ( i )
+            switch (i)
             {
                 case 1:
                     via = "Original";
@@ -5120,8 +5205,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getValorComImposto( double qtd, double taxa, double preco_venda, double desconto )
     {
-        double subtotal_linha = ( preco_venda * qtd );
-        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
+        double subtotal_linha = (preco_venda * qtd);
+        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
         double valor_iva = 1 + ( taxa / 100 );//
         return ( ( subtotal_linha - desconto_valor ) * valor_iva );
 
@@ -5135,9 +5220,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getValorComRetencao( double qtd, double ret, double preco_venda, double desconto )
     {
-        double subtotal_linha = ( preco_venda * qtd );
-        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
-        double valor_ret = ( ( ( subtotal_linha - desconto_valor ) * ret ) / 100 );//
+        double subtotal_linha = (preco_venda * qtd);
+        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
+        double valor_ret = (( ( subtotal_linha - desconto_valor ) * ret ) / 100);//
         return ( valor_ret );
     }
 
@@ -5160,8 +5245,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getRET( double qtd, double taxa_r, double preco_venda, double desconto )
     {
-        double subtotal_linha = ( preco_venda * qtd );
-        double valor_ret = ( taxa_r / 100 );//
+        double subtotal_linha = (preco_venda * qtd);
+        double valor_ret = (taxa_r / 100);//
         return ( ( subtotal_linha - desconto ) * valor_ret );
 
     }
@@ -5191,7 +5276,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private void actualizar_abreviacao()
     {
 
-        switch ( getIdDocumento() )
+        switch (getIdDocumento())
         {
             case DVML.DOC_FACTURA_RECIBO_FR:
                 if ( ck_A4.isSelected() )
@@ -5668,7 +5753,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             // a incidência só é aplicável ao produtos sujeitos a iva 
             if ( taxa != 0 )
             {
-                double valor_unitario = ( preco_unitario * qtd );
+                double valor_unitario = (preco_unitario * qtd);
 
                 desconto_valor_linha = valor_unitario * ( ( valor_percentagem ) / 100 );
                 valor_taxa = ( valor_unitario - desconto_valor_linha ) / taxa;
@@ -5734,7 +5819,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getTotalAOARetencoes()
     {
-        double valores = ( getTotalRetencao1() );
+        double valores = (getTotalRetencao1());
         return ( valores );
     }
 
@@ -5784,7 +5869,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         Documento documento_local = (Documento) documentosController.findById( getIdDocumento() );
         String abreviacao_local = documento_local.getAbreviacao();
 
-        switch ( abreviacao_local )
+        switch (abreviacao_local)
         {
             case "FT":
                 return "Facturamos o valor de: ";
@@ -6564,4 +6649,15 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     }
 
+//    public class TbCliente {
+//    private int codigo;
+//    private String nome;
+//
+//    // getters / setters
+//
+//    @Override
+//    public String toString() {
+//        return nome == null ? "" : nome;
+//    }
+//}
 }

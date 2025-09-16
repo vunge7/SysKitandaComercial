@@ -1755,7 +1755,7 @@ public List<TbVenda> getAllFRVendaByBetweenDataAndArmazemAndDocumentos(
                + "AND v.status_eliminado = 'false' "
                + "AND v.credito = false "
                + "AND v.fk_documento = 1 "
-               + "AND v.codigo_usuario = ?";
+               + "AND v.codigo_usuario = ? ORDER BY codigo ASC";
 
     BDConexao bd = new BDConexao();
 

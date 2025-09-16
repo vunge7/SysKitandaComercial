@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 import util.BDConexao;
+import util.DVML;
 import util.MetodosUtil;
 
 /**
@@ -207,9 +208,29 @@ public class ClientesController implements EntidadeFactory
         return vector;
     }
 
-    public Vector<String> getVectorExecptoConsumidorFinal()
+//    public Vector<String> getVectorExcetoConsumidorFinal()
+//    {
+//        String FIND_ALL = "SELECT nome FROM tb_cliente  WHERE codigo <> 1 ORDER BY nome ASC";
+//        ResultSet result = conexao.executeQuery( FIND_ALL );
+//        Vector<String> vector = new Vector();
+//        try
+//        {
+//            while ( result.next() )
+//            {
+//                vector.add( result.getString( "nome" ) );
+//            }
+//        }
+//        catch ( SQLException e )
+//        {
+//            e.printStackTrace();
+//        }
+//        vector.add( 0, "--Seleccione o Cliente--" );
+//
+//        return vector;
+//    }
+    public Vector<String> getVectorExcetoConsumidorFinal()
     {
-        String FIND_ALL = "SELECT nome FROM tb_cliente  WHERE codigo <> 1 ORDER BY nome ASC";
+        String FIND_ALL = "SELECT nome FROM tb_cliente  WHERE codigo <> 1 ORDER BY codigo ASC";
         ResultSet result = conexao.executeQuery( FIND_ALL );
         Vector<String> vector = new Vector();
         try
@@ -228,6 +249,58 @@ public class ClientesController implements EntidadeFactory
         return vector;
     }
 
+//    public Vector<TbCliente> getVectorClientes() {
+//    List<TbCliente> lista = listarTodos(); // método que busca todos os clientes do banco
+//    return new Vector<>(lista);
+//}
+//    public Vector<TbCliente> getVectorExcetoConsumidorFinal() {
+//    Vector<TbCliente> clientes = new Vector<>();
+//    String sql = "SELECT codigo, nome FROM tb_cliente WHERE codigo <> ? ORDER BY nome ASC";
+//
+//    try (PreparedStatement stmt = conexao.getConnection().prepareStatement(sql)) {
+//        stmt.setInt(1, DVML.ID_CONSUMIDOR_FINAL); // usa a constante correta
+//        try (ResultSet rs = stmt.executeQuery()) {
+//            while (rs.next()) {
+//                TbCliente c = new TbCliente();
+//                c.setCodigo(rs.getInt("codigo"));
+//                c.setNome(rs.getString("nome"));
+//                clientes.add(c);
+//            }
+//        }
+//    } catch (SQLException e) {
+//        System.err.println("Erro ao carregar clientes (exceto CF): " + e.getMessage());
+//        e.printStackTrace();
+//    }
+//
+//    // placeholder que obriga a selecção (codigo = 0)
+//    TbCliente placeholder = new TbCliente();
+//    placeholder.setCodigo(0);
+//    placeholder.setNome("--Seleccione o Cliente--");
+//    clientes.add(0, placeholder);
+//
+//    return clientes;
+//}
+//    public Vector<String> getVectorExcetoConsumidorFinal() {
+//    Vector<String> clientes = new Vector<>();
+//    String sql = "SELECT nome FROM tb_cliente WHERE codigo <> ? ORDER BY nome ASC";
+//
+//    try (PreparedStatement stmt = conexao.getConnection().prepareStatement(sql)) {
+//        stmt.setInt(1, DVML.ID_CONSUMIDOR_FINAL); // evita código fixo (1)
+//        try (ResultSet rs = stmt.executeQuery()) {
+//            while (rs.next()) {
+//                clientes.add(rs.getString("nome"));
+//            }
+//        }
+//    } catch (SQLException e) {
+//        // Melhor log em vez de e.printStackTrace()
+//        System.err.println("Erro ao carregar clientes: " + e.getMessage());
+//    }
+//
+//    // Adiciona a opção padrão no topo
+//    clientes.add(0, "--Seleccione o Cliente--");
+//
+//    return clientes;
+//}
     public Vector<String> getVectorByIinciais( String prefixo )
     {
         String FIND_ALL = "SELECT nome FROM tb_cliente  WHERE  nome LIKE '%" + prefixo + "%'  ORDER BY codigo ASC";
@@ -368,6 +441,32 @@ public class ClientesController implements EntidadeFactory
 
     }
 
+    public TbCliente getClienteByNome1( String nome )
+    {
+
+        String FIND__BY_CODIGO = "SELECT *  FROM tb_cliente a WHERE nome = '" + nome + "'";
+        ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
+        TbCliente armazem = null;
+        try
+        {
+
+            if ( result.next() )
+            {
+                armazem = new TbCliente();
+                armazem.setCodigo( result.getInt( "codigo" ) );
+                armazem.setNome( result.getString( "nome" ) );
+
+            }
+
+        }
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
+        }
+        return armazem;
+
+    }
+
     public TbCliente getClienteByNome( String nome )
     {
 
@@ -463,6 +562,27 @@ public class ClientesController implements EntidadeFactory
             e.printStackTrace();
         }
         return false;
+    }
+
+    public Vector<String> getVectorExecptoConsumidorFinal()
+    {
+        String FIND_ALL = "SELECT nome FROM tb_cliente  WHERE codigo <> 1 ORDER BY nome ASC";
+        ResultSet result = conexao.executeQuery( FIND_ALL );
+        Vector<String> vector = new Vector();
+        try
+        {
+            while ( result.next() )
+            {
+                vector.add( result.getString( "nome" ) );
+            }
+        }
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
+        }
+        vector.add( 0, "--Seleccione o Cliente--" );
+
+        return vector;
     }
 
 }

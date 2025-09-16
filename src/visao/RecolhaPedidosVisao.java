@@ -252,7 +252,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
 
         cmbAnoEconomico.setModel( new DefaultComboBoxModel( anoEconomicoController.getVector() ) );
         cmbMoeda.setModel( new DefaultComboBoxModel( moedasController.getVector() ) );
-        cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVectorExecptoConsumidorFinal() ) );
+        cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVectorExcetoConsumidorFinal() ) );
 //        cmbCliente.setSelectedItem( DVML._CLIENTE_CONSUMIDOR_FINAL );
 
         try
@@ -3718,7 +3718,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
 
         if ( efectuada )
         {
-            cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVectorExecptoConsumidorFinal() ) );
+            cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVectorExcetoConsumidorFinal() ) );
 //            cmbCliente.setSelectedIndex( 0 );
 
             registrar_forma_pagamento( venda.getCodigo() );
