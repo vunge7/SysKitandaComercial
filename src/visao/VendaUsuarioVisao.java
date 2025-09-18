@@ -4577,66 +4577,6 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         }
     }
 
-//    public static void registrar_forma_pagamento( int id_venda ) throws Exception
-//    {
-//        DefaultTableModel modelo = (DefaultTableModel) FormaPagamentoVisao.tabela_forma_pagamento.getModel();
-//
-//        double troco = CfMethods.parseMoedaFormatada( FormaPagamentoVisao.lb_troco.getText() );
-//
-//        for ( int i = 0; i < modelo.getRowCount(); i++ )
-//        {
-//            FormaPagamentoItem formaPagamentoItem = new FormaPagamentoItem();
-//
-//            Integer id_forma_pagamento = Integer.parseInt( modelo.getValueAt( i, 0 ).toString() );
-//            String descricaoForma = modelo.getValueAt( i, 1 ).toString();
-//
-//            FormaPagamento formaPagamento = formaPagamentoController.findByDescrisao( descricaoForma );
-//            Contas contas = (Contas) contaController.findById( formaPagamento.getFkContaAssociada() );
-//
-//            String referencia = ( modelo.getValueAt( i, 2 ) != null ) ? modelo.getValueAt( i, 2 ).toString() : "n/a";
-//            String valorStr = modelo.getValueAt( i, 3 ).toString().trim();
-//            if ( valorStr.isEmpty() )
-//            {
-//                valorStr = "0";
-//            }
-//
-//            BigDecimal valor = new BigDecimal( valorStr );
-//
-//            if ( valor.compareTo( BigDecimal.ZERO ) > 0 )
-//            {
-//                formaPagamentoItem.setValor( valor );
-//                formaPagamentoItem.setReferencia( referencia );
-//                formaPagamentoItem.setTroco( new BigDecimal( troco ) );
-//                formaPagamentoItem.setValor_real( valor.subtract( formaPagamentoItem.getTroco() ) );
-//                formaPagamentoItem.setFkVenda( new TbVenda( id_venda ) );
-//                formaPagamentoItem.setFkFormaPagamento( new FormaPagamento( id_forma_pagamento ) );
-//
-//                // Tenta salvar
-//                if ( !formaPagamentoItemController.salvar( formaPagamentoItem ) )
-//                {
-//                    throw new Exception( "Erro ao salvar forma de pagamento: " + descricaoForma );
-//                }
-//
-//                // Registra entrada na tesouraria
-//                if ( contas != null )
-//                {
-//                    MetodosUtilTS.entradaTesouraria(
-//                            contas,
-//                            lb_proximo_documento.getText(),
-//                            formaPagamento,
-//                            referencia,
-//                            valor,
-//                            cod_usuario,
-//                            usuariosController,
-//                            cmc,
-//                            conexao
-//                    );
-//                }
-//
-//                troco = 0; // Troco só desconta na primeira forma
-//            }
-//        }
-//    }
     public static void registrar_forma_pagamento( int id_venda ) throws Exception
     {
         DefaultTableModel modelo = (DefaultTableModel) FormaPagamentoVisao.tabela_forma_pagamento.getModel();

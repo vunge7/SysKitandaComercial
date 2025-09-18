@@ -198,7 +198,7 @@ WHERE
 				<text><![CDATA[N.º]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="d457d5b0-d027-4536-b71b-01802ca4089d" key="element-94" x="112" y="3" width="336" height="16" forecolor="#FFFFFF"/>
+				<reportElement uuid="d457d5b0-d027-4536-b71b-01802ca4089d" key="element-94" x="152" y="3" width="296" height="16" forecolor="#FFFFFF"/>
 				<box leftPadding="10" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -224,7 +224,20 @@ WHERE
 				<text><![CDATA[    Qtd Entrada]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="d26ff60c-b9a1-4252-b1d6-6d5b803e645b" key="element-93" x="39" y="3" width="73" height="16" forecolor="#FFFFFF"/>
+				<reportElement uuid="d26ff60c-b9a1-4252-b1d6-6d5b803e645b" key="element-93" x="67" y="3" width="85" height="16" forecolor="#FFFFFF"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cod.Manual]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f489772d-3b33-4134-ad78-0dffe53b0320" key="element-93" x="39" y="4" width="28" height="16" forecolor="#FFFFFF"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -254,7 +267,7 @@ WHERE
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00" isBlankWhenNull="false">
-				<reportElement uuid="a7e6e017-161e-418d-ad6b-cdf7ec462365" key="textField-16" x="112" y="1" width="336" height="15"/>
+				<reportElement uuid="a7e6e017-161e-418d-ad6b-cdf7ec462365" key="textField-16" x="152" y="1" width="296" height="15"/>
 				<box leftPadding="10"/>
 				<textElement textAlignment="Left">
 					<font fontName="Times New Roman"/>
@@ -269,9 +282,17 @@ WHERE
 				<textFieldExpression><![CDATA[$F{tb_item_entradas_quantidade}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="63a6ca01-2734-4f3d-81c6-a213a9b4ee8b" key="textField-15" x="39" y="1" width="73" height="15"/>
+				<reportElement uuid="63a6ca01-2734-4f3d-81c6-a213a9b4ee8b" key="textField-15" x="67" y="1" width="85" height="15"/>
 				<box leftPadding="15"/>
 				<textElement textAlignment="Justified">
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_produto_codigo_manual}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="e02ce57e-74d7-4d2e-857c-44cc9dc2e780" key="textField-15" x="39" y="1" width="28" height="15"/>
+				<box leftPadding="15"/>
+				<textElement textAlignment="Center">
 					<font fontName="Times New Roman"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_produto_codigo}]]></textFieldExpression>

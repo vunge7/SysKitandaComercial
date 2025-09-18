@@ -15,7 +15,6 @@ import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.swing.JOptionPane;
-
 /**
  *
  * @author Domingos Dala Vunge & Martinho Canhongo Luis
