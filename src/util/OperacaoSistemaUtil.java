@@ -77,13 +77,13 @@ public class OperacaoSistemaUtil implements Runnable
         try
         {
             /*ENTRADA DE PRODUTOS*/
-            EntradaVisao.txtCodigoProduto.setEnabled ( status );
-            EntradaVisao.txtCodigoManual.setEnabled ( status );
-            EntradaVisao.txtCodigoBarra.setEnabled ( status );
-            EntradaVisao.txtQuatindade.setEnabled ( status );
-            EntradaVisao.btn_adicionar.setEnabled ( status );
-            EntradaVisao.btn_remover.setEnabled ( status );
-            EntradaVisao.btn_salvar.setEnabled ( status );
+            EntradaProdutoVisao.txtCodigoProduto.setEnabled ( status );
+            EntradaProdutoVisao.txtCodigoManual.setEnabled ( status );
+            EntradaProdutoVisao.txtCodigoBarra.setEnabled ( status );
+            EntradaProdutoVisao.txtQuatindade.setEnabled ( status );
+            EntradaProdutoVisao.btn_adicionar.setEnabled ( status );
+            EntradaProdutoVisao.btn_remover.setEnabled ( status );
+            EntradaProdutoVisao.btn_salvar.setEnabled ( status );
 
         }
         catch ( Exception e )
@@ -93,12 +93,12 @@ public class OperacaoSistemaUtil implements Runnable
         try
         {
             /*SAIDA DE PRODUTOS*/
-            SaidaUsuarioVisao.txtCodigoProduto.setEnabled ( status );
-            SaidaUsuarioVisao.txtCodigoBarra.setEnabled ( status );
-            SaidaUsuarioVisao.txtQuatindade.setEnabled ( status );
-            SaidaUsuarioVisao.btn_adicionar.setEnabled ( status );
-            SaidaUsuarioVisao.btn_remover.setEnabled ( status );
-            SaidaUsuarioVisao.btnFinalizar.setEnabled ( status );
+            SaidaProdutoVisao.txtCodigoProduto.setEnabled ( status );
+            SaidaProdutoVisao.txtCodigoBarra.setEnabled ( status );
+            SaidaProdutoVisao.txtQuatindade.setEnabled ( status );
+            SaidaProdutoVisao.btn_adicionar.setEnabled ( status );
+            SaidaProdutoVisao.btn_remover.setEnabled ( status );
+            SaidaProdutoVisao.btnFinalizar.setEnabled ( status );
 
         }
         catch ( Exception e )

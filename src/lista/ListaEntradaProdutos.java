@@ -34,77 +34,74 @@ import util.BDConexao;
  *
  * @author Martinho Luis
  */
-public class ListaEntradaProdutos {
-    
-    
-    
-     private BDConexao conexao  = new BDConexao();
-     private int codigo;
- 
-    public ListaEntradaProdutos(int codigo)
+public class ListaEntradaProdutos
+{
+
+    private BDConexao conexao;
+    private int codigo;
+
+    public ListaEntradaProdutos( int codigo, BDConexao conexao )
     {
-  
+
         this.codigo = codigo;
-       
+        this.conexao = conexao;
         mostrarEntrada();
-    
+
     }
 
-    
-    
-    public void mostrarEntrada(){
-        
+    public void mostrarEntrada()
+    {
+
         Connection connection = (Connection) conexao.conectar();
         HashMap hashMap = new HashMap();
-        
-        
-        hashMap.put("COD_ENTRADA", this.codigo);
-       
-     
-        
+
+        hashMap.put( "COD_ENTRADA", this.codigo );
+
         String relatorio = getCaminho();
-       
-        File file = new File(relatorio).getAbsoluteFile();
+
+        File file = new File( relatorio ).getAbsoluteFile();
         String obterCaminho = file.getAbsolutePath();
 
-        try {
-            
-            //JasperFillManager.fillReport(obterCaminho, hashMap, connection);
-            JasperFillManager.fillReport(obterCaminho, hashMap, connection);
-            JasperPrint jasperPrint = JasperFillManager.fillReport(obterCaminho, hashMap, connection);
+        try
+        {
 
-            if (jasperPrint.getPages().size() >= 1) {
-                JasperViewer jasperViewer = new JasperViewer(jasperPrint, false);
-                jasperViewer.setVisible(true);
-            } else {
-                JOptionPane.showMessageDialog(null, "ERRO AO TENTAR MOSTRAR O COMPROVATIVO!...", "ERROR", JOptionPane.ERROR_MESSAGE);
+            //JasperFillManager.fillReport(obterCaminho, hashMap, connection);
+            JasperFillManager.fillReport( obterCaminho, hashMap, connection );
+            JasperPrint jasperPrint = JasperFillManager.fillReport( obterCaminho, hashMap, connection );
+
+            if ( jasperPrint.getPages().size() >= 1 )
+            {
+                JasperViewer jasperViewer = new JasperViewer( jasperPrint, false );
+                jasperViewer.setVisible( true );
             }
-            
-        } catch (JRException jex) {
+            else
+            {
+                JOptionPane.showMessageDialog( null, "ERRO AO TENTAR MOSTRAR O COMPROVATIVO!...", "ERROR", JOptionPane.ERROR_MESSAGE );
+            }
+
+        }
+        catch ( JRException jex )
+        {
             jex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "FALHA AO TENTAR MOSTRAR O COMPROVATIVO");
-        } catch (Exception ex) {
+            JOptionPane.showMessageDialog( null, "FALHA AO TENTAR MOSTRAR O COMPROVATIVO" );
+        }
+        catch ( Exception ex )
+        {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "ERRO AO TENTAR MOSTRAR O COMPROVATIVO");
+            JOptionPane.showMessageDialog( null, "ERRO AO TENTAR MOSTRAR O COMPROVATIVO" );
         }
     }
 
     public String getCaminho()
     {
 
-            return "relatorios/factura_entrada_prod_A4.jasper";
+        return "relatorios/factura_entrada_prod_A4.jasper";
 
     }
 
-    public static void main(String[] args) throws JRException, SQLException {
-          new ListaEntradaProdutos(2);
+    public static void main( String[] args ) throws JRException, SQLException
+    {
+        new ListaEntradaProdutos( 2, new BDConexao() );
     }
-      
+
 }
-    
-    
-    
-    
-    
-   
-

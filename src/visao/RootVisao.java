@@ -22,8 +22,6 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.persistence.EntityManagerFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -36,10 +34,7 @@ import rh.visao.MenuPrincipalRHNovoVisao;
 import tesouraria.novo.visao.NovoMenuPrincipalTesourariaVisao;
 //import rh.visao.MenuPrincipalRHVisao;
 import util.BDConexao;
-import util.BackupCryptoUtil;
-import util.BackupPaths;
 import util.BackupService;
-import util.BackupUsb;
 import util.DVML;
 import static util.DVML.CAMINHO_BK;
 import util.GerarScriptUpdateVisao;
@@ -47,7 +42,6 @@ import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
 import static util.MetodosUtil.rodarComandoWindows;
 import util.OperacaoSistemaUtil;
-import util.RestaurarBackupBotao;
 
 /**
  * @author Domingos Dala Vunge

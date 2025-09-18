@@ -2221,7 +2221,7 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
         try
         {
 
-            new SaidaUsuarioVisao( cod_utilizador, conexao ).show();
+            new SaidaProdutoVisao( cod_utilizador, conexao ).show();
 
         }
         catch ( Exception ex )

@@ -2149,7 +2149,7 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame
         try
         {
 
-            new SaidaUsuarioVisao( cod_utilizador, conexao ).show();
+            new SaidaProdutoVisao( cod_utilizador, conexao ).show();
 
         }
         catch ( Exception ex )

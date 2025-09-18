@@ -657,7 +657,7 @@ public class ProdutosController implements EntidadeFactory
         return produto;
 
     }
-    
+
     public TbProduto findByCodInterno( int codigo )
     {
 
@@ -724,25 +724,29 @@ public class ProdutosController implements EntidadeFactory
 
     }
 
-   public TbProduto findByDesignacao(String designacao) {
-    String sql = "SELECT * FROM tb_produto WHERE designacao = ?";
-    TbProduto produto = null;
+    public TbProduto findByDesignacao( String designacao )
+    {
+        String sql = "SELECT * FROM tb_produto WHERE designacao = ?";
+        TbProduto produto = null;
 
-    try (PreparedStatement stmt = conexao.getConnection().prepareStatement(sql)) {
-        stmt.setString(1, designacao);
-        ResultSet rs = stmt.executeQuery();
+        try ( PreparedStatement stmt = conexao.getConnection().prepareStatement( sql ) )
+        {
+            stmt.setString( 1, designacao );
+            ResultSet rs = stmt.executeQuery();
 
-        if (rs.next()) {
-            produto = new TbProduto();
-            setResultProduto(rs, produto);
+            if ( rs.next() )
+            {
+                produto = new TbProduto();
+                setResultProduto( rs, produto );
+            }
         }
-    } catch (SQLException e) {
-        e.printStackTrace(); // ou use um logger
+        catch ( SQLException e )
+        {
+            e.printStackTrace(); // ou use um logger
+        }
+
+        return produto;
     }
-
-    return produto;
-}
-
 
     public TbProduto getLastProduto()
     {
@@ -923,19 +927,22 @@ public class ProdutosController implements EntidadeFactory
         return false;
     }
 
-public boolean exist_designacao_produto(String designacao) {
-    designacao = normalizarDesignacao(designacao);
-    String sql = "SELECT p.codigo FROM tb_produto p WHERE p.designacao = ?";
-    try (PreparedStatement ps = BDConexao.conectar().prepareStatement(sql)) {
-        ps.setString(1, designacao);
-        ResultSet rs = ps.executeQuery();
-        return rs.next();
-    } catch (SQLException e) {
-        e.printStackTrace();
+    public boolean exist_designacao_produto( String designacao )
+    {
+        designacao = normalizarDesignacao( designacao );
+        String sql = "SELECT p.codigo FROM tb_produto p WHERE p.designacao = ?";
+        try ( PreparedStatement ps = BDConexao.conectar().prepareStatement( sql ) )
+        {
+            ps.setString( 1, designacao );
+            ResultSet rs = ps.executeQuery();
+            return rs.next();
+        }
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
+        }
+        return false;
     }
-    return false;
-}
-
 
     public Object findByName( String designacao )
     {
@@ -1046,6 +1053,50 @@ public boolean exist_designacao_produto(String designacao) {
     public TbProduto getProdutoByDesignacao( String designacao )
     {
         String FIND_BY_CODIGO = "SELECT *  FROM tb_produto  WHERE designacao = '" + designacao + "'";
+        ResultSet result = conexao.executeQuery( FIND_BY_CODIGO );
+        TbProduto produtos = null;
+        try
+        {
+            if ( result.next() )
+            {
+                produtos = new TbProduto();
+                setResultProduto( result, produtos );
+            }
+
+        }
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
+        }
+        return produtos;
+
+    }
+
+    public TbProduto getProdutoByBarra( String codBarra )
+    {
+        String FIND_BY_CODIGO = "SELECT *  FROM tb_produto  WHERE codBarra = '" + codBarra + "'";
+        ResultSet result = conexao.executeQuery( FIND_BY_CODIGO );
+        TbProduto produtos = null;
+        try
+        {
+            if ( result.next() )
+            {
+                produtos = new TbProduto();
+                setResultProduto( result, produtos );
+            }
+
+        }
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
+        }
+        return produtos;
+
+    }
+
+    public TbProduto getProdutoByManual( String codManual )
+    {
+        String FIND_BY_CODIGO = "SELECT *  FROM tb_produto  WHERE codigo_manual = '" + codManual + "'";
         ResultSet result = conexao.executeQuery( FIND_BY_CODIGO );
         TbProduto produtos = null;
         try
@@ -1290,102 +1341,114 @@ public boolean exist_designacao_produto(String designacao) {
 
         return lista;
     }
-    
-    public List<Object[]> listarStockPorCodigoManual(Connection conn, String codigoManual, int codArmazem) {
-    List<Object[]> lista = new ArrayList<>();
 
-    String sql = "SELECT p.codigo, p.designacao, tp.designacao AS tipo_produto, "
-               + "       (SELECT AVG(pr.preco_compra) FROM tb_preco pr WHERE pr.fk_produto = p.codigo) AS preco_medio_compra, "
-               + "       (SELECT pr2.preco_venda FROM tb_preco pr2 WHERE pr2.fk_produto = p.codigo "
-               + "            ORDER BY pr2.data DESC, pr2.hora DESC LIMIT 1) AS preco_venda_atual, "
-               + "       (SELECT COALESCE(SUM(s.quantidade_existente),0) FROM tb_stock s "
-               + "            WHERE s.cod_produto_codigo = p.codigo AND s.cod_armazem = ?) AS qtd_existente "
-               + "FROM tb_produto p "
-               + "JOIN tb_tipo_produto tp ON tp.codigo = p.cod_Tipo_Produto "
-               + "WHERE p.codigo_manual = ? "
-               + "  AND EXISTS (SELECT 1 FROM tb_stock s2 WHERE s2.cod_produto_codigo = p.codigo AND s2.cod_armazem = ?) "
-               + "ORDER BY p.designacao ASC";
+    public List<Object[]> listarStockPorCodigoManual( Connection conn, String codigoManual, int codArmazem )
+    {
+        List<Object[]> lista = new ArrayList<>();
 
-    try (PreparedStatement pst = conn.prepareStatement(sql)) {
-        pst.setInt(1, codArmazem);
-        pst.setString(2, codigoManual);
-        pst.setInt(3, codArmazem);
+        String sql = "SELECT p.codigo, p.designacao, tp.designacao AS tipo_produto, "
+                + "       (SELECT AVG(pr.preco_compra) FROM tb_preco pr WHERE pr.fk_produto = p.codigo) AS preco_medio_compra, "
+                + "       (SELECT pr2.preco_venda FROM tb_preco pr2 WHERE pr2.fk_produto = p.codigo "
+                + "            ORDER BY pr2.data DESC, pr2.hora DESC LIMIT 1) AS preco_venda_atual, "
+                + "       (SELECT COALESCE(SUM(s.quantidade_existente),0) FROM tb_stock s "
+                + "            WHERE s.cod_produto_codigo = p.codigo AND s.cod_armazem = ?) AS qtd_existente "
+                + "FROM tb_produto p "
+                + "JOIN tb_tipo_produto tp ON tp.codigo = p.cod_Tipo_Produto "
+                + "WHERE p.codigo_manual = ? "
+                + "  AND EXISTS (SELECT 1 FROM tb_stock s2 WHERE s2.cod_produto_codigo = p.codigo AND s2.cod_armazem = ?) "
+                + "ORDER BY p.designacao ASC";
 
-        try (ResultSet rs = pst.executeQuery()) {
-            while (rs.next()) {
-                Object[] linha = new Object[]{
-                    rs.getInt("codigo"),
-                    rs.getString("designacao"),
-                    rs.getString("tipo_produto"),
-                    rs.getBigDecimal("preco_medio_compra"),
-                    rs.getBigDecimal("preco_venda_atual"),
-                    rs.getDouble("qtd_existente"),
-                    0.0, // qtd acerto (editável)
-                    rs.getDouble("qtd_existente") // existência total inicial
-                };
-                lista.add(linha);
+        try ( PreparedStatement pst = conn.prepareStatement( sql ) )
+        {
+            pst.setInt( 1, codArmazem );
+            pst.setString( 2, codigoManual );
+            pst.setInt( 3, codArmazem );
+
+            try ( ResultSet rs = pst.executeQuery() )
+            {
+                while ( rs.next() )
+                {
+                    Object[] linha = new Object[]
+                    {
+                        rs.getInt( "codigo" ),
+                        rs.getString( "designacao" ),
+                        rs.getString( "tipo_produto" ),
+                        rs.getBigDecimal( "preco_medio_compra" ),
+                        rs.getBigDecimal( "preco_venda_atual" ),
+                        rs.getDouble( "qtd_existente" ),
+                        0.0, // qtd acerto (editável)
+                        rs.getDouble( "qtd_existente" ) // existência total inicial
+                    };
+                    lista.add( linha );
+                }
             }
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
+        }
+
+        return lista;
     }
 
-    return lista;
-}
-    
-    public List<Object[]> listarProdutosByCodigoManual(Connection conn, String codigoManual) {
-    List<Object[]> lista = new ArrayList<>();
+    public List<Object[]> listarProdutosByCodigoManual( Connection conn, String codigoManual )
+    {
+        List<Object[]> lista = new ArrayList<>();
 
-    String sql = "SELECT p.codigo AS codigo, "
-               + "p.designacao AS designacao, "
-               + "t.designacao AS categoria, "
-               + "COALESCE(pr.preco_compra, 0) AS preco_compra, "
-               + "COALESCE(pr.preco_venda, 0) AS preco_venda, "
-               + "COALESCE(pr.preco_medio, 0) AS preco_medio, "
-               + "COALESCE(SUM(i.taxa), 0) AS iva, "
-               + "ROUND(COALESCE(pr.preco_venda, 0) * (1 + COALESCE(SUM(i.taxa), 0) / 100.0), 2) AS preco_com_iva "
-               + "FROM tb_produto p "
-               + "INNER JOIN tb_tipo_produto t ON t.codigo = p.cod_tipo_produto "
-               + "LEFT JOIN ( "
-               + "    SELECT pr1.fk_produto, pr1.preco_compra, pr1.preco_venda, pr1.preco_medio "
-               + "    FROM tb_preco pr1 "
-               + "    INNER JOIN ( "
-               + "        SELECT fk_produto, MAX(pk_preco) AS max_preco "
-               + "        FROM tb_preco "
-               + "        GROUP BY fk_produto "
-               + "    ) pr2 ON pr1.fk_produto = pr2.fk_produto AND pr1.pk_preco = pr2.max_preco "
-               + ") pr ON pr.fk_produto = p.codigo "
-               + "LEFT JOIN produto_imposto pi ON pi.fk_produto = p.codigo "
-               + "LEFT JOIN imposto i ON i.pk_imposto = pi.fk_imposto "
-               + "WHERE p.codigo_manual = ? "
-               + "GROUP BY p.codigo, p.designacao, t.designacao, pr.preco_compra, pr.preco_venda, pr.preco_medio";
+        String sql = "SELECT p.codigo AS codigo, "
+                + "p.designacao AS designacao, "
+                + "t.designacao AS categoria, "
+                + "COALESCE(pr.preco_compra, 0) AS preco_compra, "
+                + "COALESCE(pr.preco_venda, 0) AS preco_venda, "
+                + "COALESCE(pr.preco_medio, 0) AS preco_medio, "
+                + "COALESCE(SUM(i.taxa), 0) AS iva, "
+                + "ROUND(COALESCE(pr.preco_venda, 0) * (1 + COALESCE(SUM(i.taxa), 0) / 100.0), 2) AS preco_com_iva "
+                + "FROM tb_produto p "
+                + "INNER JOIN tb_tipo_produto t ON t.codigo = p.cod_tipo_produto "
+                + "LEFT JOIN ( "
+                + "    SELECT pr1.fk_produto, pr1.preco_compra, pr1.preco_venda, pr1.preco_medio "
+                + "    FROM tb_preco pr1 "
+                + "    INNER JOIN ( "
+                + "        SELECT fk_produto, MAX(pk_preco) AS max_preco "
+                + "        FROM tb_preco "
+                + "        GROUP BY fk_produto "
+                + "    ) pr2 ON pr1.fk_produto = pr2.fk_produto AND pr1.pk_preco = pr2.max_preco "
+                + ") pr ON pr.fk_produto = p.codigo "
+                + "LEFT JOIN produto_imposto pi ON pi.fk_produto = p.codigo "
+                + "LEFT JOIN imposto i ON i.pk_imposto = pi.fk_imposto "
+                + "WHERE p.codigo_manual = ? "
+                + "GROUP BY p.codigo, p.designacao, t.designacao, pr.preco_compra, pr.preco_venda, pr.preco_medio";
 
-    try (PreparedStatement pst = conn.prepareStatement(sql)) {
-        pst.setString(1, codigoManual);
+        try ( PreparedStatement pst = conn.prepareStatement( sql ) )
+        {
+            pst.setString( 1, codigoManual );
 
-        try (ResultSet rs = pst.executeQuery()) {
-            while (rs.next()) {
-                Object[] linha = new Object[]{
-                    rs.getInt("codigo"),
-                    rs.getString("designacao"),
-                    rs.getString("categoria"),
-                    rs.getBigDecimal("preco_compra"),
-                    rs.getBigDecimal("preco_medio"),
-                    rs.getBigDecimal("preco_venda"),
-                    rs.getBigDecimal("iva"),
-                    rs.getBigDecimal("preco_com_iva")
-                };
-                lista.add(linha);
+            try ( ResultSet rs = pst.executeQuery() )
+            {
+                while ( rs.next() )
+                {
+                    Object[] linha = new Object[]
+                    {
+                        rs.getInt( "codigo" ),
+                        rs.getString( "designacao" ),
+                        rs.getString( "categoria" ),
+                        rs.getBigDecimal( "preco_compra" ),
+                        rs.getBigDecimal( "preco_medio" ),
+                        rs.getBigDecimal( "preco_venda" ),
+                        rs.getBigDecimal( "iva" ),
+                        rs.getBigDecimal( "preco_com_iva" )
+                    };
+                    lista.add( linha );
+                }
             }
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
+        }
+
+        return lista;
     }
-
-    return lista;
-}
-
-
 
     public static void main( String[] args )
     {

@@ -71,7 +71,7 @@ import util.DVML;
 import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
 import util.OperacaoSistemaUtil;
-import static visao.EntradaVisao.cmbArmazem;
+import static visao.EntradaProdutoVisao.cmbArmazem;
 import static visao.VendaUsuarioVisao.cmbFamilia;
 
 /**

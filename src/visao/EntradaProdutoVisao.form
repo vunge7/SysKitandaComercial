@@ -180,7 +180,6 @@
                                               <Group type="102" alignment="0" attributes="0">
                                                   <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
                                                   <Component id="lbCategoria2" min="-2" pref="146" max="-2" attributes="0"/>
-                                                  <EmptySpace min="-2" pref="85" max="-2" attributes="0"/>
                                               </Group>
                                               <Component id="txtCodigoBarra" alignment="0" min="-2" pref="237" max="-2" attributes="0"/>
                                           </Group>

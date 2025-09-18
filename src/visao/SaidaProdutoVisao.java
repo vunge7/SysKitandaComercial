@@ -5,11 +5,15 @@
 package visao;
 
 import comercial.controller.ArmazensController;
+import comercial.controller.DocumentosController;
+import comercial.controller.ItemSaidasController;
 import comercial.controller.MovimentacaoController;
 import comercial.controller.PrecosController;
 import comercial.controller.ProdutosController;
+import comercial.controller.SaidasProdutosController;
 import comercial.controller.StoksController;
 import comercial.controller.TipoProdutosController;
+import comercial.controller.UsuariosController;
 import controller.ProdutoController;
 import controller.StockController;
 import dao.ArmazemDao;
@@ -25,6 +29,7 @@ import dao.StockDao;
 import dao.UsuarioDao;
 import dao.VasilhameDao;
 import dao.SaidasProdutosDao;
+import entity.TbArmazem;
 import entity.TbItemSaidas;
 import entity.TbPreco;
 import entity.TbProduto;
@@ -32,11 +37,13 @@ import entity.TbStock;
 import entity.TbVasilhame;
 import entity.TbSaidasProdutos;
 import entity.TbTipoProduto;
+import entity.TbUsuario;
 import exemplos.PermitirNumeros;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.math.BigDecimal;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
@@ -71,7 +78,7 @@ import util.OperacaoSistemaUtil;
  *
  * @author Domingos Dala Vunge
  */
-public class SaidaUsuarioVisao extends javax.swing.JFrame
+public class SaidaProdutoVisao extends javax.swing.JFrame
 {
 
     private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
@@ -80,6 +87,8 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
     private ItemProformaDao itemProformaDao = new ItemProformaDao( emf );
     private DescontoDao descontoDao = new DescontoDao( emf );
     private PrecoDao precoDao = new PrecoDao( emf );
+    private SaidasProdutosController saidasProdutosController;
+    private ItemSaidasController itemSaidasController;
     private TbItemSaidas itemSaidas;
     private TbStock stock_local;
     private TbSaidasProdutos saidasProdutos;
@@ -92,7 +101,8 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
     private ItemSaidaDao itemSaidasProdutosDao = new ItemSaidaDao( emf );
     private TbVasilhame vasilhame;
     private BancoDao bancoDao = new BancoDao( emf );
-    private static BDConexao conexao;
+    private static BDConexao conexao, conexaoTransaction;
+
     private static int cod_usuario;
     private TipoClienteModelo tipoClienteModelo;
     private StockController stockController;
@@ -100,15 +110,17 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
     private double soma_total = 0;
     private ProdutoModelo produtoModelo;
     private static int linha_actual = -1;
-    static SaidaUsuarioVisao obj;
+    static SaidaProdutoVisao obj;
     private OperacaoSistemaUtil osu = new OperacaoSistemaUtil();
     private static ProdutosController produtosController;
     private static ArmazensController armazensController;
     private static TipoProdutosController tipoProdutoController;
     private static PrecosController precosController;
     private List<TbItemSaidas> listaItemSaida;
+    private StoksController stoksController;
+    private UsuariosController usuariosController;
 
-    public SaidaUsuarioVisao( int cod_usuario, BDConexao conexao ) throws SQLException
+    public SaidaProdutoVisao( int cod_usuario, BDConexao conexao ) throws SQLException
     {
         this.conexao = conexao;
         this.cod_usuario = cod_usuario;
@@ -119,11 +131,16 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
         txtCodigoProduto.setDocument( new PermitirNumeros() );
         txtCodigoBarra.setDocument( new PermitirNumeros() );
 
-        produtosController = new ProdutosController( SaidaUsuarioVisao.conexao );
-        tipoProdutoController = new TipoProdutosController( SaidaUsuarioVisao.conexao );
-        precosController = new PrecosController( SaidaUsuarioVisao.conexao );
+        produtosController = new ProdutosController( SaidaProdutoVisao.conexao );
+        tipoProdutoController = new TipoProdutosController( SaidaProdutoVisao.conexao );
+        precosController = new PrecosController( SaidaProdutoVisao.conexao );
+        saidasProdutosController = new SaidasProdutosController( conexao.getConnection1() );
+        itemSaidasController = new ItemSaidasController( conexao.getConnection1() );
+        stoksController = new StoksController( conexao );
+        usuariosController = new UsuariosController( conexao );
+        armazensController = new ArmazensController( conexao );
 
-        cmbArmazem.setModel( new DefaultComboBoxModel( armazemDao.buscaTodos() ) );
+        cmbArmazem.setModel( new DefaultComboBoxModel( armazensController.getVector() ) );
         DVML.activar_cmb_armazem( cmbArmazem );
         cmbSubFamilia.setModel( new DefaultComboBoxModel( tipoProdutoController.getVector1() ) );
 //        cmbSubFamilia.setModel( new DefaultComboBoxModel( conexao.getElementos( "tb_tipo_produto", "designacao", false ) ) );
@@ -163,7 +180,15 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
 
     public static int getCodigoProduto()
     {
-        return produtosController.findByDesignacao( cmbProduto.getSelectedItem().toString() ).getCodigo();
+        try
+        {
+            return produtosController.findByDesignacao( cmbProduto.getSelectedItem().toString() ).getCodigo();
+
+        }
+        catch ( Exception e )
+        {
+            return 0;
+        }
     }
 
 //    public boolean estado_critico() throws SQLException
@@ -825,7 +850,7 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(19, 19, 19)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnActualizar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
+                    .addComponent(btnActualizar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 125, Short.MAX_VALUE)
                     .addComponent(btnFinalizar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnNova, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -916,7 +941,7 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
         }
         catch ( SQLException ex )
         {
-            Logger.getLogger( SaidaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger( SaidaProdutoVisao.class.getName() ).log( Level.SEVERE, null, ex );
         }
         catch ( Exception ex )
         {
@@ -1018,8 +1043,18 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
 
     private void txtCodigoSaidaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtCodigoSaidaActionPerformed
     {//GEN-HEADEREND:event_txtCodigoSaidaActionPerformed
-        // TODO add your handling code here:
-        buscaSaida();
+        try
+        {
+            // TODO add your handling code here
+            buscaSaida();
+        }
+        catch ( SQLException ex )
+        {
+            JOptionPane.showMessageDialog( null, "Não existe saida com esta referência!" );
+//            Logger.getLogger( SaidaProdutoVisao.class.getName() ).log( Level.SEVERE, null, ex );
+        }
+
+
     }//GEN-LAST:event_txtCodigoSaidaActionPerformed
 
     private void txtCodigoManualActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtCodigoManualActionPerformed
@@ -1030,8 +1065,11 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
 
     private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnActualizarActionPerformed
     {//GEN-HEADEREND:event_btnActualizarActionPerformed
+
         // TODO add your handling code here:
         procedimentoActualizarSaida();
+
+
     }//GEN-LAST:event_btnActualizarActionPerformed
 
     private void tablePropertyChange(java.beans.PropertyChangeEvent evt)//GEN-FIRST:event_tablePropertyChange
@@ -1060,7 +1098,7 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
         catch ( Exception ex )
         {
             ex.printStackTrace();
-            Logger.getLogger( SaidaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger( SaidaProdutoVisao.class.getName() ).log( Level.SEVERE, null, ex );
             JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
         }
 
@@ -1140,36 +1178,41 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
 
 //            TbStock stockLocal = stocksController.getStockByIdProdutoAndIdArmazem( getCodigoProduto(), getCodigoArmazem() );
 //            boolean isStocavel = produto_local.getStocavel().equals( "true" );
-            if ( stockDao.get_stock_by_id_produto_and_id_armazem( getCodigoProduto(), getCodigoArmazem() ).getQuantidadeExistente() <= stockDao.get_stock_by_id_produto_and_id_armazem( getCodigoProduto(), getCodigoArmazem() ).getQuantCritica() )
+            if ( Objects.nonNull( produto_local ) )
             {
+                if ( stoksController.getStockByIdProdutoAndIdArmazem( getCodigoProduto(), getCodigoArmazem() ).getQuantidadeExistente()
+                        <= stoksController.getStockByIdProdutoAndIdArmazem( getCodigoProduto(), getCodigoArmazem() ).getQuantCritica() )
+                {
 
-                txtQuantidaStock.setBackground( Color.RED );
-                txtQuantidaStock.setForeground( Color.BLACK );
-            }
-            else
-            {
-                txtQuantidaStock.setBackground( new Color( 51, 153, 0, 255 ) );
+                    txtQuantidaStock.setBackground( Color.RED );
+                    txtQuantidaStock.setForeground( Color.BLACK );
+                }
+                else
+                {
+                    txtQuantidaStock.setBackground( new Color( 51, 153, 0, 255 ) );
+                }
+
+                TbProduto produto = produtoDao.findTbProduto( getCodigoProduto() );
+
+                if ( stockController.exist_armazem( getCodigoProduto(), getCodigoArmazem() ) )
+                {
+                    txtQuantidaStock.setText( String.valueOf( stockDao.get_stock_by_id_produto_and_id_armazem( getCodigoProduto(), getCodigoArmazem() ).getQuantidadeExistente() ) );
+
+                }
+                else
+                {
+                    txtQuantidaStock.setText( "0" );
+                }
+                txtCodigoProduto.setText( String.valueOf( produto_local.getCodigo() ) );
+                TbPreco precoLocal = precosController.getLastIdPrecoByIdProduto( produto_local.getCodigo(), Double.parseDouble( txtQuatindade.getText() ) );
             }
 
-            TbProduto produto = produtoDao.findTbProduto( getCodigoProduto() );
-
-            if ( stockDao.exist_produto_stock( getCodigoProduto(), getCodigoArmazem() ) )
-            {
-                txtQuantidaStock.setText( String.valueOf( stockDao.get_stock_by_id_produto_and_id_armazem( getCodigoProduto(), getCodigoArmazem() ).getQuantidadeExistente() ) );
-
-            }
-            else
-            {
-                txtQuantidaStock.setText( "0" );
-            }
-            txtCodigoProduto.setText( String.valueOf( produto_local.getCodigo() ) );
-            TbPreco precoLocal = precosController.getLastIdPrecoByIdProduto( produto_local.getCodigo(), Double.parseDouble( txtQuatindade.getText() ) );
         }
         catch ( Exception ex )
         {
             ex.printStackTrace();
             txtQuantidaStock.setText( "0" );
-            Logger.getLogger( SaidaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger( SaidaProdutoVisao.class.getName() ).log( Level.SEVERE, null, ex );
         }
 
     }
@@ -1368,8 +1411,8 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
                 {
                     if ( !transtorno() )
                     {
-                        salvar_saidasProdutos();
-                        salvarItemsaidasProdutos();
+                        operacaoSalvar();
+
                     }
                 }
                 catch ( Exception e )
@@ -1385,6 +1428,122 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
 
     }
 
+    private void operacaoSalvar()
+    {
+        conexaoTransaction = new BDConexao();
+        Connection conn = null;
+        try
+        {
+            conn = conexaoTransaction.getConnection1();
+            conn.setAutoCommit( false ); // Inicia a transação manualmente
+
+            saidasProdutosController = new SaidasProdutosController( conn );
+            itemSaidasController = new ItemSaidasController( conn );
+            stoksController = new StoksController( conexaoTransaction );
+
+            // Salvar a saída
+            TbSaidasProdutos saidasProdutos = salvar_saidasProdutos();
+
+            // Salvar os itens
+            salvarItemsaidasProdutos( saidasProdutos );
+
+            // Se tudo deu certo, confirma a transação
+            conn.commit();
+
+            JOptionPane.showMessageDialog( null, "Saída de Produtos efectuada com sucesso!.." );
+
+            limpar();
+            remover_all_produto();
+            adicionar_preco_quantidade_anitgo();
+            txtQuatindade.requestFocus();
+            ListaSaidaProdutos listaSaidas = new ListaSaidaProdutos( saidasProdutos.getPkSaidasProdutos() );
+
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+            try
+            {
+                if ( conn != null )
+                {
+                    conn.rollback(); // desfaz alterações se houve erro
+                    JOptionPane.showMessageDialog( null, "Erro ao salvar. Transação revertida!" );
+                }
+            }
+            catch ( SQLException ex )
+            {
+                ex.printStackTrace();
+            }
+        }
+        finally
+        {
+            try
+            {
+                if ( conn != null )
+                {
+                    conn.setAutoCommit( true ); // volta para o padrão
+                }
+                if ( conn != null )
+                {
+                    conn.close();
+                }
+                /**
+                 * Instancia com um outra conexao para as proximas actividades
+                 *
+                 */
+                saidasProdutosController = new SaidasProdutosController( conexao.getConnection1() );
+                itemSaidasController = new ItemSaidasController( conexao.getConnection1() );
+                stoksController = new StoksController( conexao );
+            }
+            catch ( SQLException e )
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void salvarItemsaidasProdutos( TbSaidasProdutos saidasProdutos ) throws SQLException
+    {
+        for ( int i = 0; i < table.getRowCount(); i++ )
+        {
+            TbItemSaidas itemSaidas = new TbItemSaidas();
+            int codProduto = Integer.parseInt( String.valueOf( table.getModel().getValueAt( i, 0 ) ) );
+            double qtd = Double.parseDouble( String.valueOf( table.getModel().getValueAt( i, 3 ) ) );
+
+            itemSaidas.setFkProdutos( new TbProduto( codProduto ) );
+            itemSaidas.setFkSaidasProdutos( saidasProdutos );
+            itemSaidas.setQuantidade( qtd );
+
+            BigDecimal precoCompra = getPreco( itemSaidas.getFkProdutos().getCodigo(), itemSaidas.getQuantidade() );
+            itemSaidas.setPrecoCompra( precoCompra );
+
+            itemSaidasController.salvar( itemSaidas );
+
+            // atualizar stock
+            this.stock_local = stoksController.getStockByIdProdutoAndIdArmazem(
+                    itemSaidas.getFkProdutos().getCodigo(), getCodigoArmazem() );
+
+            if ( Objects.nonNull( stock_local ) )
+            {
+                if ( MovimentacaoController.registrarMovimento(
+                        itemSaidas.getFkProdutos().getCodigo(),
+                        getCodigoArmazem(),
+                        cod_usuario,
+                        new BigDecimal( itemSaidas.getQuantidade() ),
+                        "SAIDA " + saidasProdutos.getPkSaidasProdutos(),
+                        "SAIDA",
+                        conexaoTransaction ) )
+                {
+
+                    actualizar_quantidade(
+                            itemSaidas.getFkProdutos().getCodigo(),
+                            itemSaidas.getQuantidade(),
+                            getCodigoArmazem() );
+                }
+            }
+        }
+    }
+
     private boolean table_vazia()
     {
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
@@ -1392,21 +1551,6 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
 
     }
 
-    private void operacao_salvar_saidasProdutos()
-    {
-        try
-        {
-
-            salvar_saidasProdutos();
-            salvarItemsaidasProdutos();
-
-        }
-        catch ( Exception ex )
-        {
-            Logger.getLogger( SaidaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
-        }
-
-    }
 
     /* CRIACAO DO GETS  */
     public static int getQuantidade()
@@ -1429,10 +1573,13 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
 
     }
 
-    private void buscaSaida()
+    private void buscaSaida() throws SQLException
     {
+        saidasProdutosController = new SaidasProdutosController( conexao.getConnection1() );
+        itemSaidasController = new ItemSaidasController( conexao.getConnection1() );
+
         int codSaida = Integer.parseInt( txtCodigoSaida.getText() );
-        listaItemSaida = itemSaidasProdutosDao.getAllItemSaidasByIdSaida( codSaida );
+        listaItemSaida = itemSaidasController.getAllItemSaidasByIdSaida( codSaida );
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         modelo.setRowCount( 0 );
         txtMotorista.setText( "" );
@@ -1441,13 +1588,15 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
 
         if ( Objects.nonNull( listaItemSaida ) )
         {
-            saidasProdutos = listaItemSaida.get( 0 ).getFkSaidasProdutos();
+            saidasProdutos = saidasProdutosController.buscarPorId( codSaida );
+
             for ( TbItemSaidas linha : listaItemSaida )
             {
+                TbProduto produto = produtosController.findByCod( linha.getFkProdutos().getCodigo() );
                 modelo.addRow( new Object[]
                 {
                     linha.getFkProdutos().getCodigo(),
-                    linha.getFkProdutos().getDesignacao(),
+                    produto.getDesignacao(),
                     linha.getPrecoCompra(),
                     linha.getQuantidade()
                 } );
@@ -1566,28 +1715,28 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
         } );
     }
 
-    public void salvarItemsaidasProdutos()
+    public void salvarItemsaidasProdutos() throws SQLException
     {
-        int cod_saidasProdutos = saidasProdutosDao.getLastSaidasProdutos();
         boolean efectuada = true;
-        this.saidasProdutos = saidasProdutosDao.findTbSaidasProdutos( cod_saidasProdutos );
-
-        int cod_produto, qtd, qtd_aceite;
-
+        this.saidasProdutos = saidasProdutosController.buscarUltimaSaida();
         for ( int i = 0; i < table.getRowCount(); i++ )
         {
             try
             {
                 itemSaidas = new TbItemSaidas();
-                itemSaidas.setFkProdutos( produtoDao.findTbProduto( Integer.parseInt( String.valueOf( table.getModel().getValueAt( i, 0 ) ) ) ) );
-                itemSaidas.setFkSaidasProdutos( this.saidasProdutos );
-                itemSaidas.setQuantidade( Double.parseDouble( String.valueOf( table.getModel().getValueAt( i, 3 ) ) ) );
-                itemSaidas.setPrecoCompra( getPreco( itemSaidas.getFkProdutos().getCodigo(), itemSaidas.getQuantidade() ) );
-                itemSaidasProdutosDao.create( itemSaidas );
-                this.stock_local = stockDao.get_stock_by_id_produto_and_id_armazem( itemSaidas.getFkProdutos().getCodigo(), getCodigoArmazem() );
+                int codProduto = Integer.parseInt( String.valueOf( table.getModel().getValueAt( i, 0 ) ) );
+                double qtd = Double.parseDouble( String.valueOf( table.getModel().getValueAt( i, 3 ) ) );
+                itemSaidas.setFkProdutos( new TbProduto( codProduto ) );
+                BigDecimal precoCompra = getPreco( itemSaidas.getFkProdutos().getCodigo(), itemSaidas.getQuantidade() );
 
+                itemSaidas.setFkSaidasProdutos( this.saidasProdutos );
+                itemSaidas.setQuantidade( qtd );
+                itemSaidas.setPrecoCompra( precoCompra );
+                itemSaidasController.salvar( itemSaidas );
+                this.stock_local = stoksController.getStockByIdProdutoAndIdArmazem(
+                        itemSaidas.getFkProdutos().getCodigo(), getCodigoArmazem() );
                 //so retirar caso existir mesmo no armazém em questão.
-                if ( stock_local.getCodigo() != 0 )
+                if ( Objects.nonNull( stock_local ) )
                 {
                     if ( MovimentacaoController.registrarMovimento(
                             itemSaidas.getFkProdutos().getCodigo(),
@@ -1598,12 +1747,15 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
                             "SAIDA",
                             conexao ) )
                     {
-                        actualizar_quantidade( itemSaidas.getFkProdutos().getCodigo(), itemSaidas.getQuantidade(), getCodigoArmazem() );
+                        actualizar_quantidade(
+                                itemSaidas.getFkProdutos().getCodigo(),
+                                itemSaidas.getQuantidade(),
+                                getCodigoArmazem() );
                     }
-                    if ( vasilhameDao.exist_vasilhame( itemSaidas.getFkProdutos().getCodigo(), getCodigoArmazem() ) )
-                    {
-                        actualizar_vasilhame( vasilhameDao.getVasilhameByIdProdutoAndIdArmazem( itemSaidas.getFkProdutos().getCodigo(), getCodigoArmazem() ), itemSaidas.getQuantidade() );
-                    }
+//                    if ( vasilhameDao.exist_vasilhame( itemSaidas.getFkProdutos().getCodigo(), getCodigoArmazem() ) )
+//                    {
+//                        actualizar_vasilhame( vasilhameDao.getVasilhameByIdProdutoAndIdArmazem( itemSaidas.getFkProdutos().getCodigo(), getCodigoArmazem() ), itemSaidas.getQuantidade() );
+//                    }
 
                 }
             }
@@ -1630,44 +1782,45 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
             catch ( Exception e )
             {
             }
-
             txtQuatindade.requestFocus();
-
-            ListaSaidaProdutos listaSaidas = new ListaSaidaProdutos( cod_saidasProdutos );
+            ListaSaidaProdutos listaSaidas = new ListaSaidaProdutos( saidasProdutos.getPkSaidasProdutos() );
 
         }
 
     }
 
-    public void actluazarItemsaidasProdutos()
+    public void actluazarItemsaidasProdutos( TbSaidasProdutos saidasProdutos ) throws SQLException
     {
         boolean efectuada = true;
-        StoksController stocksControllerLocal = new StoksController( conexao );
 
-        itemSaidasProdutosDao.deleteAllItemSaidasByIdSaidaReciclagem( saidasProdutos.getPkSaidasProdutos() );
+        // remove todos os itens antigos antes de inserir os novos
+        itemSaidasController.deleteAllItemSaidasByIdSaidaReciclagem( saidasProdutos.getPkSaidasProdutos() );
+
         for ( int i = 0; i < table.getRowCount(); i++ )
         {
             try
             {
                 itemSaidas = new TbItemSaidas();
-                itemSaidas.setFkProdutos( produtoDao.findTbProduto( Integer.parseInt(
-                        String.valueOf( table.getModel().getValueAt( i, 0 ) ) ) ) );
-                itemSaidas.setFkSaidasProdutos( this.saidasProdutos );
-                itemSaidas.setQuantidade(
-                        Double.parseDouble( String.valueOf( table.getModel().getValueAt( i, 3 ) ) ) );
-                itemSaidas.setPrecoCompra( getPreco( itemSaidas.getFkProdutos().getCodigo(), itemSaidas.getQuantidade() ) );
-                itemSaidasProdutosDao.create( itemSaidas );
-                this.stock_local = stockDao.get_stock_by_id_produto_and_id_armazem( itemSaidas.getFkProdutos().getCodigo(), getCodigoArmazem() );
+                itemSaidas.setFkProdutos(
+                        produtoDao.findTbProduto( Integer.parseInt( String.valueOf( table.getModel().getValueAt( i, 0 ) ) ) )
+                );
+                itemSaidas.setFkSaidasProdutos( saidasProdutos );
+                itemSaidas.setQuantidade( Double.parseDouble( String.valueOf( table.getModel().getValueAt( i, 3 ) ) ) );
+                itemSaidas.setPrecoCompra(
+                        getPreco( itemSaidas.getFkProdutos().getCodigo(), itemSaidas.getQuantidade() )
+                );
 
-                //so retirar caso existir mesmo no armazém em questão.
-                if ( stock_local.getCodigo() != 0 )
+                itemSaidasController.salvar( itemSaidas );
+
+                this.stock_local = stoksController.getStockByIdProdutoAndIdArmazem(
+                        itemSaidas.getFkProdutos().getCodigo(), getCodigoArmazem()
+                );
+
+                if ( Objects.nonNull( stock_local ) )
                 {
                     String tipo = getTipo( itemSaidas.getFkProdutos().getCodigo(), itemSaidas.getQuantidade() );
                     double qtdAcertar = getQtdAcertar( itemSaidas.getFkProdutos().getCodigo(), itemSaidas.getQuantidade() );
 
-//                    double qtdUpdateStock = conexao.getQtdExistenteStock(itemSaidas.getFkProdutos().getCodigo(), getCodigoArmazem() )
-//                            + getQtdAnterior( itemSaidas.getFkProdutos().getCodigo() ) - qtdAcertar;
-                    System.out.println( "TIPO: " + tipo );
                     if ( MovimentacaoController.registrarMovimento(
                             itemSaidas.getFkProdutos().getCodigo(),
                             getCodigoArmazem(),
@@ -1675,20 +1828,25 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
                             new BigDecimal( qtdAcertar ),
                             "ACTUALIZAÇÃO SAIDA " + saidasProdutos.getPkSaidasProdutos(),
                             tipo,
-                            conexao ) )
+                            conexaoTransaction ) )
                     {
+
                         if ( tipo.equals( "ENTRADA" ) )
                         {
-                            stocksControllerLocal.adicionar_quantidades( itemSaidas.getFkProdutos().getCodigo(), qtdAcertar, getCodigoArmazem() );
+                            stoksController.adicionar_quantidades(
+                                    itemSaidas.getFkProdutos().getCodigo(),
+                                    qtdAcertar,
+                                    getCodigoArmazem()
+                            );
                         }
                         else
                         {
-                            stocksControllerLocal.subtrair_quantidades( itemSaidas.getFkProdutos().getCodigo(), qtdAcertar, getCodigoArmazem() );
+                            stoksController.subtrair_quantidades(
+                                    itemSaidas.getFkProdutos().getCodigo(),
+                                    qtdAcertar,
+                                    getCodigoArmazem()
+                            );
                         }
-                    }
-                    if ( vasilhameDao.exist_vasilhame( itemSaidas.getFkProdutos().getCodigo(), getCodigoArmazem() ) )
-                    {
-                        actualizar_vasilhame( vasilhameDao.getVasilhameByIdProdutoAndIdArmazem( itemSaidas.getFkProdutos().getCodigo(), getCodigoArmazem() ), itemSaidas.getQuantidade() );
                     }
                 }
             }
@@ -1696,32 +1854,16 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
             {
                 e.printStackTrace();
                 efectuada = false;
-                JOptionPane.showMessageDialog( null, "Falha ao registrar o produto: " + itemSaidas.getFkProdutos().getCodigo() );
+                JOptionPane.showMessageDialog( null,
+                        "Falha ao actualizar o produto: " + itemSaidas.getFkProdutos().getCodigo() );
                 break;
             }
         }
 
-        if ( efectuada )
+        if ( !efectuada )
         {
-            JOptionPane.showMessageDialog( null, "Saída de Produtos efectuada com sucesso!.." );
-
-            try
-            {
-                limpar();
-                remover_all_produto();
-//                adicionar_preco_quantidade_anitgo();
-
-            }
-            catch ( Exception e )
-            {
-            }
-
-            txtQuatindade.requestFocus();
-
-            ListaSaidaProdutos listaSaidas = new ListaSaidaProdutos( saidasProdutos.getPkSaidasProdutos() );
-
+            throw new SQLException( "Erro ao actualizar itens da saída, transação será revertida." );
         }
-
     }
 
     private boolean actualizar_vasilhame( TbVasilhame vasilhame, double qtd )
@@ -1826,6 +1968,30 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
         return 0;
     }
 
+    public int getQuantidadeProduto( int cod_produto, BDConexao conexaoParm )
+    {
+
+        String sql = "SELECT quantidade_existente FROM  tb_stock WHERE  cod_produto_codigo = "
+                + cod_produto + " AND cod_armazem = " + getCodigoArmazem( conexaoParm );
+
+        ResultSet rs = conexaoParm.executeQuery( sql );
+
+        try
+        {
+            if ( rs.next() )
+            {
+                return rs.getInt( "quantidade_existente" );
+            }
+        }
+        catch ( SQLException ex )
+        {
+            ex.printStackTrace();
+            return 0;
+        }
+
+        return 0;
+    }
+
     public int getLastCodigo( String table )
     {
 
@@ -1854,55 +2020,26 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
         return conexao.getCodigoPublico( "tb_armazem", String.valueOf( cmbArmazem.getSelectedItem() ) );
     }
 
-    public void salvar_saidasProdutos()
+    private static int getCodigoArmazem( BDConexao conexaoParm )
     {
-
-        TbSaidasProdutos saidasProdutos = new TbSaidasProdutos();
-
-        saidasProdutos.setDataSaida( new Date() );
-        saidasProdutos.setFkUsuario( usuarioDao.findTbUsuario( cod_usuario ) );
-        saidasProdutos.setIdArmazemFK( armazemDao.findTbArmazem( getCodigoArmazem() ) );
-        saidasProdutos.setHoraSaida( new Date() );
-        saidasProdutos.setObs( txtAreaOBS.getText() );
-        saidasProdutos.setDocumento( txtCodigoDoc.getText() );
-        saidasProdutos.setNomeFuncionario( txtMotorista.getText() );
-        saidasProdutos.setStatusEliminado( "false" );
-
-        try
-        {
-            saidasProdutosDao.create( saidasProdutos );
-
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace();
-        }
-
+        return conexaoParm.getCodigoPublico( "tb_armazem", String.valueOf( cmbArmazem.getSelectedItem() ) );
     }
 
-    public void atualizar_saidasProdutos()
+    public TbSaidasProdutos salvar_saidasProdutos() throws SQLException
     {
-
-        TbSaidasProdutos saidasProdutos = listaItemSaida.get( 0 ).getFkSaidasProdutos();
-
+        TbSaidasProdutos saidasProdutos = new TbSaidasProdutos();
         saidasProdutos.setDataSaida( new Date() );
-        saidasProdutos.setFkUsuario( usuarioDao.findTbUsuario( cod_usuario ) );
-        saidasProdutos.setIdArmazemFK( armazemDao.findTbArmazem( getCodigoArmazem() ) );
+        saidasProdutos.setFkUsuario( new TbUsuario( cod_usuario ) );
+        saidasProdutos.setIdArmazemFK( new TbArmazem( getCodigoArmazem() ) );
         saidasProdutos.setHoraSaida( new Date() );
         saidasProdutos.setObs( txtAreaOBS.getText() );
         saidasProdutos.setDocumento( txtCodigoDoc.getText() );
         saidasProdutos.setNomeFuncionario( txtMotorista.getText() );
         saidasProdutos.setStatusEliminado( "false" );
 
-        try
-        {
-            saidasProdutosDao.edit( saidasProdutos );
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace();
-        }
+        saidasProdutosController.inserir( saidasProdutos );
 
+        return saidasProdutosController.buscarUltimaSaida();
     }
 
     public String isPefromance( boolean performance )
@@ -1926,7 +2063,7 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
     public static void main( String[] args ) throws SQLException
     {
 
-        new SaidaUsuarioVisao( 15, new BDConexao() ).show( true );
+        new SaidaProdutoVisao( 15, new BDConexao() ).show( true );
 
     }
 
@@ -2053,7 +2190,7 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
         }
         catch ( Exception ex )
         {
-            Logger.getLogger( SaidaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger( SaidaProdutoVisao.class.getName() ).log( Level.SEVERE, null, ex );
         }
 
     }
@@ -2161,13 +2298,13 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
 
     }
 
-    public static SaidaUsuarioVisao getObj( int cod_usuario )
+    public static SaidaProdutoVisao getObj( int cod_usuario )
     {
         if ( obj == null )
         {
             try
             {
-                obj = new SaidaUsuarioVisao( cod_usuario, conexao );
+                obj = new SaidaProdutoVisao( cod_usuario, conexao );
             }
             catch ( Exception e )
             {
@@ -2175,6 +2312,17 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
         }
 
         return obj;
+
+    }
+
+    public void actualizar_quantidade( int cod, double quantidade, int idArmazem, BDConexao conexaoParm )
+    {
+
+        String sql = "UPDATE tb_stock SET quantidade_existente =  "
+                + ( getQuantidadeProduto( cod ) - quantidade )
+                + " WHERE cod_produto_codigo = " + cod + " AND cod_armazem = " + idArmazem;
+
+        conexaoParm.executeUpdate( sql );
 
     }
 
@@ -2198,8 +2346,94 @@ public class SaidaUsuarioVisao extends javax.swing.JFrame
 
     private void procedimentoActualizarSaida()
     {
-        atualizar_saidasProdutos();
-        actluazarItemsaidasProdutos();
+        conexaoTransaction = new BDConexao();
+        Connection conn = null;
+
+        try
+        {
+            conn = conexaoTransaction.getConnection1();
+            conn.setAutoCommit( false ); // inicia transação
+
+            saidasProdutosController = new SaidasProdutosController( conn );
+            itemSaidasController = new ItemSaidasController( conn );
+            stoksController = new StoksController( conexaoTransaction );
+
+            // Atualiza os dados principais da saída
+            TbSaidasProdutos saidasProdutos = atualizar_saidasProdutos();
+
+            // Atualiza os itens vinculados
+            actluazarItemsaidasProdutos( saidasProdutos );
+
+            // Confirma transação se tudo correu bem
+            conn.commit();
+
+            JOptionPane.showMessageDialog( null, "Saída de Produtos actualizada com sucesso!.." );
+
+            limpar();
+            remover_all_produto();
+            txtQuatindade.requestFocus();
+            new ListaSaidaProdutos( saidasProdutos.getPkSaidasProdutos() );
+
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+            try
+            {
+                if ( conn != null )
+                {
+                    conn.rollback(); // desfaz alterações
+                    JOptionPane.showMessageDialog( null, "Erro ao actualizar. Transação revertida!" );
+                }
+            }
+            catch ( SQLException ex )
+            {
+                ex.printStackTrace();
+            }
+        }
+        finally
+        {
+            try
+            {
+                if ( conn != null )
+                {
+                    conn.setAutoCommit( true );
+                }
+                if ( conn != null )
+                {
+                    conn.close();
+                }
+
+                /**
+                 * Instancia com um outra conexao para as proximas actividades
+                 *
+                 */
+                saidasProdutosController = new SaidasProdutosController( conexao.getConnection1() );
+                itemSaidasController = new ItemSaidasController( conexao.getConnection1() );
+                stoksController = new StoksController( conexao );
+            }
+            catch ( SQLException e )
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public TbSaidasProdutos atualizar_saidasProdutos() throws SQLException
+    {
+        TbSaidasProdutos saidasProdutos = listaItemSaida.get( 0 ).getFkSaidasProdutos();
+        saidasProdutos.setDataSaida( new Date() );
+        saidasProdutos.setFkUsuario( new TbUsuario( cod_usuario ) );
+        saidasProdutos.setIdArmazemFK( new TbArmazem( getCodigoArmazem() ) );
+        saidasProdutos.setHoraSaida( new Date() );
+        saidasProdutos.setObs( txtAreaOBS.getText() );
+        saidasProdutos.setDocumento( txtCodigoDoc.getText() );
+        saidasProdutos.setNomeFuncionario( txtMotorista.getText() );
+        saidasProdutos.setStatusEliminado( "false" );
+
+        saidasProdutosController.atualizar( saidasProdutos );
+
+        return saidasProdutos;
     }
 
     private String getTipo( Integer codigo, double quantidade )

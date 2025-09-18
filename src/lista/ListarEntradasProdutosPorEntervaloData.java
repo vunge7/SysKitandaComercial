@@ -39,7 +39,7 @@ import net.sf.jasperreports.view.JasperViewer;
 import util.BDConexao;
 import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
-import static visao.EntradaVisao.cmbArmazem;
+import static visao.EntradaProdutoVisao.cmbArmazem;
 
 /**
  *
