@@ -2,9 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="factura" pageWidth="200" pageHeight="842" columnWidth="188" leftMargin="10" rightMargin="2" topMargin="2" bottomMargin="20" isIgnorePagination="true" uuid="0de43986-9be5-410e-aaa3-7f1419d0abca">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="3.305785123966945"/>
+	<property name="ireport.zoom" value="4.400000000000006"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="68"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -114,7 +114,8 @@
      tb_dados_instituicao.`regime_contrato` AS tb_dados_instituicao_regime_contrato,
      tb_dados_instituicao.`regime` AS tb_dados_instituicao_regime,
      tb_venda.`gorjeta` AS tb_venda_gorjeta,
-     tb_venda.`cliente_nif` AS tb_venda_cliente_nif
+     tb_venda.`cliente_nif` AS tb_venda_cliente_nif,
+     tb_venda.`cont` AS tb_venda_cont
 FROM
      `tb_venda` tb_venda INNER JOIN `tb_cliente` tb_cliente ON tb_venda.`codigo_cliente` = tb_cliente.`codigo`
      INNER JOIN `tb_usuario` tb_usuario ON tb_venda.`codigo_usuario` = tb_usuario.`codigo`
@@ -202,6 +203,7 @@ WHERE
 	<field name="tb_dados_instituicao_regime" class="java.lang.String"/>
 	<field name="tb_venda_gorjeta" class="java.math.BigDecimal"/>
 	<field name="tb_venda_cliente_nif" class="java.lang.String"/>
+	<field name="tb_venda_cont" class="java.lang.Integer"/>
 	<variable name="SOMA_2" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[]]></variableExpression>
 	</variable>
@@ -209,7 +211,7 @@ WHERE
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="128">
+		<band height="143">
 			<textField>
 				<reportElement uuid="82853475-19ec-484a-a036-949cdd5bd35b" x="1" y="57" width="187" height="12"/>
 				<textElement textAlignment="Center" markup="html">
@@ -250,27 +252,27 @@ WHERE
 				<imageExpression><![CDATA["logo/logo_dvml.png"]]></imageExpression>
 			</image>
 			<rectangle radius="10">
-				<reportElement uuid="7c54c3aa-0480-4947-97cb-14f56c38f800" x="-2" y="70" width="187" height="48"/>
+				<reportElement uuid="7c54c3aa-0480-4947-97cb-14f56c38f800" x="-2" y="70" width="187" height="63"/>
 				<graphicElement>
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
 			</rectangle>
 			<textField pattern="HH:mm">
-				<reportElement uuid="bcf9bb21-c662-4919-a36b-0154deb00625" key="element-95" x="130" y="81" width="41" height="13" forecolor="#000000"/>
+				<reportElement uuid="bcf9bb21-c662-4919-a36b-0154deb00625" key="element-95" x="130" y="92" width="41" height="13" forecolor="#000000"/>
 				<textElement verticalAlignment="Middle" markup="none">
 					<font fontName="Times New Roman" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_venda_hora}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="bba521bb-382c-4d32-a567-bedc62397a18" key="element-91" x="1" y="71" width="170" height="13" forecolor="#000000"/>
+				<reportElement uuid="bba521bb-382c-4d32-a567-bedc62397a18" key="element-91" x="1" y="82" width="170" height="13" forecolor="#000000"/>
 				<textElement markup="html">
 					<font fontName="Times New Roman" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{documento_designacao} +" <b>" +$F{tb_venda_cod_fact} +"</b>"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="098b2ff2-19f3-4436-9a1c-7bc4690bd0d8" key="element-94" x="-1" y="81" width="82" height="13" forecolor="#000000"/>
+				<reportElement uuid="098b2ff2-19f3-4436-9a1c-7bc4690bd0d8" key="element-94" x="-1" y="92" width="82" height="13" forecolor="#000000"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -283,14 +285,14 @@ WHERE
 				<text><![CDATA[Data de Emissão:]]></text>
 			</staticText>
 			<textField pattern="dd-MM-yyyy">
-				<reportElement uuid="3473c797-1a28-4b54-89bb-a32153832384" key="element-95" x="81" y="81" width="48" height="13" forecolor="#000000"/>
+				<reportElement uuid="3473c797-1a28-4b54-89bb-a32153832384" key="element-95" x="81" y="92" width="48" height="13" forecolor="#000000"/>
 				<textElement verticalAlignment="Middle" markup="none">
 					<font fontName="Times New Roman" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_venda_dataVenda}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="f7ca4a37-0291-4ae0-a8fa-a749e44941c9" key="textField-11" x="0" y="91" width="186" height="16"/>
+				<reportElement uuid="f7ca4a37-0291-4ae0-a8fa-a749e44941c9" key="textField-11" x="0" y="102" width="186" height="16"/>
 				<box topPadding="2"/>
 				<textElement verticalAlignment="Middle" markup="html">
 					<font fontName="Times New Roman" isItalic="false" pdfFontName="Helvetica-Oblique"/>
@@ -298,14 +300,14 @@ WHERE
 				<textFieldExpression><![CDATA["<b>Cliente:</b> " + "<i>" +$F{tb_venda_nome_cliente} +"</i>"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="4f9e9141-8f88-441e-9e64-2d1659cb5e06" x="0" y="104" width="104" height="16"/>
+				<reportElement uuid="4f9e9141-8f88-441e-9e64-2d1659cb5e06" x="0" y="115" width="104" height="16"/>
 				<textElement verticalAlignment="Middle" markup="html">
 					<font fontName="Times New Roman" size="8" isItalic="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["<b>NIF:</b> "  +"<i>" +$F{tb_venda_cliente_nif} +"</i>"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="af565914-a0c5-4982-b6e1-8275416993e0" x="0" y="118" width="118" height="10"/>
+				<reportElement uuid="af565914-a0c5-4982-b6e1-8275416993e0" x="0" y="133" width="118" height="10"/>
 				<box leftPadding="1"/>
 				<textElement>
 					<font fontName="Times New Roman" size="7" isBold="true"/>
@@ -313,12 +315,19 @@ WHERE
 				<textFieldExpression><![CDATA[$P{STATUS_DOCUMENTO}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="af19ce94-578c-4ee4-baa4-1e75473bcb69" x="117" y="118" width="71" height="10"/>
+				<reportElement uuid="af19ce94-578c-4ee4-baa4-1e75473bcb69" x="117" y="133" width="71" height="10"/>
 				<box rightPadding="1"/>
 				<textElement textAlignment="Right">
 					<font fontName="Times New Roman" size="7" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_armazem_designacao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="e293bdd0-cd38-40d1-8a45-f83667dae193" key="element-91" x="2" y="71" width="180" height="13" forecolor="#000000"/>
+				<textElement textAlignment="Right" markup="html">
+					<font fontName="Times New Roman" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Nº " +" <b>" +$F{tb_venda_cont}+"</b>"]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>

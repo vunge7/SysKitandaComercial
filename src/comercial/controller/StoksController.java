@@ -426,10 +426,10 @@ public class StoksController implements EntidadeFactory
 //                System.out.println( "CODIGO: " + codigo );
                 String designacao = rs.getString( "designacao" );
                 String categoria = rs.getString( "categoria" );
-                String qtd = (( rs.getLong( "cod_familia" ) == 1 ) ? "-" : String.valueOf( rs.getLong( "qtd" ) ));
+                String qtd = ( ( rs.getLong( "cod_familia" ) == 1 ) ? "-" : String.valueOf( rs.getLong( "qtd" ) ) );
                 double precoVenda = rs.getDouble( "preco_venda" );
 
-                String estadoCritico = (( rs.getInt( "cod_familia" ) == 1 ) ? "-" : rs.getString( "estado_critico" ));
+                String estadoCritico = ( ( rs.getInt( "cod_familia" ) == 1 ) ? "-" : rs.getString( "estado_critico" ) );
 
                 if ( Objects.isNull( estadoCritico ) || estadoCritico.equals( "0" ) )
                 {
@@ -542,10 +542,10 @@ public class StoksController implements EntidadeFactory
 //                System.out.println( "CODIGO: " + codigo );
                 String designacao = rs.getString( "designacao" );
                 String categoria = rs.getString( "categoria" );
-                String qtd = (( rs.getLong( "cod_familia" ) == 1 ) ? "-" : String.valueOf( rs.getLong( "qtd" ) ));
+                String qtd = ( ( rs.getLong( "cod_familia" ) == 1 ) ? "-" : String.valueOf( rs.getLong( "qtd" ) ) );
                 double precoVenda = rs.getDouble( "preco_venda" );
 
-                String estadoCritico = (( rs.getInt( "cod_familia" ) == 1 ) ? "-" : rs.getString( "estado_critico" ));
+                String estadoCritico = ( ( rs.getInt( "cod_familia" ) == 1 ) ? "-" : rs.getString( "estado_critico" ) );
 
                 if ( Objects.isNull( estadoCritico ) || estadoCritico.equals( "0" ) )
                 {
@@ -658,10 +658,10 @@ public class StoksController implements EntidadeFactory
 //                System.out.println( "CODIGO: " + codigo );
                 String designacao = rs.getString( "designacao" );
                 String categoria = rs.getString( "categoria" );
-                String qtd = (( rs.getLong( "cod_familia" ) == 1 ) ? "-" : String.valueOf( rs.getLong( "qtd" ) ));
+                String qtd = ( ( rs.getLong( "cod_familia" ) == 1 ) ? "-" : String.valueOf( rs.getLong( "qtd" ) ) );
                 double precoVenda = rs.getDouble( "preco_venda" );
 
-                String estadoCritico = (( rs.getInt( "cod_familia" ) == 1 ) ? "-" : rs.getString( "estado_critico" ));
+                String estadoCritico = ( ( rs.getInt( "cod_familia" ) == 1 ) ? "-" : rs.getString( "estado_critico" ) );
 
                 if ( Objects.isNull( estadoCritico ) || estadoCritico.equals( "0" ) )
                 {
@@ -877,12 +877,53 @@ public class StoksController implements EntidadeFactory
 
     }
 
+    public TbStock getStockByCodManualAndIdArmazem( String codManueal, int idArmazem )
+    {
+
+//        String FIND__BY_CODIGO = "SELECT * FROM tb_stock s WHERE s.cod_produto_codigo.codBarra = '" + codBarra  + "' AND s.cod_armazem = " + idArmazem;
+//        String FIND_ALL = "SELECT s.* FROM tb_stock s INNER JOIN tb_produto p ON p.codigo = s.cod_produto_codigo WHERE s.cod_armazem = " + idArmazem  + " AND p.designacao LIKE '%" + designacao+ "%' ";
+        String FIND__BY_CODIGO = "SELECT s.* FROM tb_stock s "
+                + " INNER JOIN tb_produto p ON p.codigo = s.cod_produto_codigo "
+                + " WHERE p.codigo_manual = '" + codManueal + "' AND s.cod_armazem = " + idArmazem;
+        ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
+        TbStock stock = null;
+        try
+        {
+
+            if ( result.next() )
+            {
+                stock = new TbStock();
+                stock.setCodigo( result.getInt( "codigo" ) );
+                stock.setCodProdutoCodigo( new TbProduto( result.getInt( "cod_produto_codigo" ) ) );
+//                stock.setDataEntrada( result.getDate("data_entrada" ) );
+                stock.setQuantidadeExistente( result.getDouble( "quantidade_existente" ) );
+                stock.setStatus( result.getString( "status" ) );
+                stock.setPrecoVenda( result.getBigDecimal( "preco_venda" ) );
+                stock.setQuantCritica( result.getInt( "quant_critica" ) );
+                stock.setQuantBaixa( result.getInt( "quant_baixa" ) );
+                stock.setQuantidadeAntiga( result.getDouble( "quantidade_antiga" ) );
+                stock.setCodArmazem( new TbArmazem( result.getInt( "cod_armazem" ) ) );
+                stock.setPrecoVendaGrosso( result.getBigDecimal( "preco_venda_grosso" ) );
+                stock.setQtdGrosso( result.getInt( "qtd_grosso" ) );
+                stock.setPrecoVendaFabrica( result.getBigDecimal( "preco_venda_fabrica" ) );
+
+            }
+
+        }
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
+        }
+        return stock;
+
+    }
+
     public boolean adicionar_quantidades( int cod, double quantidade, double qtdCritica, double qtdBaixa, int idArmazem )
     {
 
         double qtdExistente = getQuantidadeProduto( cod, idArmazem );
         System.out.println( "QTD_EXISTENTE: " + qtdExistente );
-        double qtdUpdate = (qtdExistente + quantidade);
+        double qtdUpdate = ( qtdExistente + quantidade );
         System.out.println( "QTD_UPDATE: " + qtdUpdate );
         String sql = "UPDATE tb_stock SET quantidade_existente =  " + qtdUpdate + ",  "
                 + " quant_critica = " + qtdCritica + ",  "
@@ -897,7 +938,7 @@ public class StoksController implements EntidadeFactory
 
         double qtdExistente = getQuantidadeProduto( cod, idArmazem );
 //        System.out.println( "QTD_EXISTENTE: " + qtdExistente );
-        double qtdUpdate = (qtdExistente + quantidade);
+        double qtdUpdate = ( qtdExistente + quantidade );
 //        System.out.println( "QTD_UPDATE: " + qtdUpdate );
         String sql = "UPDATE tb_stock SET quantidade_existente =  " + qtdUpdate
                 + " WHERE cod_produto_codigo = " + cod + " AND  cod_armazem = " + idArmazem;
@@ -910,7 +951,7 @@ public class StoksController implements EntidadeFactory
 
         double qtdExistente = getQuantidadeProduto( cod, idArmazem, conexao );
 //        System.out.println( "QTD_EXISTENTE: " + qtdExistente );
-        double qtdUpdate = (qtdExistente + quantidade);
+        double qtdUpdate = ( qtdExistente + quantidade );
 //        System.out.println( "QTD_UPDATE: " + qtdUpdate );
         String sql = "UPDATE tb_stock SET quantidade_existente =  " + qtdUpdate
                 + " WHERE cod_produto_codigo = " + cod + " AND  cod_armazem = " + idArmazem;
@@ -931,7 +972,7 @@ public class StoksController implements EntidadeFactory
     {
 
         double qtdExistente = getQuantidadeProduto( cod, idArmazem );
-        double qtdUpdate = (qtdExistente - quantidade);
+        double qtdUpdate = ( qtdExistente - quantidade );
 //        System.out.println( "QTD_UPDATE: " + qtdUpdate );
         String sql = "UPDATE tb_stock SET quantidade_existente =  " + qtdUpdate
                 + " WHERE cod_produto_codigo = " + cod + " AND  cod_armazem = " + idArmazem;
@@ -943,7 +984,7 @@ public class StoksController implements EntidadeFactory
     {
 
         double qtdExistente = getQuantidadeProduto( cod, idArmazem, conexao );
-        double qtdUpdate = (qtdExistente - quantidade);
+        double qtdUpdate = ( qtdExistente - quantidade );
 //        System.out.println( "QTD_UPDATE: " + qtdUpdate );
         String sql = "UPDATE tb_stock SET quantidade_existente =  " + qtdUpdate
                 + " WHERE cod_produto_codigo = " + cod + " AND  cod_armazem = " + idArmazem;
@@ -1048,10 +1089,10 @@ public class StoksController implements EntidadeFactory
 //                System.out.println( "CODIGO: " + codigo );
                 String designacao = rs.getString( "designacao" );
                 String categoria = rs.getString( "categoria" );
-                String qtd = (( rs.getLong( "cod_familia" ) == 1 ) ? "-" : String.valueOf( rs.getLong( "qtd" ) ));
+                String qtd = ( ( rs.getLong( "cod_familia" ) == 1 ) ? "-" : String.valueOf( rs.getLong( "qtd" ) ) );
                 double precoVenda = rs.getDouble( "preco_venda" );
 
-                String estadoCritico = (( rs.getInt( "cod_familia" ) == 1 ) ? "-" : rs.getString( "estado_critico" ));
+                String estadoCritico = ( ( rs.getInt( "cod_familia" ) == 1 ) ? "-" : rs.getString( "estado_critico" ) );
 
                 if ( Objects.isNull( estadoCritico ) || estadoCritico.equals( "0" ) )
                 {
@@ -1107,51 +1148,57 @@ public class StoksController implements EntidadeFactory
         return 0;
     }
 
-public void salvarAcertos(Connection conn, int codArmazem, List<Object[]> linhas, int usuarioId) throws SQLException {
-    String updateStock = "UPDATE tb_stock SET quantidade_existente = ? WHERE cod_produto_codigo = ? AND cod_armazem = ?";
-    String insertAcerto = "INSERT INTO acerto_stock (cod_produto, cod_armazem, quantidade_antes, quantidade_acerto, quantidade_depois, usuario_id, data, hora) VALUES (?, ?, ?, ?, ?, ?, CURRENT_DATE, CURRENT_TIME)";
+    public void salvarAcertos( Connection conn, int codArmazem, List<Object[]> linhas, int usuarioId ) throws SQLException
+    {
+        String updateStock = "UPDATE tb_stock SET quantidade_existente = ? WHERE cod_produto_codigo = ? AND cod_armazem = ?";
+        String insertAcerto = "INSERT INTO acerto_stock (cod_produto, cod_armazem, quantidade_antes, quantidade_acerto, quantidade_depois, usuario_id, data, hora) VALUES (?, ?, ?, ?, ?, ?, CURRENT_DATE, CURRENT_TIME)";
 
-    try (
-        PreparedStatement pstUpdate = conn.prepareStatement(updateStock);
-        PreparedStatement pstInsert = conn.prepareStatement(insertAcerto)
-    ) {
-        conn.setAutoCommit(false); // Início da transação
+        try (
+                PreparedStatement pstUpdate = conn.prepareStatement( updateStock ); PreparedStatement pstInsert = conn.prepareStatement( insertAcerto ) )
+        {
+            conn.setAutoCommit( false ); // Início da transação
 
-        for (Object[] linha : linhas) {
-            int codProduto = (Integer) linha[0];
-            double qtdAntes   = Double.parseDouble(linha[5].toString());
-            double qtdAcerto  = Double.parseDouble(linha[6].toString());
-            double qtdDepois  = Double.parseDouble(linha[7].toString());
+            for ( Object[] linha : linhas )
+            {
+                int codProduto = (Integer) linha[ 0 ];
+                double qtdAntes = Double.parseDouble( linha[ 5 ].toString() );
+                double qtdAcerto = Double.parseDouble( linha[ 6 ].toString() );
+                double qtdDepois = Double.parseDouble( linha[ 7 ].toString() );
 
-            if (qtdAcerto != 0) {
-                // Atualiza tb_stock
-                pstUpdate.setDouble(1, qtdDepois);
-                pstUpdate.setInt(2, codProduto);
-                pstUpdate.setInt(3, codArmazem);
-                pstUpdate.addBatch();
+                if ( qtdAcerto != 0 )
+                {
+                    // Atualiza tb_stock
+                    pstUpdate.setDouble( 1, qtdDepois );
+                    pstUpdate.setInt( 2, codProduto );
+                    pstUpdate.setInt( 3, codArmazem );
+                    pstUpdate.addBatch();
 
-                // Insere histórico em acerto_stock
-                pstInsert.setInt(1, codProduto);
-                pstInsert.setInt(2, codArmazem);
-                pstInsert.setDouble(3, qtdAntes);
-                pstInsert.setDouble(4, qtdAcerto);
-                pstInsert.setDouble(5, qtdDepois);
-                pstInsert.setInt(6, usuarioId);
-                pstInsert.addBatch();
+                    // Insere histórico em acerto_stock
+                    pstInsert.setInt( 1, codProduto );
+                    pstInsert.setInt( 2, codArmazem );
+                    pstInsert.setDouble( 3, qtdAntes );
+                    pstInsert.setDouble( 4, qtdAcerto );
+                    pstInsert.setDouble( 5, qtdDepois );
+                    pstInsert.setInt( 6, usuarioId );
+                    pstInsert.addBatch();
+                }
             }
+
+            pstUpdate.executeBatch();
+            pstInsert.executeBatch();
+
+            conn.commit(); // Confirma tudo
         }
-
-        pstUpdate.executeBatch();
-        pstInsert.executeBatch();
-
-        conn.commit(); // Confirma tudo
-    } catch (SQLException e) {
-        conn.rollback(); // Desfaz tudo em caso de erro
-        throw e;
-    } finally {
-        conn.setAutoCommit(true);
+        catch ( SQLException e )
+        {
+            conn.rollback(); // Desfaz tudo em caso de erro
+            throw e;
+        }
+        finally
+        {
+            conn.setAutoCommit( true );
+        }
     }
-}
 
 //public void salvarAcertoLinha(Connection conn, int codProduto, int codArmazem, int usuarioId,
 //                              String nomeUsuario, String designacaoProduto, String designacaoArmazem,
@@ -1196,67 +1243,66 @@ public void salvarAcertos(Connection conn, int codArmazem, List<Object[]> linhas
 //        throw e;
 //    }
 //}
+    public void salvarAcertoLinha( Connection conn,
+            int codProduto,
+            int codArmazem,
+            int usuarioId,
+            String nomeUsuario,
+            String designacaoProduto,
+            String designacaoArmazem,
+            double qtdAntes,
+            double qtdAcerto,
+            double qtdDepois ) throws SQLException
+    {
 
-public void salvarAcertoLinha(Connection conn,
-                              int codProduto,
-                              int codArmazem,
-                              int usuarioId,
-                              String nomeUsuario,
-                              String designacaoProduto,
-                              String designacaoArmazem,
-                              double qtdAntes,
-                              double qtdAcerto,
-                              double qtdDepois) throws SQLException {
+        String sqlAcerto = "INSERT INTO acerto_stock "
+                + "(data_hora, cod_produto, designacao_produto, cod_usuario, nome_usuario, "
+                + "qtd_anterior, qtd_acerto, qtd_depois, cod_armazem, designcao_armazem) "
+                + "VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-    String sqlAcerto = "INSERT INTO acerto_stock "
-            + "(data_hora, cod_produto, designacao_produto, cod_usuario, nome_usuario, "
-            + "qtd_anterior, qtd_acerto, qtd_depois, cod_armazem, designcao_armazem) "
-            + "VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sqlStock = "UPDATE tb_stock "
+                + "SET quantidade_existente = ? "
+                + "WHERE cod_produto_codigo = ? AND cod_armazem = ?";
 
-    String sqlStock = "UPDATE tb_stock "
-            + "SET quantidade_existente = ? "
-            + "WHERE cod_produto_codigo = ? AND cod_armazem = ?";
+        // inicia transação
+        boolean autoCommit = conn.getAutoCommit();
+        conn.setAutoCommit( false );
 
-    // inicia transação
-    boolean autoCommit = conn.getAutoCommit();
-    conn.setAutoCommit(false);
+        try (
+                PreparedStatement psAcerto = conn.prepareStatement( sqlAcerto ); PreparedStatement psStock = conn.prepareStatement( sqlStock ) )
+        {
+            // --- grava acerto_stock ---
+            psAcerto.setInt( 1, codProduto );
+            psAcerto.setString( 2, designacaoProduto );
+            psAcerto.setInt( 3, usuarioId );
+            psAcerto.setString( 4, nomeUsuario );
+            psAcerto.setDouble( 5, qtdAntes );
+            psAcerto.setDouble( 6, qtdAcerto );
+            psAcerto.setDouble( 7, qtdDepois );
+            psAcerto.setInt( 8, codArmazem );
+            psAcerto.setString( 9, designacaoArmazem );
+            psAcerto.executeUpdate();
 
-    try (
-        PreparedStatement psAcerto = conn.prepareStatement(sqlAcerto);
-        PreparedStatement psStock = conn.prepareStatement(sqlStock)
-    ) {
-        // --- grava acerto_stock ---
-        psAcerto.setInt(1, codProduto);
-        psAcerto.setString(2, designacaoProduto);
-        psAcerto.setInt(3, usuarioId);
-        psAcerto.setString(4, nomeUsuario);
-        psAcerto.setDouble(5, qtdAntes);
-        psAcerto.setDouble(6, qtdAcerto);
-        psAcerto.setDouble(7, qtdDepois);
-        psAcerto.setInt(8, codArmazem);
-        psAcerto.setString(9, designacaoArmazem);
-        psAcerto.executeUpdate();
+            // --- atualiza tb_stock ---
+            psStock.setDouble( 1, qtdDepois );
+            psStock.setInt( 2, codProduto );
+            psStock.setInt( 3, codArmazem );
+            psStock.executeUpdate();
 
-        // --- atualiza tb_stock ---
-        psStock.setDouble(1, qtdDepois);
-        psStock.setInt(2, codProduto);
-        psStock.setInt(3, codArmazem);
-        psStock.executeUpdate();
+            // confirma transação
+            conn.commit();
 
-        // confirma transação
-        conn.commit();
-
-    } catch (SQLException ex) {
-        conn.rollback();
-        throw ex;
-    } finally {
-        // restaura autoCommit
-        conn.setAutoCommit(autoCommit);
+        }
+        catch ( SQLException ex )
+        {
+            conn.rollback();
+            throw ex;
+        }
+        finally
+        {
+            // restaura autoCommit
+            conn.setAutoCommit( autoCommit );
+        }
     }
-}
-
-
-
-
 
 }

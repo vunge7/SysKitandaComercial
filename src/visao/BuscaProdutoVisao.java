@@ -342,7 +342,7 @@ public class BuscaProdutoVisao extends javax.swing.JDialog
                 DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
                 int linha = tabela_busca.getSelectedRow();
                 Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-                EntradaVisao.busca_produto_by_cod_interno_entrada(codigo );
+                EntradaProdutoVisao.busca_produto_by_cod_interno_entrada(codigo );
                 dispose();
 
             }
@@ -373,7 +373,7 @@ public class BuscaProdutoVisao extends javax.swing.JDialog
                 DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
                 int linha = tabela_busca.getSelectedRow();
                 Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-                SaidaUsuarioVisao.accao_codigo_interno_enter_busca_exterior( codigo );
+                SaidaProdutoVisao.accao_codigo_interno_enter_busca_exterior( codigo );
                 dispose();
 
             }

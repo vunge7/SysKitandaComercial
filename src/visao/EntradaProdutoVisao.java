@@ -7,6 +7,7 @@ package visao;
 import comercial.controller.ArmazensController;
 import comercial.controller.DocumentosController;
 import comercial.controller.EntradasController;
+import comercial.controller.FornecedoresController;
 import comercial.controller.ItemEntradasController;
 import comercial.controller.MovimentacaoController;
 import comercial.controller.ProdutosController;
@@ -21,6 +22,7 @@ import dao.TipoProdutoDao;
 import dao.UsuarioDao;
 import entity.TbArmazem;
 import entity.TbEntrada;
+import entity.TbFornecedor;
 import entity.TbItemEntradas;
 import entity.TbProduto;
 import entity.TbStock;
@@ -48,11 +50,12 @@ import util.DVML;
 import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
 
-public class EntradaVisao extends javax.swing.JFrame
+public class EntradaProdutoVisao extends javax.swing.JFrame
 {
 
     private static EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
     private static ProdutoDao produtoDao = new ProdutoDao( emf );
+
     private EntradaDao entradaDao = new EntradaDao( emf );
     private static StockDao stockDao = new StockDao( emf );
     private TipoProdutoDao tipoProdutoDao = new TipoProdutoDao( emf );
@@ -68,10 +71,11 @@ public class EntradaVisao extends javax.swing.JFrame
     private int linha_actual = -1;
     private String cod_barra, cod_produto;
     private static ProdutosController produtosController;
+    private static FornecedoresController fornecedoresController;
 //    private static ArmazensController armazensController;
     private static TipoProdutosController tipoProdutoController;
     private static StoksController stoksController;
-    private static TbProduto produto;
+    private static TbProduto produtoGlobal;
     private static ItemEntradasController itemEntradasController;
     private static EntradasController entradasController;
     private static BDConexao conexaoTransaction;
@@ -80,7 +84,7 @@ public class EntradaVisao extends javax.swing.JFrame
     private static ArmazensController armazensController;
     // private OperacaoSistemaUtil osu =  new OperacaoSistemaUtil();
 
-    public EntradaVisao( java.awt.Frame parent, boolean modal, int idUser, String cod_barra, BDConexao conexao ) throws SQLException
+    public EntradaProdutoVisao( java.awt.Frame parent, boolean modal, int idUser, String cod_barra, BDConexao conexao ) throws SQLException
     {
 
         //super(parent, modal);
@@ -88,13 +92,14 @@ public class EntradaVisao extends javax.swing.JFrame
         setLocationRelativeTo( null );
         this.conexao = conexao;
         this.idUser = idUser;
-        produtosController = new ProdutosController( EntradaVisao.conexao );
-        documentosController = new DocumentosController( EntradaVisao.conexao );
-        tipoProdutoController = new TipoProdutosController( EntradaVisao.conexao );
-        entradasController = new EntradasController( EntradaVisao.conexao );
-        itemEntradasController = new ItemEntradasController( EntradaVisao.conexao );
-        stoksController = new StoksController( EntradaVisao.conexao );
-        armazensController = new ArmazensController( EntradaVisao.conexao );
+        produtosController = new ProdutosController( EntradaProdutoVisao.conexao );
+        documentosController = new DocumentosController( EntradaProdutoVisao.conexao );
+        tipoProdutoController = new TipoProdutosController( EntradaProdutoVisao.conexao );
+        entradasController = new EntradasController( EntradaProdutoVisao.conexao );
+        itemEntradasController = new ItemEntradasController( EntradaProdutoVisao.conexao );
+        stoksController = new StoksController( EntradaProdutoVisao.conexao );
+        armazensController = new ArmazensController( EntradaProdutoVisao.conexao );
+        fornecedoresController = new FornecedoresController( EntradaProdutoVisao.conexao );
         cmbArmazem.setModel( new DefaultComboBoxModel( armazemDao.buscaTodos1() ) );
 //        DVML.activar_cmb_armazem(cmbArmazem);
         cmbSubFamilia.setModel( new DefaultComboBoxModel( tipoProdutoDao.getAllCategoria() ) );
@@ -109,7 +114,7 @@ public class EntradaVisao extends javax.swing.JFrame
         MetodosUtil.setArmazemByCampoConfigArmazem( cmbArmazem, conexao, idUser );
     }
 
-    public EntradaVisao( java.awt.Frame parent, boolean modal, int idUser, String codigo, BDConexao conexao, String armazem, int chamada )
+    public EntradaProdutoVisao( java.awt.Frame parent, boolean modal, int idUser, String codigo, BDConexao conexao, String armazem, int chamada )
     {
 
         //super(parent, modal);
@@ -435,8 +440,7 @@ public class EntradaVisao extends javax.swing.JFrame
                                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                             .addGroup(jPanel1Layout.createSequentialGroup()
                                                 .addGap(6, 6, 6)
-                                                .addComponent(lbCategoria2, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(85, 85, 85))
+                                                .addComponent(lbCategoria2, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
                                             .addComponent(txtCodigoBarra, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGap(18, 18, 18)
                                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -599,26 +603,25 @@ public class EntradaVisao extends javax.swing.JFrame
 
     private void cmbSubFamiliaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbSubFamiliaActionPerformed
 
-//      accao_combo_categoria();
-//         accao_codigo_produto(getIdCodigoProduto());
+;
 
     }//GEN-LAST:event_cmbSubFamiliaActionPerformed
 
     private void cmbProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbProdutoActionPerformed
 
-        accao_codigo_produto( getIdCodigoProduto() );
+        produtoGlobal = produtosController.findByDesignacao( cmbProduto.getSelectedItem().toString() );
+        accao_codigo_produto();
         //accao_key_pressed_codigo_produto();
     }//GEN-LAST:event_cmbProdutoActionPerformed
 
     private void cmbArmazemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbArmazemActionPerformed
-        accao_codigo_produto( getIdCodigoProduto() );
     }//GEN-LAST:event_cmbArmazemActionPerformed
 
     private void btn_adicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_adicionarActionPerformed
         //verifca se existe o produto no stock caso nao registra.
-        if ( !stoksController.existe_stock( produto.getCodigo(), getIdArmazem() ) )
+        if ( !stoksController.existe_stock( produtoGlobal.getCodigo(), getIdArmazem() ) )
         {
-            boolean registrar_stock = registrar_stock( produto, 0, 0, 0, stoksController );
+            boolean registrar_stock = registrar_stock( produtoGlobal, 0, 0, 0, stoksController );
         }
         adicionar_produto();
     }//GEN-LAST:event_btn_adicionarActionPerformed
@@ -647,9 +650,11 @@ public class EntradaVisao extends javax.swing.JFrame
 
     private void txtQuatindadeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtQuatindadeActionPerformed
         //verifca se existe o produto no stock caso nao registra.
-        if ( !stoksController.existe_stock( produto.getCodigo(), getIdArmazem() ) )
+        System.out.println( "COD PRODUTO: " + produtoGlobal.getCodigo() );
+        System.out.println( "ID ARMAZEM: " + getIdArmazem() );
+        if ( !stoksController.existe_stock( produtoGlobal.getCodigo(), getIdArmazem() ) )
         {
-            boolean registrar_stock = registrar_stock( produto, 0, 0, 0, stoksController );
+            boolean registrar_stock = registrar_stock( produtoGlobal, 0, 0, 0, stoksController );
         }
         adicionar_produto();
     }//GEN-LAST:event_txtQuatindadeActionPerformed
@@ -658,7 +663,6 @@ public class EntradaVisao extends javax.swing.JFrame
         // TODO add your handling code here:
 //        accao_key_pressed_codigo_produto();
         busca_produto_by_cod_interno();
-        txtQuatindade.requestFocus();
     }//GEN-LAST:event_txtCodigoProdutoActionPerformed
 
     private void txtCodigoManualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigoManualActionPerformed
@@ -703,31 +707,33 @@ public class EntradaVisao extends javax.swing.JFrame
         }
         catch ( ClassNotFoundException ex )
         {
-            java.util.logging.Logger.getLogger( EntradaVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            java.util.logging.Logger.getLogger(EntradaProdutoVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
         catch ( InstantiationException ex )
         {
-            java.util.logging.Logger.getLogger( EntradaVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            java.util.logging.Logger.getLogger(EntradaProdutoVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
         catch ( IllegalAccessException ex )
         {
-            java.util.logging.Logger.getLogger( EntradaVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            java.util.logging.Logger.getLogger(EntradaProdutoVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
         catch ( javax.swing.UnsupportedLookAndFeelException ex )
         {
-            java.util.logging.Logger.getLogger( EntradaVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            java.util.logging.Logger.getLogger(EntradaProdutoVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater( new Runnable()
+        java.awt.EventQueue.invokeLater(new Runnable()
         {
             public void run()
             {
                 try
                 {
-                    EntradaVisao dialog = new EntradaVisao( new javax.swing.JFrame(), true, 15, "", new BDConexao() );
+                    EntradaProdutoVisao dialog = new EntradaProdutoVisao( new javax.swing.JFrame(), true, 15, "", new BDConexao() );
                     dialog.addWindowListener( new java.awt.event.WindowAdapter()
                     {
                         @Override
@@ -740,7 +746,7 @@ public class EntradaVisao extends javax.swing.JFrame
                 }
                 catch ( SQLException ex )
                 {
-                    Logger.getLogger( EntradaVisao.class.getName() ).log( Level.SEVERE, null, ex );
+                    Logger.getLogger(EntradaProdutoVisao.class.getName() ).log( Level.SEVERE, null, ex );
                 }
             }
         } );
@@ -837,28 +843,33 @@ public class EntradaVisao extends javax.swing.JFrame
 
     public void adicionar_produto()
     {
-
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
-        TbStock stock = stockDao.get_stock_by_id_produto_and_id_armazem( getCodigoProduto(), getCodigoArmazem() );
+        TbStock stock = stoksController.getStockByIdProdutoAndIdArmazem(
+                getCodigoProduto(),
+                getCodigoArmazem()
+        );
 
-        if ( stock.getCodigo() != 0 )
+        double qtdExistente = stoksController.getQuantidadeProduto(
+                produtoGlobal.getCodigo(),
+                getCodigoArmazem()
+        );
+
+        double qtdEntrar = Double.parseDouble( txtQuatindade.getText() );
+
+        if ( Objects.nonNull( stock ) )
         {
             try
             {
-                if ( !exist_produto( getCodigoProduto(), armazemDao.getArmazemByDescricao( cmbArmazem.getSelectedItem().toString() ).getCodigo() ) )
+                if ( !exist_produto( produtoGlobal.getCodigo(), getCodigoArmazem() ) )
                 {
                     modelo.addRow( new Object[]
                     {
-                        getCodigoProduto(),
-                        stock.getCodProdutoCodigo().getDesignacao(),
-                        getQuantidadeProduto( getCodigoProduto() ),
+                        produtoGlobal.getCodigo(),
+                        produtoGlobal.getDesignacao(),
+                        qtdExistente,
                         txtQuatindade.getText(),
                         cmbArmazem.getSelectedItem().toString(),
-                        //                        stock.getQuantidadeExistente()
-                        //                        + Integer.parseInt(txtQuantidadeEntrar.getText())
-
-                        conexao.getQtdExistenteStock( getCodigoProduto(), getIdArmazem() )
-                        + Integer.parseInt( txtQuatindade.getText() ),
+                        ( qtdExistente + qtdEntrar ),
 
                     } );
                 }
@@ -1025,7 +1036,7 @@ public class EntradaVisao extends javax.swing.JFrame
     {
         try
         {
-            return produtoDao.getProdutoByDescricao( cmbProduto.getSelectedItem().toString() ).getCodigo();
+            return produtosController.getIdProduto( cmbProduto.getSelectedItem().toString() );
         }
         catch ( Exception e )
         {
@@ -1043,34 +1054,37 @@ public class EntradaVisao extends javax.swing.JFrame
     {
 //        TbStock stock = stockDao.get_stock_by_id_produto_and_id_armazem(getIdCodigoProduto(), getIdArmazem());
 //        txtQuatidadeExistente.setText(stock.getQuantidadeExistente().toString());
-        System.out.println( "  " + getCodigoProduto() + " - " + getCodigoArmazem() );
+        System.out.println( "  " + produtoGlobal.getCodigo() + " - " + getCodigoArmazem() );
         System.out.println( "CHEGUEI AQUI ENG." );
-        txtQuatidadeExistente.setText( String.valueOf( conexao.getQtdExistenteStock( getCodigoProduto(), getCodigoArmazem() ) ) );
+        txtQuatidadeExistente.setText( String.valueOf( stoksController.getQuantidadeProduto( produtoGlobal.getCodigo(), getCodigoArmazem() ) ) );
 
     }
 
-    private static void accao_codigo_produto( int parm_codigo )
+    private static void accao_codigo_produto()
     {
 
         try
         {
 
             id_armzem = getIdArmazem();
-            id_armzem = getIdArmazem();
             System.err.println( "ACCAO CODIGO PRODUTO ID ARMAZEM : " + id_armzem );
             System.err.println( "ACCAO CODIGO PRODUTO FORA" );
 
             System.err.println( "ACCAO CODIGO PRODUTO DENTRO" );
-            TbStock stock = stockDao.get_stock_by_id_produto_and_id_armazem( parm_codigo, id_armzem );
-            cmbSubFamilia.setSelectedItem( stock.getCodProdutoCodigo().getCodTipoProduto().getDesignacao() );
-            accao_combo_categoria();
-            cmbProduto.setSelectedItem( stock.getCodProdutoCodigo().getDesignacao() );
-            txtCodigoProduto.setText( String.valueOf( stock.getCodProdutoCodigo().getCodigo() ) );
-            //txtQuatidadeExistente.setText(String.valueOf(stock.getQuantidadeExistente()));
-            lbFornecedor.setText( "FORNECEDOR: " + stock.getCodProdutoCodigo().getCodFornecedores().getNome() );
 
+            TbTipoProduto subFamilia = (TbTipoProduto) tipoProdutoController.findById( produtoGlobal.getCodTipoProduto().getCodigo() );
+            cmbSubFamilia.setSelectedItem( subFamilia.getDesignacao() );
+            accao_combo_categoria();
+            cmbProduto.setSelectedItem( produtoGlobal.getDesignacao() );
+            txtCodigoProduto.setText( String.valueOf( produtoGlobal.getCodigo() ) );
+            //txtQuatidadeExistente.setText(String.valueOf(stock.getQuantidadeExistente()));
+
+            mostrarFornecedor();
             procedimento_actualizar_quantidade();
 
+            txtCodigoBarra.setText( String.valueOf( produtoGlobal.getCodBarra() ) );
+            txtCodigoProduto.setText( String.valueOf( produtoGlobal.getCodigo() ) );
+            txtCodigoManual.setText( String.valueOf( produtoGlobal.getCodigoManual() ) );
             txtQuatindade.requestFocus();
 
         }
@@ -1083,78 +1097,29 @@ public class EntradaVisao extends javax.swing.JFrame
 
     private void accao_enter_cod_barra()
     {
-
         try
         {
-
             String codigo_barra = txtCodigoBarra.getText().trim();
-            TbStock stock_local = stockDao.getStockByCodBarra( codigo_barra, getIdArmazem() );
-            System.err.println( " ******** COD PRODUTO :  " + stock_local.getCodProdutoCodigo().getCodigo() );
-            accao_codigo_produto( stock_local.getCodProdutoCodigo().getCodigo() );
-
+            produtoGlobal = produtosController.getProdutoByBarra( codigo_barra );
+            accao_codigo_produto();
         }
         catch ( Exception ex )
         {
-
         }
-
     }
 
-    private void accao_enter_cod_produto()
-    {
-
-        try
-        {
-
-            int codigo = Integer.parseInt( txtCodigoProduto.getText() );
-//            TbStock stock_local = stockDao.getStockByCodBarra(codigo_barra, getIdArmazem());
-//            System.err.println(" ******** COD PRODUTO :  " +stock_local.getCodProdutoCodigo().getCodigo());
-            accao_codigo_produto( codigo );
-
-        }
-        catch ( Exception ex )
-        {
-
-        }
-
-    }
-
-//    
-//     private void accao_enter_cod_produto() {
-//
-//        try {
-//
-//            Long codigo_barra = Long.parseLong(txtCodigoProduto.getText());
-//            TbStock stock_local = stockDao.getStockByCodBarra(codigo_barra, getIdArmazem());
-//            System.err.println(" ******** COD PRODUTO :  " +stock_local.getCodProdutoCodigo().getCodigo());
-//            accao_codigo_produto(stock_local.getCodProdutoCodigo().getCodigo());
-//
-//
-//        } catch (Exception ex) {
-//
-//        }
-//
-//    }
     private void accao_enter_cod_manual()
     {
-
         try
         {
-
             String codigo_manual = txtCodigoManual.getText();
-            TbStock stock_local = stockDao.getStockByCodManual( codigo_manual, getIdArmazem() );
-//            cmbCategoria.setSelectedItem( stock_local.getCodProdutoCodigo().getCodTipoProduto().getDesignacao() );
-//            cmbProduto.setSelectedItem( stock_local.getCodProdutoCodigo().getDesignacao() );
-//            txtQuatidadeExistente.setText( String.valueOf( stock_local.getQuantidadeExistente() ) );
-//            txtQuantidadeEntrar.requestFocus();
-            accao_codigo_produto( stock_local.getCodProdutoCodigo().getCodigo() );
-
+//            TbStock stock_local = stockDao.getStockByCodManual( codigo_manual, getIdArmazem() );
+            produtoGlobal = produtosController.findByCodManual( codigo_manual );
+            accao_codigo_produto();
         }
         catch ( Exception ex )
         {
-
         }
-
     }
 
     private void accao_combo_produto()
@@ -1179,9 +1144,7 @@ public class EntradaVisao extends javax.swing.JFrame
     {
         try
         {
-
-            cmbProduto.setModel( new DefaultComboBoxModel( produtoDao.getProdutoByCategoria( cmbSubFamilia.getSelectedItem().toString() ) ) );
-
+            cmbProduto.setModel( new DefaultComboBoxModel( produtosController.getVectorByIdTipoProduto( getIdTipoProduto() ) ) );
         }
         catch ( Exception ex )
         {
@@ -1190,29 +1153,13 @@ public class EntradaVisao extends javax.swing.JFrame
 
     }
 
-    private static void accao_key_pressed_codigo_produto()
-    {
-        try
-        {
-            codigo = Integer.parseInt( txtCodigoProduto.getText() );
-        }
-        catch ( Exception e )
-        {
-            codigo = 0;
-        }
-
-        if ( codigo != 0 )
-        {
-            accao_codigo_produto( codigo );
-        }
-    }
-
     public static void accao_key_pressed_codigo_produto( int codigo )
     {
 
         if ( codigo != 0 )
         {
-            accao_codigo_produto( codigo );
+            produtoGlobal = produtosController.findByCod( codigo );
+            accao_codigo_produto();
         }
     }
 
@@ -1268,7 +1215,7 @@ public class EntradaVisao extends javax.swing.JFrame
         catch ( Exception ex )
         {
             ex.printStackTrace();
-            Logger.getLogger( EntradaVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(EntradaProdutoVisao.class.getName() ).log( Level.SEVERE, null, ex );
             JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
         }
 
@@ -1313,26 +1260,9 @@ public class EntradaVisao extends javax.swing.JFrame
     private static void busca_produto_by_cod_interno()
     {
 
-        String codInternoString = txtCodigoProduto.getText();
-        Integer codigoInternoInt = ( codInternoString.isEmpty() ? 0 : Integer.parseInt( codInternoString ) );
-        System.err.println( "busca_produto_by_cod_barra: " );
-//        preco = precosController.getLastIdPrecoByIdProdutos( codigoInternoInt );
-        System.err.println( "codInternoString: " + codInternoString );
-        produto = (TbProduto) produtosController.findById( codigoInternoInt );
-        if ( produto.getCodigo() != 0 )
-        {
-            cmbProduto.setSelectedItem( produto.getDesignacao() );
-            txtCodigoBarra.setText( String.valueOf( produto.getCodBarra() ) );
-            txtCodigoManual.setText( String.valueOf( produto.getCodigoManual() ) );
-        }
-        else
-        {
-            cmbProduto.setSelectedIndex( 0 );
-            txtCodigoBarra.requestFocus();
-            txtCodigoManual.requestFocus();
-        }
-
-        mostrar_dados_stock( produto );
+        int codInterno = Integer.parseInt( txtCodigoProduto.getText() );
+        produtoGlobal = produtosController.findByCod( codInterno );
+        accao_codigo_produto();
     }
 
     private static void mostrar_dados_stock( TbProduto produto_parm )
@@ -1352,13 +1282,16 @@ public class EntradaVisao extends javax.swing.JFrame
 
     public static void busca_produto_by_cod_interno_entrada( int codProduto )
     {
-        produto = (TbProduto) produtosController.findById( codProduto );
-        if ( produto.getCodigo() != 0 )
+        produtoGlobal = (TbProduto) produtosController.findById( codProduto );
+        if ( Objects.nonNull( produtoGlobal ) )
         {
-            cmbProduto.setSelectedItem( produto.getDesignacao() );
-            txtCodigoBarra.setText( produto.getCodBarra() );
-            txtCodigoProduto.setText( String.valueOf( produto.getCodigo() ) );
-            txtCodigoManual.setText( produto.getCodigoManual() );
+            TbTipoProduto subFamilia = (TbTipoProduto) tipoProdutoController.findById( produtoGlobal.getCodTipoProduto().getCodigo() );
+            cmbSubFamilia.setSelectedItem( subFamilia.getDesignacao() );
+            accao_combo_categoria();
+            cmbProduto.setSelectedItem( produtoGlobal.getDesignacao() );
+            txtCodigoBarra.setText( produtoGlobal.getCodBarra() );
+            txtCodigoProduto.setText( String.valueOf( produtoGlobal.getCodigo() ) );
+            txtCodigoManual.setText( produtoGlobal.getCodigoManual() );
         }
         else
         {
@@ -1367,7 +1300,7 @@ public class EntradaVisao extends javax.swing.JFrame
             txtCodigoProduto.setText( "" );
             txtCodigoManual.setText( "" );
         }
-        mostrar_dados_stock( produto );
+        mostrar_dados_stock( produtoGlobal );
 
     }
 
@@ -1399,7 +1332,6 @@ public class EntradaVisao extends javax.swing.JFrame
         DocumentosController.startTransaction( conexaoTransaction );
 
         Date data_entrada = new Date();
-
         TbEntrada entradalocal = new TbEntrada();
         entradalocal.setDataEntrada( data_entrada );
         entradalocal.setIdUsuario( new TbUsuario( idUser ) );
@@ -1408,24 +1340,28 @@ public class EntradaVisao extends javax.swing.JFrame
 
         try
         {
-
             if ( entradasController.salvar( entradalocal ) )
             {
-//                System.err.println( "Entrei no salvar" );
                 Integer last_entrada = entradasController.getLastEntrada().getIdEntrada();
 
                 if ( Objects.isNull( last_entrada ) || last_entrada == 0 )
                 {
                     DocumentosController.rollBackTransaction( conexaoTransaction );
-                    conexaoTransaction.close();
                     return false;
                 }
-                if ( !Objects.isNull( last_entrada ) )
+
+                boolean sucessoItens = salvar_item_entrada( last_entrada );
+
+                if ( sucessoItens )
                 {
-                    return salvar_item_entrada( last_entrada );
+                    DocumentosController.commitTransaction( conexaoTransaction );
+                    JOptionPane.showMessageDialog( null, "Entrada efectuada com sucesso!.." );
+                    new ListaEntradaProdutos( last_entrada, conexaoTransaction );
+                    return true;
                 }
                 else
                 {
+                    DocumentosController.rollBackTransaction( conexaoTransaction );
                     return false;
                 }
 
@@ -1433,102 +1369,88 @@ public class EntradaVisao extends javax.swing.JFrame
             else
             {
                 System.out.println( "ERROR: Já existe entrada relacionada." );
+                DocumentosController.rollBackTransaction( conexaoTransaction );
+                return false;
             }
 
-            return true;
         }
         catch ( Exception e )
         {
             e.printStackTrace();
-            System.err.println( "STATUS: falha ao actualizar a entrada" );
-            e.printStackTrace();
             JOptionPane.showMessageDialog( null, "Falha ao Processar a Entrada", "FALHA", JOptionPane.ERROR_MESSAGE );
             DocumentosController.rollBackTransaction( conexaoTransaction );
-            conexaoTransaction.close();
-
+            return false;
         }
-        return false;
-
+        finally
+        {
+            conexaoTransaction.close();
+        }
     }
 
     private static boolean salvar_item_entrada( Integer cod_entrada )
     {
-        System.out.println( "Cod entrada no Item" + cod_entrada );
-//        boolean sucesso = false;
-        if ( !MetodosUtil.tabela_vazia( table ) )
-        {
-            ItemEntradasController itemEntradasControllerLocal = new ItemEntradasController( conexaoTransaction );
-            TbItemEntradas itemEntradas;
-            for ( int i = 0; i < table.getRowCount(); i++ )
-            {
-                try
-                {
-                    double qtd = Double.parseDouble( String.valueOf( table.getModel().getValueAt( i, 3 ) ) );
-                    TbProduto produto_local = (TbProduto) produtosController
-                            .findById( Integer.parseInt( String.valueOf( table.getModel().getValueAt( i, 0 ) ) )
-                            );
+        System.out.println( "Cod entrada no Item: " + cod_entrada );
 
-//                    int fichaId = Integer.parseInt( table.getValueAt( i, 3 ).toString() );
-                    itemEntradas = new TbItemEntradas();
-                    itemEntradas.setIdProduto( produto_local );
-                    itemEntradas.setQuantidade( qtd );
-                    itemEntradas.setFkEntradas( new TbEntrada( cod_entrada ) );
-
-                    if ( MovimentacaoController.registrarMovimento(
-                            produto_local.getCodigo(),
-                            getCodigoArmazem(),
-                            idUser,
-                            new BigDecimal( qtd ),
-                            "ENTRADA " + cod_entrada,
-                            "ENTRADA",
-                            conexao ) )
-                    {
-                        //cria o item entrada
-                        if ( !itemEntradasController.salvar( itemEntradas ) )
-                        {
-                            DocumentosController.rollBackTransaction( conexaoTransaction );
-                            conexaoTransaction.close();
-                            return false;
-                        }
-                        else
-                        {
-                            StoksController.adicionar_quantidades( produto_local.getCodigo(), qtd, getIdArmazem(), conexaoTransaction );
-                        }
-                    }
-
-                }
-                catch ( Exception e )
-                {
-                    e.printStackTrace();
-                    JOptionPane.showMessageDialog( null, "Falha ao registrar a entrada", "Falha", JOptionPane.ERROR_MESSAGE );
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
-                    conexaoTransaction.close();
-                    return false;
-                }
-            }
-            if ( true )
-            {
-                DocumentosController.commitTransaction( conexaoTransaction );
-                esvaziar_tabela();
-                JOptionPane.showMessageDialog( null, "Entrada efectuada com sucesso!.." );
-                ListaEntradaProdutos listaEntrada = new ListaEntradaProdutos( cod_entrada );
-                conexaoTransaction.close();
-                return true;
-            }
-            else
-            {
-
-                JOptionPane.showMessageDialog( null, "Impossivel registrar a entrada", "Falha", JOptionPane.ERROR_MESSAGE );
-                DocumentosController.rollBackTransaction( conexaoTransaction );
-                conexaoTransaction.close();
-
-            }
-        }
-        else
+        if ( MetodosUtil.tabela_vazia( table ) )
         {
             JOptionPane.showMessageDialog( null, "Adiciona itens na tabela caro usuário", "AVISO", JOptionPane.WARNING_MESSAGE );
+            return false;
         }
-        return false;
+
+        ItemEntradasController itemEntradasControllerLocal = new ItemEntradasController( conexaoTransaction );
+
+        for ( int i = 0; i < table.getRowCount(); i++ )
+        {
+            try
+            {
+                double qtd = Double.parseDouble( String.valueOf( table.getModel().getValueAt( i, 3 ) ) );
+                TbProduto produto_local = (TbProduto) produtosController.findById(
+                        Integer.parseInt( String.valueOf( table.getModel().getValueAt( i, 0 ) ) )
+                );
+
+                TbItemEntradas itemEntradas = new TbItemEntradas();
+                itemEntradas.setIdProduto( produto_local );
+                itemEntradas.setQuantidade( qtd );
+                itemEntradas.setFkEntradas( new TbEntrada( cod_entrada ) );
+
+                // Registrar movimentação
+                boolean movOk = MovimentacaoController.registrarMovimento(
+                        produto_local.getCodigo(),
+                        getCodigoArmazem(),
+                        idUser,
+                        new BigDecimal( qtd ),
+                        "ENTRADA " + cod_entrada,
+                        "ENTRADA",
+                        conexao
+                );
+
+                if ( !movOk )
+                {
+                    return false; // rollback será feito no método pai
+                }
+
+                // Salvar item entrada
+                if ( !itemEntradasControllerLocal.salvar( itemEntradas ) )
+                {
+                    return false; // rollback será feito no método pai
+                }
+
+                // Atualizar estoque
+                StoksController.adicionar_quantidades( produto_local.getCodigo(), qtd, getIdArmazem(), conexaoTransaction );
+
+            }
+            catch ( Exception e )
+            {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog( null, "Falha ao registrar a entrada", "Falha", JOptionPane.ERROR_MESSAGE );
+                return false; // rollback será feito no método pai
+            }
+        }
+
+        // Se todos os itens passaram
+        esvaziar_tabela();
+
+        return true;
     }
 
     private static void esvaziar_tabela()
@@ -1543,4 +1465,31 @@ public class EntradaVisao extends javax.swing.JFrame
 //        DefaultTableModel modelo = preparar_tabela( tabela );
 //        return modelo.getRowCount() == 0;
 //    }
+    private static int getIdTipoProduto()
+    {
+        String subFamilia = cmbSubFamilia.getSelectedItem().toString();
+        try
+        {
+            return tipoProdutoController.getTipoFamiliaByDesignacao( subFamilia ).getCodigo();
+        }
+        catch ( Exception e )
+        {
+            return 0;
+        }
+    }
+
+    private static void mostrarFornecedor()
+    {
+
+        TbFornecedor fornecedor = fornecedoresController.findByCod( produtoGlobal.getCodFornecedores().getCodigo() );
+        if ( Objects.nonNull( fornecedor ) )
+        {
+            lbFornecedor.setText( fornecedor.getNome() );
+
+        }
+        else
+        {
+            lbFornecedor.setText( "" );
+        }
+    }
 }

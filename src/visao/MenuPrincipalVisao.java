@@ -2241,7 +2241,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         try
         {
 
-            new SaidaUsuarioVisao( cod_utilizador, conexao ).show();
+            new SaidaProdutoVisao( cod_utilizador, conexao ).show();
 
         }
         catch ( Exception ex )
@@ -2388,7 +2388,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jMenuItemEntradasProdutosActionPerformed
         try
         {
-            new EntradaVisao( this, true, cod_utilizador, "", conexao ).setVisible( true );
+            new EntradaProdutoVisao( this, true, cod_utilizador, "", conexao ).setVisible( true );
         }
         catch ( SQLException ex )
         {

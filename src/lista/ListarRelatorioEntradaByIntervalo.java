@@ -291,8 +291,7 @@ public class ListarRelatorioEntradaByIntervalo extends javax.swing.JFrame
     {
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
         int selectedRow = jTable1.getSelectedRow();
-        int codigo = (int) modelo.getValueAt(selectedRow, 0);
-
+        int codigo = (int) modelo.getValueAt( selectedRow, 0 );
 
         procedimento_reimprimir_FR( codigo );
     }
@@ -312,7 +311,7 @@ public class ListarRelatorioEntradaByIntervalo extends javax.swing.JFrame
 //            lista_produto_isentos = MetodosUtil.getProdutosIsentos( venda.getTbItemSaidaList() );
 //            String motivos_isentos = MetodosUtil.getMotivoIsensaoProdutos( lista_produto_isentos );
 //            ListaVenda1 original = new ListaVenda1( cod_venda, abreviacao, false, ck_simplificada.isSelected(), "Original", motivos_isentos );
-            ListaEntradaProdutos listaEntradas = new ListaEntradaProdutos( entrada.getIdEntrada() );
+            ListaEntradaProdutos listaEntradas = new ListaEntradaProdutos( entrada.getIdEntrada(), conexao );
 //            ListaVenda2 listaVenda2 = new ListaVenda2( venda.getCodigo(), abreviacao, false, false, DVML.SEGUNDA_VIA_CONFORMIDADE_COM_ORIGINAL, motivos_isentos );
 //            ListaVenda2 listaVenda2 = new ListaVenda2( venda.getCodigo(), abreviacao, false, false, DVML.SEGUNDA_VIA_CONFORMIDADE_COM_ORIGINAL, motivos_isentos );
         }
@@ -346,19 +345,19 @@ public class ListarRelatorioEntradaByIntervalo extends javax.swing.JFrame
         }
         catch ( ClassNotFoundException ex )
         {
-            java.util.logging.Logger.getLogger(ListarRelatorioEntradaByIntervalo.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            java.util.logging.Logger.getLogger( ListarRelatorioEntradaByIntervalo.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
         catch ( InstantiationException ex )
         {
-            java.util.logging.Logger.getLogger(ListarRelatorioEntradaByIntervalo.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            java.util.logging.Logger.getLogger( ListarRelatorioEntradaByIntervalo.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
         catch ( IllegalAccessException ex )
         {
-            java.util.logging.Logger.getLogger(ListarRelatorioEntradaByIntervalo.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            java.util.logging.Logger.getLogger( ListarRelatorioEntradaByIntervalo.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
         catch ( javax.swing.UnsupportedLookAndFeelException ex )
         {
-            java.util.logging.Logger.getLogger(ListarRelatorioEntradaByIntervalo.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            java.util.logging.Logger.getLogger( ListarRelatorioEntradaByIntervalo.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
         //</editor-fold>
         //</editor-fold>
@@ -370,7 +369,7 @@ public class ListarRelatorioEntradaByIntervalo extends javax.swing.JFrame
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable()
+        java.awt.EventQueue.invokeLater( new Runnable()
         {
             public void run()
             {
@@ -380,7 +379,7 @@ public class ListarRelatorioEntradaByIntervalo extends javax.swing.JFrame
                 }
                 catch ( Exception ex )
                 {
-                    Logger.getLogger(ListarRelatorioEntradaByIntervalo.class.getName() ).log( Level.SEVERE, null, ex );
+                    Logger.getLogger( ListarRelatorioEntradaByIntervalo.class.getName() ).log( Level.SEVERE, null, ex );
                 }
             }
         } );
