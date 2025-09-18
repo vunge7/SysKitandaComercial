@@ -31,9 +31,9 @@ WHERE forma_pagamento_item.`fk_venda` = $P{CODIGO_VENDA}]]>
 		<band splitType="Stretch"/>
 	</background>
 	<columnHeader>
-		<band height="9" splitType="Stretch">
+		<band height="11" splitType="Stretch">
 			<staticText>
-				<reportElement uuid="203b17d8-6381-4890-9215-41512e8b15c1" mode="Opaque" x="0" y="0" width="63" height="9" backcolor="#CCCCCC"/>
+				<reportElement uuid="203b17d8-6381-4890-9215-41512e8b15c1" mode="Opaque" x="0" y="0" width="68" height="11" backcolor="#CCCCCC"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -42,12 +42,12 @@ WHERE forma_pagamento_item.`fk_venda` = $P{CODIGO_VENDA}]]>
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement>
-					<font fontName="Times New Roman" size="6" isBold="true"/>
+					<font fontName="Times New Roman" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Forma Pagamento]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="3b5f11cf-b4d3-4c83-aa25-a796709336c3" mode="Opaque" x="63" y="0" width="34" height="9" backcolor="#CCCCCC"/>
+				<reportElement uuid="3b5f11cf-b4d3-4c83-aa25-a796709336c3" mode="Opaque" x="68" y="0" width="30" height="11" backcolor="#CCCCCC"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -56,12 +56,12 @@ WHERE forma_pagamento_item.`fk_venda` = $P{CODIGO_VENDA}]]>
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Center">
-					<font fontName="Times New Roman" size="6" isBold="true"/>
+					<font fontName="Times New Roman" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Ref.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="8550700c-b96a-478f-9b92-b42061bd0820" mode="Opaque" x="97" y="0" width="54" height="9" backcolor="#CCCCCC"/>
+				<reportElement uuid="8550700c-b96a-478f-9b92-b42061bd0820" mode="Opaque" x="97" y="0" width="54" height="11" backcolor="#CCCCCC"/>
 				<box rightPadding="1">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -70,16 +70,16 @@ WHERE forma_pagamento_item.`fk_venda` = $P{CODIGO_VENDA}]]>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font fontName="Times New Roman" size="6" isBold="true"/>
+					<font fontName="Times New Roman" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Valor]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="10" splitType="Stretch">
+		<band height="11" splitType="Stretch">
 			<textField>
-				<reportElement uuid="0f000c16-43b9-49f2-9684-c9344b531a9d" x="0" y="0" width="63" height="9"/>
+				<reportElement uuid="0f000c16-43b9-49f2-9684-c9344b531a9d" x="0" y="0" width="69" height="11"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -88,12 +88,12 @@ WHERE forma_pagamento_item.`fk_venda` = $P{CODIGO_VENDA}]]>
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement>
-					<font fontName="Times New Roman" size="7"/>
+					<font fontName="Times New Roman" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{forma_pagamento_designacao}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="2e3ae1bf-5025-4d73-a985-cd4b00b26735" x="63" y="0" width="34" height="9"/>
+				<reportElement uuid="2e3ae1bf-5025-4d73-a985-cd4b00b26735" x="68" y="0" width="30" height="11"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -102,12 +102,12 @@ WHERE forma_pagamento_item.`fk_venda` = $P{CODIGO_VENDA}]]>
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Center">
-					<font fontName="Times New Roman" size="7"/>
+					<font fontName="Times New Roman" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{forma_pagamento_item_referencia}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement uuid="cc644b6e-6d32-4a03-931e-3c3e539dba51" x="97" y="0" width="54" height="9"/>
+				<reportElement uuid="cc644b6e-6d32-4a03-931e-3c3e539dba51" x="97" y="0" width="54" height="11"/>
 				<box rightPadding="1">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -116,7 +116,7 @@ WHERE forma_pagamento_item.`fk_venda` = $P{CODIGO_VENDA}]]>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font fontName="Times New Roman" size="7"/>
+					<font fontName="Times New Roman" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{forma_pagamento_item_valor}]]></textFieldExpression>
 			</textField>
