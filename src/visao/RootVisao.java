@@ -16,6 +16,7 @@ import entity.TbDadosInstituicao;
 import entity.TbItemPermissao;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -23,9 +24,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
 import javax.persistence.EntityManagerFactory;
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import static kitanda.util.CfConstantes.YYYYMMDD_HHMMSS;
 import static kitanda.util.CfMethodsSwing.resizeJButtonIcon;
 import rh.visao.ConfiguracaoSistemaVisao;
@@ -114,6 +118,23 @@ public class RootVisao extends javax.swing.JFrame
         setRh( dadosInstituicaoDao.findTbDadosInstituicao( 1 ).getRh() );
         setComercial( dadosInstituicaoDao.findTbDadosInstituicao( 1 ).getComercial() );
         busca_permissao();
+        
+        
+        // Atalho F4 para chamar getMenuPrincipalByNegocio(...)
+getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+    .put(KeyStroke.getKeyStroke("F4"), "abrirMenuPrincipal");
+
+getRootPane().getActionMap().put("abrirMenuPrincipal", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        try {
+            getMenuPrincipalByNegocio(dadosInstituicao.getNegocio());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+});
+
 
         setWindowsListener();
 //        btn_abertura_dia_root.setVisible( false);
@@ -506,31 +527,17 @@ public class RootVisao extends javax.swing.JFrame
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnComercialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnComercialActionPerformed
-        // TODO add your handling code here:
 
-//        dispose();
         try
         {
             getMenuPrincipalByNegocio( dadosInstituicao.getNegocio() );
-//            BackupUsb.realizarBackup();
         }
         catch ( Exception e )
         {
         }
-//        new MenuPrincipalVisao( this.idUser, this.idEmpresa, administrador, conexao ).show();
 
     }//GEN-LAST:event_btnComercialActionPerformed
 
-//    public void procedimento_activar_botao_reabertura()
-//    {
-//
-//        if ( ( btn_abertura_dia.isDefaultButton() ) == false && btn_feicho_dia.isDefaultButton() == false )
-//        {
-//
-//            btn_reabertura_dia.setEnabled( true );
-//        }
-//
-//    }
 
     private void btnRHActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRHActionPerformed
 

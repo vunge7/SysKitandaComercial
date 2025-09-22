@@ -38,6 +38,7 @@ import java.awt.Dimension;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
@@ -256,6 +257,32 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                         return false;
                     }
                 } );
+        
+        
+        
+        // No construtor ou método de inicialização da sua janela
+getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+    .put(KeyStroke.getKeyStroke("F4"), "abrirBuscaProduto");
+
+getRootPane().getActionMap().put("abrirBuscaProduto", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        try {
+            if (validar()) {
+                new BuscaProdutoVisao(
+                    VendaUsuarioVisao.this, // ou "this" conforme contexto
+                    rootPaneCheckingEnabled,
+                    getCodigoArmazem(),
+                    DVML.JANELA_VENDA,
+                    conexao
+                ).setVisible(true); // melhor que .show()
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+});
+
 
 //        habilitarColunas();
         MetodosUtil.setArmazemByCampoConfigArmazem( cmbArmazem, conexao, cod_usuario );
@@ -274,7 +301,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         if ( evt.getKeyCode() == KeyEvent.VK_ENTER )
         {
 
-            txtIniciaisCliente.requestFocus();
+            txtQuatindade.requestFocus();
 
         }
 
@@ -1624,7 +1651,6 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         {
             if ( validar() )
             {
-                System.out.println( "Codigo do Armazem em questão: " + getCodigoArmazem() );
                 new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_VENDA, conexao ).show();
             }
         }
@@ -4642,7 +4668,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         limpar_consumidor_final();
 
         txtQuatindade.setText( "1" );
-        txtIniciaisCliente.requestFocus();
+        txtQuatindade.requestFocus();
         txtQuantidadeStock.setText( String.valueOf( conexoaLocal.getQtdExistenteStock( getCodigoProduto(), getCodigoArmazem() ) ) );
 
         List<TbProduto> lista_produto_isentos = getProdutosIsentos();
@@ -4912,7 +4938,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         cmbTipoDocumento.setModel( new DefaultComboBoxModel( documentosController.getVector() ) );
         cmbAnoEconomico.setModel( new DefaultComboBoxModel( anoEconomicoController.getVector() ) );
         txtQuatindade.setText( "1" );
-        txtIniciaisCliente.requestFocus();
+        txtQuatindade.requestFocus();
         dc_data_documento.setDate( new Date() );
         mostrar_ano_economico_serie();
         lb_proximo_documento.setText( "" );
