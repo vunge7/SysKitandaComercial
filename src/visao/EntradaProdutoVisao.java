@@ -1421,7 +1421,7 @@ public class EntradaProdutoVisao extends javax.swing.JFrame
                         new BigDecimal( qtd ),
                         "ENTRADA " + cod_entrada,
                         "ENTRADA",
-                        conexao
+                        conexaoTransaction
                 );
 
                 if ( !movOk )
