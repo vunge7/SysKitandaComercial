@@ -1363,6 +1363,10 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                     JOptionPane.showMessageDialog( null, "O documento não pode ser processado porque possui uma data inferior ao úlimo documento efectuado", "AVISO", JOptionPane.WARNING_MESSAGE );
                 }
             }
+            else
+            {
+                JOptionPane.showMessageDialog( null, "Verificar a ultima da do documento." );
+            }
         }
         else
         {
@@ -1926,7 +1930,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
     private void actualizar_abreviacao()
     {
 
-        switch (getIdDocumento())
+        switch ( getIdDocumento() )
         {
             case DVML.DOC_FACTURA_RECIBO_FR:
 
@@ -2265,7 +2269,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
             visualizarQtdStock();
             TbItemPedidos itemPedidosLocal = new TbItemPedidos();
-            int cod_pedido = (pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa ));
+            int cod_pedido = ( pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa ) );
             pedido = pedidoDao.findTbPedido( cod_pedido );
 
             if ( rbSim_lugar.isSelected() )
@@ -2443,7 +2447,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
             visualizarQtdStock();
             TbItemPedidos itemPedidosLocal = new TbItemPedidos();
-            int cod_pedido = (pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa ));
+            int cod_pedido = ( pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa ) );
             pedido = pedidoDao.findTbPedido( cod_pedido );
 
             if ( rbSim_lugar.isSelected() )
@@ -3537,7 +3541,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         Documento documento_local = (Documento) documentosController.findById( getIdDocumento() );
         String abreviacao_local = documento_local.getAbreviacao();
 
-        switch (abreviacao_local)
+        switch ( abreviacao_local )
         {
             case "FT":
                 return "Facturamos o valor de: ";
@@ -3731,7 +3735,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
             for ( int i = 1; i <= numeroVias; i++ )
             {
 
-                switch (i)
+                switch ( i )
                 {
                     case 1:
 
@@ -3879,7 +3883,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
             for ( int i = 1; i <= numeroVias; i++ )
             {
 
-                switch (i)
+                switch ( i )
                 {
                     case 1:
                         ListaVendasMesas listaVenda1 = new ListaVendasMesas( venda.getCodigo(), abreviacao, cod_mesa, Integer.parseInt( lugar ), false, true, "Original" );
@@ -5847,7 +5851,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
             // a incidência só é aplicável ao produtos sujeitos a iva 
             if ( taxa != 0 )
             {
-                double valor_unitario = (preco_unitario * qtd);
+                double valor_unitario = ( preco_unitario * qtd );
                 desconto_valor_linha = valor_unitario * ( ( valor_percentagem ) / 100 );
                 imposto += ( ( valor_unitario - desconto_valor_linha ) * ( taxa / 100 ) );
 
@@ -5879,7 +5883,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                 // a incidência só é aplicável ao produtos sujeitos a iva 
                 if ( taxa != 0 )
                 {
-                    double valor_unitario = (preco_unitario * qtd);
+                    double valor_unitario = ( preco_unitario * qtd );
                     desconto_valor_linha = valor_unitario * ( ( valor_percentagem ) / 100 );
                     imposto += ( ( valor_unitario - desconto_valor_linha ) * ( taxa / 100 ) );
 
@@ -5893,8 +5897,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
     private static double getTotalAOALiquido()
     {
-        double valores = (getTotalIliquido() + getTotalImposto());
-        double descontos = (getDescontoComercial() + getDescontoFinanceiro());
+        double valores = ( getTotalIliquido() + getTotalImposto() );
+        double descontos = ( getDescontoComercial() + getDescontoFinanceiro() );
         System.out.println( "TotalIliquido: " + getTotalIliquido() );
         System.out.println( "TotalImposto: " + getTotalImposto() );
         System.out.println( "TotalDescontoComercial: " + getDescontoComercial() );
@@ -5905,8 +5909,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
     private static double getTotalAOALiquido( int lugar )
     {
-        double valores = (getTotalIliquido( lugar ) + getTotalImposto( lugar ));
-        double descontos = (getDescontoComercial( lugar ) + getDescontoFinanceiro( lugar ));
+        double valores = ( getTotalIliquido( lugar ) + getTotalImposto( lugar ) );
+        double descontos = ( getDescontoComercial( lugar ) + getDescontoFinanceiro( lugar ) );
         System.out.println( "TotalIliquido: " + getTotalIliquido( lugar ) );
         System.out.println( "TotalImposto: " + getTotalImposto( lugar ) );
         System.out.println( "TotalDescontoComercial: " + getDescontoComercial( lugar ) );
@@ -5935,7 +5939,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
             if ( taxa != 0 )
             {
                 desconto_valor_linha = ( ( valor_percentagem ) / 100 );
-                double valor_unitario = (preco_unitario * qtd);
+                double valor_unitario = ( preco_unitario * qtd );
                 incidencia += ( ( valor_unitario ) - ( valor_unitario * desconto_valor_linha ) );
 
             }
@@ -5968,7 +5972,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                 if ( taxa != 0 )
                 {
                     desconto_valor_linha = ( ( valor_percentagem ) / 100 );
-                    double valor_unitario = (preco_unitario * qtd);
+                    double valor_unitario = ( preco_unitario * qtd );
                     incidencia += ( ( valor_unitario ) - ( valor_unitario * desconto_valor_linha ) );
 
                 }
@@ -5998,7 +6002,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
             if ( taxa == 0 )
             {
                 desconto_valor_linha = ( ( valor_percentagem ) / 100 );
-                double valor_unitario = (preco_unitario * qtd);
+                double valor_unitario = ( preco_unitario * qtd );
                 incidencia_isento += ( ( valor_unitario ) - ( valor_unitario * desconto_valor_linha ) );
 
             }
@@ -6030,7 +6034,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                 if ( taxa == 0 )
                 {
                     desconto_valor_linha = ( ( valor_percentagem ) / 100 );
-                    double valor_unitario = (preco_unitario * qtd);
+                    double valor_unitario = ( preco_unitario * qtd );
                     incidencia_isento += ( ( valor_unitario ) - ( valor_unitario * desconto_valor_linha ) );
 
                 }

@@ -2016,7 +2016,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     private void jmVendaDetalhadasUsuariosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmVendaDetalhadasUsuariosActionPerformed
     {//GEN-HEADEREND:event_jmVendaDetalhadasUsuariosActionPerformed
 //        new ListarVendasDetalhadas( this.conexao ).show();
-        new ListarRelatorioVendaByIntervalo(this.conexao ).setVisible( true);
+        new ListarRelatorioVendaByIntervalo( this.conexao ).setVisible( true );
     }//GEN-LAST:event_jmVendaDetalhadasUsuariosActionPerformed
 
     private void jmListarUsuarioActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmListarUsuarioActionPerformed

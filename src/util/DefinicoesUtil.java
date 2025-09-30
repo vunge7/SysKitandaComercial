@@ -10,8 +10,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
 import java.util.Vector;
+import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.table.TableRowSorter;
 import static util.DVML.CAMINHO_SCRIP_TO_UPDATE;
 import static util.DVML.FILE_TO_UPDATE;
@@ -62,7 +64,7 @@ public class DefinicoesUtil
 
         for ( int i = 0; i < qtdeMaximaCaracteres; i++ )
         {
-            int posicao = ( int ) ( Math.random() * caracteres.length );
+            int posicao = (int) ( Math.random() * caracteres.length );
             senha.append( caracteres[ posicao ] );
         }
         return senha.toString();
@@ -211,7 +213,7 @@ public class DefinicoesUtil
         System.out.println( "TMANHO 1 = " + numeroDeTabelas( bd_1, conexao ) );
         System.out.println( "TMANHO 2 = " + numeroDeTabelas( bd_2, conexao ) );
 //        if ( numeroDeTabelas( bd_1, conexao ) == numeroDeTabelas( bd_2, conexao ) )
-        if (true )
+        if ( true )
         {
 
             int size = tablesBD_1.size();
@@ -759,6 +761,27 @@ public class DefinicoesUtil
 //        trs = new TableRowSorter( jTable.getModel() );
 //        jTable.setRowSorter( trs );
 
+    }
+
+    public static void executarComBotao( JButton botao, Runnable acao )
+    {
+        botao.setEnabled( false );
+
+        new Thread( () ->
+        {
+            try
+            {
+                acao.run(); // executa a ação recebida
+            }
+            catch ( Exception ex )
+            {
+                ex.printStackTrace();
+            }
+            finally
+            {
+                SwingUtilities.invokeLater( () -> botao.setEnabled( true ) );
+            }
+        } ).start();
     }
 
 }
