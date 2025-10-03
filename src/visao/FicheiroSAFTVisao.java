@@ -43,6 +43,7 @@ import static kitanda.util.CfConstantes.YYYY_MM_DD_T_HH_MM_SS;
 import util.BDConexao;
 import util.DVML;
 import static util.DVML.*;
+import util.DefinicoesUtil;
 import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
 import static util.MetodosUtil.*;
@@ -89,9 +90,16 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame
 
         saftDataMinimaJDateChoose.setDate( new Date() );
         saftDataMaximaJDateChooser.setDate( new Date() );
+
+        btnSalvar.addActionListener( e ->
+        {
+            DefinicoesUtil.executarComBotao( btnSalvar, () -> procedimentoGerarSaft() );
+
+        } );
+
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "unchecked" )
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents()
     {
@@ -276,21 +284,14 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-
-        if ( existe_registro() )
-        {
-            btnSalvar.setEnabled( false );
-            actualizar_hash();
-//            gerarFcheiroSAFT();
-        }
-
-
-    }//GEN-LAST:event_btnSalvarActionPerformed
-
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnSalvarActionPerformed
+    {//GEN-HEADEREND:event_btnSalvarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnSalvarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1172,7 +1173,7 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame
 
                         AGT_SAFT_NUMBER_OF_ENTRIES = String.valueOf( list_recibo.size() );
                         AGT_SAFT_TOTAL_DEBIT = "0";
-                        System.out.println( "CONTROLLER: " +  Objects.nonNull(  amortizacaoDividasController ));
+                        System.out.println( "CONTROLLER: " + Objects.nonNull( amortizacaoDividasController ) );
                         AGT_SAFT_TOTAL_CREDIT = String.valueOf( MetodosUtil.getTotalSemIvaForPayment( list_recibo, DOC_RECIBO_RC, amortizacaoDividasController ) );
 
                         buffer.append( "\n" );
@@ -1403,7 +1404,7 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame
 
             notasItem.setFkProduto( linha.getCodigoProduto() );
             notasItem.setFkNota( null );
-            notasItem.setQuantidade( ( double ) linha.getQuantidade() );
+            notasItem.setQuantidade( (double) linha.getQuantidade() );
             notasItem.setDesconto( linha.getDesconto() );
             notasItem.setValorIva( linha.getValorIva() );
             notasItem.setMotivoIsensao( linha.getMotivoIsensao() );
@@ -1571,6 +1572,16 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame
     {
 
 //        txtStatus.scrollRectToVisible( txtStatus.getCellRect( table.getRowCount() - 1, table.getColumnCount(), true ) );
+    }
+
+    private void procedimentoGerarSaft()
+    {
+        if ( existe_registro() )
+        {
+            btnSalvar.setEnabled( false );
+            actualizar_hash();
+//            gerarFcheiroSAFT();
+        }
     }
 
 }

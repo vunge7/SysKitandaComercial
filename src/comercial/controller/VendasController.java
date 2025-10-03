@@ -236,7 +236,7 @@ public class VendasController implements EntidadeFactory
             {
                 venda = new TbVenda();
                 venda.setCodigo( result.getInt( "codigo" ) );
-                venda.setDataVenda( result.getDate( "dataVenda" ) );
+                venda.setDataVenda( result.getTimestamp( "dataVenda" ) );
                 venda.setTotalVenda( result.getBigDecimal( "total_venda" ) );
                 venda.setPerformance( result.getString( "performance" ) );
                 venda.setCredito( result.getString( "credito" ) );
@@ -326,7 +326,7 @@ public class VendasController implements EntidadeFactory
         PreparedStatement stmt = conexao.getConnection1().prepareStatement( sql, Statement.RETURN_GENERATED_KEYS );
 
 //        stmt.setDate( 1, new java.sql.Date( venda.getDataVenda().getTime() ) );
-        stmt.setTimestamp(1, new java.sql.Timestamp(venda.getDataVenda().getTime()));
+        stmt.setTimestamp( 1, new java.sql.Timestamp( venda.getDataVenda().getTime() ) );
 
         stmt.setBigDecimal( 2, venda.getTotalVenda() );
         stmt.setString( 3, venda.getPerformance() );
@@ -1661,39 +1661,43 @@ public class VendasController implements EntidadeFactory
         }
 
     }
-    
-   public TbVenda findByCodFactReemprensao(String codFact) {
-    TbVenda venda = null;
-    String sql = "SELECT * FROM tb_venda WHERE cod_fact = ?"; // ajuste conforme o nome real da tabela
 
-    BDConexao bd = new BDConexao(); // cria a conexão
+    public TbVenda findByCodFactReemprensao( String codFact )
+    {
+        TbVenda venda = null;
+        String sql = "SELECT * FROM tb_venda WHERE cod_fact = ?"; // ajuste conforme o nome real da tabela
 
-    try (Connection conn = bd.getConnection1();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+        BDConexao bd = new BDConexao(); // cria a conexão
 
-        ps.setString(1, codFact); // define o parâmetro
+        try ( Connection conn = bd.getConnection1(); PreparedStatement ps = conn.prepareStatement( sql ) )
+        {
 
-        try (ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                venda = new TbVenda();
+            ps.setString( 1, codFact ); // define o parâmetro
 
-                // Mapeando os campos do ResultSet para o objeto TbVenda
-                venda.setCodigo(rs.getInt("codigo")); // exemplo
-                venda.setCodFact(rs.getString("cod_fact"));
-                venda.setDataVenda(rs.getDate("dataVenda"));
-                venda.setTotalVenda(rs.getBigDecimal("total_venda"));
-                // mapeie todos os outros campos que existirem
+            try ( ResultSet rs = ps.executeQuery() )
+            {
+                if ( rs.next() )
+                {
+                    venda = new TbVenda();
+
+                    // Mapeando os campos do ResultSet para o objeto TbVenda
+                    venda.setCodigo( rs.getInt( "codigo" ) ); // exemplo
+                    venda.setCodFact( rs.getString( "cod_fact" ) );
+                    venda.setDataVenda( rs.getDate( "dataVenda" ) );
+                    venda.setTotalVenda( rs.getBigDecimal( "total_venda" ) );
+                    // mapeie todos os outros campos que existirem
+                }
             }
+
+        }
+        catch ( SQLException e )
+        {
+            e.printStackTrace(); // ou use logging
         }
 
-    } catch (SQLException e) {
-        e.printStackTrace(); // ou use logging
+        return venda;
     }
 
-    return venda;
-}
-
-   
 //   public List<TbVenda> getAllFRVendaByBetweenDataAndArmazemAndDocumento(
 //        Date data_inicio, Date data_fim, int codigo_usuario) {
 //
@@ -1742,61 +1746,64 @@ public class VendasController implements EntidadeFactory
 //
 //    return vendas;
 //}
+    public List<TbVenda> getAllFRVendaByBetweenDataAndArmazemAndDocumentos(
+            Date data_inicio, Date data_fim, int codigo_usuario )
+    {
 
-public List<TbVenda> getAllFRVendaByBetweenDataAndArmazemAndDocumentos(
-        Date data_inicio, Date data_fim, int codigo_usuario ) {
+        List<TbVenda> vendas = new ArrayList<>();
 
-    List<TbVenda> vendas = new ArrayList<>();
+        String sql = "SELECT v.*, c.nome AS nome_cliente "
+                + "FROM tb_venda v "
+                + "JOIN tb_cliente c ON v.codigo_cliente = c.codigo "
+                + "WHERE DATE(v.dataVenda) BETWEEN ? AND ? "
+                + "AND v.status_eliminado = 'false' "
+                + "AND v.credito = false "
+                + "AND v.fk_documento = 1 "
+                + "AND v.codigo_usuario = ? ORDER BY codigo ASC";
 
-    String sql = "SELECT v.*, c.nome AS nome_cliente "
-               + "FROM tb_venda v "
-               + "JOIN tb_cliente c ON v.codigo_cliente = c.codigo "
-               + "WHERE DATE(v.dataVenda) BETWEEN ? AND ? "
-               + "AND v.status_eliminado = 'false' "
-               + "AND v.credito = false "
-               + "AND v.fk_documento = 1 "
-               + "AND v.codigo_usuario = ? ORDER BY codigo ASC";
+        BDConexao bd = new BDConexao();
 
-    BDConexao bd = new BDConexao();
+        try ( Connection conn = bd.getConnection1(); PreparedStatement ps = conn.prepareStatement( sql ) )
+        {
 
-    try (Connection conn = bd.getConnection1();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
-
-        // Definindo os parâmetros do PreparedStatement
-        ps.setDate(1, new java.sql.Date(data_inicio.getTime()));
-        ps.setDate(2, new java.sql.Date(data_fim.getTime()));
-        ps.setInt(3, codigo_usuario);
+            // Definindo os parâmetros do PreparedStatement
+            ps.setDate( 1, new java.sql.Date( data_inicio.getTime() ) );
+            ps.setDate( 2, new java.sql.Date( data_fim.getTime() ) );
+            ps.setInt( 3, codigo_usuario );
 //        ps.setInt(4, pk_documento);
 
-        try (ResultSet result = ps.executeQuery()) {
-            while (result.next()) {
-                TbVenda venda = new TbVenda();
+            try ( ResultSet result = ps.executeQuery() )
+            {
+                while ( result.next() )
+                {
+                    TbVenda venda = new TbVenda();
 
-                // Mapear todos os campos da tabela tb_venda
-                venda.setCodigo(result.getInt("codigo"));
-                venda.setCodFact(result.getString("cod_fact"));
-                venda.setDataVenda(result.getDate("dataVenda"));
-                venda.setHora(result.getTime("hora"));
-                venda.setTotalVenda(result.getBigDecimal("total_venda"));
-                venda.setIdArmazemFK(new TbArmazem(result.getInt("idArmazemFK")));
-                venda.setFkDocumento(new Documento(result.getInt("fk_documento")));
-                venda.setCodigoUsuario(new TbUsuario(result.getInt("codigo_usuario")));
-                // Cliente com ID e nome
-                TbCliente cliente = new TbCliente(result.getInt("codigo_cliente"));
-                cliente.setNome(result.getString("nome_cliente"));
-                venda.setCodigoCliente(cliente);
+                    // Mapear todos os campos da tabela tb_venda
+                    venda.setCodigo( result.getInt( "codigo" ) );
+                    venda.setCodFact( result.getString( "cod_fact" ) );
+                    venda.setDataVenda( result.getDate( "dataVenda" ) );
+                    venda.setHora( result.getTime( "hora" ) );
+                    venda.setTotalVenda( result.getBigDecimal( "total_venda" ) );
+                    venda.setIdArmazemFK( new TbArmazem( result.getInt( "idArmazemFK" ) ) );
+                    venda.setFkDocumento( new Documento( result.getInt( "fk_documento" ) ) );
+                    venda.setCodigoUsuario( new TbUsuario( result.getInt( "codigo_usuario" ) ) );
+                    // Cliente com ID e nome
+                    TbCliente cliente = new TbCliente( result.getInt( "codigo_cliente" ) );
+                    cliente.setNome( result.getString( "nome_cliente" ) );
+                    venda.setCodigoCliente( cliente );
 
-                vendas.add(venda);
+                    vendas.add( venda );
+                }
             }
+
+        }
+        catch ( SQLException e )
+        {
+            e.printStackTrace(); // ou usa logger apropriado
         }
 
-    } catch (SQLException e) {
-        e.printStackTrace(); // ou usa logger apropriado
+        return vendas;
     }
-
-    return vendas;
-}
-
 
     public static void main( String[] args )
     {
