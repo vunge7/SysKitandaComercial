@@ -1390,6 +1390,54 @@ public class ProdutosController implements EntidadeFactory
 
         return lista;
     }
+    public List<Object[]> listarStockPorCodigoBarra( Connection conn, String codBarra, int codArmazem )
+    {
+        List<Object[]> lista = new ArrayList<>();
+
+        String sql = "SELECT p.codigo, p.designacao, tp.designacao AS tipo_produto, "
+                + "       (SELECT AVG(pr.preco_compra) FROM tb_preco pr WHERE pr.fk_produto = p.codigo) AS preco_medio_compra, "
+                + "       (SELECT pr2.preco_venda FROM tb_preco pr2 WHERE pr2.fk_produto = p.codigo "
+                + "            ORDER BY pr2.data DESC, pr2.hora DESC LIMIT 1) AS preco_venda_atual, "
+                + "       (SELECT COALESCE(SUM(s.quantidade_existente),0) FROM tb_stock s "
+                + "            WHERE s.cod_produto_codigo = p.codigo AND s.cod_armazem = ?) AS qtd_existente "
+                + "FROM tb_produto p "
+                + "JOIN tb_tipo_produto tp ON tp.codigo = p.cod_Tipo_Produto "
+                + "WHERE p.codBarra = ? "
+                + "  AND EXISTS (SELECT 1 FROM tb_stock s2 WHERE s2.cod_produto_codigo = p.codigo AND s2.cod_armazem = ?) "
+                + "ORDER BY p.designacao ASC";
+
+        try ( PreparedStatement pst = conn.prepareStatement( sql ) )
+        {
+            pst.setInt( 1, codArmazem );
+            pst.setString( 2, codBarra );
+            pst.setInt( 3, codArmazem );
+
+            try ( ResultSet rs = pst.executeQuery() )
+            {
+                while ( rs.next() )
+                {
+                    Object[] linha = new Object[]
+                    {
+                        rs.getInt( "codigo" ),
+                        rs.getString( "designacao" ),
+                        rs.getString( "tipo_produto" ),
+                        rs.getBigDecimal( "preco_medio_compra" ),
+                        rs.getBigDecimal( "preco_venda_atual" ),
+                        rs.getDouble( "qtd_existente" ),
+                        0.0, // qtd acerto (editável)
+                        rs.getDouble( "qtd_existente" ) // existência total inicial
+                    };
+                    lista.add( linha );
+                }
+            }
+        }
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
+        }
+
+        return lista;
+    }
 
     public List<Object[]> listarProdutosByCodigoManual( Connection conn, String codigoManual )
     {

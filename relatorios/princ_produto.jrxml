@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lista_venda_order_usuario" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="505f4cde-77d4-4d38-81d6-6ea3af62007b">
-	<property name="ireport.zoom" value="1.4641000000000044"/>
+	<property name="ireport.zoom" value="3.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="266"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -38,7 +38,7 @@ ORDER BY
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="94" splitType="Stretch">
+		<band height="93" splitType="Stretch">
 			<textField>
 				<reportElement uuid="7cbe433c-af15-437d-bd59-8b89f30a3cf2" key="staticText" x="0" y="0" width="535" height="34"/>
 				<textElement verticalAlignment="Middle" markup="none">
@@ -69,10 +69,13 @@ ORDER BY
 			</textField>
 		</band>
 	</title>
+	<pageHeader>
+		<band height="21"/>
+	</pageHeader>
 	<detail>
-		<band height="23" splitType="Stretch">
+		<band height="10">
 			<subreport>
-				<reportElement uuid="a8b7f803-47c0-4587-85a3-8bfbd0247b82" x="-13" y="0" width="295" height="23"/>
+				<reportElement uuid="a8b7f803-47c0-4587-85a3-8bfbd0247b82" x="1" y="0" width="295" height="10" isRemoveLineWhenBlank="true"/>
 				<subreportParameter name="ID_TIPO_PRODUTO">
 					<subreportParameterExpression><![CDATA[$F{tb_tipo_produto_codigo}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -144,4 +147,7 @@ ORDER BY
 			</staticText>
 		</band>
 	</pageFooter>
+	<noData>
+		<band height="21"/>
+	</noData>
 </jasperReport>

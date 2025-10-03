@@ -45,15 +45,15 @@
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Component id="jPanel5" alignment="1" min="-2" pref="821" max="-2" attributes="0"/>
                           <Group type="102" alignment="1" attributes="0">
-                              <Component id="cmbarmazem1" min="-2" pref="128" max="-2" attributes="0"/>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="txtArmazen1" linkSize="2" min="-2" pref="88" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="cmbarmazem2" min="-2" pref="116" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="txtArmazen2" linkSize="2" min="-2" pref="90" max="-2" attributes="0"/>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="cmbarmazem3" min="-2" pref="104" max="-2" attributes="0"/>
+                              <Component id="cmbarmazem1" min="-2" pref="146" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="txtArmazen1" min="-2" pref="78" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="cmbarmazem2" min="-2" pref="154" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="txtArmazen2" min="-2" pref="70" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="cmbarmazem3" min="-2" pref="116" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="txtArmazen3" min="-2" pref="55" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -79,30 +79,23 @@
           <Group type="102" attributes="0">
               <Component id="jPanel3" min="-2" pref="68" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="txtArmazen1" alignment="1" max="32767" attributes="0"/>
-                  <Component id="txtArmazen2" alignment="1" max="32767" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="txtArmazen3" alignment="3" min="-2" pref="44" max="-2" attributes="0"/>
-                      <Component id="txtArmazen4" alignment="3" min="-2" pref="44" max="-2" attributes="0"/>
-                      <Component id="cmbarmazem1" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="cmbarmazem4" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jButtonCompras" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="cmbarmazem2" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="cmbarmazem3" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="txtArmazen3" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="txtArmazen4" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="cmbarmazem1" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="cmbarmazem4" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jButtonCompras" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="cmbarmazem2" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="cmbarmazem3" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="txtArmazen2" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="txtArmazen1" min="-2" pref="27" max="-2" attributes="0"/>
               </Group>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
-                      <Component id="painel_stock" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jPanel5" min="-2" max="-2" attributes="0"/>
-                  </Group>
+              <EmptySpace max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="jPanel5" max="32767" attributes="0"/>
+                  <Component id="painel_stock" max="32767" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="86" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -938,7 +931,7 @@
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="100" y="150" width="530" height="80"/>
+              <AbsoluteConstraints x="110" y="150" width="530" height="80"/>
             </Constraint>
           </Constraints>
 
@@ -1503,7 +1496,7 @@
                       <Component id="txtPrecoVendaGrosso" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="lbPrecoVenda1" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="166" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -1695,7 +1688,7 @@
       <Properties>
         <Property name="editable" type="boolean" value="false"/>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-          <Font name="Arial" size="18" style="1"/>
+          <Font name="Arial" size="14" style="1"/>
         </Property>
       </Properties>
       <AuxValues>
@@ -1706,7 +1699,7 @@
       <Properties>
         <Property name="editable" type="boolean" value="false"/>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-          <Font name="Arial" size="18" style="1"/>
+          <Font name="Arial" size="14" style="1"/>
         </Property>
       </Properties>
       <AuxValues>

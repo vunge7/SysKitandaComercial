@@ -210,6 +210,8 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
         jLabel2 = new javax.swing.JLabel();
         txtCodigoManual = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
+        txtCodigoBarra = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("...:::::ACERTO STOCK::::...");
@@ -312,6 +314,16 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
 
         jLabel3.setText("Digite o Código Manual");
 
+        txtCodigoBarra.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                txtCodigoBarraActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setText("Digite o Código de Barra");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -338,6 +350,10 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
                             .addComponent(txtCodigoManual))
+                        .addGap(31, 31, 31)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtCodigoBarra, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -350,14 +366,20 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
                         .addComponent(jLabel1)
                         .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtIniciais, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtIniciais, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txtCodigoBarra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 497, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -404,6 +426,11 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
 
         carregarTabelaPorCodigoManual( txtCodigoManual.getText().trim(), getIdArmazem() );
     }//GEN-LAST:event_txtCodigoManualActionPerformed
+
+    private void txtCodigoBarraActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtCodigoBarraActionPerformed
+    {//GEN-HEADEREND:event_txtCodigoBarraActionPerformed
+        carregarTabelaPorCodigoBarra( txtCodigoBarra.getText().trim(), getIdArmazem() );
+    }//GEN-LAST:event_txtCodigoBarraActionPerformed
 
     /**
      * @param args the command line arguments
@@ -461,9 +488,11 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tabela_acerto;
+    private javax.swing.JTextField txtCodigoBarra;
     private javax.swing.JTextField txtCodigoManual;
     private javax.swing.JTextField txtIniciais;
     // End of variables declaration//GEN-END:variables
@@ -1267,6 +1296,38 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
         if ( lista.isEmpty() )
         {
             JOptionPane.showMessageDialog( this, "Nenhum produto encontrado com o código manual: " + codigoManual,
+                    "Aviso", JOptionPane.INFORMATION_MESSAGE );
+            return;
+        }
+
+        for ( Object[] linha : lista )
+        {
+            // Penúltima coluna (acerto) começa vazia
+            if ( linha.length > 6 )
+            {
+                linha[ 6 ] = null;
+            }
+            model.addRow( linha );
+        }
+    }
+    private void carregarTabelaPorCodigoBarra( String codBarra, int codArmazem )
+    {
+        if ( codBarra.isEmpty() )
+        {
+            JOptionPane.showMessageDialog( this, "Digite o código de barra do produto!",
+                    "Aviso", JOptionPane.WARNING_MESSAGE );
+            return;
+        }
+
+        // Obter lista do controller
+        List<Object[]> lista = produtosController.listarStockPorCodigoBarra( conn, codBarra, codArmazem );
+
+        DefaultTableModel model = (DefaultTableModel) tabela_acerto.getModel();
+        model.setRowCount( 0 ); // limpa tabela antes de preencher
+
+        if ( lista.isEmpty() )
+        {
+            JOptionPane.showMessageDialog( this, "Nenhum produto encontrado com o código de barra: " + codBarra,
                     "Aviso", JOptionPane.INFORMATION_MESSAGE );
             return;
         }

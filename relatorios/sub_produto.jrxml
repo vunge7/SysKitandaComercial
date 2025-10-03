@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub1_stock" language="groovy" pageWidth="555" pageHeight="832" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="5342d3e6-c1f4-4891-82db-a86eaaf11a56">
-	<property name="ireport.zoom" value="8.0"/>
-	<property name="ireport.x" value="295"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub1_stock" pageWidth="555" pageHeight="832" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="4" uuid="5342d3e6-c1f4-4891-82db-a86eaaf11a56">
+	<property name="ireport.zoom" value="4.0"/>
+	<property name="ireport.x" value="1238"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="ID_TIPO_PRODUTO" class="java.lang.Integer"/>
 	<parameter name="PARM_ID_ARMAZEM" class="java.lang.Integer"/>
@@ -54,10 +54,10 @@ ORDER BY
 		<variableExpression><![CDATA[$F{tb_stock_quantidade_existente}]]></variableExpression>
 	</variable>
 	<variable name="SOMA_PRECO_COMPRA" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$F{tb_stock_quantidade_existente}*$F{MAX_PRECO_COMPRA}]]></variableExpression>
+		<variableExpression><![CDATA[$F{tb_stock_quantidade_existente}*$F{MAX_PRECO_COMPRA}.doubleValue()]]></variableExpression>
 	</variable>
 	<variable name="SOMA_PRECO_VENDA" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$F{tb_stock_quantidade_existente}*$F{MAX_PRECO_VENDA}]]></variableExpression>
+		<variableExpression><![CDATA[$F{tb_stock_quantidade_existente}*$F{MAX_PRECO_VENDA}.doubleValue()]]></variableExpression>
 	</variable>
 	<variable name="SOMA_LUCRO" class="java.lang.Double"/>
 	<background>
@@ -157,7 +157,7 @@ ORDER BY
 	</columnHeader>
 	<detail>
 		<band height="11" splitType="Stretch">
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="ae67ec88-ae13-4dfe-b0b6-6e98cde89187" x="30" y="0" width="357" height="11"/>
 				<box leftPadding="2">
 					<pen lineStyle="Solid" lineColor="#666666"/>
@@ -199,16 +199,16 @@ ORDER BY
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_stock_quantidade_existente}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0" isBlankWhenNull="true">
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement uuid="f1c66ba1-bc96-4f3b-8d57-67936a2d7445" x="488" y="0" width="67" height="11"/>
-				<box leftPadding="2">
+				<box leftPadding="0" rightPadding="5">
 					<pen lineStyle="Solid" lineColor="#666666"/>
 					<topPen lineStyle="Solid" lineColor="#666666"/>
 					<leftPen lineStyle="Solid" lineColor="#666666"/>
 					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#666666"/>
 					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#666666"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{MAX_PRECO_VENDA}]]></textFieldExpression>

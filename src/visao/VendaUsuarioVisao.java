@@ -6373,6 +6373,7 @@ getRootPane().getActionMap().put("abrirBuscaProduto", new AbstractAction() {
     {
         boolean documentoIsFA = DVML.DOC_FACTURA_FT == getIdDocumento();
         boolean documentoIsPP = DVML.DOC_FACTURA_PROFORMA_PP == getIdDocumento();
+        boolean seguradoras = DVML.DOC_FACTURA_PROFORMA_PP == getIdDocumento();
         if ( cmbCliente.getSelectedItem().equals( "--Seleccione o Cliente--" ) )
         {
 

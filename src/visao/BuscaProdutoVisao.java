@@ -62,19 +62,19 @@ public class BuscaProdutoVisao extends javax.swing.JDialog
         setBackGroundLegenda();
         
         // Adicione no construtor ou método initComponents()
-tabela_busca.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-    .put(KeyStroke.getKeyStroke("F4"), "acaoF4");
-
-tabela_busca.getActionMap().put("acaoF4", new AbstractAction() {
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        // Simula o duplo clique chamando o mesmo método
-        int linha = tabela_busca.getSelectedRow();
-        if (linha >= 0) {
-            tratarSelecaoTabela(linha);
-        }
-    }
-});
+//tabela_busca.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+//    .put(KeyStroke.getKeyStroke("F4"), "acaoF4");
+//
+//tabela_busca.getActionMap().put("acaoF4", new AbstractAction() {
+//    @Override
+//    public void actionPerformed(ActionEvent e) {
+//        // Simula o duplo clique chamando o mesmo método
+//        int linha = tabela_busca.getSelectedRow();
+//        if (linha >= 0) {
+//            tratarSelecaoTabela(linha);
+//        }
+//    }
+//});
 
 
     }
@@ -343,7 +343,11 @@ tabela_busca.getActionMap().put("acaoF4", new AbstractAction() {
     private void tabela_buscaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabela_buscaMouseClicked
         // TODO add your handling code here:
 
-        
+                // Simula o duplo clique chamando o mesmo método
+        int linha = tabela_busca.getSelectedRow();
+        if (linha >= 0) {
+            tratarSelecaoTabela(linha);
+        }
         
         
 //        if ( evt.getClickCount() == 2 )
