@@ -105,16 +105,12 @@
               <Group type="102" attributes="0">
                   <Group type="103" groupAlignment="1" attributes="0">
                       <Group type="102" attributes="0">
-                          <EmptySpace min="-2" pref="95" max="-2" attributes="0"/>
-                          <Component id="ck_fornecedor" min="-2" pref="230" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="lbFornecedor" min="-2" pref="77" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="420" max="-2" attributes="0"/>
                           <Component id="cmbFornecedor" min="-2" pref="212" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="73" max="-2" attributes="0"/>
-                          <Component id="ck_sem_iva" max="32767" attributes="0"/>
+                          <Component id="ck_sem_iva" pref="73" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="ck_com_iva" pref="141" max="32767" attributes="0"/>
+                          <Component id="ck_com_iva" pref="149" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
                           <EmptySpace min="-2" pref="340" max="-2" attributes="0"/>
@@ -147,12 +143,8 @@
                   </Group>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="cmbFornecedor" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="lbFornecedor" alignment="3" min="-2" pref="27" max="-2" attributes="0"/>
-                              <Component id="ck_fornecedor" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                          <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
+                          <Component id="cmbFornecedor" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -162,7 +154,7 @@
                           </Group>
                       </Group>
                   </Group>
-                  <EmptySpace pref="15" max="32767" attributes="0"/>
+                  <EmptySpace pref="18" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -186,19 +178,6 @@
         <Component class="javax.swing.JLabel" name="jLabel1">
           <Properties>
             <Property name="text" type="java.lang.String" value="Armaz&#xe9;m"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JCheckBox" name="ck_fornecedor">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Por Fornecedor"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ck_fornecedorActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JLabel" name="lbFornecedor">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Fornecedor"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JComboBox" name="cmbFornecedor">

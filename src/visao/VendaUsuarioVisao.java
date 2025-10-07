@@ -34,6 +34,7 @@ import entity.Unidade;
 import exemplos.PermitirNumeros;
 import hotel.controller.MesasController;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
@@ -257,32 +258,35 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                         return false;
                     }
                 } );
-        
-        
-        
+
         // No construtor ou método de inicialização da sua janela
-getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-    .put(KeyStroke.getKeyStroke("F4"), "abrirBuscaProduto");
+        getRootPane().getInputMap( JComponent.WHEN_IN_FOCUSED_WINDOW )
+                .put( KeyStroke.getKeyStroke( "F4" ), "abrirBuscaProduto" );
 
-getRootPane().getActionMap().put("abrirBuscaProduto", new AbstractAction() {
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        try {
-            if (validar()) {
-                new BuscaProdutoVisao(
-                    VendaUsuarioVisao.this, // ou "this" conforme contexto
-                    rootPaneCheckingEnabled,
-                    getCodigoArmazem(),
-                    DVML.JANELA_VENDA,
-                    conexao
-                ).setVisible(true); // melhor que .show()
+        getRootPane().getActionMap().put( "abrirBuscaProduto", new AbstractAction()
+        {
+            @Override
+            public void actionPerformed( ActionEvent e )
+            {
+                try
+                {
+                    if ( validar() )
+                    {
+                        new BuscaProdutoVisao(
+                                VendaUsuarioVisao.this, // ou "this" conforme contexto
+                                rootPaneCheckingEnabled,
+                                getCodigoArmazem(),
+                                DVML.JANELA_VENDA,
+                                conexao
+                        ).setVisible( true ); // melhor que .show()
+                    }
+                }
+                catch ( Exception ex )
+                {
+                    ex.printStackTrace();
+                }
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-});
-
+        } );
 
 //        habilitarColunas();
         MetodosUtil.setArmazemByCampoConfigArmazem( cmbArmazem, conexao, cod_usuario );
@@ -1791,11 +1795,22 @@ getRootPane().getActionMap().put("abrirBuscaProduto", new AbstractAction() {
     {//GEN-HEADEREND:event_btnFormaPagamentoActionPerformed
         // TODO add your handling code here:
 //         new FormaPagamentoVisao( this, rootPaneCheckingEnabled, DVML.VENDA_PONTUAL, emf ).setVisible( true );
-        if ( MetodosUtil.licencaValidada( conexao ) )
-        {
-            new FormaPagamentoVisao( this, rootPaneCheckingEnabled, null, DVML.VENDA_PONTUAL, conexao ).setVisible( true );
+//        if ( MetodosUtil.licencaValidada( conexao ) )
+//        {
+//            new FormaPagamentoVisao( this, rootPaneCheckingEnabled, null, DVML.VENDA_PONTUAL, conexao ).setVisible( true );
+//
+//        }
 
-        }
+if (MetodosUtil.licencaValidada(conexao)) {
+    if (!validarPrecos_tabela(table)) {
+        return; // Se houver erro, não abre forma de pagamento
+    }
+
+    new FormaPagamentoVisao(this, rootPaneCheckingEnabled, null, DVML.VENDA_PONTUAL, conexao)
+        .setVisible(true);
+}
+
+
     }//GEN-LAST:event_btnFormaPagamentoActionPerformed
 
     private void btnProcessarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnProcessarActionPerformed
@@ -1811,6 +1826,145 @@ getRootPane().getActionMap().put("abrirBuscaProduto", new AbstractAction() {
 
         }
     }//GEN-LAST:event_btnProcessarActionPerformed
+
+//   private boolean validarPrecosTabela(JTable table) {
+//    for (int i = 0; i < table.getRowCount(); i++) {
+//        try {
+//            // Pega os valores das colunas 9 (unitário) e 10 (total)
+//            String rawUnit = String.valueOf(table.getModel().getValueAt(i, 9));
+//            String rawTotal = String.valueOf(table.getModel().getValueAt(i, 10));
+//
+//            // Usa o mesmo método de parsing usado no salvar
+//            BigDecimal precoUnit = new BigDecimal(CfMethods.parseMoedaFormatada(rawUnit));
+//            BigDecimal precoTotal = new BigDecimal(CfMethods.parseMoedaFormatada(rawTotal));
+//
+//            // Validação: se um dos preços for zero ou negativo
+//            if (precoUnit.compareTo(BigDecimal.ZERO) <= 0 || precoTotal.compareTo(BigDecimal.ZERO) <= 0) {
+//                String nomeProduto = String.valueOf(table.getModel().getValueAt(i, 1)); // coluna 1 = nome do produto
+//
+//                JOptionPane.showMessageDialog(
+//                        this,
+//                        "❌ Não é possível efectuar a venda!\n" +
+//                        "O produto \"" + nomeProduto + "\" (linha " + (i + 1) + ") possui preço igual a zero.",
+//                        "Erro de Validação",
+//                        JOptionPane.ERROR_MESSAGE
+//                );
+//
+//                // Destaca e foca a célula com problema
+//                table.requestFocus();
+//                table.setRowSelectionInterval(i, i);
+//                table.changeSelection(i, 9, false, false);
+//                table.editCellAt(i, 9);
+//                Component editor = table.getEditorComponent();
+//                if (editor != null) editor.requestFocusInWindow();
+//
+//                return false; // bloqueia a continuação
+//            }
+//        } catch (Exception ex) {
+//            JOptionPane.showMessageDialog(
+//                    this,
+//                    "Erro ao validar preços na linha " + (i + 1) + ": " + ex.getMessage(),
+//                    "Erro de Validação",
+//                    JOptionPane.ERROR_MESSAGE
+//            );
+//            return false;
+//        }
+//    }
+//    return true; // tudo certo
+//}
+private boolean validarPrecos_tabela(JTable tabela) {
+    DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
+    StringBuilder produtosComErro = new StringBuilder();
+
+    // Percorrer todas as linhas
+    for (int i = 0; i < modelo.getRowCount(); i++) {
+        double precoUnitario = extrairValorNumerico(modelo.getValueAt(i, 9));
+        double precoTotal = extrairValorNumerico(modelo.getValueAt(i, 10));
+
+        // Se qualquer um dos dois preços for zero, marca como erro
+        if (precoUnitario <= 0 || precoTotal <= 0) {
+            Object designacaoObj = modelo.getValueAt(i, 1);
+            String designacao = (designacaoObj != null && !designacaoObj.toString().isEmpty())
+                    ? designacaoObj.toString()
+                    : "Produto sem nome";
+
+            if (produtosComErro.length() > 0) {
+                produtosComErro.append(" e ");
+            }
+            produtosComErro.append(designacao);
+        }
+    }
+
+    // Se encontrou produtos com erro
+    if (produtosComErro.length() > 0) {
+        int opcao = JOptionPane.showConfirmDialog(
+                null,
+                "Atenção\nO(s) produto(s):\n" + produtosComErro +
+                ". Possuem preços Zero.\n\nDeves removê-lo(s) da lista!!!",
+                "Erro de Validação de Preços",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.ERROR_MESSAGE
+        );
+
+        // Se clicar OK, remover as linhas com erro
+        if (opcao == JOptionPane.OK_OPTION) {
+            for (int i = modelo.getRowCount() - 1; i >= 0; i--) {
+                double precoUnitario = extrairValorNumerico(modelo.getValueAt(i, 9));
+                double precoTotal = extrairValorNumerico(modelo.getValueAt(i, 10));
+
+                if (precoUnitario <= 0 || precoTotal <= 0) {
+                    modelo.removeRow(i);
+                }
+            }
+        }
+
+        return false; // Impede abrir forma de pagamento
+    }
+
+    return true; // Tudo certo, pode continuar
+}
+
+
+private double extrairValorNumerico(Object valorObj) {
+    if (valorObj == null) return 0.0;
+
+    String valor = valorObj.toString().trim();
+
+    if (valor.isEmpty()) return 0.0;
+
+    // Remove espaços e símbolos de moeda (AOA, KZ, etc.)
+    valor = valor.replaceAll("(?i)AOA", "") // remove AOA (maiúsculo ou minúsculo)
+                 .replaceAll("(?i)KZ", "")
+                 .replaceAll("\\s+", "");   // remove espaços
+
+    // Substitui vírgulas por pontos
+    valor = valor.replace(",", ".");
+
+    // Remove qualquer caracter que não seja número, ponto ou sinal
+    valor = valor.replaceAll("[^0-9.\\-]", "");
+
+    // Corrige caso tenha mais de um ponto (ex: "1.600.00" -> "1600.00")
+    int firstDot = valor.indexOf('.');
+    if (firstDot != -1) {
+        int lastDot = valor.lastIndexOf('.');
+        if (lastDot != firstDot) {
+            // remove todos os pontos exceto o último
+            valor = valor.substring(0, lastDot).replace(".", "") + valor.substring(lastDot);
+        }
+    }
+
+    // Debug opcional
+    System.out.println("→ Valor processado: '" + valorObj + "' => '" + valor + "'");
+
+    try {
+        return Double.parseDouble(valor);
+    } catch (NumberFormatException e) {
+        System.err.println("Erro ao converter valor: '" + valorObj + "' -> " + e.getMessage());
+        return 0.0;
+    }
+}
+
+
 
     private void ck_ComVirgulaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ck_ComVirgulaActionPerformed
     {//GEN-HEADEREND:event_ck_ComVirgulaActionPerformed
@@ -4602,6 +4756,89 @@ getRootPane().getActionMap().put("abrirBuscaProduto", new AbstractAction() {
             }
         }
     }
+//    public static void salvar_item_venda_comercial( Integer cod_venda, BDConexao conexaoLocal, StoksController stoksControllerLocal ) throws Exception
+//    {
+//        for ( int i = 0; i < table.getRowCount(); i++ )
+//        {
+//            try
+//            {
+//                // === VALIDAÇÃO DE PREÇO ZERO ===
+//                double precoUnitario = Double.parseDouble( table.getModel().getValueAt( i, 9 ).toString().replace( ",", "." ) );
+//                double precoTotal = Double.parseDouble( table.getModel().getValueAt( i, 10 ).toString().replace( ",", "." ) );
+//
+//                if ( precoUnitario <= 0 || precoTotal <= 0 )
+//                {
+//                    String nomeProduto = table.getModel().getValueAt( i, 1 ).toString(); // supondo que coluna 1 é a designação
+//                    JOptionPane.showMessageDialog(
+//                            null,
+//                            "Não é possível efectuar a venda!\nO produto \"" + nomeProduto + "\" possui preço igual a zero.",
+//                            "Erro de Validação",
+//                            JOptionPane.ERROR_MESSAGE
+//                    );
+//                    throw new Exception( "Linha " + ( i + 1 ) + " contém preço zero." );
+//                }
+//                // ================================
+//
+//                int idProduto = Integer.parseInt( table.getModel().getValueAt( i, 0 ).toString() );
+//                TbProduto produto = (TbProduto) produtosController.findById( idProduto );
+//
+//                TbItemVenda item = new TbItemVenda();
+//                item.setCodigoVenda( new TbVenda( cod_venda ) );
+//                item.setCodigoProduto( produto );
+//                item.setQuantidade( Double.parseDouble( table.getModel().getValueAt( i, 4 ).toString() ) );
+//                item.setDesconto( Double.parseDouble( table.getModel().getValueAt( i, 5 ).toString() ) );
+//                item.setValorIva( Double.parseDouble( table.getModel().getValueAt( i, 6 ).toString() ) );
+//                item.setValorRetencao( Double.parseDouble( table.getModel().getValueAt( i, 7 ).toString() ) );
+//                TbPreco precoProduto = precosController.getLastIdPrecoByIdProduto( idProduto, item.getQuantidade() );
+//                item.setMotivoIsensao( getMotivoIsensao( idProduto ) );
+//                item.setCodigoIsensao( MetodosUtil.getCodigoRegime( idProduto ) );
+//                item.setTotal( new BigDecimal( CfMethods.parseMoedaFormatada( table.getModel().getValueAt( i, 10 ).toString() ) ) );
+//                item.setFkPreco( precosController.getLastIdPrecoByIdProduto( idProduto, item.getQuantidade() ) );
+//                item.setDataServico( new Date() );
+//                item.setFkLugares( (TbLugares) lugaresController.findById( DVML.LUGAR_BALCAO ) );
+//                item.setFkMesas( (TbMesas) mesasController.findById( DVML.MESA_BALCAO ) );
+//
+//                // Salvar item
+//                if ( !itemVendasController.salvar( item ) )
+//                {
+//                    throw new Exception( "Erro ao salvar item da venda. Produto: " + produto.getDesignacao() );
+//                }
+//
+//                int idArmazem = getCodigoArmazem();
+//                // Controle de stock (se for estocável)
+//                boolean isStocavel = "true".equalsIgnoreCase( produto.getStocavel() );
+//                if ( isStocavel )
+//                {
+//
+//                    TbStock stock_local_local = stoksControllerLocal.getStockByIdProdutoAndIdArmazem( idProduto, idArmazem );
+//
+//                    if ( ( getIdDocumento() == DOC_FACTURA_RECIBO_FR
+//                            || getIdDocumento() == DOC_FACTURA_FT
+//                            || getIdDocumento() == DOC_FACTURA_CONSULTA_MESA
+//                            || getIdDocumento() == DVML.DOC_GUIA_TRANSPORTE_GT ) && stock_local_local != null )
+//                    {
+//
+//                        MovimentacaoController.registrarMovimento(
+//                                idProduto,
+//                                idArmazem,
+//                                cod_usuario,
+//                                new BigDecimal( item.getQuantidade() ),
+//                                prox_doc,
+//                                "SAIDA",
+//                                conexao
+//                        );
+//
+//                        actualizar_quantidade( idProduto, item.getQuantidade(), conexaoLocal );
+//                    }
+//                }
+//
+//            }
+//            catch ( Exception e )
+//            {
+//                throw new Exception( "Erro ao processar item " + ( i + 1 ) + ": " + e.getMessage() );
+//            }
+//        }
+//    }
 
     public static void registrar_forma_pagamento( int id_venda ) throws Exception
     {

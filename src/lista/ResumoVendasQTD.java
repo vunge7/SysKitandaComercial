@@ -61,7 +61,7 @@ public  class ResumoVendasQTD {
         this.pk_armazem = pk_armazem;
         this.pk_fornecedor = pk_fornecedor;
         try {
-            mostrarFornecedor();
+            mostrar_detalhado();
         } catch (Exception e) {
         }
         
@@ -80,9 +80,51 @@ public  class ResumoVendasQTD {
         hashMap.put("NOME_INSTITUICAO", dadosInstituicaoDao.findTbDadosInstituicao(1).getNome().toUpperCase() );
           
         //obter o path do relatorio
-        String relatorio = "relatorios/relatorio_diario_produtos.jasper";
+        //String relatorio = "relatorios/princ_relatorio_diario_produtos.jasper";
+        
+           String relatorio = "relatorios/princ_relatorio_diario_produtos_resumido.jasper";
 
-        File file = new File(relatorio).getAbsoluteFile();
+        File file = new File( relatorio ).getAbsoluteFile();
+        String obterCaminho = file.getAbsolutePath();
+
+        try {
+             Connection connection =  BDConexao.getConnection();
+            JasperFillManager.fillReport(obterCaminho, hashMap, connection);
+            JasperPrint jasperPrint = JasperFillManager.fillReport(obterCaminho, hashMap, connection);
+
+            if (jasperPrint.getPages().size() >= 1) {
+                JasperViewer jasperViewer = new JasperViewer(jasperPrint, false);
+                jasperViewer.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Não existe registro para esse intervalo de data!...", "ERROR", JOptionPane.ERROR_MESSAGE);
+            }
+            
+        } catch (JRException jex) {
+            jex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Falha ao mostrar o relatorio", "DVML-COMERCIAL, LDA" , JOptionPane.ERROR);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Erro ao tentar mostrar o relatorio", "DVML-COMERCIAL, LDA" , JOptionPane.ERROR_MESSAGE);
+        }
+
+        }
+    
+    public void mostrar_detalhado(){
+
+       //PARM_LUCRO
+     
+        HashMap hashMap = new HashMap();
+     
+        hashMap.put("PARM_DATA_1", this.data_incio);      
+        hashMap.put("PARM_DATA_2", this.data_fim);      
+        hashMap.put("PARM_ID_ARMAZEM", this.pk_armazem);      
+        hashMap.put("DESIGNACAO_ARMAZEM", armazemDao.findTbArmazem(pk_armazem).getDesignacao() );  
+        hashMap.put("NOME_INSTITUICAO", dadosInstituicaoDao.findTbDadosInstituicao(1).getNome().toUpperCase() );
+          
+        //obter o path do relatorio
+        String relatorio = "relatorios/princ_relatorio_diario_produtos.jasper";
+
+        File file = new File( relatorio ).getAbsoluteFile();
         String obterCaminho = file.getAbsolutePath();
 
         try {

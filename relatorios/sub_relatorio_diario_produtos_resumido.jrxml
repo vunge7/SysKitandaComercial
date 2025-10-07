@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="relatorio_diario_produtos" language="groovy" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="963621be-cfd4-4f53-8a8b-bed5b630fd64">
+	<property name="ireport.zoom" value="4.0"/>
+	<property name="ireport.x" value="1335"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="CODIGO_PRODUTO" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    p.codigo,
+    p.designacao,
+    p.codigo_manual,
+    pr.preco_venda,
+    pr.data,
+    SUM(iv.quantidade) AS quantidade,
+    SUM(iv.total) AS total_vendido
+FROM tb_item_venda iv
+JOIN tb_venda v     ON iv.codigo_venda = v.codigo
+JOIN tb_produto p   ON iv.codigo_produto = p.codigo
+JOIN tb_preco pr    ON iv.fk_preco = pr.pk_preco
+WHERE
+  iv.codigo_produto = $P{CODIGO_PRODUTO}
+GROUP BY pr.preco_venda
+ORDER BY pr.preco_venda;]]>
+	</queryString>
+	<field name="codigo" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="designacao" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="codigo_manual" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="preco_venda" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="data" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="quantidade" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="total_vendido" class="java.math.BigDecimal"/>
+	<variable name="TOTAL_QTD" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{quantidade}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_VENDAS" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{total_vendido}]]></variableExpression>
+	</variable>
+	<variable name="PRECO_MEDIO" class="java.math.BigDecimal" calculation="Average">
+		<variableExpression><![CDATA[$F{preco_venda}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<summary>
+		<band height="11">
+			<textField>
+				<reportElement uuid="5c6ba69d-6f3d-4f80-806f-711d5a43b8c2" x="436" y="0" width="39" height="11"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_QTD}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="29476ef1-b2c7-4f86-a545-115b078b6af5" x="475" y="0" width="63" height="11"/>
+				<box rightPadding="2">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_VENDAS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="f295a363-8dbe-4557-934e-5e64db87d999" x="382" y="0" width="54" height="11"/>
+				<box rightPadding="2">
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_VENDAS}.doubleValue()/$V{TOTAL_QTD}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="f0cacb5c-17e5-4082-b2ff-fe0e8a8e4d8b" x="71" y="0" width="311" height="11"/>
+				<box leftPadding="5">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{designacao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="d4a67c77-a30d-4aa2-8a7e-555096cd501b" x="10" y="0" width="61" height="11"/>
+				<box leftPadding="5">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigo_manual}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

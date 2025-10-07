@@ -210,7 +210,6 @@ public class ListarRelatorioDiario extends javax.swing.JFrame {
         cmbArmazem = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
         ck_fornecedor = new javax.swing.JCheckBox();
-        lbFornecedor = new javax.swing.JLabel();
         cmbFornecedor = new javax.swing.JComboBox<>();
         rbA4 = new javax.swing.JRadioButton();
         rbA6 = new javax.swing.JRadioButton();
@@ -254,7 +253,7 @@ public class ListarRelatorioDiario extends javax.swing.JFrame {
 
         jLabel1.setText("Armazém");
 
-        ck_fornecedor.setText("Por Fornecedor");
+        ck_fornecedor.setText("Detalhado");
         ck_fornecedor.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -262,8 +261,6 @@ public class ListarRelatorioDiario extends javax.swing.JFrame {
                 ck_fornecedorActionPerformed(evt);
             }
         });
-
-        lbFornecedor.setText("Fornecedor");
 
         cmbFornecedor.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
@@ -306,9 +303,7 @@ public class ListarRelatorioDiario extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(ck_fornecedor, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lbFornecedor, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(106, 106, 106)
                         .addComponent(cmbFornecedor, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(lbData1, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -319,7 +314,7 @@ public class ListarRelatorioDiario extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(rbA4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -345,7 +340,6 @@ public class ListarRelatorioDiario extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cmbFornecedor, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbFornecedor, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(ck_fornecedor))
                 .addContainerGap())
         );
@@ -435,7 +429,7 @@ public class ListarRelatorioDiario extends javax.swing.JFrame {
 
     private void ck_fornecedorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ck_fornecedorActionPerformed
         // TODO add your handling code here:
-        accao_mostar_campo_fornecedor(ck_fornecedor.isSelected());
+//        accao_mostar_campo_fornecedor(ck_fornecedor.isSelected());
     }//GEN-LAST:event_ck_fornecedorActionPerformed
 
     private void rbA6ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_rbA6ActionPerformed
@@ -502,7 +496,6 @@ public class ListarRelatorioDiario extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel lbData;
     private javax.swing.JLabel lbData1;
-    private javax.swing.JLabel lbFornecedor;
     public static javax.swing.JRadioButton rbA4;
     public static javax.swing.JRadioButton rbA6;
     // End of variables declaration//GEN-END:variables
@@ -571,7 +564,7 @@ public class ListarRelatorioDiario extends javax.swing.JFrame {
     }
 
     private void accao_mostar_campo_fornecedor(boolean estado) {
-        lbFornecedor.setVisible(estado);
+//        lbFornecedor.setVisible(estado);
         cmbFornecedor.setVisible(estado);
     }
 

@@ -109,9 +109,7 @@
                   <Group type="103" groupAlignment="1" attributes="0">
                       <Group type="102" attributes="0">
                           <Component id="ck_fornecedor" min="-2" pref="132" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="lbFornecedor" min="-2" pref="88" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="106" max="-2" attributes="0"/>
                           <Component id="cmbFornecedor" min="-2" pref="224" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
@@ -125,7 +123,7 @@
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jLabel3" max="32767" attributes="0"/>
+                  <Component id="jLabel3" pref="158" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="rbA4" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
@@ -156,7 +154,6 @@
                   <EmptySpace pref="22" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="cmbFornecedor" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
-                      <Component id="lbFornecedor" alignment="3" min="-2" pref="34" max="-2" attributes="0"/>
                       <Component id="ck_fornecedor" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -207,16 +204,11 @@
         </Component>
         <Component class="javax.swing.JCheckBox" name="ck_fornecedor">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Por Fornecedor"/>
+            <Property name="text" type="java.lang.String" value="Detalhado"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ck_fornecedorActionPerformed"/>
           </Events>
-        </Component>
-        <Component class="javax.swing.JLabel" name="lbFornecedor">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Fornecedor"/>
-          </Properties>
         </Component>
         <Component class="javax.swing.JComboBox" name="cmbFornecedor">
           <Properties>

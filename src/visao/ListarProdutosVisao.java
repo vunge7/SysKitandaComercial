@@ -71,8 +71,6 @@ public class ListarProdutosVisao extends javax.swing.JFrame
         jPanel1 = new javax.swing.JPanel();
         cmbArmazem = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
-        ck_fornecedor = new javax.swing.JCheckBox();
-        lbFornecedor = new javax.swing.JLabel();
         cmbFornecedor = new javax.swing.JComboBox<>();
         rbA6 = new javax.swing.JRadioButton();
         rbA4 = new javax.swing.JRadioButton();
@@ -111,17 +109,6 @@ public class ListarProdutosVisao extends javax.swing.JFrame
 
         jLabel1.setText("Armazém");
 
-        ck_fornecedor.setText("Por Fornecedor");
-        ck_fornecedor.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                ck_fornecedorActionPerformed(evt);
-            }
-        });
-
-        lbFornecedor.setText("Fornecedor");
-
         cmbFornecedor.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         buttonGroup1.add(rbA6);
@@ -145,16 +132,12 @@ public class ListarProdutosVisao extends javax.swing.JFrame
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(95, 95, 95)
-                        .addComponent(ck_fornecedor, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(lbFornecedor, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(420, 420, 420)
                         .addComponent(cmbFornecedor, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(73, 73, 73)
-                        .addComponent(ck_sem_iva, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(ck_sem_iva, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(ck_com_iva, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE))
+                        .addComponent(ck_com_iva, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(340, 340, 340)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -179,17 +162,14 @@ public class ListarProdutosVisao extends javax.swing.JFrame
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(14, 14, 14)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cmbFornecedor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lbFornecedor, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(ck_fornecedor)))
+                        .addGap(16, 16, 16)
+                        .addComponent(cmbFornecedor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(ck_com_iva)
                             .addComponent(ck_sem_iva))))
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
         jPanel2.setBackground(new java.awt.Color(0, 0, 102));
@@ -257,22 +237,17 @@ public class ListarProdutosVisao extends javax.swing.JFrame
 
     private void btnImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirActionPerformed
 
-        if ( ck_fornecedor.isSelected() )
-        {
-            new ListagemTodosProdutos( getCodigoArmazem(), getCodigoFornecedor(), cmbArmazem.getSelectedItem().toString(), cmbFornecedor.getSelectedItem().toString() );
-        }
-        else
-        {
+//        if ( ck_fornecedor.isSelected() )
+//        {
+//            new ListagemTodosProdutos( getCodigoArmazem(), getCodigoFornecedor(), cmbArmazem.getSelectedItem().toString(), cmbFornecedor.getSelectedItem().toString() );
+//        }
+//        else
+//        {
             new ListagemTodosProdutos( getCodigoArmazem(), cmbArmazem.getSelectedItem().toString(), getFolha(), ck_com_iva.isSelected() );
-        }
+//        }
 
 
     }//GEN-LAST:event_btnImprimirActionPerformed
-
-    private void ck_fornecedorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ck_fornecedorActionPerformed
-        // TODO add your handling code here:
-        accao_mostar_campo_fornecedor( ck_fornecedor.isSelected() );
-    }//GEN-LAST:event_ck_fornecedorActionPerformed
 
     /**
      * @param args the command line arguments
@@ -336,7 +311,6 @@ public class ListarProdutosVisao extends javax.swing.JFrame
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JCheckBox ck_com_iva;
-    private javax.swing.JCheckBox ck_fornecedor;
     private javax.swing.JCheckBox ck_sem_iva;
     private javax.swing.JComboBox<String> cmbArmazem;
     private javax.swing.JComboBox<String> cmbFornecedor;
@@ -344,7 +318,6 @@ public class ListarProdutosVisao extends javax.swing.JFrame
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JLabel lbFornecedor;
     private javax.swing.JRadioButton rbA4;
     private javax.swing.JRadioButton rbA6;
     // End of variables declaration//GEN-END:variables
@@ -361,7 +334,7 @@ public class ListarProdutosVisao extends javax.swing.JFrame
 
     private void accao_mostar_campo_fornecedor( boolean estado )
     {
-        lbFornecedor.setVisible( estado );
+//        lbFornecedor.setVisible( estado );
         cmbFornecedor.setVisible( estado );
 
     }
@@ -376,13 +349,7 @@ public class ListarProdutosVisao extends javax.swing.JFrame
             ck_sem_iva.setSelected( false );
 
         }
-//        else if ( regime.equalsIgnoreCase( "Regime de Exclusão" ) )
-//        {
-//
-//            ck_sem_iva.setSelected( true );
-//            ck_com_iva.setSelected( false );
-//
-//        }
+
         else
         {
 

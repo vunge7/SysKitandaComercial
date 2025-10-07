@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="relatorio_diario_produtos" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="963621be-cfd4-4f53-8a8b-bed5b630fd64">
+	<property name="ireport.zoom" value="1.5000000000000002"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="PARM_DATA_2" class="java.util.Date"/>
+	<parameter name="PARM_DATA_1" class="java.util.Date"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["../relatorios/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NOME_INSTITUICAO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+    p.codigo,
+    p.designacao,
+    SUM(iv.quantidade) AS QTD,
+    SUM(iv.total) AS total_vendido
+FROM tb_item_venda iv
+JOIN tb_venda v     ON iv.codigo_venda = v.codigo
+JOIN tb_produto p   ON iv.codigo_produto = p.codigo
+WHERE DATE(v.dataVenda) BETWEEN $P{PARM_DATA_1} AND $P{PARM_DATA_2}
+  AND v.fk_documento IN (1,2)
+  AND v.status_eliminado = 'false'
+GROUP BY p.codigo, p.designacao
+ORDER BY p.designacao;]]>
+	</queryString>
+	<field name="codigo" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="designacao" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="QTD" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="total_vendido" class="java.math.BigDecimal"/>
+	<variable name="TOTAL" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{QTD}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_VENDAS" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{total_vendido}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="99" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="7ba5e9d1-8c3a-46c0-92b2-4b8bcef92db2" key="staticText" x="104" y="61" width="357" height="17"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[RELATÓRIO DE QUANTIDADES VENDIDAS]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="4fbbba3b-9ce8-4c33-983c-c344d5228d65" x="98" y="83" width="100" height="15"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{PARM_DATA_2}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="29cb9567-1b47-4e65-bc20-7072b3a3c63a" x="77" y="83" width="23" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[à]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="7091379a-1c81-46ab-b9cf-5c41f08481ce" x="27" y="83" width="55" height="15"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{PARM_DATA_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="3d3b58fb-39fd-478b-a1f1-54513ef309ea" x="5" y="83" width="23" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[De]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="faf8385a-dcd6-4827-baf4-a0f527ab47f7" key="staticText" x="0" y="0" width="555" height="14"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="Times New Roman" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NOME_INSTITUICAO}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame">
+				<reportElement uuid="42a0326b-35a8-4ad8-b01b-769dae589dde" x="-22" y="-14" width="126" height="97"/>
+				<imageExpression><![CDATA["logo/logo_dvml.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<detail>
+		<band height="72" splitType="Stretch">
+			<subreport>
+				<reportElement uuid="95aad695-3185-49ff-9268-965e4e890cb9" x="0" y="0" width="322" height="7" isRemoveLineWhenBlank="true"/>
+				<subreportParameter name="PARM_DATA_2">
+					<subreportParameterExpression><![CDATA[$P{PARM_DATA_1}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PARM_DATA_1">
+					<subreportParameterExpression><![CDATA[$P{PARM_DATA_2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="CODIGO_PRODUTO">
+					<subreportParameterExpression><![CDATA[$F{codigo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_relatorio_diario_produtos.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="66" splitType="Stretch">
+			<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
+				<reportElement uuid="6778339f-90c6-4929-b10b-c62ef67543d2" key="textField" x="519" y="14" width="36" height="19" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement uuid="dd0e387b-7493-4da5-9baa-2bc3c20c81c0" key="textField" x="345" y="14" width="170" height="19"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="2c5ac525-0deb-4da7-897f-4489b3abe21f" key="staticText-2" x="11" y="39" width="532" height="16"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isItalic="false" pdfFontName="Helvetica-Oblique"/>
+				</textElement>
+				<text><![CDATA[Software desenvolvido pela DVML-COMERCIAL, Lda/Contactos: 921734126]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement uuid="f559a0c0-8217-4803-ae16-1a0d890ac3d6" key="textField" x="11" y="16" width="209" height="19"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="59ebd481-2848-44f0-97d3-6f35327bd8e5" key="staticText-1" x="11" y="50" width="532" height="16"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isItalic="false" pdfFontName="Helvetica-Oblique"/>
+				</textElement>
+				<text><![CDATA[email:  dvml.comercial@gmail.com]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="13">
+			<textField>
+				<reportElement uuid="d9959738-82e8-40aa-b382-c40566494c63" x="436" y="0" width="40" height="13"/>
+				<box>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="0449f903-7b91-499e-8ca5-bbed74a6bd8f" x="310" y="0" width="126" height="13"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL GERAL]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="7943040f-fadc-4d17-975e-df41cc8b7b66" x="475" y="0" width="63" height="13"/>
+				<box rightPadding="2">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_VENDAS}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>
