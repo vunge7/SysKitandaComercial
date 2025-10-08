@@ -616,6 +616,13 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
         BT_FR_SEM_FORMA.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/impressora1.png"))); // NOI18N
         BT_FR_SEM_FORMA.setText("FINALIZAR");
+        BT_FR_SEM_FORMA.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                BT_FR_SEM_FORMAActionPerformed(evt);
+            }
+        });
         jPanel3.add(BT_FR_SEM_FORMA, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 0, 170, 30));
 
         lb_usuario.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
@@ -1818,8 +1825,10 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
                 new FormaPagamentoVisao( this, rootPaneCheckingEnabled, null, DVML.VENDA_PONTUAL, conexao )
                         .setVisible( true );
-            }else{
-                JOptionPane.showMessageDialog( null, "Caro usuário, adicione itens na tabela");
+            }
+            else
+            {
+                JOptionPane.showMessageDialog( null, "Caro usuário, adicione itens na tabela" );
             }
         }
 
@@ -1832,7 +1841,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         {
             if ( MetodosUtil.licencaValidada( conexao ) )
             {
-                procedimento_salvar_venda_comercial();
+                procedimento_salvar_venda_comercial( true );
 
             }
 
@@ -2099,6 +2108,27 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_txtCodClientePesquisaActionPerformed
         pesquisa_cliente_by_cod();
     }//GEN-LAST:event_txtCodClientePesquisaActionPerformed
+
+    private void BT_FR_SEM_FORMAActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_FR_SEM_FORMAActionPerformed
+    {//GEN-HEADEREND:event_BT_FR_SEM_FORMAActionPerformed
+        // TODO add your handling code here:
+        if ( MetodosUtil.licencaValidada( conexao ) )
+        {
+            if ( !MetodosUtil.tabela_vazia( table ) )
+            {
+                if ( !validarPrecos_tabela( table ) )
+                {
+                    return; // Se houver erro, não abre forma de pagamento
+                }
+                procedimento_salvar_venda_comercial( false );
+            }
+            else
+            {
+                JOptionPane.showMessageDialog( null, "Caro usuário, adicione itens na tabela" );
+            }
+        }
+
+    }//GEN-LAST:event_BT_FR_SEM_FORMAActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -2983,7 +3013,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     }
 
-    public static void procedimento_salvar_venda_comercial()
+    public static void procedimento_salvar_venda_comercial( boolean frNormal )
     {
         if ( MetodosUtil.tabela_vazia( table ) )
         {
@@ -3023,7 +3053,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         }
 
         // Agora chama o método que realmente salva a venda
-        salvar_venda_comercial();
+        salvar_venda_comercial( frNormal );
 
         // Atualiza a data após a venda
         dc_data_documento.setDate( new Date() );
@@ -4511,7 +4541,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         return armazensController.getArmazemByDesignacao( cmbArmazem.getSelectedItem().toString() ).getCodigo();
     }
 
-    private static void salvar_venda_comercial()
+    private static void salvar_venda_comercial( boolean frNormal )
     {
         BDConexao conexaoTransactionLocal = new BDConexao();
         vendasController = new VendasController( conexaoTransactionLocal );
@@ -4562,7 +4592,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             // Registrar formas de pagamento
             if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR )
             {
-                registrar_forma_pagamento( idVendaGerada );
+                registrarFormaPagamento( idVendaGerada, venda.getTotalVenda(), frNormal );
 
             }
 
@@ -4879,36 +4909,176 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //        }
 //    }
 
-    public static void registrar_forma_pagamento( int id_venda ) throws Exception
+//    public static void registrar_forma_pagamento( int id_venda, BigDecimal totaVenda, boolean frNormal ) throws Exception
+//    {
+//
+//        if ( !frNormal )
+//        {
+//            BigDecimal valor = totaVenda;
+//            FormaPagamentoItem item = new FormaPagamentoItem();
+//            int idForma = 1;
+//            String descricao = "";
+//            String referencia = String.valueOf( id_venda );
+//            FormaPagamento forma = formaPagamentoController.findByDescrisao( descricao );
+//            Contas conta = (Contas) contaController.findById( forma.getFkContaAssociada() );
+//            item.setValor( valor );
+//            item.setTroco( BigDecimal.valueOf( 0 ) );
+//            item.setValor_real( valor.subtract( item.getTroco() ) );
+//            item.setReferencia( referencia );
+//            item.setFkVenda( new TbVenda( id_venda ) );
+//            item.setFkFormaPagamento( new FormaPagamento( idForma ) );
+//
+//            if ( !formaPagamentoItemController.salvar( item ) )
+//            {
+//                throw new Exception( "Erro ao salvar forma de pagamento: " + descricao );
+//            }
+//
+//            if ( conta != null )
+//            {
+//                MetodosUtilTS.entradaTesouraria(
+//                        conta,
+//                        lb_proximo_documento.getText(),
+//                        forma,
+//                        referencia,
+//                        valor,
+//                        cod_usuario,
+//                        usuariosController,
+//                        cmc,
+//                        conexao
+//                );
+//            }
+//
+//        }
+//        else
+//        {
+//            DefaultTableModel modelo = (DefaultTableModel) FormaPagamentoVisao.tabela_forma_pagamento.getModel();
+//            double troco = CfMethods.parseMoedaFormatada( FormaPagamentoVisao.lb_troco.getText() );
+//
+//            for ( int i = 0; i < modelo.getRowCount(); i++ )
+//            {
+//                String valorStr = modelo.getValueAt( i, 3 ).toString().trim();
+//                BigDecimal valor = CfMethods.parseMoedaSegura( valorStr ); // <<< método seguro
+//                System.out.println( "VALOR LIMPO: " + valor );
+//
+//                if ( valor.compareTo( BigDecimal.ZERO ) <= 0 )
+//                {
+//                    continue;
+//                }
+//
+//                FormaPagamentoItem item = new FormaPagamentoItem();
+//                int idForma = Integer.parseInt( modelo.getValueAt( i, 0 ).toString() );
+//                String descricao = modelo.getValueAt( i, 1 ).toString();
+//                String referencia = ( modelo.getValueAt( i, 2 ) != null ) ? modelo.getValueAt( i, 2 ).toString() : "n/a";
+//
+//                FormaPagamento forma = formaPagamentoController.findByDescrisao( descricao );
+//                Contas conta = (Contas) contaController.findById( forma.getFkContaAssociada() );
+//
+//                item.setValor( valor );
+//                item.setTroco( BigDecimal.valueOf( troco ) );
+//                item.setValor_real( valor.subtract( item.getTroco() ) );
+//                item.setReferencia( referencia );
+//                item.setFkVenda( new TbVenda( id_venda ) );
+//                item.setFkFormaPagamento( new FormaPagamento( idForma ) );
+//
+//                if ( !formaPagamentoItemController.salvar( item ) )
+//                {
+//                    throw new Exception( "Erro ao salvar forma de pagamento: " + descricao );
+//                }
+//
+//                if ( conta != null )
+//                {
+//                    MetodosUtilTS.entradaTesouraria(
+//                            conta,
+//                            lb_proximo_documento.getText(),
+//                            forma,
+//                            referencia,
+//                            valor,
+//                            cod_usuario,
+//                            usuariosController,
+//                            cmc,
+//                            conexao
+//                    );
+//                }
+//
+//                troco = 0;
+//            }
+//        }
+//
+//    }
+    public static void registrarFormaPagamento( int idVenda, BigDecimal totalVenda, boolean formaNormal ) throws Exception
+    {
+
+        if ( !formaNormal )
+        {
+            registrarPagamentoUnico( idVenda, totalVenda );
+            return;
+        }
+        registrarPagamentosMultiplos( idVenda );
+    }
+
+    private static void registrarPagamentoUnico( int idVenda, BigDecimal totalVenda ) throws Exception
+    {
+        BigDecimal valor = totalVenda;
+        String descricao = "";
+        String referencia = String.valueOf( idVenda );
+        int idForma = 1;
+
+        FormaPagamento forma = formaPagamentoController.findByDescrisao( descricao );
+        if ( forma == null )
+        {
+            throw new Exception( "Forma de pagamento não encontrada: " + descricao );
+        }
+
+        Contas conta = (Contas) contaController.findById( forma.getFkContaAssociada() );
+        FormaPagamentoItem item = criarItemFormaPagamento( idVenda, idForma, valor, BigDecimal.ZERO, referencia );
+        if ( !formaPagamentoItemController.salvar( item ) )
+        {
+            throw new Exception( "Erro ao salvar forma de pagamento: " + descricao );
+        }
+
+        if ( conta != null )
+        {
+            MetodosUtilTS.entradaTesouraria(
+                    conta,
+                    lb_proximo_documento.getText(),
+                    forma,
+                    referencia,
+                    valor,
+                    cod_usuario,
+                    usuariosController,
+                    cmc,
+                    conexao
+            );
+        }
+    }
+
+    private static void registrarPagamentosMultiplos( int idVenda ) throws Exception
     {
         DefaultTableModel modelo = (DefaultTableModel) FormaPagamentoVisao.tabela_forma_pagamento.getModel();
-        double troco = CfMethods.parseMoedaFormatada( FormaPagamentoVisao.lb_troco.getText() );
+        BigDecimal troco = CfMethods.parseMoedaSegura( FormaPagamentoVisao.lb_troco.getText() );
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
         {
-            String valorStr = modelo.getValueAt( i, 3 ).toString().trim();
-            BigDecimal valor = CfMethods.parseMoedaSegura( valorStr ); // <<< método seguro
-            System.out.println( "VALOR LIMPO: " + valor );
 
+            BigDecimal valor = CfMethods.parseMoedaSegura( modelo.getValueAt( i, 3 ).toString() );
             if ( valor.compareTo( BigDecimal.ZERO ) <= 0 )
             {
                 continue;
             }
 
-            FormaPagamentoItem item = new FormaPagamentoItem();
             int idForma = Integer.parseInt( modelo.getValueAt( i, 0 ).toString() );
             String descricao = modelo.getValueAt( i, 1 ).toString();
-            String referencia = ( modelo.getValueAt( i, 2 ) != null ) ? modelo.getValueAt( i, 2 ).toString() : "n/a";
+            String referencia = modelo.getValueAt( i, 2 ) != null ? modelo.getValueAt( i, 2 ).toString() : "n/a";
 
             FormaPagamento forma = formaPagamentoController.findByDescrisao( descricao );
+            if ( forma == null )
+            {
+                throw new Exception( "Forma de pagamento não encontrada: " + descricao );
+            }
+
             Contas conta = (Contas) contaController.findById( forma.getFkContaAssociada() );
 
-            item.setValor( valor );
-            item.setTroco( BigDecimal.valueOf( troco ) );
-            item.setValor_real( valor.subtract( item.getTroco() ) );
-            item.setReferencia( referencia );
-            item.setFkVenda( new TbVenda( id_venda ) );
-            item.setFkFormaPagamento( new FormaPagamento( idForma ) );
+            FormaPagamentoItem item = criarItemFormaPagamento( idVenda, idForma, valor, troco, referencia );
 
             if ( !formaPagamentoItemController.salvar( item ) )
             {
@@ -4930,8 +5100,23 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 );
             }
 
-            troco = 0;
+            troco = BigDecimal.ZERO;
         }
+    }
+
+    /**
+     * Cria um objeto FormaPagamentoItem já populado e com cálculos prontos.
+     */
+    private static FormaPagamentoItem criarItemFormaPagamento( int idVenda, int idForma, BigDecimal valor, BigDecimal troco, String referencia )
+    {
+        FormaPagamentoItem item = new FormaPagamentoItem();
+        item.setValor( valor );
+        item.setTroco( troco );
+        item.setValor_real( valor.subtract( troco ) );
+        item.setReferencia( referencia );
+        item.setFkVenda( new TbVenda( idVenda ) );
+        item.setFkFormaPagamento( new FormaPagamento( idForma ) );
+        return item;
     }
 
     private static void imprimir_factura( int cod_venda )
@@ -4955,7 +5140,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         for ( int i = 1; i <= numeroVias; i++ )
         {
             String via;
-            switch (i)
+            switch ( i )
             {
                 case 1:
                     via = "Original";
@@ -5447,8 +5632,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getValorComImposto( double qtd, double taxa, double preco_venda, double desconto )
     {
-        double subtotal_linha = (preco_venda * qtd);
-        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
+        double subtotal_linha = ( preco_venda * qtd );
+        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
         double valor_iva = 1 + ( taxa / 100 );//
         return ( ( subtotal_linha - desconto_valor ) * valor_iva );
 
@@ -5462,9 +5647,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getValorComRetencao( double qtd, double ret, double preco_venda, double desconto )
     {
-        double subtotal_linha = (preco_venda * qtd);
-        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
-        double valor_ret = (( ( subtotal_linha - desconto_valor ) * ret ) / 100);//
+        double subtotal_linha = ( preco_venda * qtd );
+        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
+        double valor_ret = ( ( ( subtotal_linha - desconto_valor ) * ret ) / 100 );//
         return ( valor_ret );
     }
 
@@ -5487,8 +5672,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getRET( double qtd, double taxa_r, double preco_venda, double desconto )
     {
-        double subtotal_linha = (preco_venda * qtd);
-        double valor_ret = (taxa_r / 100);//
+        double subtotal_linha = ( preco_venda * qtd );
+        double valor_ret = ( taxa_r / 100 );//
         return ( ( subtotal_linha - desconto ) * valor_ret );
 
     }
@@ -5518,7 +5703,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private void actualizar_abreviacao()
     {
 
-        switch (getIdDocumento())
+        switch ( getIdDocumento() )
         {
             case DVML.DOC_FACTURA_RECIBO_FR:
                 if ( ck_A4.isSelected() )
@@ -5995,7 +6180,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             // a incidência só é aplicável ao produtos sujeitos a iva 
             if ( taxa != 0 )
             {
-                double valor_unitario = (preco_unitario * qtd);
+                double valor_unitario = ( preco_unitario * qtd );
 
                 desconto_valor_linha = valor_unitario * ( ( valor_percentagem ) / 100 );
                 valor_taxa = ( valor_unitario - desconto_valor_linha ) / taxa;
@@ -6061,7 +6246,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getTotalAOARetencoes()
     {
-        double valores = (getTotalRetencao1());
+        double valores = ( getTotalRetencao1() );
         return ( valores );
     }
 
@@ -6111,7 +6296,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         Documento documento_local = (Documento) documentosController.findById( getIdDocumento() );
         String abreviacao_local = documento_local.getAbreviacao();
 
-        switch (abreviacao_local)
+        switch ( abreviacao_local )
         {
             case "FT":
                 return "Facturamos o valor de: ";

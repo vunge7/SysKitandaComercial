@@ -704,7 +704,7 @@ public class LoginVisao extends javax.swing.JFrame
         }
         catch ( Exception ex )
         {
-            java.util.logging.Logger.getLogger( LoginVisao.class.getName() )
+            java.util.logging.Logger.getLogger(LoginVisao.class.getName() )
                     .log( java.util.logging.Level.SEVERE, null, ex );
         }
 
@@ -716,7 +716,7 @@ public class LoginVisao extends javax.swing.JFrame
         }
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater( new Runnable()
+        java.awt.EventQueue.invokeLater(new Runnable()
         {
             public void run()
             {

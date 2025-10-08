@@ -49,6 +49,7 @@ public class JPAEntityMannagerFactoryUtil
 
 //                String url = "jdbc:mysql://"   +ip +":3306/kitanda_db_abu_moys_gulele_dvml_k11_joaquim?zeroDateTimeBehavior=convertToNull";
 
+
 //                String user = "root";
 //                String password = "DoV90x?#";
 //                
@@ -86,7 +87,9 @@ public class JPAEntityMannagerFactoryUtil
                     String porta = informacao.get( 1 );
 
 
+
                     String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_abu?zeroDateTimeBehavior=convertToNull";
+
 
                     String user = "root";
                     String password = "DoV90x?#";

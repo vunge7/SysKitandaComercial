@@ -625,7 +625,7 @@ public class FormaPagamentoVisao extends javax.swing.JFrame
                 }
                 else if ( formulario == DVML.VENDA_PONTUAL )
                 {
-                    VendaUsuarioVisao.procedimento_salvar_venda_comercial();
+                    VendaUsuarioVisao.procedimento_salvar_venda_comercial(true);
                 }
                 else if ( formulario == DVML.VENDA_OFICINA )
                 {

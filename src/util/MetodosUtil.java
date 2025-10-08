@@ -2786,7 +2786,7 @@ public class MetodosUtil
     public static void main( String[] args ) throws ParseException
     {
 
-        fechoAutomatico();
+        
     }
 
     public static String criptografia_hash( Object documento, double parmGrossTotal, BDConexao conexao )

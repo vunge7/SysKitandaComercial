@@ -60,7 +60,7 @@ public class AutoLoginUtil
         }
 
         logoutTimer = new Timer();
-        logoutTimer.schedule( new TimerTask()
+        logoutTimer.schedule(new TimerTask()
         {
             @Override
             public void run()
