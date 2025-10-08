@@ -365,6 +365,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         txtObs = new javax.swing.JTextField();
         jButton2 = new javax.swing.JButton();
         jlEmpresa = new javax.swing.JLabel();
+        BT_FR_SEM_FORMA = new javax.swing.JButton();
         lb_usuario = new javax.swing.JLabel();
         lbValorPorExtenco = new javax.swing.JLabel();
         lb_nome_usuario = new javax.swing.JLabel();
@@ -594,7 +595,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         jPanel3.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 40, -1));
 
         txtObs.setFont(new java.awt.Font("Lucida Grande", 0, 11)); // NOI18N
-        jPanel3.add(txtObs, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 0, 130, 30));
+        jPanel3.add(txtObs, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 0, 180, 30));
 
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagem/calendario 32x32.png"))); // NOI18N
         jButton2.setText("VISTORIA");
@@ -605,13 +606,17 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 jButton2ActionPerformed(evt);
             }
         });
-        jPanel3.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 0, 170, 30));
+        jPanel3.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 0, 70, 30));
 
         jlEmpresa.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         jlEmpresa.setForeground(new java.awt.Color(0, 0, 102));
         jlEmpresa.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jlEmpresa.setText("Empresa");
         jPanel3.add(jlEmpresa, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, 460, -1));
+
+        BT_FR_SEM_FORMA.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/impressora1.png"))); // NOI18N
+        BT_FR_SEM_FORMA.setText("FINALIZAR");
+        jPanel3.add(BT_FR_SEM_FORMA, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 0, 170, 30));
 
         lb_usuario.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         lb_usuario.setText("Conta:");
@@ -2097,6 +2102,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BT_FR_SEM_FORMA;
     private javax.swing.JButton btnCancelar;
     private static javax.swing.JButton btnFormaPagamento;
     private static javax.swing.JButton btnProcessar;

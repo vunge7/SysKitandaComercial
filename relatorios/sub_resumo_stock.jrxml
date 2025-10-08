@@ -63,14 +63,14 @@ ORDER BY
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="34">
+		<band height="18">
 			<rectangle>
-				<reportElement uuid="a55bb01a-31bc-4d6c-8d3b-a1f4f60b7615" x="0" y="0" width="555" height="34" forecolor="#666666" backcolor="#666666"/>
+				<reportElement uuid="a55bb01a-31bc-4d6c-8d3b-a1f4f60b7615" x="0" y="0" width="555" height="18" forecolor="#666666" backcolor="#666666"/>
 			</rectangle>
 			<staticText>
-				<reportElement uuid="9d96ded0-b2df-4509-a2e4-8ce41b21c241" x="11" y="0" width="498" height="34" forecolor="#FFFFFF"/>
+				<reportElement uuid="9d96ded0-b2df-4509-a2e4-8ce41b21c241" x="11" y="0" width="498" height="18" forecolor="#FFFFFF"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font fontName="Times New Roman" size="20" isBold="true"/>
+					<font fontName="Times New Roman" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[RESUMO GERAL]]></text>
 			</staticText>
