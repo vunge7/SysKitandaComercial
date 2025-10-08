@@ -86,7 +86,7 @@ public class JPAEntityMannagerFactoryUtil
                     String porta = informacao.get( 1 );
 
 
-                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_neemias?zeroDateTimeBehavior=convertToNull";
+                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_abu?zeroDateTimeBehavior=convertToNull";
 
 
                     String user = "root";

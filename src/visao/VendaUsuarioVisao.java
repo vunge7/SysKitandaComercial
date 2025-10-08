@@ -365,7 +365,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         txtObs = new javax.swing.JTextField();
         jButton2 = new javax.swing.JButton();
         jlEmpresa = new javax.swing.JLabel();
-        BT_FR_SEM_FORMA = new javax.swing.JButton();
+        btnSemFormaPagamento = new javax.swing.JButton();
         lb_usuario = new javax.swing.JLabel();
         lbValorPorExtenco = new javax.swing.JLabel();
         lb_nome_usuario = new javax.swing.JLabel();
@@ -577,7 +577,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 btnFormaPagamentoActionPerformed(evt);
             }
         });
-        jPanel3.add(btnFormaPagamento, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, 210, 40));
+        jPanel3.add(btnFormaPagamento, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 210, 30));
 
         btnProcessar.setFont(new java.awt.Font("Lucida Grande", 0, 12)); // NOI18N
         btnProcessar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/impressora1.png"))); // NOI18N
@@ -589,7 +589,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 btnProcessarActionPerformed(evt);
             }
         });
-        jPanel3.add(btnProcessar, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 30, 170, 40));
+        jPanel3.add(btnProcessar, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 40, 150, 30));
 
         jLabel8.setText("Obs:");
         jPanel3.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 40, -1));
@@ -614,16 +614,16 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         jlEmpresa.setText("Empresa");
         jPanel3.add(jlEmpresa, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, 460, -1));
 
-        BT_FR_SEM_FORMA.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/impressora1.png"))); // NOI18N
-        BT_FR_SEM_FORMA.setText("FINALIZAR");
-        BT_FR_SEM_FORMA.addActionListener(new java.awt.event.ActionListener()
+        btnSemFormaPagamento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/impressora1.png"))); // NOI18N
+        btnSemFormaPagamento.setText("Finalisar");
+        btnSemFormaPagamento.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                BT_FR_SEM_FORMAActionPerformed(evt);
+                btnSemFormaPagamentoActionPerformed(evt);
             }
         });
-        jPanel3.add(BT_FR_SEM_FORMA, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 0, 170, 30));
+        jPanel3.add(btnSemFormaPagamento, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 0, 150, 30));
 
         lb_usuario.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         lb_usuario.setText("Conta:");
@@ -661,10 +661,11 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE))
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lbValorPorExtenco, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -2109,8 +2110,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         pesquisa_cliente_by_cod();
     }//GEN-LAST:event_txtCodClientePesquisaActionPerformed
 
-    private void BT_FR_SEM_FORMAActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_FR_SEM_FORMAActionPerformed
-    {//GEN-HEADEREND:event_BT_FR_SEM_FORMAActionPerformed
+    private void btnSemFormaPagamentoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnSemFormaPagamentoActionPerformed
+    {//GEN-HEADEREND:event_btnSemFormaPagamentoActionPerformed
         // TODO add your handling code here:
         if ( MetodosUtil.licencaValidada( conexao ) )
         {
@@ -2128,14 +2129,14 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             }
         }
 
-    }//GEN-LAST:event_BT_FR_SEM_FORMAActionPerformed
+    }//GEN-LAST:event_btnSemFormaPagamentoActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton BT_FR_SEM_FORMA;
     private javax.swing.JButton btnCancelar;
     private static javax.swing.JButton btnFormaPagamento;
     private static javax.swing.JButton btnProcessar;
+    private javax.swing.JButton btnSemFormaPagamento;
     public static javax.swing.JButton btn_adicionar;
     public static javax.swing.JButton btn_remover;
     private javax.swing.ButtonGroup buttonGroup1;
@@ -5023,7 +5024,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         String referencia = String.valueOf( idVenda );
         int idForma = 1;
 
-        FormaPagamento forma = formaPagamentoController.findByDescrisao( descricao );
+        FormaPagamento forma = formaPagamentoController.findByCodigo( idForma );
         if ( forma == null )
         {
             throw new Exception( "Forma de pagamento não encontrada: " + descricao );
@@ -5681,18 +5682,18 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private void setWindowsListener()
     {
 
-        this.addWindowListener( new WindowAdapter()
+        this.addWindowListener(new WindowAdapter()
         {
             @Override
             public void windowActivated( WindowEvent e )
             {
                 mostrar_proximo_codigo_documento();
 
-                MetodosUtil.verificarCaixa( caixasController,
+                MetodosUtil.verificarCaixa(caixasController,
                         cod_usuario,
                         RootVisao.btn_abertura_dia_root,
                         RootVisao.btn_abertura_dia_root,
-                        btnFormaPagamento );
+                        btnFormaPagamento, btnSemFormaPagamento );
 
             }
 
@@ -5792,6 +5793,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         ck_A4.setSelected( !documentoIsFA && !documentoIsPP && !documentoIsGT );
         btnProcessar.setVisible( documentoIsPP || documentoIsFA || documentoIsGT || documentoIsCM );
         btnFormaPagamento.setVisible( !documentoIsFA && !documentoIsPP && !documentoIsGT && !documentoIsCM );
+        btnSemFormaPagamento.setVisible( !documentoIsFA && !documentoIsPP && !documentoIsGT && !documentoIsCM );
     }
 
     private static Moeda getMoeda()
