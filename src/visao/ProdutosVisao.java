@@ -469,7 +469,6 @@ public class ProdutosVisao extends javax.swing.JFrame
         lbTipoProduto4.setText("Família:");
         jPanel5.add(lbTipoProduto4, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 72, 70, 20));
 
-        cmbGrupo.setEnabled(false);
         jPanel5.add(cmbGrupo, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 110, 260, -1));
 
         jLabelCodProduto.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
@@ -812,7 +811,7 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         lbTipoProduto5.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         lbTipoProduto5.setText("Grupo:");
-        jPanel5.add(lbTipoProduto5, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 120, 70, 22));
+        jPanel5.add(lbTipoProduto5, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 112, 70, 20));
 
         jPanel4.setBackground(new java.awt.Color(0, 0, 0));
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(""));

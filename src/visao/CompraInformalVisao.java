@@ -1248,145 +1248,300 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
         return total_iliquido_local;
     }
 
-    private static boolean salvar_item_compra_comercial( Integer cod_compras )
-    {
+//    private static boolean salvar_item_compra_comercial( Integer cod_compras )
+//    {
+//
+//        System.out.println( "Cod Compra no Item" + cod_compras );
+//        boolean sucesso = true;
+//        if ( !MetodosUtil.tabela_vazia( tableCompra ) )
+//        {
+//            StoksController stocksControllerLocal = new StoksController( conexaoTransaction );
+//            PrecosController precosControllerLocal = new PrecosController( conexaoTransaction );
+//            ItemComprasController itemComprasControllerLocal = new ItemComprasController( conexaoTransaction );
+//            ItemCompras itemCompraLocal;
+//            for ( int i = 0; i < tableCompra.getRowCount(); i++ )
+//            {
+//                try
+//                {
+//
+//                    double qtd = Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 3 ) ) );
+//                    TbProduto produto_local = (TbProduto) produtosController
+//                            .findById( Integer.parseInt( String.valueOf( tableCompra.getModel().getValueAt( i, 0 ) ) )
+//                            );
+//
+//                    itemCompraLocal = new ItemCompras();
+//                    itemCompraLocal.setFkProduto( produto_local );
+//                    itemCompraLocal.setFkCompra( new Compras( cod_compras ) );
+//                    itemCompraLocal.setPrecoCompra( Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 2 ) ) ) );
+//                    itemCompraLocal.setQuantidade( Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 3 ) ) ) );
+//                    itemCompraLocal.setDesconto( Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 5 ) ) ) );
+//                    itemCompraLocal.setValorIva( Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 6 ) ) ) );
+//                    itemCompraLocal.setTotal( Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 8 ) ) ) );
+//
+//                    itemCompraLocal.setMotivoIsensao( getMotivoIsensao( itemCompraLocal.getFkProduto().getCodigo() ) );
+//                    itemCompraLocal.setCodigoIsensao( MetodosUtil.getCodigoRegime( itemCompraLocal.getFkProduto().getCodigo() ) );
+//
+//                    double qtdCritica = Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 9 ) ) );
+//                    double qtdBaixa = Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 10 ) ) );
+//
+//                    //cria o item compra
+//                    if ( !itemComprasControllerLocal.salvar( itemCompraLocal ) )
+//                    {
+//                        DocumentosController.rollBackTransaction( conexaoTransaction );
+//                        conexaoTransaction.close();
+//                        return false;
+//                    }
+//
+//                    //verifca se existe o produto no stock caso nao registra.
+//                    if ( !stocksControllerLocal.existe_stock( produto_local.getCodigo(), getIdArmazens() ) )
+//                    {
+//
+//                        if ( MovimentacaoController.registrarMovimento(
+//                                produto_local.getCodigo(),
+//                                getIdArmazens(),
+//                                cod_usuario,
+//                                new BigDecimal( itemCompraLocal.getQuantidade() ),
+//                                prox_doc,
+//                                "ENTRADA",
+//                                conexao
+//                        ) )
+//                        {
+//                            boolean registrar_stock = registrar_stock( produto_local, 
+//                                    itemCompraLocal.getQuantidade(),
+//                                    qtdCritica, qtdBaixa,
+//                                    stocksControllerLocal );
+//                            System.err.println( "Registro no Stock pela primeira vez: " + registrar_stock );
+//                            if ( !registrar_stock )
+//                            {
+//                                sucesso = false;
+//                                DocumentosController.rollBackTransaction( conexaoTransaction );
+//                                conexaoTransaction.close();
+//                                return false;
+//                            }
+//
+//                        }
+//
+//                    }
+//                    else
+//                    {
+//
+//                        if ( MovimentacaoController.registrarMovimento(
+//                                produto_local.getCodigo(),
+//                                getIdArmazens(),
+//                                cod_usuario,
+//                                new BigDecimal( itemCompraLocal.getQuantidade() ),
+//                                prox_doc,
+//                                "ENTRADA",
+//                                conexao
+//                        ) )
+//                        {
+//                            actualizar_dados_stock( produto_local.getCodigo(),
+//                                    qtd,
+//                                    qtdCritica,
+//                                    qtdBaixa, stocksControllerLocal );
+//                        }
+//
+//                    }
+//
+//                    double precoMedio = getPrecoCompraMedio( produto_local.getCodigo(), itemCompraLocal.getQuantidade(), itemCompraLocal.getPrecoCompra() );
+//                    actualizarPreco( itemCompraLocal.getFkProduto().getCodigo(), precoMedio, precosControllerLocal );
+//                    System.out.println( "Preco Medio#" + precoMedio );
+//
+//                }
+//                catch ( Exception e )
+//                {
+//                    sucesso = false;
+//                    e.printStackTrace();
+//                    JOptionPane.showMessageDialog( null, "Falha ao registrar a compra", "Falha", JOptionPane.ERROR_MESSAGE );
+//                    DocumentosController.rollBackTransaction( conexaoTransaction );
+//                    conexaoTransaction.close();
+//                    return false;
+//
+//                }
+//
+//            }
+//
+//            if ( sucesso )
+//            {
+//
+//                DocumentosController.commitTransaction( conexaoTransaction );
+//                limpar_cabecario();
+//                limpar_rodape();
+//                esvaziar_tabela();
+//                compra = null;
+//                fornecedor = null;
+//                JOptionPane.showMessageDialog( null, "Compra efectuada com sucesso!.." );
+//                exibirReciboDeCompras();
+//                conexaoTransaction.close();
+//                return true;
+//
+//            }
+//
+//        }
+//        else
+//        {
+//            JOptionPane.showMessageDialog( null, "Adiciona itens na tabela caro usuário", "AVISO", JOptionPane.WARNING_MESSAGE );
+//        }
+//        return false;
+//    }
 
-        System.out.println( "Cod Compra no Item" + cod_compras );
-        boolean sucesso = true;
-        if ( !MetodosUtil.tabela_vazia( tableCompra ) )
-        {
-            StoksController stocksControllerLocal = new StoksController( conexaoTransaction );
-            PrecosController precosControllerLocal = new PrecosController( conexaoTransaction );
-            ItemComprasController itemComprasControllerLocal = new ItemComprasController( conexaoTransaction );
-            ItemCompras itemCompraLocal;
-            for ( int i = 0; i < tableCompra.getRowCount(); i++ )
-            {
-                try
-                {
+    private static boolean salvar_item_compra_comercial(Integer cod_compras) {
+    System.out.println("Cod Compra no Item: " + cod_compras);
 
-                    double qtd = Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 3 ) ) );
-                    TbProduto produto_local = (TbProduto) produtosController
-                            .findById( Integer.parseInt( String.valueOf( tableCompra.getModel().getValueAt( i, 0 ) ) )
-                            );
-
-                    itemCompraLocal = new ItemCompras();
-                    itemCompraLocal.setFkProduto( produto_local );
-                    itemCompraLocal.setFkCompra( new Compras( cod_compras ) );
-                    itemCompraLocal.setPrecoCompra( Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 2 ) ) ) );
-                    itemCompraLocal.setQuantidade( Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 3 ) ) ) );
-                    itemCompraLocal.setDesconto( Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 5 ) ) ) );
-                    itemCompraLocal.setValorIva( Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 6 ) ) ) );
-                    itemCompraLocal.setTotal( Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 8 ) ) ) );
-
-                    itemCompraLocal.setMotivoIsensao( getMotivoIsensao( itemCompraLocal.getFkProduto().getCodigo() ) );
-                    itemCompraLocal.setCodigoIsensao( MetodosUtil.getCodigoRegime( itemCompraLocal.getFkProduto().getCodigo() ) );
-
-                    double qtdCritica = Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 9 ) ) );
-                    double qtdBaixa = Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 10 ) ) );
-
-                    //cria o item compra
-                    if ( !itemComprasControllerLocal.salvar( itemCompraLocal ) )
-                    {
-                        DocumentosController.rollBackTransaction( conexaoTransaction );
-                        conexaoTransaction.close();
-                        return false;
-                    }
-
-                    //verifca se existe o produto no stock caso nao registra.
-                    if ( !stocksControllerLocal.existe_stock( produto_local.getCodigo(), getIdArmazens() ) )
-                    {
-
-                        if ( MovimentacaoController.registrarMovimento(
-                                produto_local.getCodigo(),
-                                getIdArmazens(),
-                                cod_usuario,
-                                new BigDecimal( itemCompraLocal.getQuantidade() ),
-                                prox_doc,
-                                "ENTRADA",
-                                conexao
-                        ) )
-                        {
-                            boolean registrar_stock = registrar_stock( produto_local, 
-                                    itemCompraLocal.getQuantidade(),
-                                    qtdCritica, qtdBaixa,
-                                    stocksControllerLocal );
-                            System.err.println( "Registro no Stock pela primeira vez: " + registrar_stock );
-                            if ( !registrar_stock )
-                            {
-                                sucesso = false;
-                                DocumentosController.rollBackTransaction( conexaoTransaction );
-                                conexaoTransaction.close();
-                                return false;
-                            }
-
-                        }
-
-                    }
-                    else
-                    {
-
-                        if ( MovimentacaoController.registrarMovimento(
-                                produto_local.getCodigo(),
-                                getIdArmazens(),
-                                cod_usuario,
-                                new BigDecimal( itemCompraLocal.getQuantidade() ),
-                                prox_doc,
-                                "ENTRADA",
-                                conexao
-                        ) )
-                        {
-                            actualizar_dados_stock( produto_local.getCodigo(),
-                                    qtd,
-                                    qtdCritica,
-                                    qtdBaixa, stocksControllerLocal );
-                        }
-
-                    }
-
-                    double precoMedio = getPrecoCompraMedio( produto_local.getCodigo(), itemCompraLocal.getQuantidade(), itemCompraLocal.getPrecoCompra() );
-                    actualizarPreco( itemCompraLocal.getFkProduto().getCodigo(), precoMedio, precosControllerLocal );
-//                    actualizarPreco( produto_local.getCodigo(), precoMedio, precosControllerLocal );
-                    //System.out.println( "Item Produto Codigo#" + itemCompraLocal.getFkProduto().getCodigo() );
-                    System.out.println( "Preco Medio#" + precoMedio );
-
-                }
-                catch ( Exception e )
-                {
-                    sucesso = false;
-                    e.printStackTrace();
-                    JOptionPane.showMessageDialog( null, "Falha ao registrar a compra", "Falha", JOptionPane.ERROR_MESSAGE );
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
-                    conexaoTransaction.close();
-                    return false;
-
-                }
-
-            }
-
-            if ( sucesso )
-            {
-
-                DocumentosController.commitTransaction( conexaoTransaction );
-                limpar_cabecario();
-                limpar_rodape();
-                esvaziar_tabela();
-                compra = null;
-                fornecedor = null;
-                JOptionPane.showMessageDialog( null, "Compra efectuada com sucesso!.." );
-                exibirReciboDeCompras();
-                conexaoTransaction.close();
-                return true;
-
-            }
-
-        }
-        else
-        {
-            JOptionPane.showMessageDialog( null, "Adiciona itens na tabela caro usuário", "AVISO", JOptionPane.WARNING_MESSAGE );
-        }
+    if (MetodosUtil.tabela_vazia(tableCompra)) {
+        JOptionPane.showMessageDialog(null, "Adicione itens na tabela, caro usuário", "AVISO", JOptionPane.WARNING_MESSAGE);
         return false;
     }
 
+    boolean sucesso = true;
+
+    StoksController stocksControllerLocal = new StoksController(conexaoTransaction);
+    PrecosController precosControllerLocal = new PrecosController(conexaoTransaction);
+    ItemComprasController itemComprasControllerLocal = new ItemComprasController(conexaoTransaction);
+
+    List<ItemCompras> itensParaSalvar = new ArrayList<>();
+
+    try {
+        // Pré-carrega produtos e preços antigos (cache local)
+        Map<Integer, TbProduto> produtosCache = new HashMap<>();
+        Map<Integer, TbPreco> precoRetalhoCache = new HashMap<>();
+        Map<Integer, TbPreco> precoGrossoCache = new HashMap<>();
+
+        // Itera sobre a tabela e prepara os objetos
+        for (int i = 0; i < tableCompra.getRowCount(); i++) {
+            int idProduto = Integer.parseInt(String.valueOf(tableCompra.getModel().getValueAt(i, 0)));
+            double precoCompra = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 2)));
+            double quantidade = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 3)));
+            double desconto = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 5)));
+            double valorIva = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 6)));
+            double total = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 8)));
+            double qtdCritica = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 9)));
+            double qtdBaixa = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 10)));
+
+            // Cache do produto
+            TbProduto produto = produtosCache.computeIfAbsent(idProduto, id -> 
+                (TbProduto) produtosController.findById(id)
+            );
+
+            // Cria item de compra
+            ItemCompras item = new ItemCompras();
+            item.setFkProduto(produto);
+            item.setFkCompra(new Compras(cod_compras));
+            item.setPrecoCompra(precoCompra);
+            item.setQuantidade(quantidade);
+            item.setDesconto(desconto);
+            item.setValorIva(valorIva);
+            item.setTotal(total);
+            item.setMotivoIsensao(getMotivoIsensao(idProduto));
+            item.setCodigoIsensao(MetodosUtil.getCodigoRegime(idProduto));
+            itensParaSalvar.add(item);
+
+            // Salva o item imediatamente (evita sobrecarga de memória)
+            if (!itemComprasControllerLocal.salvar(item)) {
+                throw new RuntimeException("Falha ao salvar item da compra");
+            }
+
+            // Atualiza stock e movimento
+            if (!stocksControllerLocal.existe_stock(idProduto, getIdArmazens())) {
+                if (MovimentacaoController.registrarMovimento(
+                        idProduto, getIdArmazens(), cod_usuario,
+                        BigDecimal.valueOf(quantidade), prox_doc, "ENTRADA", conexao)) {
+
+                    if (!registrar_stock(produto, quantidade, qtdCritica, qtdBaixa, stocksControllerLocal)) {
+                        throw new RuntimeException("Falha ao registrar novo stock");
+                    }
+                }
+            } else {
+                if (MovimentacaoController.registrarMovimento(
+                        idProduto, getIdArmazens(), cod_usuario,
+                        BigDecimal.valueOf(quantidade), prox_doc, "ENTRADA", conexao)) {
+
+                    actualizar_dados_stock(idProduto, quantidade, qtdCritica, qtdBaixa, stocksControllerLocal);
+                }
+            }
+
+            // Atualiza preços (com cache e comparação para evitar operações desnecessárias)
+            TbPreco precoRetalho = precoRetalhoCache.computeIfAbsent(idProduto,
+                id -> precosControllerLocal.findByIdCompra(
+                    PrecosController.getLastIdPrecoByIdProdutoIntAndQTD(idProduto, 0d, conexao)
+                )
+            );
+
+            if (precoRetalho != null) {
+                TbPreco precoGrosso = precoGrossoCache.computeIfAbsent(idProduto,
+                    id -> precosControllerLocal.findByIdCompra(
+                        PrecosController.getLastIdPrecoByIdProdutoIntAndPrecoAntigoQtdAlto(idProduto, precoRetalho.getQtdAlto() + 1, conexao)
+                    )
+                );
+
+                double precoMedio = getPrecoCompraMedio(idProduto, quantidade, precoCompra);
+                actualizarPrecoOtimizado(idProduto, precoMedio, precoRetalho, precoGrosso, precosControllerLocal);
+            }
+        }
+
+        // Tudo certo → commit
+        DocumentosController.commitTransaction(conexaoTransaction);
+        limpar_cabecario();
+        limpar_rodape();
+        esvaziar_tabela();
+        compra = null;
+        fornecedor = null;
+        JOptionPane.showMessageDialog(null, "Compra efectuada com sucesso!");
+        exibirReciboDeCompras();
+        return true;
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        sucesso = false;
+        DocumentosController.rollBackTransaction(conexaoTransaction);
+        JOptionPane.showMessageDialog(null, "Falha ao registrar a compra: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        return false;
+    } finally {
+        if (conexaoTransaction != null) conexaoTransaction.close();
+    }
+}
+    
+    private static void actualizarPrecoOtimizado(
+        int idProduto,
+        double precoCompra,
+        TbPreco precoAntigoRetalho,
+        TbPreco precoAntigoGrosso,
+        PrecosController precosControllerLocal) {
+
+    BigDecimal novoPreco = BigDecimal.valueOf(precoCompra);
+
+    // Atualiza apenas se houve mudança
+    if (!novoPreco.equals(precoAntigoRetalho.getPrecoCompra())) {
+        TbPreco novoRetalho = clonarPreco(precoAntigoRetalho, novoPreco);
+        precosControllerLocal.salvar(novoRetalho);
+        System.out.println("Preço retalho atualizado (" + idProduto + ")");
+    }
+
+    if (precoAntigoGrosso != null && !novoPreco.equals(precoAntigoGrosso.getPrecoCompra())) {
+        TbPreco novoGrosso = clonarPreco(precoAntigoGrosso, novoPreco);
+        precosControllerLocal.salvar(novoGrosso);
+        System.out.println("Preço grosso atualizado (" + idProduto + ")");
+    }
+}
+
+    private static TbPreco clonarPreco(TbPreco origem, BigDecimal novoPrecoCompra) {
+    TbPreco clone = new TbPreco();
+    clone.setData(origem.getData());
+    clone.setHora(origem.getHora());
+    clone.setPercentagemGanho(origem.getPercentagemGanho());
+    clone.setFkProduto(origem.getFkProduto());
+    clone.setFkUsuario(origem.getFkUsuario());
+    clone.setPrecoCompra(novoPrecoCompra);
+    clone.setPrecoVenda(origem.getPrecoVenda());
+    clone.setQtdBaixo(origem.getQtdBaixo());
+    clone.setQtdAlto(origem.getQtdAlto());
+    clone.setPrecoAnterior(origem.getPrecoAnterior());
+    clone.setRetalho(origem.getRetalho());
+    return clone;
+}
+
+
+    
     private static void esvaziar_tabela()
     {
         DefaultTableModel modelo = (DefaultTableModel) tableCompra.getModel();
@@ -1951,13 +2106,6 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
 
         try
         {
-//            System.err.println( "#compra_local: " + compra_local );
-//            System.err.println( "compra_local: " + compra_local );
-//            System.err.println( "getPkCompra Codigo: " + compra_local.getPkCompra() );
-//            System.err.println( "CodigoUsuario: " + compra_local.getCodigoUsuario() );
-//            System.err.println( "AnoEconomico: " + compra_local.getFkAnoEconomico() );
-//            System.err.println( "Fornecedor: " + compra_local.getFkFornecedor() );
-//            System.err.println( "ArmazemFK: " + compra_local.getIdArmazemFK() );
 
             if ( comprasController.salvar( compra_local ) )
             {
@@ -2512,6 +2660,8 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
     {
         return this;
     }
+    
+    
 
     private static void actualizarPreco( int idProduto, Double precoCompra, PrecosController precosControllerLocal )
     {
@@ -2636,7 +2786,6 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
 
         try
         {
-//            System.out.println( "QTD ACTUALIZAR COMPRA: " + qtd );
             stocksControllerLocal.adicionar_quantidades( idProduto,
                     qtd,
                     qtdCritica, qtdBaixa, getIdArmazens() );

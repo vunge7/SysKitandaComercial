@@ -10,6 +10,7 @@ import entity.TbProduto;
 import entity.TbUsuario;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -131,6 +132,28 @@ public class PrecosController implements EntidadeFactory
 
     }
 
+    public TbPreco findByIdCompra(int codigo) {
+    TbPreco preco = null;
+    String sql = "SELECT * FROM tb_preco WHERE pk_preco = ?";
+
+    try (PreparedStatement ps = conexao.getConnection().prepareStatement(sql)) {
+        ps.setInt(1, codigo);
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            preco = new TbPreco();
+            setResultSetPreco(rs, preco);
+        }
+
+        rs.close();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return preco;
+}
+
+    
     public TbPreco getLastPreco( int idProduto )
     {
 
@@ -263,28 +286,47 @@ public class PrecosController implements EntidadeFactory
 
     }
 
-    public static int getLastIdPrecoByIdProdutoIntAndPrecoAntigoQtdAlto( int fk_produto, int qtd_baixo, BDConexao conexao )
-    {
+//    public static int getLastIdPrecoByIdProdutoIntAndPrecoAntigoQtdAlto( int fk_produto, int qtd_baixo, BDConexao conexao )
+//    {
+//        String sql = "SELECT MAX(pk_preco) AS MAXIMO FROM tb_preco p WHERE p.fk_produto = " + fk_produto + " AND p.qtd_baixo = " + qtd_baixo;
+//        System.out.println( sql );
+//        ResultSet result = conexao.executeQuery( sql );
+//
+//        try
+//        {
+//            if ( result.next() )
+//            {
+//                return result.getInt( "MAXIMO" );
+//            }
+//        }
+//        catch ( SQLException ex )
+//        {
+//
+//        }
+//        return 0;
+//
+//    }
+    
+    public static int getLastIdPrecoByIdProdutoIntAndPrecoAntigoQtdAlto(int fk_produto, int qtd_baixo, BDConexao conexao) {
+    int idMaximo = 0;
+    String sql = "SELECT MAX(pk_preco) AS maximo FROM tb_preco WHERE fk_produto = ? AND qtd_baixo = ?";
 
-//        String sql = "SELECT MAX(pk_preco) AS MAXIMO FROM tb_preco p WHERE p.fk_produto = " + fk_produto + " AND qtd_alto = " + qtd_alto;
-        String sql = "SELECT MAX(pk_preco) AS MAXIMO FROM tb_preco p WHERE p.fk_produto = " + fk_produto + " AND p.qtd_baixo = " + qtd_baixo;
-        System.out.println( sql );
-        ResultSet result = conexao.executeQuery( sql );
+    try (PreparedStatement ps = conexao.getConnection().prepareStatement(sql)) {
+        ps.setInt(1, fk_produto);
+        ps.setInt(2, qtd_baixo);
 
-        try
-        {
-            if ( result.next() )
-            {
-                return result.getInt( "MAXIMO" );
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                idMaximo = rs.getInt("maximo");
             }
         }
-        catch ( SQLException ex )
-        {
-
-        }
-        return 0;
-
+    } catch (SQLException e) {
+        e.printStackTrace(); // Ou registra num logger, se tiver
     }
+
+    return idMaximo;
+}
+
 
     private void setResultSetPreco( ResultSet result, TbPreco preco )
     {
