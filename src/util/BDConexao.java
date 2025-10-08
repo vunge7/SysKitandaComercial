@@ -1521,16 +1521,7 @@ public class BDConexao
     {
         BDConexao conexao = new BDConexao();
 
-        //Vector<ExtratoProdutoModelo> vector = conexao.getExtratosProduto(5, "2014-01-17");
-//         for (ExtratoProdutoModelo extratoProdutoModelo : vector) {
-//                  
-//             System.err.println("NOME USUARIO "  +extratoProdutoModelo.getNome_usurario());
-//             System.err.println("QUANTIDADE  "  +extratoProdutoModelo.getQuant_total());
-//             System.err.println("VALOR  "  +extratoProdutoModelo.getQuant_total() * 10);
-//             System.err.println("----------------------------------------------------------");
-//        }
-//        
-//        
+
 //        
     }
 
