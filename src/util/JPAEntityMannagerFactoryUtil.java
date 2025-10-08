@@ -1,3 +1,6 @@
+
+
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -44,7 +47,7 @@ public class JPAEntityMannagerFactoryUtil
 //                
 //                String ip = "localhost";
 
-//                String url = "jdbc:mysql://"   +ip +":3306/kitanda_db_neemias_moys_gulele_dvml_k11_joaquim?zeroDateTimeBehavior=convertToNull";
+
 
 //                String user = "root";
 //                String password = "DoV90x?#";
@@ -84,6 +87,7 @@ public class JPAEntityMannagerFactoryUtil
 
 
                     String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_neemias?zeroDateTimeBehavior=convertToNull";
+
 
                     String user = "root";
                     String password = "DoV90x?#";

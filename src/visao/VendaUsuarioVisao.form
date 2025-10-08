@@ -395,7 +395,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="60" y="0" width="130" height="30"/>
+                  <AbsoluteConstraints x="40" y="0" width="180" height="30"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -411,7 +411,7 @@
               </Events>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="220" y="0" width="170" height="30"/>
+                  <AbsoluteConstraints x="400" y="0" width="70" height="30"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -429,6 +429,19 @@
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                   <AbsoluteConstraints x="10" y="80" width="460" height="-1"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="javax.swing.JButton" name="BT_FR_SEM_FORMA">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/image/impressora1.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="FINALIZAR"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="220" y="0" width="170" height="30"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -1349,42 +1362,44 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                          <Component id="jPanel6" alignment="0" max="32767" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="jLabel1" min="-2" pref="176" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="lbPreco2" min="-2" pref="42" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-                                      <Component id="txtReferencia" min="-2" pref="105" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="lbVias" min="-2" pref="50" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="spnCopia" min="-2" pref="48" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jlStockNegativo" min="-2" pref="90" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                          <Component id="rbTranstorno" max="32767" attributes="0"/>
-                                          <Component id="rbMostrar" max="32767" attributes="0"/>
-                                      </Group>
-                                      <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
-                                      <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
-                                  </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="jPanel6" alignment="0" max="32767" attributes="0"/>
+                              <Component id="jPanel7" min="-2" pref="472" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="jLabel1" min="-2" pref="176" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="lbPreco2" min="-2" pref="42" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                                  <Component id="txtReferencia" min="-2" pref="105" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="dc_data_documento" max="32767" attributes="0"/>
-                                  <Component id="dc_data_vencimento" max="32767" attributes="0"/>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="lbVias" min="-2" pref="50" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="spnCopia" min="-2" pref="48" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="jlStockNegativo" min="-2" pref="90" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                      <Component id="rbTranstorno" max="32767" attributes="0"/>
+                                      <Component id="rbMostrar" max="32767" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
+                                  <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
+                          <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="dc_data_vencimento" pref="117" max="32767" attributes="0"/>
+                              <Component id="dc_data_documento" max="32767" attributes="0"/>
+                          </Group>
                       </Group>
-                      <Component id="jPanel7" min="-2" pref="472" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

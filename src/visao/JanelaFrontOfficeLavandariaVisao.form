@@ -25,7 +25,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="0" pref="1132" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="1123" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -65,22 +65,22 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="btnRecolha" min="-2" pref="156" max="-2" attributes="0"/>
+                  <Component id="btnRecolha" min="-2" pref="125" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jButton2" min="-2" pref="155" max="-2" attributes="0"/>
+                  <Component id="jButton2" min="-2" pref="142" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jButton3" min="-2" pref="163" max="-2" attributes="0"/>
+                  <Component id="jButton3" min="-2" pref="146" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="btnRelatorio" min="-2" pref="123" max="-2" attributes="0"/>
+                  <Component id="btnRelatorio" min="-2" pref="99" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="btn_abertura_dia_lav" min="-2" pref="46" max="-2" attributes="0"/>
+                  <Component id="btn_abertura_dia_lav" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="btn_feicho_dia_lav" min="-2" pref="49" max="-2" attributes="0"/>
+                  <Component id="btn_feicho_dia_lav" min="-2" pref="46" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="btn_feicho_dia_lav1" min="-2" pref="49" max="-2" attributes="0"/>
+                  <Component id="btn_feicho_dia_lav1" min="-2" pref="46" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jButton4" min="-2" pref="120" max="-2" attributes="0"/>
-                  <EmptySpace pref="15" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

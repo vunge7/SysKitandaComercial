@@ -348,43 +348,89 @@ public class StoksController implements EntidadeFactory
         return false;
 
     }
+    
+    public Vector<BuscaModeloProduto> getFonte(int idArmazem, int codJanela) {
+    BDConexao conexaoTemp = new BDConexao();
+    Vector<BuscaModeloProduto> busca = new Vector<>();
 
-    public Vector<BuscaModeloProduto> getFonte( int idArmazem, int codJanela )
-    {
+    String condicao = (codJanela != DVML.JANELA_COMPRA) ? "IN (1,2)" : "IN (2)";
 
-        BDConexao conexaoTemp = new BDConexao();
+    String sql =
+            "SELECT " +
+            "    p.codigo AS codigo, " +
+            "    p.designacao AS designacao, " +
+            "    tp.designacao AS categoria, " +
+            "    f.pk_familia AS cod_familia, " +
+            "    s.quantidade_existente AS qtd, " +
+            "    (s.quant_baixa < s.quantidade_existente AND s.quantidade_existente < s.quant_critica) AS estado_critico, " +
+            "    pr.preco_venda AS preco_venda " +
+            "FROM tb_produto p " +
+            "INNER JOIN tb_tipo_produto tp ON tp.codigo = p.cod_Tipo_Produto " +
+            "INNER JOIN familia f ON f.pk_familia = tp.fk_familia " +
+            "LEFT JOIN tb_stock s ON s.cod_produto_codigo = p.codigo AND s.cod_armazem = ? " +
+            "LEFT JOIN ( " +
+            "    SELECT fk_produto, MAX(pk_preco) AS ultimo_preco_id " +
+            "    FROM tb_preco " +
+            "    WHERE qtd_baixo = 0 " +
+            "    GROUP BY fk_produto " +
+            ") ult_preco ON ult_preco.fk_produto = p.codigo " +
+            "LEFT JOIN tb_preco pr ON pr.pk_preco = ult_preco.ultimo_preco_id " +
+            "WHERE p.fk_grupo = 1 " +
+            "  AND f.pk_familia " + condicao + " " +
+            "GROUP BY p.codigo " +
+            "ORDER BY p.designacao";
 
-        String codicao = ( codJanela != DVML.JANELA_COMPRA ) ? "IN(1,2)" : "IN(2)";
-        Vector<BuscaModeloProduto> busca = new Vector<>();
-        String sql = "SELECT "
-                + "	p.codigo AS codigo , "
-                + "     p.designacao AS designacao, "
-                + "	tp.designacao AS categoria, "
-                + "	f.pk_familia AS cod_familia, "
-                + "     ("
-                + "		 SELECT  quantidade_existente FROM tb_stock WHERE cod_produto_codigo = p.codigo AND cod_armazem = " + idArmazem
-                + "     ) AS qtd, "
-                + "     ("
-                + "		  ("
-                + "			(SELECT  quant_baixa FROM tb_stock WHERE cod_produto_codigo = p.codigo AND cod_armazem = " + idArmazem + ")  < "
-                + "			(SELECT  quantidade_existente FROM tb_stock WHERE cod_produto_codigo = p.codigo AND cod_armazem =    " + idArmazem + ") "
-                + "		  )"
-                + "          AND  "
-                + "		  ( "
-                + "                     (SELECT  quantidade_existente FROM tb_stock WHERE cod_produto_codigo = p.codigo AND cod_armazem = " + idArmazem + ") <"
-                + "                     (SELECT  quant_critica FROM tb_stock WHERE cod_produto_codigo = p.codigo AND cod_armazem = " + idArmazem + ") "
-                + "		  ) "
-                + "     ) AS estado_critico , "
-                + "	 ("
-                + "       SELECT preco_venda FROM tb_preco where fk_produto = p.codigo AND qtd_baixo = 0 ORDER BY pk_preco DESC LIMIT 1 "
-                + "	 ) AS preco_venda "
-                + "FROM tb_produto p "
-                + "INNER JOIN tb_tipo_produto tp ON tp.codigo = p.cod_Tipo_Produto "
-                + "INNER JOIN familia f ON f.pk_familia = tp.fk_familia "
-                + " WHERE p.fk_grupo = 1 AND f.pk_familia " + codicao + " "
-                //  + "AND p.codigo BETWEEN 1 AND 30  "
-                + "GROUP BY p.codigo "
-                + "ORDER BY p.designacao ";
+    try {
+        PreparedStatement ps = conexaoTemp.getConnection1().prepareStatement(sql);
+        ps.setInt(1, idArmazem);
+
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            int codigo = rs.getInt("codigo");
+            String designacao = rs.getString("designacao");
+            String categoria = rs.getString("categoria");
+            String qtd = (rs.getLong("cod_familia") == 1) ? "-" : String.valueOf(rs.getLong("qtd"));
+            double precoVenda = rs.getDouble("preco_venda");
+
+            String estadoCritico;
+            if (rs.getLong("cod_familia") == 1) {
+                estadoCritico = "-";
+            } else {
+                estadoCritico = rs.getBoolean("estado_critico") ? "true" : "false";
+            }
+
+            BuscaModeloProduto bmp = new BuscaModeloProduto();
+            bmp.setCodigo(codigo);
+            bmp.setDesignacao(designacao);
+            bmp.setCategoria(categoria);
+            bmp.setQtd(qtd);
+            bmp.setPrecoVenda(precoVenda);
+            bmp.setEstadoCritico(estadoCritico);
+
+            busca.add(bmp);
+        }
+
+        rs.close();
+        ps.close();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    } finally {
+        conexaoTemp.close();
+    }
+
+    System.out.println("SIZE_: " + busca.size());
+    return busca;
+}
+
+
+
+//    public Vector<BuscaModeloProduto> getFonte( int idArmazem, int codJanela )
+//    {
+//
+//        BDConexao conexaoTemp = new BDConexao();
+//
+//        String codicao = ( codJanela != DVML.JANELA_COMPRA ) ? "IN(1,2)" : "IN(2)";
+//        Vector<BuscaModeloProduto> busca = new Vector<>();
 //        String sql = "SELECT "
 //                + "	p.codigo AS codigo , "
 //                + "     p.designacao AS designacao, "
@@ -405,65 +451,66 @@ public class StoksController implements EntidadeFactory
 //                + "		  ) "
 //                + "     ) AS estado_critico , "
 //                + "	 ("
-//                + "         SELECT preco_venda FROM tb_preco WHERE pk_preco = (  SELECT max(pk_preco) FROM tb_preco WHERE fk_produto = p.codigo AND qtd_baixo = ( SELECT MIN(qtd_baixo) AS QTD_MIN FROM tb_preco WHERE fk_produto = p.codigo GROUP BY fk_produto  ) )"
+//                + "       SELECT preco_venda FROM tb_preco where fk_produto = p.codigo AND qtd_baixo = 0 ORDER BY pk_preco DESC LIMIT 1 "
 //                + "	 ) AS preco_venda "
 //                + "FROM tb_produto p "
 //                + "INNER JOIN tb_tipo_produto tp ON tp.codigo = p.cod_Tipo_Produto "
 //                + "INNER JOIN familia f ON f.pk_familia = tp.fk_familia "
-//                + " WHERE f.pk_familia " + codicao + " "
-//                + "AND p.codigo BETWEEN 31 AND 33  "
+//                + " WHERE p.fk_grupo = 1 AND f.pk_familia " + codicao + " "
+//                //  + "AND p.codigo BETWEEN 1 AND 30  "
 //                + "GROUP BY p.codigo "
 //                + "ORDER BY p.designacao ";
-
-        System.out.println( sql );
-        ResultSet rs = conexaoTemp.executeQuery( sql );
-        try
-        {
-            while ( rs.next() )
-            {
-
-                int codigo = rs.getInt( "codigo" );
-//                System.out.println( "CODIGO: " + codigo );
-                String designacao = rs.getString( "designacao" );
-                String categoria = rs.getString( "categoria" );
-                String qtd = ( ( rs.getLong( "cod_familia" ) == 1 ) ? "-" : String.valueOf( rs.getLong( "qtd" ) ) );
-                double precoVenda = rs.getDouble( "preco_venda" );
-
-                String estadoCritico = ( ( rs.getInt( "cod_familia" ) == 1 ) ? "-" : rs.getString( "estado_critico" ) );
-
-                if ( Objects.isNull( estadoCritico ) || estadoCritico.equals( "0" ) )
-                {
-                    estadoCritico = "false";
-                }
-                else if ( estadoCritico.equals( "1" ) )
-                {
-                    estadoCritico = "true";
-                }
-
-                BuscaModeloProduto bmp = new BuscaModeloProduto();
-                bmp.setCodigo( codigo );
-                bmp.setDesignacao( designacao );
-                bmp.setCategoria( categoria );
-                bmp.setQtd( qtd );
-                bmp.setPrecoVenda( precoVenda );
-                bmp.setEstadoCritico( estadoCritico );
-
-                busca.add( bmp );
-
-            }
-
-        }
-        catch ( SQLException e )
-        {
-            e.printStackTrace();
-        }
-
-        System.out.println( "SIZE_: " + busca.size() );
-
-        conexaoTemp.close();
-
-        return busca;
-    }
+//
+//
+//        System.out.println( sql );
+//        ResultSet rs = conexaoTemp.executeQuery( sql );
+//        try
+//        {
+//            while ( rs.next() )
+//            {
+//
+//                int codigo = rs.getInt( "codigo" );
+////                System.out.println( "CODIGO: " + codigo );
+//                String designacao = rs.getString( "designacao" );
+//                String categoria = rs.getString( "categoria" );
+//                String qtd = ( ( rs.getLong( "cod_familia" ) == 1 ) ? "-" : String.valueOf( rs.getLong( "qtd" ) ) );
+//                double precoVenda = rs.getDouble( "preco_venda" );
+//
+//                String estadoCritico = ( ( rs.getInt( "cod_familia" ) == 1 ) ? "-" : rs.getString( "estado_critico" ) );
+//
+//                if ( Objects.isNull( estadoCritico ) || estadoCritico.equals( "0" ) )
+//                {
+//                    estadoCritico = "false";
+//                }
+//                else if ( estadoCritico.equals( "1" ) )
+//                {
+//                    estadoCritico = "true";
+//                }
+//
+//                BuscaModeloProduto bmp = new BuscaModeloProduto();
+//                bmp.setCodigo( codigo );
+//                bmp.setDesignacao( designacao );
+//                bmp.setCategoria( categoria );
+//                bmp.setQtd( qtd );
+//                bmp.setPrecoVenda( precoVenda );
+//                bmp.setEstadoCritico( estadoCritico );
+//
+//                busca.add( bmp );
+//
+//            }
+//
+//        }
+//        catch ( SQLException e )
+//        {
+//            e.printStackTrace();
+//        }
+//
+//        System.out.println( "SIZE_: " + busca.size() );
+//
+//        conexaoTemp.close();
+//
+//        return busca;
+//    }
 
     public Vector<BuscaModeloProduto> getFonteRefeicao( int idArmazem, int codJanela )
     {

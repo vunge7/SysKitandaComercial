@@ -5,9 +5,9 @@
 	<property name="ireport.y" value="0"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<import value="net.sf.jasperreports.engine.*"/>
 	<parameter name="DES_ARMAZEM" class="java.lang.String"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["../relatorios/"]]></defaultValueExpression>
@@ -70,9 +70,9 @@ ORDER BY
 		</band>
 	</title>
 	<detail>
-		<band height="33" splitType="Stretch">
+		<band height="15" splitType="Stretch">
 			<subreport>
-				<reportElement uuid="70d79338-343e-495f-9428-df7d0f6ae290" x="-29" y="0" width="295" height="33"/>
+				<reportElement uuid="70d79338-343e-495f-9428-df7d0f6ae290" x="-7" y="0" width="295" height="15" isRemoveLineWhenBlank="true"/>
 				<subreportParameter name="ID_TIPO_PRODUTO">
 					<subreportParameterExpression><![CDATA[$F{tb_tipo_produto_codigo}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -145,9 +145,9 @@ ORDER BY
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="34">
+		<band height="13">
 			<subreport>
-				<reportElement uuid="3e143221-03eb-4af6-b2a4-e6e139441d75" x="-29" y="0" width="295" height="34"/>
+				<reportElement uuid="3e143221-03eb-4af6-b2a4-e6e139441d75" x="-8" y="0" width="295" height="13" isRemoveLineWhenBlank="true"/>
 				<subreportParameter name="DES_ARMAZEM">
 					<subreportParameterExpression><![CDATA[$P{DES_ARMAZEM}]]></subreportParameterExpression>
 				</subreportParameter>

@@ -365,6 +365,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         txtObs = new javax.swing.JTextField();
         jButton2 = new javax.swing.JButton();
         jlEmpresa = new javax.swing.JLabel();
+        BT_FR_SEM_FORMA = new javax.swing.JButton();
         lb_usuario = new javax.swing.JLabel();
         lbValorPorExtenco = new javax.swing.JLabel();
         lb_nome_usuario = new javax.swing.JLabel();
@@ -594,7 +595,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         jPanel3.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 40, -1));
 
         txtObs.setFont(new java.awt.Font("Lucida Grande", 0, 11)); // NOI18N
-        jPanel3.add(txtObs, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 0, 130, 30));
+        jPanel3.add(txtObs, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 0, 180, 30));
 
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagem/calendario 32x32.png"))); // NOI18N
         jButton2.setText("VISTORIA");
@@ -605,13 +606,17 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 jButton2ActionPerformed(evt);
             }
         });
-        jPanel3.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 0, 170, 30));
+        jPanel3.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 0, 70, 30));
 
         jlEmpresa.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         jlEmpresa.setForeground(new java.awt.Color(0, 0, 102));
         jlEmpresa.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jlEmpresa.setText("Empresa");
         jPanel3.add(jlEmpresa, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, 460, -1));
+
+        BT_FR_SEM_FORMA.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/impressora1.png"))); // NOI18N
+        BT_FR_SEM_FORMA.setText("FINALIZAR");
+        jPanel3.add(BT_FR_SEM_FORMA, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 0, 170, 30));
 
         lb_usuario.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         lb_usuario.setText("Conta:");
@@ -662,7 +667,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 15), new java.awt.Color(4, 154, 3))); // NOI18N
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 12), new java.awt.Color(4, 154, 3))); // NOI18N
         jPanel4.setForeground(new java.awt.Color(102, 153, 0));
         jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -1247,7 +1252,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         lb_proximo_documento.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
         lb_proximo_documento.setText("PRÓX. DOC. : XX PP/A1");
 
-        jPanelCaracteristicas.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Características", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 15), new java.awt.Color(204, 0, 0))); // NOI18N
+        jPanelCaracteristicas.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Características", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 12), new java.awt.Color(204, 0, 0))); // NOI18N
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel3.setText("Marca:");
@@ -1435,34 +1440,35 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel5Layout.createSequentialGroup()
-                            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(jPanel5Layout.createSequentialGroup()
-                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(lbPreco2, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(5, 5, 5)
-                                    .addComponent(txtReferencia, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(jPanel5Layout.createSequentialGroup()
-                                    .addComponent(lbVias, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(spnCopia, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jlStockNegativo, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(rbTranstorno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(rbMostrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                    .addGap(14, 14, 14)
-                                    .addComponent(jLabel9)))
-                            .addGap(10, 10, 10)
-                            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(dc_data_documento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(dc_data_vencimento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                    .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lbPreco2, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(5, 5, 5)
+                                .addComponent(txtReferencia, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(lbVias, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(spnCopia, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jlStockNegativo, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(rbTranstorno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(rbMostrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(14, 14, 14)
+                                .addComponent(jLabel9)))
+                        .addGap(10, 10, 10)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(dc_data_vencimento, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
+                            .addComponent(dc_data_documento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1801,15 +1807,21 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //
 //        }
 
-if (MetodosUtil.licencaValidada(conexao)) {
-    if (!validarPrecos_tabela(table)) {
-        return; // Se houver erro, não abre forma de pagamento
-    }
+        if ( MetodosUtil.licencaValidada( conexao ) )
+        {
+            if ( !MetodosUtil.tabela_vazia( table ) )
+            {
+                if ( !validarPrecos_tabela( table ) )
+                {
+                    return; // Se houver erro, não abre forma de pagamento
+                }
 
-    new FormaPagamentoVisao(this, rootPaneCheckingEnabled, null, DVML.VENDA_PONTUAL, conexao)
-        .setVisible(true);
-}
-
+                new FormaPagamentoVisao( this, rootPaneCheckingEnabled, null, DVML.VENDA_PONTUAL, conexao )
+                        .setVisible( true );
+            }else{
+                JOptionPane.showMessageDialog( null, "Caro usuário, adicione itens na tabela");
+            }
+        }
 
     }//GEN-LAST:event_btnFormaPagamentoActionPerformed
 
@@ -1872,98 +1884,116 @@ if (MetodosUtil.licencaValidada(conexao)) {
 //    }
 //    return true; // tudo certo
 //}
-private boolean validarPrecos_tabela(JTable tabela) {
-    DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
-    StringBuilder produtosComErro = new StringBuilder();
+    private boolean validarPrecos_tabela( JTable tabela )
+    {
+        DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
+        StringBuilder produtosComErro = new StringBuilder();
 
-    // Percorrer todas as linhas
-    for (int i = 0; i < modelo.getRowCount(); i++) {
-        double precoUnitario = extrairValorNumerico(modelo.getValueAt(i, 9));
-        double precoTotal = extrairValorNumerico(modelo.getValueAt(i, 10));
+        // Percorrer todas as linhas
+        for ( int i = 0; i < modelo.getRowCount(); i++ )
+        {
+            double precoUnitario = extrairValorNumerico( modelo.getValueAt( i, 9 ) );
+            double precoTotal = extrairValorNumerico( modelo.getValueAt( i, 10 ) );
 
-        // Se qualquer um dos dois preços for zero, marca como erro
-        if (precoUnitario <= 0 || precoTotal <= 0) {
-            Object designacaoObj = modelo.getValueAt(i, 1);
-            String designacao = (designacaoObj != null && !designacaoObj.toString().isEmpty())
-                    ? designacaoObj.toString()
-                    : "Produto sem nome";
+            // Se qualquer um dos dois preços for zero, marca como erro
+            if ( precoUnitario <= 0 || precoTotal <= 0 )
+            {
+                Object designacaoObj = modelo.getValueAt( i, 1 );
+                String designacao = ( designacaoObj != null && !designacaoObj.toString().isEmpty() )
+                        ? designacaoObj.toString()
+                        : "Produto sem nome";
 
-            if (produtosComErro.length() > 0) {
-                produtosComErro.append(" e ");
+                if ( produtosComErro.length() > 0 )
+                {
+                    produtosComErro.append( " e " );
+                }
+                produtosComErro.append( designacao );
             }
-            produtosComErro.append(designacao);
         }
-    }
 
-    // Se encontrou produtos com erro
-    if (produtosComErro.length() > 0) {
-        int opcao = JOptionPane.showConfirmDialog(
-                null,
-                "Atenção\nO(s) produto(s):\n" + produtosComErro +
-                ". Possuem preços Zero.\n\nDeves removê-lo(s) da lista!!!",
-                "Erro de Validação de Preços",
-                JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.ERROR_MESSAGE
-        );
+        // Se encontrou produtos com erro
+        if ( produtosComErro.length() > 0 )
+        {
+            int opcao = JOptionPane.showConfirmDialog(
+                    null,
+                    "Atenção\nO(s) produto(s):\n" + produtosComErro
+                    + ". Possuem preços Zero.\n\nDeves removê-lo(s) da lista!!!",
+                    "Erro de Validação de Preços",
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.ERROR_MESSAGE
+            );
 
-        // Se clicar OK, remover as linhas com erro
-        if (opcao == JOptionPane.OK_OPTION) {
-            for (int i = modelo.getRowCount() - 1; i >= 0; i--) {
-                double precoUnitario = extrairValorNumerico(modelo.getValueAt(i, 9));
-                double precoTotal = extrairValorNumerico(modelo.getValueAt(i, 10));
+            // Se clicar OK, remover as linhas com erro
+            if ( opcao == JOptionPane.OK_OPTION )
+            {
+                for ( int i = modelo.getRowCount() - 1; i >= 0; i-- )
+                {
+                    double precoUnitario = extrairValorNumerico( modelo.getValueAt( i, 9 ) );
+                    double precoTotal = extrairValorNumerico( modelo.getValueAt( i, 10 ) );
 
-                if (precoUnitario <= 0 || precoTotal <= 0) {
-                    modelo.removeRow(i);
+                    if ( precoUnitario <= 0 || precoTotal <= 0 )
+                    {
+                        modelo.removeRow( i );
+                    }
                 }
             }
+
+            return false; // Impede abrir forma de pagamento
         }
 
-        return false; // Impede abrir forma de pagamento
+        return true; // Tudo certo, pode continuar
     }
 
-    return true; // Tudo certo, pode continuar
-}
+    private double extrairValorNumerico( Object valorObj )
+    {
+        if ( valorObj == null )
+        {
+            return 0.0;
+        }
 
+        String valor = valorObj.toString().trim();
 
-private double extrairValorNumerico(Object valorObj) {
-    if (valorObj == null) return 0.0;
+        if ( valor.isEmpty() )
+        {
+            return 0.0;
+        }
 
-    String valor = valorObj.toString().trim();
+        // Remove espaços e símbolos de moeda (AOA, KZ, etc.)
+        valor = valor.replaceAll( "(?i)AOA", "" ) // remove AOA (maiúsculo ou minúsculo)
+                .replaceAll( "(?i)KZ", "" )
+                .replaceAll( "\\s+", "" );   // remove espaços
 
-    if (valor.isEmpty()) return 0.0;
+        // Substitui vírgulas por pontos
+        valor = valor.replace( ",", "." );
 
-    // Remove espaços e símbolos de moeda (AOA, KZ, etc.)
-    valor = valor.replaceAll("(?i)AOA", "") // remove AOA (maiúsculo ou minúsculo)
-                 .replaceAll("(?i)KZ", "")
-                 .replaceAll("\\s+", "");   // remove espaços
+        // Remove qualquer caracter que não seja número, ponto ou sinal
+        valor = valor.replaceAll( "[^0-9.\\-]", "" );
 
-    // Substitui vírgulas por pontos
-    valor = valor.replace(",", ".");
+        // Corrige caso tenha mais de um ponto (ex: "1.600.00" -> "1600.00")
+        int firstDot = valor.indexOf( '.' );
+        if ( firstDot != -1 )
+        {
+            int lastDot = valor.lastIndexOf( '.' );
+            if ( lastDot != firstDot )
+            {
+                // remove todos os pontos exceto o último
+                valor = valor.substring( 0, lastDot ).replace( ".", "" ) + valor.substring( lastDot );
+            }
+        }
 
-    // Remove qualquer caracter que não seja número, ponto ou sinal
-    valor = valor.replaceAll("[^0-9.\\-]", "");
+        // Debug opcional
+        System.out.println( "→ Valor processado: '" + valorObj + "' => '" + valor + "'" );
 
-    // Corrige caso tenha mais de um ponto (ex: "1.600.00" -> "1600.00")
-    int firstDot = valor.indexOf('.');
-    if (firstDot != -1) {
-        int lastDot = valor.lastIndexOf('.');
-        if (lastDot != firstDot) {
-            // remove todos os pontos exceto o último
-            valor = valor.substring(0, lastDot).replace(".", "") + valor.substring(lastDot);
+        try
+        {
+            return Double.parseDouble( valor );
+        }
+        catch ( NumberFormatException e )
+        {
+            System.err.println( "Erro ao converter valor: '" + valorObj + "' -> " + e.getMessage() );
+            return 0.0;
         }
     }
-
-    // Debug opcional
-    System.out.println("→ Valor processado: '" + valorObj + "' => '" + valor + "'");
-
-    try {
-        return Double.parseDouble(valor);
-    } catch (NumberFormatException e) {
-        System.err.println("Erro ao converter valor: '" + valorObj + "' -> " + e.getMessage());
-        return 0.0;
-    }
-}
-
 
 
     private void ck_ComVirgulaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ck_ComVirgulaActionPerformed
@@ -2072,6 +2102,7 @@ private double extrairValorNumerico(Object valorObj) {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BT_FR_SEM_FORMA;
     private javax.swing.JButton btnCancelar;
     private static javax.swing.JButton btnFormaPagamento;
     private static javax.swing.JButton btnProcessar;
@@ -2364,6 +2395,9 @@ private double extrairValorNumerico(Object valorObj) {
 
     public static void procedimento_adicionar()
     {
+        boolean documentoIsFA = DVML.DOC_FACTURA_FT == getIdDocumento();
+        boolean documentoIsPP = DVML.DOC_FACTURA_PROFORMA_PP == getIdDocumento();
+        boolean documentoIsFR = DVML.DOC_FACTURA_RECIBO_FR == getIdDocumento();
 
         try
         {
@@ -2372,8 +2406,9 @@ private double extrairValorNumerico(Object valorObj) {
             {
                 if ( !isProdutoExpirado( getCodigoProduto() ) )
                 {
+
                     TbProduto produto = (TbProduto) produtosController.findById( getCodigoProduto() );
-                    if ( isStocavel( produto.getStocavel() ) )
+                    if ( isStocavel( produto.getStocavel() ) && documentoIsFR || documentoIsFA )
                     {
 
                         if ( possivel_quantidade() )
@@ -2387,7 +2422,7 @@ private double extrairValorNumerico(Object valorObj) {
                         }
                         else
                         {
-                            JOptionPane.showMessageDialog( null, "O produto: " + produto.getDesignacao() + " nao pode ser vendido pra esta quantidade", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+                            JOptionPane.showMessageDialog( null, "O produto: " + produto.getDesignacao() + " não pode ser vendido pra esta quantidade", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
                         }
 
                     }
@@ -2395,6 +2430,7 @@ private double extrairValorNumerico(Object valorObj) {
                     {
                         adicionar_produto();
                     }
+
                 }
                 else
                 {
@@ -4745,7 +4781,10 @@ private double extrairValorNumerico(Object valorObj) {
                                 conexao
                         );
 
-                        actualizar_quantidade( idProduto, item.getQuantidade(), conexaoLocal );
+                        if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR || getIdDocumento() == DOC_FACTURA_FT )
+                        {
+                            actualizar_quantidade( idProduto, item.getQuantidade(), conexaoLocal );
+                        }
                     }
                 }
 
