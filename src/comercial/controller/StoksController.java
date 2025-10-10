@@ -348,81 +348,89 @@ public class StoksController implements EntidadeFactory
         return false;
 
     }
-    
-    public Vector<BuscaModeloProduto> getFonte(int idArmazem, int codJanela) {
-    BDConexao conexaoTemp = new BDConexao();
-    Vector<BuscaModeloProduto> busca = new Vector<>();
 
-    String condicao = (codJanela != DVML.JANELA_COMPRA) ? "IN (1,2)" : "IN (2)";
+    public Vector<BuscaModeloProduto> getFonte( int idArmazem, int codJanela )
+    {
+        BDConexao conexaoTemp = new BDConexao();
+        Vector<BuscaModeloProduto> busca = new Vector<>();
 
-    String sql =
-            "SELECT " +
-            "    p.codigo AS codigo, " +
-            "    p.designacao AS designacao, " +
-            "    tp.designacao AS categoria, " +
-            "    f.pk_familia AS cod_familia, " +
-            "    s.quantidade_existente AS qtd, " +
-            "    (s.quant_baixa < s.quantidade_existente AND s.quantidade_existente < s.quant_critica) AS estado_critico, " +
-            "    pr.preco_venda AS preco_venda " +
-            "FROM tb_produto p " +
-            "INNER JOIN tb_tipo_produto tp ON tp.codigo = p.cod_Tipo_Produto " +
-            "INNER JOIN familia f ON f.pk_familia = tp.fk_familia " +
-            "LEFT JOIN tb_stock s ON s.cod_produto_codigo = p.codigo AND s.cod_armazem = ? " +
-            "LEFT JOIN ( " +
-            "    SELECT fk_produto, MAX(pk_preco) AS ultimo_preco_id " +
-            "    FROM tb_preco " +
-            "    WHERE qtd_baixo = 0 " +
-            "    GROUP BY fk_produto " +
-            ") ult_preco ON ult_preco.fk_produto = p.codigo " +
-            "LEFT JOIN tb_preco pr ON pr.pk_preco = ult_preco.ultimo_preco_id " +
-            "WHERE p.fk_grupo = 1 " +
-            "  AND f.pk_familia " + condicao + " " +
-            "GROUP BY p.codigo " +
-            "ORDER BY p.designacao";
+        String condicao = ( codJanela != DVML.JANELA_COMPRA ) ? "IN (1,2)" : "IN (2)";
 
-    try {
-        PreparedStatement ps = conexaoTemp.getConnection1().prepareStatement(sql);
-        ps.setInt(1, idArmazem);
+        String sql
+                = "SELECT "
+                + "    p.codigo AS codigo, "
+                + "    p.designacao AS designacao, "
+                + "    tp.designacao AS categoria, "
+                + "    f.pk_familia AS cod_familia, "
+                + "    s.quantidade_existente AS qtd, "
+                + "    (s.quant_baixa < s.quantidade_existente AND s.quantidade_existente < s.quant_critica) AS estado_critico, "
+                + "    pr.preco_venda AS preco_venda "
+                + "FROM tb_produto p "
+                + "INNER JOIN tb_tipo_produto tp ON tp.codigo = p.cod_Tipo_Produto "
+                + "INNER JOIN familia f ON f.pk_familia = tp.fk_familia "
+                + "LEFT JOIN tb_stock s ON s.cod_produto_codigo = p.codigo AND s.cod_armazem = ? "
+                + "LEFT JOIN ( "
+                + "    SELECT fk_produto, MAX(pk_preco) AS ultimo_preco_id "
+                + "    FROM tb_preco "
+                + "    WHERE qtd_baixo = 0 "
+                + "    GROUP BY fk_produto "
+                + ") ult_preco ON ult_preco.fk_produto = p.codigo "
+                + "LEFT JOIN tb_preco pr ON pr.pk_preco = ult_preco.ultimo_preco_id "
+                + "WHERE p.fk_grupo = 1 "
+                + "  AND f.pk_familia " + condicao + " "
+                + "GROUP BY p.codigo "
+                + "ORDER BY p.designacao";
 
-        ResultSet rs = ps.executeQuery();
-        while (rs.next()) {
-            int codigo = rs.getInt("codigo");
-            String designacao = rs.getString("designacao");
-            String categoria = rs.getString("categoria");
-            String qtd = (rs.getLong("cod_familia") == 1) ? "-" : String.valueOf(rs.getLong("qtd"));
-            double precoVenda = rs.getDouble("preco_venda");
+        try
+        {
+            PreparedStatement ps = conexaoTemp.getConnection1().prepareStatement( sql );
+            ps.setInt( 1, idArmazem );
 
-            String estadoCritico;
-            if (rs.getLong("cod_familia") == 1) {
-                estadoCritico = "-";
-            } else {
-                estadoCritico = rs.getBoolean("estado_critico") ? "true" : "false";
+            ResultSet rs = ps.executeQuery();
+            while ( rs.next() )
+            {
+                int codigo = rs.getInt( "codigo" );
+                String designacao = rs.getString( "designacao" );
+                String categoria = rs.getString( "categoria" );
+                String qtd = ( rs.getLong( "cod_familia" ) == 1 ) ? "-" : String.valueOf( rs.getLong( "qtd" ) );
+                double precoVenda = rs.getDouble( "preco_venda" );
+
+                String estadoCritico;
+                if ( rs.getLong( "cod_familia" ) == 1 )
+                {
+                    estadoCritico = "-";
+                }
+                else
+                {
+                    estadoCritico = rs.getBoolean( "estado_critico" ) ? "true" : "false";
+                }
+
+                BuscaModeloProduto bmp = new BuscaModeloProduto();
+                bmp.setCodigo( codigo );
+                bmp.setDesignacao( designacao );
+                bmp.setCategoria( categoria );
+                bmp.setQtd( qtd );
+                bmp.setPrecoVenda( precoVenda );
+                bmp.setEstadoCritico( estadoCritico );
+
+                busca.add( bmp );
             }
 
-            BuscaModeloProduto bmp = new BuscaModeloProduto();
-            bmp.setCodigo(codigo);
-            bmp.setDesignacao(designacao);
-            bmp.setCategoria(categoria);
-            bmp.setQtd(qtd);
-            bmp.setPrecoVenda(precoVenda);
-            bmp.setEstadoCritico(estadoCritico);
-
-            busca.add(bmp);
+            rs.close();
+            ps.close();
+        }
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            conexaoTemp.close();
         }
 
-        rs.close();
-        ps.close();
-    } catch (SQLException e) {
-        e.printStackTrace();
-    } finally {
-        conexaoTemp.close();
+        System.out.println( "SIZE_: " + busca.size() );
+        return busca;
     }
-
-    System.out.println("SIZE_: " + busca.size());
-    return busca;
-}
-
-
 
 //    public Vector<BuscaModeloProduto> getFonte( int idArmazem, int codJanela )
 //    {
@@ -511,7 +519,6 @@ public class StoksController implements EntidadeFactory
 //
 //        return busca;
 //    }
-
     public Vector<BuscaModeloProduto> getFonteRefeicao( int idArmazem, int codJanela )
     {
 
@@ -589,10 +596,10 @@ public class StoksController implements EntidadeFactory
 //                System.out.println( "CODIGO: " + codigo );
                 String designacao = rs.getString( "designacao" );
                 String categoria = rs.getString( "categoria" );
-                String qtd = ( ( rs.getLong( "cod_familia" ) == 1 ) ? "-" : String.valueOf( rs.getLong( "qtd" ) ) );
+                String qtd = (( rs.getLong( "cod_familia" ) == 1 ) ? "-" : String.valueOf( rs.getLong( "qtd" ) ));
                 double precoVenda = rs.getDouble( "preco_venda" );
 
-                String estadoCritico = ( ( rs.getInt( "cod_familia" ) == 1 ) ? "-" : rs.getString( "estado_critico" ) );
+                String estadoCritico = (( rs.getInt( "cod_familia" ) == 1 ) ? "-" : rs.getString( "estado_critico" ));
 
                 if ( Objects.isNull( estadoCritico ) || estadoCritico.equals( "0" ) )
                 {
@@ -705,10 +712,10 @@ public class StoksController implements EntidadeFactory
 //                System.out.println( "CODIGO: " + codigo );
                 String designacao = rs.getString( "designacao" );
                 String categoria = rs.getString( "categoria" );
-                String qtd = ( ( rs.getLong( "cod_familia" ) == 1 ) ? "-" : String.valueOf( rs.getLong( "qtd" ) ) );
+                String qtd = (( rs.getLong( "cod_familia" ) == 1 ) ? "-" : String.valueOf( rs.getLong( "qtd" ) ));
                 double precoVenda = rs.getDouble( "preco_venda" );
 
-                String estadoCritico = ( ( rs.getInt( "cod_familia" ) == 1 ) ? "-" : rs.getString( "estado_critico" ) );
+                String estadoCritico = (( rs.getInt( "cod_familia" ) == 1 ) ? "-" : rs.getString( "estado_critico" ));
 
                 if ( Objects.isNull( estadoCritico ) || estadoCritico.equals( "0" ) )
                 {
@@ -970,7 +977,7 @@ public class StoksController implements EntidadeFactory
 
         double qtdExistente = getQuantidadeProduto( cod, idArmazem );
         System.out.println( "QTD_EXISTENTE: " + qtdExistente );
-        double qtdUpdate = ( qtdExistente + quantidade );
+        double qtdUpdate = (qtdExistente + quantidade);
         System.out.println( "QTD_UPDATE: " + qtdUpdate );
         String sql = "UPDATE tb_stock SET quantidade_existente =  " + qtdUpdate + ",  "
                 + " quant_critica = " + qtdCritica + ",  "
@@ -985,7 +992,7 @@ public class StoksController implements EntidadeFactory
 
         double qtdExistente = getQuantidadeProduto( cod, idArmazem );
 //        System.out.println( "QTD_EXISTENTE: " + qtdExistente );
-        double qtdUpdate = ( qtdExistente + quantidade );
+        double qtdUpdate = (qtdExistente + quantidade);
 //        System.out.println( "QTD_UPDATE: " + qtdUpdate );
         String sql = "UPDATE tb_stock SET quantidade_existente =  " + qtdUpdate
                 + " WHERE cod_produto_codigo = " + cod + " AND  cod_armazem = " + idArmazem;
@@ -998,7 +1005,7 @@ public class StoksController implements EntidadeFactory
 
         double qtdExistente = getQuantidadeProduto( cod, idArmazem, conexao );
 //        System.out.println( "QTD_EXISTENTE: " + qtdExistente );
-        double qtdUpdate = ( qtdExistente + quantidade );
+        double qtdUpdate = (qtdExistente + quantidade);
 //        System.out.println( "QTD_UPDATE: " + qtdUpdate );
         String sql = "UPDATE tb_stock SET quantidade_existente =  " + qtdUpdate
                 + " WHERE cod_produto_codigo = " + cod + " AND  cod_armazem = " + idArmazem;
@@ -1019,7 +1026,7 @@ public class StoksController implements EntidadeFactory
     {
 
         double qtdExistente = getQuantidadeProduto( cod, idArmazem );
-        double qtdUpdate = ( qtdExistente - quantidade );
+        double qtdUpdate = (qtdExistente - quantidade);
 //        System.out.println( "QTD_UPDATE: " + qtdUpdate );
         String sql = "UPDATE tb_stock SET quantidade_existente =  " + qtdUpdate
                 + " WHERE cod_produto_codigo = " + cod + " AND  cod_armazem = " + idArmazem;
@@ -1031,7 +1038,7 @@ public class StoksController implements EntidadeFactory
     {
 
         double qtdExistente = getQuantidadeProduto( cod, idArmazem, conexao );
-        double qtdUpdate = ( qtdExistente - quantidade );
+        double qtdUpdate = (qtdExistente - quantidade);
 //        System.out.println( "QTD_UPDATE: " + qtdUpdate );
         String sql = "UPDATE tb_stock SET quantidade_existente =  " + qtdUpdate
                 + " WHERE cod_produto_codigo = " + cod + " AND  cod_armazem = " + idArmazem;
@@ -1061,80 +1068,90 @@ public class StoksController implements EntidadeFactory
 
     public Vector<BuscaModeloProduto> getFonteComprasSemRefeicao( int idArmazem, int codJanela )
     {
-          BDConexao conexaoTemp = new BDConexao();
-    Vector<BuscaModeloProduto> busca = new Vector<>();
+        BDConexao conexaoTemp = new BDConexao();
+        Vector<BuscaModeloProduto> busca = new Vector<>();
 
-    String condicao = (codJanela != DVML.JANELA_COMPRA) ? "IN(1,2)" : "IN(2)";
+        // Define a condição para filtrar famílias de produtos
+        String condicao = ( codJanela != DVML.JANELA_COMPRA ) ? "IN(1,2)" : "IN(2)";
 
-    String sql = 
-        "SELECT " +
-        "   p.codigo AS codigo, " +
-        "   p.designacao AS designacao, " +
-        "   tp.designacao AS categoria, " +
-        "   f.pk_familia AS cod_familia, " +
-        "   s.quantidade_existente AS qtd, " +
-        "   s.quant_critica AS quant_critica, " +
-        "   s.quant_baixa AS quant_baixa, " +
-        "   CASE " +
-        "       WHEN s.quant_baixa < s.quantidade_existente " +
-        "            AND s.quantidade_existente < s.quant_critica " +
-        "       THEN TRUE " +
-        "       ELSE FALSE " +
-        "   END AS estado_critico, " +
-        "   pr.preco_venda AS preco_venda " +
-        "FROM tb_produto p " +
-        "INNER JOIN tb_tipo_produto tp ON tp.codigo = p.cod_Tipo_Produto " +
-        "INNER JOIN familia f ON f.pk_familia = tp.fk_familia " +
-        "LEFT JOIN tb_stock s ON s.cod_produto_codigo = p.codigo AND s.cod_armazem = ? " +
-        "LEFT JOIN ( " +
-        "    SELECT fk_produto, MAX(pk_preco) AS max_pk, preco_venda " +
-        "    FROM tb_preco " +
-        "    WHERE qtd_baixo = 0 " +
-        "    GROUP BY fk_produto, preco_venda " +
-        ") pr ON pr.fk_produto = p.codigo " +
-        "WHERE p.fk_grupo <> 3 AND f.pk_familia " + condicao + " " +
-        "ORDER BY p.designacao";
+        // Query otimizada e sem duplicações
+        String sql
+                = "SELECT "
+                + "   p.codigo AS codigo, "
+                + "   p.designacao AS designacao, "
+                + "   tp.designacao AS categoria, "
+                + "   f.pk_familia AS cod_familia, "
+                + "   s.quantidade_existente AS qtd, "
+                + "   s.quant_critica AS quant_critica, "
+                + "   s.quant_baixa AS quant_baixa, "
+                + "   CASE "
+                + "       WHEN s.quant_baixa < s.quantidade_existente "
+                + "            AND s.quantidade_existente < s.quant_critica "
+                + "       THEN TRUE "
+                + "       ELSE FALSE "
+                + "   END AS estado_critico, "
+                + "   pr.preco_venda AS preco_venda "
+                + "FROM tb_produto p "
+                + "INNER JOIN tb_tipo_produto tp ON tp.codigo = p.cod_Tipo_Produto "
+                + "INNER JOIN familia f ON f.pk_familia = tp.fk_familia "
+                + "LEFT JOIN tb_stock s ON s.cod_produto_codigo = p.codigo AND s.cod_armazem = ? "
+                + "LEFT JOIN tb_preco pr ON pr.pk_preco = ( "
+                + "    SELECT MAX(pk_preco) "
+                + "    FROM tb_preco "
+                + "    WHERE fk_produto = p.codigo AND qtd_baixo = 0 "
+                + ") "
+                + "WHERE p.fk_grupo <> 3 AND f.pk_familia " + condicao + " "
+                + "ORDER BY p.designacao";
 
-    try {
-        PreparedStatement ps = conexaoTemp.getConnection().prepareStatement(sql);
-        ps.setInt(1, idArmazem);
+        try ( PreparedStatement ps = conexaoTemp.getConnection().prepareStatement( sql ) )
+        {
+            ps.setInt( 1, idArmazem );
 
-        ResultSet rs = ps.executeQuery();
+            try ( ResultSet rs = ps.executeQuery() )
+            {
+                while ( rs.next() )
+                {
+                    BuscaModeloProduto bmp = new BuscaModeloProduto();
 
-        while (rs.next()) {
-            BuscaModeloProduto bmp = new BuscaModeloProduto();
+                    int codFamilia = rs.getInt( "cod_familia" );
 
-            int codFamilia = rs.getInt("cod_familia");
-            bmp.setCodigo(rs.getInt("codigo"));
-            bmp.setDesignacao(rs.getString("designacao"));
-            bmp.setCategoria(rs.getString("categoria"));
+                    bmp.setCodigo( rs.getInt( "codigo" ) );
+                    bmp.setDesignacao( rs.getString( "designacao" ) );
+                    bmp.setCategoria( rs.getString( "categoria" ) );
 
-            if (codFamilia == 1) {
-                bmp.setQtd("-");
-                bmp.setEstadoCritico("-");
-            } else {
-                bmp.setQtd(String.valueOf(rs.getLong("qtd")));
-                bmp.setEstadoCritico(String.valueOf(rs.getBoolean("estado_critico")));
+                    if ( codFamilia == 1 )
+                    {
+                        bmp.setQtd( "-" );
+                        bmp.setEstadoCritico( "-" );
+                    }
+                    else
+                    {
+                        long qtd = rs.getLong( "qtd" );
+                        boolean estadoCritico = rs.getBoolean( "estado_critico" );
+                        bmp.setQtd( String.valueOf( qtd ) );
+                        bmp.setEstadoCritico( String.valueOf( estadoCritico ) );
+                    }
+
+                    bmp.setPrecoVenda( rs.getDouble( "preco_venda" ) );
+                    busca.add( bmp );
+                }
             }
 
-            bmp.setPrecoVenda(rs.getDouble("preco_venda"));
-            busca.add(bmp);
+        }
+        catch ( SQLException e )
+        {
+            System.err.println( "Erro ao buscar produtos: " + e.getMessage() );
+            e.printStackTrace();
+        }
+        finally
+        {
+            conexaoTemp.close();
         }
 
-        rs.close();
-        ps.close();
-
-    } catch (SQLException e) {
-        e.printStackTrace();
-    } finally {
-        conexaoTemp.close();
+        System.out.println( "TOTAL DE REGISTOS: " + busca.size() );
+        return busca;
     }
 
-    System.out.println("SIZE_: " + busca.size());
-    return busca;
-}  
-    
-    
 //    public Vector<BuscaModeloProduto> getFonteComprasSemRefeicao( int idArmazem, int codJanela )
 //    {
 //
@@ -1219,7 +1236,6 @@ public class StoksController implements EntidadeFactory
 //
 //        return busca;
 //    }
-
     public static double getQuantidadeProduto( int cod_produto, int idArmazem, BDConexao conexao )
     {
         String sql = "SELECT quantidade_existente FROM  tb_stock WHERE  cod_produto_codigo = " + cod_produto + " AND cod_armazem = " + idArmazem;

@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="relatorio_diario_produtos" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="963621be-cfd4-4f53-8a8b-bed5b630fd64">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="313"/>
+	<property name="ireport.y" value="132"/>
 	<parameter name="PARM_DATA_2" class="java.util.Date"/>
 	<parameter name="PARM_DATA_1" class="java.util.Date"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
@@ -173,14 +173,14 @@ ORDER BY p.designacao;]]>
 		<band height="7" splitType="Stretch">
 			<subreport>
 				<reportElement uuid="95aad695-3185-49ff-9268-965e4e890cb9" x="0" y="0" width="322" height="7" isRemoveLineWhenBlank="true"/>
-				<subreportParameter name="PARM_DATA_2">
-					<subreportParameterExpression><![CDATA[$P{PARM_DATA_1}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="PARM_DATA_1">
-					<subreportParameterExpression><![CDATA[$P{PARM_DATA_2}]]></subreportParameterExpression>
-				</subreportParameter>
 				<subreportParameter name="CODIGO_PRODUTO">
 					<subreportParameterExpression><![CDATA[$F{codigo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PARM_DATA_1">
+					<subreportParameterExpression><![CDATA[$P{PARM_DATA_1}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PARM_DATA_2">
+					<subreportParameterExpression><![CDATA[$P{PARM_DATA_2}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_relatorio_diario_produtos_resumido.jasper"]]></subreportExpression>

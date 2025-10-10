@@ -47,7 +47,7 @@ public class JPAEntityMannagerFactoryUtil
 //                
 //                String ip = "localhost";
 
-//                String url = "jdbc:mysql://"   +ip +":3306/kitanda_db_abu_moys_gulele_dvml_k11_joaquim?zeroDateTimeBehavior=convertToNull";
+//                String url = "jdbc:mysql://"   +ip +":3306/kitanda_db_moys_gulele_dvml_k11_joaquim?zeroDateTimeBehavior=convertToNull";
 
 
 //                String user = "root";
@@ -88,7 +88,7 @@ public class JPAEntityMannagerFactoryUtil
 
 
 
-                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_abu?zeroDateTimeBehavior=convertToNull";
+                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db?zeroDateTimeBehavior=convertToNull";
 
 
                     String user = "root";

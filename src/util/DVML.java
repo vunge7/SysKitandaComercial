@@ -211,42 +211,24 @@ public class DVML
     public static int COD_CATEGORIA_URGENCIA = 20;
     public static String TAXA_EXPRESSO_100 = "Taxa Expresso 100";
     public static String TAXA_URGENCIA_50 = "Taxa de Urgência 50";
-
-    public static String BD = "kitanda_db_abu";
-
-
+    public static String BD = "kitanda_db";
     public static int SEGUNDA_SEXTA_HORA = 11;
     public static int SEGUNDA_SEXTA_MINUTO = 56;
     public final static String STATUS_CONVERTIDO = "Convertido";
     public final static String STATUS_CONVERTIDO_PAGO = "Pago";
-
     private List<TbProduto> listaProdutosAleatoris = new ArrayList<>();
 
     static
     {
         PERSISTENCE_UNIT = "SGCMINIMERCADOPU";
-//        EntityManagerFactory emf = Persistence.createEntityManagerFactory( PERSISTENCE_UNIT );
         System.err.println( "emf: " + emf );
-
-//        EntityManager em = emf.createEntityManager();
-//        Map<String, Object> emfProprieties = emf.getProperties();
-//        System.err.println( "emfProprieties: " + emfProprieties );
-//        String dburl = (String) emfProprieties.get( "javax.persistence.jdbc.url" );
-        //String driver = (String) emfProprieties.get ( "javax.persistence.jdbc.driver" ) ;
-        //String port = dburl.split ( "//" )[1].split ( "/" )[0].split ( ":" )[1] ;
         MYSQL_USER_NAME = "";
         MYSQL_PASSWORD = "";
         MYSQL_HOST = "";
         MYSQL_DATABASE_NAME = "";
         MYSQL_JDBC_URL = "";
         MYSQL_JDBC_DRIVER = "";
-//        
-//        MYSQL_USER_NAME = (String) emfProprieties.get( "javax.persistence.jdbc.user" );
-//        MYSQL_PASSWORD = (String) emfProprieties.get( "javax.persistence.jdbc.password" );
-//        MYSQL_HOST = dburl.split( "//" )[ 1 ].split( "/" )[ 0 ].split( ":" )[ 0 ];
-//        MYSQL_DATABASE_NAME = dburl.split( "//" )[ 1 ].split( "/" )[ 1 ].replace( "?", ":" ).split( ":" )[ 0 ];
-//        MYSQL_JDBC_URL = (String) emfProprieties.get( "javax.persistence.jdbc.url" );
-//        MYSQL_JDBC_DRIVER = (String) emfProprieties.get( "javax.persistence.jdbc.driver" );
+
     }
 
     public static String DVML_COMECIAL_LDA = "DVML-COMERCIAL, Lda";

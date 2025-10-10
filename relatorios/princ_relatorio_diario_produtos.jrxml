@@ -96,17 +96,17 @@ ORDER BY p.designacao;]]>
 		</band>
 	</title>
 	<detail>
-		<band height="72" splitType="Stretch">
+		<band height="7" splitType="Stretch">
 			<subreport>
 				<reportElement uuid="95aad695-3185-49ff-9268-965e4e890cb9" x="0" y="0" width="322" height="7" isRemoveLineWhenBlank="true"/>
-				<subreportParameter name="PARM_DATA_2">
-					<subreportParameterExpression><![CDATA[$P{PARM_DATA_1}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="PARM_DATA_1">
-					<subreportParameterExpression><![CDATA[$P{PARM_DATA_2}]]></subreportParameterExpression>
-				</subreportParameter>
 				<subreportParameter name="CODIGO_PRODUTO">
 					<subreportParameterExpression><![CDATA[$F{codigo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PARM_DATA_1">
+					<subreportParameterExpression><![CDATA[$P{PARM_DATA_1}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PARM_DATA_2">
+					<subreportParameterExpression><![CDATA[$P{PARM_DATA_2}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_relatorio_diario_produtos.jasper"]]></subreportExpression>

@@ -157,6 +157,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         setLocationRelativeTo( null );
         jLabel7.setVisible( false );
         txtKilometragem.setVisible( false );
+
         //pegarResolucao();
         VendaUsuarioVisao.conexao = conexao;
 
@@ -292,6 +293,20 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         MetodosUtil.setArmazemByCampoConfigArmazem( cmbArmazem, conexao, cod_usuario );
 
         setWindowsListener();
+        btnFormaPagamento.setVisible( false );
+    }
+
+    public VendaUsuarioVisao( int cod_usuario, BDConexao conexao, String docPadraoPersonalizado ) throws SQLException
+    {
+        this( cod_usuario, conexao ); // chama o construtor original
+
+        // Agora força o documento padrão personalizado
+        setDocpadrao( docPadraoPersonalizado );
+
+        if ( docPadraoPersonalizado.equalsIgnoreCase( "Factura-Proforma" ) )
+        {
+            cmbTipoDocumento.setEnabled( false );
+        }
     }
 
     public JFrame getInstance()
@@ -615,7 +630,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         jPanel3.add(jlEmpresa, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, 460, -1));
 
         btnSemFormaPagamento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/impressora1.png"))); // NOI18N
-        btnSemFormaPagamento.setText("Finalisar");
+        btnSemFormaPagamento.setText("Finalizar");
         btnSemFormaPagamento.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -5141,7 +5156,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         for ( int i = 1; i <= numeroVias; i++ )
         {
             String via;
-            switch ( i )
+            switch (i)
             {
                 case 1:
                     via = "Original";
@@ -5633,8 +5648,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getValorComImposto( double qtd, double taxa, double preco_venda, double desconto )
     {
-        double subtotal_linha = ( preco_venda * qtd );
-        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
+        double subtotal_linha = (preco_venda * qtd);
+        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
         double valor_iva = 1 + ( taxa / 100 );//
         return ( ( subtotal_linha - desconto_valor ) * valor_iva );
 
@@ -5648,9 +5663,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getValorComRetencao( double qtd, double ret, double preco_venda, double desconto )
     {
-        double subtotal_linha = ( preco_venda * qtd );
-        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
-        double valor_ret = ( ( ( subtotal_linha - desconto_valor ) * ret ) / 100 );//
+        double subtotal_linha = (preco_venda * qtd);
+        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
+        double valor_ret = (( ( subtotal_linha - desconto_valor ) * ret ) / 100);//
         return ( valor_ret );
     }
 
@@ -5673,8 +5688,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getRET( double qtd, double taxa_r, double preco_venda, double desconto )
     {
-        double subtotal_linha = ( preco_venda * qtd );
-        double valor_ret = ( taxa_r / 100 );//
+        double subtotal_linha = (preco_venda * qtd);
+        double valor_ret = (taxa_r / 100);//
         return ( ( subtotal_linha - desconto ) * valor_ret );
 
     }
@@ -5682,14 +5697,14 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private void setWindowsListener()
     {
 
-        this.addWindowListener(new WindowAdapter()
+        this.addWindowListener( new WindowAdapter()
         {
             @Override
             public void windowActivated( WindowEvent e )
             {
                 mostrar_proximo_codigo_documento();
 
-                MetodosUtil.verificarCaixa(caixasController,
+                MetodosUtil.verificarCaixa( caixasController,
                         cod_usuario,
                         RootVisao.btn_abertura_dia_root,
                         RootVisao.btn_abertura_dia_root,
@@ -5704,7 +5719,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private void actualizar_abreviacao()
     {
 
-        switch ( getIdDocumento() )
+        switch (getIdDocumento())
         {
             case DVML.DOC_FACTURA_RECIBO_FR:
                 if ( ck_A4.isSelected() )
@@ -6182,7 +6197,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             // a incidência só é aplicável ao produtos sujeitos a iva 
             if ( taxa != 0 )
             {
-                double valor_unitario = ( preco_unitario * qtd );
+                double valor_unitario = (preco_unitario * qtd);
 
                 desconto_valor_linha = valor_unitario * ( ( valor_percentagem ) / 100 );
                 valor_taxa = ( valor_unitario - desconto_valor_linha ) / taxa;
@@ -6248,7 +6263,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getTotalAOARetencoes()
     {
-        double valores = ( getTotalRetencao1() );
+        double valores = (getTotalRetencao1());
         return ( valores );
     }
 
@@ -6298,7 +6313,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         Documento documento_local = (Documento) documentosController.findById( getIdDocumento() );
         String abreviacao_local = documento_local.getAbreviacao();
 
-        switch ( abreviacao_local )
+        switch (abreviacao_local)
         {
             case "FT":
                 return "Facturamos o valor de: ";

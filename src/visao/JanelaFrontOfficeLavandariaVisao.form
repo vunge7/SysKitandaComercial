@@ -25,7 +25,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="0" pref="1123" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="1126" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -47,17 +47,26 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="btnRecolha" max="32767" attributes="0"/>
-                      <Component id="jButton2" max="32767" attributes="0"/>
-                      <Component id="jButton3" pref="362" max="32767" attributes="0"/>
-                      <Component id="btnRelatorio" max="32767" attributes="0"/>
-                      <Component id="btn_abertura_dia_lav" max="32767" attributes="0"/>
-                      <Component id="btn_feicho_dia_lav" alignment="1" max="32767" attributes="0"/>
-                      <Component id="jButton4" max="32767" attributes="0"/>
-                      <Component id="btn_feicho_dia_lav1" alignment="1" max="32767" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="1" attributes="0">
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <Component id="btn_feicho_dia_lav" min="-2" pref="362" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="btnRecolha" max="32767" attributes="0"/>
+                              <Component id="jButton2" max="32767" attributes="0"/>
+                              <Component id="jButton3" pref="362" max="32767" attributes="0"/>
+                              <Component id="btnRelatorio" max="32767" attributes="0"/>
+                              <Component id="btn_abertura_dia_lav" max="32767" attributes="0"/>
+                              <Component id="jButton4" max="32767" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      </Group>
+                      <Component id="btn_feicho_dia_lav1" max="32767" attributes="0"/>
+                      <Component id="btn_feicho_dia_lav2" alignment="0" max="32767" attributes="0"/>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -71,16 +80,18 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jButton3" min="-2" pref="146" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="btnRelatorio" min="-2" pref="99" max="-2" attributes="0"/>
+                  <Component id="btnRelatorio" min="-2" pref="51" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="btn_abertura_dia_lav" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="btn_feicho_dia_lav" min="-2" pref="46" max="-2" attributes="0"/>
+                  <Component id="btn_feicho_dia_lav" min="-2" pref="40" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="btn_feicho_dia_lav1" min="-2" pref="46" max="-2" attributes="0"/>
+                  <Component id="btn_feicho_dia_lav1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jButton4" min="-2" pref="120" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <Component id="btn_feicho_dia_lav2" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jButton4" min="-2" pref="123" max="-2" attributes="0"/>
+                  <EmptySpace pref="21" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -179,13 +190,28 @@
         <Component class="javax.swing.JButton" name="btn_feicho_dia_lav1">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/imagens/alterar_32x32.png"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Factura Proforma"/>
+            <Property name="toolTipText" type="java.lang.String" value="Sair do Menu"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_feicho_dia_lav1ActionPerformed"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JButton" name="btn_feicho_dia_lav2">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/imagens/actualizar_1_32x32_1.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Reset de Senha"/>
             <Property name="toolTipText" type="java.lang.String" value="Sair do Menu"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_feicho_dia_lav1ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_feicho_dia_lav2ActionPerformed"/>
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
