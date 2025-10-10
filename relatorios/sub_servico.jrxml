@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub1_stock" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="5" bottomMargin="5" uuid="5342d3e6-c1f4-4891-82db-a86eaaf11a56">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub1_stock" language="groovy" pageWidth="555" pageHeight="832" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="4" uuid="5342d3e6-c1f4-4891-82db-a86eaaf11a56">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -51,12 +51,12 @@ ORDER BY tb_produto.`designacao` ASC]]>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="34">
+		<band height="14">
 			<rectangle>
-				<reportElement uuid="1008b270-d121-4131-b6c6-eb555315beec" x="0" y="0" width="555" height="23" forecolor="#666666" backcolor="#666666"/>
+				<reportElement uuid="1008b270-d121-4131-b6c6-eb555315beec" x="0" y="0" width="555" height="14" forecolor="#666666" backcolor="#666666"/>
 			</rectangle>
 			<textField>
-				<reportElement uuid="02aff1d0-c060-48ea-a8c0-2918524cdc54" x="0" y="0" width="202" height="23" forecolor="#FFFFFF"/>
+				<reportElement uuid="02aff1d0-c060-48ea-a8c0-2918524cdc54" x="0" y="0" width="202" height="14" forecolor="#FFFFFF"/>
 				<textElement verticalAlignment="Middle" markup="none">
 					<font fontName="Times New Roman" size="12" isBold="true"/>
 				</textElement>
@@ -65,12 +65,12 @@ ORDER BY tb_produto.`designacao` ASC]]>
 		</band>
 	</title>
 	<columnHeader>
-		<band height="19" splitType="Stretch">
+		<band height="12" splitType="Stretch">
 			<rectangle>
-				<reportElement uuid="fde1d824-608e-4967-81a2-45ba01ee7a27" x="0" y="0" width="555" height="19" forecolor="#FFFFFF" backcolor="#CCCCCC"/>
+				<reportElement uuid="fde1d824-608e-4967-81a2-45ba01ee7a27" x="0" y="0" width="555" height="12" forecolor="#FFFFFF" backcolor="#CCCCCC"/>
 			</rectangle>
 			<staticText>
-				<reportElement uuid="f8769786-9548-4a4e-843e-289587c488be" x="0" y="0" width="56" height="19" forecolor="#000000"/>
+				<reportElement uuid="f8769786-9548-4a4e-843e-289587c488be" x="0" y="0" width="56" height="12" forecolor="#000000"/>
 				<box leftPadding="2">
 					<pen lineColor="#666666"/>
 					<topPen lineWidth="0.5" lineColor="#666666"/>
@@ -84,7 +84,7 @@ ORDER BY tb_produto.`designacao` ASC]]>
 				<text><![CDATA[Cod. Serv.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="a26c77f7-7957-44f6-9027-c6d8f4a8b29a" x="56" y="0" width="432" height="19" forecolor="#000000"/>
+				<reportElement uuid="a26c77f7-7957-44f6-9027-c6d8f4a8b29a" x="56" y="0" width="421" height="12" forecolor="#000000"/>
 				<box leftPadding="2">
 					<pen lineColor="#666666"/>
 					<topPen lineWidth="0.5" lineColor="#666666"/>
@@ -98,15 +98,15 @@ ORDER BY tb_produto.`designacao` ASC]]>
 				<text><![CDATA[Designação]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="3703a2e4-1bb7-43cf-bf31-402f16d2d1c5" x="488" y="0" width="67" height="19" forecolor="#000000"/>
-				<box leftPadding="2">
+				<reportElement uuid="3703a2e4-1bb7-43cf-bf31-402f16d2d1c5" x="477" y="0" width="78" height="12" forecolor="#000000"/>
+				<box leftPadding="0" rightPadding="11">
 					<pen lineColor="#666666"/>
 					<topPen lineWidth="0.5" lineColor="#666666"/>
 					<leftPen lineWidth="0.5" lineColor="#666666"/>
 					<bottomPen lineColor="#666666"/>
 					<rightPen lineWidth="0.5" lineColor="#666666"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Custo]]></text>
@@ -114,9 +114,9 @@ ORDER BY tb_produto.`designacao` ASC]]>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="18" splitType="Stretch">
+		<band height="12" splitType="Stretch">
 			<textField>
-				<reportElement uuid="ae67ec88-ae13-4dfe-b0b6-6e98cde89187" x="56" y="0" width="432" height="18"/>
+				<reportElement uuid="ae67ec88-ae13-4dfe-b0b6-6e98cde89187" x="56" y="0" width="421" height="12"/>
 				<box leftPadding="2">
 					<pen lineStyle="Solid" lineColor="#666666"/>
 					<topPen lineStyle="Solid" lineColor="#666666"/>
@@ -125,35 +125,35 @@ ORDER BY tb_produto.`designacao` ASC]]>
 					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#666666"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9"/>
+					<font fontName="Times New Roman" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_produto_designacao}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="aece4ee0-f6f9-4e5f-b58a-20ad48c4beb5" x="0" y="0" width="56" height="18"/>
+				<reportElement uuid="aece4ee0-f6f9-4e5f-b58a-20ad48c4beb5" x="0" y="0" width="56" height="12"/>
 				<box leftPadding="2">
 					<pen lineStyle="Solid" lineColor="#666666"/>
 					<topPen lineStyle="Solid" lineColor="#666666"/>
-					<leftPen lineStyle="Solid" lineColor="#666666"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#666666"/>
 					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#666666"/>
 					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#666666"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9"/>
+					<font fontName="Times New Roman" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_produto_codigo}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
-				<reportElement uuid="f1c66ba1-bc96-4f3b-8d57-67936a2d7445" x="488" y="0" width="67" height="18"/>
-				<box leftPadding="2">
+				<reportElement uuid="f1c66ba1-bc96-4f3b-8d57-67936a2d7445" x="477" y="0" width="78" height="12"/>
+				<box leftPadding="0" rightPadding="6">
 					<pen lineStyle="Solid" lineColor="#666666"/>
 					<topPen lineStyle="Solid" lineColor="#666666"/>
 					<leftPen lineStyle="Solid" lineColor="#666666"/>
 					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#666666"/>
 					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#666666"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="true"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{MAX_PRECO_VENDA}]]></textFieldExpression>
 			</textField>

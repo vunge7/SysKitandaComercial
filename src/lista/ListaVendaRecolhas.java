@@ -390,7 +390,7 @@ public class ListaVendaRecolhas
 //                //Imprime directamente
                 if ( !performance )
                 {
-//                    JasperPrintManager.printReport( jasperPrint, false );
+                    JasperPrintManager.printReport( jasperPrint, false );
                 }
 
             }
@@ -453,7 +453,7 @@ public class ListaVendaRecolhas
                 //Imprime directamente
                 if ( !performance )
                 {
-//                    JasperPrintManager.printReport( jasperPrint, false );
+                    JasperPrintManager.printReport( jasperPrint, false );
                 }
 
             }

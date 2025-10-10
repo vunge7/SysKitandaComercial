@@ -1,6 +1,3 @@
-
-
-
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -18,6 +15,7 @@ import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.swing.JOptionPane;
+
 /**
  *
  * @author Domingos Dala Vunge & Martinho Canhongo Luis
@@ -47,19 +45,16 @@ public class JPAEntityMannagerFactoryUtil
 //                
 //                String ip = "localhost";
 
-//                String url = "jdbc:mysql://"   +ip +":3306/kitanda_db_1_moys_gulele_dvml_k11_joaquim?zeroDateTimeBehavior=convertToNull";
-
-
-//                String user = "root";
-//                String password = "DoV90x?#";
-//                
-//                Map map = new HashMap();
-//                map.put("javax.persistence.jdbc.url", url); //esta propriedade vai substituir aquela q esta no arquivo
-//                map.put("javax.persistence.jdbc.user", user); //esta propriedade vai substituir aquela q esta no arquivo
-//                map.put("javax.persistence.jdbc.password", password); //esta propriedade vai substituir aquela q esta no arquivo
-////    
-//                return  javax.persistence.Persistence.createEntityManagerFactory( "SGCMINIMERCADOPU", map );
-//                
+                   //                String url = "jdbc:mysql://"   +ip +":3306/kitanda_db_moys_gulele_dvml_k11_joaquim?zeroDateTimeBehavior=convertToNull";
+                    //                String password = "DoV90x?#";
+                    //                
+                    //                Map map = new HashMap();
+                    //                map.put("javax.persistence.jdbc.url", url); //esta propriedade vai substituir aquela q esta no arquivo
+                    //                map.put("javax.persistence.jdbc.user", user); //esta propriedade vai substituir aquela q esta no arquivo
+                    //                map.put("javax.persistence.jdbc.password", password); //esta propriedade vai substituir aquela q esta no arquivo
+                    ////    
+                    //                return  javax.persistence.Persistence.createEntityManagerFactory( "SGCMINIMERCADOPU", map );
+                    //                
             return em.createEntityManager();
         }
         catch ( Exception e )
@@ -86,10 +81,7 @@ public class JPAEntityMannagerFactoryUtil
                     String ip = informacao.get( 0 );
                     String porta = informacao.get( 1 );
 
-
-
-                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_1?zeroDateTimeBehavior=convertToNull";
-
+                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db?zeroDateTimeBehavior=convertToNull";
 
                     String user = "root";
                     String password = "DoV90x?#";

@@ -6,6 +6,8 @@
 	<parameter name="CODIGO_PRODUTO" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
+	<parameter name="PARM_DATA_2" class="java.util.Date"/>
+	<parameter name="PARM_DATA_1" class="java.util.Date"/>
 	<queryString>
 		<![CDATA[SELECT
     p.codigo,
@@ -20,7 +22,9 @@ JOIN tb_venda v     ON iv.codigo_venda = v.codigo
 JOIN tb_produto p   ON iv.codigo_produto = p.codigo
 JOIN tb_preco pr    ON iv.fk_preco = pr.pk_preco
 WHERE
-  iv.codigo_produto = $P{CODIGO_PRODUTO}
+  iv.codigo_produto = $P{CODIGO_PRODUTO} AND DATE(v.dataVenda) BETWEEN $P{PARM_DATA_1} AND $P{PARM_DATA_2}
+  AND v.fk_documento IN (1,2)
+  AND v.status_eliminado = 'false'
 GROUP BY pr.preco_venda
 ORDER BY pr.preco_venda;]]>
 	</queryString>

@@ -36,10 +36,10 @@ ORDER BY
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="132" splitType="Stretch">
+		<band height="102" splitType="Stretch">
 			<textField>
-				<reportElement uuid="7cbe433c-af15-437d-bd59-8b89f30a3cf2" key="staticText" x="0" y="0" width="535" height="34"/>
-				<textElement markup="none">
+				<reportElement uuid="7cbe433c-af15-437d-bd59-8b89f30a3cf2" key="staticText" x="121" y="0" width="414" height="34"/>
+				<textElement textAlignment="Center" markup="none">
 					<font fontName="Times New Roman" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_nome}]]></textFieldExpression>
@@ -49,21 +49,25 @@ ORDER BY
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Times New Roman" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[LISTA DE SERVIÇOS]]></text>
+				<text><![CDATA[LISTA DE SERVIÇOS / TABELA DE PREÇOS]]></text>
 			</staticText>
 			<textField>
-				<reportElement uuid="ff488d70-7dab-4164-8194-b632c827369e" key="staticText" x="1" y="27" width="535" height="22"/>
-				<textElement markup="none">
+				<reportElement uuid="ff488d70-7dab-4164-8194-b632c827369e" key="staticText" x="121" y="13" width="415" height="39"/>
+				<textElement textAlignment="Center" markup="none">
 					<font fontName="Times New Roman" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_enderecos}]]></textFieldExpression>
 			</textField>
+			<image scaleImage="FillFrame">
+				<reportElement uuid="dc08a963-e3c8-4468-b086-1d9dfb064f62" x="-5" y="-5" width="126" height="97"/>
+				<imageExpression><![CDATA["logo/logo_dvml.png"]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<detail>
-		<band height="33" splitType="Stretch">
+		<band height="10" splitType="Stretch">
 			<subreport>
-				<reportElement uuid="a8b7f803-47c0-4587-85a3-8bfbd0247b82" x="-29" y="0" width="295" height="33"/>
+				<reportElement uuid="a8b7f803-47c0-4587-85a3-8bfbd0247b82" x="-12" y="0" width="295" height="10" isRemoveLineWhenBlank="true"/>
 				<subreportParameter name="ID_TIPO_PRODUTO">
 					<subreportParameterExpression><![CDATA[$F{tb_tipo_produto_codigo}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -79,7 +83,7 @@ ORDER BY
 		<band splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="57" splitType="Stretch">
+		<band height="38" splitType="Stretch">
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement uuid="4646e94a-e9bb-439b-ba48-ac7695b9f5dc" key="textField" x="325" y="4" width="170" height="19"/>
 				<box>

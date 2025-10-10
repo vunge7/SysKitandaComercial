@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="relatorio_diario_produtos" language="groovy" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="963621be-cfd4-4f53-8a8b-bed5b630fd64">
 	<property name="ireport.zoom" value="4.0"/>
-	<property name="ireport.x" value="1335"/>
+	<property name="ireport.x" value="364"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="CODIGO_PRODUTO" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
+	<parameter name="PARM_DATA_1" class="java.util.Date"/>
+	<parameter name="PARM_DATA_2" class="java.util.Date"/>
 	<queryString>
 		<![CDATA[SELECT
     p.codigo,
@@ -20,7 +22,9 @@ JOIN tb_venda v     ON iv.codigo_venda = v.codigo
 JOIN tb_produto p   ON iv.codigo_produto = p.codigo
 JOIN tb_preco pr    ON iv.fk_preco = pr.pk_preco
 WHERE
-  iv.codigo_produto = $P{CODIGO_PRODUTO}
+  iv.codigo_produto = $P{CODIGO_PRODUTO} AND DATE(v.dataVenda) BETWEEN $P{PARM_DATA_1} AND $P{PARM_DATA_2}
+  AND v.fk_documento IN (1,2)
+  AND v.status_eliminado = 'false'
 GROUP BY pr.preco_venda
 ORDER BY pr.preco_venda;]]>
 	</queryString>
