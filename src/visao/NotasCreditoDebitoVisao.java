@@ -1697,7 +1697,7 @@ public class NotasCreditoDebitoVisao extends javax.swing.JFrame implements Runna
 
         try
         {
-            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getVenda( cmbFacturaCredito ).getIdArmazemFK().getCodigo(), DVML.JANELA_VENDA, conexao ).show();
+            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getVenda( cmbFacturaCredito ).getIdArmazemFK().getCodigo(), DVML.JANELA_VENDA, BDConexao.getInstancia()).setVisible(true);
         }
         catch ( Exception e )
         {

@@ -191,6 +191,8 @@ public class TbDadosInstituicao implements Serializable
     private String tipoFechoCaixa;
     @Column( name = "enviar_email" )
     private String enviarEmail;
+    @Column( name = "stock_consulta" )
+    private String stockConsulta;
     @Column( name = "tipo_ficha_tecnica" )
     private String tipoFichaTecnica;
     @Basic( optional = false )
@@ -220,6 +222,16 @@ public class TbDadosInstituicao implements Serializable
         this.enderecos = enderecos;
         this.email = email;
         this.nif = nif;
+    }
+
+    public String getStockConsulta()
+    {
+        return stockConsulta;
+    }
+
+    public void setStockConsulta( String stockConsulta )
+    {
+        this.stockConsulta = stockConsulta;
     }
 
     public String getEnviarEmail()

@@ -570,7 +570,7 @@ public class UsuarioRhVisao extends javax.swing.JFrame {
     private void btnEliminar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminar1ActionPerformed
         // TODO add your handling code here:
         
-        new PermissaoRH_TesourariaVisao().show();
+        new PermissaoRH_TesourariaVisao().setVisible(true);
         
     }//GEN-LAST:event_btnEliminar1ActionPerformed
 

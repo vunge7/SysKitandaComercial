@@ -132,7 +132,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //    private static Ite tipoProdutosController;
     private static TbStock stock_local;
     private TbItemPedidos itemPedidos;
-    private static MesasDao mesasDao = new MesasDao( emf );
+    private static MesasDao mesasDao = new MesasDao(emf );
     private static PrecoDao precoDao = new PrecoDao( emf );
     private static CaixaDao caixaDao;
     private static PedidoDao pedidoDao = new PedidoDao( emf );
@@ -1451,10 +1451,10 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
                         dispose();
 
-                        new FormaPagamentoVisao( this, rootPaneCheckingEnabled, emf, DVML.VENDA_RESTAURANTE, conexao ).setVisible( true );
+                        new FormaPagamentoVisao( this, rootPaneCheckingEnabled, emf, DVML.VENDA_RESTAURANTE, BDConexao.getInstancia()).setVisible(true);
 
                     }
-                    else if ( opcao == JOptionPane.NO_OPTION )
+                    else if (opcao == JOptionPane.NO_OPTION )
                     {
 
                         try
@@ -1739,15 +1739,15 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         {
             if ( rbNao_lugar.isSelected() && activo_um_lugar() )
             {
-                new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_RETAURANTE, conexao ).show();
+                new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_RETAURANTE, BDConexao.getInstancia()).setVisible(true);
             }
             else
             {
 
-                new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_RETAURANTE, conexao ).show();
+                new BuscaProdutoVisao(this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_RETAURANTE, BDConexao.getInstancia()).setVisible(true);
             }
         }
-        catch ( Exception e )
+        catch (Exception e )
         {
             e.printStackTrace();
         }
@@ -1803,7 +1803,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
     private void btClienteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btClienteActionPerformed
     {//GEN-HEADEREND:event_btClienteActionPerformed
-        new ClienteVisao( this, rootPaneCheckingEnabled, conexao ).show();
+        new ClienteVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btClienteActionPerformed
 
     private void txtIniciaisClienteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtIniciaisClienteActionPerformed
@@ -6015,29 +6015,63 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
     }
 
-    public static void verificarCaixa()
-    {
+//    public static void verificarCaixa()
+//    {
+//
+//        if ( !caixasController.existeCaixas() )
+//        {
+//            BT_Pedidos.setEnabled( false );
+//            BT_Conversao.setEnabled( false );
+//            status_mensagem_primaria.setText( "" );
+//        }
+//        else if ( caixasController.existe_abertura() && caixasController.existe_fecho() )
+//        {
+//            BT_Conversao.setEnabled( false );
+//            BT_Conversao.setEnabled( false );
+//            status_mensagem_primaria.setText( "Deves abrir o caixa" );
+//
+//        }
+//        else
+//        {
+//            BT_Conversao.setEnabled( true );
+//            BT_Conversao.setEnabled( true );
+//            status_mensagem_primaria.setText( "" );
+//        }
+//    }
+    
+    public static void verificarCaixa(int idUsuarioAtual) {
 
-        if ( !caixasController.existeCaixas() )
-        {
-            BT_Pedidos.setEnabled( false );
-            BT_Conversao.setEnabled( false );
-            status_mensagem_primaria.setText( "" );
-        }
-        else if ( caixasController.existe_abertura() && caixasController.existe_fecho() )
-        {
-            BT_Conversao.setEnabled( false );
-            BT_Conversao.setEnabled( false );
-            status_mensagem_primaria.setText( "Deves abrir o caixa" );
-
-        }
-        else
-        {
-            BT_Conversao.setEnabled( true );
-            BT_Conversao.setEnabled( true );
-            status_mensagem_primaria.setText( "" );
-        }
+    if (!caixasController.existeCaixas()) {
+        BT_Pedidos.setEnabled(false);
+        BT_Conversao.setEnabled(false);
+        status_mensagem_primaria.setText("");
+        return;
     }
+
+    boolean abertura = caixasController.existe_abertura(idUsuarioAtual);
+    boolean fecho = caixasController.existe_fecho(idUsuarioAtual);
+
+    // ajusta a lógica conforme o comportamento desejado:
+    // se houver abertura e ainda não houve fecho -> caixa aberto -> permitir vendas
+    if (abertura && !fecho) {
+        BT_Conversao.setEnabled(true);
+        BT_Pedidos.setEnabled(true);
+        status_mensagem_primaria.setText("");
+    }
+    // se houver abertura e já houve fecho -> deve abrir novo caixa
+    else if (abertura && fecho) {
+        BT_Conversao.setEnabled(false);
+        BT_Pedidos.setEnabled(false);
+        status_mensagem_primaria.setText("Deves abrir o caixa");
+    }
+    // se não há abertura -> desativa ações
+    else {
+        BT_Conversao.setEnabled(false);
+        BT_Pedidos.setEnabled(false);
+        status_mensagem_primaria.setText("");
+    }
+}
+
 
     private void setWindowsListener()
     {

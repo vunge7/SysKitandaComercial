@@ -57,7 +57,7 @@ public class NovoMenuPrincipalTesourariaVisao extends javax.swing.JFrame
     private boolean administrador = false;
     public static Contas contaOrigem;
     public static Contas contaDestino;
-    public Color color_1 = new Color( 0, 204, 204, 100 );
+    public Color color_1 = new Color(0, 204, 204, 100 );
     public Color color_2 = new Color( 0, 204, 204, 0 );
     public static Vector<Color> degradacao = new Vector<>();
     private static ContaPermissoes contaPermissoes;
@@ -1187,14 +1187,14 @@ public class NovoMenuPrincipalTesourariaVisao extends javax.swing.JFrame
         MetodosUtil.fechar_todas_janelas();
         MetodosUtil.actualizar_status( this.idUser, "Activo" );
 //        MetodosUtil.actualizar_ip_address( this.idUser, "" );
-        //new LoginVisao().show();
-        new RootVisao( this.idUser, 1, administrador, this.conexao ).show();
+        //new LoginVisao().setVisible(true);
+        new RootVisao( this.idUser, 1, administrador, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jButton12ActionPerformed
 
     private void btnCadastroUsuarioActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnCadastroUsuarioActionPerformed
     {//GEN-HEADEREND:event_btnCadastroUsuarioActionPerformed
         // TODO add your handling code here:
-        new UsuarioTesourariaVisao( this, rootPaneCheckingEnabled, idUser, conexao ).setVisible( true );
+        new UsuarioTesourariaVisao( this, rootPaneCheckingEnabled, idUser, BDConexao.getInstancia()).setVisible(true);
 
     }//GEN-LAST:event_btnCadastroUsuarioActionPerformed
 

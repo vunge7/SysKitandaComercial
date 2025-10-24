@@ -126,7 +126,7 @@ public class LinhaUsuarioVisao extends javax.swing.JPanel
     private void btnPermissoesActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnPermissoesActionPerformed
     {//GEN-HEADEREND:event_btnPermissoesActionPerformed
         // TODO add your handling code here:
-        new PermissoesVisao( usuario, conexao ).setVisible( true );
+        new PermissoesVisao( usuario, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btnPermissoesActionPerformed
 
 

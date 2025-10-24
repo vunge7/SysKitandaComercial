@@ -1825,7 +1825,7 @@ public class MesasTranferenciasVisao extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Transferencia efectuada com sucesso.");
             dispose();
 
-//            new PrincipalPedidosVisao(idUser, lugar, id_armazem, conexao ).setVisible( true);
+//            new PrincipalPedidosVisao(idUser, lugar, id_armazem, BDConexao.getInstancia()).setVisible(true);
         } else {
             criar_item_pedido_transferencia(idPedidoDestino);
             PedidoDao.eliminarPedido(pedidoDao.findTbPedido(idPedidoOrigemMesa), conexao);

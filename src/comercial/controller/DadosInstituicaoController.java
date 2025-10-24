@@ -5,7 +5,6 @@
  */
 package comercial.controller;
 
-
 import java.sql.Connection;
 import entity.TbDadosInstituicao;
 import java.sql.ResultSet;
@@ -90,6 +89,8 @@ public class DadosInstituicaoController implements EntidadeFactory
                 dadosIntituicao.setPrazoProforma( result.getInt( "prazo_proforma" ) );
                 dadosIntituicao.setTipoFechoCaixa( result.getString( "tipo_fecho_caixa" ) );
                 dadosIntituicao.setEnviarEmail( result.getString( "enviar_email" ) );
+                dadosIntituicao.setStockConsulta( result.getString( "stock_consulta" ) );
+                dadosIntituicao.setTipoFichaTecnica( result.getString( "tipo_ficha_tecnica" ) );
                 list.add( dadosIntituicao );
             }
 
@@ -165,52 +166,80 @@ public class DadosInstituicaoController implements EntidadeFactory
     }
 
     @Override
-    public Object findById( int codigo )
-    {
+public Object findById(int codigo) {
+    TbDadosInstituicao dadosInstituicao = null;
 
-        String FIND__BY_CODIGO = "SELECT * FROM tb_dados_instituicao WHERE idDadosInsitiuicao = " + codigo;
-        ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
-        TbDadosInstituicao dadosIntituicao = null;
-        try
-        {
-
-            if ( result.next() )
-            {
-                dadosIntituicao = new TbDadosInstituicao();
-                dadosIntituicao.setIdDadosInsitiuicao( result.getInt( "idDadosInsitiuicao" ) );
-                dadosIntituicao.setNome( result.getString( "nome" ) );
-                dadosIntituicao.setDocpadrao( result.getString( "docpadrao" ) );
-                dadosIntituicao.setNegocio( result.getString( "negocio" ) );
-                dadosIntituicao.setConfigArmazens( result.getString( "config_armazens" ) );
-                dadosIntituicao.setTranstorno( result.getString( "transtorno" ) );
-                dadosIntituicao.setDescontoFinanceiro( result.getString( "desconto_financeiro" ) );
-                dadosIntituicao.setAnoEconomico( result.getString( "ano_economico" ) );
-                dadosIntituicao.setVizualisarStock( result.getString( "vizualisar_stock" ) );
-                dadosIntituicao.setNumeroVias( result.getInt( "numero_vias" ) );
-                dadosIntituicao.setImpressora( result.getString( "impressora" ) );
-                dadosIntituicao.setImpressoraCozinha( result.getString( "impressora_cozinha" ) );
-                dadosIntituicao.setImpressoraSala( result.getString( "impressora_sala" ) );
-                dadosIntituicao.setFoco( result.getString( "foco" ) );
-                dadosIntituicao.setRegime( result.getString( "regime" ) );
-                dadosIntituicao.setUsarDoisPrecos( result.getString( "usar_dois_precos" ) );
-                dadosIntituicao.setDesactivarvias( result.getString( "desactivarvias" ) );
-                dadosIntituicao.setTeclado( result.getString( "teclado" ) );
-                dadosIntituicao.setPrazoProforma( result.getInt( "prazo_proforma" ) );
-                dadosIntituicao.setDesactivarLugares( result.getString( "desactivar_lugares" ) );
-                dadosIntituicao.setHoraTerminoVenda( result.getTimestamp( "hora_termino_venda" ) );
-                dadosIntituicao.setTipoFechoCaixa( result.getString( "tipo_fecho_caixa" ) );
-                dadosIntituicao.setEnviarEmail( result.getString( "enviar_email" ) );
-
-            }
-
-        }
-        catch ( SQLException e )
-        {
-            e.printStackTrace();
-        }
-        return dadosIntituicao;
-
+    // ✅ Verificação de segurança: conexão obrigatória
+    if (conexao == null || conexao.getConnectionAtiva() == null) {
+        System.err.println("[DadosInstituicaoController] ❌ Conexão não inicializada ou inativa!");
+        return null;
     }
+
+    String FIND_BY_CODIGO = 
+        "SELECT * FROM tb_dados_instituicao WHERE idDadosInsitiuicao = " + codigo;
+
+    ResultSet result = null;
+
+    try {
+        // ✅ Executa a consulta
+        result = conexao.executeQuery(FIND_BY_CODIGO);
+
+        // ✅ Verifica se veio resultado
+        if (result != null && result.next()) {
+            dadosInstituicao = new TbDadosInstituicao();
+
+            dadosInstituicao.setIdDadosInsitiuicao(result.getInt("idDadosInsitiuicao"));
+            dadosInstituicao.setNome(result.getString("nome"));
+            dadosInstituicao.setDocpadrao(result.getString("docpadrao"));
+            dadosInstituicao.setNegocio(result.getString("negocio"));
+            dadosInstituicao.setConfigArmazens(result.getString("config_armazens"));
+            dadosInstituicao.setTranstorno(result.getString("transtorno"));
+            dadosInstituicao.setDescontoFinanceiro(result.getString("desconto_financeiro"));
+            dadosInstituicao.setAnoEconomico(result.getString("ano_economico"));
+            dadosInstituicao.setVizualisarStock(result.getString("vizualisar_stock"));
+            dadosInstituicao.setNumeroVias(result.getInt("numero_vias"));
+            dadosInstituicao.setImpressora(result.getString("impressora"));
+            dadosInstituicao.setImpressoraCozinha(result.getString("impressora_cozinha"));
+            dadosInstituicao.setImpressoraSala(result.getString("impressora_sala"));
+            dadosInstituicao.setFoco(result.getString("foco"));
+            dadosInstituicao.setRegime(result.getString("regime"));
+            dadosInstituicao.setUsarDoisPrecos(result.getString("usar_dois_precos"));
+            dadosInstituicao.setDesactivarvias(result.getString("desactivarvias"));
+            dadosInstituicao.setTeclado(result.getString("teclado"));
+            dadosInstituicao.setPrazoProforma(result.getInt("prazo_proforma"));
+            dadosInstituicao.setDesactivarLugares(result.getString("desactivar_lugares"));
+            dadosInstituicao.setHoraTerminoVenda(result.getTimestamp("hora_termino_venda"));
+            dadosInstituicao.setTipoFechoCaixa(result.getString("tipo_fecho_caixa"));
+            dadosInstituicao.setEnviarEmail(result.getString("enviar_email"));
+            dadosInstituicao.setStockConsulta(result.getString("stock_consulta"));
+            dadosInstituicao.setTipoFichaTecnica(result.getString("tipo_ficha_tecnica"));
+        } 
+        else {
+            System.err.println("[DadosInstituicaoController] ⚠ Nenhum registo encontrado para o ID: " + codigo);
+        }
+
+    } catch (SQLException e) {
+        System.err.println("[DadosInstituicaoController] ❌ Erro ao buscar dados da instituição: " + e.getMessage());
+        e.printStackTrace();
+
+    } catch (Exception e) {
+        System.err.println("[DadosInstituicaoController] ⚠ Erro inesperado: " + e.getMessage());
+        e.printStackTrace();
+
+    } finally {
+        // ✅ Fecha o ResultSet corretamente para evitar vazamento de recursos
+        try {
+            if (result != null && !result.isClosed()) {
+                result.getStatement().close();
+                result.close();
+            }
+        } catch (SQLException e) {
+            System.err.println("[DadosInstituicaoController] ⚠ Falha ao fechar ResultSet: " + e.getMessage());
+        }
+    }
+
+    return dadosInstituicao;
+}
 
     public TbDadosInstituicao getLastUsuario()
     {
@@ -240,6 +269,8 @@ public class DadosInstituicaoController implements EntidadeFactory
                 dadosIntituicao.setPrazoProforma( result.getInt( "prazo_proforma" ) );
                 dadosIntituicao.setTipoFechoCaixa( result.getString( "tipo_fecho_caixa" ) );
                 dadosIntituicao.setEnviarEmail( result.getString( "enviar_email" ) );
+                dadosIntituicao.setStockConsulta( result.getString( "stock_consulta" ) );
+                dadosIntituicao.setTipoFichaTecnica( result.getString( "tipo_ficha_tecnica" ) );
 
             }
 
@@ -286,7 +317,9 @@ public class DadosInstituicaoController implements EntidadeFactory
                 dadosInstituicao.setPrazoProforma( result.getInt( "prazo_proforma" ) );
                 dadosInstituicao.setTipoFechoCaixa( result.getString( "tipo_fecho_caixa" ) );
                 dadosInstituicao.setEnviarEmail( result.getString( "enviar_email" ) );
+                dadosInstituicao.setStockConsulta( result.getString( "stock_consulta" ) );
                 dadosInstituicao.setTipoFichaTecnica( result.getString( "tipo_ficha_tecnica" ) );
+
             }
 
         }

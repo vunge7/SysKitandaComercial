@@ -1016,190 +1016,190 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
 
     private void btn_mesa_1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_1ActionPerformed
 
-        new NovaGestaoPedidosVisao( btn_mesa_1.getText(), lugar, this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_1.getText(), lugar, this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_1ActionPerformed
 
     private void btn_mesa_2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_2ActionPerformed
         // TODO add your handling code here:
-        new NovaGestaoPedidosVisao( btn_mesa_2.getText(), lugar, this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_2.getText(), lugar, this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_2ActionPerformed
 
     private void btn_mesa_3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_3ActionPerformed
         // TODO add your handling code here:
-        new NovaGestaoPedidosVisao( btn_mesa_3.getText(), lugar, this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_3.getText(), lugar, this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_3ActionPerformed
 
     private void btn_mesa_4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_4ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_4.getText(), lugar, this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_4.getText(), lugar, this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_4ActionPerformed
 
     private void btn_mesa_10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_10ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_10.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_10.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_10ActionPerformed
 
     private void btn_mesa_5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_5ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_5.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_5.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_5ActionPerformed
 
     private void btn_mesa_6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_6ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_6.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_6.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_6ActionPerformed
 
     private void btn_mesa_7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_7ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_7.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_7.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_7ActionPerformed
 
     private void btn_mesa_9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_9ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_9.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_9.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_9ActionPerformed
 
     private void btn_mesa_8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_8ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_8.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_8.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_8ActionPerformed
 
     private void btn_mesa_11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_11ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_11.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_11.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_11ActionPerformed
 
     private void btn_mesa_12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_12ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_12.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_12.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_12ActionPerformed
 
     private void btn_mesa_13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_13ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_13.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_13.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_13ActionPerformed
 
     private void btn_mesa_14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_14ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_14.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_14.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_14ActionPerformed
 
     private void btn_mesa_16ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_16ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_16.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_16.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_16ActionPerformed
 
     private void btn_mesa_15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_15ActionPerformed
         // TODO add your handling code here:
-        new NovaGestaoPedidosVisao( btn_mesa_15.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_15.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_15ActionPerformed
 
     private void btn_mesa_32ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_32ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_32ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_32.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_32.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_32ActionPerformed
 
     private void btn_mesa_24ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_24ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_24ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_24.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_24.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_24ActionPerformed
 
     private void btn_mesa_23ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_23ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_23ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_23.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_23.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_23ActionPerformed
 
     private void btn_mesa_31ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_31ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_31ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_31.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_31.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_31ActionPerformed
 
     private void btn_mesa_30ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_30ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_30ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_30.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_30.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_30ActionPerformed
 
     private void btn_mesa_22ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_22ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_22ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_22.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_22.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_22ActionPerformed
 
     private void btn_mesa_21ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_21ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_21ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_21.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_21.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_21ActionPerformed
 
     private void btn_mesa_29ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_29ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_29ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_29.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_29.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_29ActionPerformed
 
     private void btn_mesa_28ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_28ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_28ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_28.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_28.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_28ActionPerformed
 
     private void btn_mesa_20ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_20ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_20ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_20.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_20.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_20ActionPerformed
 
     private void btn_mesa_19ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_19ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_19ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_19.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_19.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_19ActionPerformed
 
     private void btn_mesa_27ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_27ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_27ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_27.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_27.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_27ActionPerformed
 
     private void btn_mesa_26ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_26ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_26ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_26.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_26.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_26ActionPerformed
 
     private void btn_mesa_18ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_18ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_18ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_18.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_18.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_18ActionPerformed
 
     private void btn_mesa_17ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_17ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_17ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_17.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_17.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_17ActionPerformed
 
     private void btn_mesa_25ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_25ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_25ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_25.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_25.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_25ActionPerformed
 
     private void btn_mesa_33ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_33ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_33ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_33.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_33.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_33ActionPerformed
 
     private void btn_mesa_34ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_34ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_34ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_34.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_34.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_34ActionPerformed
 
     private void btn_mesa_35ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_35ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_35ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_35.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_35.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_35ActionPerformed
 
     private void btn_mesa_36ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_36ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_36ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_36.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_36.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_36ActionPerformed
 
     private void btn_mesa_37ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_37ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_37ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_37.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_37.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_37ActionPerformed
 
     private void btn_mesa_38ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_38ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_38ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_38.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_38.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_38ActionPerformed
 
     private void btn_mesa_39ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_39ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_39ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_39.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_39.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_39ActionPerformed
 
     private void btn_mesa_40ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_40ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_40ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_40.getText(), "", this.idUser, id_armazem, conexao ).show();
+        new NovaGestaoPedidosVisao( btn_mesa_40.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_40ActionPerformed
 
     private void cmbArmazemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbArmazemActionPerformed

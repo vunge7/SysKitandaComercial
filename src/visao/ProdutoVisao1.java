@@ -46,7 +46,7 @@ public class ProdutoVisao1 extends javax.swing.JFrame
     private static TbProduto produto;
     private static ProdutoImposto produto_imposto;
     private static Retencao retencao;
-    private static ProdutoDao produtoDao = new ProdutoDao( emf );
+    private static ProdutoDao produtoDao = new ProdutoDao(emf );
     private DadosInstituicaoDao dadosInstituicaoDao = new DadosInstituicaoDao( emf );
     private static ProdutosMotivosIsensaoDao produtosMotivosIsensaoDao;
     private static UsuarioDao usuarioDao = new UsuarioDao( emf );
@@ -1119,7 +1119,7 @@ public class ProdutoVisao1 extends javax.swing.JFrame
         try
         {
 
-            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getIdArmazem(), DVML.JANELA_PRODUTO, conexao ).show();
+            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getIdArmazem(), DVML.JANELA_PRODUTO, BDConexao.getInstancia()).setVisible(true);
 
         }
         catch ( Exception e )

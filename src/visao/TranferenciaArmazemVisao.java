@@ -731,7 +731,7 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
         try
         {
 
-            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazemOrigem(), DVML.JANELA_COMPRA, conexao ).show();
+            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazemOrigem(), DVML.JANELA_COMPRA, BDConexao.getInstancia()).setVisible(true);
             txtQtdEntrar.requestFocus();
         }
         catch ( Exception e )
@@ -783,7 +783,7 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
 
     public static void main( String[] args )
     {
-        new TranferenciaArmazemVisao( 15, BDConexao.getInstancia() ).show();
+        new TranferenciaArmazemVisao( 15, BDConexao.getInstancia() ).setVisible(true);
     }
 
     @Override

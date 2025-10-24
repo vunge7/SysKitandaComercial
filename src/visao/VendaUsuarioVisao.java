@@ -150,7 +150,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private static final int INDEX_TABLE_TAXA_IVA = 6;
     private String doc = "";
 
-    public VendaUsuarioVisao( int cod_usuario, BDConexao conexao ) throws SQLException
+    public VendaUsuarioVisao(int cod_usuario, BDConexao conexao ) throws SQLException
     {
 
         initComponents();
@@ -236,7 +236,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                         return false;
                     }
                 } );
-        //new BuscaProdutoVisao( VendaUsuarioVisao.this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_VENDA ).show();
+        //new BuscaProdutoVisao( VendaUsuarioVisao.this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_VENDA ).setVisible(true);
 //        MetodosUtil.FUNCAO_F1( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_VENDA);
 
         KeyboardFocusManager.getCurrentKeyboardFocusManager()
@@ -249,9 +249,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                         {
                             try
                             {
-                                new BuscaProdutoVisao( getInstance(), rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_VENDA, conexao ).show();
+                                new BuscaProdutoVisao( getInstance(), rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_VENDA, BDConexao.getInstancia()).setVisible(true);
                             }
-                            catch ( Exception ex )
+                            catch (Exception ex )
                             {
                                 ex.printStackTrace();
                             }
@@ -279,9 +279,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                                 VendaUsuarioVisao.this, // ou "this" conforme contexto
                                 rootPaneCheckingEnabled,
                                 getCodigoArmazem(),
-                                DVML.JANELA_VENDA,
-                                conexao
-                        ).setVisible( true ); // melhor que .show()
+                                DVML.JANELA_VENDA, BDConexao.getInstancia()).setVisible(true); // melhor que .setVisible(true)
                     }
                 }
                 catch ( Exception ex )
@@ -295,7 +293,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         MetodosUtil.setArmazemByCampoConfigArmazem( cmbArmazem, conexao, cod_usuario );
 
         setWindowsListener();
-        btnFormaPagamento.setVisible( false );
+        btnSemFormaPagamento.setVisible( false );
     }
 
     public VendaUsuarioVisao( int cod_usuario, BDConexao conexao, String docPadraoPersonalizado ) throws SQLException
@@ -1686,10 +1684,10 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         {
             if ( validar() )
             {
-                new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_VENDA, conexao ).show();
+                new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_VENDA, BDConexao.getInstancia()).setVisible(true);
             }
         }
-        catch ( Exception e )
+        catch (Exception e )
         {
             e.printStackTrace();
         }
@@ -1747,7 +1745,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     }//GEN-LAST:event_txtCodigoManualActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        new ClienteVisao( this, rootPaneCheckingEnabled, conexao ).show();
+        new ClienteVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void txtNifClientePesquisaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNifClientePesquisaActionPerformed
@@ -1828,11 +1826,11 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //         new FormaPagamentoVisao( this, rootPaneCheckingEnabled, DVML.VENDA_PONTUAL, emf ).setVisible( true );
 //        if ( MetodosUtil.licencaValidada( conexao ) )
 //        {
-//            new FormaPagamentoVisao( this, rootPaneCheckingEnabled, null, DVML.VENDA_PONTUAL, conexao ).setVisible( true );
+//            new FormaPagamentoVisao( this, rootPaneCheckingEnabled, null, DVML.VENDA_PONTUAL, BDConexao.getInstancia()).setVisible(true);
 //
 //        }
 
-        if ( MetodosUtil.licencaValidada( conexao ) )
+        if (MetodosUtil.licencaValidada( conexao ) )
         {
             if ( !MetodosUtil.tabela_vazia( table ) )
             {
@@ -1841,8 +1839,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                     return; // Se houver erro, não abre forma de pagamento
                 }
 
-                new FormaPagamentoVisao( this, rootPaneCheckingEnabled, null, DVML.VENDA_PONTUAL, conexao )
-                        .setVisible( true );
+                new FormaPagamentoVisao( this, rootPaneCheckingEnabled, null, DVML.VENDA_PONTUAL, BDConexao.getInstancia()).setVisible(true);
             }
             else
             {
@@ -2032,7 +2029,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jButton1ActionPerformed
 
         dispose();
-        new LoginVisao();
+        new LoginVisao( conexao );
         new CaixaAberturaVisao( cod_usuario, conexao, false ).setVisible( true );
 //        fazerBackupAgora();
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -5153,7 +5150,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         for ( int i = 1; i <= numeroVias; i++ )
         {
             String via;
-            switch (i)
+            switch ( i )
             {
                 case 1:
                     via = "Original";
@@ -5645,8 +5642,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getValorComImposto( double qtd, double taxa, double preco_venda, double desconto )
     {
-        double subtotal_linha = (preco_venda * qtd);
-        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
+        double subtotal_linha = ( preco_venda * qtd );
+        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
         double valor_iva = 1 + ( taxa / 100 );//
         return ( ( subtotal_linha - desconto_valor ) * valor_iva );
 
@@ -5660,9 +5657,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getValorComRetencao( double qtd, double ret, double preco_venda, double desconto )
     {
-        double subtotal_linha = (preco_venda * qtd);
-        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
-        double valor_ret = (( ( subtotal_linha - desconto_valor ) * ret ) / 100);//
+        double subtotal_linha = ( preco_venda * qtd );
+        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
+        double valor_ret = ( ( ( subtotal_linha - desconto_valor ) * ret ) / 100 );//
         return ( valor_ret );
     }
 
@@ -5685,8 +5682,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getRET( double qtd, double taxa_r, double preco_venda, double desconto )
     {
-        double subtotal_linha = (preco_venda * qtd);
-        double valor_ret = (taxa_r / 100);//
+        double subtotal_linha = ( preco_venda * qtd );
+        double valor_ret = ( taxa_r / 100 );//
         return ( ( subtotal_linha - desconto ) * valor_ret );
 
     }
@@ -5716,7 +5713,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private void actualizar_abreviacao()
     {
 
-        switch (getIdDocumento())
+        switch ( getIdDocumento() )
         {
             case DVML.DOC_FACTURA_RECIBO_FR:
                 if ( ck_A4.isSelected() )
@@ -6194,7 +6191,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             // a incidência só é aplicável ao produtos sujeitos a iva 
             if ( taxa != 0 )
             {
-                double valor_unitario = (preco_unitario * qtd);
+                double valor_unitario = ( preco_unitario * qtd );
 
                 desconto_valor_linha = valor_unitario * ( ( valor_percentagem ) / 100 );
                 valor_taxa = ( valor_unitario - desconto_valor_linha ) / taxa;
@@ -6260,7 +6257,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getTotalAOARetencoes()
     {
-        double valores = (getTotalRetencao1());
+        double valores = ( getTotalRetencao1() );
         return ( valores );
     }
 
@@ -6310,7 +6307,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         Documento documento_local = (Documento) documentosController.findById( getIdDocumento() );
         String abreviacao_local = documento_local.getAbreviacao();
 
-        switch (abreviacao_local)
+        switch ( abreviacao_local )
         {
             case "FT":
                 return "Facturamos o valor de: ";

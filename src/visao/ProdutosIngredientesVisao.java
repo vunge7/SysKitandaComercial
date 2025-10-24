@@ -47,7 +47,7 @@ public class ProdutosIngredientesVisao extends javax.swing.JFrame
      * CONTROLLER COMERCIAL
      */
     private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
-    private ItemPermissaoDao itemPermissaoDao = new ItemPermissaoDao( emf );
+    private ItemPermissaoDao itemPermissaoDao = new ItemPermissaoDao(emf );
     private static ProdutosController produtosController;
     private static ModelosController modelosController;
     private static MarcasController marcasController;
@@ -1553,8 +1553,8 @@ public class ProdutosIngredientesVisao extends javax.swing.JFrame
         try
         {
 
-            new BuscaProdutoIngredientesVisao( this, rootPaneCheckingEnabled, getCodigoArmazem( cmbarmazem2.getSelectedItem().toString() ), DVML.JANELA_PRODUTO, conexao ).setVisible( true );
-            mostrar_qtd_stock_armazem( txtArmazen1, 1 );
+            new BuscaProdutoIngredientesVisao( this, rootPaneCheckingEnabled, getCodigoArmazem( cmbarmazem2.getSelectedItem().toString() ), DVML.JANELA_PRODUTO, BDConexao.getInstancia()).setVisible(true);
+            mostrar_qtd_stock_armazem(txtArmazen1, 1 );
             mostrar_qtd_stock_armazem( txtArmazen2, 2 );
             mostrar_qtd_stock_armazem( txtArmazen3, 3 );
             mostrar_qtd_stock_armazem( txtArmazen4, 4 );
@@ -1589,14 +1589,14 @@ public class ProdutosIngredientesVisao extends javax.swing.JFrame
     }//GEN-LAST:event_cmbUnidadeActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        new CategoriasLugarVisao().show();
+        new CategoriasLugarVisao().setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButtonComprasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonComprasActionPerformed
         try
         {
 
-            new CompraInformalVisao( idUser, this.conexao ).show();
+            new CompraInformalVisao(idUser, BDConexao.getInstancia()).setVisible(true);
 
         }
         catch ( Exception e )
@@ -1635,7 +1635,7 @@ public class ProdutosIngredientesVisao extends javax.swing.JFrame
         // TODO add your handling code here:
         new AssociacaoServicoVisao( idUser,
                 getCodigoProduto(),
-                getCodigoArmazem( cmbarmazem1.getSelectedItem().toString() ), conexao ).setVisible( true );
+                getCodigoArmazem( cmbarmazem1.getSelectedItem().toString() ), BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btnAssociarActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton2ActionPerformed

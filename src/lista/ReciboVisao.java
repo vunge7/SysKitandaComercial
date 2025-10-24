@@ -39,7 +39,7 @@ public class ReciboVisao extends javax.swing.JFrame
      * Creates new form ListaUsuarioVisao
      */
     private static EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
-    private static VendaDao vendaDao = new VendaDao( emf );
+    private static VendaDao vendaDao = new VendaDao(emf );
     private static UsuarioDao usuarioDao = new UsuarioDao( emf );
     private static ProdutoDao produtoDao = new ProdutoDao( emf );
     private static ItemVendaDao itemVendaDao = new ItemVendaDao( emf );
@@ -1432,7 +1432,7 @@ public class ReciboVisao extends javax.swing.JFrame
     {
         if ( JOptionPane.showConfirmDialog( null, "Caro usuario este processo e irreversivel, deseja continuar?" ) == JOptionPane.YES_OPTION )
         {
-            new FormaPagamentoVisao( this, rootPaneCheckingEnabled, emf, DVML.EMISSAO_RECIBOS, conexao ).setVisible( true );
+            new FormaPagamentoVisao( this, rootPaneCheckingEnabled, emf, DVML.EMISSAO_RECIBOS, BDConexao.getInstancia()).setVisible(true);
 
         }
     }

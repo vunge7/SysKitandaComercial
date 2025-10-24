@@ -91,7 +91,7 @@ public class EstornoVisao extends javax.swing.JFrame
     private static FamiliasController familiaController;
     private static PrecosController precosController;
     private static StoksController stocksController;
-    private VasilhameDao vasilhameDao = new VasilhameDao( emf );
+    private VasilhameDao vasilhameDao = new VasilhameDao(emf );
     private ProFormaDao proFormaDao = new ProFormaDao( emf );
     private ItemProformaDao itemProformaDao = new ItemProformaDao( emf );
     private ItemEstornoDao itemEstornoDao = new ItemEstornoDao( emf );
@@ -717,7 +717,7 @@ public class EstornoVisao extends javax.swing.JFrame
         try
         {
 
-            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_ESTORNO, conexao ).show();
+            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_ESTORNO, BDConexao.getInstancia()).setVisible(true);
 
         }
         catch ( Exception e )

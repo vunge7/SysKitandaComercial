@@ -28,7 +28,7 @@ public class MenuPrincipalRHNovoVisao extends javax.swing.JFrame
 {
 
     private final EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
-    private final UsuarioDao usuarioDao = new UsuarioDao( emf );
+    private final UsuarioDao usuarioDao = new UsuarioDao(emf );
     private final EmpresaDao empresaDao = new EmpresaDao( emf );
     private final ItemPermissaoDao itemPermissaoDao = new ItemPermissaoDao( emf );
     private final BDConexao conexao;
@@ -61,7 +61,7 @@ public class MenuPrincipalRHNovoVisao extends javax.swing.JFrame
         busca_permissao();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "unchecked" )
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents()
     {
@@ -224,35 +224,35 @@ public class MenuPrincipalRHNovoVisao extends javax.swing.JFrame
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton2ActionPerformed
     {//GEN-HEADEREND:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        new FichaFuncionarioVisao( idUser, idEmpresa, conexao ).show();
+        new FichaFuncionarioVisao( idUser, idEmpresa, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton3ActionPerformed
     {//GEN-HEADEREND:event_jButton3ActionPerformed
-        new RecibosVisao( idUser, idEmpresa, conexao ).show();
+        new RecibosVisao( idUser, idEmpresa, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton4ActionPerformed
     {//GEN-HEADEREND:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        new ExtraSalarioFuncionarioVisao( idUser, idEmpresa, conexao ).show();
+        new ExtraSalarioFuncionarioVisao( idUser, idEmpresa, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton5ActionPerformed
     {//GEN-HEADEREND:event_jButton5ActionPerformed
         // TODO add your handling code here:
-        new TabelasDinamicasVisao( conexao ).show();
+        new TabelasDinamicasVisao( conexao ).setVisible(true);
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton6ActionPerformed
     {//GEN-HEADEREND:event_jButton6ActionPerformed
         // TODO add your handling code here:
-        new DefinicoesVisao( idUser, idEmpresa, conexao ).show();
+        new DefinicoesVisao( idUser, idEmpresa, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton9ActionPerformed
     {//GEN-HEADEREND:event_jButton9ActionPerformed
-        new UsuarioVisao( this, rootPaneCheckingEnabled, this.conexao ).show();
+        new UsuarioVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia()).setVisible(true);
 
     }//GEN-LAST:event_jButton9ActionPerformed
 
@@ -261,15 +261,15 @@ public class MenuPrincipalRHNovoVisao extends javax.swing.JFrame
         MetodosUtil.fechar_todas_janelas();
         MetodosUtil.actualizar_status( this.idUser, "OFF" );
 //        MetodosUtil.actualizar_ip_address( this.idUser, "" );
-        //new LoginVisao().show();
-        new RootVisao( this.idUser, 1, administrador, this.conexao ).show();
+        //new LoginVisao().setVisible(true);
+        new RootVisao( this.idUser, 1, administrador, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
     {//GEN-HEADEREND:event_jButton1ActionPerformed
         try
         {
-            new ListarMapaSalario( idUser, this.conexao ).show();
+            new ListarMapaSalario(idUser, BDConexao.getInstancia()).setVisible(true);
         }
         catch ( Exception e )
         {
@@ -285,7 +285,7 @@ public class MenuPrincipalRHNovoVisao extends javax.swing.JFrame
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton7ActionPerformed
     {//GEN-HEADEREND:event_jButton7ActionPerformed
-        new Configuracoes( idUser ).show();
+        new Configuracoes( idUser ).setVisible(true);
     }//GEN-LAST:event_jButton7ActionPerformed
 
     public void busca_permissao()
@@ -409,7 +409,7 @@ public class MenuPrincipalRHNovoVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new MenuPrincipalRHNovoVisao( 15, 2, true, BDConexao.getInstancia() ).show();
+                new MenuPrincipalRHNovoVisao( 15, 2, true, BDConexao.getInstancia() ).setVisible(true);
             }
         } );
     }
@@ -435,13 +435,15 @@ public class MenuPrincipalRHNovoVisao extends javax.swing.JFrame
     private void sair()
     {
         dispose();
-        new RootVisao( this.idUser, this.idEmpresa, true, this.conexao ).show();
+        new RootVisao( this.idUser, this.idEmpresa, true, BDConexao.getInstancia()).setVisible(true);
     }
 
     private void terminarSessao()
     {
         dispose();
-        new LoginVisao().setVisible( true );
+        new LoginVisao(BDConexao.getInstancia()).setVisible(true);
+
+//        new LoginVisao( new BDConexao() ).setVisible( true );
     }
 
 }

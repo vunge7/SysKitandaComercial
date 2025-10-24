@@ -1249,7 +1249,7 @@ public class ExtraSalarioFuncionarioVisao extends javax.swing.JFrame
             if ( hora > 0 )
             {
 
-                new MyCalendarVisao( idUsuario ).show();
+                new MyCalendarVisao( idUsuario ).setVisible(true);
             }
             else
             {

@@ -1356,7 +1356,7 @@ public class ReactivarProdutosVisao extends javax.swing.JFrame
         try
         {
             
-            new BuscaNovoProdutoVisao( this, rootPaneCheckingEnabled, DVML.JANELA_PRODUTO ).show();
+            new BuscaNovoProdutoVisao( this, rootPaneCheckingEnabled, DVML.JANELA_PRODUTO ).setVisible(true);
             if ( ivaAplicarJRadioButton.isSelected() )
             {
                 calcularTotalComIva();
@@ -1379,14 +1379,14 @@ public class ReactivarProdutosVisao extends javax.swing.JFrame
     }//GEN-LAST:event_cmbUnidadeActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        new CategoriasLugarVisao().show();
+        new CategoriasLugarVisao().setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         try
         {
             
-//            new CompraVisao( idUser, this.conexao ).show();
+//            new CompraVisao(idUser, BDConexao.getInstancia()).setVisible(true);
             
         }
         catch ( Exception e )
@@ -1412,7 +1412,7 @@ public class ReactivarProdutosVisao extends javax.swing.JFrame
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton5ActionPerformed
     {//GEN-HEADEREND:event_jButton5ActionPerformed
-        new ListarProdutosDesactivosVisao(idUser ).show();
+        new ListarProdutosDesactivosVisao(idUser ).setVisible(true);
     }//GEN-LAST:event_jButton5ActionPerformed
 
     /**

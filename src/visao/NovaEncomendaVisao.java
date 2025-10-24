@@ -139,7 +139,7 @@ public class NovaEncomendaVisao extends javax.swing.JFrame implements Runnable
 //                            try
 //                            {
 //                                cmbArmazem.setModel( new DefaultComboBoxModel( armazemDao.buscaTodos1() ) );
-//                                new BuscaProdutoVisao( getInstance(), rootPaneCheckingEnabled, getIdArmazem(), DVML.JANELA_COMPRA, CompraVisao.class ).show();
+//                                new BuscaProdutoVisao( getInstance(), rootPaneCheckingEnabled, getIdArmazem(), DVML.JANELA_COMPRA, CompraVisao.class ).setVisible(true);
 //                            }
 //                            catch ( Exception ex )
 //                            {
@@ -843,7 +843,7 @@ public class NovaEncomendaVisao extends javax.swing.JFrame implements Runnable
         try
         {
 //            new BuscaNovoProdutoVisao(this, rootPaneCheckingEnabled, coordenada )
-            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getIdArmazem(), DVML.JANELA_COMPRA, conexao ).show();
+            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getIdArmazem(), DVML.JANELA_COMPRA, BDConexao.getInstancia()).setVisible(true);
         }
         catch ( Exception e )
         {
@@ -954,7 +954,7 @@ public class NovaEncomendaVisao extends javax.swing.JFrame implements Runnable
 
     public static void main( String[] args )
     {
-        new NovaEncomendaVisao( null, 15, BDConexao.getInstancia() ).show();
+        new NovaEncomendaVisao( null, 15, BDConexao.getInstancia() ).setVisible(true);
     }
 
     @Override

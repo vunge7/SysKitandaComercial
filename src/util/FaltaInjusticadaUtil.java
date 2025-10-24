@@ -198,7 +198,7 @@ public class FaltaInjusticadaUtil
                 if ( evt.getClickCount() == 1 )
                 {
                     ExtraSalarioFuncionarioVisao.desenhar_tabelas_justificadas_e_injustificadas();
-                    new JustificarFaltaVisao( codFalta, true ).show();
+                    new JustificarFaltaVisao( codFalta, true ).setVisible(true);
                 }
 
             }

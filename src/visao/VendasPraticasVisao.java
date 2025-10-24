@@ -143,7 +143,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
     private static TbStock stock_local;
 
     private TbItemPedidos itemPedidos;
-    private static MesasDao mesasDao = new MesasDao( emf );
+    private static MesasDao mesasDao = new MesasDao(emf );
     private static PrecoDao precoDao = new PrecoDao( emf );
     private static CaixaDao caixaDao;
     private static PedidoDao pedidoDao = new PedidoDao( emf );
@@ -1426,10 +1426,10 @@ public class VendasPraticasVisao extends javax.swing.JFrame
 //
 //                        dispose();
 //
-                    new FormaPagamentoVisao( this, rootPaneCheckingEnabled, emf, DVML.VENDA_EXPRESSO, conexao ).setVisible( true );
+                    new FormaPagamentoVisao( this, rootPaneCheckingEnabled, emf, DVML.VENDA_EXPRESSO, BDConexao.getInstancia()).setVisible(true);
 //
 //                    }
-//                    else if ( opcao == JOptionPane.NO_OPTION )
+//                    else if (opcao == JOptionPane.NO_OPTION )
 //                    {
 //
 //                        try
@@ -1628,11 +1628,11 @@ public class VendasPraticasVisao extends javax.swing.JFrame
             {
 
                 System.out.println( "PARAMETROS LUPA Área: " + GRUPO_AREA );
-                new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_VENDA_EXPRESSO, conexao ).show();
+                new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_VENDA_EXPRESSO, BDConexao.getInstancia()).setVisible(true);
             }
             else
             {
-                JOptionPane.showMessageDialog( null, "Atenção\n Insira a quantidade do produto que desejas vender!", "AVISO", JOptionPane.INFORMATION_MESSAGE );
+                JOptionPane.showMessageDialog(null, "Atenção\n Insira a quantidade do produto que desejas vender!", "AVISO", JOptionPane.INFORMATION_MESSAGE );
                 txtQuantidade.setBackground( Color.RED );
                 txtQuantidade.requestFocus();
                 txtQuantidade.setText( "" );
@@ -1710,7 +1710,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
 
     private void btClienteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btClienteActionPerformed
     {//GEN-HEADEREND:event_btClienteActionPerformed
-        new ClienteVisao( this, rootPaneCheckingEnabled, conexao ).show();
+        new ClienteVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btClienteActionPerformed
 
     private void txtIniciaisClienteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtIniciaisClienteActionPerformed

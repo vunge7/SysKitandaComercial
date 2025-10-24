@@ -43,7 +43,7 @@ public class InventarioVisao extends javax.swing.JFrame
 
     private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
 
-    private ProdutoDao produtoDao = new ProdutoDao( emf );
+    private ProdutoDao produtoDao = new ProdutoDao(emf );
     private ArmazemDao armazemDao = new ArmazemDao( emf );
     private StockDao stockDao = new StockDao( emf );
     private TipoProdutoDao tipoProdutoDao = new TipoProdutoDao( emf );
@@ -376,7 +376,7 @@ public class InventarioVisao extends javax.swing.JFrame
         // TODO add your handling code here:
         try
         {
-            new ProdutosVisao( this, rootPaneCheckingEnabled, this.id_user, this.conexao ).show();
+            new ProdutosVisao( this, rootPaneCheckingEnabled, this.id_user, BDConexao.getInstancia()).setVisible(true);
         }
         catch ( Exception e )
         {

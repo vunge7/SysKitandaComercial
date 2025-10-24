@@ -1024,7 +1024,7 @@ public final class DefinicoesVisao extends javax.swing.JFrame implements Runnabl
     private void btnOpenJaneiroMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_btnOpenJaneiroMouseClicked
     {//GEN-HEADEREND:event_btnOpenJaneiroMouseClicked
         // TODO add your handling code here:
-        new DataAberturaPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), JANEIRO ).show();
+        new DataAberturaPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), JANEIRO ).setVisible(true);
         resetMes( painelJaneiro, btnOpenJaneiro, btnCloseJaneiro, btnEliminarJaneiro );
     }//GEN-LAST:event_btnOpenJaneiroMouseClicked
 
@@ -1036,27 +1036,27 @@ public final class DefinicoesVisao extends javax.swing.JFrame implements Runnabl
     private void btnCloseJaneiroMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_btnCloseJaneiroMouseClicked
     {//GEN-HEADEREND:event_btnCloseJaneiroMouseClicked
         // TODO add your handling code here:
-        new DataFechoPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), JANEIRO ).show();
+        new DataFechoPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), JANEIRO ).setVisible(true);
     }//GEN-LAST:event_btnCloseJaneiroMouseClicked
 
     private void btnOpenFevereiroMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_btnOpenFevereiroMouseClicked
     {//GEN-HEADEREND:event_btnOpenFevereiroMouseClicked
         // TODO add your handling code here:
-        new DataAberturaPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), FEVEREIRO ).show();
+        new DataAberturaPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), FEVEREIRO ).setVisible(true);
         resetMes( painelFevereiro, btnOpenFevereiro, btnCloseFevereiro, btnEliminarFevereiro );
     }//GEN-LAST:event_btnOpenFevereiroMouseClicked
 
     private void btnOpenMarcoMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_btnOpenMarcoMouseClicked
     {//GEN-HEADEREND:event_btnOpenMarcoMouseClicked
         // TODO add your handling code here:
-        new DataAberturaPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), MARCO ).show();
+        new DataAberturaPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), MARCO ).setVisible(true);
         resetMes( painelMarco, btnOpenMarco, btnCloseMarco, btnEliminarMarco );
     }//GEN-LAST:event_btnOpenMarcoMouseClicked
 
     private void btnCloseFevereiroMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_btnCloseFevereiroMouseClicked
     {//GEN-HEADEREND:event_btnCloseFevereiroMouseClicked
         // TODO add your handling code here:
-        new DataFechoPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), FEVEREIRO ).show();
+        new DataFechoPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), FEVEREIRO ).setVisible(true);
 //       
 //            procedimentoFechar( FEVEREIRO );
 //            resetMes( painelFevereiro, btnOpenFevereiro, btnCloseFevereiro, btnEliminarFevereiro );
@@ -1067,26 +1067,26 @@ public final class DefinicoesVisao extends javax.swing.JFrame implements Runnabl
     private void btnCloseMarcoMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_btnCloseMarcoMouseClicked
     {//GEN-HEADEREND:event_btnCloseMarcoMouseClicked
         // TODO add your handling code here:
-        new DataFechoPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), MARCO ).show();
+        new DataFechoPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), MARCO ).setVisible(true);
     }//GEN-LAST:event_btnCloseMarcoMouseClicked
 
     private void btnOpenAbrilMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_btnOpenAbrilMouseClicked
     {//GEN-HEADEREND:event_btnOpenAbrilMouseClicked
         // TODO add your handling code here:
-        new DataAberturaPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), ABRIL ).show();
+        new DataAberturaPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), ABRIL ).setVisible(true);
         resetMes( painelAbril, btnOpenAbril, btnCloseAbril, btnEliminarAbril );
     }//GEN-LAST:event_btnOpenAbrilMouseClicked
 
     private void btnCloseAbrilMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_btnCloseAbrilMouseClicked
     {//GEN-HEADEREND:event_btnCloseAbrilMouseClicked
         // TODO add your handling code here:
-         new DataFechoPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), ABRIL ).show();
+         new DataFechoPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), ABRIL ).setVisible(true);
     }//GEN-LAST:event_btnCloseAbrilMouseClicked
 
     private void btnOpenMaioMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_btnOpenMaioMouseClicked
     {//GEN-HEADEREND:event_btnOpenMaioMouseClicked
         // TODO add your handling code here:
-        new DataAberturaPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), MAIO ).show();
+        new DataAberturaPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), MAIO ).setVisible(true);
         resetMes( painelMaio, btnOpenMaio, btnCloseMaio, btnEliminarMaio );
     }//GEN-LAST:event_btnOpenMaioMouseClicked
 
@@ -1099,7 +1099,7 @@ public final class DefinicoesVisao extends javax.swing.JFrame implements Runnabl
     {//GEN-HEADEREND:event_btnCloseMaioMouseClicked
         // TODO add your handling code here:
         // TODO add your handling code here:
-        new DataFechoPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), MAIO ).show();
+        new DataFechoPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), MAIO ).setVisible(true);
     }//GEN-LAST:event_btnCloseMaioMouseClicked
 
     private void btnCloseMaioActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnCloseMaioActionPerformed
@@ -1110,40 +1110,40 @@ public final class DefinicoesVisao extends javax.swing.JFrame implements Runnabl
     private void btnOpenJunhoMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_btnOpenJunhoMouseClicked
     {//GEN-HEADEREND:event_btnOpenJunhoMouseClicked
         // TODO add your handling code here:
-        new DataAberturaPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), JUNHO ).show();
+        new DataAberturaPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), JUNHO ).setVisible(true);
         resetMes( painelJunho, btnOpenJunho, btnCloseJunho, btnEliminarJunho );
     }//GEN-LAST:event_btnOpenJunhoMouseClicked
 
     private void btnCloseJunhoMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_btnCloseJunhoMouseClicked
     {//GEN-HEADEREND:event_btnCloseJunhoMouseClicked
         // TODO add your handling code here:
-         new DataFechoPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), JUNHO ).show();
+         new DataFechoPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), JUNHO ).setVisible(true);
     }//GEN-LAST:event_btnCloseJunhoMouseClicked
 
     private void btnOpenJulhoMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_btnOpenJulhoMouseClicked
     {//GEN-HEADEREND:event_btnOpenJulhoMouseClicked
         // TODO add your handling code here:
-        new DataAberturaPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), JULHO ).show();
+        new DataAberturaPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), JULHO ).setVisible(true);
         resetMes( painelJulho, btnOpenJulho, btnCloseJulho, btnEliminarJulho );
     }//GEN-LAST:event_btnOpenJulhoMouseClicked
 
     private void btnCloseJulhoMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_btnCloseJulhoMouseClicked
     {//GEN-HEADEREND:event_btnCloseJulhoMouseClicked
         // TODO add your handling code here:
-         new DataFechoPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), JULHO ).show();
+         new DataFechoPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), JULHO ).setVisible(true);
     }//GEN-LAST:event_btnCloseJulhoMouseClicked
 
     private void btnOpenAgostoMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_btnOpenAgostoMouseClicked
     {//GEN-HEADEREND:event_btnOpenAgostoMouseClicked
         // TODO add your handling code here:
-        new DataAberturaPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), AGOSTO ).show();
+        new DataAberturaPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), AGOSTO ).setVisible(true);
         resetMes( painelAgosto, btnOpenAgosto, btnCloseAgosto, btnEliminarAgosto );
     }//GEN-LAST:event_btnOpenAgostoMouseClicked
 
     private void btnCloseAgostoMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_btnCloseAgostoMouseClicked
     {//GEN-HEADEREND:event_btnCloseAgostoMouseClicked
         // TODO add your handling code here:
-         new DataFechoPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), AGOSTO ).show();
+         new DataFechoPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), AGOSTO ).setVisible(true);
     }//GEN-LAST:event_btnCloseAgostoMouseClicked
 
     private void btnEliminarAbrilActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnEliminarAbrilActionPerformed
@@ -1165,7 +1165,7 @@ public final class DefinicoesVisao extends javax.swing.JFrame implements Runnabl
     private void btnOpenSetembroMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_btnOpenSetembroMouseClicked
     {//GEN-HEADEREND:event_btnOpenSetembroMouseClicked
         // TODO add your handling code here:
-        new DataAberturaPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), SETEMBRO ).show();
+        new DataAberturaPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), SETEMBRO ).setVisible(true);
         resetMes( painelSetembro, btnOpenSetembro, btnCloseSetembro, btnEliminarSetembro );
     }//GEN-LAST:event_btnOpenSetembroMouseClicked
 
@@ -1177,7 +1177,7 @@ public final class DefinicoesVisao extends javax.swing.JFrame implements Runnabl
     private void btnCloseSetembroMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_btnCloseSetembroMouseClicked
     {//GEN-HEADEREND:event_btnCloseSetembroMouseClicked
         // TODO add your handling code here:
-         new DataFechoPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), SETEMBRO ).show();
+         new DataFechoPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), SETEMBRO ).setVisible(true);
     }//GEN-LAST:event_btnCloseSetembroMouseClicked
 
     private void btnCloseSetembroActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnCloseSetembroActionPerformed
@@ -1188,7 +1188,7 @@ public final class DefinicoesVisao extends javax.swing.JFrame implements Runnabl
     private void btnOpenOutubroMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_btnOpenOutubroMouseClicked
     {//GEN-HEADEREND:event_btnOpenOutubroMouseClicked
         // TODO add your handling code here:
-        new DataAberturaPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), OUTUBRO ).show();
+        new DataAberturaPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), OUTUBRO ).setVisible(true);
         resetMes( painelOutubro, btnOpenOutubro, btnCloseOutubro, btnEliminarOutubro );
     }//GEN-LAST:event_btnOpenOutubroMouseClicked
 
@@ -1196,13 +1196,13 @@ public final class DefinicoesVisao extends javax.swing.JFrame implements Runnabl
     {//GEN-HEADEREND:event_btnCloseOutubroMouseClicked
         // TODO add your handling code here:
 
-         new DataFechoPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), OUTUBRO ).show();
+         new DataFechoPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), OUTUBRO ).setVisible(true);
     }//GEN-LAST:event_btnCloseOutubroMouseClicked
 
     private void btnOpenNovembroMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_btnOpenNovembroMouseClicked
     {//GEN-HEADEREND:event_btnOpenNovembroMouseClicked
         // TODO add your handling code here:
-        new DataAberturaPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), NOVEMBRO ).show();
+        new DataAberturaPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), NOVEMBRO ).setVisible(true);
         resetMes( painelNovembro, btnOpenNovembro, btnCloseNovembro, btnEliminarNovembro );
     }//GEN-LAST:event_btnOpenNovembroMouseClicked
 
@@ -1214,13 +1214,13 @@ public final class DefinicoesVisao extends javax.swing.JFrame implements Runnabl
     private void btnCloseNovembroMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_btnCloseNovembroMouseClicked
     {//GEN-HEADEREND:event_btnCloseNovembroMouseClicked
         // TODO add your handling code here:
-        new DataFechoPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), NOVEMBRO ).show();
+        new DataFechoPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), NOVEMBRO ).setVisible(true);
     }//GEN-LAST:event_btnCloseNovembroMouseClicked
 
     private void btnOpenDezembroMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_btnOpenDezembroMouseClicked
     {//GEN-HEADEREND:event_btnOpenDezembroMouseClicked
         // TODO add your handling code here:
-        new DataAberturaPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), DEZEMBRO ).show();
+        new DataAberturaPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), DEZEMBRO ).setVisible(true);
         resetMes( painelDezembro, btnOpenDezembro, btnCloseDezembro, btnEliminarDezembro );
     }//GEN-LAST:event_btnOpenDezembroMouseClicked
 
@@ -1232,7 +1232,7 @@ public final class DefinicoesVisao extends javax.swing.JFrame implements Runnabl
     private void btnCloseDezembroMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_btnCloseDezembroMouseClicked
     {//GEN-HEADEREND:event_btnCloseDezembroMouseClicked
         // TODO add your handling code here:
-          new DataFechoPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), FEVEREIRO ).show();
+          new DataFechoPeriodoVisao( this, estado, idUsuario, getIdAnoEconomico(), FEVEREIRO ).setVisible(true);
     }//GEN-LAST:event_btnCloseDezembroMouseClicked
 
     private void btnEliminarSetembroActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnEliminarSetembroActionPerformed

@@ -4041,7 +4041,7 @@ public class MyCalendarVisao extends javax.swing.JDialog implements Runnable
         {
 
             // new InputMask(this, "Insira a senha para adicionar", "AVISO", "###");
-//            new SenhaDialogVisao( this, true ).show();
+//            new SenhaDialogVisao( this, true ).setVisible(true);
             if ( MyCalendarVisao.senha.equals( "senha4716" ) )
             {
                 if ( !button.getText().equals( "" ) )

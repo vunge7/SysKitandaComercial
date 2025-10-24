@@ -35,7 +35,7 @@ public class AssociacaoServicoVisao extends javax.swing.JFrame
     private static int codPai;
     private int codArmazem;
 
-    public AssociacaoServicoVisao( int idUser, int codProduto, int codArmazem, BDConexao conexao )
+    public AssociacaoServicoVisao(int idUser, int codProduto, int codArmazem, BDConexao conexao )
     {
         initComponents();
         setLocationRelativeTo( null );
@@ -261,7 +261,7 @@ public class AssociacaoServicoVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jButton4ActionPerformed
         new BuscaProdutoVisao( this, rootPaneCheckingEnabled, 
                 codArmazem, 
-                DVML.JANELA_ASSOCIACAO, conexao ).setVisible( true );
+                DVML.JANELA_ASSOCIACAO, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jButton4ActionPerformed
 
     /**

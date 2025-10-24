@@ -137,7 +137,7 @@ public class LoginEncomendaVisao extends javax.swing.JFrame {
        if(   new UsuarioController(conexao).exist_senha(getSenha())  )
        {       
            pswSenha.setText("");
-            new GestaoEncomendaVisao(idUusario).show();
+            new GestaoEncomendaVisao(idUusario).setVisible(true);
        }
        else JOptionPane.showMessageDialog(null, "Erro Senha errada");
 

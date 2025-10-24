@@ -139,8 +139,8 @@ public class ConverterEncomendasCompraVisao extends javax.swing.JFrame implement
                             {
 //                                cmbArmazem.setModel(new DefaultComboBoxModel(armazemDao.buscaTodos1()));
 //                                cmbArmazem.setModel(new DefaultComboBoxModel(armazemDao.buscaTodos1()));
-//                                new BuscaProdutoVisao( getInstance(), rootPaneCheckingEnabled, getIdArmazens(), DVML.JANELA_COMPRA, conexao, ConverterEncomendasCompraVisao.class ).show();
-                                new BuscaProdutoVisao( getInstance(), rootPaneCheckingEnabled, getIdArmazens(), DVML.JANELA_COMPRA, conexao ).show();
+//                                new BuscaProdutoVisao( getInstance(), rootPaneCheckingEnabled, getIdArmazens(), DVML.JANELA_COMPRA, conexao, ConverterEncomendasCompraVisao.class ).setVisible(true);
+                                new BuscaProdutoVisao( getInstance(), rootPaneCheckingEnabled, getIdArmazens(), DVML.JANELA_COMPRA, BDConexao.getInstancia()).setVisible(true);
                             }
                             catch ( Exception ex )
                             {
@@ -846,7 +846,7 @@ public class ConverterEncomendasCompraVisao extends javax.swing.JFrame implement
 
     public static void main( String[] args )
     {
-        new ConverterEncomendasCompraVisao( 15, BDConexao.getInstancia(), "", null ).show();
+        new ConverterEncomendasCompraVisao( 15, BDConexao.getInstancia(), "", null ).setVisible(true);
     }
 
     @Override

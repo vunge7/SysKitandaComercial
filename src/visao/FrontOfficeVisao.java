@@ -46,7 +46,7 @@ public class FrontOfficeVisao extends javax.swing.JFrame
 {
 
     private static EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
-    private AccessoArmazemDao accessoArmazemDao = new AccessoArmazemDao( emf );
+    private AccessoArmazemDao accessoArmazemDao = new AccessoArmazemDao(emf );
     private static ArmazemDao armazemDao = new ArmazemDao( emf );
     private MesasController mesasController;
     private LugaresController lugaresController;
@@ -192,11 +192,11 @@ public class FrontOfficeVisao extends javax.swing.JFrame
 
         if ( id_armazem > 0 )
         {
-            new PrincipalPedidosVisao( id_usuario, "", id_armazem, conexao ).setVisible( true );
+            new PrincipalPedidosVisao( id_usuario, "", id_armazem, BDConexao.getInstancia()).setVisible(true);
         }
         else
         {
-            JOptionPane.showMessageDialog( null, "Caro usuario seleccione o armazem." );
+            JOptionPane.showMessageDialog(null, "Caro usuario seleccione o armazem." );
         }
 
     }//GEN-LAST:event_btnGestaoMesasActionPerformed
@@ -207,12 +207,12 @@ public class FrontOfficeVisao extends javax.swing.JFrame
         {
 //            new VendaPOSVisao( conexao, id_armazem, id_usuario ).setVisible( true );
 //            fazerBackupAgora();
-            new VendasPraticasVisao( getMesa(), getLugar(), this.id_usuario, id_armazem, conexao ).show();
-//            new RecolhaPedidosVisao( getMesa(), getLugar(), idUser, DVML.ARMAZEM_LOJA, conexao ).setVisible( true );
+            new VendasPraticasVisao( getMesa(), getLugar(), this.id_usuario, id_armazem, BDConexao.getInstancia()).setVisible(true);
+//            new RecolhaPedidosVisao(getMesa(), getLugar(), idUser, DVML.ARMAZEM_LOJA, BDConexao.getInstancia()).setVisible(true);
         }
         else
         {
-            JOptionPane.showMessageDialog( null, "Caro usuario seleccione o armazem." );
+            JOptionPane.showMessageDialog(null, "Caro usuario seleccione o armazem." );
         }
     }//GEN-LAST:event_btnVendasExpressoActionPerformed
 
@@ -309,12 +309,13 @@ public class FrontOfficeVisao extends javax.swing.JFrame
         TbUsuario usuario = usuarioDao.findTbUsuario( id_usuario );
         if ( usuario.getIdTipoUsuario().getIdTipoUsuario() == 1 )
         {
-            new RootVisao( id_usuario, 1, true, conexao ).setVisible( true );
-//            new MenuPrincipalVisao( id_usuario, 1, true, conexao ).setVisible( true );
+            new RootVisao( id_usuario, 1, true, BDConexao.getInstancia()).setVisible(true);
+//            new MenuPrincipalVisao(id_usuario, 1, true, BDConexao.getInstancia()).setVisible(true);
         }
         else
         {
-            new LoginVisao().setVisible( true );
+            new LoginVisao(BDConexao.getInstancia()).setVisible(true);
+
         }
     }
 
@@ -374,7 +375,7 @@ public class FrontOfficeVisao extends javax.swing.JFrame
                         id_usuario,
                         RootVisao.btn_abertura_dia_root,
                         RootVisao.btn_feicho_dia_root,
-                        btnVendasPontuais, btnGestaoMesas);
+                        btnVendasPontuais, btnGestaoMesas );
             }
 
         } );

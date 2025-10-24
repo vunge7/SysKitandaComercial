@@ -142,7 +142,7 @@ public class VendaOficinaUsuarioVisao extends javax.swing.JFrame
     private TbProduto produto;
     private TbPreco preco;
 
-    public VendaOficinaUsuarioVisao( int cod_usuario, BDConexao conexao ) throws SQLException
+    public VendaOficinaUsuarioVisao(int cod_usuario, BDConexao conexao ) throws SQLException
     {
 
         initComponents();
@@ -231,7 +231,7 @@ public class VendaOficinaUsuarioVisao extends javax.swing.JFrame
                         return false;
                     }
                 } );
-        //new BuscaProdutoVisao( VendaUsuarioVisao.this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_VENDA ).show();
+        //new BuscaProdutoVisao( VendaUsuarioVisao.this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_VENDA ).setVisible(true);
 //        MetodosUtil.FUNCAO_F1( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_VENDA);
 
         KeyboardFocusManager.getCurrentKeyboardFocusManager()
@@ -244,9 +244,9 @@ public class VendaOficinaUsuarioVisao extends javax.swing.JFrame
                         {
                             try
                             {
-                                new BuscaProdutoVisao( getInstance(), rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_VENDA_OFICINA, conexao ).show();
+                                new BuscaProdutoVisao( getInstance(), rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_VENDA_OFICINA, BDConexao.getInstancia()).setVisible(true);
                             }
-                            catch ( Exception ex )
+                            catch (Exception ex )
                             {
                                 ex.printStackTrace();
                             }
@@ -1668,10 +1668,10 @@ public class VendaOficinaUsuarioVisao extends javax.swing.JFrame
             if ( validar() )
             {
                 System.out.println( "Codigo do Armazem em questão: " + getCodigoArmazem() );
-                new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_VENDA_OFICINA, conexao ).show();
+                new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_VENDA_OFICINA, BDConexao.getInstancia()).setVisible(true);
             }
         }
-        catch ( Exception e )
+        catch (Exception e )
         {
             e.printStackTrace();
         }
@@ -1728,7 +1728,7 @@ public class VendaOficinaUsuarioVisao extends javax.swing.JFrame
     }//GEN-LAST:event_txtCodigoManualActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        new ClienteVisao( this, rootPaneCheckingEnabled, conexao ).show();
+        new ClienteVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void txtCodClientePesquisaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodClientePesquisaActionPerformed
@@ -1813,7 +1813,7 @@ public class VendaOficinaUsuarioVisao extends javax.swing.JFrame
 //         new FormaPagamentoVisao( this, rootPaneCheckingEnabled, DVML.VENDA_PONTUAL, emf ).setVisible( true );
         if ( MetodosUtil.licencaValidada( conexao ) )
         {
-            new FormaPagamentoVisao( this, rootPaneCheckingEnabled, null, DVML.VENDA_OFICINA, conexao ).setVisible( true );
+            new FormaPagamentoVisao( this, rootPaneCheckingEnabled, null, DVML.VENDA_OFICINA, BDConexao.getInstancia()).setVisible(true);
 
         }
     }//GEN-LAST:event_btnFormaPagamentoActionPerformed
@@ -1841,7 +1841,7 @@ public class VendaOficinaUsuarioVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jButton1ActionPerformed
 
         dispose();
-        new LoginVisao();
+        new LoginVisao(BDConexao.getInstancia()).setVisible(true);
         new CaixaAberturaVisao( cod_usuario, conexao, false ).setVisible( true );
 //        fazerBackupAgora();
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -6328,7 +6328,6 @@ public class VendaOficinaUsuarioVisao extends javax.swing.JFrame
                     registrar_preco( idProduto, precosController, Double.parseDouble( precoLocal ) );
 
 //                    actualizarQtdTable();
-
                 }
                 else
                 {

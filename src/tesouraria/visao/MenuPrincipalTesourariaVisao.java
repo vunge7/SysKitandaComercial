@@ -419,35 +419,35 @@ public class MenuPrincipalTesourariaVisao extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jlmSaldosContasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jlmSaldosContasActionPerformed
-        new SaldoBanco().show();
+        new SaldoBanco().setVisible(true);
     }//GEN-LAST:event_jlmSaldosContasActionPerformed
 
     private void jlmEntradasCaixaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jlmEntradasCaixaActionPerformed
-        new EntradaTesourariaVisao(idUser).show();
+        new EntradaTesourariaVisao(idUser).setVisible(true);
     }//GEN-LAST:event_jlmEntradasCaixaActionPerformed
 
     private void jlmSaidasCaixaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jlmSaidasCaixaActionPerformed
-        new SaidaTesourariaVisao(idUser).show();
+        new SaidaTesourariaVisao(idUser).setVisible(true);
     }//GEN-LAST:event_jlmSaidasCaixaActionPerformed
 
     private void jlmDepositosBancariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jlmDepositosBancariosActionPerformed
-        new DepositoBancarioVisao(idUser).show();
+        new DepositoBancarioVisao(idUser).setVisible(true);
     }//GEN-LAST:event_jlmDepositosBancariosActionPerformed
 
     private void jlmLevantamentosBancariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jlmLevantamentosBancariosActionPerformed
-        new LevantamentoBancarioVisao(idUser).show();
+        new LevantamentoBancarioVisao(idUser).setVisible(true);
     }//GEN-LAST:event_jlmLevantamentosBancariosActionPerformed
 
     private void jlmTransferenciasBancariasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jlmTransferenciasBancariasActionPerformed
-        new TransferenciasBancarias(idUser).show();
+        new TransferenciasBancarias(idUser).setVisible(true);
     }//GEN-LAST:event_jlmTransferenciasBancariasActionPerformed
 
     private void jlmRelatoriosDeEntradasNoCaixaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jlmRelatoriosDeEntradasNoCaixaActionPerformed
-        new RelatorioEntradasVisao().show();
+        new RelatorioEntradasVisao().setVisible(true);
     }//GEN-LAST:event_jlmRelatoriosDeEntradasNoCaixaActionPerformed
 
     private void jlmRelatoriosDeSaidasDoCaixaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jlmRelatoriosDeSaidasDoCaixaActionPerformed
-        new RelatorioSaidasVisao().show();
+        new RelatorioSaidasVisao().setVisible(true);
     }//GEN-LAST:event_jlmRelatoriosDeSaidasDoCaixaActionPerformed
 
     private void jMenuItem26ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem26ActionPerformed
@@ -455,52 +455,53 @@ public class MenuPrincipalTesourariaVisao extends javax.swing.JFrame {
 //        MetodosUtil.fechar_todas_janelas();
 //        MetodosUtil.actualizar_status(  this.id_user  , "OFF");
 //        MetodosUtil.actualizar_ip_address(this.id_user , "");
-       // new LoginVisao().show();
-         new RootVisao(this.idUser, this.idEmpresa, true, this.conexao).show();
+       // new LoginVisao().setVisible(true);
+         new RootVisao(this.idUser, this.idEmpresa, true, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jMenuItem26ActionPerformed
 
     private void jMenuItem27ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem27ActionPerformed
         dispose();
-        new LoginVisao().setVisible( true);
+        new LoginVisao(BDConexao.getInstancia()).setVisible(true);
+
     }//GEN-LAST:event_jMenuItem27ActionPerformed
 
     private void jlmExtratoDeMovimentosBancariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jlmExtratoDeMovimentosBancariosActionPerformed
-        new RelatorioExtratoVisao().show();
+        new RelatorioExtratoVisao().setVisible(true);
     }//GEN-LAST:event_jlmExtratoDeMovimentosBancariosActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        new BancoVisao().show();
+        new BancoVisao().setVisible(true);
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
-        new InformacoesEmpresaVisao().show();
+        new InformacoesEmpresaVisao().setVisible(true);
     }//GEN-LAST:event_jMenuItem9ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
         // TODO add your handling code here:
-       new   RelatorioBalancoVisao().show();
+       new   RelatorioBalancoVisao().setVisible(true);
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
-        new ReemprimirEntradaTesourariaVisao().show();
+        new ReemprimirEntradaTesourariaVisao().setVisible(true);
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
-        new ReemprimirSaidaTesourariaVisao().show();
+        new ReemprimirSaidaTesourariaVisao().setVisible(true);
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
-        new ReemprimirAdiantamentoVisao().show();
+        new ReemprimirAdiantamentoVisao().setVisible(true);
     }//GEN-LAST:event_jMenuItem6ActionPerformed
 
     private void jlmRelatoriosDeEntradasNoCaixa1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jlmRelatoriosDeEntradasNoCaixa1ActionPerformed
     {//GEN-HEADEREND:event_jlmRelatoriosDeEntradasNoCaixa1ActionPerformed
-       new RelatorioDepositosVisao().show();
+       new RelatorioDepositosVisao().setVisible(true);
     }//GEN-LAST:event_jlmRelatoriosDeEntradasNoCaixa1ActionPerformed
 
     private void jlmRelatoriosDeEntradasNoCaixa2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jlmRelatoriosDeEntradasNoCaixa2ActionPerformed
     {//GEN-HEADEREND:event_jlmRelatoriosDeEntradasNoCaixa2ActionPerformed
-        new RelatorioLevantamentosVisao().show();
+        new RelatorioLevantamentosVisao().setVisible(true);
     }//GEN-LAST:event_jlmRelatoriosDeEntradasNoCaixa2ActionPerformed
 
     /**

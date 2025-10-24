@@ -136,29 +136,29 @@ public class GestaoEncomendaVisao extends javax.swing.JFrame {
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         // TODO add your handling code here:
-        new CadastroClienteVisao().show();
+        new CadastroClienteVisao().setVisible(true);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         // TODO add your handling code here:
-        new EfectuarEncomendasVisao(idUduario).show();
+        new EfectuarEncomendasVisao(idUduario).setVisible(true);
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
         // TODO add your handling code here:
-       new ListagemEncomendas().show();
+       new ListagemEncomendas().setVisible(true);
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
        
-       new LoginEntradaEfectuarSaldo(idUduario).show();
+       new LoginEntradaEfectuarSaldo(idUduario).setVisible(true);
         
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
         // TODO add your handling code here:\
         
-        new RemoverEncomendasVisao().show();
+        new RemoverEncomendasVisao().setVisible(true);
                 
         
     }//GEN-LAST:event_jMenuItem5ActionPerformed

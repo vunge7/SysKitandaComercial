@@ -4,7 +4,6 @@
  */
 package visao;
 
-
 import java.sql.Connection;
 import com.formdev.flatlaf.intellijthemes.FlatCyanLightIJTheme;
 import com.formdev.flatlaf.intellijthemes.FlatDarkFlatIJTheme;
@@ -13,6 +12,7 @@ import com.formdev.flatlaf.intellijthemes.FlatOneDarkIJTheme;
 import com.formdev.flatlaf.intellijthemes.FlatVuesionIJTheme;
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialLighterIJTheme;
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialOceanicIJTheme;
+
 import comercial.controller.DadosInstituicaoController;
 import dao.CaixaDao;
 import dao.DadosInstituicaoDao;
@@ -20,8 +20,6 @@ import dao.DocumentoDao;
 import dao.EmpresaDao;
 import dao.UsuarioDao;
 import de.javasoft.plaf.synthetica.SyntheticaBlackStarLookAndFeel;
-import de.javasoft.plaf.synthetica.SyntheticaLookAndFeel;
-import de.javasoft.plaf.synthetica.SyntheticaStandardLookAndFeel;
 //import de.javasoft.plaf.synthetica.SyntheticaBlackStarLookAndFeel;
 import entity.TbDadosInstituicao;
 import entity.TbUsuario;
@@ -53,6 +51,7 @@ import util.MetodosUtil;
 import static util.MetodosUtil.startBackGroundProcesses;
 import util.SingleInstanceLock;
 import util.cronjob.QuartzApp;
+import util.cronjob.StockAutoCheckService;
 import util.cronjob.ValidadorJob;
 
 /**
@@ -64,7 +63,7 @@ public class LoginVisao extends javax.swing.JFrame
 
     private static EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
     private static DadosInstituicaoController dadosInstituicaoController;
-    private UsuarioDao usuarioDao = new UsuarioDao( emf );
+    private UsuarioDao usuarioDao = new UsuarioDao(emf );
     private EmpresaDao empresaDao = new EmpresaDao( emf );
     private static CaixaDao caixaDao = new CaixaDao( emf );
 
@@ -81,26 +80,23 @@ public class LoginVisao extends javax.swing.JFrame
     private int id_user, id_empresa;
     private javax.swing.Timer piscarTimer;
 
-    public LoginVisao()
+    public LoginVisao( BDConexao conexao )
     {
 
         initComponents();
         setLocationRelativeTo( null );
         setResizable( false );
         setVisible( true );
-//        setTitle( "BEM VINDO AO " + DVML.NAME_SOFTWARE + " " + DVML.VERSION_SOFTWARE );
 
-//        if (Objects.nonNull(conexao)) {
-//            conexao.close();
-//        }
+// Obtém a instância única e garante que a conexão está ativa
         conexao = BDConexao.getInstancia();
+        conexao.getConnectionAtiva(); // força a ativação da conexão, se ainda não estiver
 
-//        registerLog( conexao );
-        dadosInstituicaoController = new DadosInstituicaoController( LoginVisao.conexao );
+// Cria o controller com a instância de BDConexao já inicializada
+        dadosInstituicaoController = new DadosInstituicaoController( conexao );
+
+// Busca os dados da instituição (id = 1)
         d = (TbDadosInstituicao) dadosInstituicaoController.findById( 1 );
-        horaTerminoVenda = d.getHoraTerminoVenda();
-//        this.idUser = idUser;
-//        licensaUtil = new LicensaUtil( conexao );
 
         mostrar_empresas();
 
@@ -610,7 +606,7 @@ public class LoginVisao extends javax.swing.JFrame
                 }
 
 //                dispose();
-                switch ( usuario.getIdTipoUsuario().getIdTipoUsuario() )
+                switch (usuario.getIdTipoUsuario().getIdTipoUsuario())
                 {
 
                     //1 - Administrador
@@ -620,7 +616,7 @@ public class LoginVisao extends javax.swing.JFrame
                         System.err.println( "getCodico_Utilizador (): " + getCodico_Utilizador() );
                         System.err.println( "getCodico_Empresa (): " + getIdEmpresa() );
 //                        MetodosUtil.abrir_caixa_automatica( getCodico_Utilizador(), new UsuariosController( conexao ), new CaixasController( conexao ) );
-                        new RootVisao( getCodico_Utilizador(), getIdEmpresa(), true, conexao ).setVisible( true );
+                        new RootVisao( getCodico_Utilizador(), getIdEmpresa(), true, BDConexao.getInstancia()).setVisible(true);
                         limpar();
                         break;
 //                    Sub Administrador
@@ -633,13 +629,13 @@ public class LoginVisao extends javax.swing.JFrame
                         if ( dadosInstituicao.getNegocio().equals( "Lavandaria" ) )
                         {
 
-                            new JanelaFrontOfficeLavandariaVisao( getCodico_Utilizador(), conexao ).setVisible( true );
+                            new JanelaFrontOfficeLavandariaVisao( getCodico_Utilizador(), BDConexao.getInstancia()).setVisible(true);
 
                         }
                         else
                         {
 
-                            new RootVisao( getCodico_Utilizador(), getIdEmpresa(), true, conexao ).setVisible( true );
+                            new RootVisao(getCodico_Utilizador(), getIdEmpresa(), true, BDConexao.getInstancia()).setVisible(true);
                         }
                         limpar();
                         break;
@@ -647,7 +643,7 @@ public class LoginVisao extends javax.swing.JFrame
                     case 3:
 //                        dispose();
 //                        MetodosUtil.abrir_caixa_automatica( getCodico_Utilizador(), new UsuariosController( conexao ), new CaixasController( conexao ) );
-                        new VendaUsuarioVisao( getCodico_Utilizador(), conexao ).setVisible( true );
+                        new VendaUsuarioVisao( getCodico_Utilizador(), BDConexao.getInstancia()).setVisible(true);
                         limpar();
                         break;
                     //3 - VendaPO
@@ -655,7 +651,7 @@ public class LoginVisao extends javax.swing.JFrame
 //                        dispose();
 //                        new VendaPOSVisao( BDConexao.getInstancia(), DVML.ARMAZEM_LOJA, getCodico_Utilizador() ).setVisible( true );
 //                        MetodosUtil.abrir_caixa_automatica( getCodico_Utilizador(), new UsuariosController( conexao ), new CaixasController( conexao ) );
-                        new FrontOfficeVisao( getCodico_Utilizador(), conexao ).setVisible( true );
+                        new FrontOfficeVisao( getCodico_Utilizador(), BDConexao.getInstancia()).setVisible(true);
                         limpar();
                         break;
 
@@ -706,7 +702,7 @@ public class LoginVisao extends javax.swing.JFrame
         }
         catch ( Exception ex )
         {
-            java.util.logging.Logger.getLogger(LoginVisao.class.getName() )
+            java.util.logging.Logger.getLogger( LoginVisao.class.getName() )
                     .log( java.util.logging.Level.SEVERE, null, ex );
         }
 
@@ -718,7 +714,7 @@ public class LoginVisao extends javax.swing.JFrame
         }
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable()
+        java.awt.EventQueue.invokeLater( new Runnable()
         {
             public void run()
             {
@@ -760,9 +756,22 @@ public class LoginVisao extends javax.swing.JFrame
                 // INICIAR PROCESSOS EM BACKGROUND
                 if ( startBackGroundProcesses() )
                 {
+                    BDConexao conexao = BDConexao.getInstancia();
+                    StockAutoCheckService service = new StockAutoCheckService( conexao.getConnectionAtiva() );
+
+                    try
+                    {
+                        service.verificarOuSalvarStockDiario();
+                    }
+                    catch ( SQLException e )
+                    {
+                        e.printStackTrace();
+                    }
+
                     if ( true )
                     { // <- aqui você pode colocar sua regra de licença
-                        new LoginVisao().setVisible( true );
+                        new LoginVisao( BDConexao.getInstancia() ).setVisible( true );
+
                     }
                     else
                     {
@@ -957,8 +966,10 @@ public class LoginVisao extends javax.swing.JFrame
 //        Empresa empresa = empresaDao.findEmpresa( id_empresa );
         MetodosUtil.fechar_todas_janelas();
         MetodosUtil.actualizarEstadoLog( "OFF" );
-        new LoginVisao();
+        conexao.close();
+        new LoginVisao( BDConexao.getInstancia() ).setVisible( true );
 
+//        new LoginVisao(BDConexao.getInstancia().getConnectionAtiva()).setVisible(true);
     }
 
 }

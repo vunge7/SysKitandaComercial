@@ -537,7 +537,7 @@ public class EntradaPratosCompostosVisao extends javax.swing.JFrame
         try
         {
             dispose();
-            new FichaTecnicaVisao( cod_usuario, this.conexao ).show();
+            new FichaTecnicaVisao(cod_usuario, BDConexao.getInstancia()).setVisible(true);
 
         }
         catch ( Exception e )

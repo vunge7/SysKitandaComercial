@@ -449,7 +449,7 @@ public class AprovacaoCompraVisao extends javax.swing.JFrame
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
         dispose();
-        //new MenuPrincipal().show();
+        //new MenuPrincipal().setVisible(true);
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void porocedimento_actualizar()

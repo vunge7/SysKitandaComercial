@@ -148,7 +148,7 @@ public class ConverterGuiaFacturaVisao extends javax.swing.JFrame implements Run
     private static String prox_doc;
     private static EntityTransaction transaction;
 
-    public ConverterGuiaFacturaVisao( int cod_usuario, BDConexao conexao ) throws SQLException
+    public ConverterGuiaFacturaVisao(int cod_usuario, BDConexao conexao ) throws SQLException
     {
 
         initComponents();
@@ -820,7 +820,7 @@ public class ConverterGuiaFacturaVisao extends javax.swing.JFrame implements Run
         {
             if ( data_documento_superior_ou_igual_ao_ultimo_doc() )
             {
-                new FormaPagamentoVisao( this, rootPaneCheckingEnabled, emf, DVML.CONVERSAO_GUIA_TRANSPORTE, conexao ).setVisible( true );
+                new FormaPagamentoVisao( this, rootPaneCheckingEnabled, emf, DVML.CONVERSAO_GUIA_TRANSPORTE, BDConexao.getInstancia()).setVisible(true);
 
             }
             else

@@ -35,7 +35,7 @@ public class FrontOfficeLavandariaVisao extends javax.swing.JFrame
 {
 
     private static EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
-    private AccessoArmazemDao accessoArmazemDao = new AccessoArmazemDao( emf );
+    private AccessoArmazemDao accessoArmazemDao = new AccessoArmazemDao(emf );
     private static ArmazemDao armazemDao = new ArmazemDao( emf );
     private UsuarioDao usuarioDao = new UsuarioDao( emf );
     private static int id_usuario = 0;
@@ -131,9 +131,9 @@ public class FrontOfficeLavandariaVisao extends javax.swing.JFrame
         // TODO add your handling code here:
         try
         {
-            new JanelaFrontOfficeLavandariaVisao( id_usuario, conexao ).setVisible( true );
+            new JanelaFrontOfficeLavandariaVisao( id_usuario, BDConexao.getInstancia()).setVisible(true);
         }
-        catch ( Exception e )
+        catch (Exception e )
         {
             e.printStackTrace();
         }
@@ -232,12 +232,13 @@ public class FrontOfficeLavandariaVisao extends javax.swing.JFrame
         TbUsuario usuario = usuarioDao.findTbUsuario( id_usuario );
         if ( usuario.getIdTipoUsuario().getIdTipoUsuario() == 1 )
         {
-            new RootVisao( id_usuario, 1, true, conexao ).setVisible( true );
-//            new MenuPrincipalVisao( id_usuario, 1, true, conexao ).setVisible( true );
+            new RootVisao( id_usuario, 1, true, BDConexao.getInstancia()).setVisible(true);
+//            new MenuPrincipalVisao(id_usuario, 1, true, BDConexao.getInstancia()).setVisible(true);
         }
         else
         {
-            new LoginVisao().setVisible( true );
+            new LoginVisao(BDConexao.getInstancia()).setVisible(true);
+
         }
     }
 

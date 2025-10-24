@@ -42,7 +42,7 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
 {
 
     private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
-    private ItemPermissaoDao itemPermissaoDao = new ItemPermissaoDao( emf );
+    private ItemPermissaoDao itemPermissaoDao = new ItemPermissaoDao(emf );
     private UsuarioDao usuarioDao = new UsuarioDao( emf );
     private DadosInstituicaoDao dadosInstituicaoDao = new DadosInstituicaoDao( emf );
     private int cod_utilizador;
@@ -1566,10 +1566,10 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
         try
         {
             // TODO add your handling code here
-            new VendaOficinaUsuarioVisao( cod_utilizador, this.conexao ).show();
-//            new VendaOficinaUsuarioVisao( cod_utilizador, this.conexao ).show();
-            //VendaUsuarioVisao.getObj(cod_utilizador).show();
-            // MetodosUtil.getObj(cod_utilizador, (VendaUsuarioVisao)).show();
+            new VendaOficinaUsuarioVisao(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
+//            new VendaOficinaUsuarioVisao(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
+            //VendaUsuarioVisao.getObj(cod_utilizador).setVisible(true);
+            // MetodosUtil.getObj(cod_utilizador, (VendaUsuarioVisao)).setVisible(true);
 
         }
         catch ( Exception ex )
@@ -1588,13 +1588,13 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
 
     private void jDadosEmpresaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jDadosEmpresaActionPerformed
         // TODO add your handling code here:
-        new DadosInstituicaoVisao( this, rootPaneCheckingEnabled ).show();
+        new DadosInstituicaoVisao( this, rootPaneCheckingEnabled ).setVisible(true);
     }//GEN-LAST:event_jDadosEmpresaActionPerformed
 
     private void jmPermissaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmPermissaoActionPerformed
         // TODO add your handling code here:
 
-        new PermissaoVisao( this.conexao ).show();
+        new PermissaoVisao( this.conexao ).setVisible(true);
     }//GEN-LAST:event_jmPermissaoActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
@@ -1606,7 +1606,7 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
-        new InformacoesEmpresaVisao().show();
+        new InformacoesEmpresaVisao().setVisible(true);
     }//GEN-LAST:event_jMenuItem9ActionPerformed
 
     private void jmAcertoStockActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmAcertoStockActionPerformed
@@ -1614,7 +1614,7 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
         try
         {
 
-            new AcertoStockVisao( this.cod_utilizador, this.conexao ).show();
+            new AcertoStockVisao(this.cod_utilizador, BDConexao.getInstancia()).setVisible(true);
         }
         catch ( Exception e )
         {
@@ -1627,7 +1627,7 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
         try
         {
             // TODO add your handling code here:
-            new ConverterProformaFacturaVisao( this.cod_utilizador, this.conexao ).show();
+            new ConverterProformaFacturaVisao(this.cod_utilizador, BDConexao.getInstancia()).setVisible(true);
         }
         catch ( SQLException ex )
         {
@@ -1651,22 +1651,22 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
     private void jmProcessarReciboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmProcessarReciboActionPerformed
 
 //        new ReciboVisao( cod_utilizador, this.conexao ).setVisible( true );
-        new EmissaoRecibos( cod_utilizador, conexao ).setVisible( true );
+        new EmissaoRecibos( cod_utilizador, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jmProcessarReciboActionPerformed
 
     private void jmUnidadesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmUnidadesActionPerformed
-        new UnidadeMedidasVisao( this, rootPaneCheckingEnabled ).show();
+        new UnidadeMedidasVisao( this, rootPaneCheckingEnabled ).setVisible(true);
     }//GEN-LAST:event_jmUnidadesActionPerformed
 
     private void jmGavetasPrateleirasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmGavetasPrateleirasActionPerformed
-        new LocalVisao( this, rootPaneCheckingEnabled ).show();
+        new LocalVisao( this, rootPaneCheckingEnabled ).setVisible(true);
     }//GEN-LAST:event_jmGavetasPrateleirasActionPerformed
 
     private void jmSolicitacaoComprasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmSolicitacaoComprasActionPerformed
         try
         {
 
-            new SolicitacaoComprasVisao( cod_utilizador, this.conexao ).show();
+            new SolicitacaoComprasVisao(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
 
         }
         catch ( Exception e )
@@ -1679,7 +1679,7 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
         try
         {
 
-            new AprovacaoCompraVisao( cod_utilizador, this.conexao ).show();
+            new AprovacaoCompraVisao(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
 
         }
         catch ( Exception e )
@@ -1692,7 +1692,7 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
         try
         {
 
-            new EncomendaVisao( cod_utilizador, this.conexao ).show();
+            new EncomendaVisao(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
 
         }
         catch ( Exception e )
@@ -1705,9 +1705,9 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
         try
         {
 
-            new FornecedorOutroVisao( this, cod_utilizador, rootPaneCheckingEnabled, conexao ).setVisible( true );
+            new FornecedorOutroVisao( this, cod_utilizador, rootPaneCheckingEnabled, BDConexao.getInstancia()).setVisible(true);
         }
-        catch ( Exception e )
+        catch (Exception e )
         {
             e.printStackTrace();
         }
@@ -1716,37 +1716,37 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
     private void jmFamiliaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmFamiliaActionPerformed
     {//GEN-HEADEREND:event_jmFamiliaActionPerformed
         // TODO add your handling code here:
-        new FamiliaVisao().show();
+        new FamiliaVisao().setVisible(true);
     }//GEN-LAST:event_jmFamiliaActionPerformed
 
     private void jmSubFamiliaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmSubFamiliaActionPerformed
     {//GEN-HEADEREND:event_jmSubFamiliaActionPerformed
         // TODO add your handling code here:
-        new CategoriasVisao( this.conexao ).show();
+        new CategoriasVisao( this.conexao ).setVisible(true);
     }//GEN-LAST:event_jmSubFamiliaActionPerformed
 
     private void jmMarcaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmMarcaActionPerformed
     {//GEN-HEADEREND:event_jmMarcaActionPerformed
         // TODO add your handling code here:
-        new MarcaVisao().show();
+        new MarcaVisao().setVisible(true);
     }//GEN-LAST:event_jmMarcaActionPerformed
 
     private void jmModeloActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmModeloActionPerformed
     {//GEN-HEADEREND:event_jmModeloActionPerformed
         // TODO add your handling code here:
-        new ModeloVisao().show();
+        new ModeloVisao().setVisible(true);
     }//GEN-LAST:event_jmModeloActionPerformed
 
     private void jmGrupoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmGrupoActionPerformed
     {//GEN-HEADEREND:event_jmGrupoActionPerformed
         // TODO add your handling code here:
-        new GrupoVisao().show();
+        new GrupoVisao().setVisible(true);
     }//GEN-LAST:event_jmGrupoActionPerformed
 
     private void jmImprimirPrecosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmImprimirPrecosActionPerformed
     {//GEN-HEADEREND:event_jmImprimirPrecosActionPerformed
         // TODO add your handling code here:
-        new ImprimirPrecoVisao( this.conexao ).show();
+        new ImprimirPrecoVisao( this.conexao ).setVisible(true);
     }//GEN-LAST:event_jmImprimirPrecosActionPerformed
 
     private void jPercentagemDescontoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jPercentagemDescontoActionPerformed
@@ -1754,7 +1754,7 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
 
         try
         {
-            new PercentagemDesconto( this, rootPaneCheckingEnabled, cod_utilizador, this.conexao ).show();
+            new PercentagemDesconto( this, rootPaneCheckingEnabled, cod_utilizador, BDConexao.getInstancia()).setVisible(true);
         }
         catch ( SQLException ex )
         {
@@ -1768,7 +1768,7 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
         {
             // TODO add your handling code here:
 
-            new ProdutosVisao( this, rootPaneCheckingEnabled, cod_utilizador, this.conexao ).setVisible( true );
+            new ProdutosVisao(this, rootPaneCheckingEnabled, cod_utilizador, this.conexao ).setVisible( true );
         }
         catch ( Exception ex )
         {
@@ -1778,32 +1778,32 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
 
     private void jmCadastroClienteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmCadastroClienteActionPerformed
     {//GEN-HEADEREND:event_jmCadastroClienteActionPerformed
-        new ClienteVisao( this, rootPaneCheckingEnabled, this.conexao ).show();
+        new ClienteVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jmCadastroClienteActionPerformed
 
     private void jmCadastroArmazemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmCadastroArmazemActionPerformed
     {//GEN-HEADEREND:event_jmCadastroArmazemActionPerformed
         // TODO add your handling code here:
-        new ArmazemVisao( this.conexao ).show();
+        new ArmazemVisao(this.conexao ).setVisible(true);
     }//GEN-LAST:event_jmCadastroArmazemActionPerformed
 
     private void jmCadastroUsuarioActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmCadastroUsuarioActionPerformed
     {//GEN-HEADEREND:event_jmCadastroUsuarioActionPerformed
         // TODO add your handling code here:
-        new UsuarioVisao( this, rootPaneCheckingEnabled, this.conexao ).show();
+        new UsuarioVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jmCadastroUsuarioActionPerformed
 
     private void jmTurnoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmTurnoActionPerformed
     {//GEN-HEADEREND:event_jmTurnoActionPerformed
         // TODO add your handling code here:
-        new TurnoVisao( cod_utilizador, this.conexao ).show();
+        new TurnoVisao(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jmTurnoActionPerformed
 
     private void jmReeprmirFacuraActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmReeprmirFacuraActionPerformed
     {//GEN-HEADEREND:event_jmReeprmirFacuraActionPerformed
         // TODO add your handling code here:
 
-        new ReemprimirDocumentoVisao( this, rootPaneCheckingEnabled, this.conexao ).show();
+        new ReemprimirDocumentoVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia()).setVisible(true);
 
 
     }//GEN-LAST:event_jmReeprmirFacuraActionPerformed
@@ -1811,19 +1811,19 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
     private void jmRelatorioPorFonecedorActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmRelatorioPorFonecedorActionPerformed
     {//GEN-HEADEREND:event_jmRelatorioPorFonecedorActionPerformed
         // TODO add your handling code here:
-        new FornecedorRelatorioDiario( this.conexao ).show();
+        new FornecedorRelatorioDiario(this.conexao ).setVisible(true);
     }//GEN-LAST:event_jmRelatorioPorFonecedorActionPerformed
 
     private void jmVendaDetalhadasUsuariosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmVendaDetalhadasUsuariosActionPerformed
     {//GEN-HEADEREND:event_jmVendaDetalhadasUsuariosActionPerformed
-        new ListarVendasDetalhadas( this.conexao ).show();
+        new ListarVendasDetalhadas( this.conexao ).setVisible(true);
     }//GEN-LAST:event_jmVendaDetalhadasUsuariosActionPerformed
 
     private void jmListarUsuarioActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmListarUsuarioActionPerformed
     {//GEN-HEADEREND:event_jmListarUsuarioActionPerformed
         // TODO add your handling code here:
 
-        new ListaUsuarioVisao().show();
+        new ListaUsuarioVisao().setVisible(true);
     }//GEN-LAST:event_jmListarUsuarioActionPerformed
 
     private void jmProdutosActualizarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmProdutosActualizarActionPerformed
@@ -1832,7 +1832,7 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
         try
         {
             // TODO add your handling code here
-            new ListarProdutosAcomprar( cod_utilizador, this.conexao ).show();
+            new ListarProdutosAcomprar(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
 
         }
         catch ( SQLException ex )
@@ -1846,13 +1846,13 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jmListagensTodosProdutosActionPerformed
         // TODO add your handling code here:
 
-        new ListarProdutosVisao( cod_utilizador ).show();
+        new ListarProdutosVisao( cod_utilizador ).setVisible(true);
     }//GEN-LAST:event_jmListagensTodosProdutosActionPerformed
 
     private void jmRelatorioDiarioTodasVendasTempoRealActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmRelatorioDiarioTodasVendasTempoRealActionPerformed
     {//GEN-HEADEREND:event_jmRelatorioDiarioTodasVendasTempoRealActionPerformed
         // TODO add your handling code here:
-        new RelatorioVendaEmTempoRealVisao( this.conexao ).show();
+        new RelatorioVendaEmTempoRealVisao( this.conexao ).setVisible(true);
     }//GEN-LAST:event_jmRelatorioDiarioTodasVendasTempoRealActionPerformed
 
     private void jmRelatorioDiarioActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmRelatorioDiarioActionPerformed
@@ -1873,7 +1873,7 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
     private void jmRelatorioVendasPorUsuarioDataActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmRelatorioVendasPorUsuarioDataActionPerformed
     {//GEN-HEADEREND:event_jmRelatorioVendasPorUsuarioDataActionPerformed
         // TODO add your handling code here:
-        new ListarVendasByUsuarios( cod_utilizador, this.conexao ).show();
+        new ListarVendasByUsuarios(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jmRelatorioVendasPorUsuarioDataActionPerformed
 
     private void jmTodasVendasActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmTodasVendasActionPerformed
@@ -1881,7 +1881,7 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
 
         try
         {
-            new ListarRelatorioVenda( this.conexao, cod_utilizador ).show();
+            new ListarRelatorioVenda( this.conexao, cod_utilizador ).setVisible(true);
         }
         catch ( Exception e )
         {
@@ -1896,7 +1896,7 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
         // TODO add your handling code here:
         try
         {
-            new InventarioVisao( cod_utilizador, this.conexao ).show();
+            new InventarioVisao(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
         }
         catch ( Exception e )
         {
@@ -1907,21 +1907,21 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
 
     private void jmMapaExistenciaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmMapaExistenciaActionPerformed
         // TODO add your handling code here:
-        new MapaExistenciaVisao( cod_utilizador, this.conexao ).show();
+        new MapaExistenciaVisao(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jmMapaExistenciaActionPerformed
 
     private void jmRelatoriosSaidasProdutosPorDatasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmRelatoriosSaidasProdutosPorDatasActionPerformed
         // TODO add your handling code here:
-        //        new ListarSaidasByUsuarios().show();
-        new ListarRelatorioSaidaByIntervalo( this.conexao ).show();
+        //        new ListarSaidasByUsuarios().setVisible(true);
+        new ListarRelatorioSaidaByIntervalo( this.conexao ).setVisible(true);
     }//GEN-LAST:event_jmRelatoriosSaidasProdutosPorDatasActionPerformed
 
     private void jmAnulamentoSaidasProdutosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmAnulamentoSaidasProdutosActionPerformed
-        new AnulamentoSaidasProdutosVisao( this, rootPaneCheckingEnabled, this.conexao ).show();
+        new AnulamentoSaidasProdutosVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jmAnulamentoSaidasProdutosActionPerformed
 
     private void jmReimprimirSaidasProdutosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmReimprimirSaidasProdutosActionPerformed
-        new ReimprimirSaidasProdutos( this.conexao ).show();
+        new ReimprimirSaidasProdutos(this.conexao ).setVisible(true);
     }//GEN-LAST:event_jmReimprimirSaidasProdutosActionPerformed
 
     private void jmRelatorioNotasCreditoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmRelatorioNotasCreditoActionPerformed
@@ -1931,7 +1931,7 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
 
     private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem8ActionPerformed
     {//GEN-HEADEREND:event_jMenuItem8ActionPerformed
-        new UsuarioAlterarSenhaVissao( usuarioDao.findTbUsuario( cod_utilizador ) ).show();
+        new UsuarioAlterarSenhaVissao( usuarioDao.findTbUsuario( cod_utilizador ) ).setVisible(true);
     }//GEN-LAST:event_jMenuItem8ActionPerformed
 
     private void jmRelatorioFormaPagamentoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmRelatorioFormaPagamentoActionPerformed
@@ -1939,7 +1939,7 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
 
         try
         {
-            new ListarRelatorioFormaPagamento( BDConexao.getInstancia(), this.cod_utilizador ).show();
+            new ListarRelatorioFormaPagamento( BDConexao.getInstancia(), this.cod_utilizador ).setVisible(true);
         }
         catch ( Exception e )
         {
@@ -1949,17 +1949,17 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
 
     private void jmRelatorioVendasPorClienteDataActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmRelatorioVendasPorClienteDataActionPerformed
     {//GEN-HEADEREND:event_jmRelatorioVendasPorClienteDataActionPerformed
-        new ListarVendasByClientes( cod_utilizador, this.conexao ).show();
+        new ListarVendasByClientes(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jmRelatorioVendasPorClienteDataActionPerformed
 
     private void jmVendaDetalhadasClientesActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmVendaDetalhadasClientesActionPerformed
     {//GEN-HEADEREND:event_jmVendaDetalhadasClientesActionPerformed
-        new ListarVendasDetalhadasClientes( this.conexao ).show();
+        new ListarVendasDetalhadasClientes( this.conexao ).setVisible(true);
     }//GEN-LAST:event_jmVendaDetalhadasClientesActionPerformed
 
     private void jmRelatorioTodosServicosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmRelatorioTodosServicosActionPerformed
     {//GEN-HEADEREND:event_jmRelatorioTodosServicosActionPerformed
-        new ListarServicosVisao( cod_utilizador, this.conexao ).show();
+        new ListarServicosVisao(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jmRelatorioTodosServicosActionPerformed
 
     private void jmRelatorioAcertoStockActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmRelatorioAcertoStockActionPerformed
@@ -1980,7 +1980,7 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
 
     private void jmReeprmirCompraActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmReeprmirCompraActionPerformed
     {//GEN-HEADEREND:event_jmReeprmirCompraActionPerformed
-        new ReemprimirCompraVisao( this, rootPaneCheckingEnabled ).show();
+        new ReemprimirCompraVisao( this, rootPaneCheckingEnabled ).setVisible(true);
     }//GEN-LAST:event_jmReeprmirCompraActionPerformed
 
     private void jMenuItem13ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem13ActionPerformed
@@ -1998,7 +1998,7 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
         try
         {
             // TODO add your handling code here:
-            new ListarRelatorioComprasDiario( cod_utilizador, this.conexao ).show();
+            new ListarRelatorioComprasDiario(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
         }
         catch ( SQLException ex )
         {
@@ -2021,19 +2021,19 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
     private void jmFrontOfficeActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmFrontOfficeActionPerformed
     {//GEN-HEADEREND:event_jmFrontOfficeActionPerformed
         // TODO add your handling code here:
-        new FrontOfficeVisao( cod_utilizador, conexao ).setVisible( true );
-//        new PosVisao( "", cod_utilizador, this.conexao ).co( true );
+        new FrontOfficeVisao( cod_utilizador, BDConexao.getInstancia()).setVisible(true);
+//        new PosVisao("", cod_utilizador, this.conexao ).co( true );
     }//GEN-LAST:event_jmFrontOfficeActionPerformed
 
     private void jmTransferenciaArmazemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmTransferenciaArmazemActionPerformed
     {//GEN-HEADEREND:event_jmTransferenciaArmazemActionPerformed
         // TODO add your handling code here:
-        new TranferenciaArmazemVisao( cod_utilizador, conexao ).setVisible( true );
+        new TranferenciaArmazemVisao( cod_utilizador, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jmTransferenciaArmazemActionPerformed
 
     private void jMenuItemGestaoCreditosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemGestaoCreditosActionPerformed
     {//GEN-HEADEREND:event_jMenuItemGestaoCreditosActionPerformed
-        new GestaoCreditos( this.cod_utilizador ).show();
+        new GestaoCreditos( this.cod_utilizador ).setVisible(true);
     }//GEN-LAST:event_jMenuItemGestaoCreditosActionPerformed
 
     private void jmSaidasProdutosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmSaidasProdutosActionPerformed
@@ -2041,10 +2041,10 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
         try
         {
 
-            new SaidaProdutoVisao( cod_utilizador, conexao ).show();
+            new SaidaProdutoVisao( cod_utilizador, BDConexao.getInstancia()).setVisible(true);
 
         }
-        catch ( Exception ex )
+        catch (Exception ex )
         {
             ex.printStackTrace();
             Logger.getLogger( MenuPrincipalOficinaVisao.class.getName() ).log( Level.SEVERE, null, ex );
@@ -2055,9 +2055,9 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jMenuItemRectificacaoActionPerformed
                 try
         {
-            new NotasCreditoParcialVisao( cod_utilizador, conexao ).setVisible( true );
+            new NotasCreditoParcialVisao( cod_utilizador, BDConexao.getInstancia()).setVisible(true);
         }
-        catch ( Exception e )
+        catch (Exception e )
         {
             e.printStackTrace();
         }
@@ -2079,12 +2079,12 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
 
     private void jmReeprmirNotaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmReeprmirNotaActionPerformed
     {//GEN-HEADEREND:event_jmReeprmirNotaActionPerformed
-        new ReemprimirNotaVisao( this, rootPaneCheckingEnabled, this.conexao ).show();
+        new ReemprimirNotaVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jmReeprmirNotaActionPerformed
 
     private void jMenuConfiguracoesSistemaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuConfiguracoesSistemaActionPerformed
     {//GEN-HEADEREND:event_jMenuConfiguracoesSistemaActionPerformed
-        new ConfiguracoesVisao( this, rootPaneCheckingEnabled ).show();
+        new ConfiguracoesVisao( this, rootPaneCheckingEnabled ).setVisible(true);
     }//GEN-LAST:event_jMenuConfiguracoesSistemaActionPerformed
 
     private void jmEstornosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmEstornosActionPerformed
@@ -2092,10 +2092,10 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
         try
         {
 
-            new EstornoVisao( cod_utilizador, conexao ).show();
+            new EstornoVisao( cod_utilizador, BDConexao.getInstancia()).setVisible(true);
 
         }
-        catch ( Exception ex )
+        catch (Exception ex )
         {
             ex.printStackTrace();
             Logger.getLogger( MenuPrincipalOficinaVisao.class.getName() ).log( Level.SEVERE, null, ex );
@@ -2104,7 +2104,7 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
 
     private void jMenuItemRelatorioQuebrasActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemRelatorioQuebrasActionPerformed
     {//GEN-HEADEREND:event_jMenuItemRelatorioQuebrasActionPerformed
-        new ListarRelatorioQuebras( this.conexao ).show();
+        new ListarRelatorioQuebras( this.conexao ).setVisible(true);
     }//GEN-LAST:event_jMenuItemRelatorioQuebrasActionPerformed
 
     private void jmReactivarProdutosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmReactivarProdutosActionPerformed
@@ -2131,7 +2131,7 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
         try
         {
             // TODO add your handling code here:
-            new AlteracaoGuiaTransporteVisao( this.cod_utilizador, this.conexao ).show();
+            new AlteracaoGuiaTransporteVisao(this.cod_utilizador, BDConexao.getInstancia()).setVisible(true);
         }
         catch ( SQLException ex )
         {
@@ -2144,7 +2144,7 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
         try
         {
             // TODO add your handling code here:
-            new ConverterGuiaFacturaVisao( this.cod_utilizador, this.conexao ).show();
+            new ConverterGuiaFacturaVisao(this.cod_utilizador, BDConexao.getInstancia()).setVisible(true);
         }
         catch ( SQLException ex )
         {
@@ -2166,7 +2166,7 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
 
     private void jMenuRelatorioTransferenciaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuRelatorioTransferenciaActionPerformed
     {//GEN-HEADEREND:event_jMenuRelatorioTransferenciaActionPerformed
-        new RelatorioTransferenciaArmazem( cod_utilizador, conexao ).setVisible( true );
+        new RelatorioTransferenciaArmazem( cod_utilizador, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jMenuRelatorioTransferenciaActionPerformed
 
     private void jMenuItemRelatorioMensalActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemRelatorioMensalActionPerformed

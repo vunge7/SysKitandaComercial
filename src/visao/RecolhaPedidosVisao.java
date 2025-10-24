@@ -137,7 +137,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
     private static TbStock stock_local;
 
     private TbItemPedidos itemPedidos;
-    private static MesasDao mesasDao = new MesasDao( emf );
+    private static MesasDao mesasDao = new MesasDao(emf );
     private static PrecoDao precoDao = new PrecoDao( emf );
     private static CaixaDao caixaDao;
     private static PedidoDao pedidoDao = new PedidoDao( emf );
@@ -1437,12 +1437,12 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
             {
                 if ( true )
                 {
-//                    new FormaPagamentoVisao( this, rootPaneCheckingEnabled, emf, DVML.VENDA_LAVANDARIA, conexao ).setVisible( true );
-                    new FormaPagamentoGoldVisao( this, rootPaneCheckingEnabled, conexao ).setVisible( true );
+//                    new FormaPagamentoVisao( this, rootPaneCheckingEnabled, emf, DVML.VENDA_LAVANDARIA, BDConexao.getInstancia()).setVisible(true);
+                    new FormaPagamentoGoldVisao(this, rootPaneCheckingEnabled, BDConexao.getInstancia()).setVisible(true);
                 }
                 else
                 {
-                    JOptionPane.showMessageDialog( null, "O documento não pode ser processado porque possui uma data inferior ao úlimo documento efectuado", "AVISO", JOptionPane.WARNING_MESSAGE );
+                    JOptionPane.showMessageDialog(null, "O documento não pode ser processado porque possui uma data inferior ao úlimo documento efectuado", "AVISO", JOptionPane.WARNING_MESSAGE );
                 }
             }
         }
@@ -1569,10 +1569,10 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
         {
 //            if ( activo_um_lugar() )
 //            {
-            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_RECOLHA, conexao ).show();
+            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_RECOLHA, BDConexao.getInstancia()).setVisible(true);
 //            }
         }
-        catch ( Exception e )
+        catch (Exception e )
         {
             e.printStackTrace();
         }
@@ -1612,7 +1612,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
 
     private void btClienteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btClienteActionPerformed
     {//GEN-HEADEREND:event_btClienteActionPerformed
-        new ClienteVisao( this, rootPaneCheckingEnabled, conexao ).setVisible( true );
+        new ClienteVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btClienteActionPerformed
 
     private void txtIniciaisClienteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtIniciaisClienteActionPerformed

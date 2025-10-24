@@ -132,7 +132,7 @@ public class VendaPraticaVisao extends javax.swing.JFrame
 //    private static Ite tipoProdutosController;
     private static TbStock stock_local;
     private TbItemPedidos itemPedidos;
-    private static MesasDao mesasDao = new MesasDao( emf );
+    private static MesasDao mesasDao = new MesasDao(emf );
     private static PrecoDao precoDao = new PrecoDao( emf );
     private static CaixaDao caixaDao;
     private static PedidoDao pedidoDao = new PedidoDao( emf );
@@ -1340,10 +1340,10 @@ public class VendaPraticaVisao extends javax.swing.JFrame
 
                         dispose();
 
-                        new FormaPagamentoVisao( this, rootPaneCheckingEnabled, emf, DVML.VENDA_RESTAURANTE, conexao ).setVisible( true );
+                        new FormaPagamentoVisao( this, rootPaneCheckingEnabled, emf, DVML.VENDA_RESTAURANTE, BDConexao.getInstancia()).setVisible(true);
 
                     }
-                    else if ( opcao == JOptionPane.NO_OPTION )
+                    else if (opcao == JOptionPane.NO_OPTION )
                     {
 
                         try
@@ -1620,15 +1620,15 @@ public class VendaPraticaVisao extends javax.swing.JFrame
         {
 //            if ( rbNao_lugar.isSelected() && activo_um_lugar() )
 //            {
-                new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_RETAURANTE, conexao ).show();
+                new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_RETAURANTE, BDConexao.getInstancia()).setVisible(true);
 //            }
 //            else
 //            {
 //
-//                new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_RETAURANTE, conexao ).show();
+//                new BuscaProdutoVisao(this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_RETAURANTE, BDConexao.getInstancia()).setVisible(true);
 //            }
         }
-        catch ( Exception e )
+        catch (Exception e )
         {
             e.printStackTrace();
         }
@@ -1663,7 +1663,7 @@ public class VendaPraticaVisao extends javax.swing.JFrame
 
     private void btClienteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btClienteActionPerformed
     {//GEN-HEADEREND:event_btClienteActionPerformed
-        new ClienteVisao( this, rootPaneCheckingEnabled, conexao ).show();
+        new ClienteVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btClienteActionPerformed
 
     private void txtIniciaisClienteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtIniciaisClienteActionPerformed

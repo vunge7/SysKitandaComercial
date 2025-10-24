@@ -44,7 +44,7 @@ public class RelatorioLavandariaVisao extends javax.swing.JFrame
 
     private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
 
-    private ProdutoDao produtoDao = new ProdutoDao( emf );
+    private ProdutoDao produtoDao = new ProdutoDao(emf );
     private ArmazemDao armazemDao = new ArmazemDao( emf );
     private StockDao stockDao = new StockDao( emf );
     private TipoProdutoDao tipoProdutoDao = new TipoProdutoDao( emf );
@@ -305,12 +305,12 @@ public class RelatorioLavandariaVisao extends javax.swing.JFrame
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton4ActionPerformed
     {//GEN-HEADEREND:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        new RelatorioLavandariaEntregaVisao( id_user, conexao ).setVisible( true );
+        new RelatorioLavandariaEntregaVisao( id_user, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton5ActionPerformed
     {//GEN-HEADEREND:event_jButton5ActionPerformed
-        new ListarVendasByUsuarios( id_user, this.conexao ).show();
+        new ListarVendasByUsuarios(id_user, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
@@ -345,7 +345,7 @@ public class RelatorioLavandariaVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jButton6ActionPerformed
         try
         {
-            new ListarRelatorioVenda( this.conexao, id_user ).show();
+            new ListarRelatorioVenda( this.conexao, id_user ).setVisible(true);
         }
         catch ( Exception e )
         {
@@ -356,7 +356,7 @@ public class RelatorioLavandariaVisao extends javax.swing.JFrame
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton7ActionPerformed
     {//GEN-HEADEREND:event_jButton7ActionPerformed
-        new ListarServicosVisao( id_user, this.conexao ).show();
+        new ListarServicosVisao(id_user, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jButton7ActionPerformed
 
     public void mostrarRecolhas() throws SQLException

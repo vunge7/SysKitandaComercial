@@ -1137,7 +1137,7 @@ public class FichaTecnicaVisao extends javax.swing.JFrame
             txt_qtd_liquido.setText( "" );
             txt_factor_correcao.setText( "" );
             txt_custo_total.setText( "" );
-            new BuscaProdutoIngredientesVisao( this, rootPaneCheckingEnabled, getIdArmazens(), DVML.JANELA_FICHA_TECNICA, conexao ).show();
+            new BuscaProdutoIngredientesVisao( this, rootPaneCheckingEnabled, getIdArmazens(), DVML.JANELA_FICHA_TECNICA, BDConexao.getInstancia()).setVisible(true);
             txt_qtd_bruta.requestFocus();
         }
         catch ( Exception e )
@@ -1249,7 +1249,7 @@ public class FichaTecnicaVisao extends javax.swing.JFrame
         try
         {
 
-            new BuscaProdutoRefeicoesVisao( this, rootPaneCheckingEnabled, getIdArmazens(), DVML.JANELA_FICHA_TECNICA, conexao ).show();
+            new BuscaProdutoRefeicoesVisao( this, rootPaneCheckingEnabled, getIdArmazens(), DVML.JANELA_FICHA_TECNICA, BDConexao.getInstancia()).setVisible(true);
 
         }
         catch ( Exception e )
@@ -1654,7 +1654,7 @@ public class FichaTecnicaVisao extends javax.swing.JFrame
             public void run()
             {
 
-                new FichaTecnicaVisao( 15, BDConexao.getInstancia() ).show();
+                new FichaTecnicaVisao( 15, BDConexao.getInstancia() ).setVisible(true);
             }
         } );
     }

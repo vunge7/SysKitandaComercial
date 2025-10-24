@@ -140,9 +140,9 @@ public class CompraVisao extends javax.swing.JFrame implements Runnable
                             {
 //                                cmbArmazem.setModel(new DefaultComboBoxModel(armazemDao.buscaTodos1()));
 //                                cmbArmazem.setModel(new DefaultComboBoxModel(armazemDao.buscaTodos1()));
-                                new BuscaProdutoVisao( getInstance(), rootPaneCheckingEnabled, getIdArmazens(), DVML.JANELA_COMPRA, conexao ).show();
+                                new BuscaProdutoVisao( getInstance(), rootPaneCheckingEnabled, getIdArmazens(), DVML.JANELA_COMPRA, BDConexao.getInstancia()).setVisible(true);
                             }
-                            catch ( Exception ex )
+                            catch (Exception ex )
                             {
                                 ex.printStackTrace();
                             }
@@ -946,9 +946,9 @@ public class CompraVisao extends javax.swing.JFrame implements Runnable
 
         try
         {
-//          new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getIdArmazem(), DVML.JANELA_COMPRA, conexao ).show();
+//          new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getIdArmazem(), DVML.JANELA_COMPRA, BDConexao.getInstancia()).setVisible(true);
 
-            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getIdArmazens(), DVML.JANELA_COMPRA, conexao ).show();
+            new BuscaProdutoVisao(this, rootPaneCheckingEnabled, getIdArmazens(), DVML.JANELA_COMPRA, BDConexao.getInstancia()).setVisible(true);
             txtQtdEntrar.requestFocus();
         }
         catch ( Exception e )
@@ -1033,7 +1033,7 @@ public class CompraVisao extends javax.swing.JFrame implements Runnable
 
     public static void main( String[] args )
     {
-        new CompraVisao( 15, BDConexao.getInstancia() ).show();
+        new CompraVisao( 15, BDConexao.getInstancia() ).setVisible(true);
     }
 
     @Override

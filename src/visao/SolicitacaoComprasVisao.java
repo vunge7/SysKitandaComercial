@@ -94,7 +94,7 @@ public class SolicitacaoComprasVisao extends javax.swing.JFrame implements Runna
     private static ArmazemDao armazemDao;
     private ItemComprasDao itemComprasDao;
     private TbVasilhame vasilhame;
-    private StockDao stocksDao = new StockDao( emf );
+    private StockDao stocksDao = new StockDao(emf );
     private Moeda moeda;
     private AnoEconomico anoEconomico;
     private static BDConexao conexao;
@@ -956,7 +956,7 @@ public class SolicitacaoComprasVisao extends javax.swing.JFrame implements Runna
 
 //        try
 //        {
-//            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_VENDA ).show();
+//            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_VENDA ).setVisible(true);
 //        }
 //        catch ( Exception e )
 //        {
@@ -1045,7 +1045,7 @@ public class SolicitacaoComprasVisao extends javax.swing.JFrame implements Runna
     }//GEN-LAST:event_txtCodigoManualActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        new FornecedorOutroVisao( this, cod_usuario, rootPaneCheckingEnabled, conexao ).show();
+        new FornecedorOutroVisao( this, cod_usuario, rootPaneCheckingEnabled, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void lista_ProdutosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lista_ProdutosMouseClicked

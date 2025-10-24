@@ -352,7 +352,7 @@ WHERE
 				<text><![CDATA[Preço Un.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="ea6a8330-d054-490f-a8d9-9baa62229bce" mode="Opaque" x="141" y="11" width="50" height="11" backcolor="#CCCCCC"/>
+				<reportElement uuid="ea6a8330-d054-490f-a8d9-9baa62229bce" mode="Opaque" x="141" y="11" width="46" height="11" backcolor="#CCCCCC"/>
 				<box leftPadding="1" rightPadding="1"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="9" isBold="true"/>
@@ -368,7 +368,7 @@ WHERE
 				<text><![CDATA[IVA%]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="1e7e23db-9b13-49c6-b33d-6a3a295bc86b" mode="Opaque" x="0" y="0" width="191" height="11" backcolor="#CCCCCC"/>
+				<reportElement uuid="1e7e23db-9b13-49c6-b33d-6a3a295bc86b" mode="Opaque" x="0" y="0" width="187" height="11" backcolor="#CCCCCC"/>
 				<box leftPadding="1"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="9" isBold="true"/>
@@ -378,9 +378,13 @@ WHERE
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="20" splitType="Stretch">
+		<band height="23" splitType="Stretch">
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
-				<reportElement uuid="8f205689-84f6-4f4b-9c22-736ed531de55" key="textField-18" x="138" y="9" width="51" height="11"/>
+				<reportElement uuid="8f205689-84f6-4f4b-9c22-736ed531de55" key="textField-18" x="138" y="12" width="50" height="11"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="9" isBold="true"/>
 					<paragraph rightIndent="5"/>
@@ -388,34 +392,46 @@ WHERE
 				<textFieldExpression><![CDATA[$F{tb_item_venda_total}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
-				<reportElement uuid="9be6ef76-1d45-42ff-9476-84efcf26e05c" key="textField-16" x="31" y="9" width="68" height="11"/>
+				<reportElement uuid="9be6ef76-1d45-42ff-9476-84efcf26e05c" key="textField-16" x="31" y="12" width="68" height="11"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_preco_preco_venda}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0" isBlankWhenNull="false">
-				<reportElement uuid="acbbdef5-4cfb-4558-b1b4-8be5b50434d8" key="textField-16" x="98" y="9" width="41" height="11"/>
+				<reportElement uuid="acbbdef5-4cfb-4558-b1b4-8be5b50434d8" key="textField-16" x="98" y="12" width="41" height="11"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_item_venda_valor_iva}.intValue()]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0">
-				<reportElement uuid="c5dc2ea5-b3bd-4c95-9a53-6972fb547dc9" x="0" y="9" width="32" height="11"/>
+				<reportElement uuid="c5dc2ea5-b3bd-4c95-9a53-6972fb547dc9" x="0" y="12" width="32" height="11"/>
+				<box>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.25"/>
+				</box>
 				<textElement textAlignment="Center">
 					<font fontName="Times New Roman" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_item_venda_quantidade}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="ea5218f4-f3b3-4199-9a0d-3df5df401fde" key="textField-15" x="0" y="-2" width="192" height="12"/>
+				<reportElement uuid="ea5218f4-f3b3-4199-9a0d-3df5df401fde" key="textField-15" x="0" y="1" width="188" height="12"/>
 				<box leftPadding="0">
 					<topPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="10" isBold="true"/>
+					<font fontName="Times New Roman" size="9" isBold="false" isUnderline="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_produto_designacao}]]></textFieldExpression>
 			</textField>

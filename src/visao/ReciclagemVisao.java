@@ -141,7 +141,7 @@ public class ReciclagemVisao extends javax.swing.JFrame {
             try {
                 
                 if (!valor.equals("")) {
-                    new DetalheFacturaReciclagem(this, rootPaneCheckingEnabled, Integer.parseInt(valor), conexao).show();
+                    new DetalheFacturaReciclagem(this, rootPaneCheckingEnabled, Integer.parseInt(valor), BDConexao.getInstancia()).setVisible(true);
                 }
    
             } catch (Exception e) {

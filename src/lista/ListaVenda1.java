@@ -142,7 +142,7 @@ public class ListaVenda1
     public void mostrarVenda() throws SQLException
     {
 
-//        this.motivo_isencao = "Motivo de Exclusão";
+//        this.motivo_isencao = "Motivo de Exclusão";x
         //this.motivo_isencao = "Regime Transitório";
 
         String relatorio = getCaminho();

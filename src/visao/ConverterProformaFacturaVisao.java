@@ -162,7 +162,7 @@ public class ConverterProformaFacturaVisao extends javax.swing.JFrame implements
     private static String prox_doc;
     private static EntityTransaction transaction;
 
-    public ConverterProformaFacturaVisao( int cod_usuario, BDConexao conexao ) throws SQLException
+    public ConverterProformaFacturaVisao(int cod_usuario, BDConexao conexao ) throws SQLException
     {
 
         initComponents();
@@ -828,8 +828,8 @@ public class ConverterProformaFacturaVisao extends javax.swing.JFrame implements
         {
             if ( data_documento_superior_ou_igual_ao_ultimo_doc() )
             {
-                new FormaPagamentoVisao( this, rootPaneCheckingEnabled, null, DVML.CONVERSAO_PROFORMA_FACTURA_RECIBO, conexao ).setVisible( true );
-//                new FormaPagamentoVisao( this, rootPaneCheckingEnabled, emf, DVML.CONVERSAO_PROFORMA_FACTURA_RECIBO, conexao ).setVisible( true );
+                new FormaPagamentoVisao( this, rootPaneCheckingEnabled, null, DVML.CONVERSAO_PROFORMA_FACTURA_RECIBO, BDConexao.getInstancia()).setVisible(true);
+//                new FormaPagamentoVisao(this, rootPaneCheckingEnabled, emf, DVML.CONVERSAO_PROFORMA_FACTURA_RECIBO, BDConexao.getInstancia()).setVisible(true);
 
             }
             else

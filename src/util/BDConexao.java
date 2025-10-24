@@ -2,11 +2,6 @@ package util;
 
 
 import java.sql.Connection;
-/*----------------------------------------------
- *project: SGC
- *fle:	BDConexao.java
- *Desenvolvido por: Domingos Dala Vunge
- *----------------------------------------------*/
 import controller.ProdutoController;
 import dao.ArmazemDao;
 import dao.ProdutoDao;
@@ -31,6 +26,7 @@ public class BDConexao
     private static EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
     private static ArmazemDao armazemDao = new ArmazemDao( emf );
     private static ProdutoDao produtoDao = new ProdutoDao( emf );
+
 
     static
     {
@@ -74,27 +70,16 @@ public class BDConexao
     // ===========================================================
     public static BDConexao getInstancia()
     {
-//        if ( instancia == null )
-//        {
-//            synchronized ( BDConexao.class )
-//            {
-//                if ( instancia == null )
-//                {
-//                    instancia = BDConexao.getInstancia();
-//                }
-//            }
-//        }
         if ( instancia == null )
         {
             synchronized ( BDConexao.class )
             {
                 if ( instancia == null )
                 {
-                    instancia = new BDConexao(); // ✅ Correto
+                    instancia = new BDConexao();
                 }
             }
         }
-
         return instancia;
     }
 

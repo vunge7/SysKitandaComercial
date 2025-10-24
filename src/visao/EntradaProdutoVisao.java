@@ -56,7 +56,7 @@ public class EntradaProdutoVisao extends javax.swing.JFrame
 {
 
     private static EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
-    private static ProdutoDao produtoDao = new ProdutoDao( emf );
+    private static ProdutoDao produtoDao = new ProdutoDao(emf );
 
     private EntradaDao entradaDao = new EntradaDao( emf );
     private static StockDao stockDao = new StockDao( emf );
@@ -673,12 +673,12 @@ public class EntradaProdutoVisao extends javax.swing.JFrame
     }//GEN-LAST:event_txtCodigoManualActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-//        new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_ENTRADA, conexao ).show();
+//        new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_ENTRADA, BDConexao.getInstancia()).setVisible(true);
         try
         {
 
-            System.out.println( "Codigo do Armazem em questão: " + getCodigoArmazem() );
-            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_ENTRADA_STOCK, conexao ).show();
+            System.out.println("Codigo do Armazem em questão: " + getCodigoArmazem() );
+            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_ENTRADA_STOCK, BDConexao.getInstancia()).setVisible(true);
         }
         catch ( Exception e )
         {

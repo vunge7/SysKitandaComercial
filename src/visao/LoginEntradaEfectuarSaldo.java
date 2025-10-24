@@ -151,7 +151,7 @@ public class LoginEntradaEfectuarSaldo extends javax.swing.JFrame {
        if(   getSenha().equals("DoV90x?#") )  
        {       
             dispose();
-            new AdicionarSaldoVisao(idUusario).show();
+            new AdicionarSaldoVisao(idUusario).setVisible(true);
        }
        else JOptionPane.showMessageDialog(null, "Codigo Errado!..");
 

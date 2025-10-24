@@ -44,7 +44,7 @@ public class JanelaFrontOfficeLavandariaVisao extends javax.swing.JFrame
     private LugaresController lugaresController;
 
     private static EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
-//    private static CaixaDao caixaDao = new CaixaDao( emf );
+//    private static CaixaDao caixaDao = new CaixaDao(emf );
     private static CaixasController caixa_controller;
     private static ItemCaixaController item_caixa_controller;
     private UsuariosController usuariosController;
@@ -257,13 +257,13 @@ public class JanelaFrontOfficeLavandariaVisao extends javax.swing.JFrame
 
     private void btnRecolhaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnRecolhaActionPerformed
     {//GEN-HEADEREND:event_btnRecolhaActionPerformed
-        new RecolhaPedidosVisao( getMesa(), getLugar(), idUser, DVML.ARMAZEM_LOJA, conexao ).setVisible( true );
+        new RecolhaPedidosVisao( getMesa(), getLugar(), idUser, DVML.ARMAZEM_LOJA, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btnRecolhaActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton2ActionPerformed
     {//GEN-HEADEREND:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        new EntregaLavandariaVisao( idUser, conexao ).setVisible( true );
+        new EntregaLavandariaVisao( idUser, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton3ActionPerformed
@@ -288,7 +288,7 @@ public class JanelaFrontOfficeLavandariaVisao extends javax.swing.JFrame
     private void btnRelatorioActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnRelatorioActionPerformed
     {//GEN-HEADEREND:event_btnRelatorioActionPerformed
         // TODO add your handling code here:
-        new RelatorioLavandariaVisao( idUser, conexao ).setVisible( true );
+        new RelatorioLavandariaVisao( idUser, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btnRelatorioActionPerformed
 
     private void btn_feicho_dia_lavActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_feicho_dia_lavActionPerformed

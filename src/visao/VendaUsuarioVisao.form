@@ -1400,7 +1400,7 @@
                           </Group>
                           <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="dc_data_vencimento" pref="117" max="32767" attributes="0"/>
+                              <Component id="dc_data_vencimento" max="32767" attributes="0"/>
                               <Component id="dc_data_documento" max="32767" attributes="0"/>
                           </Group>
                       </Group>

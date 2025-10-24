@@ -553,7 +553,7 @@ public class EncomendaVisao extends javax.swing.JFrame implements Runnable
         
         try
         {
-            new EncomendaVisao( 15, BDConexao.getInstancia() ).show();
+            new EncomendaVisao( 15, BDConexao.getInstancia() ).setVisible(true);
         }
         catch ( SQLException e )
         {

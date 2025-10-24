@@ -76,12 +76,11 @@ public class CardexVisao extends javax.swing.JFrame
     private final int usuarioId;
     private static TbProduto produtoLocal;
 
-    public CardexVisao( java.awt.Frame parent, boolean modal, int usuarioId, String usuarioNome, BDConexao conexao )
+    public CardexVisao(java.awt.Frame parent, boolean modal, int usuarioId, String usuarioNome, BDConexao conexao )
     {
 
         initComponents();
         setLocationRelativeTo( null );
-        bt_imprimir.setEnabled( false);
         txtCodigoManual.requestFocus();
         this.conexao = conexao;
         this.usuarioId = usuarioId;
@@ -120,28 +119,34 @@ public class CardexVisao extends javax.swing.JFrame
     private void initComponents()
     {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel2 = new javax.swing.JPanel();
-        txtCodigoBarra = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
-        txtCodigoManual = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel9 = new javax.swing.JLabel();
+        ckArtigo = new javax.swing.JCheckBox();
+        ckGeral = new javax.swing.JCheckBox();
+        lbDataInicio = new javax.swing.JLabel();
         dcDataInicio = new com.toedter.calendar.JDateChooser();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
+        lbDataFim = new javax.swing.JLabel();
         dcDataFim = new com.toedter.calendar.JDateChooser();
+        bt_imprimir = new javax.swing.JButton();
+        btnCancelar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         cmbArmazem = new javax.swing.JComboBox<>();
-        jPanel1 = new javax.swing.JPanel();
-        btnCancelar = new javax.swing.JButton();
-        bt_imprimir = new javax.swing.JButton();
+        bt_stock_diario = new javax.swing.JButton();
+        painelBuscaArigo = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        txtCodigoManual = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        txtCodigoBarra = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        txtCodigoInterno = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         lbArtigo = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         lbQtd = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        txtCodigoInterno = new javax.swing.JTextField();
-        jLabel8 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabela = new javax.swing.JTable();
 
@@ -150,27 +155,37 @@ public class CardexVisao extends javax.swing.JFrame
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
-        txtCodigoBarra.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        txtCodigoBarra.addActionListener(new java.awt.event.ActionListener()
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
+
+        jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel9.setText("CARDEX");
+
+        buttonGroup1.add(ckArtigo);
+        ckArtigo.setSelected(true);
+        ckArtigo.setText("Por Artigo");
+        ckArtigo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        ckArtigo.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        ckArtigo.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                txtCodigoBarraActionPerformed(evt);
+                ckArtigoActionPerformed(evt);
             }
         });
 
-        jLabel4.setText("CodBarra");
-
-        txtCodigoManual.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        txtCodigoManual.addActionListener(new java.awt.event.ActionListener()
+        buttonGroup1.add(ckGeral);
+        ckGeral.setText("Geral");
+        ckGeral.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        ckGeral.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        ckGeral.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                txtCodigoManualActionPerformed(evt);
+                ckGeralActionPerformed(evt);
             }
         });
 
-        jLabel3.setText("Digite o Código Manual");
+        lbDataInicio.setText("Data Inicio");
 
         dcDataInicio.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         dcDataInicio.addPropertyChangeListener(new java.beans.PropertyChangeListener()
@@ -181,9 +196,7 @@ public class CardexVisao extends javax.swing.JFrame
             }
         });
 
-        jLabel5.setText("Data Inicio");
-
-        jLabel6.setText("Data Fim");
+        lbDataFim.setText("Data Fim");
 
         dcDataFim.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         dcDataFim.addPropertyChangeListener(new java.beans.PropertyChangeListener()
@@ -194,13 +207,12 @@ public class CardexVisao extends javax.swing.JFrame
             }
         });
 
-        jLabel1.setText("Armazém:");
-
-        cmbArmazem.addActionListener(new java.awt.event.ActionListener()
+        bt_imprimir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/impressora1.png"))); // NOI18N
+        bt_imprimir.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                cmbArmazemActionPerformed(evt);
+                bt_imprimirActionPerformed(evt);
             }
         });
 
@@ -215,35 +227,134 @@ public class CardexVisao extends javax.swing.JFrame
             }
         });
 
-        bt_imprimir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/impressora1.png"))); // NOI18N
-        bt_imprimir.addActionListener(new java.awt.event.ActionListener()
+        jLabel1.setText("Armazém:");
+
+        cmbArmazem.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                bt_imprimirActionPerformed(evt);
+                cmbArmazemActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        bt_stock_diario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagem/find/seach_32x32.png"))); // NOI18N
+        bt_stock_diario.setText("Stock Diario");
+        bt_stock_diario.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bt_stock_diarioActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(dcDataInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lbDataInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(32, 32, 32)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(dcDataFim, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lbDataFim, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(25, 25, 25)
+                        .addComponent(bt_imprimir, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 665, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(12, 12, 12)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                        .addComponent(ckArtigo, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ckGeral, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                        .addComponent(bt_stock_diario, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnCancelar)
+                        .addGap(15, 15, 15))))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(bt_imprimir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(ckArtigo)
+                            .addComponent(ckGeral))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(jPanel4Layout.createSequentialGroup()
+                                        .addComponent(lbDataInicio)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(dcDataInicio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(btnCancelar))
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                                    .addComponent(jLabel1)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(bt_imprimir)
+                            .addComponent(bt_stock_diario)))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(lbDataFim)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(dcDataFim, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(33, 33, 33)
-                .addComponent(bt_imprimir)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnCancelar)
-                .addContainerGap())
-        );
+
+        painelBuscaArigo.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
+
+        jLabel3.setText("Digite o Código Manual");
+
+        txtCodigoManual.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        txtCodigoManual.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                txtCodigoManualActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setText("CodBarra");
+
+        txtCodigoBarra.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        txtCodigoBarra.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                txtCodigoBarraActionPerformed(evt);
+            }
+        });
+
+        jLabel8.setText("CodInterno");
+
+        txtCodigoInterno.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                txtCodigoInternoActionPerformed(evt);
+            }
+        });
+
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/proucura.png"))); // NOI18N
+        jButton1.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         lbArtigo.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         lbArtigo.setText("ARTIGO");
@@ -265,7 +376,7 @@ public class CardexVisao extends javax.swing.JFrame
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(lbArtigo, javax.swing.GroupLayout.PREFERRED_SIZE, 647, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 57, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(lbQtd, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel2)
@@ -287,109 +398,78 @@ public class CardexVisao extends javax.swing.JFrame
                 .addGap(34, 34, 34))
         );
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/proucura.png"))); // NOI18N
-        jButton1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        txtCodigoInterno.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                txtCodigoInternoActionPerformed(evt);
-            }
-        });
-
-        jLabel8.setText("CodInterno");
+        javax.swing.GroupLayout painelBuscaArigoLayout = new javax.swing.GroupLayout(painelBuscaArigo);
+        painelBuscaArigo.setLayout(painelBuscaArigoLayout);
+        painelBuscaArigoLayout.setHorizontalGroup(
+            painelBuscaArigoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(painelBuscaArigoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(painelBuscaArigoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(painelBuscaArigoLayout.createSequentialGroup()
+                        .addGroup(painelBuscaArigoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(32, 32, 32)
+                        .addGroup(painelBuscaArigoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtCodigoBarra, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(33, 33, 33)
+                        .addGroup(painelBuscaArigoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtCodigoInterno, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        painelBuscaArigoLayout.setVerticalGroup(
+            painelBuscaArigoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(painelBuscaArigoLayout.createSequentialGroup()
+                .addGroup(painelBuscaArigoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(painelBuscaArigoLayout.createSequentialGroup()
+                        .addGap(11, 11, 11)
+                        .addGroup(painelBuscaArigoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(painelBuscaArigoLayout.createSequentialGroup()
+                                .addGroup(painelBuscaArigoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel4)
+                                    .addComponent(jLabel3))
+                                .addGap(9, 9, 9))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelBuscaArigoLayout.createSequentialGroup()
+                                .addComponent(jLabel8)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                        .addGroup(painelBuscaArigoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(painelBuscaArigoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(txtCodigoBarra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtCodigoInterno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(painelBuscaArigoLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(dcDataInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(32, 32, 32)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(dcDataFim, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtCodigoBarra, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(81, 81, 81))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(33, 33, 33)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(txtCodigoInterno))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(15, 15, 15))
+                        .addContainerGap()
+                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(painelBuscaArigo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel5)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(dcDataInicio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel6)
-                                    .addComponent(jLabel1))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(dcDataFim, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                            .addComponent(jLabel4)
-                                            .addComponent(jLabel3))
-                                        .addGap(9, 9, 9))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                        .addComponent(jLabel8)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(txtCodigoBarra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(txtCodigoInterno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(3, 3, 3)
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())))
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(painelBuscaArigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         tabela.setModel(new javax.swing.table.DefaultTableModel(
@@ -431,7 +511,7 @@ public class CardexVisao extends javax.swing.JFrame
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane1)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -499,12 +579,12 @@ public class CardexVisao extends javax.swing.JFrame
         try
         {
 
-            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getIdArmazem(), DVML.JANELA_CARDEX, conexao ).setVisible( true );
+            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getIdArmazem(), DVML.JANELA_CARDEX, BDConexao.getInstancia()).setVisible(true);
 //            chamar_acerto( true );
 //            TbStock stockByCodBarra = stocksController.getStockByCodBarraAndIdArmazem( txt_cod_barra.getText().trim(), getCodigoArmazem() );
 //            txtQuatidadeExistente.setText( String.valueOf( stockByCodBarra.getQuantidadeExistente() ) );
 //            txtQtdEntrar.requestFocus();
-            bt_imprimir.setEnabled( true);
+            bt_imprimir.setEnabled( true );
         }
         catch ( Exception e )
         {
@@ -523,6 +603,25 @@ public class CardexVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_txtCodigoInternoActionPerformed
         procedimentoBusca();
     }//GEN-LAST:event_txtCodigoInternoActionPerformed
+
+    private void ckGeralActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ckGeralActionPerformed
+    {//GEN-HEADEREND:event_ckGeralActionPerformed
+        // TODO add your handling code here:
+        mostarComponentes( false, "Data Stock" );
+    }//GEN-LAST:event_ckGeralActionPerformed
+
+    private void ckArtigoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ckArtigoActionPerformed
+    {//GEN-HEADEREND:event_ckArtigoActionPerformed
+        // TODO add your handling code here:
+
+        mostarComponentes( true, "Data Inicio" );
+    }//GEN-LAST:event_ckArtigoActionPerformed
+
+    private void bt_stock_diarioActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bt_stock_diarioActionPerformed
+    {//GEN-HEADEREND:event_bt_stock_diarioActionPerformed
+        // TODO add your handling code here:
+        visualizarStockDiario();
+    }//GEN-LAST:event_bt_stock_diarioActionPerformed
 
     /**
      * @param args the command line arguments
@@ -587,7 +686,11 @@ public class CardexVisao extends javax.swing.JFrame
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bt_imprimir;
+    private javax.swing.JButton bt_stock_diario;
     private javax.swing.JButton btnCancelar;
+    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JCheckBox ckArtigo;
+    private javax.swing.JCheckBox ckGeral;
     private static javax.swing.JComboBox<String> cmbArmazem;
     public static com.toedter.calendar.JDateChooser dcDataFim;
     public static com.toedter.calendar.JDateChooser dcDataInicio;
@@ -596,16 +699,18 @@ public class CardexVisao extends javax.swing.JFrame
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel2;
     private static javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private static javax.swing.JLabel lbArtigo;
+    private javax.swing.JLabel lbDataFim;
+    private javax.swing.JLabel lbDataInicio;
     private static javax.swing.JLabel lbQtd;
+    private javax.swing.JPanel painelBuscaArigo;
     private static javax.swing.JTable tabela;
     private static javax.swing.JTextField txtCodigoBarra;
     private javax.swing.JTextField txtCodigoInterno;
@@ -693,7 +798,7 @@ public class CardexVisao extends javax.swing.JFrame
 
         }
     }
-    
+
 //    private void procedimentoBusca(int codigo) {
 //    try {
 //        // Busca o produto pelo código interno recebido como parâmetro
@@ -706,18 +811,18 @@ public class CardexVisao extends javax.swing.JFrame
 //        ex.printStackTrace();
 //    }
 //}
-    
-    public static void procedimentoBusca(int codigo) {
-    try {
-        produtoLocal = produtosController.findByCodInterno(codigo);
-        busca();
-    } catch (Exception ex) {
-        ex.printStackTrace();
+    public static void procedimentoBusca( int codigo )
+    {
+        try
+        {
+            produtoLocal = produtosController.findByCodInterno( codigo );
+            busca();
+        }
+        catch ( Exception ex )
+        {
+            ex.printStackTrace();
+        }
     }
-}
-
-
-
 
 //    public static void accao_codigo_interno_enter_busca_exterior( int codigo )
 //    {
@@ -777,12 +882,43 @@ public class CardexVisao extends javax.swing.JFrame
 
         HashMap hashMap = new HashMap();
 
-        hashMap.put( "DATA_01", dcDataInicio.getDate() );
-        hashMap.put( "DATA_02", dcDataFim.getDate() );
-        hashMap.put( "ID_PRODUTO", produtoLocal.getCodigo() );
+        if ( ckArtigo.isSelected() )
+        {
+            hashMap.put( "DATA_01", dcDataInicio.getDate() );
+            hashMap.put( "DATA_02", dcDataFim.getDate() );
+            hashMap.put( "ID_PRODUTO", produtoLocal.getCodigo() );
+            hashMap.put( "ID_ARMAZEM", getIdArmazem() );
+            String fileName = "cardex.jasper";
+            AnyReport anyReport = new AnyReport( hashMap, fileName );
+
+        }
+        else
+        {
+            hashMap.put( "DATA_STOCK", dcDataInicio.getDate() );
+            hashMap.put( "ID_ARMAZEM", getIdArmazem() );
+            String fileName = "cardex_geral.jasper";
+            AnyReport anyReport = new AnyReport( hashMap, fileName );
+        }
+
+    }
+
+    private void visualizarStockDiario()
+    {
+        HashMap hashMap = new HashMap();
+        hashMap.put( "DATA_STOCK", dcDataInicio.getDate() );
         hashMap.put( "ID_ARMAZEM", getIdArmazem() );
-        String fileName = "cardex.jasper";
+        String fileName = "historico_stock.jasper";
         AnyReport anyReport = new AnyReport( hashMap, fileName );
+    }
+
+    private void mostarComponentes( boolean status, String nomeLabel )
+    {
+        painelBuscaArigo.setVisible( status );
+        lbDataFim.setVisible( status );
+        dcDataFim.setVisible( status );
+        jScrollPane1.setVisible( status );
+
+        lbDataInicio.setText( nomeLabel );
     }
 
 }

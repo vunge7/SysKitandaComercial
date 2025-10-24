@@ -184,27 +184,27 @@ public class Configuracoes extends javax.swing.JFrame
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
     {//GEN-HEADEREND:event_jButton1ActionPerformed
-        new GrausAcademicoVisao().show();
+        new GrausAcademicoVisao().setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton4ActionPerformed
     {//GEN-HEADEREND:event_jButton4ActionPerformed
-        new EspecilidadesVisao().show();
+        new EspecilidadesVisao().setVisible(true);
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton2ActionPerformed
     {//GEN-HEADEREND:event_jButton2ActionPerformed
-       new DepartamentosVisao().show();
+       new DepartamentosVisao().setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton8ActionPerformed
     {//GEN-HEADEREND:event_jButton8ActionPerformed
-        new FuncoesVisao().show();
+        new FuncoesVisao().setVisible(true);
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton7ActionPerformed
     {//GEN-HEADEREND:event_jButton7ActionPerformed
-       new TipoSubsidioVisao().show();
+       new TipoSubsidioVisao().setVisible(true);
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton3ActionPerformed
@@ -219,7 +219,7 @@ public class Configuracoes extends javax.swing.JFrame
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton5ActionPerformed
     {//GEN-HEADEREND:event_jButton5ActionPerformed
-        new UsuarioAlterarSenhaVissao( usuarioDao.findTbUsuario( idUser ) ).show();
+        new UsuarioAlterarSenhaVissao( usuarioDao.findTbUsuario( idUser ) ).setVisible(true);
     }//GEN-LAST:event_jButton5ActionPerformed
 
     /**

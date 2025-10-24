@@ -62,7 +62,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
 {
 
     private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
-    private ItemPermissaoDao itemPermissaoDao = new ItemPermissaoDao( emf );
+    private ItemPermissaoDao itemPermissaoDao = new ItemPermissaoDao(emf );
     private ItemCompras itemCompras;
     private static PrecosController precosController;
     private static LugaresController lugaresController;
@@ -160,9 +160,9 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
                             {
 //                                cmbArmazem.setModel(new DefaultComboBoxModel(armazemDao.buscaTodos1()));
 //                                cmbArmazem.setModel(new DefaultComboBoxModel(armazemDao.buscaTodos1()));
-                                new BuscaProdutoVisao( getInstance(), rootPaneCheckingEnabled, getIdArmazens(), DVML.JANELA_COMPRA, conexao ).show();
+                                new BuscaProdutoVisao( getInstance(), rootPaneCheckingEnabled, getIdArmazens(), DVML.JANELA_COMPRA, BDConexao.getInstancia()).setVisible(true);
                             }
-                            catch ( Exception ex )
+                            catch (Exception ex )
                             {
                                 ex.printStackTrace();
                             }
@@ -1040,7 +1040,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
 //                try
 //        {
 ////            new BuscaNovoProdutoVisao(this, rootPaneCheckingEnabled, coordenada )
-//            new BuscaProdutosVisao( this, rootPaneCheckingEnabled, getIdArmazem(), DVML.JANELA_COMPRA, conexao, GRUPO_AREA, NovaEncomendaVisao.class ).show();
+//            new BuscaProdutosVisao( this, rootPaneCheckingEnabled, getIdArmazem(), DVML.JANELA_COMPRA, conexao, GRUPO_AREA, NovaEncomendaVisao.class ).setVisible(true);
 //        }
 //        catch ( Exception e )
 //        {
@@ -1048,9 +1048,9 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
 //        }
         try
         {
-            new BuscaProdutoComprasVisao( this, rootPaneCheckingEnabled, getIdArmazens(), DVML.JANELA_COMPRA, conexao ).show();
+            new BuscaProdutoComprasVisao( this, rootPaneCheckingEnabled, getIdArmazens(), DVML.JANELA_COMPRA, BDConexao.getInstancia()).setVisible(true);
 
-//            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getIdArmazens(), DVML.JANELA_COMPRA, conexao ).show();
+//            new BuscaProdutoVisao(this, rootPaneCheckingEnabled, getIdArmazens(), DVML.JANELA_COMPRA, BDConexao.getInstancia()).setVisible(true);
             txtQtdEntrar.requestFocus();
         }
         catch ( Exception e )
@@ -1067,7 +1067,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
 
     private void btTransferenciaArmazemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btTransferenciaArmazemActionPerformed
     {//GEN-HEADEREND:event_btTransferenciaArmazemActionPerformed
-        new TranferenciaArmazemVisao( cod_usuario, conexao ).setVisible( true );
+        new TranferenciaArmazemVisao( cod_usuario, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btTransferenciaArmazemActionPerformed
 
 
@@ -1141,7 +1141,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
 
     public static void main( String[] args )
     {
-        new CompraInformalVisao( 15, BDConexao.getInstancia() ).show();
+        new CompraInformalVisao( 15, BDConexao.getInstancia() ).setVisible(true);
     }
 
     @Override

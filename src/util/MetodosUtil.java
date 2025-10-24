@@ -2448,7 +2448,7 @@ public class MetodosUtil
         }
         else
         {
-            new RootVisao( id_user, id_empresa, true, BDConexao.getInstancia() ).show();
+            new RootVisao( id_user, id_empresa, true, BDConexao.getInstancia() ).setVisible(true);
         }
 
     }
@@ -4754,7 +4754,7 @@ public class MetodosUtil
                         {
                             try
                             {
-//                                new BuscaProdutoVisao( frame, modal, idArmazem, idJanela m, ).show();
+//                                new BuscaProdutoVisao( frame, modal, idArmazem, idJanela m, ).setVisible(true);
                             }
                             catch ( Exception ex )
                             {

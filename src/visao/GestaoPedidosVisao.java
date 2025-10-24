@@ -83,7 +83,7 @@ public class GestaoPedidosVisao extends javax.swing.JFrame
     private static EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
     private TbItemPedidos itemPedidos;
     private static AccessoArmazemDao accessoArmazemDao;
-    private static MesasDao mesasDao = new MesasDao( emf );
+    private static MesasDao mesasDao = new MesasDao(emf );
     private static PrecoDao precoDao = new PrecoDao( emf );
     private static CaixaDao caixaDao;
     private static PedidoDao pedidoDao = new PedidoDao( emf );
@@ -991,10 +991,10 @@ public class GestaoPedidosVisao extends javax.swing.JFrame
 
                         dispose();
 
-                        new FormaPagamentoVisao( this, rootPaneCheckingEnabled, emf, DVML.VENDA_RESTAURANTE, conexao ).setVisible( true );
+                        new FormaPagamentoVisao( this, rootPaneCheckingEnabled, emf, DVML.VENDA_RESTAURANTE, BDConexao.getInstancia()).setVisible(true);
 
                     }
-                    else if ( opcao == JOptionPane.NO_OPTION )
+                    else if (opcao == JOptionPane.NO_OPTION )
                     {
 //                        dispose();
 
@@ -1220,7 +1220,7 @@ public class GestaoPedidosVisao extends javax.swing.JFrame
         {
 //            if ( activo_um_lugar() )
 //            {
-            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_RETAURANTE, conexao ).show();
+            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_RETAURANTE, BDConexao.getInstancia()).setVisible(true);
 //            }
         }
         catch ( Exception e )

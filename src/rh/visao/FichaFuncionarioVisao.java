@@ -1834,7 +1834,7 @@ public class FichaFuncionarioVisao extends javax.swing.JFrame
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton5ActionPerformed
     {//GEN-HEADEREND:event_jButton5ActionPerformed
         // TODO add your handling code here:
-        new AgregadoFamiliarVisao( this, rootPaneCheckingEnabled ).show();
+        new AgregadoFamiliarVisao( this, rootPaneCheckingEnabled ).setVisible(true);
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jsValorSubsidioMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_jsValorSubsidioMouseClicked
@@ -1907,22 +1907,22 @@ public class FichaFuncionarioVisao extends javax.swing.JFrame
 
     private void jButton13ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton13ActionPerformed
     {//GEN-HEADEREND:event_jButton13ActionPerformed
-        new EspecilidadeVisao().show();
+        new EspecilidadeVisao().setVisible(true);
     }//GEN-LAST:event_jButton13ActionPerformed
 
     private void jButton16ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton16ActionPerformed
     {//GEN-HEADEREND:event_jButton16ActionPerformed
-        new GrauAcademicoVisao().show();
+        new GrauAcademicoVisao().setVisible(true);
     }//GEN-LAST:event_jButton16ActionPerformed
 
     private void jButton17ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton17ActionPerformed
     {//GEN-HEADEREND:event_jButton17ActionPerformed
-        new DepartamentoVisao().show();
+        new DepartamentoVisao().setVisible(true);
     }//GEN-LAST:event_jButton17ActionPerformed
 
     private void jButton14ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton14ActionPerformed
     {//GEN-HEADEREND:event_jButton14ActionPerformed
-        new FuncaoVisao().show();
+        new FuncaoVisao().setVisible(true);
     }//GEN-LAST:event_jButton14ActionPerformed
 
     private void cmbFuncionarioActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbFuncionarioActionPerformed

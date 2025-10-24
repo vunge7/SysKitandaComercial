@@ -134,28 +134,32 @@ public class PrecosController implements EntidadeFactory
 
     }
 
-    public TbPreco findByIdCompra(int codigo) {
-    TbPreco preco = null;
-    String sql = "SELECT * FROM tb_preco WHERE pk_preco = ?";
+    public TbPreco findByIdCompra( int codigo )
+    {
+        TbPreco preco = null;
+        String sql = "SELECT * FROM tb_preco WHERE pk_preco = ?";
 
-    try (PreparedStatement ps = conexao.getConnection().prepareStatement(sql)) {
-        ps.setInt(1, codigo);
-        ResultSet rs = ps.executeQuery();
+        try ( PreparedStatement ps = conexao.getConnection().prepareStatement( sql ) )
+        {
+            ps.setInt( 1, codigo );
+            ResultSet rs = ps.executeQuery();
 
-        if (rs.next()) {
-            preco = new TbPreco();
-            setResultSetPreco(rs, preco);
+            if ( rs.next() )
+            {
+                preco = new TbPreco();
+                setResultSetPreco( rs, preco );
+            }
+
+            rs.close();
+        }
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
         }
 
-        rs.close();
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return preco;
     }
 
-    return preco;
-}
-
-    
     public TbPreco getLastPreco( int idProduto )
     {
 
@@ -308,27 +312,31 @@ public class PrecosController implements EntidadeFactory
 //        return 0;
 //
 //    }
-    
-    public static int getLastIdPrecoByIdProdutoIntAndPrecoAntigoQtdAlto(int fk_produto, int qtd_baixo, BDConexao conexao) {
-    int idMaximo = 0;
-    String sql = "SELECT MAX(pk_preco) AS maximo FROM tb_preco WHERE fk_produto = ? AND qtd_baixo = ?";
+    public static int getLastIdPrecoByIdProdutoIntAndPrecoAntigoQtdAlto( int fk_produto, int qtd_baixo, BDConexao conexao )
+    {
+        int idMaximo = 0;
+        String sql = "SELECT MAX(pk_preco) AS maximo FROM tb_preco WHERE fk_produto = ? AND qtd_baixo = ?";
 
-    try (PreparedStatement ps = conexao.getConnection().prepareStatement(sql)) {
-        ps.setInt(1, fk_produto);
-        ps.setInt(2, qtd_baixo);
+        try ( PreparedStatement ps = conexao.getConnection().prepareStatement( sql ) )
+        {
+            ps.setInt( 1, fk_produto );
+            ps.setInt( 2, qtd_baixo );
 
-        try (ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                idMaximo = rs.getInt("maximo");
+            try ( ResultSet rs = ps.executeQuery() )
+            {
+                if ( rs.next() )
+                {
+                    idMaximo = rs.getInt( "maximo" );
+                }
             }
         }
-    } catch (SQLException e) {
-        e.printStackTrace(); // Ou registra num logger, se tiver
+        catch ( SQLException e )
+        {
+            e.printStackTrace(); // Ou registra num logger, se tiver
+        }
+
+        return idMaximo;
     }
-
-    return idMaximo;
-}
-
 
     private void setResultSetPreco( ResultSet result, TbPreco preco )
     {

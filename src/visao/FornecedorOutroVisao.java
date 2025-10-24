@@ -44,7 +44,7 @@ import util.MetodosUtil;
 public class FornecedorOutroVisao extends javax.swing.JFrame
 {
     private static EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
-    private static FornecedorDao fornecedorDao = new FornecedorDao( emf );
+    private static FornecedorDao fornecedorDao = new FornecedorDao(emf );
     private static FornecedoresController fornecedoresController;
     private static ExtratoContaFornecedorController ecfController;
     private static ComprasController comprasController;
@@ -757,7 +757,7 @@ public class FornecedorOutroVisao extends javax.swing.JFrame
             Compras compraLocal = comprasController.findByCodFact( cod );
             int idFornecedor = compraLocal.getFkFornecedor().getCodigo();
 
-            new SaidaVisao( compraLocal, idFornecedor, documento, Double.parseDouble( valorPorPagar ), conexao ).setVisible( true );
+            new SaidaVisao( compraLocal, idFornecedor, documento, Double.parseDouble( valorPorPagar ), BDConexao.getInstancia()).setVisible(true);
 
         }
 
@@ -768,7 +768,7 @@ public class FornecedorOutroVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jButton2ActionPerformed
         // TODO add your handling code here:
 
-        new NovaEncomendaVisao( fornecedor, idUser, conexao ).setVisible( true );
+        new NovaEncomendaVisao( fornecedor, idUser, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton3ActionPerformed
@@ -776,7 +776,7 @@ public class FornecedorOutroVisao extends javax.swing.JFrame
         try
         {
 
-            new CompraInformalVisao(idUser, this.conexao ).show();
+            new CompraInformalVisao(idUser, BDConexao.getInstancia()).setVisible(true);
 
         }
         catch ( Exception e )

@@ -170,7 +170,7 @@ public class FaltaJusticadaUtil
                 //System.err.println( "Justiciação de falta." );
                 if ( evt.getClickCount() == 1 )
                 {
-                    new JustificarFaltaVisao( codFalta, true ).show();
+                    new JustificarFaltaVisao( codFalta, true ).setVisible(true);
                 }
 
             }

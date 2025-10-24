@@ -47,7 +47,7 @@ public class AcertoStockVisao extends javax.swing.JFrame
     /**
      * Creates new form AcertoStockVisao
      */
-    public AcertoStockVisao( int idUser, BDConexao conexao )
+    public AcertoStockVisao(int idUser, BDConexao conexao )
     {
         initComponents();
         setLocationRelativeTo( null );
@@ -316,8 +316,8 @@ public class AcertoStockVisao extends javax.swing.JFrame
         try
         {
             
-            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_COMPRA, conexao ).setVisible( true );
-            chamar_acerto( true );
+            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_COMPRA, BDConexao.getInstancia()).setVisible(true);
+            chamar_acerto(true );
             TbStock stockByCodBarra = stocksController.getStockByCodBarraAndIdArmazem( txt_cod_barra.getText().trim(), getCodigoArmazem() );
             txtQuatidadeExistente.setText( String.valueOf( stockByCodBarra.getQuantidadeExistente() ) );
 //            txtQtdEntrar.requestFocus();
@@ -482,7 +482,7 @@ public class AcertoStockVisao extends javax.swing.JFrame
         }
 
         //TbStock stock = stockDao.getStockByDescricao(cod_prod, getCodigoArmazem());
-        new AcertoStockPorProdutoLupaVisao( cod_prod, getCodigoArmazem(), idUser , conexao ).setVisible( true );
+        new AcertoStockPorProdutoLupaVisao( cod_prod, getCodigoArmazem(), idUser, BDConexao.getInstancia()).setVisible(true);
     }
 
     public static void accao_codigo_interno_enter_busca_exterior( int codigo )

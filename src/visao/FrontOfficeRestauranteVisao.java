@@ -40,7 +40,7 @@ public class FrontOfficeRestauranteVisao extends javax.swing.JFrame
 {
 
     private static EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
-    private AccessoArmazemDao accessoArmazemDao = new AccessoArmazemDao( emf );
+    private AccessoArmazemDao accessoArmazemDao = new AccessoArmazemDao(emf );
     private MesasController mesasController;
     private LugaresController lugaresController;
     private static ArmazemDao armazemDao = new ArmazemDao( emf );
@@ -151,11 +151,11 @@ public class FrontOfficeRestauranteVisao extends javax.swing.JFrame
 
         if ( id_armazem > 0 )
         {
-            new PrincipalPedidosVisao( id_usuario, "", id_armazem, conexao ).setVisible( true );
+            new PrincipalPedidosVisao( id_usuario, "", id_armazem, BDConexao.getInstancia()).setVisible(true);
         }
         else
         {
-            JOptionPane.showMessageDialog( null, "Caro usuario seleccione o armazem." );
+            JOptionPane.showMessageDialog(null, "Caro usuario seleccione o armazem." );
         }
 
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -170,11 +170,11 @@ public class FrontOfficeRestauranteVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jButton5ActionPerformed
         if ( id_armazem > 0 )
         {
-            new VendasPraticasVisao( getMesa(), getLugar(), this.id_usuario, id_armazem, conexao ).show();;
+            new VendasPraticasVisao( getMesa(), getLugar(), this.id_usuario, id_armazem, BDConexao.getInstancia()).setVisible(true);;
         }
         else
         {
-            JOptionPane.showMessageDialog( null, "Caro usuario seleccione o armazem." );
+            JOptionPane.showMessageDialog(null, "Caro usuario seleccione o armazem." );
         }
     }//GEN-LAST:event_jButton5ActionPerformed
 
@@ -266,12 +266,12 @@ public class FrontOfficeRestauranteVisao extends javax.swing.JFrame
         TbUsuario usuario = usuarioDao.findTbUsuario( id_usuario );
         if ( usuario.getIdTipoUsuario().getIdTipoUsuario() == 1 )
         {
-            new RootVisao( id_usuario, 1, true, conexao ).setVisible( true );
-//            new MenuPrincipalVisao( id_usuario, 1, true, conexao ).setVisible( true );
+            new RootVisao( id_usuario, 1, true, BDConexao.getInstancia()).setVisible(true);
+//            new MenuPrincipalVisao(id_usuario, 1, true, BDConexao.getInstancia()).setVisible(true);
         }
         else
         {
-            new LoginVisao().setVisible( true );
+            new LoginVisao(BDConexao.getInstancia()).setVisible(true);
         }
     }
 

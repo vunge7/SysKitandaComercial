@@ -143,7 +143,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
     private static ContaMovimentosController cmc;
 //    private static int id_usuario;
 
-    public VendaPOSVisao( BDConexao conexao, int id_armazem, int id_usuario )
+    public VendaPOSVisao(BDConexao conexao, int id_armazem, int id_usuario )
     {
         initComponents();
         setLocationRelativeTo( null );
@@ -620,12 +620,12 @@ public class VendaPOSVisao extends javax.swing.JFrame
             {
                 if ( MetodosUtil.licencaValidada( conexao ) )
                 {
-                    new FormaPagamentoVisao( this, rootPaneCheckingEnabled, emf, DVML.VENDA_POS, conexao ).setVisible( true );
+                    new FormaPagamentoVisao( this, rootPaneCheckingEnabled, emf, DVML.VENDA_POS, BDConexao.getInstancia()).setVisible(true);
                 }
             }
             else
             {
-                JOptionPane.showMessageDialog( null, "O documento não pode ser processado porque possui uma data inferior ao úlimo documento efectuado", "AVISO", JOptionPane.WARNING_MESSAGE );
+                JOptionPane.showMessageDialog(null, "O documento não pode ser processado porque possui uma data inferior ao úlimo documento efectuado", "AVISO", JOptionPane.WARNING_MESSAGE );
             }
 
         }
@@ -665,7 +665,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
     {//GEN-HEADEREND:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        new PrincipalPedidosVisao( id_usuario, "", id_armazem, conexao ).setVisible( true );
+        new PrincipalPedidosVisao( id_usuario, "", id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void cmbAnoEconomicoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbAnoEconomicoActionPerformed
@@ -697,10 +697,10 @@ public class VendaPOSVisao extends javax.swing.JFrame
 //            if ( validar() )
 //            {
 
-            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, 2, DVML.JANELA_VENDA_POS, conexao ).show();
+            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, 2, DVML.JANELA_VENDA_POS, BDConexao.getInstancia()).setVisible(true);
 //            }
         }
-        catch ( Exception e )
+        catch (Exception e )
         {
             e.printStackTrace();
         }
@@ -708,7 +708,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton5ActionPerformed
     {//GEN-HEADEREND:event_jButton5ActionPerformed
-        new ClienteVisao( this, rootPaneCheckingEnabled, conexao ).show();
+        new ClienteVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void txtCodClientePesquisaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtCodClientePesquisaActionPerformed

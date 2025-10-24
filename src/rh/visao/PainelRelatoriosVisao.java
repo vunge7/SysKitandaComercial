@@ -198,11 +198,11 @@ public class PainelRelatoriosVisao extends javax.swing.JFrame {
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
 //        OperacaoSistemaUtil.operacao_fechar_run();
         dispose();
-//        new PainelAdministrativoVisao(idUser, this.conexao).show();
+//        new PainelAdministrativoVisao(idUser, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        new MapaCompletoVisao().show();
+        new MapaCompletoVisao().setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed

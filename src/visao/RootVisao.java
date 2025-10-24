@@ -61,7 +61,7 @@ public class RootVisao extends javax.swing.JFrame
     private static DadosInstituicaoController dadosInstituicaoController;
     private static CaixasController caixa_controller;
     private static ItemCaixaController item_caixa_controller;
-    private ItemPermissaoDao itemPermissaoDao = new ItemPermissaoDao( emf );
+    private ItemPermissaoDao itemPermissaoDao = new ItemPermissaoDao(emf );
     private static EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
     private DadosInstituicaoDao dadosInstituicaoDao = new DadosInstituicaoDao( emf );
     private static UsuarioDao usuarioDao = new UsuarioDao( emf );
@@ -530,13 +530,19 @@ getRootPane().getActionMap().put("abrirMenuPrincipal", new AbstractAction() {
 
     private void btnComercialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnComercialActionPerformed
 
-        try
-        {
-            getMenuPrincipalByNegocio( dadosInstituicao.getNegocio() );
-        }
-        catch ( Exception e )
-        {
-        }
+try {
+    if (dadosInstituicao != null && dadosInstituicao.getNegocio() != null) {
+        System.out.println("Abrindo menu para negócio: " + dadosInstituicao.getNegocio());
+        getMenuPrincipalByNegocio(dadosInstituicao.getNegocio());
+    } else {
+        System.err.println("[Erro] Dados da instituição estão nulos. Abrindo menu padrão...");
+        getMenuPrincipalByNegocio("Comercial");
+    }
+} catch (Exception e) {
+    e.printStackTrace();
+}
+
+
 
     }//GEN-LAST:event_btnComercialActionPerformed
 
@@ -544,19 +550,19 @@ getRootPane().getActionMap().put("abrirMenuPrincipal", new AbstractAction() {
     private void btnRHActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRHActionPerformed
 
         dispose();
-        new MenuPrincipalRHNovoVisao( this.idUser, this.idEmpresa, true, conexao ).show();
+        new MenuPrincipalRHNovoVisao( this.idUser, this.idEmpresa, true, BDConexao.getInstancia()).setVisible(true);
 
 //                dispose();
 //        new MenuPrincipalNovaRHVisao (idUser, administrador, BDConexao.getInstancia()).setVisible(true);
 //        dispose();
-//        new MenuPrincipalTesourariaVisao(this.idUser).show();
+//        new MenuPrincipalTesourariaVisao(this.idUser).setVisible(true);
     }//GEN-LAST:event_btnRHActionPerformed
 
     private void btnTesourariaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTesourariaActionPerformed
         // TODO add your handling code here:
         dispose();
-//        new MenuPrincipalTesourariaVisao( this.idUser, this.idEmpresa, conexao ).show();
-        new NovoMenuPrincipalTesourariaVisao( idUser, true, conexao ).setVisible( true );
+//        new MenuPrincipalTesourariaVisao( this.idUser, this.idEmpresa, BDConexao.getInstancia()).setVisible(true);
+        new NovoMenuPrincipalTesourariaVisao(idUser, true, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btnTesourariaActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
@@ -583,8 +589,8 @@ getRootPane().getActionMap().put("abrirMenuPrincipal", new AbstractAction() {
     private void btn_feicho_dia_rootActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_feicho_dia_rootActionPerformed
         // TODO add your handling code here:
 //        procedimento_fechar_contagem( this.idUser );
-//        new CaixaVisao( this.idUser, conexao ).setVisible( true );
-//        btn_reabertura_dia.setEnabled( true);
+//        new CaixaVisao( this.idUser, BDConexao.getInstancia()).setVisible(true);
+//        btn_reabertura_dia.setEnabled(true);
 
         if ( dadosInstituicao.getTipoFechoCaixa().equals( "Normal" ) )
         {
@@ -641,14 +647,14 @@ getRootPane().getActionMap().put("abrirMenuPrincipal", new AbstractAction() {
     private void btTesourariaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btTesourariaActionPerformed
     {//GEN-HEADEREND:event_btTesourariaActionPerformed
         dispose();
-//        new MenuPrincipalTesourariaVisao( this.idUser, this.idEmpresa, conexao ).show();
-        new NovoMenuPrincipalTesourariaVisao( idUser, true, conexao ).setVisible( true );
+//        new MenuPrincipalTesourariaVisao( this.idUser, this.idEmpresa, BDConexao.getInstancia()).setVisible(true);
+        new NovoMenuPrincipalTesourariaVisao(idUser, true, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btTesourariaActionPerformed
 
     private void btRhActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btRhActionPerformed
     {//GEN-HEADEREND:event_btRhActionPerformed
         dispose();
-        new MenuPrincipalRHNovoVisao( this.idUser, this.idEmpresa, true, conexao ).show();
+        new MenuPrincipalRHNovoVisao( this.idUser, this.idEmpresa, true, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btRhActionPerformed
 
     private void btnGerarScriptActualizacaoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnGerarScriptActualizacaoActionPerformed
@@ -958,39 +964,39 @@ getRootPane().getActionMap().put("abrirMenuPrincipal", new AbstractAction() {
     {
         if ( negocio.equalsIgnoreCase( "Oficina" ) )
         {
-            new MenuPrincipalOficinaVisao( this.idUser, this.idEmpresa, administrador, conexao ).show();
+            new MenuPrincipalOficinaVisao( this.idUser, this.idEmpresa, administrador, BDConexao.getInstancia()).setVisible(true);
         }
-        else if ( negocio.equalsIgnoreCase( "Transportes" ) )
+        else if (negocio.equalsIgnoreCase( "Transportes" ) )
         {
-            new MenuPrincipalTransporteVisao( this.idUser, this.idEmpresa, administrador, conexao ).show();
+            new MenuPrincipalTransporteVisao( this.idUser, this.idEmpresa, administrador, BDConexao.getInstancia()).setVisible(true);
         }
-        else if ( negocio.equalsIgnoreCase( "Comercial" ) )
+        else if (negocio.equalsIgnoreCase( "Comercial" ) )
         {
-            new MenuPrincipalVisao( this.idUser, this.idEmpresa, administrador, conexao ).show();
+            new MenuPrincipalVisao( this.idUser, this.idEmpresa, administrador, BDConexao.getInstancia()).setVisible(true);
 
         }
-        else if ( negocio.equalsIgnoreCase( "Farmacia" ) )
+        else if (negocio.equalsIgnoreCase( "Farmacia" ) )
         {
-            new MenuPrincipalFarmaciaVisao( this.idUser, this.idEmpresa, administrador, conexao ).show();
+            new MenuPrincipalFarmaciaVisao( this.idUser, this.idEmpresa, administrador, BDConexao.getInstancia()).setVisible(true);
 
         }
-        else if ( negocio.equalsIgnoreCase( "Lavandaria" ) )
+        else if (negocio.equalsIgnoreCase( "Lavandaria" ) )
         {
-            new MenuPrincipalLavandariaVisao( this.idUser, this.idEmpresa, administrador, conexao ).show();
+            new MenuPrincipalLavandariaVisao( this.idUser, this.idEmpresa, administrador, BDConexao.getInstancia()).setVisible(true);
 
         }
-        else if ( negocio.equalsIgnoreCase( "Layout" ) )
+        else if (negocio.equalsIgnoreCase( "Layout" ) )
         {
-            new MenuPrincipalLogoVisao( this.idUser, this.idEmpresa, administrador, conexao ).show();
+            new MenuPrincipalLogoVisao( this.idUser, this.idEmpresa, administrador, BDConexao.getInstancia()).setVisible(true);
 
         }
-        else if ( negocio.equalsIgnoreCase( "Restaurante" ) )
+        else if (negocio.equalsIgnoreCase( "Restaurante" ) )
         {
-            new MenuPrincipalRestauranteVisao( this.idUser, this.idEmpresa, administrador, conexao ).show();
+            new MenuPrincipalRestauranteVisao( this.idUser, this.idEmpresa, administrador, BDConexao.getInstancia()).setVisible(true);
         }
         else
         {
-            new MenuPrincipalVisao( this.idUser, this.idEmpresa, administrador, conexao ).show();
+            new MenuPrincipalVisao(this.idUser, this.idEmpresa, administrador, BDConexao.getInstancia()).setVisible(true);
         }
     }
 

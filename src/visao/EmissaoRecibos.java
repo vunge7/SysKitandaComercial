@@ -1870,7 +1870,7 @@ public class EmissaoRecibos extends javax.swing.JFrame
     {
         if ( JOptionPane.showConfirmDialog( null, "Caro usuario este processo é irreversivel, deseja continuar?" ) == JOptionPane.YES_OPTION )
         {
-            new FormaPagamentoVisao( this, rootPaneCheckingEnabled, null, DVML.EMISSAO_RECIBOS, conexao ).setVisible( true );
+            new FormaPagamentoVisao( this, rootPaneCheckingEnabled, null, DVML.EMISSAO_RECIBOS, BDConexao.getInstancia()).setVisible(true);
 //            new FormaPagamentoVisao( this, rootPaneCheckingEnabled, DVML.EMISSAO_RECIBOS, emf ).setVisible( true );
         }
     }
