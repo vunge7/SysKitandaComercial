@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import controller.ProdutoController;
 import comercial.controller.*;
 import dao.DocumentoDao;
@@ -1820,7 +1822,7 @@ public class ProdutosIngredientesVisao extends javax.swing.JFrame
             {
                 try
                 {
-                    ProdutosIngredientesVisao dialog = new ProdutosIngredientesVisao( new javax.swing.JFrame(), true, 15, new BDConexao() );
+                    ProdutosIngredientesVisao dialog = new ProdutosIngredientesVisao( new javax.swing.JFrame(), true, 15, BDConexao.getInstancia() );
                     dialog.addWindowListener( new java.awt.event.WindowAdapter()
                     {
                         @Override
@@ -2284,7 +2286,7 @@ public class ProdutosIngredientesVisao extends javax.swing.JFrame
         try
         {
             produto.setStatus( "Desactivo" );
-            produtosController.desactivar( produto );
+            produtosController.desactivar( conexao, produto );
             JOptionPane.showMessageDialog( null, "Produto desactivado com sucesso!", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
             procedimento_limpar_campos();
         }
@@ -2315,7 +2317,7 @@ public class ProdutosIngredientesVisao extends javax.swing.JFrame
     {
         if ( campos_validos() )
         {
-            conexaoTransaction = new BDConexao();
+            conexaoTransaction = BDConexao.getInstancia();
             DocumentoDao.startTransaction( conexaoTransaction );
             String designacao_produto = getDesignacaoText();
             ProdutosController produtosControllerLocal = new ProdutosController( conexaoTransaction );
@@ -2327,7 +2329,7 @@ public class ProdutosIngredientesVisao extends javax.swing.JFrame
 
             System.out.println( "CHEGUEI AQUI!....... INICIAL" );
             //ALTERAR PRODUTO
-            if ( produtosControllerLocal.exist_designacao_produto( designacao_produto ) )
+            if ( produtosControllerLocal.exist_designacao_produto( conexao, designacao_produto ) )
             {
 
                 try
@@ -2343,7 +2345,7 @@ public class ProdutosIngredientesVisao extends javax.swing.JFrame
                 }
                 catch ( Exception e )
                 {
-                    DocumentoDao.rollBackTransaction( conexaoTransaction );
+                    DocumentoDao.rollBackTransaction(conexaoTransaction );
                     conexaoTransaction.close();
                     JOptionPane.showMessageDialog( null, "Falha ao actualizar o produto", "Falha", JOptionPane.WARNING_MESSAGE );
                     return;
@@ -2374,7 +2376,7 @@ public class ProdutosIngredientesVisao extends javax.swing.JFrame
                             produtoIsento.setFkProduto( new TbProduto( produto.getCodigo() ) );
                             if ( !produtosIsentoControllerLocal.salvar( produtoIsento ) )
                             {
-                                DocumentoDao.rollBackTransaction( conexaoTransaction );
+                                DocumentoDao.rollBackTransaction(conexaoTransaction );
                                 conexaoTransaction.close();
                                 JOptionPane.showMessageDialog( null, "Falha ao registrar o produto", "Falha", JOptionPane.WARNING_MESSAGE );
                                 return;
@@ -2393,7 +2395,7 @@ public class ProdutosIngredientesVisao extends javax.swing.JFrame
                         produtoImposto.setFkImposto( new Imposto( getIdImposto() ) );
                         if ( !produtosImpostoControllerLocal.salvar( produtoImposto ) )
                         {
-                            DocumentoDao.rollBackTransaction( conexaoTransaction );
+                            DocumentoDao.rollBackTransaction(conexaoTransaction );
                             conexaoTransaction.close();
                             JOptionPane.showMessageDialog( null, "Falha ao registrar o produto", "Falha", JOptionPane.WARNING_MESSAGE );
                             return;
@@ -2409,7 +2411,7 @@ public class ProdutosIngredientesVisao extends javax.swing.JFrame
 //                        produtoRetencao.setFkRetencao( new Retencao( 2 ) );
 //                        if ( !servicosRetencaoControllerLocal.salvar( produtoRetencao ) )
 //                        {
-//                            DocumentoDao.rollBackTransaction( conexaoTransaction );
+//                            DocumentoDao.rollback( conexaoTransaction );
 //                            conexaoTransaction.close();
 //                            JOptionPane.showMessageDialog( null, "Falha ao registrar o produto", "Falha", JOptionPane.WARNING_MESSAGE );
 //                            return;
@@ -2426,7 +2428,7 @@ public class ProdutosIngredientesVisao extends javax.swing.JFrame
 
                         if ( !servicosRetencaoControllerLocal.salvar( produtoRetencao ) )
                         {
-                            DocumentoDao.rollBackTransaction( conexaoTransaction );
+                            DocumentoDao.rollBackTransaction(conexaoTransaction );
                             conexaoTransaction.close();
                             JOptionPane.showMessageDialog( null, "Falha ao registrar o produto", "Falha", JOptionPane.WARNING_MESSAGE );
                             return;
@@ -2470,7 +2472,7 @@ public class ProdutosIngredientesVisao extends javax.swing.JFrame
                 }
                 else
                 {
-                    DocumentoDao.rollBackTransaction( conexaoTransaction );
+                    DocumentoDao.rollBackTransaction(conexaoTransaction );
                     JOptionPane.showMessageDialog( null, "Falha ao registrar o produto", "Falha", JOptionPane.WARNING_MESSAGE );
                     return;
 
@@ -2494,7 +2496,7 @@ public class ProdutosIngredientesVisao extends javax.swing.JFrame
                 try
                 {
 
-                    conexaoTransaction = new BDConexao();
+                    conexaoTransaction = BDConexao.getInstancia();
                     ProdutosController produtosControllerLocal = new ProdutosController( conexaoTransaction );
                     PrecosController precosControllerLocal = new PrecosController( conexaoTransaction );
                     ProdutosImpostoController produtosImpostoControllerLocal = new ProdutosImpostoController( conexaoTransaction );
@@ -2514,7 +2516,7 @@ public class ProdutosIngredientesVisao extends javax.swing.JFrame
                     }
                     else
                     {
-                        DocumentoDao.rollBackTransaction( conexaoTransaction );
+                        DocumentoDao.rollBackTransaction(conexaoTransaction );
                         conexaoTransaction.close();
                         JOptionPane.showMessageDialog( null, "Falha ao actualizar o produto", "Falha", JOptionPane.WARNING_MESSAGE );
                         return;
@@ -2526,7 +2528,7 @@ public class ProdutosIngredientesVisao extends javax.swing.JFrame
                 {
                     e.printStackTrace();
 
-                    DocumentoDao.rollBackTransaction( conexaoTransaction );
+                    DocumentoDao.rollBackTransaction(conexaoTransaction );
                     JOptionPane.showMessageDialog( null, "Falha ao actualizar o produto", "Falha", JOptionPane.WARNING_MESSAGE );
                     return;
                 }
@@ -3078,7 +3080,7 @@ public class ProdutosIngredientesVisao extends javax.swing.JFrame
             return false;
 
         }
-        else if ( produtosController.exist_designacao_produto( getDesignacaoText() ) )
+        else if ( produtosController.exist_designacao_produto( conexao, getDesignacaoText() ) )
         {
             JOptionPane.showMessageDialog( null, "Já existe um produto com esta designação!!!", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
             txtDesignacao.requestFocus();

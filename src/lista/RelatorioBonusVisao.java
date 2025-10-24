@@ -74,7 +74,7 @@ public class RelatorioBonusVisao extends javax.swing.JFrame
         initComponents ();
 //        setResizable(false);
         setLocationRelativeTo ( null );
-        this.conexao = new BDConexao ();
+        this.conexao = BDConexao.getInstancia();
 
         inicializar ();
 

@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.PrecoDao;
 import dao.ProdutoDao;
 import dao.StockDao;

@@ -6,6 +6,8 @@
 
 package dao;
 
+
+import java.sql.Connection;
 import controlador.EntradaTesourariaJpaController;
 //import controlador.PaisJpaController;
 import entity.EntradaTesouraria;

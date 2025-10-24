@@ -5,6 +5,8 @@
  */
 package util.extrasalario;
 
+
+import java.sql.Connection;
 import entity.MasterTable;
 import java.util.Date;
 import javax.swing.JComboBox;

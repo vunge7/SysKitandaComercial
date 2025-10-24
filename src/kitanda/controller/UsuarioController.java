@@ -5,6 +5,8 @@
  */
 package kitanda.controller;
 
+
+import java.sql.Connection;
 import hotel.controller.*;
 import entity.TbCliente;
 import entity.TbProfissao;

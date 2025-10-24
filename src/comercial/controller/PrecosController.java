@@ -5,6 +5,8 @@
  */
 package comercial.controller;
 
+
+import java.sql.Connection;
 import entity.TbPreco;
 import entity.TbProduto;
 import entity.TbUsuario;

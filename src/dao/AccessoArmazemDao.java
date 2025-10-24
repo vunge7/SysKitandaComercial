@@ -5,6 +5,8 @@
  */
 package dao;
 
+
+import java.sql.Connection;
 import controlador.AccessoArmazemJpaController;
 import entity.AccessoArmazem;
 import java.util.List;

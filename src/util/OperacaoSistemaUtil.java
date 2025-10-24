@@ -5,6 +5,8 @@
  */
 package util;
 
+
+import java.sql.Connection;
 import dao.BalancoDao;
 import dao.OperacaoSistemaDao;
 import dao.UsuarioDao;

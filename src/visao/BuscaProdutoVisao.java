@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.StoksController;
 import enties.util.BuscaModeloProduto;
 import java.awt.Color;
@@ -754,7 +756,7 @@ public class BuscaProdutoVisao extends javax.swing.JDialog
         {
             public void run()
             {
-                BuscaProdutoVisao dialog = new BuscaProdutoVisao( new javax.swing.JFrame(), true, 1, 0, new BDConexao() );
+                BuscaProdutoVisao dialog = new BuscaProdutoVisao( new javax.swing.JFrame(), true, 1, 0, BDConexao.getInstancia() );
                 dialog.addWindowListener( new java.awt.event.WindowAdapter()
                 {
                     @Override

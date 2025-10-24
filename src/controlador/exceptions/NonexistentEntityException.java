@@ -1,5 +1,7 @@
 package controlador.exceptions;
 
+
+import java.sql.Connection;
 public class NonexistentEntityException extends Exception {
     public NonexistentEntityException(String message, Throwable cause) {
         super(message, cause);

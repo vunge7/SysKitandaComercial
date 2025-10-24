@@ -5,6 +5,8 @@
  */
 package dao;
 
+
+import java.sql.Connection;
 import controlador.ReciboRhJpaController;
 import controlador.TbSalarioJpaController;
 import entity.ReciboRh;

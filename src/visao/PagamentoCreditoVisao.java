@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import controller.ClienteController;
 import controller.PagamentoVendaCreditoController;
 import controller.TipoProdutoController;
@@ -61,7 +63,7 @@ public class PagamentoCreditoVisao extends javax.swing.JDialog {
         setLocationRelativeTo(null);
         
         tipoProdutoModelo = new TipoProdutoModelo();
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
         tipoProdutoController = new TipoProdutoController(conexao);
         
         txtFactura.addKeyListener( new TratarEventoTeclado() );

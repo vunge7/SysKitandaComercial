@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.JButton;

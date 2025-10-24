@@ -4,6 +4,8 @@
  */
 package controlador;
 
+
+import java.sql.Connection;
 import controlador.exceptions.NonexistentEntityException;
 import entity.AmortizacaoDivida;
 import java.io.Serializable;

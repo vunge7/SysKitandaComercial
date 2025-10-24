@@ -4,7 +4,8 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import dao.ItemVendaDao;
 import dao.VendaDao;
 import entity.TbVenda;
@@ -46,7 +47,7 @@ public class ListaVenda
     private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
     private VendaDao vendaDao = new VendaDao( emf );
     private ItemVendaDao itemVendaDao = new ItemVendaDao( emf );
-    private BDConexao conexao = new BDConexao();
+    private BDConexao conexao = BDConexao.getInstancia();
     private int codigo, pk_mesas, pk_lugares;
     private double valor_entregue, troco;
     private boolean performance, a5;
@@ -131,7 +132,7 @@ public class ListaVenda
 ////        listar_impressoras();
 //        
 //        /*obtendo a conexão*/
-//        Connection connection = (Connection) conexao.conectar();
+//        java.sql.Connection connection = conexao.getConnectionAtiva();
 //        /*configurando os parametros para a submisão no ficheiro*/
 //        Map parameters = new HashMap();
 //        /*obtendo o caminho do ficheiro (.jrxml)*/
@@ -171,7 +172,7 @@ public class ListaVenda
     private void printReportToPrinter( String report, String impressora ) throws JRException
     {
         /*obtendo a conexão*/
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         /*configurando os parametros para a submisão no ficheiro*/
         Map parameters = new HashMap();
 
@@ -245,7 +246,7 @@ public class ListaVenda
     private void printReportToPrinterFILTRAR( String report, String impressora, HashMap parameters ) throws JRException
     {
         /*obtendo a conexão*/
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         /*configurando os parametros para a submisão no ficheiro*/
 
 //        parameters.put ( "CODIGO_VENDA", this.codigo );
@@ -332,7 +333,7 @@ public class ListaVenda
     public void mostrarVendaFiltrada()
     {
 
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
 
         hashMap.put( "CODIGO_VENDA", this.codigo );
@@ -399,7 +400,7 @@ public class ListaVenda
 
         System.err.println( "COD VENDA: " + this.codigo );
 
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
 
         hashMap.put( "CODIGO_VENDA", this.codigo );

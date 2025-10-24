@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import javax.swing.JOptionPane;
 import static kitanda.util.CfMethodsSwing.*;
 import static util.MetodosUtil.fazerBackupAgora;

@@ -4,7 +4,8 @@
  */
 package visao;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import comercial.controller.StatusController;
 import comercial.controller.UsuariosController;
 import controller.UsuarioController;
@@ -640,7 +641,7 @@ public class UsuarioVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                UsuarioVisao dialog = new UsuarioVisao( new javax.swing.JFrame(), true, new BDConexao() );
+                UsuarioVisao dialog = new UsuarioVisao( new javax.swing.JFrame(), true, BDConexao.getInstancia() );
                 dialog.addWindowListener( new java.awt.event.WindowAdapter()
                 {
                     @Override
@@ -980,9 +981,9 @@ public class UsuarioVisao extends javax.swing.JFrame
     
     private void revelarSenha( int codigoUtilizador, String novasenha )
     {
-//        BDConexao conexao = new BDConexao();
+//        BDConexao conexao = BDConexao.getInstancia();
 
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
         String relatorio = "";
         relatorio = "relatorios/credenciais.jasper";

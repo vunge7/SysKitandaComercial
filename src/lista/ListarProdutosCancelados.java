@@ -4,6 +4,8 @@
  */
 package lista;
 
+
+import java.sql.Connection;
 import dao.ArmazemDao;
 import dao.ItemVendaDao;
 import dao.PrecoDao;
@@ -275,7 +277,7 @@ public class ListarProdutosCancelados extends javax.swing.JFrame
             {
                 try
                 {
-                    new ListarProdutosCancelados( new BDConexao(), 15 ).setVisible( true );
+                    new ListarProdutosCancelados( BDConexao.getInstancia(), 15 ).setVisible( true );
                 }
                 catch ( Exception ex )
                 {

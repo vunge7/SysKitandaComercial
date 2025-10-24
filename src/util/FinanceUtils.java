@@ -4,6 +4,8 @@
  */
 package util;
 
+
+import java.sql.Connection;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import javax.swing.JTable;

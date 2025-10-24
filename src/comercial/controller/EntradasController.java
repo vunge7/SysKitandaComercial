@@ -4,6 +4,8 @@
  * and open the template in the editor.
  */
 package comercial.controller;
+
+import java.sql.Connection;
 import entity.TbArmazem;
 import entity.TbEntrada;
 import entity.TbUsuario;
@@ -260,7 +262,7 @@ public class EntradasController implements EntidadeFactory
 
     public static void main( String[] args )
     {
-        BDConexao conexao = new BDConexao();
+        BDConexao conexao = BDConexao.getInstancia();
         EntradasController f = new EntradasController( conexao );
 
     }

@@ -6,6 +6,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import controller.ItemVendaController;
 import controller.ProdutoController;
 import controller.StockController;
@@ -3318,7 +3320,7 @@ public class NotasCreditoDebitoVisao extends javax.swing.JFrame implements Runna
 
     public static void main( String[] args ) throws SQLException
     {
-        new NotasCreditoDebitoVisao( 15, new BDConexao() ).show( true );
+        new NotasCreditoDebitoVisao( 15, BDConexao.getInstancia() ).show( true );
     }
 
     public int getCodigoTipoProduto() throws SQLException

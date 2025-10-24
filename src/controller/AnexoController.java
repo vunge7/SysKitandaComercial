@@ -5,6 +5,8 @@
  */
 package controller;
 
+
+import java.sql.Connection;
 import entity.Anexos;
 import entity.TbFuncionario;
 import entity.TbUsuario;

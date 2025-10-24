@@ -6,6 +6,8 @@
 
 package lista;
 
+
+import java.sql.Connection;
 import dao.DadosInstituicaoDao;
 import java.sql.SQLException;
 import java.util.HashMap;

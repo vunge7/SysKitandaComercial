@@ -5,7 +5,8 @@
  */
 package visao;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import dao.AccessoArmazemDao;
 import dao.ArmazemDao;
 import dao.DadosInstituicaoDao;
@@ -361,7 +362,7 @@ public class RelatorioLavandariaVisao extends javax.swing.JFrame
     public void mostrarRecolhas() throws SQLException
     {
 
-        Connection connection = ( Connection ) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
 
         hashMap.put( "PARM_DATA_1", dcDataInicio.getDate() );
@@ -407,7 +408,7 @@ public class RelatorioLavandariaVisao extends javax.swing.JFrame
     public void mostrarEntregas() throws SQLException
     {
 
-        Connection connection = ( Connection ) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
 
         hashMap.put( "PARM_DATA_1", dcDataInicio.getDate() );
@@ -515,7 +516,7 @@ public class RelatorioLavandariaVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new RelatorioLavandariaVisao( 15, new BDConexao() ).setVisible( true );
+                new RelatorioLavandariaVisao( 15, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }
@@ -562,9 +563,9 @@ public class RelatorioLavandariaVisao extends javax.swing.JFrame
     public void mostrar_servicos()
     {
 
-        BDConexao conexao = new BDConexao();
+        BDConexao conexao = BDConexao.getInstancia();
 
-        Connection connection = ( Connection ) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
         String relatorio = "";
         relatorio = "relatorios/Produto_Stock.jasper";

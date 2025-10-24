@@ -4,7 +4,9 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+
+import java.sql.Connection;
 import dao.ArmazemDao;
 import dao.FornecedorDao;
 import dao.ItemVendaDao;
@@ -61,7 +63,7 @@ public class FornecedorRelatorioDiario extends javax.swing.JFrame {
         cmbArmazem.setModel(new DefaultComboBoxModel(armazemDao.buscaTodos()));
         //accao_mostar_campo_fornecedor(false);
         cmbFornecedor.setModel(new DefaultComboBoxModel(fornecedorDao.buscaTodos()));
-       // conexao = new BDConexao();
+       // conexao = BDConexao.getInstancia();
         
       
        
@@ -102,7 +104,7 @@ public class FornecedorRelatorioDiario extends javax.swing.JFrame {
     
     public void mostrar() throws SQLException {
         
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
    
     
@@ -155,7 +157,7 @@ public class FornecedorRelatorioDiario extends javax.swing.JFrame {
     
     
     public void mostrar2() throws SQLException {
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
         String relatorio = "";
         
@@ -415,7 +417,7 @@ public class FornecedorRelatorioDiario extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                   new FornecedorRelatorioDiario(new BDConexao()).setVisible(true);
+                   new FornecedorRelatorioDiario(BDConexao.getInstancia()).setVisible(true);
               
             }
         });

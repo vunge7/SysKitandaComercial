@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 //import controller.ClienteController;
 //import controller.PagamentoSaidasProdutosCreditoController;
 import controller.TipoProdutoController;
@@ -428,7 +430,7 @@ public class AnulamentoSaidasProdutosVisao extends javax.swing.JDialog
         {
             public void run()
             {
-                AnulamentoSaidasProdutosVisao dialog = new AnulamentoSaidasProdutosVisao( new javax.swing.JFrame(), true, new BDConexao() );
+                AnulamentoSaidasProdutosVisao dialog = new AnulamentoSaidasProdutosVisao( new javax.swing.JFrame(), true, BDConexao.getInstancia() );
                 dialog.addWindowListener( new java.awt.event.WindowAdapter()
                 {
                     @Override

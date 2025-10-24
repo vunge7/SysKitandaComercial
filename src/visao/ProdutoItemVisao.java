@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import entity.TbPreco;
 import java.util.Objects;
 import javax.swing.ImageIcon;

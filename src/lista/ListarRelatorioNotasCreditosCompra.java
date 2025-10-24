@@ -4,6 +4,8 @@
  */
 package lista;
 
+
+import java.sql.Connection;
 import dao.ArmazemDao;
 import dao.ItemComprasDao;
 import dao.PrecoDao;

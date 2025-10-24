@@ -4,7 +4,8 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import java.io.File;
 import java.util.HashMap;
 import javax.swing.JLabel;
@@ -31,7 +32,7 @@ public class ListaUsuarioVisao extends javax.swing.JFrame {
         setResizable(false);
         setLocationRelativeTo(null);
         confLabel();
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
     }
 
     
@@ -66,7 +67,7 @@ public class ListaUsuarioVisao extends javax.swing.JFrame {
     
     public void mostrarUsuarios() {
         
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
         String relatorio = "";
         

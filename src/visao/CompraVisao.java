@@ -1033,7 +1033,7 @@ public class CompraVisao extends javax.swing.JFrame implements Runnable
 
     public static void main( String[] args )
     {
-        new CompraVisao( 15, new BDConexao() ).show();
+        new CompraVisao( 15, BDConexao.getInstancia() ).show();
     }
 
     @Override
@@ -1177,7 +1177,7 @@ public class CompraVisao extends javax.swing.JFrame implements Runnable
                     //cria o item compra
                     if ( !itemComprasControllerLocal.salvar( itemCompraLocal ) )
                     {
-                        DocumentosController.rollBackTransaction( conexaoTransaction );
+                        DocumentosController.rollback( conexaoTransaction );
                         conexaoTransaction.close();
                         return false;
                     }
@@ -1190,7 +1190,7 @@ public class CompraVisao extends javax.swing.JFrame implements Runnable
                         if ( !registrar_stock )
                         {
                             sucesso = false;
-                            DocumentosController.rollBackTransaction( conexaoTransaction );
+                            DocumentosController.rollback( conexaoTransaction );
                             conexaoTransaction.close();
                             return false;
                         }
@@ -1215,7 +1215,7 @@ public class CompraVisao extends javax.swing.JFrame implements Runnable
                     sucesso = false;
                     e.printStackTrace();
                     JOptionPane.showMessageDialog( null, "Falha ao registrar a compra", "Falha", JOptionPane.ERROR_MESSAGE );
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    DocumentosController.rollback( conexaoTransaction );
                     conexaoTransaction.close();
                     return false;
 
@@ -1226,7 +1226,7 @@ public class CompraVisao extends javax.swing.JFrame implements Runnable
             if ( sucesso )
             {
 
-                DocumentosController.commitTransaction( conexaoTransaction );
+                DocumentosController.commit( conexaoTransaction );
                 limpar_cabecario();
                 limpar_rodape();
                 esvaziar_tabela();
@@ -1756,8 +1756,8 @@ public class CompraVisao extends javax.swing.JFrame implements Runnable
 
     public static boolean salvar_compra_comercial()
     {
-        conexaoTransaction = new BDConexao();
-        DocumentosController.startTransaction( conexaoTransaction );
+        conexaoTransaction = BDConexao.getInstancia();
+        DocumentosController.start( conexaoTransaction );
 
         Date data_documento = new Date();
 
@@ -1828,7 +1828,7 @@ public class CompraVisao extends javax.swing.JFrame implements Runnable
 
                 if ( Objects.isNull( last_compra ) || last_compra == 0 )
                 {
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    DocumentosController.rollback( conexaoTransaction );
                     conexaoTransaction.close();
                     return false;
                 }
@@ -1855,7 +1855,7 @@ public class CompraVisao extends javax.swing.JFrame implements Runnable
             System.err.println( "STATUS: falha ao actualizar a factura" );
             e.printStackTrace();
             JOptionPane.showMessageDialog( null, "Falha ao Processar a Factura", "FALHA", JOptionPane.ERROR_MESSAGE );
-            DocumentosController.rollBackTransaction( conexaoTransaction );
+            DocumentosController.rollback( conexaoTransaction );
             conexaoTransaction.close();
 
         }

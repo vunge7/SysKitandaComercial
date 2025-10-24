@@ -5,6 +5,8 @@
  */
 package util;
 
+
+import java.sql.Connection;
 import dao.*;
 import controlador.NotasJpaController;
 import entity.*;

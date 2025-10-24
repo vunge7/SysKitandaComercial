@@ -5,6 +5,8 @@
  */
 package dao;
 
+
+import java.sql.Connection;
 import controlador.FormaPagamentoItemJpaController;
 import entity.FormaPagamentoItem;
 import java.sql.ResultSet;

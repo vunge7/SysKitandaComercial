@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import controller.ClienteController;
 import controller.PagamentoVendaCreditoController;
 import controller.TipoProdutoController;
@@ -428,7 +430,7 @@ public class AnulamentoFacturaVisao extends javax.swing.JDialog
         {
             public void run()
             {
-                AnulamentoFacturaVisao dialog = new AnulamentoFacturaVisao( new javax.swing.JFrame(), true, new BDConexao() );
+                AnulamentoFacturaVisao dialog = new AnulamentoFacturaVisao( new javax.swing.JFrame(), true, BDConexao.getInstancia() );
                 dialog.addWindowListener( new java.awt.event.WindowAdapter()
                 {
                     @Override

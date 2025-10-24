@@ -396,7 +396,9 @@ public class MovimentacaoController
             BDConexao conexao
     )
     {
-        MovimentacaoController mv = new MovimentacaoController( conexao.getConnection1() );
+//        MovimentacaoController mv = new MovimentacaoController( conexao.getConnectionAtiva() );
+        MovimentacaoController mv = new MovimentacaoController(conexao.getConnectionAtiva());
+
         PrecosController pc = new PrecosController( conexao );
         StoksController sc = new StoksController( conexao );
 

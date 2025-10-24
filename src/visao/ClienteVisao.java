@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.ClientesController;
 import controller.TipoClienteController;
 import dao.ClienteDao;
@@ -521,7 +523,7 @@ public class ClienteVisao extends javax.swing.JDialog
         {
             public void run()
             {
-                ClienteVisao dialog = new ClienteVisao( new javax.swing.JFrame(), true, new BDConexao() );
+                ClienteVisao dialog = new ClienteVisao( new javax.swing.JFrame(), true, BDConexao.getInstancia() );
                 dialog.addWindowListener( new java.awt.event.WindowAdapter()
                 {
                     @Override
@@ -920,7 +922,7 @@ public class ClienteVisao extends javax.swing.JDialog
         if ( valido() )
         {
             this.cliente = clienteDao.findTbCliente( this.codigo );
-            if ( !clientesController.existeClienteNIFParaOutroCliente( txtNif.getText(), codigo, conexao.getConnection1() ) )
+            if ( !clientesController.existeClienteNIFParaOutroCliente( txtNif.getText(), codigo, conexao.getConnectionAtiva() ) )
             {
                 setDados();
                 try

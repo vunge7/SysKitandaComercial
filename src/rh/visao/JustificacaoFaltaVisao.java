@@ -4,6 +4,8 @@
  */
 package rh.visao;
 
+
+import java.sql.Connection;
 import dao.AnoDao;
 import dao.FaltaDao;
 import dao.PedidoFeriaDao;
@@ -826,7 +828,7 @@ public class JustificacaoFaltaVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new JustificacaoFaltaVisao( 15, 1, new BDConexao() ).setVisible( true );
+                new JustificacaoFaltaVisao( 15, 1, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }

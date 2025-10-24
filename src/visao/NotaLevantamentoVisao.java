@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import controller.ItemVendaController;
 import controller.StockController;
 import controller.TipoClienteController;
@@ -1454,7 +1456,7 @@ public class NotaLevantamentoVisao extends javax.swing.JFrame implements Runnabl
 
     public static void main( String[] args ) throws SQLException
     {
-        new NotaLevantamentoVisao( 15, new BDConexao() ).show( true );
+        new NotaLevantamentoVisao( 15, BDConexao.getInstancia() ).show( true );
     }
 
     public void confiLabel()

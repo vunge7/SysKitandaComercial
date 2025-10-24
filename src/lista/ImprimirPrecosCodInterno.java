@@ -4,7 +4,8 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import java.io.File;
 import java.util.HashMap;
 import javax.swing.JOptionPane;
@@ -23,7 +24,7 @@ public class ImprimirPrecosCodInterno {
     
     
     
-    private BDConexao conexao  = new BDConexao();
+    private BDConexao conexao  = BDConexao.getInstancia();
     private int cod_interno = 0;
      
     public ImprimirPrecosCodInterno(int cod_interno)
@@ -42,7 +43,7 @@ public class ImprimirPrecosCodInterno {
     
     public void mostrar_preco(){
         
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();        
         hashMap.put("COD_INTERNO", cod_interno);
         

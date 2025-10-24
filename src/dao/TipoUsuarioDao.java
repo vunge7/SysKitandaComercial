@@ -6,6 +6,8 @@
 
 package dao;
 
+
+import java.sql.Connection;
 //import controller.TipoUserJpaController;
 import controlador.TbTipoUsuarioJpaController;
 import entity.TbTipoUsuario;

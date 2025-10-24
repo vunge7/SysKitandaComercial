@@ -4,7 +4,8 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import dao.VendaDao;
 import entity.TbVenda;
 import java.io.File;
@@ -30,7 +31,7 @@ public class ReciboAmortizacao
 
     private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
     private VendaDao vendaDao = new VendaDao( emf );
-    private BDConexao conexao = new BDConexao();
+    private BDConexao conexao = BDConexao.getInstancia();
     private String cod_factura;
     private String usuario = "";
     private double valor_por_pagar, total_amortizacoes, valor_entregue, diferenca;
@@ -51,7 +52,7 @@ public class ReciboAmortizacao
     public void mostrarVenda()
     {
 
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
 
         System.out.println( "COD_VENDA: "  + this.cod_factura);

@@ -4,6 +4,8 @@
  */
 package lista;
 
+
+import java.sql.Connection;
 import dao.*;
 import enties.util.RelatorioClienteBonusVipUtil;
 import entity.*;
@@ -431,7 +433,7 @@ public class ReciboVisao extends javax.swing.JFrame
             {
                 try
                 {
-                    new ReciboVisao( new BDConexao() ).setVisible( true );
+                    new ReciboVisao( BDConexao.getInstancia() ).setVisible( true );
                 }
                 catch ( Exception ex )
                 {

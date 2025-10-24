@@ -5,6 +5,8 @@
  */
 package hotel.controller;
 
+
+import java.sql.Connection;
 import entity.Notas;
 import java.util.List;
 import util.BDConexao;

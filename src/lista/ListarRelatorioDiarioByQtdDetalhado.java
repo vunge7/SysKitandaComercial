@@ -4,7 +4,8 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import dao.AccessoArmazemDao;
 import dao.ArmazemDao;
 import dao.FornecedorDao;
@@ -99,7 +100,7 @@ public class ListarRelatorioDiarioByQtdDetalhado extends javax.swing.JFrame
     public void mostrar() throws SQLException
     {
 
-        Connection connection = ( Connection ) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
 
         hashMap.put( "DATA_INICIO", dcDataInicio.getDate() );
@@ -154,7 +155,7 @@ public class ListarRelatorioDiarioByQtdDetalhado extends javax.swing.JFrame
 
     public void mostrar2() throws SQLException
     {
-        Connection connection = ( Connection ) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
         String relatorio = "";
 
@@ -496,7 +497,7 @@ public class ListarRelatorioDiarioByQtdDetalhado extends javax.swing.JFrame
             {
                 try
                 {
-                    new ListarRelatorioDiarioByQtdDetalhado( 15, new BDConexao() ).setVisible( true );
+                    new ListarRelatorioDiarioByQtdDetalhado( 15, BDConexao.getInstancia() ).setVisible( true );
                 }
                 catch ( SQLException ex )
                 {

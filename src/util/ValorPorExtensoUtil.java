@@ -5,6 +5,8 @@
  */
 package util;
 
+
+import java.sql.Connection;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import javax.swing.JOptionPane;

@@ -5,6 +5,8 @@
  */
 package dao;
 
+
+import java.sql.Connection;
 import controlador.AmortizacaoJpaController;
 import entity.Amortizacao;
 import java.util.List;

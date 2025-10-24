@@ -5,6 +5,8 @@
  */
 package hotel.controller;
 
+
+import java.sql.Connection;
 import entity.Documento;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -66,7 +68,7 @@ public class DocumentoController
 
     public static void main( String[] args )
     {
-//        Documento documento = new DocumentoController( new BDConexao() ).findDocumentoById( 1 );
+//        Documento documento = new DocumentoController( BDConexao.getInstancia() ).findDocumentoById( 1 );
 //        System.out.println( "Documento: " +documento.getDesignacao() );
     }
 

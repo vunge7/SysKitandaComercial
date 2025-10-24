@@ -6,6 +6,8 @@
 
 package dao;
 
+
+import java.sql.Connection;
 import controlador.RegimeJpaController;
 import entity.Regime;
 

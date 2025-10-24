@@ -10,6 +10,8 @@
  */
 package rh.visao;
 
+
+import java.sql.Connection;
 import dao.DadosInstituicaoDao;
 import entity.TbDadosInstituicao;
 import java.util.Vector;

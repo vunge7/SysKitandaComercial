@@ -5,6 +5,8 @@
  */
 package comercial.controller;
 
+
+import java.sql.Connection;
 import entity.AnoEconomico;
 import entity.Caixa;
 import entity.Cambio;
@@ -47,27 +49,61 @@ public class ItemCaixaController implements EntidadeFactory
     @Override
     public boolean salvar(Object object) {
     ItemCaixa itemcaixa = (ItemCaixa) object;
-    
-    String INSERT = "INSERT INTO item_caixa (valor_declarado, valor_real, fk_caixa, fk_forma_pagamento) " +
-                    "VALUES (?, ?, ?, ?)";
+
+    String INSERT = "INSERT INTO item_caixa (valor_declarado, valor_real, fk_caixa, fk_forma_pagamento) "
+                  + "VALUES (?, ?, ?, ?)";
+
+    PreparedStatement ps = null;
 
     try {
-        PreparedStatement ps = conexao.getConnection1().prepareStatement(INSERT);
+        // Usa a conexão ativa
+        ps = conexao.getConnectionAtiva().prepareStatement(INSERT);
         ps.setDouble(1, itemcaixa.getValorDeclarado());
         ps.setDouble(2, itemcaixa.getValorReal());
         ps.setInt(3, itemcaixa.getFkCaixa().getPkCaixa());
         ps.setInt(4, itemcaixa.getFkFormaPagamento().getPkFormaPagamento());
 
         int result = ps.executeUpdate();
-
-        System.out.println("ItemCaixa salvo com sucesso. Result: " + result);
+        System.out.println("✅ ItemCaixa salvo com sucesso (conexão ativa). Result: " + result);
         return result > 0;
+
     } catch (SQLException e) {
-        System.err.println("Erro ao salvar ItemCaixa: " + e.getMessage());
+        System.err.println("❌ Erro ao salvar ItemCaixa: " + e.getMessage());
         e.printStackTrace();
         return false;
+
+    } finally {
+        try {
+            if (ps != null) ps.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 }
+
+//    public boolean salvar(Object object) {
+//    ItemCaixa itemcaixa = (ItemCaixa) object;
+//    
+//    String INSERT = "INSERT INTO item_caixa (valor_declarado, valor_real, fk_caixa, fk_forma_pagamento) " +
+//                    "VALUES (?, ?, ?, ?)";
+//
+//    try {
+//        PreparedStatement ps = conexao.getConnectionAtiva().prepareStatement(INSERT);
+//        ps.setDouble(1, itemcaixa.getValorDeclarado());
+//        ps.setDouble(2, itemcaixa.getValorReal());
+//        ps.setInt(3, itemcaixa.getFkCaixa().getPkCaixa());
+//        ps.setInt(4, itemcaixa.getFkFormaPagamento().getPkFormaPagamento());
+//
+//        int result = ps.executeUpdate();
+//
+//        System.out.println("ItemCaixa salvo com sucesso. Result: " + result);
+//        return result > 0;
+//    } catch (SQLException e) {
+//        System.err.println("Erro ao salvar ItemCaixa: " + e.getMessage());
+//        e.printStackTrace();
+//        return false;
+//    }
+//}
 
 //    public boolean salvar( Object object )
 //    {

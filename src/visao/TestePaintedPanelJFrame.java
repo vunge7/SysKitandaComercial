@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import static kitanda.util.CfMethodsSwing.resizeJLableIcon;
 
 

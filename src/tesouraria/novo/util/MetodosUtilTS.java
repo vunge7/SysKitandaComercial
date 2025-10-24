@@ -4,6 +4,8 @@
  */
 package tesouraria.novo.util;
 
+
+import java.sql.Connection;
 import entity.Contas;
 import entity.FormaPagamento;
 import entity.TbUsuario;

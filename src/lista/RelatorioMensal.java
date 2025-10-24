@@ -4,6 +4,8 @@
  */
 package lista;
 
+
+import java.sql.Connection;
 import comercial.controller.DadosInstituicaoController;
 import dao.DadosInstituicaoDao;
 import entity.TbDadosInstituicao;
@@ -227,7 +229,7 @@ public class RelatorioMensal extends javax.swing.JFrame
         {
             public void run()
             {
-                new RelatorioMensal( new BDConexao() ).setVisible( true );
+                new RelatorioMensal( BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }

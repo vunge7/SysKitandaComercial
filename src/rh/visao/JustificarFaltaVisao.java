@@ -5,6 +5,8 @@
  */
 package rh.visao;
 
+
+import java.sql.Connection;
 import dao.FaltaDao;
 import entity.TbFalta;
 import java.util.Date;

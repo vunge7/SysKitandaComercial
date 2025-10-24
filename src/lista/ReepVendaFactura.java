@@ -4,7 +4,8 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import dao.VendaDao;
 import entity.TbVenda;
 import java.io.File;
@@ -27,7 +28,7 @@ public class ReepVendaFactura {
     
      private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
      private VendaDao vendaDao = new VendaDao(emf);
-     private BDConexao conexao  = new BDConexao();
+     private BDConexao conexao  = BDConexao.getInstancia();
      private int codigo;
      private double valor_entregue, troco;
      private boolean performance;
@@ -52,7 +53,7 @@ public class ReepVendaFactura {
 
     public void mostrarVenda(){
         
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
         
         

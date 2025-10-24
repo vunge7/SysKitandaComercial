@@ -5,6 +5,8 @@
  */
 package dao;
 
+
+import java.sql.Connection;
 import controlador.CaixaJpaController;
 import entity.Caixa;
 import java.sql.ResultSet;

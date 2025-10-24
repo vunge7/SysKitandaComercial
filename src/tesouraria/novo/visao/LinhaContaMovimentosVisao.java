@@ -4,6 +4,8 @@
  */
 package tesouraria.novo.visao;
 
+
+import java.sql.Connection;
 import entity.ContaMovimentos;
 import entity.ContaOperacoes;
 import entity.ContaPermissoes;

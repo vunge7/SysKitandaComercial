@@ -5,6 +5,8 @@
  */
 package comercial.controller;
 
+
+import java.sql.Connection;
 import entity.FichaTecnica;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -657,7 +659,7 @@ public class FichaTecnicaController implements EntidadeFactory
 
     public static void main( String[] args )
     {
-        BDConexao conexao = new BDConexao();
+        BDConexao conexao = BDConexao.getInstancia();
         FichaTecnicaController f = new FichaTecnicaController( conexao );
 
     }

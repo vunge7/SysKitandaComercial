@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.ArmazemDao;
 import dao.ComprasDao;
 import dao.DescontoDao;
@@ -941,7 +943,7 @@ public class AprovacaoCompraVisao extends javax.swing.JFrame
                 try
                 {
 
-                    new AprovacaoCompraVisao( 15, new BDConexao() ).setVisible( true );
+                    new AprovacaoCompraVisao( 15, BDConexao.getInstancia() ).setVisible( true );
 
                 }
                 catch ( Exception e )

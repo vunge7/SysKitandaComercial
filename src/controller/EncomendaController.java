@@ -44,97 +44,114 @@ public class EncomendaController {
     
     private EncomendaModelo encomendaModelo = null;
     private PreparedStatement comando = null;
-    private Connection conexao = null;
+    private BDConexao conexao = BDConexao.getInstancia();
+
+//    private Connection conexao = null;
 
     public EncomendaController() {
         
     }
 
      public boolean guardar(EncomendaModelo encomendaModelo) {
-       
-        this.encomendaModelo =  encomendaModelo;
- 
-        try {
-            
-            conexao = BDConexao.conectar();
-            System.out.println(insert);
-            comando = conexao.prepareStatement(insert);
+    this.encomendaModelo = encomendaModelo;
+    PreparedStatement comando = null;
 
-               /*       
+    try {
+        // Usa a conexão activa
+        Connection conn = conexao.getConnectionAtiva();
+
+        comando = conn.prepareStatement(insert);
+        System.out.println(insert);
+
+        /* Campos:
            data_encomenda , data_entrega_prevista , idCliente , total_encomenda, status_entrega
-                */      
+        */
+        comando.setString(1, encomendaModelo.getData_encomenda());
+        comando.setString(2, encomendaModelo.getData_entrega_prevista());
+        comando.setInt(3, encomendaModelo.getIdCliente());
+        comando.setDouble(4, encomendaModelo.getTotal_encomenda());
+        comando.setBoolean(5, encomendaModelo.isStatus_entrega());
+        comando.setInt(6, encomendaModelo.getIdUsuario());
+        comando.setString(7, encomendaModelo.getObs());
 
-            comando.setString(1, encomendaModelo.getData_encomenda());
-            comando.setString(2, encomendaModelo.getData_entrega_prevista());
-            comando.setInt(3, encomendaModelo.getIdCliente());
-            comando.setDouble(4, encomendaModelo.getTotal_encomenda());
-            comando.setBoolean(5, encomendaModelo.isStatus_entrega());
-            comando.setInt(6, encomendaModelo.getIdUsuario());
-            comando.setString(7, encomendaModelo.getObs());
-            comando.execute();
-            conexao.close();
-            
-        } catch (SQLException ex) {
-            Logger.getLogger(EncomendaController.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        }
-
-     return true;
-     
-    }
-    
-    
-      public boolean alterar(EncomendaModelo encomendaModelo) {
-       
-        this.encomendaModelo = encomendaModelo;
- 
-        try {
-            
-            conexao = BDConexao.conectar();
-            comando = conexao.prepareStatement(update);
-
-            /*       
-             descrisao , idTurno , idCurso , idSala , valor_propina
-                */      
-
-            comando.setString(1, encomendaModelo.getData_encomenda());
-            comando.setString(2, encomendaModelo.getData_entrega_prevista());
-            comando.setInt(3, encomendaModelo.getIdCliente());
-            comando.setDouble(4, encomendaModelo.getTotal_encomenda());
-            comando.setBoolean(5, encomendaModelo.isStatus_entrega());
-            comando.setInt(6, encomendaModelo.getIdUsuario());
-            comando.setString(7, encomendaModelo.getObs());
-            comando.setInt(8, encomendaModelo.getIdEncomenda());
-            
-            comando.execute();
-            conexao.close();
-            
-        } catch (SQLException ex) {
-            Logger.getLogger(EncomendaController.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        }
-
-     return true;
-     
-    }
-    
-       public boolean eliminar(EncomendaModelo encomendaModelo) {
-
-        this.encomendaModelo = encomendaModelo;
-       
-        try {
-            conexao = BDConexao.conectar();
-            comando = conexao.prepareStatement(delete);
-            comando.setInt(1, encomendaModelo.getIdEncomenda());
-            comando.execute();
-            conexao.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(EncomendaController.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        }
-        
+        comando.execute();
         return true;
+
+    } catch (SQLException ex) {
+        Logger.getLogger(EncomendaController.class.getName()).log(Level.SEVERE, null, ex);
+        return false;
+
+    } finally {
+        try {
+            if (comando != null) comando.close();
+        } catch (SQLException e) {
+            Logger.getLogger(EncomendaController.class.getName()).log(Level.SEVERE, null, e);
+        }
     }
+}
+
+
+public boolean alterar(EncomendaModelo encomendaModelo) {
+    this.encomendaModelo = encomendaModelo;
+    PreparedStatement comando = null;
+
+    try {
+        Connection conn = conexao.getConnectionAtiva();
+
+        comando = conn.prepareStatement(update);
+
+        comando.setString(1, encomendaModelo.getData_encomenda());
+        comando.setString(2, encomendaModelo.getData_entrega_prevista());
+        comando.setInt(3, encomendaModelo.getIdCliente());
+        comando.setDouble(4, encomendaModelo.getTotal_encomenda());
+        comando.setBoolean(5, encomendaModelo.isStatus_entrega());
+        comando.setInt(6, encomendaModelo.getIdUsuario());
+        comando.setString(7, encomendaModelo.getObs());
+        comando.setInt(8, encomendaModelo.getIdEncomenda());
+
+        comando.execute();
+        return true;
+
+    } catch (SQLException ex) {
+        Logger.getLogger(EncomendaController.class.getName()).log(Level.SEVERE, null, ex);
+        return false;
+
+    } finally {
+        try {
+            if (comando != null) comando.close();
+        } catch (SQLException e) {
+            Logger.getLogger(EncomendaController.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+}
+
+
+public boolean eliminar(EncomendaModelo encomendaModelo) {
+    this.encomendaModelo = encomendaModelo;
+    PreparedStatement comando = null;
+
+    try {
+        Connection conn = conexao.getConnectionAtiva();
+
+        comando = conn.prepareStatement(delete);
+        comando.setInt(1, encomendaModelo.getIdEncomenda());
+        comando.execute();
+
+        return true;
+
+    } catch (SQLException ex) {
+        Logger.getLogger(EncomendaController.class.getName()).log(Level.SEVERE, null, ex);
+        return false;
+
+    } finally {
+        try {
+            if (comando != null) comando.close();
+        } catch (SQLException e) {
+            Logger.getLogger(EncomendaController.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+}
+
  
    private void preencher_objecto(ResultSet resultado) throws SQLException
    {
@@ -151,58 +168,77 @@ public class EncomendaController {
     }
        
     //Retorna o Objecto por Numero do Processo que neste caso e o codigo
-    public EncomendaModelo getEncomendaByCodigo(int codigo) 
-    {
-        ResultSet resultado = null;
+public EncomendaModelo getEncomendaByCodigo(int codigo) {
+    PreparedStatement comando = null;
+    ResultSet resultado = null;
 
-        try {
-            
-             conexao = BDConexao.conectar();
-             comando = conexao.prepareStatement(getEncomendaByIdEncomenda);
-             comando.setInt(1, codigo);
-             resultado = comando.executeQuery();
+    try {
+        // Usa a conexão ativa (não abre nova)
+        Connection conn = conexao.getConnectionAtiva();
 
-            if (resultado.next()) {
-                preencher_objecto(resultado);
-            }
-            conexao.close();
+        comando = conn.prepareStatement(getEncomendaByIdEncomenda);
+        comando.setInt(1, codigo);
+        resultado = comando.executeQuery();
 
-        } catch (SQLException ex) {
-            Logger.getLogger(EncomendaController.class.getName()).log(Level.SEVERE, null, ex);
-
+        if (resultado.next()) {
+            preencher_objecto(resultado);
         }
-        
-        return encomendaModelo;
+
+    } catch (SQLException ex) {
+        Logger.getLogger(EncomendaController.class.getName()).log(Level.SEVERE, null, ex);
+    } finally {
+        // Fecha apenas os recursos auxiliares, não a conexão ativa
+        try {
+            if (resultado != null) resultado.close();
+            if (comando != null) comando.close();
+        } catch (SQLException e) {
+            Logger.getLogger(EncomendaController.class.getName()).log(Level.SEVERE, null, e);
+        }
     }
+
+    return encomendaModelo;
+}
+
     
 
     
       //Retorna o Objecto por Numero do Processo que neste caso e o codigo
-    public Integer getCodigoByNome(String nome_cliente) 
-    {
-        ResultSet resultado = null;
+public Integer getCodigoByNome(String nome_cliente) {
+    Integer codigo = 0;
+    PreparedStatement comando = null;
+    ResultSet resultado = null;
 
-        Integer codigo = 0;
-        try {
-            
-             conexao = BDConexao.conectar();
-             comando = conexao.prepareStatement("");
-             comando.setString(1, nome_cliente);
-             resultado = comando.executeQuery();
+    try {
+        // Usa a conexão ativa sem abrir nova
+        Connection conn = conexao.getConnectionAtiva();
 
-            if (resultado.next()) {
-                
-                codigo =  resultado.getInt(1);
-            }
-            conexao.close();
+        // Consulta que retorna o ID da encomenda com base no nome do cliente
+        String sql = "SELECT idEncomenda FROM tb_encomenda e "
+                   + "INNER JOIN tb_cliente c ON e.idCliente = c.idCliente "
+                   + "WHERE c.nome_cliente = ?";
 
-        } catch (SQLException ex) {
-            Logger.getLogger(EncomendaController.class.getName()).log(Level.SEVERE, null, ex);
-            return codigo;
+        comando = conn.prepareStatement(sql);
+        comando.setString(1, nome_cliente);
+        resultado = comando.executeQuery();
+
+        if (resultado.next()) {
+            codigo = resultado.getInt(1);
         }
-        
-        return codigo;
+
+    } catch (SQLException ex) {
+        Logger.getLogger(EncomendaController.class.getName()).log(Level.SEVERE, null, ex);
+    } finally {
+        try {
+            if (resultado != null) resultado.close();
+            if (comando != null) comando.close();
+        } catch (SQLException e) {
+            Logger.getLogger(EncomendaController.class.getName()).log(Level.SEVERE, null, e);
+        }
     }
+
+    return codigo;
+}
+
     
     
  

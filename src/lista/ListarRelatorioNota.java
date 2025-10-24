@@ -4,6 +4,8 @@
  */
 package lista;
 
+
+import java.sql.Connection;
 import dao.ArmazemDao;
 import dao.ItemNotaDao;
 import dao.PrecoDao;
@@ -347,7 +349,7 @@ public class ListarRelatorioNota extends javax.swing.JFrame
             {
                 try
                 {
-                    new ListarRelatorioNota(new BDConexao()).setVisible( true );
+                    new ListarRelatorioNota(BDConexao.getInstancia()).setVisible( true );
                 }
                 catch ( Exception ex )
                 {

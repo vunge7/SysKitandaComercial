@@ -4,7 +4,8 @@
  */
 package tesouraria.novo.visao;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import controller.UsuarioController;
 import entity.TbUsuario;
 import java.awt.Color;
@@ -599,7 +600,7 @@ public class UsuarioTesourariaVisao extends javax.swing.JFrame implements Runnab
         {
             public void run()
             {
-                UsuarioTesourariaVisao dialog = new UsuarioTesourariaVisao( new javax.swing.JFrame(), true, 15, new BDConexao() );
+                UsuarioTesourariaVisao dialog = new UsuarioTesourariaVisao( new javax.swing.JFrame(), true, 15, BDConexao.getInstancia() );
                 dialog.addWindowListener( new java.awt.event.WindowAdapter()
                 {
                     @Override
@@ -876,9 +877,9 @@ public class UsuarioTesourariaVisao extends javax.swing.JFrame implements Runnab
 
     private void revelarSenha( int codigoUtilizador, String novasenha )
     {
-        BDConexao conexao = new BDConexao();
+        BDConexao conexao = BDConexao.getInstancia();
 
-        Connection connection = ( Connection ) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
         String relatorio = "";
         relatorio = "relatorios/credenciais.jasper";

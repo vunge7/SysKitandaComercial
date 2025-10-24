@@ -9,6 +9,8 @@
  */
 package rh.visao;
 
+
+import java.sql.Connection;
 import dao.FechoPeriodoDao;
 import entity.FechoPeriodo;
 import java.util.Calendar;

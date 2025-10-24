@@ -6,6 +6,8 @@
 
 package util;
 
+
+import java.sql.Connection;
 /**
  *
  * @author Toshiba

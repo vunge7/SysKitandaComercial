@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.CaixasController;
 import comercial.controller.DadosInstituicaoController;
 import comercial.controller.DocumentosController;
@@ -342,7 +344,7 @@ public class CaixaFechoGoldVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new CaixaFechoGoldVisao( 15, new BDConexao(), false ).setVisible( true );
+                new CaixaFechoGoldVisao( 15, BDConexao.getInstancia(), false ).setVisible( true );
             }
         } );
     }
@@ -362,7 +364,7 @@ public class CaixaFechoGoldVisao extends javax.swing.JFrame
 //    private void procedimento_fechar_caixa()
 //    {
 //
-//        conexaoTransaction = new BDConexao();
+//        conexaoTransaction = BDConexao.getInstancia();
 //        DocumentosController.startTransaction( conexaoTransaction );
 //
 //        TbUsuario usuario = ( TbUsuario ) usuariosController.findById( this.idUser );
@@ -465,7 +467,7 @@ public class CaixaFechoGoldVisao extends javax.swing.JFrame
 //
 //                        JOptionPane.showMessageDialog( null, "Falha ao processar os relatórios.\nFalha: " + e.getLocalizedMessage(),
 //                                "Falha", JOptionPane.ERROR_MESSAGE );
-//                        DocumentosController.rollBackTransaction( conexaoTransaction );
+//                        DocumentosController.rollback( conexaoTransaction );
 //                        conexaoTransaction.close();
 //                    }
 //
@@ -474,7 +476,7 @@ public class CaixaFechoGoldVisao extends javax.swing.JFrame
 //        }
 //    }
 //    private void procedimento_fechar_caixa() {
-//    conexaoTransaction = new BDConexao();
+//    conexaoTransaction = BDConexao.getInstancia();
 //    DocumentosController.startTransaction(conexaoTransaction);
 //
 //    TbUsuario usuario = (TbUsuario) usuariosController.findById(this.idUser);
@@ -578,12 +580,12 @@ public class CaixaFechoGoldVisao extends javax.swing.JFrame
 //                } catch (Exception e) {
 //                    JOptionPane.showMessageDialog(null, "Falha ao processar os relatórios.\nFalha: " + e.getLocalizedMessage(),
 //                            "Falha", JOptionPane.ERROR_MESSAGE);
-//                    DocumentosController.rollBackTransaction(conexaoTransaction);
+//                    DocumentosController.rollback(conexaoTransaction);
 //                    conexaoTransaction.close();
 //                }
 //
 //            } else {
-//                DocumentosController.rollBackTransaction(conexaoTransaction);
+//                DocumentosController.rollback(conexaoTransaction);
 //                conexaoTransaction.close();
 //            }
 //        }
@@ -591,8 +593,8 @@ public class CaixaFechoGoldVisao extends javax.swing.JFrame
 //}
     private void procedimento_fechar_caixa()
     {
-        conexaoTransaction = new BDConexao();
-        DocumentosController.startTransaction( conexaoTransaction );
+        conexaoTransaction = BDConexao.getInstancia();
+        DocumentosController.start( conexaoTransaction );
 
         TbUsuario usuario = (TbUsuario) usuariosController.findById( this.idUser );
         DefaultTableModel modelo = (DefaultTableModel) tabela_fecho_caixa.getModel();
@@ -690,7 +692,7 @@ public class CaixaFechoGoldVisao extends javax.swing.JFrame
                 // Finalizar transação
                 if ( sucesso )
                 {
-                    DocumentosController.commitTransaction( conexaoTransaction );
+                    DocumentosController.commit( conexaoTransaction );
                     JOptionPane.showMessageDialog( null, "Fecho realizado com sucesso" );
                     modelo.setRowCount( 0 );
                     dispose();
@@ -703,13 +705,13 @@ public class CaixaFechoGoldVisao extends javax.swing.JFrame
                     catch ( Exception e )
                     {
                         JOptionPane.showMessageDialog( null, "Falha ao gerar relatórios: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE );
-                        DocumentosController.rollBackTransaction( conexaoTransaction );
+                        DocumentosController.rollback( conexaoTransaction );
                         conexaoTransaction.close();
                     }
                 }
                 else
                 {
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    DocumentosController.rollback( conexaoTransaction );
                     conexaoTransaction.close();
                     JOptionPane.showMessageDialog( null, "Erro ao realizar o fecho do caixa." );
                 }

@@ -5,7 +5,8 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import dao.DadosInstituicaoDao;
 import java.sql.SQLException;
 import java.util.Date;

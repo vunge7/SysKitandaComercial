@@ -12,6 +12,8 @@
 package rh.visao;
 
 
+
+import java.sql.Connection;
 import dao.BancoDao;
 import dao.ItemSubsidioFuncionarioDao;
 import dao.FuncionarioDao;

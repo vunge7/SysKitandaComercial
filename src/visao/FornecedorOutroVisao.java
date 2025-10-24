@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.FornecedorDao;
 import dao.RegimeDao;
 import entity.Compras;
@@ -828,7 +830,7 @@ public class FornecedorOutroVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                FornecedorOutroVisao dialog = new FornecedorOutroVisao( new javax.swing.JFrame(), 15, true, new BDConexao() );
+                FornecedorOutroVisao dialog = new FornecedorOutroVisao( new javax.swing.JFrame(), 15, true, BDConexao.getInstancia() );
                 dialog.addWindowListener( new java.awt.event.WindowAdapter()
                 {
                     @Override

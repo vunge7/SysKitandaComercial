@@ -5,6 +5,8 @@
  */
 package comercial.controller;
 
+
+import java.sql.Connection;
 import entity.Caixa;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -78,7 +80,9 @@ public class CaixasController implements EntidadeFactory
             + "WHERE pk_caixa = ?";
 
     try {
-        PreparedStatement ps = conexao.getConnection1().prepareStatement(sql);
+        
+        PreparedStatement ps = conexao.getConnectionAtiva().prepareStatement(sql);
+
         ps.setTimestamp(1, new java.sql.Timestamp(caixa.getDataAbertura().getTime()));
         ps.setTimestamp(2, new java.sql.Timestamp(caixa.getDataFecho().getTime()));
         ps.setDouble(3, caixa.getTotalVendas());
@@ -516,7 +520,7 @@ public class CaixasController implements EntidadeFactory
 
     public static void main( String[] args )
     {
-        CaixasController caixa = new CaixasController( new BDConexao() );
+        CaixasController caixa = new CaixasController( BDConexao.getInstancia() );
         int firstId = caixa.getFirstIdCaixaByDataAbertura( new Date() );
         int lastId = caixa.getLastCaixaByDataAbertura( new Date() );
 

@@ -4,6 +4,8 @@
  */
 package lista;
 
+
+import java.sql.Connection;
 import visao.*;
 import controller.ClienteEncomendaController;
 import exemplos.PermitirNumeros;
@@ -42,7 +44,7 @@ public final class ListagemEncomendas extends javax.swing.JFrame {
         setLabel();
      
        
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
         
         getClientes();
         txtIniciasNome.addKeyListener(  new TratarEventoTeclado() );

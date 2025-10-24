@@ -5,6 +5,8 @@
  */
 package util.validacao.ficha_funcionario;
 
+
+import java.sql.Connection;
 import dao.FuncionarioDao;
 import javax.persistence.EntityManagerFactory;
 import javax.swing.table.TableModel;

@@ -4,7 +4,8 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -155,7 +156,7 @@ public class ListarVendasDetalhadas extends javax.swing.JFrame
     public void mostrarUsuarios() throws SQLException
     {
 
-        Connection connection = ( Connection ) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
 
         hashMap.put( "NOME_USUARIO", getUsuario() );
@@ -426,7 +427,7 @@ public class ListarVendasDetalhadas extends javax.swing.JFrame
         {
             public void run()
             {
-                new ListarVendasDetalhadas( new BDConexao()).setVisible( true );
+                new ListarVendasDetalhadas( BDConexao.getInstancia()).setVisible( true );
             }
         } );
     }

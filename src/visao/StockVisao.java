@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import controller.ProdutoController;
 import controller.StockController;
 import controller.TipoProdutoController;
@@ -58,7 +60,7 @@ public class StockVisao extends javax.swing.JDialog {
         setLocationRelativeTo(null);
         
        
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
         stockController = new StockController(conexao);
         
         jcDataEntrada.setDate( new Date() );

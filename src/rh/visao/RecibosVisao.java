@@ -5,6 +5,8 @@
  */
 package rh.visao;
 
+
+import java.sql.Connection;
 import dao.AdiantamentoDao;
 import dao.AgregadoFamiliarDao;
 import dao.AnoDao;
@@ -924,7 +926,7 @@ public class RecibosVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new RecibosVisao( 15, 2, new BDConexao() ).setVisible( true );
+                new RecibosVisao( 15, 2, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }
@@ -2289,7 +2291,7 @@ public class RecibosVisao extends javax.swing.JFrame
 
     public static void main( String[] args )
     {
-        new RecibosVisao( 15, 1, new BDConexao() ).setVisible( true );
+        new RecibosVisao( 15, 1, BDConexao.getInstancia() ).setVisible( true );
     }
 
 }

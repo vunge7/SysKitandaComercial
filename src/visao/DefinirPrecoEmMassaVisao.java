@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.ArmazensController;
 import comercial.controller.ImpostosController;
 import comercial.controller.PrecosController;
@@ -86,7 +88,7 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
 
         initComponents();
         setLocationRelativeTo( null );
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
         this.usuarioId = usuarioId;
         this.usuarioNome = usuarioNome;
         cmbCategoria.setModel( new DefaultComboBoxModel<>() );
@@ -173,7 +175,7 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
             }
         } );
 
-        listaFonte = produtosController.listarProdutos( BDConexao.conectar() );
+        listaFonte = produtosController.listarProdutos( conexao.getConnectionAtiva() );
         carregarProdutos( listaFonte );
 
     }
@@ -413,7 +415,7 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
         {
 
             System.err.println( "INIT" );
-            List<Object[]> listaPorCategoria = produtosController.listarProdutosByCategoria( BDConexao.conectar(), cmbCategoria.getSelectedItem().toString() );
+            List<Object[]> listaPorCategoria = produtosController.listarProdutosByCategoria( conexao.getConnectionAtiva(), cmbCategoria.getSelectedItem().toString() );
             System.err.println( "LISTA SIZE : " + listaPorCategoria.size() );
             carregarProdutos( listaPorCategoria );
 
@@ -454,7 +456,7 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
             }
 
             List<Object[]> listaPorCodigo = produtosController.listarProdutosByCodigoManual(
-                    BDConexao.conectar(), codigoManual);
+                    conexao.getConnectionAtiva(), codigoManual);
 
             carregarProdutos(listaPorCodigo); // reutiliza o mesmo método
         } catch (Exception ex) {
@@ -660,7 +662,7 @@ public class DefinirPrecoEmMassaVisao extends javax.swing.JFrame
 
         }
 
-        listaFonte = produtosController.listarProdutos( BDConexao.conectar() );
+        listaFonte = produtosController.listarProdutos( conexao.getConnectionAtiva() );
         JOptionPane.showMessageDialog( null, "Operação efectuada com sucesso!..." );
     }
 

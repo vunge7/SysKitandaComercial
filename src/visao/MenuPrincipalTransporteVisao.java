@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.DadosInstituicaoDao;
 import dao.ItemPermissaoDao;
 import dao.ProdutoDao;
@@ -1926,7 +1928,7 @@ public class MenuPrincipalTransporteVisao extends javax.swing.JFrame
 
         try
         {
-            new ListarRelatorioFormaPagamento( new BDConexao(), this.cod_utilizador ).show();
+            new ListarRelatorioFormaPagamento( BDConexao.getInstancia(), this.cod_utilizador ).show();
         }
         catch ( Exception e )
         {

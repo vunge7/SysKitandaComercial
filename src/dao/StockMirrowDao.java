@@ -5,6 +5,8 @@
  */
 package dao;
 
+
+import java.sql.Connection;
 import controlador.TbStockMirrowJpaController;
 import entity.TbProduto;
 import entity.TbStockMirrow;

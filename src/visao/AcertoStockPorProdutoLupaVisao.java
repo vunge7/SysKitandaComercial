@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.AcertosStockController;
 import comercial.controller.ArmazensController;
 import comercial.controller.ProdutosController;
@@ -299,7 +301,7 @@ public class AcertoStockPorProdutoLupaVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                AcertoStockPorProdutoLupaVisao dialog = new AcertoStockPorProdutoLupaVisao( 1, 1675, 15, new BDConexao() );
+                AcertoStockPorProdutoLupaVisao dialog = new AcertoStockPorProdutoLupaVisao( 1, 1675, 15, BDConexao.getInstancia() );
                 dialog.addWindowListener( new java.awt.event.WindowAdapter()
                 {
                     @Override
@@ -371,7 +373,7 @@ public class AcertoStockPorProdutoLupaVisao extends javax.swing.JFrame
             {
                 try
                 {
-                    conexaoTransaction = new BDConexao();
+                    conexaoTransaction = BDConexao.getInstancia();
                     DocumentoDao.startTransaction( conexaoTransaction );
                     double qtdAnterior = stoksController.getQuantidadeProduto( cod_produto, cod_armazem );
                     StoksController stoksControllerLocal = new StoksController( conexaoTransaction );

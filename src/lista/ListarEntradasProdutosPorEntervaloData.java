@@ -4,7 +4,8 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import controller.EntradaController;
 import dao.ArmazemDao;
 import dao.EntradaDao;
@@ -71,7 +72,7 @@ public class ListarEntradasProdutosPorEntervaloData extends javax.swing.JFrame
         dcDataInicio.setDate( new Date() );
         dcDataFim.setDate( new Date() );
 
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
         this.idUser = idUser;
         cmbArmazem.setModel( new DefaultComboBoxModel( (Vector) armazemDao.buscaTodos5() ) );
         MetodosUtil.setArmazemByCampoConfigArmazem( cmbArmazem, conexao, idUser );
@@ -111,7 +112,7 @@ public class ListarEntradasProdutosPorEntervaloData extends javax.swing.JFrame
     public void mostrar() throws SQLException
     {
 
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
 
         System.out.println( "DATA_INICIO" + dcDataInicio.getDate() );
@@ -169,7 +170,7 @@ public class ListarEntradasProdutosPorEntervaloData extends javax.swing.JFrame
     public void mostrarFornecedor() throws SQLException
     {
 
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
 
         System.out.println( "DATA_INICIO" + dcDataInicio.getDate() );

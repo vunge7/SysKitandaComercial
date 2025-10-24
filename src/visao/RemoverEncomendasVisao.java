@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import controller.ClienteEncomendaController;
 import controller.EncomendaController;
 import controller.ItemEncomendaController;
@@ -60,7 +62,7 @@ public class RemoverEncomendasVisao extends javax.swing.JFrame {
 
         this.idUser = idUser;
    
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
       
         txtNFactura.addKeyListener(new TratarEventoTecladoCodigoFactura());
 

@@ -5,6 +5,8 @@
  */
 package comercial.controller;
 
+
+import java.sql.Connection;
 import entity.AnoEconomico;
 import entity.Cambio;
 import entity.Documento;

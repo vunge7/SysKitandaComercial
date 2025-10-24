@@ -5,6 +5,8 @@
  */
 package util;
 
+
+import java.sql.Connection;
 import dao.FaltaDao;
 import dao.FechoPeriodoDao;
 import entity.FechoPeriodo;

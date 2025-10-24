@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.AnoEconomicoDao;
 import dao.ArmazemDao;
 import dao.BancoDao;
@@ -551,7 +553,7 @@ public class EncomendaVisao extends javax.swing.JFrame implements Runnable
         
         try
         {
-            new EncomendaVisao( 15, new BDConexao() ).show();
+            new EncomendaVisao( 15, BDConexao.getInstancia() ).show();
         }
         catch ( SQLException e )
         {

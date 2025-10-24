@@ -6,6 +6,8 @@
 
 package dao;
 
+
+import java.sql.Connection;
 import controlador.TransferenciaBancariaJpaController;
 import entity.TbBanco;
 import entity.TransferenciaBancaria;

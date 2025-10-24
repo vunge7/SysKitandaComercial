@@ -10,6 +10,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.AmortizacaoDividaDao;
 import dao.AnoEconomicoDao;
 import dao.DadosInstituicaoDao;
@@ -302,7 +304,7 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new FicheiroSAFTVisao( new BDConexao() ).setVisible( true );
+                new FicheiroSAFTVisao( BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }

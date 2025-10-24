@@ -495,7 +495,7 @@ public class ListarRelatorioCompra extends javax.swing.JFrame
             {
                 try
                 {
-                    new ListarRelatorioCompra( new BDConexao() ).setVisible( true );
+                    new ListarRelatorioCompra( BDConexao.getInstancia() ).setVisible( true );
                 }
                 catch ( Exception ex )
                 {

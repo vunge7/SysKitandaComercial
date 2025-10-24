@@ -10,6 +10,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.FuncaoDao;
 import dao.GrupoDao;
 import entity.Grupo;

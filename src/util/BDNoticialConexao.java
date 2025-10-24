@@ -1,5 +1,7 @@
 package util;
 
+
+import java.sql.Connection;
 /*----------------------------------------------
  *project: GPRODUTSS
  *fle:	BDConexao.java

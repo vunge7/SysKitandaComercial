@@ -4,8 +4,9 @@
  */
 package rh.visao;
 
+
+import java.sql.Connection;
 import lista.*;
-import com.mysql.jdbc.Connection;
 import dao.AccessoArmazemDao;
 import dao.ArmazemDao;
 import dao.FornecedorDao;
@@ -92,7 +93,7 @@ public class ListarMapaSalario extends javax.swing.JFrame
     public void mostrar() throws SQLException
     {
 
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
 
 //        hashMap.put("DATA_INICIO", dcDataInicio.getDate());
@@ -431,7 +432,7 @@ public class ListarMapaSalario extends javax.swing.JFrame
             {
                 try
                 {
-                    new ListarMapaSalario( 15, new BDConexao() ).setVisible( true );
+                    new ListarMapaSalario( 15, BDConexao.getInstancia() ).setVisible( true );
                 }
                 catch ( SQLException ex )
                 {

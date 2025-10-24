@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.ProdutoDao;
 import static dao.UtilDao.emf;
 import entity.TbProduto;

@@ -6,6 +6,8 @@
 
 package tesouraria.visao;
 
+
+import java.sql.Connection;
 import java.util.Date;
 import lista.RelGeralTransferencias;
 //import relatorios.RelGeralDeclaracoes;

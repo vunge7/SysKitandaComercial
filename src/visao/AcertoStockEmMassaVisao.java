@@ -186,7 +186,7 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
             }
         } );
 
-        listaFonte = produtosController.listarStockPorArmazem( conexao.getConnection1(), getIdArmazem() );
+        listaFonte = produtosController.listarStockPorArmazem( conexao.getConnectionAtiva(), getIdArmazem() );
 
     }
 
@@ -477,7 +477,7 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new AcertoStockEmMassaVisao( null, true, 15, "", new BDConexao() ).setVisible( true );
+                new AcertoStockEmMassaVisao( null, true, 15, "", BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }
@@ -826,7 +826,7 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
                                     );
                                 }
 
-                                listaFonte = produtosController.listarStockPorArmazem( conexao.getConnection1(), getIdArmazem() );
+                                listaFonte = produtosController.listarStockPorArmazem( conexao.getConnectionAtiva(), getIdArmazem() );
                             }
 
                             // mover foco para próxima linha
@@ -1227,7 +1227,7 @@ public class AcertoStockEmMassaVisao extends javax.swing.JFrame
                     int codProduto = Integer.parseInt( tabela_acerto.getValueAt( row, 0 ).toString() );
                     int codArmazem = armazensController.getCodigoPorDesignacao(
                             cmbArmazem.getSelectedItem().toString() );
-                    stocksController.salvarAcertoLinha( conexao.getConnection1(), codProduto, codArmazem,
+                    stocksController.salvarAcertoLinha( conexao.getConnectionAtiva(), codProduto, codArmazem,
                             usuarioId, usuarioNome,
                             tabela_acerto.getValueAt( row, 1 ).toString(),
                             cmbArmazem.getSelectedItem().toString(),

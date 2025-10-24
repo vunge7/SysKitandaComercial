@@ -6,6 +6,8 @@
 
 package dao;
 
+
+import java.sql.Connection;
 import controlador.TbBalancoJpaController;
 //import controller.BalancoJpaController;
 import entity.TbBalanco;

@@ -11,6 +11,8 @@
 
 package visao;
 
+
+import java.sql.Connection;
 import dao.GrauAcademicoDao;
 import entity.TbGrauAcademico;
 import java.util.List;

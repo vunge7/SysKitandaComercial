@@ -5,6 +5,8 @@
  */
 package kitanda.util;
 
+
+import java.sql.Connection;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.net.URL;

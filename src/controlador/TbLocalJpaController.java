@@ -4,6 +4,8 @@
  */
 package controlador;
 
+
+import java.sql.Connection;
 import controlador.exceptions.IllegalOrphanException;
 import controlador.exceptions.NonexistentEntityException;
 import entity.TbLocal;

@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.CaixasController;
 import comercial.controller.ItemCaixaController;
 import comercial.controller.LugaresController;
@@ -365,7 +367,7 @@ public class JanelaFrontOfficeLavandariaVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new JanelaFrontOfficeLavandariaVisao( 15, new BDConexao() ).setVisible( true );
+                new JanelaFrontOfficeLavandariaVisao( 15, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }

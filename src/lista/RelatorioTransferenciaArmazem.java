@@ -4,7 +4,8 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.Date;
@@ -273,7 +274,7 @@ public class RelatorioTransferenciaArmazem extends javax.swing.JFrame
         {
             public void run()
             {
-                new RelatorioTransferenciaArmazem( 15, new BDConexao() ).setVisible( true );
+                new RelatorioTransferenciaArmazem( 15, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }

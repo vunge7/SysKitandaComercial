@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import controller.UsuarioController;
 
 import java.awt.Dimension;
@@ -46,7 +48,7 @@ public class LoginEntradaEfectuarSaldo extends javax.swing.JFrame {
         setResizable(false);
         setVisible(true);
         this.idUusario = idUsuario;
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
         
         usuarioController = new UsuarioController(conexao);
         

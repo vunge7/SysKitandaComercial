@@ -5,6 +5,8 @@
  */
 package tabela;
 
+
+import java.sql.Connection;
 import dao.AdiantamentoDao;
 import dao.BancoDao;
 import dao.FaltaDao;

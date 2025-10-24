@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.TurnoDao;
 import dao.UsuarioDao;
 import entity.Turno;
@@ -318,7 +320,7 @@ public class TurnoVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new TurnoVisao( 15, new BDConexao() ).setVisible( true );
+                new TurnoVisao( 15, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }

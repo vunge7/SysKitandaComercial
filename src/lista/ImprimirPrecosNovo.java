@@ -4,7 +4,8 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import java.io.File;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -23,7 +24,7 @@ import util.BDConexao;
 public class ImprimirPrecosNovo
 {
 
-    private BDConexao conexao = new BDConexao();
+    private BDConexao conexao = BDConexao.getInstancia();
     private double preco_retalho = 0d, preco_grosso = 0d;
     private String designacao;
     private int cod_produto;
@@ -55,7 +56,7 @@ public class ImprimirPrecosNovo
     public void mostrar_preco()
     {
 
-        Connection connection = ( Connection ) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
         hashMap.put( "DADOS_INSTITUICAO", "KOGUI" );
         hashMap.put( "DADOS_INSTITUICAO", dados_instituicao );

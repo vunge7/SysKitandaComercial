@@ -4,6 +4,8 @@
  */
 package tesouraria.novo.visao;
 
+
+import java.sql.Connection;
 import entity.ContaMovimentos;
 import entity.ContaPermissoes;
 import entity.Contas;
@@ -1265,7 +1267,7 @@ public class NovoMenuPrincipalTesourariaVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new NovoMenuPrincipalTesourariaVisao( 15, true, new BDConexao() ).setVisible( true );
+                new NovoMenuPrincipalTesourariaVisao( 15, true, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }

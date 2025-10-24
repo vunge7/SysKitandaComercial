@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.AccessoArmazemDao;
 import dao.ArmazemDao;
 import dao.ItemVendaDao;
@@ -276,7 +278,7 @@ public class MapaExistenciaVisao extends javax.swing.JFrame
             {
                 try
                 {
-                    new MapaExistenciaVisao( 15, new BDConexao() ).setVisible( true );
+                    new MapaExistenciaVisao( 15, BDConexao.getInstancia() ).setVisible( true );
                 }
                 catch ( Exception ex )
                 {
@@ -408,7 +410,7 @@ public class MapaExistenciaVisao extends javax.swing.JFrame
     private void processar_mapa()
     {
 
-//        BDConexao conexao = new BDConexao();
+//        BDConexao conexao = BDConexao.getInstancia();
         List<TbStock> list_stock = MetodosUtil.getAllStock( conexao );
         List<MapaExistenciaUtil> lista = new ArrayList<MapaExistenciaUtil>();
         MapaExistenciaUtil object;

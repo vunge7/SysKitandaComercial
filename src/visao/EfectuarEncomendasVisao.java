@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import controller.ClienteEncomendaController;
 import controller.EncomendaController;
 import controller.ItemEncomendaController;
@@ -59,7 +61,7 @@ public class EfectuarEncomendasVisao extends javax.swing.JFrame {
         txtQuantidadeEncomendar.setDocument(new PermitirNumeros());
         txtCodigoproduto.setDocument(new PermitirNumeros());
         txtNFactura.setDocument(new PermitirNumeros());
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
            
            
            
@@ -410,7 +412,7 @@ public class EfectuarEncomendasVisao extends javax.swing.JFrame {
          
         String sql = "SELECT max(idEncomenda) FROM tb_encomenda";
         
-        ResultSet rs = new BDConexao().executeQuery(sql);
+        ResultSet rs = BDConexao.getInstancia().executeQuery(sql);
 
         try 
         {
@@ -518,7 +520,7 @@ public class EfectuarEncomendasVisao extends javax.swing.JFrame {
      public  int getQuantidadeProduto(int cod_produto) {
          
         String sql = "SELECT quantidade_existente FROM  tb_stock WHERE  cod_produto_codigo = "  +cod_produto +" AND cod_armazem = " + id_armzem; 
-        ResultSet rs = new BDConexao().executeQuery(sql);
+        ResultSet rs = BDConexao.getInstancia().executeQuery(sql);
 
         try 
         {

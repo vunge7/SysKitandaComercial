@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import controller.UsuarioController;
 
 import java.awt.event.KeyAdapter;
@@ -37,7 +39,7 @@ public class LoginEncomendaVisao extends javax.swing.JFrame {
         setResizable(false);
         setVisible(true);
         this.idUusario = idUsuario;
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
         
         usuarioController = new UsuarioController(conexao);
         

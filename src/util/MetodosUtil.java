@@ -5,7 +5,8 @@
  */
 package util;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import comercial.controller.AmortizacaoDividasController;
 import comercial.controller.ArmazensAccessoController;
 import comercial.controller.ArmazensController;
@@ -2088,7 +2089,7 @@ public class MetodosUtil
     {
 
         String sql = "SELECT saldo_banco FROM  tb_banco WHERE  idBanco = " + idBanco;
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -2169,7 +2170,7 @@ public class MetodosUtil
     {
 
         String sql = "SELECT SUM(saldo_banco) AS TOTAL FROM  tb_banco WHERE  idBanco <> " + DVML.COD_BANCO_CAIXA;
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -2362,7 +2363,7 @@ public class MetodosUtil
 
     public static void actualizar_status( int idUsuario, String status_OFF_ON )
     {
-        BDConexao conexao = new BDConexao();
+        BDConexao conexao = BDConexao.getInstancia();
         String sql = "UPDATE tb_usuario SET estado_log =  '" + status_OFF_ON + "' WHERE codigo = " + idUsuario;
         conexao.executeUpdate( sql );
         conexao.close();
@@ -2370,7 +2371,7 @@ public class MetodosUtil
 
     public static void actualizar_ip_address( int idUsuario, String ip_address )
     {
-        BDConexao conexao = new BDConexao();
+        BDConexao conexao = BDConexao.getInstancia();
         String sql = "UPDATE tb_usuario SET ip_address =  '" + ip_address + "' WHERE codigo = " + idUsuario;
         conexao.executeUpdate( sql );
         conexao.close();
@@ -2447,7 +2448,7 @@ public class MetodosUtil
         }
         else
         {
-            new RootVisao( id_user, id_empresa, true, new BDConexao() ).show();
+            new RootVisao( id_user, id_empresa, true, BDConexao.getInstancia() ).show();
         }
 
     }
@@ -3923,7 +3924,7 @@ public class MetodosUtil
     public static void precedimento_actualizar_produto()
     {
         List<TbProduto> lista_produto = produtoDao.buscaTodosProdutos();
-        BDConexao conexao = new BDConexao();
+        BDConexao conexao = BDConexao.getInstancia();
         System.err.println( "PRODUTO A ADICONADOS" );
         int cont = 1;
         for ( TbProduto produto : lista_produto )
@@ -4080,7 +4081,7 @@ public class MetodosUtil
         List<TbProduto> lista_produto = produtoDao.buscaTodosProdutosComCampoVazios();
         EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
         ProdutoDao produtoLocalDao = new ProdutoDao( emf );
-        BDConexao conexao = new BDConexao();
+        BDConexao conexao = BDConexao.getInstancia();
         System.err.println( "TAMANHO: " + lista_produto.size() );
         int cont = 1;
         String designacao = "Produto ";
@@ -5256,7 +5257,7 @@ public class MetodosUtil
     public double getTotalFaltasSalarial( int idFuncionario )
     {
 
-        BDConexao conexaoLocal = new BDConexao();
+        BDConexao conexaoLocal = BDConexao.getInstancia();
         FechoPeriodo fechoPeriodo = fechoPeriodoDao.getFechoPeriodoByIdAnoAndPerido( getIdAno(), getIdPeriodo() );
         List<TbFalta> itens = FaltaDao.getAllFaltasByBetweenDatasByIdFncionario(
                 idFuncionario, fechoPeriodo.getDataAbertura(),
@@ -5280,7 +5281,7 @@ public class MetodosUtil
 
     public double getTotalSubsidio( TbFuncionario funcionario_local, List<TbItemSubsidiosFuncionario> subsidios )
     {
-        BDConexao conexaoLocal = new BDConexao();
+        BDConexao conexaoLocal = BDConexao.getInstancia();
         double total = 0;
 
         if ( Objects.nonNull( subsidios ) )
@@ -5318,7 +5319,7 @@ public class MetodosUtil
         double total = 0, CONSTANTE = 30000;
         double valor;
 
-        BDConexao conexaoLocal = new BDConexao();
+        BDConexao conexaoLocal = BDConexao.getInstancia();
         int dias_uteis_trabalho = funcionario_local.getFkModalidade().getDiasUteisTrabalho();
         double horas_de_faltas = FaltaDao.getNHoraIntervaloDatasFalta( funcionario_local,
                 RecibosVisao.fechoPeriodo.getDataAbertura(),
@@ -5685,8 +5686,8 @@ public class MetodosUtil
 
     public static void actualizarPrecoVendaManual( int idProduto, Double precoVenda, PrecosController precosControllerLocal, BDConexao conexao )
     {
-        BDConexao conexaoTransaction = new BDConexao();
-        DocumentosController.startTransaction( conexaoTransaction );
+        BDConexao conexaoTransaction = BDConexao.getInstancia();
+        DocumentosController.start( conexaoTransaction );
 
         System.out.println( "ID PRODUTO: " + idProduto );
 
@@ -5721,20 +5722,20 @@ public class MetodosUtil
         try
         {
             precosControllerLocal.salvar( preco_novo_retalho );
-            DocumentosController.commitTransaction( conexaoTransaction );
+            DocumentosController.commit( conexaoTransaction );
             conexaoTransaction.close();
 //            precoDao.create(preco_novo_retalho);
             System.out.println( "Preco de compra retalho actualizado na venda" );
         }
         catch ( Exception e )
         {
-            DocumentosController.rollBackTransaction( conexaoTransaction );
+            DocumentosController.rollback( conexaoTransaction );
             e.printStackTrace();
             System.err.println( "Falha ao actualizar o preço retalho na venda" );
         }
 
-        conexaoTransaction = new BDConexao();
-        DocumentosController.startTransaction( conexaoTransaction );
+        conexaoTransaction = BDConexao.getInstancia();
+        DocumentosController.start( conexaoTransaction );
         try
         {
             //        preco_novo_grosso = precoAntigoGrosso;
@@ -5758,14 +5759,14 @@ public class MetodosUtil
 
             precosControllerLocal.salvar( preco_novo_grosso );
 
-            DocumentosController.commitTransaction( conexaoTransaction );
+            DocumentosController.commit( conexaoTransaction );
             conexaoTransaction.close();
 //            precoDao.create(preco_novo_grosso);
             System.out.println( "Preco de compra grosso actualizado na compra" );
         }
         catch ( Exception e )
         {
-            DocumentosController.rollBackTransaction( conexaoTransaction );
+            DocumentosController.rollback( conexaoTransaction );
             e.printStackTrace();
             System.err.println( "Falha ao actualizar o preço grosso na compra" );
         }
@@ -5880,9 +5881,9 @@ public class MetodosUtil
             UsuariosController usuariosController, CaixasController caixa_controller )
     {
 
-        BDConexao conexaoTransaction = new BDConexao();
+        BDConexao conexaoTransaction = BDConexao.getInstancia();
 
-        DocumentosController.startTransaction( conexaoTransaction );
+        DocumentosController.start( conexaoTransaction );
         TbUsuario usuario = (TbUsuario) usuariosController.findById( idUser );
         Caixa caixa = new Caixa();
         caixa.setDataAbertura( new Date() );
@@ -5903,7 +5904,7 @@ public class MetodosUtil
             if ( caixa_controller.salvar( caixa ) )
             {
                 System.out.println( "Caixa aberto com sucesso!" );
-                DocumentosController.commitTransaction( conexaoTransaction );
+                DocumentosController.commit( conexaoTransaction );
                 conexaoTransaction.close();
             }
             else
@@ -5917,14 +5918,14 @@ public class MetodosUtil
         catch ( HeadlessException e )
         {
             JOptionPane.showMessageDialog( null, "Falha ao abrir o caixa: " + e.getLocalizedMessage(), "Falha", JOptionPane.ERROR_MESSAGE );
-            DocumentosController.rollBackTransaction( conexaoTransaction );
+            DocumentosController.rollback( conexaoTransaction );
             conexaoTransaction.close();
         }
     }
 
 //    public static void fechoAutomatico()
 //    {
-//        BDConexao conexaoTransaction = new BDConexao();
+//        BDConexao conexaoTransaction = BDConexao.getInstancia();
 //        CaixasController caixa_controller = new CaixasController( conexaoTransaction );
 //        VendasController vendasController = new VendasController( conexaoTransaction );
 //        FormaPagamentoItemController formaPagamentoItemController = new FormaPagamentoItemController( conexaoTransaction );
@@ -5990,7 +5991,7 @@ public class MetodosUtil
 //                            {
 //                                sucesso = false;
 //                                System.out.println( "Erro: " + e.getLocalizedMessage() );
-//                                DocumentosController.rollBackTransaction( conexaoTransaction );
+//                                DocumentosController.rollback( conexaoTransaction );
 //                                break;
 //
 //                            }
@@ -6012,7 +6013,7 @@ public class MetodosUtil
 //
 //            try
 //            {
-//                DocumentosController.commitTransaction( conexaoTransaction );
+//                DocumentosController.commit( conexaoTransaction );
 //                /**
 //                 * CONSTRUIR .PDFs
 //                 */
@@ -6025,7 +6026,7 @@ public class MetodosUtil
 //
 //                JOptionPane.showMessageDialog( null, "Falha ao processar os relatórios.\nFalha: " + e.getLocalizedMessage(),
 //                        "Falha", JOptionPane.ERROR_MESSAGE );
-//                DocumentosController.rollBackTransaction( conexaoTransaction );
+//                DocumentosController.rollback( conexaoTransaction );
 //                conexaoTransaction.close();
 //            }
 //
@@ -6038,7 +6039,7 @@ public class MetodosUtil
 //    }
     public static void fechoAutomatico()
     {
-        BDConexao conexaoTransaction = new BDConexao();
+        BDConexao conexaoTransaction = BDConexao.getInstancia();
         CaixasController caixa_controller = new CaixasController( conexaoTransaction );
         VendasController vendasController = new VendasController( conexaoTransaction );
         FormaPagamentoItemController formaPagamentoItemController = new FormaPagamentoItemController( conexaoTransaction );
@@ -6112,7 +6113,7 @@ public class MetodosUtil
                             {
                                 sucesso = false;
                                 System.out.println( "Erro ao salvar ItemCaixa: " + e.getLocalizedMessage() );
-                                DocumentosController.rollBackTransaction( conexaoTransaction );
+                                DocumentosController.rollback( conexaoTransaction );
                                 break;
                             }
                         }
@@ -6130,7 +6131,7 @@ public class MetodosUtil
         {
             try
             {
-                DocumentosController.commitTransaction( conexaoTransaction );
+                DocumentosController.commit( conexaoTransaction );
                 NLExporToPdfForSandEmailReport exporToPdf = new NLExporToPdfForSandEmailReport( conexaoTransaction );
                 conexaoTransaction.close();
                 System.out.println( "Fecho realizado com sucesso!..." );
@@ -6139,7 +6140,7 @@ public class MetodosUtil
             {
                 JOptionPane.showMessageDialog( null, "Falha ao processar os relatórios.\nFalha: " + e.getLocalizedMessage(),
                         "Falha", JOptionPane.ERROR_MESSAGE );
-                DocumentosController.rollBackTransaction( conexaoTransaction );
+                DocumentosController.rollback( conexaoTransaction );
                 conexaoTransaction.close();
             }
         }
@@ -6187,7 +6188,7 @@ public class MetodosUtil
 
     public static void actualizarEstadoLog( String estado )
     {
-        BDConexao conexaoLocal = new BDConexao();
+        BDConexao conexaoLocal = BDConexao.getInstancia();
         LogController logController = new LogController( conexaoLocal );
         String nomeMaquina = MetodosUtil.getNomeMaquina();
         Log log = logController.getLogByNomeMaquina( nomeMaquina );

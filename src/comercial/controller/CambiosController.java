@@ -5,6 +5,8 @@
  */
 package comercial.controller;
 
+
+import java.sql.Connection;
 import entity.Cambio;
 import entity.Moeda;
 import java.sql.ResultSet;

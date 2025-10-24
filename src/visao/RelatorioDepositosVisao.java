@@ -6,6 +6,8 @@
 
 package visao;
 
+
+import java.sql.Connection;
 import dao.EntradaDao;
 import dao.DepositoBancariaDao;
 import entity.DepositoBancario;

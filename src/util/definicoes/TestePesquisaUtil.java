@@ -5,6 +5,8 @@
  */
 package util.definicoes;
 
+
+import java.sql.Connection;
 import java.util.Iterator;
 import java.util.Vector;
 

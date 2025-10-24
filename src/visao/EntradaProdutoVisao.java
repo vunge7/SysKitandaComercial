@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.ArmazensController;
 import comercial.controller.DocumentosController;
 import comercial.controller.EntradasController;
@@ -733,7 +735,7 @@ public class EntradaProdutoVisao extends javax.swing.JFrame
             {
                 try
                 {
-                    EntradaProdutoVisao dialog = new EntradaProdutoVisao( new javax.swing.JFrame(), true, 15, "", new BDConexao() );
+                    EntradaProdutoVisao dialog = new EntradaProdutoVisao( new javax.swing.JFrame(), true, 15, "", BDConexao.getInstancia() );
                     dialog.addWindowListener( new java.awt.event.WindowAdapter()
                     {
                         @Override
@@ -1184,7 +1186,7 @@ public class EntradaProdutoVisao extends javax.swing.JFrame
     {
 
         String sql = "SELECT quantidade_existente FROM  tb_stock WHERE  cod_produto_codigo = " + cod_produto + " AND cod_armazem = " + getCodigoArmazem();
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -1328,8 +1330,8 @@ public class EntradaProdutoVisao extends javax.swing.JFrame
 
     public static boolean salvar_entradas()
     {
-        conexaoTransaction = new BDConexao();
-        DocumentosController.startTransaction( conexaoTransaction );
+        conexaoTransaction = BDConexao.getInstancia();
+        DocumentosController.start( conexaoTransaction );
 
         Date data_entrada = new Date();
         TbEntrada entradalocal = new TbEntrada();
@@ -1346,7 +1348,7 @@ public class EntradaProdutoVisao extends javax.swing.JFrame
 
                 if ( Objects.isNull( last_entrada ) || last_entrada == 0 )
                 {
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    DocumentosController.rollback( conexaoTransaction );
                     return false;
                 }
 
@@ -1354,14 +1356,14 @@ public class EntradaProdutoVisao extends javax.swing.JFrame
 
                 if ( sucessoItens )
                 {
-                    DocumentosController.commitTransaction( conexaoTransaction );
+                    DocumentosController.commit( conexaoTransaction );
                     JOptionPane.showMessageDialog( null, "Entrada efectuada com sucesso!.." );
                     new ListaEntradaProdutos( last_entrada, conexaoTransaction );
                     return true;
                 }
                 else
                 {
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    DocumentosController.rollback( conexaoTransaction );
                     return false;
                 }
 
@@ -1369,7 +1371,7 @@ public class EntradaProdutoVisao extends javax.swing.JFrame
             else
             {
                 System.out.println( "ERROR: Já existe entrada relacionada." );
-                DocumentosController.rollBackTransaction( conexaoTransaction );
+                DocumentosController.rollback( conexaoTransaction );
                 return false;
             }
 
@@ -1378,7 +1380,7 @@ public class EntradaProdutoVisao extends javax.swing.JFrame
         {
             e.printStackTrace();
             JOptionPane.showMessageDialog( null, "Falha ao Processar a Entrada", "FALHA", JOptionPane.ERROR_MESSAGE );
-            DocumentosController.rollBackTransaction( conexaoTransaction );
+            DocumentosController.rollback( conexaoTransaction );
             return false;
         }
         finally

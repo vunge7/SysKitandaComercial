@@ -5,6 +5,8 @@
  */
 package dao;
 
+
+import java.sql.Connection;
 import controlador.TbPermissaoJpaController;
 import java.util.List;
 import javax.persistence.EntityManager;

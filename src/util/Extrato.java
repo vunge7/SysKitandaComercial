@@ -5,6 +5,8 @@
  */
 package util;
 
+
+import java.sql.Connection;
 import dao.BancoDao;
 import dao.ValidadeDao;
 import java.util.ArrayList;

@@ -4,6 +4,8 @@
  */
 package util;
 
+
+import java.sql.Connection;
 import static util.DefinicoesUtil.gerarScript;
 
 /**
@@ -224,7 +226,7 @@ public class GerarScriptUpdateVisao extends javax.swing.JFrame
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() ->
         {
-            new GerarScriptUpdateVisao( new BDConexao() ).setVisible( true );
+            new GerarScriptUpdateVisao( BDConexao.getInstancia() ).setVisible( true );
         });
     }
 

@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.FormaPagamentoController;
 import comercial.controller.FormaPagamentoItemController;
 import comercial.controller.UsuariosController;
@@ -2258,7 +2260,7 @@ public class ConverterProformaFacturaVisao extends javax.swing.JFrame implements
 
     public static void main( String[] args ) throws SQLException
     {
-        new ConverterProformaFacturaVisao( 15, new BDConexao() ).show( true );
+        new ConverterProformaFacturaVisao( 15, BDConexao.getInstancia() ).show( true );
     }
 
     public void confiLabel()

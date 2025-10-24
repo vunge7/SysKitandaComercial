@@ -5,6 +5,8 @@
  */
 package rh.visao;
 
+
+import java.sql.Connection;
 import dao.AnoDao;
 import dao.FechoPeriodoDao;
 import dao.MesRhDao;
@@ -1395,7 +1397,7 @@ public final class DefinicoesVisao extends javax.swing.JFrame implements Runnabl
             public void run()
             {
 
-                new DefinicoesVisao( 15, 2, new BDConexao() ).setVisible( true );
+                new DefinicoesVisao( 15, 2, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }

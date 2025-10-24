@@ -5,6 +5,8 @@
  */
 package comercial.controller;
 
+
+import java.sql.Connection;
 import entity.FormaPagamento;
 import entity.FormaPagamentoItem;
 import entity.TbVenda;
@@ -444,7 +446,7 @@ public class FormaPagamentoItemController implements EntidadeFactory
 
     }
     
-    public Integer getNumeroVendasDiario(BDConexao conexao, int idUser, Date data1, Date data2) {
+public Integer getNumeroVendasDiario(BDConexao conexao, int idUser, Date data1, Date data2) {
     String query = "SELECT COUNT(*) AS NUMERO_VENDAS "
                  + "FROM tb_venda "
                  + "WHERE fk_documento = 1 "
@@ -452,25 +454,24 @@ public class FormaPagamentoItemController implements EntidadeFactory
                  + "AND dataVenda BETWEEN ? AND ? "
                  + "AND codigo_usuario = ?";
 
-    try {
-        PreparedStatement ps = conexao.getConnection1().prepareStatement(query);
+    try (PreparedStatement ps = conexao.getConnectionAtiva().prepareStatement(query)) {
         ps.setTimestamp(1, new java.sql.Timestamp(data1.getTime()));
         ps.setTimestamp(2, new java.sql.Timestamp(data2.getTime()));
         ps.setInt(3, idUser);
 
-        ResultSet rs = ps.executeQuery();
-
-        if (rs.next()) {
-            return rs.getInt("NUMERO_VENDAS");
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("NUMERO_VENDAS");
+            }
         }
-
     } catch (SQLException e) {
-        System.err.println("Erro ao buscar número de vendas: " + e.getMessage());
+        System.err.println("[ERRO] Falha ao buscar número de vendas: " + e.getMessage());
         e.printStackTrace();
     }
 
     return 0;
 }
+
 
 
 //    public Integer getNumeroVendasDiario( BDConexao conexao, int idUser, Date data_1, Date data_2 )
@@ -537,33 +538,34 @@ public class FormaPagamentoItemController implements EntidadeFactory
 //
 //    }
 public BigDecimal getValorRealDiario(BDConexao conexao, int idUser, Date data1, Date data2) {
-    String query = "SELECT SUM(i.valor_real) AS TOTAL " +
-                   "FROM forma_pagamento_item i " +
-                   "INNER JOIN tb_venda v ON v.codigo = i.fk_venda " +
-                   "WHERE v.status_eliminado = 'false' " +
-                   "AND v.fk_documento = 1 " +
-                   "AND v.dataVenda BETWEEN ? AND ? " +
-                   "AND v.codigo_usuario = ?";
+    String query =
+        "SELECT SUM(i.valor_real) AS TOTAL " +
+        "FROM forma_pagamento_item i " +
+        "INNER JOIN tb_venda v ON v.codigo = i.fk_venda " +
+        "WHERE v.status_eliminado = 'false' " +
+        "AND v.fk_documento = 1 " +
+        "AND v.dataVenda BETWEEN ? AND ? " +
+        "AND v.codigo_usuario = ?";
 
-    try {
-        PreparedStatement ps = conexao.getConnection1().prepareStatement(query);
+    try (PreparedStatement ps = conexao.getConnectionAtiva().prepareStatement(query)) {
         ps.setTimestamp(1, new java.sql.Timestamp(data1.getTime()));
         ps.setTimestamp(2, new java.sql.Timestamp(data2.getTime()));
         ps.setInt(3, idUser);
 
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            BigDecimal total = rs.getBigDecimal("TOTAL");
-            return total != null ? total : BigDecimal.ZERO;
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                BigDecimal total = rs.getBigDecimal("TOTAL");
+                return (total != null) ? total : BigDecimal.ZERO;
+            }
         }
-
     } catch (SQLException ex) {
-        System.err.println("Erro ao obter valor real diário: " + ex.getMessage());
+        System.err.println("[ERRO] Falha ao obter valor real diário: " + ex.getMessage());
         ex.printStackTrace();
     }
 
     return BigDecimal.ZERO;
 }
+
 
 
     public BigDecimal getTotalDesconto( BDConexao conexao, int idUser, Date data_1, Date data_2 )

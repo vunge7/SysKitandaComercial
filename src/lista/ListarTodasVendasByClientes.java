@@ -4,7 +4,8 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import dao.ArmazemDao;
 import dao.DocumentoDao;
 import dao.ItemVendaDao;
@@ -78,7 +79,7 @@ public class ListarTodasVendasByClientes extends javax.swing.JFrame
     public void mostrarContasPendentesResumidaClientes() throws SQLException
     {
 
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
 
         hashMap.put( "NOME_CLIENTE", getCliente() );
@@ -140,7 +141,7 @@ public class ListarTodasVendasByClientes extends javax.swing.JFrame
     public void mostrarContasPendentesDetalhadaClientes() throws SQLException
     {
 
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
 
         hashMap.put( "NOME_CLIENTE", getCliente() );
@@ -202,7 +203,7 @@ public class ListarTodasVendasByClientes extends javax.swing.JFrame
     public void mostrarClientesPagos() throws SQLException
     {
 
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
 
         hashMap.put( "NOME_CLIENTE", getCliente() );
@@ -553,7 +554,7 @@ public class ListarTodasVendasByClientes extends javax.swing.JFrame
         {
             public void run()
             {
-                new ListarTodasVendasByClientes( new BDConexao() ).setVisible( true );
+                new ListarTodasVendasByClientes( BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }

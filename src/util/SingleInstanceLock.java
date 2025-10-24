@@ -4,6 +4,8 @@
  */
 package util;
 
+
+import java.sql.Connection;
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;

@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import com.lowagie.text.xml.xmp.DublinCoreSchema;
 import dao.AccessoArmazemDao;
 import dao.AnoEconomicoDao;
@@ -1319,7 +1321,7 @@ public class GestaoPedidosVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new GestaoPedidosVisao( "Mesa 2", "Lugar 2", 1, 1, new BDConexao() ).setVisible( true );
+                new GestaoPedidosVisao( "Mesa 2", "Lugar 2", 1, 1, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }

@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.CaixasController;
 import comercial.controller.DadosInstituicaoController;
 import comercial.controller.ItemCaixaController;
@@ -545,7 +547,7 @@ getRootPane().getActionMap().put("abrirMenuPrincipal", new AbstractAction() {
         new MenuPrincipalRHNovoVisao( this.idUser, this.idEmpresa, true, conexao ).show();
 
 //                dispose();
-//        new MenuPrincipalNovaRHVisao (idUser, administrador, new BDConexao ()).setVisible(true);
+//        new MenuPrincipalNovaRHVisao (idUser, administrador, BDConexao.getInstancia()).setVisible(true);
 //        dispose();
 //        new MenuPrincipalTesourariaVisao(this.idUser).show();
     }//GEN-LAST:event_btnRHActionPerformed

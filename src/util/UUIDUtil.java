@@ -4,6 +4,8 @@
  */
 package util;
 
+
+import java.sql.Connection;
 /**
  *
  * @author Engº Domingos Dala Vunge

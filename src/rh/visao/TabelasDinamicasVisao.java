@@ -5,6 +5,8 @@
  */
 package rh.visao;
 
+
+import java.sql.Connection;
 import dao.FuncionarioDao;
 import java.io.File;
 import java.io.IOException;
@@ -262,7 +264,7 @@ public class TabelasDinamicasVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new TabelasDinamicasVisao( new BDConexao() ).setVisible( true );
+                new TabelasDinamicasVisao( BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }

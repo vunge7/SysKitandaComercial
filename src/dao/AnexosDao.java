@@ -5,6 +5,8 @@
  */
 package dao;
 
+
+import java.sql.Connection;
 import controlador.AnexosJpaController;
 import entity.Anexos;
 import java.util.List;

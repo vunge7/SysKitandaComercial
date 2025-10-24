@@ -5,6 +5,8 @@
  */
 package controller;
 
+
+import java.sql.Connection;
 import java.util.List;
 import java.util.Vector;
 import util.BDConexao;

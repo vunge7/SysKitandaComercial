@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.*;
 //import hotel.controller.ExtratoContaClienteController;
 import dao.ItemPermissaoDao;
@@ -3761,7 +3763,7 @@ public class VendaOficinaVisao extends javax.swing.JFrame
 //                int last_id_item_venda = itemVendaDao.criarComProcedimentos( itemVenda, conexao );
                 if ( !itemVendasController.salvar( itemVenda ) )
                 {
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    DocumentosController.rollback( conexaoTransaction );
                     conexaoTransaction.close();
                     return;
                 }
@@ -3791,7 +3793,7 @@ public class VendaOficinaVisao extends javax.swing.JFrame
                 e.printStackTrace();
                 efectuada = false;
                 JOptionPane.showMessageDialog( null, "Falha ao registrar o produto: " + itemVenda.getCodigoProduto().getCodigo() + " na Factura" );
-                DocumentosController.rollBackTransaction( conexaoTransaction );
+                DocumentosController.rollback( conexaoTransaction );
                 conexaoTransaction.close();
                 return;
             }
@@ -3804,7 +3806,7 @@ public class VendaOficinaVisao extends javax.swing.JFrame
             {
                 if ( !registrar_forma_pagamento( cod_venda ) )
                 {
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    DocumentosController.rollback( conexaoTransaction );
                     conexaoTransaction.close();
                     JOptionPane.showMessageDialog( null, "Falha ao registrar a forma de pagamento.", "Falha", JOptionPane.WARNING_MESSAGE );
                     return;
@@ -3812,7 +3814,7 @@ public class VendaOficinaVisao extends javax.swing.JFrame
             }
 
             JOptionPane.showMessageDialog( null, "Factura efectuada com sucesso!.." );
-            DocumentosController.commitTransaction( conexaoTransaction );
+            DocumentosController.commit( conexaoTransaction );
 
             List<TbProduto> lista_produto_isentos = new ArrayList<>();
             lista_produto_isentos = getProdutosIsentos();
@@ -4343,8 +4345,8 @@ public class VendaOficinaVisao extends javax.swing.JFrame
     private static void salvar_venda_comercial()
     {
         mostrar_proximo_codigo_documento();
-        conexaoTransaction = new BDConexao();
-        DocumentosController.startTransaction( conexaoTransaction );
+        conexaoTransaction = BDConexao.getInstancia();
+        DocumentosController.start( conexaoTransaction );
         int prazo_proforma = dadosInstituicaoController.findByCodigo( 1 ).getPrazoProforma();
         Date data_documento = dc_data_documento.getDate();
         Date data_vencimento = dc_data_vencimento.getDate();
@@ -4442,7 +4444,7 @@ public class VendaOficinaVisao extends javax.swing.JFrame
 
                 if ( Objects.isNull( last_venda ) || last_venda == 0 )
                 {
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    DocumentosController.rollback( conexaoTransaction );
                     conexaoTransaction.close();
                     return;
                 }
@@ -4476,7 +4478,7 @@ public class VendaOficinaVisao extends javax.swing.JFrame
             System.err.println( "STATUS: falha ao actualizar a factura" );
             e.printStackTrace();
             JOptionPane.showMessageDialog( null, "Falha ao Processar a Factura", "FALHA", JOptionPane.ERROR_MESSAGE );
-            DocumentosController.rollBackTransaction( conexaoTransaction );
+            DocumentosController.rollback( conexaoTransaction );
             conexaoTransaction.close();
         }
 
@@ -4522,7 +4524,7 @@ public class VendaOficinaVisao extends javax.swing.JFrame
 //    }
     public static void main( String[] args ) throws SQLException
     {
-        new VendaOficinaVisao( 15, new BDConexao() ).show( true );
+        new VendaOficinaVisao( 15, BDConexao.getInstancia() ).show( true );
     }
 
     public void confiLabel()
@@ -6282,8 +6284,8 @@ public class VendaOficinaVisao extends javax.swing.JFrame
 
     private static void actualizarPrecoVendaManual( int idProduto, Double precoVenda, PrecosController precosControllerLocal )
     {
-        conexaoTransaction = new BDConexao();
-        DocumentosController.startTransaction( conexaoTransaction );
+        conexaoTransaction = BDConexao.getInstancia();
+        DocumentosController.start( conexaoTransaction );
 
         System.out.println( "ID PRODUTO: " + idProduto );
 
@@ -6318,20 +6320,20 @@ public class VendaOficinaVisao extends javax.swing.JFrame
         try
         {
             precosControllerLocal.salvar( preco_novo_retalho );
-            DocumentosController.commitTransaction( conexaoTransaction );
+            DocumentosController.commit( conexaoTransaction );
             conexaoTransaction.close();
 //            precoDao.create(preco_novo_retalho);
             System.out.println( "Preco de compra retalho actualizado na venda" );
         }
         catch ( Exception e )
         {
-            DocumentosController.rollBackTransaction( conexaoTransaction );
+            DocumentosController.rollback( conexaoTransaction );
             e.printStackTrace();
             System.err.println( "Falha ao actualizar o preço retalho na venda" );
         }
 
-        conexaoTransaction = new BDConexao();
-        DocumentosController.startTransaction( conexaoTransaction );
+        conexaoTransaction = BDConexao.getInstancia();
+        DocumentosController.start( conexaoTransaction );
         try
         {
             //        preco_novo_grosso = precoAntigoGrosso;
@@ -6355,14 +6357,14 @@ public class VendaOficinaVisao extends javax.swing.JFrame
 
             precosControllerLocal.salvar( preco_novo_grosso );
 
-            DocumentosController.commitTransaction( conexaoTransaction );
+            DocumentosController.commit( conexaoTransaction );
             conexaoTransaction.close();
 //            precoDao.create(preco_novo_grosso);
             System.out.println( "Preco de compra grosso actualizado na compra" );
         }
         catch ( Exception e )
         {
-            DocumentosController.rollBackTransaction( conexaoTransaction );
+            DocumentosController.rollback( conexaoTransaction );
             e.printStackTrace();
             System.err.println( "Falha ao actualizar o preço grosso na compra" );
         }

@@ -12,6 +12,8 @@
 package rh.visao;
 
 
+
+import java.sql.Connection;
 import dao.ContaDao;
 import dao.FaltaDao;
 import dao.FuncionarioDao;

@@ -4,6 +4,8 @@
  */
 package controller;
 
+
+import java.sql.Connection;
 import dao.UsuarioDao;
 import entity.TbUsuario;
 import java.sql.ResultSet;
@@ -218,7 +220,7 @@ public class UsuarioController
 
     public static void main ( String[] args ) throws SQLException
     {
-        BDConexao conexao = new BDConexao ();
+        BDConexao conexao = BDConexao.getInstancia();
         UsuarioController usuarioController = new UsuarioController ( conexao );
         if ( usuarioController.isAdmintrador ( "root", "root" ) )
         {

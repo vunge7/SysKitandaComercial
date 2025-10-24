@@ -4,6 +4,8 @@
  */
 package util.cronjob;
 
+
+import java.sql.Connection;
 import entity.TbDadosInstituicao;
 import comercial.controller.DadosInstituicaoController;
 import java.util.Date;
@@ -82,7 +84,7 @@ public class QuartzApp
     public static void main( String[] args )
     {
         
-        BDConexao conexao = new BDConexao();
+        BDConexao conexao = BDConexao.getInstancia();
         DadosInstituicaoController dadosInstituicaoController = new DadosInstituicaoController( conexao );
         QuartzApp.executarCronjob( ValidadorJob.class, ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 ) );
     }

@@ -6,6 +6,8 @@
 
 package dao;
 
+
+import java.sql.Connection;
 import controlador.TbTempoJpaController;
 import entity.TbTempo;
 import java.util.List;

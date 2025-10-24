@@ -5,6 +5,8 @@
  */
 package util.tabela_manual.render;
 
+
+import java.sql.Connection;
 import java.awt.Color;
 import java.awt.Component;
 import java.util.Objects;

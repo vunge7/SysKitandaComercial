@@ -5,6 +5,8 @@
  */
 package kitanda.controller;
 
+
+import java.sql.Connection;
 import hotel.controller.*;
 import entity.Documento;
 import java.sql.ResultSet;
@@ -67,7 +69,7 @@ public class DocumentoController
 
     public static void main( String[] args )
     {
-//        Documento documento = new DocumentoController( new BDConexao() ).findDocumentoById( 1 );
+//        Documento documento = new DocumentoController( BDConexao.getInstancia() ).findDocumentoById( 1 );
 //        System.out.println( "Documento: " +documento.getDesignacao() );
     }
 

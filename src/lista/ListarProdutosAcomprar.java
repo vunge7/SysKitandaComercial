@@ -4,6 +4,8 @@
  */
 package lista;
 
+
+import java.sql.Connection;
 import dao.AccessoArmazemDao;
 import dao.ArmazemDao;
 import dao.FornecedorDao;
@@ -262,7 +264,7 @@ public class ListarProdutosAcomprar extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    new ListarProdutosAcomprar( 15, new BDConexao()).setVisible(true);
+                    new ListarProdutosAcomprar( 15, BDConexao.getInstancia()).setVisible(true);
                 } catch (SQLException ex) {
                     Logger.getLogger(ListarProdutosAcomprar.class.getName()).log(Level.SEVERE, null, ex);
                 }

@@ -4,6 +4,8 @@
  */
 package enties.util;
 
+
+import java.sql.Connection;
 /**
  *
  * @author Domingos Dala Vune

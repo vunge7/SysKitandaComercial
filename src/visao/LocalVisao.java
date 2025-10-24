@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.LocalDao;
 import entity.TbLocal;
 import java.awt.Color;
@@ -38,7 +40,7 @@ public class LocalVisao extends javax.swing.JDialog
         initComponents();
         confLabel();
         setLocationRelativeTo( null );
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
 //        tipoProdutoController = new LocalController(conexao);
 
         adicionar();

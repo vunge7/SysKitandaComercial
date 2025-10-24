@@ -6,6 +6,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.ExtratoContaClienteController;
 import comercial.controller.MovimentacaoController;
 import comercial.controller.ProdutosController;
@@ -653,7 +655,7 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
 
         String sql = "SELECT quantidade_existente FROM  tb_stock WHERE  cod_produto_codigo = " + cod_produto + " AND cod_armazem = " + getVenda().getIdArmazemFK().getCodigo();
 
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -676,7 +678,7 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
 
         String sql = "SELECT max(codigo) FROM " + tabela;
 
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -703,7 +705,7 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
 
     public static void main( String[] args ) throws SQLException
     {
-        new NotasCreditoDebitoAnulacaoVisao( 15, new BDConexao() ).show( true );
+        new NotasCreditoDebitoAnulacaoVisao( 15, BDConexao.getInstancia() ).show( true );
     }
 
     public static boolean estado_critico() throws SQLException

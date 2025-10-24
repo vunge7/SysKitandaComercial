@@ -5,6 +5,8 @@
  */
 package rh.visao;
 
+
+import java.sql.Connection;
 import dao.EmpresaDao;
 import dao.ItemPermissaoDao;
 import dao.UsuarioDao;
@@ -407,7 +409,7 @@ public class MenuPrincipalRHNovoVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new MenuPrincipalRHNovoVisao( 15, 2, true, new BDConexao() ).show();
+                new MenuPrincipalRHNovoVisao( 15, 2, true, BDConexao.getInstancia() ).show();
             }
         } );
     }

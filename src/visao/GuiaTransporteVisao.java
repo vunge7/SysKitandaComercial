@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import controller.ItemVendaController;
 import controller.StockController;
 import controller.TipoClienteController;
@@ -1207,7 +1209,7 @@ public class GuiaTransporteVisao extends javax.swing.JFrame implements Runnable
 
         String sql = "SELECT quantidade_existente FROM  tb_stock WHERE  cod_produto_codigo = " + cod_produto + " AND cod_armazem = " + getCodigoArmazem();
 
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -1230,7 +1232,7 @@ public class GuiaTransporteVisao extends javax.swing.JFrame implements Runnable
 
         String sql = "SELECT max(codigo) FROM " + tabela;
 
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -1328,7 +1330,7 @@ public class GuiaTransporteVisao extends javax.swing.JFrame implements Runnable
 
     public static void main( String[] args ) throws SQLException
     {
-        new GuiaTransporteVisao( 15, new BDConexao() ).show( true );
+        new GuiaTransporteVisao( 15, BDConexao.getInstancia() ).show( true );
     }
 
     public void confiLabel()

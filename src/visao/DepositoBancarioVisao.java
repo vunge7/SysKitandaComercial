@@ -11,6 +11,8 @@
 
 package visao;
 
+
+import java.sql.Connection;
 import dao.BancoDao;
 import dao.DepositoBancariaDao;
 import dao.TransferenciaBancariaDao;
@@ -55,7 +57,7 @@ public class DepositoBancarioVisao extends javax.swing.JFrame {
         initComponents();
         this.idUser = idUser;
         setLocationRelativeTo(null);
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
         txtValorDeposito.setDocument( new PermitirNumeros() );
         actualizar();
         txtValorDeposito.setText("0");

@@ -667,7 +667,7 @@ public class ListarRelatorioVendaByIntervalo extends javax.swing.JFrame
             {
                 try
                 {
-                    new ListarRelatorioVendaByIntervalo( new BDConexao() ).setVisible( true );
+                    new ListarRelatorioVendaByIntervalo( BDConexao.getInstancia() ).setVisible( true );
                 }
                 catch ( Exception ex )
                 {
@@ -715,7 +715,7 @@ public class ListarRelatorioVendaByIntervalo extends javax.swing.JFrame
         try
         {
 
-            lista = vendasController.getAllFRVendaByBetweenDataAndArmazemAndDocumentos( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoUsuario());
+            lista = vendasController.getAllFRVendaByBetweenDataAndArmazemAndDocumentos( conexao, dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoUsuario());
 
             if ( lista != null )
             {

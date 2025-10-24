@@ -12,6 +12,8 @@
 package rh.visao;
 
 
+
+import java.sql.Connection;
 import dao.AdiantamentoDao;
 import dao.EmpresaDao;
 import dao.FuncionarioDao;
@@ -62,7 +64,7 @@ public class AdiantamentoVisao extends javax.swing.JFrame {
         this.idUser = idUser;
         this.idEmpresa = idEmpresa;
         setLocationRelativeTo(null);
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
         txtValor.setDocument( new PermitirNumeros() );
         txtIniciaisProfessores.addKeyListener( new TratarEventoTecladoProfessores()  );
         lbEmpresa.setText(  empresaDao.findEmpresa(idEmpresa).getNome()      );

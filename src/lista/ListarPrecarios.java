@@ -4,7 +4,8 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import java.io.File;
 import java.util.HashMap;
 import javax.swing.JOptionPane;
@@ -20,7 +21,7 @@ import util.BDConexao;
  */
 public class ListarPrecarios {
   
-     private BDConexao conexao  = new BDConexao();
+     private BDConexao conexao  = BDConexao.getInstancia();
      private int codigo;
      private float valor_entregue, troco;
      private boolean performance;
@@ -34,7 +35,7 @@ public class ListarPrecarios {
     public void mostrarVenda()
     {
         
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
     
         

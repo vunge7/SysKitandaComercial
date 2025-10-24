@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.ClientesController;
 import comercial.controller.VendasController;
 import entity.TbCliente;
@@ -449,7 +451,7 @@ public class RelatorioLavandariaEntregaVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new RelatorioLavandariaEntregaVisao( 15, new BDConexao() ).setVisible( true );
+                new RelatorioLavandariaEntregaVisao( 15, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }

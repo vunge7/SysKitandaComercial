@@ -6,6 +6,8 @@
 
 package dao;
 
+
+import java.sql.Connection;
 import controlador.TbMunicipioJpaController;
 import entity.TbMunicipio;
 import java.util.List;

@@ -5,6 +5,8 @@
  */
 package dao;
 
+
+import java.sql.Connection;
 import controlador.TbAdiantamentoJpaController;
 import entity.TbAdiantamento;
 import java.util.Date;

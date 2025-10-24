@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.ArmazensController;
 import comercial.controller.DocumentosController;
 import comercial.controller.EntradasController;
@@ -611,8 +613,8 @@ public class EntradaPratosCompostosVisao extends javax.swing.JFrame
 
     public static boolean salvar_entradas()
     {
-        conexaoTransaction = new BDConexao();
-        DocumentosController.startTransaction( conexaoTransaction );
+        conexaoTransaction = BDConexao.getInstancia();
+        DocumentosController.start( conexaoTransaction );
 
         Date data_entrada = new Date();
 
@@ -632,7 +634,7 @@ public class EntradaPratosCompostosVisao extends javax.swing.JFrame
 
                 if ( Objects.isNull( last_entrada ) || last_entrada == 0 )
                 {
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    DocumentosController.rollback( conexaoTransaction );
                     conexaoTransaction.close();
                     return false;
                 }
@@ -659,7 +661,7 @@ public class EntradaPratosCompostosVisao extends javax.swing.JFrame
             System.err.println( "STATUS: falha ao actualizar a entrada" );
             e.printStackTrace();
             JOptionPane.showMessageDialog( null, "Falha ao Processar a Entrada", "FALHA", JOptionPane.ERROR_MESSAGE );
-            DocumentosController.rollBackTransaction( conexaoTransaction );
+            DocumentosController.rollback( conexaoTransaction );
             conexaoTransaction.close();
 
         }
@@ -699,7 +701,7 @@ public class EntradaPratosCompostosVisao extends javax.swing.JFrame
                             //cria o item entrada
                             if ( !itemEntradasController.salvar( itemEntradas ) )
                             {
-                                DocumentosController.rollBackTransaction( conexaoTransaction );
+                                DocumentosController.rollback( conexaoTransaction );
                                 conexaoTransaction.close();
                                 return false;
                             }
@@ -713,7 +715,7 @@ public class EntradaPratosCompostosVisao extends javax.swing.JFrame
                     catch ( Exception e )
                     {
                         e.printStackTrace();
-                        DocumentosController.rollBackTransaction( conexaoTransaction );
+                        DocumentosController.rollback( conexaoTransaction );
                         conexaoTransaction.close();
                         return false;
                     }
@@ -724,14 +726,14 @@ public class EntradaPratosCompostosVisao extends javax.swing.JFrame
                     sucesso = false;
                     e.printStackTrace();
                     JOptionPane.showMessageDialog( null, "Falha ao registrar a entrada", "Falha", JOptionPane.ERROR_MESSAGE );
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    DocumentosController.rollback( conexaoTransaction );
                     conexaoTransaction.close();
                     return false;
                 }
             }
             if ( sucesso )
             {
-                DocumentosController.commitTransaction( conexaoTransaction );
+                DocumentosController.commit( conexaoTransaction );
                 esvaziar_tabela();
                 esvaziar_tabela_ingrediente();
                 fichaTecnica = null;
@@ -744,7 +746,7 @@ public class EntradaPratosCompostosVisao extends javax.swing.JFrame
             {
 
                 JOptionPane.showMessageDialog( null, "Impossivel registrar a entrada", "Falha", JOptionPane.ERROR_MESSAGE );
-                DocumentosController.rollBackTransaction( conexaoTransaction );
+                DocumentosController.rollback( conexaoTransaction );
                 conexaoTransaction.close();
 
             }
@@ -1042,7 +1044,7 @@ public class EntradaPratosCompostosVisao extends javax.swing.JFrame
     {
         try
         {
-            new EntradaPratosCompostosVisao( 15, new BDConexao() ).setVisible( true );
+            new EntradaPratosCompostosVisao( 15, BDConexao.getInstancia() ).setVisible( true );
         }
         catch ( Exception e )
         {

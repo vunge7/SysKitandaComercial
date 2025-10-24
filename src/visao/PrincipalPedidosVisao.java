@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.AccessoArmazemDao;
 import dao.ArmazemDao;
 import dao.ItemPedidosDao;
@@ -1274,7 +1276,7 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         {
             public void run()
             {
-                new PrincipalPedidosVisao( 15, "", DVML.ARMAZEM_DEFAUTL, new BDConexao() ).setVisible( true );
+                new PrincipalPedidosVisao( 15, "", DVML.ARMAZEM_DEFAUTL, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }

@@ -5,6 +5,8 @@
  */
 package tesouraria.visao;
 
+
+import java.sql.Connection;
 //import dao.BancoDao;
 //import dao.ConfirmacaoDao;
 //import dao.DeclaracaDao;

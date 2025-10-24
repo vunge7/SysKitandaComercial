@@ -11,6 +11,8 @@
 
 package rh.visao;
 
+
+import java.sql.Connection;
 import visao.*;
 import dao.EspecialidadeDao;
 import dao.ModalidadeDao;

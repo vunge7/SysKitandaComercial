@@ -4,6 +4,8 @@
  */
 package lista;
 
+
+import java.sql.Connection;
 import dao.ArmazemDao;
 import dao.ClienteDao;
 import dao.ItemVendaDao;
@@ -58,7 +60,7 @@ public class RelatorioBonusDeClientesVipsVisao extends javax.swing.JFrame {
         initComponents();
         setResizable(false);
         setLocationRelativeTo(null);
-        this.conexao = new BDConexao();
+        this.conexao = BDConexao.getInstancia();
         dcDataInicio.setDate( new Date() );
         dcDataFim.setDate( new Date() );
         cmbArmazem.setModel(new DefaultComboBoxModel(armazemDao.buscaTodos1()));

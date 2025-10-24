@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import controller.DadoInstituicaoController;
 import controller.UsuarioController;
 import java.awt.Color;

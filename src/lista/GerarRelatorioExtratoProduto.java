@@ -4,6 +4,8 @@
  */
 package lista;
 
+
+import java.sql.Connection;
 import controller.ProdutoController;
 import controller.StockController;
 import java.sql.SQLException;
@@ -53,7 +55,7 @@ public class GerarRelatorioExtratoProduto {
 
     
     
-   Vector<ExtratoProdutoModelo>   vector =  new BDConexao().getExtratosProduto(codigo_produto, data);
+   Vector<ExtratoProdutoModelo>   vector =  BDConexao.getInstancia().getExtratosProduto(codigo_produto, data);
     
     for (int i = 0; i < vector.size(); i++) {
                  quantidade += vector.get(i).getQuant_total() ;
@@ -67,10 +69,10 @@ public class GerarRelatorioExtratoProduto {
         parameters.put("PRODUTO",produtoModelo.getDesignacao() );
         
         if(produto_sotcavel(produtoModelo.getStocavel()))
-              parameters.put("PRECO", new StockController(new BDConexao()).getStockProduto(codigo_produto, 1).getPreco_venda());
+              parameters.put("PRECO", new StockController(BDConexao.getInstancia()).getStockProduto(codigo_produto, 1).getPreco_venda());
         else  parameters.put("PRECO", produtoModelo.getPreco());
        
-        parameters.put("QUANT_EXISTENTE",  new StockController(new BDConexao()).getStockProduto(codigo_produto, 1).getQuantidade_existente());
+        parameters.put("QUANT_EXISTENTE",  new StockController(BDConexao.getInstancia()).getStockProduto(codigo_produto, 1).getQuantidade_existente());
         parameters.put("DATA", data);
         parameters.put("TOTAL_QUANTIDADE", quantidade);
         parameters.put("TOTAL_VALOR", valor_total);
@@ -86,7 +88,7 @@ public class GerarRelatorioExtratoProduto {
    }
     
     public ProdutoModelo getProdutoByCodigo(Integer codigo) throws SQLException{
-                return new ProdutoController( new BDConexao()).getProduto(codigo);
+                return new ProdutoController( BDConexao.getInstancia()).getProduto(codigo);
     }
     
     
@@ -100,7 +102,7 @@ public static List<Object> findReportData(int codigoProduto, String data_proucur
     List<Object> reports = new LinkedList<Object>();
  
    
-    Vector<ExtratoProdutoModelo>   vector =  new BDConexao().getExtratosProduto(codigoProduto, data_proucurada);
+    Vector<ExtratoProdutoModelo>   vector =  BDConexao.getInstancia().getExtratosProduto(codigoProduto, data_proucurada);
     
     for (int i = 0; i < vector.size(); i++) {
                   reports.add((Object)   vector.get(i)  );

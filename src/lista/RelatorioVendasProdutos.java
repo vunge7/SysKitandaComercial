@@ -4,7 +4,8 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import dao.DadosInstituicaoDao;
 import dao.ItemVendaDao;
 import java.io.File;

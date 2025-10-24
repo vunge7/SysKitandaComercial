@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import controlador.exceptions.NonexistentEntityException;
 import dao.PrecoDao;
 import dao.ProdutoDao;
@@ -277,7 +279,7 @@ public class PromocaoVisao extends javax.swing.JDialog {
                              this.promocao =    promocaoDao.findPromocao(1);
                              this.promocao.setPercentagem( Double.parseDouble( txt_percentagem.getText()));
                              this.promocao.setRetalhoGroso(false);
-                             MetodosUtil.actualizar_promocao(this.promocao, id_user, new BDConexao());
+                             MetodosUtil.actualizar_promocao(this.promocao, id_user, BDConexao.getInstancia());
                              procedimento_enable_buttons();
                              JOptionPane.showMessageDialog(null, "Promoção desactiva!...");
                             
@@ -308,7 +310,7 @@ public class PromocaoVisao extends javax.swing.JDialog {
                              this.promocao.setPercentagem(0.0);
                              this.promocao.setRetalhoGroso(true);
                              //this.promocaoDao.edit(promocao);
-                             MetodosUtil.actualizar_promocao(promocao, id_user, new BDConexao());
+                             MetodosUtil.actualizar_promocao(promocao, id_user, BDConexao.getInstancia());
                              procedimento_enable_buttons();
                              JOptionPane.showMessageDialog(null, "Promoção desactiva!...");
                           
@@ -362,11 +364,11 @@ public class PromocaoVisao extends javax.swing.JDialog {
 
                 System.out.println("ULTIMA PROMOÇÃO: " +id_promocao);
                 this.promocao = promocaoDao.findPromocao(id_promocao);
-                txt_percentagem.setText( String.valueOf( MetodosUtil.getColunaPromocao("percentagem", new BDConexao()) )  );
+                txt_percentagem.setText( String.valueOf( MetodosUtil.getColunaPromocao("percentagem", BDConexao.getInstancia()) )  );
                 
-                if ( MetodosUtil.getStatusPromocao(new BDConexao() ) == false ) {
+                if ( MetodosUtil.getStatusPromocao(BDConexao.getInstancia() ) == false ) {
 
-                   this.percentagem = MetodosUtil.getColunaPromocao("percentagem", new BDConexao());
+                   this.percentagem = MetodosUtil.getColunaPromocao("percentagem", BDConexao.getInstancia());
                    txt_percentagem.setText( String.valueOf( this.percentagem ));
                    txt_percentagem.setEditable(false);
                    btn_activar.setEnabled(false);
@@ -374,7 +376,7 @@ public class PromocaoVisao extends javax.swing.JDialog {
                  
 
                 }else{ 
-                   this.percentagem =  MetodosUtil.getColunaPromocao("percentagem", new BDConexao());
+                   this.percentagem =  MetodosUtil.getColunaPromocao("percentagem", BDConexao.getInstancia());
                    txt_percentagem.setText( String.valueOf( this.percentagem ));
                    txt_percentagem.setEditable(true);
                    btn_activar.setEnabled(true);

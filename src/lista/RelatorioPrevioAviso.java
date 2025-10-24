@@ -23,7 +23,7 @@ import util.BDConexao;
 
 public  class RelatorioPrevioAviso {
     
-    private BDConexao conexao  = new BDConexao();
+    private BDConexao conexao  = BDConexao.getInstancia();
     private int pk_previo_aviso;
  
     public RelatorioPrevioAviso(int pk_previo_aviso) throws SQLException {
@@ -39,7 +39,7 @@ public  class RelatorioPrevioAviso {
     
     public void mostrar() throws SQLException{
 
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
   
        

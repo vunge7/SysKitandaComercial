@@ -6,6 +6,8 @@
 
 package dao;
 
+
+import java.sql.Connection;
 import controlador.TbOperacaoSistemaJpaController;
 import entity.TbOperacaoSistema;
 import java.util.Date;

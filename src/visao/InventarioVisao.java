@@ -5,7 +5,8 @@
  */
 package visao;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import dao.AccessoArmazemDao;
 import dao.ArmazemDao;
 import dao.DadosInstituicaoDao;
@@ -473,7 +474,7 @@ public class InventarioVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new InventarioVisao( 15, new BDConexao() ).setVisible( true );
+                new InventarioVisao( 15, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }
@@ -558,9 +559,9 @@ public class InventarioVisao extends javax.swing.JFrame
     public void mostrar_servicos()
     {
 
-        BDConexao conexao = new BDConexao();
+        BDConexao conexao = BDConexao.getInstancia();
 
-        Connection connection = ( Connection ) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
         String relatorio = "";
         relatorio = "relatorios/Produto_Stock.jasper";

@@ -5,6 +5,8 @@
  */
 package dao;
 
+
+import java.sql.Connection;
 import controlador.PagamentoSubsidioFeriaNatalJpaController;
 import entity.PagamentoSubsidioFeriaNatal;
 import java.util.Date;

@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import com.formdev.flatlaf.intellijthemes.FlatCyanLightIJTheme;
 import com.formdev.flatlaf.intellijthemes.FlatDarkFlatIJTheme;
 import com.formdev.flatlaf.intellijthemes.FlatNordIJTheme;
@@ -91,7 +93,7 @@ public class LoginVisao extends javax.swing.JFrame
 //        if (Objects.nonNull(conexao)) {
 //            conexao.close();
 //        }
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
 
 //        registerLog( conexao );
         dadosInstituicaoController = new DadosInstituicaoController( LoginVisao.conexao );
@@ -167,7 +169,7 @@ public class LoginVisao extends javax.swing.JFrame
         setResizable( false );
         setVisible( true );
 
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
 //        setTitle( "BEM VINDO AO " + DVML.NAME_SOFTWARE + " " + DVML.VERSION_SOFTWARE );
 
 //        if (Objects.nonNull(conexao)) {
@@ -651,7 +653,7 @@ public class LoginVisao extends javax.swing.JFrame
                     //3 - VendaPO
                     case 4:
 //                        dispose();
-//                        new VendaPOSVisao( new BDConexao(), DVML.ARMAZEM_LOJA, getCodico_Utilizador() ).setVisible( true );
+//                        new VendaPOSVisao( BDConexao.getInstancia(), DVML.ARMAZEM_LOJA, getCodico_Utilizador() ).setVisible( true );
 //                        MetodosUtil.abrir_caixa_automatica( getCodico_Utilizador(), new UsuariosController( conexao ), new CaixasController( conexao ) );
                         new FrontOfficeVisao( getCodico_Utilizador(), conexao ).setVisible( true );
                         limpar();

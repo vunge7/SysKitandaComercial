@@ -10,6 +10,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.MarcaDao;
 import entity.Marca;
 import java.util.List;

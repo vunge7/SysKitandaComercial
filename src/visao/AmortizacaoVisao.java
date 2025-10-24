@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.AmortizacaoDao;
 import dao.UsuarioDao;
 import dao.VendaDao;

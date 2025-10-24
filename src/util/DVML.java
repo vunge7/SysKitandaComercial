@@ -5,6 +5,8 @@
  */
 package util;
 
+
+import java.sql.Connection;
 import comercial.controller.DadosInstituicaoController;
 import comercial.controller.DocumentosController;
 import comercial.controller.VendasController;
@@ -212,7 +214,7 @@ public class DVML
     public static String TAXA_EXPRESSO_100 = "Taxa Expresso 100";
     public static String TAXA_URGENCIA_50 = "Taxa de Urgência 50";
 
-    public static String BD = "kitanda_db_1";
+    public static String BD = "kitanda_db";
     public static int SEGUNDA_SEXTA_HORA = 11;
     public static int SEGUNDA_SEXTA_MINUTO = 56;
     public final static String STATUS_CONVERTIDO = "Convertido";
@@ -983,11 +985,11 @@ public class DVML
     private void salvar_venda_comercial_automatico( Date dataDocumento )
     {
 //        mostrar_proximo_codigo_documento();
-        BDConexao conexaoTransaction = new BDConexao();
+        BDConexao conexaoTransaction = BDConexao.getInstancia();
         DadosInstituicaoController dadosInstituicaoController = new DadosInstituicaoController( conexaoTransaction );
         VendasController vendasController = new VendasController( conexaoTransaction );
         DocumentosController documentosController = new DocumentosController( conexaoTransaction );
-        DocumentosController.startTransaction( conexaoTransaction );
+        DocumentosController.start( conexaoTransaction );
         int prazo_proforma = dadosInstituicaoController.findByCodigo( 1 ).getPrazoProforma();
         Date data_documento = dataDocumento;
 
@@ -1079,7 +1081,7 @@ public class DVML
                 Integer last_venda = vendasController.getLastVenda().getCodigo();
                 if ( Objects.isNull( last_venda ) || last_venda == 0 )
                 {
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    DocumentosController.rollback( conexaoTransaction );
                     conexaoTransaction.close();
                     return;
                 }
@@ -1104,7 +1106,7 @@ public class DVML
             e.printStackTrace();
             JOptionPane.showMessageDialog( null, "Falha ao Processar a Factura", "FALHA", JOptionPane.ERROR_MESSAGE );
 
-            DocumentosController.rollBackTransaction( conexaoTransaction );
+            DocumentosController.rollback( conexaoTransaction );
 
             conexaoTransaction.close();
         }

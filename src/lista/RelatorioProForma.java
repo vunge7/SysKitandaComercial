@@ -4,7 +4,8 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import dao.ArmazemDao;
 import dao.EntradaDao;
 import dao.ProFormaDao;
@@ -63,7 +64,7 @@ public class RelatorioProForma extends javax.swing.JFrame {
         dcDataInicio.setDate( new Date() );
         dcDataFim.setDate( new Date() );
   
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
       
     }
 
@@ -77,7 +78,7 @@ public class RelatorioProForma extends javax.swing.JFrame {
     
     public void mostrar() throws SQLException {
         
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
 
       

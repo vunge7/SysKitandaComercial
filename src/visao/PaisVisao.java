@@ -11,6 +11,8 @@
 
 package visao;
 
+
+import java.sql.Connection;
 import dao.PaisDao;
 //import dao.TipoPagamentoDiversoDao;
 import entity.TbPais;

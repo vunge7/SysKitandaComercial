@@ -11,6 +11,8 @@
 
 package visao;
 
+
+import java.sql.Connection;
 import dao.EspecialidadeDao;
 import entity.TbEspecialidade;
 import java.util.List;

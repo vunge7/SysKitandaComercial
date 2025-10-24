@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.PrecosController;
 import comercial.controller.ProdutosController;
 import entity.TbCliente;
@@ -310,7 +312,7 @@ public class AssociacaoServicoVisao extends javax.swing.JFrame
             @Override
             public void run()
             {
-                new AssociacaoServicoVisao( 15, 1, 1, new BDConexao() ).setVisible( true );
+                new AssociacaoServicoVisao( 15, 1, 1, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }

@@ -4,6 +4,8 @@
  */
 package tesouraria.novo.visao;
 
+
+import java.sql.Connection;
 import entity.Compras;
 import entity.Contas;
 import entity.ExtratoContaFornecedor;
@@ -372,7 +374,7 @@ public class SaidaVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new SaidaVisao( null, 1, "", 0d, new BDConexao() ).setVisible( true );
+                new SaidaVisao( null, 1, "", 0d, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }
@@ -449,7 +451,7 @@ public class SaidaVisao extends javax.swing.JFrame
             {
                 if ( comprasController.actualizarValores( compra.getCodFact(), new BigDecimal( txtValor.getText() ), compra.getValorPago(), compra.getValorPorPagar() ) )
                 {
-                    DocumentosController.commitTransaction( conexao );
+                    DocumentosController.commit( conexao );
                     JOptionPane.showMessageDialog( null, "Movimento registrado com sucesso" );
                     FornecedorOutroVisao.mostrarSaldoFornecedor();
                     FornecedorOutroVisao.mostrarContaCorrenteFornecedor();
@@ -458,14 +460,14 @@ public class SaidaVisao extends javax.swing.JFrame
                 }
                 else
                 {
-                    DocumentosController.rollBackTransaction( conexao );
+                    DocumentosController.rollback( conexao );
                     JOptionPane.showMessageDialog( null, "Falha ao registrar a saida.", "Falha", JOptionPane.ERROR_MESSAGE );
                 }
 
             }
             else
             {
-                DocumentosController.rollBackTransaction( conexao );
+                DocumentosController.rollback( conexao );
                 JOptionPane.showMessageDialog( null, "Falha ao registrar a saida.", "Falha", JOptionPane.ERROR_MESSAGE );
             }
         }
@@ -495,21 +497,21 @@ public class SaidaVisao extends javax.swing.JFrame
 //                }
 //                else
 //                {
-//                    DocumentosController.rollBackTransaction( conexao );
+//                    DocumentosController.rollback( conexao );
 //                    JOptionPane.showMessageDialog( null, "Falha ao registrar a saida.", "Falha", JOptionPane.ERROR_MESSAGE );
 //                }
 //
 //            }
 //            else
 //            {
-//                DocumentosController.rollBackTransaction( conexao );
+//                DocumentosController.rollback( conexao );
 //                JOptionPane.showMessageDialog( null, "Falha ao registrar a saida.", "Falha", JOptionPane.ERROR_MESSAGE );
 //            }
 //
 //        }
 //        else
 //        {
-//            DocumentosController.rollBackTransaction( conexao );
+//            DocumentosController.rollback( conexao );
 //            JOptionPane.showMessageDialog( null, "Falha ao registrar a saida.", "Falha", JOptionPane.ERROR_MESSAGE );
 //        }
 //

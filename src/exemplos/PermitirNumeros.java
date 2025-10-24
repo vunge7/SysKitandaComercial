@@ -5,6 +5,8 @@
 package exemplos;
 
 
+
+import java.sql.Connection;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 /**

@@ -4,6 +4,8 @@
  */
 package lista;
 
+
+import java.sql.Connection;
 /**
  *
  * @author Miguel

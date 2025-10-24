@@ -10,6 +10,8 @@
  */
 package rh.visao;
 
+
+import java.sql.Connection;
 import dao.TipoSubsidioDao;
 import dao.FuncionarioDao;
 import entity.TbSalario;

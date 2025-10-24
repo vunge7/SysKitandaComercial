@@ -5,6 +5,8 @@
  */
 package tesouraria.novo.controller;
 
+
+import java.sql.Connection;
 import entity.Contas;
 import java.math.BigDecimal;
 import java.sql.ResultSet;

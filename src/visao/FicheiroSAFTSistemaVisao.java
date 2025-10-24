@@ -10,6 +10,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.AnoEconomicoDao;
 import dao.DadosInstituicaoDao;
 import dao.NotasDao;
@@ -283,7 +285,7 @@ public class FicheiroSAFTSistemaVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new FicheiroSAFTSistemaVisao( new BDConexao() ).setVisible( true );
+                new FicheiroSAFTSistemaVisao( BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }

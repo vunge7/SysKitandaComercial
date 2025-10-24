@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.ProFormaDao;
 import dao.VendaDao;
 import exemplos.PermitirNumeros;

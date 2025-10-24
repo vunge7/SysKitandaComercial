@@ -4,7 +4,8 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import controller.EntradaController;
 import controller.ProdutoController;
 import controller.UsuarioController;
@@ -55,7 +56,7 @@ public class ListarRegistroDeEntradasPorEntervaloData extends javax.swing.JFrame
         confLabel();        
         dcDataInicio.setDate( new Date() );
         dcDataFim.setDate( new Date() );  
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
         cmbArmazem.setModel( new DefaultComboBoxModel( conexao.getElementos("tb_armazem", "designacao", false)   ) );       
         this.id_armzem = getCodigoArmazem();
         
@@ -99,7 +100,7 @@ public class ListarRegistroDeEntradasPorEntervaloData extends javax.swing.JFrame
     
     public void mostrar() throws SQLException {
         
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
 
         System.out.println("DATA_INICIO" +dcDataInicio.getDate() );
@@ -150,7 +151,7 @@ public class ListarRegistroDeEntradasPorEntervaloData extends javax.swing.JFrame
 
 
     public void mostrar2() throws SQLException {
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
         String relatorio = "";
         

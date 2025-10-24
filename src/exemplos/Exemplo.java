@@ -4,6 +4,8 @@
  */
 package exemplos;
 
+
+import java.sql.Connection;
 /**
  *
  * @author Dominfos Dala Vunge

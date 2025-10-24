@@ -6,6 +6,8 @@
 
 package tesouraria.visao;
 
+
+import java.sql.Connection;
 import visao.*;
 //import dao.BancoDao;
 import dao.EntradaDao;
@@ -46,7 +48,7 @@ public class EntradaTesourariaVisao extends javax.swing.JFrame {
         initComponents();
         this.idUser=idUser;
         setLocationRelativeTo(null);
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
         actualizar();
         txtValorEntrar.setDocument( new PermitirNumeros() );
         txtValorEntrar.setText("0");

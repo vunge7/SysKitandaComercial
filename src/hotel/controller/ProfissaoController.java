@@ -5,6 +5,8 @@
  */
 package hotel.controller;
 
+
+import java.sql.Connection;
 import entity.TbProfissao;
 import java.sql.ResultSet;
 import java.sql.SQLException;

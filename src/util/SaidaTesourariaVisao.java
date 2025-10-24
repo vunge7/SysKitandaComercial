@@ -6,6 +6,8 @@
 
 package util;
 
+
+import java.sql.Connection;
 import visao.*;
 import dao.BancoDao;
 import dao.SaidaDao;
@@ -38,7 +40,7 @@ public class SaidaTesourariaVisao extends javax.swing.JFrame {
         initComponents();
         this.idUser=idUser;
         setLocationRelativeTo(null);
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
         txtValorSair.setDocument( new PermitirNumeros() );
         txtValorSair.setText("0");
     }

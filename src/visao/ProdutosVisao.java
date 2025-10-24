@@ -4,6 +4,7 @@
  */
 package visao;
 
+import java.sql.Connection;
 import controller.ProdutoController;
 import comercial.controller.*;
 import dao.DocumentoDao;
@@ -164,6 +165,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         txtPrecoVendaGrosso.setHorizontalAlignment( JTextField.RIGHT );
         popularComponentes();
         configurar_dois_precos();
+        setArmazem( dadosInstituicaoController.findByCodigo( 1 ).getConfigArmazens() );
         KeyboardFocusManager.getCurrentKeyboardFocusManager()
                 .addKeyEventDispatcher( new KeyEventDispatcher()
                 {
@@ -225,6 +227,22 @@ public class ProdutosVisao extends javax.swing.JFrame
         catch ( Exception ex )
         {
             ex.printStackTrace();
+        }
+    }
+
+    private void setArmazem( String armazem )
+    {
+        if ( !armazem.equalsIgnoreCase( "Multi_armazem" ) )
+        {
+            btLupaEconomato.setVisible( false );
+//            jmFrontOffice.setVisible( false );
+
+        }
+        else
+        {
+            btLupaEconomato.setVisible( true );
+//            jmFrontOffice.setVisible( true );
+
         }
     }
 
@@ -330,7 +348,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         jButton4 = new javax.swing.JButton();
         rbJanelaServico = new javax.swing.JRadioButton();
         jLabel2 = new javax.swing.JLabel();
-        jButton5 = new javax.swing.JButton();
+        btLupaEconomato = new javax.swing.JButton();
         painel_stock = new javax.swing.JPanel();
         llbDataFabrico = new javax.swing.JLabel();
         jcDataFabrico = new com.toedter.calendar.JDateChooser();
@@ -984,16 +1002,16 @@ public class ProdutosVisao extends javax.swing.JFrame
         jLabel2.setText("KITANDA 1.2");
         jPanel3.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(890, 20, 239, 39));
 
-        jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/proucura.png"))); // NOI18N
-        jButton5.setToolTipText("Lupa de Pesquisas de Produtos no Economato ou Depósito");
-        jButton5.addActionListener(new java.awt.event.ActionListener()
+        btLupaEconomato.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/proucura.png"))); // NOI18N
+        btLupaEconomato.setToolTipText("Lupa de Pesquisas de Produtos no Economato ou Depósito");
+        btLupaEconomato.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                jButton5ActionPerformed(evt);
+                btLupaEconomatoActionPerformed(evt);
             }
         });
-        jPanel3.add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 20, 40, 30));
+        jPanel3.add(btLupaEconomato, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 20, 40, 30));
 
         painel_stock.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
@@ -1298,7 +1316,7 @@ public class ProdutosVisao extends javax.swing.JFrame
             btnSalvar.setEnabled( false );
             btnAlterar2.setEnabled( true );
             String codInternoString = txtCodigoProduto.getText();
-            Integer codigoInternoInt = ( codInternoString.isEmpty() ? 0 : Integer.parseInt( codInternoString ) );
+            Integer codigoInternoInt = (codInternoString.isEmpty() ? 0 : Integer.parseInt( codInternoString ));
             produto = (TbProduto) produtosController.findById( codigoInternoInt );
 
             ver_dados_produtos( codigoInternoInt );
@@ -1627,8 +1645,8 @@ public class ProdutosVisao extends javax.swing.JFrame
         txtDesignacao.requestFocus();
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton5ActionPerformed
-    {//GEN-HEADEREND:event_jButton5ActionPerformed
+    private void btLupaEconomatoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btLupaEconomatoActionPerformed
+    {//GEN-HEADEREND:event_btLupaEconomatoActionPerformed
         btnSalvar.setEnabled( false );
         btnAlterar2.setEnabled( true );
         try
@@ -1655,7 +1673,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         {
             e.printStackTrace();
         }
-    }//GEN-LAST:event_jButton5ActionPerformed
+    }//GEN-LAST:event_btLupaEconomatoActionPerformed
 
     private void txtUnidadeCompraActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtUnidadeCompraActionPerformed
     {//GEN-HEADEREND:event_txtUnidadeCompraActionPerformed
@@ -1728,7 +1746,7 @@ public class ProdutosVisao extends javax.swing.JFrame
             {
                 try
                 {
-                    ProdutosVisao dialog = new ProdutosVisao( new javax.swing.JFrame(), true, 15, new BDConexao() );
+                    ProdutosVisao dialog = new ProdutosVisao( new javax.swing.JFrame(), true, 15, BDConexao.getInstancia() );
                     dialog.addWindowListener( new java.awt.event.WindowAdapter()
                     {
                         @Override
@@ -1750,6 +1768,7 @@ public class ProdutosVisao extends javax.swing.JFrame
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private static javax.swing.JLabel TotalIvaLabel;
+    private javax.swing.JButton btLupaEconomato;
     private javax.swing.JButton btnAlterar2;
     public static javax.swing.JButton btnAssociar;
     private javax.swing.JButton btnCancelar;
@@ -1785,7 +1804,6 @@ public class ProdutosVisao extends javax.swing.JFrame
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
     private static javax.swing.JButton jButtonCompras;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -1904,7 +1922,7 @@ public class ProdutosVisao extends javax.swing.JFrame
     public Integer lastProduto()
     {
 
-        String sql = ( "select MAX(codigo) from tb_produto" );
+        String sql = ("select MAX(codigo) from tb_produto");
 
         ResultSet rs = conexao.executeQuery( sql );
 
@@ -2098,7 +2116,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         produto.setPreco( new BigDecimal( MetodosUtil.convertToDouble( txtPrecoCompra.getText() ) ) );
         produto.setDataFabrico( isStocavel ? jcDataFabrico.getDate() : new Date() );
         produto.setDataExpiracao( isStocavel ? jcDataExpiracao.getDate() : new Date() );
-        
+
         String codBarra = normalizarCodigoBarra( txtCodigoBarra.getText() );
         produto.setCodBarra( isStocavel ? codBarra : "2147483647" );
         produto.setStatus( "Activo" );
@@ -2106,7 +2124,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         produto.setStocavel( isStocavel ? "true" : "false" );
         produto.setPrecoVenda( MetodosUtil.convertToDouble( txtPrecoCompra.getText() ) );
         produto.setQuantidadeDesconto( 0 );
-        
+
         String codigoManual = normalizarCodigoManual( txtCodigoManual.getText() );
         produto.setCodigoManual( isStocavel ? codigoManual : "" );
         produto.setCodUnidade( new Unidade( getIdUnidade() ) );
@@ -2238,7 +2256,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         try
         {
             produto.setStatus( "Desactivo" );
-            produtosController.desactivar( produto );
+            produtosController.desactivar( conexao, produto );
             JOptionPane.showMessageDialog( null, "Produto desactivado com sucesso!", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
             procedimento_limpar_campos();
         }
@@ -2269,7 +2287,7 @@ public class ProdutosVisao extends javax.swing.JFrame
     {
         if ( campos_validos() )
         {
-            conexaoTransaction = new BDConexao();
+            conexaoTransaction = BDConexao.getInstancia();
             DocumentoDao.startTransaction( conexaoTransaction );
             String designacao_produto = getDesignacaoText();
             ProdutosController produtosControllerLocal = new ProdutosController( conexaoTransaction );
@@ -2281,7 +2299,7 @@ public class ProdutosVisao extends javax.swing.JFrame
 
             System.out.println( "CHEGUEI AQUI!....... INICIAL" );
             //ALTERAR PRODUTO
-            if ( produtosControllerLocal.exist_designacao_produto( designacao_produto ) )
+            if ( produtosControllerLocal.exist_designacao_produto( conexao, designacao_produto ) )
             {
 
                 try
@@ -2456,7 +2474,7 @@ public class ProdutosVisao extends javax.swing.JFrame
                 try
                 {
 
-                    conexaoTransaction = new BDConexao();
+                    conexaoTransaction = BDConexao.getInstancia();
                     ProdutosController produtosControllerLocal = new ProdutosController( conexaoTransaction );
                     PrecosController precosControllerLocal = new PrecosController( conexaoTransaction );
                     ProdutosImpostoController produtosImpostoControllerLocal = new ProdutosImpostoController( conexaoTransaction );
@@ -3066,7 +3084,7 @@ public class ProdutosVisao extends javax.swing.JFrame
             return false;
 
         }
-        else if ( produtosController.exist_designacao_produto( getDesignacaoText() ) )
+        else if ( produtosController.exist_designacao_produto( conexao, getDesignacaoText() ) )
         {
             JOptionPane.showMessageDialog( null, "Já existe um produto com esta designação!!!", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
             txtDesignacao.requestFocus();

@@ -9,6 +9,8 @@
  */
 package rh.visao;
 
+
+import java.sql.Connection;
 import java.util.Calendar;
 import java.util.Date;
 import javax.persistence.EntityManagerFactory;

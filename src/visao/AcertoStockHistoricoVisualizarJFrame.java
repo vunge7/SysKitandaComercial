@@ -5,7 +5,8 @@
  */
 package visao;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import dao.ComprasDao;
 import entity.Compras;
 import java.io.File;

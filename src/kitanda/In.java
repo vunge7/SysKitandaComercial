@@ -6,6 +6,8 @@
 
 package kitanda;
 
+
+import java.sql.Connection;
 /**
  *
  * @author tagif

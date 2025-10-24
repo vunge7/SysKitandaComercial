@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import entity.Amortizacao;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;

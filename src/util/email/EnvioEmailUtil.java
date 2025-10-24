@@ -5,6 +5,8 @@
  */
 package util.email;
 
+
+import java.sql.Connection;
 import dao.DadosInstituicaoDao;
 import java.io.File;
 import java.util.Properties;

@@ -5,6 +5,8 @@
  */
 package kitanda.util;
 
+
+import java.sql.Connection;
 import java.util.Locale;
 
 /**

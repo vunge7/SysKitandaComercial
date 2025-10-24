@@ -5,6 +5,8 @@
  */
 package dao;
 
+
+import java.sql.Connection;
 import controlador.ItemSalarioExtraJpaController;
 import entity.ItemSalarioExtra;
 import java.util.Date;

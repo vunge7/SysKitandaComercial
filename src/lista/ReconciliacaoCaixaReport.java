@@ -4,7 +4,8 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import comercial.controller.CaixasController;
 import dao.DadosInstituicaoDao;
 import dao.VendaDao;
@@ -133,7 +134,7 @@ public class ReconciliacaoCaixaReport
 
     public static void main( String[] args ) throws JRException, SQLException
     {
-        new ReconciliacaoCaixaReport( 4, new BDConexao() );
+        new ReconciliacaoCaixaReport( 4, BDConexao.getInstancia() );
     }
 
 }

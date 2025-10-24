@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.AccessoArmazemDao;
 import dao.ArmazemDao;
 import dao.ItemPedidosDao;
@@ -1199,7 +1201,7 @@ public class MesasTranferenciasVisao extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MesasTranferenciasVisao(15, "", 1, new BDConexao(), null).setVisible(true);
+                new MesasTranferenciasVisao(15, "", 1, BDConexao.getInstancia(), null).setVisible(true);
             }
         });
     }

@@ -6,6 +6,8 @@
 
 package tesouraria.visao;
 
+
+import java.sql.Connection;
 import dao.AdiantamentoDao;
 import dao.EntradaTesourariaDao;
 import entity.TbAdiantamento;

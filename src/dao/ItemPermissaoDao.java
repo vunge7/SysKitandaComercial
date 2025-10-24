@@ -5,6 +5,8 @@
  */
 package dao;
 
+
+import java.sql.Connection;
 import controlador.TbItemPermissaoJpaController;
 import entity.TbItemPermissao;
 import java.util.List;

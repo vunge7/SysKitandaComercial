@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.LugaresController;
 import comercial.controller.MesasController;
 import dao.AccessoArmazemDao;
@@ -221,7 +223,7 @@ public class FrontOfficeRestauranteVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new FrontOfficeRestauranteVisao( 15, new BDConexao() ).setVisible( true );
+                new FrontOfficeRestauranteVisao( 15, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }

@@ -4,6 +4,8 @@
  */
 package lista;
 
+
+import java.sql.Connection;
 import dao.AccessoArmazemDao;
 import dao.ArmazemDao;
 import dao.FormaPagamentoDao;
@@ -422,7 +424,7 @@ public class ListarRelatorioFormaPagamento extends javax.swing.JFrame
             {
                 try
                 {
-                    new ListarRelatorioFormaPagamento( new BDConexao(), 15 ).setVisible( true );
+                    new ListarRelatorioFormaPagamento( BDConexao.getInstancia(), 15 ).setVisible( true );
                 }
                 catch ( Exception ex )
                 {

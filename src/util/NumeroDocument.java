@@ -5,6 +5,8 @@
  */
 package util;
 
+
+import java.sql.Connection;
 import javax.swing.text.*;
 /*
  * Classe para validar e formatar a entrada de um numero

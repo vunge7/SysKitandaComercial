@@ -6,6 +6,8 @@
 
 package visao;
 
+
+import java.sql.Connection;
 import dao.VendaDao;
 import entity.TbVenda;
 import java.util.ArrayList;
@@ -178,7 +180,7 @@ public class ReciclagemVisao extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ReciclagemVisao( new BDConexao() ).setVisible(true);
+                new ReciclagemVisao( BDConexao.getInstancia() ).setVisible(true);
             }
         });
     }

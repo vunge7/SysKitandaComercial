@@ -335,48 +335,41 @@ public class DocumentosController implements EntidadeFactory
         return documento;
     }
 
-    public static void startTransaction( BDConexao conexao )
-    {
-        try
-        {
-            Connection connection1 = conexao.getConnection1();
-           connection1.setAutoCommit( false ); // ← aqui é onde realmente funciona
-        }
-        catch ( SQLException e )
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public static void commitTransaction( BDConexao conexao )
-    {
-        try
-        {
-            conexao.getConnection1().commit();
-        }
-        catch ( SQLException e )
-        {
-            e.printStackTrace();
+   public static void start(BDConexao conexao) {
+        try {
+            Connection conn = conexao.getConnectionAtiva();
+            if (conn.getAutoCommit()) {
+                conn.setAutoCommit(false);
+                System.out.println("[TRANSAÇÃO] 🔹 Iniciada");
+            }
+        } catch (SQLException e) {
+            System.err.println("[TRANSAÇÃO] ❌ Erro ao iniciar: " + e.getMessage());
         }
     }
 
-    public static void rollBackTransaction( BDConexao conexao )
-    {
-        try
-        {
-            Connection conn = conexao.getConnection1();
-            if ( !conn.getAutoCommit() )
-            {
+    public static void commit(BDConexao conexao) {
+        try {
+            Connection conn = conexao.getConnectionAtiva();
+            if (!conn.getAutoCommit()) {
+                conn.commit();
+                conn.setAutoCommit(true);
+                System.out.println("[TRANSAÇÃO] ✅ Commit concluído");
+            }
+        } catch (SQLException e) {
+            System.err.println("[TRANSAÇÃO] ❌ Erro ao fazer commit: " + e.getMessage());
+        }
+    }
+
+    public static void rollback(BDConexao conexao) {
+        try {
+            Connection conn = conexao.getConnectionAtiva();
+            if (!conn.getAutoCommit()) {
                 conn.rollback();
+                conn.setAutoCommit(true);
+                System.out.println("[TRANSAÇÃO] 🔄 Rollback efetuado");
             }
-            else
-            {
-                System.err.println( "Rollback ignorado: autoCommit ainda está true!" );
-            }
-        }
-        catch ( SQLException e )
-        {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            System.err.println("[TRANSAÇÃO] ❌ Erro ao fazer rollback: " + e.getMessage());
         }
     }
     
@@ -385,7 +378,7 @@ public class DocumentosController implements EntidadeFactory
 //    {
 //        try
 //        {
-//            conexao.getConnection1().setAutoCommit( false ); // ← aqui é onde realmente funciona
+//            conexao.getConnectionAtiva().setAutoCommit( false ); // ← aqui é onde realmente funciona
 //        }
 //        catch ( SQLException e )
 //        {

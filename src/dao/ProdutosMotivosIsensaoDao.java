@@ -5,6 +5,8 @@
  */
 package dao;
 
+
+import java.sql.Connection;
 import controlador.ProdutosMotivosIsensaoJpaController;
 import entity.ProdutosMotivosIsensao;
 import java.util.Date;

@@ -33,13 +33,13 @@ import util.JPAEntityMannagerFactoryUtil;
 public class Cozinha {
 
     private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
-    private BDConexao conexao = new BDConexao();
+    private BDConexao conexao = BDConexao.getInstancia();
     private DadosInstituicaoDao dadosInstituicaoDao = new DadosInstituicaoDao(emf);
     private int cod_item_pedido;
 
     public Cozinha(int cod_item_pedido) {
         try {
-            Connection connection = ( Connection ) conexao.conectar();
+            java.sql.Connection connection = conexao.getConnectionAtiva();
             String impressora;
             impressora = dadosInstituicaoDao.findTbDadosInstituicao( 1 ).getImpressoraCozinha();
             

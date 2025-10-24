@@ -4,6 +4,8 @@
  */
 package lista;
 
+
+import java.sql.Connection;
 import dao.ArmazemDao;
 import dao.ItemVendaDao;
 import dao.PrecoDao;
@@ -494,7 +496,7 @@ public class ListarRelatorioVendaConsultaRestaurante extends javax.swing.JFrame
             {
                 try
                 {
-                    new ListarRelatorioVendaConsultaRestaurante( new BDConexao() ).setVisible( true );
+                    new ListarRelatorioVendaConsultaRestaurante( BDConexao.getInstancia() ).setVisible( true );
                 }
                 catch ( Exception ex )
                 {

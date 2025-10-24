@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import controlador.exceptions.NonexistentEntityException;
 import dao.UsuarioDao;
 import entity.TbUsuario;

@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.FamiliasController;
 import comercial.controller.ItemVendasController;
 import comercial.controller.PrecosController;
@@ -1626,7 +1628,7 @@ public class EstornoVisao extends javax.swing.JFrame
     public static void main( String[] args ) throws SQLException
     {
 
-        new EstornoVisao( 15, new BDConexao() ).show( true );
+        new EstornoVisao( 15, BDConexao.getInstancia() ).show( true );
 
     }
 

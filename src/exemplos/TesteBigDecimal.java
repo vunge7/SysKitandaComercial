@@ -4,6 +4,8 @@
  */
 package exemplos;
 
+
+import java.sql.Connection;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 

@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import controller.TipoProdutoController;
 import dao.ClienteDao;
 import dao.DescontoDao;
@@ -524,7 +526,7 @@ public class PercentagemDesconto extends javax.swing.JFrame
                 PercentagemDesconto dialog = null;
                 try
                 {
-                    dialog = new PercentagemDesconto( new javax.swing.JFrame(), true, 15, new BDConexao() );
+                    dialog = new PercentagemDesconto( new javax.swing.JFrame(), true, 15, BDConexao.getInstancia() );
                 }
                 catch ( SQLException ex )
                 {

@@ -6,6 +6,8 @@
 
 package dao;
 
+
+import java.sql.Connection;
 import controlador.TbDadosInstituicaoJpaController;
 import javax.persistence.EntityManagerFactory;
 

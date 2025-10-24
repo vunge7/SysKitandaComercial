@@ -5,6 +5,8 @@
  */
 package render;
 
+
+import java.sql.Connection;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 

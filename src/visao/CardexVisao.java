@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.ArmazensController;
 import comercial.controller.ImpostosController;
 import comercial.controller.MovimentacaoController;
@@ -577,7 +579,7 @@ public class CardexVisao extends javax.swing.JFrame
                         true,
                         15,
                         "",
-                        new BDConexao()
+                        BDConexao.getInstancia()
                 ).setVisible( true );
             }
         } );
@@ -614,7 +616,7 @@ public class CardexVisao extends javax.swing.JFrame
     {
         try
         {
-            MovimentacaoController controller = new MovimentacaoController( conexao.getConnection1() );
+            MovimentacaoController controller = new MovimentacaoController( conexao.getConnectionAtiva() );
             List<Object[]> buscarPorIntervaloDatas = controller.buscarPorIntervaloDatas(
                     produtoId, armazemId, dataInicio, dataFim
             );

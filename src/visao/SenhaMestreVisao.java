@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import entity.TbDadosInstituicao;
 import javax.swing.JOptionPane;
 import util.DVML;

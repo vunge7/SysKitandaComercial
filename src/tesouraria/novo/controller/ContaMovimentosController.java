@@ -5,6 +5,8 @@
  */
 package tesouraria.novo.controller;
 
+
+import java.sql.Connection;
 import entity.ContaMovimentos;
 import entity.Contas;
 import comercial.controller.DocumentosController;
@@ -223,18 +225,18 @@ public class ContaMovimentosController implements EntidadeFactory
             int userId, String userName, String beneficiario, BDConexao conexao )
     {
         ContaOperacaoController coc = new ContaOperacaoController( conexao );
-        DocumentosController.startTransaction( conexao );
+        DocumentosController.start( conexao );
         long LAST_ID = coc.insertContaOperacao( tipo, new Date(), userId, userName, beneficiario, valor );
 
         boolean sucesso = false;
         if ( LAST_ID > 0 )
         {
-            DocumentosController.commitTransaction( conexao );
+            DocumentosController.commit( conexao );
             sucesso = entrada( LAST_ID, conta, documeto, valor, descricao, conexao );
         }
         else
         {
-            DocumentosController.rollBackTransaction( conexao );
+            DocumentosController.rollback( conexao );
             JOptionPane.showMessageDialog( null, "Falha ao registrar a operacao.", "Falha", JOptionPane.ERROR_MESSAGE );
         }
 
@@ -245,11 +247,11 @@ public class ContaMovimentosController implements EntidadeFactory
             int userId, String userName, String beneficiario, BDConexao conexao )
     {
         ContaOperacaoController coc = new ContaOperacaoController( conexao );
-        DocumentosController.startTransaction( conexao );
+        DocumentosController.start( conexao );
         long LAST_ID = coc.insertContaOperacao( "Transferencia", new Date(), userId, userName, beneficiario, valor );
         if ( LAST_ID > 0 )
         {
-            DocumentosController.commitTransaction( conexao );
+            DocumentosController.commit( conexao );
             boolean saida = saida( LAST_ID, contaSaida, documento, valor, descricao, conexao );
             boolean entrada = entrada( LAST_ID, contaEntrada, documento, valor, descricao, conexao );
             return ( saida && entrada );
@@ -257,7 +259,7 @@ public class ContaMovimentosController implements EntidadeFactory
         }
         else
         {
-            DocumentosController.rollBackTransaction( conexao );
+            DocumentosController.rollback( conexao );
             JOptionPane.showMessageDialog( null, "Falha ao registrar a operacao.", "Falha", JOptionPane.ERROR_MESSAGE );
         }
         return false;
@@ -267,16 +269,16 @@ public class ContaMovimentosController implements EntidadeFactory
             String tipo, int userId, String userName, String beneficiario, BDConexao conexao )
     {
         ContaOperacaoController coc = new ContaOperacaoController( conexao );
-        DocumentosController.startTransaction( conexao );
+        DocumentosController.start( conexao );
         long LAST_ID = coc.insertContaOperacao( tipo, new Date(), userId, userName, beneficiario, valor );
         if ( LAST_ID > 0 )
         {
-            DocumentosController.commitTransaction( conexao );
+            DocumentosController.commit( conexao );
             return saida( LAST_ID, conta, documento, valor, descricao, conexao );
         }
         else
         {
-            DocumentosController.rollBackTransaction( conexao );
+            DocumentosController.rollback( conexao );
             JOptionPane.showMessageDialog( null, "Falha ao registrar a operacao.", "Falha", JOptionPane.ERROR_MESSAGE );
         }
         return false;
@@ -286,7 +288,7 @@ public class ContaMovimentosController implements EntidadeFactory
     {
 
         ContaController ccc = new ContaController( conexao );
-        DocumentosController.startTransaction( conexao );
+        DocumentosController.start( conexao );
 
         ContaMovimentos movimento = new ContaMovimentos();
         movimento.setContaDesignacao( conta.getDesignacao() );
@@ -304,12 +306,12 @@ public class ContaMovimentosController implements EntidadeFactory
         if ( salvar( movimento )
                 && ccc.actualizarSaldo( conta.getPkContas(), movimento.getSaldoFinal() ) )
         {
-            DocumentosController.commitTransaction( conexao );
+            DocumentosController.commit( conexao );
             return true;
         }
         else
         {
-            DocumentosController.rollBackTransaction( conexao );
+            DocumentosController.rollback( conexao );
             JOptionPane.showMessageDialog( null, "Falha ao registrar a entrada.", "Falha", JOptionPane.ERROR_MESSAGE );
         }
         return false;
@@ -319,7 +321,7 @@ public class ContaMovimentosController implements EntidadeFactory
     public boolean saida( long lasID, Contas conta, String documento, BigDecimal valor, String descricao, BDConexao conexao )
     {
         ContaController ccc = new ContaController( conexao );
-        DocumentosController.startTransaction( conexao );
+        DocumentosController.start( conexao );
         ContaMovimentos movimento = new ContaMovimentos();
         movimento.setContaDesignacao( conta.getDesignacao() );
         movimento.setContaId( conta.getPkContas() );
@@ -335,12 +337,12 @@ public class ContaMovimentosController implements EntidadeFactory
         if ( salvar( movimento )
                 && ccc.actualizarSaldo( conta.getPkContas(), movimento.getSaldoFinal() ) )
         {
-            DocumentosController.commitTransaction( conexao );
+            DocumentosController.commit( conexao );
             return true;
         }
         else
         {
-            DocumentosController.rollBackTransaction( conexao );
+            DocumentosController.rollback( conexao );
             JOptionPane.showMessageDialog( null, "Falha ao registrar a saida.", "Falha", JOptionPane.ERROR_MESSAGE );
         }
         return false;

@@ -5,6 +5,8 @@
  */
 package dao;
 
+
+import java.sql.Connection;
 import controlador.TbBancoJpaController;
 import entity.TbBanco;
 import java.util.Date;

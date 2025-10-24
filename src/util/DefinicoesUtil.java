@@ -4,6 +4,8 @@
  */
 package util;
 
+
+import java.sql.Connection;
 import java.io.File;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -27,7 +29,7 @@ public class DefinicoesUtil
 
     public static void main( String[] args )
     {
-        BDConexao conexao = new BDConexao();
+        BDConexao conexao = BDConexao.getInstancia();
         String bd_fd = "kitanda_db";
         String bd_fb = "kitanda_db_indiano";
 //        System.out.println( gerarScript( bd_fd, bd_fb, conexao ) );

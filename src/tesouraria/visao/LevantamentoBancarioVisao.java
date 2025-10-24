@@ -10,6 +10,8 @@
  */
 package tesouraria.visao;
 
+
+import java.sql.Connection;
 import visao.*;
 //import dao.BancoDao;
 import dao.DepositoBancariaDao;
@@ -60,7 +62,7 @@ public class LevantamentoBancarioVisao extends javax.swing.JFrame
         initComponents();
         this.idUser = idUser;
         setLocationRelativeTo( null );
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
         txtValorLevantamento.setDocument( new PermitirNumeros() );
         actualizar();
         txtValorLevantamento.setText( "0" );

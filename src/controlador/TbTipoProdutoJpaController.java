@@ -4,6 +4,8 @@
  */
 package controlador;
 
+
+import java.sql.Connection;
 import controlador.exceptions.NonexistentEntityException;
 import java.io.Serializable;
 import javax.persistence.Query;

@@ -6,6 +6,8 @@
 
 package dao;
 
+
+import java.sql.Connection;
 import controlador.TbSexoJpaController;
 import entity.TbSexo;
 import java.util.List;

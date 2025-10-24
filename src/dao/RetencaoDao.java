@@ -5,6 +5,8 @@
  */
 package dao;
 
+
+import java.sql.Connection;
 import controlador.RetencaoJpaController;
 import entity.Retencao;
 import java.util.Date;

@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 //import comercial.ProdutoItemVisao;
 import controller.TipoClienteController;
 import comercial.controller.VendasController;
@@ -927,7 +929,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         {
             boolean[] canEdit = new boolean []
             {
-                false, false, false, false, false
+                false, false, false, true, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex)
@@ -954,6 +956,14 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
             }
         });
         jScrollPane2.setViewportView(jTable1);
+        if (jTable1.getColumnModel().getColumnCount() > 0)
+        {
+            jTable1.getColumnModel().getColumn(0).setPreferredWidth(10);
+            jTable1.getColumnModel().getColumn(1).setPreferredWidth(40);
+            jTable1.getColumnModel().getColumn(2).setPreferredWidth(200);
+            jTable1.getColumnModel().getColumn(3).setPreferredWidth(20);
+            jTable1.getColumnModel().getColumn(4).setPreferredWidth(70);
+        }
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -2138,7 +2148,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new NovaGestaoPedidosVisao( "Mesa 2", "Lugar 2", 1, 1, new BDConexao() ).setVisible( true );
+                new NovaGestaoPedidosVisao( "Mesa 2", "Lugar 2", 1, 1, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }
@@ -2855,7 +2865,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         {
 
             //define a altura das linhas
-            jTable1.setRowHeight( 50 );
+            jTable1.setRowHeight( 25 );
             try
             {
                 for ( int i = 0; i < itemPedidos_list.size(); i++ )
@@ -3177,9 +3187,6 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                 MetodosUtil.imprimir_sala( findByDesignacao, idPedido, mesa, lugarLocal, usuario, "Cancelado", (int) itemPedidosLocal.getQtd(), dadosInstituicaoController );
             }
 
-//            MetodosUtil.imprimir_cozinha( itemPedidosLocal.getFkProdutos(),
-//                    "Cancelado", itemPedidosLocal.getQtd(),
-//                    dadosInstituicaoController );
             itemPedidosDao.destroy( id_item_pedido );
             actualizar();
         }
@@ -3279,8 +3286,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
     public static TbVenda salvar_venda()
     {
-        conexaoTransaction = new BDConexao();
-        DocumentosController.startTransaction( conexaoTransaction );
+        conexaoTransaction = BDConexao.getInstancia();
+        DocumentosController.start( conexaoTransaction );
 //        Date data_documento = new Date ();
         Date data_documento = dc_data_documento.getDate();
         TbVenda venda_local = new TbVenda();
@@ -3354,7 +3361,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
                 if ( Objects.isNull( last_venda ) || last_venda == 0 )
                 {
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    DocumentosController.rollback( conexaoTransaction );
                     conexaoTransaction.close();
                     return venda_local;
                 }
@@ -3381,7 +3388,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
             System.err.println( "STATUS: falha ao actualizar a factura" );
             e.printStackTrace();
             JOptionPane.showMessageDialog( null, "Falha ao Processar a Factura", "FALHA", JOptionPane.ERROR_MESSAGE );
-            DocumentosController.rollBackTransaction( conexao );
+            DocumentosController.rollback( conexao );
 //            conexaoTransaction.close();
         }
 //        return vendaDao.findTbVenda( last_venda );
@@ -3412,8 +3419,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
     public static TbVenda salvar_venda( int lugar )
     {
-        conexaoTransaction = new BDConexao();
-        DocumentosController.startTransaction( conexaoTransaction );
+        conexaoTransaction = BDConexao.getInstancia();
+        DocumentosController.start( conexaoTransaction );
 //        Date data_documento = new Date ();
         Date data_documento = dc_data_documento.getDate();
         TbVenda venda_local = new TbVenda();
@@ -3481,7 +3488,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
                 if ( Objects.isNull( last_venda ) || last_venda == 0 )
                 {
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    DocumentosController.rollback( conexaoTransaction );
                     conexaoTransaction.close();
                     return venda_local;
                 }
@@ -3508,7 +3515,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
             System.err.println( "STATUS: falha ao actualizar a factura" );
             e.printStackTrace();
             JOptionPane.showMessageDialog( null, "Falha ao Processar a Factura", "FALHA", JOptionPane.ERROR_MESSAGE );
-            DocumentosController.rollBackTransaction( conexao );
+            DocumentosController.rollback( conexao );
 //            conexaoTransaction.close();
         }
 //        return vendaDao.findTbVenda( last_venda );
@@ -3683,7 +3690,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //                int last_venda = itemVendaDao.criarComProcedimentos( itemVenda, conexao );
                 if ( !itemVendasController.salvar( itemVenda ) )
                 {
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    DocumentosController.rollback( conexaoTransaction );
                     conexaoTransaction.close();
                     return;
                 }
@@ -3824,7 +3831,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //                int last_venda = itemVendaDao.criarComProcedimentos( itemVenda, conexao );
                     if ( !itemVendasController.salvar( itemVenda ) )
                     {
-                        DocumentosController.rollBackTransaction( conexaoTransaction );
+                        DocumentosController.rollback( conexaoTransaction );
                         conexaoTransaction.close();
                         return;
                     }
@@ -4454,7 +4461,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //                    itemVendaDao.create ( itemVenda );
                     if ( !itemVendasController.salvar( itemVenda ) )
                     {
-                        DocumentosController.rollBackTransaction( conexaoTransaction );
+                        DocumentosController.rollback( conexaoTransaction );
                         conexaoTransaction.close();
                         return;
                     }
@@ -4499,7 +4506,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                 e.printStackTrace();
                 efectuada = false;
                 JOptionPane.showMessageDialog( null, "Falha ao registrar o produto: " + itemVenda.getCodigoProduto().getCodigo() + " na Factura" );
-                DocumentosController.rollBackTransaction( conexaoTransaction );
+                DocumentosController.rollback( conexaoTransaction );
                 conexaoTransaction.close();
                 return;
             }
@@ -5007,43 +5014,15 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
     }
 
-//    private void procedimento_eliminar_item_pedido()
-//    {
-//
-//        if ( validar1() )
-//        {
-//            eliminar_item( jTable1 );
-//            PrincipalPedidosVisao.mesas_livres( getLabelMesaByMesa() );
-//            PrincipalPedidosVisao.pintar_mesas( getLabelMesaByMesa(), this.mesa );
-//        }
-//
-//    }
     public void procedimento_eliminar_item_pedido()
     {
         linha_acutal = jTable1.getSelectedRow();
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
-//        int id_item_consumo_alojamento = Integer.parseInt( modelo.getValueAt( linha_acutal, 0 ).toString() );
-
         try
         {
 
             new SenhaMestreVisao( this, rootPaneCheckingEnabled, DVML.FORMULARIO_PEDIDO_RESTAURANTE ).setVisible( true );
-//                if ( validar1() )
-//                {
-//                    eliminar_item( jTable1 );
-//                    PrincipalPedidosVisao.mesas_livres( getLabelMesaByMesa() );
-//                    PrincipalPedidosVisao.pintar_mesas( getLabelMesaByMesa(), mesa );
-//                }
 
-//                ItemAlojamentoConsumo item = itemAlojamentoDao.findItemAlojamentoConsumo( id_item_consumo_alojamento );
-//                //chamar o
-//                itemAlojamentoDao.destroy( id_item_consumo_alojamento );
-//                if ( item.getFkProduto().getStocavel().equals( "true" ) )
-//                {
-//                    MetodosUtil.adiciona_quantidade( item.getFkProduto().getCodigo(), item.getQtd(), DVML.ARMAZEM_DEFAUTL, conexao );
-//                }
-//                adicionar_consumos_tabela();
-//                JOptionPane.showMessageDialog( null, "Produto removido com sucesso!...", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
         }
         catch ( Exception e )
         {
@@ -5055,32 +5034,17 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
     {
         linha_acutal = jTable1.getSelectedRow();
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
-//        int id_item_consumo_alojamento = Integer.parseInt( modelo.getValueAt( linha_acutal, 0 ).toString() );
+
         try
         {
 
-//            new SenhaMestreVisao( this, rootPaneCheckingEnabled ).setVisible( true );
-//                if ( validar1() )
-//                {
-//                    eliminar_item( jTable1 );
-//                    PrincipalPedidosVisao.mesas_livres( getLabelMesaByMesa() );
-//                    PrincipalPedidosVisao.pintar_mesas( getLabelMesaByMesa(), mesa );
-//                }
-//                ItemAlojamentoConsumo item = itemAlojamentoDao.findItemAlojamentoConsumo( id_item_consumo_alojamento );
-//                //chamar o
-//                itemAlojamentoDao.destroy( id_item_consumo_alojamento );
-//                if ( item.getFkProduto().getStocavel().equals( "true" ) )
-//                {
-//                    MetodosUtil.adiciona_quantidade( item.getFkProduto().getCodigo(), item.getQtd(), DVML.ARMAZEM_DEFAUTL, conexao );
-//                }
-//                adicionar_consumos_tabela();
-//                JOptionPane.showMessageDialog( null, "Produto removido com sucesso!...", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
         }
         catch ( Exception e )
         {
         }
 
     }
+    
 
     public static void procedimento_eliminar_item_pedido( String chave_mestre )
     {
@@ -5090,14 +5054,9 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         String consumo = modelo.getValueAt( linha_actual, 2 ).toString();
         int idProduto = produtosController.getIdProduto( consumo );
         double qtd = Double.parseDouble( modelo.getValueAt( linha_actual, 3 ).toString() );
-//ESTE
-//        double preco_unitario = precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( idProduto, qtd ) ).getPrecoVenda().doubleValue();
         double preco_unitario = precosController.getLastIdPrecoByIdProduto( idProduto, qtd ).getPrecoVenda().doubleValue();
-//        String usuario = usuarioDao.findTbUsuario( idUser ).getNome();
         String usuario = usuariosController.getUsuarioByCodigo( idUser ).getNome();
-
         String chave_mestre_local = dadosInstituicaoController.findByCodigo( 1 ).getChaveMestre();
-//        String chave_mestre_local = dadosInstituicaoController.findByCodigo( 1 ).getChaveMestre();
         System.out.println( "Chave Apresentação1: " + chave_mestre );
         System.out.println( "Chave Apresentação2 sem chave: " + chave_mestre_local );
         if ( chave_mestre.equals( chave_mestre_local ) )
@@ -5111,7 +5070,6 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                     eliminar_item( jTable1 );
                     PrincipalPedidosVisao.mesas_livres( getLabelMesaByMesa() );
                     PrincipalPedidosVisao.pintar_mesas( getLabelMesaByMesa(), mesa );
-
                     Productos p = new Productos();
                     p.setConsumo( consumo );
                     p.setLugar( lugar );
@@ -5142,75 +5100,6 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
     }
 
-//    public static void procedimento_eliminar_item_pedido( String chave_mestre )
-//    {
-//        linha_acutal = jTable1.getSelectedRow();
-//        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
-//        String chave_mestre_local;
-//        chave_mestre_local = dadosInstituicaoDao.findTbDadosInstituicao( 1 ).getChaveMestre();
-//
-////        int id_item_consumo_alojamento = Integer.parseInt( modelo.getValueAt( linha_acutal, 0 ).toString() );
-//        TbDadosInstituicao dadosInstituicao = new TbDadosInstituicao();
-//        if ( chave_mestre.equals( chave_mestre_local ) )
-//        {
-//            try
-//            {
-//                if ( validar1() )
-//                {
-//                    eliminar_item( jTable1 );
-//                    PrincipalPedidosVisao.mesas_livres( getLabelMesaByMesa() );
-//                    PrincipalPedidosVisao.pintar_mesas( getLabelMesaByMesa(), mesa );
-//                }
-////                ItemAlojamentoConsumo item = itemAlojamentoDao.findItemAlojamentoConsumo( id_item_consumo_alojamento );
-////                //chamar o
-////                itemAlojamentoDao.destroy( id_item_consumo_alojamento );
-//
-////                if ( item.getFkProduto().getStocavel().equals( "true" ) )
-////                {
-////                    MetodosUtil.adiciona_quantidade( item.getFkProduto().getCodigo(), item.getQtd(), DVML.ARMAZEM_DEFAUTL, conexao );
-////                }
-////                adicionar_consumos_tabela();
-////                JOptionPane.showMessageDialog( null, "Produto removido com sucesso!...", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
-//            }
-//            catch ( Exception e )
-//            {
-//            }
-//        }
-//        else
-//        {
-//            JOptionPane.showMessageDialog( null, "Accesso negado." );
-//        }
-//
-//    }
-//    public static void procedimento_gravar_item_pedido_eliminado()
-//    {
-//        linha_acutal = jTable1.getSelectedRow();
-//        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
-//
-////        int id_item_consumo_alojamento = Integer.parseInt( modelo.getValueAt( linha_acutal, 0 ).toString() );
-//        try
-//        {
-//            if ( validar1() )
-//            {
-//                gravar_item_eliminado( jTable1 );
-//
-//            }
-////                ItemAlojamentoConsumo item = itemAlojamentoDao.findItemAlojamentoConsumo( id_item_consumo_alojamento );
-////                //chamar o
-////                itemAlojamentoDao.destroy( id_item_consumo_alojamento );
-//
-////                if ( item.getFkProduto().getStocavel().equals( "true" ) )
-////                {
-////                    MetodosUtil.adiciona_quantidade( item.getFkProduto().getCodigo(), item.getQtd(), DVML.ARMAZEM_DEFAUTL, conexao );
-////                }
-////                adicionar_consumos_tabela();
-////                JOptionPane.showMessageDialog( null, "Produto removido com sucesso!...", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
-//        }
-//        catch ( Exception e )
-//        {
-//        }
-//
-//    }
     private static boolean activo_um_lugar()
     {
 

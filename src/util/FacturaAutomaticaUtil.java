@@ -4,6 +4,8 @@
  */
 package util;
 
+
+//import java.sql.Connection;
 import comercial.controller.AnoEconomicoController;
 import comercial.controller.DadosInstituicaoController;
 import comercial.controller.DocumentosController;
@@ -84,7 +86,7 @@ public class FacturaAutomaticaUtil
      */
     public static void main( String[] args )
     {
-        FacturaAutomaticaUtil facturaAutomaticaUtil = new FacturaAutomaticaUtil( new BDConexao() );
+        FacturaAutomaticaUtil facturaAutomaticaUtil = new FacturaAutomaticaUtil( BDConexao.getInstancia() );
         facturaAutomaticaUtil.procedimentoGerar();
 
 //        facturaAutomaticaUtil.mostrarItens();
@@ -221,13 +223,13 @@ public class FacturaAutomaticaUtil
     private void salvar_venda_comercial_automatico( Date dataDocumento )
     {
 //        mostrar_proximo_codigo_documento();
-        conexaoTransaction = new BDConexao();
+        conexaoTransaction = BDConexao.getInstancia();
         DadosInstituicaoController dadosInstituicaoController = new DadosInstituicaoController( conexaoTransaction );
         VendasController vendasController = new VendasController( conexaoTransaction );
         DocumentosController documentosController = new DocumentosController( conexaoTransaction );
         AnoEconomicoController anoEconomicoController = new AnoEconomicoController( conexaoTransaction );
         itemVendasController = new ItemVendasController( conexaoTransaction );
-        DocumentosController.startTransaction( conexaoTransaction );
+        DocumentosController.start( conexaoTransaction );
         int prazo_proforma = dadosInstituicaoController.findByCodigo( 1 ).getPrazoProforma();
         Date data_documento = dataDocumento;
 
@@ -319,7 +321,7 @@ public class FacturaAutomaticaUtil
                 Integer last_venda = vendasController.getLastVenda().getCodigo();
                 if ( Objects.isNull( last_venda ) || last_venda == 0 )
                 {
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    DocumentosController.rollback( conexaoTransaction );
                     conexaoTransaction.close();
                     return;
                 }
@@ -344,7 +346,7 @@ public class FacturaAutomaticaUtil
             e.printStackTrace();
             JOptionPane.showMessageDialog( null, "Falha ao Processar a Factura", "FALHA", JOptionPane.ERROR_MESSAGE );
 
-            DocumentosController.rollBackTransaction( conexaoTransaction );
+            DocumentosController.rollback( conexaoTransaction );
 
             conexaoTransaction.close();
         }
@@ -386,7 +388,7 @@ public class FacturaAutomaticaUtil
 //                int last_id_item_venda = itemVendaDao.criarComProcedimentos( itemVenda, conexao );
                 if ( !itemVendasController.salvar( itemVenda ) )
                 {
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    DocumentosController.rollback( conexaoTransaction );
                     conexaoTransaction.close();
                     return;
                 }
@@ -400,7 +402,7 @@ public class FacturaAutomaticaUtil
                 e.printStackTrace();
                 efectuada = false;
                 JOptionPane.showMessageDialog( null, "Falha ao registrar o produto: " + itemVenda.getCodigoProduto().getCodigo() + " na Factura" );
-                DocumentosController.rollBackTransaction( conexaoTransaction );
+                DocumentosController.rollback( conexaoTransaction );
                 conexaoTransaction.close();
                 return;
             }
@@ -410,7 +412,7 @@ public class FacturaAutomaticaUtil
         if ( efectuada )
         {
             System.out.println( "Factura efectuada com sucesso!.." );
-            DocumentosController.commitTransaction( conexaoTransaction );
+            DocumentosController.commit( conexaoTransaction );
             conexaoTransaction.close();
         }
 
@@ -443,7 +445,7 @@ public class FacturaAutomaticaUtil
     {
         double qtd = 0d;
         double imposto = 0d, preco_unitario = 0d, desconto_valor_linha = 0d;
-        BDConexao conexaoLocal = new BDConexao();
+        BDConexao conexaoLocal = BDConexao.getInstancia();
         ProdutosImpostoController produtosImpostoController = new ProdutosImpostoController( conexaoLocal );
         for ( int i = 0; i < listaIntes.size(); i++ )
         {
@@ -503,7 +505,7 @@ public class FacturaAutomaticaUtil
 
         double qtd = 0;
         double incidencia = 0d, preco_unitario = 0d, desconto_valor_linha = 0;
-        BDConexao conexaoLocal = new BDConexao();
+        BDConexao conexaoLocal = BDConexao.getInstancia();
         ProdutosImpostoController produtosImpostoController = new ProdutosImpostoController( conexaoLocal );
 
         for ( int i = 0; i < listaIntes.size(); i++ )

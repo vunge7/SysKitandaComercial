@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.CaixasController;
 import comercial.controller.ClientesController;
 import comercial.controller.FormaPagamentoController;
@@ -813,7 +815,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new VendaPOSVisao( new BDConexao(), DVML.ARMAZEM_DEFAUTL, 15 ).setVisible( true );
+                new VendaPOSVisao( BDConexao.getInstancia(), DVML.ARMAZEM_DEFAUTL, 15 ).setVisible( true );
             }
         } );
     }

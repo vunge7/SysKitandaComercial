@@ -4,6 +4,8 @@
  */
 package entity;
 
+
+import java.sql.Connection;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;

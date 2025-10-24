@@ -10,6 +10,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.DocumentosController;
 import comercial.controller.FamiliasController;
 import comercial.controller.GruposController;
@@ -109,7 +111,7 @@ public class CategoriasVisao extends javax.swing.JFrame {
         }
     }
 //    public void salvar() {
-//        conexaoTransaction = new BDConexao();
+//        conexaoTransaction = BDConexao.getInstancia();
 //        DocumentosController.startTransaction(conexaoTransaction);
 //
 //        TbTipoProduto subFamilia_local = new TbTipoProduto();
@@ -433,7 +435,7 @@ public class CategoriasVisao extends javax.swing.JFrame {
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CategoriasVisao( new BDConexao()).setVisible(true);
+                new CategoriasVisao( BDConexao.getInstancia()).setVisible(true);
             }
         });
     }

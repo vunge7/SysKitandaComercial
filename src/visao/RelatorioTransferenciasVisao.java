@@ -6,6 +6,8 @@
 
 package visao;
 
+
+import java.sql.Connection;
 import java.util.Date;
 //import relatorios.RelGeralDeclaracoes;
 //import relatorios.RelGeralPropinas;

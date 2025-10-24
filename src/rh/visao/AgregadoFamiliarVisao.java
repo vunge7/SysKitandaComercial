@@ -5,6 +5,8 @@
  */
 package rh.visao;
 
+
+import java.sql.Connection;
 import java.util.Date;
 import kitanda.util.CfMethodsSwing;
 import util.DVML;

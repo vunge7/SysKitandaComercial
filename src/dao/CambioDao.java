@@ -5,6 +5,8 @@
  */
 package dao;
 
+
+import java.sql.Connection;
 import controlador.CambioJpaController;
 import entity.AnoEconomico;
 import entity.Cambio;

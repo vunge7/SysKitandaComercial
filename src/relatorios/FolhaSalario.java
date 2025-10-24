@@ -5,6 +5,8 @@
  */
 package relatorios;
 
+
+import java.sql.Connection;
 import entity.TbFuncionario;
 import java.util.ArrayList;
 import java.util.HashMap;

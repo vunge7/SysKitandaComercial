@@ -42,42 +42,49 @@ public class ItemEncomendaController {
     
     private ItemEncomendaModelo itemEncomendaModelo = null;
     private PreparedStatement comando = null;
-    private Connection conexao = null;
+    private BDConexao conexao = BDConexao.getInstancia();
+//    private Connection conexao = null;
 
     public ItemEncomendaController() {
         
     }
 
      public boolean guardar(ItemEncomendaModelo itemEncomendaModelo) {
-       
-        this.itemEncomendaModelo =  itemEncomendaModelo;
- 
+    this.itemEncomendaModelo = itemEncomendaModelo;
+    PreparedStatement comando = null;
+
+    try {
+        // Usa a conexão activa (não cria nova)
+        Connection conn = conexao.getConnectionAtiva();
+
+        comando = conn.prepareStatement(insert);
+
+        /*
+            idEncomenda , idProduto , total , quantidade
+        */
+        comando.setInt(1, itemEncomendaModelo.getIdEncomenda());
+        comando.setInt(2, itemEncomendaModelo.getIdPrdouto());
+        comando.setDouble(3, itemEncomendaModelo.getTotal());
+        comando.setInt(4, itemEncomendaModelo.getQauntidade());
+
+        comando.execute();
+
+        System.out.println("Item da encomenda salvo com sucesso.");
+
+        return true;
+    } catch (SQLException ex) {
+        Logger.getLogger(ItemEncomendaController.class.getName()).log(Level.SEVERE, null, ex);
+        return false;
+    } finally {
+        // Fecha apenas o PreparedStatement (não fecha a conexão activa)
         try {
-            
-            conexao = BDConexao.conectar();
-            System.out.println(insert);
-            comando = conexao.prepareStatement(insert);
-
-               /*       
-                    idEncomenda , idProduto , total , quantidade
-                */      
-
-            comando.setInt(1, itemEncomendaModelo.getIdEncomenda());
-            comando.setInt(2, itemEncomendaModelo.getIdPrdouto());
-            comando.setDouble(3, itemEncomendaModelo.getTotal());
-            comando.setInt(4, itemEncomendaModelo.getQauntidade());
-            
-            comando.execute();
-            conexao.close();
-            
-        } catch (SQLException ex) {
-            Logger.getLogger(ItemEncomendaController.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
+            if (comando != null) comando.close();
+        } catch (SQLException e) {
+            Logger.getLogger(ItemEncomendaController.class.getName()).log(Level.SEVERE, null, e);
         }
-
-     return true;
-     
     }
+}
+
     
     
    private void preencher_objecto(ResultSet resultado) throws SQLException
@@ -93,62 +100,73 @@ public class ItemEncomendaController {
    }
        
     //Retorna o Objecto por Numero do Processo que neste caso e o codigo
-    public ItemEncomendaModelo getItemEcomendaByIdEncomenda(int codigo) 
-    {
-        ResultSet resultado = null;
+   public ItemEncomendaModelo getItemEcomendaByIdEncomenda(int codigo) {
+    ResultSet resultado = null;
+    PreparedStatement comando = null;
 
-        try {
-            
-             conexao = BDConexao.conectar();
-             comando = conexao.prepareStatement(getItemEcomendaByIdEncomenda);
-             comando.setInt(1, codigo);
-             resultado = comando.executeQuery();
+    try {
+        // Usa a conexão activa (sem abrir nova)
+        Connection conn = conexao.getConnectionAtiva();
 
-            if (resultado.next()) {
-                preencher_objecto(resultado);
-            }
-            conexao.close();
+        comando = conn.prepareStatement(getItemEcomendaByIdEncomenda);
+        comando.setInt(1, codigo);
+        resultado = comando.executeQuery();
 
-        } catch (SQLException ex) {
-            Logger.getLogger(ItemEncomendaController.class.getName()).log(Level.SEVERE, null, ex);
-
+        if (resultado.next()) {
+            preencher_objecto(resultado);
         }
-        
-        return itemEncomendaModelo;
+
+    } catch (SQLException ex) {
+        Logger.getLogger(ItemEncomendaController.class.getName()).log(Level.SEVERE, null, ex);
+    } finally {
+        try {
+            if (resultado != null) resultado.close();
+            if (comando != null) comando.close();
+        } catch (SQLException e) {
+            Logger.getLogger(ItemEncomendaController.class.getName()).log(Level.SEVERE, null, e);
+        }
     }
+
+    return itemEncomendaModelo;
+}
+
     
 
     
     
      //Retorna o Objecto por Numero do Processo que neste caso e o codigo
-    public Vector<ItemEncomendaModelo> getAllItemEncomenda(int codigo) 
-    {
-        ResultSet resultado = null;
+    public Vector<ItemEncomendaModelo> getAllItemEncomenda(int codigo) {
+    ResultSet resultado = null;
+    PreparedStatement comando = null;
+    Vector<ItemEncomendaModelo> vector = new Vector<>();
 
-        Vector<ItemEncomendaModelo> vector = new Vector<ItemEncomendaModelo>();
-        
-        try {
-            
-             conexao = BDConexao.conectar();
-             comando = conexao.prepareStatement(getItemEcomendaByIdEncomenda);
-             comando.setInt(1, codigo);
-             resultado = comando.executeQuery();
+    try {
+        // Usa a conexão activa (sem abrir nova)
+        Connection conn = conexao.getConnectionAtiva();
 
-            while (resultado.next()) {
-                preencher_objecto(resultado);
-                
-                vector.add(itemEncomendaModelo);
-                
-            }
-            conexao.close();
+        comando = conn.prepareStatement(getItemEcomendaByIdEncomenda);
+        comando.setInt(1, codigo);
+        resultado = comando.executeQuery();
 
-        } catch (SQLException ex) {
-            Logger.getLogger(ItemEncomendaController.class.getName()).log(Level.SEVERE, null, ex);
-
+        while (resultado.next()) {
+            preencher_objecto(resultado);
+            vector.add(itemEncomendaModelo);
         }
-        
-        return vector;
+
+    } catch (SQLException ex) {
+        Logger.getLogger(ItemEncomendaController.class.getName()).log(Level.SEVERE, null, ex);
+    } finally {
+        try {
+            if (resultado != null) resultado.close();
+            if (comando != null) comando.close();
+        } catch (SQLException e) {
+            Logger.getLogger(ItemEncomendaController.class.getName()).log(Level.SEVERE, null, e);
+        }
     }
+
+    return vector;
+}
+
     
     
 

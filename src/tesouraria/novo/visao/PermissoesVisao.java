@@ -4,6 +4,8 @@
  */
 package tesouraria.novo.visao;
 
+
+import java.sql.Connection;
 import entity.ContaPermissoes;
 import entity.Contas;
 import entity.TbUsuario;
@@ -333,7 +335,7 @@ public class PermissoesVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                PermissoesVisao dialog = new PermissoesVisao( new TbUsuario( 15 ), new BDConexao() );
+                PermissoesVisao dialog = new PermissoesVisao( new TbUsuario( 15 ), BDConexao.getInstancia() );
                 dialog.addWindowListener( new java.awt.event.WindowAdapter()
                 {
                     @Override
@@ -384,7 +386,7 @@ public class PermissoesVisao extends javax.swing.JFrame
         if ( Objects.nonNull( selectedValuesList ) )
         {
             boolean sucesso = true;
-            DocumentosController.startTransaction( conexao );
+            DocumentosController.start( conexao );
             for ( String contaDesignacao : selectedValuesList )
             {
                 contaPermissoes = new ContaPermissoes();
@@ -394,7 +396,7 @@ public class PermissoesVisao extends javax.swing.JFrame
                 {
                     if ( !cpc.salvar( contaPermissoes ) )
                     {
-                        DocumentosController.rollBackTransaction( conexao );
+                        DocumentosController.rollback( conexao );
                         JOptionPane.showMessageDialog( null, "Falha ao adcionar as permissões.", "Falha", JOptionPane.ERROR_MESSAGE );
                         sucesso = false;
                         break;
@@ -405,7 +407,7 @@ public class PermissoesVisao extends javax.swing.JFrame
             }
             if ( sucesso )
             {
-                DocumentosController.commitTransaction( conexao );
+                DocumentosController.commit( conexao );
                 adicionarContasPermitidas();
                 JOptionPane.showMessageDialog( null, "Permissões atribuidas com sucesso." );
             }
@@ -481,14 +483,14 @@ public class PermissoesVisao extends javax.swing.JFrame
         contaPermissoes.setVisEntrato( visExtrato );
         contaPermissoes.setAnulacao( anulacao );
 
-        DocumentosController.startTransaction( conexao );
+        DocumentosController.start( conexao );
         if ( cpc.actualizar( contaPermissoes ) )
         {
-            DocumentosController.commitTransaction( conexao );
+            DocumentosController.commit( conexao );
         }
         else
         {
-            DocumentosController.rollBackTransaction( conexao );
+            DocumentosController.rollback( conexao );
         }
 
     }
@@ -498,7 +500,7 @@ public class PermissoesVisao extends javax.swing.JFrame
         DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
         int[] selectedRows = jTable1.getSelectedRows();
 
-        DocumentosController.startTransaction( conexao );
+        DocumentosController.start( conexao );
         for ( int i = 0; i < selectedRows.length; i++ )
         {
             int selectedRow = selectedRows[ i ];
@@ -506,11 +508,11 @@ public class PermissoesVisao extends javax.swing.JFrame
             int id = Integer.parseInt( valueAt );
             if ( !cpc.eliminar( id ) )
             {
-                DocumentosController.rollBackTransaction( conexao );
+                DocumentosController.rollback( conexao );
                 return;
             }
         }
-        DocumentosController.commitTransaction( conexao );
+        DocumentosController.commit( conexao );
         adicionarContasPermitidas();
 
     }

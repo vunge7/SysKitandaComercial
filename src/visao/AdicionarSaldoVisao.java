@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import controller.ClienteEncomendaController;
 import exemplos.PermitirNumeros;
 import java.awt.event.KeyEvent;
@@ -46,7 +48,7 @@ public final class AdicionarSaldoVisao extends javax.swing.JFrame {
     
         txtNomeCliente.requestFocus();
        
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
         
         getClientes();
         txtIniciasNome.addKeyListener(  new TratarEventoTeclado() );

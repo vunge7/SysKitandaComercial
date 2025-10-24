@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import controller.TipoProdutoController;
 import dao.DadosInstituicaoDao;
 import dao.NotasDao;
@@ -297,7 +299,7 @@ public class ReemprimirDocumentoVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                ReemprimirDocumentoVisao dialog = new ReemprimirDocumentoVisao( new javax.swing.JFrame(), true, new BDConexao()
+                ReemprimirDocumentoVisao dialog = new ReemprimirDocumentoVisao( new javax.swing.JFrame(), true, BDConexao.getInstancia()
                 );
                 dialog.addWindowListener( new java.awt.event.WindowAdapter()
                 {

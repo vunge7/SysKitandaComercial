@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 //import comercial.visao.ProdutoItemVisao;
 import controller.TipoClienteController;
 import comercial.controller.VendasController;
@@ -1403,8 +1405,8 @@ public class VendasPraticasVisao extends javax.swing.JFrame
     private void procedimento_processar_facturacao()
     {
 
-        conexaoTransaction = new BDConexao();
-        DocumentosController.startTransaction( conexaoTransaction );
+        conexaoTransaction = BDConexao.getInstancia();
+        DocumentosController.start( conexaoTransaction );
 
         vendasController = new VendasController( conexaoTransaction );
         itemVendasController = new ItemVendasController( conexaoTransaction );
@@ -1480,7 +1482,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
         if ( true )
         {
             TbVenda salvar_venda = salvar_venda();
-//            DocumentosController.commitTransaction( conexaoTransaction );
+//            DocumentosController.commit( conexaoTransaction );
 
             if ( salvar_venda != null )
             {
@@ -1621,7 +1623,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jButton4ActionPerformed
         try
         {
-            BDConexao conexaoLocal = new BDConexao();
+            BDConexao conexaoLocal = BDConexao.getInstancia();
             if ( !validar_qtd_zero() )
             {
 
@@ -2287,7 +2289,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new VendasPraticasVisao( "Mesa 2", "Lugar 2", 1, 1, new BDConexao() ).setVisible( true );
+                new VendasPraticasVisao( "Mesa 2", "Lugar 2", 1, 1, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }
@@ -2490,7 +2492,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
                         }
 
 //#ped2z
-                        BDConexao conexaoLocal = new BDConexao();
+                        BDConexao conexaoLocal = BDConexao.getInstancia();
                         Integer idLastItemPedido = itemPedidosDao.criarComProcedimentoLugar( itemPedidosLocal, conexaoLocal );
 
                         if ( idLastItemPedido != null )
@@ -2583,7 +2585,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
     public static void procedimento_salvar_pedidos_iten_pedidos_interno( String designacao_produto )
     {
         System.out.println( "### CHEGUEI NO ITEM-PEDIDO INTERNO" );
-        BDConexao conexaoLocal = new BDConexao();
+        BDConexao conexaoLocal = BDConexao.getInstancia();
 
 //        if ( stock_local.getCodigo() != 0  )
 //        {
@@ -2753,7 +2755,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
 //    public boolean possivel_quantidade_pedidos_existentes( int codigo_produto )
     public static boolean possivel_quantidade_pedidos_existentes( int codigo_produto )
     {
-        BDConexao conexaoLocal = new BDConexao();
+        BDConexao conexaoLocal = BDConexao.getInstancia();
         produtosController = new ProdutosController( conexaoLocal );
 
         TbProduto produtoLocal = (TbProduto) produtosController.findById( codigo_produto );
@@ -2844,7 +2846,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
                 pedido_2.setFkMesas( mesasDao.findTbMesas( DVML.MESA_BALCAO ) );
 //                pedido_2.setAreaPedido( setar_grupo() );
 //#ped1                
-                BDConexao conexaoTransction = new BDConexao();
+                BDConexao conexaoTransction = BDConexao.getInstancia();
 
                 Integer idLastPedido = pedidoDao.criarComProcedimentos( pedido_2, conexao );
 
@@ -3514,8 +3516,8 @@ public class VendasPraticasVisao extends javax.swing.JFrame
 
     public static TbVenda salvar_venda()
     {
-        conexaoTransaction = new BDConexao();
-        DocumentosController.startTransaction( conexaoTransaction );
+        conexaoTransaction = BDConexao.getInstancia();
+        DocumentosController.start( conexaoTransaction );
         vendasController = new VendasController( conexaoTransaction );
 //        Date data_documento = new Date ();
         Date data_documento = dc_data_documento.getDate();
@@ -3591,11 +3593,11 @@ public class VendasPraticasVisao extends javax.swing.JFrame
             {
                 last_venda = vendasController.getLastVenda().getCodigo();
 
-                DocumentosController.commitTransaction( conexaoTransaction );
+                DocumentosController.commit( conexaoTransaction );
 
                 if ( Objects.isNull( last_venda ) || last_venda == 0 )
                 {
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    DocumentosController.rollback( conexaoTransaction );
                     conexaoTransaction.close();
                     return venda_local;
                 }
@@ -3622,7 +3624,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
             System.err.println( "STATUS: falha ao actualizar a factura" );
             e.printStackTrace();
             JOptionPane.showMessageDialog( null, "Falha ao Processar a Factura", "FALHA", JOptionPane.ERROR_MESSAGE );
-            DocumentosController.rollBackTransaction( conexaoTransaction );
+            DocumentosController.rollback( conexaoTransaction );
 //            conexaoTransaction.close();
         }
 //        return vendaDao.findTbVenda( last_venda );
@@ -3689,8 +3691,8 @@ public class VendasPraticasVisao extends javax.swing.JFrame
 
     public static TbVenda salvar_venda( int lugar )
     {
-        conexaoTransaction = new BDConexao();
-        DocumentosController.startTransaction( conexaoTransaction );
+        conexaoTransaction = BDConexao.getInstancia();
+        DocumentosController.start( conexaoTransaction );
 //        Date data_documento = new Date ();
         Date data_documento = dc_data_documento.getDate();
         TbVenda venda_local = new TbVenda();
@@ -3758,7 +3760,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
 
                 if ( Objects.isNull( last_venda ) || last_venda == 0 )
                 {
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    DocumentosController.rollback( conexaoTransaction );
                     conexaoTransaction.close();
                     return venda_local;
                 }
@@ -3785,7 +3787,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
             System.err.println( "STATUS: falha ao actualizar a factura" );
             e.printStackTrace();
             JOptionPane.showMessageDialog( null, "Falha ao Processar a Factura", "FALHA", JOptionPane.ERROR_MESSAGE );
-            DocumentosController.rollBackTransaction( conexao );
+            DocumentosController.rollback( conexao );
 //            conexaoTransaction.close();
         }
 //        return vendaDao.findTbVenda( last_venda );
@@ -3935,7 +3937,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
 
     private static void actualizarQtdIngredientes( FichaTecnica fichaTecnica, double qtdPrato )
     {
-        BDConexao conexaoLocal = new BDConexao();
+        BDConexao conexaoLocal = BDConexao.getInstancia();
         if ( Objects.nonNull( fichaTecnica ) )//existe ficha tecnica
         {
             List<LinhaFichaTecnica> linhasFichaTecnica = linhaFichaTecnicaController.listarTodosByCodigoFichaTecnica( fichaTecnica.getId() );
@@ -4010,7 +4012,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
 //                int last_venda = itemVendaDao.criarComProcedimentos( itemVenda, conexao );
                 if ( !itemVendasController.salvar( itemVenda ) )
                 {
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    DocumentosController.rollback( conexaoTransaction );
                     conexaoTransaction.close();
                     return;
                 }
@@ -4061,7 +4063,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
             JOptionPane.showMessageDialog( null, "Factura efectuada com sucesso!.." );
             txtQuantidade.setBackground( Color.BLUE );
 
-            DocumentosController.commitTransaction( conexaoTransaction );
+            DocumentosController.commit( conexaoTransaction );
             TbPedido pedido = pedidoDao.findTbPedido( pedidoDao.getLastPedidoByDefignacaoMesaFALSE( getMesa() ) );
             PedidoDao.eliminarPedido( pedido, conexao ); // Elimina o pedido
 
@@ -4737,7 +4739,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
 //                    itemVendaDao.create ( itemVenda );
                     if ( !itemVendasController.salvar( itemVenda ) )
                     {
-                        DocumentosController.rollBackTransaction( conexaoTransaction );
+                        DocumentosController.rollback( conexaoTransaction );
                         conexaoTransaction.close();
                         return;
                     }
@@ -4782,7 +4784,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
                 e.printStackTrace();
                 efectuada = false;
                 JOptionPane.showMessageDialog( null, "Falha ao registrar o produto: " + itemVenda.getCodigoProduto().getCodigo() + " na Factura" );
-                DocumentosController.rollBackTransaction( conexaoTransaction );
+                DocumentosController.rollback( conexaoTransaction );
                 conexaoTransaction.close();
                 return;
             }
@@ -4790,7 +4792,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
 
         if ( efectuada )
         {
-//            DocumentoDao.commitTransaction( conexao );
+//            DocumentoDao.commit( conexao );
             gorjeta = 0;
 //          act actualizar_cod_doc ( venda_local.getDataVenda () );
             alterar_status_pedido_lugar( lugar );
@@ -5021,7 +5023,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
 
     private void adicionar_centro_botao( int idTipoPorduto )
     {
-        BDConexao conexaoLocal = new BDConexao();
+        BDConexao conexaoLocal = BDConexao.getInstancia();
         try
         {
 
@@ -5466,7 +5468,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
     public static int getQuantidadeProduto( int cod_produto )
     {
 
-        BDConexao conexaoLocal = new BDConexao();
+        BDConexao conexaoLocal = BDConexao.getInstancia();
         String sql = "SELECT quantidade_existente FROM  tb_stock WHERE  cod_produto_codigo = " + cod_produto + " AND cod_armazem = " + id_armzem;
 
         ResultSet rs = conexaoLocal.executeQuery( sql );
@@ -5492,7 +5494,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
     public static int getQuantidadeProduto( int cod_produto, int idArmazem )
     {
 
-        BDConexao conexaoLocal = new BDConexao();
+        BDConexao conexaoLocal = BDConexao.getInstancia();
         String sql = "SELECT quantidade_existente FROM  tb_stock WHERE  cod_produto_codigo = " + cod_produto + " AND cod_armazem = " + idArmazem;
 
         ResultSet rs = conexaoLocal.executeQuery( sql );
@@ -5542,7 +5544,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
     {
 //        public  void actualizar_quantidade(int cod, int quantidade) {
 
-        BDConexao conexaoLocal = new BDConexao();
+        BDConexao conexaoLocal = BDConexao.getInstancia();
         String sql = "UPDATE tb_stock SET quantidade_existente =  " + ( getQuantidadeProduto( cod, idArmazem ) - quantidade ) + " WHERE cod_produto_codigo = " + cod + " AND cod_armazem = " + idArmazem;
 //        String sql = "UPDATE tb_stock SET quantidade_existente =  "  + ( getQuantidadeProduto(cod) - quantidade)     +" WHERE cod_produto_codigo = "   +cod;
         conexaoLocal.executeUpdate( sql );
@@ -5574,7 +5576,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
 //    }
     public static boolean estado_critico( int codigo_produto ) throws SQLException
     {
-        BDConexao conexaoLocal = new BDConexao();
+        BDConexao conexaoLocal = BDConexao.getInstancia();
         stocksController = new StoksController( conexaoLocal );
 
         TbStock stock = stocksController.getStockByIdProdutoAndIdArmazem( codigo_produto, id_armzem );
@@ -5658,7 +5660,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
 
     public double qtd_possivel_quantidade( int codigo_produto )
     {
-        BDConexao conexaoLocal = new BDConexao();
+        BDConexao conexaoLocal = BDConexao.getInstancia();
         TbStock stock = stocksController.getStockByIdProdutoAndIdArmazem( codigo_produto, 1 );
         double quant_possivel = stock.getQuantidadeExistente() - stock.getQuantBaixa();
 
@@ -6677,7 +6679,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
 
     public static void accao_codigo_interno_enter_busca_exterior( int codigo )
     {
-        BDConexao conexaoLocal = new BDConexao();
+        BDConexao conexaoLocal = BDConexao.getInstancia();
         ProdutosController produtosControllerLocal = new ProdutosController( conexaoLocal );
 
         try
@@ -6748,7 +6750,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
 //    }
     public static void adicionar_preco_quantidade_anitgo()
     {
-        BDConexao conexaoLocal = new BDConexao();
+        BDConexao conexaoLocal = BDConexao.getInstancia();
         StoksController stockControllerLocal = new StoksController( conexaoLocal );
         try
         {
@@ -6793,7 +6795,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
 //    public static void procedimento_adicionar( String designacao )
 //    {
 //
-//        BDConexao conexaoLocal = new BDConexao();
+//        BDConexao conexaoLocal = BDConexao.getInstancia();
 //        ProdutosController produtosControllerLocal = new ProdutosController( conexaoLocal );
 //        int codigo_produto = produtosControllerLocal.getIdProduto( designacao );
 //        System.out.println( "Aqui vai o codigo" + codigo_produto );
@@ -6830,7 +6832,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
     public static void procedimento_adicionar( String designacao )
     {
 
-        BDConexao conexaoLocal = new BDConexao();
+        BDConexao conexaoLocal = BDConexao.getInstancia();
         ProdutosController produtosControllerLocal = new ProdutosController( conexaoLocal );
         int codigo_produto = produtosControllerLocal.getIdProduto( designacao );
         System.out.println( "Aqui vai o codigo" + codigo_produto );
@@ -6876,7 +6878,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
 
     public static boolean estado_critico() throws SQLException
     {
-        BDConexao conexaoLocal = new BDConexao();
+        BDConexao conexaoLocal = BDConexao.getInstancia();
         TbStock stock = stocksController.getStockByIdProdutoAndIdArmazem1( getCodigoProduto(), getCodigoArmazem(), conexaoLocal );
         double qtd_minima = stock.getQuantBaixa(),
                 qtd_existente = stock.getQuantidadeExistente(),
@@ -6902,7 +6904,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
 
     private static boolean qtd_possivel( String designacao )
     {
-        BDConexao conexaoLocal = new BDConexao();
+        BDConexao conexaoLocal = BDConexao.getInstancia();
 //            TbDadosInstituicao dadosInstituicao = dadosInstituicaoDao.findTbDadosInstituicao( 1 );
         int idProduto = produtoDao.getIdByDescricao( designacao );
         TbProduto produto = produtoDao.findTbProduto( idProduto );
@@ -6930,8 +6932,8 @@ public class VendasPraticasVisao extends javax.swing.JFrame
 
     private static boolean qtd_possivel( String designacao, double qtd )
     {
-        conexaoTransaction = new BDConexao();
-        DocumentosController.startTransaction( conexaoTransaction );
+        conexaoTransaction = BDConexao.getInstancia();
+        DocumentosController.start( conexaoTransaction );
 //            TbDadosInstituicao dadosInstituicao = dadosInstituicaoDao.findTbDadosInstituicao( 1 );
         int idProduto = produtoDao.getIdByDescricao( designacao );
         TbProduto produto = produtoDao.findTbProduto( idProduto );
@@ -7240,7 +7242,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
 
         try
         {
-            BDConexao conexaoLocal = new BDConexao();
+            BDConexao conexaoLocal = BDConexao.getInstancia();
             TbProduto produto_local = (TbProduto) produtosController.findById( getCodigoProduto1() );
 
             TbStock stockLocal = stocksController.getStockByIdProdutoAndIdArmazem1( getCodigoProduto1(), getCodigoArmazem(), conexaoLocal );
@@ -7390,7 +7392,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
         boolean possivel = true;
         String msg = "O prato: " + prato + " não poder ser vendido, porque o(s) ingrediente(s): \n";
 
-        BDConexao conexaoLocal = new BDConexao();
+        BDConexao conexaoLocal = BDConexao.getInstancia();
         for ( LinhaFichaTecnica l : linhasFichaTecnica )
         {
 

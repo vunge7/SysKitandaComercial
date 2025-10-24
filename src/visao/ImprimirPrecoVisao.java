@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.DadosInstituicaoDao;
 import dao.PrecoDao;
 import dao.ProdutoDao;
@@ -170,7 +172,7 @@ public class ImprimirPrecoVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                ImprimirPrecoVisao dialog = new ImprimirPrecoVisao( new BDConexao() );
+                ImprimirPrecoVisao dialog = new ImprimirPrecoVisao( BDConexao.getInstancia() );
                 dialog.addWindowListener( new java.awt.event.WindowAdapter()
                 {
                     @Override

@@ -5,6 +5,8 @@
  */
 package tesouraria.novo.controller;
 
+
+import java.sql.Connection;
 import entity.TipoConta;
 import java.sql.ResultSet;
 import java.sql.SQLException;

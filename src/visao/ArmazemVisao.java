@@ -6,6 +6,8 @@
 
 package visao;
 
+
+import java.sql.Connection;
 import dao.ArmazemDao;
 import dao.DadosInstituicaoDao;
 import entity.TbArmazem;
@@ -266,7 +268,7 @@ public class ArmazemVisao extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ArmazemVisao(new BDConexao()).setVisible(true);
+                new ArmazemVisao(BDConexao.getInstancia()).setVisible(true);
             }
         });
     }

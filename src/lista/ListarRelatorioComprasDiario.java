@@ -4,7 +4,8 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import dao.AccessoArmazemDao;
 import dao.ArmazemDao;
 import dao.FornecedorDao;
@@ -64,7 +65,7 @@ public class ListarRelatorioComprasDiario extends javax.swing.JFrame {
 //        cmbArmazem.setModel(new DefaultComboBoxModel(armazemDao.buscaTodos()));
 //        accao_mostar_campo_fornecedor(false);
 //        cmbFornecedor.setModel(new DefaultComboBoxModel(fornecedorDao.buscaTodos()));
-       // conexao = new BDConexao();
+       // conexao = BDConexao.getInstancia();
         
       
        
@@ -105,7 +106,7 @@ public class ListarRelatorioComprasDiario extends javax.swing.JFrame {
     
     public void mostrar() throws SQLException {
         
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
    
     
@@ -158,7 +159,7 @@ public class ListarRelatorioComprasDiario extends javax.swing.JFrame {
     
     
     public void mostrar2() throws SQLException {
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
         String relatorio = "";
         
@@ -415,7 +416,7 @@ public class ListarRelatorioComprasDiario extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    new ListarRelatorioComprasDiario(15, new BDConexao()).setVisible(true);
+                    new ListarRelatorioComprasDiario(15, BDConexao.getInstancia()).setVisible(true);
                 } catch (SQLException ex) {
                     Logger.getLogger(ListarRelatorioComprasDiario.class.getName()).log(Level.SEVERE, null, ex);
                 }

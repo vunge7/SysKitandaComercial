@@ -4,6 +4,8 @@
  */
 package rh.visao;
 
+
+import java.sql.Connection;
 import dao.ItemPermissaoDao;
 import dao.PermissaoDao;
 import dao.UsuarioDao;

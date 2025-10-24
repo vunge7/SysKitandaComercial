@@ -4,7 +4,8 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.Date;
@@ -258,7 +259,7 @@ public class RelatorioAcertoStock extends javax.swing.JFrame
         {
             public void run()
             {
-                new RelatorioAcertoStock( 15, new BDConexao() ).setVisible( true );
+                new RelatorioAcertoStock( 15, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }
@@ -281,7 +282,7 @@ public class RelatorioAcertoStock extends javax.swing.JFrame
     public void mostrar() throws SQLException
     {
 
-        Connection connection = ( Connection ) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
 
         hashMap.put( "data_inicio", dc_inicio.getDate() );

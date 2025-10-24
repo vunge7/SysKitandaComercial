@@ -10,6 +10,8 @@
  */
 package tesouraria.visao;
 
+
+import java.sql.Connection;
 import visao.*;
 //import dao.BancoDao;
 import dao.TransferenciaBancariaDao;
@@ -54,7 +56,7 @@ public class TransferenciasBancarias extends javax.swing.JFrame
         initComponents();
         this.idUser = idUser;
         setLocationRelativeTo( null );
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
         txtValorTranferencia.setDocument( new PermitirNumeros() );
         actualizar();
         txtValorTranferencia.setText( "0" );

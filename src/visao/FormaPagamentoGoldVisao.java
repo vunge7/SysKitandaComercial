@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 //import com.sun.org.apache.bcel.internal.generic.DCMPG;
 import comercial.controller.CaixasController;
 import comercial.controller.FormaPagamentoController;
@@ -425,7 +427,7 @@ public class FormaPagamentoGoldVisao extends javax.swing.JDialog
         {
             public void run()
             {
-                FormaPagamentoGoldVisao dialog = new FormaPagamentoGoldVisao( new javax.swing.JFrame(), true, new BDConexao() );
+                FormaPagamentoGoldVisao dialog = new FormaPagamentoGoldVisao( new javax.swing.JFrame(), true, BDConexao.getInstancia() );
                 dialog.addWindowListener( new java.awt.event.WindowAdapter()
                 {
                     @Override

@@ -4,6 +4,8 @@
  */
 package lista;
 
+
+import java.sql.Connection;
 import dao.ArmazemDao;
 import dao.ItemVendaDao;
 import dao.PrecoDao;
@@ -313,7 +315,7 @@ public class ListarRelatorioQuebras extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    new ListarRelatorioQuebras(new BDConexao()).setVisible(true);
+                    new ListarRelatorioQuebras(BDConexao.getInstancia()).setVisible(true);
                 } catch (Exception ex) {
                     Logger.getLogger(ListarRelatorioQuebras.class.getName()).log(Level.SEVERE, null, ex);
                 }

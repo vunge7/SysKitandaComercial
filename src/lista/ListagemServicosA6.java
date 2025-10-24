@@ -4,7 +4,8 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import java.io.File;
 import java.util.HashMap;
 import javax.swing.JOptionPane;
@@ -22,7 +23,7 @@ public class ListagemServicosA6 {
     
     
     
-    private BDConexao conexao  = new BDConexao();
+    private BDConexao conexao  = BDConexao.getInstancia();
     private int cod_armazem = 0, cod_fornecedor;
     private String armazem = "", fornecedor = "";
     private boolean a4 =  true;
@@ -34,7 +35,7 @@ public class ListagemServicosA6 {
     }
 
       public void mostrarProdutos() {
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
         String relatorio = "";
         

@@ -4,7 +4,8 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import com.toedter.calendar.JDateChooser;
 import dao.AccessoArmazemDao;
 import dao.ArmazemDao;
@@ -100,7 +101,7 @@ public class ListarVendasByClientesVips extends javax.swing.JFrame
 
         String sql = "SELECT  SUM(total_venda) as soma FROM tb_venda WHERE codigo_cliente = " + codCliente + "  AND performance = 'false'  AND status_eliminado = 'false'  AND credito = 'false'  AND dataVenda = '" + getDataSelecionadaString() + "'";
         System.out.println( sql );
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -123,7 +124,7 @@ public class ListarVendasByClientesVips extends javax.swing.JFrame
 
         String sql = "SELECT  SUM(total_venda) as soma FROM tb_venda WHERE DATE(dataVenda) BETWEEN '" + getDataSelecionadaString( dc_inicio ) + "' AND '" + getDataSelecionadaString( dc_fim ) + "' AND  codigo_cliente = " + codCliente + "  AND performance = 'false'  AND fk_documento = " + cod_documento + " AND status_eliminado = 'false'  AND credito = 'false' AND idArmazemFK = " + cod_armazem;
         System.out.println( sql );
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -147,7 +148,7 @@ public class ListarVendasByClientesVips extends javax.swing.JFrame
 
         String sql = "SELECT codigo FROM  tb_cliente WHERE( nome  = '" + getCliente() + "')";
 
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -212,7 +213,7 @@ public class ListarVendasByClientesVips extends javax.swing.JFrame
     public void mostrarClientes() throws SQLException
     {
 
-        Connection connection = ( Connection ) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
 
         hashMap.put( "NOME_CLIENTE", getCliente() );
@@ -697,7 +698,7 @@ public class ListarVendasByClientesVips extends javax.swing.JFrame
         {
             public void run()
             {
-                new ListarVendasByClientesVips( 15, new BDConexao() ).setVisible( true );
+                new ListarVendasByClientesVips( 15, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }

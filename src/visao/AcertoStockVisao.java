@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.ArmazensAccessoController;
 import comercial.controller.ArmazensController;
 import comercial.controller.ProdutosController;
@@ -377,7 +379,7 @@ public class AcertoStockVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new AcertoStockVisao( 15, new BDConexao() ).setVisible( true );
+                new AcertoStockVisao( 15, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }

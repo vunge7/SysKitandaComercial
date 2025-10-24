@@ -4,6 +4,8 @@
  */
 package rh.visao;
 
+
+import java.sql.Connection;
 import dao.PedidoFeriaDao;
 import dao.FuncionarioDao;
 import dao.UsuarioDao;

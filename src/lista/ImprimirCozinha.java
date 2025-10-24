@@ -4,7 +4,8 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.*;
@@ -39,7 +40,7 @@ public class ImprimirCozinha
 {
 
     private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
-    private BDConexao conexao = new BDConexao();
+    private BDConexao conexao = BDConexao.getInstancia();
     private int cod_pedido, cod_produto;
     String impressoraCozinha = "EPSON TM-T88V Receipt";
 
@@ -71,7 +72,7 @@ public class ImprimirCozinha
     private void printReportToPrinterFILTRAR( String report, String impressora, HashMap parameters ) throws JRException
     {
         /*obtendo a conexão*/
-        Connection connection = ( Connection ) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         /*configurando os parametros para a submisão no ficheiro*/
         report = getCaminho();
 
@@ -152,7 +153,7 @@ public class ImprimirCozinha
     public void mostrarVendaFiltrada()
     {
 
-        Connection connection = ( Connection ) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
 
         hashMap.put( "CODIGO_PEDIDO", cod_pedido );

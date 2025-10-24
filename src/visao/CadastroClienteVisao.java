@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import controller.ClienteEncomendaController;
 import exemplos.PermitirNumeros;
 import java.awt.event.KeyEvent;
@@ -41,7 +43,7 @@ public final class CadastroClienteVisao extends javax.swing.JFrame {
         txtTelefone.setDocument( new PermitirNumeros() );
         txtNomeCliente.requestFocus();
         btnNovo.setEnabled(false);
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
         
         getClientes();
         txtIniciasNome.addKeyListener(  new TratarEventoTeclado() );

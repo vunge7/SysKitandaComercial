@@ -308,90 +308,191 @@ public class VendasController implements EntidadeFactory
 
         conexao.executeUpdate( sql );
     }
+    
+    public Integer salvarRetornaID(TbVenda venda) throws SQLException {
+    String sql = "INSERT INTO tb_venda ("
+            + "dataVenda, total_venda, performance, credito, valor_entregue, troco, hora, nome_cliente, status_eliminado, desconto_total, "
+            + "total_iva, total_geral, cod_fact, assinatura, hash_cod, obs, ref_cod_fact, total_por_extenso, status_recibo, desconto_comercial, "
+            + "desconto_financeiro, total_incidencia, local_carga, local_descarga, idBanco, codigo_usuario, codigo_cliente, idArmazemFK, fk_documento, fk_ano_economico, "
+            + "fk_cambio, dataVencimento, cliente_nif, total_incidencia_isento, ref_data_fact, cont, nome_consumidor_final, referencia, matricula, modelo, "
+            + "num_chassi, num_motor, kilometro, nome_motorista, marca_carro, cor_carro, n_doc_motorista, total_retencao, gorjeta"
+            + ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
-    public Integer salvarRetornaID( TbVenda venda ) throws SQLException
-    {
-        String sql = "INSERT INTO tb_venda ("
-                + "dataVenda, total_venda, performance, credito, valor_entregue, troco, hora, nome_cliente, status_eliminado, desconto_total, "
-                + "total_iva, total_geral, cod_fact, assinatura, hash_cod, obs, ref_cod_fact, total_por_extenso, status_recibo, desconto_comercial, "
-                + "desconto_financeiro, total_incidencia, local_carga, local_descarga, idBanco, codigo_usuario, codigo_cliente, idArmazemFK, fk_documento, fk_ano_economico, "
-                + "fk_cambio, dataVencimento, cliente_nif, total_incidencia_isento, ref_data_fact, cont, nome_consumidor_final, referencia, matricula, modelo, "
-                + "num_chassi, num_motor, kilometro, nome_motorista, marca_carro, cor_carro, n_doc_motorista, total_retencao, gorjeta "
-                + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, "
-                + "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
-                + "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
-                + "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
-                + "?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    try (PreparedStatement stmt = conexao.getConnectionAtiva().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-        PreparedStatement stmt = conexao.getConnection1().prepareStatement( sql, Statement.RETURN_GENERATED_KEYS );
+        // 1 - Datas
+        stmt.setTimestamp(1, new java.sql.Timestamp(venda.getDataVenda().getTime()));
 
-//        stmt.setDate( 1, new java.sql.Date( venda.getDataVenda().getTime() ) );
-        stmt.setTimestamp( 1, new java.sql.Timestamp( venda.getDataVenda().getTime() ) );
+        // 2 - Valores principais
+        stmt.setBigDecimal(2, venda.getTotalVenda());
+        stmt.setString(3, venda.getPerformance());
+        stmt.setString(4, venda.getCredito());
+        stmt.setBigDecimal(5, venda.getValorEntregue());
+        stmt.setBigDecimal(6, venda.getTroco());
 
-        stmt.setBigDecimal( 2, venda.getTotalVenda() );
-        stmt.setString( 3, venda.getPerformance() );
-        stmt.setString( 4, venda.getCredito() );
-        stmt.setBigDecimal( 5, venda.getValorEntregue() );
-        stmt.setBigDecimal( 6, venda.getTroco() );
+        // 7 - Hora e cliente
+        stmt.setTime(7, new java.sql.Time(venda.getHora().getTime()));
+        stmt.setString(8, venda.getNomeCliente());
+        stmt.setString(9, venda.getStatusEliminado());
 
-        stmt.setTime( 7, new java.sql.Time( venda.getHora().getTime() ) );
-        stmt.setString( 8, venda.getNomeCliente() );
-        stmt.setString( 9, venda.getStatusEliminado() );
-        stmt.setBigDecimal( 10, venda.getDescontoTotal() );
-        stmt.setBigDecimal( 11, venda.getTotalIva() );
-        stmt.setBigDecimal( 12, venda.getTotalGeral() );
-        stmt.setString( 13, venda.getCodFact() );
-        stmt.setString( 14, venda.getAssinatura() );
-        stmt.setString( 15, venda.getHashCod() );
-        stmt.setString( 16, venda.getObs() );
-        stmt.setString( 17, venda.getRefCodFact() );
-        stmt.setString( 18, venda.getTotalPorExtenso() );
-        stmt.setBoolean( 19, venda.getStatusRecibo() );
-        stmt.setBigDecimal( 20, venda.getDescontoComercial() );
-        stmt.setBigDecimal( 21, venda.getDescontoFinanceiro() );
-        stmt.setBigDecimal( 22, venda.getTotalIncidencia() );
-        stmt.setString( 23, venda.getLocalCarga() );
-        stmt.setString( 24, venda.getLocalDescarga() );
+        // 10 - Totais e dados fiscais
+        stmt.setBigDecimal(10, venda.getDescontoTotal());
+        stmt.setBigDecimal(11, venda.getTotalIva());
+        stmt.setBigDecimal(12, venda.getTotalGeral());
+        stmt.setString(13, venda.getCodFact());
+        stmt.setString(14, venda.getAssinatura());
+        stmt.setString(15, venda.getHashCod());
+        stmt.setString(16, venda.getObs());
+        stmt.setString(17, venda.getRefCodFact());
+        stmt.setString(18, venda.getTotalPorExtenso());
+        stmt.setBoolean(19, venda.getStatusRecibo());
+        stmt.setBigDecimal(20, venda.getDescontoComercial());
+        stmt.setBigDecimal(21, venda.getDescontoFinanceiro());
+        stmt.setBigDecimal(22, venda.getTotalIncidencia());
+        stmt.setString(23, venda.getLocalCarga());
+        stmt.setString(24, venda.getLocalDescarga());
 
-        stmt.setInt( 25, venda.getIdBanco() != null ? venda.getIdBanco().getIdBanco() : 0 );
-        stmt.setInt( 26, venda.getCodigoUsuario() != null ? venda.getCodigoUsuario().getCodigo() : 0 );
-        stmt.setInt( 27, venda.getCodigoCliente() != null ? venda.getCodigoCliente().getCodigo() : 0 );
-        stmt.setInt( 28, venda.getIdArmazemFK() != null ? venda.getIdArmazemFK().getCodigo() : 0 );
-        stmt.setInt( 29, venda.getFkDocumento() != null ? venda.getFkDocumento().getPkDocumento() : 0 );
-        stmt.setInt( 30, venda.getFkAnoEconomico() != null ? venda.getFkAnoEconomico().getPkAnoEconomico() : 0 );
-        stmt.setInt( 31, venda.getFkCambio() != null ? venda.getFkCambio().getPkCambio() : 0 );
+        // 25 - FK (relacionamentos opcionais)
+        stmt.setInt(25, (venda.getIdBanco() != null) ? venda.getIdBanco().getIdBanco() : 0);
+        stmt.setInt(26, (venda.getCodigoUsuario() != null) ? venda.getCodigoUsuario().getCodigo() : 0);
+        stmt.setInt(27, (venda.getCodigoCliente() != null) ? venda.getCodigoCliente().getCodigo() : 0);
+        stmt.setInt(28, (venda.getIdArmazemFK() != null) ? venda.getIdArmazemFK().getCodigo() : 0);
+        stmt.setInt(29, (venda.getFkDocumento() != null) ? venda.getFkDocumento().getPkDocumento() : 0);
+        stmt.setInt(30, (venda.getFkAnoEconomico() != null) ? venda.getFkAnoEconomico().getPkAnoEconomico() : 0);
+        stmt.setInt(31, (venda.getFkCambio() != null) ? venda.getFkCambio().getPkCambio() : 0);
 
-        stmt.setDate( 32, venda.getDataVencimento() != null ? new java.sql.Date( venda.getDataVencimento().getTime() ) : null );
-        stmt.setString( 33, venda.getClienteNif() );
-        stmt.setBigDecimal( 34, venda.getTotalIncidenciaIsento() );
-        stmt.setDate( 35, venda.getRefDataFact() != null ? new java.sql.Date( venda.getRefDataFact().getTime() ) : null );
-        stmt.setInt( 36, venda.getCont() );
-        stmt.setString( 37, venda.getNomeConsumidorFinal() );
-        stmt.setString( 38, venda.getReferencia() );
-        stmt.setString( 39, venda.getMatricula() );
-        stmt.setString( 40, venda.getModelo() );
-        stmt.setString( 41, venda.getNumChassi() );
-        stmt.setString( 42, venda.getNumMotor() );
-        stmt.setString( 43, venda.getKilometro() );
-        stmt.setString( 44, venda.getNomeMotorista() );
-        stmt.setString( 45, venda.getMarcaCarro() );
-        stmt.setString( 46, venda.getCorCarro() );
-        stmt.setString( 47, venda.getNDocMotorista() );
-        stmt.setBigDecimal( 48, venda.getTotalRetencao() );
-        stmt.setBigDecimal( 49, venda.getGorjeta() );
+        // 32 - Datas opcionais e campos complementares
+        if (venda.getDataVencimento() != null)
+            stmt.setDate(32, new java.sql.Date(venda.getDataVencimento().getTime()));
+        else
+            stmt.setNull(32, java.sql.Types.DATE);
+
+        stmt.setString(33, venda.getClienteNif());
+        stmt.setBigDecimal(34, venda.getTotalIncidenciaIsento());
+
+        if (venda.getRefDataFact() != null)
+            stmt.setDate(35, new java.sql.Date(venda.getRefDataFact().getTime()));
+        else
+            stmt.setNull(35, java.sql.Types.DATE);
+
+        stmt.setInt(36, venda.getCont());
+        stmt.setString(37, venda.getNomeConsumidorFinal());
+        stmt.setString(38, venda.getReferencia());
+        stmt.setString(39, venda.getMatricula());
+        stmt.setString(40, venda.getModelo());
+        stmt.setString(41, venda.getNumChassi());
+        stmt.setString(42, venda.getNumMotor());
+        stmt.setString(43, venda.getKilometro());
+        stmt.setString(44, venda.getNomeMotorista());
+        stmt.setString(45, venda.getMarcaCarro());
+        stmt.setString(46, venda.getCorCarro());
+        stmt.setString(47, venda.getNDocMotorista());
+        stmt.setBigDecimal(48, venda.getTotalRetencao());
+        stmt.setBigDecimal(49, venda.getGorjeta());
 
         int resultado = stmt.executeUpdate();
-        if ( resultado > 0 )
-        {
-            ResultSet rs = stmt.getGeneratedKeys();
-            if ( rs.next() )
-            {
-                return rs.getInt( 1 ); // Código gerado
+
+        if (resultado > 0) {
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
             }
         }
 
-        return null;
+    } catch (SQLException e) {
+        System.err.println("[ERRO] Falha ao salvar venda: " + e.getMessage());
+        e.printStackTrace();
+        throw e; // Propaga o erro para tratamento superior, se necessário
     }
+
+    return null;
+}
+
+
+//    public Integer salvarRetornaID( TbVenda venda ) throws SQLException
+//    {
+//        String sql = "INSERT INTO tb_venda ("
+//                + "dataVenda, total_venda, performance, credito, valor_entregue, troco, hora, nome_cliente, status_eliminado, desconto_total, "
+//                + "total_iva, total_geral, cod_fact, assinatura, hash_cod, obs, ref_cod_fact, total_por_extenso, status_recibo, desconto_comercial, "
+//                + "desconto_financeiro, total_incidencia, local_carga, local_descarga, idBanco, codigo_usuario, codigo_cliente, idArmazemFK, fk_documento, fk_ano_economico, "
+//                + "fk_cambio, dataVencimento, cliente_nif, total_incidencia_isento, ref_data_fact, cont, nome_consumidor_final, referencia, matricula, modelo, "
+//                + "num_chassi, num_motor, kilometro, nome_motorista, marca_carro, cor_carro, n_doc_motorista, total_retencao, gorjeta "
+//                + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, "
+//                + "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+//                + "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+//                + "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+//                + "?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+//
+//        PreparedStatement stmt = conexao.getConnectionAtiva().prepareStatement( sql, Statement.RETURN_GENERATED_KEYS );
+//
+////        stmt.setDate( 1, new java.sql.Date( venda.getDataVenda().getTime() ) );
+//        stmt.setTimestamp( 1, new java.sql.Timestamp( venda.getDataVenda().getTime() ) );
+//
+//        stmt.setBigDecimal( 2, venda.getTotalVenda() );
+//        stmt.setString( 3, venda.getPerformance() );
+//        stmt.setString( 4, venda.getCredito() );
+//        stmt.setBigDecimal( 5, venda.getValorEntregue() );
+//        stmt.setBigDecimal( 6, venda.getTroco() );
+//
+//        stmt.setTime( 7, new java.sql.Time( venda.getHora().getTime() ) );
+//        stmt.setString( 8, venda.getNomeCliente() );
+//        stmt.setString( 9, venda.getStatusEliminado() );
+//        stmt.setBigDecimal( 10, venda.getDescontoTotal() );
+//        stmt.setBigDecimal( 11, venda.getTotalIva() );
+//        stmt.setBigDecimal( 12, venda.getTotalGeral() );
+//        stmt.setString( 13, venda.getCodFact() );
+//        stmt.setString( 14, venda.getAssinatura() );
+//        stmt.setString( 15, venda.getHashCod() );
+//        stmt.setString( 16, venda.getObs() );
+//        stmt.setString( 17, venda.getRefCodFact() );
+//        stmt.setString( 18, venda.getTotalPorExtenso() );
+//        stmt.setBoolean( 19, venda.getStatusRecibo() );
+//        stmt.setBigDecimal( 20, venda.getDescontoComercial() );
+//        stmt.setBigDecimal( 21, venda.getDescontoFinanceiro() );
+//        stmt.setBigDecimal( 22, venda.getTotalIncidencia() );
+//        stmt.setString( 23, venda.getLocalCarga() );
+//        stmt.setString( 24, venda.getLocalDescarga() );
+//
+//        stmt.setInt( 25, venda.getIdBanco() != null ? venda.getIdBanco().getIdBanco() : 0 );
+//        stmt.setInt( 26, venda.getCodigoUsuario() != null ? venda.getCodigoUsuario().getCodigo() : 0 );
+//        stmt.setInt( 27, venda.getCodigoCliente() != null ? venda.getCodigoCliente().getCodigo() : 0 );
+//        stmt.setInt( 28, venda.getIdArmazemFK() != null ? venda.getIdArmazemFK().getCodigo() : 0 );
+//        stmt.setInt( 29, venda.getFkDocumento() != null ? venda.getFkDocumento().getPkDocumento() : 0 );
+//        stmt.setInt( 30, venda.getFkAnoEconomico() != null ? venda.getFkAnoEconomico().getPkAnoEconomico() : 0 );
+//        stmt.setInt( 31, venda.getFkCambio() != null ? venda.getFkCambio().getPkCambio() : 0 );
+//
+//        stmt.setDate( 32, venda.getDataVencimento() != null ? new java.sql.Date( venda.getDataVencimento().getTime() ) : null );
+//        stmt.setString( 33, venda.getClienteNif() );
+//        stmt.setBigDecimal( 34, venda.getTotalIncidenciaIsento() );
+//        stmt.setDate( 35, venda.getRefDataFact() != null ? new java.sql.Date( venda.getRefDataFact().getTime() ) : null );
+//        stmt.setInt( 36, venda.getCont() );
+//        stmt.setString( 37, venda.getNomeConsumidorFinal() );
+//        stmt.setString( 38, venda.getReferencia() );
+//        stmt.setString( 39, venda.getMatricula() );
+//        stmt.setString( 40, venda.getModelo() );
+//        stmt.setString( 41, venda.getNumChassi() );
+//        stmt.setString( 42, venda.getNumMotor() );
+//        stmt.setString( 43, venda.getKilometro() );
+//        stmt.setString( 44, venda.getNomeMotorista() );
+//        stmt.setString( 45, venda.getMarcaCarro() );
+//        stmt.setString( 46, venda.getCorCarro() );
+//        stmt.setString( 47, venda.getNDocMotorista() );
+//        stmt.setBigDecimal( 48, venda.getTotalRetencao() );
+//        stmt.setBigDecimal( 49, venda.getGorjeta() );
+//
+//        int resultado = stmt.executeUpdate();
+//        if ( resultado > 0 )
+//        {
+//            ResultSet rs = stmt.getGeneratedKeys();
+//            if ( rs.next() )
+//            {
+//                return rs.getInt( 1 ); // Código gerado
+//            }
+//        }
+//
+//        return null;
+//    }
 
     public List<TbVenda> findVendasByClientes( int codigo )
     {
@@ -1661,42 +1762,98 @@ public class VendasController implements EntidadeFactory
         }
 
     }
+    
+    public TbVenda findByCodFactReemprensao(String codFact) {
+    TbVenda venda = null;
 
-    public TbVenda findByCodFactReemprensao( String codFact )
-    {
-        TbVenda venda = null;
-        String sql = "SELECT * FROM tb_venda WHERE cod_fact = ?"; // ajuste conforme o nome real da tabela
+    String sql = "SELECT * FROM tb_venda WHERE cod_fact = ?";
 
-        BDConexao bd = new BDConexao(); // cria a conexão
+    BDConexao conexao = BDConexao.getInstancia();
 
-        try ( Connection conn = bd.getConnection1(); PreparedStatement ps = conn.prepareStatement( sql ) )
-        {
+    try (PreparedStatement ps = conexao.getConnectionAtiva().prepareStatement(sql)) {
 
-            ps.setString( 1, codFact ); // define o parâmetro
+        ps.setString(1, codFact);
 
-            try ( ResultSet rs = ps.executeQuery() )
-            {
-                if ( rs.next() )
-                {
-                    venda = new TbVenda();
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                venda = new TbVenda();
 
-                    // Mapeando os campos do ResultSet para o objeto TbVenda
-                    venda.setCodigo( rs.getInt( "codigo" ) ); // exemplo
-                    venda.setCodFact( rs.getString( "cod_fact" ) );
-                    venda.setDataVenda( rs.getDate( "dataVenda" ) );
-                    venda.setTotalVenda( rs.getBigDecimal( "total_venda" ) );
-                    // mapeie todos os outros campos que existirem
-                }
+                // Mapeamento básico
+                venda.setCodigo(rs.getInt("codigo"));
+                venda.setCodFact(rs.getString("cod_fact"));
+                venda.setDataVenda(rs.getTimestamp("dataVenda")); // usa Timestamp se a coluna tiver data/hora
+                venda.setTotalVenda(rs.getBigDecimal("total_venda"));
+                venda.setTotalGeral(rs.getBigDecimal("total_geral"));
+                venda.setTotalIva(rs.getBigDecimal("total_iva"));
+                venda.setValorEntregue(rs.getBigDecimal("valor_entregue"));
+                venda.setTroco(rs.getBigDecimal("troco"));
+                venda.setCredito(rs.getString("credito"));
+                venda.setStatusEliminado(rs.getString("status_eliminado"));
+                venda.setDescontoTotal(rs.getBigDecimal("desconto_total"));
+                venda.setObs(rs.getString("obs"));
+                venda.setNomeCliente(rs.getString("nome_cliente"));
+                venda.setAssinatura(rs.getString("assinatura"));
+                venda.setHashCod(rs.getString("hash_cod"));
+                venda.setRefCodFact(rs.getString("ref_cod_fact"));
+                venda.setClienteNif(rs.getString("cliente_nif"));
+                venda.setReferencia(rs.getString("referencia"));
+                venda.setTotalPorExtenso(rs.getString("total_por_extenso"));
+                venda.setMatricula(rs.getString("matricula"));
+                venda.setModelo(rs.getString("modelo"));
+                venda.setNomeMotorista(rs.getString("nome_motorista"));
+                venda.setMarcaCarro(rs.getString("marca_carro"));
+                venda.setCorCarro(rs.getString("cor_carro"));
+                venda.setNDocMotorista(rs.getString("n_doc_motorista"));
+                venda.setGorjeta(rs.getBigDecimal("gorjeta"));
+                venda.setTotalRetencao(rs.getBigDecimal("total_retencao"));
+                // Adiciona mais campos conforme tua entidade TbVenda
             }
-
-        }
-        catch ( SQLException e )
-        {
-            e.printStackTrace(); // ou use logging
         }
 
-        return venda;
+    } catch (SQLException e) {
+        System.err.println("[ERRO] Falha ao buscar venda por código de factura: " + e.getMessage());
+        e.printStackTrace();
     }
+
+    return venda;
+}
+
+
+//    public TbVenda findByCodFactReemprensao( String codFact )
+//    {
+//        TbVenda venda = null;
+//        String sql = "SELECT * FROM tb_venda WHERE cod_fact = ?"; // ajuste conforme o nome real da tabela
+//
+//        BDConexao bd = BDConexao.getInstancia(); // cria a conexão
+//
+//        try ( Connection conn = bd.getConnection1(); PreparedStatement ps = conn.prepareStatement( sql ) )
+//        {
+//
+//            ps.setString( 1, codFact ); // define o parâmetro
+//
+//            try ( ResultSet rs = ps.executeQuery() )
+//            {
+//                if ( rs.next() )
+//                {
+//                    venda = new TbVenda();
+//
+//                    // Mapeando os campos do ResultSet para o objeto TbVenda
+//                    venda.setCodigo( rs.getInt( "codigo" ) ); // exemplo
+//                    venda.setCodFact( rs.getString( "cod_fact" ) );
+//                    venda.setDataVenda( rs.getDate( "dataVenda" ) );
+//                    venda.setTotalVenda( rs.getBigDecimal( "total_venda" ) );
+//                    // mapeie todos os outros campos que existirem
+//                }
+//            }
+//
+//        }
+//        catch ( SQLException e )
+//        {
+//            e.printStackTrace(); // ou use logging
+//        }
+//
+//        return venda;
+//    }
 
 //   public List<TbVenda> getAllFRVendaByBetweenDataAndArmazemAndDocumento(
 //        Date data_inicio, Date data_fim, int codigo_usuario) {
@@ -1708,7 +1865,7 @@ public class VendasController implements EntidadeFactory
 //               + "AND credito = false "
 //               + "AND codigo_usuario = ?"; // novo filtro
 //
-//    BDConexao bd = new BDConexao();
+//    BDConexao bd = BDConexao.getInstancia();
 //
 //    try (Connection conn = bd.getConnection1();
 //         PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -1746,68 +1903,128 @@ public class VendasController implements EntidadeFactory
 //
 //    return vendas;
 //}
+    
     public List<TbVenda> getAllFRVendaByBetweenDataAndArmazemAndDocumentos(
-            Date data_inicio, Date data_fim, int codigo_usuario )
-    {
+        BDConexao conexao, Date dataInicio, Date dataFim, int codigoUsuario) {
 
-        List<TbVenda> vendas = new ArrayList<>();
+    List<TbVenda> vendas = new ArrayList<>();
 
-        String sql = "SELECT v.*, c.nome AS nome_cliente "
-                + "FROM tb_venda v "
-                + "JOIN tb_cliente c ON v.codigo_cliente = c.codigo "
-                + "WHERE DATE(v.dataVenda) BETWEEN ? AND ? "
-                + "AND v.status_eliminado = 'false' "
-                + "AND v.credito = false "
-                + "AND v.fk_documento = 1 "
-                + "AND v.codigo_usuario = ? ORDER BY codigo ASC";
+    String sql = "SELECT v.*, c.nome AS nome_cliente "
+            + "FROM tb_venda v "
+            + "JOIN tb_cliente c ON v.codigo_cliente = c.codigo "
+            + "WHERE DATE(v.dataVenda) BETWEEN ? AND ? "
+            + "AND v.status_eliminado = 'false' "
+            + "AND v.credito = false "
+            + "AND v.fk_documento = 1 "
+            + "AND v.codigo_usuario = ? "
+            + "ORDER BY v.codigo ASC";
 
-        BDConexao bd = new BDConexao();
+    try (PreparedStatement ps = conexao.getConnectionAtiva().prepareStatement(sql)) {
 
-        try ( Connection conn = bd.getConnection1(); PreparedStatement ps = conn.prepareStatement( sql ) )
-        {
+        ps.setDate(1, new java.sql.Date(dataInicio.getTime()));
+        ps.setDate(2, new java.sql.Date(dataFim.getTime()));
+        ps.setInt(3, codigoUsuario);
 
-            // Definindo os parâmetros do PreparedStatement
-            ps.setDate( 1, new java.sql.Date( data_inicio.getTime() ) );
-            ps.setDate( 2, new java.sql.Date( data_fim.getTime() ) );
-            ps.setInt( 3, codigo_usuario );
-//        ps.setInt(4, pk_documento);
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                TbVenda venda = new TbVenda();
 
-            try ( ResultSet result = ps.executeQuery() )
-            {
-                while ( result.next() )
-                {
-                    TbVenda venda = new TbVenda();
+                // Campos principais
+                venda.setCodigo(rs.getInt("codigo"));
+                venda.setCodFact(rs.getString("cod_fact"));
+                venda.setDataVenda(rs.getTimestamp("dataVenda")); // usa Timestamp (mantém data/hora)
+                venda.setHora(rs.getTime("hora"));
+                venda.setTotalVenda(rs.getBigDecimal("total_venda"));
+                venda.setTotalGeral(rs.getBigDecimal("total_geral"));
+                venda.setTotalIva(rs.getBigDecimal("total_iva"));
+                venda.setCredito(rs.getString("credito"));
+                venda.setStatusEliminado(rs.getString("status_eliminado"));
 
-                    // Mapear todos os campos da tabela tb_venda
-                    venda.setCodigo( result.getInt( "codigo" ) );
-                    venda.setCodFact( result.getString( "cod_fact" ) );
-                    venda.setDataVenda( result.getDate( "dataVenda" ) );
-                    venda.setHora( result.getTime( "hora" ) );
-                    venda.setTotalVenda( result.getBigDecimal( "total_venda" ) );
-                    venda.setIdArmazemFK( new TbArmazem( result.getInt( "idArmazemFK" ) ) );
-                    venda.setFkDocumento( new Documento( result.getInt( "fk_documento" ) ) );
-                    venda.setCodigoUsuario( new TbUsuario( result.getInt( "codigo_usuario" ) ) );
-                    // Cliente com ID e nome
-                    TbCliente cliente = new TbCliente( result.getInt( "codigo_cliente" ) );
-                    cliente.setNome( result.getString( "nome_cliente" ) );
-                    venda.setCodigoCliente( cliente );
+                // Armazém, documento e usuário
+                venda.setIdArmazemFK(new TbArmazem(rs.getInt("idArmazemFK")));
+                venda.setFkDocumento(new Documento(rs.getInt("fk_documento")));
+                venda.setCodigoUsuario(new TbUsuario(rs.getInt("codigo_usuario")));
 
-                    vendas.add( venda );
-                }
+                // Cliente (ID e nome)
+                TbCliente cliente = new TbCliente(rs.getInt("codigo_cliente"));
+                cliente.setNome(rs.getString("nome_cliente"));
+                venda.setCodigoCliente(cliente);
+
+                vendas.add(venda);
             }
-
-        }
-        catch ( SQLException e )
-        {
-            e.printStackTrace(); // ou usa logger apropriado
         }
 
-        return vendas;
+    } catch (SQLException e) {
+        System.err.println("[ERRO] Falha ao buscar vendas por período e armazém: " + e.getMessage());
+        e.printStackTrace();
     }
+
+    return vendas;
+}
+
+    
+//    public List<TbVenda> getAllFRVendaByBetweenDataAndArmazemAndDocumentos(
+//            Date data_inicio, Date data_fim, int codigo_usuario )
+//    {
+//
+//        List<TbVenda> vendas = new ArrayList<>();
+//
+//        String sql = "SELECT v.*, c.nome AS nome_cliente "
+//                + "FROM tb_venda v "
+//                + "JOIN tb_cliente c ON v.codigo_cliente = c.codigo "
+//                + "WHERE DATE(v.dataVenda) BETWEEN ? AND ? "
+//                + "AND v.status_eliminado = 'false' "
+//                + "AND v.credito = false "
+//                + "AND v.fk_documento = 1 "
+//                + "AND v.codigo_usuario = ? ORDER BY codigo ASC";
+//
+//        BDConexao bd = BDConexao.getInstancia();
+//
+//        try ( Connection conn = bd.getConnection1(); PreparedStatement ps = conn.prepareStatement( sql ) )
+//        {
+//
+//            // Definindo os parâmetros do PreparedStatement
+//            ps.setDate( 1, new java.sql.Date( data_inicio.getTime() ) );
+//            ps.setDate( 2, new java.sql.Date( data_fim.getTime() ) );
+//            ps.setInt( 3, codigo_usuario );
+////        ps.setInt(4, pk_documento);
+//
+//            try ( ResultSet result = ps.executeQuery() )
+//            {
+//                while ( result.next() )
+//                {
+//                    TbVenda venda = new TbVenda();
+//
+//                    // Mapear todos os campos da tabela tb_venda
+//                    venda.setCodigo( result.getInt( "codigo" ) );
+//                    venda.setCodFact( result.getString( "cod_fact" ) );
+//                    venda.setDataVenda( result.getDate( "dataVenda" ) );
+//                    venda.setHora( result.getTime( "hora" ) );
+//                    venda.setTotalVenda( result.getBigDecimal( "total_venda" ) );
+//                    venda.setIdArmazemFK( new TbArmazem( result.getInt( "idArmazemFK" ) ) );
+//                    venda.setFkDocumento( new Documento( result.getInt( "fk_documento" ) ) );
+//                    venda.setCodigoUsuario( new TbUsuario( result.getInt( "codigo_usuario" ) ) );
+//                    // Cliente com ID e nome
+//                    TbCliente cliente = new TbCliente( result.getInt( "codigo_cliente" ) );
+//                    cliente.setNome( result.getString( "nome_cliente" ) );
+//                    venda.setCodigoCliente( cliente );
+//
+//                    vendas.add( venda );
+//                }
+//            }
+//
+//        }
+//        catch ( SQLException e )
+//        {
+//            e.printStackTrace(); // ou usa logger apropriado
+//        }
+//
+//        return vendas;
+//    }
 
     public static void main( String[] args )
     {
-        BDConexao conexao = new BDConexao();
+        BDConexao conexao = BDConexao.getInstancia();
         VendasController v = new VendasController( conexao );
         v.actualizarContagem();
     }

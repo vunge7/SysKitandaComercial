@@ -6,6 +6,8 @@
 
 package visao;
 
+
+import java.sql.Connection;
 import dao.ArmazemDao;
 import dao.CategoriaDao;
 import dao.ProdutoDao;
@@ -50,7 +52,7 @@ public class VasilhameVisao extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
         this.idUser = idUser;
-        this.conexao = new BDConexao();
+        this.conexao = BDConexao.getInstancia();
         setComboCategoria();
         //setVasilhameExistente();
         cmbArmazem.setModel( new DefaultComboBoxModel( conexao.getElementos("tb_armazem", "designacao", false)   ) );

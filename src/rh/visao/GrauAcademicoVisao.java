@@ -10,6 +10,8 @@
  */
 package rh.visao;
 
+
+import java.sql.Connection;
 import visao.*;
 import dao.GrauAcademicoDao;
 import entity.TbGrauAcademico;

@@ -5,6 +5,8 @@
  */
 package dao;
 
+
+import java.sql.Connection;
 import controlador.DocumentoJpaController;
 import java.util.Date;
 //import controller.DocumentoJpaController;

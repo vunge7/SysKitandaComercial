@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import controller.TipoClienteController;
 import dao.ClienteDao;
 import entity.TbCliente;

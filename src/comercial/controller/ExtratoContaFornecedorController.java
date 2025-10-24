@@ -5,6 +5,8 @@
  */
 package comercial.controller;
 
+
+import java.sql.Connection;
 import dao.VendaDao;
 import entity.Compras;
 import entity.Documento;
@@ -268,10 +270,10 @@ public class ExtratoContaFornecedorController implements EntidadeFactory
 
     public static void main( String[] args )
     {
-//        List<Notas> listarAllNotaCreditoByCodFact = new NotasController( new BDConexao() ).listarAllNotaCreditoByCodFact( "FT 2021/38", DVML.DOC_NOTA_CREDITO_NC );
+//        List<Notas> listarAllNotaCreditoByCodFact = new NotasController( BDConexao.getInstancia() ).listarAllNotaCreditoByCodFact( "FT 2021/38", DVML.DOC_NOTA_CREDITO_NC );
 //
 //        System.out.println( "Cod Nota: " + listarAllNotaCreditoByCodFact.get( 0 ).getCodNota() );
-        limpar_dados( new BDConexao() );
+        limpar_dados( BDConexao.getInstancia() );
     }
 
     public static boolean registro_movimento_conta_fornecedor( Object object, BDConexao conexao )

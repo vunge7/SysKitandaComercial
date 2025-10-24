@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.AccessoArmazemDao;
 import dao.ArmazemDao;
 import dao.DadosInstituicaoDao;
@@ -1425,7 +1427,7 @@ public class PermissaoVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new PermissaoVisao( new BDConexao() ).setVisible( true );
+                new PermissaoVisao( BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }

@@ -4,7 +4,8 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import java.io.File;
 import java.util.HashMap;
 import javax.swing.JOptionPane;
@@ -20,7 +21,7 @@ import util.BDConexao;
  */
 public class ListagemTodasEncomendas {
     
-   private  BDConexao conexao  = new BDConexao();
+   private  BDConexao conexao  = BDConexao.getInstancia();
    
   
     public ListagemTodasEncomendas()
@@ -32,7 +33,7 @@ public class ListagemTodasEncomendas {
    
     public void mostrarProdutos() {
         
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
         String relatorio = "";
       

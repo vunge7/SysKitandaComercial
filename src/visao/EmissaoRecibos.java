@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.VendasController;
 import dao.AmortizacaoDividaDao;
 import dao.AnoEconomicoDao;
@@ -1067,7 +1069,7 @@ public class EmissaoRecibos extends javax.swing.JFrame
         {
             public void run()
             {
-                new EmissaoRecibos( 15, new BDConexao() ).setVisible( true );
+                new EmissaoRecibos( 15, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }

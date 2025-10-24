@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.CaixasController;
 import comercial.controller.DadosInstituicaoController;
 import comercial.controller.DocumentosController;
@@ -286,7 +288,7 @@ public class CaixaAberturaVisao extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CaixaAberturaVisao(15, new BDConexao(), false).setVisible(true);
+                new CaixaAberturaVisao(15, BDConexao.getInstancia(), false).setVisible(true);
             }
         });
     }
@@ -306,7 +308,7 @@ public class CaixaAberturaVisao extends javax.swing.JFrame {
 //        if ( usuario.getIdTipoUsuario().getIdTipoUsuario() == DVML.COD_TIPO_USUARIO_SUB_ADMINISTRADOR )
 //    private void procedimento_abrir_caixa()
 //    {
-//        conexaoTransaction = new BDConexao();
+//        conexaoTransaction = BDConexao.getInstancia();
 //        DocumentosController.startTransaction( conexaoTransaction );
 //        TbDadosInstituicao dadosInstituicao = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
 //        if ( camposValidos() )
@@ -397,8 +399,8 @@ public class CaixaAberturaVisao extends javax.swing.JFrame {
 
     private void abrir_caixa() {
 
-        conexaoTransaction = new BDConexao();
-        DocumentosController.startTransaction(conexaoTransaction);
+        conexaoTransaction = BDConexao.getInstancia();
+        DocumentosController.start(conexaoTransaction);
         TbUsuario usuario = (TbUsuario) usuariosController.findById(idUser);
         Caixa caixa = new Caixa();
         caixa.setDataAbertura(new Date());
@@ -417,7 +419,7 @@ public class CaixaAberturaVisao extends javax.swing.JFrame {
         try {
             if (caixa_controller.salvar(caixa)) {
                 JOptionPane.showMessageDialog(null, "Caixa aberto com sucesso!");
-                DocumentosController.commitTransaction(conexaoTransaction);
+                DocumentosController.commit(conexaoTransaction);
                 conexaoTransaction.close();
 
             BackupUsb.realizarBackup();
@@ -431,7 +433,7 @@ public class CaixaAberturaVisao extends javax.swing.JFrame {
 //            JanelaFrontOfficeLavandariaVisao.alterar_status_botao();
         } catch (HeadlessException e) {
             JOptionPane.showMessageDialog(null, "Falha ao abrir o caixa: " + e.getLocalizedMessage(), "Falha", JOptionPane.ERROR_MESSAGE);
-            DocumentosController.rollBackTransaction(conexaoTransaction);
+            DocumentosController.rollback(conexaoTransaction);
             conexaoTransaction.close();
         }
     }

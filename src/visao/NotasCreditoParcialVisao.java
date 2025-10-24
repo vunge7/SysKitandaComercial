@@ -7,6 +7,8 @@
 package visao;
 
 
+
+import java.sql.Connection;
 import controller.ItemVendaController;
 import controller.StockController;
 import controller.TipoClienteController;
@@ -1049,7 +1051,7 @@ table.getModel().addTableModelListener(e -> {
 
         String sql = "SELECT quantidade_existente FROM  tb_stock WHERE  cod_produto_codigo = " + cod_produto + " AND cod_armazem = " + getVenda().getIdArmazemFK().getCodigo();
 
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -1072,7 +1074,7 @@ table.getModel().addTableModelListener(e -> {
 
         String sql = "SELECT max(codigo) FROM " + tabela;
 
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -1099,7 +1101,7 @@ table.getModel().addTableModelListener(e -> {
 
     public static void main( String[] args ) throws SQLException
     {
-        new NotasCreditoParcialVisao( 15, new BDConexao() ).show( true );
+        new NotasCreditoParcialVisao( 15, BDConexao.getInstancia() ).show( true );
     }
 
     public static boolean estado_critico() throws SQLException
@@ -1518,8 +1520,8 @@ table.getModel().addTableModelListener(e -> {
     public static void procedimento_salvar_nota_credito_parcial_venda()
     {
         mostrar_proximo_codigo_documento();
-//        conexaoTransaction = new BDConexao();
-        comercial.controller.DocumentosController.startTransaction( conexaoTransaction );
+//        conexaoTransaction = BDConexao.getInstancia();
+        comercial.controller.DocumentosController.start( conexaoTransaction );
 //        Date data_documento = lbData.getDate();
 //        Date data_vencimento = lbData.getDate();
         TbVenda venda_local = new TbVenda();
@@ -1584,7 +1586,7 @@ table.getModel().addTableModelListener(e -> {
 
                 if ( Objects.isNull( last_venda ) || last_venda == 0 )
                 {
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    DocumentosController.rollback( conexaoTransaction );
                     conexaoTransaction.close();
                     return;
                 }
@@ -1608,7 +1610,7 @@ table.getModel().addTableModelListener(e -> {
             System.err.println( "STATUS: falha ao actualizar a factura" );
             e.printStackTrace();
             JOptionPane.showMessageDialog( null, "Falha ao Processar a Factura", "FALHA", JOptionPane.ERROR_MESSAGE );
-            DocumentosController.rollBackTransaction( conexaoTransaction );
+            DocumentosController.rollback( conexaoTransaction );
             conexaoTransaction.close();
         }
 
@@ -1681,7 +1683,7 @@ table.getModel().addTableModelListener(e -> {
 //                //cria o item venda
 //                if ( !itemVendasController.salvar( itemVenda ) )
 //                {
-//                    DocumentosController.rollBackTransaction( conexaoTransaction );
+//                    DocumentosController.rollback( conexaoTransaction );
 //                    conexaoTransaction.close();
 //                    return;
 //                }
@@ -1711,7 +1713,7 @@ table.getModel().addTableModelListener(e -> {
 //                e.printStackTrace();
 //                efectuada = false;
 //                JOptionPane.showMessageDialog( null, "Falha ao registrar o produto: " + itemVenda.getCodigoProduto().getCodigo() + " na Factura" );
-//                DocumentosController.rollBackTransaction( conexaoTransaction );
+//                DocumentosController.rollback( conexaoTransaction );
 //                conexaoTransaction.close();
 //                return;
 //            }
@@ -1724,7 +1726,7 @@ table.getModel().addTableModelListener(e -> {
 //            {
 //                if ( !registrar_forma_pagamento( cod_venda ) )
 //                {
-//                    DocumentosController.rollBackTransaction( conexaoTransaction );
+//                    DocumentosController.rollback( conexaoTransaction );
 //                    conexaoTransaction.close();
 //                    JOptionPane.showMessageDialog( null, "Falha ao registrar a forma de pagamento.", "Falha", JOptionPane.WARNING_MESSAGE );
 //                    return;

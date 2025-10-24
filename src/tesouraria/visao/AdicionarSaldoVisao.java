@@ -4,6 +4,8 @@
  */
 package tesouraria.visao;
 
+
+import java.sql.Connection;
 import visao.*;
 //import controller.ClienteEncomendaController;
 import exemplos.PermitirNumeros;
@@ -47,7 +49,7 @@ public final class AdicionarSaldoVisao extends javax.swing.JFrame {
     
         txtNomeCliente.requestFocus();
        
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
         
         getClientes();
         txtIniciasNome.addKeyListener(  new TratarEventoTeclado() );

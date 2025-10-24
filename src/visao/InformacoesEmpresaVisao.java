@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 /**
  *
  * @author macpro

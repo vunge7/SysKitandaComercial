@@ -6,6 +6,8 @@
 
 package kitanda.util;
 
+
+import java.sql.Connection;
 import kitanda.*;
 
 /**

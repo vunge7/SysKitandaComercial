@@ -5,6 +5,8 @@
  */
 package dao;
 
+
+import java.sql.Connection;
 import controlador.TbAcertoJpaController;
 import entity.*;
 import java.text.SimpleDateFormat;

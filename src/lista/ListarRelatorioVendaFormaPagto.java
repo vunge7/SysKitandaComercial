@@ -4,6 +4,8 @@
  */
 package lista;
 
+
+import java.sql.Connection;
 import dao.ItemVendaDao;
 import dao.PrecoDao;
 import dao.UsuarioDao;
@@ -250,7 +252,7 @@ public class ListarRelatorioVendaFormaPagto extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    new ListarRelatorioVendaFormaPagto( new BDConexao()).setVisible(true);
+                    new ListarRelatorioVendaFormaPagto( BDConexao.getInstancia()).setVisible(true);
                 } catch (Exception ex) {
                     Logger.getLogger(ListarRelatorioVendaFormaPagto.class.getName()).log(Level.SEVERE, null, ex);
                 }

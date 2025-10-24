@@ -6,6 +6,8 @@
 
 package tesouraria.visao;
 
+
+import java.sql.Connection;
 import dao.BalancoDao;
 import entity.TbBalanco;
 import java.util.Date;

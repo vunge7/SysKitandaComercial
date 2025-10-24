@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.CaixasController;
 import comercial.controller.DadosInstituicaoController;
 import comercial.controller.FormaPagamentoController;
@@ -378,7 +380,7 @@ public class FormaPagamentoVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                FormaPagamentoVisao dialog = new FormaPagamentoVisao( new javax.swing.JFrame(), true, null, 0, new BDConexao() );
+                FormaPagamentoVisao dialog = new FormaPagamentoVisao( new javax.swing.JFrame(), true, null, 0, BDConexao.getInstancia() );
                 dialog.addWindowListener( new java.awt.event.WindowAdapter()
                 {
                     @Override

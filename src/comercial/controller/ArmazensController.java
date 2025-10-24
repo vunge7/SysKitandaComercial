@@ -5,6 +5,8 @@
  */
 package comercial.controller;
 
+
+import java.sql.Connection;
 import entity.TbArmazem;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -338,7 +340,7 @@ public class ArmazensController implements EntidadeFactory
         int codigo = -1;
         String sql = "SELECT codigo FROM tb_armazem WHERE designacao = ?";
 
-        try ( PreparedStatement ps = conexao.getConnection1().prepareStatement( sql ) )
+        try ( PreparedStatement ps = conexao.getConnection().prepareStatement( sql ) )
         {
             ps.setString( 1, nomeArmazem );
             try ( ResultSet rs = ps.executeQuery() )

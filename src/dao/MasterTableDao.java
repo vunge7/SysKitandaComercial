@@ -5,6 +5,8 @@
  */
 package dao;
 
+
+import java.sql.Connection;
 import controlador.MasterTableJpaController;
 //import controller.AnoJpaController;
 import entity.MasterTable;

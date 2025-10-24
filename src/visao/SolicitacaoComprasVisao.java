@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.AnoEconomicoDao;
 import dao.ArmazemDao;
 //import dao.BancoDao;
@@ -2790,7 +2792,7 @@ public class SolicitacaoComprasVisao extends javax.swing.JFrame implements Runna
 
         String sql = "SELECT quantidade_existente FROM  tb_stock WHERE  cod_produto_codigo = " + cod_produto + " AND cod_armazem = " + getCodigoArmazem();
 
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -2813,7 +2815,7 @@ public class SolicitacaoComprasVisao extends javax.swing.JFrame implements Runna
 
         String sql = "SELECT max(codigo) FROM " + tabela;
 
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -2924,7 +2926,7 @@ public class SolicitacaoComprasVisao extends javax.swing.JFrame implements Runna
 
     public static void main( String[] args ) throws SQLException
     {
-        new SolicitacaoComprasVisao( 15, new BDConexao() ).show( true );
+        new SolicitacaoComprasVisao( 15, BDConexao.getInstancia() ).show( true );
     }
 
     public void confiLabel()

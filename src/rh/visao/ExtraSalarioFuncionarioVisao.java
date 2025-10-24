@@ -5,6 +5,8 @@
  */
 package rh.visao;
 
+
+import java.sql.Connection;
 import dao.AnoDao;
 import dao.FaltaDao;
 import dao.FechoPeriodoDao;
@@ -1013,7 +1015,7 @@ public class ExtraSalarioFuncionarioVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new ExtraSalarioFuncionarioVisao( 15, 2, new BDConexao() ).setVisible( true );
+                new ExtraSalarioFuncionarioVisao( 15, 2, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }

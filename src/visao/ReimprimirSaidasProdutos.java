@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.ProFormaDao;
 import dao.SaidasProdutosDao;
 import entity.TbSaidasProdutos;
@@ -276,7 +278,7 @@ public class ReimprimirSaidasProdutos extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ReimprimirSaidasProdutos( new BDConexao()).setVisible(true);
+                new ReimprimirSaidasProdutos( BDConexao.getInstancia()).setVisible(true);
             }
         });
     }

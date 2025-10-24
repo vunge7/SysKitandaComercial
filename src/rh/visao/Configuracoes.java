@@ -5,6 +5,8 @@
  */
 package rh.visao;
 
+
+import java.sql.Connection;
 import dao.UsuarioDao;
 import javax.persistence.EntityManagerFactory;
 import util.JPAEntityMannagerFactoryUtil;

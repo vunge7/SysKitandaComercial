@@ -1,5 +1,7 @@
 package util;
 
+
+import java.sql.Connection;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;

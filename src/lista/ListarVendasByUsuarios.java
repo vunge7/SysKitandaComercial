@@ -4,7 +4,8 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import com.toedter.calendar.JDateChooser;
 import dao.AccessoArmazemDao;
 import dao.ArmazemDao;
@@ -229,7 +230,7 @@ public class ListarVendasByUsuarios extends javax.swing.JFrame
     public void mostrarUsuarios() throws SQLException
     {
 
-        Connection connection = ( Connection ) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
 
         hashMap.put( "NOME_USUARIO", getUsuario() );
@@ -282,7 +283,7 @@ public class ListarVendasByUsuarios extends javax.swing.JFrame
     public void mostrarUsuariosA6() throws SQLException
     {
 
-        Connection connection = ( Connection ) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
 
         hashMap.put( "NOME_USUARIO", getUsuario() );
@@ -721,7 +722,7 @@ public class ListarVendasByUsuarios extends javax.swing.JFrame
         {
             public void run()
             {
-                new ListarVendasByUsuarios( 15, new BDConexao() ).setVisible( true );
+                new ListarVendasByUsuarios( 15, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }

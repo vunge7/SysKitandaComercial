@@ -23,7 +23,7 @@ import util.BDConexao;
 
 public  class RelatorioEntradaCaixa {
     
-     private BDConexao conexao  = new BDConexao();
+     private BDConexao conexao  = BDConexao.getInstancia();
     private int pk_entrada_tesouraria;
  
     public RelatorioEntradaCaixa(int pk_entrada_tesouraria) throws SQLException {
@@ -39,7 +39,7 @@ public  class RelatorioEntradaCaixa {
     
     public void mostrar() throws SQLException{
 
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
   
        

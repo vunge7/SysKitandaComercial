@@ -11,6 +11,8 @@
 
 package visao;
 
+
+import java.sql.Connection;
 import dao.BancoDao;
 import entity.TbBanco;
 import java.util.Vector;

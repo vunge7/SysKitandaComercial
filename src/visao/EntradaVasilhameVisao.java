@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import controller.EntradaController;
 import controller.ProdutoController;
 import controller.StockController;
@@ -83,7 +85,7 @@ public class EntradaVasilhameVisao extends javax.swing.JDialog {
      
         this.parent = parent;
         this.idUser = idUser;        
-        conexao = new BDConexao(); 
+        conexao = BDConexao.getInstancia(); 
         
         
         txtCodigoVasilhame.requestFocus();

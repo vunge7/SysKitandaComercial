@@ -1,5 +1,7 @@
 package visao;
 
+
+import java.sql.Connection;
 import lista.ListagemEncomendas;
 import lista.ListagemTodasEncomendas;
 

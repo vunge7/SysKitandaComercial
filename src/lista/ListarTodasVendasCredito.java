@@ -4,7 +4,8 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -33,7 +34,7 @@ public class ListarTodasVendasCredito {
     
     
     
-     BDConexao conexao  = new BDConexao();
+     BDConexao conexao  = BDConexao.getInstancia();
   
     public ListarTodasVendasCredito() throws JRException, SQLException
     {
@@ -42,7 +43,7 @@ public class ListarTodasVendasCredito {
     }
    
     public void mostrarVendas() {
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
         String relatorio = "";
         

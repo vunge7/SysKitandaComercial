@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 //import comercial.ProdutoItemVisao;
 import controller.TipoClienteController;
 import comercial.controller.VendasController;
@@ -2382,8 +2384,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
         java.awt.EventQueue.invokeLater( ()
                 ->
         {
-            //                procedimentoImprimirTicket( 780, new BDConexao() );
-            new RecolhaPedidosVisao( "MESA 16", "LUGAR 1", 15, 1, new BDConexao() ).setVisible( true );
+            //                procedimentoImprimirTicket( 780, BDConexao.getInstancia() );
+            new RecolhaPedidosVisao( "MESA 16", "LUGAR 1", 15, 1, BDConexao.getInstancia() ).setVisible( true );
         } );
     }
 
@@ -3180,8 +3182,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
 
     public static TbVenda salvar_venda()
     {
-        conexaoTransaction = new BDConexao();
-        DocumentosController.startTransaction( conexaoTransaction );
+        conexaoTransaction = BDConexao.getInstancia();
+        DocumentosController.start( conexaoTransaction );
 
         Date data_documento = new Date();
 //        Date data_documento = dc_data_documento.getDate();
@@ -3285,7 +3287,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
 
                 if ( Objects.isNull( last_venda ) || last_venda == 0 )
                 {
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    DocumentosController.rollback(conexaoTransaction );
                     conexaoTransaction.close();
                     return venda_local;
                 }
@@ -3312,7 +3314,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
             System.err.println( "STATUS: falha ao actualizar a factura" );
             e.printStackTrace();
             JOptionPane.showMessageDialog( null, "Falha ao Processar a Factura", "FALHA", JOptionPane.ERROR_MESSAGE );
-            DocumentosController.rollBackTransaction( conexao );
+            DocumentosController.rollback(conexao );
 //            conexaoTransaction.close();
         }
 //        return vendaDao.findTbVenda( last_venda );
@@ -3445,7 +3447,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
 
                 if ( Objects.isNull( last_venda ) || last_venda == 0 )
                 {
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    DocumentosController.rollback(conexaoTransaction );
                     conexaoTransaction.close();
                     return venda_local;
                 }
@@ -3472,7 +3474,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
             System.err.println( "STATUS: falha ao actualizar a factura" );
             e.printStackTrace();
             JOptionPane.showMessageDialog( null, "Falha ao Processar a Factura", "FALHA", JOptionPane.ERROR_MESSAGE );
-            DocumentosController.rollBackTransaction( conexao );
+            DocumentosController.rollback(conexao );
 //            conexaoTransaction.close();
         }
 //        return vendaDao.findTbVenda( last_venda );
@@ -3679,7 +3681,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
 //                int last_venda = itemVendaDao.criarComProcedimentos( itemVenda, conexao );
                 if ( !itemVendasController.salvarLavandaria( itemVenda ) )
                 {
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    DocumentosController.rollback(conexaoTransaction );
                     conexaoTransaction.close();
                     return;
                 }
@@ -4343,7 +4345,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
 //                    itemVendaDao.create ( itemVenda );
                     if ( !itemVendasController.salvar( itemVenda ) )
                     {
-                        DocumentosController.rollBackTransaction( conexaoTransaction );
+                        DocumentosController.rollback(conexaoTransaction );
                         conexaoTransaction.close();
                         return;
                     }
@@ -4388,7 +4390,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
                 e.printStackTrace();
                 efectuada = false;
                 JOptionPane.showMessageDialog( null, "Falha ao registrar o produto: " + itemVenda.getCodigoProduto().getCodigo() + " na Factura" );
-                DocumentosController.rollBackTransaction( conexaoTransaction );
+                DocumentosController.rollback(conexaoTransaction );
                 conexaoTransaction.close();
                 return;
             }

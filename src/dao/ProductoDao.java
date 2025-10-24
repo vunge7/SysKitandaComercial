@@ -5,6 +5,8 @@
  */
 package dao;
 
+
+import java.sql.Connection;
 import entity.Productos;
 import util.BDConexao;
 import util.MetodosUtil;

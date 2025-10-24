@@ -5,6 +5,8 @@
  */
 package util;
 
+
+import java.sql.Connection;
 import dao.PrecoDao;
 import entity.TbPreco;
 import entity.TbProduto;
@@ -118,7 +120,7 @@ public class RascunhoUtil
 
     public static void main( String[] args )
     {
-//        RascunhoUtil rascunhoUtil = new RascunhoUtil( new BDConexao() );
+//        RascunhoUtil rascunhoUtil = new RascunhoUtil( BDConexao.getInstancia() );
 //
 //        Vector<String> dcoumentosRepetidos = rascunhoUtil.getDcoumentosRepetidos();
 //        rascunhoUtil.imprimir( dcoumentosRepetidos );
@@ -130,7 +132,7 @@ public class RascunhoUtil
     public static void inserir_precos_grosso( EntityManagerFactory emf )
     {
         PrecoDao precoDao = new PrecoDao( emf );
-        BDConexao conexao = new BDConexao();
+        BDConexao conexao = BDConexao.getInstancia();
         List<TbPreco> lista_preco = precoDao.getAllPrecos();
         boolean sucesso = true;
 

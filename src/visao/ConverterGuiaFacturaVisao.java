@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import controller.ItemVendaController;
 import controller.StockController;
 import controller.TipoClienteController;
@@ -2169,7 +2171,7 @@ public class ConverterGuiaFacturaVisao extends javax.swing.JFrame implements Run
 
     public static void main( String[] args ) throws SQLException
     {
-        new ConverterGuiaFacturaVisao( 15, new BDConexao() ).show( true );
+        new ConverterGuiaFacturaVisao( 15, BDConexao.getInstancia() ).show( true );
     }
 
     public void confiLabel()

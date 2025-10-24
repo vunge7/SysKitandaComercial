@@ -1,5 +1,7 @@
 package util;
 
+
+import java.sql.Connection;
 /*----------------------------------------------
  *project: SGC
  *fle:	BDConexao.java
@@ -9,78 +11,400 @@ import controller.ProdutoController;
 import dao.ArmazemDao;
 import dao.ProdutoDao;
 import entity.TbStock;
+import modelo.*;
 import javax.swing.*;
 import java.sql.*;
 import java.util.*;
-import java.util.Date;
+import java.util.concurrent.*;
+import javax.persistence.EntityManagerFactory;
+import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.persistence.EntityManagerFactory;
-import modelo.*;
-import static util.JPAEntityMannagerFactoryUtil.leituraFicheiro;
 
 public class BDConexao
 {
 
-    private  Connection connection;
-    private Statement statement;
+    private static volatile BDConexao instancia;
+    private volatile Connection connection;
+    private static boolean monitorAtivo = false;
+
     private static EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
     private static ArmazemDao armazemDao = new ArmazemDao( emf );
     private static ProdutoDao produtoDao = new ProdutoDao( emf );
 
-    public ResultSet resultset = null;
-
-    public BDConexao()
+    static
     {
-
-        try
+        Runtime.getRuntime().addShutdownHook( new Thread( () ->
         {
-            Vector<String> informacao = leituraFicheiro();
-
-            String ip = informacao.get( 0 );
-            String porta = informacao.get( 1 );
-            String bd = DVML.BD;
-
-            String url = "jdbc:mysql://" + ip + ":" + porta + "/" + bd + "?zeroDateTimeBehavior=convertToNull";
-            String user = "root";
-            String password = "DoV90x?#";
-
-//            connection = DriverManager.getConnection( DVML.MYSQL_JDBC_URL, DVML.MYSQL_USER_NAME, DVML.MYSQL_PASSWORD );
-            connection = DriverManager.getConnection( url, user, password );
-            statement = connection.createStatement();
-
-        }
-        catch ( Exception e )
-        {
-            //e.printStackTrace();
-            JOptionPane.showMessageDialog( null, "Falhou a Conexao com a Base de Dados" );
-        }
-
+            try
+            {
+                if ( instancia != null )
+                {
+                    instancia.close();
+                    System.out.println( "[BDConexao] 📴 Fechando conexão no encerramento da aplicação." );
+                }
+            }
+            catch ( Exception ignored )
+            {
+            }
+        } ) );
     }
 
+    private static final ScheduledExecutorService monitorExecutor
+            = Executors.newSingleThreadScheduledExecutor( r ->
+            {
+                Thread t = new Thread( r, "BDConexao-Monitor" );
+                t.setDaemon( true );
+                return t;
+            } );
+
+    // 🔹 Construtor privado
+    private BDConexao()
+    {
+        conectar();
+        if ( !monitorAtivo )
+        {
+            iniciarMonitoramento();
+            monitorAtivo = true;
+        }
+    }
+
+    // ===========================================================
+    // Singleton (seguro para multithread)
+    // ===========================================================
+    public static BDConexao getInstancia()
+    {
+//        if ( instancia == null )
+//        {
+//            synchronized ( BDConexao.class )
+//            {
+//                if ( instancia == null )
+//                {
+//                    instancia = BDConexao.getInstancia();
+//                }
+//            }
+//        }
+        if ( instancia == null )
+        {
+            synchronized ( BDConexao.class )
+            {
+                if ( instancia == null )
+                {
+                    instancia = new BDConexao(); // ✅ Correto
+                }
+            }
+        }
+
+        return instancia;
+    }
+
+    // ===========================================================
+    // Conectar ao MySQL
+    // ===========================================================
+    private synchronized Connection conectar()
+    {
+        try
+        {
+            if ( connection != null && !connection.isClosed() && connection.isValid( 2 ) )
+            {
+                return connection;
+            }
+
+            Vector<String> info = leituraFicheiroSeguro();
+            if ( info == null || info.isEmpty() )
+            {
+                System.err.println( "[BDConexao] ⚠ Ficheiro de credenciais vazio!" );
+                showMessage( "Erro: ficheiro de credenciais não encontrado!" );
+                return null;
+            }
+
+            String ip = info.get( 0 ).trim();
+            String porta = (info.size() > 1 ? info.get( 1 ).trim() : "3306");
+
+            String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db"
+                    //            String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db"
+                    + "?zeroDateTimeBehavior=convertToNull"
+                    + "&useSSL=false"
+                    + "&allowPublicKeyRetrieval=true"
+                    + "&autoReconnect=true"
+                    + "&connectTimeout=5000"
+                    + "&socketTimeout=30000"
+                    + "&characterEncoding=UTF-8";
+
+            connection = DriverManager.getConnection( url, "root", "DoV90x?#" );
+
+            System.out.println( "[BDConexao] ✅ Conectado a: " + ip + ":" + porta );
+            return connection;
+
+        }
+        catch ( SQLException ex )
+        {
+            System.err.println( "[BDConexao] ❌ Falha ao conectar: " + ex.getMessage() );
+            return null;
+        }
+    }
+
+    // ===========================================================
+    // Monitor automático
+    // ===========================================================
+    private void iniciarMonitoramento()
+    {
+        monitorExecutor.scheduleAtFixedRate( () ->
+        {
+            try
+            {
+                if ( connection == null || connection.isClosed() || !connection.isValid( 2 ) )
+                {
+                    System.out.println( "[BDConexao] ⚠ Conexão perdida. Tentando reconectar..." );
+                    reconectar();
+                }
+            }
+            catch ( SQLException e )
+            {
+                System.err.println( "[BDConexao] Erro ao verificar conexão: " + e.getMessage() );
+                reconectar();
+            }
+        }, 10, 30, TimeUnit.SECONDS );
+    }
+
+    // ===========================================================
+    // Recriar conexão
+    // ===========================================================
+    private synchronized void reconectar()
+    {
+        try
+        {
+            if ( connection != null && !connection.isClosed() )
+            {
+                connection.close();
+            }
+        }
+        catch ( Exception ignored )
+        {
+        }
+        conectar();
+    }
+
+    // ===========================================================
+    // Garantir conexão ativa
+    // ===========================================================
+    public synchronized Connection getConnectionAtiva()
+    {
+        try
+        {
+            if ( connection == null || connection.isClosed() || !connection.isValid( 2 ) )
+            {
+                reconectar();
+            }
+        }
+        catch ( SQLException e )
+        {
+            reconectar();
+        }
+        return connection;
+    }
+
+    // ===========================================================
+    // EXECUTE QUERY (seguro e isolado)
+    // ===========================================================
+    public synchronized ResultSet executeQuery( String query )
+    {
+        int tentativas = 2;
+        while ( tentativas-- > 0 )
+        {
+            try
+            {
+                Connection conn = getConnectionAtiva();
+                Statement st = conn.createStatement( ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY );
+                ResultSet rs = st.executeQuery( query );
+                return rs;
+
+            }
+            catch ( SQLException ex )
+            {
+                if ( ex.getMessage().contains( "Communications link failure" )
+                        || ex.getMessage().contains( "statement closed" ) )
+                {
+                    System.out.println( "[BDConexao] 🔄 Tentando repetir query após falha..." );
+                    reconectar();
+                    continue;
+                }
+                showMessage( "Erro ao executar consulta: " + ex.getMessage() );
+                break;
+            }
+        }
+        return null;
+    }
+
+    // ===========================================================
+    // EXECUTE UPDATE (seguro e isolado)
+    // ===========================================================
+    public synchronized boolean executeUpdate( String query )
+    {
+        int tentativas = 2;
+        while ( tentativas-- > 0 )
+        {
+            try
+            {
+                Connection conn = getConnectionAtiva();
+                try ( Statement st = conn.createStatement() )
+                {
+                    st.executeUpdate( query );
+                }
+                return true;
+
+            }
+            catch ( SQLException ex )
+            {
+                if ( ex.getMessage().contains( "Communications link failure" )
+                        || ex.getMessage().contains( "statement closed" ) )
+                {
+                    System.out.println( "[BDConexao] 🔄 Repetindo update após falha..." );
+                    reconectar();
+                    continue;
+                }
+                showMessage( "Erro ao atualizar dados: " + ex.getMessage() );
+                break;
+            }
+        }
+        return false;
+    }
+
+    // ===========================================================
+    // PREPARED STATEMENT
+    // ===========================================================
+    public synchronized PreparedStatement getPreparedStatement( String sql ) throws SQLException
+    {
+        return getConnectionAtiva().prepareStatement( sql );
+    }
+
+    public static PreparedStatement prepareStatement( String sql ) throws SQLException
+    {
+        return getInstancia().getPreparedStatement( sql );
+    }
+
+    // ===========================================================
+    // FECHAR CONEXÃO
+    // ===========================================================
+    public synchronized void close()
+    {
+        try
+        {
+            if ( connection != null && !connection.isClosed() )
+            {
+                connection.close();
+            }
+            System.out.println( "[BDConexao] 🔒 Conexão encerrada." );
+        }
+        catch ( SQLException ex )
+        {
+            showMessage( "Erro ao fechar conexão: " + ex.getMessage() );
+        }
+    }
+
+    // ===========================================================
+    // LER FICHEIRO DE CREDENCIAIS
+    // ===========================================================
+    private Vector<String> leituraFicheiroSeguro()
+    {
+        Vector<String> dados = new Vector<>();
+        File arquivo = new File( "credencial" + File.separator + "file.txt" );
+
+        if ( !arquivo.exists() )
+        {
+            String basePath = new File( "" ).getAbsolutePath();
+            arquivo = new File( basePath + File.separator + "credencial" + File.separator + "file.txt" );
+        }
+
+        if ( !arquivo.exists() )
+        {
+            System.err.println( "[BDConexao] ⚠ Ficheiro não encontrado em: " + arquivo.getAbsolutePath() );
+            return dados;
+        }
+
+        try ( BufferedReader br = new BufferedReader( new FileReader( arquivo ) ) )
+        {
+            String linha;
+            while ( ( linha = br.readLine() ) != null )
+            {
+                if ( !linha.trim().isEmpty() )
+                {
+                    dados.add( linha.trim() );
+                }
+            }
+        }
+        catch ( IOException e )
+        {
+            System.err.println( "[BDConexao] ⚠ Erro ao ler ficheiro: " + e.getMessage() );
+        }
+
+        return dados;
+    }
+
+    // ===========================================================
+    // Métodos compatíveis antigos
+    // ===========================================================
     public static BDConexao getBDConetion()
     {
-        return new BDConexao();
+        return getInstancia();
     }
 
     public static Connection getConexao() throws SQLException
     {
-
-        Vector<String> informacao = leituraFicheiro();
-
-        String ip = informacao.get( 0 );
-        String porta = informacao.get( 1 );
-        String bd = DVML.BD;
-
-        String url = "jdbc:mysql://" + ip + ":" + porta + "/" + bd + "?zeroDateTimeBehavior=convertToNull";
-        String user = "root";
-        String password = "DoV90x?#";
-
-//            connection = DriverManager.getConnection( DVML.MYSQL_JDBC_URL, DVML.MYSQL_USER_NAME, DVML.MYSQL_PASSWORD );
-        return DriverManager.getConnection( url, user, password );
-//        return DriverManager.getConnection( DVML.MYSQL_JDBC_URL, DVML.MYSQL_USER_NAME, DVML.MYSQL_PASSWORD );
+        return getInstancia().getConnectionAtiva();
     }
 
+//    public static com.mysql.jdbc.Connection getConnection() {
+//    public static java.sql.Connection getConnection()
+//    {
+//        try
+//        {
+//            return (com.mysql.jdbc.Connection) getInstancia().getConnectionAtiva();
+//        }
+//        catch ( Exception e )
+//        {
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
+//    public static com.mysql.jdbc.Connection getConnection() {
+//    try {
+//        return (com.mysql.jdbc.Connection) getInstancia().getConnectionAtiva();
+//    } catch (Exception e) {
+//        e.printStackTrace();
+//        return null;
+//    }
+//}
+    public static java.sql.Connection getConnection()
+    {
+        try
+        {
+            return getInstancia().getConnectionAtiva();
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    
+
+    // ===========================================================
+    // Helper para mensagens Swing
+    // ===========================================================
+    public static void showMessage( String mensagem )
+    {
+        SwingUtilities.invokeLater( ()
+                -> JOptionPane.showMessageDialog( null, mensagem )
+        );
+    }
+
+//    public static void showMessage( String mensagen )
+//    {
+//        JOptionPane.showMessageDialog( null, mensagen );
+//
+//    }
     // metodo criado para a conexao a utilizar na geracao dos relatorios
     public Vector<ProdutoModelo> getAllProdutosLOCALHOST_BY_ID_CATEGORIA( int idCategoria )
     {
@@ -131,109 +455,6 @@ public class BDConexao
 
         return vector;
 
-    }
-    
-    
-     public  Connection getConnection1() {
-        return connection;
-    }
-
-
-    public static Connection conectar()
-    {
-        try
-        {
-
-            Vector<String> informacao = leituraFicheiro();
-
-            String ip = informacao.get( 0 );
-            String porta = informacao.get( 1 );
-            String bd = DVML.BD;
-
-            String url = "jdbc:mysql://" + ip + ":" + porta + "/" + bd + "?zeroDateTimeBehavior=convertToNull";
-            String user = "root";
-            String password = "DoV90x?#";
-
-//            connection = DriverManager.getConnection( DVML.MYSQL_JDBC_URL, DVML.MYSQL_USER_NAME, DVML.MYSQL_PASSWORD );
-            return DriverManager.getConnection( url, user, password );
-
-//            return DriverManager.getConnection( DVML.MYSQL_JDBC_URL, DVML.MYSQL_USER_NAME, DVML.MYSQL_PASSWORD );
-        }
-        catch ( SQLException sqlex )
-        {
-            sqlex.printStackTrace();
-            showMessage( "Erro ao Estabelecer a Conexao:" + sqlex.getMessage() );
-        }
-
-        return null;
-    }
-
-    public static com.mysql.jdbc.Connection getConnection()
-    {
-
-        try
-        {
-
-            Vector<String> informacao = leituraFicheiro();
-
-            String ip = informacao.get( 0 );
-            String porta = informacao.get( 1 );
-            String bd = DVML.BD;
-
-            String url = "jdbc:mysql://" + ip + ":" + porta + "/" + bd + "?zeroDateTimeBehavior=convertToNull";
-            String user = "root";
-            String password = "DoV90x?#";
-
-//            connection = DriverManager.getConnection( DVML.MYSQL_JDBC_URL, DVML.MYSQL_USER_NAME, DVML.MYSQL_PASSWORD );
-            return ( com.mysql.jdbc.Connection ) DriverManager.getConnection( url, user, password );
-
-//            return ( com.mysql.jdbc.Connection ) DriverManager.getConnection( DVML.MYSQL_JDBC_URL, DVML.MYSQL_USER_NAME, DVML.MYSQL_PASSWORD );
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    protected void finalized()
-    {
-        close();
-    }
-
-    public ResultSet executeQuery( String query )
-    {
-        ResultSet resultSet = null;
-        try
-        {
-            resultSet = statement.executeQuery( query );
-
-            return resultSet;
-        }
-        catch ( Exception ex )
-        {
-            ex.printStackTrace();
-            showMessage( "Falha ao Carregar os Dados" );
-        }
-
-        return resultSet;
-    }
-
-    public boolean executeUpdate( String query )
-    {
-        ResultSet result = null;
-        try
-        {
-            statement.executeUpdate( query );
-        }
-        catch ( Exception ex )
-        {
-            ex.printStackTrace();
-            showMessage( "Falha ao Actualizar a BD" );
-
-            return false;
-        }
-        return true;
     }
 
     public static Vector<ItemPermissaoModelo> getItemPermissaoByIdUser( int idUser ) throws SQLException
@@ -367,26 +588,6 @@ public class BDConexao
         }
 
         return null;
-    }
-
-    public void close()
-    {
-        try
-        {
-            statement.close();
-            connection.close();
-        }
-        catch ( SQLException sqlException )
-        {
-            //sqlException.printStackTrace();
-            showMessage( "Erro ao Fechar a Conexao" );
-        }
-    }
-
-    public static void showMessage( String mensagen )
-    {
-        JOptionPane.showMessageDialog( null, mensagen );
-
     }
 
     public Vector getElementosLike( String tabela, String campo, String prefixo )
@@ -550,7 +751,7 @@ public class BDConexao
     {
         String sql = "SELECT codigo FROM " + tabela + " WHERE(designacao = '" + descricao.trim() + "')";
 
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -616,7 +817,7 @@ public class BDConexao
     {
         String sql = "SELECT idTipoUsuario FROM tb_tipo_usuario WHERE(descricao = '" + descricao.trim() + "')";
 
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -639,7 +840,7 @@ public class BDConexao
 
         String sql = "SELECT SUM(total_venda) FROM tb_venda  WHERE credito <> true";
 
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -662,7 +863,7 @@ public class BDConexao
 
         String sql = "SELECT SUM(total_venda) FROM tb_venda   WHERE credito <> false ";
 
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -685,7 +886,7 @@ public class BDConexao
 
         String sql = "SELECT quant_baixa FROM tb_stock WHERE cod_produto_codigo = " + codigo + " AND cod_armazem = " + codigo_armzem;
 
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -740,7 +941,7 @@ public class BDConexao
                 + " AND  v.dataVenda BETWEEN '" + data_inicio + "' AND '" + data_fim + "'";
 
         System.out.println( sql );
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         Integer soma_total = 0;
 
@@ -775,7 +976,7 @@ public class BDConexao
                 + " AND  v.dataVenda BETWEEN '" + data_inicio + "' AND '" + data_fim + "'";
 
         System.out.println( sql );
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         Integer soma_total = 0;
 
@@ -801,7 +1002,7 @@ public class BDConexao
 
         String sql = "SELECT quant_critica FROM tb_stock WHERE cod_produto_codigo = " + codigo + " AND cod_armazem = " + codigo_armzem;
 
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -847,7 +1048,7 @@ public class BDConexao
 
         String sql = "SELECT quantidade_existente FROM tb_stock WHERE cod_produto_codigo = " + codigo + " AND cod_armazem = " + codigo_armazem;
 
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -870,7 +1071,7 @@ public class BDConexao
 
         String sql = "SELECT cod_produto_codigo FROM tb_stock WHERE cod_produto_codigo = " + codigo + " AND cod_armazem = " + codigo_armazem;
 
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -924,7 +1125,7 @@ public class BDConexao
 
         String sql = "SELECT cod_produto_codigo FROM tb_stock WHERE cod_produto_codigo = " + codigo;
 
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -945,7 +1146,7 @@ public class BDConexao
     {
         String sql = "SELECT " + campo + " FROM " + tabela + " WHERE( codigo = " + codigo + ")";
 
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -989,7 +1190,7 @@ public class BDConexao
     {
         String sql = "SELECT " + campo + " FROM " + tabela + " WHERE( codigo = " + codigo + ")";
 
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -1011,7 +1212,7 @@ public class BDConexao
 
         String sql = "SELECT  designacao FROM tb_armazem WHERE( codigo = " + codigo + ")";
 
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -1032,7 +1233,7 @@ public class BDConexao
     {
         String sql = "SELECT " + campo + " FROM " + tabela + " WHERE( codigo = " + codigo + ")";
 
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -1055,7 +1256,7 @@ public class BDConexao
         String sql = "SELECT descricao FROM tb_tipo_usuario  WHERE( idTipoUsuario = " + codigo + ")";
 
         System.err.println( sql );
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -1077,7 +1278,7 @@ public class BDConexao
 
         String sql = "SELECT " + campo + " FROM " + tabela + " WHERE( " + campo_proucurado + " = " + codigo + " ) ";
 
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -1182,7 +1383,7 @@ public class BDConexao
 
         String sql = "SELECT preco_venda  FROM tb_stock WHERE cod_produto_codigo = " + codigo_produto;
 
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -1202,7 +1403,7 @@ public class BDConexao
     {
 
         String sql = "SELECT codigo FROM " + tabela + " WHERE(" + campoProcurado + " = '" + descricao.trim() + "')";
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -1248,7 +1449,7 @@ public class BDConexao
         String sql = "SELECT codigo FROM  tb_usuario WHERE( userName = '" + user_name.trim() + "' AND senha = encript_pass('" + senha + "') )";
 
         System.out.println( sql );
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -1383,11 +1584,11 @@ public class BDConexao
         // System.out.println(" PRIMEIRO REGISTRO " + vector.get(0).getIdEntrada());
         return vector;
     }
-
-    private void getEntradaByIntervalodeDeData( Date data_1 )
-    {
-
-    }
+//
+//    private void getEntradaByIntervalodeDeData( Date data_1 )
+//    {
+//
+//    }
 
     public boolean prouduto_stocavel( String stocavel )
     {
@@ -1403,7 +1604,7 @@ public class BDConexao
         try
         {
 
-            ProdutoModelo produtoModelo = new ProdutoController( new BDConexao() ).getProduto( codProduto );
+            ProdutoModelo produtoModelo = new ProdutoController( BDConexao.getInstancia() ).getProduto( codProduto );
 
             if ( prouduto_stocavel( produtoModelo.getStocavel() ) )
             {
@@ -1501,7 +1702,7 @@ public class BDConexao
 
         String sql = "SELECT   s.quant_baixa FROM  tb_stock s WHERE  s.cod_produto_codigo = " + idProduto + "  AND  cod_armazem = " + idArmazem;
 
-        ResultSet rs = new BDConexao().executeQuery( sql );
+        ResultSet rs = BDConexao.getInstancia().executeQuery( sql );
 
         try
         {
@@ -1519,8 +1720,7 @@ public class BDConexao
 
     public static void main( String args[] )
     {
-        BDConexao conexao = new BDConexao();
-
+        BDConexao conexao = BDConexao.getInstancia();
 
 //        
     }

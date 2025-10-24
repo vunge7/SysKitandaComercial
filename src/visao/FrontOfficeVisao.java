@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.CaixasController;
 import comercial.controller.ItemCaixaController;
 import comercial.controller.LugaresController;
@@ -264,7 +266,7 @@ public class FrontOfficeVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new FrontOfficeVisao( 15, new BDConexao() ).setVisible( true );
+                new FrontOfficeVisao( 15, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }

@@ -5,6 +5,8 @@
  */
 package dao;
 
+
+import java.sql.Connection;
 import controlador.TbSaidasProdutosJpaController;
 import entity.TbEstorno;
 import entity.TbSaidasProdutos;

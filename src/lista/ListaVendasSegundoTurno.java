@@ -4,7 +4,8 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import dao.TurnoDao;
 import entity.Turno;
 import java.io.File;
@@ -28,7 +29,7 @@ import util.JPAEntityMannagerFactoryUtil;
 public class ListaVendasSegundoTurno
 {
 
-    BDConexao conexao = new BDConexao();
+    BDConexao conexao = BDConexao.getInstancia();
     private String kid = "";
     private Turno turno;
 
@@ -43,7 +44,7 @@ public class ListaVendasSegundoTurno
     public void mostrarVendas()
     {
 
-        Connection connection = ( Connection ) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
         String relatorio = "";
         hashMap.put( "DATA_ACTUAL", this.turno.getData() );

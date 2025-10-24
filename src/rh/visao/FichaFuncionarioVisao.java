@@ -5,6 +5,8 @@
  */
 package rh.visao;
 
+
+import java.sql.Connection;
 //import com.sun.media.sound.InvalidFormatException;
 import controlador.exceptions.NonexistentEntityException;
 import controller.AnexoController;
@@ -2054,7 +2056,7 @@ public class FichaFuncionarioVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new FichaFuncionarioVisao( 15, 2, new BDConexao() ).setVisible( true );
+                new FichaFuncionarioVisao( 15, 2, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }

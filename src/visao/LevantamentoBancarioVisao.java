@@ -11,6 +11,8 @@
 
 package visao;
 
+
+import java.sql.Connection;
 import dao.BancoDao;
 import dao.DepositoBancariaDao;
 import dao.LevantamentoBancarioDao;
@@ -57,7 +59,7 @@ public class LevantamentoBancarioVisao extends javax.swing.JFrame {
         initComponents();
         this.idUser = idUser;
         setLocationRelativeTo(null);
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
         txtValorLevantamento.setDocument( new PermitirNumeros() );
         actualizar();
         txtValorLevantamento.setText("0");

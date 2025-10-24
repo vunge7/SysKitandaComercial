@@ -44,98 +44,164 @@ public class ClienteEncomendaController {
     
     private ClienteEncomendaModelo clienteEncomendaModelo = null;
     private PreparedStatement comando = null;
-    private Connection conexao = null;
+//    private Connection conexao = null;
+    private final BDConexao conexao = BDConexao.getInstancia();
+
 
     public ClienteEncomendaController() {
         
     }
-
-     public boolean guardar(ClienteEncomendaModelo clienteEncomendaModelo) {
-       
-        this.clienteEncomendaModelo =  clienteEncomendaModelo;
- 
-        try {
-            
-            conexao = BDConexao.conectar();
-            System.out.println(insert);
-            comando = conexao.prepareStatement(insert);
-
-               /*       
-            nome_cliente , telefone , endereco , saldo, email 
-                */      
-
-            comando.setString(1, clienteEncomendaModelo.getNome_cliente());
-            comando.setString(2, clienteEncomendaModelo.getTelefone());
-            comando.setString(3, clienteEncomendaModelo.getEndereco());
-            comando.setDouble(4, clienteEncomendaModelo.getSaldo());
-            comando.setString(5, clienteEncomendaModelo.getEmail());
-            comando.setDouble(6, clienteEncomendaModelo.getCredito());
-            
-            
-            comando.execute();
-            conexao.close();
-            
-        } catch (SQLException ex) {
-            Logger.getLogger(ClienteEncomendaController.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        }
-
-     return true;
-     
-    }
     
-    
-      public boolean alterar(ClienteEncomendaModelo clienteEncomendaModelo) {
-       
-        this.clienteEncomendaModelo = clienteEncomendaModelo;
- 
-        try {
-            
-            conexao = BDConexao.conectar();
-            comando = conexao.prepareStatement(update);
+    public boolean guardar(ClienteEncomendaModelo clienteEncomendaModelo) {
+    this.clienteEncomendaModelo = clienteEncomendaModelo;
 
-            /*       
-             descrisao , idTurno , idCurso , idSala , valor_propina
-                */      
+    String sql = "INSERT INTO cliente_encomenda (nome_cliente, telefone, endereco, saldo, email, credito) VALUES (?, ?, ?, ?, ?, ?)";
 
-            comando.setString(1, clienteEncomendaModelo.getNome_cliente());
-            comando.setString(2, clienteEncomendaModelo.getTelefone());
-            comando.setString(3, clienteEncomendaModelo.getEndereco());
-            comando.setDouble(4, clienteEncomendaModelo.getSaldo());
-            comando.setString(5, clienteEncomendaModelo.getEmail());
-            comando.setDouble(6, clienteEncomendaModelo.getCredito());
-            
-            comando.setInt(7, clienteEncomendaModelo.getIdCliente());
-            
-            comando.execute();
-            conexao.close();
-            
-        } catch (SQLException ex) {
-            Logger.getLogger(ClienteEncomendaController.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        }
+    try (PreparedStatement comando = BDConexao.getInstancia().getConnectionAtiva().prepareStatement(sql)) {
+        comando.setString(1, clienteEncomendaModelo.getNome_cliente());
+        comando.setString(2, clienteEncomendaModelo.getTelefone());
+        comando.setString(3, clienteEncomendaModelo.getEndereco());
+        comando.setDouble(4, clienteEncomendaModelo.getSaldo());
+        comando.setString(5, clienteEncomendaModelo.getEmail());
+        comando.setDouble(6, clienteEncomendaModelo.getCredito());
 
-     return true;
-     
-    }
-    
-       public boolean eliminar(ClienteEncomendaModelo clienteEncomendaModelo) {
-
-        this.clienteEncomendaModelo = clienteEncomendaModelo;
-       
-        try {
-            conexao = BDConexao.conectar();
-            comando = conexao.prepareStatement(delete);
-            comando.setInt(1, clienteEncomendaModelo.getIdCliente());
-            comando.execute();
-            conexao.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(ClienteEncomendaController.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        }
-        
+        comando.executeUpdate();
         return true;
+
+    } catch (SQLException ex) {
+        Logger.getLogger(ClienteEncomendaController.class.getName()).log(Level.SEVERE, "Erro ao guardar cliente", ex);
+        return false;
     }
+}
+
+    
+    public boolean alterar(ClienteEncomendaModelo clienteEncomendaModelo) {
+    this.clienteEncomendaModelo = clienteEncomendaModelo;
+
+    String sql = "UPDATE cliente_encomenda SET nome_cliente=?, telefone=?, endereco=?, saldo=?, email=?, credito=? WHERE idCliente=?";
+
+    try (PreparedStatement comando = BDConexao.getInstancia().getConnectionAtiva().prepareStatement(sql)) {
+        comando.setString(1, clienteEncomendaModelo.getNome_cliente());
+        comando.setString(2, clienteEncomendaModelo.getTelefone());
+        comando.setString(3, clienteEncomendaModelo.getEndereco());
+        comando.setDouble(4, clienteEncomendaModelo.getSaldo());
+        comando.setString(5, clienteEncomendaModelo.getEmail());
+        comando.setDouble(6, clienteEncomendaModelo.getCredito());
+        comando.setInt(7, clienteEncomendaModelo.getIdCliente());
+
+        comando.executeUpdate();
+        return true;
+
+    } catch (SQLException ex) {
+        Logger.getLogger(ClienteEncomendaController.class.getName()).log(Level.SEVERE, "Erro ao alterar cliente", ex);
+        return false;
+    }
+}
+
+    
+    public boolean eliminar(ClienteEncomendaModelo clienteEncomendaModelo) {
+    this.clienteEncomendaModelo = clienteEncomendaModelo;
+
+    String sql = "DELETE FROM cliente_encomenda WHERE idCliente=?";
+
+    try (PreparedStatement comando = BDConexao.getInstancia().getConnectionAtiva().prepareStatement(sql)) {
+        comando.setInt(1, clienteEncomendaModelo.getIdCliente());
+        comando.executeUpdate();
+        return true;
+
+    } catch (SQLException ex) {
+        Logger.getLogger(ClienteEncomendaController.class.getName()).log(Level.SEVERE, "Erro ao eliminar cliente", ex);
+        return false;
+    }
+}
+
+
+//     public boolean guardar(ClienteEncomendaModelo clienteEncomendaModelo) {
+//       
+//        this.clienteEncomendaModelo =  clienteEncomendaModelo;
+// 
+//        try {
+//            
+//            conexao = conexao.getConnectionAtiva();
+//            System.out.println(insert);
+//            comando = conexao.prepareStatement(insert);
+//
+//               /*       
+//            nome_cliente , telefone , endereco , saldo, email 
+//                */      
+//
+//            comando.setString(1, clienteEncomendaModelo.getNome_cliente());
+//            comando.setString(2, clienteEncomendaModelo.getTelefone());
+//            comando.setString(3, clienteEncomendaModelo.getEndereco());
+//            comando.setDouble(4, clienteEncomendaModelo.getSaldo());
+//            comando.setString(5, clienteEncomendaModelo.getEmail());
+//            comando.setDouble(6, clienteEncomendaModelo.getCredito());
+//            
+//            
+//            comando.execute();
+//            conexao.close();
+//            
+//        } catch (SQLException ex) {
+//            Logger.getLogger(ClienteEncomendaController.class.getName()).log(Level.SEVERE, null, ex);
+//            return false;
+//        }
+//
+//     return true;
+//     
+//    }
+//    
+//    
+//      public boolean alterar(ClienteEncomendaModelo clienteEncomendaModelo) {
+//       
+//        this.clienteEncomendaModelo = clienteEncomendaModelo;
+// 
+//        try {
+//            
+//            conexao = conexao.getConnectionAtiva();
+//            comando = conexao.prepareStatement(update);
+//
+//            /*       
+//             descrisao , idTurno , idCurso , idSala , valor_propina
+//                */      
+//
+//            comando.setString(1, clienteEncomendaModelo.getNome_cliente());
+//            comando.setString(2, clienteEncomendaModelo.getTelefone());
+//            comando.setString(3, clienteEncomendaModelo.getEndereco());
+//            comando.setDouble(4, clienteEncomendaModelo.getSaldo());
+//            comando.setString(5, clienteEncomendaModelo.getEmail());
+//            comando.setDouble(6, clienteEncomendaModelo.getCredito());
+//            
+//            comando.setInt(7, clienteEncomendaModelo.getIdCliente());
+//            
+//            comando.execute();
+//            conexao.close();
+//            
+//        } catch (SQLException ex) {
+//            Logger.getLogger(ClienteEncomendaController.class.getName()).log(Level.SEVERE, null, ex);
+//            return false;
+//        }
+//
+//     return true;
+//     
+//    }
+//    
+//       public boolean eliminar(ClienteEncomendaModelo clienteEncomendaModelo) {
+//
+//        this.clienteEncomendaModelo = clienteEncomendaModelo;
+//       
+//        try {
+//            conexao = conexao.getConnectionAtiva();
+//            comando = conexao.prepareStatement(delete);
+//            comando.setInt(1, clienteEncomendaModelo.getIdCliente());
+//            comando.execute();
+//            conexao.close();
+//        } catch (SQLException ex) {
+//            Logger.getLogger(ClienteEncomendaController.class.getName()).log(Level.SEVERE, null, ex);
+//            return false;
+//        }
+//        
+//        return true;
+//    }
  
    private void preencher_objecto(ResultSet resultado) throws SQLException
    {
@@ -164,58 +230,74 @@ public class ClienteEncomendaController {
     }
        
     //Retorna o Objecto por Numero do Processo que neste caso e o codigo
-    public ClienteEncomendaModelo getClienteByCodigo(int codigo) 
-    {
-        ResultSet resultado = null;
+public ClienteEncomendaModelo getClienteByCodigo(int codigo) {
+    ResultSet resultado = null;
+    PreparedStatement comando = null;
 
-        try {
-            
-             conexao = BDConexao.conectar();
-             comando = conexao.prepareStatement(getClienteByIdCliente);
-             comando.setInt(1, codigo);
-             resultado = comando.executeQuery();
+    try {
+        // Usa a conexão activa (sem criar nova)
+        Connection conn = conexao.getConnectionAtiva();
 
-            if (resultado.next()) {
-                preencher_objecto(resultado);
-            }
-            conexao.close();
+        comando = conn.prepareStatement(getClienteByIdCliente);
+        comando.setInt(1, codigo);
+        resultado = comando.executeQuery();
 
-        } catch (SQLException ex) {
-            Logger.getLogger(ClienteEncomendaController.class.getName()).log(Level.SEVERE, null, ex);
-
+        if (resultado.next()) {
+            preencher_objecto(resultado);
         }
-        
-        return clienteEncomendaModelo;
+
+    } catch (SQLException ex) {
+        Logger.getLogger(ClienteEncomendaController.class.getName()).log(Level.SEVERE, null, ex);
+    } finally {
+        try {
+            // Fecha apenas recursos auxiliares, não a conexão activa
+            if (resultado != null) resultado.close();
+            if (comando != null) comando.close();
+        } catch (SQLException e) {
+            Logger.getLogger(ClienteEncomendaController.class.getName()).log(Level.SEVERE, null, e);
+        }
     }
+
+    return clienteEncomendaModelo;
+}
+
     
 
     
       //Retorna o Objecto por Numero do Processo que neste caso e o codigo
-    public Integer getCodigoByNome(String nome_cliente) 
-    {
-        ResultSet resultado = null;
+    public Integer getCodigoByNome(String nome_cliente) {
+    Integer codigo = 0;
+    PreparedStatement comando = null;
+    ResultSet resultado = null;
 
-        Integer codigo = 0;
-        try {
-            
-             conexao = BDConexao.conectar();
-             comando = conexao.prepareStatement(getIdClienteBynome_cliente);
-             comando.setString(1, nome_cliente);
-             resultado = comando.executeQuery();
+    try {
+        Connection conn = conexao.getConnectionAtiva();
 
-            if (resultado.next()) {
-                
-                codigo =  resultado.getInt(1);
-            }
-            conexao.close();
 
-        } catch (SQLException ex) {
-            Logger.getLogger(ClienteEncomendaController.class.getName()).log(Level.SEVERE, null, ex);
-            return codigo;
+
+        comando = conn.prepareStatement(getIdClienteBynome_cliente);
+        comando.setString(1, nome_cliente);
+        resultado = comando.executeQuery();
+
+        if (resultado.next()) {
+            codigo = resultado.getInt(1);
         }
-        
-        return codigo;
+
+    } catch (SQLException ex) {
+        Logger.getLogger(ClienteEncomendaController.class.getName()).log(Level.SEVERE, null, ex);
+    } finally {
+        try {
+            if (resultado != null) resultado.close();
+            if (comando != null) comando.close();
+        } catch (SQLException e) {
+            Logger.getLogger(ClienteEncomendaController.class.getName()).log(Level.SEVERE, null, e);
+        }
     }
+
+    return codigo;
+}
+
+
     
     
  

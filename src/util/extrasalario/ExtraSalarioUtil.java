@@ -5,6 +5,8 @@
  */
 package util.extrasalario;
 
+
+import java.sql.Connection;
 import javax.swing.JComboBox;
 import javax.swing.JSpinner;
 import javax.swing.JTable;

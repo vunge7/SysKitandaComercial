@@ -6,6 +6,8 @@
 
 package tesouraria.visao;
 
+
+import java.sql.Connection;
 //import rh.visao.*;
 import dao.ItemPermissaoDao;
 import entity.TbItemPermissao;

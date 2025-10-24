@@ -12,6 +12,8 @@
 package rh.visao;
 
 
+
+import java.sql.Connection;
 import visao.*;
 import dao.StatusDao;
 import dao.TipoUsuarioDao;
@@ -51,7 +53,7 @@ public class UsuarioRhVisao extends javax.swing.JFrame {
         
         initComponents();
         setLocationRelativeTo(null);
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
         txtIniciaisNome.addKeyListener( new TratarEventoTeclado() );
         setCampos();
    

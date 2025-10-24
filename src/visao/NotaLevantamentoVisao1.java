@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import controller.ItemVendaController;
 import controller.StockController;
 import controller.TipoClienteController;
@@ -1122,7 +1124,7 @@ public class NotaLevantamentoVisao1 extends javax.swing.JFrame implements Runnab
         
         String sql = "SELECT quantidade_existente FROM  tb_stock WHERE  cod_produto_codigo = " + cod_produto + " AND cod_armazem = " + getCodigoArmazem();
         
-        ResultSet rs = new BDConexao().executeQuery(sql);
+        ResultSet rs = BDConexao.getInstancia().executeQuery(sql);
         
         try {
             if (rs.next()) {
@@ -1140,7 +1142,7 @@ public class NotaLevantamentoVisao1 extends javax.swing.JFrame implements Runnab
         
         String sql = "SELECT max(codigo) FROM " + tabela;
         
-        ResultSet rs = new BDConexao().executeQuery(sql);
+        ResultSet rs = BDConexao.getInstancia().executeQuery(sql);
         
         try {
             if (rs.next()) {
@@ -1230,7 +1232,7 @@ public class NotaLevantamentoVisao1 extends javax.swing.JFrame implements Runnab
     }
     
     public static void main(String[] args) throws SQLException {
-        new NotaLevantamentoVisao1(15, new BDConexao()).show(true);
+        new NotaLevantamentoVisao1(15, BDConexao.getInstancia()).show(true);
     }
     
     public void confiLabel() {

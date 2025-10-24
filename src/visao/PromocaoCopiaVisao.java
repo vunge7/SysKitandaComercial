@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import controlador.exceptions.NonexistentEntityException;
 import dao.PrecoDao;
 import dao.ProdutoDao;
@@ -731,7 +733,7 @@ public class PromocaoCopiaVisao extends javax.swing.JDialog
                 //desactiva o botão
                 btn_update.setEnabled( false );
                 //Abri a conexão
-                conexao = new BDConexao();
+                conexao = BDConexao.getInstancia();
                 //for (int i = 0; i < vector.size(); i++) {
                 for ( int i = 0; i < TAMANHO; i++ )
                 {
@@ -831,7 +833,7 @@ public class PromocaoCopiaVisao extends javax.swing.JDialog
                 //desactiva o botão
                 btn_update.setEnabled( false );
                 //Abri a conexão
-                conexao = new BDConexao();
+                conexao = BDConexao.getInstancia();
                 //for (int i = 0; i < vector.size(); i++) {
                 for ( int i = 0; i < TAMANHO; i++ )
                 {
@@ -1058,7 +1060,7 @@ public class PromocaoCopiaVisao extends javax.swing.JDialog
                 //desactiva o botão
                 btn_update.setEnabled( false );
                 //Abri a conexão
-                conexao = new BDConexao();
+                conexao = BDConexao.getInstancia();
 
                 for ( int i = 0; i < TAMANHO; i++ )
                 {

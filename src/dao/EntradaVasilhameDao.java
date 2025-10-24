@@ -7,6 +7,8 @@
 package dao;
 
 
+
+import java.sql.Connection;
 import controlador.TbEntradaVasilhameJpaController;
 import entity.TbEntradaVasilhame;
 import entity.TbEntradaVasilhame;

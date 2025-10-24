@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.*;
 //import hotel.controller.ExtratoContaClienteController;
 import dao.ItemPermissaoDao;
@@ -192,7 +194,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         formaPagamentoItemController = new FormaPagamentoItemController( VendaUsuarioVisao.conexao );
         servicosRetencaoController = new ServicosRetencaoController( VendaUsuarioVisao.conexao );
         contaController = new ContaController( VendaUsuarioVisao.conexao );
-        movimentacaoController = new MovimentacaoController( conexao.getConnection1() );
+        movimentacaoController = new MovimentacaoController(conexao.getConnection());
         dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById( 1 );
         cmc = new ContaMovimentosController( conexao );
         txtQuatindade.setText( "1" );
@@ -2404,14 +2406,6 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         txtNomeConsumidorFinal.setText( nomeCliente );
         String nif = clientesController.findByNome( nomeCliente ).getNif();
         txtNifClientePesquisa.setText( nif );
-
-//        txtClienteNome.setEditable (  ! clienteDiverso );
-//        txtClienteNome.setText ( clienteDiverso ? "Consumidor Final" : nomeCliente );
-//        txtClienteNome.setVisible ( cmbCliente.getSelectedItem ().equals ( "DIVERSOS" ) );
-//        if ( clienteDiverso )
-//        {
-//            txtClienteNome.requestFocus ();
-//        }
     }
 
     private void calcularTotalComDesconto()
@@ -3094,6 +3088,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         }
 
     }
+    
 
     public static int getIdDocumento()
     {
@@ -4559,15 +4554,17 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static void salvar_venda_comercial( boolean frNormal )
     {
-        BDConexao conexaoTransactionLocal = new BDConexao();
+        BDConexao conexaoTransactionLocal = BDConexao.getInstancia();
         vendasController = new VendasController( conexaoTransactionLocal );
         itemVendasController = new ItemVendasController( conexaoTransactionLocal );
         formaPagamentoItemController = new FormaPagamentoItemController( conexaoTransactionLocal );
         StoksController stocksControllerLocal = new StoksController( conexaoTransactionLocal );
-        DocumentosController.startTransaction( conexaoTransactionLocal ); // Inicia a transação
+        DocumentosController.start( conexaoTransactionLocal ); // Inicia a transação
         try
         {
-            System.out.println( "AutoCommit após iniciar transação? " + conexaoTransactionLocal.getConnection1().getAutoCommit() );
+            System.out.println("AutoCommit após iniciar transação? " 
+    + conexaoTransactionLocal.getConnection().getAutoCommit());
+
         }
         catch ( SQLException e )
         {
@@ -4613,7 +4610,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             }
 
             // Finaliza transação
-            DocumentosController.commitTransaction( conexaoTransactionLocal );
+            DocumentosController.commit(conexaoTransactionLocal );
 
             JOptionPane.showMessageDialog( null, "Factura efectuada com sucesso!" );
 //            imprimir_factura( idVendaGerada ); // Imprime a factura
@@ -4622,7 +4619,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         catch ( Exception e )
         {
 
-            DocumentosController.rollBackTransaction( conexaoTransactionLocal );
+            DocumentosController.rollback(conexaoTransactionLocal );
             e.printStackTrace();
             JOptionPane.showMessageDialog( null, "Erro ao processar a venda: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE );
         }
@@ -5138,7 +5135,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private static void imprimir_factura( int cod_venda )
     {
 
-        BDConexao conexoaLocal = new BDConexao();
+        BDConexao conexoaLocal = BDConexao.getInstancia();
         limpar();
         remover_all_produto();
         accao_cliente();
@@ -5268,7 +5265,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //    }
     public static void main( String[] args ) throws SQLException
     {
-        new VendaUsuarioVisao( 15, new BDConexao() ).show( true );
+        new VendaUsuarioVisao( 15, BDConexao.getInstancia() ).show( true );
     }
 
     public void confiLabel()
@@ -5529,7 +5526,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
         try
         {
-            BDConexao conexaoLocal = new BDConexao();
+            BDConexao conexaoLocal = BDConexao.getInstancia();
             documentosController = new DocumentosController( conexaoLocal );
             anoEconomicoController = new AnoEconomicoController( conexaoLocal );
             vendasController = new VendasController( conexaoLocal );
@@ -7007,8 +7004,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static void actualizarPrecoVendaManual( int idProduto, Double precoVenda, PrecosController precosControllerLocal )
     {
-        conexaoTransaction = new BDConexao();
-        DocumentosController.startTransaction( conexaoTransaction );
+        conexaoTransaction = BDConexao.getInstancia();
+        DocumentosController.start( conexaoTransaction );
 
         System.out.println( "ID PRODUTO: " + idProduto );
 
@@ -7043,20 +7040,20 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         try
         {
             precosControllerLocal.salvar( preco_novo_retalho );
-            DocumentosController.commitTransaction( conexaoTransaction );
+            DocumentosController.commit( conexaoTransaction );
             conexaoTransaction.close();
 //            precoDao.create(preco_novo_retalho);
             System.out.println( "Preco de compra retalho actualizado na venda" );
         }
         catch ( Exception e )
         {
-            DocumentosController.rollBackTransaction( conexaoTransaction );
+            DocumentosController.rollback(conexaoTransaction );
             e.printStackTrace();
             System.err.println( "Falha ao actualizar o preço retalho na venda" );
         }
 
-        conexaoTransaction = new BDConexao();
-        DocumentosController.startTransaction( conexaoTransaction );
+        conexaoTransaction = BDConexao.getInstancia();
+        DocumentosController.start( conexaoTransaction );
         try
         {
             //        preco_novo_grosso = precoAntigoGrosso;
@@ -7080,14 +7077,14 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
             precosControllerLocal.salvar( preco_novo_grosso );
 
-            DocumentosController.commitTransaction( conexaoTransaction );
+            DocumentosController.commit( conexaoTransaction );
             conexaoTransaction.close();
 //            precoDao.create(preco_novo_grosso);
             System.out.println( "Preco de compra grosso actualizado na compra" );
         }
         catch ( Exception e )
         {
-            DocumentosController.rollBackTransaction( conexaoTransaction );
+            DocumentosController.rollback(conexaoTransaction );
             e.printStackTrace();
             System.err.println( "Falha ao actualizar o preço grosso na compra" );
         }

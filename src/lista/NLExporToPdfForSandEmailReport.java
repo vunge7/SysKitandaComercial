@@ -4,7 +4,8 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import comercial.controller.CaixasController;
 import dao.DadosInstituicaoDao;
 import java.io.File;
@@ -107,7 +108,7 @@ public final class NLExporToPdfForSandEmailReport
 
     public static void main( String[] args ) throws JRException, SQLException
     {
-        NLExporToPdfForSandEmailReport r = new NLExporToPdfForSandEmailReport( new BDConexao() );
+        NLExporToPdfForSandEmailReport r = new NLExporToPdfForSandEmailReport( BDConexao.getInstancia() );
     }
 
 }

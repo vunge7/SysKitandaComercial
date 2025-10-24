@@ -4,7 +4,8 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -45,7 +46,7 @@ public class ListarEntradaPorEntervaloData extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         confLabel();
           
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
         
         cmbtipoProduto.setModel( new DefaultComboBoxModel( conexao.getElementos("tb_tipo_produto", "designacao", false)   ) );
         cmbProduto.setModel( new DefaultComboBoxModel( conexao.getElementos2("tb_produto", "designacao", "cod_Tipo_Produto", getCodigoTipoProduto())   ) );
@@ -108,7 +109,7 @@ public class ListarEntradaPorEntervaloData extends javax.swing.JFrame {
     
     public void mostrar() throws SQLException {
         
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
        
         
@@ -170,7 +171,7 @@ public class ListarEntradaPorEntervaloData extends javax.swing.JFrame {
     
     
     public void mostrar2() throws SQLException {
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
         String relatorio = "";
         

@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.*;
 
 import dao.ItemPermissaoDao;
@@ -3287,7 +3289,7 @@ public class AlteracaoGuiaTransporteVisao extends javax.swing.JFrame implements 
 //                int last_id_item_venda = itemVendaDao.criarComProcedimentos( itemVenda, conexao );
                 if ( !itemVendasController.actualizar( itemVenda ) )
                 {
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    DocumentosController.rollback( conexaoTransaction );
                     conexaoTransaction.close();
                     return;
                 }
@@ -3315,7 +3317,7 @@ public class AlteracaoGuiaTransporteVisao extends javax.swing.JFrame implements 
                 e.printStackTrace();
                 efectuada = false;
                 JOptionPane.showMessageDialog( null, "Falha ao registrar o produto: " + itemVenda.getCodigoProduto().getCodigo() + " na Factura" );
-                DocumentosController.rollBackTransaction( conexaoTransaction );
+                DocumentosController.rollback( conexaoTransaction );
                 conexaoTransaction.close();
                 return;
             }
@@ -3328,7 +3330,7 @@ public class AlteracaoGuiaTransporteVisao extends javax.swing.JFrame implements 
             {
                 if ( !registrar_forma_pagamento( cod_venda ) )
                 {
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    DocumentosController.rollback( conexaoTransaction );
                     conexaoTransaction.close();
                     JOptionPane.showMessageDialog( null, "Falha ao registrar a forma de pagamento.", "Falha", JOptionPane.WARNING_MESSAGE );
                     return;
@@ -3336,7 +3338,7 @@ public class AlteracaoGuiaTransporteVisao extends javax.swing.JFrame implements 
             }
 
             JOptionPane.showMessageDialog( null, "Factura efectuada com sucesso!.." );
-            DocumentosController.commitTransaction( conexaoTransaction );
+            DocumentosController.commit( conexaoTransaction );
 
             List<TbProduto> lista_produto_isentos = new ArrayList<>();
             lista_produto_isentos = getProdutosIsentos();
@@ -3805,8 +3807,8 @@ public class AlteracaoGuiaTransporteVisao extends javax.swing.JFrame implements 
 
     private static void salvar_venda_comercial()
     {
-        conexaoTransaction = new BDConexao();
-        DocumentosController.startTransaction( conexaoTransaction );
+        conexaoTransaction = BDConexao.getInstancia();
+        DocumentosController.start( conexaoTransaction );
 
         Date data_documento = dc_data_documento.getDate();
 //        TbVenda venda_local = new TbVenda();
@@ -3908,7 +3910,7 @@ public class AlteracaoGuiaTransporteVisao extends javax.swing.JFrame implements 
                 Integer last_venda = guia_transporte_global.getCodigo();
                 if ( Objects.isNull( last_venda ) || last_venda == 0 )
                 {
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    DocumentosController.rollback( conexaoTransaction );
                     conexaoTransaction.close();
                     return;
                 }
@@ -3935,7 +3937,7 @@ public class AlteracaoGuiaTransporteVisao extends javax.swing.JFrame implements 
             System.err.println( "STATUS: falha ao actualizar a factura" );
             e.printStackTrace();
             JOptionPane.showMessageDialog( null, "Falha ao Processar a Factura", "FALHA", JOptionPane.ERROR_MESSAGE );
-            DocumentosController.rollBackTransaction( conexao );
+            DocumentosController.rollback( conexao );
 //            conexaoTransaction.close();
         }
 
@@ -3961,7 +3963,7 @@ public class AlteracaoGuiaTransporteVisao extends javax.swing.JFrame implements 
 
     public static void main( String[] args ) throws SQLException
     {
-        new AlteracaoGuiaTransporteVisao( 15, new BDConexao() ).show( true );
+        new AlteracaoGuiaTransporteVisao( 15, BDConexao.getInstancia() ).show( true );
     }
 
     public void confiLabel()

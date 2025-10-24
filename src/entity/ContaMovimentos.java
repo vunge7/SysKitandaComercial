@@ -4,6 +4,8 @@
  */
 package entity;
 
+
+import java.sql.Connection;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;

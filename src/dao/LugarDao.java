@@ -5,6 +5,8 @@
  */
 package dao;
 
+
+import java.sql.Connection;
 import java.util.List;
 import java.util.Vector;
 import javax.persistence.EntityManager;

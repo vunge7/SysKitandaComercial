@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.LocalDao;
 import dao.UnidadeDao;
 import entity.TbLocal;
@@ -40,7 +42,7 @@ public class UnidadeMedidasVisao extends javax.swing.JDialog
         initComponents();
         confLabel();
         setLocationRelativeTo( null );
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
 //        tipoProdutoController = new LocalController(conexao);
 
         adicionar();

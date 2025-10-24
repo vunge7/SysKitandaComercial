@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.ProdutoDao;
 import entity.TbProduto;
 import entity.TbStock;
@@ -248,7 +250,7 @@ public class AcertoStockPorProdutoVisao extends javax.swing.JDialog
         {
             public void run()
             {
-                AcertoStockPorProdutoVisao dialog = new AcertoStockPorProdutoVisao( new javax.swing.JFrame(), true, 1, 1675, new BDConexao() );
+                AcertoStockPorProdutoVisao dialog = new AcertoStockPorProdutoVisao( new javax.swing.JFrame(), true, 1, 1675, BDConexao.getInstancia() );
                 dialog.addWindowListener( new java.awt.event.WindowAdapter()
                 {
                     @Override

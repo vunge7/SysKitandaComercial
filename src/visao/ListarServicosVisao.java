@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.AccessoArmazemDao;
 import lista.*;
 import dao.ArmazemDao;
@@ -217,7 +219,7 @@ public class ListarServicosVisao extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    new ListarServicosVisao(15, new BDConexao()).setVisible(true);
+                    new ListarServicosVisao(15, BDConexao.getInstancia()).setVisible(true);
                 } catch (Exception ex) {
                     Logger.getLogger(ListarServicosVisao.class.getName()).log(Level.SEVERE, null, ex);
                 }

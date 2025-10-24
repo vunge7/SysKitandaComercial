@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import controller.ProdutoController;
 import controller.StockController;
 import dao.*;
@@ -1299,7 +1301,7 @@ public class ProdutoVisao1 extends javax.swing.JFrame
             {
                 try
                 {
-                    ProdutoVisao1 dialog = new ProdutoVisao1( new javax.swing.JFrame(), true, 15, new BDConexao() );
+                    ProdutoVisao1 dialog = new ProdutoVisao1( new javax.swing.JFrame(), true, 15, BDConexao.getInstancia() );
                     dialog.addWindowListener( new java.awt.event.WindowAdapter()
                     {
                         @Override

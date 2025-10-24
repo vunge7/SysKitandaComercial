@@ -6,6 +6,8 @@
 
 package tesouraria.visao;
 
+
+import java.sql.Connection;
 import dao.SaidaDao;
 import java.util.Date;
 import java.util.List;

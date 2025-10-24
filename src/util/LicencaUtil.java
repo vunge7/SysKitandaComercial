@@ -5,6 +5,8 @@
  */
 package util;
 
+
+import java.sql.Connection;
 import dao.AnoEconomicoDao;
 import dao.DadosInstituicaoDao;
 import java.sql.ResultSet;

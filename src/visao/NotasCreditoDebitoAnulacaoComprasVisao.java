@@ -6,6 +6,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import controller.ItemVendaController;
 import controller.StockController;
 import controller.TipoClienteController;
@@ -622,7 +624,7 @@ public class NotasCreditoDebitoAnulacaoComprasVisao extends javax.swing.JFrame i
 
     public static void main( String[] args ) throws SQLException
     {
-        new NotasCreditoDebitoAnulacaoComprasVisao( 15, new BDConexao() ).show( true );
+        new NotasCreditoDebitoAnulacaoComprasVisao( 15, BDConexao.getInstancia() ).show( true );
     }
 
 //    public static boolean estado_critico() throws SQLException

@@ -5,6 +5,8 @@
  */
 package dao;
 
+
+import java.sql.Connection;
 import controlador.TbSalarioJpaController;
 import entity.TbSalario;
 import java.util.List;

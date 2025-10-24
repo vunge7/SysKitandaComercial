@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.CaixasController;
 import comercial.controller.DadosInstituicaoController;
 import comercial.controller.DocumentosController;
@@ -326,7 +328,7 @@ public class CaixaFechoVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new CaixaFechoVisao( 15, new BDConexao(), false ).setVisible( true );
+                new CaixaFechoVisao( 15, BDConexao.getInstancia(), false ).setVisible( true );
             }
         } );
     }
@@ -345,7 +347,7 @@ public class CaixaFechoVisao extends javax.swing.JFrame
 
 //    private void procedimento_fechar_caixa()
 //    {
-//        conexaoTransaction = new BDConexao();
+//        conexaoTransaction = BDConexao.getInstancia();
 //        DocumentosController.startTransaction( conexaoTransaction );
 //
 //        TbDadosInstituicao dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById( 1 );
@@ -461,7 +463,7 @@ public class CaixaFechoVisao extends javax.swing.JFrame
 //
 //                        JOptionPane.showMessageDialog( null, "Falha ao processar os relatórios.\nFalha: " + e.getLocalizedMessage(),
 //                                "Falha", JOptionPane.ERROR_MESSAGE );
-//                        DocumentosController.rollBackTransaction( conexaoTransaction );
+//                        DocumentosController.rollback( conexaoTransaction );
 //                        conexaoTransaction.close();
 //                    }
 //
@@ -477,8 +479,8 @@ public class CaixaFechoVisao extends javax.swing.JFrame
     
     private void procedimento_fechar_caixa()
 {
-    conexaoTransaction = new BDConexao();
-    DocumentosController.startTransaction(conexaoTransaction);
+    conexaoTransaction = BDConexao.getInstancia();
+    DocumentosController.start(conexaoTransaction);
 
     TbDadosInstituicao dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
     TbUsuario usuario = (TbUsuario) usuariosController.findById(this.idUser);
@@ -566,7 +568,7 @@ public class CaixaFechoVisao extends javax.swing.JFrame
             {
                 modelo.setRowCount(0);
                 JOptionPane.showMessageDialog(null, "Fecho realizado com sucesso!");
-                DocumentosController.commitTransaction(conexaoTransaction);
+                DocumentosController.commit(conexaoTransaction);
                 dispose();
 
                 if (dadosInstituicao.getNegocio().equals("Lavandaria"))
@@ -587,14 +589,14 @@ public class CaixaFechoVisao extends javax.swing.JFrame
                 {
                     JOptionPane.showMessageDialog(null, "Falha ao processar os relatórios.\nFalha: " + e.getLocalizedMessage(),
                             "Falha", JOptionPane.ERROR_MESSAGE);
-                    DocumentosController.rollBackTransaction(conexaoTransaction);
+                    DocumentosController.rollback(conexaoTransaction);
                     conexaoTransaction.close();
                 }
 
             }
             else
             {
-                DocumentosController.rollBackTransaction(conexaoTransaction);
+                DocumentosController.rollback(conexaoTransaction);
                 JOptionPane.showMessageDialog(null, "Falha ao realizar o fecho de caixa!", "Erro", JOptionPane.ERROR_MESSAGE);
             }
         }

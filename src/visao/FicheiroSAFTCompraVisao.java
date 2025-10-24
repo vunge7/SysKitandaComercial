@@ -10,6 +10,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.ComprasController;
 import comercial.controller.DocumentosController;
 import comercial.controller.FornecedoresController;
@@ -297,7 +299,7 @@ public class FicheiroSAFTCompraVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new FicheiroSAFTCompraVisao( new BDConexao() ).setVisible( true );
+                new FicheiroSAFTCompraVisao( BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }

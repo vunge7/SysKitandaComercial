@@ -5,6 +5,8 @@
  */
 package util.definicoes;
 
+
+import java.sql.Connection;
 import entity.FechoPeriodo;
 import java.util.Vector;
 

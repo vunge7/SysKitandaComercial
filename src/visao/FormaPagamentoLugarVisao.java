@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.DadosInstituicaoDao;
 import dao.FormaPagamentoDao;
 import dao.FormaPagamentoItemDao;
@@ -352,7 +354,7 @@ public class FormaPagamentoLugarVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                FormaPagamentoLugarVisao dialog = new FormaPagamentoLugarVisao( new javax.swing.JFrame(), true, null, 0, new BDConexao(), 1, 0 );
+                FormaPagamentoLugarVisao dialog = new FormaPagamentoLugarVisao( new javax.swing.JFrame(), true, null, 0, BDConexao.getInstancia(), 1, 0 );
                 dialog.addWindowListener( new java.awt.event.WindowAdapter()
                 {
                     @Override

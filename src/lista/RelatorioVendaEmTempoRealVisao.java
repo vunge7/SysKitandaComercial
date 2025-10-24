@@ -4,6 +4,8 @@
  */
 package lista;
 
+
+import java.sql.Connection;
 import dao.ArmazemDao;
 import dao.ItemVendaDao;
 import dao.PrecoDao;
@@ -385,7 +387,7 @@ public class RelatorioVendaEmTempoRealVisao extends javax.swing.JFrame implement
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    new RelatorioVendaEmTempoRealVisao( new BDConexao() ).setVisible(true);
+                    new RelatorioVendaEmTempoRealVisao( BDConexao.getInstancia() ).setVisible(true);
                 } catch (Exception ex) {
                     Logger.getLogger(RelatorioVendaEmTempoRealVisao.class.getName()).log(Level.SEVERE, null, ex);
                 }

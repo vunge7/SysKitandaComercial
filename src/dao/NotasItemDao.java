@@ -5,6 +5,8 @@
  */
 package dao;
 
+
+import java.sql.Connection;
 import controlador.NotasItemJpaController;
 import entity.NotasItem;
 import entity.TbPreco;

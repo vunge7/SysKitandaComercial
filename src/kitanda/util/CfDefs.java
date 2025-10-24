@@ -5,6 +5,8 @@
  */
 package kitanda.util;
 
+
+import java.sql.Connection;
 import java.util.HashMap;
 import static kitanda.util.CfDefs.Mensagem.*;
 import static kitanda.util.CfDefs.Titulo.*;

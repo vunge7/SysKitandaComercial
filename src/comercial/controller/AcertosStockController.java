@@ -5,6 +5,8 @@
  */
 package comercial.controller;
 
+
+import java.sql.Connection;
 import entity.AcertoStock;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -209,7 +211,7 @@ public class AcertosStockController implements EntidadeFactory
 
     public static void main( String[] args )
     {
-        BDConexao conexao = new BDConexao();
+        BDConexao conexao = BDConexao.getInstancia();
         AcertosStockController pc = new AcertosStockController( conexao );
     }
 

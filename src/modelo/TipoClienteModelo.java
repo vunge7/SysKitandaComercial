@@ -6,6 +6,8 @@
 
 package modelo;
 
+
+import java.sql.Connection;
 /**
  *
  * @author Martinho

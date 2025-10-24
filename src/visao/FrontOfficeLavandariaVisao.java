@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.AccessoArmazemDao;
 import dao.ArmazemDao;
 import dao.UsuarioDao;
@@ -189,7 +191,7 @@ public class FrontOfficeLavandariaVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new FrontOfficeLavandariaVisao( 15, new BDConexao() ).setVisible( true );
+                new FrontOfficeLavandariaVisao( 15, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }

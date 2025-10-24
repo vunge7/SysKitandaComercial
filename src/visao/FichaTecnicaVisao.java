@@ -1367,8 +1367,8 @@ public class FichaTecnicaVisao extends javax.swing.JFrame
 
         if ( !MetodosUtil.tabela_vazia( tabela_ficha_tecnica ) )
         {
-            conexaoTransaction = new BDConexao();
-            DocumentosController.startTransaction( conexaoTransaction );
+            conexaoTransaction = BDConexao.getInstancia();
+            DocumentosController.start( conexaoTransaction );
 //            fichaTecnicaController = new FichaTecnicaController( conexaoTransaction );
             try
             {
@@ -1397,8 +1397,8 @@ public class FichaTecnicaVisao extends javax.swing.JFrame
 
     public static boolean salvar_ficha_tecnica()
     {
-        conexaoTransaction = new BDConexao();
-        DocumentosController.startTransaction( conexaoTransaction );
+        conexaoTransaction = BDConexao.getInstancia();
+        DocumentosController.start( conexaoTransaction );
 
         Date data_documento = new Date();
 
@@ -1442,7 +1442,7 @@ public class FichaTecnicaVisao extends javax.swing.JFrame
 
                 if ( Objects.isNull( last_ficha ) || last_ficha == 0 )
                 {
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    DocumentosController.rollback( conexaoTransaction );
                     conexaoTransaction.close();
                     return false;
                 }
@@ -1469,7 +1469,7 @@ public class FichaTecnicaVisao extends javax.swing.JFrame
             System.err.println( "STATUS: falha ao actualizar a ficha tecnica" );
             e.printStackTrace();
             JOptionPane.showMessageDialog( null, "Falha ao Processar a Ficha Técnica", "FALHA", JOptionPane.ERROR_MESSAGE );
-            DocumentosController.rollBackTransaction( conexaoTransaction );
+            DocumentosController.rollback( conexaoTransaction );
             conexaoTransaction.close();
 
         }
@@ -1504,7 +1504,7 @@ public class FichaTecnicaVisao extends javax.swing.JFrame
                     //cria o item ficha
                     if ( !linhafichaTecnicaController.salvar( linhaFichaTecnica ) )
                     {
-                        DocumentosController.rollBackTransaction( conexaoTransaction );
+                        DocumentosController.rollback( conexaoTransaction );
                         conexaoTransaction.close();
                         return false;
                     }
@@ -1514,14 +1514,14 @@ public class FichaTecnicaVisao extends javax.swing.JFrame
                     sucesso = false;
                     e.printStackTrace();
                     JOptionPane.showMessageDialog( null, "Falha ao registrar a ficha", "Falha", JOptionPane.ERROR_MESSAGE );
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    DocumentosController.rollback( conexaoTransaction );
                     conexaoTransaction.close();
                     return false;
                 }
             }
             if ( sucesso )
             {
-                DocumentosController.commitTransaction( conexaoTransaction );
+                DocumentosController.commit( conexaoTransaction );
                 //esvaziar_tabela();
                 fichaTecnica = null;
                 JOptionPane.showMessageDialog( null, "Ficha Técnica efectuada com sucesso!.." );
@@ -1654,7 +1654,7 @@ public class FichaTecnicaVisao extends javax.swing.JFrame
             public void run()
             {
 
-                new FichaTecnicaVisao( 15, new BDConexao() ).show();
+                new FichaTecnicaVisao( 15, BDConexao.getInstancia() ).show();
             }
         } );
     }

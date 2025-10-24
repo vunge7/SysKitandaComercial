@@ -5,6 +5,8 @@
  */
 package comercial.controller;
 
+
+import java.sql.Connection;
 import entity.Imposto;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

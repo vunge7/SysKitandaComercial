@@ -4,6 +4,8 @@
  */
 package lista;
 
+
+import java.sql.Connection;
 import dao.ArmazemDao;
 import dao.ItemVendaDao;
 import dao.PrecoDao;
@@ -571,7 +573,7 @@ public class ListarRelatorioNotasCredito extends javax.swing.JFrame
             {
                 try
                 {
-                    new ListarRelatorioNotasCredito( new BDConexao() ).setVisible( true );
+                    new ListarRelatorioNotasCredito( BDConexao.getInstancia() ).setVisible( true );
                 }
                 catch ( Exception ex )
                 {

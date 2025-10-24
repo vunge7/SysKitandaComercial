@@ -5,6 +5,8 @@
  */
 package rh.visao;
 
+
+import java.sql.Connection;
 import de.javasoft.plaf.synthetica.SyntheticaBlackStarLookAndFeel;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -758,7 +760,7 @@ public class PainelRelatoriosVisao extends javax.swing.JFrame {
 //                } catch (Exception e) {
 //                    JOptionPane.showMessageDialog(null, "Error en Look an Feel" + e.getMessage(), null, JOptionPane.ERROR_MESSAGE);
 //                }
-                new PainelRelatoriosVisao(15, new BDConexao()).setVisible(true);
+                new PainelRelatoriosVisao(15, BDConexao.getInstancia()).setVisible(true);
             }
         });
     }

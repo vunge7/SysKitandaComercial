@@ -5,6 +5,8 @@
  */
 package comercial.controller;
 
+
+import java.sql.Connection;
 import entity.FichaTecnica;
 import entity.TbArmazem;
 import entity.TbEntrada;
@@ -261,7 +263,7 @@ public class ItemEntradasController implements EntidadeFactory
 
     public static void main( String[] args )
     {
-        BDConexao conexao = new BDConexao();
+        BDConexao conexao = BDConexao.getInstancia();
         ItemEntradasController f = new ItemEntradasController( conexao );
 
     }

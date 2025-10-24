@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.AnoEconomicoController;
 import comercial.controller.ClientesController;
 import comercial.controller.DadosInstituicaoController;
@@ -906,7 +908,7 @@ public class DespachoVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new DespachoVisao( 15, new BDConexao() ).setVisible( true );
+                new DespachoVisao( 15, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }
@@ -1074,9 +1076,9 @@ public class DespachoVisao extends javax.swing.JFrame
     private int salvar_venda_comercial()
     {
 //        mostrar_proximo_codigo_documento();
-        conexaoTransaction = new BDConexao();
+        conexaoTransaction = BDConexao.getInstancia();
 
-        DocumentosController.startTransaction( conexaoTransaction );
+        DocumentosController.start( conexaoTransaction );
         int prazo_proforma = dadosInstituicaoController.findByCodigo( 1 ).getPrazoProforma();
         Date data_documento = new Date();
         TbVenda venda_local = new TbVenda();
@@ -1165,12 +1167,12 @@ public class DespachoVisao extends javax.swing.JFrame
 
             if ( vendasController.salvar( venda_local ) )
             {
-                DocumentosController.commitTransaction( conexaoTransaction );
+                DocumentosController.commit( conexaoTransaction );
                 Integer last_venda = vendasController.getLastVenda().getCodigo();
 
                 if ( Objects.isNull( last_venda ) || last_venda == 0 )
                 {
-                    DocumentosController.rollBackTransaction( conexaoTransaction );
+                    DocumentosController.rollback( conexaoTransaction );
                     conexaoTransaction.close();
                     return 0;
                 }
@@ -1189,7 +1191,7 @@ public class DespachoVisao extends javax.swing.JFrame
             System.err.println( "STATUS: falha ao actualizar a factura" );
             e.printStackTrace();
             JOptionPane.showMessageDialog( null, "Falha ao Processar a Factura", "FALHA", JOptionPane.ERROR_MESSAGE );
-            DocumentosController.rollBackTransaction( conexaoTransaction );
+            DocumentosController.rollback( conexaoTransaction );
             conexaoTransaction.close();
         }
 

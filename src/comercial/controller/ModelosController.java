@@ -5,6 +5,8 @@
  */
 package comercial.controller;
 
+
+import java.sql.Connection;
 import entity.Marca;
 import entity.Modelo;
 import java.sql.ResultSet;

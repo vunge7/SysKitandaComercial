@@ -5,6 +5,8 @@
  */
 package render;
 
+
+import java.sql.Connection;
 import java.awt.Component;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;

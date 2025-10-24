@@ -5,6 +5,8 @@
  */
 package util.tabela_manual.tabela;
 
+
+import java.sql.Connection;
 /**
  *
  * @author Domingos Dala Vunge

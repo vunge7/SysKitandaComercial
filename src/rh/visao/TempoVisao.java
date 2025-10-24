@@ -12,6 +12,8 @@
 package rh.visao;
 
 
+
+import java.sql.Connection;
 import dao.TempoDao;
 import dao.FuncionarioDao;
 import entity.TbTempo;

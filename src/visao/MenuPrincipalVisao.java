@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.DadosInstituicaoDao;
 import dao.ItemPermissaoDao;
 import dao.ProdutoDao;
@@ -220,7 +222,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
             else if ( permissao.equals( jmRelatorioNotasCredito.getText() ) )
             {
                 jmRelatorioNotasCredito.setEnabled( true );
-            } 
+            }
 
             else if ( permissao.equals( jmRelatorioAcertoStock.getText() ) )
             {
@@ -679,6 +681,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jmListarUsuario = new javax.swing.JMenuItem();
         jmGerarSaftVendas = new javax.swing.JMenuItem();
         jmGerarSaftCompras = new javax.swing.JMenuItem();
+        jMenuItem1 = new javax.swing.JMenuItem();
         jMenu7 = new javax.swing.JMenu();
         jmFamilia = new javax.swing.JMenuItem();
         jmSubFamilia = new javax.swing.JMenuItem();
@@ -1616,6 +1619,16 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         });
         jMenu6.add(jmGerarSaftCompras);
 
+        jMenuItem1.setText("Operação Inverter IVA");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu6.add(jMenuItem1);
+
         jMenuBar1.add(jMenu6);
 
         jMenu7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/1588_32x32.png"))); // NOI18N
@@ -2138,7 +2151,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
         try
         {
-            new ListarRelatorioFormaPagamento( new BDConexao(), this.cod_utilizador ).show();
+            new ListarRelatorioFormaPagamento( BDConexao.getInstancia(), this.cod_utilizador ).show();
         }
         catch ( Exception e )
         {
@@ -2438,6 +2451,12 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
                 .setVisible( true );
     }//GEN-LAST:event_jcbCardexActionPerformed
 
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem1ActionPerformed
+    {//GEN-HEADEREND:event_jMenuItem1ActionPerformed
+        FrmAplicarIvaPrecos frm = new FrmAplicarIvaPrecos( conexao );
+        frm.setVisible( true );
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -2514,6 +2533,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     private javax.swing.JMenu jMenu7;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuConfiguracoesSistema;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem13;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;

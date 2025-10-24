@@ -5,7 +5,8 @@
  */
 package util;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import controlador.DbBackupScheduleJpaController;
 import dao.*;
 import entity.AnoEconomico;

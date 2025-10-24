@@ -4,7 +4,8 @@
  */
 package lista;
 
-import com.mysql.jdbc.Connection;
+
+import java.sql.Connection;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -35,7 +36,7 @@ public class ListarProdutoStock extends javax.swing.JFrame {
         setResizable(false);
         setLocationRelativeTo(null);
         confLabel();
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
         cmbArmazem.setModel( new DefaultComboBoxModel( conexao.getElementos("tb_armazem", "designacao", false)   ) );
         //cmbArmazem.setSelectedItem("AR");
     }
@@ -195,7 +196,7 @@ public class ListarProdutoStock extends javax.swing.JFrame {
 
       public void mostrarUsuarios() {
           
-        Connection connection = (Connection) conexao.conectar();
+        java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
         String relatorio = "";
 

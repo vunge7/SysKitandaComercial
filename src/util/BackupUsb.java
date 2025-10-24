@@ -4,6 +4,8 @@
  */
 package util;
 
+
+import java.sql.Connection;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;

@@ -4,6 +4,8 @@
  */
 package tesouraria.novo.visao;
 
+
+import java.sql.Connection;
 import entity.Contas;
 import java.awt.Color;
 import java.awt.event.ActionEvent;

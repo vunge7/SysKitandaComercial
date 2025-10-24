@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.ArmazensController;
 import comercial.controller.LinhasTransferenciasController;
 import comercial.controller.MovimentacaoController;
@@ -781,7 +783,7 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
 
     public static void main( String[] args )
     {
-        new TranferenciaArmazemVisao( 15, new BDConexao() ).show();
+        new TranferenciaArmazemVisao( 15, BDConexao.getInstancia() ).show();
     }
 
     @Override
@@ -1030,7 +1032,7 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
     private void procedimento_salvar()
     {
 
-        conexaoTransacao = new BDConexao();
+        conexaoTransacao = BDConexao.getInstancia();
         DocumentoDao.startTransaction( conexaoTransacao );
 
         TransferenciaArmazem transferenciaArmazem = new TransferenciaArmazem();

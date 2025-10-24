@@ -4,6 +4,8 @@
  */
 package util.cronjob;
 
+
+import java.sql.Connection;
 import entity.TbDadosInstituicao;
 import comercial.controller.DadosInstituicaoController;
 import java.util.Date;
@@ -24,7 +26,7 @@ public class ValidadorJob implements Job
     @Override
     public void execute( JobExecutionContext jec ) throws JobExecutionException
     {
-//        BDConexao conexaoTemp = new BDConexao();
+//        BDConexao conexaoTemp = BDConexao.getInstancia();
         System.out.println( "Enviar o relatório mensal no email " + new Date() );
         Date data_sistema = new Date();
         System.out.println( "HORA_SISTEMA: " + data_sistema.getHours() );

@@ -5,6 +5,8 @@
  */
 package dao;
 
+
+import java.sql.Connection;
 import controlador.PedidoFeriaJpaController;
 import controlador.PrevioAvisoJpaController;
 import entity.PedidoFeria;

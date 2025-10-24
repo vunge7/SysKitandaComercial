@@ -4,6 +4,8 @@
  */
 package util;
 
+
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -51,7 +53,7 @@ public class Definicoes
 
     public Definicoes()
     {
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
     }
 
     public String getIpServido()

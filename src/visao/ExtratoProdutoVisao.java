@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import controller.ClienteController;
 import controller.PagamentoVendaCreditoController;
 import controller.TipoProdutoController;
@@ -62,7 +64,7 @@ public class ExtratoProdutoVisao extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         
         tipoProdutoModelo = new TipoProdutoModelo();
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
         tipoProdutoController = new TipoProdutoController(conexao);
         
        

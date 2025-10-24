@@ -6,6 +6,8 @@
 
 package dao;
 
+
+import java.sql.Connection;
 import controlador.TbProFormaJpaController;
 import entity.TbProForma;
 import java.util.Date;

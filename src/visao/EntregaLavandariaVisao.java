@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import comercial.controller.AnoEconomicoController;
 import comercial.controller.ClientesController;
 import comercial.controller.DocumentosController;
@@ -582,7 +584,7 @@ public class EntregaLavandariaVisao extends javax.swing.JFrame
         {
             public void run()
             {
-                new EntregaLavandariaVisao( 15, new BDConexao() ).setVisible( true );
+                new EntregaLavandariaVisao( 15, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
 //        imprimiRecibo( 29 );

@@ -1,5 +1,7 @@
 package util;
 
+
+import java.sql.Connection;
 import javax.swing.*;
 
 public class OlaMundo

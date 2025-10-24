@@ -7,6 +7,8 @@
 package relatorios;
 
 
+
+import java.sql.Connection;
 import dao.DadosInstituicaoDao;
 import entity.TbFuncionario;
 import java.util.ArrayList;

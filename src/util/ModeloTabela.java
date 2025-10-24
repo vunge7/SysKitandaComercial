@@ -6,6 +6,8 @@
 
 package util;
 
+
+import java.sql.Connection;
 import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 

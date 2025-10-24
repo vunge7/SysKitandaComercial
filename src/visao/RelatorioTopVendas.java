@@ -10,6 +10,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 //import clinica.controllers.RequisitantesController;
 //import clinica.controllers.SubProcessosController;
 //import entity.Requisitante;
@@ -307,7 +309,7 @@ public class RelatorioTopVendas extends javax.swing.JFrame
         {
             public void run()
             {
-                new RelatorioTopVendas( new BDConexao() ).setVisible( true );
+                new RelatorioTopVendas( BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }

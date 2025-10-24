@@ -6,6 +6,8 @@
 
 package dao;
 
+
+import java.sql.Connection;
 import controlador.TbItemSubsidiosFuncionarioJpaController;
 import controlador.exceptions.NonexistentEntityException;
 import entity.TbItemSubsidiosFuncionario;

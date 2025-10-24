@@ -11,6 +11,8 @@
 
 package visao;
 
+
+import java.sql.Connection;
 import dao.FuncaoDao;
 import entity.TbFuncao;
 import java.util.List;

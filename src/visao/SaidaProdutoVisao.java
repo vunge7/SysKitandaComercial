@@ -102,7 +102,7 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
     private TbVasilhame vasilhame;
     private BancoDao bancoDao = new BancoDao( emf );
     private static BDConexao conexao, conexaoTransaction;
-
+    
     private static int cod_usuario;
     private TipoClienteModelo tipoClienteModelo;
     private StockController stockController;
@@ -119,6 +119,7 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
     private List<TbItemSaidas> listaItemSaida;
     private StoksController stoksController;
     private UsuariosController usuariosController;
+//    private final Connection conn;
 
     public SaidaProdutoVisao( int cod_usuario, BDConexao conexao ) throws SQLException
     {
@@ -134,8 +135,8 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
         produtosController = new ProdutosController( SaidaProdutoVisao.conexao );
         tipoProdutoController = new TipoProdutosController( SaidaProdutoVisao.conexao );
         precosController = new PrecosController( SaidaProdutoVisao.conexao );
-        saidasProdutosController = new SaidasProdutosController( conexao.getConnection1() );
-        itemSaidasController = new ItemSaidasController( conexao.getConnection1() );
+        saidasProdutosController = new SaidasProdutosController( conexao.getConnection() );
+        itemSaidasController = new ItemSaidasController( conexao.getConnection() );
         stoksController = new StoksController( conexao );
         usuariosController = new UsuariosController( conexao );
         armazensController = new ArmazensController( conexao );
@@ -1066,8 +1067,15 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
     private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnActualizarActionPerformed
     {//GEN-HEADEREND:event_btnActualizarActionPerformed
 
-        // TODO add your handling code here:
-        procedimentoActualizarSaida();
+        try
+        {
+            // TODO add your handling code here:
+            procedimentoActualizarSaida();
+        }
+        catch ( SQLException ex )
+        {
+            Logger.getLogger( SaidaProdutoVisao.class.getName() ).log( Level.SEVERE, null, ex );
+        }
 
 
     }//GEN-LAST:event_btnActualizarActionPerformed
@@ -1428,79 +1436,69 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
 
     }
 
-    private void operacaoSalvar()
-    {
-        conexaoTransaction = new BDConexao();
-        Connection conn = null;
-        try
-        {
-            conn = conexaoTransaction.getConnection1();
-            conn.setAutoCommit( false ); // Inicia a transação manualmente
+private void operacaoSalvar() throws SQLException {
+    Connection conn = null;
 
-            saidasProdutosController = new SaidasProdutosController( conn );
-            itemSaidasController = new ItemSaidasController( conn );
-            stoksController = new StoksController( conexaoTransaction );
+    try {
+        // 🔹 Obtém a conexão ativa para a transação
+        conn = this.conexao.getConnectionAtiva();
+        conn.setAutoCommit(false);
 
-            // Salvar a saída
-            TbSaidasProdutos saidasProdutos = salvar_saidasProdutos();
+        // 🔹 Inicializa controladores com a MESMA conexão
+        saidasProdutosController = new SaidasProdutosController(conn);
+        itemSaidasController = new ItemSaidasController(conn);
+        stoksController = new StoksController(this.conexao); // continua recebendo BDConexao
 
-            // Salvar os itens
-            salvarItemsaidasProdutos( saidasProdutos );
+        // 🔹 1. Salva saída principal
+        TbSaidasProdutos saidasProdutos = salvar_saidasProdutos();
 
-            // Se tudo deu certo, confirma a transação
-            conn.commit();
+        // 🔹 2. Salva itens da saída
+        salvarItemsaidasProdutos(saidasProdutos);
 
-            JOptionPane.showMessageDialog( null, "Saída de Produtos efectuada com sucesso!.." );
+        // 🔹 3. Confirma transação
+        conn.commit();
+        JOptionPane.showMessageDialog(null, "Saída de Produtos efectuada com sucesso!..");
 
-            limpar();
-            remover_all_produto();
-            adicionar_preco_quantidade_anitgo();
-            txtQuatindade.requestFocus();
-            ListaSaidaProdutos listaSaidas = new ListaSaidaProdutos( saidasProdutos.getPkSaidasProdutos() );
+        // 🔹 4. Limpeza e atualização da interface
+        limpar();
+        remover_all_produto();
+        adicionar_preco_quantidade_anitgo();
+        txtQuatindade.requestFocus();
+        new ListaSaidaProdutos(saidasProdutos.getPkSaidasProdutos());
 
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace();
-            try
-            {
-                if ( conn != null )
-                {
-                    conn.rollback(); // desfaz alterações se houve erro
-                    JOptionPane.showMessageDialog( null, "Erro ao salvar. Transação revertida!" );
-                }
-            }
-            catch ( SQLException ex )
-            {
+    } catch (Exception e) {
+        e.printStackTrace();
+        // 🔹 Rollback na MESMA conexão
+        if (conn != null) {
+            try {
+                conn.rollback();
+                JOptionPane.showMessageDialog(null, "Erro ao salvar. Transação revertida!");
+            } catch (SQLException ex) {
                 ex.printStackTrace();
             }
         }
-        finally
-        {
-            try
-            {
-                if ( conn != null )
-                {
-                    conn.setAutoCommit( true ); // volta para o padrão
-                }
-                if ( conn != null )
-                {
-                    conn.close();
-                }
-                /**
-                 * Instancia com um outra conexao para as proximas actividades
-                 *
-                 */
-                saidasProdutosController = new SaidasProdutosController( conexao.getConnection1() );
-                itemSaidasController = new ItemSaidasController( conexao.getConnection1() );
-                stoksController = new StoksController( conexao );
-            }
-            catch ( SQLException e )
-            {
+    } finally {
+        // 🔹 Fecha a conexão e restaura autoCommit
+        if (conn != null) {
+            try {
+                conn.setAutoCommit(true);
+                conn.close();
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
+
+        // 🔹 Reabre controladores para próximas operações
+        Connection novaConn = this.conexao.getConnection(); // pode lançar SQLException
+        saidasProdutosController = new SaidasProdutosController(novaConn);
+        itemSaidasController = new ItemSaidasController(novaConn);
+        stoksController = new StoksController(this.conexao);
     }
+}
+
+
+
+
 
     public void salvarItemsaidasProdutos( TbSaidasProdutos saidasProdutos ) throws SQLException
     {
@@ -1573,54 +1571,62 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
 
     }
 
-    private void buscaSaida() throws SQLException
-    {
-        saidasProdutosController = new SaidasProdutosController( conexao.getConnection1() );
-        itemSaidasController = new ItemSaidasController( conexao.getConnection1() );
+   private void buscaSaida() throws SQLException {
+    Connection conn = null;
+    try {
+        // 🔹 Obtém a conexão ativa
+        conn = this.conexao.getConnectionAtiva();
 
-        int codSaida = Integer.parseInt( txtCodigoSaida.getText() );
-        listaItemSaida = itemSaidasController.getAllItemSaidasByIdSaida( codSaida );
+        // 🔹 Inicializa controladores com a MESMA conexão
+        saidasProdutosController = new SaidasProdutosController(conn);
+        itemSaidasController = new ItemSaidasController(conn);
+
+        int codSaida = Integer.parseInt(txtCodigoSaida.getText());
+        listaItemSaida = itemSaidasController.getAllItemSaidasByIdSaida(codSaida);
+
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
-        modelo.setRowCount( 0 );
-        txtMotorista.setText( "" );
-        txtAreaOBS.setText( "" );
-        txtCodigoDoc.setText( "" );
+        modelo.setRowCount(0);
+        txtMotorista.setText("");
+        txtAreaOBS.setText("");
+        txtCodigoDoc.setText("");
 
-        if ( Objects.nonNull( listaItemSaida ) )
-        {
-            saidasProdutos = saidasProdutosController.buscarPorId( codSaida );
+        if (Objects.nonNull(listaItemSaida) && !listaItemSaida.isEmpty()) {
+            saidasProdutos = saidasProdutosController.buscarPorId(codSaida);
 
-            for ( TbItemSaidas linha : listaItemSaida )
-            {
-                TbProduto produto = produtosController.findByCod( linha.getFkProdutos().getCodigo() );
-                modelo.addRow( new Object[]
-                {
-                    linha.getFkProdutos().getCodigo(),
-                    produto.getDesignacao(),
-                    linha.getPrecoCompra(),
-                    linha.getQuantidade()
-                } );
+            for (TbItemSaidas linha : listaItemSaida) {
+                TbProduto produto = produtosController.findByCod(linha.getFkProdutos().getCodigo());
+                modelo.addRow(new Object[]{
+                        linha.getFkProdutos().getCodigo(),
+                        produto.getDesignacao(),
+                        linha.getPrecoCompra(),
+                        linha.getQuantidade()
+                });
             }
 
-            txtMotorista.setText( saidasProdutos.getNomeFuncionario() );
-            txtAreaOBS.setText( saidasProdutos.getObs() );
-            txtCodigoDoc.setText( saidasProdutos.getDocumento() );
-            btnNova.setEnabled( true );
-            btnFinalizar.setEnabled( false );
-            btnActualizar.setEnabled( true );
+            txtMotorista.setText(saidasProdutos.getNomeFuncionario());
+            txtAreaOBS.setText(saidasProdutos.getObs());
+            txtCodigoDoc.setText(saidasProdutos.getDocumento());
+            btnNova.setEnabled(true);
+            btnFinalizar.setEnabled(false);
+            btnActualizar.setEnabled(true);
 
-            configurarColunaDouble( table, 3, true );
-        }
-        else
-        {
+            configurarColunaDouble(table, 3, true);
 
-            JOptionPane.showMessageDialog( null,
-                    "Não existe saida com esta referência.",
+        } else {
+            JOptionPane.showMessageDialog(null,
+                    "Não existe saída com esta referência.",
                     "Aviso",
-                    JOptionPane.WARNING_MESSAGE );
+                    JOptionPane.WARNING_MESSAGE);
         }
 
+    } finally {
+        // 🔹 Fecha a conexão ativa, se necessário
+        if (conn != null && !conn.isClosed()) {
+            conn.close();
+        }
     }
+}
+
 
     public String getDataActual()
     {
@@ -2063,7 +2069,7 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
     public static void main( String[] args ) throws SQLException
     {
 
-        new SaidaProdutoVisao( 15, new BDConexao() ).show( true );
+        new SaidaProdutoVisao( 15, BDConexao.getInstancia() ).show( true );
 
     }
 
@@ -2344,80 +2350,65 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
 
     }
 
-    private void procedimentoActualizarSaida()
-    {
-        conexaoTransaction = new BDConexao();
-        Connection conn = null;
+    private void procedimentoActualizarSaida() throws SQLException {
+    Connection conn = null;
 
-        try
-        {
-            conn = conexaoTransaction.getConnection1();
-            conn.setAutoCommit( false ); // inicia transação
+    try {
+        // 🔹 Obtém a conexão ativa para a transação
+        conn = this.conexao.getConnectionAtiva();
+        conn.setAutoCommit(false);
 
-            saidasProdutosController = new SaidasProdutosController( conn );
-            itemSaidasController = new ItemSaidasController( conn );
-            stoksController = new StoksController( conexaoTransaction );
+        // 🔹 Inicializa controladores com a MESMA conexão
+        saidasProdutosController = new SaidasProdutosController(conn);
+        itemSaidasController = new ItemSaidasController(conn);
+        stoksController = new StoksController(this.conexao); // continua recebendo BDConexao
 
-            // Atualiza os dados principais da saída
-            TbSaidasProdutos saidasProdutos = atualizar_saidasProdutos();
+        // 🔹 1. Atualiza dados principais da saída
+        TbSaidasProdutos saidasProdutos = atualizar_saidasProdutos();
 
-            // Atualiza os itens vinculados
-            actluazarItemsaidasProdutos( saidasProdutos );
+        // 🔹 2. Atualiza os itens vinculados
+        actluazarItemsaidasProdutos(saidasProdutos);
 
-            // Confirma transação se tudo correu bem
-            conn.commit();
+        // 🔹 3. Confirma transação
+        conn.commit();
+        JOptionPane.showMessageDialog(null, "Saída de Produtos actualizada com sucesso!..");
 
-            JOptionPane.showMessageDialog( null, "Saída de Produtos actualizada com sucesso!.." );
+        // 🔹 4. Limpeza e atualização da interface
+        limpar();
+        remover_all_produto();
+        txtQuatindade.requestFocus();
+        new ListaSaidaProdutos(saidasProdutos.getPkSaidasProdutos());
 
-            limpar();
-            remover_all_produto();
-            txtQuatindade.requestFocus();
-            new ListaSaidaProdutos( saidasProdutos.getPkSaidasProdutos() );
-
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace();
-            try
-            {
-                if ( conn != null )
-                {
-                    conn.rollback(); // desfaz alterações
-                    JOptionPane.showMessageDialog( null, "Erro ao actualizar. Transação revertida!" );
-                }
-            }
-            catch ( SQLException ex )
-            {
+    } catch (Exception e) {
+        e.printStackTrace();
+        // 🔹 Rollback na MESMA conexão em caso de erro
+        if (conn != null) {
+            try {
+                conn.rollback();
+                JOptionPane.showMessageDialog(null, "Erro ao actualizar. Transação revertida!");
+            } catch (SQLException ex) {
                 ex.printStackTrace();
             }
         }
-        finally
-        {
-            try
-            {
-                if ( conn != null )
-                {
-                    conn.setAutoCommit( true );
-                }
-                if ( conn != null )
-                {
-                    conn.close();
-                }
-
-                /**
-                 * Instancia com um outra conexao para as proximas actividades
-                 *
-                 */
-                saidasProdutosController = new SaidasProdutosController( conexao.getConnection1() );
-                itemSaidasController = new ItemSaidasController( conexao.getConnection1() );
-                stoksController = new StoksController( conexao );
-            }
-            catch ( SQLException e )
-            {
+    } finally {
+        // 🔹 Fecha a conexão e restaura autoCommit
+        if (conn != null) {
+            try {
+                conn.setAutoCommit(true);
+                conn.close();
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
+
+        // 🔹 Reabre controladores para próximas operações
+        Connection novaConn = this.conexao.getConnection(); // pode lançar SQLException
+        saidasProdutosController = new SaidasProdutosController(novaConn);
+        itemSaidasController = new ItemSaidasController(novaConn);
+        stoksController = new StoksController(this.conexao);
     }
+}
+
 
     public TbSaidasProdutos atualizar_saidasProdutos() throws SQLException
     {

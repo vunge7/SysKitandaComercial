@@ -5,6 +5,8 @@
  */
 package comercial.controller;
 
+
+import java.sql.Connection;
 import entity.Grupo;
 import entity.LinhaTransferencia;
 import entity.Modelo;

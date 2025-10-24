@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import controller.FornecedorController;
 import controller.UsuarioController;
 import java.awt.Color;
@@ -60,7 +62,7 @@ public class FornecedorVisao extends javax.swing.JDialog {
         setLocationRelativeTo(null);
         
         fornecedorModelo = new FornecedorModelo();
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
         fornecedorController = new FornecedorController(conexao);
         cmbFornecedores.setModel( new DefaultComboBoxModel( conexao.getElementos("tb_fornecedor", "nome", false)   ) );
         txtInicias.addKeyListener( new TratarEventoTeclado() );

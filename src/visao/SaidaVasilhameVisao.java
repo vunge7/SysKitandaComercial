@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import controller.EntradaController;
 import controller.ProdutoController;
 import controller.TipoProdutoController;
@@ -80,7 +82,7 @@ public class SaidaVasilhameVisao extends javax.swing.JFrame {
      
         this.parent = parent;
         this.idUser = idUser;        
-        conexao = new BDConexao(); 
+        conexao = BDConexao.getInstancia(); 
         
         cmbArmazem.setModel( new DefaultComboBoxModel( conexao.getElementos("tb_armazem", "designacao", false)   ) );
         cmbTipoProduto.setModel(  new DefaultComboBoxModel(   conexao.getElementos("tb_tipo_produto", "designacao", false)   ));

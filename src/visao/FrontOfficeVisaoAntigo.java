@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.AccessoArmazemDao;
 import dao.ArmazemDao;
 import dao.UsuarioDao;
@@ -239,7 +241,7 @@ public class FrontOfficeVisaoAntigo extends javax.swing.JFrame
         {
             public void run()
             {
-                new FrontOfficeVisaoAntigo( 15, new BDConexao() ).setVisible( true );
+                new FrontOfficeVisaoAntigo( 15, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }

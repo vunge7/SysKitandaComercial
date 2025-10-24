@@ -5,6 +5,8 @@
  */
 package comercial.controller;
 
+
+import java.sql.Connection;
 import entity.ProdutoImposto;
 import java.sql.ResultSet;
 import java.sql.SQLException;

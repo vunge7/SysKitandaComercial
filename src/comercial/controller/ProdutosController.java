@@ -174,25 +174,23 @@ public class ProdutosController implements EntidadeFactory
 
     }
 
-    public boolean desactivar( TbProduto produto )
-    {
-        String sql = "UPDATE tb_produto SET status = ? WHERE codigo = ?";
+public boolean desactivar(BDConexao conexao, TbProduto produto) {
+    String sql = "UPDATE tb_produto SET status = ? WHERE codigo = ?";
 
-        try
-        {
-            PreparedStatement stmt = BDConexao.conectar().prepareStatement( sql );
-            stmt.setString( 1, produto.getStatus() );
-            stmt.setInt( 2, produto.getCodigo() );
-            stmt.executeUpdate();
-            stmt.close();
-            return true;
-        }
-        catch ( SQLException e )
-        {
-        }
-        return false;
+    try (PreparedStatement stmt = conexao.getConnectionAtiva().prepareStatement(sql)) {
+        stmt.setString(1, produto.getStatus());
+        stmt.setInt(2, produto.getCodigo());
+        int linhas = stmt.executeUpdate();
 
+        return linhas > 0; // true se pelo menos 1 linha foi atualizada
+    } catch (SQLException e) {
+        System.err.println("[ERRO] Falha ao desactivar produto: " + e.getMessage());
+        e.printStackTrace();
     }
+
+    return false;
+}
+
 
     @Override
     public boolean actualizar( Object object )
@@ -927,22 +925,25 @@ public class ProdutosController implements EntidadeFactory
         return false;
     }
 
-    public boolean exist_designacao_produto( String designacao )
-    {
-        designacao = normalizarDesignacao( designacao );
-        String sql = "SELECT p.codigo FROM tb_produto p WHERE p.designacao = ?";
-        try ( PreparedStatement ps = BDConexao.conectar().prepareStatement( sql ) )
-        {
-            ps.setString( 1, designacao );
-            ResultSet rs = ps.executeQuery();
-            return rs.next();
+public boolean exist_designacao_produto(BDConexao conexao, String designacao) {
+    designacao = normalizarDesignacao(designacao);
+    String sql = "SELECT p.codigo FROM tb_produto p WHERE p.designacao = ?";
+
+    try (PreparedStatement ps = conexao.getConnectionAtiva().prepareStatement(sql)) {
+        ps.setString(1, designacao);
+
+        try (ResultSet rs = ps.executeQuery()) {
+            return rs.next(); // retorna true se encontrou um registro
         }
-        catch ( SQLException e )
-        {
-            e.printStackTrace();
-        }
-        return false;
+
+    } catch (SQLException e) {
+        System.err.println("[ERRO] Falha ao verificar designação do produto: " + e.getMessage());
+        e.printStackTrace();
     }
+
+    return false;
+}
+
 
     public Object findByName( String designacao )
     {
@@ -1500,7 +1501,7 @@ public class ProdutosController implements EntidadeFactory
 
     public static void main( String[] args )
     {
-        BDConexao conexao = new BDConexao();
+        BDConexao conexao = BDConexao.getInstancia();
         ProdutosController pc = new ProdutosController( conexao );
         System.out.println( "LAST ID PRODUTO: " + pc.getLastProduto().getCodigo() );
     }

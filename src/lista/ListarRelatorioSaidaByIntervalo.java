@@ -4,6 +4,8 @@
  */
 package lista;
 
+
+import java.sql.Connection;
 import dao.ArmazemDao;
 import dao.ItemVendaDao;
 import dao.PrecoDao;
@@ -386,7 +388,7 @@ public class ListarRelatorioSaidaByIntervalo extends javax.swing.JFrame
             {
                 try
                 {
-                    new ListarRelatorioSaidaByIntervalo( new BDConexao() ).setVisible( true );
+                    new ListarRelatorioSaidaByIntervalo( BDConexao.getInstancia() ).setVisible( true );
                 }
                 catch ( Exception ex )
                 {

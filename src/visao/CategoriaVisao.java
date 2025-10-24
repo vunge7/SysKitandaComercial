@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import controller.TipoProdutoController;
 import dao.TipoProdutoDao;
 import entity.TbTipoProduto;
@@ -50,7 +52,7 @@ public class CategoriaVisao extends javax.swing.JDialog {
         confLabel();
         setLocationRelativeTo(null);        
         tipoProdutoModelo = new TipoProdutoModelo();
-        conexao = new BDConexao();
+        conexao = BDConexao.getInstancia();
         tipoProdutoController = new TipoProdutoController(conexao);
       
         adicionar();

@@ -4,6 +4,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.PrecoDao;
 import dao.ProdutoDao;
 import dao.UsuarioDao;
@@ -346,7 +348,7 @@ public class DefinirPrecosPercentagemVisao extends javax.swing.JDialog
         {
             public void run()
             {
-                DefinirPrecosPercentagemVisao dialog = new DefinirPrecosPercentagemVisao( new javax.swing.JFrame(), true, 15, new BDConexao() );
+                DefinirPrecosPercentagemVisao dialog = new DefinirPrecosPercentagemVisao( new javax.swing.JFrame(), true, 15, BDConexao.getInstancia() );
                 dialog.addWindowListener( new java.awt.event.WindowAdapter()
                 {
                     @Override
@@ -500,7 +502,7 @@ public class DefinirPrecosPercentagemVisao extends javax.swing.JDialog
                 //desactiva o botão
                 btnSalvar.setEnabled( false );
                 //Abri a conexão
-//                conexao = new BDConexao();
+//                conexao = BDConexao.getInstancia();
                 //for (int i = 0; i < vector.size(); i++) {
                 for ( int i = 0; i < TAMANHO; i++ )
                 {

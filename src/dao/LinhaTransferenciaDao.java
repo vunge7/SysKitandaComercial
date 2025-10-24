@@ -5,6 +5,8 @@
  */
 package dao;
 
+
+import java.sql.Connection;
 import controlador.LinhaTransferenciaJpaController;
 import javax.persistence.EntityManagerFactory;
 

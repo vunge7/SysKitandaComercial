@@ -6,6 +6,8 @@
 
 package visao;
 
+
+import java.sql.Connection;
 import dao.ItemVendaDao;
 import dao.StockDao;
 import dao.VasilhameDao;
@@ -338,7 +340,7 @@ public class DetalheFacturaReciclagem extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                DetalheFacturaReciclagem dialog = new DetalheFacturaReciclagem(new javax.swing.JFrame(), true, 12, new BDConexao());
+                DetalheFacturaReciclagem dialog = new DetalheFacturaReciclagem(new javax.swing.JFrame(), true, 12, BDConexao.getInstancia());
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

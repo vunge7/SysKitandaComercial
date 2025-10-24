@@ -134,10 +134,10 @@ public class PrecosUtil
     {
         BigDecimal novoPrecoMedio = BigDecimal.ZERO;
 
-        BDConexao conexaoLocal = new BDConexao();
+        BDConexao conexaoLocal = BDConexao.getInstancia();
         String sql = "SELECT fn_calcula_preco_medio(?, ?, ?) AS preco_medio";
 
-        try ( Connection conn = conexaoLocal.getConnection1(); PreparedStatement stmt = conn.prepareStatement( sql ) )
+        try ( Connection conn = conexaoLocal.getConnection(); PreparedStatement stmt = conn.prepareStatement( sql ) )
         {
 
             stmt.setInt( 1, produtoId );

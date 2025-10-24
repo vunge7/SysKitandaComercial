@@ -5,6 +5,8 @@
  */
 package visao;
 
+
+import java.sql.Connection;
 import dao.ItemPedidosDao;
 import dao.PedidoDao;
 import dao.TurnoDao;
@@ -1353,7 +1355,7 @@ public class PrincipalLavandariaVisao extends javax.swing.JFrame implements Runn
         {
             public void run()
             {
-                new PrincipalLavandariaVisao( 15, 1, new BDConexao() ).setVisible( true );
+                new PrincipalLavandariaVisao( 15, 1, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
     }
