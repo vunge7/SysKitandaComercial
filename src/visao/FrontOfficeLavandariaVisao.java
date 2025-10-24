@@ -235,7 +235,7 @@ public class FrontOfficeLavandariaVisao extends javax.swing.JFrame
         }
         else
         {
-            new LoginVisao().setVisible( true );
+            new LoginVisao(new BDConexao()).setVisible( true );
         }
     }
 

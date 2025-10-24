@@ -459,7 +459,7 @@ public class MenuPrincipalTesourariaVisao extends javax.swing.JFrame {
 
     private void jMenuItem27ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem27ActionPerformed
         dispose();
-        new LoginVisao().setVisible( true);
+        new LoginVisao(new BDConexao()).setVisible( true);
     }//GEN-LAST:event_jMenuItem27ActionPerformed
 
     private void jlmExtratoDeMovimentosBancariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jlmExtratoDeMovimentosBancariosActionPerformed

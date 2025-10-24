@@ -4,13 +4,6 @@
  */
 package visao;
 
-import com.formdev.flatlaf.intellijthemes.FlatCyanLightIJTheme;
-import com.formdev.flatlaf.intellijthemes.FlatDarkFlatIJTheme;
-import com.formdev.flatlaf.intellijthemes.FlatNordIJTheme;
-import com.formdev.flatlaf.intellijthemes.FlatOneDarkIJTheme;
-import com.formdev.flatlaf.intellijthemes.FlatVuesionIJTheme;
-import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialLighterIJTheme;
-import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialOceanicIJTheme;
 import comercial.controller.DadosInstituicaoController;
 import dao.CaixaDao;
 import dao.DadosInstituicaoDao;
@@ -18,8 +11,6 @@ import dao.DocumentoDao;
 import dao.EmpresaDao;
 import dao.UsuarioDao;
 import de.javasoft.plaf.synthetica.SyntheticaBlackStarLookAndFeel;
-import de.javasoft.plaf.synthetica.SyntheticaLookAndFeel;
-import de.javasoft.plaf.synthetica.SyntheticaStandardLookAndFeel;
 //import de.javasoft.plaf.synthetica.SyntheticaBlackStarLookAndFeel;
 import entity.TbDadosInstituicao;
 import entity.TbUsuario;
@@ -51,6 +42,7 @@ import util.MetodosUtil;
 import static util.MetodosUtil.startBackGroundProcesses;
 import util.SingleInstanceLock;
 import util.cronjob.QuartzApp;
+import util.cronjob.StockAutoCheckService;
 import util.cronjob.ValidadorJob;
 
 /**
@@ -79,7 +71,7 @@ public class LoginVisao extends javax.swing.JFrame
     private int id_user, id_empresa;
     private javax.swing.Timer piscarTimer;
 
-    public LoginVisao()
+    public LoginVisao( BDConexao conexao )
     {
 
         initComponents();
@@ -91,7 +83,7 @@ public class LoginVisao extends javax.swing.JFrame
 //        if (Objects.nonNull(conexao)) {
 //            conexao.close();
 //        }
-        conexao = new BDConexao();
+        this.conexao = conexao;
 
 //        registerLog( conexao );
         dadosInstituicaoController = new DadosInstituicaoController( LoginVisao.conexao );
@@ -704,7 +696,7 @@ public class LoginVisao extends javax.swing.JFrame
         }
         catch ( Exception ex )
         {
-            java.util.logging.Logger.getLogger(LoginVisao.class.getName() )
+            java.util.logging.Logger.getLogger( LoginVisao.class.getName() )
                     .log( java.util.logging.Level.SEVERE, null, ex );
         }
 
@@ -716,7 +708,7 @@ public class LoginVisao extends javax.swing.JFrame
         }
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable()
+        java.awt.EventQueue.invokeLater( new Runnable()
         {
             public void run()
             {
@@ -758,9 +750,21 @@ public class LoginVisao extends javax.swing.JFrame
                 // INICIAR PROCESSOS EM BACKGROUND
                 if ( startBackGroundProcesses() )
                 {
+                    BDConexao conexao = new BDConexao();
+                    StockAutoCheckService service = new StockAutoCheckService( conexao.conectar() );
+
+                    try
+                    {
+                        service.verificarOuSalvarStockDiario();
+                    }
+                    catch ( SQLException e )
+                    {
+                        e.printStackTrace();
+                    }
+
                     if ( true )
                     { // <- aqui você pode colocar sua regra de licença
-                        new LoginVisao().setVisible( true );
+                        new LoginVisao( conexao ).setVisible( true );
                     }
                     else
                     {
@@ -955,7 +959,8 @@ public class LoginVisao extends javax.swing.JFrame
 //        Empresa empresa = empresaDao.findEmpresa( id_empresa );
         MetodosUtil.fechar_todas_janelas();
         MetodosUtil.actualizarEstadoLog( "OFF" );
-        new LoginVisao();
+        conexao.close();
+        new LoginVisao( new BDConexao() );
 
     }
 

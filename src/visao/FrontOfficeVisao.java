@@ -312,7 +312,7 @@ public class FrontOfficeVisao extends javax.swing.JFrame
         }
         else
         {
-            new LoginVisao().setVisible( true );
+            new LoginVisao( new BDConexao() ).setVisible( true );
         }
     }
 
@@ -372,7 +372,7 @@ public class FrontOfficeVisao extends javax.swing.JFrame
                         id_usuario,
                         RootVisao.btn_abertura_dia_root,
                         RootVisao.btn_feicho_dia_root,
-                        btnVendasPontuais, btnGestaoMesas);
+                        btnVendasPontuais, btnGestaoMesas );
             }
 
         } );

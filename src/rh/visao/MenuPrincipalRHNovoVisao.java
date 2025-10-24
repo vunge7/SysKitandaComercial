@@ -59,7 +59,7 @@ public class MenuPrincipalRHNovoVisao extends javax.swing.JFrame
         busca_permissao();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "unchecked" )
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents()
     {
@@ -439,7 +439,7 @@ public class MenuPrincipalRHNovoVisao extends javax.swing.JFrame
     private void terminarSessao()
     {
         dispose();
-        new LoginVisao().setVisible( true );
+        new LoginVisao( new BDConexao() ).setVisible( true );
     }
 
 }

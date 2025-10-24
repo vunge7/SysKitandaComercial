@@ -2,9 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="factura" pageWidth="200" pageHeight="842" columnWidth="188" leftMargin="10" rightMargin="2" topMargin="2" bottomMargin="20" isIgnorePagination="true" uuid="0de43986-9be5-410e-aaa3-7f1419d0abca">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="5.0"/>
+	<property name="ireport.zoom" value="6.0500000000000025"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="1144"/>
+	<property name="ireport.y" value="752"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -362,7 +362,7 @@ WHERE
 				<text><![CDATA[Preço Unit.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="ea6a8330-d054-490f-a8d9-9baa62229bce" mode="Opaque" x="149" y="0" width="41" height="11" backcolor="#FFFFFF"/>
+				<reportElement uuid="ea6a8330-d054-490f-a8d9-9baa62229bce" mode="Opaque" x="149" y="0" width="40" height="11" backcolor="#FFFFFF"/>
 				<box leftPadding="1" rightPadding="1"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="8"/>
@@ -380,9 +380,9 @@ WHERE
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="22" splitType="Stretch">
+		<band height="34" splitType="Stretch">
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
-				<reportElement uuid="8f205689-84f6-4f4b-9c22-736ed531de55" key="textField-18" x="142" y="11" width="49" height="11"/>
+				<reportElement uuid="8f205689-84f6-4f4b-9c22-736ed531de55" key="textField-18" x="142" y="11" width="46" height="11"/>
 				<box>
 					<topPen lineWidth="0.0"/>
 					<bottomPen lineWidth="0.0"/>
@@ -394,10 +394,10 @@ WHERE
 				<textFieldExpression><![CDATA[$F{tb_item_venda_total}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="ea5218f4-f3b3-4199-9a0d-3df5df401fde" key="textField-15" x="1" y="0" width="185" height="11"/>
+				<reportElement uuid="ea5218f4-f3b3-4199-9a0d-3df5df401fde" key="textField-15" x="1" y="0" width="187" height="11"/>
 				<box leftPadding="0">
 					<topPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="9" isBold="true"/>
@@ -433,6 +433,12 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_item_venda_quantidade}]]></textFieldExpression>
 			</textField>
+			<line>
+				<reportElement uuid="353cdd89-e354-4467-b0e3-4cc721d072e1" x="0" y="22" width="188" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
 		</band>
 	</detail>
 	<columnFooter>

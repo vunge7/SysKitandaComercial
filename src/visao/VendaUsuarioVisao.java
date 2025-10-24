@@ -293,7 +293,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         MetodosUtil.setArmazemByCampoConfigArmazem( cmbArmazem, conexao, cod_usuario );
 
         setWindowsListener();
-        btnFormaPagamento.setVisible( false );
+        btnSemFormaPagamento.setVisible( false );
     }
 
     public VendaUsuarioVisao( int cod_usuario, BDConexao conexao, String docPadraoPersonalizado ) throws SQLException
@@ -2030,7 +2030,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jButton1ActionPerformed
 
         dispose();
-        new LoginVisao();
+        new LoginVisao( conexao );
         new CaixaAberturaVisao( cod_usuario, conexao, false ).setVisible( true );
 //        fazerBackupAgora();
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -5156,7 +5156,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         for ( int i = 1; i <= numeroVias; i++ )
         {
             String via;
-            switch (i)
+            switch ( i )
             {
                 case 1:
                     via = "Original";
@@ -5648,8 +5648,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getValorComImposto( double qtd, double taxa, double preco_venda, double desconto )
     {
-        double subtotal_linha = (preco_venda * qtd);
-        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
+        double subtotal_linha = ( preco_venda * qtd );
+        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
         double valor_iva = 1 + ( taxa / 100 );//
         return ( ( subtotal_linha - desconto_valor ) * valor_iva );
 
@@ -5663,9 +5663,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getValorComRetencao( double qtd, double ret, double preco_venda, double desconto )
     {
-        double subtotal_linha = (preco_venda * qtd);
-        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
-        double valor_ret = (( ( subtotal_linha - desconto_valor ) * ret ) / 100);//
+        double subtotal_linha = ( preco_venda * qtd );
+        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
+        double valor_ret = ( ( ( subtotal_linha - desconto_valor ) * ret ) / 100 );//
         return ( valor_ret );
     }
 
@@ -5688,8 +5688,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getRET( double qtd, double taxa_r, double preco_venda, double desconto )
     {
-        double subtotal_linha = (preco_venda * qtd);
-        double valor_ret = (taxa_r / 100);//
+        double subtotal_linha = ( preco_venda * qtd );
+        double valor_ret = ( taxa_r / 100 );//
         return ( ( subtotal_linha - desconto ) * valor_ret );
 
     }
@@ -5719,7 +5719,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private void actualizar_abreviacao()
     {
 
-        switch (getIdDocumento())
+        switch ( getIdDocumento() )
         {
             case DVML.DOC_FACTURA_RECIBO_FR:
                 if ( ck_A4.isSelected() )
@@ -6197,7 +6197,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             // a incidência só é aplicável ao produtos sujeitos a iva 
             if ( taxa != 0 )
             {
-                double valor_unitario = (preco_unitario * qtd);
+                double valor_unitario = ( preco_unitario * qtd );
 
                 desconto_valor_linha = valor_unitario * ( ( valor_percentagem ) / 100 );
                 valor_taxa = ( valor_unitario - desconto_valor_linha ) / taxa;
@@ -6263,7 +6263,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getTotalAOARetencoes()
     {
-        double valores = (getTotalRetencao1());
+        double valores = ( getTotalRetencao1() );
         return ( valores );
     }
 
@@ -6313,7 +6313,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         Documento documento_local = (Documento) documentosController.findById( getIdDocumento() );
         String abreviacao_local = documento_local.getAbreviacao();
 
-        switch (abreviacao_local)
+        switch ( abreviacao_local )
         {
             case "FT":
                 return "Facturamos o valor de: ";

@@ -1839,7 +1839,7 @@ public class VendaOficinaUsuarioVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jButton1ActionPerformed
 
         dispose();
-        new LoginVisao();
+        new LoginVisao( new BDConexao() );
         new CaixaAberturaVisao( cod_usuario, conexao, false ).setVisible( true );
 //        fazerBackupAgora();
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -6326,7 +6326,6 @@ public class VendaOficinaUsuarioVisao extends javax.swing.JFrame
                     registrar_preco( idProduto, precosController, Double.parseDouble( precoLocal ) );
 
 //                    actualizarQtdTable();
-
                 }
                 else
                 {
