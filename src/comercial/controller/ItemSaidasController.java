@@ -30,18 +30,29 @@ public class ItemSaidasController
     }
 
     // CREATE
-    public void salvar( TbItemSaidas item ) throws SQLException
-    {
-        String sql = "INSERT INTO tb_item_saidas (quantidade, preco_compra, fk_produtos, fk_saidas_produtos) VALUES (?, ?, ?, ?)";
-        try ( PreparedStatement stmt = conn.prepareStatement( sql ) )
-        {
-            stmt.setDouble( 1, item.getQuantidade() );
-            stmt.setBigDecimal( 2, item.getPrecoCompra() );
-            stmt.setInt( 3, item.getFkProdutos().getCodigo() );
-            stmt.setInt( 4, item.getFkSaidasProdutos().getPkSaidasProdutos() );
-            stmt.executeUpdate();
-        }
+    public void salvar(TbItemSaidas item) throws SQLException {
+    String sql = "INSERT INTO tb_item_saidas (quantidade, preco_compra, fk_produtos, fk_saidas_produtos) VALUES (?, ?, ?, ?)";
+    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        stmt.setDouble(1, item.getQuantidade());
+        stmt.setBigDecimal(2, item.getPrecoCompra());
+        stmt.setInt(3, item.getFkProdutos().getCodigo());
+        stmt.setInt(4, item.getFkSaidasProdutos().getPkSaidasProdutos());
+        stmt.executeUpdate();
     }
+}
+
+//    public void salvar( TbItemSaidas item ) throws SQLException
+//    {
+//        String sql = "INSERT INTO tb_item_saidas (quantidade, preco_compra, fk_produtos, fk_saidas_produtos) VALUES (?, ?, ?, ?)";
+//        try ( PreparedStatement stmt = conn.prepareStatement( sql ) )
+//        {
+//            stmt.setDouble( 1, item.getQuantidade() );
+//            stmt.setBigDecimal( 2, item.getPrecoCompra() );
+//            stmt.setInt( 3, item.getFkProdutos().getCodigo() );
+//            stmt.setInt( 4, item.getFkSaidasProdutos().getPkSaidasProdutos() );
+//            stmt.executeUpdate();
+//        }
+//    }
 
     // READ by ID
     public TbItemSaidas buscarPorId( int id ) throws SQLException

@@ -386,56 +386,97 @@ public class MovimentacaoController
         return m;
     }
 
+//    public static boolean registrarMovimento(
+//            int idProduto,
+//            int idArmazem,
+//            int idUsuario,
+//            BigDecimal qtd,
+//            String doc,
+//            String tipo,
+//            BDConexao conexao
+//    )
+//    {
+////        MovimentacaoController mv = new MovimentacaoController( conexao.getConnectionAtiva() );
+//        MovimentacaoController mv = new MovimentacaoController(conexao.getConnectionAtiva());
+//
+//        PrecosController pc = new PrecosController( conexao );
+//        StoksController sc = new StoksController( conexao );
+//
+//        double qtdAnterior = sc.getQuantidadeProduto( idProduto, idArmazem );
+//
+//        TbPreco preco = (TbPreco) pc.getLastIdPrecoByIdProdutos( idProduto, qtd.doubleValue() );
+//        Movimentacao mov = new Movimentacao();
+//        mov.setProdutoId( idProduto );
+//        mov.setDataMov( new java.util.Date() );
+//        mov.setQuantidadeAnterior( new BigDecimal( qtdAnterior ) );
+//        mov.setDocumento( doc );
+//        mov.setQuantidade( qtd );
+//        mov.setValorUnitario( Objects.nonNull( preco )
+//                ? preco.getPrecoVenda()
+//                : new BigDecimal( 0 )
+//        );
+//        mov.setUsuarioId( idUsuario );
+//        mov.setArmazemId( idArmazem );
+//
+//        try
+//        {
+//            if ( tipo.equals( "ENTRADA" ) )
+//            {
+//                mv.registrarEntrada( mov );
+//                return true;
+//            }
+//            else
+//            {
+//                mv.registrarSaida( mov );
+//                return true;
+//            }
+//        }
+//        catch ( SQLException e )
+//        {
+//        }
+//
+//        return false;
+//    }
+    
     public static boolean registrarMovimento(
-            int idProduto,
-            int idArmazem,
-            int idUsuario,
-            BigDecimal qtd,
-            String doc,
-            String tipo,
-            BDConexao conexao
-    )
-    {
-//        MovimentacaoController mv = new MovimentacaoController( conexao.getConnectionAtiva() );
-        MovimentacaoController mv = new MovimentacaoController(conexao.getConnectionAtiva());
+        int idProduto,
+        int idArmazem,
+        int idUsuario,
+        BigDecimal qtd,
+        String doc,
+        String tipo,
+        BDConexao conexao
+) {
+    MovimentacaoController mv = new MovimentacaoController(conexao.getConnectionAtiva());
+    PrecosController pc = new PrecosController(conexao);
+    StoksController sc = new StoksController(conexao);
 
-        PrecosController pc = new PrecosController( conexao );
-        StoksController sc = new StoksController( conexao );
+    double qtdAnterior = sc.getQuantidadeProduto(idProduto, idArmazem);
+    TbPreco preco = (TbPreco) pc.getLastIdPrecoByIdProdutos(idProduto, qtd.doubleValue());
 
-        double qtdAnterior = sc.getQuantidadeProduto( idProduto, idArmazem );
+    Movimentacao mov = new Movimentacao();
+    mov.setProdutoId(idProduto);
+    mov.setDataMov(new java.util.Date());
+    mov.setQuantidadeAnterior(new BigDecimal(qtdAnterior));
+    mov.setDocumento(doc);
+    mov.setQuantidade(qtd);
+    mov.setValorUnitario(preco != null ? preco.getPrecoVenda() : BigDecimal.ZERO);
+    mov.setUsuarioId(idUsuario);
+    mov.setArmazemId(idArmazem);
 
-        TbPreco preco = (TbPreco) pc.getLastIdPrecoByIdProdutos( idProduto, qtd.doubleValue() );
-        Movimentacao mov = new Movimentacao();
-        mov.setProdutoId( idProduto );
-        mov.setDataMov( new java.util.Date() );
-        mov.setQuantidadeAnterior( new BigDecimal( qtdAnterior ) );
-        mov.setDocumento( doc );
-        mov.setQuantidade( qtd );
-        mov.setValorUnitario( Objects.nonNull( preco )
-                ? preco.getPrecoVenda()
-                : new BigDecimal( 0 )
-        );
-        mov.setUsuarioId( idUsuario );
-        mov.setArmazemId( idArmazem );
-
-        try
-        {
-            if ( tipo.equals( "ENTRADA" ) )
-            {
-                mv.registrarEntrada( mov );
-                return true;
-            }
-            else
-            {
-                mv.registrarSaida( mov );
-                return true;
-            }
+    try {
+        if ("ENTRADA".equalsIgnoreCase(tipo)) {
+            mv.registrarEntrada(mov);
+        } else {
+            mv.registrarSaida(mov);
         }
-        catch ( SQLException e )
-        {
-        }
-
-        return false;
+        return true;
+    } catch (SQLException e) {
+        e.printStackTrace(); // Mantém registo do erro no log
     }
+
+    return false;
+}
+
 
 }

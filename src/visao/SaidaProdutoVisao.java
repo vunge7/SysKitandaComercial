@@ -1440,6 +1440,9 @@ private void operacaoSalvar() throws SQLException {
     Connection conn = null;
 
     try {
+        // 🔹 Garante que a transação e os controladores usam a mesma instância de BDConexao
+        this.conexaoTransaction = this.conexao;
+
         // 🔹 Obtém a conexão ativa para a transação
         conn = this.conexao.getConnectionAtiva();
         conn.setAutoCommit(false);
@@ -1447,12 +1450,12 @@ private void operacaoSalvar() throws SQLException {
         // 🔹 Inicializa controladores com a MESMA conexão
         saidasProdutosController = new SaidasProdutosController(conn);
         itemSaidasController = new ItemSaidasController(conn);
-        stoksController = new StoksController(this.conexao); // continua recebendo BDConexao
+        stoksController = new StoksController(this.conexao); // mantém BDConexao
 
         // 🔹 1. Salva saída principal
         TbSaidasProdutos saidasProdutos = salvar_saidasProdutos();
 
-        // 🔹 2. Salva itens da saída
+        // 🔹 2. Salva itens da saída (aqui dentro faz o registrarMovimento)
         salvarItemsaidasProdutos(saidasProdutos);
 
         // 🔹 3. Confirma transação
