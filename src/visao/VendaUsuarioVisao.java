@@ -5,7 +5,6 @@
 package visao;
 
 
-import java.sql.Connection;
 import comercial.controller.*;
 //import hotel.controller.ExtratoContaClienteController;
 import dao.ItemPermissaoDao;
@@ -19,7 +18,6 @@ import entity.FormaPagamento;
 import entity.FormaPagamentoItem;
 import entity.TbItemVenda;
 import entity.Moeda;
-import entity.Movimentacao;
 import entity.TbArmazem;
 import entity.TbBanco;
 import entity.TbCliente;
@@ -36,7 +34,6 @@ import entity.Unidade;
 import exemplos.PermitirNumeros;
 import hotel.controller.MesasController;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
@@ -56,7 +53,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
