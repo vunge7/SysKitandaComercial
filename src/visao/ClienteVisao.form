@@ -515,7 +515,7 @@
                           </Group>
                           <Component id="jButton2" min="-2" pref="36" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="7" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -659,7 +659,7 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JTable" name="jTable1">
+                <Component class="javax.swing.JTable" name="tabelaServicoMensalidade">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                       <Table columnCount="4" rowCount="0">
@@ -697,6 +697,9 @@
                       <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tabelaServicoMensalidadeMouseClicked"/>
+                  </Events>
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
                   </AuxValues>
@@ -764,6 +767,9 @@
                   <Image iconType="3" name="/imagens/adicionar.png"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton2ActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
@@ -785,7 +791,7 @@
                   <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
                   <Component id="lbTipoProduto2" min="-2" pref="63" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="txtNomeCliente1" min="-2" pref="70" max="-2" attributes="0"/>
+                  <Component id="txtProcNIF" min="-2" pref="70" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="60" max="-2" attributes="0"/>
                   <Component id="lbTipoProduto3" min="-2" pref="32" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -807,7 +813,7 @@
                       </Group>
                       <Component id="jButton4" alignment="0" pref="0" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="txtNomeCliente1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="txtProcNIF" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="txtNomeCliente2" alignment="3" max="32767" attributes="0"/>
                           <Component id="lbTipoProduto3" alignment="3" min="-2" pref="29" max="-2" attributes="0"/>
                       </Group>
@@ -826,15 +832,9 @@
             <Property name="text" type="java.lang.String" value="Cod.:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="txtNomeCliente1">
-          <Properties>
-            <Property name="editable" type="boolean" value="false"/>
-            <Property name="caretColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
-            </Property>
-          </Properties>
+        <Component class="javax.swing.JTextField" name="txtProcNIF">
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtNomeCliente1ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtProcNIFActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="jButton4">
@@ -856,12 +856,6 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="txtNomeCliente2">
-          <Properties>
-            <Property name="editable" type="boolean" value="false"/>
-            <Property name="caretColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
-            </Property>
-          </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtNomeCliente2ActionPerformed"/>
           </Events>

@@ -55,7 +55,7 @@ public class PagamentoMensalidade implements Serializable {
     private int clienteId;
     @Basic( optional = false )
     @Column( name = "mes_id" )
-    private short mesId;
+    private int mesId;
     @Basic( optional = false )
     @Column( name = "venda_id" )
     private int vendaId;
@@ -113,12 +113,12 @@ public class PagamentoMensalidade implements Serializable {
         this.clienteId = clienteId;
     }
 
-    public short getMesId()
+    public int getMesId()
     {
         return mesId;
     }
 
-    public void setMesId( short mesId )
+    public void setMesId( int mesId )
     {
         this.mesId = mesId;
     }

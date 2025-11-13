@@ -171,9 +171,11 @@ public class ConfiguracaoMesComecoController
     public List<ConfiguracaoMesComeco> listarTodos( int clienteId )
     {
         List<ConfiguracaoMesComeco> lista = new ArrayList<>();
-        String sql = "SELECT * FROM configuracao_mes_comeco WHERE cliente_id ";
-        try ( PreparedStatement ps = conexao.prepareStatement( sql ); ResultSet rs = ps.executeQuery() )
+        String sql = "SELECT * FROM configuracao_mes_comeco WHERE cliente_id = ?";
+        try ( PreparedStatement ps = conexao.prepareStatement( sql ); )
         {
+            ps.setInt( 1, clienteId );
+            ResultSet rs = ps.executeQuery();
             while ( rs.next() )
             {
                 ConfiguracaoMesComeco config = new ConfiguracaoMesComeco();
@@ -193,4 +195,27 @@ public class ConfiguracaoMesComecoController
         }
         return lista;
     }
+
+    // 🔹 Verificar se o cliente já possui uma configuração para um produto
+    public boolean existeConfiguracaoDoCliente( int clienteId, int produtoId )
+    {
+        String sql = "SELECT COUNT(*) FROM configuracao_mes_comeco WHERE cliente_id = ? AND produto_id = ?";
+        try ( PreparedStatement ps = conexao.prepareStatement( sql ) )
+        {
+            ps.setInt( 1, clienteId );
+            ps.setInt( 2, produtoId );
+            ResultSet rs = ps.executeQuery();
+            if ( rs.next() )
+            {
+                int total = rs.getInt( 1 );
+                return total > 0; // Retorna true se já existir
+            }
+        }
+        catch ( SQLException e )
+        {
+            JOptionPane.showMessageDialog( null, "Erro ao verificar configuração: " + e.getMessage() );
+        }
+        return false;
+    }
+
 }
