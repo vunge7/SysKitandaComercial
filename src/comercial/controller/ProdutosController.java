@@ -544,6 +544,28 @@ public boolean desactivar(BDConexao conexao, TbProduto produto) {
         return produto;
 
     }
+    
+    public TbProduto buscarPorCodigo( int codigo )
+    {
+
+        String FIND__BY_CODIGO = "SELECT * FROM tb_produto WHERE codigo = " + codigo + "";
+        ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
+        TbProduto produto = null;
+
+        try
+        {
+            if ( result.next() )
+            {
+                produto = new TbProduto();
+                setResultProduto( result, produto );
+            }
+        }
+        catch ( SQLException e )
+        {
+        }
+        return produto;
+
+    }
 
     @Override
     public Object findById( int codigo )

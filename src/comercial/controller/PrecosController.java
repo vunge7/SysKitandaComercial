@@ -18,6 +18,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import util.BDConexao;
 import util.MetodosUtil;
 
@@ -213,6 +215,48 @@ public class PrecosController implements EntidadeFactory
         return preco;
 
     }
+    
+    public TbPreco getLastIdPrecoByIdProduto1(int idProduto, BigDecimal quantidade) {
+    TbPreco preco = null;
+
+    try {
+        String sql = "SELECT * FROM tb_preco WHERE fk_produto = ? ORDER BY data DESC, hora DESC LIMIT 1";
+        Connection conn = BDConexao.getInstancia().getConnectionAtiva();
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, idProduto);
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            preco = new TbPreco();
+            preco.setPkPreco(rs.getInt("pk_preco"));
+            preco.setPrecoCompra(rs.getBigDecimal("preco_compra").setScale(2, RoundingMode.HALF_UP));
+            preco.setPrecoVenda(rs.getBigDecimal("preco_venda").setScale(2, RoundingMode.HALF_UP));
+            
+            // Para preco_anterior que é Double
+            Double precoAnterior = rs.getDouble("preco_anterior");
+            preco.setPrecoAnterior(precoAnterior != null ? BigDecimal.valueOf(precoAnterior).setScale(2, RoundingMode.HALF_UP).doubleValue() : 0d);
+
+            // demais campos
+            preco.setQtdBaixo(rs.getInt("qtd_baixo"));
+            preco.setQtdAlto(rs.getInt("qtd_alto"));
+            preco.setRetalho(rs.getBoolean("retalho"));
+            preco.setFkProduto(new TbProduto(rs.getInt("fk_produto")));
+            preco.setFkUsuario(new TbUsuario(rs.getInt("fk_usuario")));
+            preco.setData(rs.getDate("data"));
+            preco.setHora(rs.getTime("hora"));
+        }
+
+        rs.close();
+        ps.close();
+
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+        Logger.getLogger(PrecosController.class.getName()).log(Level.SEVERE, null, ex);
+    }
+
+    return preco;
+}
+
 
     public TbPreco getLastIdPrecoByIdProdutos( int idProduto, double qtd )
     {
