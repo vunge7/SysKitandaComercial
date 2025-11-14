@@ -5,7 +5,6 @@
 package util;
 
 
-import java.sql.Connection;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
@@ -42,21 +41,8 @@ public class JPAEntityMannagerFactoryUtil
     {
 
         try
-        {
 
-//                
-//                String ip = "localhost";
-
-                   //                String url = "jdbc:mysql://"   +ip +":3306/kitanda_db_dori_moys_gulele_dvml_k11_joaquim?zeroDateTimeBehavior=convertToNull";
-                    //                String password = "DoV90x?#";
-                    //                
-                    //                Map map = new HashMap();
-                    //                map.put("javax.persistence.jdbc.url", url); //esta propriedade vai substituir aquela q esta no arquivo
-                    //                map.put("javax.persistence.jdbc.user", user); //esta propriedade vai substituir aquela q esta no arquivo
-                    //                map.put("javax.persistence.jdbc.password", password); //esta propriedade vai substituir aquela q esta no arquivo
-                    ////    
-                    //                return  javax.persistence.Persistence.createEntityManagerFactory( "SGCMINIMERCADOPU", map );
-                    //                
+        {             
             return em.createEntityManager();
         }
         catch ( Exception e )

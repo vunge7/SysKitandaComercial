@@ -76,6 +76,8 @@ public class TbItemVenda implements Serializable
     private Date dataEntrega;
     @Column(name = "obs")
     private String obs;
+    @Column(name = "designacao_item")
+    private String designacaoItem;
     @Column(name = "valor_retencao")
     private Double valorRetencao;
     @Column(name = "status_entrega")
@@ -293,6 +295,18 @@ public class TbItemVenda implements Serializable
     {
         this.posicao = posicao;
     }
+
+    public String getDesignacaoItem()
+    {
+        return designacaoItem;
+    }
+
+    public void setDesignacaoItem( String designacaoItem )
+    {
+        this.designacaoItem = designacaoItem;
+    }
+    
+    
     
     @Override
     public int hashCode()

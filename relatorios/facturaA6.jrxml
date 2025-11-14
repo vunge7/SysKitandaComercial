@@ -115,7 +115,8 @@
      tb_dados_instituicao.`regime` AS tb_dados_instituicao_regime,
      tb_venda.`gorjeta` AS tb_venda_gorjeta,
      tb_venda.`cliente_nif` AS tb_venda_cliente_nif,
-     tb_venda.`cont` AS tb_venda_cont
+     tb_venda.`cont` AS tb_venda_cont,
+     tb_item_venda.`designacao_item` AS tb_item_venda_designacao_item
 FROM
      `tb_venda` tb_venda INNER JOIN `tb_cliente` tb_cliente ON tb_venda.`codigo_cliente` = tb_cliente.`codigo`
      INNER JOIN `tb_usuario` tb_usuario ON tb_venda.`codigo_usuario` = tb_usuario.`codigo`
@@ -204,6 +205,7 @@ WHERE
 	<field name="tb_venda_gorjeta" class="java.math.BigDecimal"/>
 	<field name="tb_venda_cliente_nif" class="java.lang.String"/>
 	<field name="tb_venda_cont" class="java.lang.Integer"/>
+	<field name="tb_item_venda_designacao_item" class="java.lang.String"/>
 	<variable name="SOMA_2" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[]]></variableExpression>
 	</variable>
@@ -431,9 +433,9 @@ WHERE
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="false" isUnderline="false"/>
+					<font fontName="Times New Roman" size="8" isBold="false" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_produto_designacao}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tb_item_venda_designacao_item}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

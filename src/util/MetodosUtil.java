@@ -5,7 +5,6 @@
  */
 package util;
 
-
 import java.sql.Connection;
 import comercial.controller.AmortizacaoDividasController;
 import comercial.controller.ArmazensAccessoController;
@@ -2448,7 +2447,7 @@ public class MetodosUtil
         }
         else
         {
-            new RootVisao( id_user, id_empresa, true, BDConexao.getInstancia() ).setVisible(true);
+            new RootVisao( id_user, id_empresa, true, BDConexao.getInstancia() ).setVisible( true );
         }
 
     }
@@ -2787,7 +2786,6 @@ public class MetodosUtil
     public static void main( String[] args ) throws ParseException
     {
 
-        
     }
 
     public static String criptografia_hash( Object documento, double parmGrossTotal, BDConexao conexao )
@@ -6289,6 +6287,17 @@ public class MetodosUtil
 
         return c1.get( Calendar.YEAR ) == c2.get( Calendar.YEAR )
                 && c1.get( Calendar.MONTH ) == c2.get( Calendar.MONTH );
+    }
+
+    public static String normalizarCampo( String nif )
+    {
+        if ( nif == null )
+        {
+            return null;
+        }
+        // Remove espaços no início e fim
+        // Substitui múltiplos espaços no meio por apenas 1
+        return nif.trim().replaceAll( "\\s+", " " );
     }
 
 }

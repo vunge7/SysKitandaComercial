@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="6.0500000000000025"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="752"/>
+	<property name="ireport.y" value="512"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -114,7 +114,8 @@
      tb_dados_instituicao.`regime_contrato` AS tb_dados_instituicao_regime_contrato,
      tb_dados_instituicao.`regime` AS tb_dados_instituicao_regime,
      tb_venda.`gorjeta` AS tb_venda_gorjeta,
-     tb_venda.`cont` AS tb_venda_cont
+     tb_venda.`cont` AS tb_venda_cont,
+     tb_item_venda.`designacao_item` AS tb_item_venda_designacao_item
 FROM
      `tb_venda` tb_venda INNER JOIN `tb_cliente` tb_cliente ON tb_venda.`codigo_cliente` = tb_cliente.`codigo`
      INNER JOIN `tb_usuario` tb_usuario ON tb_venda.`codigo_usuario` = tb_usuario.`codigo`
@@ -202,6 +203,7 @@ WHERE
 	<field name="tb_dados_instituicao_regime" class="java.lang.String"/>
 	<field name="tb_venda_gorjeta" class="java.math.BigDecimal"/>
 	<field name="tb_venda_cont" class="java.lang.Integer"/>
+	<field name="tb_item_venda_designacao_item" class="java.lang.String"/>
 	<variable name="SOMA_2" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[]]></variableExpression>
 	</variable>
@@ -402,7 +404,7 @@ WHERE
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="9" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_produto_designacao}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tb_item_venda_designacao_item}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement uuid="9be6ef76-1d45-42ff-9476-84efcf26e05c" key="textField-16" x="92" y="11" width="39" height="11"/>
