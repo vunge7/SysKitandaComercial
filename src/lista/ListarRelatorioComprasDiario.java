@@ -61,8 +61,8 @@ public class ListarRelatorioComprasDiario extends javax.swing.JFrame {
         
         dcDataInicio.setDate( new Date() );
         dcDataFim.setDate( new Date() );
-        cmbArmazem.setModel( new DefaultComboBoxModel( accessoArmazemDao.getAllArmazemByIdUSuario( idUser ) ) );
-//        cmbArmazem.setModel(new DefaultComboBoxModel(armazemDao.buscaTodos()));
+//        cmbArmazem.setModel( new DefaultComboBoxModel( accessoArmazemDao.getAllArmazemByIdUSuario( idUser ) ) );
+        cmbArmazem.setModel(new DefaultComboBoxModel(armazemDao.buscaTodos()));
 //        accao_mostar_campo_fornecedor(false);
 //        cmbFornecedor.setModel(new DefaultComboBoxModel(fornecedorDao.buscaTodos()));
        // conexao = BDConexao.getInstancia();
