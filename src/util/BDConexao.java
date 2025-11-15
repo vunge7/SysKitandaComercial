@@ -1,6 +1,5 @@
 package util;
 
-
 import java.sql.Connection;
 import controller.ProdutoController;
 import dao.ArmazemDao;
@@ -26,7 +25,6 @@ public class BDConexao
     private static EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
     private static ArmazemDao armazemDao = new ArmazemDao( emf );
     private static ProdutoDao produtoDao = new ProdutoDao( emf );
-
 
     static
     {
@@ -104,16 +102,18 @@ public class BDConexao
             }
 
             String ip = info.get( 0 ).trim();
-            String porta = (info.size() > 1 ? info.get( 1 ).trim() : "3306");
+            String porta = ( info.size() > 1 ? info.get( 1 ).trim() : "3306" );
+
 
             String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_bt"
+
                     + "?zeroDateTimeBehavior=convertToNull"
                     + "&useSSL=false"
                     + "&allowPublicKeyRetrieval=true"
                     + "&autoReconnect=true"
                     + "&connectTimeout=5000"
-                    + "&socketTimeout=30000"
-                    + "&characterEncoding=UTF-8";
+                    + "&socketTimeout=30000";
+//                    + "&characterEncoding=UTF-8";
 
             connection = DriverManager.getConnection( url, "root", "DoV90x?#" );
 
@@ -371,8 +371,6 @@ public class BDConexao
             return null;
         }
     }
-    
-    
 
     // ===========================================================
     // Helper para mensagens Swing

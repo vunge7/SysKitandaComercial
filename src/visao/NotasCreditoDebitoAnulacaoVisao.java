@@ -6,10 +6,11 @@
  */
 package visao;
 
-
 import java.sql.Connection;
 import comercial.controller.ExtratoContaClienteController;
 import comercial.controller.MovimentacaoController;
+import comercial.controller.ItemVendasController;
+import comercial.controller.PagamentoMensalidadeController;
 import comercial.controller.ProdutosController;
 import comercial.controller.TipoProdutosController;
 import controller.ItemVendaController;
@@ -63,6 +64,7 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
     private static EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
     private static ProdutosController produtosController;
     private static TipoProdutosController tipoProdutosController;
+    private static ItemVendasController itemVendasController;
     private ItemVendaDao itemVendaDao;
     private VasilhameDao vasilhameDao;
     private static DescontoDao descontoDao;
@@ -1083,6 +1085,16 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
                             hashMap.put( "_CLIENTE_MORADA", DVML._NAO_INCLUIR );
                         }
                         procedimento_limpar_dados();
+
+                        PagamentoMensalidadeController pagamentoMensalidadeController = new PagamentoMensalidadeController( conexao.getConnectionAtiva() );
+                        itemVendasController = new ItemVendasController( conexao );
+
+                        System.out.println( "#Codigo Venda#: " + venda_local.getCodigo() );
+                        pagamentoMensalidadeController.removerItem(
+                                venda_local.getCodigo(),
+                                itemVendasController.listarTodosByIdVenda( venda_local.getCodigo() )
+                        );
+
                         //Chama a factura e imprime directamente para a imprissora que estiver definidade no sistema operativo
                         ListaNotaDebito listaNotaDebito = new ListaNotaDebito( last_nota, Abreviacao.NC, false, false, hashMap, motivos_isentos );
 //                        ListaVenda1 original = new ListaVenda1( last_nota, abreviacao, false, false, "Original", motivos_isentos );

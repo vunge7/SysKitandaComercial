@@ -5,7 +5,6 @@
 package util;
 
 
-import java.sql.Connection;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
@@ -41,8 +40,7 @@ public class JPAEntityMannagerFactoryUtil
     public static EntityManager createEntityManager()
     {
 
-        try
-        {
+        try{
 
 //                
 //                String ip = "localhost";
@@ -57,6 +55,7 @@ public class JPAEntityMannagerFactoryUtil
                     ////    
                     //                return  javax.persistence.Persistence.createEntityManagerFactory( "SGCMINIMERCADOPU", map );
                     //                
+
             return em.createEntityManager();
         }
         catch ( Exception e )
@@ -84,6 +83,7 @@ public class JPAEntityMannagerFactoryUtil
                     String porta = informacao.get( 1 );
 
                     String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_bt?zeroDateTimeBehavior=convertToNull";
+
 
                     String user = "root";
                     String password = "DoV90x?#";

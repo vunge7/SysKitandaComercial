@@ -10,7 +10,6 @@
  */
 package visao;
 
-
 import java.sql.Connection;
 import dao.AmortizacaoDividaDao;
 import dao.AnoEconomicoDao;
@@ -688,7 +687,7 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame
                         AGT_SAFT_INVOICE_NO = venda.getCodFact();
                         AGT_SAFT_INVOICE_STATUS = "N";
                         AGT_SAFT_INVOICE_STATUS_DATE = formateDate( YYYY_MM_DD_T_HH_MM_SS, venda.getDataVenda() );
-                        AGT_SAFT_SOURCE_ID = venda.getCodigoUsuario().getNome();
+                        AGT_SAFT_SOURCE_ID = getStringValidaNomeUSuario( venda.getCodigoUsuario().getNome() );
                         AGT_SAFT_SOURCE_BILLING = "P";
                         AGT_SAFT_HASH = venda.getHashCod();
                         AGT_SAFT_HASH_CONTROL = "1.0";

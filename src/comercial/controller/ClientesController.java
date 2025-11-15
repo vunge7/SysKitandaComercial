@@ -126,6 +126,35 @@ public class ClientesController implements EntidadeFactory
         return lista_clientes;
     }
 
+    public Vector<TbCliente> listarTodos2()
+    {
+        String FIND_ALL = "SELECT * FROM tb_cliente ORDER BY nome ASC";
+        ResultSet result = conexao.executeQuery( FIND_ALL );
+        Vector<TbCliente> listaClientes = new Vector<>();
+        TbCliente cliente;
+
+        try
+        {
+            while ( result.next() )
+            {
+                cliente = new TbCliente();
+                cliente.setCodigo( result.getInt( "codigo" ) );
+                cliente.setNome( result.getString( "nome" ) );
+                cliente.setMorada( result.getString( "morada" ) );
+                cliente.setTelefone( result.getString( "telefone" ) );
+                cliente.setNif( result.getString( "nif" ) );
+                cliente.setEmail( result.getString( "email" ) );
+                listaClientes.add( cliente );
+            }
+        }
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
+        }
+
+        return listaClientes;
+    }
+
     public TbCliente findByCodigo( int codigo )
     {
 
@@ -583,6 +612,32 @@ public class ClientesController implements EntidadeFactory
         vector.add( 0, "--Seleccione o Cliente--" );
 
         return vector;
+    }
+
+    
+
+    public boolean existeClienteNomeParaOutroCliente( String nome, int codigo, Connection connection )
+    {
+        String sql = "SELECT COUNT(*) FROM tb_cliente WHERE nome = ? AND codigo <> ?";
+        try ( PreparedStatement stmt = connection.prepareStatement( sql ) )
+        {
+            stmt.setString( 1, nome );
+            stmt.setInt( 2, codigo );
+
+            try ( ResultSet rs = stmt.executeQuery() )
+            {
+                if ( rs.next() )
+                {
+                    int count = rs.getInt( 1 );
+                    return count > 0; // true se já existe em outro cliente
+                }
+            }
+        }
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }
