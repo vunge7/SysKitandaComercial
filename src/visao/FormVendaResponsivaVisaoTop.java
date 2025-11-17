@@ -302,6 +302,9 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
         setWindowsListener();
 //        btnSemFormaPagamento.setVisible( false );
+
+        table.setRowHeight( 25 );
+        inserir_uma_linha();
     }
 
     private void init()
@@ -1237,8 +1240,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnProcessar, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jlEmpresa, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jlEmpresa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(14, 14, 14))
                     .addGroup(painelDirLayout.createSequentialGroup()
@@ -1258,9 +1261,9 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(lbCodigoProduto2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtCodigoManual)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(jButton4))
                             .addGroup(painelDirLayout.createSequentialGroup()
                                 .addComponent(ck_S_A6)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1575,36 +1578,36 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private void txtQuatindadeActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtQuatindadeActionPerformed
     {//GEN-HEADEREND:event_txtQuatindadeActionPerformed
         // TODO add your handling code here:
-//        if ( validar() )
-//        {
-//
-//            setFocus( dadosInstituicao.getFoco() );
-//            txtCodigoBarra.setText( "" );
-//        }
+        if ( validar() )
+        {
+
+            setFocus( dadosInstituicao.getFoco() );
+            txtCodigoBarra.setText( "" );
+        }
     }//GEN-LAST:event_txtQuatindadeActionPerformed
 
     private void btn_adicionarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_adicionarActionPerformed
     {//GEN-HEADEREND:event_btn_adicionarActionPerformed
 
-//        if ( validar() )
-//        {
-//
-//            configuracaoMesComecoController = new ConfiguracaoMesComecoController( conexao.getConnectionAtiva() );
-//            boolean existeConfiguracaoDoCliente = configuracaoMesComecoController.existeConfiguracaoDoCliente( getIdCliente(), getCodigoProduto() );
-//
-//            if ( existeConfiguracaoDoCliente )
-//            {
-//                new MesesPagoClienteVisao( this, rootPaneCheckingEnabled,
-//                    getIdCliente(),
-//                    getCodigoProduto(), conexao ).setVisible( true );
-//            }
-//            else
-//            {
-//                adicionar_botao();
-//                scrolltable();
-//            }
-//
-//        }
+        if ( validar() )
+        {
+
+            configuracaoMesComecoController = new ConfiguracaoMesComecoController( conexao.getConnectionAtiva() );
+            boolean existeConfiguracaoDoCliente = configuracaoMesComecoController.existeConfiguracaoDoCliente( getIdCliente(), getCodigoProduto() );
+
+            if ( existeConfiguracaoDoCliente )
+            {
+                new MesesPagoClienteVisao( this, rootPaneCheckingEnabled,
+                        getIdCliente(),
+                        getCodigoProduto(), conexao ).setVisible( true );
+            }
+            else
+            {
+                adicionar_botao();
+                scrolltable();
+            }
+
+        }
     }//GEN-LAST:event_btn_adicionarActionPerformed
 
     private void btn_removerActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_removerActionPerformed
@@ -1612,16 +1615,18 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         try
         {
 
-//            DefaultTableModel modelo = (DefaultTableModel) table.getModel();
-//            if ( podeRemoverServico( modelo, table.getSelectedRow() ) )
-//            {
-//                remover_item_carrinho();
-//            }
+            DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+            if ( podeRemoverServico( modelo, table.getSelectedRow() ) )
+            {
+                remover_item_carrinho();
+            }
+
         }
         catch ( Exception ex )
         {
-            //Logger.getLogger(FormVendaResponsivaVisaoTop.class.getName()).log(Level.SEVERE, null, ex);
-            //            JOptionPane.showMessageDialog( null, "Possivelmente não selecionaste \n nenhuma linha ou não existe dados na tabela", "AVISO", JOptionPane.WARNING_MESSAGE );
+            ex.printStackTrace();
+            //Logger.getLogger(VendaUsuarioVisao.class.getName()).log(Level.SEVERE, null, ex);
+//            JOptionPane.showMessageDialog( null, "Possivelmente não selecionaste \n nenhuma linha ou não existe dados na tabela", "AVISO", JOptionPane.WARNING_MESSAGE );
         }
 
     }//GEN-LAST:event_btn_removerActionPerformed
@@ -3607,6 +3612,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     {
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         int codigo_produto = getCodigoProduto();
+        //define a altura das linhas
+        table.setRowHeight( 28 );
 
         String descricao_produto = getDescricao_Produto();
 
@@ -3651,20 +3658,53 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                 );
 
                 // Adicionar à tabela
-                modelo.addRow( new Object[]
+//                modelo.addRow( new Object[]
+//                {
+//                    codigo_produto,
+//                    descricao_produto,
+//                    unidade,
+//                    CfMethods.formatarComoMoeda( preco ),
+//                    qtd,
+//                    descontoPercent,
+//                    taxaIva,
+//                    taxaRet,
+//                    total_linha_retencao,
+//                    CfMethods.formatarComoMoeda( valorIliquido ),
+//                    CfMethods.formatarComoMoeda( totalComIva )
+//                } );
+                if ( primeiraLinhaVazia() )
                 {
-                    codigo_produto,
-                    descricao_produto,
-                    unidade,
-                    CfMethods.formatarComoMoeda( preco ),
-                    qtd,
-                    descontoPercent,
-                    taxaIva,
-                    taxaRet,
-                    total_linha_retencao,
-                    CfMethods.formatarComoMoeda( valorIliquido ),
-                    CfMethods.formatarComoMoeda( totalComIva )
-                } );
+                    // Preenche a linha 0
+                    modelo.setValueAt( codigo_produto, 0, 0 );
+                    modelo.setValueAt( descricao_produto, 0, 1 );
+                    modelo.setValueAt( unidade, 0, 2 );
+                    modelo.setValueAt( CfMethods.formatarComoMoeda( preco ), 0, 3 );
+                    modelo.setValueAt( qtd, 0, 4 );
+                    modelo.setValueAt( descontoPercent, 0, 5 );
+                    modelo.setValueAt( taxaIva, 0, 6 );
+                    modelo.setValueAt( taxaRet, 0, 7 );
+                    modelo.setValueAt( total_linha_retencao, 0, 8 );
+                    modelo.setValueAt( CfMethods.formatarComoMoeda( valorIliquido ), 0, 9 );
+                    modelo.setValueAt( CfMethods.formatarComoMoeda( totalComIva ), 0, 10 );
+                }
+                else
+                {
+                    // A primeira linha já está ocupada → criar nova
+                    modelo.addRow( new Object[]
+                    {
+                        codigo_produto,
+                        descricao_produto,
+                        unidade,
+                        CfMethods.formatarComoMoeda( preco ),
+                        qtd,
+                        descontoPercent,
+                        taxaIva,
+                        taxaRet,
+                        total_linha_retencao,
+                        CfMethods.formatarComoMoeda( valorIliquido ),
+                        CfMethods.formatarComoMoeda( totalComIva )
+                    } );
+                }
 
                 // Impressão de ticket (cozinha ou sala)
                 TbProduto findByDesignacao = produtosController.findByDesignacao( cmbProduto.getSelectedItem().toString() );
@@ -4586,7 +4626,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     {
         TbDadosInstituicao dados = (TbDadosInstituicao) dadosInstituicaoController.findById( 1 );
 
-        jlEmpresa.setText( "KITANDA 1.2                      "+dados.getNome() );
+        jlEmpresa.setText( "KITANDA 1.2                      " + dados.getNome() );
 
     }
 
@@ -4735,7 +4775,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         }
 
     }
-    
+
     public void adicionar_preco_quantidade()
     {
 
@@ -4799,7 +4839,49 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             dc_data_vencimento.setEnabled( false );
         }
     }
-    
+
+    public void remover_item_carrinho()
+    {
+
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+
+        String designacao = modelo.getValueAt( table.getSelectedRow(), 1 ).toString();
+        if ( designacao.contentEquals( "#" ) )
+        {
+            JOptionPane.showMessageDialog( null, "Não é permitido remover um  serviço " );
+        }
+
+        modelo.removeRow( table.getSelectedRow() );
+        setTotalPagar();
+        setTotalRetencao();
+        calculaTotalIVA();
+        //txtDesconto.setText("0");
+
+        TbProduto findByDesignacao = produtosController.findByDesignacao( cmbProduto.getSelectedItem().toString() );
+
+        int idPedido = 0;
+        TbMesas mesaEntity = (TbMesas) mesasController.findById( DVML.MESA_BALCAO );
+        String mesa = mesaEntity.getDesignacao();
+        TbLugares lugarEntity = (TbLugares) lugaresController.findById( DVML.LUGAR_BALCAO );
+        String lugar = lugarEntity.getDesignacao();
+        TbUsuario usuarioEntity = (TbUsuario) usuariosController.findById( cod_usuario );
+        String usuario = usuarioEntity.getNome();
+
+        if ( findByDesignacao.getCozinha().equals( "Enviar Ticket" ) )
+        {
+            MetodosUtil.imprimir_cozinha( findByDesignacao, idPedido, mesa, lugar, usuario, "Cancelado", (int) getQuantidade(), dadosInstituicaoController );
+        }
+        else if ( findByDesignacao.getCozinha().equals( "Enviar Sala" ) )
+        {
+            MetodosUtil.imprimir_sala( findByDesignacao, idPedido, mesa, lugar, usuario, "Cancelado", (int) getQuantidade(), dadosInstituicaoController );
+        }
+
+        valor_por_extenco();
+        reset_desconto_global();
+        //calcularTroco();
+
+    }
+
     public static void accao_codigo_interno_enter_busca_exterior( int codigo )
     {
 
@@ -4844,6 +4926,244 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                     .getLogger( VendaUsuarioVisao.class
                             .getName() ).log( Level.SEVERE, null, ex );
             JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+        }
+
+    }
+
+    /**
+     * Normaliza uma string: lower-case, remove acentos, pontuação extra e
+     * colapsa espaços.
+     */
+    private String normalizar( String s )
+    {
+        if ( s == null )
+        {
+            return "";
+        }
+
+        // remove acentos
+        String n = Normalizer.normalize( s, Normalizer.Form.NFD )
+                .replaceAll( "\\p{M}", "" );
+        // remove pontuação (mas preserva #), transforma espaços múltiplos em 1 e trim
+        n = n.replaceAll( "[\\p{Punct}&&[^#]]+", " " )
+                .replaceAll( "\\s+", " " )
+                .trim()
+                .toLowerCase();
+        return n;
+    }
+
+    /**
+     * Extrai (produto, mes) de uma designacao que contenha '#'. Retorna null se
+     * não for possível extrair.
+     */
+    private String[] extrairProdutoEMes( String designacao )
+    {
+        if ( designacao == null )
+        {
+            return null;
+        }
+        Pattern p = Pattern.compile( "^(.*?)#(.*)$" ); // grupo 1: tudo antes do #, grupo2: tudo depois
+        Matcher m = p.matcher( designacao );
+        if ( !m.find() )
+        {
+            return null;
+        }
+        String produto = m.group( 1 ).trim();
+        String mes = m.group( 2 ).trim();
+        return new String[]
+        {
+            produto, mes
+        };
+    }
+
+    private boolean podeRemoverServico( DefaultTableModel model, int selectedRow )
+    {
+        if ( selectedRow == -1 )
+        {
+            JOptionPane.showMessageDialog( null, "Selecione um serviço para remover!" );
+            return false;
+        }
+
+        String designacaoSelecionada = String.valueOf( model.getValueAt( selectedRow, 1 ) );
+        if ( designacaoSelecionada == null || !designacaoSelecionada.contains( "#" ) )
+        {
+            return true; // não é mensalidade
+        }
+
+        // mapa de meses em ordem e normalizado
+        String[] meses =
+        {
+            "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+            "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+        };
+        // criar versão normalizada do array meses para comparação
+        String[] mesesNorm = new String[ meses.length ];
+        for ( int i = 0; i < meses.length; i++ )
+        {
+            mesesNorm[ i ] = normalizar( meses[ i ] );
+        }
+
+        try
+        {
+            String[] pm = extrairProdutoEMes( designacaoSelecionada );
+            if ( pm == null )
+            {
+                return true;
+            }
+            String produtoOriginal = pm[ 0 ];
+            String mesAtual = pm[ 1 ];
+
+            String produtoNorm = normalizar( produtoOriginal );
+
+            // índice do mês selecionado
+            String mesAtualNorm = normalizar( mesAtual );
+            int indexMesAtual = -1;
+            for ( int i = 0; i < mesesNorm.length; i++ )
+            {
+                if ( mesesNorm[ i ].equals( mesAtualNorm ) )
+                {
+                    indexMesAtual = i;
+                    break;
+                }
+            }
+            if ( indexMesAtual == -1 )
+            {
+                JOptionPane.showMessageDialog( null, "Mês inválido: " + mesAtual );
+                return false;
+            }
+
+            // percorre todas as linhas e identifica as que pertencem EXATAMENTE ao mesmo produto
+            int totalMesesMesmoProduto = 0;
+            int maxIndexPresente = -1;
+            String mesMaisRecentePresente = null;
+
+            // também vamos registrar as linhas que tem o mês mais recente para garantir remover última ocorrência
+            java.util.List<Integer> linhasDoMesMaisRecente = new java.util.ArrayList<>();
+
+            for ( int r = 0; r < model.getRowCount(); r++ )
+            {
+                String d = String.valueOf( model.getValueAt( r, 1 ) );
+                if ( d == null || !d.contains( "#" ) )
+                {
+                    continue;
+                }
+
+                String[] pmLinha = extrairProdutoEMes( d );
+                if ( pmLinha == null )
+                {
+                    continue;
+                }
+
+                String produtoLinhaNorm = normalizar( pmLinha[ 0 ] );
+
+                // compara produto por igualdade da string normalizada
+                if ( !produtoLinhaNorm.equals( produtoNorm ) )
+                {
+                    continue;
+                }
+
+                // extrai mes e normaliza
+                String mesLinhaNorm = normalizar( pmLinha[ 1 ] );
+                int idxLinha = -1;
+                for ( int m = 0; m < mesesNorm.length; m++ )
+                {
+                    if ( mesesNorm[ m ].equals( mesLinhaNorm ) )
+                    {
+                        idxLinha = m;
+                        break;
+                    }
+                }
+                if ( idxLinha == -1 )
+                {
+                    continue;
+                }
+
+                totalMesesMesmoProduto++;
+
+                if ( idxLinha > maxIndexPresente )
+                {
+                    maxIndexPresente = idxLinha;
+                    mesMaisRecentePresente = meses[ idxLinha ];
+                    linhasDoMesMaisRecente.clear();
+                    linhasDoMesMaisRecente.add( r );
+                }
+                else if ( idxLinha == maxIndexPresente )
+                {
+                    // mesma posição do mês mais recente — acrescenta a linha (duplicatas do mesmo mês)
+                    linhasDoMesMaisRecente.add( r );
+                }
+            }
+
+            // se existe apenas 1 mês daquele produto -> pode remover
+            if ( totalMesesMesmoProduto <= 1 )
+            {
+                return true;
+            }
+
+            // se o mês do selectedRow não é o mês mais recente -> bloqueia
+            if ( indexMesAtual != maxIndexPresente )
+            {
+                JOptionPane.showMessageDialog( null,
+                        "Não pode remover " + meses[ indexMesAtual ]
+                        + " antes de remover " + mesMaisRecentePresente + " (remova do último para o primeiro)." );
+                return false;
+            }
+
+            // se o mês selecionado é o mês mais recente, mas há várias linhas com o mesmo mês,
+            // só permita remover se a linha selecionada for a *última ocorrência* daquele mês (maior índice de linha).
+            if ( !linhasDoMesMaisRecente.isEmpty() )
+            {
+                int maiorLinha = -1;
+                for ( Integer ln : linhasDoMesMaisRecente )
+                {
+                    if ( ln > maiorLinha )
+                    {
+                        maiorLinha = ln;
+                    }
+                }
+                if ( selectedRow != maiorLinha )
+                {
+                    JOptionPane.showMessageDialog( null,
+                            "Existem várias entradas para " + mesMaisRecentePresente
+                            + ". Remova a linha mais abaixo (última ocorrência) primeiro." );
+                    return false;
+                }
+            }
+
+            // passou todas as regras -> pode remover
+            return true;
+
+        }
+        catch ( Exception ex )
+        {
+            JOptionPane.showMessageDialog( null, "Erro ao verificar serviço: " + ex.getMessage() );
+            return false;
+        }
+    }
+
+    private static boolean primeiraLinhaVazia()
+    {
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+
+        if ( modelo.getRowCount() == 0 )
+        {
+            return true;
+        }
+
+        Object codigo = modelo.getValueAt( 0, 0 );
+
+        return codigo == null || codigo.toString().trim().isEmpty();
+    }
+
+    private void inserir_uma_linha()
+    {
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        if ( modelo.getRowCount() == 0 )
+        {
+            modelo.addRow( new Object[]
+            {
+                null, null, null, null, null, null, null, null, null, null, null
+            } );
         }
 
     }
