@@ -1607,6 +1607,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         }
         catch ( Exception ex )
         {
+            ex.printStackTrace();
             //Logger.getLogger(VendaUsuarioVisao.class.getName()).log(Level.SEVERE, null, ex);
 //            JOptionPane.showMessageDialog( null, "Possivelmente não selecionaste \n nenhuma linha ou não existe dados na tabela", "AVISO", JOptionPane.WARNING_MESSAGE );
         }
@@ -1624,9 +1625,13 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
             if ( existeConfiguracaoDoCliente )
             {
-                new MesesPagoClienteVisao( this, rootPaneCheckingEnabled,
+                new MesesPagoClienteVisao(
+                        this,
+                        rootPaneCheckingEnabled,
                         getIdCliente(),
-                        getCodigoProduto(), conexao ).setVisible( true );
+                        getCodigoProduto(),
+                        conexao
+                ).setVisible( true );
             }
             else
             {
@@ -4199,6 +4204,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     public static void setTotalPagar()
     {
         BigDecimal total = getTotalAOALiquido();
+        System.out.println( "TOTAL ####### " + total );
         String valorFormatado = CfMethods.formatarComoMoeda( total );
         txtTotalPagar.setText( valorFormatado );
     }
@@ -4225,7 +4231,6 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     {
 
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
-        modelo.removeRow( table.getSelectedRow() );
 
         String designacao = modelo.getValueAt( table.getSelectedRow(), 1 ).toString();
         if ( designacao.contentEquals( "#" ) )
@@ -4233,6 +4238,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             JOptionPane.showMessageDialog( null, "Não é permitido remover um  serviço " );
         }
 
+        modelo.removeRow( table.getSelectedRow() );
         setTotalPagar();
         setTotalRetencao();
         calculaTotalIVA();
@@ -4243,7 +4249,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         int idPedido = 0;
         TbMesas mesaEntity = (TbMesas) mesasController.findById( DVML.MESA_BALCAO );
         String mesa = mesaEntity.getDesignacao();
-        TbMesas lugarEntity = (TbMesas) lugaresController.findById( DVML.LUGAR_BALCAO );
+        TbLugares lugarEntity = (TbLugares) lugaresController.findById( DVML.LUGAR_BALCAO );
         String lugar = lugarEntity.getDesignacao();
         TbUsuario usuarioEntity = (TbUsuario) usuariosController.findById( cod_usuario );
         String usuario = usuarioEntity.getNome();
@@ -7234,12 +7240,12 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
         System.out.println( "ID PRODUTO: " + idProduto );
 
-        int idPrecoRetalho = PrecosController.getLastIdPrecoByIdProdutoIntAndQTD( idProduto, 0d, conexao );
+        int idPrecoRetalho = PrecosController.getLastIdPrecoByIdProdutoIntAndQTD( idProduto, 1d, conexaoTransaction );
         System.out.println( "ID RETALHO: " + idPrecoRetalho );
         TbPreco precoAntigoRetalho = (TbPreco) precosControllerLocal.findById( idPrecoRetalho );
         System.out.println( "PRECO RETALHO: " + precoAntigoRetalho );
 
-        int idPrecoGrosso = PrecosController.getLastIdPrecoByIdProdutoIntAndPrecoAntigoQtdAlto( idProduto, precoAntigoRetalho.getQtdAlto() + 1, conexao );
+        int idPrecoGrosso = PrecosController.getLastIdPrecoByIdProdutoIntAndPrecoAntigoQtdAlto( idProduto, precoAntigoRetalho.getQtdAlto() + 1, conexaoTransaction );
         TbPreco precoAntigoGrosso = (TbPreco) precosControllerLocal.findById( idPrecoGrosso );
         System.out.println( "ID GROSSO: " + idPrecoGrosso );
         System.out.println( "PRECO GROSSO: " + precoAntigoGrosso );
@@ -7258,6 +7264,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         preco_novo_retalho.setQtdAlto( precoAntigoRetalho.getQtdAlto() );
         preco_novo_retalho.setPrecoAnterior( precoAntigoRetalho.getPrecoAnterior() );
         preco_novo_retalho.setRetalho( precoAntigoRetalho.getRetalho() );
+      
 
         System.out.println( "HORA RETALHO: " + preco_novo_retalho.getHora() );
         System.out.println( "DATA RETAHO: " + preco_novo_retalho.getData() );
