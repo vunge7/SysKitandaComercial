@@ -593,6 +593,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         sp_desconto_financeiro = new javax.swing.JSpinner();
         lbDescontoFinanceiro = new javax.swing.JLabel();
         txtTotal_AOA_Retencao = new javax.swing.JLabel();
+        txtLocal = new javax.swing.JTextField();
         painelTabela = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
@@ -1236,8 +1237,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnProcessar, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jlEmpresa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jlEmpresa, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(14, 14, 14))
                     .addGroup(painelDirLayout.createSequentialGroup()
@@ -1301,6 +1302,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                                 .addComponent(cmbSubFamilia, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(cmbProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtLocal, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtTotalPagar, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1338,6 +1341,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(cmbSubFamilia, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+                            .addComponent(txtLocal, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(cmbProduto))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -1379,7 +1383,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                             .addComponent(btnProcessar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jlEmpresa)))
                     .addComponent(btn_adicionar, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
 
         painelDirLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btn_adicionar, btn_remover});
@@ -1532,7 +1536,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         // TODO add your handling code here:
         try
         {
-//            adicionar_preco_quantidade();
+            adicionar_preco_quantidade();
         }
         catch ( Exception e )
         {
@@ -3162,6 +3166,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     public static javax.swing.JTextField txtCodigoManual;
     public static javax.swing.JTextField txtCodigoProduto;
     private static javax.swing.JTextField txtIniciaisCliente;
+    private javax.swing.JTextField txtLocal;
     private static javax.swing.JTextField txtNifClientePesquisa;
     private static javax.swing.JTextField txtNomeConsumidorFinal;
     public static javax.swing.JTextField txtPreco;
@@ -4727,6 +4732,54 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             ex.printStackTrace();
             Logger.getLogger( VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
             JOptionPane.showMessageDialog( null, "Não existe produto com este código de barra.", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+        }
+
+    }
+    
+    public void adicionar_preco_quantidade()
+    {
+
+        try
+        {
+
+            TbProduto produto_local = (TbProduto) produtosController.findById( getCodigoProduto() );
+
+            TbStock stockLocal = stocksController.getStockByIdProdutoAndIdArmazem( getCodigoProduto(), getCodigoArmazem() );
+            boolean isStocavel = produto_local.getStocavel().equals( "true" );
+
+            if ( isStocavel && stockLocal.getQuantidadeExistente() <= stockLocal.getQuantCritica() )
+            {
+
+                txtQuantidadeStock.setBackground( Color.RED );
+                txtQuantidadeStock.setForeground( Color.BLACK );
+            }
+            else
+            {
+                txtQuantidadeStock.setBackground( new Color( 51, 153, 0, 255 ) );
+            }
+
+            txtCodigoBarra.setText( String.valueOf( produto_local.getCodBarra() ) );
+            //actualizar
+            txtLocal.setText( String.valueOf( produto_local.getCodLocal().getDesignacao() ) );
+            txtCodigoProduto.setText( String.valueOf( produto_local.getCodigo() ) );
+
+            if ( isStocavel && !Objects.isNull( stockLocal ) )
+            {
+                txtQuantidadeStock.setText( String.valueOf( stockLocal.getQuantidadeExistente() ) );
+            }
+            else
+            {
+                txtQuantidadeStock.setText( "0" );
+            }
+
+        }
+        catch ( Exception ex )
+        {
+            ex.printStackTrace();
+            txtQuantidadeStock.setText( "0" );
+            Logger
+                    .getLogger( VendaUsuarioVisao.class
+                            .getName() ).log( Level.SEVERE, null, ex );
         }
 
     }

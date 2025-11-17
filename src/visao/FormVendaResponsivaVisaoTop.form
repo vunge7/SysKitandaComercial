@@ -538,8 +538,8 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="btnProcessar" min="-2" pref="117" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jlEmpresa" max="32767" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jlEmpresa" min="-2" pref="12" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
                               <Component id="btnCancelar" min="-2" pref="80" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
                           </Group>
@@ -609,6 +609,8 @@
                                       <Component id="cmbSubFamilia" min="-2" pref="118" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="cmbProduto" min="-2" pref="299" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="txtLocal" min="-2" pref="16" max="-2" attributes="0"/>
                                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
@@ -659,7 +661,8 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Component id="cmbSubFamilia" pref="31" max="32767" attributes="0"/>
-                                  <Component id="cmbProduto" max="32767" attributes="0"/>
+                                  <Component id="txtLocal" min="-2" pref="30" max="-2" attributes="0"/>
+                                  <Component id="cmbProduto" alignment="0" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -714,7 +717,7 @@
                           </Group>
                           <Component id="btn_adicionar" linkSize="1" min="-2" pref="28" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="21" max="32767" attributes="0"/>
+                      <EmptySpace pref="22" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -1244,6 +1247,8 @@
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
               </AuxValues>
+            </Component>
+            <Component class="javax.swing.JTextField" name="txtLocal">
             </Component>
           </SubComponents>
         </Container>
