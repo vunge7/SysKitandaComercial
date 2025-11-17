@@ -45,7 +45,7 @@ public class JPAEntityMannagerFactoryUtil
 //                
 //                String ip = "localhost";
 
-                   //                String url = "jdbc:mysql://"   +ip +":3306/kitanda_db_bt_moys_gulele_dvml_k11_joaquim?zeroDateTimeBehavior=convertToNull";
+                   //                String url = "jdbc:mysql://"   +ip +":3306/kitanda_db_moys_gulele_dvml_k11_joaquim?zeroDateTimeBehavior=convertToNull";
                     //                String password = "DoV90x?#";
                     //                
                     //                Map map = new HashMap();
@@ -82,7 +82,7 @@ public class JPAEntityMannagerFactoryUtil
                     String ip = informacao.get( 0 );
                     String porta = informacao.get( 1 );
 
-                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_bt?zeroDateTimeBehavior=convertToNull";
+                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db?zeroDateTimeBehavior=convertToNull";
 
 
                     String user = "root";
