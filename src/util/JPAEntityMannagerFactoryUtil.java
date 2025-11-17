@@ -40,9 +40,22 @@ public class JPAEntityMannagerFactoryUtil
     public static EntityManager createEntityManager()
     {
 
-        try
+        try{
 
-        {             
+//                
+//                String ip = "localhost";
+
+                   //                String url = "jdbc:mysql://"   +ip +":3306/kitanda_db_moys_gulele_dvml_k11_joaquim?zeroDateTimeBehavior=convertToNull";
+                    //                String password = "DoV90x?#";
+                    //                
+                    //                Map map = new HashMap();
+                    //                map.put("javax.persistence.jdbc.url", url); //esta propriedade vai substituir aquela q esta no arquivo
+                    //                map.put("javax.persistence.jdbc.user", user); //esta propriedade vai substituir aquela q esta no arquivo
+                    //                map.put("javax.persistence.jdbc.password", password); //esta propriedade vai substituir aquela q esta no arquivo
+                    ////    
+                    //                return  javax.persistence.Persistence.createEntityManagerFactory( "SGCMINIMERCADOPU", map );
+                    //                
+
             return em.createEntityManager();
         }
         catch ( Exception e )
@@ -69,7 +82,8 @@ public class JPAEntityMannagerFactoryUtil
                     String ip = informacao.get( 0 );
                     String porta = informacao.get( 1 );
 
-                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_bento?zeroDateTimeBehavior=convertToNull";
+                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db?zeroDateTimeBehavior=convertToNull";
+
 
                     String user = "root";
                     String password = "DoV90x?#";
