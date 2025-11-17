@@ -3160,8 +3160,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private javax.swing.JPanel painelEsq;
     private javax.swing.JPanel painelTabela;
     private javax.swing.JPanel painelTopo;
-    private javax.swing.JRadioButton rbArmazem;
-    private javax.swing.JRadioButton rbArmazem1;
+    private static javax.swing.JRadioButton rbArmazem;
+    private static javax.swing.JRadioButton rbArmazem1;
     private static javax.swing.JRadioButton rbMostrar;
     private static javax.swing.JRadioButton rbTranstorno;
     private static javax.swing.JSpinner sp_desconto_financeiro;
