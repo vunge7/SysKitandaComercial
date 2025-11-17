@@ -4736,5 +4736,53 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             dc_data_vencimento.setEnabled( false );
         }
     }
+    
+    public static void accao_codigo_interno_enter_busca_exterior( int codigo )
+    {
+
+        try
+        {
+
+            System.out.println( "ID PRODUTO EXTERIOR: " + codigo );
+            TbProduto produtoLocal = (TbProduto) produtosController.findById( codigo );
+
+            Integer codTipoProduto = produtoLocal.getCodTipoProduto().getCodigo();
+            TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById( codTipoProduto );
+            Integer codFamilia = tipoProduto.getFkFamilia().getPkFamilia();
+            Familia familia = (Familia) familiaController.findById( codFamilia );
+            cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
+
+            cmbProduto.setModel( new DefaultComboBoxModel( produtosController.getVector() ) );
+            cmbProduto.setSelectedItem( produtoLocal.getDesignacao() );
+
+            configuracaoMesComecoController = new ConfiguracaoMesComecoController( conexao.getConnectionAtiva() );
+
+            boolean existeConfiguracaoDoCliente = configuracaoMesComecoController.existeConfiguracaoDoCliente(
+                    getIdCliente(), produtoLocal.getCodigo() );
+            if ( existeConfiguracaoDoCliente )
+            {
+
+                new MesesPagoClienteVisao( null,
+                        true,
+                        getIdCliente(),
+                        getCodigoProduto(), conexao ).setVisible( true );
+            }
+            else
+            {
+
+                procedimentoAdicionarTabela( produtoLocal );
+            }
+
+        }
+        catch ( Exception ex )
+        {
+            ex.printStackTrace();
+            Logger
+                    .getLogger( VendaUsuarioVisao.class
+                            .getName() ).log( Level.SEVERE, null, ex );
+            JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+        }
+
+    }
 
 }
