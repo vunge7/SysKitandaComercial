@@ -10,7 +10,6 @@
  */
 package visao;
 
-import java.sql.Connection;
 import dao.AmortizacaoDividaDao;
 import dao.AnoEconomicoDao;
 import dao.DadosInstituicaoDao;

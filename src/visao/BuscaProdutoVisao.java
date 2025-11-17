@@ -5,6 +5,7 @@
  */
 package visao;
 
+import comercial.controller.ProdutosImpostoController;
 import comercial.controller.StoksController;
 import enties.util.BuscaModeloProduto;
 import java.awt.Color;
@@ -17,6 +18,7 @@ import javax.swing.table.DefaultTableModel;
 import util.BDConexao;
 import util.DVML;
 import util.Definicoes;
+import util.FinanceUtils;
 import util.tabela_manual.render.RenderBusca;
 
 /**
@@ -28,6 +30,7 @@ public class BuscaProdutoVisao extends javax.swing.JDialog
 
     private Vector<BuscaModeloProduto> fonte_dados = null;
     private StoksController stoksController;
+    private static ProdutosImpostoController produtosImpostoController;
 
     private int cod_armazem = 0, cod_janela = 0;
 
@@ -40,10 +43,17 @@ public class BuscaProdutoVisao extends javax.swing.JDialog
         this.cod_janela = cod_janela;
         txtDesignacao.requestFocus();
         stoksController = new StoksController( conexao );
+        produtosImpostoController = new ProdutosImpostoController( conexao );
         fonte_dados = stoksController.getFonte( cod_armazem, cod_janela );
 
         tabela_busca.setDefaultRenderer( Object.class, new RenderBusca( cod_armazem, conexao ) );
         txtDesignacao.requestFocus();
+
+        txtDesignacao.addKeyListener( new TratarEvento() );
+
+        setBackGroundLegenda();
+//        updatePrecoIvaTabela();
+
         try
         {
             adicionar_tabela();
@@ -52,10 +62,6 @@ public class BuscaProdutoVisao extends javax.swing.JDialog
         {
             e.printStackTrace();
         }
-
-        txtDesignacao.addKeyListener( new TratarEvento() );
-
-        setBackGroundLegenda();
 
         // Adicione no construtor ou método initComponents()
 //tabela_busca.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
