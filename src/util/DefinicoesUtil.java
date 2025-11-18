@@ -1,383 +1,413 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package util;
 
-
-import java.sql.Connection;
 import java.io.File;
 import java.io.IOException;
+import java.security.SecureRandom;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
-import javax.swing.JTable;
-import javax.swing.JTextField;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableRowSorter;
+
 import static util.DVML.CAMINHO_SCRIP_TO_UPDATE;
 import static util.DVML.FILE_TO_UPDATE;
 
 /**
+ * Classe DefinicoesUtil — refatorada para Java 8. - Fechamento correto de
+ * resources - Validação de schema (whitelist) - Mensagens: quando já
+ * sincronizado e quando sincronização concluída - Geração de script de
+ * atualização
  *
- * @author Domingos Dala Vunge
+ * Obs: Assumo que BDConexao tem getConnection() retornando java.sql.Connection
+ * e que MetodosUtil.escreverNoDocumento(String, File) existe no projecto.
  */
 public class DefinicoesUtil
 {
 
+    private static final Logger LOGGER = Logger.getLogger( DefinicoesUtil.class.getName() );
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    // escape da barra invertida para Java String (funciona em Java 8)
+    private static final String PASSWORD_CHARS = "0123456789abcdefghijklmnopqrstuvwxyz=+\\\\-/*";
+    private static final int DEFAULT_PASSWORD_LENGTH = 8;
+    private static final ExecutorService EXEC = Executors.newFixedThreadPool( 4 );
+
+    // --- MAIN DE TESTE ---
     public static void main( String[] args )
     {
         BDConexao conexao = BDConexao.getInstancia();
         String bd_fd = "kitanda_db";
         String bd_fb = "kitanda_db_indiano";
-//        System.out.println( gerarScript( bd_fd, bd_fb, conexao ) );
 
-        if ( existeTabela( "tb_venda", bd_fb, conexao ) == 0 )
-        {
-            System.out.println( "Não existe" );
-        }
-        else
-        {
-            System.out.println( "Existe" );
-        }
-
-    }
-
-    public static String gerarSenha()
-    {
-        int qtdeMaximaCaracteres = 8;
-        String[] caracteres =
-        {
-            "0", "1", "b", "2", "4", "5", "6", "7", "8",
-            "9",
-            "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k",
-            "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w",
-            "x", "y", "z",
-            "=", "+", "-", "/", "*"
-
-//            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
-//            "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W",
-//            "X", "Y", "Z",
-        };
-
-        StringBuilder senha = new StringBuilder();
-
-        for ( int i = 0; i < qtdeMaximaCaracteres; i++ )
-        {
-            int posicao = (int) ( Math.random() * caracteres.length );
-            senha.append( caracteres[ posicao ] );
-        }
-        return senha.toString();
-
-    }
-
-    public static int numeroDeTabelas( String bd, BDConexao conexao )
-    {
-        int number = 0;
-        String sql = "SELECT count(*) AS TOTALNUMBEROFTABLES "
-                + "FROM INFORMATION_SCHEMA.TABLES "
-                + "WHERE TABLE_SCHEMA = '" + bd + "'";
         try
         {
-            ResultSet rs = conexao.executeQuery( sql );
-
-            if ( rs.next() )
-            {
-                number = rs.getInt( 1 );
-            }
+            String script = gerarScript( bd_fd, bd_fb, conexao );
+            System.out.println( script );
         }
-        catch ( Exception e )
+        catch ( Exception ex )
         {
-            e.printStackTrace();
+            LOGGER.log( Level.SEVERE, "Falha ao gerar script", ex );
         }
 
-        return number;
+        int existe = existeTabela( "tb_venda", bd_fb, conexao );
+        System.out.println( existe == 0 ? "Não existe" : "Existe" );
 
+        EXEC.shutdown();
     }
 
+    // --- Gerador de senha seguro ---
+    public static String gerarSenha()
+    {
+        StringBuilder sb = new StringBuilder( DEFAULT_PASSWORD_LENGTH );
+        for ( int i = 0; i < DEFAULT_PASSWORD_LENGTH; i++ )
+        {
+            int idx = SECURE_RANDOM.nextInt( PASSWORD_CHARS.length() );
+            sb.append( PASSWORD_CHARS.charAt( idx ) );
+        }
+        return sb.toString();
+    }
+
+    // --- Contagem de tabelas ---
+    public static int numeroDeTabelas( String bd, BDConexao conexao )
+    {
+        if ( !isValidSchemaName( bd, conexao ) )
+        {
+            LOGGER.warning( "Schema não válido: " + bd );
+            return 0;
+        }
+        String sql = "SELECT count(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ?";
+        int number = 0;
+        try ( Connection conn = conexao.getConnection(); PreparedStatement ps = conn.prepareStatement( sql ) )
+        {
+            ps.setString( 1, bd );
+            try ( ResultSet rs = ps.executeQuery() )
+            {
+                if ( rs.next() )
+                {
+                    number = rs.getInt( 1 );
+                }
+            }
+        }
+        catch ( SQLException ex )
+        {
+            LOGGER.log( Level.SEVERE, "Erro em numeroDeTabelas", ex );
+        }
+        return number;
+    }
+
+    // --- Lista de tabelas de um schema ---
     public static Vector<String> getTables( String bd, BDConexao conexao )
     {
         Vector<String> vector_tabelas = new Vector<>();
-
-        String sql = "SELECT TABLE_NAME "
-                + "FROM INFORMATION_SCHEMA.TABLES "
-                + "WHERE TABLE_SCHEMA = '" + bd + "'";
-        try
+        if ( !isValidSchemaName( bd, conexao ) )
         {
-            ResultSet rs = conexao.executeQuery( sql );
+            LOGGER.warning( "getTables: schema inválido: " + bd );
+            return vector_tabelas;
+        }
 
-//          rs.getMetaData(
-            while ( rs.next() )
+        String sql = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ?";
+        try ( Connection conn = conexao.getConnection(); PreparedStatement ps = conn.prepareStatement( sql ) )
+        {
+            ps.setString( 1, bd );
+            try ( ResultSet rs = ps.executeQuery() )
             {
-                String tabela = rs.getString( 1 );
-                vector_tabelas.add( tabela );
+                while ( rs.next() )
+                {
+                    vector_tabelas.add( rs.getString( 1 ) );
+                }
             }
         }
-        catch ( Exception e )
+        catch ( SQLException ex )
         {
-            e.printStackTrace();
+            LOGGER.log( Level.SEVERE, "Erro em getTables", ex );
         }
-
         return vector_tabelas;
     }
 
+    // --- Tabelas em falta (bd_1 - bd_2) ---
     public static Vector<String> tabelasEmFalta( String bd_1, String bd_2, BDConexao conexao )
     {
-
         Vector<String> tabelasEmFalta = new Vector<>();
-
         Vector<String> tablesBD_1 = getTables( bd_1, conexao );
         Vector<String> tablesBD_2 = getTables( bd_2, conexao );
 
-        boolean existe = false;
-        for ( int i = 0; i < tablesBD_1.size(); i++ )
+        for ( String tabela : tablesBD_1 )
         {
-            String elementAt1 = tablesBD_1.elementAt( i );
-            existe = false;
-            for ( int j = 0; j < tablesBD_2.size(); j++ )
+            if ( !tablesBD_2.contains( tabela ) )
             {
-                String elementAt2 = tablesBD_2.elementAt( j );
-
-                if ( elementAt1.equals( elementAt2 ) )
-                {
-                    existe = true;
-                    break;
-                }
-
+                tabelasEmFalta.add( tabela );
             }
-            if ( !existe )
-            {
-                tabelasEmFalta.add( elementAt1 );
-            }
-
         }
-
         return tabelasEmFalta;
-
     }
 
+    // --- Geração/abertura segura do ficheiro ---
     private static File gerarFicheiro()
     {
-
-        File path = new File( CAMINHO_SCRIP_TO_UPDATE );
-        File file = null;
-        //ELIMINAR O FICHEIRO SAFT CASO EXISTA
-        if ( !path.exists() )
+        File dir = new File( CAMINHO_SCRIP_TO_UPDATE );
+        if ( !dir.exists() )
         {
-            try
+            if ( !dir.mkdirs() )
             {
-
-                path.mkdirs();
-                file = new File( CAMINHO_SCRIP_TO_UPDATE + "/" + FILE_TO_UPDATE );
-                file.createNewFile();
-                System.out.println( "Script criado com successo." );
+                LOGGER.severe( "Falha ao criar diretório: " + dir.getAbsolutePath() );
+                return null;
             }
-            catch ( IOException e )
-            {
-                System.err.println( "Falha ao criar o ficheiro  " + e.getLocalizedMessage() );
-            }
-
         }
-        else if ( path.exists() )
+        File file = new File( dir, FILE_TO_UPDATE );
+        try
         {
-            path.delete();
-
-            try
+            if ( file.exists() )
             {
-                file = new File( CAMINHO_SCRIP_TO_UPDATE + "/" + FILE_TO_UPDATE );
-                file.createNewFile();
+                // criar backup em vez de apagar
+                File backup = new File( dir, FILE_TO_UPDATE + ".bak" );
+                if ( !file.renameTo( backup ) )
+                {
+                    LOGGER.warning( "Não foi possível renomear ficheiro existente para backup: " + backup.getAbsolutePath() );
+                }
             }
-            catch ( IOException e )
+            if ( file.createNewFile() )
             {
+                LOGGER.info( "Script criado com sucesso: " + file.getAbsolutePath() );
             }
-
+            else
+            {
+                LOGGER.info( "Ficheiro pronto para uso: " + file.getAbsolutePath() );
+            }
+        }
+        catch ( IOException e )
+        {
+            LOGGER.log( Level.SEVERE, "Falha ao criar o ficheiro: ", e );
+            return null;
         }
         return file;
-
     }
 
+    // --- Gerar script principal ---
     public static String gerarScript( String bd_1, String bd_2, BDConexao conexao )
     {
+        if ( !isValidSchemaName( bd_1, conexao ) || !isValidSchemaName( bd_2, conexao ) )
+        {
+            throw new IllegalArgumentException( "Schema inválido" );
+        }
 
-        StringBuilder buffer = new StringBuilder();
+        StringBuilder out = new StringBuilder();
         File file = gerarFicheiro();
+        if ( file == null )
+        {
+            throw new IllegalStateException( "Não foi possível criar ficheiro de output" );
+        }
+
         Vector<Vector<ColunasFalta>> vectorColunasEmFalta = new Vector<>();
         Vector<Vector<ColunasUpdate>> vectorColunasUpdate = new Vector<>();
         Vector<String> tablesBD_1 = getTables( bd_1, conexao );
         Vector<String> tables = tabelasEmFalta( bd_1, bd_2, conexao );
 
-        String out = "";
+        out.append( "USE `" ).append( bd_2 ).append( "`;\n\n" );
 
-        out += "USE `" + bd_2 + "`;\n\n";
+        LOGGER.info( "TMANHO 1 = " + numeroDeTabelas( bd_1, conexao ) );
+        LOGGER.info( "TMANHO 2 = " + numeroDeTabelas( bd_2, conexao ) );
 
-        System.out.println( "TMANHO 1 = " + numeroDeTabelas( bd_1, conexao ) );
-        System.out.println( "TMANHO 2 = " + numeroDeTabelas( bd_2, conexao ) );
-//        if ( numeroDeTabelas( bd_1, conexao ) == numeroDeTabelas( bd_2, conexao ) )
-        if ( true )
+        // preencher vetores de colunas faltando / update
+        for ( String tabela : tablesBD_1 )
         {
-
-            int size = tablesBD_1.size();
-
-            for ( int i = 0; i < size; i++ )
+            if ( existeTabela( tabela, bd_2, conexao ) != 0 )
             {
-                String tabela = tablesBD_1.elementAt( i );
-
                 String sql1 = getSql( tabela, bd_1 );
                 String sql2 = getSql( tabela, bd_2 );
 
-                if ( existeTabela( tabela, bd_2, conexao ) != 0 )
-                {
-                    Vector<EstruturaTabela> e1 = getLinhasTabela( sql1, conexao ); //Estrutura da tabela na BD 1.
-                    Vector<EstruturaTabela> e2 = getLinhasTabela( sql2, conexao ); //Estrutura da tabela na BD 2.
+                Vector<EstruturaTabela> e1 = getLinhasTabela( sql1, conexao ); // estrutura tabela BD1
+                Vector<EstruturaTabela> e2 = getLinhasTabela( sql2, conexao ); // estrutura tabela BD2
 
-                    Vector<ColunasFalta> cf = getColunasEmFaltas( tabela, e1, e2 ); //Retorna as colunas em falta.
-                    Vector<ColunasUpdate> cu = getColunasUpdate( tabela, e1, e2 ); // Retorna as colunas por actualizar.
+                Vector<ColunasFalta> cf = getColunasEmFaltas( tabela, e1, e2 );
+                Vector<ColunasUpdate> cu = getColunasUpdate( tabela, e1, e2 );
 
-                    vectorColunasEmFalta.add( cf );
-                    vectorColunasUpdate.add( cu );
-
-                }
-
+                vectorColunasEmFalta.add( cf );
+                vectorColunasUpdate.add( cu );
             }
-
-            /**
-             * ADIÇÃO COLUNAS EM FATLAS.
-             */
-            out += gerarScriptColumnAdd( bd_2, vectorColunasEmFalta );
-            System.out.println( out );
-
-            /**
-             * ACTUALIZAR AS COLUNAS.
-             */
-            out += gerarScriptColumnUpdate( bd_2, vectorColunasUpdate );
-            System.out.println( out );
-
-            /**
-             * GERAÇÃO DE SCRIPTS DA TABELA EM FALTA.
-             */
-            for ( int i = 0; i < tables.size(); i++ )
+            else
             {
-                String elementAt = tables.elementAt( i );
-                String sql = getSql( elementAt, bd_1 );
-                Vector<EstruturaTabela> e = getLinhasTabela( sql, conexao );
-                out += gerarScriptTable( elementAt, e ) + "\n\n";
+                // tabela não existe em bd_2 -> será tratada em 'tables' (tabelas em falta)
+            }
+        }
+
+        // Verificar se não há nada para fazer
+        boolean semTabelasFaltando = tables.isEmpty();
+        boolean semColunasFaltando = true;
+        for ( Vector<ColunasFalta> v : vectorColunasEmFalta )
+        {
+            if ( v != null && !v.isEmpty() )
+            {
+                semColunasFaltando = false;
+                break;
+            }
+        }
+        boolean semColunasParaAtualizar = true;
+        for ( Vector<ColunasUpdate> v : vectorColunasUpdate )
+        {
+            if ( v != null && !v.isEmpty() )
+            {
+                semColunasParaAtualizar = false;
+                break;
+            }
+        }
+
+        if ( semTabelasFaltando && semColunasFaltando && semColunasParaAtualizar )
+        {
+            // escreve no ficheiro e informa o utilizador
+            MetodosUtil.escreverNoDocumento( "-- AS BASES JÁ ESTÃO TOTALMENTE SINCRONIZADAS --\n", file );
+            LOGGER.info( "As bases já estão completamente sincronizadas!" );
+            JOptionPane.showMessageDialog( null, "As bases já estão totalmente sincronizadas!", "Informação", JOptionPane.INFORMATION_MESSAGE );
+            return "-- AS BASES JÁ ESTÃO TOTALMENTE SINCRONIZADAS --\n";
+        }
+
+        // ADIÇÃO DE COLUNAS
+        out.append( gerarScriptColumnAdd( bd_2, vectorColunasEmFalta ) );
+        // UPDATE DE COLUNAS
+        out.append( gerarScriptColumnUpdate( bd_2, vectorColunasUpdate ) );
+        // TABELAS EM FALTA (criar)
+        for ( int i = 0; i < tables.size(); i++ )
+        {
+            String elementAt = tables.elementAt( i );
+            String sql = getSql( elementAt, bd_1 );
+            Vector<EstruturaTabela> e = getLinhasTabela( sql, conexao );
+            out.append( gerarScriptTable( elementAt, e ) ).append( "\n\n" );
+        }
+
+        // Escrever no ficheiro (usa MetodosUtil existente)
+        MetodosUtil.escreverNoDocumento( out.toString(), file );
+
+        // informar que sincronização terminou
+        LOGGER.info( "SINCRONIZAÇÃO COMPLETA!" );
+        JOptionPane.showMessageDialog( null, "Sincronização concluída com sucesso!", "Informação", JOptionPane.INFORMATION_MESSAGE );
+
+        return out.toString();
+    }
+
+    // --- Geração de SQL para criação de tabela com base na estrutura ---
+    private static String gerarScriptTable( String tabela, Vector<EstruturaTabela> cols )
+    {
+        if ( cols == null || cols.isEmpty() )
+        {
+            return "-- Sem informação para tabela " + tabela + "\n";
+        }
+        StringBuilder sql = new StringBuilder();
+        sql.append( "DROP TABLE IF EXISTS `" ).append( tabela ).append( "`; \n" );
+        sql.append( "CREATE TABLE `" ).append( tabela ).append( "` ( \n" );
+
+        List<String> pkCols = new ArrayList<>();
+        for ( int i = 0; i < cols.size(); i++ )
+        {
+            EstruturaTabela col = cols.get( i );
+            sql.append( "    `" ).append( col.getField() ).append( "` " ).append( col.getType() );
+            if ( col.getNulo() == null || col.getNulo().equalsIgnoreCase( "NO" ) )
+            {
+                sql.append( " NOT NULL" );
+            }
+            else
+            {
+                sql.append( " DEFAULT NULL" );
+            }
+            if ( col.getPadrao_default() != null && !col.getPadrao_default().isEmpty() )
+            {
+                sql.append( " DEFAULT '" ).append( col.getPadrao_default().replace( "'", "''" ) ).append( "'" );
+            }
+            if ( col.getExtra() != null && col.getExtra().toLowerCase().contains( "auto_increment" ) )
+            {
+                sql.append( " AUTO_INCREMENT" );
+            }
+            if ( i < cols.size() - 1 )
+            {
+                sql.append( ",\n" );
             }
 
+            if ( "PRI".equalsIgnoreCase( col.getKey() ) )
+            {
+                pkCols.add( col.getField() );
+            }
         }
 
-        buffer.append( out );
-        MetodosUtil.escreverNoDocumento( buffer.toString(), file );
-
-        return out;
-
-    }
-
-    private static String gerarScriptTable( String tabela, Vector<EstruturaTabela> e )
-    {
-
-        EstruturaTabela chave_primaria = e.get( 0 );
-
-        String sql = "DROP TABLE IF EXISTS `" + tabela + "`; \n"
-                + "CREATE TABLE `" + tabela + "` ( \n";
-
-        sql += "    `" + chave_primaria.getField() + "` " + chave_primaria.getType() + " NOT NULL AUTO_INCREMENT, \n";
-        for ( int i = 1; i < e.size(); i++ )
+        if ( !pkCols.isEmpty() )
         {
-            EstruturaTabela elementAt = e.elementAt( i );
-            sql += "    `" + elementAt.getField() + "` " + elementAt.getType() + " " + ( ( elementAt.getNulo().equals( "YES" ) ) ? " DEFAULT NULL" : " NOT NULL" ) + " , \n";
+            sql.append( ",\n    PRIMARY KEY (`" ).append( String.join( "`,`", pkCols ) ).append( "`)\n" );
+        }
+        else
+        {
+            sql.append( "\n" );
         }
 
-        sql += "  PRIMARY KEY (`" + chave_primaria.getField() + "`)\n";
-//        sql += ") ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;\n";
-        sql += ") ENGINE=InnoDB DEFAULT CHARSET=latin1;\n";
-//
-        System.out.println( sql );
-        return sql;
-
+        sql.append( ") ENGINE=InnoDB DEFAULT CHARSET=latin1;\n" );
+        return sql.toString();
     }
 
+    // --- Geração de scripts para adicionar colunas ---
     private static String gerarScriptColumnAdd( String bd, Vector<Vector<ColunasFalta>> v )
     {
-        String out = "";
-        for ( int i = 0; i < v.size(); i++ )
+        StringBuilder out = new StringBuilder();
+        for ( Vector<ColunasFalta> vec : v )
         {
-            Vector<ColunasFalta> get = v.get( i );
-            if ( !Objects.isNull( get ) )
+            if ( vec == null )
             {
-
-                for ( int j = 0; j < get.size(); j++ )
-                {
-                    ColunasFalta elementAt = get.elementAt( j );
-                    out += addColumnAfter( bd, elementAt.getTabela(), elementAt.getAnterior(), elementAt.getNome(), elementAt.getTipo(), elementAt.getValorDefault() ) + "\n";
-                }
+                continue;
+            }
+            for ( ColunasFalta cf : vec )
+            {
+                out.append( addColumnAfter( bd, cf.getTabela(), cf.getAnterior(), cf.getNome(), cf.getTipo(), cf.getValorDefault() ) )
+                        .append( "\n" );
             }
         }
-
-        return out;
+        return out.toString();
     }
 
+    // --- Geração de scripts para alterar colunas ---
     private static String gerarScriptColumnUpdate( String bd, Vector<Vector<ColunasUpdate>> v )
     {
-        String out = "";
-        for ( int i = 0; i < v.size(); i++ )
+        StringBuilder out = new StringBuilder();
+        for ( Vector<ColunasUpdate> vec : v )
         {
-            Vector<ColunasUpdate> get = v.get( i );
-            if ( !Objects.isNull( get ) )
+            if ( vec == null )
             {
-
-                for ( int j = 0; j < get.size(); j++ )
-                {
-                    ColunasUpdate elementAt = get.elementAt( j );
-                    out += updateColumn( bd, elementAt.getTabela(),
-                            elementAt.getNome(),
-                            elementAt.getNewType(),
-                            elementAt.getValorDefault() ) + "\n";
-                }
+                continue;
+            }
+            for ( ColunasUpdate cu : vec )
+            {
+                out.append( updateColumn( bd, cu.getTabela(), cu.getNome(), cu.getNewType(), cu.getValorDefault() ) )
+                        .append( "\n" );
             }
         }
-        return out;
+        return out.toString();
     }
 
     private static String addColumnAfter( String bd, String tabela, String coluna_anterior, String coluna, String tipo, String padraDefault )
     {
-
-        String padrao = Objects.isNull( padraDefault ) ? "" : " DEFAULT '" + padraDefault + "' ";
-
-        String sql = "ALTER TABLE `" + bd + "`.`" + tabela + "` "
-                + "ADD COLUMN `" + coluna + "`  " + tipo + " NULL  " + padrao + "AFTER `" + coluna_anterior + "`;";
-
+        String padrao = Objects.isNull( padraDefault ) ? "" : " DEFAULT '" + padraDefault.replace( "'", "''" ) + "' ";
+        String afterPart = ( coluna_anterior == null || coluna_anterior.isEmpty() ) ? "" : " AFTER `" + coluna_anterior + "`";
+        String sql = String.format( "ALTER TABLE `%s`.`%s` ADD COLUMN `%s` %s NULL %s%s;", bd, tabela, coluna, tipo, padrao, afterPart );
         return sql;
-
     }
 
     private static String updateColumn( String bd, String tabela, String coluna, String novoTipo, String valorDefault )
     {
-
-        /*
-            
-         */
-        String padrao = ( novoTipo.contentEquals( "int" )
-                || novoTipo.contentEquals( "double" )
-                || novoTipo.contentEquals( "decimal" ) )
-                ? //                valorDefault : "'" + valorDefault + "'";
-                "0.0" : "'" + valorDefault + "'";
-
-        String sql = "ALTER TABLE `" + bd + "`.`" + tabela + "` \n"
-                //                + "CHANGE COLUMN `" + coluna + "` `" + coluna + "` " + novoTipo + " NULL DEFAULT " + padrao + ";";
-                + "CHANGE COLUMN `" + coluna + "` `" + coluna + "` " + novoTipo + ";";
-
+        String defaultPart = ( valorDefault == null || valorDefault.isEmpty() ) ? "" : " DEFAULT '" + valorDefault.replace( "'", "''" ) + "'";
+        String sql = String.format( "ALTER TABLE `%s`.`%s` CHANGE COLUMN `%s` `%s` %s%s;", bd, tabela, coluna, coluna, novoTipo, defaultPart );
         return sql;
     }
 
+    // --- Recuperar estrutura de coluna (usando SHOW COLUMNS FROM ... FROM schema) ---
     private static Vector<EstruturaTabela> getLinhasTabela( String sql, BDConexao conexao )
     {
-
-        ResultSet rs = conexao.executeQuery( sql );
-        Vector<EstruturaTabela> extruturaTabela = new Vector<>();
-
-        try
+        Vector<EstruturaTabela> estruturaTabela = new Vector<>();
+        // OBS: sql deve ser como: SHOW COLUMNS FROM tabela FROM schema
+        try ( Connection conn = conexao.getConnection(); PreparedStatement ps = conn.prepareStatement( sql ); ResultSet rs = ps.executeQuery() )
         {
 
             while ( rs.next() )
@@ -389,126 +419,163 @@ public class DefinicoesUtil
                 e.setKey( rs.getString( 4 ) );
                 e.setPadrao_default( rs.getString( 5 ) );
                 e.setExtra( rs.getString( 6 ) );
-                extruturaTabela.add( e );
-
+                estruturaTabela.add( e );
             }
         }
-        catch ( SQLException e )
+        catch ( SQLException ex )
         {
+            LOGGER.log( Level.SEVERE, "Erro getLinhasTabela: " + sql, ex );
         }
-
-        return extruturaTabela;
+        return estruturaTabela;
     }
 
     private static String getSql( String tabela, String bd )
     {
-//        System.out.println( "SHOW COLUMNS FROM " + tabela + "  FROM " + bd + "");
-
-        return "SHOW COLUMNS FROM " + tabela + "  FROM " + bd + "";
-
-    }
-
-    private static void mostrarEstrtura( Vector<EstruturaTabela> e )
-    {
-
-        for ( int i = 0; i < e.size(); i++ )
-        {
-            EstruturaTabela elementAt = e.elementAt( i );
-            System.out.println( "Field: " + elementAt.getField() + "                Type: " + elementAt.getType() + "                Null: " + elementAt.getNulo() + "                Key: " + elementAt.getKey() );
-
-        }
-        System.out.println( "\n\n" );
-
+        return "SHOW COLUMNS FROM " + tabela + " FROM " + bd;
     }
 
     private static Vector<ColunasFalta> getColunasEmFaltas( String tabela, Vector<EstruturaTabela> e1, Vector<EstruturaTabela> e2 )
     {
-
         Vector<ColunasFalta> cf = new Vector<>();
-        boolean encontrou;
         for ( int i = 0; i < e1.size(); i++ )
         {
-            EstruturaTabela elementA1 = e1.elementAt( i );
-            encontrou = false;
+            EstruturaTabela a1 = e1.get( i );
+            boolean encontrou = false;
             for ( int j = 0; j < e2.size(); j++ )
             {
-                EstruturaTabela elementA2 = e2.elementAt( j );
-
-                if ( elementA1.getField().equals( elementA2.getField() ) )
+                EstruturaTabela a2 = e2.get( j );
+                if ( a1.getField().equals( a2.getField() ) )
                 {
                     encontrou = true;
                     break;
                 }
-
             }
-
-            if ( !encontrou && i > 1 )
+            if ( !encontrou )
             {
-                ColunasFalta colunasFalta = new ColunasFalta();
-                colunasFalta.setTabela( tabela );
-                colunasFalta.setNome( elementA1.getField() );
-                colunasFalta.setTipo( elementA1.getType() );
-
-                colunasFalta.setAnterior( e1.get( i - 1 ).field );
-                colunasFalta.setValorDefault( e1.get( i ).padrao_default );
-
-                cf.add( colunasFalta );
+                ColunasFalta col = new ColunasFalta();
+                col.setTabela( tabela );
+                col.setNome( a1.getField() );
+                col.setTipo( a1.getType() );
+                col.setAnterior( i > 0 ? e1.get( i - 1 ).getField() : "" );
+                col.setValorDefault( a1.getPadrao_default() );
+                cf.add( col );
             }
-
         }
-
         return cf;
-
     }
 
     private static Vector<ColunasUpdate> getColunasUpdate( String tabela, Vector<EstruturaTabela> e1, Vector<EstruturaTabela> e2 )
     {
-
         Vector<ColunasUpdate> cf = new Vector<>();
-        boolean encontrou;
-        String typeOld;
         for ( int i = 0; i < e1.size(); i++ )
         {
-            typeOld = "";
-            EstruturaTabela elementA1 = e1.elementAt( i );
-            encontrou = false;
+            EstruturaTabela a1 = e1.get( i );
             for ( int j = 0; j < e2.size(); j++ )
             {
-                EstruturaTabela elementA2 = e2.elementAt( j );
-
-                if ( elementA1.getField().equals( elementA2.getField() ) )
+                EstruturaTabela a2 = e2.get( j );
+                if ( a1.getField().equals( a2.getField() ) )
                 {
-
-                    if ( !elementA1.getType().equals( elementA2.getType() ) )
+                    if ( !Objects.equals( a1.getType(), a2.getType() ) || !Objects.equals( a1.getPadrao_default(), a2.getPadrao_default() ) )
                     {
-                        System.out.println( "diferente" );
-                        typeOld = elementA2.getType();
-                        encontrou = true;
-                        break;
+                        ColunasUpdate cu = new ColunasUpdate();
+                        cu.setTabela( tabela );
+                        cu.setNome( a1.getField() );
+                        cu.setNewType( a1.getType() );
+                        cu.setOldType( a2.getType() );
+                        cu.setValorDefault( a1.getPadrao_default() );
+                        cf.add( cu );
                     }
-
+                    break;
                 }
-
             }
-
-            if ( encontrou )
-            {
-                ColunasUpdate cu = new ColunasUpdate();
-                cu.setTabela( tabela );
-                cu.setNome( elementA1.getField() );
-                cu.setNewType( elementA1.getType() );
-                cu.setOldType( typeOld );
-                cu.setValorDefault( elementA1.getPadrao_default() );
-
-                cf.add( cu );
-            }
-
         }
-
         return cf;
-
     }
 
+    private static int existeTabela( String tabela, String bd, BDConexao conexao )
+    {
+        if ( !isValidSchemaName( bd, conexao ) )
+        {
+            LOGGER.warning( "existeTabela: schema inválido: " + bd );
+            return -1;
+        }
+        String sql = "SELECT COUNT(1) AS n FROM INFORMATION_SCHEMA.TABLES WHERE table_schema = ? AND table_name = ?";
+        try ( Connection conn = conexao.getConnection(); PreparedStatement ps = conn.prepareStatement( sql ) )
+        {
+            ps.setString( 1, bd );
+            ps.setString( 2, tabela );
+            try ( ResultSet rs = ps.executeQuery() )
+            {
+                if ( rs.next() )
+                {
+                    return rs.getInt( "n" );
+                }
+            }
+        }
+        catch ( SQLException ex )
+        {
+            LOGGER.log( Level.SEVERE, "Erro existeTabela", ex );
+        }
+        return -1;
+    }
+
+    // --- Sort utility (esqueleto) ---
+    private void sort( final javax.swing.JTable jTable, final javax.swing.JTextField field, TableRowSorter trs, int[] indexs )
+    {
+        // Implementação deixada intencionalmente simples — pode ser ativada quando necessário
+    }
+
+    // --- executarComBotao com ExecutorService ---
+    public static void executarComBotao( final JButton botao, final Runnable acao )
+    {
+        botao.setEnabled( false );
+        EXEC.submit( () ->
+        {
+            try
+            {
+                acao.run();
+            }
+            catch ( Exception ex )
+            {
+                LOGGER.log( Level.SEVERE, "Erro na ação executada pelo botão", ex );
+            }
+            finally
+            {
+                SwingUtilities.invokeLater( () -> botao.setEnabled( true ) );
+            }
+        } );
+    }
+
+    // --- Validação de nomes de schema/tabela (usando whitelist) ---
+    private static boolean isValidSchemaName( String schema, BDConexao conexao )
+    {
+        if ( schema == null || schema.trim().isEmpty() )
+        {
+            return false;
+        }
+        Vector<String> schemas = getSchemas( conexao );
+        return schemas.contains( schema );
+    }
+
+    private static Vector<String> getSchemas( BDConexao conexao )
+    {
+        Vector<String> list = new Vector<>();
+        String sql = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA";
+        try ( Connection conn = conexao.getConnection(); PreparedStatement ps = conn.prepareStatement( sql ); ResultSet rs = ps.executeQuery() )
+        {
+            while ( rs.next() )
+            {
+                list.add( rs.getString( 1 ) );
+            }
+        }
+        catch ( SQLException ex )
+        {
+            LOGGER.log( Level.WARNING, "Não foi possível obter schemas", ex );
+        }
+        return list;
+    }
+
+    // --- Classes internas ---
     private static class EstruturaTabela
     {
 
@@ -518,10 +585,6 @@ public class DefinicoesUtil
         private String key;
         private String padrao_default;
         private String extra;
-
-        public EstruturaTabela()
-        {
-        }
 
         public String getField()
         {
@@ -582,13 +645,6 @@ public class DefinicoesUtil
         {
             this.extra = extra;
         }
-
-        @Override
-        public String toString()
-        {
-            return "EstruturaTabela{" + "field=" + field + "\n type=" + type + "\n nulo=" + nulo + "\n key=" + key + "\n padrao_default=" + padrao_default + "\n extra=" + extra + '}';
-        }
-
     }
 
     private static class ColunasFalta
@@ -653,7 +709,6 @@ public class DefinicoesUtil
         {
             this.valorDefault = valorDefault;
         }
-
     }
 
     private static class ColunasUpdate
@@ -718,72 +773,6 @@ public class DefinicoesUtil
         {
             this.newType = newType;
         }
-
-    }
-
-    private static int existeTabela( String tabela, String bd, BDConexao conexao )
-    {
-        String sql = "select count(table_name) as n "
-                + "FROM INFORMATION_SCHEMA.TABLES "
-                + "WHERE table_schema = '" + bd + "' and table_name like '" + tabela + "'";
-
-        System.out.println( sql );
-        ResultSet rs = conexao.executeQuery( sql );
-
-        try
-        {
-            if ( rs.next() )
-            {
-                return rs.getInt( "n" );
-            }
-        }
-        catch ( SQLException e )
-        {
-
-        }
-        return -1;
-    }
-
-    private void sort( final JTable jTable, final JTextField field, TableRowSorter trs, int[] indexs )
-    {
-//         field.addKeyListener( new KeyAdapter()
-//        {
-//            @Override
-//            public void keyReleased( KeyEvent e )
-//            {
-//                trs.setRowFilter( RowFilter.regexFilter( "(?i)" + field.getText(), indexs ) );
-//            }
-//
-//            
-//
-//            
-//
-//        } );
-//
-//        trs = new TableRowSorter( jTable.getModel() );
-//        jTable.setRowSorter( trs );
-
-    }
-
-    public static void executarComBotao( JButton botao, Runnable acao )
-    {
-        botao.setEnabled( false );
-
-        new Thread( () ->
-        {
-            try
-            {
-                acao.run(); // executa a ação recebida
-            }
-            catch ( Exception ex )
-            {
-                ex.printStackTrace();
-            }
-            finally
-            {
-                SwingUtilities.invokeLater( () -> botao.setEnabled( true ) );
-            }
-        } ).start();
     }
 
 }

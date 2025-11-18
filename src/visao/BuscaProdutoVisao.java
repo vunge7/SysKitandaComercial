@@ -18,7 +18,6 @@ import javax.swing.table.DefaultTableModel;
 import util.BDConexao;
 import util.DVML;
 import util.Definicoes;
-import util.FinanceUtils;
 import util.tabela_manual.render.RenderBusca;
 
 /**
