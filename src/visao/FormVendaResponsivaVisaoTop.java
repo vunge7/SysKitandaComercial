@@ -34,11 +34,13 @@ import entity.Unidade;
 import exemplos.PermitirNumeros;
 import hotel.controller.MesasController;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
@@ -59,7 +61,12 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.*;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableColumn;
 import static kitanda.util.CfConstantes.YYYYMMDD_HHMMSS;
 import kitanda.util.CfMethods;
 import kitanda.util.CfMethodsSwing;
@@ -77,7 +84,7 @@ import static util.DVML.DOC_FACTURA_RECIBO_FR;
 import static util.DVML.DOC_FACTURA_FT;
 import util.FinanceUtils;
 import util.MetodosUtil;
-import static util.MetodosUtil.rodarComandoWindows;
+
 
 /**
  *
@@ -156,6 +163,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     public FormVendaResponsivaVisaoTop( int cod_usuario, BDConexao conexao ) throws SQLException
     {
         initComponents();
+//        procedimento_codBarra__jtable();
+
         this.setExtendedState( JFrame.MAXIMIZED_BOTH ); // abre maximizado
 
         btnSemFormaPagamento.setVisible( false );
@@ -165,6 +174,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         rbMostrar.setVisible( false );
         jlStockNegativo.setVisible( false );
         rbTranstorno.setVisible( false );
+        txtLocal.setVisible( false );
 
         //pegarResolucao();
         FormVendaResponsivaVisaoTop.conexao = conexao;
@@ -247,30 +257,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         //new BuscaProdutoVisao( FormVendaResponsivaVisaoTop.this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_VENDA ).setVisible(true);
 //        MetodosUtil.FUNCAO_F1( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_VENDA);
 
-        KeyboardFocusManager.getCurrentKeyboardFocusManager()
-                .addKeyEventDispatcher( new KeyEventDispatcher()
-                {
-                    @Override
-                    public boolean dispatchKeyEvent( KeyEvent e )
-                    {
-                        if ( e.getID() == KeyEvent.KEY_RELEASED && e.getKeyCode() == KeyEvent.VK_F1 )
-                        {
-                            try
-                            {
-                                new BuscaProdutoVisao( getInstance(), rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_VENDA, BDConexao.getInstancia() ).setVisible( true );
-                            }
-                            catch ( Exception ex )
-                            {
-                                ex.printStackTrace();
-                            }
-                            return true;
-
-                        }
-                        return false;
-                    }
-                } );
-
-        // No construtor ou método de inicialização da sua janela
+        // No construtor ou método de inicialização do formulário
         getRootPane().getInputMap( JComponent.WHEN_IN_FOCUSED_WINDOW )
                 .put( KeyStroke.getKeyStroke( "F4" ), "abrirBuscaProduto" );
 
@@ -284,10 +271,12 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                     if ( validar() )
                     {
                         new BuscaProdutoVisao(
-                                FormVendaResponsivaVisaoTop.this, // ou "this" conforme contexto
+                                FormVendaResponsivaVisaoTop.this,
                                 rootPaneCheckingEnabled,
                                 getCodigoArmazem(),
-                                DVML.JANELA_VENDA, BDConexao.getInstancia() ).setVisible( true ); // melhor que .setVisible(true)
+                                DVML.JANELA_VENDA,
+                                BDConexao.getInstancia()
+                        ).setVisible( true );
                     }
                 }
                 catch ( Exception ex )
@@ -305,6 +294,9 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
         table.setRowHeight( 25 );
         inserir_uma_linha();
+
+        procedimento_codBarra__jtable();
+//        initStockListener();
     }
 
     private void init()
@@ -1171,7 +1163,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         lbCodigoProduto4.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         lbCodigoProduto4.setText("TOTAL:");
 
-        lbValorPorExtenco.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
+        lbValorPorExtenco.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         lbValorPorExtenco.setForeground(new java.awt.Color(204, 0, 0));
         lbValorPorExtenco.setText("VALOR POR EXTENSO");
 
@@ -1257,13 +1249,13 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(lbCodigoProduto)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtCodigoProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtCodigoProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(lbCodigoProduto2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(txtCodigoManual)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton4))
+                                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(painelDirLayout.createSequentialGroup()
                                 .addComponent(ck_S_A6)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1306,7 +1298,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(cmbProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtLocal, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtLocal, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtTotalPagar, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1353,11 +1345,11 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                                 .addComponent(lbCodigoProduto1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(txtCodigoBarra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(txtCodigoProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(lbCodigoProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(lbQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(lbCodigoProduto2, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(lbCodigoProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lbCodigoProduto2, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(lbQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(painelDirLayout.createSequentialGroup()
                         .addGap(33, 33, 33)
                         .addComponent(jButton4)))
@@ -1413,6 +1405,14 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         );
 
         painelTabela.setLayout(new java.awt.BorderLayout());
+
+        jScrollPane1.addPropertyChangeListener(new java.beans.PropertyChangeListener()
+        {
+            public void propertyChange(java.beans.PropertyChangeEvent evt)
+            {
+                jScrollPane1PropertyChange(evt);
+            }
+        });
 
         table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][]
@@ -1619,6 +1619,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             if ( podeRemoverServico( modelo, table.getSelectedRow() ) )
             {
                 remover_item_carrinho();
+                inserir_uma_linha();
             }
 
         }
@@ -1655,7 +1656,12 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private void txtCodigoBarraActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtCodigoBarraActionPerformed
     {//GEN-HEADEREND:event_txtCodigoBarraActionPerformed
-        accao_codigo_barra_enter();
+//        accao_codigo_barra_enter();
+//        accao_codigo_barra_enter_cb();
+        accao_codigo_barra_enter_cb();
+        scrolltable();
+
+
     }//GEN-LAST:event_txtCodigoBarraActionPerformed
 
     private void ck_A7ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ck_A7ActionPerformed
@@ -1707,6 +1713,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private void btnFormaPagamentoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnFormaPagamentoActionPerformed
     {//GEN-HEADEREND:event_btnFormaPagamentoActionPerformed
+        removerUltimaLinhaVazia();
         if ( MetodosUtil.licencaValidada( conexao ) )
         {
             if ( !MetodosUtil.tabela_vazia( table ) )
@@ -1716,13 +1723,54 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                     return; // Se houver erro, não abre forma de pagamento
                 }
 
-                new FormaPagamentoVisao( this, rootPaneCheckingEnabled, null, DVML.VENDA_PONTUAL, BDConexao.getInstancia() ).setVisible( true );
+                new FormaPagamentoVisao( this, rootPaneCheckingEnabled, null, DVML.VENDA_PONTUAL_TOP, BDConexao.getInstancia() ).setVisible( true );
             }
             else
             {
                 JOptionPane.showMessageDialog( null, "Caro usuário, adicione itens na tabela" );
             }
         }
+
+//        // No construtor ou método de inicialização da janela
+//getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+//        .put(KeyStroke.getKeyStroke("F5"), "abrirFormaPagamento");
+//
+//getRootPane().getActionMap().put("abrirFormaPagamento", new AbstractAction() {
+//    @Override
+//    public void actionPerformed(ActionEvent e) {
+//        try {
+//            // Valida licença
+//            if (!MetodosUtil.licencaValidada(BDConexao.getInstancia())) {
+//                JOptionPane.showMessageDialog(null, "Licença não validada!");
+//                return;
+//            }
+//
+//            // Verifica se há itens na tabela
+//            if (MetodosUtil.tabela_vazia(table)) {
+//                JOptionPane.showMessageDialog(null, "Caro usuário, adicione itens na tabela");
+//                return;
+//            }
+//
+//            // Valida preços
+//            if (validarPrecos_tabela(table)) {
+//                return; // Se houver erro, não abre forma de pagamento
+//            }
+//
+//            // Abre o formulário de forma de pagamento
+//            new FormaPagamentoVisao(
+//                    FormVendaResponsivaVisaoTop.this,
+//                    rootPaneCheckingEnabled,
+//                    null,
+//                    DVML.VENDA_PONTUAL_TOP,
+//                    BDConexao.getInstancia()
+//            ).setVisible(true);
+//
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//        }
+//    }
+//});
+
     }//GEN-LAST:event_btnFormaPagamentoActionPerformed
 
     private void btnProcessarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnProcessarActionPerformed
@@ -1819,6 +1867,16 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             }
         }
     }//GEN-LAST:event_btnSemFormaPagamentoActionPerformed
+
+    private void jScrollPane1PropertyChange(java.beans.PropertyChangeEvent evt)//GEN-FIRST:event_jScrollPane1PropertyChange
+    {//GEN-HEADEREND:event_jScrollPane1PropertyChange
+        if ( table.getSelectedColumn() == 3 || table.getSelectedColumn() == 4 || table.getSelectedColumn() == 5 )
+        {
+            actualizarPreco();
+            System.out.println( "Qtd......" );
+            actualizarQtdTable();
+        }
+    }//GEN-LAST:event_jScrollPane1PropertyChange
 
     /**
      * @param args the command line arguments
@@ -1996,6 +2054,32 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     }
 
+    public static Double getPreco( int codigoProduto, double qtd )
+    {
+
+        Moeda moeda = getMoeda();
+        if ( moeda == null )
+        {
+            return null;
+        }
+
+        Cambio lastCambio = cambiosController.getLastObject( moeda.getPkMoeda() );
+        try
+        {
+
+            Double valorCambio = lastCambio.getValor();
+            TbPreco precoLocal = precosController.getLastIdPrecoByIdProduto( codigoProduto, qtd );
+            double precoVenda = precoLocal.getPrecoVenda().doubleValue();
+
+            return ( precoVenda / valorCambio );
+        }
+        catch ( Exception e )
+        {
+            return 0.0;
+        }
+
+    }
+
     private static void mostrar_abreviacao_moeda_cambio()
     {
         try
@@ -2072,7 +2156,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         mostrar_abreviacao_moeda_cambio();
         try
         {
-            refresh_table();
+//            refresh_table();
         }
         catch ( Exception e )
         {
@@ -2118,37 +2202,6 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 //        }
 
         cmbArmazem.setModel( new DefaultComboBoxModel( armazensController.getVector2() ) );
-    }
-
-    public static Double getPreco( int idProduto, double qtd )
-    {
-
-        Moeda moeda = getMoeda();
-        if ( moeda == null )
-        {
-            return null;
-        }
-
-        Cambio lastCambio = cambiosController.getLastObject( moeda.getPkMoeda() );
-        try
-        {
-            Double valorCambio = lastCambio.getValor();
-            TbPreco precoLocal = precosController.getLastIdPrecoByIdProduto( idProduto, qtd );
-            double precoVenda = precoLocal.getPrecoVenda().doubleValue();
-            if ( moeda.getAbreviacao().equals( DVML.MOEDA_KWANZA ) )
-            {
-                return precoVenda;
-            }
-
-            return ( precoVenda / valorCambio );
-
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace();
-            return null;
-        }
-
     }
 
     public static Double getPreco( int idProduto, double qtd, int idMoeda )
@@ -3223,7 +3276,6 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById( codTipoProduto );
             Integer codFamilia = tipoProduto.getFkFamilia().getPkFamilia();
             Familia familia = (Familia) familiaController.findById( codFamilia );
-//            cmbFamilia.setSelectedItem( familia.getDesignacao() );
             cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
 
             cmbProduto.setModel( new DefaultComboBoxModel( produtosController.getVector() ) );
@@ -3247,12 +3299,12 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             else
             {
                 procedimentoAdicionarTabela( produto );
+
             }
 
         }
         catch ( Exception ex )
         {
-//            ex.printStackTrace();
             Logger.getLogger( FormVendaResponsivaVisaoTop.class.getName() ).log( Level.SEVERE, null, ex );
             JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
         }
@@ -3326,31 +3378,100 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
         {
-            // Preço unitário (coluna 3)
-            BigDecimal preco = BigDecimal.valueOf(
-                    CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 3 ).toString() )
-            );
+            Object precoObj = modelo.getValueAt( i, 3 );
+            Object qtdObj = modelo.getValueAt( i, 4 );
+            Object ivaObj = modelo.getValueAt( i, 6 );
 
-            // Quantidade (coluna 4)
-            BigDecimal quantidade = new BigDecimal( modelo.getValueAt( i, 4 ).toString() );
+            // Linha incompleta → ignora
+            if ( precoObj == null || qtdObj == null || ivaObj == null )
+            {
+                continue;
+            }
 
-            // Taxa de IVA (coluna 6)
-            BigDecimal taxaIva = new BigDecimal( modelo.getValueAt( i, 6 ).toString() );
+            String precoTxt = precoObj.toString().trim();
+            String qtdTxt = qtdObj.toString().trim();
+            String ivaTxt = ivaObj.toString().trim();
 
-            // Desconto (se aplicável - aqui ainda é zero porque está comentado no original)
+            // Células vazias → ignora linha
+            if ( precoTxt.isEmpty() || qtdTxt.isEmpty() || ivaTxt.isEmpty() )
+            {
+                continue;
+            }
+
+            // --------------- PARSE SEGURO ---------------
+            BigDecimal preco;
+            try
+            {
+                preco = BigDecimal.valueOf( CfMethods.parseMoedaFormatada( precoTxt ) );
+            }
+            catch ( Exception e )
+            {
+                continue; // Preço inválido → ignora linha
+            }
+
+            BigDecimal quantidade;
+            try
+            {
+                quantidade = new BigDecimal( qtdTxt );
+            }
+            catch ( Exception e )
+            {
+                continue; // Quantidade inválida → ignora linha
+            }
+
+            BigDecimal taxaIva;
+            try
+            {
+                taxaIva = new BigDecimal( ivaTxt );
+            }
+            catch ( Exception e )
+            {
+                taxaIva = BigDecimal.ZERO;
+            }
+
             BigDecimal desconto = BigDecimal.ZERO;
 
-            // Valor do IVA calculado
+            // cálculo
             BigDecimal valorIva = getIVA( quantidade, taxaIva, preco, desconto );
-
             totalIva = totalIva.add( valorIva );
         }
 
-        // Arredondar o total de IVA
+//    total_iva = MetodosUtil.valorCasasDecimaisNovoBD(totalIva.doubleValue(), CASAS_DECIMAIS);
         total_iva = MetodosUtil.valorCasasDecimaisNovo( totalIva.doubleValue(), CASAS_DECIMAIS );
         System.out.println( "(*)TOTAL IVA: " + total_iva );
     }
 
+//    private static void calculaTotalIVA()
+//    {
+//        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+//        BigDecimal totalIva = BigDecimal.ZERO;
+//
+//        for ( int i = 0; i < modelo.getRowCount(); i++ )
+//        {
+//            // Preço unitário (coluna 3)
+//            BigDecimal preco = BigDecimal.valueOf(
+//                    CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 3 ).toString() )
+//            );
+//
+//            // Quantidade (coluna 4)
+//            BigDecimal quantidade = new BigDecimal( modelo.getValueAt( i, 4 ).toString() );
+//
+//            // Taxa de IVA (coluna 6)
+//            BigDecimal taxaIva = new BigDecimal( modelo.getValueAt( i, 6 ).toString() );
+//
+//            // Desconto (se aplicável - aqui ainda é zero porque está comentado no original)
+//            BigDecimal desconto = BigDecimal.ZERO;
+//
+//            // Valor do IVA calculado
+//            BigDecimal valorIva = getIVA( quantidade, taxaIva, preco, desconto );
+//
+//            totalIva = totalIva.add( valorIva );
+//        }
+//
+//        // Arredondar o total de IVA
+//        total_iva = MetodosUtil.valorCasasDecimaisNovo( totalIva.doubleValue(), CASAS_DECIMAIS );
+//        System.out.println( "(*)TOTAL IVA: " + total_iva );
+//    }
     private static void refresh_table( int idMoeda )
     {
 
@@ -3611,10 +3732,15 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     public static void adicionar_produto( String mes ) throws SQLException
     {
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
-        int codigo_produto = getCodigoProduto();
-        //define a altura das linhas
         table.setRowHeight( 28 );
 
+        // --- 1. CONFIRMAR edição atual para não perder o valor da coluna 0 ---
+        if ( table.isEditing() )
+        {
+            table.getCellEditor().stopCellEditing();
+        }
+
+        int codigo_produto = getCodigoProduto();
         String descricao_produto = getDescricao_Produto();
 
         if ( !mes.equals( "" ) )
@@ -3622,129 +3748,279 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             descricao_produto = "Pgt. Ref. de " + descricao_produto + " de #" + mes;
         }
 
-        if ( !exist_produto_tabela_formulario( descricao_produto ) )
-        {
-            if ( !validar_zero() )
-            {
-                String unidade = getUnidade_Produto();
-
-                // Usar BigDecimal para valores monetários
-                BigDecimal qtd = BigDecimal.valueOf( getQuantidade() );
-                BigDecimal preco = BigDecimal.valueOf( getPreco() );
-                BigDecimal descontoPercent = BigDecimal.valueOf( getDescontoPercentagem() );
-                BigDecimal taxaIva = BigDecimal.valueOf( getTaxaImpostoIva( codigo_produto ) );
-                BigDecimal taxaRet = BigDecimal.valueOf( getTaxaImpostoRet( codigo_produto ) );
-//       
-//                BigDecimal totalComDesconto = totalBruto.subtract( descontoValor ).setScale( 6, RoundingMode.HALF_UP );
-                BigDecimal valorIliquido = FinanceUtils.getValorIliquido( qtd, preco, descontoPercent );
-
-                double valorLiquido = FinanceUtils.getValorComIVA(
-                        qtd.doubleValue(),
-                        taxaIva.doubleValue(),
-                        preco.doubleValue(),
-                        descontoPercent.doubleValue()
-                );
-
-                BigDecimal totalComIva = new BigDecimal( valorLiquido );
-
-                // Valor com Retenção
-                String total_linha_retencao = CfMethods.formatarComoMoeda(
-                        MetodosUtil.getValorComRetencao(
-                                qtd.doubleValue(),
-                                taxaRet.doubleValue(),
-                                preco.doubleValue(),
-                                descontoPercent.doubleValue()
-                        )
-                );
-
-                // Adicionar à tabela
-//                modelo.addRow( new Object[]
-//                {
-//                    codigo_produto,
-//                    descricao_produto,
-//                    unidade,
-//                    CfMethods.formatarComoMoeda( preco ),
-//                    qtd,
-//                    descontoPercent,
-//                    taxaIva,
-//                    taxaRet,
-//                    total_linha_retencao,
-//                    CfMethods.formatarComoMoeda( valorIliquido ),
-//                    CfMethods.formatarComoMoeda( totalComIva )
-//                } );
-                if ( primeiraLinhaVazia() )
-                {
-                    // Preenche a linha 0
-                    modelo.setValueAt( codigo_produto, 0, 0 );
-                    modelo.setValueAt( descricao_produto, 0, 1 );
-                    modelo.setValueAt( unidade, 0, 2 );
-                    modelo.setValueAt( CfMethods.formatarComoMoeda( preco ), 0, 3 );
-                    modelo.setValueAt( qtd, 0, 4 );
-                    modelo.setValueAt( descontoPercent, 0, 5 );
-                    modelo.setValueAt( taxaIva, 0, 6 );
-                    modelo.setValueAt( taxaRet, 0, 7 );
-                    modelo.setValueAt( total_linha_retencao, 0, 8 );
-                    modelo.setValueAt( CfMethods.formatarComoMoeda( valorIliquido ), 0, 9 );
-                    modelo.setValueAt( CfMethods.formatarComoMoeda( totalComIva ), 0, 10 );
-                }
-                else
-                {
-                    // A primeira linha já está ocupada → criar nova
-                    modelo.addRow( new Object[]
-                    {
-                        codigo_produto,
-                        descricao_produto,
-                        unidade,
-                        CfMethods.formatarComoMoeda( preco ),
-                        qtd,
-                        descontoPercent,
-                        taxaIva,
-                        taxaRet,
-                        total_linha_retencao,
-                        CfMethods.formatarComoMoeda( valorIliquido ),
-                        CfMethods.formatarComoMoeda( totalComIva )
-                    } );
-                }
-
-                // Impressão de ticket (cozinha ou sala)
-                TbProduto findByDesignacao = produtosController.findByDesignacao( cmbProduto.getSelectedItem().toString() );
-                int idPedido = 0;
-                TbMesas mesaEntity = (TbMesas) mesasController.findById( DVML.MESA_BALCAO );
-                TbLugares lugarEntity = (TbLugares) lugaresController.findById( DVML.LUGAR_BALCAO );
-                TbUsuario usuarioEntity = (TbUsuario) usuariosController.findById( cod_usuario );
-                String usuario = usuarioEntity.getNome();
-
-                if ( findByDesignacao.getCozinha().equals( DVML.ENVIAR_TICKET ) )
-                {
-                    MetodosUtil.imprimir_cozinha( findByDesignacao, idPedido, mesaEntity.getDesignacao(),
-                            lugarEntity.getDesignacao(), usuario, "Activo", qtd.intValue(), dadosInstituicaoController );
-                }
-                else if ( findByDesignacao.getCozinha().equals( DVML.ENVIAR_SALA ) )
-                {
-                    MetodosUtil.imprimir_sala( findByDesignacao, idPedido, mesaEntity.getDesignacao(),
-                            lugarEntity.getDesignacao(), usuarioEntity.getNome(), "Activo", qtd.intValue(), dadosInstituicaoController );
-                }
-            }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Atenção\nA quantidade a sair não pode ser igual a zero!" );
-            }
-        }
-        else
+        // Não permitir duplicados
+        if ( exist_produto_tabela_formulario( descricao_produto ) )
         {
             JOptionPane.showMessageDialog( null, "O produto já consta na tabela." );
+            return;
         }
 
-        // Atualização de totais
+        // Quantidade inválida
+        if ( validar_zero() )
+        {
+            JOptionPane.showMessageDialog( null, "Atenção\nA quantidade a sair não pode ser igual a zero!" );
+            return;
+        }
+
+        // --------------------------
+        // 2. CÁLCULOS ORIGINAIS
+        // --------------------------
+        String unidade = getUnidade_Produto();
+
+        BigDecimal qtd = BigDecimal.valueOf( getQuantidade() );
+        BigDecimal preco = BigDecimal.valueOf( getPreco() );
+        BigDecimal descontoPercent = BigDecimal.valueOf( getDescontoPercentagem() );
+        BigDecimal taxaIva = BigDecimal.valueOf( getTaxaImpostoIva( codigo_produto ) );
+        BigDecimal taxaRet = BigDecimal.valueOf( getTaxaImpostoRet( codigo_produto ) );
+
+        BigDecimal valorIliquido = FinanceUtils.getValorIliquido( qtd, preco, descontoPercent );
+
+        double valorLiquidoDouble = FinanceUtils.getValorComIVA(
+                qtd.doubleValue(),
+                taxaIva.doubleValue(),
+                preco.doubleValue(),
+                descontoPercent.doubleValue()
+        );
+        BigDecimal totalComIva = BigDecimal.valueOf( valorLiquidoDouble );
+
+        String totalRetencao = CfMethods.formatarComoMoeda(
+                MetodosUtil.getValorComRetencao(
+                        qtd.doubleValue(),
+                        taxaRet.doubleValue(),
+                        preco.doubleValue(),
+                        descontoPercent.doubleValue()
+                )
+        );
+
+        // --------------------------
+        // 3. Encontrar PRIMEIRA linha vazia
+        // --------------------------
+        int row = -1;
+        for ( int i = 0; i < modelo.getRowCount(); i++ )
+        {
+            if ( linhaTabelaEstaVazia( modelo, i ) )
+            {
+                row = i;
+                break;
+            }
+        }
+
+        // Se não existe nenhuma linha vazia → cria nova
+        if ( row == -1 )
+        {
+            modelo.addRow( new Object[]
+            {
+                "", "", "", "", "", "", "", "", "", "", ""
+            } );
+            row = modelo.getRowCount() - 1;
+        }
+
+        // --------------------------
+        // 4. Preencher a linha
+        // --------------------------
+        modelo.setValueAt( codigo_produto, row, 0 );
+        modelo.setValueAt( descricao_produto, row, 1 );
+        modelo.setValueAt( unidade, row, 2 );
+        modelo.setValueAt( CfMethods.formatarComoMoeda( preco ), row, 3 );
+        modelo.setValueAt( qtd, row, 4 );
+        modelo.setValueAt( descontoPercent, row, 5 );
+        modelo.setValueAt( taxaIva, row, 6 );
+        modelo.setValueAt( taxaRet, row, 7 );
+        modelo.setValueAt( totalRetencao, row, 8 );
+        modelo.setValueAt( CfMethods.formatarComoMoeda( valorIliquido ), row, 9 );
+        modelo.setValueAt( CfMethods.formatarComoMoeda( totalComIva ), row, 10 );
+
+        // --------------------------
+        // 5. Adicionar linha vazia no FINAL sempre
+        // --------------------------
+        int last = modelo.getRowCount() - 1;
+        if ( !linhaTabelaEstaVazia( modelo, last ) )
+        {
+            modelo.addRow( new Object[]
+            {
+                "", "", "", "", "", "", "", "", "", "", ""
+            } );
+        }
+
+        // --------------------------
+        // 6. Impressão (mantido exatamente como o teu)
+        // --------------------------
+        TbProduto findByDesignacao = produtosController.findByDesignacao(
+                cmbProduto.getSelectedItem().toString()
+        );
+
+        int idPedido = 0;
+        TbMesas mesaEntity = (TbMesas) mesasController.findById( DVML.MESA_BALCAO );
+        TbLugares lugarEntity = (TbLugares) lugaresController.findById( DVML.LUGAR_BALCAO );
+        TbUsuario usuarioEntity = (TbUsuario) usuariosController.findById( cod_usuario );
+        String usuario = usuarioEntity.getNome();
+
+        if ( findByDesignacao.getCozinha().equals( DVML.ENVIAR_TICKET ) )
+        {
+            MetodosUtil.imprimir_cozinha( findByDesignacao, idPedido,
+                    mesaEntity.getDesignacao(), lugarEntity.getDesignacao(),
+                    usuario, "Activo", qtd.intValue(), dadosInstituicaoController );
+        }
+        else if ( findByDesignacao.getCozinha().equals( DVML.ENVIAR_SALA ) )
+        {
+            MetodosUtil.imprimir_sala( findByDesignacao, idPedido,
+                    mesaEntity.getDesignacao(), lugarEntity.getDesignacao(),
+                    usuario, "Activo", qtd.intValue(), dadosInstituicaoController );
+        }
+
+        // --------------------------
+        // 7. Totais
+        // --------------------------
         setTotalRetencao();
         setTotalPagar();
         calculaTotalIVA();
         valor_por_extenco();
 
-        txtQuatindade.setText( String.valueOf( 1 ) );
+        // --------------------------
+        // 8. Foco na próxima linha
+        // --------------------------
+        int novaLinha = modelo.getRowCount() - 1;
+        table.changeSelection( novaLinha, 0, false, false );
+        table.editCellAt( novaLinha, 0 );
+        table.requestFocus();
+
+        txtQuatindade.setText( "1" );
         txtCodigoProduto.requestFocus();
     }
 
+    private static boolean linhaTabelaEstaVazia( DefaultTableModel model, int row )
+    {
+        for ( int col = 0; col < model.getColumnCount(); col++ )
+        {
+            Object v = model.getValueAt( row, col );
+            if ( v != null && !v.toString().trim().isEmpty() )
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+//    public static void adicionar_produto( String mes ) throws SQLException
+//    {
+//        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+//        int codigo_produto = getCodigoProduto();
+//        //define a altura das linhas
+//        table.setRowHeight( 28 );
+//
+//        String descricao_produto = getDescricao_Produto();
+//
+//        if ( !mes.equals( "" ) )
+//        {
+//            descricao_produto = "Pgt. Ref. de " + descricao_produto + " de #" + mes;
+//        }
+//
+//        if ( !exist_produto_tabela_formulario( descricao_produto ) )
+//        {
+//            if ( !validar_zero() )
+//            {
+//                String unidade = getUnidade_Produto();
+//
+//                // Usar BigDecimal para valores monetários
+//                BigDecimal qtd = BigDecimal.valueOf( getQuantidade() );
+//                BigDecimal preco = BigDecimal.valueOf( getPreco() );
+//                BigDecimal descontoPercent = BigDecimal.valueOf( getDescontoPercentagem() );
+//                BigDecimal taxaIva = BigDecimal.valueOf( getTaxaImpostoIva( codigo_produto ) );
+//                BigDecimal taxaRet = BigDecimal.valueOf( getTaxaImpostoRet( codigo_produto ) );
+//
+//                BigDecimal valorIliquido = FinanceUtils.getValorIliquido( qtd, preco, descontoPercent );
+//
+//                double valorLiquido = FinanceUtils.getValorComIVA(
+//                        qtd.doubleValue(),
+//                        taxaIva.doubleValue(),
+//                        preco.doubleValue(),
+//                        descontoPercent.doubleValue()
+//                );
+//
+//                BigDecimal totalComIva = new BigDecimal( valorLiquido );
+//
+//                // Valor com Retenção
+//                String total_linha_retencao = CfMethods.formatarComoMoeda(
+//                        MetodosUtil.getValorComRetencao(
+//                                qtd.doubleValue(),
+//                                taxaRet.doubleValue(),
+//                                preco.doubleValue(),
+//                                descontoPercent.doubleValue()
+//                        )
+//                );
+//
+//                if ( primeiraLinhaVazia() )
+//                {
+//                    // Preenche a linha 0
+//                    modelo.setValueAt( codigo_produto, 0, 0 );
+//                    modelo.setValueAt( descricao_produto, 0, 1 );
+//                    modelo.setValueAt( unidade, 0, 2 );
+//                    modelo.setValueAt( CfMethods.formatarComoMoeda( preco ), 0, 3 );
+//                    modelo.setValueAt( qtd, 0, 4 );
+//                    modelo.setValueAt( descontoPercent, 0, 5 );
+//                    modelo.setValueAt( taxaIva, 0, 6 );
+//                    modelo.setValueAt( taxaRet, 0, 7 );
+//                    modelo.setValueAt( total_linha_retencao, 0, 8 );
+//                    modelo.setValueAt( CfMethods.formatarComoMoeda( valorIliquido ), 0, 9 );
+//                    modelo.setValueAt( CfMethods.formatarComoMoeda( totalComIva ), 0, 10 );
+//                }
+//                else
+//                {
+//                    // A primeira linha já está ocupada → criar nova
+//                    modelo.addRow( new Object[]
+//                    {
+//                        codigo_produto,
+//                        descricao_produto,
+//                        unidade,
+//                        CfMethods.formatarComoMoeda( preco ),
+//                        qtd,
+//                        descontoPercent,
+//                        taxaIva,
+//                        taxaRet,
+//                        total_linha_retencao,
+//                        CfMethods.formatarComoMoeda( valorIliquido ),
+//                        CfMethods.formatarComoMoeda( totalComIva )
+//                    } );
+//                }
+//
+//                // Impressão de ticket (cozinha ou sala)
+//                TbProduto findByDesignacao = produtosController.findByDesignacao( cmbProduto.getSelectedItem().toString() );
+//                int idPedido = 0;
+//                TbMesas mesaEntity = (TbMesas) mesasController.findById( DVML.MESA_BALCAO );
+//                TbLugares lugarEntity = (TbLugares) lugaresController.findById( DVML.LUGAR_BALCAO );
+//                TbUsuario usuarioEntity = (TbUsuario) usuariosController.findById( cod_usuario );
+//                String usuario = usuarioEntity.getNome();
+//
+//                if ( findByDesignacao.getCozinha().equals( DVML.ENVIAR_TICKET ) )
+//                {
+//                    MetodosUtil.imprimir_cozinha( findByDesignacao, idPedido, mesaEntity.getDesignacao(),
+//                            lugarEntity.getDesignacao(), usuario, "Activo", qtd.intValue(), dadosInstituicaoController );
+//                }
+//                else if ( findByDesignacao.getCozinha().equals( DVML.ENVIAR_SALA ) )
+//                {
+//                    MetodosUtil.imprimir_sala( findByDesignacao, idPedido, mesaEntity.getDesignacao(),
+//                            lugarEntity.getDesignacao(), usuarioEntity.getNome(), "Activo", qtd.intValue(), dadosInstituicaoController );
+//                }
+//            }
+//            else
+//            {
+//                JOptionPane.showMessageDialog( null, "Atenção\nA quantidade a sair não pode ser igual a zero!" );
+//            }
+//        }
+//        else
+//        {
+//            JOptionPane.showMessageDialog( null, "O produto já consta na tabela." );
+//        }
+//
+//        // Atualização de totais
+//        setTotalRetencao();
+//        setTotalPagar();
+//        calculaTotalIVA();
+//        valor_por_extenco();
+//
+//        txtQuatindade.setText( String.valueOf( 1 ) );
+//        txtCodigoProduto.requestFocus();
+//    }
     public static boolean estado_critico() throws SQLException
     {
 
@@ -3908,6 +4184,45 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     }
 
+    public static void adicionar_preco_quantidade_anitgo( int codigo_produto )
+    {
+        try
+        {
+            if ( txtQuatindade.getText().isEmpty() )
+            {
+                JOptionPane.showMessageDialog( null, "Não informou a quantidade, por favor informe a quantidade!" );
+            }
+            else
+            {
+                TbStock stockLocal = stocksController.getStockByIdProdutoAndIdArmazem( codigo_produto, getCodigoArmazem() );
+                if ( stockLocal != ( null ) )
+                {
+                    if ( stockLocal.getQuantidadeExistente() <= stockLocal.getQuantCritica() )
+                    {
+                        txtQuantidadeStock.setBackground( Color.RED );
+                        txtQuantidadeStock.setForeground( Color.BLACK );
+                    }
+                    else
+                    {
+                        txtQuantidadeStock.setBackground( new Color( 51, 153, 0, 255 ) );
+                    }
+//                    TbPreco precoLocal = precosController.getLastIdPrecoByIdProduto( codigo_produto, Double.parseDouble( txtQuatindade.getText() ) );
+//                    txtPreco.setText( String.valueOf( MetodosUtil.retirar_dizimas( precoLocal.getPrecoVenda().doubleValue() ) ) );
+                    txtQuantidadeStock.setText( String.valueOf( stockLocal.getQuantidadeExistente() ) );
+                }
+
+            }
+        }
+        catch ( Exception ex )
+        {
+            ex.printStackTrace();
+            Logger
+                    .getLogger( FormVendaResponsivaVisaoTop.class
+                            .getName() ).log( Level.SEVERE, null, ex );
+        }
+
+    }
+
     public void adicionar_botao()
     {
         try
@@ -4056,18 +4371,56 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         txtTotal_AOA_Retencao.setText( CfMethods.formatarComoMoeda( totalRetencao ) );
     }
 
+//    private static BigDecimal getTotalRetencaoLiquido()
+//    {
+//        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+//        BigDecimal totalRetencao = BigDecimal.ZERO;
+//
+//        for ( int i = 0; i < modelo.getRowCount(); i++ )
+//        {
+//            BigDecimal valorRetencao = BigDecimal.valueOf(
+//                    CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 8 ).toString() )
+//            );
+//
+//            totalRetencao = totalRetencao.add( valorRetencao );
+//        }
+//
+//        return totalRetencao.setScale( 2, RoundingMode.HALF_UP );
+//    }
     private static BigDecimal getTotalRetencaoLiquido()
     {
+
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         BigDecimal totalRetencao = BigDecimal.ZERO;
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
         {
-            BigDecimal valorRetencao = BigDecimal.valueOf(
-                    CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 8 ).toString() )
-            );
 
-            totalRetencao = totalRetencao.add( valorRetencao );
+            Object valorObj = modelo.getValueAt( i, 8 );
+
+            // Se estiver vazio, pula
+            if ( valorObj == null )
+            {
+                continue;
+            }
+
+            String valorTexto = valorObj.toString().trim();
+
+            if ( valorTexto.isEmpty() || valorTexto.equals( "--" ) )
+            {
+                continue;
+            }
+
+            try
+            {
+                double valor = CfMethods.parseMoedaFormatada( valorTexto );
+                totalRetencao = totalRetencao.add( BigDecimal.valueOf( valor ) );
+            }
+            catch ( Exception e )
+            {
+                System.err.println( "Erro ao converter valor da coluna 8: '" + valorTexto + "'" );
+                continue; // continua sem travar o programa
+            }
         }
 
         return totalRetencao.setScale( 2, RoundingMode.HALF_UP );
@@ -4770,7 +5123,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         catch ( Exception ex )
         {
             ex.printStackTrace();
-            Logger.getLogger( VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger( FormVendaResponsivaVisaoTop.class.getName() ).log( Level.SEVERE, null, ex );
             JOptionPane.showMessageDialog( null, "Não existe produto com este código de barra.", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
         }
 
@@ -4818,7 +5171,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             ex.printStackTrace();
             txtQuantidadeStock.setText( "0" );
             Logger
-                    .getLogger( VendaUsuarioVisao.class
+                    .getLogger( FormVendaResponsivaVisaoTop.class
                             .getName() ).log( Level.SEVERE, null, ex );
         }
 
@@ -4923,7 +5276,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         {
             ex.printStackTrace();
             Logger
-                    .getLogger( VendaUsuarioVisao.class
+                    .getLogger( FormVendaResponsivaVisaoTop.class
                             .getName() ).log( Level.SEVERE, null, ex );
             JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
         }
@@ -5155,7 +5508,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         return codigo == null || codigo.toString().trim().isEmpty();
     }
 
-    private void inserir_uma_linha()
+    private static void inserir_uma_linha()
     {
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         if ( modelo.getRowCount() == 0 )
@@ -5165,6 +5518,1062 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                 null, null, null, null, null, null, null, null, null, null, null
             } );
         }
+
+    }
+
+//    private void accao_codigo_barra_enter_cb() {
+//    try {
+//        String codigoBarra = txtCodigoBarra.getText().trim();
+//
+//        if (codigoBarra.isEmpty()) {
+//            JOptionPane.showMessageDialog(null, 
+//                "Digite o código de barra!", 
+//                DVML.DVML_COMERCIAL, 
+//                JOptionPane.WARNING_MESSAGE
+//            );
+//            return;
+//        }
+//
+//        // Busca o produto pelo código de barra
+//        TbProduto produto = produtosController.findByCodBarra(codigoBarra);
+//
+//        if (produto == null) {
+//            JOptionPane.showMessageDialog(
+//                null,
+//                "Nenhum produto encontrado com o código de barra informado.",
+//                DVML.DVML_COMERCIAL,
+//                JOptionPane.ERROR_MESSAGE
+//            );
+//            txtCodigoBarra.requestFocus();
+//            txtCodigoBarra.selectAll();
+//            return;
+//        }
+//
+//        // Obtém a família e subfamília como no método original
+//        Integer codTipoProduto = produto.getCodTipoProduto().getCodigo();
+//        TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById(codTipoProduto);
+//        Integer codFamilia = tipoProduto.getFkFamilia().getPkFamilia();
+//        Familia familia = (Familia) familiaController.findById(codFamilia);
+//
+//        // Preenche os combos (igual ao método original)
+//        cmbSubFamilia.setSelectedItem(tipoProduto.getDesignacao());
+//        cmbProduto.setModel(new DefaultComboBoxModel(produtosController.getVector()));
+//        cmbProduto.setSelectedItem(produto.getDesignacao());
+//
+//        // Verificação da configuração do cliente (igual ao original)
+//        configuracaoMesComecoController = new ConfiguracaoMesComecoController(conexao.getConnectionAtiva());
+//        boolean existeConfiguracaoDoCliente =
+//                configuracaoMesComecoController.existeConfiguracaoDoCliente(
+//                        getIdCliente(),
+//                        produto.getCodigo()
+//                );
+//
+//        if (existeConfiguracaoDoCliente) {
+//            new MesesPagoClienteVisao(
+//                    this,
+//                    rootPaneCheckingEnabled,
+//                    getIdCliente(),
+//                    produto.getCodigo(),
+//                    conexao
+//            ).setVisible(true);
+//        } else {
+//            procedimentoAdicionarTabela(produto);
+//        }
+//
+//    } catch (Exception ex) {
+//        Logger.getLogger(FormVendaResponsivaVisaoTop.class.getName()).log(Level.SEVERE, null, ex);
+//        JOptionPane.showMessageDialog(null,
+//            "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(),
+//            DVML.DVML_COMERCIAL,
+//            JOptionPane.ERROR_MESSAGE
+//        );
+//
+//    } finally {
+//        // Nada por agora
+//    }
+//}
+    private void accao_codigo_barra_enter_cb()
+    {
+        try
+        {
+            String codigoBarra = txtCodigoBarra.getText().trim();
+
+            if ( codigoBarra.isEmpty() )
+            {
+                JOptionPane.showMessageDialog( null,
+                        "Digite o código de barra!",
+                        DVML.DVML_COMERCIAL,
+                        JOptionPane.WARNING_MESSAGE
+                );
+                return;
+            }
+
+            // Busca o produto pelo código de barra
+            TbProduto produto = produtosController.findByCodBarra( codigoBarra );
+
+            if ( produto == null )
+            {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Nenhum produto encontrado com o código de barra informado.",
+                        DVML.DVML_COMERCIAL,
+                        JOptionPane.ERROR_MESSAGE
+                );
+                txtCodigoBarra.requestFocus();
+                txtCodigoBarra.selectAll();
+                return;
+            }
+
+            // Preenche combos (igual ao original)
+            Integer codTipoProduto = produto.getCodTipoProduto().getCodigo();
+            TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById( codTipoProduto );
+            cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
+            cmbProduto.setModel( new DefaultComboBoxModel( produtosController.getVector() ) );
+            cmbProduto.setSelectedItem( produto.getDesignacao() );
+
+            // Verificação da configuração do cliente
+            configuracaoMesComecoController = new ConfiguracaoMesComecoController( conexao.getConnectionAtiva() );
+            boolean existeConfiguracaoDoCliente
+                    = configuracaoMesComecoController.existeConfiguracaoDoCliente( getIdCliente(), produto.getCodigo() );
+
+            if ( existeConfiguracaoDoCliente )
+            {
+                new MesesPagoClienteVisao( this, rootPaneCheckingEnabled, getIdCliente(),
+                        produto.getCodigo(), conexao ).setVisible( true );
+            }
+            else
+            {
+                // --- ADICIONA PRODUTO NA TABELA ---
+                adicionarProdutoNaTabelaComLinhaVazia( produto );
+            }
+
+            // Limpa campos
+            txtCodigoProduto.setText( "" );
+            txtCodigoBarra.setText( "" );
+            txtQuatindade.setText( "1" );
+            txtQuatindade.requestFocus();
+
+        }
+        catch ( Exception ex )
+        {
+            Logger.getLogger( FormVendaResponsivaVisaoTop.class.getName() ).log( Level.SEVERE, null, ex );
+            JOptionPane.showMessageDialog( null,
+                    "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(),
+                    DVML.DVML_COMERCIAL,
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+    }
+
+    private void adicionarProdutoNaTabelaComLinhaVazia( TbProduto produto )
+    {
+        try
+        {
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
+
+            // --- Corrigir: confirmar edição atual ---
+            if ( table.isEditing() )
+            {
+                table.getCellEditor().stopCellEditing();
+            }
+
+            // ---------- 1. Localizar linha vazia ----------
+            int row = -1;
+            for ( int i = 0; i < model.getRowCount(); i++ )
+            {
+                if ( linhaEstaVazia( model, i ) )
+                {
+                    row = i;
+                    break;
+                }
+            }
+
+            if ( row == -1 )
+            {
+                model.addRow( new Object[]
+                {
+                    "", "", "", "", "", "", "", "", "", "", ""
+                } );
+                row = model.getRowCount() - 1;
+            }
+
+            // ------------------------------------------
+            // 2. Cálculos igual ao teu sistema original
+            // ------------------------------------------
+            int codigoProduto = produto.getCodigo();
+            String descricao = produto.getDesignacao();
+            String unidade = getUnidade_Produto();
+
+            BigDecimal qtd = BigDecimal.valueOf( 1 );
+            BigDecimal preco = BigDecimal.valueOf( getPreco() );
+            BigDecimal descontoPercent = BigDecimal.valueOf( produto.getPercentagemDesconto() );
+            BigDecimal taxaIva = BigDecimal.valueOf( getTaxaImpostoIva( codigoProduto ) );
+            BigDecimal taxaRet = BigDecimal.valueOf( getTaxaImpostoRet( codigoProduto ) );
+
+            BigDecimal valorIliquido = FinanceUtils.getValorIliquido( qtd, preco, descontoPercent );
+
+            double valorLiquidoDouble = FinanceUtils.getValorComIVA(
+                    qtd.doubleValue(),
+                    taxaIva.doubleValue(),
+                    preco.doubleValue(),
+                    descontoPercent.doubleValue()
+            );
+            BigDecimal totalComIva = BigDecimal.valueOf( valorLiquidoDouble );
+
+            String totalComRetencao = CfMethods.formatarComoMoeda(
+                    MetodosUtil.getValorComRetencao(
+                            qtd.doubleValue(),
+                            taxaRet.doubleValue(),
+                            preco.doubleValue(),
+                            descontoPercent.doubleValue()
+                    )
+            );
+
+            // ---------- 3. Preencher a linha ----------
+            model.setValueAt( codigoProduto, row, 0 );
+            model.setValueAt( descricao, row, 1 );
+            model.setValueAt( unidade, row, 2 );
+            model.setValueAt( CfMethods.formatarComoMoeda( preco ), row, 3 );
+            model.setValueAt( qtd, row, 4 );
+            model.setValueAt( descontoPercent, row, 5 );
+            model.setValueAt( taxaIva, row, 6 );
+            model.setValueAt( taxaRet, row, 7 );
+            model.setValueAt( totalComRetencao, row, 8 );
+            model.setValueAt( CfMethods.formatarComoMoeda( valorIliquido ), row, 9 );
+            model.setValueAt( CfMethods.formatarComoMoeda( totalComIva ), row, 10 );
+
+            // ---------- 4. Criar linha vazia ao final ----------
+            int lastRow = model.getRowCount() - 1;
+            if ( !linhaEstaVazia( model, lastRow ) )
+            {
+                model.addRow( new Object[]
+                {
+                    "", "", "", "", "", "", "", "", "", "", ""
+                } );
+            }
+
+            // ---------- 5. Focar próximo item ----------
+            int novaLinha = model.getRowCount() - 1;
+            table.changeSelection( novaLinha, 0, false, false );
+            table.editCellAt( novaLinha, 0 );
+            table.requestFocus();
+
+            // --------------------------
+            // 7. Totais
+            // --------------------------
+            setTotalRetencao();
+            setTotalPagar();
+            calculaTotalIVA();
+            valor_por_extenco();
+
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean linhaEstaVazia( DefaultTableModel model, int row )
+    {
+        for ( int col = 0; col < model.getColumnCount(); col++ )
+        {
+            Object v = model.getValueAt( row, col );
+            if ( v != null && !v.toString().trim().isEmpty() )
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+//private void procedimento_codBarra__jtable(){
+//    
+//    table.addKeyListener(new java.awt.event.KeyAdapter() {
+//    @Override
+//    public void keyPressed(java.awt.event.KeyEvent evt) {
+//        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+//            int row = table.getSelectedRow();
+//            int col = table.getSelectedColumn();
+//
+//            // ENTER pressionado na coluna 0 → pesquisar produto
+//            if (col == 0) {
+//                accao_codigo_barra_enter_jtable(row);
+//                evt.consume(); // impede pular linha automaticamente
+//            }
+//        }
+//    }
+//});
+//
+//    
+//}
+    private void accao_codigo_barra_enter_jtable( int row )
+    {
+
+        try
+        {
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
+
+            // Lê o código digitado na coluna 0
+            String codigoBarra = model.getValueAt( row, 0 ).toString().trim();
+
+            if ( codigoBarra.isEmpty() )
+            {
+                JOptionPane.showMessageDialog( null,
+                        "Digite o código de barra!",
+                        DVML.DVML_COMERCIAL,
+                        JOptionPane.WARNING_MESSAGE );
+                return;
+            }
+
+            // --- Buscar produto ---
+            TbProduto produto = produtosController.findByCodBarra( codigoBarra );
+
+            if ( produto == null )
+            {
+                JOptionPane.showMessageDialog( null,
+                        "Produto não encontrado!",
+                        DVML.DVML_COMERCIAL,
+                        JOptionPane.ERROR_MESSAGE );
+                model.setValueAt( "", row, 0 );
+                table.changeSelection( row, 0, false, false );
+                table.editCellAt( row, 0 );
+                return;
+            }
+
+            // Preencher linha inteira
+            preencherLinhaTabelaComProduto( row, produto );
+
+            // Criar nova linha se necessário
+            adicionarLinhaVaziaSeNecessario();
+
+            // Atualizar totais (SE existir este método)
+//        calcularTotais();
+            // Focar na nova última linha
+            int last = model.getRowCount() - 1;
+            table.changeSelection( last, 0, false, false );
+            table.editCellAt( last, 0 );
+
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
+    }
+
+//private void preencherLinhaTabelaComProduto(int row, TbProduto produto) {
+//
+//    DefaultTableModel model = (DefaultTableModel) table.getModel();
+//
+//    int codigoProduto = produto.getCodigo();
+//    String descricao = produto.getDesignacao();
+//    String unidade = getUnidade_Produto();
+//
+//    BigDecimal qtd = BigDecimal.valueOf(1);
+//    BigDecimal preco = BigDecimal.valueOf(getPreco());
+//    BigDecimal descontoPercent = BigDecimal.valueOf(produto.getPercentagemDesconto());
+//    BigDecimal taxaIva = BigDecimal.valueOf(getTaxaImpostoIva(codigoProduto));
+//    BigDecimal taxaRet = BigDecimal.valueOf(getTaxaImpostoRet(codigoProduto));
+//    BigDecimal valorIliquido = FinanceUtils.getValorIliquido(qtd, preco, descontoPercent);
+//
+//    double valorLiquidoDouble = FinanceUtils.getValorComIVA(
+//            qtd.doubleValue(),
+//            taxaIva.doubleValue(),
+//            preco.doubleValue(),
+//            descontoPercent.doubleValue()
+//    );
+//
+//    BigDecimal totalComIva = BigDecimal.valueOf(valorLiquidoDouble);
+//
+//    String totalComRet = CfMethods.formatarComoMoeda(
+//            MetodosUtil.getValorComRetencao(
+//                    qtd.doubleValue(),
+//                    taxaRet.doubleValue(),
+//                    preco.doubleValue(),
+//                    descontoPercent.doubleValue()
+//            )
+//    );
+//
+//    // Preencher colunas
+//    model.setValueAt(codigoProduto, row, 0);
+//    model.setValueAt(descricao, row, 1);
+//    model.setValueAt(unidade, row, 2);
+//    model.setValueAt(CfMethods.formatarComoMoeda(preco), row, 3);
+//    model.setValueAt(qtd, row, 4);
+//    model.setValueAt(descontoPercent, row, 5);
+//    model.setValueAt(taxaIva, row, 6);
+//    model.setValueAt(taxaRet, row, 7);
+//    model.setValueAt(totalComRet, row, 8);
+//    model.setValueAt(CfMethods.formatarComoMoeda(valorIliquido), row, 9);
+//    model.setValueAt(CfMethods.formatarComoMoeda(totalComIva), row, 10);
+//}
+//private void preencherLinhaTabelaComProduto(int row, TbProduto produto) {
+//
+//    DefaultTableModel model = (DefaultTableModel) table.getModel();
+//
+//    int codigoProduto = produto.getCodigo();
+//    String descricao = produto.getDesignacao();
+//    String unidade = getUnidade_Produto();
+//
+//    // ------------------------------
+//    // PEGAR PREÇO CORRETO DO PRODUTO
+//    // ------------------------------
+//    BigDecimal qtd = BigDecimal.ONE; // normalmente 1
+//    BigDecimal preco = produto.getPreco(); // <- pegar do produto, SEM IVA
+//    BigDecimal descontoPercent = BigDecimal.valueOf(produto.getPercentagemDesconto());
+//    BigDecimal taxaIva = BigDecimal.valueOf(getTaxaImpostoIva(codigoProduto));
+//    BigDecimal taxaRet = BigDecimal.valueOf(getTaxaImpostoRet(codigoProduto));
+//
+//    // ------------------------------
+//    // CALCULAR VALORES
+//    // ------------------------------
+//    BigDecimal valorIliquido = FinanceUtils.getValorIliquido(qtd, preco, descontoPercent);
+//
+//    double valorComIvaDouble = FinanceUtils.getValorComIVA(
+//            qtd.doubleValue(),
+//            taxaIva.doubleValue(),
+//            preco.doubleValue(),
+//            descontoPercent.doubleValue()
+//    );
+//    BigDecimal totalComIva = BigDecimal.valueOf(valorComIvaDouble)
+//            .setScale(2, RoundingMode.HALF_UP);
+//
+//    double valorComRetDouble = MetodosUtil.getValorComRetencao(
+//            qtd.doubleValue(),
+//            taxaRet.doubleValue(),
+//            preco.doubleValue(),
+//            descontoPercent.doubleValue()
+//    );
+//    BigDecimal totalComRetencao = BigDecimal.valueOf(valorComRetDouble)
+//            .setScale(2, RoundingMode.HALF_UP);
+//
+//    // ------------------------------
+//    // PREENCHER LINHA
+//    // ------------------------------
+//    model.setValueAt(codigoProduto, row, 0);
+//    model.setValueAt(descricao, row, 1);
+//    model.setValueAt(unidade, row, 2);
+//    model.setValueAt(CfMethods.formatarComoMoeda(preco), row, 3); // SEM IVA
+//    model.setValueAt(qtd, row, 4);
+//    model.setValueAt(descontoPercent, row, 5);
+//    model.setValueAt(taxaIva, row, 6);
+//    model.setValueAt(taxaRet, row, 7);
+//    model.setValueAt(CfMethods.formatarComoMoeda(totalComRetencao), row, 8);
+//    model.setValueAt(CfMethods.formatarComoMoeda(valorIliquido), row, 9);
+//    model.setValueAt(CfMethods.formatarComoMoeda(totalComIva), row, 10);
+//}
+    private void preencherLinhaTabelaComProduto( int row, TbProduto produto )
+    {
+
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+//
+        int codigoProduto = produto.getCodigo();
+        String descricao = produto.getDesignacao();
+
+        String unidade = getUnidade_Produto();
+
+        BigDecimal qtd = new BigDecimal( "1" );
+        BigDecimal preco = BigDecimal.valueOf( getPreco( codigoProduto, qtd.doubleValue() ) );
+        BigDecimal descontoPercent = BigDecimal.valueOf( getDescontoPercentagem() );
+        BigDecimal taxaIva = BigDecimal.valueOf( getTaxaImpostoIva( codigoProduto ) );
+        BigDecimal taxaRet = BigDecimal.valueOf( getTaxaImpostoRet( codigoProduto ) );
+
+        BigDecimal valorIliquido = FinanceUtils.getValorIliquido( qtd, preco, descontoPercent );
+
+        double valorLiquidoDouble = FinanceUtils.getValorComIVA(
+                qtd.doubleValue(),
+                taxaIva.doubleValue(),
+                preco.doubleValue(),
+                descontoPercent.doubleValue()
+        );
+        BigDecimal totalComIva = BigDecimal.valueOf( valorLiquidoDouble );
+
+        String totalRetencao = CfMethods.formatarComoMoeda(
+                MetodosUtil.getValorComRetencao(
+                        qtd.doubleValue(),
+                        taxaRet.doubleValue(),
+                        preco.doubleValue(),
+                        descontoPercent.doubleValue()
+                )
+        );
+
+        // ------------------------------
+        // Preencher tabela
+        // ------------------------------
+        model.setValueAt( codigoProduto, row, 0 );
+        model.setValueAt( descricao, row, 1 );
+        model.setValueAt( unidade, row, 2 );
+        model.setValueAt( CfMethods.formatarComoMoeda( preco ), row, 3 ); // SEM IVA
+        model.setValueAt( qtd, row, 4 );
+        model.setValueAt( descontoPercent, row, 5 );
+        model.setValueAt( taxaIva, row, 6 );
+        model.setValueAt( taxaRet, row, 7 );
+        model.setValueAt( totalRetencao, row, 8 );
+//    model.setValueAt(CfMethods.formatarComoMoeda(totalRetencao), row, 8);
+        model.setValueAt( CfMethods.formatarComoMoeda( valorIliquido ), row, 9 );
+        model.setValueAt( CfMethods.formatarComoMoeda( totalComIva ), row, 10 );
+
+        // --------------------------
+        // 7. Totais
+        // --------------------------
+        setTotalRetencao();
+        setTotalPagar();
+        calculaTotalIVA();
+        valor_por_extenco();
+    }
+
+//private void preencherLinhaTabelaComProduto(int row, TbProduto produto) {
+//
+//    DefaultTableModel model = (DefaultTableModel) table.getModel();
+//
+//    int codigoProduto = produto.getCodigo();
+//    String descricao = produto.getDesignacao();
+//    String unidade = getUnidade_Produto();
+//
+//    BigDecimal taxaIva = BigDecimal.valueOf(getTaxaImpostoIva(codigoProduto));
+//    BigDecimal taxaRet = BigDecimal.valueOf(getTaxaImpostoRet(codigoProduto));
+//    BigDecimal descontoPercent = BigDecimal.valueOf(produto.getPercentagemDesconto());
+//    BigDecimal qtd = BigDecimal.ONE; // normalmente 1
+//
+//    // ------------------------------
+//    // PREÇO SEM IVA
+//    // ------------------------------
+//    BigDecimal preco = produto.getPreco(); // preço do produto (pode vir com IVA)
+//    BigDecimal precoSemIva = preco.divide(
+//            BigDecimal.ONE.add(taxaIva.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP)),
+//            2,
+//            RoundingMode.HALF_UP
+//    );
+//
+//    // ------------------------------
+//    // CALCULAR VALORES
+//    // ------------------------------
+//    BigDecimal valorIliquido = FinanceUtils.getValorIliquido(qtd, precoSemIva, descontoPercent);
+//
+//    BigDecimal totalComIva = valorIliquido
+//            .multiply(BigDecimal.ONE.add(taxaIva.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP)))
+//            .setScale(2, RoundingMode.HALF_UP);
+//
+//    BigDecimal totalComRetencao = valorIliquido
+//            .multiply(BigDecimal.ONE.add(taxaRet.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP)))
+//            .setScale(2, RoundingMode.HALF_UP);
+//
+//    // ------------------------------
+//    // PREENCHER LINHA
+//    // ------------------------------
+//    model.setValueAt(codigoProduto, row, 0);
+//    model.setValueAt(descricao, row, 1);
+//    model.setValueAt(unidade, row, 2);
+//    model.setValueAt(CfMethods.formatarComoMoeda(precoSemIva), row, 3); // SEM IVA
+//    model.setValueAt(qtd, row, 4);
+//    model.setValueAt(descontoPercent, row, 5);
+//    model.setValueAt(taxaIva, row, 6);
+//    model.setValueAt(taxaRet, row, 7);
+//    model.setValueAt(CfMethods.formatarComoMoeda(totalComRetencao), row, 8);
+//    model.setValueAt(CfMethods.formatarComoMoeda(valorIliquido), row, 9);
+//    model.setValueAt(CfMethods.formatarComoMoeda(totalComIva), row, 10);
+//}
+    private void adicionarLinhaVaziaSeNecessario()
+    {
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+
+        int last = model.getRowCount() - 1;
+        boolean vazia = true;
+
+        for ( int col = 0; col < model.getColumnCount(); col++ )
+        {
+            Object v = model.getValueAt( last, col );
+            if ( v != null && !v.toString().trim().isEmpty() )
+            {
+                vazia = false;
+                break;
+            }
+        }
+
+        if ( !vazia )
+        {
+            model.addRow( new Object[]
+            {
+                "", "", "", "", "", "", "", "", "", "", ""
+            } );
+        }
+    }
+
+//private void procedimento_codBarra__jtable() {
+//
+//    table.putClientProperty("terminateEditOnFocusLost", true);
+//
+//    table.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(new JTextField() {
+//        @Override
+//        protected void processKeyEvent(KeyEvent e) {
+//            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+//
+//                int row = table.getSelectedRow();
+//                int col = table.getSelectedColumn();
+//
+//                if (col == 0) {
+////                    accao_codigo_barra_enter_jtable(row);
+//                    accao_codigo_produto_enter_jtable(row);
+//                    e.consume();
+//                    return;
+//                }
+//            }
+//
+//            super.processKeyEvent(e);
+//        }
+//    }));
+//}
+    private void procedimento_codBarra__jtable()
+    {
+
+        // Criar o editor de texto que será usado na coluna 0
+        JTextField editor = new JTextField();
+
+        // Capturar o ENTER dentro do editor da célula
+        editor.addKeyListener( new KeyAdapter()
+        {
+            @Override
+            public void keyPressed( KeyEvent e )
+            {
+                if ( e.getKeyCode() == KeyEvent.VK_ENTER )
+                {
+
+                    // Salvar o texto digitado no model ANTES de pesquisar
+                    if ( table.isEditing() )
+                    {
+                        table.getCellEditor().stopCellEditing();
+                    }
+
+                    int row = table.getSelectedRow();
+                    int col = table.getSelectedColumn();
+
+                    // Só dispara pesquisa se estiver na coluna 0
+                    if ( col == 0 )
+                    {
+                        accao_codigo_produto_enter_jtable( row );
+                        e.consume(); // impede JTable de mudar de linha automaticamente
+                    }
+                }
+            }
+        } );
+
+        // Aplicar o editor na coluna 0 da JTable
+        table.getColumnModel().getColumn( 0 ).setCellEditor( new DefaultCellEditor( editor ) );
+    }
+
+    private void accao_codigo_produto_enter_jtable( int row )
+    {
+
+        try
+        {
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
+
+            String valorDigitado = model.getValueAt( row, 0 ).toString().trim();
+
+            if ( valorDigitado.isEmpty() )
+            {
+                JOptionPane.showMessageDialog( null,
+                        "Digite o código!",
+                        DVML.DVML_COMERCIAL,
+                        JOptionPane.WARNING_MESSAGE );
+                return;
+            }
+
+            TbProduto produto = null;
+
+            // -------------------------------
+            // 1) DETECTAR AUTOMATICAMENTE
+            // -------------------------------
+            if ( valorDigitado.matches( "\\d+" ) )
+            {
+                // só números → pode ser ID interno
+                int codigo = Integer.parseInt( valorDigitado );
+
+                // tenta buscar por ID interno
+                produto = (TbProduto) produtosController.findById( codigo );
+
+                // se não achar por ID → tenta como código de barras numérico
+                if ( produto == null )
+                {
+                    produto = produtosController.findByCodBarra( valorDigitado );
+                }
+
+            }
+            else
+            {
+                // contém letras ou formato de código → buscar como código de barras
+                produto = produtosController.findByCodBarra( valorDigitado );
+            }
+
+            // -------------------------------
+            // 2) Se mesmo assim não encontrou
+            // -------------------------------
+            if ( produto == null )
+            {
+                JOptionPane.showMessageDialog( null,
+                        "Produto não encontrado!",
+                        DVML.DVML_COMERCIAL,
+                        JOptionPane.ERROR_MESSAGE );
+
+                model.setValueAt( "", row, 0 );
+                table.changeSelection( row, 0, false, false );
+                table.editCellAt( row, 0 );
+                return;
+            }
+
+            adicionar_preco_quantidade_anitgo( produto.getCodigo() );
+
+            // -------------------------------
+            // 3) Preencher linha normalmente
+            // -------------------------------
+            preencherLinhaTabelaComProduto( row, produto );
+
+            // linha vazia se necessário
+            adicionarLinhaVaziaSeNecessario();
+
+            // focar próxima linha
+            int last = model.getRowCount() - 1;
+            table.changeSelection( last, 0, false, false );
+            table.editCellAt( last, 0 );
+
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private void initStockListener()
+    {
+        // Pegamos a coluna do código do produto
+        TableColumn codigoCol = table.getColumnModel().getColumn( 0 );
+
+        // Garantimos que qualquer editor usado seja monitorado
+        TableCellEditor editor = codigoCol.getCellEditor();
+        if ( editor == null )
+        {
+            editor = table.getDefaultEditor( Object.class );
+            codigoCol.setCellEditor( editor );
+        }
+
+        editor.addCellEditorListener( new CellEditorListener()
+        {
+            @Override
+            public void editingStopped( ChangeEvent e )
+            {
+                int row = table.getSelectedRow();
+                if ( row < 0 )
+                {
+                    return;
+                }
+
+                // Executa após a célula terminar de editar
+                SwingUtilities.invokeLater( () ->
+                {
+                    mostrarStockKeyPress( row );
+                    // Move foco automaticamente para a coluna quantidade (1)
+                    table.changeSelection( row, 1, false, false );
+                } );
+            }
+
+            @Override
+            public void editingCanceled( ChangeEvent e )
+            {
+                // Nada a fazer
+            }
+        } );
+    }
+
+    /**
+     * Mostra a quantidade de stock e preço baseado no código do produto.
+     */
+    private void mostrarStockKeyPress( int row )
+    {
+        try
+        {
+            Object codigoObj = table.getValueAt( row, 0 );
+            if ( codigoObj == null || codigoObj.toString().trim().isEmpty() )
+            {
+                return;
+            }
+
+            int codigoProduto;
+            try
+            {
+                codigoProduto = Integer.parseInt( codigoObj.toString().trim() );
+            }
+            catch ( NumberFormatException ex )
+            {
+                System.err.println( "Código inválido na linha " + row + ": " + codigoObj );
+                return;
+            }
+
+            TbStock stockLocal = stocksController.getStockByIdProdutoAndIdArmazem( codigoProduto, getCodigoArmazem() );
+            if ( stockLocal != null )
+            {
+                // Atualiza JTextField
+                txtQuantidadeStock.setText( String.valueOf( stockLocal.getQuantidadeExistente() ) );
+
+                // Colore campo se abaixo do critico
+                if ( stockLocal.getQuantidadeExistente() <= stockLocal.getQuantCritica() )
+                {
+                    txtQuantidadeStock.setBackground( Color.RED );
+                    txtQuantidadeStock.setForeground( Color.BLACK );
+                }
+                else
+                {
+                    txtQuantidadeStock.setBackground( new Color( 51, 153, 0 ) );
+                    txtQuantidadeStock.setForeground( Color.BLACK );
+                }
+
+                // Atualiza preço se quantidade informada
+                if ( !txtQuatindade.getText().isEmpty() )
+                {
+                    TbPreco precoLocal = precosController.getLastIdPrecoByIdProduto(
+                            codigoProduto, Double.parseDouble( txtQuatindade.getText() )
+                    );
+                    txtPreco.setText( String.valueOf( MetodosUtil.retirar_dizimas( precoLocal.getPrecoVenda().doubleValue() ) ) );
+                }
+            }
+        }
+        catch ( Exception ex )
+        {
+            ex.printStackTrace();
+            Logger.getLogger( FormVendaResponsivaVisaoTop.class.getName() )
+                    .log( Level.SEVERE, null, ex );
+        }
+    }
+
+    private static void removerUltimaLinhaVazia()
+    {
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        int lastRow = modelo.getRowCount() - 1;
+
+        if ( lastRow < 0 )
+        {
+            return; // Não há linhas
+        }
+        boolean vazia = true;
+        // Verifica se todas as células da última linha estão nulas ou vazias
+        for ( int col = 0; col < modelo.getColumnCount(); col++ )
+        {
+            Object valor = modelo.getValueAt( lastRow, col );
+            if ( valor != null && !valor.toString().trim().isEmpty() )
+            {
+                vazia = false;
+                break;
+            }
+        }
+
+        if ( vazia )
+        {
+            modelo.removeRow( lastRow );
+        }
+    }
+
+    private void actualizarPreco()
+    {
+        String preco = table.getValueAt( table.getSelectedRow(), 3 ).toString();
+        int idProduto = Integer.parseInt( table.getValueAt( table.getSelectedRow(), 0 ).toString() );
+        preco = preco.replaceAll( "A", "" ).
+                replace( "O", "" ).
+                replace( ".", "" ).
+                replace( ",", "." );
+
+        String precoUnitario = CfMethods.formatarComoMoeda( Double.parseDouble( preco ) );
+        table.setValueAt( precoUnitario, table.getSelectedRow(), 3 );
+
+        actualizarPrecoVendaManual( idProduto, CfMethods.parseMoedaFormatada( precoUnitario ), precosController );
+    }
+
+    private static void actualizarPrecoVendaManual( int idProduto, Double precoVenda, PrecosController precosControllerLocal )
+    {
+        conexaoTransaction = BDConexao.getInstancia();
+        DocumentosController.start( conexaoTransaction );
+
+        System.out.println( "ID PRODUTO: " + idProduto );
+
+        int idPrecoRetalho = PrecosController.getLastIdPrecoByIdProdutoIntAndQTD( idProduto, 1d, conexaoTransaction );
+        System.out.println( "ID RETALHO: " + idPrecoRetalho );
+        TbPreco precoAntigoRetalho = (TbPreco) precosControllerLocal.findById( idPrecoRetalho );
+        System.out.println( "PRECO RETALHO: " + precoAntigoRetalho );
+
+        int idPrecoGrosso = PrecosController.getLastIdPrecoByIdProdutoIntAndPrecoAntigoQtdAlto( idProduto, precoAntigoRetalho.getQtdAlto() + 1, conexaoTransaction );
+        TbPreco precoAntigoGrosso = (TbPreco) precosControllerLocal.findById( idPrecoGrosso );
+        System.out.println( "ID GROSSO: " + idPrecoGrosso );
+        System.out.println( "PRECO GROSSO: " + precoAntigoGrosso );
+
+        TbPreco preco_novo_retalho = new TbPreco();
+
+        preco_novo_retalho.setData( precoAntigoRetalho.getData() );
+        preco_novo_retalho.setHora( precoAntigoRetalho.getHora() );
+        preco_novo_retalho.setPercentagemGanho( precoAntigoRetalho.getPercentagemGanho() );
+
+        preco_novo_retalho.setFkProduto( precoAntigoRetalho.getFkProduto() );
+        preco_novo_retalho.setFkUsuario( precoAntigoRetalho.getFkUsuario() );
+        preco_novo_retalho.setPrecoCompra( precoAntigoRetalho.getPrecoCompra() );
+        preco_novo_retalho.setPrecoVenda( new BigDecimal( precoVenda ) );
+        preco_novo_retalho.setQtdBaixo( precoAntigoRetalho.getQtdBaixo() );
+        preco_novo_retalho.setQtdAlto( precoAntigoRetalho.getQtdAlto() );
+        preco_novo_retalho.setPrecoAnterior( precoAntigoRetalho.getPrecoAnterior() );
+        preco_novo_retalho.setRetalho( precoAntigoRetalho.getRetalho() );
+
+        System.out.println( "HORA RETALHO: " + preco_novo_retalho.getHora() );
+        System.out.println( "DATA RETAHO: " + preco_novo_retalho.getData() );
+
+        try
+        {
+            precosControllerLocal.salvar( preco_novo_retalho );
+            DocumentosController.commit( conexaoTransaction );
+            conexaoTransaction.close();
+//            precoDao.create(preco_novo_retalho);
+            System.out.println( "Preco de compra retalho actualizado na venda" );
+        }
+        catch ( Exception e )
+        {
+            DocumentosController.rollback( conexaoTransaction );
+            e.printStackTrace();
+            System.err.println( "Falha ao actualizar o preço retalho na venda" );
+        }
+
+        conexaoTransaction = BDConexao.getInstancia();
+        DocumentosController.start( conexaoTransaction );
+        try
+        {
+            //        preco_novo_grosso = precoAntigoGrosso;
+            TbPreco preco_novo_grosso = new TbPreco();
+
+            preco_novo_grosso.setData( precoAntigoGrosso.getData() );
+            preco_novo_grosso.setHora( precoAntigoGrosso.getHora() );
+            preco_novo_grosso.setPercentagemGanho( precoAntigoGrosso.getPercentagemGanho() );
+
+            preco_novo_grosso.setFkProduto( precoAntigoGrosso.getFkProduto() );
+            preco_novo_grosso.setFkUsuario( precoAntigoGrosso.getFkUsuario() );
+            preco_novo_grosso.setPrecoCompra( precoAntigoGrosso.getPrecoCompra() );
+            preco_novo_grosso.setPrecoVenda( new BigDecimal( precoVenda ) );
+            preco_novo_grosso.setQtdBaixo( precoAntigoGrosso.getQtdBaixo() );
+            preco_novo_grosso.setQtdAlto( precoAntigoGrosso.getQtdAlto() );
+            preco_novo_grosso.setPrecoAnterior( precoAntigoGrosso.getPrecoAnterior() );
+            preco_novo_grosso.setRetalho( precoAntigoGrosso.getRetalho() );
+
+            System.out.println( "HORA GROSSO: " + precoAntigoGrosso.getHora() );
+            System.out.println( "DATA GROSSO: " + precoAntigoGrosso.getData() );
+
+            precosControllerLocal.salvar( preco_novo_grosso );
+
+            DocumentosController.commit( conexaoTransaction );
+            conexaoTransaction.close();
+//            precoDao.create(preco_novo_grosso);
+            System.out.println( "Preco de compra grosso actualizado na compra" );
+        }
+        catch ( Exception e )
+        {
+            DocumentosController.rollback( conexaoTransaction );
+            e.printStackTrace();
+            System.err.println( "Falha ao actualizar o preço grosso na compra" );
+        }
+
+    }
+
+    private void actualizarQtdTable()
+    {
+
+        linha_actual = table.getSelectedRow();
+
+        if ( linha_actual > -1 )
+        {
+
+            int codProduto = Integer.parseInt( table.getValueAt( linha_actual, 0 ).toString() );
+            double desconto = Double.parseDouble( table.getValueAt( linha_actual, 5 ).toString() );
+
+            TbProduto produtoLocal = (TbProduto) produtosController.findById( codProduto );
+            TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById( produtoLocal.getCodTipoProduto().getCodigo() );
+
+            double qtd;
+
+            try
+            {
+                qtd = Double.parseDouble( table.getValueAt( linha_actual, 4 ).toString() );
+            }
+            catch ( NumberFormatException e )
+            {
+                resetValue( "Erro de formatação da quantidade.\nAtenção: Tem que ser número.", 4 );
+                return;
+            }
+
+            if ( qtd <= 0 )
+            {
+                qtd = 1;
+                resetValue( "Quantidade não pode ser zero(0) ou número negativo", 4 );
+            }
+
+            if ( desconto < 0 )
+            {
+                desconto = 0;
+                resetValue( "O desconto não deve ser um número negativo.", 4 );
+            }
+            else if ( desconto > 100 )
+            {
+                desconto = 0;
+                resetValue( "O desconto não deve ser maior do que 100%", 4 );
+            }
+
+            if ( possivel_quantidade( codProduto, qtd ) || tipoProduto.getFkFamilia().getPkFamilia() == DVML.COD_SERVICO )
+            {
+                actuazlizar_quantidade_tabela_formulario( String.valueOf( qtd ), desconto );
+                setTotalRetencao();
+                setTotalPagar();
+                calculaTotalIVA();
+                valor_por_extenco();
+            }
+            else
+            {
+                resetValue( "Não é possivel para esta quantidade.", 4 );
+            }
+        }
+    }
+
+    private static void actuazlizar_quantidade_tabela_formulario( String quantidade, double desconto )
+    {
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        double qtd = Double.parseDouble( quantidade );
+        double retencao = 0;
+
+        double preco_venda = CfMethods.parseMoedaFormatada( String.valueOf( modelo.getValueAt( linha_actual, 3 ) ) );
+        double taxa = Double.parseDouble( String.valueOf( modelo.getValueAt( linha_actual, 6 ) ) );
+//        double ret = CfMethods.parseMoedaFormatada( String.valueOf( modelo.getValueAt( linha_actual, 7) ) );
+        double ret = Double.parseDouble( String.valueOf( modelo.getValueAt( linha_actual, 7 ) ) );
+
+//        double total_iliquido_linha = (( preco_venda * qtd ) - desconto);
+        String total_iliquido_linha = CfMethods.formatarComoMoeda( FinanceUtils.getValorIliquido(
+                new BigDecimal( qtd ),
+                new BigDecimal( preco_venda ),
+                new BigDecimal( desconto )
+        ) );
+
+        double totalComIva = FinanceUtils.getValorComIVA( qtd, taxa, preco_venda, desconto );
+        String total_liquido_linha = CfMethods.formatarComoMoeda( totalComIva );
+
+        retencao = MetodosUtil.getValorComRetencao( qtd, ret, preco_venda, desconto );
+
+        String total_retencao = CfMethods.formatarComoMoeda( retencao );
+
+        modelo.setValueAt( qtd, linha_actual, 4 );
+        modelo.setValueAt( desconto, linha_actual, 5 );
+        modelo.setValueAt( total_retencao, linha_actual, 8 );
+//
+        modelo.setValueAt( total_iliquido_linha, linha_actual, 9 );
+        modelo.setValueAt( total_liquido_linha, linha_actual, 10 );
+        //a linha_actual recebe o default
+        linha_actual = -1;
+
+    }
+
+    private void resetValue( String msg, int columnValue )
+    {
+        System.out.println( "Cheguei aqui..." );
+        table.setValueAt( 1, linha_actual, columnValue );
+        JOptionPane.showMessageDialog( null, msg );
+        table.clearSelection();
 
     }
 

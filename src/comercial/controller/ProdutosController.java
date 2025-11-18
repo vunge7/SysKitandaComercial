@@ -1520,6 +1520,14 @@ public boolean exist_designacao_produto(BDConexao conexao, String designacao) {
 
         return lista;
     }
+    
+//    public TbProduto findByCodigoBarra(String codigoBarra) {
+//    return (TbProduto) entityManager
+//        .createQuery("SELECT p FROM TbProduto p WHERE p.codBarra = :cb")
+//        .setParameter("cb", codigoBarra)
+//        .getSingleResult();
+//}
+
 
     public static void main( String[] args )
     {

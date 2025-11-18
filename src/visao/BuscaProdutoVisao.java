@@ -9,11 +9,15 @@ import comercial.controller.ProdutosImpostoController;
 import comercial.controller.StoksController;
 import enties.util.BuscaModeloProduto;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Vector;
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 import util.BDConexao;
 import util.DVML;
@@ -64,19 +68,19 @@ public class BuscaProdutoVisao extends javax.swing.JDialog
         }
 
         // Adicione no construtor ou método initComponents()
-//tabela_busca.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-//    .put(KeyStroke.getKeyStroke("F4"), "acaoF4");
-//
-//tabela_busca.getActionMap().put("acaoF4", new AbstractAction() {
-//    @Override
-//    public void actionPerformed(ActionEvent e) {
-//        // Simula o duplo clique chamando o mesmo método
-//        int linha = tabela_busca.getSelectedRow();
-//        if (linha >= 0) {
-//            tratarSelecaoTabela(linha);
-//        }
-//    }
-//});
+tabela_busca.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+    .put(KeyStroke.getKeyStroke("F4"), "acaoF4");
+
+tabela_busca.getActionMap().put("acaoF4", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // Simula o duplo clique chamando o mesmo método
+        int linha = tabela_busca.getSelectedRow();
+        if (linha >= 0) {
+            tratarSelecaoTabela(linha);
+        }
+    }
+});
     }
 
     /**

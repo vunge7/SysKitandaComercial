@@ -606,7 +606,6 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jcbConverterGuiaTransporteDocumento = new javax.swing.JMenuItem();
         jSeparator9 = new javax.swing.JPopupMenu.Separator();
         jMenuItem3 = new javax.swing.JMenuItem();
-        jMenuItem5 = new javax.swing.JMenuItem();
         jmenuRelatorios = new javax.swing.JMenu();
         jmListarProdutosStock = new javax.swing.JMenuItem();
         jmTodasVendas = new javax.swing.JMenuItem();
@@ -897,16 +896,6 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
             }
         });
         jMenu1.add(jMenuItem3);
-
-        jMenuItem5.setText("jMenuItem5");
-        jMenuItem5.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                jMenuItem5ActionPerformed(evt);
-            }
-        });
-        jMenu1.add(jMenuItem5);
 
         jMenuBar1.add(jMenu1);
 
@@ -1727,12 +1716,30 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     }// </editor-fold>//GEN-END:initComponents
 
     private void jmVendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmVendaActionPerformed
+//        try
+//        {
+//
+//            try
+//            {
+//                new VendaUsuarioVisao( cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
+//            }
+//            catch ( Exception ex )
+//            {
+//                ex.printStackTrace();
+//            }
+//
+//        }
+//        catch ( Exception ex )
+//        {
+//            Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( Level.SEVERE, null, ex );
+//        }
+
         try
         {
 
             try
             {
-                new VendaUsuarioVisao( cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
+                new FormVendaResponsivaVisaoTop( cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
             }
             catch ( Exception ex )
             {
@@ -2470,27 +2477,6 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         frm.setVisible( true );
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
-    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem5ActionPerformed
-    {//GEN-HEADEREND:event_jMenuItem5ActionPerformed
-        try
-        {
-
-            try
-            {
-                new FormVendaResponsivaVisaoTop( cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
-            }
-            catch ( Exception ex )
-            {
-                ex.printStackTrace();
-            }
-
-        }
-        catch ( Exception ex )
-        {
-            Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( Level.SEVERE, null, ex );
-        }
-    }//GEN-LAST:event_jMenuItem5ActionPerformed
-
     /**
      * @param args the command line arguments
      */
@@ -2572,7 +2558,6 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
-    private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenuItem jMenuItem8;

@@ -3315,6 +3315,12 @@ public class MetodosUtil
         return Double.parseDouble( resultado );
 
     }
+    
+    public static BigDecimal valorCasasDecimaisNovoBD(BigDecimal valor, int casas) {
+    return valor.setScale(casas, RoundingMode.HALF_UP);
+}
+
+    
 
     public static int comparar_datas( Date data_1, Date data_2 )
     {
