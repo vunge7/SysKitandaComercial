@@ -178,6 +178,7 @@ public class DVML
     public static int JANELA_ASSOCIACAO = 12;
     public static int EMISSAO_RECIBOS = 6;
     public static int VENDA_PONTUAL = 3;
+    public static int VENDA_PONTUAL_TOP = 15;
     public static int VENDA_OFICINA = 13;
     public static int VENDA_EXPRESSO = 14;
     public static int CONVERSAO_PROFORMA_FACTURA_RECIBO = 8;

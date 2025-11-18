@@ -430,6 +430,10 @@ public class FormaPagamentoVisao extends javax.swing.JFrame
         {
             lb_total_geral.setText( VendaUsuarioVisao.txtTotalPagar.getText() );
         }
+        else if ( formulario == DVML.VENDA_PONTUAL_TOP )
+        {
+            lb_total_geral.setText( FormVendaResponsivaVisaoTop.txtTotalPagar.getText() );
+        }
         else if ( formulario == DVML.VENDA_OFICINA )
         {
             lb_total_geral.setText( VendaOficinaUsuarioVisao.txtTotal_AOA_liquido.getText() );
@@ -628,6 +632,10 @@ public class FormaPagamentoVisao extends javax.swing.JFrame
                 else if ( formulario == DVML.VENDA_PONTUAL )
                 {
                     VendaUsuarioVisao.procedimento_salvar_venda_comercial(true);
+                }
+                else if ( formulario == DVML.VENDA_PONTUAL_TOP )
+                {
+                    FormVendaResponsivaVisaoTop.procedimento_salvar_venda_comercial(true);
                 }
                 else if ( formulario == DVML.VENDA_OFICINA )
                 {
