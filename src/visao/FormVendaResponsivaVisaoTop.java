@@ -85,7 +85,6 @@ import static util.DVML.DOC_FACTURA_FT;
 import util.FinanceUtils;
 import util.MetodosUtil;
 
-
 /**
  *
  * @author marti
@@ -2435,8 +2434,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static double getValorComImposto( double qtd, double taxa, double preco_venda, double desconto )
     {
-        double subtotal_linha = (preco_venda * qtd);
-        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
+        double subtotal_linha = ( preco_venda * qtd );
+        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
         double valor_iva = 1 + ( taxa / 100 );//
         return ( ( subtotal_linha - desconto_valor ) * valor_iva );
     }
@@ -2460,8 +2459,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static double getRET( double qtd, double taxa_r, double preco_venda, double desconto )
     {
-        double subtotal_linha = (preco_venda * qtd);
-        double valor_ret = (taxa_r / 100);//
+        double subtotal_linha = ( preco_venda * qtd );
+        double valor_ret = ( taxa_r / 100 );//
         return ( ( subtotal_linha - desconto ) * valor_ret );
 
     }
@@ -2741,7 +2740,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         for ( int i = 1; i <= numeroVias; i++ )
         {
             String via;
-            switch (i)
+            switch ( i )
             {
                 case 1:
                     via = "Original";
@@ -4503,7 +4502,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static double getTotalAOARetencoes()
     {
-        double valores = (getTotalRetencao1());
+        double valores = ( getTotalRetencao1() );
         return ( valores );
     }
 
@@ -4522,7 +4521,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             // a incidência só é aplicável ao produtos sujeitos a iva 
             if ( taxa != 0 )
             {
-                double valor_unitario = (preco_unitario * qtd);
+                double valor_unitario = ( preco_unitario * qtd );
 
                 desconto_valor_linha = valor_unitario * ( ( valor_percentagem ) / 100 );
                 valor_taxa = ( valor_unitario - desconto_valor_linha ) / taxa;
@@ -4692,7 +4691,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         Documento documento_local = (Documento) documentosController.findById( getIdDocumento() );
         String abreviacao_local = documento_local.getAbreviacao();
 
-        switch (abreviacao_local)
+        switch ( abreviacao_local )
         {
             case "FT":
                 return "Facturamos o valor de: ";
@@ -4986,7 +4985,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private void actualizar_abreviacao()
     {
 
-        switch (getIdDocumento())
+        switch ( getIdDocumento() )
         {
             case DVML.DOC_FACTURA_RECIBO_FR:
                 if ( ck_A4.isSelected() )
@@ -6185,11 +6184,18 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             // -------------------------------
             if ( valorDigitado.matches( "\\d+" ) )
             {
-                // só números → pode ser ID interno
-                int codigo = Integer.parseInt( valorDigitado );
 
-                // tenta buscar por ID interno
-                produto = (TbProduto) produtosController.findById( codigo );
+                try
+                {
+                    // só números → pode ser ID interno
+                    int codigo = Integer.parseInt( valorDigitado );
+
+                    // tenta buscar por ID interno
+                    produto = (TbProduto) produtosController.findById( codigo );
+                }
+                catch ( Exception e )
+                {
+                }
 
                 // se não achar por ID → tenta como código de barras numérico
                 if ( produto == null )
@@ -6234,6 +6240,13 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             int last = model.getRowCount() - 1;
             table.changeSelection( last, 0, false, false );
             table.editCellAt( last, 0 );
+            table.requestFocusInWindow();
+
+            Component editor = table.getEditorComponent();
+            if ( editor != null )
+            {
+                editor.requestFocusInWindow();
+            }
 
         }
         catch ( Exception e )
