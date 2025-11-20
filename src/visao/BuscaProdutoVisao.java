@@ -80,6 +80,10 @@ tabela_busca.getActionMap().put("acaoF4", new AbstractAction() {
         }
     }
 });
+
+tabela_busca.setSelectionBackground(new java.awt.Color(0, 0, 128)); // Azul escuro
+tabela_busca.setSelectionForeground(Color.WHITE);
+
     }
 
     /**
@@ -118,6 +122,14 @@ tabela_busca.getActionMap().put("acaoF4", new AbstractAction() {
         setUndecorated(true);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
+
+        txtDesignacao.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                txtDesignacaoActionPerformed(evt);
+            }
+        });
 
         tabela_busca.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         tabela_busca.setModel(new javax.swing.table.DefaultTableModel(
@@ -353,198 +365,6 @@ tabela_busca.getActionMap().put("acaoF4", new AbstractAction() {
             tratarSelecaoTabela( linha );
         }
 
-//        if ( evt.getClickCount() == 2 )
-//        {
-//            if ( DVML.JANELA_ENTRADA == cod_janela )
-//            {
-//
-//                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
-//                int linha = tabela_busca.getSelectedRow();
-//                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-//                EntradaPratosCompostosVisao.accao_codigo_interno_enter_busca_exterior( codigo );
-//                dispose();
-//
-//            }
-//            else if ( DVML.JANELA_ENTRADA_STOCK == cod_janela )
-//            {
-//
-//                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
-//                int linha = tabela_busca.getSelectedRow();
-//                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-//                EntradaProdutoVisao.busca_produto_by_cod_interno_entrada(codigo );
-//                dispose();
-//
-//            }
-//            else if ( DVML.JANELA_VENDA == cod_janela )
-//            {
-//
-//                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
-//                int linha = tabela_busca.getSelectedRow();
-//                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-//                VendaUsuarioVisao.accao_codigo_interno_enter_busca_exterior( codigo );
-//                dispose();
-//
-//            }
-//            else if ( DVML.JANELA_CARDEX == cod_janela )
-//            {
-//
-//                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
-//                int linha = tabela_busca.getSelectedRow();
-//                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-////                CardexVisao.procedimentoBuscaLupa();
-//                CardexVisao.procedimentoBusca( codigo );
-//                dispose();
-//
-//            }
-//            else if ( DVML.JANELA_SAIDA == cod_janela )
-//            {
-//
-//                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
-//                int linha = tabela_busca.getSelectedRow();
-//                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-//                SaidaProdutoVisao.accao_codigo_interno_enter_busca_exterior( codigo );
-//                dispose();
-//
-//            }
-//            else if ( DVML.JANELA_VENDA_POS == cod_janela )
-//            {
-//
-//                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
-//                int linha = tabela_busca.getSelectedRow();
-//                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-//                VendaPOSVisao.accao_codigo_interno_enter_busca_exterior( codigo );
-//                dispose();
-//
-//            }
-//            
-//            else if ( DVML.JANELA_VENDA_OFICINA == cod_janela )
-//            {
-//
-//                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
-//                int linha = tabela_busca.getSelectedRow();
-//                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-//                VendaOficinaUsuarioVisao.accao_codigo_interno_enter_busca_exterior( codigo );
-//                dispose();
-//
-//            }
-//            
-//            else if ( DVML.JANELA_FICHA_TECNICA == cod_janela )
-//            {
-//
-//                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
-//                int linha = tabela_busca.getSelectedRow();
-//                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-//                FichaTecnicaVisao.busca_produto_by_cod_interno( codigo );
-//                dispose();
-//
-//            }
-//            
-//            else if ( DVML.JANELA_COMPRA == cod_janela )
-//            {
-//
-//                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
-//                int linha = tabela_busca.getSelectedRow();
-//                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-//                try
-//                {
-//
-//                    NovaEncomendaVisao.busca_produto_by_cod_interno( codigo );
-//
-//                }
-//                catch ( Exception e )
-//                {
-//                }
-//
-//                try
-//                {
-//                    CompraInformalVisao.busca_produto_by_cod_interno_compra( codigo );
-//                }
-//                catch ( Exception e )
-//                {
-//                }
-//
-//                try
-//                {
-//                    TranferenciaArmazemVisao.accao_codigo_interno_enter_busca_exterior( codigo );
-//                }
-//                catch ( Exception e )
-//                {
-//                }
-//
-//                try
-//                {
-//                    AcertoStockVisao.accao_codigo_interno_enter_busca_exterior(codigo );
-//                }
-//                catch ( Exception e )
-//                {
-//                }
-//
-//                dispose();
-//
-//            }
-//
-//            else if ( DVML.JANELA_ESTORNO == cod_janela )
-//            {
-//
-//                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
-//                int linha = tabela_busca.getSelectedRow();
-//                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-//                EstornoVisao.accao_codigo_interno_enter_busca_exterior( codigo );
-//                dispose();
-//
-//            }
-//            else if ( DVML.JANELA_PRODUTO == cod_janela )
-//            {
-//
-//                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
-//                int linha = tabela_busca.getSelectedRow();
-//                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-//                ProdutosVisao.ver_dados( codigo );
-//                dispose();
-//
-//            }
-//            else if ( ( Objects.nonNull( NovaGestaoPedidosVisao.rbNao_lugar ) && NovaGestaoPedidosVisao.rbNao_lugar.isSelected() ) 
-//                    && DVML.JANELA_RETAURANTE == cod_janela )
-//            {
-//
-//                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
-//                int linha = tabela_busca.getSelectedRow();
-//                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-//                NovaGestaoPedidosVisao.accao_codigo_interno_enter_busca_exterior( codigo );
-//                dispose();
-//
-//            }
-//            else if ( DVML.JANELA_VENDA_EXPRESSO == cod_janela )
-//            {
-//
-//                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
-//                int linha = tabela_busca.getSelectedRow();
-//                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-//                VendasPraticasVisao.accao_codigo_interno_enter_busca_exterior( codigo );
-//                dispose();
-//
-//            }
-//            else if ( DVML.JANELA_RECOLHA == cod_janela )
-//            {
-//
-//                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
-//                int linha = tabela_busca.getSelectedRow();
-//                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-//                RecolhaPedidosVisao.accao_codigo_interno_enter_busca_exterior( codigo );
-//                dispose();
-//
-//            }
-//            else if ( DVML.JANELA_ASSOCIACAO == cod_janela )
-//            {
-//
-//                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
-//                int linha = tabela_busca.getSelectedRow();
-//                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-//                AssociacaoServicoVisao.adcionarItem( codigo );
-//                dispose();
-//
-//            }
-//        }
     }//GEN-LAST:event_tabela_buscaMouseClicked
 
     private void tratarSelecaoTabela( int linha )
@@ -577,6 +397,14 @@ tabela_busca.getActionMap().put("acaoF4", new AbstractAction() {
             catch ( Exception e )
             {
             }
+
+            dispose();
+
+        }
+        
+        else if ( DVML.JANELA_VENDA_TOP == cod_janela )
+        {
+
 
             try
             {
@@ -720,6 +548,11 @@ tabela_busca.getActionMap().put("acaoF4", new AbstractAction() {
         dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void txtDesignacaoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtDesignacaoActionPerformed
+    {//GEN-HEADEREND:event_txtDesignacaoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtDesignacaoActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -809,49 +642,175 @@ tabela_busca.getActionMap().put("acaoF4", new AbstractAction() {
     private javax.swing.JTextField txtDesignacao;
     // End of variables declaration//GEN-END:variables
 
-    class TratarEvento implements KeyListener
-    {
+//    class TratarEvento implements KeyListener
+//    {
+//
+//        String prefixo = "";
+//
+//        public void keyPressed( KeyEvent evt )
+//        {
+//
+//            if ( evt.getKeyCode() != KeyEvent.VK_BACK_SPACE && evt.getKeyCode() != KeyEvent.VK_ENTER )
+//            {
+//                char key = evt.getKeyChar();
+//                prefixo = txtDesignacao.getText().trim() + key;
+//                adicionar( prefixo );
+//                focarPrimeiraLinha();
+//
+//            }
+//            else if ( evt.getKeyCode() == KeyEvent.VK_BACK_SPACE )
+//            {
+//                try
+//                {
+//
+//                    prefixo = prefixo.toString().trim().substring( 0, prefixo.length() - 1 );
+//                    adicionar( prefixo );
+//                    focarPrimeiraLinha();
+//
+//                }
+//                catch ( Exception e )
+//                {
+//
+//                }
+//
+//            }
+//        }
+//
+//        public void keyReleased( KeyEvent evt )
+//        {
+//        }
+//
+//        public void keyTyped( KeyEvent evt )
+//        {
+//        }
+//
+//    }
+    
+    class TratarEvento implements KeyListener {
 
-        String prefixo = "";
+    String prefixo = "";
 
-        public void keyPressed( KeyEvent evt )
-        {
+    @Override
+    public void keyPressed(KeyEvent evt) {
 
-            if ( evt.getKeyCode() != KeyEvent.VK_BACK_SPACE && evt.getKeyCode() != KeyEvent.VK_ENTER )
-            {
-                char key = evt.getKeyChar();
-                prefixo = txtDesignacao.getText().trim() + key;
-                //adicionar( stockDao.getStockLIKE_Nome( prefixo ) );
-                adicionar( prefixo );
+        // TECLA NORMAL (não é backspace nem enter)
+        if (evt.getKeyCode() != KeyEvent.VK_BACK_SPACE && evt.getKeyCode() != KeyEvent.VK_ENTER) {
 
+            char key = evt.getKeyChar();
+            prefixo = txtDesignacao.getText().trim() + key;
+
+            adicionar(prefixo);
+
+            // *** Só foca se tiver pelo menos 4 caracteres ***
+            if (prefixo.length() >= 4) {
+                focarPrimeiraLinha();
             }
-            else if ( evt.getKeyCode() == KeyEvent.VK_BACK_SPACE )
-            {
-                try
-                {
 
-                    prefixo = prefixo.toString().trim().substring( 0, prefixo.length() - 1 );
-                    // adicionar( stockDao.getStockLIKE_Nome( prefixo ) );
-                    adicionar( prefixo );
+        }
+        // BACKSPACE
+        else if (evt.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
 
-                }
-                catch ( Exception e )
-                {
+            try {
+                prefixo = prefixo.substring(0, prefixo.length() - 1);
+            } catch (Exception e) {
+                prefixo = "";
+            }
 
-                }
+            adicionar(prefixo);
 
+            // *** Só foca se tiver pelo menos 4 caracteres ***
+            if (prefixo.length() >= 4) {
+                focarPrimeiraLinha();
             }
         }
-
-        public void keyReleased( KeyEvent evt )
-        {
-        }
-
-        public void keyTyped( KeyEvent evt )
-        {
-        }
-
     }
+
+    @Override
+    public void keyReleased(KeyEvent evt) { }
+
+    @Override
+    public void keyTyped(KeyEvent evt) { }
+}
+
+    
+//    class TratarEvento implements KeyListener
+//{
+//
+//    String prefixo = "";
+//
+//    public void keyPressed(KeyEvent evt)
+//    {
+//
+//        if (evt.getKeyCode() != KeyEvent.VK_BACK_SPACE && evt.getKeyCode() != KeyEvent.VK_ENTER)
+//        {
+//            char key = evt.getKeyChar();
+//            prefixo = txtDesignacao.getText().trim() + key;
+//
+//            adicionar(prefixo);
+//
+//            // Só foca se tiver pelo menos 4 letras
+//            if (prefixo.length() >= 4) {
+//                focarPrimeiraLinha();
+//            }
+//        }
+//        else if (evt.getKeyCode() == KeyEvent.VK_BACK_SPACE)
+//        {
+//            try
+//            {
+//                prefixo = prefixo.trim().substring(0, prefixo.length() - 1);
+//                adicionar(prefixo);
+//
+//                if (prefixo.length() >= 4) {
+//                    focarPrimeiraLinha();
+//                }
+//
+//            }
+//            catch (Exception e) {}
+//        }
+//    }
+//
+//    public void keyReleased(KeyEvent evt) {}
+//    public void keyTyped(KeyEvent evt) {}
+//
+//}
+
+    
+//    class TratarEvento1 implements KeyListener
+//{
+//
+//    String prefixo = "";
+//
+//    public void keyPressed(KeyEvent evt)
+//    {
+//
+//        if (evt.getKeyCode() != KeyEvent.VK_BACK_SPACE && evt.getKeyCode() != KeyEvent.VK_ENTER)
+//        {
+//            char key = evt.getKeyChar();
+//            prefixo = txtDesignacao.getText().trim() + key;
+//
+//            adicionar(prefixo);
+//            focarPrimeiraLinha();
+//        }
+//        else if (evt.getKeyCode() == KeyEvent.VK_BACK_SPACE)
+//        {
+//            try
+//            {
+//                prefixo = prefixo.trim().substring(0, prefixo.length() - 1);
+//
+//                adicionar(prefixo);
+//                focarPrimeiraLinha();
+//            }
+//            catch (Exception e)
+//            {
+//            }
+//        }
+//    }
+//
+//    public void keyReleased(KeyEvent evt) {}
+//    public void keyTyped(KeyEvent evt) {}
+//
+//}
+
 
     private void adicionar( String designacao )
     {
@@ -965,62 +924,23 @@ tabela_busca.getActionMap().put("acaoF4", new AbstractAction() {
         lbTotalStockCritico.setText( String.valueOf( contTotalStockCritco ) );
         lbTotalStockNormal.setText( String.valueOf( contTotalStockNormal ) );
         lbTamnho.setText( String.valueOf( contTotal ) );
+        
+//            // --- Foco automático na primeira linha ---
+//    if (tabela_busca.getRowCount() > 0) {
+//        tabela_busca.setRowSelectionInterval(0, 0);
+//        tabela_busca.requestFocus();
+//    }
 
     }
-//    private void adicionar_tabela()
-//    {
-//
-//        int contTotal = 0, contTotalStockVazio = 0, contTotalStockCritco = 0, contTotalStockNormal = 0, contTotalServico = 0;
-//        DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
-//        modelo.setRowCount( 0 );
-//        Iterator<BuscaModeloProduto> iterator = fonte_dados.iterator();
-//        System.err.println( "SIZE-ITERATOR: " +iterator.le );
-//        while ( iterator.hasNext() )
-//        {
-//            contTotal++;
-//
-//            BuscaModeloProduto next = iterator.next();
-//
-//            if ( next.getQtd().equals( "0" ) )
-//            {
-//                contTotalStockVazio++;
-//            }
-//
-//            if ( next.getEstadoCritico().equals( "true" ) )
-//            {
-//                contTotalStockCritco++;
-//            }
-//
-//            if ( next.getQtd().equals( "-" ) )
-//            {
-//                contTotalServico++;
-//            }
-//            else if ( Double.parseDouble( next.getQtd() ) != 0 && next.getEstadoCritico().equals( "false" ) )
-//            {
-//                contTotalStockNormal++;
-//            }
-//
-//            modelo.addRow(
-//                    new Object[]
-//                    {
-//                        next.getCodigo(),
-//                        next.getDesignacao(),
-//                        next.getCategoria(),
-//                        next.getQtd(),
-//                        next.getPrecoVenda(),
-//                        next.getEstadoCritico()
-//
-//                    }
-//            );
-//
-//        }
-//        lbTotalStockVazio.setText( String.valueOf( contTotalStockVazio ) );
-//        lbTotalServico.setText( String.valueOf( contTotalServico ) );
-//        lbTotalStockCritico.setText( String.valueOf( contTotalStockCritco ) );
-//        lbTotalStockNormal.setText( String.valueOf( contTotalStockNormal ) );
-//        lbTamnho.setText( String.valueOf( contTotal ) );
-//
-//    }
+    
+    private void focarPrimeiraLinha() {
+    if (tabela_busca.getRowCount() > 0) {
+        tabela_busca.setRowSelectionInterval(0, 0);
+        tabela_busca.requestFocus();
+    }
+}
+
+
 
     private void setBackGroundLegenda()
     {

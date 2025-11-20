@@ -2635,6 +2635,8 @@ public class MetodosUtil
         return Double.parseDouble( value );
 
     }
+    
+    
 
     public static String getValorTransformadoString( double valor )
     {

@@ -61,22 +61,22 @@ public class CfMethods
 //        return formatarComoMoeda( valor);
     }
 
-//    public static String formatarComoMoeda( BigDecimal valor )
-//    {
-//        return formatarComoMoeda( valor.doubleValue(), MOEDA );
-//    }
+    public static String formatarComoMoeda( BigDecimal valor )
+    {
+        return formatarComoMoeda( valor.doubleValue(), MOEDA );
+    }
 
-    public static String formatarComoMoeda(BigDecimal valor)
-{
-    DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-    symbols.setDecimalSeparator(',');
-    symbols.setGroupingSeparator('.'); // ponto para milhares
-
-    DecimalFormat df = new DecimalFormat("#,##0.00 'Kz'", symbols);
-    df.setRoundingMode(RoundingMode.HALF_UP);
-
-    return df.format(valor);
-}
+//    public static String formatarComoMoeda(BigDecimal valor)
+//{
+//    DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+//    symbols.setDecimalSeparator(',');
+//    symbols.setGroupingSeparator('.'); // ponto para milhares
+//
+//    DecimalFormat df = new DecimalFormat("#,##0.00 'Kz'", symbols);
+//    df.setRoundingMode(RoundingMode.HALF_UP);
+//
+//    return df.format(valor);
+//}
 
     
     public static String formatarComoMoeda( double valor, String moeda )

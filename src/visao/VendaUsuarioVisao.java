@@ -1081,12 +1081,23 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             {
                 tableMouseClicked(evt);
             }
+            public void mouseEntered(java.awt.event.MouseEvent evt)
+            {
+                tableMouseEntered(evt);
+            }
         });
         table.addPropertyChangeListener(new java.beans.PropertyChangeListener()
         {
             public void propertyChange(java.beans.PropertyChangeEvent evt)
             {
                 tablePropertyChange(evt);
+            }
+        });
+        table.addKeyListener(new java.awt.event.KeyAdapter()
+        {
+            public void keyPressed(java.awt.event.KeyEvent evt)
+            {
+                tableKeyPressed(evt);
             }
         });
         jScrollPane1.setViewportView(table);
@@ -2167,6 +2178,16 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         }
 
     }//GEN-LAST:event_btnSemFormaPagamentoActionPerformed
+
+    private void tableKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event_tableKeyPressed
+    {//GEN-HEADEREND:event_tableKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tableKeyPressed
+
+    private void tableMouseEntered(java.awt.event.MouseEvent evt)//GEN-FIRST:event_tableMouseEntered
+    {//GEN-HEADEREND:event_tableMouseEntered
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tableMouseEntered
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
