@@ -2105,7 +2105,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //        }
         if ( table.getSelectedColumn() == 3 || table.getSelectedColumn() == 4 || table.getSelectedColumn() == 5 )
         {
-            actualizarPreco();
+//            actualizarPreco();
             System.out.println( "Qtd......" );
             actualizarQtdTable();
         }
@@ -4208,8 +4208,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static void valor_por_extenco()
     {
-        BigDecimal total = BigDecimal.valueOf( CfMethods.parseMoedaFormatada( txtTotalPagar.getText() ) );
-//        BigDecimal total = CfMethods.parseMoedaFormatadaBigDecimal( txtTotalPagar.getText() );
+//        BigDecimal total = BigDecimal.valueOf( CfMethods.parseMoedaFormatada( txtTotalPagar.getText() ) );
+        BigDecimal total = CfMethods.parseMoedaFormatadaBigDecimal( txtTotalPagar.getText() );
         lbValorPorExtenco.setText( MetodosUtil.valorPorExtensoBigDecima( total, getMoeda().getDesignacao() ) );
     }
 
@@ -6669,7 +6669,6 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         }
     }
 
-
     private void setFocus( String focus )
     {
         if ( focus.equalsIgnoreCase( "Codigo Interno" ) )
@@ -7098,7 +7097,6 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         preco_novo_retalho.setQtdAlto( precoAntigoRetalho.getQtdAlto() );
         preco_novo_retalho.setPrecoAnterior( precoAntigoRetalho.getPrecoAnterior() );
         preco_novo_retalho.setRetalho( precoAntigoRetalho.getRetalho() );
-      
 
         System.out.println( "HORA RETALHO: " + preco_novo_retalho.getHora() );
         System.out.println( "DATA RETAHO: " + preco_novo_retalho.getData() );

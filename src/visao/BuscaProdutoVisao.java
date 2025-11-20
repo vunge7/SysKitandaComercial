@@ -16,13 +16,17 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.Vector;
 import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import util.BDConexao;
 import util.DVML;
 import util.Definicoes;
 import util.tabela_manual.render.RenderBusca;
+import static visao.VendaUsuarioVisao.table;
 
 /**
  *
@@ -42,20 +46,23 @@ public class BuscaProdutoVisao extends javax.swing.JDialog
         super( parent, modal );
         initComponents();
         setLocationRelativeTo( null );
+
         this.cod_armazem = cod_armazem;
         this.cod_janela = cod_janela;
-        txtDesignacao.requestFocus();
+
         stoksController = new StoksController( conexao );
         produtosImpostoController = new ProdutosImpostoController( conexao );
         fonte_dados = stoksController.getFonte( cod_armazem, cod_janela );
 
         tabela_busca.setDefaultRenderer( Object.class, new RenderBusca( cod_armazem, conexao ) );
-        txtDesignacao.requestFocus();
+        tabela_busca.setSelectionMode( ListSelectionModel.SINGLE_SELECTION );
+        tabela_busca.setRowSelectionAllowed( true );
+        tabela_busca.setFillsViewportHeight( true );
 
+        txtDesignacao.requestFocus();
         txtDesignacao.addKeyListener( new TratarEvento() );
 
         setBackGroundLegenda();
-//        updatePrecoIvaTabela();
 
         try
         {
@@ -66,22 +73,154 @@ public class BuscaProdutoVisao extends javax.swing.JDialog
             e.printStackTrace();
         }
 
-        // Adicione no construtor ou método initComponents()
-tabela_busca.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-    .put(KeyStroke.getKeyStroke("F4"), "acaoF4");
-
-tabela_busca.getActionMap().put("acaoF4", new AbstractAction() {
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        // Simula o duplo clique chamando o mesmo método
-        int linha = tabela_busca.getSelectedRow();
-        if (linha >= 0) {
-            tratarSelecaoTabela(linha);
+        // Selecionar a primeira linha ao abrir
+        if ( tabela_busca.getRowCount() > 0 )
+        {
+            tabela_busca.setRowSelectionInterval( 0, 0 );
         }
-    }
-});
+
+        // Atalho F4 e ENTER para tratar seleção
+        InputMap im = tabela_busca.getInputMap( JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT );
+        ActionMap am = tabela_busca.getActionMap();
+
+// F4
+        im.put( KeyStroke.getKeyStroke( "F4" ), "acaoF4" );
+// ENTER
+        im.put( KeyStroke.getKeyStroke( "ENTER" ), "acaoEnter" );
+
+// Mesma ação para F4 e ENTER
+        AbstractAction acaoSelecionar = new AbstractAction()
+        {
+            @Override
+            public void actionPerformed( ActionEvent e )
+            {
+                int linha = tabela_busca.getSelectedRow();
+                if ( linha >= 0 )
+                {
+                    tratarSelecaoTabela( linha );
+                }
+            }
+        };
+
+        am.put( "acaoF4", acaoSelecionar );
+        am.put( "acaoEnter", acaoSelecionar );
+
+        // Atalho DOWN no próprio JTable
+        tabela_busca.getInputMap( JComponent.WHEN_FOCUSED )
+                .put( KeyStroke.getKeyStroke( "DOWN" ), "moveDown" );
+        tabela_busca.getActionMap().put( "moveDown", new AbstractAction()
+        {
+            @Override
+            public void actionPerformed( ActionEvent e )
+            {
+                int selectedRow = tabela_busca.getSelectedRow();
+                int rowCount = tabela_busca.getRowCount();
+                if ( selectedRow < rowCount - 1 )
+                {
+                    int next = selectedRow + 1;
+                    tabela_busca.setRowSelectionInterval( next, next );
+                    tabela_busca.scrollRectToVisible( tabela_busca.getCellRect( next, 0, true ) );
+                }
+            }
+        } );
+
+        // Atalho DOWN também quando o foco está no txtDesignacao
+        txtDesignacao.addKeyListener( new java.awt.event.KeyAdapter()
+        {
+            @Override
+            public void keyPressed( java.awt.event.KeyEvent e )
+            {
+                if ( e.getKeyCode() == java.awt.event.KeyEvent.VK_DOWN )
+                {
+                    tabela_busca.requestFocus();
+                    int selectedRow = tabela_busca.getSelectedRow();
+                    int rowCount = tabela_busca.getRowCount();
+                    if ( selectedRow < rowCount - 1 )
+                    {
+                        int next = selectedRow + 1;
+                        tabela_busca.setRowSelectionInterval( next, next );
+                        tabela_busca.scrollRectToVisible( tabela_busca.getCellRect( next, 0, true ) );
+                    }
+                }
+            }
+        } );
     }
 
+//    public BuscaProdutoVisao( java.awt.Frame parent, boolean modal, int cod_armazem, int cod_janela, BDConexao conexao )
+//    {
+//        super( parent, modal );
+//        initComponents();
+//        setLocationRelativeTo( null );
+//        this.cod_armazem = cod_armazem;
+//        this.cod_janela = cod_janela;
+//        txtDesignacao.requestFocus();
+//        stoksController = new StoksController( conexao );
+//        produtosImpostoController = new ProdutosImpostoController( conexao );
+//        fonte_dados = stoksController.getFonte( cod_armazem, cod_janela );
+//
+//        tabela_busca.setDefaultRenderer( Object.class, new RenderBusca( cod_armazem, conexao ) );
+//        txtDesignacao.requestFocus();
+//
+//        txtDesignacao.addKeyListener( new TratarEvento() );
+//
+//        setBackGroundLegenda();
+////        updatePrecoIvaTabela();
+//
+//        try
+//        {
+//            adicionar_tabela();
+//        }
+//        catch ( Exception e )
+//        {
+//            e.printStackTrace();
+//        }
+//
+//        // Adicione no construtor ou método initComponents()
+//        tabela_busca.getInputMap( JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT )
+//                .put( KeyStroke.getKeyStroke( "F4" ), "acaoF4" );
+//
+//        tabela_busca.getActionMap().put( "acaoF4", new AbstractAction()
+//        {
+//            @Override
+//            public void actionPerformed( ActionEvent e )
+//            {
+//                // Simula o duplo clique chamando o mesmo método
+//                int linha = tabela_busca.getSelectedRow();
+//                if ( linha >= 0 )
+//                {
+//                    tratarSelecaoTabela( linha );
+//                }
+//            }
+//        } );
+//
+//        tabela_busca.setSelectionMode( ListSelectionModel.SINGLE_SELECTION );
+//
+//        // Pintar a linha selecionada
+//        tabela_busca.setRowSelectionAllowed( true );
+//        tabela_busca.setFillsViewportHeight( true );
+//
+//        // Adicionar Key Binding para a tecla DOWN
+//        InputMap im = tabela_busca.getInputMap( JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT );
+//        ActionMap am = tabela_busca.getActionMap();
+//
+//        im.put( KeyStroke.getKeyStroke( "DOWN" ), "moveDown" );
+//        am.put( "moveDown", new AbstractAction()
+//        {
+//            @Override
+//            public void actionPerformed( ActionEvent e )
+//            {
+//                int selectedRow = tabela_busca.getSelectedRow();
+//                int rowCount = tabela_busca.getRowCount();
+//
+//                if ( selectedRow < rowCount - 1 )
+//                {
+//                    tabela_busca.setRowSelectionInterval( selectedRow + 1, selectedRow + 1 );
+//                    tabela_busca.scrollRectToVisible( tabela_busca.getCellRect( selectedRow + 1, 0, true ) );
+//                }
+//            }
+//        } );
+//
+//    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -160,12 +299,12 @@ tabela_busca.getActionMap().put("acaoF4", new AbstractAction() {
         jScrollPane1.setViewportView(tabela_busca);
         if (tabela_busca.getColumnModel().getColumnCount() > 0)
         {
-            tabela_busca.getColumnModel().getColumn(0).setPreferredWidth(15);
-            tabela_busca.getColumnModel().getColumn(1).setPreferredWidth(520);
+            tabela_busca.getColumnModel().getColumn(0).setPreferredWidth(35);
+            tabela_busca.getColumnModel().getColumn(1).setPreferredWidth(400);
             tabela_busca.getColumnModel().getColumn(2).setPreferredWidth(120);
             tabela_busca.getColumnModel().getColumn(3).setPreferredWidth(10);
-            tabela_busca.getColumnModel().getColumn(4).setPreferredWidth(50);
-            tabela_busca.getColumnModel().getColumn(5).setPreferredWidth(2);
+            tabela_busca.getColumnModel().getColumn(4).setPreferredWidth(80);
+            tabela_busca.getColumnModel().getColumn(5).setPreferredWidth(1);
         }
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -188,7 +327,7 @@ tabela_busca.getActionMap().put("acaoF4", new AbstractAction() {
                 .addComponent(txtDesignacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 399, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(9, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LOGOUT - VERMELHO/Logout 32x32.png"))); // NOI18N
@@ -809,61 +948,186 @@ tabela_busca.getActionMap().put("acaoF4", new AbstractAction() {
     private javax.swing.JTextField txtDesignacao;
     // End of variables declaration//GEN-END:variables
 
+//    class TratarEvento implements KeyListener
+//    {
+//
+//        String prefixo = "";
+//
+//        public void keyPressed( KeyEvent evt )
+//        {
+//
+//            if ( evt.getKeyCode() != KeyEvent.VK_BACK_SPACE && evt.getKeyCode() != KeyEvent.VK_ENTER )
+//            {
+//                char key = evt.getKeyChar();
+//                prefixo = txtDesignacao.getText().trim() + key;
+//                //adicionar( stockDao.getStockLIKE_Nome( prefixo ) );
+//                adicionar( prefixo );
+//
+//            }
+//            else if ( evt.getKeyCode() == KeyEvent.VK_BACK_SPACE )
+//            {
+//                try
+//                {
+//
+//                    prefixo = prefixo.toString().trim().substring( 0, prefixo.length() - 1 );
+//                    // adicionar( stockDao.getStockLIKE_Nome( prefixo ) );
+//                    adicionar( prefixo );
+//
+//                }
+//                catch ( Exception e )
+//                {
+//
+//                }
+//
+//            }
+//        }
+//
+//        public void keyReleased( KeyEvent evt )
+//        {
+//        }
+//
+//        public void keyTyped( KeyEvent evt )
+//        {
+//        }
+//
+//    }
+//
+//    private void adicionar( String designacao )
+//    {
+//        int contTotal = 0, contTotalStockVazio = 0, contTotalStockCritco = 0, contTotalStockNormal = 0, contTotalServico = 0;
+//        Iterator<BuscaModeloProduto> iterator = fonte_dados.iterator();
+//        DefaultTableModel modelo = (DefaultTableModel) tabela_busca.getModel();
+//        modelo.setRowCount( 0 );
+//
+//        while ( iterator.hasNext() )
+//        {
+//
+//            BuscaModeloProduto next = iterator.next();
+//            if ( next.getDesignacao().toLowerCase().contains( designacao.toLowerCase() ) )
+//            {
+//                contTotal++;
+//
+//                if ( next.getQtd().equals( "0" ) )
+//                {
+//                    contTotalStockVazio++;
+//                }
+//
+//                if ( next.getEstadoCritico().equals( "true" ) )
+//                {
+//                    contTotalStockCritco++;
+//                }
+//
+//                if ( next.getQtd().equals( "-" ) )
+//                {
+//                    contTotalServico++;
+//                }
+//
+//                else if ( Double.parseDouble( next.getQtd() ) != 0 && next.getEstadoCritico().equals( "false" ) )
+//                {
+//                    contTotalStockNormal++;
+//                }
+//
+//                modelo.addRow(
+//                        new Object[]
+//                        {
+//                            next.getCodigo(),
+//                            next.getDesignacao(),
+//                            next.getCategoria(),
+//                            next.getQtd(),
+//                            next.getPrecoVenda(),
+//                            next.getEstadoCritico()
+//
+//                        }
+//                );
+//
+//            }
+//
+//        }
+//
+//        lbTotalStockVazio.setText( String.valueOf( contTotalStockVazio ) );
+//
+//        lbTotalServico.setText( String.valueOf( contTotalServico ) );
+//        lbTotalStockCritico.setText( String.valueOf( contTotalStockCritco ) );
+//        lbTotalStockNormal.setText( String.valueOf( contTotalStockNormal ) );
+//        lbTamnho.setText( String.valueOf( contTotal ) );
+//    }
     class TratarEvento implements KeyListener
     {
 
         String prefixo = "";
 
+        @Override
         public void keyPressed( KeyEvent evt )
         {
+            int keyCode = evt.getKeyCode();
 
-            if ( evt.getKeyCode() != KeyEvent.VK_BACK_SPACE && evt.getKeyCode() != KeyEvent.VK_ENTER )
+            // Teclas de navegação
+            if ( keyCode == KeyEvent.VK_DOWN )
+            {
+                if ( tabela_busca.getRowCount() > 0 )
+                {
+                    int selected = tabela_busca.getSelectedRow();
+                    int next = ( selected < 0 ) ? 0 : Math.min( selected + 1, tabela_busca.getRowCount() - 1 );
+                    tabela_busca.requestFocus();
+                    tabela_busca.setRowSelectionInterval( next, next );
+                    tabela_busca.scrollRectToVisible( tabela_busca.getCellRect( next, 0, true ) );
+                }
+                return; // interrompe processamento normal
+            }
+            else if ( keyCode == KeyEvent.VK_UP )
+            {
+                if ( tabela_busca.getRowCount() > 0 )
+                {
+                    int selected = tabela_busca.getSelectedRow();
+                    int prev = ( selected > 0 ) ? selected - 1 : 0;
+                    tabela_busca.requestFocus();
+                    tabela_busca.setRowSelectionInterval( prev, prev );
+                    tabela_busca.scrollRectToVisible( tabela_busca.getCellRect( prev, 0, true ) );
+                }
+                return;
+            }
+
+            // Teclas de busca
+            if ( keyCode != KeyEvent.VK_BACK_SPACE && keyCode != KeyEvent.VK_ENTER )
             {
                 char key = evt.getKeyChar();
                 prefixo = txtDesignacao.getText().trim() + key;
-                //adicionar( stockDao.getStockLIKE_Nome( prefixo ) );
                 adicionar( prefixo );
-
             }
-            else if ( evt.getKeyCode() == KeyEvent.VK_BACK_SPACE )
+            else if ( keyCode == KeyEvent.VK_BACK_SPACE )
             {
                 try
                 {
-
-                    prefixo = prefixo.toString().trim().substring( 0, prefixo.length() - 1 );
-                    // adicionar( stockDao.getStockLIKE_Nome( prefixo ) );
+                    prefixo = prefixo.trim().substring( 0, Math.max( 0, prefixo.length() - 1 ) );
                     adicionar( prefixo );
-
                 }
                 catch ( Exception e )
                 {
-
+                    // ignorar
                 }
-
             }
         }
 
+        @Override
         public void keyReleased( KeyEvent evt )
         {
         }
 
+        @Override
         public void keyTyped( KeyEvent evt )
         {
         }
-
     }
 
     private void adicionar( String designacao )
     {
-        int contTotal = 0, contTotalStockVazio = 0, contTotalStockCritco = 0, contTotalStockNormal = 0, contTotalServico = 0;
-        Iterator<BuscaModeloProduto> iterator = fonte_dados.iterator();
         DefaultTableModel modelo = (DefaultTableModel) tabela_busca.getModel();
         modelo.setRowCount( 0 );
 
-        while ( iterator.hasNext() )
-        {
+        int contTotal = 0, contTotalStockVazio = 0, contTotalStockCritco = 0, contTotalStockNormal = 0, contTotalServico = 0;
 
-            BuscaModeloProduto next = iterator.next();
+        for ( BuscaModeloProduto next : fonte_dados )
+        {
             if ( next.getDesignacao().toLowerCase().contains( designacao.toLowerCase() ) )
             {
                 contTotal++;
@@ -872,45 +1136,42 @@ tabela_busca.getActionMap().put("acaoF4", new AbstractAction() {
                 {
                     contTotalStockVazio++;
                 }
-
                 if ( next.getEstadoCritico().equals( "true" ) )
                 {
                     contTotalStockCritco++;
                 }
-
                 if ( next.getQtd().equals( "-" ) )
                 {
                     contTotalServico++;
                 }
-
-                else if ( Double.parseDouble( next.getQtd() ) != 0 && next.getEstadoCritico().equals( "false" ) )
+                else if ( !next.getQtd().equals( "0" ) && next.getEstadoCritico().equals( "false" ) )
                 {
                     contTotalStockNormal++;
                 }
 
-                modelo.addRow(
-                        new Object[]
-                        {
-                            next.getCodigo(),
-                            next.getDesignacao(),
-                            next.getCategoria(),
-                            next.getQtd(),
-                            next.getPrecoVenda(),
-                            next.getEstadoCritico()
-
-                        }
-                );
-
+                modelo.addRow( new Object[]
+                {
+                    next.getCodigo(),
+                    next.getDesignacao(),
+                    next.getCategoria(),
+                    next.getQtd(),
+                    next.getPrecoVenda(),
+                    next.getEstadoCritico()
+                } );
             }
-
         }
 
         lbTotalStockVazio.setText( String.valueOf( contTotalStockVazio ) );
-
         lbTotalServico.setText( String.valueOf( contTotalServico ) );
         lbTotalStockCritico.setText( String.valueOf( contTotalStockCritco ) );
         lbTotalStockNormal.setText( String.valueOf( contTotalStockNormal ) );
         lbTamnho.setText( String.valueOf( contTotal ) );
+
+        // Selecionar a primeira linha após atualização
+        if ( tabela_busca.getRowCount() > 0 )
+        {
+            tabela_busca.setRowSelectionInterval( 0, 0 );
+        }
     }
 
     private void adicionar_tabela()

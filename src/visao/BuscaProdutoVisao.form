@@ -89,7 +89,7 @@
                   <Component id="txtDesignacao" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jScrollPane1" min="-2" pref="399" max="-2" attributes="0"/>
-                  <EmptySpace pref="9" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -121,12 +121,12 @@
                 </Property>
                 <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                   <TableColumnModel selectionModel="0">
-                    <Column maxWidth="-1" minWidth="-1" prefWidth="15" resizable="true">
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="35" resizable="true">
                       <Title/>
                       <Editor/>
                       <Renderer/>
                     </Column>
-                    <Column maxWidth="-1" minWidth="-1" prefWidth="520" resizable="true">
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="400" resizable="true">
                       <Title/>
                       <Editor/>
                       <Renderer/>
@@ -141,12 +141,12 @@
                       <Editor/>
                       <Renderer/>
                     </Column>
-                    <Column maxWidth="-1" minWidth="-1" prefWidth="50" resizable="true">
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="80" resizable="true">
                       <Title/>
                       <Editor/>
                       <Renderer/>
                     </Column>
-                    <Column maxWidth="-1" minWidth="-1" prefWidth="2" resizable="true">
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="1" resizable="true">
                       <Title/>
                       <Editor/>
                       <Renderer/>
