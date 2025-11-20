@@ -538,7 +538,7 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="btnProcessar" min="-2" pref="117" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jlEmpresa" pref="100" max="32767" attributes="0"/>
+                              <Component id="jlEmpresa" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="btnCancelar" min="-2" pref="80" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>

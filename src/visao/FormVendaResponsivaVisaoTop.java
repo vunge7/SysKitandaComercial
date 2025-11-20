@@ -158,6 +158,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private static final int INDEX_TABLE_TAXA_IVA = 6;
 
     private String doc = "";
+    
+    
 
     public FormVendaResponsivaVisaoTop( int cod_usuario, BDConexao conexao ) throws SQLException
     {
