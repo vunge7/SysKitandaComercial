@@ -35,6 +35,9 @@ import static visao.VendaUsuarioVisao.table;
 public class BuscaProdutoVisao extends javax.swing.JDialog
 {
 
+    
+    
+    
     private Vector<BuscaModeloProduto> fonte_dados = null;
     private StoksController stoksController;
     private static ProdutosImpostoController produtosImpostoController;
