@@ -1941,18 +1941,12 @@ public class VendaUsuarioResponsivaVisao extends javax.swing.JFrame
 
     private void tablePropertyChange(java.beans.PropertyChangeEvent evt)//GEN-FIRST:event_tablePropertyChange
     {//GEN-HEADEREND:event_tablePropertyChange
-        // TODO add your handling code here:
 
-//        if ( table.getSelectedColumn() == 3 )
-//        {
-//           
-//        }
-        if ( table.getSelectedColumn() == 4 || table.getSelectedColumn() == 5 )
-//        if ( table.getSelectedColumn() == 3 || table.getSelectedColumn() == 4 || table.getSelectedColumn() == 5 )
+        if ( table.getSelectedColumn() == 3 || table.getSelectedColumn() == 4 || table.getSelectedColumn() == 5 )
         {
-//            actualizarPreco();
-            System.out.println( "Qtd......" );
-//            actualizarQtdTable();
+//////            actualizarPreco();
+////            System.out.println( "Qtd......" );
+            actualizarQtdTable();
         }
 
     }//GEN-LAST:event_tablePropertyChange
@@ -4049,8 +4043,8 @@ public class VendaUsuarioResponsivaVisao extends javax.swing.JFrame
 
     private static void valor_por_extenco()
     {
-        BigDecimal total = BigDecimal.valueOf( CfMethods.parseMoedaFormatada( txtTotalPagar.getText() ) );
-//        BigDecimal total = CfMethods.parseMoedaFormatadaBigDecimal( txtTotalPagar.getText() );
+//        BigDecimal total = BigDecimal.valueOf( CfMethods.parseMoedaFormatada( txtTotalPagar.getText() ) );
+        BigDecimal total = CfMethods.parseMoedaFormatadaBigDecimal( txtTotalPagar.getText() );
         lbValorPorExtenco.setText( MetodosUtil.valorPorExtensoBigDecima( total, getMoeda().getDesignacao() ) );
     }
 
@@ -6990,7 +6984,7 @@ public class VendaUsuarioResponsivaVisao extends javax.swing.JFrame
             }
             else
             {
-                resetValue( "Não é possivel para esta quantidade.", 4 );
+                resetValue( "Não é possivel para esta quantidade. TESTE$$$$", 4 );
             }
         }
     }
