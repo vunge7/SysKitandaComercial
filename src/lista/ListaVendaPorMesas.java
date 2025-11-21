@@ -4,10 +4,17 @@
  */
 package lista;
 
-
+import comercial.controller.ClientesController;
+import comercial.controller.DocumentosController;
+import comercial.controller.ItemVendasController;
+import comercial.controller.MesasController;
+import comercial.controller.VendasController;
 import java.sql.Connection;
 import dao.ItemVendaDao;
 import dao.VendaDao;
+import entity.Documento;
+import entity.TbCliente;
+import entity.TbMesas;
 import entity.TbVenda;
 import java.io.File;
 import java.sql.SQLException;
@@ -352,22 +359,40 @@ public class ListaVendaPorMesas
         System.err.println( "COD VENDA: " + this.codigo );
 
         java.sql.Connection connection = conexao.getConnectionAtiva();
+
+        ItemVendasController itemVendasController = new ItemVendasController( conexao );
+        MesasController mesasController = new MesasController( conexao );
+        VendasController vendasController = new VendasController( conexao );
+        DocumentosController documentosController = new DocumentosController( conexao );
+        ClientesController clientesController = new ClientesController( conexao );
+
+        TbVenda venda = (TbVenda) vendasController.findById( codigo );
+
+        int idDocuemnto = venda.getFkDocumento().getPkDocumento();
+
+        Documento documento = (Documento) documentosController.findById( idDocuemnto );
+
+        TbMesas mesa = (TbMesas) mesasController.findById( itemVendasController.getFkMesasByCodigoVenda( codigo ) );
+        
+        TbCliente cliente = clientesController.findByCodigo( venda.getCodigoCliente().getCodigo());
+        
+        
         HashMap hashMap = new HashMap();
 
         hashMap.put( "CODIGO_VENDA", this.codigo );
 //        hashMap.put( "CODIGO_MESA", getCodMesa() );
         hashMap.put( "PARM_LUGAR", this.pk_lugares );
-        hashMap.put( "CODIGO_MESA", itemVendaDao.getAllItemVendasByIdVenda( codigo ).get( 0 ).getFkMesas().getPkMesas() );
-        hashMap.put( "DESIGNACAO_MESA", itemVendaDao.getAllItemVendasByIdVenda( codigo ).get( 0 ).getFkMesas().getDesignacao() );
+        hashMap.put( "CODIGO_MESA", mesa.getPkMesas() );
+        hashMap.put( "DESIGNACAO_MESA", mesa.getDesignacao() );
 
-        hashMap.put( "DOCUMENTO", vendaDao.findTbVenda( codigo ).getFkDocumento().getDesignacao() );
+        hashMap.put( "DOCUMENTO", documento.getDesignacao() );
         hashMap.put( "SOFTWARE_VERSION", VERSION_SOFTWARE );
         hashMap.put( "SOFTWARE_NAME", NAME_SOFTWARE );
-        hashMap.put( "REF_COD_FACT", getRefCodFact( vendaDao.findTbVenda( codigo ).getRefCodFact() ) );
+        hashMap.put( "REF_COD_FACT", venda.getRefCodFact() );
         hashMap.put( "STATUS_DOCUMENTO", this.status_documento );
 
 //        hashMap.put( "MOTIVO_ISENCAO", this.motivo_isencao );
-        hashMap.put( "NIF_CLIENTE_CONSOMIDOR_FINAL", setConsumidorFinal( vendaDao.findTbVenda( codigo ) ) );
+        hashMap.put( "NIF_CLIENTE_CONSOMIDOR_FINAL", setConsumidorFinal( venda) );
         String relatorio = getCaminhoGeral();
 
         File file = new File( relatorio ).getAbsoluteFile();
@@ -387,7 +412,7 @@ public class ListaVendaPorMesas
                     case FR_A6:
                     {
                         jasperViewer.setVisible( false );
-                       // Imprime directamente
+                        // Imprime directamente
                         if ( !performance )
                         {
                             JasperPrintManager.printReport( jasperPrint, false );

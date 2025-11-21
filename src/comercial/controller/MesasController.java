@@ -5,7 +5,6 @@
  */
 package comercial.controller;
 
-
 import java.sql.Connection;
 import entity.AnoEconomico;
 import entity.Cambio;
@@ -20,6 +19,7 @@ import entity.TbPreco;
 import entity.TbProduto;
 import entity.TbVenda;
 import entity.TbUsuario;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class MesasController implements EntidadeFactory
     @Override
     public boolean salvar( Object object )
     {
-        TbMesas mesas = ( TbMesas ) object;
+        TbMesas mesas = (TbMesas) object;
         String INSERT = "INSERT INTO tb_mesas( designacao , "
                 + ")"
                 + " VALUES("
@@ -180,6 +180,26 @@ public class MesasController implements EntidadeFactory
         }
         return mesas;
 
+    }
+
+    // Retorna o ID da mesa a partir da designação
+    public int getIdByDescricao( String designacao ) throws SQLException
+    {
+        String sql = "SELECT pk_mesas FROM tb_mesas WHERE designacao = ?";
+
+        try ( PreparedStatement ps = conexao.prepareStatement( sql ) )
+        {
+            ps.setString( 1, designacao );
+
+            try ( ResultSet rs = ps.executeQuery() )
+            {
+                if ( rs.next() )
+                {
+                    return rs.getInt( "pk_mesas" );
+                }
+            }
+        }
+        return 0; // retorna 0 se não encontrar
     }
 
 }
