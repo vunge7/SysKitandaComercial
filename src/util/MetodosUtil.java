@@ -193,7 +193,7 @@ public class MetodosUtil
         }
         catch ( FileNotFoundException ex )
         {
-            Logger.getLogger( MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
         }
         return final_hash;
     }
@@ -341,7 +341,7 @@ public class MetodosUtil
         }
         catch ( FileNotFoundException ex )
         {
-            Logger.getLogger( MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
         }
         return final_hash;
     }
@@ -455,7 +455,7 @@ public class MetodosUtil
         }
         catch ( FileNotFoundException ex )
         {
-            Logger.getLogger( MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
         }
         return final_hash;
     }
@@ -547,7 +547,7 @@ public class MetodosUtil
         catch ( IOException ex )
         {
 
-            Logger.getLogger( MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
         }
     }
 
@@ -2177,7 +2177,7 @@ public class MetodosUtil
         }
         catch ( SQLException ex )
         {
-            Logger.getLogger( MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
         }
 
         try
@@ -2640,7 +2640,7 @@ public class MetodosUtil
 
     public static String getValorTransformadoString( double valor )
     {
-        return MetodosUtil.getNumeroTransformado( valor ).substring( 0, MetodosUtil.getNumeroTransformado( valor ).length() - 2 );
+        return MetodosUtil.getNumeroTransformado( valor ).substring(0, MetodosUtil.getNumeroTransformado( valor ).length() - 2 );
 
     }
 
@@ -2865,13 +2865,13 @@ public class MetodosUtil
             }
             catch ( FileNotFoundException ex )
             {
-                Logger.getLogger( MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
+                Logger.getLogger(MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
             }
         }
         catch ( IOException ex )
         {
             JOptionPane.showMessageDialog( null, "Erro ao criar o ficheiro", "ERRO", JOptionPane.ERROR_MESSAGE );
-            Logger.getLogger( MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
         }
     }
 
@@ -2891,13 +2891,13 @@ public class MetodosUtil
             }
             catch ( FileNotFoundException ex )
             {
-                Logger.getLogger( MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
+                Logger.getLogger(MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
             }
         }
         catch ( IOException ex )
         {
             JOptionPane.showMessageDialog( null, "Erro ao criar o ficheiro", "ERRO", JOptionPane.ERROR_MESSAGE );
-            Logger.getLogger( MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
         }
     }
 
@@ -3401,7 +3401,7 @@ public class MetodosUtil
                     }
                     catch ( InterruptedException ex )
                     {
-                        Logger.getLogger( MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
+                        Logger.getLogger(MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
                     }
                 }
             }
@@ -3423,7 +3423,7 @@ public class MetodosUtil
         }
         catch ( IOException ex )
         {
-            Logger.getLogger( MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
         }
     }
 
@@ -3457,7 +3457,7 @@ public class MetodosUtil
         }
         catch ( URISyntaxException ex )
         {
-            Logger.getLogger( MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
         }
 
         return null;
@@ -5131,7 +5131,7 @@ public class MetodosUtil
         catch ( SQLException ex )
         {
             ex.printStackTrace();
-            Logger.getLogger( MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
         }
 
         System.out.println( "DATA FECHO: " + getDataBanco( dataFecho ) );
@@ -5172,7 +5172,7 @@ public class MetodosUtil
         catch ( SQLException ex )
         {
             ex.printStackTrace();
-            Logger.getLogger( MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
         }
 
         if ( diferenca <= 30 && diferenca > 0 )

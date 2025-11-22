@@ -147,7 +147,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
     {
         initComponents();
         setLocationRelativeTo( null );
-        this.setExtendedState( VendaPOSVisao.MAXIMIZED_BOTH );
+        this.setExtendedState(VendaPOSVisao.MAXIMIZED_BOTH );
         this.id_armazem = id_armazem;
         this.id_usuario = id_usuario;
         this.conexao = conexao;
@@ -734,7 +734,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
         catch ( Exception ex )
         {
             ex.printStackTrace();
-            Logger.getLogger( VendaPOSVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(VendaPOSVisao.class.getName() ).log( Level.SEVERE, null, ex );
             JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + 2, DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
         }
 
@@ -793,25 +793,31 @@ public class VendaPOSVisao extends javax.swing.JFrame
         }
         catch ( ClassNotFoundException ex )
         {
-            java.util.logging.Logger.getLogger( VendaPOSVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            java.util.logging.Logger.getLogger(VendaPOSVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
         catch ( InstantiationException ex )
         {
-            java.util.logging.Logger.getLogger( VendaPOSVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            java.util.logging.Logger.getLogger(VendaPOSVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
         catch ( IllegalAccessException ex )
         {
-            java.util.logging.Logger.getLogger( VendaPOSVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            java.util.logging.Logger.getLogger(VendaPOSVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
         catch ( javax.swing.UnsupportedLookAndFeelException ex )
         {
-            java.util.logging.Logger.getLogger( VendaPOSVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            java.util.logging.Logger.getLogger(VendaPOSVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater( new Runnable()
+        java.awt.EventQueue.invokeLater(new Runnable()
         {
             public void run()
             {

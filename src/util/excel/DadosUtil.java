@@ -19,11 +19,33 @@ public class DadosUtil
     private String categoria;
     private String designacao;
     private BigDecimal precoVenda;
+    private String codBarra;
+    private double stock_actual;
+    private BigDecimal precoCompra;
 
     public DadosUtil()
     {
     }
     
+        public double getStock_actual()
+    {
+        return stock_actual;
+    }
+
+    public void setStock_actual( double stock_actual )
+    {
+        this.stock_actual = stock_actual;
+    }
+
+        public BigDecimal getPrecoCompra()
+    {
+        return precoCompra;
+    }
+
+    public void setPrecoCompra( BigDecimal precoCompra )
+    {
+        this.precoCompra = precoCompra;
+    }
     
 
     public String getCodManual()
@@ -64,6 +86,17 @@ public class DadosUtil
     public void setPrecoVenda( BigDecimal precoVenda )
     {
         this.precoVenda = precoVenda;
+    }
+    
+        
+    public String getCodBarra()
+    {
+        return codBarra;
+    }
+
+    public void setCodBarra( String codBarra )
+    {
+        this.codBarra = codBarra;
     }
     
     

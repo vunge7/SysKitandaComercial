@@ -18,25 +18,6 @@ import kitanda.util.CfMethods;
  */
 public class FinanceUtils
 {
-
-//    public static BigDecimal getTotalIliquidoTable( int indexColunaPreco, int indexColunaQtd, JTable table )
-//    {
-//        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
-//        BigDecimal totalIliquido = BigDecimal.ZERO;
-//
-//        for ( int i = 0; i < modelo.getRowCount(); i++ )
-//        {
-//            // Coluna 3: Preço Unitário, Coluna 4: Quantidade
-//            BigDecimal precoUnitario = BigDecimal.valueOf(
-//                    CfMethods.parseMoedaFormatada(
-//                            modelo.getValueAt( i, indexColunaPreco ).toString() ) );
-//            BigDecimal quantidade = new BigDecimal( modelo.getValueAt( i, indexColunaQtd ).toString() );
-//
-//            BigDecimal subtotal = precoUnitario.multiply( quantidade );
-//            totalIliquido = totalIliquido.add( subtotal );
-//        }
-//        return totalIliquido.setScale( 2, RoundingMode.HALF_UP );
-//    }
     
     public static BigDecimal getTotalIliquidoTable(int indexColunaPreco, int indexColunaQtd, JTable table) {
 

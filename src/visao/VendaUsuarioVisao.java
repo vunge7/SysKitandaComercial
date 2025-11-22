@@ -272,7 +272,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         getRootPane().getInputMap( JComponent.WHEN_IN_FOCUSED_WINDOW )
                 .put( KeyStroke.getKeyStroke( "F4" ), "abrirBuscaProduto" );
 
-        getRootPane().getActionMap().put( "abrirBuscaProduto", new AbstractAction()
+        getRootPane().getActionMap().put("abrirBuscaProduto", new AbstractAction()
         {
             @Override
             public void actionPerformed( ActionEvent e )
@@ -2345,7 +2345,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         catch ( Exception ex )
         {
             ex.printStackTrace();
-            Logger.getLogger( VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
             JOptionPane.showMessageDialog( null, "Não existe produto com este código de barra.", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
         }
 
@@ -2597,7 +2597,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         catch ( Exception ex )
         {
             ex.printStackTrace();
-            Logger.getLogger( VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
             JOptionPane.showMessageDialog( null, "Não existe produto com este código de barra.", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
         }
 
@@ -2776,7 +2776,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         catch ( Exception ex )
         {
 //            ex.printStackTrace();
-            Logger.getLogger( VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
             JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
         }
         finally
@@ -2827,7 +2827,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         {
             ex.printStackTrace();
             Logger
-                    .getLogger( VendaUsuarioVisao.class
+                    .getLogger(VendaUsuarioVisao.class
                             .getName() ).log( Level.SEVERE, null, ex );
             JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
         }
@@ -2850,7 +2850,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         {
             ex.printStackTrace();
             Logger
-                    .getLogger( VendaUsuarioVisao.class
+                    .getLogger(VendaUsuarioVisao.class
                             .getName() ).log( Level.SEVERE, null, ex );
             JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
         }
@@ -2933,7 +2933,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             ex.printStackTrace();
             txtQuantidadeStock.setText( "0" );
             Logger
-                    .getLogger( VendaUsuarioVisao.class
+                    .getLogger(VendaUsuarioVisao.class
                             .getName() ).log( Level.SEVERE, null, ex );
         }
 
@@ -2973,7 +2973,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         {
             ex.printStackTrace();
             Logger
-                    .getLogger( VendaUsuarioVisao.class
+                    .getLogger(VendaUsuarioVisao.class
                             .getName() ).log( Level.SEVERE, null, ex );
         }
     }
@@ -3011,7 +3011,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         {
             ex.printStackTrace();
             Logger
-                    .getLogger( VendaUsuarioVisao.class
+                    .getLogger(VendaUsuarioVisao.class
                             .getName() ).log( Level.SEVERE, null, ex );
         }
 
@@ -3793,7 +3793,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 }
                 catch ( Exception ex )
                 {
-                    Logger.getLogger( VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
+                    Logger.getLogger(VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
                 }
 
             }
@@ -3827,7 +3827,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 }
                 catch ( Exception ex )
                 {
-                    Logger.getLogger( VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
+                    Logger.getLogger(VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
                 }
 
             }
