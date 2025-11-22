@@ -263,6 +263,7 @@ public class DVML
     public static double QTD_EXISTENTE_PADRAO_SERVICO = 1000000;
     public static double QTD_DEFAULT = 6;
     public static int JANELA_VENDA = 1;
+    public static int JANELA_VENDA_TOP = 1;
     public static int JANELA_SAIDA = 16;
     public static int JANELA_VENDA_POS = 13;
     public static int JANELA_VENDA_OFICINA = 12;

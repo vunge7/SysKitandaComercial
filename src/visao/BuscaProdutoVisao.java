@@ -718,6 +718,7 @@ public class BuscaProdutoVisao extends javax.swing.JDialog
             }
             catch ( Exception e )
             {
+                e.printStackTrace();
             }
 
             try

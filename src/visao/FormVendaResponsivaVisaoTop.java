@@ -302,6 +302,19 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private void init()
     {
+        // Dentro do construtor ou depois do initComponents():
+this.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+        .put(KeyStroke.getKeyStroke("F5"), "abrirFormaPagamento");
+
+this.getRootPane().getActionMap().put("abrirFormaPagamento", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        abrirFormaPagamento(); // chama o método abaixo
+    }
+});
+
+        
+        
         cmbMoeda.setVisible( false );
         txtIniciaisCliente.addKeyListener( new TratarEventoTeclado() );
 
@@ -1716,6 +1729,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private void btnFormaPagamentoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnFormaPagamentoActionPerformed
     {//GEN-HEADEREND:event_btnFormaPagamentoActionPerformed
         removerUltimaLinhaVazia();
+        
 
         jScrollPane1.repaint();
         if ( MetodosUtil.licencaValidada( conexao ) )
@@ -1737,48 +1751,38 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
         table.getCellEditor().cancelCellEditing();
 
-//        // No construtor ou método de inicialização da janela
-//getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-//        .put(KeyStroke.getKeyStroke("F5"), "abrirFormaPagamento");
-//
-//getRootPane().getActionMap().put("abrirFormaPagamento", new AbstractAction() {
-//    @Override
-//    public void actionPerformed(ActionEvent e) {
-//        try {
-//            // Valida licença
-//            if (!MetodosUtil.licencaValidada(BDConexao.getInstancia())) {
-//                JOptionPane.showMessageDialog(null, "Licença não validada!");
-//                return;
-//            }
-//
-//            // Verifica se há itens na tabela
-//            if (MetodosUtil.tabela_vazia(table)) {
-//                JOptionPane.showMessageDialog(null, "Caro usuário, adicione itens na tabela");
-//                return;
-//            }
-//
-//            // Valida preços
-//            if (validarPrecos_tabela(table)) {
-//                return; // Se houver erro, não abre forma de pagamento
-//            }
-//
-//            // Abre o formulário de forma de pagamento
-//            new FormaPagamentoVisao(
-//                    FormVendaResponsivaVisaoTop.this,
-//                    rootPaneCheckingEnabled,
-//                    null,
-//                    DVML.VENDA_PONTUAL_TOP,
-//                    BDConexao.getInstancia()
-//            ).setVisible(true);
-//
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//        }
-//    }
-//});
 
     }//GEN-LAST:event_btnFormaPagamentoActionPerformed
 
+    private void abrirFormaPagamento() {
+
+    jScrollPane1.repaint();
+
+    if (MetodosUtil.licencaValidada(conexao)) {
+
+        if (!MetodosUtil.tabela_vazia(table)) {
+
+            if (!validarPrecos_tabela(table)) {
+                return; // Se houver erro, não abre forma de pagamento
+            }
+
+            new FormaPagamentoVisao(
+                    this,
+                    rootPaneCheckingEnabled,
+                    null,
+                    DVML.VENDA_PONTUAL_TOP,
+                    BDConexao.getInstancia()
+            ).setVisible(true);
+
+        } else {
+            JOptionPane.showMessageDialog(null, "Caro usuário, adicione itens na tabela");
+        }
+    }
+
+    table.getCellEditor().cancelCellEditing();
+}
+
+    
     private void btnProcessarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnProcessarActionPerformed
     {//GEN-HEADEREND:event_btnProcessarActionPerformed
         if ( validar() )

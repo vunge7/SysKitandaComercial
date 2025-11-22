@@ -1024,6 +1024,13 @@ public class VendaUsuarioResponsivaVisao extends javax.swing.JFrame
                 tablePropertyChange(evt);
             }
         });
+        table.addKeyListener(new java.awt.event.KeyAdapter()
+        {
+            public void keyPressed(java.awt.event.KeyEvent evt)
+            {
+                tableKeyPressed(evt);
+            }
+        });
         jScrollPane1.setViewportView(table);
         table.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         if (table.getColumnModel().getColumnCount() > 0)
@@ -1934,18 +1941,13 @@ public class VendaUsuarioResponsivaVisao extends javax.swing.JFrame
 
     private void tablePropertyChange(java.beans.PropertyChangeEvent evt)//GEN-FIRST:event_tablePropertyChange
     {//GEN-HEADEREND:event_tablePropertyChange
-        // TODO add your handling code here:
 
-//        if ( table.getSelectedColumn() == 3 )
-//        {
-//           
-//        }
-//        if ( table.getSelectedColumn() == 3 || table.getSelectedColumn() == 4 || table.getSelectedColumn() == 5 )
-//        {
+        if ( table.getSelectedColumn() == 3 || table.getSelectedColumn() == 4 || table.getSelectedColumn() == 5 )
+        {
 //////            actualizarPreco();
 ////            System.out.println( "Qtd......" );
-//////            actualizarQtdTable();
-//        }
+            actualizarQtdTable();
+        }
 
     }//GEN-LAST:event_tablePropertyChange
 
@@ -2013,6 +2015,11 @@ public class VendaUsuarioResponsivaVisao extends javax.swing.JFrame
         // TODO add your handling code here:
         dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void tableKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event_tableKeyPressed
+    {//GEN-HEADEREND:event_tableKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tableKeyPressed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
