@@ -5,20 +5,12 @@
  */
 package comercial.controller;
 
-import java.sql.Connection;
-import entity.AnoEconomico;
-import entity.Cambio;
-import entity.Documento;
-import entity.TbArmazem;
-import entity.TbBanco;
-import entity.TbCliente;
 import entity.TbItemVenda;
 import entity.TbLugares;
 import entity.TbMesas;
 import entity.TbPreco;
 import entity.TbProduto;
 import entity.TbVenda;
-import entity.TbUsuario;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -494,6 +486,83 @@ public class ItemVendasController implements EntidadeFactory
         String query = "UPDATE tb_item_venda SET status_entrega =  true "
                 + " WHERE codigo = " + cod;
         return conexao.executeUpdate( query );
+    }
+
+    public List<TbItemVenda> getAllItemVendasByIdVenda( int id_venda )
+    {
+
+        String QUERY = "SELECT * FROM tb_item_venda i "
+                + " INNER JOIN tb_venda v ON v.codigo = i.codigo_venda "
+                + " WHERE v.codigo = " + id_venda + " AND v.status_eliminado = 'false'";
+
+        ResultSet result = conexao.executeQuery( QUERY );
+        List<TbItemVenda> lista = new ArrayList<>();
+        TbItemVenda item;
+
+        try
+        {
+            while ( result.next() )
+            {
+
+                item = new TbItemVenda();
+                item.setCodigo( result.getInt( "codigo" ) );
+                item.setQuantidade( result.getInt( "quantidade" ) );
+                item.setValorIva( result.getDouble( "valor_iva" ) );
+                item.setMotivoIsensao( result.getString( "motivo_isensao" ) );
+                item.setDesconto( result.getDouble( "desconto" ) );
+                item.setTotal( result.getBigDecimal( "total" ) );
+                item.setCodigoVenda( new TbVenda( result.getInt( "codigo_venda" ) ) );
+                item.setCodigoProduto( new TbProduto( result.getInt( "codigo_produto" ) ) );
+                item.setFkPreco( new TbPreco( result.getInt( "fk_preco" ) ) );
+                item.setCodigoIsensao( result.getString( "codigo_isensao" ) );
+                item.setFkLugares( new TbLugares( result.getInt( "fk_lugares" ) ) );
+                item.setFkMesas( new TbMesas( result.getInt( "fk_mesas" ) ) );
+                item.setDataServico( result.getDate( "data_servico" ) );
+                item.setValorRetencao( result.getDouble( "valor_retencao" ) );
+                item.setDesignacaoItem( result.getString( "designacao_item" ) );
+
+                lista.add( item );
+            }
+
+        }
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
+        }
+
+        // Mesmo comportamento do método original em JPA:
+        if ( !lista.isEmpty() )
+        {
+            return lista;
+        }
+
+        // Se não existir, devolve 1 item default
+        TbItemVenda vazio = new TbItemVenda( 0 );
+        lista.add( vazio );
+        return lista;
+    }
+
+    public Integer getFkMesasByCodigoVenda( int codigoVenda )
+    {
+
+        String QUERY = "SELECT fk_mesas FROM tb_item_venda "
+                + " WHERE codigo_venda = " + codigoVenda + " LIMIT 1";
+
+        ResultSet result = conexao.executeQuery( QUERY );
+
+        try
+        {
+            if ( result.next() )
+            {
+                return result.getInt( "fk_mesas" );
+            }
+        }
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
+        }
+
+        return null; // Caso não exista mesa ligada a esta venda
     }
 
 }
