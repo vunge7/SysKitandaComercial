@@ -373,10 +373,9 @@ public class ListaVendaPorMesas
         Documento documento = (Documento) documentosController.findById( idDocuemnto );
 
         TbMesas mesa = (TbMesas) mesasController.findById( itemVendasController.getFkMesasByCodigoVenda( codigo ) );
-        
-        TbCliente cliente = clientesController.findByCodigo( venda.getCodigoCliente().getCodigo());
-        
-        
+
+        TbCliente cliente = clientesController.findByCodigo( venda.getCodigoCliente().getCodigo() );
+
         HashMap hashMap = new HashMap();
 
         hashMap.put( "CODIGO_VENDA", this.codigo );
@@ -392,7 +391,7 @@ public class ListaVendaPorMesas
         hashMap.put( "STATUS_DOCUMENTO", this.status_documento );
 
 //        hashMap.put( "MOTIVO_ISENCAO", this.motivo_isencao );
-        hashMap.put( "NIF_CLIENTE_CONSOMIDOR_FINAL", setConsumidorFinal( venda) );
+        hashMap.put( "NIF_CLIENTE_CONSOMIDOR_FINAL", setConsumidorFinal( venda ) );
         String relatorio = getCaminhoGeral();
 
         File file = new File( relatorio ).getAbsoluteFile();
@@ -405,8 +404,9 @@ public class ListaVendaPorMesas
 
             if ( jasperPrint.getPages().size() >= 1 )
             {
+
                 JasperViewer jasperViewer = new JasperViewer( jasperPrint, false );
-                switch ( this.doc_breviacao )
+                switch (this.doc_breviacao)
                 {
 
                     case FR_A6:
@@ -415,6 +415,12 @@ public class ListaVendaPorMesas
                         // Imprime directamente
                         if ( !performance )
                         {
+                            if ( jasperPrint.getPages().isEmpty() )
+                            {
+                                JOptionPane.showMessageDialog( null, "Não existem vendas a imprimir!" );
+                                return;
+                            }
+
                             JasperPrintManager.printReport( jasperPrint, false );
                         }
                     }

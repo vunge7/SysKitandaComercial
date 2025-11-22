@@ -1721,18 +1721,36 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
     }// </editor-fold>//GEN-END:initComponents
 
     private void jmVendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmVendaActionPerformed
+//        try
+//        {
+//            // TODO add your handling code here
+//
+//            new VendaUsuarioVisao(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
+//            //VendaUsuarioVisao.getObj(cod_utilizador).setVisible(true);
+//            // MetodosUtil.getObj(cod_utilizador, (VendaUsuarioVisao)).setVisible(true);
+//
+//        }
+//        catch ( Exception ex )
+//        {
+//            Logger.getLogger( MenuPrincipalRestauranteVisao.class.getName() ).log( Level.SEVERE, null, ex );
+//        }
+
         try
         {
-            // TODO add your handling code here
 
-            new VendaUsuarioVisao(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
-            //VendaUsuarioVisao.getObj(cod_utilizador).setVisible(true);
-            // MetodosUtil.getObj(cod_utilizador, (VendaUsuarioVisao)).setVisible(true);
+            try
+            {
+                new FormVendaResponsivaVisaoTop( cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
+            }
+            catch ( Exception ex )
+            {
+                ex.printStackTrace();
+            }
 
         }
         catch ( Exception ex )
         {
-            Logger.getLogger( MenuPrincipalRestauranteVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( Level.SEVERE, null, ex );
         }
 
     }//GEN-LAST:event_jmVendaActionPerformed

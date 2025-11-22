@@ -4142,14 +4142,9 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
             }
 
-//            ListaVenda listaVenda = new ListaVenda( venda.getCodigo(), false, true );
-//            ListaVenda listaVenda1 = new ListaVenda( venda.getCodigo(), false, true );
-//            ListaVenda listaVenda = new ListaVenda ( venda.getCodigo(), false, true, "Original" );
-//            ListaVenda listaVenda1 = new ListaVenda ( venda.getCodigo(), false, true, "Duplicado" );
             PrincipalPedidosVisao.mesas_livres( getLabelMesaByMesa() );
             PrincipalPedidosVisao.pintar_mesas( getLabelMesaByMesa(), mesa );
             procedimento_mesas_livre();
-//            JOptionPane.showMessageDialog( null, "Factura Convertida com sucesso!.." );
 
         }
 
