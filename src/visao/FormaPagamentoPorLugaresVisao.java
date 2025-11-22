@@ -15,6 +15,7 @@ import entity.TbVenda;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
 import javax.swing.JOptionPane;
@@ -546,7 +547,7 @@ public class FormaPagamentoPorLugaresVisao extends javax.swing.JFrame
 
     }
 
-    private void procedimento_finalizar()
+    private void procedimento_finalizar() throws SQLException
     {
 
         if ( true )

@@ -5,7 +5,6 @@
  */
 package visao;
 
-
 import java.sql.Connection;
 //import comercial.ProdutoItemVisao;
 import controller.TipoClienteController;
@@ -132,7 +131,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //    private static Ite tipoProdutosController;
     private static TbStock stock_local;
     private TbItemPedidos itemPedidos;
-    private static MesasDao mesasDao = new MesasDao(emf );
+    private static MesasDao mesasDao = new MesasDao( emf );
     private static PrecoDao precoDao = new PrecoDao( emf );
     private static CaixaDao caixaDao;
     private static PedidoDao pedidoDao = new PedidoDao( emf );
@@ -1451,10 +1450,10 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
                         dispose();
 
-                        new FormaPagamentoVisao( this, rootPaneCheckingEnabled, emf, DVML.VENDA_RESTAURANTE, BDConexao.getInstancia()).setVisible(true);
+                        new FormaPagamentoVisao( this, rootPaneCheckingEnabled, emf, DVML.VENDA_RESTAURANTE, BDConexao.getInstancia() ).setVisible( true );
 
                     }
-                    else if (opcao == JOptionPane.NO_OPTION )
+                    else if ( opcao == JOptionPane.NO_OPTION )
                     {
 
                         try
@@ -1502,7 +1501,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
     }
 
-    public static void procedimento_converter_factura()
+    public static void procedimento_converter_factura() throws SQLException
     {
 
         if ( true )
@@ -1511,6 +1510,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
             if ( salvar_venda != null )
             {
+                vendasController.actualizar_hash_and_assinatura( salvar_venda.getCodigo(), getGrossTotal() );
                 System.err.println( "VENDA AQUI " + salvar_venda.getCodigo() );
                 registrar_forma_pagamento( salvar_venda.getCodigo() );
                 salvarItemvenda( salvar_venda );
@@ -1739,15 +1739,15 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         {
             if ( rbNao_lugar.isSelected() && activo_um_lugar() )
             {
-                new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_RETAURANTE, BDConexao.getInstancia()).setVisible(true);
+                new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_RETAURANTE, BDConexao.getInstancia() ).setVisible( true );
             }
             else
             {
 
-                new BuscaProdutoVisao(this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_RETAURANTE, BDConexao.getInstancia()).setVisible(true);
+                new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_RETAURANTE, BDConexao.getInstancia() ).setVisible( true );
             }
         }
-        catch (Exception e )
+        catch ( Exception e )
         {
             e.printStackTrace();
         }
@@ -1803,7 +1803,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
     private void btClienteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btClienteActionPerformed
     {//GEN-HEADEREND:event_btClienteActionPerformed
-        new ClienteVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia()).setVisible(true);
+        new ClienteVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia() ).setVisible( true );
     }//GEN-LAST:event_btClienteActionPerformed
 
     private void txtIniciaisClienteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtIniciaisClienteActionPerformed
@@ -2000,19 +2000,19 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         }
         catch ( ClassNotFoundException ex )
         {
-            java.util.logging.Logger.getLogger(NovaGestaoPedidosVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            java.util.logging.Logger.getLogger( NovaGestaoPedidosVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
         catch ( InstantiationException ex )
         {
-            java.util.logging.Logger.getLogger(NovaGestaoPedidosVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            java.util.logging.Logger.getLogger( NovaGestaoPedidosVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
         catch ( IllegalAccessException ex )
         {
-            java.util.logging.Logger.getLogger(NovaGestaoPedidosVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            java.util.logging.Logger.getLogger( NovaGestaoPedidosVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
         catch ( javax.swing.UnsupportedLookAndFeelException ex )
         {
-            java.util.logging.Logger.getLogger(NovaGestaoPedidosVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            java.util.logging.Logger.getLogger( NovaGestaoPedidosVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
         //</editor-fold>
         //</editor-fold>
@@ -2528,7 +2528,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable()
+        java.awt.EventQueue.invokeLater( new Runnable()
         {
             public void run()
             {
@@ -4115,11 +4115,13 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         {
             JOptionPane.showMessageDialog( null, "Factura efectuada com sucesso!.." );
             TbPedido pedido = pedidoDao.findTbPedido( pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa ) );
-            PedidoDao.eliminarPedido( pedido, conexao ); // Elimina o pedido
+            PedidoDao.eliminarPedido( pedido, conexaoTransaction ); // Elimina o pedido
 
             System.err.println( "Codigo Venda: " + venda.getCodigo() );
             System.err.println( "Venda: " + venda.getCodFact() );
             gorjeta = 0;
+
+            DocumentosController.commit( conexaoTransaction );
 
 //            int numeroVias = 1;
             int numeroVias = (int) Double.parseDouble( spnCopia.getValue().toString() );
@@ -4146,6 +4148,10 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
             PrincipalPedidosVisao.pintar_mesas( getLabelMesaByMesa(), mesa );
             procedimento_mesas_livre();
 
+        }
+        else
+        {
+            DocumentosController.rollback( conexaoTransaction );
         }
 
     }
@@ -5423,7 +5429,6 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         }
 
     }
-    
 
     public static void procedimento_eliminar_item_pedido( String chave_mestre )
     {
@@ -6417,40 +6422,43 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //            status_mensagem_primaria.setText( "" );
 //        }
 //    }
-    
-    public static void verificarCaixa(int idUsuarioAtual) {
+    public static void verificarCaixa( int idUsuarioAtual )
+    {
 
-    if (!caixasController.existeCaixas()) {
-        BT_Pedidos.setEnabled(false);
-        BT_Conversao.setEnabled(false);
-        status_mensagem_primaria.setText("");
-        return;
-    }
+        if ( !caixasController.existeCaixas() )
+        {
+            BT_Pedidos.setEnabled( false );
+            BT_Conversao.setEnabled( false );
+            status_mensagem_primaria.setText( "" );
+            return;
+        }
 
-    boolean abertura = caixasController.existe_abertura(idUsuarioAtual);
-    boolean fecho = caixasController.existe_fecho(idUsuarioAtual);
+        boolean abertura = caixasController.existe_abertura( idUsuarioAtual );
+        boolean fecho = caixasController.existe_fecho( idUsuarioAtual );
 
-    // ajusta a lógica conforme o comportamento desejado:
-    // se houver abertura e ainda não houve fecho -> caixa aberto -> permitir vendas
-    if (abertura && !fecho) {
-        BT_Conversao.setEnabled(true);
-        BT_Pedidos.setEnabled(true);
-        status_mensagem_primaria.setText("");
+        // ajusta a lógica conforme o comportamento desejado:
+        // se houver abertura e ainda não houve fecho -> caixa aberto -> permitir vendas
+        if ( abertura && !fecho )
+        {
+            BT_Conversao.setEnabled( true );
+            BT_Pedidos.setEnabled( true );
+            status_mensagem_primaria.setText( "" );
+        }
+        // se houver abertura e já houve fecho -> deve abrir novo caixa
+        else if ( abertura && fecho )
+        {
+            BT_Conversao.setEnabled( false );
+            BT_Pedidos.setEnabled( false );
+            status_mensagem_primaria.setText( "Deves abrir o caixa" );
+        }
+        // se não há abertura -> desativa ações
+        else
+        {
+            BT_Conversao.setEnabled( false );
+            BT_Pedidos.setEnabled( false );
+            status_mensagem_primaria.setText( "" );
+        }
     }
-    // se houver abertura e já houve fecho -> deve abrir novo caixa
-    else if (abertura && fecho) {
-        BT_Conversao.setEnabled(false);
-        BT_Pedidos.setEnabled(false);
-        status_mensagem_primaria.setText("Deves abrir o caixa");
-    }
-    // se não há abertura -> desativa ações
-    else {
-        BT_Conversao.setEnabled(false);
-        BT_Pedidos.setEnabled(false);
-        status_mensagem_primaria.setText("");
-    }
-}
-
 
     private void setWindowsListener()
     {
@@ -6756,7 +6764,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         }
         catch ( Exception ex )
         {
-            Logger.getLogger(NovaGestaoPedidosVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger( NovaGestaoPedidosVisao.class.getName() ).log( Level.SEVERE, null, ex );
             JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
         }
 
@@ -6795,7 +6803,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         catch ( Exception ex )
         {
             ex.printStackTrace();
-            Logger.getLogger(NovaGestaoPedidosVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger( NovaGestaoPedidosVisao.class.getName() ).log( Level.SEVERE, null, ex );
         }
 
     }
