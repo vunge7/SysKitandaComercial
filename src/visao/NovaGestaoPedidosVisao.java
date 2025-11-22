@@ -62,14 +62,17 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManagerFactory;
+import javax.swing.AbstractAction;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 import static kitanda.util.CfConstantes.YYYYMMDD_HHMMSS;
 import kitanda.util.CfMethods;
@@ -256,6 +259,40 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         {
             e.printStackTrace();
         }
+        
+        
+        
+        
+            // No construtor ou método de inicialização do formulário
+        getRootPane().getInputMap( JComponent.WHEN_IN_FOCUSED_WINDOW )
+                .put( KeyStroke.getKeyStroke( "F4" ), "abrirBuscaProduto" );
+
+        getRootPane().getActionMap().put( "abrirBuscaProduto", new AbstractAction()
+        {
+            @Override
+            public void actionPerformed( ActionEvent e )
+            {
+                try
+                {
+                    if ( validar() )
+                    {
+                        new BuscaProdutoVisao(
+                                NovaGestaoPedidosVisao.this,
+                                rootPaneCheckingEnabled,
+                                getCodigoArmazem(),
+                                DVML.JANELA_RETAURANTE,
+                                BDConexao.getInstancia()
+                        ).setVisible( true );
+                    }
+                }
+                catch ( Exception ex )
+                {
+                    ex.printStackTrace();
+                }
+            }
+        } );
+
+        
 
         try
         {
@@ -1739,12 +1776,16 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         {
             if ( rbNao_lugar.isSelected() && activo_um_lugar() )
             {
-                new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_RETAURANTE, BDConexao.getInstancia() ).setVisible( true );
+                new BuscaProdutoVisao( this,
+                        rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_RETAURANTE, BDConexao.getInstancia() ).setVisible( true );
             }
             else
             {
 
-                new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_RETAURANTE, BDConexao.getInstancia() ).setVisible( true );
+                new BuscaProdutoVisao( this,
+                        rootPaneCheckingEnabled,
+                        getCodigoArmazem(), DVML.JANELA_RETAURANTE,
+                        BDConexao.getInstancia() ).setVisible( true );
             }
         }
         catch ( Exception e )
@@ -6833,7 +6874,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         System.out.println( "Aqui vai a designacao" + designacao1 );
         TbProduto produto_local = produtosController.findByCod( codigo_produto );
 
-        if ( activo_um_lugar() && rbNao_lugar.isSelected() )
+//        if ( activo_um_lugar() && rbNao_lugar.isSelected() )
+        if ( true )
         {
 
             if ( qtd_possivel( designacao1 ) )
