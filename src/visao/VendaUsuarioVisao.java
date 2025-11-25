@@ -2840,6 +2840,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         try
         {
 
+            produtosController = new ProdutosController(conexao );
             System.out.println( "ID PRODUTO EXTERIOR: " + codigo );
             TbProduto produtoLocal = (TbProduto) produtosController.findById( codigo );
 

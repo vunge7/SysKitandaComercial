@@ -491,7 +491,7 @@ public class MesesPagoClienteVisao extends javax.swing.JDialog
         for ( int i = 0; i < modelo.getRowCount(); i++ )
         {
             String mes = modelo.getValueAt( i, 0 ).toString();
-            VendaUsuarioVisao.accao_codigo_interno_enter_busca_exterior_2(
+            FormVendaResponsivaVisaoTop.accao_codigo_interno_enter_busca_exterior_2(
                     produtoId, mes );
         }
 

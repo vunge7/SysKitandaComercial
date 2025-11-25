@@ -158,8 +158,6 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private static final int INDEX_TABLE_TAXA_IVA = 6;
 
     private String doc = "";
-    
-    
 
     public FormVendaResponsivaVisaoTop( int cod_usuario, BDConexao conexao ) throws SQLException
     {
@@ -303,18 +301,18 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private void init()
     {
         // Dentro do construtor ou depois do initComponents():
-this.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-        .put(KeyStroke.getKeyStroke("F5"), "abrirFormaPagamento");
+        this.getRootPane().getInputMap( JComponent.WHEN_IN_FOCUSED_WINDOW )
+                .put( KeyStroke.getKeyStroke( "F5" ), "abrirFormaPagamento" );
 
-this.getRootPane().getActionMap().put("abrirFormaPagamento", new AbstractAction() {
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        abrirFormaPagamento(); // chama o método abaixo
-    }
-});
+        this.getRootPane().getActionMap().put( "abrirFormaPagamento", new AbstractAction()
+        {
+            @Override
+            public void actionPerformed( ActionEvent e )
+            {
+                abrirFormaPagamento(); // chama o método abaixo
+            }
+        } );
 
-        
-        
         cmbMoeda.setVisible( false );
         txtIniciaisCliente.addKeyListener( new TratarEventoTeclado() );
 
@@ -1729,7 +1727,6 @@ this.getRootPane().getActionMap().put("abrirFormaPagamento", new AbstractAction(
     private void btnFormaPagamentoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnFormaPagamentoActionPerformed
     {//GEN-HEADEREND:event_btnFormaPagamentoActionPerformed
         removerUltimaLinhaVazia();
-        
 
         jScrollPane1.repaint();
         if ( MetodosUtil.licencaValidada( conexao ) )
@@ -1754,35 +1751,41 @@ this.getRootPane().getActionMap().put("abrirFormaPagamento", new AbstractAction(
 
     }//GEN-LAST:event_btnFormaPagamentoActionPerformed
 
-    private void abrirFormaPagamento() {
+    private void abrirFormaPagamento()
+    {
 
-    jScrollPane1.repaint();
+        jScrollPane1.repaint();
 
-    if (MetodosUtil.licencaValidada(conexao)) {
+        if ( MetodosUtil.licencaValidada( conexao ) )
+        {
 
-        if (!MetodosUtil.tabela_vazia(table)) {
+            if ( !MetodosUtil.tabela_vazia( table ) )
+            {
 
-            if (!validarPrecos_tabela(table)) {
-                return; // Se houver erro, não abre forma de pagamento
+                if ( !validarPrecos_tabela( table ) )
+                {
+                    return; // Se houver erro, não abre forma de pagamento
+                }
+
+                new FormaPagamentoVisao(
+                        this,
+                        rootPaneCheckingEnabled,
+                        null,
+                        DVML.VENDA_PONTUAL_TOP,
+                        BDConexao.getInstancia()
+                ).setVisible( true );
+
             }
-
-            new FormaPagamentoVisao(
-                    this,
-                    rootPaneCheckingEnabled,
-                    null,
-                    DVML.VENDA_PONTUAL_TOP,
-                    BDConexao.getInstancia()
-            ).setVisible(true);
-
-        } else {
-            JOptionPane.showMessageDialog(null, "Caro usuário, adicione itens na tabela");
+            else
+            {
+                JOptionPane.showMessageDialog( null, "Caro usuário, adicione itens na tabela" );
+            }
         }
+
+        table.getCellEditor().cancelCellEditing();
     }
 
-    table.getCellEditor().cancelCellEditing();
-}
 
-    
     private void btnProcessarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnProcessarActionPerformed
     {//GEN-HEADEREND:event_btnProcessarActionPerformed
         if ( validar() )
@@ -6831,6 +6834,30 @@ this.getRootPane().getActionMap().put("abrirFormaPagamento", new AbstractAction(
         table.setValueAt( 1, linha_actual, columnValue );
         JOptionPane.showMessageDialog( null, msg );
         table.clearSelection();
+
+    }
+
+    public static void accao_codigo_interno_enter_busca_exterior_2( int codigo, String mes )
+    {
+
+        try
+        {
+
+            produtosController = new ProdutosController( conexao );
+            System.out.println( "ID PRODUTO EXTERIOR: " + codigo );
+            TbProduto produtoLocal = (TbProduto) produtosController.findById( codigo );
+
+            procedimentoAdicionarTabela2( produtoLocal, mes );
+
+        }
+        catch ( Exception ex )
+        {
+            ex.printStackTrace();
+            Logger
+                    .getLogger( VendaUsuarioVisao.class
+                            .getName() ).log( Level.SEVERE, null, ex );
+            JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+        }
 
     }
 
