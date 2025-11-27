@@ -1244,7 +1244,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnProcessar, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jlEmpresa, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                        .addComponent(jlEmpresa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(14, 14, 14))
@@ -1427,13 +1427,13 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             },
             new String []
             {
-                "Codigo", "Descrição", "Unidade", "Preço", "Quantidade", "Desconto", "Taxa", "Retenção", "Valor Retenção", "Valor", "Valor C/ Imposto"
+                "Codigo", "Descrição", "Unidade", "Preço", "Quantidade", "Desconto (%)", "Taxa", "Retenção", "Valor Retenção", "Valor", "Valor C/ Imposto"
             }
         )
         {
             boolean[] canEdit = new boolean []
             {
-                true, false, false, false, true, false, false, false, false, true, false
+                true, false, false, false, true, true, false, false, false, true, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex)
@@ -1808,7 +1808,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private void sp_desconto_financeiroStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_sp_desconto_financeiroStateChanged
     {//GEN-HEADEREND:event_sp_desconto_financeiroStateChanged
         // TODO add your handling code here:
-//        tratar_desconto();
+        tratar_desconto();
     }//GEN-LAST:event_sp_desconto_financeiroStateChanged
 
     private void sp_desconto_financeiroInputMethodTextChanged(java.awt.event.InputMethodEvent evt)//GEN-FIRST:event_sp_desconto_financeiroInputMethodTextChanged
@@ -6857,6 +6857,49 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                     .getLogger( VendaUsuarioVisao.class
                             .getName() ).log( Level.SEVERE, null, ex );
             JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+        }
+
+    }
+    
+     private void tratar_desconto()
+    {
+        try
+        {
+            double desconto = 0.0;
+            double total_pagar = getTotalPagar();
+            double valor_desconto_geral = (double) sp_desconto_financeiro.getValue();
+
+            if ( valor_desconto_geral > total_pagar )
+            {
+                JOptionPane.showMessageDialog( null, "O desconto global não pode ser maior que o total à pagar.", "AVISO", JOptionPane.WARNING_MESSAGE );
+                //reset desconto global
+                reset_desconto_global();
+                setTotalPagar();
+                sp_desconto_financeiro.requestFocus();
+            }
+            else if ( valor_desconto_geral == total_pagar )
+            {
+                reset_valor_entregue();
+//                txtTroco.setText( "0.0" );
+
+                desconto = ( total_pagar - valor_desconto_geral );
+                txtTotalPagar.setText( CfMethods.formatarComoMoeda( desconto ) );
+                valor_por_extenco();
+            }
+            else
+            {
+                desconto = ( total_pagar - valor_desconto_geral );
+                txtTotalPagar.setText( CfMethods.formatarComoMoeda( desconto ) );
+                reset_valor_entregue();
+//                txtValorEntregue.setText( String.valueOf( desconto ) );
+//                txtTroco.setText( "0.0" );
+                valor_por_extenco();
+
+            }
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
         }
 
     }

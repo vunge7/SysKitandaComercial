@@ -1270,7 +1270,7 @@
                     <Column editable="false" title="Unidade" type="java.lang.Object"/>
                     <Column editable="false" title="Pre&#xe7;o" type="java.lang.Object"/>
                     <Column editable="true" title="Quantidade" type="java.lang.Object"/>
-                    <Column editable="false" title="Desconto" type="java.lang.Object"/>
+                    <Column editable="true" title="Desconto (%)" type="java.lang.Object"/>
                     <Column editable="false" title="Taxa" type="java.lang.Object"/>
                     <Column editable="false" title="Reten&#xe7;&#xe3;o" type="java.lang.Object"/>
                     <Column editable="false" title="Valor Reten&#xe7;&#xe3;o" type="java.lang.Object"/>
