@@ -572,6 +572,7 @@ public boolean desactivar(BDConexao conexao, TbProduto produto) {
     {
 
         String sql = "SELECT * FROM tb_produto WHERE codigo = " + codigo;
+        System.out.println( sql );
         ResultSet result = conexao.executeQuery( sql );
         TbProduto produto = null;
 

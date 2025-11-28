@@ -689,7 +689,7 @@ public class BuscaProdutoVisao extends javax.swing.JDialog
 
     private void tratarSelecaoTabela( int linha )
     {
-        DefaultTableModel modelo = (DefaultTableModel) tabela_busca.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
         Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
 
         if ( DVML.JANELA_ENTRADA == cod_janela )
@@ -709,16 +709,15 @@ public class BuscaProdutoVisao extends javax.swing.JDialog
         else if ( DVML.JANELA_VENDA == cod_janela )
         {
 
-            try
-            {
-                VendaUsuarioVisao.accao_codigo_interno_enter_busca_exterior( codigo );
-
-            }
-            catch ( Exception e )
-            {
-                e.printStackTrace();
-            }
-
+//            try
+//            {
+//                VendaUsuarioVisao.accao_codigo_interno_enter_busca_exterior( codigo );
+//
+//            }
+//            catch ( Exception e )
+//            {
+//                e.printStackTrace();
+//            }
             try
             {
                 FormVendaResponsivaVisaoTop.accao_codigo_interno_enter_busca_exterior( codigo );
@@ -726,6 +725,7 @@ public class BuscaProdutoVisao extends javax.swing.JDialog
             }
             catch ( Exception e )
             {
+                e.printStackTrace();
             }
             dispose();
 
@@ -1124,7 +1124,7 @@ public class BuscaProdutoVisao extends javax.swing.JDialog
 
     private void adicionar( String designacao )
     {
-        DefaultTableModel modelo = (DefaultTableModel) tabela_busca.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
         modelo.setRowCount( 0 );
 
         int contTotal = 0, contTotalStockVazio = 0, contTotalStockCritco = 0, contTotalStockNormal = 0, contTotalServico = 0;
@@ -1181,7 +1181,7 @@ public class BuscaProdutoVisao extends javax.swing.JDialog
     {
 
         int contTotal = 0, contTotalStockVazio = 0, contTotalStockCritco = 0, contTotalStockNormal = 0, contTotalServico = 0;
-        DefaultTableModel modelo = (DefaultTableModel) tabela_busca.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
         modelo.setRowCount( 0 );
         Iterator<BuscaModeloProduto> iterator = fonte_dados.iterator();
         System.err.println( "SIZE-ITERATOR: " + fonte_dados.size() );
