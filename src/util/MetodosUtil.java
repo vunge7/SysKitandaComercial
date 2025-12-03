@@ -193,7 +193,7 @@ public class MetodosUtil
         }
         catch ( FileNotFoundException ex )
         {
-            Logger.getLogger(MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger( MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
         }
         return final_hash;
     }
@@ -341,7 +341,7 @@ public class MetodosUtil
         }
         catch ( FileNotFoundException ex )
         {
-            Logger.getLogger(MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger( MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
         }
         return final_hash;
     }
@@ -455,7 +455,7 @@ public class MetodosUtil
         }
         catch ( FileNotFoundException ex )
         {
-            Logger.getLogger(MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger( MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
         }
         return final_hash;
     }
@@ -547,7 +547,7 @@ public class MetodosUtil
         catch ( IOException ex )
         {
 
-            Logger.getLogger(MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger( MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
         }
     }
 
@@ -566,7 +566,7 @@ public class MetodosUtil
 
         Vector vector = new Vector();
 
-        switch ( mesesPagar )
+        switch (mesesPagar)
         {
 
             case 0:
@@ -715,7 +715,7 @@ public class MetodosUtil
 
     public static void esvaziar_tabela( JTable tabela )
     {
-        DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) tabela.getModel();
         modelo.setRowCount( 0 );
     }
 
@@ -725,7 +725,7 @@ public class MetodosUtil
 
         Vector vector = new Vector();
 
-        switch ( mesesPagar )
+        switch (mesesPagar)
         {
 
             case "Janeiro":
@@ -871,7 +871,7 @@ public class MetodosUtil
     private int getDias( int mes, int ano )
     {
 
-        switch ( mes )
+        switch (mes)
         {
             case 0:
             case 2:
@@ -908,7 +908,7 @@ public class MetodosUtil
 
     private int getDiaBissesto( int ano )
     {
-        switch ( ano )
+        switch (ano)
         {
             case 2016:
             case 2020:
@@ -1078,7 +1078,7 @@ public class MetodosUtil
             return ( "zero" );
         }
 
-        long inteiro = (long) Math.abs( vlr ); // parte inteira do valor
+        long inteiro = ( long ) Math.abs( vlr ); // parte inteira do valor
         double resto = vlr - inteiro;       // parte fracionária do valor
 
         String vlrS = String.valueOf( inteiro );
@@ -1088,7 +1088,7 @@ public class MetodosUtil
         }
 
         String s = "", saux, vlrP;
-        String centavos = String.valueOf( (int) Math.round( resto * 100 ) );
+        String centavos = String.valueOf( ( int ) Math.round( resto * 100 ) );
 
         String[] unidade
                 =
@@ -1541,7 +1541,7 @@ public class MetodosUtil
     public static String getMesPagarU( int id_mes )
     {
 
-        switch ( id_mes )
+        switch (id_mes)
         {
 
             case 1:
@@ -1602,7 +1602,7 @@ public class MetodosUtil
 
     public static void remover_item_carrinho( JTable tabela )
     {
-        DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) tabela.getModel();
         modelo.setRowCount( 0 );
 
     }
@@ -1720,15 +1720,15 @@ public class MetodosUtil
     {
 
         double salario_bruto = salario_base + getTotalSubsidio( subsidios );
-        double seguranca_social = ( salario_bruto * 0.03 );
+        double seguranca_social = (salario_bruto * 0.03);
         double material_coletavel = salario_base - seguranca_social + getTotalSubsidioTributavel( subsidios );
         //seta os dados de taxa de tributação
         DadosIrt taxas_tributacao = taxas_tributacao( material_coletavel );
 
         double parcela_fixa = taxas_tributacao.parcela_fixa;
         double excesso = taxas_tributacao.excesso;
-        double taxa = ( taxas_tributacao.percentagem / 100 );
-        double irt = ( parcela_fixa + ( ( material_coletavel - excesso ) * taxa ) );
+        double taxa = (taxas_tributacao.percentagem / 100);
+        double irt = (parcela_fixa + ( ( material_coletavel - excesso ) * taxa ));
 
         return irt;
 
@@ -2131,7 +2131,7 @@ public class MetodosUtil
     public static String getDescricaoMes( int codMes )
     {
 
-        switch ( codMes )
+        switch (codMes)
         {
             case 0:
                 return "Janeiro";
@@ -2177,7 +2177,7 @@ public class MetodosUtil
         }
         catch ( SQLException ex )
         {
-            Logger.getLogger(MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger( MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
         }
 
         try
@@ -2455,8 +2455,8 @@ public class MetodosUtil
     public static String getDataString( Date date )
     {
         Integer dia = date.getDate();
-        Integer mes = ( date.getMonth() + 1 );
-        Integer ano = ( date.getYear() + 1900 );
+        Integer mes = (date.getMonth() + 1);
+        Integer ano = (date.getYear() + 1900);
 
         String data = "";
 
@@ -2635,12 +2635,10 @@ public class MetodosUtil
         return Double.parseDouble( value );
 
     }
-    
-    
 
     public static String getValorTransformadoString( double valor )
     {
-        return MetodosUtil.getNumeroTransformado( valor ).substring(0, MetodosUtil.getNumeroTransformado( valor ).length() - 2 );
+        return MetodosUtil.getNumeroTransformado( valor ).substring( 0, MetodosUtil.getNumeroTransformado( valor ).length() - 2 );
 
     }
 
@@ -2747,15 +2745,15 @@ public class MetodosUtil
     public static double percentagem_ganho( double preco_compra, double preco_venda )
     {
 
-        double lucro = ( preco_venda - preco_compra );
-        double percetagem = ( ( lucro * 100 ) / preco_compra );
+        double lucro = (preco_venda - preco_compra);
+        double percetagem = (( lucro * 100 ) / preco_compra);
         return MetodosUtil.retirar_dizimas( percetagem );
 
     }
 
     public static double preco_venda( double percentagem_ganho, double preco_compra )
     {
-        double preco_venda = ( ( ( ( percentagem_ganho * preco_compra ) ) / 100 ) + preco_compra );
+        double preco_venda = (( ( ( percentagem_ganho * preco_compra ) ) / 100 ) + preco_compra);
         return MetodosUtil.retirar_dizimas( preco_venda );
     }
 
@@ -2797,17 +2795,17 @@ public class MetodosUtil
         if ( documento instanceof TbVenda )
         {
             System.err.println( " **********************DOC VENDA******************************" );
-            final_hash = criptografia_hash_venda( (TbVenda) documento, parmGrossTotal, conexao );
+            final_hash = criptografia_hash_venda( ( TbVenda ) documento, parmGrossTotal, conexao );
         }
         else if ( documento instanceof Notas )
         {
             System.err.println( " **********************DOC NOTAS******************************" );
-            final_hash = criptografia_hash_nota( (Notas) documento, parmGrossTotal, conexao );
+            final_hash = criptografia_hash_nota( ( Notas ) documento, parmGrossTotal, conexao );
         }
         else if ( documento instanceof Compras )
         {
             System.err.println( " **********************DOC COMPRAS ******************************" );
-            final_hash = criptografia_hash_compras( (Compras) documento, parmGrossTotal, conexao );
+            final_hash = criptografia_hash_compras( ( Compras ) documento, parmGrossTotal, conexao );
         }
 
         System.err.println( "final_hash: " + final_hash );
@@ -2865,13 +2863,13 @@ public class MetodosUtil
             }
             catch ( FileNotFoundException ex )
             {
-                Logger.getLogger(MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
+                Logger.getLogger( MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
             }
         }
         catch ( IOException ex )
         {
             JOptionPane.showMessageDialog( null, "Erro ao criar o ficheiro", "ERRO", JOptionPane.ERROR_MESSAGE );
-            Logger.getLogger(MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger( MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
         }
     }
 
@@ -2891,13 +2889,13 @@ public class MetodosUtil
             }
             catch ( FileNotFoundException ex )
             {
-                Logger.getLogger(MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
+                Logger.getLogger( MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
             }
         }
         catch ( IOException ex )
         {
             JOptionPane.showMessageDialog( null, "Erro ao criar o ficheiro", "ERRO", JOptionPane.ERROR_MESSAGE );
-            Logger.getLogger(MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger( MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
         }
     }
 
@@ -3227,7 +3225,7 @@ public class MetodosUtil
 
     public static double getTotalIVASobreTotalIliquido( List<TbItemVenda> list, double imposto )
     {
-        double taxa = ( imposto / 100 );
+        double taxa = (imposto / 100);
         return ( getTotalIliquido( list ) * taxa );
     }
 
@@ -3317,12 +3315,11 @@ public class MetodosUtil
         return Double.parseDouble( resultado );
 
     }
-    
-    public static BigDecimal valorCasasDecimaisNovoBD(BigDecimal valor, int casas) {
-    return valor.setScale(casas, RoundingMode.HALF_UP);
-}
 
-    
+    public static BigDecimal valorCasasDecimaisNovoBD( BigDecimal valor, int casas )
+    {
+        return valor.setScale( casas, RoundingMode.HALF_UP );
+    }
 
     public static int comparar_datas( Date data_1, Date data_2 )
     {
@@ -3401,7 +3398,7 @@ public class MetodosUtil
                     }
                     catch ( InterruptedException ex )
                     {
-                        Logger.getLogger(MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
+                        Logger.getLogger( MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
                     }
                 }
             }
@@ -3423,7 +3420,7 @@ public class MetodosUtil
         }
         catch ( IOException ex )
         {
-            Logger.getLogger(MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger( MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
         }
     }
 
@@ -3457,7 +3454,7 @@ public class MetodosUtil
         }
         catch ( URISyntaxException ex )
         {
-            Logger.getLogger(MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger( MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
         }
 
         return null;
@@ -3771,7 +3768,7 @@ public class MetodosUtil
     {
         AnoEconomico anoEconomico = anoEconomicoDao.getLastObject();
         int ano_economico = Integer.parseInt( anoEconomico.getDesignacao() );
-        int ano_sistema_operativo = ( new Date().getYear() + 1900 );
+        int ano_sistema_operativo = (new Date().getYear() + 1900);
 
         return ( ano_economico <= ano_sistema_operativo );
     }
@@ -3860,7 +3857,7 @@ public class MetodosUtil
     public static boolean exist_produto_tabela_formulario( JTable tabela, int codigo )
     {
 
-        DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) tabela.getModel();
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
         {
@@ -3883,9 +3880,9 @@ public class MetodosUtil
 //    }
     public static double getValorComRetencao( double qtd, double ret, double preco_venda, double desconto )
     {
-        double subtotal_linha = ( preco_venda * qtd );
-        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
-        double valor_ret = ( ( ( subtotal_linha - desconto_valor ) * ret ) / 100 );//
+        double subtotal_linha = (preco_venda * qtd);
+        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
+        double valor_ret = (( ( subtotal_linha - desconto_valor ) * ret ) / 100);//
         return ( valor_ret );
     }
 
@@ -3895,7 +3892,7 @@ public class MetodosUtil
         Documento documento_local = documentoDao.findDocumento( idDocumento );
         String abreviacao_local = documento_local.getAbreviacao();
 
-        switch ( abreviacao_local )
+        switch (abreviacao_local)
         {
             case "FT":
                 return "Facturamos o valor de: ";
@@ -3911,10 +3908,10 @@ public class MetodosUtil
     public static String iniciais_extenso_comercial( int idDocumento, DocumentosController documentosController )
     {
 
-        Documento documento_local = (Documento) documentosController.findById( idDocumento );
+        Documento documento_local = ( Documento ) documentosController.findById( idDocumento );
         String abreviacao_local = documento_local.getAbreviacao();
 
-        switch ( abreviacao_local )
+        switch (abreviacao_local)
         {
             case "FT":
                 return "Facturamos o valor de: ";
@@ -4005,7 +4002,7 @@ public class MetodosUtil
         preco_local_1.setFkProduto( produto );
         preco_local_1.setFkUsuario( usuarioDao.findTbUsuario( 15 ) );
         preco_local_1.setQtdBaixo( 1 );
-        preco_local_1.setQtdAlto( (int) DVML.QTD_DEFAULT - 1 );
+        preco_local_1.setQtdAlto( ( int ) DVML.QTD_DEFAULT - 1 );
         preco_local_1.setPrecoVenda( new BigDecimal( "150" ) );
 
         try
@@ -4026,9 +4023,9 @@ public class MetodosUtil
         preco_local_2.setFkProduto( produto );
         preco_local_2.setFkUsuario( usuarioDao.findTbUsuario( 15 ) );
         preco_local_2.setQtdBaixo( 1 );
-        preco_local_2.setQtdAlto( (int) DVML.QTD_DEFAULT - 1 );
+        preco_local_2.setQtdAlto( ( int ) DVML.QTD_DEFAULT - 1 );
         preco_local_2.setPrecoVenda( new BigDecimal( "150" ) );
-        preco_local_2.setQtdBaixo( (int) DVML.QTD_DEFAULT );
+        preco_local_2.setQtdBaixo( ( int ) DVML.QTD_DEFAULT );
         preco_local_2.setQtdAlto( 2147483647 );
         preco_local_2.setPrecoVenda( new BigDecimal( "150" ) );
 
@@ -4201,7 +4198,7 @@ public class MetodosUtil
         {
             return 0;
         }
-        int days = (int) ( ( finalDate.getTime() - initialDate.getTime() ) / ( 24 * 60 * 60 * 1000 ) );
+        int days = ( int ) ( ( finalDate.getTime() - initialDate.getTime() ) / ( 24 * 60 * 60 * 1000 ) );
 
         return ( days > 0 ? days : 0 );
     }
@@ -4217,7 +4214,7 @@ public class MetodosUtil
         while ( menor_data_1_data_2( dateInicio, dateFim ) || igual_data_1_data_2( dateInicio, dateFim ) )
         {
             calendar.setTime( dateInicio );
-            switch ( idModalidade )
+            switch (idModalidade)
             {
                 case 1:
                     if ( !( calendar.get( Calendar.DAY_OF_WEEK ) == Calendar.SATURDAY ) && !( calendar.get( Calendar.DAY_OF_WEEK ) == Calendar.SUNDAY ) )
@@ -4255,7 +4252,7 @@ public class MetodosUtil
         while ( menor_data_1_data_2( dateInicio, dateFim ) || igual_data_1_data_2( dateInicio, dateFim ) )
         {
             calendar.setTime( dateInicio );
-            switch ( idModalidade )
+            switch (idModalidade)
             {
                 case 1:
                     if ( !( calendar.get( Calendar.DAY_OF_WEEK ) == Calendar.SATURDAY ) && !( calendar.get( Calendar.DAY_OF_WEEK ) == Calendar.SUNDAY ) )
@@ -4370,8 +4367,8 @@ public class MetodosUtil
         else
         {
             Date dataContrato = funcionario.getDataContrato();
-            int anoActual = ( dataActual.getYear() + 1900 );
-            int anoContrato = ( dataContrato.getYear() + 1900 );
+            int anoActual = (dataActual.getYear() + 1900);
+            int anoContrato = (dataContrato.getYear() + 1900);
 
 //
             Date dataComeco = ( anoActual == anoContrato ) ? funcionario.getDataContrato() : stringToDate( "01/01/" + anoActual );
@@ -4401,9 +4398,9 @@ public class MetodosUtil
         //dias possíveis de trabalho do funcionário  na instituição.
         int diasPossiveisTrabalho = funcionario.getFkModalidade().getDiasUteisTrabalho();
         //valor a receber mensal 
-        double remunuracaoMensal = ( salarioBase / 12 );
+        double remunuracaoMensal = (salarioBase / 12);
         //valor a receber diário
-        double remuneracaoDiario = ( remunuracaoMensal / diasPossiveisTrabalho );
+        double remuneracaoDiario = (remunuracaoMensal / diasPossiveisTrabalho);
 
         return remuneracaoDiario;
 
@@ -4703,11 +4700,11 @@ public class MetodosUtil
     {
         if ( campo instanceof JLabel )
         {
-            ( (JLabel) campo ).setText( "" );
+            ( ( JLabel ) campo ).setText( "" );
         }
         else if ( campo instanceof JTextField )
         {
-            ( (JTextField) campo ).setText( "" );
+            ( ( JTextField ) campo ).setText( "" );
         }
 
     }
@@ -4720,7 +4717,7 @@ public class MetodosUtil
 
     public static DefaultTableModel preparar_tabela( JTable tabela )
     {
-        return (DefaultTableModel) tabela.getModel();
+        return ( DefaultTableModel ) tabela.getModel();
     }
 
     public static boolean remover_item_tabela( JTable tabela, int linha )
@@ -4776,25 +4773,25 @@ public class MetodosUtil
 
     public static double percentagemGanho( double pc, double pv )
     {
-        double pg = ( ( pv - pc ) / ( pc * 0.01 ) );
+        double pg = (( pv - pc ) / ( pc * 0.01 ));
         return pg;
     }
 
     public static double precoVendaMargem( double pc, double mg )
     {
-        double pvm = ( ( pc / 100 + mg * 0.01 ) );
+        double pvm = (( pc / 100 + mg * 0.01 ));
         return pvm;
     }
 
     public static double factor_correcao( double qtd_bruto, double qtd_liquido )
     {
-        double fc = ( qtd_bruto / qtd_liquido );
+        double fc = (qtd_bruto / qtd_liquido);
         return fc;
     }
 
     public static double custo_total( double preco_compra, double qtd_bruto, double qtd_liquido, double unidade_compra )
     {
-        double custo = ( qtd_bruto * preco_compra );
+        double custo = (qtd_bruto * preco_compra);
         double custo_total = ( custo / unidade_compra ) * 0.1;
         return custo_total;
     }
@@ -4803,7 +4800,7 @@ public class MetodosUtil
     {
         System.out.println( "PC: " + pc );
         System.out.println( "PG: " + pg );
-        double pv = ( pc + ( pc * pg * 0.01 ) );
+        double pv = (pc + ( pc * pg * 0.01 ));
         System.out.println( "PV: " + pv );
         return pv;
     }
@@ -4854,7 +4851,7 @@ public class MetodosUtil
             return ( "zero" );
         }
 
-        long inteiro = (long) Math.abs( vlr ); // parte inteira do valor
+        long inteiro = ( long ) Math.abs( vlr ); // parte inteira do valor
         double resto = vlr - inteiro;       // parte fracionária do valor
 
         String vlrS = String.valueOf( inteiro );
@@ -4864,7 +4861,7 @@ public class MetodosUtil
         }
 
         String s = "", saux, vlrP;
-        String centavos = String.valueOf( (int) Math.round( resto * 100 ) );
+        String centavos = String.valueOf( ( int ) Math.round( resto * 100 ) );
 
         String[] unidade
                 =
@@ -5079,7 +5076,7 @@ public class MetodosUtil
     {
 
         double taxaByIdProduto = produtoImpostoDao.getTaxaByIdProduto( idProduto );
-        double valor = ( ( preco * qtd ) - desconto );
+        double valor = (( preco * qtd ) - desconto);
         if ( taxaByIdProduto != 0 )
         {
             return ( valor * 1.14 );
@@ -5131,7 +5128,7 @@ public class MetodosUtil
         catch ( SQLException ex )
         {
             ex.printStackTrace();
-            Logger.getLogger(MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger( MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
         }
 
         System.out.println( "DATA FECHO: " + getDataBanco( dataFecho ) );
@@ -5172,7 +5169,7 @@ public class MetodosUtil
         catch ( SQLException ex )
         {
             ex.printStackTrace();
-            Logger.getLogger(MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger( MetodosUtil.class.getName() ).log( Level.SEVERE, null, ex );
         }
 
         if ( diferenca <= 30 && diferenca > 0 )
@@ -5193,17 +5190,17 @@ public class MetodosUtil
         if ( documento instanceof TbVenda )
         {
             System.err.println( " **********************DOC VENDA******************************" );
-            final_hash = criptografia_hash_venda( (TbVenda) documento, parmGrossTotal, conexao );
+            final_hash = criptografia_hash_venda( ( TbVenda ) documento, parmGrossTotal, conexao );
         }
         else if ( documento instanceof Notas )
         {
             System.err.println( " **********************DOC NOTAS******************************" );
-            final_hash = criptografia_hash_nota( (Notas) documento, parmGrossTotal, conexao );
+            final_hash = criptografia_hash_nota( ( Notas ) documento, parmGrossTotal, conexao );
         }
         else if ( documento instanceof Compras )
         {
             System.err.println( " **********************DOC COMPRAS ******************************" );
-            final_hash = criptografia_hash_compras( (Compras) documento, parmGrossTotal, conexao );
+            final_hash = criptografia_hash_compras( ( Compras ) documento, parmGrossTotal, conexao );
         }
 
         System.err.println( "final_hash: " + final_hash );
@@ -5219,17 +5216,17 @@ public class MetodosUtil
         if ( documento instanceof TbVenda )
         {
             System.err.println( " **********************DOC VENDA******************************" );
-            final_hash = criptografia_hash_venda2( (TbVenda) documento, parmGrossTotal, conexao );
+            final_hash = criptografia_hash_venda2( ( TbVenda ) documento, parmGrossTotal, conexao );
         }
         else if ( documento instanceof Notas )
         {
             System.err.println( " **********************DOC NOTAS******************************" );
-            final_hash = criptografia_hash_nota( (Notas) documento, parmGrossTotal, conexao );
+            final_hash = criptografia_hash_nota( ( Notas ) documento, parmGrossTotal, conexao );
         }
         else if ( documento instanceof Compras )
         {
             System.err.println( " **********************DOC COMPRAS ******************************" );
-            final_hash = criptografia_hash_compras( (Compras) documento, parmGrossTotal, conexao );
+            final_hash = criptografia_hash_compras( ( Compras ) documento, parmGrossTotal, conexao );
         }
 
         System.err.println( "final_hash: " + final_hash );
@@ -5361,7 +5358,7 @@ public class MetodosUtil
         double abono_familia = ( agregado_familiar > ( salario_base * 0.05 ) ) ? 0 : agregado_familiar;
 
         double salario_iliquido = salario_base - valor_total_faltas + total_subsidios + remuneracoesEspecies;
-        double seguranca_social = ( salario_iliquido * 0.03 ); //O agregado por lei nao poder ser adicionado para calcular o inss
+        double seguranca_social = (salario_iliquido * 0.03); //O agregado por lei nao poder ser adicionado para calcular o inss
         salario_iliquido += agregado_familiar;
 //        double material_coletavel = salario_iliquido - seguranca_social - abono_familia + getTotalSubsidioTributavel( subsidios );
         double desconto_susidios_tributaveis = getDescontoSubsidiosTributavel( funcionario, subsidios ); //alimentacao e transporte
@@ -5374,7 +5371,7 @@ public class MetodosUtil
         double excesso = RecibosVisao.taxas_tributacao.excesso;
         double taxa = RecibosVisao.taxas_tributacao.percentagem;
         taxa = taxa / 100;
-        double irt = ( parcela_fixa + ( ( material_coletavel - excesso ) * taxa ) );
+        double irt = (parcela_fixa + ( ( material_coletavel - excesso ) * taxa ));
 
         System.out.println( "*** SALARIO BASE: " + salario_base );
         System.out.println( "*** ABONO DE FAMILIA: " + abono_familia );
@@ -5463,17 +5460,22 @@ public class MetodosUtil
     {
 
         BigDecimal soma = new BigDecimal( 0 );
-        for ( TbVenda venda : list )
+
+        if ( Objects.nonNull( list ) )
         {
-            // soma += (venda.getTotalGeral() - venda.getTotalIva());
-            //TOTAL ILÍQUIDO
-            if ( venda.getFkDocumento().getPkDocumento() == pk_documento )
+            for ( TbVenda venda : list )
             {
-                soma = soma.add( getNetTotal( venda.getTbItemVendaList() ) );
-            }
+                // soma += (venda.getTotalGeral() - venda.getTotalIva());
+                //TOTAL ILÍQUIDO
+                if ( venda.getFkDocumento().getPkDocumento() == pk_documento )
+                {
+                    soma = soma.add( getNetTotal( venda.getTbItemVendaList() ) );
+                }
 //            if (venda.getFkDocumento().getPkDocumento() == pk_documento) {
 //                soma += (venda.getTotalGeral() - venda.getTotalIva());
 //            }
+
+            }
 
         }
 
@@ -5509,8 +5511,8 @@ public class MetodosUtil
         if ( taxaByIdProduto != 0 )
         {
 
-            double taxa = ( MetodosUtil.getTaxaIva( regime ) / 100 );
-            double valor_final = ( preco + ( preco * taxa ) );
+            double taxa = (MetodosUtil.getTaxaIva( regime ) / 100);
+            double valor_final = (preco + ( preco * taxa ));
             System.out.println( "TAXA: " + taxa );
             System.out.println( "VALOR FINAL: " + valor_final );
 //            return ( preco * taxa );
@@ -5642,7 +5644,7 @@ public class MetodosUtil
 
     public static void imprimir_cozinha( TbProduto produto, int id, String mesa, String lugar, String usuario, String condicao, int qtd, DadosInstituicaoController dadosInstituicaoController )
     {
-        TbDadosInstituicao dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById( 1 );
+        TbDadosInstituicao dadosInstituicao = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
         HashMap hashMap = new HashMap();
         hashMap.put( "designacao", produto.getDesignacao() );
         hashMap.put( "condicao", condicao );
@@ -5657,7 +5659,7 @@ public class MetodosUtil
 
     public static void imprimir_sala( TbProduto produto, int id, String mesa, String lugar, String usuario, String condicao, int qtd, DadosInstituicaoController dadosInstituicaoController )
     {
-        TbDadosInstituicao dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById( 1 );
+        TbDadosInstituicao dadosInstituicao = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
         HashMap hashMap = new HashMap();
         hashMap.put( "designacao", produto.getDesignacao() );
         hashMap.put( "condicao", condicao );
@@ -5673,7 +5675,7 @@ public class MetodosUtil
 //    public static void imprimir_geral_cozinha( TbProduto produto, int id, String mesa, String lugar, String usuario, String condicao, int qtd, DadosInstituicaoController dadosInstituicaoController )
     public static void imprimir_geral_cozinha( int pk_pedido, DadosInstituicaoController dadosInstituicaoController )
     {
-        TbDadosInstituicao dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById( 1 );
+        TbDadosInstituicao dadosInstituicao = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
         HashMap hashMap = new HashMap();
         hashMap.put( "ID_PEDIDO", pk_pedido );
         hashMap.put( "AREA_ENVIO", DVML.ENVIAR_TICKET );
@@ -5683,7 +5685,7 @@ public class MetodosUtil
 
     public static void imprimir_geral_sala( int pk_pedido, DadosInstituicaoController dadosInstituicaoController )
     {
-        TbDadosInstituicao dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById( 1 );
+        TbDadosInstituicao dadosInstituicao = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
         HashMap hashMap = new HashMap();
         hashMap.put( "ID_PEDIDO", pk_pedido );
         hashMap.put( "AREA_ENVIO", DVML.ENVIAR_SALA );
@@ -5699,11 +5701,11 @@ public class MetodosUtil
 
         int idPrecoRetalho = PrecosController.getLastIdPrecoByIdProdutoIntAndQTD( idProduto, 0d, conexao );
         System.out.println( "ID RETALHO: " + idPrecoRetalho );
-        TbPreco precoAntigoRetalho = (TbPreco) precosControllerLocal.findById( idPrecoRetalho );
+        TbPreco precoAntigoRetalho = ( TbPreco ) precosControllerLocal.findById( idPrecoRetalho );
         System.out.println( "PRECO RETALHO: " + precoAntigoRetalho );
 
         int idPrecoGrosso = PrecosController.getLastIdPrecoByIdProdutoIntAndPrecoAntigoQtdAlto( idProduto, precoAntigoRetalho.getQtdAlto() + 1, conexao );
-        TbPreco precoAntigoGrosso = (TbPreco) precosControllerLocal.findById( idPrecoGrosso );
+        TbPreco precoAntigoGrosso = ( TbPreco ) precosControllerLocal.findById( idPrecoGrosso );
         System.out.println( "ID GROSSO: " + idPrecoGrosso );
         System.out.println( "PRECO GROSSO: " + precoAntigoGrosso );
 
@@ -5890,7 +5892,7 @@ public class MetodosUtil
         BDConexao conexaoTransaction = BDConexao.getInstancia();
 
         DocumentosController.start( conexaoTransaction );
-        TbUsuario usuario = (TbUsuario) usuariosController.findById( idUser );
+        TbUsuario usuario = ( TbUsuario ) usuariosController.findById( idUser );
         Caixa caixa = new Caixa();
         caixa.setDataAbertura( new Date() );
         caixa.setDataFecho( null );

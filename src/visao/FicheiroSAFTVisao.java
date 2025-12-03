@@ -680,264 +680,269 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame
                     buffer.append( "<TotalCredit>" ).append( AGT_SAFT_TOTAL_CREDIT ).append( "</TotalCredit>" );
                     buffer.append( "\n" );
                     //INICIO DO CICLO DAS VENDAS
-                    for ( TbVenda venda : list_venda )
+                    
+                    if ( Objects.nonNull( list_venda))
                     {
-
-                        AGT_SAFT_INVOICE_NO = venda.getCodFact();
-                        AGT_SAFT_INVOICE_STATUS = "N";
-                        AGT_SAFT_INVOICE_STATUS_DATE = formateDate( YYYY_MM_DD_T_HH_MM_SS, venda.getDataVenda() );
-                        AGT_SAFT_SOURCE_ID = getStringValidaNomeUSuario( venda.getCodigoUsuario().getNome() );
-                        AGT_SAFT_SOURCE_BILLING = "P";
-                        AGT_SAFT_HASH = venda.getHashCod();
-                        AGT_SAFT_HASH_CONTROL = "1.0";
-                        AGT_SAFT_PERIOD = String.valueOf( venda.getDataVenda().getMonth() + 1 );
-                        AGT_SAFT_INVOICE_DATE = formateDate( YYYY_MM_DD, venda.getDataVenda() );
-                        AGT_SAFT_INVOICE_TYPE = venda.getFkDocumento().getAbreviacao();
-                        AGT_SAFT_STATUS_SELF_BILLING_INDICATOR = "0";
-                        AGT_SAFT_STATUS_CASH_VAT_SCHEME_INDICATOR = "0";
-                        AGT_SAFT_STATUS_THIRD_PARTIES_BILLING_INDICATOR = "0";
-                        AGT_SAFT_INVOICE_SOURCE_ID = getStringValidaNomeUSuario( venda.getCodigoUsuario().getNome() );
-                        AGT_SAFT_INVOICE_SYSTEM_ENTRY_DATE = formateDate( YYYY_MM_DD_T_HH_MM_SS, venda.getDataVenda() );
-                        AGT_SAFT_INVOICE_CUSTOMER_ID = String.valueOf( venda.getCodigoCliente().getCodigo() );
-
-                        buffer.append( "<Invoice>" );
+                        for ( TbVenda venda : list_venda )
                         {
 
-                            System.out.println( "INVOICE NO: " + AGT_SAFT_INVOICE_NO );
-                            //FIM DAS VENDAS
-                            buffer.append( "\n" );
-                            buffer.append( "<InvoiceNo>" ).append( AGT_SAFT_INVOICE_NO ).append( "</InvoiceNo>" );
-                            buffer.append( "\n" );
-                            buffer.append( "<DocumentStatus>" );
-                            {
-                                buffer.append( "\n" );
-                                buffer.append( "<InvoiceStatus>" ).append( AGT_SAFT_INVOICE_STATUS ).append( "</InvoiceStatus>" );
-                                buffer.append( "\n" );
-                                buffer.append( "<InvoiceStatusDate>" ).append( AGT_SAFT_INVOICE_STATUS_DATE ).append( "</InvoiceStatusDate>" );
-                                buffer.append( "\n" );
-                                buffer.append( "<SourceID>" ).append( AGT_SAFT_SOURCE_ID ).append( "</SourceID>" );
-                                buffer.append( "\n" );
-                                buffer.append( "<SourceBilling>" ).append( AGT_SAFT_SOURCE_BILLING ).append( "</SourceBilling>" );
-                                buffer.append( "\n" );
+                            AGT_SAFT_INVOICE_NO = venda.getCodFact();
+                            AGT_SAFT_INVOICE_STATUS = "N";
+                            AGT_SAFT_INVOICE_STATUS_DATE = formateDate( YYYY_MM_DD_T_HH_MM_SS, venda.getDataVenda() );
+                            AGT_SAFT_SOURCE_ID = getStringValidaNomeUSuario( venda.getCodigoUsuario().getNome() );
+                            AGT_SAFT_SOURCE_BILLING = "P";
+                            AGT_SAFT_HASH = venda.getHashCod();
+                            AGT_SAFT_HASH_CONTROL = "1.0";
+                            AGT_SAFT_PERIOD = String.valueOf( venda.getDataVenda().getMonth() + 1 );
+                            AGT_SAFT_INVOICE_DATE = formateDate( YYYY_MM_DD, venda.getDataVenda() );
+                            AGT_SAFT_INVOICE_TYPE = venda.getFkDocumento().getAbreviacao();
+                            AGT_SAFT_STATUS_SELF_BILLING_INDICATOR = "0";
+                            AGT_SAFT_STATUS_CASH_VAT_SCHEME_INDICATOR = "0";
+                            AGT_SAFT_STATUS_THIRD_PARTIES_BILLING_INDICATOR = "0";
+                            AGT_SAFT_INVOICE_SOURCE_ID = getStringValidaNomeUSuario( venda.getCodigoUsuario().getNome() );
+                            AGT_SAFT_INVOICE_SYSTEM_ENTRY_DATE = formateDate( YYYY_MM_DD_T_HH_MM_SS, venda.getDataVenda() );
+                            AGT_SAFT_INVOICE_CUSTOMER_ID = String.valueOf( venda.getCodigoCliente().getCodigo() );
 
-                            }
-                            buffer.append( "</DocumentStatus>" );
-                            buffer.append( "\n" );
-                            buffer.append( "<Hash>" ).append( AGT_SAFT_HASH ).append( "</Hash>" );
-                            buffer.append( "\n" );
-                            buffer.append( "<HashControl>" ).append( AGT_SAFT_HASH_CONTROL ).append( "</HashControl>" );
-                            buffer.append( "\n" );
-                            buffer.append( "<Period>" ).append( AGT_SAFT_PERIOD ).append( "</Period>" );
-                            buffer.append( "\n" );
-                            buffer.append( "<InvoiceDate>" ).append( AGT_SAFT_INVOICE_DATE ).append( "</InvoiceDate>" );
-                            buffer.append( "\n" );
-                            buffer.append( "<InvoiceType>" ).append( AGT_SAFT_INVOICE_TYPE ).append( "</InvoiceType>" );
-                            buffer.append( "\n" );
-
-                            buffer.append( "<SpecialRegimes>" );
-                            {
-                                buffer.append( "\n" );
-                                buffer.append( "<SelfBillingIndicator>" ).append( AGT_SAFT_STATUS_SELF_BILLING_INDICATOR ).append( "</SelfBillingIndicator>" );
-                                buffer.append( "\n" );
-                                buffer.append( "<CashVATSchemeIndicator>" ).append( AGT_SAFT_STATUS_CASH_VAT_SCHEME_INDICATOR ).append( "</CashVATSchemeIndicator>" );
-                                buffer.append( "\n" );
-                                buffer.append( "<ThirdPartiesBillingIndicator>" ).append( AGT_SAFT_STATUS_THIRD_PARTIES_BILLING_INDICATOR ).append( "</ThirdPartiesBillingIndicator>" );
-                                buffer.append( "\n" );
-
-                            }
-                            buffer.append( "</SpecialRegimes>" );
-                            buffer.append( "\n" );
-                            buffer.append( "<SourceID>" ).append( AGT_SAFT_INVOICE_SOURCE_ID ).append( "</SourceID>" );
-                            buffer.append( "\n" );
-                            buffer.append( "<SystemEntryDate>" ).append( AGT_SAFT_INVOICE_SYSTEM_ENTRY_DATE ).append( "</SystemEntryDate>" );
-                            buffer.append( "\n" );
-                            buffer.append( "<CustomerID>" ).append( AGT_SAFT_INVOICE_CUSTOMER_ID ).append( "</CustomerID>" );
-                            buffer.append( "\n" );
-
-                            list_item_venda = venda.getTbItemVendaList();
-                            line_number = 1;
-                            //INICIO LINHA
-                            for ( TbItemVenda item_venda : list_item_venda )
+                            buffer.append( "<Invoice>" );
                             {
 
-                                AGT_SAFT_LINE_NUMBER = "" + line_number;
-                                AGT_SAFT_LINE_PRODUCT_CODE = String.valueOf( item_venda.getCodigoProduto().getCodigo() );
-                                AGT_SAFT_LINE_QUANTITY = String.valueOf( item_venda.getQuantidade() );
-                                AGT_SAFT_LINE_UNIT_OF_MEASURE = "Un";
-                                AGT_SAFT_LINE_UNIT_PRICE = String.valueOf( getValorCasasDecimais( item_venda.getFkPreco().getPrecoVenda().doubleValue(), CASAS_DECIMAIS ) );
-                                AGT_SAFT_LINE_TAX_POINT_DATE = formateDate( YYYY_MM_DD, item_venda.getCodigoProduto().getDataEntrada() );
-                                AGT_SAFT_LINE_PRODUCT_DESCRIPTION = getStringValida( item_venda.getCodigoProduto().getDesignacao() );
-                                AGT_SAFT_LINE_DESCRIPTION = "N/A";
-                                AGT_SAFT_LINE_CREDIT_AMOUNT = String.valueOf( getValorCasasDecimais( item_venda.getFkPreco().getPrecoVenda().doubleValue() * item_venda.getQuantidade(), CASAS_DECIMAIS ) );
-                                AGT_SAFT_LINE_DEBIT_AMOUNT = String.valueOf( getValorCasasDecimais( item_venda.getFkPreco().getPrecoVenda().doubleValue() * item_venda.getQuantidade(), CASAS_DECIMAIS ) );
-//                                AGT_SAFT_LINE_TAX_TYPE = String.valueOf( getTaxType( item_venda.getCodigoProduto().getCodigo() ) );
-                                AGT_SAFT_LINE_TAX_TYPE = String.valueOf( item_venda.getValorIva().doubleValue() > 0 ? "IVA" : "NS" );
-                                AGT_SAFT_LINE_TAX_COUNTRY_REGION = "AO";
-//                                AGT_SAFT_LINE_TAX_CODE = String.valueOf( getTaxCode( item_venda.getCodigoProduto().getCodigo() ) );
-                                AGT_SAFT_LINE_TAX_CODE = String.valueOf( item_venda.getValorIva().doubleValue() > 0 ? "NOR" : "NS" );
-//                                AGT_SAFT_LINE_TAX_PERCENTAGE = String.valueOf( getTaxaPercantagem( item_venda.getCodigoProduto().getCodigo() ) );
-                                AGT_SAFT_LINE_TAX_PERCENTAGE = String.valueOf( item_venda.getValorIva() );
-                                //AGT_SAFT_LINE_SETTLEMENT_AMOUNT = String.valueOf(getValorCasasDecimais((item_venda.getDesconto() * item_venda.getQuantidade()), CASAS_DECIMAIS));
-                                AGT_SAFT_LINE_SETTLEMENT_AMOUNT = String.valueOf( getValorCasasDecimais( item_venda.getDesconto(), CASAS_DECIMAIS ) );
-                                AGT_SAFT_LINE_TAX_EXEMPTION_REASON = getStringValida( getMotivoIsensao( item_venda.getCodigoProduto().getCodigo() ) );
-                                AGT_SAFT_LINE_TAX_TAX_EXEMPTION_CODE = getCodigoRegime( item_venda.getCodigoProduto().getCodigo() );
-
-                                if ( item_venda.getCodigoVenda().getFkDocumento().getPkDocumento() == DVML.DOC_NOTA_CREDITO_NC )
+                                System.out.println( "INVOICE NO: " + AGT_SAFT_INVOICE_NO );
+                                //FIM DAS VENDAS
+                                buffer.append( "\n" );
+                                buffer.append( "<InvoiceNo>" ).append( AGT_SAFT_INVOICE_NO ).append( "</InvoiceNo>" );
+                                buffer.append( "\n" );
+                                buffer.append( "<DocumentStatus>" );
                                 {
-                                    AGT_LINE_REFERENCES_REFERENCE = item_venda.getCodigoVenda().getRefCodFact();
-                                    AGT_LINE_REFERENCES_REASON = ( item_venda.getCodigoVenda().getObs().length() < 50 ) ? item_venda.getCodigoVenda().getObs() : item_venda.getCodigoVenda().getObs().substring( 0, 49 ); // so e permitido 50 caracteres
+                                    buffer.append( "\n" );
+                                    buffer.append( "<InvoiceStatus>" ).append( AGT_SAFT_INVOICE_STATUS ).append( "</InvoiceStatus>" );
+                                    buffer.append( "\n" );
+                                    buffer.append( "<InvoiceStatusDate>" ).append( AGT_SAFT_INVOICE_STATUS_DATE ).append( "</InvoiceStatusDate>" );
+                                    buffer.append( "\n" );
+                                    buffer.append( "<SourceID>" ).append( AGT_SAFT_SOURCE_ID ).append( "</SourceID>" );
+                                    buffer.append( "\n" );
+                                    buffer.append( "<SourceBilling>" ).append( AGT_SAFT_SOURCE_BILLING ).append( "</SourceBilling>" );
+                                    buffer.append( "\n" );
+
                                 }
+                                buffer.append( "</DocumentStatus>" );
+                                buffer.append( "\n" );
+                                buffer.append( "<Hash>" ).append( AGT_SAFT_HASH ).append( "</Hash>" );
+                                buffer.append( "\n" );
+                                buffer.append( "<HashControl>" ).append( AGT_SAFT_HASH_CONTROL ).append( "</HashControl>" );
+                                buffer.append( "\n" );
+                                buffer.append( "<Period>" ).append( AGT_SAFT_PERIOD ).append( "</Period>" );
+                                buffer.append( "\n" );
+                                buffer.append( "<InvoiceDate>" ).append( AGT_SAFT_INVOICE_DATE ).append( "</InvoiceDate>" );
+                                buffer.append( "\n" );
+                                buffer.append( "<InvoiceType>" ).append( AGT_SAFT_INVOICE_TYPE ).append( "</InvoiceType>" );
+                                buffer.append( "\n" );
 
-                                //AGT_SAFT_LINE_ORIGINATION_ON = item_venda.
-                                buffer.append( "<Line>" );
+                                buffer.append( "<SpecialRegimes>" );
                                 {
                                     buffer.append( "\n" );
-                                    buffer.append( "<LineNumber>" ).append( AGT_SAFT_LINE_NUMBER ).append( "</LineNumber>" );
+                                    buffer.append( "<SelfBillingIndicator>" ).append( AGT_SAFT_STATUS_SELF_BILLING_INDICATOR ).append( "</SelfBillingIndicator>" );
+                                    buffer.append( "\n" );
+                                    buffer.append( "<CashVATSchemeIndicator>" ).append( AGT_SAFT_STATUS_CASH_VAT_SCHEME_INDICATOR ).append( "</CashVATSchemeIndicator>" );
+                                    buffer.append( "\n" );
+                                    buffer.append( "<ThirdPartiesBillingIndicator>" ).append( AGT_SAFT_STATUS_THIRD_PARTIES_BILLING_INDICATOR ).append( "</ThirdPartiesBillingIndicator>" );
                                     buffer.append( "\n" );
 
-                                    buffer.append( "<ProductCode>" ).append( AGT_SAFT_LINE_PRODUCT_CODE ).append( "</ProductCode>" );
-                                    buffer.append( "\n" );
-                                    buffer.append( "<ProductDescription>" ).append( AGT_SAFT_LINE_PRODUCT_DESCRIPTION ).append( "</ProductDescription>" );
-                                    buffer.append( "\n" );
-                                    buffer.append( "<Quantity>" ).append( AGT_SAFT_LINE_QUANTITY ).append( "</Quantity>" );
-                                    buffer.append( "\n" );
-                                    buffer.append( "<UnitOfMeasure>" ).append( AGT_SAFT_LINE_UNIT_OF_MEASURE ).append( "</UnitOfMeasure>" );
-                                    buffer.append( "\n" );
-                                    buffer.append( "<UnitPrice>" ).append( AGT_SAFT_LINE_UNIT_PRICE ).append( "</UnitPrice>" );
-                                    buffer.append( "\n" );
-                                    buffer.append( "<TaxPointDate>" ).append( AGT_SAFT_LINE_TAX_POINT_DATE ).append( "</TaxPointDate>" );
-                                    buffer.append( "\n" );
+                                }
+                                buffer.append( "</SpecialRegimes>" );
+                                buffer.append( "\n" );
+                                buffer.append( "<SourceID>" ).append( AGT_SAFT_INVOICE_SOURCE_ID ).append( "</SourceID>" );
+                                buffer.append( "\n" );
+                                buffer.append( "<SystemEntryDate>" ).append( AGT_SAFT_INVOICE_SYSTEM_ENTRY_DATE ).append( "</SystemEntryDate>" );
+                                buffer.append( "\n" );
+                                buffer.append( "<CustomerID>" ).append( AGT_SAFT_INVOICE_CUSTOMER_ID ).append( "</CustomerID>" );
+                                buffer.append( "\n" );
+
+                                list_item_venda = venda.getTbItemVendaList();
+                                line_number = 1;
+                                //INICIO LINHA
+                                for ( TbItemVenda item_venda : list_item_venda )
+                                {
+
+                                    AGT_SAFT_LINE_NUMBER = "" + line_number;
+                                    AGT_SAFT_LINE_PRODUCT_CODE = String.valueOf( item_venda.getCodigoProduto().getCodigo() );
+                                    AGT_SAFT_LINE_QUANTITY = String.valueOf( item_venda.getQuantidade() );
+                                    AGT_SAFT_LINE_UNIT_OF_MEASURE = "Un";
+                                    AGT_SAFT_LINE_UNIT_PRICE = String.valueOf( getValorCasasDecimais( item_venda.getFkPreco().getPrecoVenda().doubleValue(), CASAS_DECIMAIS ) );
+                                    AGT_SAFT_LINE_TAX_POINT_DATE = formateDate( YYYY_MM_DD, item_venda.getCodigoProduto().getDataEntrada() );
+                                    AGT_SAFT_LINE_PRODUCT_DESCRIPTION = getStringValida( item_venda.getCodigoProduto().getDesignacao() );
+                                    AGT_SAFT_LINE_DESCRIPTION = "N/A";
+                                    AGT_SAFT_LINE_CREDIT_AMOUNT = String.valueOf( getValorCasasDecimais( item_venda.getFkPreco().getPrecoVenda().doubleValue() * item_venda.getQuantidade(), CASAS_DECIMAIS ) );
+                                    AGT_SAFT_LINE_DEBIT_AMOUNT = String.valueOf( getValorCasasDecimais( item_venda.getFkPreco().getPrecoVenda().doubleValue() * item_venda.getQuantidade(), CASAS_DECIMAIS ) );
+//                                AGT_SAFT_LINE_TAX_TYPE = String.valueOf( getTaxType( item_venda.getCodigoProduto().getCodigo() ) );
+                                    AGT_SAFT_LINE_TAX_TYPE = String.valueOf( item_venda.getValorIva().doubleValue() > 0 ? "IVA" : "NS" );
+                                    AGT_SAFT_LINE_TAX_COUNTRY_REGION = "AO";
+//                                AGT_SAFT_LINE_TAX_CODE = String.valueOf( getTaxCode( item_venda.getCodigoProduto().getCodigo() ) );
+                                    AGT_SAFT_LINE_TAX_CODE = String.valueOf( item_venda.getValorIva().doubleValue() > 0 ? "NOR" : "NS" );
+//                                AGT_SAFT_LINE_TAX_PERCENTAGE = String.valueOf( getTaxaPercantagem( item_venda.getCodigoProduto().getCodigo() ) );
+                                    AGT_SAFT_LINE_TAX_PERCENTAGE = String.valueOf( item_venda.getValorIva() );
+                                    //AGT_SAFT_LINE_SETTLEMENT_AMOUNT = String.valueOf(getValorCasasDecimais((item_venda.getDesconto() * item_venda.getQuantidade()), CASAS_DECIMAIS));
+                                    AGT_SAFT_LINE_SETTLEMENT_AMOUNT = String.valueOf( getValorCasasDecimais( item_venda.getDesconto(), CASAS_DECIMAIS ) );
+                                    AGT_SAFT_LINE_TAX_EXEMPTION_REASON = getStringValida( getMotivoIsensao( item_venda.getCodigoProduto().getCodigo() ) );
+                                    AGT_SAFT_LINE_TAX_TAX_EXEMPTION_CODE = getCodigoRegime( item_venda.getCodigoProduto().getCodigo() );
 
                                     if ( item_venda.getCodigoVenda().getFkDocumento().getPkDocumento() == DVML.DOC_NOTA_CREDITO_NC )
                                     {
-                                        //4.1.4.19.10
-                                        buffer.append( "<References>" );
+                                        AGT_LINE_REFERENCES_REFERENCE = item_venda.getCodigoVenda().getRefCodFact();
+                                        AGT_LINE_REFERENCES_REASON = ( item_venda.getCodigoVenda().getObs().length() < 50 ) ? item_venda.getCodigoVenda().getObs() : item_venda.getCodigoVenda().getObs().substring( 0, 49 ); // so e permitido 50 caracteres
+                                    }
+
+                                    //AGT_SAFT_LINE_ORIGINATION_ON = item_venda.
+                                    buffer.append( "<Line>" );
+                                    {
+                                        buffer.append( "\n" );
+                                        buffer.append( "<LineNumber>" ).append( AGT_SAFT_LINE_NUMBER ).append( "</LineNumber>" );
+                                        buffer.append( "\n" );
+
+                                        buffer.append( "<ProductCode>" ).append( AGT_SAFT_LINE_PRODUCT_CODE ).append( "</ProductCode>" );
+                                        buffer.append( "\n" );
+                                        buffer.append( "<ProductDescription>" ).append( AGT_SAFT_LINE_PRODUCT_DESCRIPTION ).append( "</ProductDescription>" );
+                                        buffer.append( "\n" );
+                                        buffer.append( "<Quantity>" ).append( AGT_SAFT_LINE_QUANTITY ).append( "</Quantity>" );
+                                        buffer.append( "\n" );
+                                        buffer.append( "<UnitOfMeasure>" ).append( AGT_SAFT_LINE_UNIT_OF_MEASURE ).append( "</UnitOfMeasure>" );
+                                        buffer.append( "\n" );
+                                        buffer.append( "<UnitPrice>" ).append( AGT_SAFT_LINE_UNIT_PRICE ).append( "</UnitPrice>" );
+                                        buffer.append( "\n" );
+                                        buffer.append( "<TaxPointDate>" ).append( AGT_SAFT_LINE_TAX_POINT_DATE ).append( "</TaxPointDate>" );
+                                        buffer.append( "\n" );
+
+                                        if ( item_venda.getCodigoVenda().getFkDocumento().getPkDocumento() == DVML.DOC_NOTA_CREDITO_NC )
                                         {
-                                            buffer.append( "<Reference>" ).append( AGT_LINE_REFERENCES_REFERENCE ).append( "</Reference>" );
-                                            buffer.append( "\n" );
-                                            buffer.append( "<Reason>" ).append( AGT_LINE_REFERENCES_REASON ).append( "</Reason>" );
+                                            //4.1.4.19.10
+                                            buffer.append( "<References>" );
+                                            {
+                                                buffer.append( "<Reference>" ).append( AGT_LINE_REFERENCES_REFERENCE ).append( "</Reference>" );
+                                                buffer.append( "\n" );
+                                                buffer.append( "<Reason>" ).append( AGT_LINE_REFERENCES_REASON ).append( "</Reason>" );
+                                                buffer.append( "\n" );
+                                            }
+                                            buffer.append( "</References>" );
+                                        }
+
+                                        //buffer.append("<Description>").append(AGT_SAFT_LINE_DESCRIPTION).append("</Description>");
+                                        buffer.append( "<Description>" ).append( AGT_SAFT_LINE_PRODUCT_DESCRIPTION ).append( "</Description>" );
+                                        buffer.append( "\n" );
+
+                                        if ( item_venda.getCodigoVenda().getFkDocumento().getPkDocumento() == DVML.DOC_NOTA_CREDITO_NC )
+                                        {
+                                            buffer.append( "<DebitAmount>" ).append( AGT_SAFT_LINE_DEBIT_AMOUNT ).append( "</DebitAmount>" );
                                             buffer.append( "\n" );
                                         }
-                                        buffer.append( "</References>" );
-                                    }
-
-                                    //buffer.append("<Description>").append(AGT_SAFT_LINE_DESCRIPTION).append("</Description>");
-                                    buffer.append( "<Description>" ).append( AGT_SAFT_LINE_PRODUCT_DESCRIPTION ).append( "</Description>" );
-                                    buffer.append( "\n" );
-
-                                    if ( item_venda.getCodigoVenda().getFkDocumento().getPkDocumento() == DVML.DOC_NOTA_CREDITO_NC )
-                                    {
-                                        buffer.append( "<DebitAmount>" ).append( AGT_SAFT_LINE_DEBIT_AMOUNT ).append( "</DebitAmount>" );
-                                        buffer.append( "\n" );
-                                    }
-                                    else
-                                    {
-                                        buffer.append( "<CreditAmount>" ).append( AGT_SAFT_LINE_CREDIT_AMOUNT ).append( "</CreditAmount>" );
-                                        buffer.append( "\n" );
-                                    }
+                                        else
+                                        {
+                                            buffer.append( "<CreditAmount>" ).append( AGT_SAFT_LINE_CREDIT_AMOUNT ).append( "</CreditAmount>" );
+                                            buffer.append( "\n" );
+                                        }
 
 //                                    buffer.append( "<CreditAmount>" ).append( AGT_SAFT_LINE_CREDIT_AMOUNT ).append( "</CreditAmount>" );
 //                                    buffer.append( "\n" );
-                                    buffer.append( "<Tax>" );
-                                    {
+                                        buffer.append( "<Tax>" );
+                                        {
+                                            buffer.append( "\n" );
+                                            buffer.append( "<TaxType>" ).append( AGT_SAFT_LINE_TAX_TYPE ).append( "</TaxType>" );
+                                            buffer.append( "\n" );
+                                            buffer.append( "<TaxCountryRegion>" ).append( AGT_SAFT_LINE_TAX_COUNTRY_REGION ).append( "</TaxCountryRegion>" );
+                                            buffer.append( "\n" );
+                                            buffer.append( "<TaxCode>" ).append( AGT_SAFT_LINE_TAX_CODE ).append( "</TaxCode>" );
+                                            buffer.append( "\n" );
+                                            buffer.append( "<TaxPercentage>" ).append( AGT_SAFT_LINE_TAX_PERCENTAGE ).append( "</TaxPercentage>" );
+                                            buffer.append( "\n" );
+                                        }
+                                        buffer.append( "</Tax>" );
                                         buffer.append( "\n" );
-                                        buffer.append( "<TaxType>" ).append( AGT_SAFT_LINE_TAX_TYPE ).append( "</TaxType>" );
+                                        if ( !AGT_SAFT_LINE_TAX_EXEMPTION_REASON.isEmpty() )
+                                        {
+                                            buffer.append( "<TaxExemptionReason>" ).append( AGT_SAFT_LINE_TAX_EXEMPTION_REASON ).append( "</TaxExemptionReason>" );
+                                            buffer.append( "\n" );
+                                            buffer.append( "<TaxExemptionCode>" ).append( AGT_SAFT_LINE_TAX_TAX_EXEMPTION_CODE ).append( "</TaxExemptionCode>" );
+                                            buffer.append( "\n" );
+                                        }
+                                        buffer.append( "<SettlementAmount>" ).append( AGT_SAFT_LINE_SETTLEMENT_AMOUNT ).append( "</SettlementAmount>" );
                                         buffer.append( "\n" );
-                                        buffer.append( "<TaxCountryRegion>" ).append( AGT_SAFT_LINE_TAX_COUNTRY_REGION ).append( "</TaxCountryRegion>" );
-                                        buffer.append( "\n" );
-                                        buffer.append( "<TaxCode>" ).append( AGT_SAFT_LINE_TAX_CODE ).append( "</TaxCode>" );
-                                        buffer.append( "\n" );
-                                        buffer.append( "<TaxPercentage>" ).append( AGT_SAFT_LINE_TAX_PERCENTAGE ).append( "</TaxPercentage>" );
-                                        buffer.append( "\n" );
+
                                     }
-                                    buffer.append( "</Tax>" );
-                                    buffer.append( "\n" );
-                                    if ( !AGT_SAFT_LINE_TAX_EXEMPTION_REASON.isEmpty() )
-                                    {
-                                        buffer.append( "<TaxExemptionReason>" ).append( AGT_SAFT_LINE_TAX_EXEMPTION_REASON ).append( "</TaxExemptionReason>" );
-                                        buffer.append( "\n" );
-                                        buffer.append( "<TaxExemptionCode>" ).append( AGT_SAFT_LINE_TAX_TAX_EXEMPTION_CODE ).append( "</TaxExemptionCode>" );
-                                        buffer.append( "\n" );
-                                    }
-                                    buffer.append( "<SettlementAmount>" ).append( AGT_SAFT_LINE_SETTLEMENT_AMOUNT ).append( "</SettlementAmount>" );
-                                    buffer.append( "\n" );
+                                    buffer.append( "</Line>" );
+                                    line_number++;
 
                                 }
-                                buffer.append( "</Line>" );
-                                line_number++;
+                                //FIM LINHA
+                                buffer.append( "\n" );
+                                BigDecimal total_iva_sem_desconto = MetodosUtil.getTotalVendaIVASemIncluirDesconto( venda.getTbItemVendaList() );
 
-                            }
-                            //FIM LINHA
-                            buffer.append( "\n" );
-                            BigDecimal total_iva_sem_desconto = MetodosUtil.getTotalVendaIVASemIncluirDesconto( venda.getTbItemVendaList() );
-
-                            BigDecimal net_total = MetodosUtil.getNetTotal( venda.getTbItemVendaList() );
+                                BigDecimal net_total = MetodosUtil.getNetTotal( venda.getTbItemVendaList() );
 //                            double gross_total = ( net_total + total_iva_sem_desconto );
-                            BigDecimal gross_total = MetodosUtil.getGrossTotal( venda.getTbItemVendaList() );
-                            //AGT_SAFT_LINE_TAX_PAYABLE = String.valueOf( getValorCasasDecimais( venda.getTotalIva(), CASAS_DECIMAIS ) );
-                            System.out.println( "DOC: " + venda.getCodFact() + " - AGT_SAFT_LINE_TAX_PAYABLE = " + total_iva_sem_desconto );
+                                BigDecimal gross_total = MetodosUtil.getGrossTotal( venda.getTbItemVendaList() );
+                                //AGT_SAFT_LINE_TAX_PAYABLE = String.valueOf( getValorCasasDecimais( venda.getTotalIva(), CASAS_DECIMAIS ) );
+                                System.out.println( "DOC: " + venda.getCodFact() + " - AGT_SAFT_LINE_TAX_PAYABLE = " + total_iva_sem_desconto );
 //                            AGT_SAFT_LINE_TAX_PAYABLE = String.valueOf( getValorCasasDecimais( total_iva_sem_desconto, CASAS_DECIMAIS ) );
-                            AGT_SAFT_LINE_TAX_PAYABLE = String.valueOf( total_iva_sem_desconto );
+                                AGT_SAFT_LINE_TAX_PAYABLE = String.valueOf( total_iva_sem_desconto );
 
 //                            AGT_SAFT_LINE_NET_TOTAL = String.valueOf( getValorCasasDecimais( venda.getTotalGeral(), CASAS_DECIMAIS ) );
-                            AGT_SAFT_LINE_NET_TOTAL = String.valueOf( net_total );
-                            //AGT_SAFT_LINE_GROSS_TOTAL = String.valueOf( getValorCasasDecimais( venda.getTotalGeral() + venda.getTotalIva(), CASAS_DECIMAIS ) );
+                                AGT_SAFT_LINE_NET_TOTAL = String.valueOf( net_total );
+                                //AGT_SAFT_LINE_GROSS_TOTAL = String.valueOf( getValorCasasDecimais( venda.getTotalGeral() + venda.getTotalIva(), CASAS_DECIMAIS ) );
 //                            AGT_SAFT_LINE_GROSS_TOTAL = String.valueOf( getValorCasasDecimais( venda.getTotalGeral() + total_iva_sem_desconto, CASAS_DECIMAIS ) );
-                            AGT_SAFT_LINE_GROSS_TOTAL = String.valueOf( gross_total );
-                            AGT_SAFT_TOTAL_DESCONTO_FACTURA = String.valueOf( getValorCasasDecimais( venda.getDescontoTotal().doubleValue(), CASAS_DECIMAIS ) );
-                            buffer.append( "<DocumentTotals>" );
-                            {
-                                buffer.append( "\n" );
-                                buffer.append( "<TaxPayable>" ).append( AGT_SAFT_LINE_TAX_PAYABLE ).append( "</TaxPayable>" );
-                                buffer.append( "\n" );
-                                buffer.append( "<NetTotal>" ).append( AGT_SAFT_LINE_NET_TOTAL ).append( "</NetTotal>" );
-                                buffer.append( "\n" );
-                                buffer.append( "<GrossTotal>" ).append( AGT_SAFT_LINE_GROSS_TOTAL ).append( "</GrossTotal>" );
-                                buffer.append( "\n" );
-
-                                // NO CASO DE MOEDA ESTRANGEIRA
-                                if ( !Objects.equals( venda.getFkCambio().getFkMoeda().getPkMoeda(), DVML.MOEDA_NACIONAL ) )
+                                AGT_SAFT_LINE_GROSS_TOTAL = String.valueOf( gross_total );
+                                AGT_SAFT_TOTAL_DESCONTO_FACTURA = String.valueOf( getValorCasasDecimais( venda.getDescontoTotal().doubleValue(), CASAS_DECIMAIS ) );
+                                buffer.append( "<DocumentTotals>" );
                                 {
+                                    buffer.append( "\n" );
+                                    buffer.append( "<TaxPayable>" ).append( AGT_SAFT_LINE_TAX_PAYABLE ).append( "</TaxPayable>" );
+                                    buffer.append( "\n" );
+                                    buffer.append( "<NetTotal>" ).append( AGT_SAFT_LINE_NET_TOTAL ).append( "</NetTotal>" );
+                                    buffer.append( "\n" );
+                                    buffer.append( "<GrossTotal>" ).append( AGT_SAFT_LINE_GROSS_TOTAL ).append( "</GrossTotal>" );
+                                    buffer.append( "\n" );
 
-                                    AGT_SAFT_MOEDA_ESTRANGEIRA = venda.getFkCambio().getFkMoeda().getAbreviacao();
-                                    AGT_SAFT_MOEDA_CAMBIO = getValorCasasDecimais( venda.getFkCambio().getValor(), CASAS_DECIMAIS );
-
-                                    buffer.append( "<Currency>" );
+                                    // NO CASO DE MOEDA ESTRANGEIRA
+                                    if ( !Objects.equals( venda.getFkCambio().getFkMoeda().getPkMoeda(), DVML.MOEDA_NACIONAL ) )
                                     {
-                                        buffer.append( "\n" );
-                                        buffer.append( "<CurrencyCode>" ).append( AGT_SAFT_MOEDA_ESTRANGEIRA ).append( "</CurrencyCode>" );
-                                        buffer.append( "\n" );
-                                        buffer.append( "<CurrencyAmount>" ).append( AGT_SAFT_LINE_GROSS_TOTAL ).append( "</CurrencyAmount>" );
-                                        buffer.append( "\n" );
-                                        buffer.append( "<ExchangeRate>" ).append( AGT_SAFT_MOEDA_CAMBIO ).append( "</ExchangeRate>" );
-                                        buffer.append( "\n" );
+
+                                        AGT_SAFT_MOEDA_ESTRANGEIRA = venda.getFkCambio().getFkMoeda().getAbreviacao();
+                                        AGT_SAFT_MOEDA_CAMBIO = getValorCasasDecimais( venda.getFkCambio().getValor(), CASAS_DECIMAIS );
+
+                                        buffer.append( "<Currency>" );
+                                        {
+                                            buffer.append( "\n" );
+                                            buffer.append( "<CurrencyCode>" ).append( AGT_SAFT_MOEDA_ESTRANGEIRA ).append( "</CurrencyCode>" );
+                                            buffer.append( "\n" );
+                                            buffer.append( "<CurrencyAmount>" ).append( AGT_SAFT_LINE_GROSS_TOTAL ).append( "</CurrencyAmount>" );
+                                            buffer.append( "\n" );
+                                            buffer.append( "<ExchangeRate>" ).append( AGT_SAFT_MOEDA_CAMBIO ).append( "</ExchangeRate>" );
+                                            buffer.append( "\n" );
+
+                                        }
+                                        buffer.append( "</Currency>" );
 
                                     }
-                                    buffer.append( "</Currency>" );
+
+                                    //desconto
+                                    buffer.append( "<Settlement>" );
+                                    {
+                                        buffer.append( "\n" );
+                                        buffer.append( "<SettlementAmount>" ).append( AGT_SAFT_TOTAL_DESCONTO_FACTURA ).append( "</SettlementAmount>" );
+                                        buffer.append( "\n" );
+                                    }
+                                    buffer.append( "</Settlement>" );
+                                    buffer.append( "\n" );
 
                                 }
-
-                                //desconto
-                                buffer.append( "<Settlement>" );
-                                {
-                                    buffer.append( "\n" );
-                                    buffer.append( "<SettlementAmount>" ).append( AGT_SAFT_TOTAL_DESCONTO_FACTURA ).append( "</SettlementAmount>" );
-                                    buffer.append( "\n" );
-                                }
-                                buffer.append( "</Settlement>" );
+                                buffer.append( "</DocumentTotals>" );
                                 buffer.append( "\n" );
 
                             }
-                            buffer.append( "</DocumentTotals>" );
+
+                            buffer.append( "</Invoice>" );
+
                             buffer.append( "\n" );
 
-                        }
-
-                        buffer.append( "</Invoice>" );
-
-                        buffer.append( "\n" );
-
-                    }//FIM DO CICLO DAS VENDAS
+                        }//FIM DO CICLO DAS VENDAS
+                    }
+                 
 
                 }
                 buffer.append( "</SalesInvoices>" );
@@ -1576,7 +1581,8 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame
 
     private void procedimentoGerarSaft()
     {
-        if ( existe_registro() )
+//        if ( existe_registro() )
+        if ( true )
         {
             btnSalvar.setEnabled( false );
 //            actualizar_hash();

@@ -67,14 +67,14 @@ group  by u.codigo;]]>
 	<title>
 		<band height="96">
 			<textField>
-				<reportElement x="0" y="44" width="184" height="15" uuid="57c7ccb4-617f-41c9-a8ec-7940293d9fe2"/>
+				<reportElement uuid="57c7ccb4-617f-41c9-a8ec-7940293d9fe2" x="0" y="44" width="184" height="15"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Arial" size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["FECHO DIÁRIO Nº " +$P{ID_CAIXA}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="0" width="184" height="14" uuid="d05091f4-bd96-4b7f-b63b-a8617782b280"/>
+				<reportElement uuid="d05091f4-bd96-4b7f-b63b-a8617782b280" x="0" y="0" width="184" height="14"/>
 				<box leftPadding="2"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="7" isBold="false"/>
@@ -82,7 +82,7 @@ group  by u.codigo;]]>
 				<textFieldExpression><![CDATA[$F{nome_instituicao}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="10" width="184" height="14" uuid="38c8c166-0735-4011-9270-109f67d617e8"/>
+				<reportElement uuid="38c8c166-0735-4011-9270-109f67d617e8" x="0" y="10" width="184" height="14"/>
 				<box leftPadding="2"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="7" isBold="false"/>
@@ -90,7 +90,7 @@ group  by u.codigo;]]>
 				<textFieldExpression><![CDATA[$F{nif_instituicao}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="19" width="184" height="18" uuid="63dd0b94-413f-4012-aa35-796a1c46adc3"/>
+				<reportElement uuid="63dd0b94-413f-4012-aa35-796a1c46adc3" x="0" y="19" width="184" height="18"/>
 				<box leftPadding="2"/>
 				<textElement verticalAlignment="Top">
 					<font fontName="Arial" size="7" isBold="false"/>
@@ -98,28 +98,28 @@ group  by u.codigo;]]>
 				<textFieldExpression><![CDATA[$F{enderecos_inituicao}]]></textFieldExpression>
 			</textField>
 			<textField pattern="&apos;Data :&apos;dd/MM/yyyy">
-				<reportElement x="0" y="65" width="93" height="12" uuid="6b93e43f-48f7-47ec-8602-3598dc11bfdb"/>
+				<reportElement uuid="6b93e43f-48f7-47ec-8602-3598dc11bfdb" x="0" y="65" width="93" height="12"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{DATA_1}]]></textFieldExpression>
 			</textField>
 			<textField pattern="&apos;Hora: &apos;HH:mm:ss">
-				<reportElement x="0" y="77" width="69" height="12" uuid="19911f76-4762-4f39-84aa-30b8369b45a5"/>
+				<reportElement uuid="19911f76-4762-4f39-84aa-30b8369b45a5" x="0" y="77" width="69" height="12"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{DATA_1}]]></textFieldExpression>
 			</textField>
 			<textField pattern="&apos;às &apos;HH:mm:ss">
-				<reportElement x="69" y="77" width="60" height="12" uuid="9faa256b-ae37-464e-ae19-aaf0ed0f0f4b"/>
+				<reportElement uuid="9faa256b-ae37-464e-ae19-aaf0ed0f0f4b" x="69" y="77" width="60" height="12"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{DATA_2}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="93" y="65" width="92" height="12" uuid="603f9cdc-00e2-44bf-9239-f0066ef519d9"/>
+				<reportElement uuid="603f9cdc-00e2-44bf-9239-f0066ef519d9" x="93" y="65" width="92" height="12"/>
 				<box leftPadding="2"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Arial" size="7" isBold="false"/>
@@ -131,7 +131,7 @@ group  by u.codigo;]]>
 	<detail>
 		<band height="24">
 			<subreport>
-				<reportElement x="-10" y="0" width="175" height="24" uuid="ebde59f7-ae4d-4ffc-ab95-0bf9e9737f0b"/>
+				<reportElement uuid="ebde59f7-ae4d-4ffc-ab95-0bf9e9737f0b" x="-10" y="0" width="175" height="24"/>
 				<subreportParameter name="ID_DOCUMENTO">
 					<subreportParameterExpression><![CDATA[$P{ID_DOCUMENTO}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -151,6 +151,25 @@ group  by u.codigo;]]>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_reconciliacao_caixa_lavandaria.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
+		<band height="13">
+			<subreport>
+				<reportElement uuid="c71975cf-4210-4933-9edc-1ca448112c4a" x="-10" y="0" width="200" height="13"/>
+				<subreportParameter name="PARM_DATA_2">
+					<subreportParameterExpression><![CDATA[$P{DATA_2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PARM_DATA_1">
+					<subreportParameterExpression><![CDATA[$P{DATA_1}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PARM_ID_ARMAZEM">
+					<subreportParameterExpression><![CDATA[2]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PARM_ID_USUARIO">
+					<subreportParameterExpression><![CDATA[$P{ID_USUARIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_relatorio_diario_produtos_A6.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
 	</detail>
 	<columnFooter>
 		<band splitType="Stretch"/>
@@ -158,7 +177,7 @@ group  by u.codigo;]]>
 	<summary>
 		<band height="16">
 			<subreport>
-				<reportElement x="-10" y="0" width="175" height="16" uuid="61c78927-78f3-45d2-bc79-b39b2eabc161"/>
+				<reportElement uuid="61c78927-78f3-45d2-bc79-b39b2eabc161" x="-10" y="0" width="175" height="16"/>
 				<subreportParameter name="ID_CAIXA">
 					<subreportParameterExpression><![CDATA[$P{ID_CAIXA}]]></subreportParameterExpression>
 				</subreportParameter>

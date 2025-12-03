@@ -251,8 +251,8 @@ public class VendaDao extends TbVendaJpaController
             return result;
         }
 
-        TbCliente cliente = new TbCliente( 0 );
-        result.add( cliente );
+//        TbCliente cliente = new TbCliente( 0 );
+//        result.add( cliente );
 
         return result;
     }
