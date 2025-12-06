@@ -2771,6 +2771,19 @@ public class MetodosUtil
         return valor;
 
     }
+    
+//        public static double convertToDouble( String texto )
+//    {
+//        double valor = 0;
+//        //retira todo o ponto da string
+//        String valor_string = texto.replace( ".", "" );
+//        //transforma a vírgula em ponto
+//        valor_string = valor_string.replace( ",", "." );
+//        //converte em double finalmente
+//        valor = Double.parseDouble( valor_string );
+//        return valor;
+//
+//    }
 
     public static float convertToFloat( String texto )
     {
