@@ -2550,18 +2550,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
                     {
                         //##PINTAR
                         actualizar();
-                        //imprimir para a cozinha
-//                        
-//                        if ( true )
-//                        {
-//                            if ( itemPedidosLocal.getFkProdutos().getCozinha().equals( DVML.ENVIAR_TICKET ) );
-//                            {
-//                                MetodosUtil.imprimir_cozinha( itemPedidosLocal.getFkProdutos(),
-//                                        "Activo", itemPedidosLocal.getQtd(),
-//                                        dadosInstituicaoController );
-//                            }
-//
-//                        }
+
                     }
                     else
                     {
