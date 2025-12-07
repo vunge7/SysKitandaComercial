@@ -5,7 +5,6 @@
  */
 package comercial.controller;
 
-
 import java.sql.Connection;
 import entity.Familia;
 import entity.TbTipoProduto;
@@ -219,13 +218,16 @@ public class TipoProdutosController implements EntidadeFactory
 
         String FIND_BY_CODIGO = "SELECT *  FROM tb_tipo_produto  WHERE codigo = " + codigo;
         ResultSet result = conexao.executeQuery( FIND_BY_CODIGO );
-        TbTipoProduto tipoProduto = null;
+        TbTipoProduto tipo_produto = null;
         try
         {
             if ( result.next() )
             {
-                tipoProduto = new TbTipoProduto();
-                setResultSetTipoProduto( result, tipoProduto );
+                tipo_produto = new TbTipoProduto();
+                tipo_produto.setCodigo( result.getInt( "codigo" ) );
+                tipo_produto.setDesignacao( result.getString( "designacao" ) );
+                tipo_produto.setFkFamilia( new Familia( result.getInt( "fk_familia" ) ) );
+//                setResultSetTipoProduto( result, tipoProduto );
             }
 
         }
@@ -233,7 +235,7 @@ public class TipoProdutosController implements EntidadeFactory
         {
             e.printStackTrace();
         }
-        return tipoProduto;
+        return tipo_produto;
 
     }
 
@@ -257,7 +259,7 @@ public class TipoProdutosController implements EntidadeFactory
         return lista;
 
     }
-    
+
     public Vector<String> getVector1()
     {
         String FIND_ALL = "SELECT designacao FROM tb_tipo_produto WHERE fk_familia <> 1 ORDER BY designacao ASC";

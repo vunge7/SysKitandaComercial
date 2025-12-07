@@ -4619,8 +4619,99 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
         }
 
     }
+    
+    private void adicionar_centro_botao(int idTipoProduto) {
+    try {
+        System.out.println("ESTOU AQUI DALLAS");
 
-    private void adicionar_centro_botao( int idTipoPorduto )
+        // 1️⃣ Buscar tipo de produto
+        TbTipoProduto tipoProduto = tipoProdutosController.getTipoProdutoByCodigo(idTipoProduto);
+        if (tipoProduto == null) {
+            System.err.println("Tipo de produto não encontrado para id: " + idTipoProduto);
+            return;
+        }
+
+        // 2️⃣ Buscar família completa do banco
+        Familia familia = tipoProduto.getFkFamilia();
+        if (familia == null) {
+            System.err.println("Familia não encontrada para o tipo de produto: " + tipoProduto.getDesignacao());
+            return;
+        }
+
+        btn_voltar.setVisible(true);
+        designacao_categoria.setVisible(true);
+        designacao_categoria.setText(tipoProduto.getDesignacao());
+        System.err.println("Cod Tipo de Produtos: " + tipoProduto.getDesignacao());
+
+        System.out.println("ID ARMAZEM: " + id_armzem);
+        System.out.println("FAMILIA: " + familia.getPkFamilia());
+        System.out.println("ID GRUPO: " + getIdGrupo());
+
+        // 3️⃣ Buscar lista de produtos
+        List<TbProduto> lista_produtos;
+        if (familia.getPkFamilia() != DVML.COD_SERVICO) {
+            lista_produtos = stocksController.get_all_produtos_by_id_tipo_produto_and_id_armazem_and_grupo(
+                    idTipoProduto, id_armzem, getIdGrupo());
+        } else {
+            lista_produtos = produtosController.getProdutosByTipoProdutoAndIdGrupo(idTipoProduto, getIdGrupo());
+        }
+
+        if (lista_produtos == null || lista_produtos.isEmpty()) {
+            System.out.println("LISTA DE PRODUTO VAZIA.");
+            painel_central.removeAll();
+            return;
+        }
+
+        // 4️⃣ Limpar painel e preparar layout
+        painel_central.removeAll();
+        jScrollPane3.setViewportView(painel_central);
+
+        TbUsuario usuarioLocal = (TbUsuario) usuariosController.findById(idUser);
+        if (usuarioLocal == null || usuarioLocal.getIdTipoUsuario() == null) {
+            System.err.println("Usuário ou tipo de usuário não encontrado para id: " + idUser);
+            return;
+        }
+
+        botoes_object.clear();
+        this.TAMANHO_CATEGORIA = lista_produtos.size();
+        System.out.println("TAMANHO CENTRO: " + TAMANHO_CATEGORIA);
+
+        int raiz_quadrada = (int) Math.sqrt(TAMANHO_CATEGORIA);
+        int linhas = raiz_quadrada > 0 ? raiz_quadrada : 1;
+        int colunas = raiz_quadrada > 0 ? raiz_quadrada : 1;
+        painel_central.setLayout(new java.awt.GridLayout(linhas, colunas));
+        jScrollPane3.setViewportView(painel_central);
+
+        // 5️⃣ Adicionar produtos ao painel
+        for (TbProduto produto : lista_produtos) {
+            TbPreco precoObject = precosController.getLastIdPrecoByIdProdutos(produto.getCodigo());
+            double quantidadeProduto = stocksController.getQuantidadeProduto(produto.getCodigo(), id_armzem);
+
+            ProdutoItemVisao item = new ProdutoItemVisao(
+                    produto.getStocavel(),
+                    produto.getDesignacao(),
+                    produto.getPhoto(),
+                    quantidadeProduto,
+                    precoObject,
+                    DVML.FORMULARIO_RECOLHA_LAVANDARIA,
+                    usuarioLocal.getIdTipoUsuario().getIdTipoUsuario()
+            );
+
+            painel_central.add(item);
+        }
+
+        painel_central.revalidate();
+        painel_central.repaint();
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        painel_central.removeAll();
+        botoes_object.clear();
+    }
+}
+
+
+    private void adicionar_centro_botao2( int idTipoPorduto )
     {
 
         try
@@ -4628,7 +4719,6 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
 
             System.out.println( "ESTOU AQUI DALLAS" );
             TbTipoProduto tipoProduto = tipoProdutosController.getTipoProdutoByCodigo( idTipoPorduto );
-//            TbTipoProduto tipoProduto = tipoProdutoDao.findTbTipoProduto( idTipoPorduto );
             btn_voltar.setVisible( true );
             designacao_categoria.setVisible( true );
             designacao_categoria.setText( tipoProduto.getDesignacao() );
