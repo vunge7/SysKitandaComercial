@@ -1457,6 +1457,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
 
         if ( true )
         {
+            conexaoTransaction = BDConexao.getInstancia();
+            DocumentosController.start( conexaoTransaction );
             TbVenda salvar_venda = salvar_venda();
 
             if ( salvar_venda != null )
@@ -1465,7 +1467,6 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
 
                 salvarItemvenda( salvar_venda );
                 remover_dados_tabela();
-                setSalvarPedidos();
 
             }
             else
@@ -2509,7 +2510,9 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
             }
 
             TbItemPedidos itemPedidosLocal = new TbItemPedidos();
-            int cod_pedido = (pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa ));
+            int cod_pedido = pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa, conexao );
+
+            System.err.println( "$$$$CODIGO PEDIDO ACTUAL: " + cod_pedido );
             pedido = pedidoDao.findTbPedido( cod_pedido );
             itemPedidosLocal.setFkLugares( ( TbLugares ) lugaresController.findByLugar( lugar ) );
 //            itemPedidosLocal.setFkLugares( lugarDao.findTbLugares( lugarDao.getIdByDescricao( getDescricaoLugar() ) ) );
@@ -2637,7 +2640,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
     public static void setSalvarPedidos()
     {
 
-        System.out.println( "ID PEDIDO : " + pedidoDao.getLastPedidoByDefignacaoMesaSemStatus( mesa ) );
+        System.out.println( "$$$$$$ ID PEDIDO : " + pedidoDao.getLastPedidoByDefignacaoMesaSemStatus( mesa ) );
         TbPedido pedido_local;
         //busca o último pedido de uma determinada mesa, senão existe instancia um pedido como 
         if ( pedidoDao.getLastPedidoByDefignacaoMesaSemStatus( mesa ) == 0 )
@@ -2664,6 +2667,47 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
                 pedido_2.setFkMesas( mesasDao.findTbMesas( mesasDao.getIdByDescricao( mesa ) ) );
 //#ped1                
                 Integer idLastPedido = pedidoDao.criarComProcedimentos( pedido_2, conexao );
+                System.out.println( "$$$$$$ SALVAR NOVO PEDIDO >  " + idLastPedido );
+
+//                if ( idLastPedido != null )
+//                {
+//                    PrincipalPedidosVisao.mesas_livres( getLabelMesaByMesa() );
+//                    PrincipalPedidosVisao.pintar_mesas( getLabelMesaByMesa(), this.mesa );
+//                }
+//                else
+//                {
+//                    System.err.println( "ERRO AO SALVAR O PEDIDO...." );
+//                }
+            }
+            catch ( Exception e )
+            {
+                e.printStackTrace();
+            }
+
+        }
+        else
+        {
+            //JOptionPane.showMessageDialog(null, "Não Houve Feicho");
+        }
+
+    }
+
+    public static void setSalvarPedidoPosVenda( BDConexao conexaoParm )
+    {
+
+        if ( true )
+        {
+            try
+            {
+                TbPedido pedido_2 = new TbPedido();
+                pedido_2.setDataPedido( new Date() );
+                pedido_2.setHoraPedido( new Date() );
+                pedido_2.setStatusPedido( false );
+                pedido_2.setFkMesas( mesasDao.findTbMesas( mesasDao.getIdByDescricao( mesa ) ) );
+//                System.out.println( "PEDIDOS : " + pedido_2.toString() );
+//#ped1                
+                Integer idLastPedido = pedidoDao.criarComProcedimentos( pedido_2, conexaoParm );
+                System.out.println( "$$$$$$ SALVAR NOVO PEDIDO >  " + idLastPedido );
 
 //                if ( idLastPedido != null )
 //                {
@@ -3170,8 +3214,6 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
 
     public static TbVenda salvar_venda()
     {
-        conexaoTransaction = BDConexao.getInstancia();
-        DocumentosController.start( conexaoTransaction );
 
         Date data_documento = new Date();
 //        Date data_documento = dc_data_documento.getDate();
@@ -3720,6 +3762,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
             txtTotalQTD.setText( "" );
             TbPedido pedido = pedidoDao.findTbPedido( pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa ) );
             PedidoDao.eliminarPedido( pedido, conexaoTransaction ); // Elimina o pedido
+            setSalvarPedidoPosVenda( conexaoTransaction );
+
             DocumentoDao.commitTransaction( conexaoTransaction );
             gorjeta = 0;
 
@@ -4608,97 +4652,108 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
         }
 
     }
-    
-    private void adicionar_centro_botao(int idTipoProduto) {
-    try {
-        System.out.println("ESTOU AQUI DALLAS");
 
-        // 1️⃣ Buscar tipo de produto
-        TbTipoProduto tipoProduto = tipoProdutosController.getTipoProdutoByCodigo(idTipoProduto);
-        if (tipoProduto == null) {
-            System.err.println("Tipo de produto não encontrado para id: " + idTipoProduto);
-            return;
-        }
+    private void adicionar_centro_botao( int idTipoProduto )
+    {
+        try
+        {
+            System.out.println( "ESTOU AQUI DALLAS" );
 
-        // 2️⃣ Buscar família completa do banco
-        Familia familia = tipoProduto.getFkFamilia();
-        if (familia == null) {
-            System.err.println("Familia não encontrada para o tipo de produto: " + tipoProduto.getDesignacao());
-            return;
-        }
+            // 1️⃣ Buscar tipo de produto
+            TbTipoProduto tipoProduto = tipoProdutosController.getTipoProdutoByCodigo( idTipoProduto );
+            if ( tipoProduto == null )
+            {
+                System.err.println( "Tipo de produto não encontrado para id: " + idTipoProduto );
+                return;
+            }
 
-        btn_voltar.setVisible(true);
-        designacao_categoria.setVisible(true);
-        designacao_categoria.setText(tipoProduto.getDesignacao());
-        System.err.println("Cod Tipo de Produtos: " + tipoProduto.getDesignacao());
+            // 2️⃣ Buscar família completa do banco
+            Familia familia = tipoProduto.getFkFamilia();
+            if ( familia == null )
+            {
+                System.err.println( "Familia não encontrada para o tipo de produto: " + tipoProduto.getDesignacao() );
+                return;
+            }
 
-        System.out.println("ID ARMAZEM: " + id_armzem);
-        System.out.println("FAMILIA: " + familia.getPkFamilia());
-        System.out.println("ID GRUPO: " + getIdGrupo());
+            btn_voltar.setVisible( true );
+            designacao_categoria.setVisible( true );
+            designacao_categoria.setText( tipoProduto.getDesignacao() );
+            System.err.println( "Cod Tipo de Produtos: " + tipoProduto.getDesignacao() );
 
-        // 3️⃣ Buscar lista de produtos
-        List<TbProduto> lista_produtos;
-        if (familia.getPkFamilia() != DVML.COD_SERVICO) {
-            lista_produtos = stocksController.get_all_produtos_by_id_tipo_produto_and_id_armazem_and_grupo(
-                    idTipoProduto, id_armzem, getIdGrupo());
-        } else {
-            lista_produtos = produtosController.getProdutosByTipoProdutoAndIdGrupo(idTipoProduto, getIdGrupo());
-        }
+            System.out.println( "ID ARMAZEM: " + id_armzem );
+            System.out.println( "FAMILIA: " + familia.getPkFamilia() );
+            System.out.println( "ID GRUPO: " + getIdGrupo() );
 
-        if (lista_produtos == null || lista_produtos.isEmpty()) {
-            System.out.println("LISTA DE PRODUTO VAZIA.");
+            // 3️⃣ Buscar lista de produtos
+            List<TbProduto> lista_produtos;
+            if ( familia.getPkFamilia() != DVML.COD_SERVICO )
+            {
+                lista_produtos = stocksController.get_all_produtos_by_id_tipo_produto_and_id_armazem_and_grupo(
+                        idTipoProduto, id_armzem, getIdGrupo() );
+            }
+            else
+            {
+                lista_produtos = produtosController.getProdutosByTipoProdutoAndIdGrupo( idTipoProduto, getIdGrupo() );
+            }
+
+            if ( lista_produtos == null || lista_produtos.isEmpty() )
+            {
+                System.out.println( "LISTA DE PRODUTO VAZIA." );
+                painel_central.removeAll();
+                return;
+            }
+
+            // 4️⃣ Limpar painel e preparar layout
             painel_central.removeAll();
-            return;
+            jScrollPane3.setViewportView( painel_central );
+
+            TbUsuario usuarioLocal = ( TbUsuario ) usuariosController.findById( idUser );
+            if ( usuarioLocal == null || usuarioLocal.getIdTipoUsuario() == null )
+            {
+                System.err.println( "Usuário ou tipo de usuário não encontrado para id: " + idUser );
+                return;
+            }
+
+            botoes_object.clear();
+            this.TAMANHO_CATEGORIA = lista_produtos.size();
+            System.out.println( "TAMANHO CENTRO: " + TAMANHO_CATEGORIA );
+
+            int raiz_quadrada = ( int ) Math.sqrt( TAMANHO_CATEGORIA );
+            int linhas = raiz_quadrada > 0 ? raiz_quadrada : 1;
+            int colunas = raiz_quadrada > 0 ? raiz_quadrada : 1;
+            painel_central.setLayout( new java.awt.GridLayout( linhas, colunas ) );
+            jScrollPane3.setViewportView( painel_central );
+
+            // 5️⃣ Adicionar produtos ao painel
+            for ( TbProduto produto : lista_produtos )
+            {
+                TbPreco precoObject = precosController.getLastIdPrecoByIdProdutos( produto.getCodigo() );
+                double quantidadeProduto = stocksController.getQuantidadeProduto( produto.getCodigo(), id_armzem );
+
+                ProdutoItemVisao item = new ProdutoItemVisao(
+                        produto.getStocavel(),
+                        produto.getDesignacao(),
+                        produto.getPhoto(),
+                        quantidadeProduto,
+                        precoObject,
+                        DVML.FORMULARIO_RECOLHA_LAVANDARIA,
+                        usuarioLocal.getIdTipoUsuario().getIdTipoUsuario()
+                );
+
+                painel_central.add( item );
+            }
+
+            painel_central.revalidate();
+            painel_central.repaint();
+
         }
-
-        // 4️⃣ Limpar painel e preparar layout
-        painel_central.removeAll();
-        jScrollPane3.setViewportView(painel_central);
-
-        TbUsuario usuarioLocal = (TbUsuario) usuariosController.findById(idUser);
-        if (usuarioLocal == null || usuarioLocal.getIdTipoUsuario() == null) {
-            System.err.println("Usuário ou tipo de usuário não encontrado para id: " + idUser);
-            return;
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+            painel_central.removeAll();
+            botoes_object.clear();
         }
-
-        botoes_object.clear();
-        this.TAMANHO_CATEGORIA = lista_produtos.size();
-        System.out.println("TAMANHO CENTRO: " + TAMANHO_CATEGORIA);
-
-        int raiz_quadrada = (int) Math.sqrt(TAMANHO_CATEGORIA);
-        int linhas = raiz_quadrada > 0 ? raiz_quadrada : 1;
-        int colunas = raiz_quadrada > 0 ? raiz_quadrada : 1;
-        painel_central.setLayout(new java.awt.GridLayout(linhas, colunas));
-        jScrollPane3.setViewportView(painel_central);
-
-        // 5️⃣ Adicionar produtos ao painel
-        for (TbProduto produto : lista_produtos) {
-            TbPreco precoObject = precosController.getLastIdPrecoByIdProdutos(produto.getCodigo());
-            double quantidadeProduto = stocksController.getQuantidadeProduto(produto.getCodigo(), id_armzem);
-
-            ProdutoItemVisao item = new ProdutoItemVisao(
-                    produto.getStocavel(),
-                    produto.getDesignacao(),
-                    produto.getPhoto(),
-                    quantidadeProduto,
-                    precoObject,
-                    DVML.FORMULARIO_RECOLHA_LAVANDARIA,
-                    usuarioLocal.getIdTipoUsuario().getIdTipoUsuario()
-            );
-
-            painel_central.add(item);
-        }
-
-        painel_central.revalidate();
-        painel_central.repaint();
-
-    } catch (Exception e) {
-        e.printStackTrace();
-        painel_central.removeAll();
-        botoes_object.clear();
     }
-}
-
 
     private void adicionar_centro_botao2( int idTipoPorduto )
     {

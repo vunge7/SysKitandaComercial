@@ -5,15 +5,11 @@
 package lista;
 
 
-import java.sql.Connection;
 import comercial.controller.DadosInstituicaoController;
-import dao.DadosInstituicaoDao;
 import entity.TbDadosInstituicao;
 import java.util.HashMap;
-import javax.persistence.EntityManagerFactory;
 import tesouraria.novo.util.AnyReport;
 import util.BDConexao;
-import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
 
 /**
