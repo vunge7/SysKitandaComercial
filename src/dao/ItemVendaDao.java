@@ -5,7 +5,6 @@
  */
 package dao;
 
-
 import java.sql.Connection;
 import controlador.TbItemVendaJpaController;
 import entity.TbItemVenda;
@@ -33,102 +32,115 @@ import util.RelatorioDiarioUtil;
  *
  * @author Toshiba
  */
-public class ItemVendaDao extends TbItemVendaJpaController {
+public class ItemVendaDao extends TbItemVendaJpaController
+{
 
-    public ItemVendaDao(EntityManagerFactory emf) {
-        super(emf);
+    public ItemVendaDao( EntityManagerFactory emf )
+    {
+        super( emf );
     }
 
-    public List<TbItemVenda> getAllItemVendasByIdVendaReciclagem(int id_venda) {
+    public List<TbItemVenda> getAllItemVendasByIdVendaReciclagem( int id_venda )
+    {
         EntityManager em = getEntityManager();
-        Query query = em.createQuery("SELECT v FROM TbItemVenda  v WHERE v.codigoVenda.codigo = :id_venda")
-                .setParameter("id_venda", id_venda);
+        Query query = em.createQuery( "SELECT v FROM TbItemVenda  v WHERE v.codigoVenda.codigo = :id_venda" )
+                .setParameter( "id_venda", id_venda );
 
         List<TbItemVenda> result = query.getResultList();
         em.close();
 
-        if (!result.isEmpty()) {
+        if ( !result.isEmpty() )
+        {
             return result;
         }
 
-        TbItemVenda itemVenda = new TbItemVenda(0);
-        result.add(itemVenda);
+        TbItemVenda itemVenda = new TbItemVenda( 0 );
+        result.add( itemVenda );
         return result;
     }
 
-    public List<TbItemVenda> getAllItemVendasByIdVenda(int id_venda) {
+    public List<TbItemVenda> getAllItemVendasByIdVenda( int id_venda )
+    {
         EntityManager em = getEntityManager();
-        Query query = em.createQuery("SELECT v FROM TbItemVenda  v WHERE v.codigoVenda.codigo = :id_venda AND v.codigoVenda.statusEliminado = 'false'")
-                .setParameter("id_venda", id_venda);
+        Query query = em.createQuery( "SELECT v FROM TbItemVenda  v WHERE v.codigoVenda.codigo = :id_venda AND v.codigoVenda.statusEliminado = 'false'" )
+                .setParameter( "id_venda", id_venda );
 
         List<TbItemVenda> result = query.getResultList();
         em.close();
 
-        if (!result.isEmpty()) {
+        if ( !result.isEmpty() )
+        {
             return result;
         }
 
-        TbItemVenda itemVenda = new TbItemVenda(0);
-        result.add(itemVenda);
+        TbItemVenda itemVenda = new TbItemVenda( 0 );
+        result.add( itemVenda );
         return result;
     }
 
-    public List<TbItemVenda> getAllVenda() {
+    public List<TbItemVenda> getAllVenda()
+    {
         EntityManager em = getEntityManager();
-        Query query = em.createQuery("SELECT v FROM TbItemVenda  v WHERE  v.codigoVenda.statusEliminado = 'false' AND v.codigo > 32898");
+        Query query = em.createQuery( "SELECT v FROM TbItemVenda  v WHERE  v.codigoVenda.statusEliminado = 'false' AND v.codigo > 32898" );
 
         List<TbItemVenda> result = query.getResultList();
         em.close();
 
-        if (!result.isEmpty()) {
+        if ( !result.isEmpty() )
+        {
             return result;
         }
 
-        TbItemVenda itemVenda = new TbItemVenda(0);
-        result.add(itemVenda);
+        TbItemVenda itemVenda = new TbItemVenda( 0 );
+        result.add( itemVenda );
         return result;
     }
 
-    public List<TbProduto> getAllProdutosVendidos(Date data_inicio, Date data_fim, int id_armazem) {
+    public List<TbProduto> getAllProdutosVendidos( Date data_inicio, Date data_fim, int id_armazem )
+    {
         EntityManager em = getEntityManager();
-        Query query = em.createQuery("SELECT  v.codigoProduto AS TOTAL FROM TbItemVenda  v WHERE v.codigoVenda.statusEliminado = 'false' AND v.codigoVenda.performance = 'false' AND v.codigoVenda.dataVenda     BETWEEN :data_inicio AND :data_fim   AND  v.codigoVenda.idArmazemFK.codigo = :id_armazem  GROUP BY v.codigoProduto")
-                .setParameter("data_inicio", data_inicio)
-                .setParameter("data_fim", data_fim)
-                .setParameter("id_armazem", id_armazem);
+        Query query = em.createQuery( "SELECT  v.codigoProduto AS TOTAL FROM TbItemVenda  v WHERE v.codigoVenda.statusEliminado = 'false' AND v.codigoVenda.performance = 'false' AND v.codigoVenda.dataVenda     BETWEEN :data_inicio AND :data_fim   AND  v.codigoVenda.idArmazemFK.codigo = :id_armazem  GROUP BY v.codigoProduto" )
+                .setParameter( "data_inicio", data_inicio )
+                .setParameter( "data_fim", data_fim )
+                .setParameter( "id_armazem", id_armazem );
 
         List<TbProduto> result = query.getResultList();
         em.close();
 
-        if (!result.isEmpty()) {
+        if ( !result.isEmpty() )
+        {
             return result;
         }
         return null;
 
     }
 
-    public List<TbProduto> getAllProdutosVendidos(Date data_inicio, Date data_fim, int id_armazem, int id_fornecedor) {
+    public List<TbProduto> getAllProdutosVendidos( Date data_inicio, Date data_fim, int id_armazem, int id_fornecedor )
+    {
         EntityManager em = getEntityManager();
-        Query query = em.createQuery("SELECT  v.codigoProduto AS TOTAL FROM TbItemVenda  v WHERE v.codigoVenda.statusEliminado = 'false' AND v.codigoVenda.performance = 'false' AND v.codigoVenda.dataVenda     BETWEEN :data_inicio AND :data_fim   AND  v.codigoVenda.idArmazemFK.codigo = :id_armazem  AND v.codigoProduto.codFornecedores.codigo = :id_fornecedor GROUP BY v.codigoProduto")
-                .setParameter("data_inicio", data_inicio)
-                .setParameter("data_fim", data_fim)
-                .setParameter("id_armazem", id_armazem)
-                .setParameter("id_fornecedor", id_fornecedor);
+        Query query = em.createQuery( "SELECT  v.codigoProduto AS TOTAL FROM TbItemVenda  v WHERE v.codigoVenda.statusEliminado = 'false' AND v.codigoVenda.performance = 'false' AND v.codigoVenda.dataVenda     BETWEEN :data_inicio AND :data_fim   AND  v.codigoVenda.idArmazemFK.codigo = :id_armazem  AND v.codigoProduto.codFornecedores.codigo = :id_fornecedor GROUP BY v.codigoProduto" )
+                .setParameter( "data_inicio", data_inicio )
+                .setParameter( "data_fim", data_fim )
+                .setParameter( "id_armazem", id_armazem )
+                .setParameter( "id_fornecedor", id_fornecedor );
 
         List<TbProduto> result = query.getResultList();
         em.close();
 
-        if (!result.isEmpty()) {
+        if ( !result.isEmpty() )
+        {
             return result;
         }
         return null;
 
     }
 
-    public List<RelatorioDiarioUtil> getRelatorioDiaio(Date data_inicio, Date data_fim, int id_armazem) {
+    public List<RelatorioDiarioUtil> getRelatorioDiaio( Date data_inicio, Date data_fim, int id_armazem )
+    {
         EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
-        StockDao stockDao = new StockDao(emf);
+        StockDao stockDao = new StockDao( emf );
 
-        List<TbProduto> lista_produto = getAllProdutosVendidos(data_inicio, data_fim, id_armazem);
+        List<TbProduto> lista_produto = getAllProdutosVendidos( data_inicio, data_fim, id_armazem );
 
         List<RelatorioDiarioUtil> lista_relatorio_diario = new ArrayList<>();
 
@@ -157,7 +169,7 @@ public class ItemVendaDao extends TbItemVendaJpaController {
 //
 //        }
         relatorioDiarioUtil = new RelatorioDiarioUtil();
-        lista_relatorio_diario.add(relatorioDiarioUtil);
+        lista_relatorio_diario.add( relatorioDiarioUtil );
 
 //        relatorioDiarioUtil = new RelatorioDiarioUtil();        
 //        relatorioDiarioUtil.setQuantidade("RESUMO");
@@ -175,11 +187,12 @@ public class ItemVendaDao extends TbItemVendaJpaController {
 
     }
 
-    public List<RelatorioDiarioUtil> getRelatorioDiaio(Date data_inicio, Date data_fim, int id_armazem, int id_fornecedor) {
+    public List<RelatorioDiarioUtil> getRelatorioDiaio( Date data_inicio, Date data_fim, int id_armazem, int id_fornecedor )
+    {
         EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
-        StockDao stockDao = new StockDao(emf);
+        StockDao stockDao = new StockDao( emf );
 
-        List<TbProduto> lista_produto = getAllProdutosVendidos(data_inicio, data_fim, id_armazem, id_fornecedor);
+        List<TbProduto> lista_produto = getAllProdutosVendidos( data_inicio, data_fim, id_armazem, id_fornecedor );
 
         List<RelatorioDiarioUtil> lista_relatorio_diario = new ArrayList<>();
 
@@ -208,7 +221,7 @@ public class ItemVendaDao extends TbItemVendaJpaController {
 //
 //        }
         relatorioDiarioUtil = new RelatorioDiarioUtil();
-        lista_relatorio_diario.add(relatorioDiarioUtil);
+        lista_relatorio_diario.add( relatorioDiarioUtil );
 
 //        relatorioDiarioUtil = new RelatorioDiarioUtil();        
 //        relatorioDiarioUtil.setQuantidade("RESUMO");
@@ -226,17 +239,18 @@ public class ItemVendaDao extends TbItemVendaJpaController {
 
     }
 
-    public long getQuantidadeByIdProduto(int codigo_produto, Date data_inicio, Date data_fim, int pk_armazem) {
+    public long getQuantidadeByIdProduto( int codigo_produto, Date data_inicio, Date data_fim, int pk_armazem )
+    {
         EntityManager em = getEntityManager();
-        Query query = em.createQuery("SELECT SUM(v.quantidade) AS TOTAL FROM TbItemVenda  v WHERE v.codigoVenda.statusEliminado = 'false' AND  v.codigoProduto.codigo = :codigo_produto  AND v.codigoVenda.idArmazemFK.codigo = :pk_armazem AND  v.codigoVenda.performance = 'false' AND v.codigoVenda.dataVenda BETWEEN :data_inicio AND :data_fim   ORDER BY v.codigoProduto.codigo")
-                .setParameter("codigo_produto", codigo_produto)
-                .setParameter("data_inicio", data_inicio)
-                .setParameter("data_fim", data_fim)
-                .setParameter("pk_armazem", pk_armazem);
+        Query query = em.createQuery( "SELECT SUM(v.quantidade) AS TOTAL FROM TbItemVenda  v WHERE v.codigoVenda.statusEliminado = 'false' AND  v.codigoProduto.codigo = :codigo_produto  AND v.codigoVenda.idArmazemFK.codigo = :pk_armazem AND  v.codigoVenda.performance = 'false' AND v.codigoVenda.dataVenda BETWEEN :data_inicio AND :data_fim   ORDER BY v.codigoProduto.codigo" )
+                .setParameter( "codigo_produto", codigo_produto )
+                .setParameter( "data_inicio", data_inicio )
+                .setParameter( "data_fim", data_fim )
+                .setParameter( "pk_armazem", pk_armazem );
 
         List<Long> result = query.getResultList();
         em.close();
-        return result.get(0);
+        return result.get( 0 );
 
     }
 
@@ -260,27 +274,32 @@ public class ItemVendaDao extends TbItemVendaJpaController {
 //        
 //        return result;
 //    }
-    public double lucro(Date data_inicio, Date data_fim) {
+    public double lucro( Date data_inicio, Date data_fim )
+    {
 
-        List<TbItemVenda> lista_venda = getAll_ItensVendidos(data_inicio, data_fim);
+        List<TbItemVenda> lista_venda = getAll_ItensVendidos( data_inicio, data_fim );
         double soma = 0, diferenca = 0, desconto = 0;
         TbItemVenda itemVenda;
-        for (int i = 0; i < lista_venda.size(); i++) {
+        for ( int i = 0; i < lista_venda.size(); i++ )
+        {
 
-            itemVenda = lista_venda.get(i);
+            itemVenda = lista_venda.get( i );
 
-            try {
+            try
+            {
 
                 desconto = itemVenda.getCodigoVenda().getDescontoTotal().doubleValue();
-                diferenca = (itemVenda.getFkPreco().getPrecoVenda().doubleValue() * itemVenda.getQuantidade()
-                        - itemVenda.getFkPreco().getPrecoCompra().doubleValue() * itemVenda.getQuantidade());
+                diferenca = ( itemVenda.getFkPreco().getPrecoVenda().doubleValue() * itemVenda.getQuantidade()
+                        - itemVenda.getFkPreco().getPrecoCompra().doubleValue() * itemVenda.getQuantidade() );
 
-                diferenca = diferenca - (diferenca * desconto) / 100;
+                diferenca = diferenca - ( diferenca * desconto ) / 100;
 
-            } catch (Exception e) {
+            }
+            catch ( Exception e )
+            {
             }
 
-            System.out.println("DIFERENÇA : " + diferenca);
+            System.out.println( "DIFERENÇA : " + diferenca );
             soma = soma + diferenca;
             diferenca = 0;
             desconto = 0;
@@ -290,27 +309,32 @@ public class ItemVendaDao extends TbItemVendaJpaController {
 
     }
 
-    public double lucro(Date data_inicio, Date data_fim, int id_armazem, int id_documento, int id_usuario) {
+    public double lucro( Date data_inicio, Date data_fim, int id_armazem, int id_documento, int id_usuario )
+    {
 
-        List<TbItemVenda> lista_venda = getAll_ItensVendidos(data_inicio, data_fim, id_armazem, id_documento, id_usuario);
+        List<TbItemVenda> lista_venda = getAll_ItensVendidos( data_inicio, data_fim, id_armazem, id_documento, id_usuario );
         double soma = 0, lucro = 0, desconto = 0, iva = 0;
         TbItemVenda itemVenda;
-        for (int i = 0; i < lista_venda.size(); i++) {
+        for ( int i = 0; i < lista_venda.size(); i++ )
+        {
 
-            itemVenda = lista_venda.get(i);
+            itemVenda = lista_venda.get( i );
 
-            try {
+            try
+            {
 
                 desconto = itemVenda.getDesconto();
-                lucro = (itemVenda.getFkPreco().getPrecoVenda().doubleValue() * itemVenda.getQuantidade()
-                        - itemVenda.getFkPreco().getPrecoCompra().doubleValue() * itemVenda.getQuantidade());
+                lucro = ( itemVenda.getFkPreco().getPrecoVenda().doubleValue() * itemVenda.getQuantidade()
+                        - itemVenda.getFkPreco().getPrecoCompra().doubleValue() * itemVenda.getQuantidade() );
 
-                lucro = (lucro - (lucro * desconto) / 100);
+                lucro = ( lucro - ( lucro * desconto ) / 100 );
 
-            } catch (Exception e) {
+            }
+            catch ( Exception e )
+            {
             }
 
-            System.out.println("DIFERENÇA : " + lucro);
+            System.out.println( "DIFERENÇA : " + lucro );
             soma = soma + lucro;
             lucro = 0;
             desconto = 0;
@@ -320,38 +344,44 @@ public class ItemVendaDao extends TbItemVendaJpaController {
 
     }
 
-    public double lucro(Date data_inicio, Date data_fim, int id_armazem, int id_documento) {
+    public double lucro( Date data_inicio, Date data_fim, int id_armazem, int id_documento )
+    {
 
-        System.out.println("data inicio: " + MetodosUtil.getDataBanco(data_inicio));
-        System.out.println("data fim: " + MetodosUtil.getDataBanco(data_fim));
-        System.out.println("ID_ARMAZEM" + id_armazem);
-        System.out.println("ID_DOCUMENTO" + id_documento);
+        System.out.println( "data inicio: " + MetodosUtil.getDataBanco( data_inicio ) );
+        System.out.println( "data fim: " + MetodosUtil.getDataBanco( data_fim ) );
+        System.out.println( "ID_ARMAZEM" + id_armazem );
+        System.out.println( "ID_DOCUMENTO" + id_documento );
 
-        List<TbItemVenda> lista_item_venda = getAll_ItensVendidosForLucro(data_inicio, data_fim, id_armazem, id_documento);
+        List<TbItemVenda> lista_item_venda = getAll_ItensVendidosForLucro( data_inicio, data_fim, id_armazem, id_documento );
         double soma = 0, lucro = 0, desconto = 0, iva = 0;
         TbItemVenda itemVenda;
-        System.out.println(Objects.isNull(lista_item_venda));
+        System.out.println( Objects.isNull( lista_item_venda ) );
 
-        if (!Objects.isNull(lista_item_venda)) {
+        if ( !Objects.isNull( lista_item_venda ) )
+        {
 
-            for (int i = 0; i < lista_item_venda.size(); i++) {
+            for ( int i = 0; i < lista_item_venda.size(); i++ )
+            {
 
-                itemVenda = lista_item_venda.get(i);
+                itemVenda = lista_item_venda.get( i );
 
-                try {
+                try
+                {
 
-                    desconto = Objects.isNull(itemVenda.getDesconto()) ? 0 : itemVenda.getDesconto();
-                    System.out.println("Preco Venda: " + itemVenda.getFkPreco().getPrecoVenda().doubleValue());
-                    lucro = (itemVenda.getFkPreco().getPrecoVenda().doubleValue() * itemVenda.getQuantidade()
-                            - itemVenda.getFkPreco().getPrecoCompra().doubleValue() * itemVenda.getQuantidade());
+                    desconto = Objects.isNull( itemVenda.getDesconto() ) ? 0 : itemVenda.getDesconto();
+                    System.out.println( "Preco Venda: " + itemVenda.getFkPreco().getPrecoVenda().doubleValue() );
+                    lucro = ( itemVenda.getFkPreco().getPrecoVenda().doubleValue() * itemVenda.getQuantidade()
+                            - itemVenda.getFkPreco().getPrecoCompra().doubleValue() * itemVenda.getQuantidade() );
 
-                    lucro = (lucro - (lucro * desconto) / 100);
+                    lucro = ( lucro - ( lucro * desconto ) / 100 );
 
-                } catch (Exception e) {
+                }
+                catch ( Exception e )
+                {
                     e.printStackTrace();
                 }
 
-                System.out.println("DIFERENÇA : " + lucro);
+                System.out.println( "DIFERENÇA : " + lucro );
                 soma = soma + lucro;
                 lucro = 0;
                 desconto = 0;
@@ -397,31 +427,34 @@ public class ItemVendaDao extends TbItemVendaJpaController {
 //        return soma;
 //
 //    }
-    public List<TbVenda> getAllVenda(Date data_inicio, Date data_fim) {
+    public List<TbVenda> getAllVenda( Date data_inicio, Date data_fim )
+    {
 
         EntityManager em = getEntityManager();
-        Query query = em.createQuery("SELECT i.codigoVenda FROM TbItemVenda  i WHERE i.codigoVenda.dataVenda BETWEEN :data_inicio AND :data_fim AND i.codigoVenda.statusEliminado = 'false' GROUP BY i.codigoVenda.codigo")
-                .setParameter("data_inicio", data_inicio)
-                .setParameter("data_fim", data_fim);
+        Query query = em.createQuery( "SELECT i.codigoVenda FROM TbItemVenda  i WHERE i.codigoVenda.dataVenda BETWEEN :data_inicio AND :data_fim AND i.codigoVenda.statusEliminado = 'false' GROUP BY i.codigoVenda.codigo" )
+                .setParameter( "data_inicio", data_inicio )
+                .setParameter( "data_fim", data_fim );
 
         List<TbVenda> result = query.getResultList();
         em.close();
 
-        if (!result.isEmpty()) {
+        if ( !result.isEmpty() )
+        {
             return result;
         }
 
-        TbVenda venda = new TbVenda(0);
-        result.add(venda);
+        TbVenda venda = new TbVenda( 0 );
+        result.add( venda );
 
         return result;
     }
 
-    public boolean exist_factura(int id_venda) {
+    public boolean exist_factura( int id_venda )
+    {
 
         EntityManager em = getEntityManager();
-        Query query = em.createQuery("SELECT v FROM TbItemVenda  v WHERE v.codigoVenda.codigo = :id_venda AND v.codigoVenda.statusEliminado = 'false'")
-                .setParameter("id_venda", id_venda);
+        Query query = em.createQuery( "SELECT v FROM TbItemVenda  v WHERE v.codigoVenda.codigo = :id_venda AND v.codigoVenda.statusEliminado = 'false'" )
+                .setParameter( "id_venda", id_venda );
 
         List<TbItemVenda> result = query.getResultList();
         em.close();
@@ -430,15 +463,16 @@ public class ItemVendaDao extends TbItemVendaJpaController {
 
     }
 
-    public static void main(String[] args) {
+    public static void main( String[] args )
+    {
 
         EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
-        ItemVendaDao itemVendaDao = new ItemVendaDao(emf);
-        VendaDao vendaDao = new VendaDao(emf);
+        ItemVendaDao itemVendaDao = new ItemVendaDao( emf );
+        VendaDao vendaDao = new VendaDao( emf );
         //sPrecoDao precoDao = new PrecoDao(emf);
 
         //List<TbItemVenda> list = itemVendaDao.getAllVenda();
-        System.out.println("LUCRO GERAL: " + itemVendaDao.lucro(new Date(), new Date(), 1, 1, 1));
+        System.out.println( "LUCRO GERAL: " + itemVendaDao.lucro( new Date(), new Date(), 1, 1, 1 ) );
 
 //        for (int i = 0; i < list.size(); i++) 
 //        {
@@ -454,39 +488,43 @@ public class ItemVendaDao extends TbItemVendaJpaController {
 //       }
     }
 
-    public List<TbItemVenda> getAll_ItensVendidos(Date data_inicio, Date data_fim) {
+    public List<TbItemVenda> getAll_ItensVendidos( Date data_inicio, Date data_fim )
+    {
 
         EntityManager em = getEntityManager();
-        Query query = em.createQuery("SELECT i FROM TbItemVenda  i WHERE i.codigoVenda.dataVenda BETWEEN :data_inicio AND :data_fim AND i.codigoVenda.statusEliminado = 'false' AND  i.codigoVenda.credito = 'false' ")
-                .setParameter("data_inicio", data_inicio)
-                .setParameter("data_fim", data_fim);
+        Query query = em.createQuery( "SELECT i FROM TbItemVenda  i WHERE i.codigoVenda.dataVenda BETWEEN :data_inicio AND :data_fim AND i.codigoVenda.statusEliminado = 'false' AND  i.codigoVenda.credito = 'false' " )
+                .setParameter( "data_inicio", data_inicio )
+                .setParameter( "data_fim", data_fim );
 
         List<TbItemVenda> result = query.getResultList();
         em.close();
 
-        if (!result.isEmpty()) {
+        if ( !result.isEmpty() )
+        {
             return result;
         }
 
-        TbItemVenda itemVenda = new TbItemVenda(0);
-        result.add(itemVenda);
+        TbItemVenda itemVenda = new TbItemVenda( 0 );
+        result.add( itemVenda );
 
         return result;
     }
 
-    public List<TbItemVenda> getAll_ItensVendidos(Date data_inicio, Date data_fim, int id_armazem, int id_documento) {
+    public List<TbItemVenda> getAll_ItensVendidos( Date data_inicio, Date data_fim, int id_armazem, int id_documento )
+    {
 
         EntityManager em = getEntityManager();
-        Query query = em.createQuery("SELECT i FROM TbItemVenda  i WHERE i.codigoVenda.dataVenda BETWEEN :data_inicio AND :data_fim AND i.codigoVenda.idArmazemFK.codigo = :id_armazem AND i.codigoVenda.fkDocumento.pkDocumento = :id_documento")
-                .setParameter("data_inicio", data_inicio)
-                .setParameter("data_fim", data_fim)
-                .setParameter("id_armazem", id_armazem)
-                .setParameter("id_documento", id_documento);
+        Query query = em.createQuery( "SELECT i FROM TbItemVenda  i WHERE i.codigoVenda.dataVenda BETWEEN :data_inicio AND :data_fim AND i.codigoVenda.idArmazemFK.codigo = :id_armazem AND i.codigoVenda.fkDocumento.pkDocumento = :id_documento" )
+                .setParameter( "data_inicio", data_inicio )
+                .setParameter( "data_fim", data_fim )
+                .setParameter( "id_armazem", id_armazem )
+                .setParameter( "id_documento", id_documento );
 
         List<TbItemVenda> result = query.getResultList();
         em.close();
 
-        if (!result.isEmpty()) {
+        if ( !result.isEmpty() )
+        {
             return result;
         }
 //
@@ -496,75 +534,81 @@ public class ItemVendaDao extends TbItemVendaJpaController {
         return null;
     }
 
-    public List<TbItemVenda> getAll_ItensVendidosForLucro(Date data_inicio, Date data_fim, int id_armazem, int id_documento) {
+    public List<TbItemVenda> getAll_ItensVendidosForLucro( Date data_inicio, Date data_fim, int id_armazem, int id_documento )
+    {
 
         EntityManager em = getEntityManager();
 
-        Query query = em.createNativeQuery("SELECT i.* FROM tb_venda v, tb_item_venda i "
+        Query query = em.createNativeQuery( "SELECT i.* FROM tb_venda v, tb_item_venda i "
                 + "WHERE  DATE(v.dataVenda) BETWEEN ? AND ? "
                 + "AND v.status_eliminado = 'false' "
                 + "AND v.credito = 'false' "
                 + "AND v.codigo = i.codigo_venda "
                 + "AND idArmazemFK = ? "
-                + "AND fk_documento = ?  ", TbItemVenda.class);
+                + "AND fk_documento = ?  ", TbItemVenda.class );
 
-        query.setParameter(1, MetodosUtil.getDataBanco(data_inicio));
-        query.setParameter(2, MetodosUtil.getDataBanco(data_fim));
-        query.setParameter(3, id_armazem);
-        query.setParameter(4, id_documento);
+        query.setParameter( 1, MetodosUtil.getDataBanco( data_inicio ) );
+        query.setParameter( 2, MetodosUtil.getDataBanco( data_fim ) );
+        query.setParameter( 3, id_armazem );
+        query.setParameter( 4, id_documento );
 
         List<TbItemVenda> result = query.getResultList();
         em.close();
 
-        if (!result.isEmpty()) {
+        if ( !result.isEmpty() )
+        {
             return result;
         }
         return result;
     }
 
-    public List<TbItemVenda> getAll_ItensVendidos(Date data_inicio, Date data_fim, int id_armazem, int id_documento, int id_usuario) {
+    public List<TbItemVenda> getAll_ItensVendidos( Date data_inicio, Date data_fim, int id_armazem, int id_documento, int id_usuario )
+    {
 
         EntityManager em = getEntityManager();
         //  Query query = em.createQuery ( "SELECT i FROM TbItemVenda  i WHERE  i.codigoVenda.dataVenda BETWEEN :data_inicio AND :data_fim AND i.codigoVenda.statusEliminado = 'false' AND  i.codigoVenda.credito = 'false' AND i.codigoVenda.idArmazemFK.codigo = :id_armazem AND i.codigoVenda.fkDocumento.pkDocumento = 1" )
-        Query query = em.createQuery("SELECT i FROM TbItemVenda  i WHERE i.codigoVenda.dataVenda BETWEEN :data_inicio AND :data_fim AND i.codigoVenda.idArmazemFK.codigo = :id_armazem AND i.codigoVenda.fkDocumento.pkDocumento = :id_documento AND i.codigoVenda.codigoUsuario.codigo = :id_usuario")
-                .setParameter("data_inicio", data_inicio)
-                .setParameter("data_fim", data_fim)
-                .setParameter("id_armazem", id_armazem)
-                .setParameter("id_documento", id_documento)
-                .setParameter("id_usuario", id_usuario);
+        Query query = em.createQuery( "SELECT i FROM TbItemVenda  i WHERE i.codigoVenda.dataVenda BETWEEN :data_inicio AND :data_fim AND i.codigoVenda.idArmazemFK.codigo = :id_armazem AND i.codigoVenda.fkDocumento.pkDocumento = :id_documento AND i.codigoVenda.codigoUsuario.codigo = :id_usuario" )
+                .setParameter( "data_inicio", data_inicio )
+                .setParameter( "data_fim", data_fim )
+                .setParameter( "id_armazem", id_armazem )
+                .setParameter( "id_documento", id_documento )
+                .setParameter( "id_usuario", id_usuario );
 
         List<TbItemVenda> result = query.getResultList();
         em.close();
 
-        if (!result.isEmpty()) {
+        if ( !result.isEmpty() )
+        {
             return result;
         }
 
-        TbItemVenda itemVenda = new TbItemVenda(0);
-        result.add(itemVenda);
+        TbItemVenda itemVenda = new TbItemVenda( 0 );
+        result.add( itemVenda );
 
         return result;
     }
-    
-    public List<TbItemVenda> getAll_ItensVendidos1(Date data_inicio, Date data_fim, boolean status, int pk_documento ) {
+
+    public List<TbItemVenda> getAll_ItensVendidos1( Date data_inicio, Date data_fim, boolean status, int pk_documento )
+    {
 
         EntityManager em = getEntityManager();
         //  Query query = em.createQuery ( "SELECT i FROM TbItemVenda  i WHERE  i.codigoVenda.dataVenda BETWEEN :data_inicio AND :data_fim AND i.codigoVenda.statusEliminado = 'false' AND  i.codigoVenda.credito = 'false' AND i.codigoVenda.idArmazemFK.codigo = :id_armazem AND i.codigoVenda.fkDocumento.pkDocumento = 1" )
-        Query query = em.createQuery("SELECT i FROM TbItemVenda  i WHERE i.codigoVenda.dataVenda BETWEEN :data_inicio AND :data_fim AND i.status = :status AND i.codigoVenda.fkDocumento.pkDocumento = :id_documento AND i.codigoVenda.codigoUsuario.codigo = :id_usuario")
-                .setParameter("data_inicio", data_inicio)
-                .setParameter("data_fim", data_fim)
-                .setParameter("status", status)
-                .setParameter("id_documento", pk_documento);
+        Query query = em.createQuery( "SELECT i FROM TbItemVenda  i WHERE i.codigoVenda.dataVenda BETWEEN :data_inicio AND :data_fim AND i.status = :status AND i.codigoVenda.fkDocumento.pkDocumento = :id_documento AND i.codigoVenda.codigoUsuario.codigo = :id_usuario" )
+                .setParameter( "data_inicio", data_inicio )
+                .setParameter( "data_fim", data_fim )
+                .setParameter( "status", status )
+                .setParameter( "id_documento", pk_documento );
 
         List<TbItemVenda> result = query.getResultList();
         em.close();
 
-        if (!result.isEmpty()) {
+        if ( !result.isEmpty() )
+        {
             return result;
         }
 
-        TbItemVenda itemVenda = new TbItemVenda(0);
-        result.add(itemVenda);
+        TbItemVenda itemVenda = new TbItemVenda( 0 );
+        result.add( itemVenda );
 
         return result;
     }
@@ -592,60 +636,67 @@ public class ItemVendaDao extends TbItemVendaJpaController {
 //
 //        return result;
 //    }
-    public List<TbItemVenda> itens_venda_by_id(int codigo) {
+    public List<TbItemVenda> itens_venda_by_id( int codigo )
+    {
 
         EntityManager em = getEntityManager();
-        Query query = em.createQuery("SELECT p FROM TbItemVenda p WHERE p.codigoVenda.codigo = :codigo")
-                .setParameter("codigo", codigo);
+        Query query = em.createQuery( "SELECT p FROM TbItemVenda p WHERE p.codigoVenda.codigo = :codigo" )
+                .setParameter( "codigo", codigo );
         return query.getResultList();
 
     }
 
-    public TbItemVenda getByIdVendaAndProductName(Integer codigoVenda, String codProdutoSelecionado) {
+    public TbItemVenda getByIdVendaAndProductName( Integer codigoVenda, String codProdutoSelecionado )
+    {
         EntityManager em = getEntityManager();
-        Query query = em.createQuery("SELECT v AS TOTAL FROM TbItemVenda  v WHERE v.codigoVenda.codigo = :CODIGO_VENDA AND  v.codigoProduto.designacao = :DESIGNACAO_PRODUTO")
-                .setParameter("CODIGO_VENDA", codigoVenda)
-                .setParameter("DESIGNACAO_PRODUTO", codProdutoSelecionado);
+        Query query = em.createQuery( "SELECT v AS TOTAL FROM TbItemVenda  v WHERE v.codigoVenda.codigo = :CODIGO_VENDA AND  v.codigoProduto.designacao = :DESIGNACAO_PRODUTO" )
+                .setParameter( "CODIGO_VENDA", codigoVenda )
+                .setParameter( "DESIGNACAO_PRODUTO", codProdutoSelecionado );
 
         List<TbItemVenda> result = query.getResultList();
 
-        if (result.isEmpty()) {
+        if ( result.isEmpty() )
+        {
             return null;
         }
 
-        return result.get(0);
+        return result.get( 0 );
     }
 
-    public TbItemVenda getlItemVendasByIdVendaAndPrduto(Integer fkVenda, Integer fkProduto) {
+    public TbItemVenda getlItemVendasByIdVendaAndPrduto( Integer fkVenda, Integer fkProduto )
+    {
         EntityManager em = getEntityManager();
-        Query query = em.createQuery("SELECT v AS TOTAL FROM TbItemVenda  v WHERE v.codigoVenda.codigo = :CODIGO_VENDA AND  v.codigoProduto.codigo = :CODIGO_PRODUTO")
-                .setParameter("CODIGO_VENDA", fkVenda)
-                .setParameter("CODIGO_PRODUTO", fkProduto);
+        Query query = em.createQuery( "SELECT v AS TOTAL FROM TbItemVenda  v WHERE v.codigoVenda.codigo = :CODIGO_VENDA AND  v.codigoProduto.codigo = :CODIGO_PRODUTO" )
+                .setParameter( "CODIGO_VENDA", fkVenda )
+                .setParameter( "CODIGO_PRODUTO", fkProduto );
 
         List<TbItemVenda> result = query.getResultList();
 
-        if (result.isEmpty()) {
+        if ( result.isEmpty() )
+        {
             return null;
         }
 
-        return result.get(0);
+        return result.get( 0 );
     }
 
-    public double lucro(Date data_inicio, Date data_fim, int pk_armazem) {
+    public double lucro( Date data_inicio, Date data_fim, int pk_armazem )
+    {
 
-        List<TbItemVenda> lista_venda = getAll_ItensVendidos(data_inicio, data_fim, pk_armazem);
+        List<TbItemVenda> lista_venda = getAll_ItensVendidos( data_inicio, data_fim, pk_armazem );
         double soma = 0, diferenca = 0;
         double soma_lucro = 0, diferenca_lucro = 0, desconto = 0;
         TbItemVenda itemVenda;
 
-        for (int i = 0; i < lista_venda.size(); i++) {
+        for ( int i = 0; i < lista_venda.size(); i++ )
+        {
 
-            itemVenda = lista_venda.get(i);
-            diferenca = (itemVenda.getFkPreco().getPrecoVenda().doubleValue() * itemVenda.getQuantidade()
-                    - itemVenda.getFkPreco().getPrecoCompra().doubleValue() * itemVenda.getQuantidade());
+            itemVenda = lista_venda.get( i );
+            diferenca = ( itemVenda.getFkPreco().getPrecoVenda().doubleValue() * itemVenda.getQuantidade()
+                    - itemVenda.getFkPreco().getPrecoCompra().doubleValue() * itemVenda.getQuantidade() );
 
             desconto = itemVenda.getDesconto();
-            soma = (soma + diferenca) - desconto;
+            soma = ( soma + diferenca ) - desconto;
             diferenca = 0;
             desconto = 0;
         }
@@ -653,35 +704,39 @@ public class ItemVendaDao extends TbItemVendaJpaController {
 
     }
 
-    public List<TbItemVenda> getAll_ItensVendidos(Date data_inicio, Date data_fim, int pk_armazem) {
+    public List<TbItemVenda> getAll_ItensVendidos( Date data_inicio, Date data_fim, int pk_armazem )
+    {
 
         EntityManager em = getEntityManager();
-        Query query = em.createQuery("SELECT i FROM TbItemVenda  i WHERE i.codigoVenda.dataVenda BETWEEN :data_inicio AND :data_fim AND i.codigoVenda.statusEliminado = 'false' AND i.codigoVenda.idArmazemFK.codigo = :pk_armazem")
-                .setParameter("data_inicio", data_inicio)
-                .setParameter("data_fim", data_fim)
-                .setParameter("pk_armazem", pk_armazem);
+        Query query = em.createQuery( "SELECT i FROM TbItemVenda  i WHERE i.codigoVenda.dataVenda BETWEEN :data_inicio AND :data_fim AND i.codigoVenda.statusEliminado = 'false' AND i.codigoVenda.idArmazemFK.codigo = :pk_armazem" )
+                .setParameter( "data_inicio", data_inicio )
+                .setParameter( "data_fim", data_fim )
+                .setParameter( "pk_armazem", pk_armazem );
 
         List<TbItemVenda> result = query.getResultList();
         em.close();
 
-        if (!result.isEmpty()) {
+        if ( !result.isEmpty() )
+        {
             return result;
         }
 
-        TbItemVenda itemVenda = new TbItemVenda(0);
-        result.add(itemVenda);
+        TbItemVenda itemVenda = new TbItemVenda( 0 );
+        result.add( itemVenda );
 
         return result;
     }
 
-    public double desconto(Date data_inicio, Date data_fim, int pk_armazem) {
-        List<TbItemVenda> lista_venda = getAll_ItensVendidos(data_inicio, data_fim, pk_armazem);
+    public double desconto( Date data_inicio, Date data_fim, int pk_armazem )
+    {
+        List<TbItemVenda> lista_venda = getAll_ItensVendidos( data_inicio, data_fim, pk_armazem );
 
         double desconto = 0;
         TbItemVenda itemVenda;
 
-        for (int i = 0; i < lista_venda.size(); i++) {
-            itemVenda = lista_venda.get(i);
+        for ( int i = 0; i < lista_venda.size(); i++ )
+        {
+            itemVenda = lista_venda.get( i );
             desconto = desconto + itemVenda.getDesconto();
         }
         return desconto;
@@ -728,11 +783,12 @@ public class ItemVendaDao extends TbItemVendaJpaController {
 //
 //        return 0;
 //    }
-    public static Integer criarComProcedimentos(TbItemVenda itemVenda, BDConexao conexao) {
-        String inserirVendaQuery = String.format("select ITEM_VENDA_CRIAR ( "
+    public static Integer criarComProcedimentos( TbItemVenda itemVenda, BDConexao conexao )
+    {
+        String inserirVendaQuery = String.format( "select ITEM_VENDA_CRIAR ( "
                 + "%d, %s, %s, '%s', "
                 + "%s, %s, %d, %d, "
-                + "%d, '%s', %d, %d, '%s', %s ) as ID",
+                + "%d, '%s', %d, %d, '%s', %s, '%s' ) as ID",
                 0,
                 itemVenda.getQuantidade(),
                 itemVenda.getValorIva(),
@@ -746,28 +802,34 @@ public class ItemVendaDao extends TbItemVendaJpaController {
                 itemVenda.getFkLugares().getPkLugares(),
                 itemVenda.getFkMesas().getPkMesas(),
                 new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( itemVenda.getDataServico() ),
-                itemVenda.getValorRetencao()
+                itemVenda.getValorRetencao(),
+                itemVenda.getDesignacaoItem()
         );
 
-        ResultSet resultSet = conexao.executeQuery(inserirVendaQuery);
+        ResultSet resultSet = conexao.executeQuery( inserirVendaQuery );
 
-        try {
-            if (resultSet.next()) {
-                return resultSet.getInt("ID");
+        try
+        {
+            if ( resultSet.next() )
+            {
+                return resultSet.getInt( "ID" );
 
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(VendaDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        catch ( SQLException ex )
+        {
+            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
         }
 
         return null;
     }
 
-    public List<TbItemVenda> itens_venda_by_id(String codFact) {
+    public List<TbItemVenda> itens_venda_by_id( String codFact )
+    {
 
         EntityManager em = getEntityManager();
-        Query query = em.createQuery("SELECT p FROM TbItemVenda p WHERE p.codigoVenda.codFact = :codFact")
-                .setParameter("codFact", codFact);
+        Query query = em.createQuery( "SELECT p FROM TbItemVenda p WHERE p.codigoVenda.codFact = :codFact" )
+                .setParameter( "codFact", codFact );
         return query.getResultList();
 
     }
