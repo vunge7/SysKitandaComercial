@@ -5,7 +5,6 @@
  */
 package visao;
 
-
 import java.sql.Connection;
 import comercial.controller.CaixasController;
 import comercial.controller.ClientesController;
@@ -143,11 +142,11 @@ public class VendaPOSVisao extends javax.swing.JFrame
     private static ContaMovimentosController cmc;
 //    private static int id_usuario;
 
-    public VendaPOSVisao(BDConexao conexao, int id_armazem, int id_usuario )
+    public VendaPOSVisao( BDConexao conexao, int id_armazem, int id_usuario )
     {
         initComponents();
         setLocationRelativeTo( null );
-        this.setExtendedState(VendaPOSVisao.MAXIMIZED_BOTH );
+        this.setExtendedState( VendaPOSVisao.MAXIMIZED_BOTH );
         this.id_armazem = id_armazem;
         this.id_usuario = id_usuario;
         this.conexao = conexao;
@@ -620,12 +619,12 @@ public class VendaPOSVisao extends javax.swing.JFrame
             {
                 if ( MetodosUtil.licencaValidada( conexao ) )
                 {
-                    new FormaPagamentoVisao( this, rootPaneCheckingEnabled, emf, DVML.VENDA_POS, BDConexao.getInstancia()).setVisible(true);
+                    new FormaPagamentoVisao( this, rootPaneCheckingEnabled, emf, DVML.VENDA_POS, BDConexao.getInstancia() ).setVisible( true );
                 }
             }
             else
             {
-                JOptionPane.showMessageDialog(null, "O documento não pode ser processado porque possui uma data inferior ao úlimo documento efectuado", "AVISO", JOptionPane.WARNING_MESSAGE );
+                JOptionPane.showMessageDialog( null, "O documento não pode ser processado porque possui uma data inferior ao úlimo documento efectuado", "AVISO", JOptionPane.WARNING_MESSAGE );
             }
 
         }
@@ -665,7 +664,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
     {//GEN-HEADEREND:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        new PrincipalPedidosVisao( id_usuario, "", id_armazem, BDConexao.getInstancia()).setVisible(true);
+        new PrincipalPedidosVisao( id_usuario, "", id_armazem, BDConexao.getInstancia() ).setVisible( true );
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void cmbAnoEconomicoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbAnoEconomicoActionPerformed
@@ -697,10 +696,10 @@ public class VendaPOSVisao extends javax.swing.JFrame
 //            if ( validar() )
 //            {
 
-            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, 2, DVML.JANELA_VENDA_POS, BDConexao.getInstancia()).setVisible(true);
+            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, 2, DVML.JANELA_VENDA_POS, BDConexao.getInstancia() ).setVisible( true );
 //            }
         }
-        catch (Exception e )
+        catch ( Exception e )
         {
             e.printStackTrace();
         }
@@ -708,7 +707,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton5ActionPerformed
     {//GEN-HEADEREND:event_jButton5ActionPerformed
-        new ClienteVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia()).setVisible(true);
+        new ClienteVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia() ).setVisible( true );
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void txtCodClientePesquisaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtCodClientePesquisaActionPerformed
@@ -728,13 +727,13 @@ public class VendaPOSVisao extends javax.swing.JFrame
         try
         {
             System.out.println( "ID PRODUTO EXTERIOR: " + codigo );
-            TbProduto produtoLocal = (TbProduto) produtosController.findById( codigo );
+            TbProduto produtoLocal = ( TbProduto ) produtosController.findById( codigo );
             procedimentoAdicionarTabela( produtoLocal );
         }
         catch ( Exception ex )
         {
             ex.printStackTrace();
-            Logger.getLogger(VendaPOSVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger( VendaPOSVisao.class.getName() ).log( Level.SEVERE, null, ex );
             JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + 2, DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
         }
 
@@ -793,19 +792,19 @@ public class VendaPOSVisao extends javax.swing.JFrame
         }
         catch ( ClassNotFoundException ex )
         {
-            java.util.logging.Logger.getLogger(VendaPOSVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            java.util.logging.Logger.getLogger( VendaPOSVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
         catch ( InstantiationException ex )
         {
-            java.util.logging.Logger.getLogger(VendaPOSVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            java.util.logging.Logger.getLogger( VendaPOSVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
         catch ( IllegalAccessException ex )
         {
-            java.util.logging.Logger.getLogger(VendaPOSVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            java.util.logging.Logger.getLogger( VendaPOSVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
         catch ( javax.swing.UnsupportedLookAndFeelException ex )
         {
-            java.util.logging.Logger.getLogger(VendaPOSVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            java.util.logging.Logger.getLogger( VendaPOSVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
         //</editor-fold>
         //</editor-fold>
@@ -817,7 +816,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable()
+        java.awt.EventQueue.invokeLater( new Runnable()
         {
             public void run()
             {
@@ -884,8 +883,8 @@ public class VendaPOSVisao extends javax.swing.JFrame
         caixaDao = new CaixaDao( emf );
         dadosInstituicaoDao = new DadosInstituicaoDao( emf );
         dc_data_documento.setDate( new Date() );
-        cmbTipoDocumento.setModel( new DefaultComboBoxModel( (Vector) documentoDao.buscaTodos() ) );
-        cmbAnoEconomico.setModel( new DefaultComboBoxModel( (Vector) anoEconomicoDao.buscaTodos() ) );
+        cmbTipoDocumento.setModel( new DefaultComboBoxModel( ( Vector ) documentoDao.buscaTodos() ) );
+        cmbAnoEconomico.setModel( new DefaultComboBoxModel( ( Vector ) anoEconomicoDao.buscaTodos() ) );
         mostrar_ano_economico_serie();
         lb_proximo_documento.setText( "" );
 
@@ -949,7 +948,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
         try
         {
 
-            TbCliente cliente = (TbCliente) clientesController.findById( codCliente );
+            TbCliente cliente = ( TbCliente ) clientesController.findById( codCliente );
             String nome_cliente = cliente.getNome();
             cmbCliente.setSelectedItem( nome_cliente.trim() );
             accao_cliente();
@@ -1003,7 +1002,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
     private static void accao_cliente()
     {
-        String nomeCliente = (String) cmbCliente.getSelectedItem();
+        String nomeCliente = ( String ) cmbCliente.getSelectedItem();
 
         txtNomeConsumidorFinal.setText( nomeCliente );
         String nif = clientesController.findByNome( nomeCliente ).getNif();
@@ -1051,7 +1050,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
     private static void adicionar_linha_em_branco()
     {
 
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
 
         modelo.addRow( new Object[]
         {
@@ -1116,7 +1115,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
                         taxa = getTaxaImposto( cod_interno );
                         total_linha = FinanceUtils.getValorComIVA( qtd, taxa, preco_linha, desconto );
 
-                        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+                        DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
 
                         modelo.addRow( new Object[]
                         {
@@ -1148,7 +1147,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
             }
             else
             {
-                DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+                DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
                 int cod_interno = Integer.parseInt( modelo.getValueAt( linha_existente_produto, 1 ).toString() );
                 double preco = Double.parseDouble( modelo.getValueAt( linha_existente_produto, 3 ).toString() );
                 double qtd = Double.parseDouble( modelo.getValueAt( linha_existente_produto, 4 ).toString() ) + 1;
@@ -1213,7 +1212,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
                         taxa = getTaxaImposto( cod_interno );
                         total_linha = FinanceUtils.getValorComIVA( qtd, taxa, preco_linha, desconto );
 
-                        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+                        DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
 
                         modelo.addRow( new Object[]
                         {
@@ -1245,7 +1244,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
             }
             else
             {
-                DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+                DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
                 int cod_interno = Integer.parseInt( modelo.getValueAt( linha_existente_produto, 1 ).toString() );
                 double preco = Double.parseDouble( modelo.getValueAt( linha_existente_produto, 3 ).toString() );
                 double qtd = Double.parseDouble( modelo.getValueAt( linha_existente_produto, 4 ).toString() ) + 1;
@@ -1290,7 +1289,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
     public static void setTotalGeral()
     {
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
         double total_geral = 0;
         for ( int i = 0; i <= modelo.getRowCount() - 1; i++ )
         {
@@ -1302,7 +1301,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
     public static boolean existProduto( String cod_barra )
     {
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
         if ( modelo.getRowCount() > 0 )
         {
             System.out.println( "Tamanho: " + modelo.getRowCount() );
@@ -1354,7 +1353,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
     public void remover_item_carrinho()
     {
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
         modelo.removeRow( jTable1.getSelectedRow() );
         VendaPOSVisao.setTotalGeral();
     }
@@ -1459,7 +1458,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
         venda_local.setHora( data_documento );
 //        venda_local.setNomeCliente( getNomeCliente() );
 //        venda_local.setClienteNif( getClienteNif() );
-                venda_local.setNomeCliente( txtNomeConsumidorFinal.getText() );
+        venda_local.setNomeCliente( txtNomeConsumidorFinal.getText() );
         venda_local.setClienteNif( txtNifClientePesquisa.getText() );
         //Total Ilíquido
         venda_local.setTotalGeral( new BigDecimal( getTotalIliquido() ) );
@@ -1483,7 +1482,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
         venda_local.setDescontoTotal( new BigDecimal( getDescontoComercial() + getDescontoFinanceiro() ) );
         venda_local.setIdBanco( bancoDao.findTbBanco( 1 ) );
         venda_local.setIdArmazemFK( armazemDao.findTbArmazem( id_armazem ) );
-                venda_local.setCodigoUsuario( new TbUsuario( id_usuario ) );
+        venda_local.setCodigoUsuario( new TbUsuario( id_usuario ) );
         venda_local.setCodigoCliente( new TbCliente( getIdCliente() ) );
 //        venda_local.setCodigoUsuario( usuarioDao.findTbUsuario( id_usuario ) );
 //        venda_local.setCodigoCliente( clienteDao.findTbCliente( 1 ) ); //Consomidor final
@@ -1579,7 +1578,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
     private static double getTotalIliquido()
     {
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
         double qtd = 0d;
         double total_iliquido = 0d, preco_unitario = 0d;
 
@@ -1596,7 +1595,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
     private static double getDescontoComercial()
     {
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
         double desconto_comercial = 0d, desconto_valor_linha = 0d;
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
@@ -1610,7 +1609,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
     private static double getTotalImposto()
     {
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
         double qtd = 0d;
         double imposto = 0d, preco_unitario = 0d, desconto_valor_linha = 0d;
 
@@ -1671,7 +1670,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
     private static double getTotalIncidencia()
     {
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
         double qtd = 0;
         double incidencia = 0d, preco_unitario = 0d, desconto_valor_linha = 0;
 
@@ -1696,7 +1695,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
     private static double getTotalIncidenciaIsento()
     {
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
         double qtd = 0d;
         double incidencia_isento = 0d, preco_unitario = 0d, desconto_valor_linha = 0;
 
@@ -1830,7 +1829,8 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
                 itemVenda = new TbItemVenda();
                 System.out.println( "CODIGO PRODUTO : " + jTable1.getModel().getValueAt( i, 1 ).toString() );
-                itemVenda.setCodigoProduto( produtoDao.findTbProduto( Integer.parseInt( String.valueOf( jTable1.getModel().getValueAt( i, 1 ) ) ) ) );
+                TbProduto produtoLocal = produtoDao.findTbProduto( Integer.parseInt( String.valueOf( jTable1.getModel().getValueAt( i, 1 ) ) ) );
+                itemVenda.setCodigoProduto( produtoLocal );
                 itemVenda.setCodigoVenda( venda );
                 itemVenda.setQuantidade( Double.parseDouble( String.valueOf( jTable1.getModel().getValueAt( i, 4 ) ) ) );
                 itemVenda.setValorIva( Double.parseDouble( String.valueOf( jTable1.getModel().getValueAt( i, 5 ) ) ) );
@@ -1844,6 +1844,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
                 /*setando a mesa e lugar para cunprir a formalidade só aplica-se somente para resstauração*/
                 itemVenda.setFkLugares( lugarDao.findTbLugares( DVML.LUGAR_BALCAO ) );
                 itemVenda.setFkMesas( mesasDao.findTbMesas( DVML.MESA_BALCAO ) );
+                itemVenda.setDesignacaoItem( produtoLocal.getDesignacao() );
 
                 //cria o item venda
                 //itemVendaDao.create( itemVenda );
@@ -1965,7 +1966,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
     private static List<TbProduto> getProdutosIsentos()
     {
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
         double taxa = 0.0;
         int codigo_produto = 0;
         List<TbProduto> lista_produtos_isentos = new ArrayList<>();
@@ -1986,7 +1987,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
     public static void remover_all_produto()
     {
 
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
         for ( int i = modelo.getRowCount() - 1; i >= 0; i-- )
         {
             modelo.removeRow( i );
@@ -2117,7 +2118,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
     public static boolean registrar_forma_pagamento( int id_venda )
     {
 
-        DefaultTableModel modelo = (DefaultTableModel) FormaPagamentoVisao.tabela_forma_pagamento.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) FormaPagamentoVisao.tabela_forma_pagamento.getModel();
 
         FormaPagamentoItem formaPagamentoItem;
         Contas contas;
@@ -2128,7 +2129,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
             formaPagamentoItem = new FormaPagamentoItem();
             Integer id_forma_pagamento = Integer.parseInt( modelo.getValueAt( i, 0 ).toString() );
             FormaPagamento formaPagamento = formaPagamentoController.findByDescrisao( modelo.getValueAt( i, 1 ).toString() );
-            contas = (Contas) contaController.findById( formaPagamento.getFkContaAssociada() );
+            contas = ( Contas ) contaController.findById( formaPagamento.getFkContaAssociada() );
 
             String referencia = ( modelo.getValueAt( i, 2 ) != null ) ? modelo.getValueAt( i, 2 ).toString() : "n/a";
 //            String valor = ( modelo.getValueAt( i, 3 ) != null ) ? modelo.getValueAt( i, 3 ).toString() : "0";
