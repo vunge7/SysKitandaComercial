@@ -5,7 +5,6 @@
  */
 package dao;
 
-
 import java.sql.Connection;
 import controlador.TbStockJpaController;
 import entity.TbProduto;
@@ -124,13 +123,14 @@ public class StockDao extends TbStockJpaController
 
     }
 
-    public TbStock getStockByCodBarra( String codigo_barra, int codigo )
+    public TbStock getStockByCodBarra( Object codigo_barra, int codigo )
     {
         System.out.println( "COD BARRA " + codigo_barra );
+        System.out.println( "COD ARMAZEM " + codigo );
 
         EntityManager em = getEntityManager();
         Query query = em.createQuery( "SELECT s FROM TbStock  s WHERE s.codProdutoCodigo.codBarra = :codigo_barra AND s.codArmazem.codigo = :codigo" )
-                .setParameter( "codigo_barra", codigo_barra )
+                .setParameter( "codigo_barra", String.valueOf( codigo_barra ) )
                 .setParameter( "codigo", codigo );
 
         List<TbStock> result = query.getResultList();
@@ -142,6 +142,7 @@ public class StockDao extends TbStockJpaController
         }
         return null;
     }
+
     public TbStock getStockByCodBarraSemArmazem( String codigo_barra )
     {
         System.out.println( "COD BARRA " + codigo_barra );
@@ -159,7 +160,7 @@ public class StockDao extends TbStockJpaController
         }
         return null;
     }
-    
+
     public TbStock getStockByCodInterno( int codigo, int idAmazem )
     {
         System.out.println( "COD BARRA " + codigo );
@@ -231,6 +232,7 @@ public class StockDao extends TbStockJpaController
         return null;
 
     }
+
     public TbStock get_stock_by_id_produto_and_sem_armazem( int codigo )
     {
 
@@ -250,6 +252,7 @@ public class StockDao extends TbStockJpaController
         return null;
 
     }
+
     public TbStock get_stock_by_id_produto_1( int codigo )
     {
 
@@ -269,7 +272,7 @@ public class StockDao extends TbStockJpaController
         return null;
 
     }
-    
+
     public TbStock get_stock_by_id_produto_2( int codigo )
     {
 
@@ -295,7 +298,7 @@ public class StockDao extends TbStockJpaController
         try
         {
             double qtd_actualizar = stock.getQuantidadeExistente() + qtd;
-            stock.setQuantidadeExistente(  stock.getQuantidadeExistente() +  qtd );
+            stock.setQuantidadeExistente( stock.getQuantidadeExistente() + qtd );
             edit( stock );
         }
         catch ( Exception e )
@@ -330,7 +333,7 @@ public class StockDao extends TbStockJpaController
         Query query = em.createQuery( "SELECT p FROM TbStock  p WHERE p.codProdutoCodigo.codTipoProduto.designacao = :categoria  AND p.codProdutoCodigo.stocavel = 'true'  ORDER BY p.codProdutoCodigo.designacao" )
                 .setParameter( "categoria", categoria );
 
-        Vector<TbStock> result = (Vector) query.getResultList();
+        Vector<TbStock> result = ( Vector ) query.getResultList();
         em.close();
 
         TbStock stock = new TbStock();
@@ -411,7 +414,7 @@ public class StockDao extends TbStockJpaController
         }
         return null;
     }
-    
+
     public List<TbStock> getProdutosImprimirPrecos()
     {
 
@@ -556,6 +559,7 @@ public class StockDao extends TbStockJpaController
         return null;
 
     }
+
     public List<TbProduto> get_all_produtos_and_id_armazem( int codigo_tipo_produto, int idArmazem )
     {
 

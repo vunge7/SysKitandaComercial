@@ -5,6 +5,7 @@
  */
 package visao;
 
+import comercial.controller.ArmazensController;
 import java.sql.Connection;
 import comercial.controller.CaixasController;
 import comercial.controller.ClientesController;
@@ -51,6 +52,7 @@ import entity.TbTipoProduto;
 import entity.TbUsuario;
 import entity.TbVenda;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
@@ -69,9 +71,11 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManagerFactory;
+import javax.swing.AbstractAction;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 import static kitanda.util.CfConstantes.YYYYMMDD_HHMMSS;
 import kitanda.util.CfMethods;
@@ -88,6 +92,7 @@ import util.FinanceUtils;
 import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
 import static util.MetodosUtil.rodarComandoWindows;
+import util.plu.LeitorDePeso;
 import static visao.VendaUsuarioVisao.cmbTipoDocumento;
 
 /**
@@ -139,6 +144,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
     private static ContaController contaController;
     private static CaixasController caixa_controller;
     private static ClientesController clientesController;
+    private static ArmazensController armazensController;
     private static ContaMovimentosController cmc;
 //    private static int id_usuario;
 
@@ -159,6 +165,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
         contaController = new ContaController( VendaPOSVisao.conexao );
         usuariosController = new UsuariosController( VendaPOSVisao.conexao );
         caixa_controller = new CaixasController( conexao );
+        armazensController = new ArmazensController( conexao );
 
         cmc = new ContaMovimentosController( conexao );
 //        dadosInstituicao = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
@@ -169,6 +176,26 @@ public class VendaPOSVisao extends javax.swing.JFrame
         actualizar_moeda();
         actualizar_abreviacao();
         txt_cod_barra.requestFocus();
+
+        // No construtor ou método de inicialização do formulário
+        getRootPane().getInputMap( JComponent.WHEN_IN_FOCUSED_WINDOW )
+                .put( KeyStroke.getKeyStroke( "F5" ), "abrirFormaPagamento" );
+
+        getRootPane().getActionMap().put( "abrirFormaPagamento", new AbstractAction()
+        {
+            @Override
+            public void actionPerformed( ActionEvent e )
+            {
+                try
+                {
+                    procedimentoChamarFormaPagemnto();
+                }
+                catch ( Exception ex )
+                {
+                    ex.printStackTrace();
+                }
+            }
+        } );
 
     }
 
@@ -271,6 +298,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
         cmbCliente = new javax.swing.JComboBox<>();
         txtIniciaisCliente = new javax.swing.JTextField();
         txtCodClientePesquisa = new javax.swing.JTextField();
+        lb_proximo_documento = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         jButton4 = new javax.swing.JButton();
         jPanel6 = new javax.swing.JPanel();
@@ -278,14 +306,13 @@ public class VendaPOSVisao extends javax.swing.JFrame
         btn_lupa = new javax.swing.JButton();
         txt_cod_barra = new javax.swing.JTextField();
         btn_remover = new javax.swing.JButton();
-        lb_proximo_documento = new javax.swing.JLabel();
         lb_total_geral = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
         txtNomeConsumidorFinal = new javax.swing.JTextField();
         txtNifClientePesquisa = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        table = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -396,6 +423,9 @@ public class VendaPOSVisao extends javax.swing.JFrame
             }
         });
 
+        lb_proximo_documento.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        lb_proximo_documento.setText("FR 2021/1");
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -404,7 +434,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGap(119, 119, 119)
-                        .addComponent(txtCodClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 29, Short.MAX_VALUE)
+                        .addComponent(txtCodClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -418,7 +448,9 @@ public class VendaPOSVisao extends javax.swing.JFrame
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cmbTipoDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(dc_data_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(79, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lb_proximo_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(37, 37, 37))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -437,6 +469,9 @@ public class VendaPOSVisao extends javax.swing.JFrame
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(dc_data_documento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addComponent(lb_proximo_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(8, 8, 8))
         );
 
         jPanel2.add(jPanel4, java.awt.BorderLayout.LINE_END);
@@ -503,11 +538,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
         });
         jPanel6.add(btn_remover);
 
-        lb_proximo_documento.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        lb_proximo_documento.setText("FR 2021/1");
-        jPanel6.add(lb_proximo_documento);
-
-        lb_total_geral.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lb_total_geral.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
         lb_total_geral.setText("0.0 AOA");
         jPanel6.add(lb_total_geral);
 
@@ -523,8 +554,8 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
         jPanel3.setLayout(new java.awt.BorderLayout());
 
-        jTable1.setFont(new java.awt.Font("Lucida Grande", 0, 18)); // NOI18N
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        table.setFont(new java.awt.Font("Lucida Grande", 0, 18)); // NOI18N
+        table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][]
             {
 
@@ -554,22 +585,22 @@ public class VendaPOSVisao extends javax.swing.JFrame
                 return canEdit [columnIndex];
             }
         });
-        jTable1.setRowHeight(40);
-        jTable1.addMouseListener(new java.awt.event.MouseAdapter()
+        table.setRowHeight(40);
+        table.addMouseListener(new java.awt.event.MouseAdapter()
         {
             public void mouseClicked(java.awt.event.MouseEvent evt)
             {
-                jTable1MouseClicked(evt);
+                tableMouseClicked(evt);
             }
         });
-        jTable1.addKeyListener(new java.awt.event.KeyAdapter()
+        table.addKeyListener(new java.awt.event.KeyAdapter()
         {
             public void keyReleased(java.awt.event.KeyEvent evt)
             {
-                jTable1KeyReleased(evt);
+                tableKeyReleased(evt);
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(table);
 
         jPanel3.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
@@ -578,15 +609,15 @@ public class VendaPOSVisao extends javax.swing.JFrame
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTable1MouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_jTable1MouseClicked
-    {//GEN-HEADEREND:event_jTable1MouseClicked
+    private void tableMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_tableMouseClicked
+    {//GEN-HEADEREND:event_tableMouseClicked
         // TODO add your handling code here:
-        linha = jTable1.getSelectedRow() + 1;
+        linha = table.getSelectedRow() + 1;
         accao_quantidade();
-    }//GEN-LAST:event_jTable1MouseClicked
+    }//GEN-LAST:event_tableMouseClicked
 
-    private void jTable1KeyReleased(java.awt.event.KeyEvent evt)//GEN-FIRST:event_jTable1KeyReleased
-    {//GEN-HEADEREND:event_jTable1KeyReleased
+    private void tableKeyReleased(java.awt.event.KeyEvent evt)//GEN-FIRST:event_tableKeyReleased
+    {//GEN-HEADEREND:event_tableKeyReleased
         // TODO add your handling code here:
         int key = evt.getKeyCode();
         if ( key == KeyEvent.VK_ENTER )
@@ -594,7 +625,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
             actualizar_linha();
 
         }
-    }//GEN-LAST:event_jTable1KeyReleased
+    }//GEN-LAST:event_tableKeyReleased
 
     private void btn_removerActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_removerActionPerformed
     {//GEN-HEADEREND:event_btn_removerActionPerformed
@@ -613,25 +644,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
     private void btnFinalizarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnFinalizarActionPerformed
     {//GEN-HEADEREND:event_btnFinalizarActionPerformed
-        if ( verifica_ano_documento_igual_economico() )
-        {
-            if ( data_documento_superior_ou_igual_ao_ultimo_doc() )
-            {
-                if ( MetodosUtil.licencaValidada( conexao ) )
-                {
-                    new FormaPagamentoVisao( this, rootPaneCheckingEnabled, emf, DVML.VENDA_POS, BDConexao.getInstancia() ).setVisible( true );
-                }
-            }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "O documento não pode ser processado porque possui uma data inferior ao úlimo documento efectuado", "AVISO", JOptionPane.WARNING_MESSAGE );
-            }
-
-        }
-        else
-        {
-            JOptionPane.showMessageDialog( null, "A data do documento a ser emitido deve estar no intervalo do ano economico", "Aviso", JOptionPane.WARNING_MESSAGE );
-        }
+        procedimentoChamarFormaPagemnto();
     }//GEN-LAST:event_btnFinalizarActionPerformed
 
     private void txt_cod_barraActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txt_cod_barraActionPerformed
@@ -846,10 +859,10 @@ public class VendaPOSVisao extends javax.swing.JFrame
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane1;
-    private static javax.swing.JTable jTable1;
     private javax.swing.JLabel lb_armazem;
     private static javax.swing.JLabel lb_proximo_documento;
     public static javax.swing.JLabel lb_total_geral;
+    private static javax.swing.JTable table;
     private static javax.swing.JTextField txtCodClientePesquisa;
     private javax.swing.JTextField txtIniciaisCliente;
     private static javax.swing.JTextField txtNifClientePesquisa;
@@ -968,20 +981,20 @@ public class VendaPOSVisao extends javax.swing.JFrame
 //        System.out.println( "LINHA: " + linha );
 //        System.out.println( "ROW COUNT: " + jTable1.getRowCount() );
 
-        if ( jTable1.getRowCount() > 0 )
+        if ( table.getRowCount() > 0 )
         {
             // vefica se a linha esta vazia
-            if ( !jTable1.getValueAt( jTable1.getRowCount() - 1, 2 ).toString().equals( "" ) )
+            if ( !table.getValueAt( table.getRowCount() - 1, 2 ).toString().equals( "" ) )
             {
-                if ( linha == jTable1.getRowCount() )
+                if ( linha == table.getRowCount() )
                 {
                     adicionar_linha_em_branco();
                 }
-                jTable1.clearSelection();
-                jTable1.setCellSelectionEnabled( true );
-                jTable1.requestFocus();
-                jTable1.editCellAt( linha, 0 );
-                jTable1.getEditorComponent().requestFocus();
+                table.clearSelection();
+                table.setCellSelectionEnabled( true );
+                table.requestFocus();
+                table.editCellAt( linha, 0 );
+                table.getEditorComponent().requestFocus();
                 linha++;
             }
 
@@ -990,11 +1003,11 @@ public class VendaPOSVisao extends javax.swing.JFrame
         {
             System.out.println( "CHEGUEI AQUI." );
             adicionar_linha_em_branco();
-            jTable1.clearSelection();
-            jTable1.setCellSelectionEnabled( true );
-            jTable1.requestFocus();
-            jTable1.editCellAt( linha, 0 );
-            jTable1.getEditorComponent().requestFocus();
+            table.clearSelection();
+            table.setCellSelectionEnabled( true );
+            table.requestFocus();
+            table.editCellAt( linha, 0 );
+            table.getEditorComponent().requestFocus();
             linha++;
         }
 
@@ -1050,7 +1063,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
     private static void adicionar_linha_em_branco()
     {
 
-        DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
 
         modelo.addRow( new Object[]
         {
@@ -1096,7 +1109,9 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
             if ( !existProduto( cod_barra ) )
             {
-                TbStock stock_local_1 = stockDao.getStockByCodBarra( cod_barra, id_armazem );
+
+                TbStock stock_local_1 = stockDao.getStockByCodBarra(
+                        Integer.parseInt( cod_barra ), id_armazem );
 
                 if ( !Objects.isNull( stock_local_1 ) )
                 {
@@ -1115,7 +1130,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
                         taxa = getTaxaImposto( cod_interno );
                         total_linha = FinanceUtils.getValorComIVA( qtd, taxa, preco_linha, desconto );
 
-                        DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
+                        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
 
                         modelo.addRow( new Object[]
                         {
@@ -1147,7 +1162,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
             }
             else
             {
-                DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
+                DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
                 int cod_interno = Integer.parseInt( modelo.getValueAt( linha_existente_produto, 1 ).toString() );
                 double preco = Double.parseDouble( modelo.getValueAt( linha_existente_produto, 3 ).toString() );
                 double qtd = Double.parseDouble( modelo.getValueAt( linha_existente_produto, 4 ).toString() ) + 1;
@@ -1212,7 +1227,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
                         taxa = getTaxaImposto( cod_interno );
                         total_linha = FinanceUtils.getValorComIVA( qtd, taxa, preco_linha, desconto );
 
-                        DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
+                        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
 
                         modelo.addRow( new Object[]
                         {
@@ -1244,7 +1259,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
             }
             else
             {
-                DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
+                DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
                 int cod_interno = Integer.parseInt( modelo.getValueAt( linha_existente_produto, 1 ).toString() );
                 double preco = Double.parseDouble( modelo.getValueAt( linha_existente_produto, 3 ).toString() );
                 double qtd = Double.parseDouble( modelo.getValueAt( linha_existente_produto, 4 ).toString() ) + 1;
@@ -1289,7 +1304,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
     public static void setTotalGeral()
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         double total_geral = 0;
         for ( int i = 0; i <= modelo.getRowCount() - 1; i++ )
         {
@@ -1301,7 +1316,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
     public static boolean existProduto( String cod_barra )
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         if ( modelo.getRowCount() > 0 )
         {
             System.out.println( "Tamanho: " + modelo.getRowCount() );
@@ -1353,8 +1368,8 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
     public void remover_item_carrinho()
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
-        modelo.removeRow( jTable1.getSelectedRow() );
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        modelo.removeRow( table.getSelectedRow() );
         VendaPOSVisao.setTotalGeral();
     }
 
@@ -1372,13 +1387,13 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
     private void accao_quantidade()
     {
-        int linha_selecionada = jTable1.getSelectedRow();
-        int coluna_selecionada = jTable1.getSelectedColumn();
+        int linha_selecionada = table.getSelectedRow();
+        int coluna_selecionada = table.getSelectedColumn();
 
 //        if ( coluna_selecionada == 4 || coluna_selecionada == 6 )
         if ( coluna_selecionada == 4 )
         {
-            new TecladoNumeroPOSVisao( this, rootPaneCheckingEnabled, jTable1, linha_selecionada, coluna_selecionada, DVML.NUMERO_TECLADO_VENDA_POS ).setVisible( true );
+            new TecladoNumeroPOSVisao( this, rootPaneCheckingEnabled, table, linha_selecionada, coluna_selecionada, DVML.NUMERO_TECLADO_VENDA_POS ).setVisible( true );
         }
     }
 
@@ -1417,7 +1432,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
     private void setCursosLinha( int linha_parm )
     {
-        jTable1.addKeyListener( new java.awt.event.KeyAdapter()
+        table.addKeyListener( new java.awt.event.KeyAdapter()
         {
             @Override
             public void keyReleased( java.awt.event.KeyEvent evt )
@@ -1427,11 +1442,11 @@ public class VendaPOSVisao extends javax.swing.JFrame
                 {
                     try
                     {
-                        jTable1.clearSelection();
-                        jTable1.setCellSelectionEnabled( true );
-                        jTable1.requestFocus();
-                        jTable1.editCellAt( linha_parm, 0 );
-                        jTable1.getEditorComponent().requestFocus();
+                        table.clearSelection();
+                        table.setCellSelectionEnabled( true );
+                        table.requestFocus();
+                        table.editCellAt( linha_parm, 0 );
+                        table.getEditorComponent().requestFocus();
                     }
                     catch ( Exception e )
                     {
@@ -1578,7 +1593,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
     private static double getTotalIliquido()
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         double qtd = 0d;
         double total_iliquido = 0d, preco_unitario = 0d;
 
@@ -1595,7 +1610,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
     private static double getDescontoComercial()
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         double desconto_comercial = 0d, desconto_valor_linha = 0d;
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
@@ -1609,7 +1624,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
     private static double getTotalImposto()
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         double qtd = 0d;
         double imposto = 0d, preco_unitario = 0d, desconto_valor_linha = 0d;
 
@@ -1670,7 +1685,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
     private static double getTotalIncidencia()
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         double qtd = 0;
         double incidencia = 0d, preco_unitario = 0d, desconto_valor_linha = 0;
 
@@ -1695,7 +1710,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
     private static double getTotalIncidenciaIsento()
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         double qtd = 0d;
         double incidencia_isento = 0d, preco_unitario = 0d, desconto_valor_linha = 0;
 
@@ -1822,23 +1837,23 @@ public class VendaPOSVisao extends javax.swing.JFrame
         boolean efectuada = true;
         venda = vendaDao.findTbVenda( last_cod );
 
-        for ( int i = 0; i < jTable1.getRowCount(); i++ )
+        for ( int i = 0; i < table.getRowCount(); i++ )
         {
             try
             {
 
                 itemVenda = new TbItemVenda();
-                System.out.println( "CODIGO PRODUTO : " + jTable1.getModel().getValueAt( i, 1 ).toString() );
-                TbProduto produtoLocal = produtoDao.findTbProduto( Integer.parseInt( String.valueOf( jTable1.getModel().getValueAt( i, 1 ) ) ) );
+                System.out.println( "CODIGO PRODUTO : " + table.getModel().getValueAt( i, 1 ).toString() );
+                TbProduto produtoLocal = produtoDao.findTbProduto( Integer.parseInt( String.valueOf( table.getModel().getValueAt( i, 1 ) ) ) );
                 itemVenda.setCodigoProduto( produtoLocal );
                 itemVenda.setCodigoVenda( venda );
-                itemVenda.setQuantidade( Double.parseDouble( String.valueOf( jTable1.getModel().getValueAt( i, 4 ) ) ) );
-                itemVenda.setValorIva( Double.parseDouble( String.valueOf( jTable1.getModel().getValueAt( i, 5 ) ) ) );
-                itemVenda.setDesconto( Double.parseDouble( String.valueOf( jTable1.getModel().getValueAt( i, 6 ) ) ) );
+                itemVenda.setQuantidade( Double.parseDouble( String.valueOf( table.getModel().getValueAt( i, 4 ) ) ) );
+                itemVenda.setValorIva( Double.parseDouble( String.valueOf( table.getModel().getValueAt( i, 5 ) ) ) );
+                itemVenda.setDesconto( Double.parseDouble( String.valueOf( table.getModel().getValueAt( i, 6 ) ) ) );
                 itemVenda.setValorRetencao( 0d );
                 itemVenda.setMotivoIsensao( getMotivoIsensao( itemVenda.getCodigoProduto().getCodigo() ) );
                 itemVenda.setCodigoIsensao( MetodosUtil.getCodigoRegime( itemVenda.getCodigoProduto().getCodigo() ) );
-                itemVenda.setTotal( new BigDecimal( Double.parseDouble( String.valueOf( jTable1.getModel().getValueAt( i, 7 ) ) ) ) );
+                itemVenda.setTotal( new BigDecimal( Double.parseDouble( String.valueOf( table.getModel().getValueAt( i, 7 ) ) ) ) );
                 itemVenda.setFkPreco( precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( itemVenda.getCodigoProduto().getCodigo(), itemVenda.getQuantidade() ) ) );
                 itemVenda.setDataServico( new Date() );
                 /*setando a mesa e lugar para cunprir a formalidade só aplica-se somente para resstauração*/
@@ -1966,7 +1981,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
     private static List<TbProduto> getProdutosIsentos()
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         double taxa = 0.0;
         int codigo_produto = 0;
         List<TbProduto> lista_produtos_isentos = new ArrayList<>();
@@ -1987,7 +2002,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
     public static void remover_all_produto()
     {
 
-        DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         for ( int i = modelo.getRowCount() - 1; i >= 0; i-- )
         {
             modelo.removeRow( i );
@@ -2018,11 +2033,16 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
     private void mostrar_armazem()
     {
-        TbArmazem armazem = armazemDao.findTbArmazem( id_armazem );
-
+//        TbArmazem armazem = armazemDao.findTbArmazem( id_armazem );
+//
+//        if ( !Objects.isNull( armazem ) )
+//        {
+//            lb_armazem.setText( armazem.getDesignacao() );
+//        }
+        String armazem = armazensController.getVector2().get( 0 );
         if ( !Objects.isNull( armazem ) )
         {
-            lb_armazem.setText( armazem.getDesignacao() );
+            lb_armazem.setText( armazem );
         }
     }
 
@@ -2040,18 +2060,45 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
             cod_flag = Integer.parseInt( cod_barra.substring( 0, 2 ) );
 
-            if ( cod_flag == 28 ) // se trata de um produto na balanca
+            if ( cod_flag == 28 ) // se trata de um produto de balanca
             {
-                cod_produto = Integer.parseInt( cod_barra.substring( 2, 8 ) );
-                peso = Double.parseDouble( cod_barra.substring( 8, 12 ) );
-                qtd = ( peso / 1000 ); // que e a quantidade do produto
-
+                qtd = LeitorDePeso.calcularPeso( cod_barra );
             }
 
         }
         return qtd;
 
     }
+//    private static double getQtd( String cod_barra )
+//    {
+//        int tamanho = cod_barra.length();
+//        double qtd = Double.parseDouble( txt_qtd.getText() );
+////        double qtd = 1d;
+//        if ( tamanho == 13 )
+//        {
+//            int cod_flag; // 0 - 1
+//            int cod_produto; // 2 - 7
+//            double peso; // 8 - 11
+//            double preco; // 
+//
+//            cod_flag = Integer.parseInt( cod_barra.substring( 0, 2 ) );
+//
+////            if ( cod_flag == 28 ) // se trata de um produto de balanca
+////            {
+////                cod_produto = Integer.parseInt( cod_barra.substring( 2, 8 ) );
+////                peso = Double.parseDouble( cod_barra.substring( 8, 12 ) );
+////                qtd = ( peso / 1000 ); // que e a quantidade do produto
+////
+////            }
+//            if ( cod_flag == 28 ) // se trata de um produto de balanca
+//            {
+//                qtd = LeitorDePeso.calcularPeso( cod_barra );
+//            }
+//
+//        }
+//        return qtd;
+//
+//    }
 
     private static String getCodBarra( String text )
     {
@@ -2066,8 +2113,9 @@ public class VendaPOSVisao extends javax.swing.JFrame
 
             if ( cod_flag == 28 ) // se trata de um produto na balanca
             {
-                System.out.println( "Cod Barra produto: " + text.substring( 2, 8 ) );
-                return text.substring( 2, 8 );
+//                System.out.println( "Cod Barra produto: " + text.substring( 2, 8 ) );
+                System.out.println( "Cod Barra produto: " + text.substring( 2, 7 ) );
+                return text.substring( 2, 7 );
 //                peso = Double.parseDouble( cod_barra.substring( 8, 11 ) );
 //                qtd = ( peso / 1000 ); // que e a quantidade do produto
 
@@ -2230,8 +2278,48 @@ public class VendaPOSVisao extends javax.swing.JFrame
     public void scrolltable()
     {
 
-        jTable1.scrollRectToVisible( jTable1.getCellRect( jTable1.getRowCount() - 1, jTable1.getColumnCount(), true ) );
+        table.scrollRectToVisible( table.getCellRect( table.getRowCount() - 1, table.getColumnCount(), true ) );
 
+    }
+
+    private void procedimentoChamarFormaPagemnto()
+    {
+        if ( verifica_ano_documento_igual_economico() )
+        {
+            if ( data_documento_superior_ou_igual_ao_ultimo_doc() )
+            {
+                if ( MetodosUtil.licencaValidada( conexao ) )
+                {
+
+                    if ( !MetodosUtil.tabela_vazia( table ) )
+                    {
+//                        if ( !validarPrecos_tabela( table ) )
+//                   lb_proximo_documento     {
+//                            return; // Se houver erro, não abre forma de pagamento
+//                        }
+
+                        new FormaPagamentoVisao( this, rootPaneCheckingEnabled, emf, DVML.VENDA_POS, BDConexao.getInstancia() ).setVisible( true );
+
+//                new FormaPagamentoVisao( this, rootPaneCheckingEnabled, null, DVML.VENDA_PONTUAL_TOP, BDConexao.getInstancia() ).setVisible( true );
+                    }
+                    else
+                    {
+                        JOptionPane.showMessageDialog( null, "Caro usuário, adicione itens na tabela" );
+                    }
+
+//                    new FormaPagamentoVisao( this, rootPaneCheckingEnabled, emf, DVML.VENDA_POS, BDConexao.getInstancia() ).setVisible( true );
+                }
+            }
+            else
+            {
+                JOptionPane.showMessageDialog( null, "O documento não pode ser processado porque possui uma data inferior ao úlimo documento efectuado", "AVISO", JOptionPane.WARNING_MESSAGE );
+            }
+
+        }
+        else
+        {
+            JOptionPane.showMessageDialog( null, "A data do documento a ser emitido deve estar no intervalo do ano economico", "Aviso", JOptionPane.WARNING_MESSAGE );
+        }
     }
 
 }
