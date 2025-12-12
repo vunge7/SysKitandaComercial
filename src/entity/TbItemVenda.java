@@ -54,7 +54,7 @@ public class TbItemVenda implements Serializable
     @Column(name = "codigo")
     private Integer codigo;
     @Basic(optional = false)
-    @Column(name = "quantidade")
+    @Column(name = "relatorio_vendas_mes_final")
     private double quantidade;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "valor_iva")

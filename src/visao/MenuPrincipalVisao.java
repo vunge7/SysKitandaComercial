@@ -638,6 +638,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jcbRelatorioMensalClientesVips = new javax.swing.JMenuItem();
         jmRelatoriosSaidasProdutosPorDatas = new javax.swing.JMenuItem();
         jMenuItemRelatorioDeEntradas = new javax.swing.JMenuItem();
+        jMenuItem5 = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jmTurno = new javax.swing.JMenuItem();
         jmCadastroUsuario = new javax.swing.JMenuItem();
@@ -1219,6 +1220,16 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
             }
         });
         jmenuRelatorios.add(jMenuItemRelatorioDeEntradas);
+
+        jMenuItem5.setText("Relatório Mensalidades");
+        jMenuItem5.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jMenuItem5ActionPerformed(evt);
+            }
+        });
+        jmenuRelatorios.add(jMenuItem5);
 
         jMenuBar1.add(jmenuRelatorios);
 
@@ -2477,6 +2488,11 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         frm.setVisible( true );
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
+    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem5ActionPerformed
+    {//GEN-HEADEREND:event_jMenuItem5ActionPerformed
+        new FrmRelatorioVendasMes().setVisible( true);
+    }//GEN-LAST:event_jMenuItem5ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -2558,6 +2574,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
+    private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenuItem jMenuItem8;
