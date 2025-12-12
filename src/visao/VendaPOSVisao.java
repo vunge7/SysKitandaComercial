@@ -93,7 +93,6 @@ import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
 import static util.MetodosUtil.rodarComandoWindows;
 import util.plu.LeitorDePeso;
-import static visao.VendaUsuarioVisao.cmbTipoDocumento;
 
 /**
  *
