@@ -50,6 +50,7 @@ import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
 import static util.MetodosUtil.startBackGroundProcesses;
 import util.SingleInstanceLock;
+import util.SingleInstanceManager;
 import util.cronjob.QuartzApp;
 import util.cronjob.StockAutoCheckService;
 import util.cronjob.ValidadorJob;
@@ -707,11 +708,18 @@ public class LoginVisao extends javax.swing.JFrame
         }
 
         // 🔒 Verifica instância única ANTES de abrir interface
-        if ( SingleInstanceLock.isAlreadyRunning() )
-        {
-            JOptionPane.showMessageDialog( null, "Atenção\nO sistema já está aberto!" );
-            System.exit( 0 );
-        }
+//        if ( SingleInstanceLock.isAlreadyRunning() )
+//        {
+//            JOptionPane.showMessageDialog( null, "Atenção\nO sistema já está aberto!" );
+//            System.exit( 0 );
+//        }
+
+        if (SingleInstanceManager.isInstanceRunning()) {
+    // A instância antiga será fechada automaticamente.
+    // Depois disto a nova abertura funciona normalmente.
+    System.exit(0);
+}
+
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater( new Runnable()
