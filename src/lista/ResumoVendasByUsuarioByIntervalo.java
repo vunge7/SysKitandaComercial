@@ -6,11 +6,8 @@ package lista;
 
 import dao.ArmazemDao;
 import dao.ItemVendaDao;
-import dao.UsuarioDao;
-import dao.VendaDao;
 import java.io.File;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import javax.persistence.EntityManagerFactory;

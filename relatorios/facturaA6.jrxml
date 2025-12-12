@@ -413,16 +413,19 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_item_venda_valor_iva}.intValue()]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0">
+			<textField pattern="#,##0.000">
 				<reportElement uuid="c5dc2ea5-b3bd-4c95-9a53-6972fb547dc9" x="0" y="12" width="32" height="11"/>
 				<box>
 					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.25"/>
 				</box>
-				<textElement textAlignment="Center">
-					<font fontName="Times New Roman" size="9" isBold="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="7" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_item_venda_quantidade}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{tb_item_venda_quantidade}.doubleValue() % 1 == 0) 
+    ? String.valueOf($F{tb_item_venda_quantidade}.intValue()) 
+    : String.valueOf($F{tb_item_venda_quantidade})
+]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement uuid="ea5218f4-f3b3-4199-9a0d-3df5df401fde" key="textField-15" x="0" y="1" width="188" height="12"/>

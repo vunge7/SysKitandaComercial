@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Objects;
 import javax.persistence.EntityManagerFactory;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import kitanda.util.CfMethods;
 import util.BDConexao;
@@ -38,6 +39,10 @@ public class FormaPagamentoVisao extends javax.swing.JFrame
     private boolean a6 = false;
     public static int formulario = 0;
     private List<FormaPagamento> bancos;
+    // ÍNDICE DA COLUNA VALOR (ex.: 3)
+    private static final int COL_VALOR = 3;
+    double totalVenda = 10100.00; // ← pode vir do banco, variável, etc.
+    private boolean bloqueio = false;       // evita loops infinitos
 
     /**
      * Creates new form FormaPagamentoVisao
@@ -56,7 +61,7 @@ public class FormaPagamentoVisao extends javax.swing.JFrame
 //        if ( caixasController.possivelVendaByCaixaAberto() )
 //        {
         initComponents();
-        TbDadosInstituicao d = (TbDadosInstituicao) dadosInstituicaoController.findById( 1 );
+        TbDadosInstituicao d = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
         FormaPagamentoVisao.conexao = conexao;
         setActivarTeclado( d.getTeclado() );
         rdTeclado.setVisible( false );
@@ -64,6 +69,10 @@ public class FormaPagamentoVisao extends javax.swing.JFrame
         this.setLocation( dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2 );
         this.formulario = formulario;
         inicializar_componentes();
+
+        totalVenda = CfMethods.parseMoedaFormatada( lb_total_geral.getText() );
+
+        aplicarRegraValor( tabela_forma_pagamento );
 //        }
 //        else
 //        {
@@ -317,22 +326,21 @@ public class FormaPagamentoVisao extends javax.swing.JFrame
 //        }
 //
 //    }
-    public static void visualizar_troco()
-    {
-        try
-        {
-
-            BigDecimal total_geral = new BigDecimal( CfMethods.parseMoedaFormatada( lb_total_geral.getText() ) );
-            BigDecimal total_valor = get_total_valor();
-            lb_troco.setText( CfMethods.formatarComoMoeda( total_valor.subtract( total_geral ).doubleValue() ) );
-
-        }
-        catch ( Exception e )
-        {
-        }
-
-    }
-
+//    public static void visualizar_troco()
+//    {
+//        try
+//        {
+//
+//            BigDecimal total_geral = new BigDecimal( CfMethods.parseMoedaFormatada( lb_total_geral.getText() ) );
+//            BigDecimal total_valor = get_total_valor();
+//            lb_troco.setText( CfMethods.formatarComoMoeda( total_valor.subtract( total_geral ).doubleValue() ) );
+//
+//        }
+//        catch ( Exception e )
+//        {
+//        }
+//
+//    }
     /**
      * @param args the command line arguments
      */
@@ -463,7 +471,7 @@ public class FormaPagamentoVisao extends javax.swing.JFrame
 
         bancos = ( formulario != DVML.VENDA_LAVANDARIA ) ? formaPagamentoController.listarTodos() : formaPagamentoController.listarTodosExeceptoOrdemSacEGorjet();
 
-        DefaultTableModel modelo = (DefaultTableModel) tabela_forma_pagamento.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) tabela_forma_pagamento.getModel();
 
         if ( !bancos.isEmpty() )
         {
@@ -490,7 +498,7 @@ public class FormaPagamentoVisao extends javax.swing.JFrame
 
         bancos = ( formulario != DVML.VENDA_LAVANDARIA ) ? formaPagamentoController.listarTodos() : formaPagamentoController.listarTodosExeceptoOrdemSacEGorjet();
 
-        DefaultTableModel modelo = (DefaultTableModel) tabela_forma_pagamento.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) tabela_forma_pagamento.getModel();
         modelo.setRowCount( 0 );
         if ( !bancos.isEmpty() )
         {
@@ -541,69 +549,68 @@ public class FormaPagamentoVisao extends javax.swing.JFrame
 //        return total;
 //
 //    }
-    public static BigDecimal get_total_valor()
-    {
-
-        DefaultTableModel modelo = (DefaultTableModel) tabela_forma_pagamento.getModel();
-
-        double gorjeta = 0;
-        BigDecimal total = new BigDecimal( "0" );
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-
-            String forma = ( modelo.getValueAt( i, 1 ) != null ) ? modelo.getValueAt( i, 1 ).toString() : "";
-            String valor = ( !modelo.getValueAt( i, 3 ).equals( "" ) ) ? modelo.getValueAt( i, 3 ).toString() : "0";
-            total = total.add( new BigDecimal( valor ) );
-
-            if ( forma.equals( DVML.FORMA_PAGAMENTO_CARTAO ) )
-            {
-                Double valor_factura = CfMethods.parseMoedaFormatada( lb_total_geral.getText() );
-                double dif = Double.parseDouble( valor ) - valor_factura;
-                gorjeta = ( dif > 0 ) ? dif : 0;
-            }
-        }
-
-        System.out.println( "GORJETA: " + gorjeta );
-
-        if ( gorjeta > 0 )
-        {
-
-            if ( formulario == DVML.VENDA_POS )
-            {
-                VendaPOSVisao.gorjeta = gorjeta;
-            }
-            else if ( formulario == DVML.VENDA_RESTAURANTE )
-            {
-                NovaGestaoPedidosVisao.gorjeta = gorjeta;
-            }
-            else if ( formulario == DVML.VENDA_EXPRESSO )
-            {
-                VendasPraticasVisao.gorjeta = gorjeta;
-            }
-            else if ( formulario == DVML.VENDA_PONTUAL )
-            {
-                VendaUsuarioVisao.gorjeta = gorjeta;
-            }
-            else if ( formulario == DVML.VENDA_OFICINA )
-            {
-                VendaOficinaUsuarioVisao.gorjeta = gorjeta;
-            }
-            else if ( formulario == DVML.CONVERSAO_PROFORMA_FACTURA_RECIBO )
-            {
-                ConverterProformaFacturaVisao.gorjeta = 0;
-            }
-            else if ( formulario == DVML.CONVERSAO_GUIA_TRANSPORTE )
-            {
-                ConverterGuiaFacturaVisao.gorjeta = 0;
-            }
-//            else if ( formulario == DVML.EMISSAO_RECIBOS )
+//    public static BigDecimal get_total_valor()
+//    {
+//
+//        DefaultTableModel modelo = ( DefaultTableModel ) tabela_forma_pagamento.getModel();
+//
+//        double gorjeta = 0;
+//        BigDecimal total = new BigDecimal( "0" );
+//        for ( int i = 0; i < modelo.getRowCount(); i++ )
+//        {
+//
+//            String forma = ( modelo.getValueAt( i, 1 ) != null ) ? modelo.getValueAt( i, 1 ).toString() : "";
+//            String valor = ( !modelo.getValueAt( i, 3 ).equals( "" ) ) ? modelo.getValueAt( i, 3 ).toString() : "0";
+//            total = total.add( new BigDecimal( valor ) );
+//
+//            if ( forma.equals( DVML.FORMA_PAGAMENTO_CARTAO ) )
 //            {
-//                EmissaoRecibos.gorjeta = gorjeta;
+//                Double valor_factura = CfMethods.parseMoedaFormatada( lb_total_geral.getText() );
+//                double dif = Double.parseDouble( valor ) - valor_factura;
+//                gorjeta = ( dif > 0 ) ? dif : 0;
 //            }
-        }
-        return total;
-    }
-
+//        }
+//
+//        System.out.println( "GORJETA: " + gorjeta );
+//
+//        if ( gorjeta > 0 )
+//        {
+//
+//            if ( formulario == DVML.VENDA_POS )
+//            {
+//                VendaPOSVisao.gorjeta = gorjeta;
+//            }
+//            else if ( formulario == DVML.VENDA_RESTAURANTE )
+//            {
+//                NovaGestaoPedidosVisao.gorjeta = gorjeta;
+//            }
+//            else if ( formulario == DVML.VENDA_EXPRESSO )
+//            {
+//                VendasPraticasVisao.gorjeta = gorjeta;
+//            }
+//            else if ( formulario == DVML.VENDA_PONTUAL )
+//            {
+//                VendaUsuarioVisao.gorjeta = gorjeta;
+//            }
+//            else if ( formulario == DVML.VENDA_OFICINA )
+//            {
+//                VendaOficinaUsuarioVisao.gorjeta = gorjeta;
+//            }
+//            else if ( formulario == DVML.CONVERSAO_PROFORMA_FACTURA_RECIBO )
+//            {
+//                ConverterProformaFacturaVisao.gorjeta = 0;
+//            }
+//            else if ( formulario == DVML.CONVERSAO_GUIA_TRANSPORTE )
+//            {
+//                ConverterGuiaFacturaVisao.gorjeta = 0;
+//            }
+////            else if ( formulario == DVML.EMISSAO_RECIBOS )
+////            {
+////                EmissaoRecibos.gorjeta = gorjeta;
+////            }
+//        }
+//        return total;
+//    }
     private void procedimento_finalizar()
     {
 
@@ -695,7 +702,7 @@ public class FormaPagamentoVisao extends javax.swing.JFrame
 
     private void podeAdicionarValor()
     {
-        DefaultTableModel modelo = (DefaultTableModel) tabela_forma_pagamento.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) tabela_forma_pagamento.getModel();
 
         int linhaSelecionada = tabela_forma_pagamento.getSelectedRow();
 //        double valor = Double.valueOf( modelo.getValueAt( linhaSelecionada, 3 ).toString() );
@@ -705,7 +712,7 @@ public class FormaPagamentoVisao extends javax.swing.JFrame
         {
             try
             {
-                modelo = (DefaultTableModel) tabela_forma_pagamento.getModel();
+                modelo = ( DefaultTableModel ) tabela_forma_pagamento.getModel();
                 System.out.println( "SIZE: " + modelo.getRowCount() );
                 if ( modelo.getRowCount() - 1 > 0 )
                 {
@@ -727,7 +734,7 @@ public class FormaPagamentoVisao extends javax.swing.JFrame
     {
         System.out.println( "TROCO < 0" );
         System.out.println( "TROCO: " + lb_troco.getText() );
-        DefaultTableModel modelo = (DefaultTableModel) tabela_forma_pagamento.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) tabela_forma_pagamento.getModel();
         double troco = CfMethods.parseMoedaFormatada( lb_troco.getText() );
         if ( troco < 0 )
         {
@@ -750,7 +757,7 @@ public class FormaPagamentoVisao extends javax.swing.JFrame
     private boolean valorSuperiorOutrasFormasPagamento2()
     {
 
-        DefaultTableModel modelo = (DefaultTableModel) tabela_forma_pagamento.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) tabela_forma_pagamento.getModel();
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
         {
@@ -788,7 +795,7 @@ public class FormaPagamentoVisao extends javax.swing.JFrame
     private boolean valorSuperiorOutrasFormasPagamento()
     {
 
-        DefaultTableModel modelo = (DefaultTableModel) tabela_forma_pagamento.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) tabela_forma_pagamento.getModel();
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
         {
@@ -824,7 +831,7 @@ public class FormaPagamentoVisao extends javax.swing.JFrame
     {
 
 //        tabela_forma_pagamento.setModel( getModelDefault() );
-        DefaultTableModel modelo = (DefaultTableModel) tabela_forma_pagamento.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) tabela_forma_pagamento.getModel();
         double valor = 0, troco_local = 0, total;
 
         total = CfMethods.parseMoedaFormatada( lb_total_geral.getText() );
@@ -850,6 +857,247 @@ public class FormaPagamentoVisao extends javax.swing.JFrame
         }
         visualizar_troco();
 
+    }
+
+    public void aplicarRegraValor( JTable tabela )
+    {
+        tabela.getSelectionModel().addListSelectionListener( e ->
+        {
+
+            if ( !e.getValueIsAdjusting() && !bloqueio )
+            {
+
+                int row = tabela.getSelectedRow();
+                int col = tabela.getSelectedColumn();
+
+                if ( row >= 0 && col == COL_VALOR )
+                {
+                    atualizarValorLinha( tabela, row );
+                }
+            }
+        } );
+    }
+
+    private void atualizarValorLinha( JTable tabela, int row )
+    {
+        try
+        {
+            bloqueio = true; // 🔒 impede eventos internos
+
+            // Ler numerário (linha 0)
+            double numerario = 0.0;
+            try
+            {
+                Object numObj = tabela.getValueAt( 0, COL_VALOR );
+                if ( numObj != null )
+                {
+                    numerario = Double.parseDouble(
+                            numObj.toString().replace( ",", "." ).trim()
+                    );
+                }
+            }
+            catch ( Exception ignored )
+            {
+            }
+
+            double valorParaLinha;
+
+            if ( row == 0 )
+            {
+                // Para numerário → total da venda
+                valorParaLinha = totalVenda;
+            }
+            else
+            {
+                // Para outras linhas → total - numerário
+                valorParaLinha = totalVenda - numerario;
+                if ( valorParaLinha < 0 )
+                {
+                    valorParaLinha = 0;
+                }
+            }
+
+            // Sempre com ponto
+            String texto = String.format( java.util.Locale.US, "%.2f", valorParaLinha );
+
+            // Só atualiza se o valor mudou
+            Object atual = tabela.getValueAt( row, COL_VALOR );
+            if ( atual == null || !atual.toString().equals( texto ) )
+            {
+                if ( CfMethods.parseMoedaFormatada( lb_troco.getText() ) < 0 )
+                {
+                    tabela.setValueAt( texto, row, COL_VALOR );
+                }
+
+            }
+
+            // 🔥 Atualizar troco
+            visualizar_troco();
+
+        }
+        finally
+        {
+            bloqueio = false; // 🔓 libera eventos
+        }
+    }
+
+    public static void visualizar_troco()
+    {
+        try
+        {
+            BigDecimal totalGeral
+                    = new BigDecimal( CfMethods.parseMoedaFormatada( lb_total_geral.getText() ) );
+
+            BigDecimal totalPago = get_total_valor();
+
+            BigDecimal troco = totalPago.subtract( totalGeral );
+
+            // Evitar -0.00
+            if ( troco.abs().doubleValue() < 0.005 )
+            {
+                troco = BigDecimal.ZERO;
+            }
+
+            // Não atualizar se for o mesmo texto
+            String texto = CfMethods.formatarComoMoeda( troco.doubleValue() );
+
+            if ( !lb_troco.getText().equals( texto ) )
+            {
+                lb_troco.setText( texto );
+            }
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
+    }
+
+//    public static BigDecimal get_total_valor()
+//    {
+//        BigDecimal soma = BigDecimal.ZERO;
+//
+//        for ( int i = 0; i < tabela_forma_pagamento.getRowCount(); i++ )
+//        {
+//
+//            Object val = tabela_forma_pagamento.getValueAt( i, COL_VALOR );
+//
+//            if ( val != null && !val.toString().trim().isEmpty() )
+//            {
+//
+//                try
+//                {
+//                    double v = Double.parseDouble(
+//                            val.toString().replace( ",", "." )
+//                    );
+//
+//                    soma = soma.add( BigDecimal.valueOf( v ) );
+//
+//                }
+//                catch ( Exception ignored )
+//                {
+//                }
+//            }
+//        }
+//
+//        return soma;
+//    }
+    public static BigDecimal get_total_valor()
+    {
+        DefaultTableModel modelo = ( DefaultTableModel ) tabela_forma_pagamento.getModel();
+
+        double gorjeta = 0;
+        BigDecimal total = BigDecimal.ZERO;
+
+        for ( int i = 0; i < modelo.getRowCount(); i++ )
+        {
+            // Ler forma (coluna 1)
+            String forma = "";
+            Object formaObj = modelo.getValueAt( i, 1 );
+            if ( formaObj != null )
+            {
+                forma = formaObj.toString();
+            }
+
+            // Ler valor (coluna 3)
+            String valorStr = "0";
+
+            try
+            {
+                Object valorObj = modelo.getValueAt( i, COL_VALOR );
+                if ( valorObj != null )
+                {
+                    valorStr = valorObj.toString().trim();
+                    if ( valorStr.isEmpty() )
+                    {
+                        valorStr = "0";
+                    }
+                }
+            }
+            catch ( Exception ignored )
+            {
+            }
+
+            // Converte vírgula para ponto
+            valorStr = valorStr.replace( ",", "." );
+
+            // Converter para BigDecimal
+            BigDecimal valorLinha = BigDecimal.ZERO;
+            try
+            {
+                valorLinha = new BigDecimal( valorStr );
+            }
+            catch ( Exception ignored )
+            {
+            }
+
+            // Somar ao total
+            total = total.add( valorLinha );
+
+            // Cálculo da gorjeta (apenas para cartão)
+            if ( forma.equals( DVML.FORMA_PAGAMENTO_CARTAO ) )
+            {
+                double valorFatura = CfMethods.parseMoedaFormatada( lb_total_geral.getText() );
+                double dif = valorLinha.doubleValue() - valorFatura;
+                gorjeta = ( dif > 0 ) ? dif : 0;
+            }
+        }
+
+        System.out.println( "GORJETA: " + gorjeta );
+
+        // Aplicar gorjeta no formulário correto
+        if ( gorjeta > 0 )
+        {
+            if ( formulario == DVML.VENDA_POS )
+            {
+                VendaPOSVisao.gorjeta = gorjeta;
+            }
+            else if ( formulario == DVML.VENDA_RESTAURANTE )
+            {
+                NovaGestaoPedidosVisao.gorjeta = gorjeta;
+            }
+            else if ( formulario == DVML.VENDA_EXPRESSO )
+            {
+                VendasPraticasVisao.gorjeta = gorjeta;
+            }
+            else if ( formulario == DVML.VENDA_PONTUAL )
+            {
+                VendaUsuarioVisao.gorjeta = gorjeta;
+            }
+            else if ( formulario == DVML.VENDA_OFICINA )
+            {
+                VendaOficinaUsuarioVisao.gorjeta = gorjeta;
+            }
+            else if ( formulario == DVML.CONVERSAO_PROFORMA_FACTURA_RECIBO )
+            {
+                ConverterProformaFacturaVisao.gorjeta = 0;
+            }
+            else if ( formulario == DVML.CONVERSAO_GUIA_TRANSPORTE )
+            {
+                ConverterGuiaFacturaVisao.gorjeta = 0;
+            }
+        }
+
+        return total;
     }
 
 }

@@ -290,6 +290,8 @@ public class AnyReport
 //        }
 //
 //    }
+    
+    
     public void mostrar2() throws SQLException
     {
         try
@@ -299,7 +301,7 @@ public class AnyReport
             String jasper = getWays();
             JasperPrint print = JasperFillManager.fillReport( jasper, hashMap, connection );
             JasperViewer jasperViewer = new JasperViewer( print, false );
-            jasperViewer.setVisible( true );
+            jasperViewer.setVisible( false );
 
             String impressoraSelecionada = impressora;
             System.out.println( "Impressora da Cozinha: " + impressoraSelecionada );

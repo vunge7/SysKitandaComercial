@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="relatorio_diario_produtos" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="963621be-cfd4-4f53-8a8b-bed5b630fd64">
 	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="132"/>
+	<property name="ireport.x" value="225"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="PARM_DATA_2" class="java.util.Date"/>
 	<parameter name="PARM_DATA_1" class="java.util.Date"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
@@ -34,7 +34,7 @@ ORDER BY p.designacao;]]>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="total_vendido" class="java.math.BigDecimal"/>
-	<variable name="TOTAL" class="java.lang.Integer" calculation="Sum">
+	<variable name="TOTAL" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{QTD}]]></variableExpression>
 	</variable>
 	<variable name="TOTAL_VENDAS" class="java.math.BigDecimal" calculation="Sum">
@@ -256,7 +256,9 @@ ORDER BY p.designacao;]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="11" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{TOTAL}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($V{TOTAL}.doubleValue() % 1 == 0) 
+    ? String.valueOf($V{TOTAL}.intValue()) 
+    : String.valueOf($V{TOTAL})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement uuid="0449f903-7b91-499e-8ca5-bbed74a6bd8f" x="310" y="0" width="126" height="13"/>

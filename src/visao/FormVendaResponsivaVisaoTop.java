@@ -287,6 +287,26 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             }
         } );
 
+        // No construtor ou método de inicialização do formulário
+        getRootPane().getInputMap( JComponent.WHEN_IN_FOCUSED_WINDOW )
+                .put( KeyStroke.getKeyStroke( "F5" ), "abrirFormaPagamento" );
+
+        getRootPane().getActionMap().put( "abrirFormaPagamento", new AbstractAction()
+        {
+            @Override
+            public void actionPerformed( ActionEvent e )
+            {
+                try
+                {
+                    procedimentoChamarFormaPagemnto();
+                }
+                catch ( Exception ex )
+                {
+                    ex.printStackTrace();
+                }
+            }
+        } );
+
 //        habilitarColunas();
         MetodosUtil.setArmazemByCampoConfigArmazem( cmbArmazem, conexao, cod_usuario );
 
@@ -6921,6 +6941,31 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             e.printStackTrace();
         }
 
+    }
+
+    private void procedimentoChamarFormaPagemnto()
+    {
+        removerUltimaLinhaVazia();
+
+        jScrollPane1.repaint();
+        if ( MetodosUtil.licencaValidada( conexao ) )
+        {
+            if ( !MetodosUtil.tabela_vazia( table ) )
+            {
+                if ( !validarPrecos_tabela( table ) )
+                {
+                    return; // Se houver erro, não abre forma de pagamento
+                }
+
+                new FormaPagamentoVisao( this, rootPaneCheckingEnabled, null, DVML.VENDA_PONTUAL_TOP, BDConexao.getInstancia() ).setVisible( true );
+            }
+            else
+            {
+                JOptionPane.showMessageDialog( null, "Caro usuário, adicione itens na tabela" );
+            }
+        }
+
+        table.getCellEditor().cancelCellEditing();
     }
 
 }

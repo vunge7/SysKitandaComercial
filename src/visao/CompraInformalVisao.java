@@ -141,7 +141,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
 //        cmbArmazem.setModel( new DefaultComboBoxModel( armazemDao.buscaTodos1() ) );
 //        lista_compras_apuradas.setModel ( lista_model_compras_apuradas );
 
-        txtQtdEntrar.setDocument( new PermitirNumeros() );
+//        txtQtdEntrar.setDocument( new PermitirNumeros() );
         init();
         initJDialogue();
         //DESATIVAR COMVERTER COMPRAS
