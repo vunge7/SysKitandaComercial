@@ -195,7 +195,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
         DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         TelaCliente telaCliente = new TelaCliente( modelo );
 
-// Abre no segundo monitor, se existir
+        //Abre no segundo monitor, se existir
         abrirNoSegundoMonitor( telaCliente );
 
     }
