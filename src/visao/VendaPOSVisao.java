@@ -6,7 +6,6 @@
 package visao;
 
 import comercial.controller.ArmazensController;
-import java.sql.Connection;
 import comercial.controller.CaixasController;
 import comercial.controller.ClientesController;
 import comercial.controller.FormaPagamentoController;
@@ -14,7 +13,6 @@ import comercial.controller.FormaPagamentoItemController;
 import comercial.controller.ProdutosController;
 import comercial.controller.TipoProdutosController;
 import comercial.controller.UsuariosController;
-import controller.TipoProdutoController;
 import dao.AnoEconomicoDao;
 import dao.ArmazemDao;
 import dao.BancoDao;
@@ -23,7 +21,6 @@ import dao.CambioDao;
 import dao.ClienteDao;
 import dao.DadosInstituicaoDao;
 import dao.DocumentoDao;
-import dao.FormaPagamentoItemDao;
 import dao.ItemVendaDao;
 import dao.LugarDao;
 import dao.MesasDao;
@@ -42,23 +39,21 @@ import entity.Documento;
 import entity.FormaPagamento;
 import entity.FormaPagamentoItem;
 import entity.Moeda;
-import entity.TbArmazem;
 import entity.TbCliente;
 import entity.TbItemVenda;
-import entity.TbPreco;
 import entity.TbProduto;
 import entity.TbStock;
-import entity.TbTipoProduto;
 import entity.TbUsuario;
 import entity.TbVenda;
-import java.awt.Component;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -74,6 +69,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
@@ -93,7 +89,6 @@ import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
 import static util.MetodosUtil.rodarComandoWindows;
 import util.plu.LeitorDePeso;
-import static visao.VendaUsuarioVisao.cmbTipoDocumento;
 
 /**
  *
@@ -196,6 +191,12 @@ public class VendaPOSVisao extends javax.swing.JFrame
                 }
             }
         } );
+
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        TelaCliente telaCliente = new TelaCliente( modelo );
+
+// Abre no segundo monitor, se existir
+        abrirNoSegundoMonitor( telaCliente );
 
     }
 
@@ -601,6 +602,17 @@ public class VendaPOSVisao extends javax.swing.JFrame
             }
         });
         jScrollPane1.setViewportView(table);
+        if (table.getColumnModel().getColumnCount() > 0)
+        {
+            table.getColumnModel().getColumn(0).setMaxWidth(150);
+            table.getColumnModel().getColumn(1).setMaxWidth(50);
+            table.getColumnModel().getColumn(2).setMaxWidth(750);
+            table.getColumnModel().getColumn(3).setMaxWidth(150);
+            table.getColumnModel().getColumn(4).setMaxWidth(100);
+            table.getColumnModel().getColumn(5).setMaxWidth(250);
+            table.getColumnModel().getColumn(6).setMaxWidth(250);
+            table.getColumnModel().getColumn(7).setMaxWidth(300);
+        }
 
         jPanel3.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
@@ -1162,10 +1174,13 @@ public class VendaPOSVisao extends javax.swing.JFrame
             }
             else
             {
+
                 DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
                 int cod_interno = Integer.parseInt( modelo.getValueAt( linha_existente_produto, 1 ).toString() );
                 double preco = Double.parseDouble( modelo.getValueAt( linha_existente_produto, 3 ).toString() );
-                double qtd = Double.parseDouble( modelo.getValueAt( linha_existente_produto, 4 ).toString() ) + 1;
+                double qtd = Double.parseDouble( modelo.getValueAt( linha_existente_produto, 4 ).toString() )
+                        + getUpdateQtd( txt_cod_barra.getText() );
+
                 double taxa = Double.parseDouble( modelo.getValueAt( linha_existente_produto, 5 ).toString() );
                 double desconto = Double.parseDouble( modelo.getValueAt( linha_existente_produto, 6 ).toString() );
 
@@ -2069,6 +2084,30 @@ public class VendaPOSVisao extends javax.swing.JFrame
         return qtd;
 
     }
+
+    private static double getUpdateQtd( String cod_barra )
+    {
+        int tamanho = cod_barra.length();
+        double qtd = 1;
+//        double qtd = 1d;
+        if ( tamanho == 13 )
+        {
+            int cod_flag; // 0 - 1
+            int cod_produto; // 2 - 7
+            double peso; // 8 - 11
+            double preco; // 
+
+            cod_flag = Integer.parseInt( cod_barra.substring( 0, 2 ) );
+
+            if ( cod_flag == 28 ) // se trata de um produto de balanca
+            {
+                qtd = LeitorDePeso.calcularPeso( cod_barra );
+            }
+
+        }
+        return qtd;
+
+    }
 //    private static double getQtd( String cod_barra )
 //    {
 //        int tamanho = cod_barra.length();
@@ -2320,6 +2359,30 @@ public class VendaPOSVisao extends javax.swing.JFrame
         {
             JOptionPane.showMessageDialog( null, "A data do documento a ser emitido deve estar no intervalo do ano economico", "Aviso", JOptionPane.WARNING_MESSAGE );
         }
+    }
+
+    public static void abrirNoSegundoMonitor( JFrame frame )
+    {
+        // Pega todos os monitores
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+
+        GraphicsDevice[] devices = ge.getScreenDevices();
+
+        if ( devices.length > 1 )
+        {
+            // Segundo monitor existe
+
+            Rectangle bounds = devices[ 1 ].getDefaultConfiguration().getBounds();
+            frame.setBounds( bounds );          // Posiciona e dimensiona
+            frame.setExtendedState( JFrame.MAXIMIZED_BOTH ); // Maximiza
+        }
+        else
+        {
+            // Apenas monitor principal
+            frame.setLocationRelativeTo( null ); // Centraliza
+        }
+
+        frame.setVisible( true );
     }
 
 }
