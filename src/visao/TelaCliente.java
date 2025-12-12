@@ -5,8 +5,19 @@
 package visao;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import javax.swing.BorderFactory;
+import static javax.swing.GroupLayout.Alignment.CENTER;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import kitanda.util.CfMethods;
 
@@ -24,12 +35,41 @@ public class TelaCliente extends javax.swing.JFrame
     {
         initComponents();
 
-        // Usa o mesmo modelo!
+        // --- TRANSPARÊNCIA REAL PARA NIMBUS ---
+        jTableCliente.setOpaque( false );
+        jScrollPane1.getViewport().setOpaque( false );
+        jScrollPane1.setOpaque( false );
+
+        // CANCELA FUNDO QUE O NIMBUS FORÇA
+        jTableCliente.putClientProperty( "Nimbus.Overrides", null );
+        jTableCliente.putClientProperty( "Nimbus.Overrides.InheritDefaults", false );
+
+        // --- IMPEDE A TABELA DE PINTAR FUNDO POR CIMA DO DEGRADÊ ---
+        jTableCliente.setUI( new javax.swing.plaf.basic.BasicTableUI()
+        {
+            @Override
+            public void paint( Graphics g, JComponent c )
+            {
+                // NÃO PINTA FUNDO NENHUM → permite o degradê do renderer
+                super.paint( g, c );
+            }
+        } );
+
+        // --- USA O MODELO RECEBIDO ---
         jTableCliente.setModel( modeloRecebido );
 
-        // Atualiza o total sempre que houver mudança
+        // --- AJUSTES DE COLUNAS ---
+        ocultarColunas();
+        ajustarLarguraColunas();
+
+        // --- RENDERER COM DEGRADÊ EM TODAS AS COLUNAS ---
+        aplicarRenderizacaoProfissional();
+
+        // --- ATUALIZA TOTAL AO MODIFICAR LINHAS ---
         modeloRecebido.addTableModelListener( e -> atualizarTotal() );
         atualizarTotal();
+
+        // --- ESTILO GERAL (FONTE, ALTURA, CABEÇALHO) ---
         configurarEstilo();
     }
 
@@ -161,26 +201,157 @@ public class TelaCliente extends javax.swing.JFrame
 
     private void configurarEstilo()
     {
-        // Fonte e cores da tabela
-        jTableCliente.setFont( new Font( "Segoe UI", Font.PLAIN, 24 ) );
-        jTableCliente.setRowHeight( 40 );
-        jTableCliente.setFillsViewportHeight( true );
-        jTableCliente.setShowGrid( true );
-        jTableCliente.setGridColor( new Color( 200, 200, 200 ) );
+        // Tabela
+        jTableCliente.setFont( new Font( "Segoe UI", Font.PLAIN, 20 ) );
+        jTableCliente.setRowHeight( 32 );
+        jTableCliente.setShowHorizontalLines( false );
+        jTableCliente.setShowVerticalLines( false );
+        jTableCliente.setIntercellSpacing( new java.awt.Dimension( 0, 0 ) );
         jTableCliente.setForeground( Color.WHITE );
-        jTableCliente.setBackground( new Color( 50, 50, 50 ) );
+        jTableCliente.setBackground( new Color( 45, 45, 48 ) );
 
-        // Cabeçalho
-        jTableCliente.getTableHeader().setFont( new Font( "Segoe UI", Font.BOLD, 28 ) );
-        jTableCliente.getTableHeader().setBackground( new Color( 0, 102, 204 ) );
+        // Cabeçalho estilo POS moderno
+        jTableCliente.getTableHeader().setFont( new Font( "Segoe UI", Font.BOLD, 22 ) );
+        jTableCliente.getTableHeader().setOpaque( false );
+        jTableCliente.getTableHeader().setBackground( new Color( 30, 144, 255 ) );
         jTableCliente.getTableHeader().setForeground( Color.WHITE );
+        jTableCliente.getTableHeader().setReorderingAllowed( false );
 
-        // Total
-        lblTotalCliente.setFont( new Font( "Segoe UI", Font.BOLD, 48 ) );
-        lblTotalCliente.setForeground( new Color( 0, 153, 0 ) );
+        // Painel Total
+        lblTotalCliente.setFont( new Font( "Segoe UI", Font.BOLD, 50 ) );
+        lblTotalCliente.setForeground( new Color( 0, 255, 128 ) );
         lblTotalCliente.setOpaque( true );
-        lblTotalCliente.setBackground( Color.BLACK );
+        lblTotalCliente.setBackground( new Color( 20, 20, 20 ) );
         lblTotalCliente.setBorder( BorderFactory.createEmptyBorder( 10, 10, 10, 20 ) );
+
+    }
+
+    private void ocultarColunas()
+    {
+        int[] colunasParaOcultar =
+        {
+            0, 1, 3, 6
+        };
+
+        for ( int i : colunasParaOcultar )
+        {
+            try
+            {
+                jTableCliente.getColumnModel().getColumn( i ).setMinWidth( 0 );
+                jTableCliente.getColumnModel().getColumn( i ).setMaxWidth( 0 );
+                jTableCliente.getColumnModel().getColumn( i ).setPreferredWidth( 0 );
+            }
+            catch ( Exception e )
+            {
+                System.out.println( "Coluna já removida ou não encontrada: " + i );
+            }
+        }
+    }
+
+    private void ajustarLarguraColunas()
+    {
+        // Coluna Qtd (índice 4)
+        jTableCliente.getColumnModel().getColumn( 4 ).setPreferredWidth( 90 );
+        jTableCliente.getColumnModel().getColumn( 4 ).setMinWidth( 70 );
+        jTableCliente.getColumnModel().getColumn( 4 ).setMaxWidth( 110 );
+
+        // Coluna Taxa (índice 5)
+        jTableCliente.getColumnModel().getColumn( 5 ).setPreferredWidth( 100 );
+        jTableCliente.getColumnModel().getColumn( 5 ).setMinWidth( 80 );
+        jTableCliente.getColumnModel().getColumn( 5 ).setMaxWidth( 130 );
+
+        // Coluna Total (índice 7)
+        jTableCliente.getColumnModel().getColumn( 7 ).setPreferredWidth( 130 );
+        jTableCliente.getColumnModel().getColumn( 7 ).setMinWidth( 100 );
+        jTableCliente.getColumnModel().getColumn( 7 ).setMaxWidth( 160 );
+    }
+
+    private void aplicarRenderizacaoProfissional()
+    {
+        jTableCliente.setDefaultRenderer( Object.class, new DefaultTableCellRenderer()
+        {
+            private int viewRow;
+            private boolean cellSelected;
+            private JTable tableRef;
+
+            @Override
+            public Component getTableCellRendererComponent(
+                    JTable table, Object value, boolean isSelected,
+                    boolean hasFocus, int row, int column )
+            {
+                viewRow = row;
+                cellSelected = isSelected;
+                tableRef = table;
+
+                super.getTableCellRendererComponent( table, value, isSelected, hasFocus, row, column );
+
+                // números
+                if ( value instanceof Number )
+                {
+                    setHorizontalAlignment( RIGHT );
+
+                    double numero = ( ( Number ) value ).doubleValue();
+                    if ( column == 4 )
+                    {
+                        setText( String.format( "%,.3f", numero ) );
+                    }
+                    else
+                    {
+                        setText( String.format( "%,.2f", numero ) );
+                    }
+                }
+                else
+                {
+                    setHorizontalAlignment( LEFT );
+                }
+
+                // texto sempre preto
+                setForeground( Color.BLACK );
+
+                // FORÇA transparência total
+                setOpaque( false );
+
+                return this;
+            }
+
+            @Override
+            protected void paintComponent( Graphics g )
+            {
+                Graphics2D g2 = ( Graphics2D ) g;
+
+                int modelRow = tableRef.convertRowIndexToModel( viewRow );
+
+                GradientPaint gp;
+
+                if ( cellSelected )
+                {
+                    gp = new GradientPaint(
+                            0, 0, new Color( 0, 255, 255 ),
+                            getWidth(), getHeight(), new Color( 0, 180, 255 )
+                    );
+                }
+                else if ( modelRow % 2 == 0 )
+                {
+                    gp = new GradientPaint(
+                            0, 0, new Color( 0, 255, 255 ),
+                            getWidth(), getHeight(), new Color( 0, 120, 255 )
+                    );
+                }
+                else
+                {
+                    gp = new GradientPaint(
+                            0, 0, new Color( 0, 230, 240 ),
+                            getWidth(), getHeight(), new Color( 0, 150, 255 )
+                    );
+                }
+
+                // pinta a linha inteira (TODAS AS COLUNAS)
+                g2.setPaint( gp );
+                g2.fillRect( 0, 0, getWidth(), getHeight() );
+
+                super.paintComponent( g );
+            }
+        } );
     }
 
 }
