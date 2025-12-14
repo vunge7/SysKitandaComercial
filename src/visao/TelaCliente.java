@@ -1,9 +1,13 @@
 package visao;
 
 import java.awt.*;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.event.TableModelEvent;
+import javax.swing.table.*;
+
 import kitanda.util.CfMethods;
 
 public class TelaCliente extends JFrame
@@ -12,228 +16,363 @@ public class TelaCliente extends JFrame
     private JTable tabela;
     private JLabel lblTotal;
 
-    public TelaCliente( DefaultTableModel modeloRecebido )
+    private final DefaultTableModel modeloPrincipal;
+    private final DefaultTableModel modeloCliente;
+
+    // ==========================================================
+    // CONSTRUTOR
+    // ==========================================================
+    public TelaCliente( DefaultTableModel modeloPrincipal )
     {
-
         super( "Tela Cliente" );
-        setDefaultCloseOperation( DISPOSE_ON_CLOSE );
-        setLayout( new BorderLayout() );
-        setSize( 1200, 700 );
-        setLocationRelativeTo( null );
 
-        // ======================================================
-        // 1) REMOVER LINHAS VAZIAS DO MODELO
-        // ======================================================
-        for ( int i = modeloRecebido.getRowCount() - 1; i >= 0; i-- )
+        this.modeloPrincipal = modeloPrincipal;
+        this.modeloCliente = criarModeloCliente();
+
+        configurarJanela();
+        montarLayout();
+        sincronizarModelo();
+        atualizarTotal();
+
+        // Espelhamento em tempo real
+        modeloPrincipal.addTableModelListener( ( TableModelEvent e ) ->
         {
-            boolean vazia = true;
+            sincronizarModelo();
+            atualizarTotal();
+        } );
 
-            for ( int c = 0; c < modeloRecebido.getColumnCount(); c++ )
-            {
-                Object val = modeloRecebido.getValueAt( i, c );
-                if ( val != null && !val.toString().trim().isEmpty() )
-                {
-                    vazia = false;
-                    break;
-                }
-            }
-            if ( vazia )
-            {
-                modeloRecebido.removeRow( i );
-            }
-        }
+        setVisible( true );
+    }
 
-        // ======================================================
-        // 2) TABELA COMPLETA (SEM OCULTAR COLUNAS)
-        // ======================================================
-        tabela = new JTable( modeloRecebido );
-        tabela.setRowHeight( 32 );
-        tabela.setFont( new Font( "Segoe UI", Font.PLAIN, 20 ) );
-        tabela.setShowHorizontalLines( false );
-        tabela.setShowVerticalLines( false );
-        tabela.setIntercellSpacing( new Dimension( 0, 0 ) );
+    // ==========================================================
+    // CONFIGURAÇÃO DA JANELA
+    // ==========================================================
+    private void configurarJanela()
+    {
+        setDefaultCloseOperation( DISPOSE_ON_CLOSE );
+        setSize( 1200, 700 );
+        setLayout( new BorderLayout() );
+        setLocationRelativeTo( null );
+    }
 
-        // Render moderno
-        tabela.setDefaultRenderer( Object.class, new LinhaRenderer() );
+    // ==========================================================
+    // LAYOUT
+    // ==========================================================
+    private void montarLayout()
+    {
+        tabela = criarTabela();
 
         JScrollPane scroll = new JScrollPane( tabela );
-        scroll.setBorder( null );
-        scroll.getViewport().setOpaque( false );
+        scroll.setBorder( BorderFactory.createEmptyBorder() );
+        scroll.getViewport().setBackground( Color.WHITE );
 
+        add( criarPainelPublicidade(), BorderLayout.WEST );
         add( scroll, BorderLayout.CENTER );
+        add( criarRodapeTotal(), BorderLayout.SOUTH );
+    }
 
-        // ======================================================
-        // 3) CABEÇALHO PROFISSIONAL
-        // ======================================================
-        tabela.getTableHeader().setPreferredSize( new Dimension( 0, 40 ) );
-        tabela.getTableHeader().setFont( new Font( "Segoe UI", Font.BOLD, 22 ) );
-        tabela.getTableHeader().setDefaultRenderer( new HeaderRenderer() );
-        tabela.getTableHeader().setReorderingAllowed( false );
+    // ==========================================================
+    // MODELO DO CLIENTE (COLUNAS VISÍVEIS)
+    // ==========================================================
+    private DefaultTableModel criarModeloCliente()
+    {
+        DefaultTableModel m = new DefaultTableModel()
+        {
+            @Override
+            public boolean isCellEditable( int row, int column )
+            {
+                return false;
+            }
+        };
 
-        // ======================================================
-        // 4) AJUSTAR LARGURA DAS COLUNAS IMPORTANTES
-        // ======================================================
-        ajustarColunas();
+        m.addColumn( "Designação" );
+        m.addColumn( "Preço" );
+        m.addColumn( "Qtd" );
+        m.addColumn( "Taxa" );
+        m.addColumn( "Total" );
 
-        // ======================================================
-        // 5) TOTAL DESTACADO
-        // ======================================================
+        return m;
+    }
+
+    // ==========================================================
+    // SINCRONIZAÇÃO (ESPELHO PURO)
+    // ==========================================================
+    private void sincronizarModelo()
+    {
+        modeloCliente.setRowCount( 0 );
+
+        int cDesc = idx( "Designacao" );
+        int cPreco = idx( "Preco" );
+        int cQtd = idx( "Qtd" );
+        int cTaxa = idx( "Taxa" );
+        int cTotal = idx( "Total" );
+
+        for ( int r = 0; r < modeloPrincipal.getRowCount(); r++ )
+        {
+            modeloCliente.addRow( new Object[]
+            {
+                modeloPrincipal.getValueAt( r, cDesc ),
+                modeloPrincipal.getValueAt( r, cPreco ),
+                modeloPrincipal.getValueAt( r, cQtd ),
+                modeloPrincipal.getValueAt( r, cTaxa ),
+                modeloPrincipal.getValueAt( r, cTotal )
+            } );
+        }
+    }
+
+    // ==========================================================
+    // LOCALIZA COLUNA PELO NOME
+    // ==========================================================
+    private int idx( String nome )
+    {
+        for ( int i = 0; i < modeloPrincipal.getColumnCount(); i++ )
+        {
+            if ( modeloPrincipal.getColumnName( i ).equalsIgnoreCase( nome ) )
+            {
+                return i;
+            }
+        }
+        throw new RuntimeException( "Coluna não encontrada: " + nome );
+    }
+
+    // ==========================================================
+    // TABELA
+    // ==========================================================
+    private JTable criarTabela()
+    {
+        JTable t = new JTable( modeloCliente );
+
+        t.setRowHeight( 28 );
+        t.setFont( new Font( "Segoe UI", Font.PLAIN, 17 ) );
+        t.setShowGrid( false );
+        t.setIntercellSpacing( new Dimension( 0, 0 ) );
+        t.setFillsViewportHeight( true );
+
+        JTableHeader h = t.getTableHeader();
+        h.setFont( new Font( "Segoe UI", Font.BOLD, 16 ) );
+        h.setReorderingAllowed( false );
+
+        aplicarRenderizadores( t );
+        ajustarColunas( t );
+
+        return t;
+    }
+
+    // ==========================================================
+    // RENDERIZADORES
+    // ==========================================================
+    private void aplicarRenderizadores( JTable t )
+    {
+        TableColumnModel cm = t.getColumnModel();
+
+        cm.getColumn( 1 ).setCellRenderer( new Money3Renderer() ); // Preço
+        cm.getColumn( 2 ).setCellRenderer( new QtdRenderer() );    // Qtd
+        cm.getColumn( 3 ).setCellRenderer( new Money2Renderer() );// Taxa
+        cm.getColumn( 4 ).setCellRenderer( new Money2Renderer() );// Total
+    }
+
+    // ==========================================================
+    // RENDER MONETÁRIO – 3 CASAS (PREÇO)
+    // ==========================================================
+    private static class Money3Renderer extends DefaultTableCellRenderer
+    {
+
+        private static final DecimalFormat DF;
+
+        static
+        {
+            DecimalFormatSymbols s = new DecimalFormatSymbols();
+            s.setDecimalSeparator( ',' );
+            s.setGroupingSeparator( ' ' );
+
+            DF = new DecimalFormat( "#,##0.000", s );
+            DF.setGroupingUsed( true );
+            DF.setMinimumFractionDigits( 3 );
+            DF.setMaximumFractionDigits( 3 );
+        }
+
+        public Money3Renderer()
+        {
+            setHorizontalAlignment( RIGHT );
+        }
+
+        @Override
+        protected void setValue( Object value )
+        {
+            if ( value == null )
+            {
+                setText( "" );
+                return;
+            }
+
+            try
+            {
+                BigDecimal v = new BigDecimal(
+                        value.toString().replace( ",", "." ) );
+                setText( DF.format( v ) );
+            }
+            catch ( Exception e )
+            {
+                setText( value.toString() );
+            }
+        }
+    }
+
+    // ==========================================================
+    // RENDER MONETÁRIO – 2 CASAS (TAXA / TOTAL)
+    // ==========================================================
+    private static class Money2Renderer extends DefaultTableCellRenderer
+    {
+
+        private static final DecimalFormat DF;
+
+        static
+        {
+            DecimalFormatSymbols s = new DecimalFormatSymbols();
+            s.setDecimalSeparator( ',' );
+            s.setGroupingSeparator( ' ' );
+
+            DF = new DecimalFormat( "#,##0.00", s );
+            DF.setGroupingUsed( true );
+            DF.setMinimumFractionDigits( 2 );
+            DF.setMaximumFractionDigits( 2 );
+        }
+
+        public Money2Renderer()
+        {
+            setHorizontalAlignment( RIGHT );
+        }
+
+        @Override
+        protected void setValue( Object value )
+        {
+            if ( value == null )
+            {
+                setText( "" );
+                return;
+            }
+
+            try
+            {
+                BigDecimal v = new BigDecimal(
+                        value.toString().replace( ",", "." ) );
+                setText( DF.format( v ) );
+            }
+            catch ( Exception e )
+            {
+                setText( value.toString() );
+            }
+        }
+    }
+
+    // ==========================================================
+    // RENDER QTD – ATÉ 3 CASAS (SEM ARREDONDAR)
+    // ==========================================================
+    private static class QtdRenderer extends DefaultTableCellRenderer
+    {
+
+        public QtdRenderer()
+        {
+            setHorizontalAlignment( RIGHT );
+        }
+
+        @Override
+        protected void setValue( Object value )
+        {
+            if ( value == null )
+            {
+                setText( "" );
+                return;
+            }
+
+            String txt = value.toString().replace( ',', '.' );
+
+            if ( txt.contains( "." ) )
+            {
+                int p = txt.indexOf( "." );
+                int max = Math.min( p + 4, txt.length() );
+                txt = txt.substring( 0, max );
+            }
+
+            setText( txt );
+        }
+    }
+
+    // ==========================================================
+    // AJUSTE DE COLUNAS
+    // ==========================================================
+    private void ajustarColunas( JTable t )
+    {
+        t.getColumnModel().getColumn( 0 ).setPreferredWidth( 320 );
+        t.getColumnModel().getColumn( 1 ).setPreferredWidth( 120 );
+        t.getColumnModel().getColumn( 2 ).setPreferredWidth( 80 );
+        t.getColumnModel().getColumn( 3 ).setPreferredWidth( 70 );
+        t.getColumnModel().getColumn( 4 ).setPreferredWidth( 130 );
+    }
+
+    // ==========================================================
+    // PAINEL PUBLICIDADE
+    // ==========================================================
+    private JPanel criarPainelPublicidade()
+    {
+        JPanel p = new JPanel( new BorderLayout() );
+        p.setPreferredSize( new Dimension( 350, 0 ) );
+        p.setBackground( Color.BLACK );
+
+        JLabel topo = new JLabel( "PUBLICIDADE", SwingConstants.CENTER );
+        topo.setFont( new Font( "Segoe UI", Font.BOLD, 26 ) );
+        topo.setForeground( Color.WHITE );
+        topo.setBorder( BorderFactory.createEmptyBorder( 30, 10, 20, 10 ) );
+
+        JLabel msg = new JLabel(
+                "<html><center>"
+                + "<span style='font-size:22px;'>Carne fresca todos os dias</span><br>"
+                + "<span style='font-size:18px;'>Qualidade garantida</span>"
+                + "</center></html>",
+                SwingConstants.CENTER
+        );
+        msg.setForeground( Color.LIGHT_GRAY );
+
+        p.add( topo, BorderLayout.NORTH );
+        p.add( msg, BorderLayout.CENTER );
+
+        return p;
+    }
+
+    // ==========================================================
+    // RODAPÉ TOTAL
+    // ==========================================================
+    private JLabel criarRodapeTotal()
+    {
         lblTotal = new JLabel( "TOTAL: 0,00 AOA", SwingConstants.RIGHT );
         lblTotal.setFont( new Font( "Segoe UI", Font.BOLD, 40 ) );
         lblTotal.setForeground( new Color( 0, 255, 128 ) );
         lblTotal.setBackground( Color.BLACK );
         lblTotal.setOpaque( true );
         lblTotal.setBorder( BorderFactory.createEmptyBorder( 10, 20, 10, 20 ) );
-
-        add( lblTotal, BorderLayout.SOUTH );
-
-        modeloRecebido.addTableModelListener( e -> atualizarTotal() );
-        atualizarTotal();
-
-        setVisible( true );
+        return lblTotal;
     }
 
-    // ============================================================
-    // RENDER DAS LINHAS COM DEGRADÊ E FORMATAÇÃO PROFISSIONAL
-    // ============================================================
-    private class LinhaRenderer extends DefaultTableCellRenderer
-    {
-
-        @Override
-        public Component getTableCellRendererComponent( JTable table, Object value,
-                boolean isSelected, boolean hasFocus, int row, int column )
-        {
-
-            super.getTableCellRendererComponent( table, value, isSelected, hasFocus, row, column );
-
-            setOpaque( false );
-
-            // Formatação automática de números
-            if ( value instanceof Number )
-            {
-                setHorizontalAlignment( RIGHT );
-                double n = ( ( Number ) value ).doubleValue();
-                setText( String.format( "%,.2f", n ) );
-            }
-            else
-            {
-                setHorizontalAlignment( LEFT );
-            }
-
-            setFont( new Font( "Segoe UI", Font.PLAIN, 20 ) );
-            setForeground( Color.BLACK );
-
-            return this;
-        }
-
-        @Override
-        protected void paintComponent( Graphics g )
-        {
-            Graphics2D g2 = ( Graphics2D ) g;
-            g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
-
-            int realRow = tabela.rowAtPoint( new Point( 0, getY() ) );
-
-            if ( realRow == -1 )
-            {
-                super.paintComponent( g );
-                return;
-            }
-
-            Color c1, c2;
-
-            if ( tabela.isRowSelected( realRow ) )
-            {
-                c1 = new Color( 0, 255, 255 );
-                c2 = new Color( 0, 150, 255 );
-            }
-            else if ( realRow % 2 == 0 )
-            {
-                c1 = new Color( 210, 240, 255 );
-                c2 = new Color( 180, 220, 255 );
-            }
-            else
-            {
-                c1 = new Color( 230, 250, 255 );
-                c2 = new Color( 200, 230, 255 );
-            }
-
-            g2.setPaint( new GradientPaint( 0, 0, c1, getWidth(), getHeight(), c2 ) );
-            g2.fillRect( 0, 0, getWidth(), getHeight() );
-
-            super.paintComponent( g );
-        }
-    }
-
-    // ============================================================
-    // CABEÇALHO MODERNO
-    // ============================================================
-    private class HeaderRenderer extends DefaultTableCellRenderer
-    {
-
-        public HeaderRenderer()
-        {
-            setHorizontalAlignment( CENTER );
-            setForeground( Color.WHITE );
-        }
-
-        @Override
-        protected void paintComponent( Graphics g )
-        {
-            Graphics2D g2 = ( Graphics2D ) g;
-
-            g2.setPaint( new GradientPaint(
-                    0, 0, new Color( 100, 100, 100 ),
-                    0, getHeight(), new Color( 60, 60, 60 ) ) );
-
-            g2.fillRect( 0, 0, getWidth(), getHeight() );
-            setFont( new Font( "Segoe UI", Font.BOLD, 22 ) );
-
-            super.paintComponent( g );
-        }
-    }
-
-    // ============================================================
-    // AJUSTE DE LARGURAS
-    // ============================================================
-    private void ajustarColunas()
-    {
-        for ( int i = 0; i < tabela.getColumnCount(); i++ )
-        {
-            tabela.getColumnModel().getColumn( i ).setPreferredWidth( 150 );
-        }
-
-        // Ajuste especial
-        if ( tabela.getColumnCount() > 4 )
-        {
-            tabela.getColumnModel().getColumn( 4 ).setPreferredWidth( 90 );
-        }
-    }
-
-    // ============================================================
-    // TOTAL
-    // ============================================================
     private void atualizarTotal()
     {
         double total = 0;
 
-        int colTotal = tabela.getColumnCount() - 1;
-
-        for ( int i = 0; i < tabela.getRowCount(); i++ )
+        for ( int i = 0; i < modeloCliente.getRowCount(); i++ )
         {
-            Object valor = tabela.getValueAt( i, colTotal );
-            if ( valor != null )
+            Object v = modeloCliente.getValueAt( i, 4 );
+            if ( v != null )
             {
                 try
                 {
-                    total += Double.parseDouble( valor.toString().replace( ",", "." ) );
+                    total += Double.parseDouble(
+                            v.toString().replace( ",", "." ) );
                 }
-                catch ( Exception ignored )
+                catch ( Exception e )
                 {
                 }
             }
         }
 
-        lblTotal.setText( "TOTAL: " + CfMethods.formatarComoMoeda( total ) + " AOA" );
+        lblTotal.setText( "TOTAL: " + CfMethods.formatarComoMoeda( total ) );
     }
 }

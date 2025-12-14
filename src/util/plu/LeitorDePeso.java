@@ -4,6 +4,8 @@
  */
 package util.plu;
 
+import java.math.BigDecimal;
+
 /**
  *
  * @author Engº Domingos Dala Vunge
@@ -61,11 +63,20 @@ public class LeitorDePeso
         }
     }
 
+    public static BigDecimal calcularPesoBD( String codBarra )
+    {
+        // posições 8 a 11 → peso
+        String pesoStr = codBarra.substring( 8, 12 ); // ex: "0155"
+
+        return new BigDecimal( pesoStr )
+                .movePointLeft( 3 ); // 0.155 EXATO
+    }
+
     public static void main( String[] args )
     {
 //        String codValido = "2800008010302"; // Começa com 28 -> Válido
         String codValido = "2800019002655"; // Começa com 28 -> Válido
-      
+
         System.out.println( "Peso do código " + codValido + ": " + calcularPeso( codValido ) + " kg" );
         System.out.println( "---" );
 //        System.out.println( "Peso do código " + codInvalido1 + ": " + calcularPeso( codInvalido1 ) + " kg" );
