@@ -34,6 +34,7 @@ import java.awt.event.MouseEvent;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
@@ -61,13 +62,13 @@ import util.cronjob.ValidadorJob;
  */
 public class LoginVisao extends javax.swing.JFrame
 {
-
+    
     private static EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
     private static DadosInstituicaoController dadosInstituicaoController;
-    private UsuarioDao usuarioDao = new UsuarioDao(emf );
+    private UsuarioDao usuarioDao = new UsuarioDao( emf );
     private EmpresaDao empresaDao = new EmpresaDao( emf );
     private static CaixaDao caixaDao = new CaixaDao( emf );
-
+    
     private DocumentoDao documentoDao = new DocumentoDao( emf );
     private DadosInstituicaoDao dadosInstituicaoDao = new DadosInstituicaoDao( emf );
     public Date horaTerminoVenda;
@@ -80,10 +81,10 @@ public class LoginVisao extends javax.swing.JFrame
     private final int TIMEOUT = 60 * 60 * 1000; // 60 minutos em milissegundos
     private int id_user, id_empresa;
     private javax.swing.Timer piscarTimer;
-
+    
     public LoginVisao( BDConexao conexao )
     {
-
+        
         initComponents();
         setLocationRelativeTo( null );
         setResizable( false );
@@ -97,12 +98,12 @@ public class LoginVisao extends javax.swing.JFrame
         dadosInstituicaoController = new DadosInstituicaoController( conexao );
 
 // Busca os dados da instituição (id = 1)
-        d = (TbDadosInstituicao) dadosInstituicaoController.findById( 1 );
-
+        d = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
+        
         mostrar_empresas();
-
+        
         prazo();
-
+        
         LoginVisao.setDefaultLookAndFeelDecorated( true );
         try
         {
@@ -123,15 +124,15 @@ public class LoginVisao extends javax.swing.JFrame
         }
         iniciarMonitoramento();
         iniciarPiscarLabelJLDataFecho();
-
+        
     }
-
+    
     public void iniciarPiscarLabelJLDataFecho()
     {
         piscarTimer = new javax.swing.Timer( 500, new ActionListener()
         {
             private boolean ligado = false;
-
+            
             @Override
             public void actionPerformed( ActionEvent e )
             {
@@ -148,7 +149,7 @@ public class LoginVisao extends javax.swing.JFrame
         } );
         piscarTimer.start();
     }
-
+    
     public void pararPiscarLabelJLDataFecho()
     {
         if ( piscarTimer != null && piscarTimer.isRunning() )
@@ -157,15 +158,15 @@ public class LoginVisao extends javax.swing.JFrame
             JLDataFecho.setForeground( Color.BLACK );  // Garante a cor normal
         }
     }
-
+    
     public LoginVisao( int idUser )
     {
-
+        
         initComponents();
         setLocationRelativeTo( null );
         setResizable( false );
         setVisible( true );
-
+        
         conexao = BDConexao.getInstancia();
 //        setTitle( "BEM VINDO AO " + DVML.NAME_SOFTWARE + " " + DVML.VERSION_SOFTWARE );
 
@@ -173,14 +174,14 @@ public class LoginVisao extends javax.swing.JFrame
 //            conexao.close();
 //        }
         dadosInstituicaoController = new DadosInstituicaoController( conexao );
-        d = (TbDadosInstituicao) dadosInstituicaoController.findById( 1 );
+        d = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
         horaTerminoVenda = d.getHoraTerminoVenda();
 //        this.idUser = idUser;
 //        licensaUtil = new LicensaUtil( conexao );
 //        registerLog( conexao );
         mostrar_empresas();
         prazo();
-
+        
         LoginVisao.setDefaultLookAndFeelDecorated( true );
         try
         {
@@ -199,34 +200,34 @@ public class LoginVisao extends javax.swing.JFrame
         catch ( Exception e )
         {
         }
-
+        
         iniciarMonitoramento();
-
+        
     }
-
+    
     private void verificarEnvioEmail()
     {
-
+        
         if ( d.getEnviarEmail().equals( "Sim" ) )
         {
             BTnSair.setVisible( false );
-            QuartzApp.executarCronjob( ValidadorJob.class, (TbDadosInstituicao) dadosInstituicaoController.findById( 1 ) );
+            QuartzApp.executarCronjob( ValidadorJob.class, ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 ) );
         }
         else
         {
             BTnSair.setVisible( true );
         }
-
+        
     }
-
+    
     public void mostrar_empresas()
     {
-        cmbEmpresa.setModel( new DefaultComboBoxModel( (Vector) empresaDao.getAllEmpresa() ) );
+        cmbEmpresa.setModel( new DefaultComboBoxModel( ( Vector ) empresaDao.getAllEmpresa() ) );
     }
-
+    
     private void prazo()
     {
-
+        
         TbDadosInstituicao dadosInstituicao = dadosInstituicaoDao.findTbDadosInstituicao( 1 );
         JEmpresa.setText( "Empresa " + dadosInstituicao.getNome() );
         JLNif.setText( "NIF " + dadosInstituicao.getNif() );
@@ -511,7 +512,7 @@ public class LoginVisao extends javax.swing.JFrame
             {
                 JOptionPane.showMessageDialog( null, "Impossível aceder ao sistema.\nDeves abrir um novo ano económico.\nContacte o seu fornecedor.", "AVISO", JOptionPane.WARNING_MESSAGE );
             }
-
+            
         }
         catch ( Exception e )
         {
@@ -541,7 +542,7 @@ public class LoginVisao extends javax.swing.JFrame
             {
                 JOptionPane.showMessageDialog( null, "Impossível aceder ao sistema.\nDeves abrir um novo ano económico.\nContacte o seu fornecedor.", "AVISO", JOptionPane.WARNING_MESSAGE );
             }
-
+            
         }
         catch ( Exception e )
         {
@@ -578,10 +579,10 @@ public class LoginVisao extends javax.swing.JFrame
 //    }
     public void entrar_sistema() throws SQLException, UnknownHostException
     {
-
+        
         TbUsuario usuario = usuarioDao.getUsuariowithEncriptedPass( getUserName(), getSenha() );
-        TbDadosInstituicao dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById( 1 );
-
+        TbDadosInstituicao dadosInstituicao = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
+        
         if ( usuario == null )
         {
             JOptionPane.showMessageDialog( null, "Erro Senha errada ou  User Name" );
@@ -594,7 +595,7 @@ public class LoginVisao extends javax.swing.JFrame
             }
             else
             {
-
+                
                 id_user = usuario.getCodigo();
                 id_empresa = getIdEmpresa();
                 try
@@ -617,7 +618,7 @@ public class LoginVisao extends javax.swing.JFrame
                         System.err.println( "getCodico_Utilizador (): " + getCodico_Utilizador() );
                         System.err.println( "getCodico_Empresa (): " + getIdEmpresa() );
 //                        MetodosUtil.abrir_caixa_automatica( getCodico_Utilizador(), new UsuariosController( conexao ), new CaixasController( conexao ) );
-                        new RootVisao( getCodico_Utilizador(), getIdEmpresa(), true, BDConexao.getInstancia()).setVisible(true);
+                        new RootVisao( getCodico_Utilizador(), getIdEmpresa(), true, BDConexao.getInstancia() ).setVisible( true );
                         limpar();
                         break;
 //                    Sub Administrador
@@ -629,14 +630,14 @@ public class LoginVisao extends javax.swing.JFrame
 //                        MetodosUtil.abrir_caixa_automatica( getCodico_Utilizador(), new UsuariosController( conexao ), new CaixasController( conexao ) );
                         if ( dadosInstituicao.getNegocio().equals( "Lavandaria" ) )
                         {
-
-                            new JanelaFrontOfficeLavandariaVisao( getCodico_Utilizador(), BDConexao.getInstancia()).setVisible(true);
-
+                            
+                            new JanelaFrontOfficeLavandariaVisao( getCodico_Utilizador(), BDConexao.getInstancia() ).setVisible( true );
+                            
                         }
                         else
                         {
-
-                            new RootVisao(getCodico_Utilizador(), getIdEmpresa(), true, BDConexao.getInstancia()).setVisible(true);
+                            
+                            new RootVisao( getCodico_Utilizador(), getIdEmpresa(), true, BDConexao.getInstancia() ).setVisible( true );
                         }
                         limpar();
                         break;
@@ -644,7 +645,7 @@ public class LoginVisao extends javax.swing.JFrame
                     case 3:
 //                        dispose();
 //                        MetodosUtil.abrir_caixa_automatica( getCodico_Utilizador(), new UsuariosController( conexao ), new CaixasController( conexao ) );
-                        new VendaUsuarioVisao( getCodico_Utilizador(), BDConexao.getInstancia()).setVisible(true);
+                        new VendaUsuarioVisao( getCodico_Utilizador(), BDConexao.getInstancia() ).setVisible( true );
                         limpar();
                         break;
                     //3 - VendaPO
@@ -652,10 +653,10 @@ public class LoginVisao extends javax.swing.JFrame
 //                        dispose();
 //                        new VendaPOSVisao( BDConexao.getInstancia(), DVML.ARMAZEM_LOJA, getCodico_Utilizador() ).setVisible( true );
 //                        MetodosUtil.abrir_caixa_automatica( getCodico_Utilizador(), new UsuariosController( conexao ), new CaixasController( conexao ) );
-                        new FrontOfficeVisao( getCodico_Utilizador(), BDConexao.getInstancia()).setVisible(true);
+                        new FrontOfficeVisao( getCodico_Utilizador(), BDConexao.getInstancia() ).setVisible( true );
                         limpar();
                         break;
-
+                    
                     default:
                         JOptionPane.showMessageDialog( null, "Erro Senha errado ou  User Name" );
                         break;
@@ -663,22 +664,22 @@ public class LoginVisao extends javax.swing.JFrame
             }
         }
     }
-
+    
     public int getCodico_Utilizador()
     {
         return BDConexao.getCodigoUSuario( getUserName(), getSenha() );
     }
-
+    
     public int getIdEmpresa()
     {
         return empresaDao.getIdByDescricao( cmbEmpresa.getSelectedItem().toString() );
     }
-
+    
     public String getUserName()
     {
         return txtUserName.getText().toLowerCase();
     }
-
+    
     public String getSenha()
     {
         return pswSenha.getText();
@@ -692,6 +693,8 @@ public class LoginVisao extends javax.swing.JFrame
         /* Set the Nimbus look and feel */
         try
         {
+            
+            Locale.setDefault( new Locale( "pt", "AO" ) );
             for ( javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels() )
             {
                 if ( "Windows".equals( info.getName() ) )
@@ -713,12 +716,12 @@ public class LoginVisao extends javax.swing.JFrame
 //            JOptionPane.showMessageDialog( null, "Atenção\nO sistema já está aberto!" );
 //            System.exit( 0 );
 //        }
-
-        if (SingleInstanceManager.isInstanceRunning()) {
-    // A instância antiga será fechada automaticamente.
-    // Depois disto a nova abertura funciona normalmente.
-    System.exit(0);
-}
+        if ( SingleInstanceManager.isInstanceRunning() )
+        {
+            // A instância antiga será fechada automaticamente.
+            // Depois disto a nova abertura funciona normalmente.
+            System.exit( 0 );
+        }
 
 
         /* Create and display the form */
@@ -728,7 +731,7 @@ public class LoginVisao extends javax.swing.JFrame
             {
                 try
                 {
-
+                    
                     UIManager.setLookAndFeel( new SyntheticaBlackStarLookAndFeel() );
 //                    UIManager.setLookAndFeel("com.jtattoo.plaf.acryl.AcrylLookAndFeel");
 //                    FlatMTMaterialOceanicIJTheme.setup();
@@ -753,7 +756,7 @@ public class LoginVisao extends javax.swing.JFrame
                     UIManager.put( "Table.gridColor", Color.GRAY );
                     UIManager.put( "TableHeader.background", new Color( 0, 200, 200 ) );
                     UIManager.put( "TableHeader.foreground", Color.BLACK );
-
+                    
                 }
                 catch ( Exception e )
                 {
@@ -766,7 +769,7 @@ public class LoginVisao extends javax.swing.JFrame
                 {
                     BDConexao conexao = BDConexao.getInstancia();
                     StockAutoCheckService service = new StockAutoCheckService( conexao.getConnectionAtiva() );
-
+                    
                     try
                     {
                         service.verificarOuSalvarStockDiario();
@@ -775,11 +778,11 @@ public class LoginVisao extends javax.swing.JFrame
                     {
                         e.printStackTrace();
                     }
-
+                    
                     if ( true )
                     { // <- aqui você pode colocar sua regra de licença
                         new LoginVisao( BDConexao.getInstancia() ).setVisible( true );
-
+                        
                     }
                     else
                     {
@@ -822,9 +825,9 @@ public class LoginVisao extends javax.swing.JFrame
     {
         txtUserName.setText( "" );
         pswSenha.setText( "" );
-
+        
     }
-
+    
     private void alterarSenha()
     {
         JOptionPane.showMessageDialog( null, "A senha que está a usar Atualmente não é segura, deve mudar a senha!" );
@@ -847,16 +850,16 @@ public class LoginVisao extends javax.swing.JFrame
     {
         Date data_maxima_ultimo_doc = documentoDao.getMAxDataDoc();
         Date data_actual = new Date();
-
+        
         if ( data_maxima_ultimo_doc != null )
         {
             if ( MetodosUtil.menor_data_1_data_2( data_actual, data_maxima_ultimo_doc ) )
             {
                 JOptionPane.showMessageDialog( null, "Caro usário verifique a data do sistema", "AVISO", JOptionPane.WARNING_MESSAGE );
             }
-
+            
         }
-
+        
     }
 
 //    public static void fazerBackupAgora()
@@ -930,7 +933,7 @@ public class LoginVisao extends javax.swing.JFrame
             resetTimer();
             return false;
         } );
-
+        
         Toolkit.getDefaultToolkit().addAWTEventListener( ( AWTEvent event ) ->
         {
             if ( event.getID() == MouseEvent.MOUSE_MOVED
@@ -941,14 +944,14 @@ public class LoginVisao extends javax.swing.JFrame
             }
         }, AWTEvent.MOUSE_MOTION_EVENT_MASK | AWTEvent.MOUSE_EVENT_MASK );
     }
-
+    
     private void resetTimer()
     {
         if ( logoutTimer != null )
         {
             logoutTimer.cancel();
         }
-
+        
         logoutTimer = new Timer();
         logoutTimer.schedule( new TimerTask()
         {
@@ -964,7 +967,7 @@ public class LoginVisao extends javax.swing.JFrame
             }
         }, TIMEOUT );
     }
-
+    
     public static void logo_out()
     {
 //        EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
@@ -979,5 +982,5 @@ public class LoginVisao extends javax.swing.JFrame
 
 //        new LoginVisao(BDConexao.getInstancia().getConnectionAtiva()).setVisible(true);
     }
-
+    
 }

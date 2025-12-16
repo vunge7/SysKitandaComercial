@@ -1200,7 +1200,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         });
 
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/actualizar_1.png"))); // NOI18N
-        jButton3.setText("Enviar Ticket");
+        jButton3.setText("Enviar Ticket $");
         jButton3.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -1299,7 +1299,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                                         .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(cmbMoeda, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addContainerGap(162, Short.MAX_VALUE))
+                                .addContainerGap(150, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(lbVias, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
