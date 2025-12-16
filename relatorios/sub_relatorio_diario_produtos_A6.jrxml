@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="relatorio_diario_produtos" language="groovy" pageWidth="200" pageHeight="842" columnWidth="190" leftMargin="5" rightMargin="5" topMargin="5" bottomMargin="5" uuid="963621be-cfd4-4f53-8a8b-bed5b630fd64">
 	<property name="ireport.zoom" value="6.0"/>
-	<property name="ireport.x" value="115"/>
+	<property name="ireport.x" value="640"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="PARM_DATA_2" class="java.sql.Timestamp"/>
 	<parameter name="PARM_DATA_1" class="java.sql.Timestamp"/>
@@ -43,7 +43,7 @@ ORDER BY produto.designacao;]]>
 		<variableExpression><![CDATA[$F{QTD}]]></variableExpression>
 	</variable>
 	<variable name="TOTAL__VALOR_TOTAL" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$F{QTD}*$F{tb_preco_preco_venda}.doubleValue()]]></variableExpression>
+		<variableExpression><![CDATA[$F{total}]]></variableExpression>
 	</variable>
 	<background>
 		<band splitType="Stretch"/>

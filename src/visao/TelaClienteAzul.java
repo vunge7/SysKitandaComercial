@@ -10,7 +10,7 @@ import javax.swing.table.*;
 
 import kitanda.util.CfMethods;
 
-public class TelaCliente extends JFrame
+public class TelaClienteAzul extends JFrame
 {
 
     // ======================================================
@@ -29,16 +29,18 @@ public class TelaCliente extends JFrame
     private JLabel lblDesconto;
     private JLabel lblTotalGeral;
 
+    // ======================================================
+    // CONTROLE VISUAL
+    // ======================================================
     private int ultimaLinhaPiscar = -1;
 
     // ======================================================
-    // PALETA DE CORES (LARANJA / PRETO)
+    // CORES (DEGRADÊ AZUL)
     // ======================================================
-    private static final Color PRETO_FUNDO = new Color( 0x06, 0x00, 0x00 );
-    private static final Color LARANJA = new Color( 0xF7, 0x7B, 0x02 );
-    private static final Color LINHA_CLARA = new Color( 255, 211, 205 );
-    private static final Color LINHA_ESCURA = new Color( 30, 30, 30 );
-    private static final Color BLINK_LARANJA = new Color( 255, 200, 140 );
+    private static final Color AZUL_CLARO = new Color( 0x02, 0xEE, 0xF9 );
+    private static final Color AZUL_ESCURO = new Color( 0x00, 0x0A, 0x0B );
+    private static final Color AZUL_TOTAL = new Color( 0x00, 0xC8, 0xFF );
+    private static final Color COR_BLINK = new Color( 255, 255, 170 );
 
     private static final Font FONTE_TEXTO = new Font( "Segoe UI", Font.PLAIN, 17 );
     private static final Font FONTE_NUMERO = new Font( "Consolas", Font.PLAIN, 17 );
@@ -46,7 +48,7 @@ public class TelaCliente extends JFrame
     // ======================================================
     // CONSTRUTOR
     // ======================================================
-    public TelaCliente( DefaultTableModel modeloPrincipal )
+    public TelaClienteAzul( DefaultTableModel modeloPrincipal )
     {
         super( "Tela Cliente" );
 
@@ -64,7 +66,7 @@ public class TelaCliente extends JFrame
     }
 
     // ======================================================
-    // EVENTO
+    // EVENTO DO MODELO PRINCIPAL
     // ======================================================
     private void onModeloMudou( TableModelEvent e )
     {
@@ -98,7 +100,9 @@ public class TelaCliente extends JFrame
     // ======================================================
     private void montarLayout()
     {
-        JScrollPane scroll = new JScrollPane( criarTabela() );
+        tabela = criarTabela();
+
+        JScrollPane scroll = new JScrollPane( tabela );
         scroll.setBorder( BorderFactory.createEmptyBorder() );
 
         add( criarPainelPublicidade(), BorderLayout.WEST );
@@ -166,23 +170,23 @@ public class TelaCliente extends JFrame
     // ======================================================
     private JTable criarTabela()
     {
-        tabela = new JTable( modeloCliente );
-        tabela.setRowHeight( 28 );
-        tabela.setFont( FONTE_TEXTO );
-        tabela.setShowGrid( false );
-        tabela.setIntercellSpacing( new Dimension( 0, 0 ) );
+        JTable t = new JTable( modeloCliente );
+        t.setRowHeight( 28 );
+        t.setFont( FONTE_TEXTO );
+        t.setShowGrid( false );
+        t.setIntercellSpacing( new Dimension( 0, 0 ) );
 
-        JTableHeader h = tabela.getTableHeader();
+        JTableHeader h = t.getTableHeader();
         h.setFont( new Font( "Segoe UI", Font.BOLD, 16 ) );
 
         DefaultTableCellRenderer r = new LinhaRenderer();
-        for ( int i = 0; i < tabela.getColumnCount(); i++ )
+        for ( int i = 0; i < t.getColumnCount(); i++ )
         {
-            tabela.getColumnModel().getColumn( i ).setCellRenderer( r );
+            t.getColumnModel().getColumn( i ).setCellRenderer( r );
         }
 
-        ajustarColunas( tabela );
-        return tabela;
+        ajustarColunas( t );
+        return t;
     }
 
     private class LinhaRenderer extends DefaultTableCellRenderer
@@ -201,11 +205,11 @@ public class TelaCliente extends JFrame
 
             if ( row == ultimaLinhaPiscar )
             {
-                setBackground( BLINK_LARANJA );
+                setBackground( COR_BLINK );
             }
             else
             {
-                setBackground( row % 2 == 0 ? LINHA_CLARA : LINHA_ESCURA );
+                setBackground( row % 2 == 0 ? AZUL_CLARO : AZUL_ESCURO );
             }
 
             setForeground( row % 2 == 0 ? Color.BLACK : Color.WHITE );
@@ -228,7 +232,7 @@ public class TelaCliente extends JFrame
         try
         {
             BigDecimal bd = new BigDecimal( v.toString().replace( ",", "." ) );
-            return ( col == 1 || col == 2 ) ? fmt( bd, 3 ) : fmt( bd, 2 );
+            return ( col == 1 ) ? fmt( bd, 3 ) : fmt( bd, 2 );
         }
         catch ( Exception e )
         {
@@ -278,7 +282,7 @@ public class TelaCliente extends JFrame
     {
         JPanel p = new JPanel( new BorderLayout() );
         p.setPreferredSize( new Dimension( 350, 0 ) );
-        p.setBackground( PRETO_FUNDO );
+        p.setBackground( Color.BLACK );
 
         JLabel msg = new JLabel(
                 "<html><center>Carne fresca todos os dias<br>Qualidade garantida</center></html>",
@@ -292,12 +296,12 @@ public class TelaCliente extends JFrame
     }
 
     // ======================================================
-    // RODAPÉ FINANCEIRO (DIREITA)
+    // RODAPÉ FINANCEIRO (TODOS À DIREITA)
     // ======================================================
     private JPanel criarRodapeFinanceiro()
     {
         JPanel rodape = new JPanel( new BorderLayout() );
-        rodape.setBackground( PRETO_FUNDO );
+        rodape.setBackground( Color.BLACK );
         rodape.setBorder( BorderFactory.createEmptyBorder( 10, 20, 10, 20 ) );
 
         JPanel painelDireito = new JPanel();
@@ -312,8 +316,8 @@ public class TelaCliente extends JFrame
 
         lblTotalGeral = new JLabel( "TOTAL: 0,00 AOA" );
         lblTotalGeral.setFont( new Font( "Segoe UI", Font.BOLD, 26 ) );
-        lblTotalGeral.setForeground( LARANJA );
-        lblTotalGeral.setBorder( BorderFactory.createEmptyBorder( 8, 0, 0, 0 ) );
+        lblTotalGeral.setForeground( AZUL_TOTAL );
+        lblTotalGeral.setBorder( BorderFactory.createEmptyBorder( 10, 0, 0, 0 ) );
 
         painelDireito.add( lblIliquido );
         painelDireito.add( lblIva );
@@ -369,7 +373,7 @@ public class TelaCliente extends JFrame
     // ======================================================
     private void iniciarBlink()
     {
-        Timer t = new Timer( 160, e ->
+        Timer t = new Timer( 180, e ->
         {
             ultimaLinhaPiscar = -1;
             tabela.repaint();
