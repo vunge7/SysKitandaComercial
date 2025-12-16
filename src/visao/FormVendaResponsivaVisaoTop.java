@@ -56,6 +56,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -317,6 +318,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         inserir_uma_linha();
 
         procedimento_codBarra__jtable();
+        
+        configurarTabela();
 //        initStockListener();
     }
 
@@ -1911,8 +1914,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         // TODO add your handling code here:
         if ( table.getSelectedColumn() == 3 || table.getSelectedColumn() == 4 || table.getSelectedColumn() == 5 )
         {
-//            actualizarPreco();
             System.out.println( "Preparar para actualiza a Qtd......" );
+            actualizarPreco();
 //            JOptionPane.showMessageDialog( null, "Preparar para actualizar qtd" );
             actualizarQtdTable();
         }
@@ -6967,5 +6970,43 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
         table.getCellEditor().cancelCellEditing();
     }
+    
+//    private void configurarTabela() {
+//    table.setModel(new DefaultTableModel(
+//        table.getModel().getDataVector(),
+//        getColumnNames()
+//    ) {
+//        @Override
+//        public boolean isCellEditable(int row, int column) {
+//            return column == 2;
+//        }
+//    });
+//}
+    
+    private void configurarTabela() {
+
+    DefaultTableModel model = (DefaultTableModel) table.getModel();
+
+    table.setModel(new DefaultTableModel(
+        model.getDataVector(),
+        getColumnNames(model)
+    ) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return column == 3; // 3ª coluna editável
+        }
+    });
+}
+    
+    private Vector<String> getColumnNames(DefaultTableModel model) {
+    Vector<String> colunas = new Vector<>();
+    for (int i = 0; i < model.getColumnCount(); i++) {
+        colunas.add(model.getColumnName(i));
+    }
+    return colunas;
+}
+
+
+
 
 }
