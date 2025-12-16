@@ -178,6 +178,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         jlStockNegativo.setVisible( false );
         rbTranstorno.setVisible( false );
         txtLocal.setVisible( false );
+        lb_proximo_documento.setVisible( false );
 
         //pegarResolucao();
         FormVendaResponsivaVisaoTop.conexao = conexao;
@@ -566,7 +567,6 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
         painelTopo = new javax.swing.JPanel();
         painelEsq = new javax.swing.JPanel();
-        dc_data_documento = new com.toedter.calendar.JDateChooser();
         jLabel9 = new javax.swing.JLabel();
         dc_data_vencimento = new com.toedter.calendar.JDateChooser();
         txtIniciaisCliente = new javax.swing.JTextField();
@@ -591,6 +591,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         rbArmazem = new javax.swing.JRadioButton();
         cmbMoeda = new javax.swing.JComboBox();
         btnSemFormaPagamento = new javax.swing.JButton();
+        lbClienteConsumidorFinal1 = new javax.swing.JLabel();
+        txtTelClientePesquisa = new javax.swing.JTextField();
         painelDir = new javax.swing.JPanel();
         txtPreco = new javax.swing.JTextField();
         jButton4 = new javax.swing.JButton();
@@ -630,6 +632,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         lbDescontoFinanceiro = new javax.swing.JLabel();
         txtTotal_AOA_Retencao = new javax.swing.JLabel();
         txtLocal = new javax.swing.JTextField();
+        dc_data_documento = new com.toedter.calendar.JDateChooser();
         painelTabela = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
@@ -637,9 +640,6 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         painelEsq.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-
-        dc_data_documento.setEnabled(false);
-        dc_data_documento.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
         jLabel9.setText("DATA VENCIMENTO");
@@ -656,7 +656,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         });
 
         lbCliente.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        lbCliente.setText("Iniciais:");
+        lbCliente.setText("Iniciais Nome:");
 
         lbCliente1.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         lbCliente1.setText("Nome:");
@@ -681,7 +681,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         jLabel2.setText("Cod.");
 
         lbClienteConsumidorFinal.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        lbClienteConsumidorFinal.setText("NIF");
+        lbClienteConsumidorFinal.setText("NIF:");
 
         txtNomeConsumidorFinal.addActionListener(new java.awt.event.ActionListener()
         {
@@ -809,6 +809,17 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             }
         });
 
+        lbClienteConsumidorFinal1.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        lbClienteConsumidorFinal1.setText("TEL:");
+
+        txtTelClientePesquisa.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                txtTelClientePesquisaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout painelEsqLayout = new javax.swing.GroupLayout(painelEsq);
         painelEsq.setLayout(painelEsqLayout);
         painelEsqLayout.setHorizontalGroup(
@@ -816,63 +827,65 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             .addGroup(painelEsqLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelEsqLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelEsqLayout.createSequentialGroup()
-                                .addComponent(cmbTipoDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lb_proximo_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(8, 8, 8))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(painelEsqLayout.createSequentialGroup()
-                                    .addComponent(txtIniciaisCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txtNomeConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txtNifClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txtCodClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addComponent(cmbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(painelEsqLayout.createSequentialGroup()
                         .addComponent(cmbAnoEconomico, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(spnCopia, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lb_nome_usuario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelEsqLayout.createSequentialGroup()
-                        .addComponent(dc_data_documento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(dc_data_vencimento, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(painelEsqLayout.createSequentialGroup()
+                        .addComponent(lbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel2))
+                    .addGroup(painelEsqLayout.createSequentialGroup()
+                        .addComponent(rbTranstorno)
+                        .addGap(31, 31, 31)
+                        .addComponent(jlStockNegativo, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(14, 14, 14)
+                        .addComponent(rbMostrar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(rbArmazem1)
+                        .addGap(18, 18, 18)
+                        .addComponent(rbArmazem)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lb_proximo_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(40, 40, 40)
+                        .addComponent(cmbMoeda, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnSemFormaPagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelEsqLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(painelEsqLayout.createSequentialGroup()
-                                .addComponent(lbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(6, 6, 6)
+                                .addComponent(lbClienteConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lbCliente1, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(34, 34, 34)
-                                .addComponent(lbClienteConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel2))
-                            .addGroup(painelEsqLayout.createSequentialGroup()
-                                .addComponent(rbTranstorno)
-                                .addGap(31, 31, 31)
-                                .addComponent(jlStockNegativo, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(14, 14, 14)
-                                .addComponent(rbMostrar)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(rbArmazem1)
-                                .addGap(18, 18, 18)
-                                .addComponent(rbArmazem)
-                                .addGap(57, 57, 57)
-                                .addComponent(cmbMoeda, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnSemFormaPagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                                .addComponent(txtNifClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelEsqLayout.createSequentialGroup()
+                                    .addComponent(cmbTipoDocumento, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(dc_data_vencimento, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(cmbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(painelEsqLayout.createSequentialGroup()
+                                        .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addGroup(painelEsqLayout.createSequentialGroup()
+                                                .addComponent(lbClienteConsumidorFinal1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(txtTelClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addGroup(painelEsqLayout.createSequentialGroup()
+                                                .addComponent(txtIniciaisCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                    .addComponent(txtNomeConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addComponent(lbCliente1, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(txtCodClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
                 .addContainerGap())
         );
         painelEsqLayout.setVerticalGroup(
@@ -881,46 +894,43 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                 .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbCliente1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbClienteConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(txtNomeConsumidorFinal, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtCodClientePesquisa)
-                            .addComponent(txtNifClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txtCodClientePesquisa, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(txtIniciaisCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
+                .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbClienteConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtNifClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(lbClienteConsumidorFinal1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtTelClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cmbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
-                .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cmbTipoDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lb_proximo_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(8, 8, 8)
-                .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(dc_data_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(dc_data_vencimento, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(dc_data_vencimento, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cmbTipoDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(painelEsqLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(painelEsqLayout.createSequentialGroup()
-                                .addGap(3, 3, 3)
-                                .addComponent(rbTranstorno, javax.swing.GroupLayout.PREFERRED_SIZE, 7, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(painelEsqLayout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(cmbMoeda, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnSemFormaPagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(lb_proximo_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(rbTranstorno, javax.swing.GroupLayout.PREFERRED_SIZE, 7, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(rbMostrar, javax.swing.GroupLayout.PREFERRED_SIZE, 9, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jlStockNegativo, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
-                            .addGroup(painelEsqLayout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(cmbMoeda, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(btnSemFormaPagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(8, 8, 8))
+                                    .addComponent(jlStockNegativo, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))))
+                        .addGap(7, 7, 7))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelEsqLayout.createSequentialGroup()
                         .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(rbArmazem1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
@@ -1256,6 +1266,9 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         txtTotal_AOA_Retencao.setForeground(new java.awt.Color(255, 51, 51));
         txtTotal_AOA_Retencao.setText("Retencao");
 
+        dc_data_documento.setEnabled(false);
+        dc_data_documento.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
+
         javax.swing.GroupLayout painelDirLayout = new javax.swing.GroupLayout(painelDir);
         painelDir.setLayout(painelDirLayout);
         painelDirLayout.setHorizontalGroup(
@@ -1329,7 +1342,9 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(cmbProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtLocal, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(txtLocal, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(dc_data_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(painelDirLayout.createSequentialGroup()
                         .addComponent(txtReferencia, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1366,9 +1381,9 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                 .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbValorPorExtenco, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtTotal_AOA_Retencao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(painelDirLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(cmbSubFamilia, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
                             .addComponent(txtLocal, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1386,7 +1401,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                                 .addComponent(lbCodigoProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(lbQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(painelDirLayout.createSequentialGroup()
-                        .addGap(33, 33, 33)
+                        .addComponent(dc_data_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(4, 4, 4)
                         .addComponent(jButton4)))
                 .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(painelDirLayout.createSequentialGroup()
@@ -1413,7 +1429,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                             .addComponent(btnProcessar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jlEmpresa)))
                     .addComponent(btn_adicionar, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
 
         painelDirLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btn_adicionar, btn_remover});
@@ -1539,12 +1555,12 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private void txtNifClientePesquisaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtNifClientePesquisaActionPerformed
     {//GEN-HEADEREND:event_txtNifClientePesquisaActionPerformed
-//        pesquisa_cliente_by_nif();
+        pesquisa_cliente_by_nif();
     }//GEN-LAST:event_txtNifClientePesquisaActionPerformed
 
     private void txtCodClientePesquisaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtCodClientePesquisaActionPerformed
     {//GEN-HEADEREND:event_txtCodClientePesquisaActionPerformed
-//        pesquisa_cliente_by_cod();
+        pesquisa_cliente_by_cod();
     }//GEN-LAST:event_txtCodClientePesquisaActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton5ActionPerformed
@@ -1588,6 +1604,66 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         }
     }//GEN-LAST:event_cmbProdutoActionPerformed
 
+        private void pesquisa_cliente_by_cod()
+    {
+
+        Integer codCliente = Integer.parseInt( txtCodClientePesquisa.getText() );
+        try
+        {
+
+            TbCliente cliente = (TbCliente) clientesController.findById( codCliente );
+            String nome_cliente = cliente.getNome();
+            cmbCliente.setSelectedItem( nome_cliente.trim() );
+            accao_cliente();
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog( null, "Não existe cliente com código" );
+            cmbCliente.setSelectedItem( "Consumidor Final" );
+        }
+        txtCodClientePesquisa.setText( "" );
+        txtCodClientePesquisa.requestFocus();
+    }
+
+    private void pesquisa_cliente_by_nif()
+    {
+
+        String nif = txtNifClientePesquisa.getText();
+        try
+        {
+            String nome_cliente = clientesController.getClienteByNifOrberByNome( nif ).getNome();
+            cmbCliente.setSelectedItem( nome_cliente.trim() );
+            accao_cliente();
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog( null, "Não existe cliente com este código" );
+            cmbCliente.setSelectedItem( "Consumidor Final" );
+        }
+        txtNifClientePesquisa.requestFocus();
+    }
+    
+    private void pesquisa_cliente_by_tel()
+    {
+
+        String tel = txtTelClientePesquisa.getText();
+        try
+        {
+            String nome_cliente = clientesController.getClienteByTelOrberByNome( tel ).getNome();
+            cmbCliente.setSelectedItem( nome_cliente.trim() );
+            accao_cliente_tel();
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog( null, "Não existe cliente com este código" );
+            cmbCliente.setSelectedItem( "Consumidor Final" );
+        }
+        txtTelClientePesquisa.requestFocus();
+    }
+    
     private void cmbArmazemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbArmazemActionPerformed
     {//GEN-HEADEREND:event_cmbArmazemActionPerformed
         // TODO add your handling code here:
@@ -1931,6 +2007,11 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jScrollPane1PropertyChange
 
     }//GEN-LAST:event_jScrollPane1PropertyChange
+
+    private void txtTelClientePesquisaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtTelClientePesquisaActionPerformed
+    {//GEN-HEADEREND:event_txtTelClientePesquisaActionPerformed
+        pesquisa_cliente_by_tel();
+    }//GEN-LAST:event_txtTelClientePesquisaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -2638,6 +2719,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             DocumentosController.commit( conexaoTransactionLocal );
 
             JOptionPane.showMessageDialog( null, "Factura efectuada com sucesso!" );
+            txtNomeConsumidorFinal.setVisible( true );
 //            imprimir_factura( idVendaGerada ); // Imprime a factura
 
         }
@@ -2787,6 +2869,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         remover_all_produto();
         accao_cliente();
         limpar_consumidor_final();
+        txtNomeConsumidorFinal.setVisible( true );
+        txtNomeConsumidorFinal.getText().equals( "Consumidor Final" );
 
         txtQuatindade.setText( "1" );
         txtQuatindade.requestFocus();
@@ -2833,6 +2917,15 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         txtNomeConsumidorFinal.setText( nomeCliente );
         String nif = clientesController.findByNome( nomeCliente ).getNif();
         txtNifClientePesquisa.setText( nif );
+    }
+    
+    private static void accao_cliente_tel()
+    {
+        String nomeCliente = ( String ) cmbCliente.getSelectedItem();
+
+        txtNomeConsumidorFinal.setText( nomeCliente );
+        String telefone = clientesController.findByNome( nomeCliente ).getTelefone();
+        txtTelClientePesquisa.setText( telefone );
     }
 
     private static void limpar_consumidor_final()
@@ -3256,6 +3349,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private javax.swing.JLabel lbCliente;
     private javax.swing.JLabel lbCliente1;
     private javax.swing.JLabel lbClienteConsumidorFinal;
+    private javax.swing.JLabel lbClienteConsumidorFinal1;
     private javax.swing.JLabel lbCodigoProduto;
     private javax.swing.JLabel lbCodigoProduto1;
     private javax.swing.JLabel lbCodigoProduto2;
@@ -3290,6 +3384,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     public static javax.swing.JTextField txtQuantidadeStock;
     public static javax.swing.JTextField txtQuatindade;
     private static javax.swing.JTextField txtReferencia;
+    private static javax.swing.JTextField txtTelClientePesquisa;
     public static javax.swing.JTextField txtTotalPagar;
     private static javax.swing.JLabel txtTotal_AOA_Retencao;
     // End of variables declaration//GEN-END:variables
@@ -5332,12 +5427,12 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
         if ( cmbCliente.getSelectedItem().equals( "Consumidor Final" ) )
         {
-            lbClienteConsumidorFinal.setVisible( true );
+//            lbClienteConsumidorFinal.setVisible( true );
             txtNomeConsumidorFinal.setVisible( true );
         }
         else
         {
-            lbClienteConsumidorFinal.setVisible( false );
+//            lbClienteConsumidorFinal.setVisible( false );
             txtNomeConsumidorFinal.setVisible( false );
         }
 

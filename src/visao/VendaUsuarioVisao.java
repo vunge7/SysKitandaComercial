@@ -6560,7 +6560,6 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         txtCodClientePesquisa.setText( "" );
         txtCodClientePesquisa.requestFocus();
     }
-//    5417221915
 
     private void pesquisa_cliente_by_nif()
     {
@@ -6578,7 +6577,6 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             JOptionPane.showMessageDialog( null, "Não existe cliente com código" );
             cmbCliente.setSelectedItem( "Consumidor Final" );
         }
-//        txtNifClientePesquisa.setText( "" );
         txtNifClientePesquisa.requestFocus();
     }
 

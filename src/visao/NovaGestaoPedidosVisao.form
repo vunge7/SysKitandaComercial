@@ -633,7 +633,7 @@
                               </Group>
                               <Component id="cmbCliente" alignment="0" min="-2" pref="362" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="12" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="1" attributes="0">
@@ -643,14 +643,18 @@
                                   <Component id="txtNomeConsumidorFinal" min="-2" pref="263" max="-2" attributes="0"/>
                               </Group>
                               <Group type="102" attributes="0">
-                                  <Component id="lbClienteConsumidorFinal1" min="-2" pref="157" max="-2" attributes="0"/>
+                                  <Component id="lbClienteConsumidorFinal1" min="-2" pref="63" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="txtIniciaisCliente" min="-2" pref="166" max="-2" attributes="0"/>
+                                  <Component id="txtIniciaisCliente" max="32767" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="lbClienteConsumidorFinal2" min="-2" pref="33" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="txtTelClientePesquisa" min="-2" pref="96" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="btCliente" min="-2" pref="40" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -661,13 +665,24 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="lbClienteConsumidorFinal1" alignment="0" min="-2" pref="20" max="-2" attributes="0"/>
-                      <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                          <Component id="txtIniciaisCliente" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
-                          <Component id="btCliente" alignment="3" pref="0" max="32767" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="lbClienteConsumidorFinal1" alignment="0" min="-2" pref="20" max="-2" attributes="0"/>
+                              <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                                  <Component id="txtIniciaisCliente" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
+                                  <Component id="btCliente" alignment="3" pref="0" max="32767" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="lbClienteConsumidorFinal2" alignment="0" min="-2" pref="20" max="-2" attributes="0"/>
+                              <Component id="txtTelClientePesquisa" alignment="0" min="-2" pref="23" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="32767" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
                   <Component id="cmbCliente" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
@@ -766,7 +781,7 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Lucida Grande" size="14" style="1"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Pesquisar Clientes:"/>
+            <Property name="text" type="java.lang.String" value="Iniciais:"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="txtIniciaisCliente">
@@ -787,6 +802,23 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton2ActionPerformed"/>
           </Events>
+        </Component>
+        <Component class="javax.swing.JTextField" name="txtTelClientePesquisa">
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtTelClientePesquisaActionPerformed"/>
+            <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtTelClientePesquisaKeyPressed"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JLabel" name="lbClienteConsumidorFinal2">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Lucida Grande" size="14" style="1"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Tel:"/>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>
@@ -928,7 +960,7 @@
                     <Column editable="false" title="ID" type="java.lang.Object"/>
                     <Column editable="false" title="Lugar" type="java.lang.Object"/>
                     <Column editable="false" title="Consumo" type="java.lang.Object"/>
-                    <Column editable="true" title="QTD" type="java.lang.Object"/>
+                    <Column editable="false" title="QTD" type="java.lang.Object"/>
                     <Column editable="false" title="Total" type="java.lang.Object"/>
                   </Table>
                 </Property>

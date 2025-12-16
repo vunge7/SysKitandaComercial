@@ -98,6 +98,8 @@ public class ClienteVisao extends javax.swing.JDialog
         catch ( Exception e )
         {
         }
+        
+        txtNomeCliente.requestFocus();
 
     }
 
@@ -1078,11 +1080,16 @@ public class ClienteVisao extends javax.swing.JDialog
                             JOptionPane.showMessageDialog( null, "Cliente salvo com sucesso!...", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
                             txtNomeCliente.requestFocus();
 
-                            if ( !Objects.isNull( VendaUsuarioVisao.cmbCliente ) )
+                            if ( !Objects.isNull( NovaGestaoPedidosVisao.cmbCliente ) )
                             {
-//                            VendaUsuarioVisao.cmbCliente.setModel( new DefaultComboBoxModel( clienteDao.buscaTodos() ) );
-                                VendaUsuarioVisao.cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );
-                                VendaUsuarioVisao.cmbCliente.setSelectedItem( clienteGlobal.getNome() );
+                                NovaGestaoPedidosVisao.cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );
+                                NovaGestaoPedidosVisao.cmbCliente.setSelectedItem( clienteGlobal.getNome() );
+                                dispose();
+                            }
+                            if ( !Objects.isNull( FormVendaResponsivaVisaoTop.cmbCliente ) )
+                            {
+                                FormVendaResponsivaVisaoTop.cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );
+                                FormVendaResponsivaVisaoTop.cmbCliente.setSelectedItem( clienteGlobal.getNome() );
                                 dispose();
                             }
                             if ( !Objects.isNull( RecolhaPedidosVisao.cmbCliente ) )
@@ -1110,11 +1117,6 @@ public class ClienteVisao extends javax.swing.JDialog
                             e.printStackTrace();
                             JOptionPane.showMessageDialog( null, "Erro ao salvar o cliente", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
                         }
-//                }
-//                else
-//                {
-//                    JOptionPane.showMessageDialog( null, "Aviso: Nif já existente", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
-//                }
 
                     }
                     else

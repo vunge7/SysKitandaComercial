@@ -2176,7 +2176,7 @@ public class CompraVisao extends javax.swing.JFrame implements Runnable
         }
         catch ( SQLException ex )
         {
-            Logger.getLogger( CompraVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(CompraVisao.class.getName() ).log( Level.SEVERE, null, ex );
         }
     }
 

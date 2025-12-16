@@ -55,7 +55,6 @@ public class RootVisao extends javax.swing.JFrame
 {
 
     private Integer idUser;
-    private boolean administrador = false;
     public static TbDadosInstituicao dadosInstituicao;
     private static DadosInstituicaoController dadosInstituicaoController;
     private static CaixasController caixa_controller;
@@ -68,6 +67,7 @@ public class RootVisao extends javax.swing.JFrame
     private static CaixaDao caixaDao = new CaixaDao( emf );
     private static BDConexao conexao;
     private int codigo = 0;
+    private boolean administrador = false;
     private int idEmpresa = 0;
     private float percentagem_seja_bem_vindo = 0;
     Thread t;

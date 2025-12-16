@@ -259,11 +259,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         {
             e.printStackTrace();
         }
-        
-        
-        
-        
-            // No construtor ou método de inicialização do formulário
+
+        // No construtor ou método de inicialização do formulário
         getRootPane().getInputMap( JComponent.WHEN_IN_FOCUSED_WINDOW )
                 .put( KeyStroke.getKeyStroke( "F4" ), "abrirBuscaProduto" );
 
@@ -291,8 +288,6 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                 }
             }
         } );
-
-        
 
         try
         {
@@ -489,6 +484,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         lbClienteConsumidorFinal1 = new javax.swing.JLabel();
         txtIniciaisCliente = new javax.swing.JTextField();
         jButton2 = new javax.swing.JButton();
+        txtTelClientePesquisa = new javax.swing.JTextField();
+        lbClienteConsumidorFinal2 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         BT_Pedidos = new javax.swing.JButton();
         BT_Conversao = new javax.swing.JButton();
@@ -795,7 +792,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         });
 
         lbClienteConsumidorFinal1.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        lbClienteConsumidorFinal1.setText("Pesquisar Clientes:");
+        lbClienteConsumidorFinal1.setText("Iniciais:");
 
         txtIniciaisCliente.addActionListener(new java.awt.event.ActionListener()
         {
@@ -821,6 +818,24 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
             }
         });
 
+        txtTelClientePesquisa.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                txtTelClientePesquisaActionPerformed(evt);
+            }
+        });
+        txtTelClientePesquisa.addKeyListener(new java.awt.event.KeyAdapter()
+        {
+            public void keyPressed(java.awt.event.KeyEvent evt)
+            {
+                txtTelClientePesquisaKeyPressed(evt);
+            }
+        });
+
+        lbClienteConsumidorFinal2.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        lbClienteConsumidorFinal2.setText("Tel:");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -837,7 +852,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(cmbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 362, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addGap(0, 12, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
@@ -845,23 +860,34 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                                 .addGap(18, 18, 18)
                                 .addComponent(txtNomeConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(lbClienteConsumidorFinal1, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(lbClienteConsumidorFinal1, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtIniciaisCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtIniciaisCliente)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lbClienteConsumidorFinal2, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtTelClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addContainerGap())))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbClienteConsumidorFinal1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtIniciaisCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
-                .addGap(9, 9, 9)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lbClienteConsumidorFinal1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(txtIniciaisCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                        .addGap(9, 9, 9))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lbClienteConsumidorFinal2, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtTelClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addComponent(cmbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -965,7 +991,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         {
             boolean[] canEdit = new boolean []
             {
-                false, false, false, true, false
+                false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex)
@@ -1896,6 +1922,16 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         }
     }//GEN-LAST:event_btFTActionPerformed
 
+    private void txtTelClientePesquisaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtTelClientePesquisaActionPerformed
+    {//GEN-HEADEREND:event_txtTelClientePesquisaActionPerformed
+        pesquisa_cliente_by_tel();
+    }//GEN-LAST:event_txtTelClientePesquisaActionPerformed
+
+    private void txtTelClientePesquisaKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event_txtTelClientePesquisaKeyPressed
+    {//GEN-HEADEREND:event_txtTelClientePesquisaKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtTelClientePesquisaKeyPressed
+
     private void atualizarCliente1()
     {
         boolean documentoIsFA = DVML.DOC_FACTURA_FT == getIdDocumento();
@@ -1981,7 +2017,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
     private void actualizar_abreviacao()
     {
 
-        switch ( getIdDocumento() )
+        switch (getIdDocumento())
         {
             case DVML.DOC_FACTURA_RECIBO_FR:
 
@@ -2632,6 +2668,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
     private static javax.swing.JTable jTable1;
     private javax.swing.JLabel lbClienteConsumidorFinal;
     private javax.swing.JLabel lbClienteConsumidorFinal1;
+    private javax.swing.JLabel lbClienteConsumidorFinal2;
     private static javax.swing.JLabel lbQuantidadeExistente;
     public static javax.swing.JLabel lbValorPorExtenco;
     private javax.swing.JLabel lbVias;
@@ -2649,6 +2686,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
     private javax.swing.JTextField txtMesa;
     private static javax.swing.JTextField txtNomeConsumidorFinal;
     private static javax.swing.JTextField txtQuatidadeExistente;
+    private static javax.swing.JTextField txtTelClientePesquisa;
     public static javax.swing.JTextField txtTotalApagar;
     // End of variables declaration//GEN-END:variables
 
@@ -2704,7 +2742,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
             visualizarQtdStock();
             TbItemPedidos itemPedidosLocal = new TbItemPedidos();
-            int cod_pedido = ( pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa ) );
+            int cod_pedido = (pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa ));
             pedido = pedidoDao.findTbPedido( cod_pedido );
 
             if ( rbSim_lugar.isSelected() )
@@ -2882,7 +2920,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
             visualizarQtdStock();
             TbItemPedidos itemPedidosLocal = new TbItemPedidos();
-            int cod_pedido = ( pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa ) );
+            int cod_pedido = (pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa ));
             pedido = pedidoDao.findTbPedido( cod_pedido );
 
             if ( rbSim_lugar.isSelected() )
@@ -3973,7 +4011,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         Documento documento_local = (Documento) documentosController.findById( getIdDocumento() );
         String abreviacao_local = documento_local.getAbreviacao();
 
-        switch ( abreviacao_local )
+        switch (abreviacao_local)
         {
             case "FT":
                 return "Facturamos o valor de: ";
@@ -4169,7 +4207,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
             for ( int i = 1; i <= numeroVias; i++ )
             {
 
-                switch ( i )
+                switch (i)
                 {
                     case 1:
 
@@ -4316,7 +4354,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
             for ( int i = 1; i <= numeroVias; i++ )
             {
 
-                switch ( i )
+                switch (i)
                 {
                     case 1:
                         ListaVendasMesas listaVenda1 = new ListaVendasMesas( venda.getCodigo(), abreviacao, cod_mesa, Integer.parseInt( lugar ), false, true, "Original" );
@@ -6165,7 +6203,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
             // a incidência só é aplicável ao produtos sujeitos a iva 
             if ( taxa != 0 )
             {
-                double valor_unitario = ( preco_unitario * qtd );
+                double valor_unitario = (preco_unitario * qtd);
                 desconto_valor_linha = valor_unitario * ( ( valor_percentagem ) / 100 );
                 imposto += ( ( valor_unitario - desconto_valor_linha ) * ( taxa / 100 ) );
 
@@ -6197,7 +6235,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                 // a incidência só é aplicável ao produtos sujeitos a iva 
                 if ( taxa != 0 )
                 {
-                    double valor_unitario = ( preco_unitario * qtd );
+                    double valor_unitario = (preco_unitario * qtd);
                     desconto_valor_linha = valor_unitario * ( ( valor_percentagem ) / 100 );
                     imposto += ( ( valor_unitario - desconto_valor_linha ) * ( taxa / 100 ) );
 
@@ -6211,8 +6249,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
     private static double getTotalAOALiquido()
     {
-        double valores = ( getTotalIliquido() + getTotalImposto() );
-        double descontos = ( getDescontoComercial() + getDescontoFinanceiro() );
+        double valores = (getTotalIliquido() + getTotalImposto());
+        double descontos = (getDescontoComercial() + getDescontoFinanceiro());
         System.out.println( "TotalIliquido: " + getTotalIliquido() );
         System.out.println( "TotalImposto: " + getTotalImposto() );
         System.out.println( "TotalDescontoComercial: " + getDescontoComercial() );
@@ -6223,8 +6261,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
     private static double getTotalAOALiquido( int lugar )
     {
-        double valores = ( getTotalIliquido( lugar ) + getTotalImposto( lugar ) );
-        double descontos = ( getDescontoComercial( lugar ) + getDescontoFinanceiro( lugar ) );
+        double valores = (getTotalIliquido( lugar ) + getTotalImposto( lugar ));
+        double descontos = (getDescontoComercial( lugar ) + getDescontoFinanceiro( lugar ));
         System.out.println( "TotalIliquido: " + getTotalIliquido( lugar ) );
         System.out.println( "TotalImposto: " + getTotalImposto( lugar ) );
         System.out.println( "TotalDescontoComercial: " + getDescontoComercial( lugar ) );
@@ -6253,7 +6291,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
             if ( taxa != 0 )
             {
                 desconto_valor_linha = ( ( valor_percentagem ) / 100 );
-                double valor_unitario = ( preco_unitario * qtd );
+                double valor_unitario = (preco_unitario * qtd);
                 incidencia += ( ( valor_unitario ) - ( valor_unitario * desconto_valor_linha ) );
 
             }
@@ -6286,7 +6324,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                 if ( taxa != 0 )
                 {
                     desconto_valor_linha = ( ( valor_percentagem ) / 100 );
-                    double valor_unitario = ( preco_unitario * qtd );
+                    double valor_unitario = (preco_unitario * qtd);
                     incidencia += ( ( valor_unitario ) - ( valor_unitario * desconto_valor_linha ) );
 
                 }
@@ -6316,7 +6354,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
             if ( taxa == 0 )
             {
                 desconto_valor_linha = ( ( valor_percentagem ) / 100 );
-                double valor_unitario = ( preco_unitario * qtd );
+                double valor_unitario = (preco_unitario * qtd);
                 incidencia_isento += ( ( valor_unitario ) - ( valor_unitario * desconto_valor_linha ) );
 
             }
@@ -6348,7 +6386,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                 if ( taxa == 0 )
                 {
                     desconto_valor_linha = ( ( valor_percentagem ) / 100 );
-                    double valor_unitario = ( preco_unitario * qtd );
+                    double valor_unitario = (preco_unitario * qtd);
                     incidencia_isento += ( ( valor_unitario ) - ( valor_unitario * desconto_valor_linha ) );
 
                 }
@@ -7149,6 +7187,34 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         }
     }
 
+    private void pesquisa_cliente_by_tel()
+    {
+
+        String tel = txtTelClientePesquisa.getText();
+        try
+        {
+            String nome_cliente = clientesController.getClienteByTelOrberByNome( tel ).getNome();
+            cmbCliente.setSelectedItem( nome_cliente.trim() );
+            accao_cliente_tel();
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog( null, "Não existe cliente com este código" );
+            cmbCliente.setSelectedItem( "Consumidor Final" );
+        }
+        txtTelClientePesquisa.requestFocus();
+    }
+
+    private static void accao_cliente_tel()
+    {
+        String nomeCliente = (String) cmbCliente.getSelectedItem();
+
+        txtNomeConsumidorFinal.setText( nomeCliente );
+        String telefone = clientesController.findByNome( nomeCliente ).getTelefone();
+        txtTelClientePesquisa.setText( telefone );
+    }
+
 //    public void setDesactivarLugares( String desactivar_lugares )
 //    {
 //        if ( desactivar_lugares.equalsIgnoreCase( "Sim" ) )
@@ -7184,6 +7250,46 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //            rbLugarActivrbSimLugar( true );
 //            rbLugarDesactivo.setSelecrbNao_lugar       }
 //
+//    }
+//    private void pesquisa_cliente_by_cod()
+//    {
+//
+//        Integer codCliente = Integer.parseInt( txtCodClientePesquisa.getText() );
+//        try
+//        {
+//
+//            TbCliente cliente = (TbCliente) clientesController.findById( codCliente );
+//            String nome_cliente = cliente.getNome();
+//            cmbCliente.setSelectedItem( nome_cliente.trim() );
+//            accao_cliente();
+//        }
+//        catch ( Exception e )
+//        {
+//            e.printStackTrace();
+//            JOptionPane.showMessageDialog( null, "Não existe cliente com código" );
+//            cmbCliente.setSelectedItem( "Consumidor Final" );
+//        }
+//        txtCodClientePesquisa.setText( "" );
+//        txtCodClientePesquisa.requestFocus();
+//    }
+//
+//    private void pesquisa_cliente_by_nif()
+//    {
+//
+//        String nif = txtNifClientePesquisa.getText();
+//        try
+//        {
+//            String nome_cliente = clientesController.getClienteByNifOrberByNome( nif ).getNome();
+//            cmbCliente.setSelectedItem( nome_cliente.trim() );
+//            accao_cliente();
+//        }
+//        catch ( Exception e )
+//        {
+//            e.printStackTrace();
+//            JOptionPane.showMessageDialog( null, "Não existe cliente com código" );
+//            cmbCliente.setSelectedItem( "Consumidor Final" );
+//        }
+//        txtNifClientePesquisa.requestFocus();
 //    }
     private void desactivarLugares()
     {
