@@ -159,6 +159,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private static final int INDEX_TABLE_DESCONTO = 5;
     private static final int INDEX_TABLE_TAXA_IVA = 6;
 
+    private static List<Vector<TbPreco>> listaPrecoTemp = new ArrayList<>();
+
     private String doc = "";
 
     public FormVendaResponsivaVisaoTop( int cod_usuario, BDConexao conexao ) throws SQLException
@@ -318,8 +320,10 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         inserir_uma_linha();
 
         procedimento_codBarra__jtable();
-        
+
         configurarTabela();
+//        configurarTabela( 3 );
+//        configurarTabela( 4 );
 //        initStockListener();
     }
 
@@ -630,7 +634,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         painelEsq.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
@@ -1656,6 +1660,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
             if ( podeRemoverServico( modelo, table.getSelectedRow() ) )
             {
+                actualizarPrecosAntigos2();
                 remover_item_carrinho();
                 inserir_uma_linha();
             }
@@ -1830,6 +1835,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnCancelarActionPerformed
     {//GEN-HEADEREND:event_btnCancelarActionPerformed
         // TODO add your handling code here:
+        actualizarPrecosAntigos2();
         dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
@@ -2572,6 +2578,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         itemVendasController = new ItemVendasController( conexaoTransactionLocal );
         formaPagamentoItemController = new FormaPagamentoItemController( conexaoTransactionLocal );
         pagamentoMensalidadeController = new PagamentoMensalidadeController( conexaoTransactionLocal.getConnectionAtiva() );
+        precosController = new PrecosController( conexaoTransactionLocal );
+
         StoksController stocksControllerLocal = new StoksController( conexaoTransactionLocal );
         DocumentosController.start( conexaoTransactionLocal ); // Inicia a transação
         try
@@ -2622,6 +2630,9 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                 registrarFormaPagamento( idVendaGerada, venda.getTotalVenda(), frNormal );
 
             }
+
+            //actualizar precos antigos
+            actualizarPrecosAntigos();
 
             // Finaliza transação
             DocumentosController.commit( conexaoTransactionLocal );
@@ -6684,14 +6695,17 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static void actualizarPrecoVendaManual( int idProduto, Double precoVenda, PrecosController precosControllerLocal )
     {
+
+        Vector<TbPreco> vectorDoisPrecoAnterior = new Vector<>();
         conexaoTransaction = BDConexao.getInstancia();
         DocumentosController.start( conexaoTransaction );
 
         System.out.println( "ID PRODUTO: " + idProduto );
 
-        int idPrecoRetalho = PrecosController.getLastIdPrecoByIdProdutoIntAndQTD( idProduto, 1d, conexaoTransaction );
+        int idPrecoRetalho = PrecosController.getLastIdPrecoByIdProdutoIntAndQTD( idProduto, 0d, conexaoTransaction );
         System.out.println( "ID RETALHO: " + idPrecoRetalho );
         TbPreco precoAntigoRetalho = ( TbPreco ) precosControllerLocal.findById( idPrecoRetalho );
+
         System.out.println( "PRECO RETALHO: " + precoAntigoRetalho );
 
         int idPrecoGrosso = PrecosController.getLastIdPrecoByIdProdutoIntAndPrecoAntigoQtdAlto( idProduto, precoAntigoRetalho.getQtdAlto() + 1, conexaoTransaction );
@@ -6768,6 +6782,32 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             e.printStackTrace();
             System.err.println( "Falha ao actualizar o preço grosso na compra" );
         }
+
+        if ( !existeProdutoPrecoLista( idProduto ) )
+        {
+            vectorDoisPrecoAnterior.add( precoAntigoRetalho );
+            vectorDoisPrecoAnterior.add( precoAntigoGrosso );
+            System.err.println( "Adicionei o preco retalho antigo " + precoAntigoRetalho.getPrecoVenda().doubleValue() );
+            System.err.println( "Adicionei o preco grosso antigo " + precoAntigoGrosso.getPrecoVenda().doubleValue() );
+
+            listaPrecoTemp.add( vectorDoisPrecoAnterior );
+        }
+
+    }
+
+    private static boolean existeProdutoPrecoLista( int idProduto )
+    {
+
+        for ( int i = 0; i < listaPrecoTemp.size(); i++ )
+        {
+            Vector<TbPreco> get = listaPrecoTemp.get( i );
+            if ( get.get( 0 ).getFkProduto().getCodigo() == idProduto )
+            {
+                return true;
+            }
+
+        }
+        return false;
 
     }
 
@@ -6970,7 +7010,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
         table.getCellEditor().cancelCellEditing();
     }
-    
+
 //    private void configurarTabela() {
 //    table.setModel(new DefaultTableModel(
 //        table.getModel().getDataVector(),
@@ -6982,31 +7022,96 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 //        }
 //    });
 //}
-    
-    private void configurarTabela() {
+    private void configurarTabela()
+    {
 
-    DefaultTableModel model = (DefaultTableModel) table.getModel();
+        DefaultTableModel model = ( DefaultTableModel ) table.getModel();
 
-    table.setModel(new DefaultTableModel(
-        model.getDataVector(),
-        getColumnNames(model)
-    ) {
-        @Override
-        public boolean isCellEditable(int row, int column) {
-            return column == 3; // 3ª coluna editável
-        }
-    });
-}
-    
-    private Vector<String> getColumnNames(DefaultTableModel model) {
-    Vector<String> colunas = new Vector<>();
-    for (int i = 0; i < model.getColumnCount(); i++) {
-        colunas.add(model.getColumnName(i));
+        table.setModel( new DefaultTableModel(
+                model.getDataVector(),
+                getColumnNames( model )
+        )
+        {
+            @Override
+            public boolean isCellEditable( int row, int column )
+            {
+                return ( column == 3 ||  column == 4) ; // 3ª coluna editável
+            }
+        } );
     }
-    return colunas;
-}
 
+    private void configurarTabela( int coluna )
+    {
 
+        DefaultTableModel model = ( DefaultTableModel ) table.getModel();
 
+        table.setModel( new DefaultTableModel(
+                model.getDataVector(),
+                getColumnNames( model )
+        )
+        {
+            @Override
+            public boolean isCellEditable( int row, int column )
+            {
+                return column == coluna; // 3ª coluna editável
+            }
+        } );
+    }
+
+    private Vector<String> getColumnNames( DefaultTableModel model )
+    {
+        Vector<String> colunas = new Vector<>();
+        for ( int i = 0; i < model.getColumnCount(); i++ )
+        {
+            colunas.add( model.getColumnName( i ) );
+        }
+        return colunas;
+    }
+
+    private static void actualizarPrecosAntigos() throws Exception
+    {
+        prepararPrecosAntigos( precosController );
+    }
+
+    private static void actualizarPrecosAntigos2()
+    {
+
+        BDConexao conexaoLocal = new BDConexao();
+        DocumentosController.start( conexaoLocal );
+        PrecosController precosController = new PrecosController( conexaoLocal );
+        try
+        {
+            prepararPrecosAntigos( precosController );
+            DocumentosController.commit( conexaoLocal );
+        }
+        catch ( Exception e )
+        {
+            DocumentosController.rollback( conexaoLocal );
+        }
+        finally
+        {
+            conexaoLocal.close();
+        }
+
+    }
+
+    private static void prepararPrecosAntigos( PrecosController precosController )
+    {
+        System.out.println( "Cheguei no actualizar precos Antigos" );
+        if ( Objects.nonNull( listaPrecoTemp ) || listaPrecoTemp.size() > 0 )
+        {
+            for ( int i = 0; i < listaPrecoTemp.size(); i++ )
+            {
+                Vector<TbPreco> get = listaPrecoTemp.get( i );
+                TbPreco precoRetalhoLocal = get.get( 0 );
+                TbPreco precoGrossoLocal = get.get( 1 );
+                precosController.salvar( precoRetalhoLocal );
+                System.out.println( "Salvei o preco retalho" );
+                precosController.salvar( precoGrossoLocal );
+                System.out.println( "Salvei o preco groso" );
+            }
+            listaPrecoTemp.clear();
+        }
+    }
 
 }

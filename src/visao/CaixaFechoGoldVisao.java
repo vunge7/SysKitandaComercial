@@ -5,8 +5,6 @@
  */
 package visao;
 
-
-import java.sql.Connection;
 import comercial.controller.CaixasController;
 import comercial.controller.DadosInstituicaoController;
 import comercial.controller.DocumentosController;
@@ -19,11 +17,12 @@ import dao.FormaPagamentoDao;
 import entity.Caixa;
 import entity.FormaPagamento;
 import entity.ItemCaixa;
-import entity.TbDadosInstituicao;
+import entity.TbPreco;
 import entity.TbUsuario;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
@@ -55,6 +54,7 @@ public class CaixaFechoGoldVisao extends javax.swing.JFrame
     private static BDConexao conexao;
     private static BDConexao conexaoTransaction;
     private boolean touch;
+    private List<TbPreco> listaPreco = new ArrayList<>();
 
     public CaixaFechoGoldVisao( int idUser, BDConexao conexao, boolean touch )
     {
@@ -596,8 +596,8 @@ public class CaixaFechoGoldVisao extends javax.swing.JFrame
         conexaoTransaction = BDConexao.getInstancia();
         DocumentosController.start( conexaoTransaction );
 
-        TbUsuario usuario = (TbUsuario) usuariosController.findById( this.idUser );
-        DefaultTableModel modelo = (DefaultTableModel) tabela_fecho_caixa.getModel();
+        TbUsuario usuario = ( TbUsuario ) usuariosController.findById( this.idUser );
+        DefaultTableModel modelo = ( DefaultTableModel ) tabela_fecho_caixa.getModel();
 
         int opcao = JOptionPane.showConfirmDialog( null, "Caro usuário deseja fechar realmente o caixa?" );
         if ( opcao == JOptionPane.YES_OPTION )
@@ -650,7 +650,7 @@ public class CaixaFechoGoldVisao extends javax.swing.JFrame
                             if ( formaPagamentoItemController.existeVendaDiarioByFormaPagamento(
                                     idUser, idFormaPagamento, dataAbertura, dataFecho, conexaoTransaction ) )
                             {
-                                 System.out.println( "Inicio da operação salvar item_caixa: " );
+                                System.out.println( "Inicio da operação salvar item_caixa: " );
                                 BigDecimal valor_declarado = BigDecimal.ZERO; // você pode ajustar isso se tiver a coluna
 //                            BigDecimal valor_declarado = new BigDecimal(modelo.getValueAt(i, 1).toString());
 
@@ -733,7 +733,7 @@ public class CaixaFechoGoldVisao extends javax.swing.JFrame
         Caixa caixa_actual = caixa_controller.caixa_actual();
 //        List<TbBanco> bancos = vendaDao.getAllBancos( caixa_actual.getDataAbertura(), caixa_actual.getDataFecho() );
         List<FormaPagamento> bancos = formaPagamentoDao.findFormaPagamentoEntities();
-        DefaultTableModel modelo = (DefaultTableModel) tabela_fecho_caixa.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) tabela_fecho_caixa.getModel();
         modelo.setRowCount( 0 );
         for ( FormaPagamento banco : bancos )
         {

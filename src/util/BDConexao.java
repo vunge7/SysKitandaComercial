@@ -53,7 +53,7 @@ public class BDConexao
             } );
 
     // 🔹 Construtor privado
-    private BDConexao()
+    public BDConexao()
     {
         conectar();
         if ( !monitorAtivo )
