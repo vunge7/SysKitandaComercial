@@ -202,11 +202,10 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame
                     .addComponent(saftDataMaximaJLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(saftDataMinimaJDateChoose, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(saftDataMinimaJLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(saftDataMaximaJDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(btnSalvar))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(saftDataMinimaJLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
+                    .addComponent(saftDataMaximaJDateChooser, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
+                    .addComponent(btnSalvar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -1575,7 +1574,6 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame
 
     public void scrolltable()
     {
-
 //        txtStatus.scrollRectToVisible( txtStatus.getCellRect( table.getRowCount() - 1, table.getColumnCount(), true ) );
     }
 
@@ -1585,8 +1583,8 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame
         if ( true )
         {
             btnSalvar.setEnabled( false );
-//            actualizar_hash();
-            gerarFcheiroSAFT();
+            actualizar_hash();
+//            gerarFcheiroSAFT();
         }
     }
 

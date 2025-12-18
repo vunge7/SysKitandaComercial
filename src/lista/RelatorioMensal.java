@@ -145,8 +145,8 @@ public class RelatorioMensal extends javax.swing.JFrame
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(yearChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29)
-                .addComponent(moutnChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(69, 69, 69)
+                .addComponent(moutnChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 479, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -166,6 +166,7 @@ public class RelatorioMensal extends javax.swing.JFrame
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+
         chamarReport();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
@@ -248,23 +249,16 @@ public class RelatorioMensal extends javax.swing.JFrame
 
     private void chamarReport()
     {
-
+        
         int idMes = moutnChooser.getMonth() + 1;
         String mes = MetodosUtil.getMesPagarU( idMes );
-//        System.out.println( "Ano:  " + yearChooser.getValue() );
-//        System.out.println( "Ano:  " + moutnChooser.getMonth() );
-        TbDadosInstituicao dadosInstituicao = dadosInstituicaoController.findByCodigo( 1 );
 
         HashMap hashMap = new HashMap();
-        hashMap.put( "codDoc", 1 );
-        hashMap.put( "codAno", yearChooser.getValue() );
-        hashMap.put( "codMes", idMes );
+        hashMap.put( "ano", yearChooser.getValue() );
+        hashMap.put( "mes", idMes );
         hashMap.put( "mes_designacao", mes );
-        hashMap.put( "NOME", dadosInstituicao.getNome() );
-        hashMap.put( "ENDERECO", dadosInstituicao.getEnderecos() );
-        String file = "relatorio_mensal.jasper";
+        new AnyReport( hashMap, "relatorio_mensal.jasper" );
 
-        AnyReport anyReport = new AnyReport( hashMap, file );
     }
 
 }
