@@ -176,12 +176,14 @@
                           <Component id="txtIniciaisCliente" min="-2" pref="30" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace pref="13" max="32767" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="lbClienteConsumidorFinal" alignment="3" min="-2" pref="26" max="-2" attributes="0"/>
-                          <Component id="txtNifClientePesquisa" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
-                          <Group type="103" alignment="3" groupAlignment="3" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="103" alignment="0" groupAlignment="3" attributes="0">
                               <Component id="lbClienteConsumidorFinal1" alignment="3" min="-2" pref="26" max="-2" attributes="0"/>
                               <Component id="txtTelClientePesquisa" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="lbClienteConsumidorFinal" alignment="3" min="-2" pref="26" max="-2" attributes="0"/>
+                              <Component id="txtNifClientePesquisa" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>

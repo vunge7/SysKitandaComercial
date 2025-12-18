@@ -274,20 +274,38 @@ public class TelaCliente extends JFrame
     // ======================================================
     // PUBLICIDADE (ESQUERDA)
     // ======================================================
+//    private JPanel criarPainelPublicidade()
+//    {
+//        JPanel p = new JPanel( new BorderLayout() );
+//        p.setPreferredSize( new Dimension( 350, 0 ) );
+//        p.setBackground( PRETO_FUNDO );
+//
+//        JLabel msg = new JLabel(
+//                "<html><center>Carne fresca todos os dias<br>Qualidade garantida</center></html>",
+//                SwingConstants.CENTER
+//        );
+//        msg.setForeground( Color.WHITE );
+//        msg.setFont( new Font( "Segoe UI", Font.BOLD, 22 ) );
+//
+//        p.add( msg, BorderLayout.CENTER );
+//        return p;
+//    }
     private JPanel criarPainelPublicidade()
     {
         JPanel p = new JPanel( new BorderLayout() );
         p.setPreferredSize( new Dimension( 350, 0 ) );
         p.setBackground( PRETO_FUNDO );
 
-        JLabel msg = new JLabel(
-                "<html><center>Carne fresca todos os dias<br>Qualidade garantida</center></html>",
-                SwingConstants.CENTER
+        // === Carregar imagens ===
+        java.util.List<Image> imagens = java.util.Arrays.asList(
+                new ImageIcon( getClass().getResource( "/imagens/carne1.jpg" ) ).getImage(),
+                new ImageIcon( getClass().getResource( "/imagens/carne2.jpg" ) ).getImage(),
+                new ImageIcon( getClass().getResource( "/imagens/carne3.jpg" ) ).getImage()
         );
-        msg.setForeground( Color.WHITE );
-        msg.setFont( new Font( "Segoe UI", Font.BOLD, 22 ) );
 
-        p.add( msg, BorderLayout.CENTER );
+        PainelCarrossel carrossel = new PainelCarrossel( imagens );
+
+        p.add( carrossel, BorderLayout.CENTER );
         return p;
     }
 
@@ -359,9 +377,10 @@ public class TelaCliente extends JFrame
         lblIva.setText( "IVA: " + fmt( iva, 2 ) + " AOA" );
         lblDesconto.setText( "Desconto: " + fmt( desconto, 2 ) + " AOA" );
 
-        lblTotalGeral.setText(
-                "TOTAL: " + CfMethods.formatarComoMoeda( totalGeral.doubleValue() )
-        );
+        lblTotalGeral.setText("TOTAL: " +fmt(totalGeral,2) );
+//        lblTotalGeral.setText(
+//                "TOTAL: " + CfMethods.formatarComoMoeda( totalGeral.doubleValue() )
+//        );
     }
 
     // ======================================================

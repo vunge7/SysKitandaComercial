@@ -903,12 +903,13 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                         .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(txtIniciaisCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
-                .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbClienteConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtNifClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(lbClienteConsumidorFinal1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txtTelClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txtTelClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(lbClienteConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtNifClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cmbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1604,14 +1605,14 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         }
     }//GEN-LAST:event_cmbProdutoActionPerformed
 
-        private void pesquisa_cliente_by_cod()
+    private void pesquisa_cliente_by_cod()
     {
 
         Integer codCliente = Integer.parseInt( txtCodClientePesquisa.getText() );
         try
         {
 
-            TbCliente cliente = (TbCliente) clientesController.findById( codCliente );
+            TbCliente cliente = ( TbCliente ) clientesController.findById( codCliente );
             String nome_cliente = cliente.getNome();
             cmbCliente.setSelectedItem( nome_cliente.trim() );
             accao_cliente();
@@ -1644,7 +1645,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         }
         txtNifClientePesquisa.requestFocus();
     }
-    
+
     private void pesquisa_cliente_by_tel()
     {
 
@@ -1663,7 +1664,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         }
         txtTelClientePesquisa.requestFocus();
     }
-    
+
     private void cmbArmazemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbArmazemActionPerformed
     {//GEN-HEADEREND:event_cmbArmazemActionPerformed
         // TODO add your handling code here:
@@ -2918,7 +2919,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         String nif = clientesController.findByNome( nomeCliente ).getNif();
         txtNifClientePesquisa.setText( nif );
     }
-    
+
     private static void accao_cliente_tel()
     {
         String nomeCliente = ( String ) cmbCliente.getSelectedItem();
@@ -7130,7 +7131,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             @Override
             public boolean isCellEditable( int row, int column )
             {
-                return ( column == 3 ||  column == 4) ; // 3ª coluna editável
+//                return ( column == 3 ||  column == 4) ; // 3ª coluna editável
+                return ( column == 4 ); // 3ª coluna editável
             }
         } );
     }

@@ -1585,8 +1585,8 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame
         if ( true )
         {
             btnSalvar.setEnabled( false );
-//            actualizar_hash();
-            gerarFcheiroSAFT();
+            actualizar_hash();
+//            gerarFcheiroSAFT();
         }
     }
 

@@ -244,7 +244,7 @@ public class DVML
     public static String NAME_SOFTWARE = "Kitanda";
     public static String NAME_COMPANY = "DVML-COMERCIAL, LDA";
     public static String VERSION_SOFTWARE = "1.1";
-    public final static String CAMINHO_SAFT = "../FICHEIRO_FAFT/";
+    public final static String CAMINHO_SAFT = "../FICHEIRO_SAFT/";
     public final static String CAMINHO_BK = "../BD_BACKUP/";
     public final static String FICHEIRO_SAFT = "SAFT_FACTURACAO.xml";
     public final static String FICHEIRO_SAFT_COMPRA = "SAFT_COMPRA.xml";
