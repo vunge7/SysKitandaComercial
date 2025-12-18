@@ -3425,7 +3425,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         {
 
             int codigo = Integer.parseInt( txtCodigoProduto.getText() );
-            TbProduto produto = ( TbProduto ) produtosController.findById( codigo );
+            TbProduto produto = ( TbProduto ) produtosController.findByIdStatus(codigo );
 
             Integer codTipoProduto = produto.getCodTipoProduto().getCodigo();
             TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutoController.findById( codTipoProduto );
@@ -3706,7 +3706,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             }
             else
             {
-                JOptionPane.showMessageDialog( null, "Nao existe produto/servico relacionado a esta referencia" );
+                JOptionPane.showMessageDialog( null, "Nao existe produto/servico relacionado com esta referencia" );
             }
 
         }
@@ -4474,7 +4474,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             }
             else
             {
-                JOptionPane.showMessageDialog( null, "Nao existe produto/servico relacionado a esta referencia" );
+                JOptionPane.showMessageDialog( null, "Nao existe produto/servico relacionado com esta referencia" );
             }
 
         }

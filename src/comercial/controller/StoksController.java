@@ -540,6 +540,7 @@ public class StoksController implements EntidadeFactory
                 + "LEFT JOIN produto_imposto pi ON pi.fk_produto = p.codigo "
                 + "LEFT JOIN imposto im ON im.pk_imposto = pi.fk_imposto "
                 + "WHERE p.fk_grupo = 1 "
+                + " AND p.status = 'Activo' "
                 + "  AND f.pk_familia " + condicao + " "
                 + "ORDER BY p.designacao";
 

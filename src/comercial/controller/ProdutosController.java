@@ -590,6 +590,29 @@ public boolean desactivar(BDConexao conexao, TbProduto produto) {
         return produto;
 
     }
+    
+    public Object findByIdStatus( int codigo )
+    {
+
+        String sql = "SELECT * FROM tb_produto WHERE codigo = " + codigo + " AND status = 'Activo'";
+        System.out.println( sql );
+        ResultSet result = conexao.executeQuery( sql );
+        TbProduto produto = null;
+
+        try
+        {
+            if ( result.next() )
+            {
+                produto = new TbProduto();
+                setResultProduto( result, produto );
+            }
+        }
+        catch ( SQLException e )
+        {
+        }
+        return produto;
+
+    }
 
     public Object findByIdCod( int codigo )
     {
@@ -638,7 +661,7 @@ public boolean desactivar(BDConexao conexao, TbProduto produto) {
     public TbProduto findByCodBarra( String codBarra )
     {
 
-        String FIND_BY_COD_BARRA = "SELECT * FROM tb_produto WHERE codBarra = '" + codBarra + "'";
+        String FIND_BY_COD_BARRA = "SELECT * FROM tb_produto WHERE status = 'Activo' AND codBarra = '" + codBarra + "'";
         ResultSet result = conexao.executeQuery( FIND_BY_COD_BARRA );
         TbProduto produto = null;
 
@@ -660,7 +683,7 @@ public boolean desactivar(BDConexao conexao, TbProduto produto) {
     public TbProduto findByCodManual1( String codigo_manual )
     {
 
-        String FIND_BY_COD_BARRA = "SELECT * FROM tb_produto WHERE codigo_manual = '" + codigo_manual + "'";
+        String FIND_BY_COD_BARRA = "SELECT * FROM tb_produto WHERE status = 'Activo' AND codigo_manual = '" + codigo_manual + "'";
         ResultSet result = conexao.executeQuery( FIND_BY_COD_BARRA );
         TbProduto produto = null;
 
@@ -726,7 +749,7 @@ public boolean desactivar(BDConexao conexao, TbProduto produto) {
     public TbProduto findByCodManual( String codManual )
     {
 
-        String FIND_BY_COD_BARRA = "SELECT * FROM tb_produto WHERE codigo_manual = '" + codManual + "'";
+        String FIND_BY_COD_BARRA = "SELECT * FROM tb_produto WHERE status = 'Activo' AND codigo_manual = '" + codManual + "'";
         ResultSet result = conexao.executeQuery( FIND_BY_COD_BARRA );
         TbProduto produto = null;
 
