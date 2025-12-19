@@ -254,9 +254,9 @@ public class RelatorioMensal extends javax.swing.JFrame
         String mes = MetodosUtil.getMesPagarU( idMes );
 
         HashMap hashMap = new HashMap();
-        hashMap.put( "ano", yearChooser.getValue() );
-        hashMap.put( "mes", idMes );
-        hashMap.put( "mes_designacao", mes );
+        hashMap.put( "ANO", yearChooser.getValue() );
+        hashMap.put( "ID_MES", idMes );
+        hashMap.put( "MES", mes );
         new AnyReport( hashMap, "relatorio_mensal.jasper" );
 
     }

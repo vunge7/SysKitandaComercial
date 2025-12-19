@@ -33,6 +33,7 @@ import lista.ReconciliacaoCaixaReport;
 import util.BDConexao;
 import util.DVML;
 import util.JPAEntityMannagerFactoryUtil;
+import util.email.EnvioEmailUtil;
 
 /**
  *
@@ -700,6 +701,8 @@ public class CaixaFechoGoldVisao extends javax.swing.JFrame
                     {
                         ReconciliacaoCaixaReport rb = new ReconciliacaoCaixaReport( caixa_actual.getPkCaixa(), conexaoTransaction );
                         NLExporToPdfForSandEmailReport exporToPdf = new NLExporToPdfForSandEmailReport( conexaoTransaction );
+                        EnvioEmailUtil.inicio();
+
                         conexaoTransaction.close();
                     }
                     catch ( Exception e )
