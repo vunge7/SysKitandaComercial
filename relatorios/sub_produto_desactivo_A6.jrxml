@@ -33,7 +33,7 @@ FROM
      INNER JOIN `tb_tipo_produto` tb_tipo_produto ON tb_produto.`cod_Tipo_Produto` = tb_tipo_produto.`codigo`
      INNER JOIN `tb_armazem` tb_armazem ON tb_stock.`cod_armazem` = tb_armazem.`codigo`
 WHERE
-     tb_tipo_produto.`codigo` = $P{ID_TIPO_PRODUTO} AND tb_armazem.`codigo` = $P{PARM_ID_ARMAZEM}
+     tb_tipo_produto.`codigo` = $P{ID_TIPO_PRODUTO} AND tb_armazem.`codigo` = $P{PARM_ID_ARMAZEM} AND tb_produto.`status` = 'Desactivo'
 
 ORDER BY tb_produto.`designacao` ASC]]>
 	</queryString>
