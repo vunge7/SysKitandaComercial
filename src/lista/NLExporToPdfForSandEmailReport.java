@@ -4,7 +4,6 @@
  */
 package lista;
 
-
 import java.sql.Connection;
 import comercial.controller.CaixasController;
 import dao.DadosInstituicaoDao;
@@ -45,6 +44,7 @@ public final class NLExporToPdfForSandEmailReport
         {
             caixasController = new CaixasController( conexao );
             exportReportToPdf( "relatorio_diario_resumo_caixa_lavandaria.jasper", "relatorio_diario_resumo_caixa_lavandaria.pdf" );
+            exportReportToPdf( "reconciliacao_caixa_lavandaria.jasper", "reconciliacao_caixa_lavandaria.pdf" );
             exportReportToPdf( "relatorio_diario_mes_caixa.jasper", "relatorio_diario_mes_caixa.pdf" );
 //            exportReportToPdf( "relatorio_mensal.jasper", "relatorio_mensal.pdf" );
 
@@ -88,6 +88,7 @@ public final class NLExporToPdfForSandEmailReport
         {
             JasperFillManager.fillReport( caminhoAbsoluto, getParametros(), connection );
             JasperPrint jasperPrint = JasperFillManager.fillReport( caminhoAbsoluto, getParametros(), connection );
+            System.out.println( "PAGE: " + jasperPrint.getPages().size() );
             if ( jasperPrint.getPages().size() >= 1 )
             {
                 //exporta o ficheiro como pdf no directorio 'anexos'

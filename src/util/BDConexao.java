@@ -102,18 +102,20 @@ public class BDConexao
             }
 
             String ip = info.get( 0 ).trim();
-            String porta = ( info.size() > 1 ? info.get( 1 ).trim() : "3306" );
+            String porta = (info.size() > 1 ? info.get( 1 ).trim() : "3306");
 
             String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db"
-//            String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db"
-
+//<<<<<<< HEAD
+////            String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db"
+//
+//=======
+//>>>>>>> 042d2252188dc11399191e122c5e9694ec2c25b6
                     + "?zeroDateTimeBehavior=convertToNull"
                     + "&useSSL=false"
                     + "&allowPublicKeyRetrieval=true"
                     + "&autoReconnect=true"
                     + "&connectTimeout=5000"
                     + "&socketTimeout=30000";
-//                    + "&characterEncoding=UTF-8";
 
             connection = DriverManager.getConnection( url, "root", "DoV90x?#" );
 
