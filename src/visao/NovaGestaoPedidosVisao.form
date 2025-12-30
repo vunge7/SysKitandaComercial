@@ -960,7 +960,7 @@
                     <Column editable="false" title="ID" type="java.lang.Object"/>
                     <Column editable="false" title="Lugar" type="java.lang.Object"/>
                     <Column editable="false" title="Consumo" type="java.lang.Object"/>
-                    <Column editable="false" title="QTD" type="java.lang.Object"/>
+                    <Column editable="true" title="QTD" type="java.lang.Object"/>
                     <Column editable="false" title="Total" type="java.lang.Object"/>
                   </Table>
                 </Property>

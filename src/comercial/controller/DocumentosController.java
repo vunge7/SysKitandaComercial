@@ -116,7 +116,7 @@ public class DocumentosController implements EntidadeFactory
 
     public Vector<String> getVectorRecolha()
     {
-        String FIND_ALL = "SELECT designacao FROM documento WHERE pk_documento IN(1)";
+        String FIND_ALL = "SELECT designacao FROM documento WHERE pk_documento IN(1,2,3)";
         ResultSet result = conexao.executeQuery( FIND_ALL );
         Vector<String> lista = new Vector<>();
         try

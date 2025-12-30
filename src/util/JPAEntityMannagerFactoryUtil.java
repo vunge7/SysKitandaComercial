@@ -22,6 +22,7 @@ import javax.swing.JOptionPane;
  * @author Domingos Dala Vunge & Martinho Canhongo Luis
  */
 public class JPAEntityMannagerFactoryUtil
+        
 {
 
 //    public static EntityManagerFactory em  =  Persistence.createEntityManagerFactory("SGCMINIMERCADOPU");

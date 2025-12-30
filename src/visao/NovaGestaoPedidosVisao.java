@@ -991,7 +991,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         {
             boolean[] canEdit = new boolean []
             {
-                false, false, false, false, false
+                false, false, false, true, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex)
@@ -3173,18 +3173,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                 pedido_2.setHoraPedido( new Date() );
                 pedido_2.setStatusPedido( false );
                 pedido_2.setFkMesas( mesasDao.findTbMesas( mesasDao.getIdByDescricao( mesa ) ) );
-//#ped1                
+              
                 Integer idLastPedido = pedidoDao.criarComProcedimentos( pedido_2, conexao );
-
-//                if ( idLastPedido != null )
-//                {
-//                    PrincipalPedidosVisao.mesas_livres( getLabelMesaByMesa() );
-//                    PrincipalPedidosVisao.pintar_mesas( getLabelMesaByMesa(), this.mesa );
-//                }
-//                else
-//                {
-//                    System.err.println( "ERRO AO SALVAR O PEDIDO...." );
-//                }
             }
             catch ( Exception e )
             {
