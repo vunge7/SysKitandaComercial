@@ -104,7 +104,7 @@ public class BDConexao
             String ip = info.get( 0 ).trim();
             String porta = (info.size() > 1 ? info.get( 1 ).trim() : "3306");
 
-            String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db"
+            String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_dona_arleth"
                     + "?zeroDateTimeBehavior=convertToNull"
                     + "&useSSL=false"
                     + "&allowPublicKeyRetrieval=true"

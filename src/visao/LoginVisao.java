@@ -256,12 +256,12 @@ public class LoginVisao extends javax.swing.JFrame
         BTnSair = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
         JLDataFecho = new javax.swing.JLabel();
         JLNif = new javax.swing.JLabel();
         JEmpresa = new javax.swing.JLabel();
         Soft = new javax.swing.JLabel();
         Soft1 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -393,8 +393,6 @@ public class LoginVisao extends javax.swing.JFrame
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setText("email: dvml.comerciall@gmail.com");
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/img30.png"))); // NOI18N
-
         JLDataFecho.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         JLDataFecho.setForeground(new java.awt.Color(255, 255, 255));
         JLDataFecho.setText("jLabel7");
@@ -409,11 +407,13 @@ public class LoginVisao extends javax.swing.JFrame
 
         Soft.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         Soft.setForeground(new java.awt.Color(255, 255, 255));
-        Soft.setText("KITANDA 1.2.   Sistema Certificado pela AGT. Nº 258");
+        Soft.setText("KITANDA 1.1.   Sistema Certificado pela AGT. Nº 258");
 
         Soft1.setFont(new java.awt.Font("American Typewriter", 1, 48)); // NOI18N
         Soft1.setForeground(new java.awt.Color(255, 255, 255));
-        Soft1.setText("KITANDA 1.2");
+        Soft1.setText("KITANDA 1.1");
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/img30.png"))); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -475,6 +475,9 @@ public class LoginVisao extends javax.swing.JFrame
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 836, Short.MAX_VALUE)
                     .addContainerGap()))
         );
+
+        Soft.getAccessibleContext().setAccessibleName("KITANDA 1.1.   Sistema Certificado pela AGT. Nº 258");
+        Soft1.getAccessibleContext().setAccessibleName("KITANDA 1.1");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents

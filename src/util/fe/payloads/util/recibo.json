@@ -1,0 +1,50 @@
+{
+    "schemaVersion": "1.2",
+    "submissionUUID": "b3409ad9-7dff-4d5a-b1d7-6395dfa3073b",
+    "taxRegistrationNumber": "5000413178",
+    "submissionTimeStamp": "2025-01-15T14:30:00Z",
+
+    "softwareInfo": {
+        "softwareInfoDetail": {
+            "productId": "Kitanda",
+            "productVersion": "1.1",
+            "softwareValidationNumber": "FE/196/AGT/2025"
+        },
+        "jwsSoftwareSignature": "eyJhbGciOiJSUzI1NiJ9.eyJwcm9kdWN0VmVyc2lvbiI6IjEuMSIsInByb2R1Y3RJZCI6IktpdGFuZGEiLCJzb2Z0d2FyZVZhbGlkYXRpb25OdW1iZXIiOiJGRS8xOTYvQUdULzIwMjUifQ.MSbEY5zxWOTCBAgkrtflD5TK6dZb0Kc44QxG6tBzYYfB9c9hynIPZuE1fnJKmy8H7uvTeeWXO2eoVa2QpI4d8T_iBtASOJgmF-az28pW69hFCnnW-hIXMgHOToYILYwqEMD0tX34vIAj1ZKOcFtc99rWG3YnN-lKTw_nePNFF2TVXc0HE4F7-phmMZyjutiJnEoPcDQoKLjDoKv8FlYw_ek0I15ZctOkvPLZ2OEjQZUPf5prt7Hipi5n8VB3Pv5709o_kG6p82bXcV3E7FKgn5WAUA-oz3Gih-WPt2reDL2P7ILuaTDLIBw_IHP1SySQgKikiloYkTvaTymPgm7U8g"
+    },
+
+    "numberOfEntries": 1,
+    "documents": [
+        {
+            "documentNo": "RG RG7825S17N/2",
+            "documentStatus": "N",
+            "jwsDocumentSignature": "eyJhbGciOiJSUzI1NiJ9.eyJkb2N1bWVudE5vIjoiUkcgUkc3ODI1UzE3Ti8yIiwidGF4UmVnaXN0cmF0aW9uTnVtYmVyIjoiNTAwMDQxMzE3OCIsImRvY3VtZW50VHlwZSI6IlJHIiwiZG9jdW1lbnREYXRlIjoiMjAyNS0xMi0zMCIsImN1c3RvbWVyVGF4SUQiOiJQVDk4NzY1NDMyMSIsImN1c3RvbWVyQ291bnRyeSI6IlBUIiwiY29tcGFueU5hbWUiOiJDbGllbnRlIEV4ZW1wbG8gTGRhIiwiZG9jdW1lbnRUb3RhbHMiOnsidGF4UGF5YWJsZSI6NzAsIm5ldFRvdGFsIjo1MDAsImdyb3NzVG90YWwiOjU3MH19.FVB1hjwKD11rCzMj89tubuFpo2QtwbXt-vohPFmcN-az-v9j1tiB6lGUvuDSfJuy0YgocS7Eh65KgSA9CceAiTuRHM78anfky9HvnMQgJp17_KPfdBDBwCfHw6xLYc3ro9EDeMb7ac43Zb7ZLr4eIaShN9W5-7f3vQwxQOFGJW-qPgtB5_NMQVS1nJRHKrQ-EQAXVjZq20oPsOet3PSIot6xHtSFvKpw8NrBZwkALVV5exZKnISCYK1_UkbsvDIXvyd6o-3Txoqx7IlgpnKYUOGNSCXNbCuyszCuAmcPljGTUw2BmUK5fGUXsvKDu6Agon-7cGWTPYDJzSwXHBgbAA",
+            "documentDate": "2025-12-30",
+            "documentType": "RG",
+            "eacCode": "12345",
+            "systemEntryDate": "2025-12-30T12:56:00Z",
+            "customerTaxID": "PT987654321",
+            "customerCountry": "PT",
+            "companyName": "Cliente Exemplo Lda",
+
+            "paymentReceipt": {
+                "sourceDocuments": [
+                    {
+                        "lineNo": 1,
+                        "sourceDocumentID": {
+                            "originatingON": "FT FT7825S1917N/4",
+                            "documentDate": "2025-12-30"
+                        },
+                        "creditAmount": 570
+                    }
+                ]
+            },
+
+            "documentTotals": {
+                "taxPayable": 70,
+                "netTotal": 500,
+                "grossTotal": 570
+            }
+        }
+    ]
+}

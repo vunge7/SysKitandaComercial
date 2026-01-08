@@ -1,0 +1,69 @@
+{
+    "schemaVersion": "1.2",
+    "submissionUUID": "c33c4317-d62a-47ca-a435-eae695f28c51",
+    "taxRegistrationNumber": "5000413178",
+    "submissionTimeStamp": "2025-12-23T13:09:00Z",
+    "softwareInfo": {
+        "softwareInfoDetail": {
+            "productId": "Meu ERP CERTO",
+            "productVersion": "1.0.1",
+            "softwareValidationNumber": "C_134"
+        },
+        "jwsSoftwareSignature": "eyJhbGciOiJSUzI1NiJ9.eyJkb2N1bWVudE5vIjoiRlQgRlQ3ODI1UzE5MTdOLzIiLCJ0YXhSZWdpc3RyYXRpb25OdW1iZXIiOiI1MDAwNDEzMTc4IiwiZG9jdW1lbnRUeXBlIjoiRlQiLCJkb2N1bWVudERhdGUiOiIyMDI1LTEyLTIzIiwiY3VzdG9tZXJUYXhJRCI6IlBUOTg3NjU0MzIxIiwiY3VzdG9tZXJDb3VudHJ5IjoiUFQiLCJjb21wYW55TmFtZSI6IkNsaWVudGUgRXhlbXBsbyBMZGEiLCJkb2N1bWVudFRvdGFscyI6eyJ0YXhQYXlhYmxlIjo3MCwibmV0VG90YWwiOjUwMCwiZ3Jvc3NUb3RhbCI6NTcwfX0.ppYugy3IAxKM3XkdlMBad194dmtiMpQTcMT7kXMWylBH-OLoAdqyZownEOjwl5bKmpbCt0fpungxN55F12J8qyq8WN8Qi-zy-LVtV2_JXZM31uCCvrqvvukfemXJZrwYYsiyYhfNcpD6LXoIJsNx9pMxXyG2_1e2rqDXtwfTyzCCs5QBDBC7-FDDSuzWCWFoof8TT-zIN5TfZOrqTP0O-uY95N3Qr0GxTayGNZ6l2XIBTwLEwK32R-_bKR8ZhQMomGJXj0uRcvqAY6KinE7VyGfVDIuOqV4V2GvMrPu-xowhfIvemzchi-MkcoBzU1I8qU9payD3Si4-5JuVLiMHaw"
+    },
+    "numberOfEntries": 1,
+    "documents": [
+        {
+            "documentNo": "ND ND7825S439N/3",
+            "documentStatus": "N",
+            "jwsDocumentSignature": "eyJhbGciOiJSUzI1NiJ9.eyJkb2N1bWVudE5vIjoiTkQgTkQ3ODI1Uzc1N04vMyIsInRheFJlZ2lzdHJhdGlvbk51bWJlciI6IjUwMDA0MTMxNzgiLCJkb2N1bWVudFR5cGUiOiJORCIsImRvY3VtZW50RGF0ZSI6IjIwMjUtMTItMjMiLCJjdXN0b21lclRheElEIjoiUFQ5ODc2NTQzMjEiLCJjdXN0b21lckNvdW50cnkiOiJQVCIsImNvbXBhbnlOYW1lIjoiQ2xpZW50ZSBFeGVtcGxvIExkYSIsImRvY3VtZW50VG90YWxzIjp7InRheFBheWFibGUiOjcwLCJuZXRUb3RhbCI6NTAwLCJncm9zc1RvdGFsIjo1NzB9fQ.L0EtP6mdxNaUp3kG0P5NYp5YlKOlhR8axx1dtqQlkq8pWqs8_enB4dst5nUsZUTDha9aKdFIY1ZOcKXdtk2zEZPkY_NvUP1WbiBuhwWJWsZski2x_IvWk8wq1JZ_MxI52SIUP_eJY3xtnwW3LjDjuxNfTZybAdgulEHLP7y1h3ULDmc7bTcQe12oyrpaf2s-eYb6_T7MUquFgLdiHK04Ut9a7OZiN47C022vnNnNB_Iaar84Arohs5pf08TdnaM_JfO0oXDXdIc18d9-lLXjtpoM2ucrcXh4QZBj70Up-XONrUTkN23YSVIVFdNik2OAjqemZ0IkmEIGRV1SLp01PQ",
+            "documentDate": "2025-12-23",
+            "documentType": "ND",
+            "eacCode": "12345",
+            "systemEntryDate": "2025-12-23T13:09:00Z",
+            "customerTaxID": "PT987654321",
+            "customerCountry": "PT",
+            "companyName": "Cliente Exemplo Lda",
+            "lines": [
+                {
+                    "lineNumber": 1,
+                    "productCode": "PROD001",
+                    "productDescription": "Produto Exemplo 1",
+                    "quantity": 2,
+                    "unitOfMeasure": "UN",
+                    "unitPrice": 250,
+                    "unitPriceBase": 250,
+                    "referenceInfo": {
+                        "referenceItemLineNo": 1,
+                        "reference": "FR FR7825S960N/1",
+                        "reason": "Anulação parcial por devolução de mercadoria"
+                    },
+                    "debitAmount": 0,
+                    "creditAmount": 500,
+                    "taxes": [
+                        {
+                            "taxType": "IVA",
+                            "taxCountryRegion": "AO",
+                            "taxCode": "NOR",
+                            "taxPercentage": 14,
+                            "taxContribution": 70
+                        }
+                    ],
+                    "settlementAmount": 0
+                }
+            ],
+            "documentTotals": {
+                "taxPayable": 70,
+                "netTotal": 500,
+                "grossTotal": 570
+            },
+            "withholdingTaxList": [
+                {
+                    "withholdingTaxType": "IRT",
+                    "withholdingTaxDescription": "Retenção na fonte",
+                    "withholdingTaxAmount": 16.5
+                }
+            ]
+        }
+    ]
+}

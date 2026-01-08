@@ -2762,12 +2762,12 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     public static void registrarFormaPagamento( int idVenda, BigDecimal totalVenda, boolean formaNormal ) throws Exception
     {
-
-        if ( !formaNormal )
-        {
-            registrarPagamentoUnico( idVenda, totalVenda );
-            return;
-        }
+//
+//        if ( !formaNormal )
+//        {
+//            registrarPagamentoUnico( idVenda, totalVenda );
+//            return;
+//        }
         registrarPagamentosMultiplos( idVenda );
     }
 
@@ -2810,7 +2810,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private static void registrarPagamentosMultiplos( int idVenda ) throws Exception
     {
         DefaultTableModel modelo = ( DefaultTableModel ) FormaPagamentoVisao.tabela_forma_pagamento.getModel();
-        BigDecimal troco = CfMethods.parseMoedaSegura( FormaPagamentoVisao.lb_troco.getText() );
+        double trocoExterno = CfMethods.parseMoedaFormatada( FormaPagamentoVisao.lb_troco.getText() );
+        BigDecimal troco = new BigDecimal( trocoExterno );
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
         {
@@ -2832,6 +2833,10 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             }
 
             Contas conta = ( Contas ) contaController.findById( forma.getFkContaAssociada() );
+
+            System.out.println( "FORMA PAGAMENTO: " + descricao );
+            System.out.println( "FORMA PAGAMENTO VALOR: " + valor );
+            System.out.println( "FORMA PAGAMENTO TROCO: " + troco );
 
             FormaPagamentoItem item = criarItemFormaPagamento( idVenda, idForma, valor, troco, referencia );
 
@@ -3425,7 +3430,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         {
 
             int codigo = Integer.parseInt( txtCodigoProduto.getText() );
-            TbProduto produto = ( TbProduto ) produtosController.findByIdStatus(codigo );
+            TbProduto produto = ( TbProduto ) produtosController.findByIdStatus( codigo );
 
             Integer codTipoProduto = produto.getCodTipoProduto().getCodigo();
             TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutoController.findById( codTipoProduto );
