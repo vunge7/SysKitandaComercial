@@ -23,8 +23,16 @@ import java.util.Base64;
 public class BasicAuthUtil
 {
 
+//    public static String username = "ws.kitanda";
     public static String username = "ws.hml.kitanda";
-    public static String password = "mfn538052025";
+    public static String password = "mfn27942026";
+//    public static String password = "mfn538052025";
+    
+    
+    
+
+
+
 
     /**
      * Gera a string Base64 para autenticação Basic
