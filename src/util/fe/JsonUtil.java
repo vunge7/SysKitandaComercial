@@ -30,4 +30,24 @@ public class JsonUtil
             throw new RuntimeException( "Erro ao converter para JSON", e );
         }
     }
+
+    public static void print( String resposta )
+    {
+        try
+        {
+            String json = resposta;
+            ObjectMapper mapper = new ObjectMapper();
+            Object jsonObj = mapper.readValue( json, Object.class );
+
+            String pretty = mapper
+                    .writerWithDefaultPrettyPrinter()
+                    .writeValueAsString( jsonObj );
+
+            System.out.println( pretty );
+        }
+        catch ( Exception e )
+        {
+        }
+
+    }
 }

@@ -80,7 +80,7 @@ public class HttpClientUtil
         Map<String, Object> jsonPayload = PayloadFactory.criarPayloadCriarSerie( "5000413178", "2025", "GF" );
 
 //        System.out.println( "JSON PAYLOAD " + JsonUtil.toJson( jsonPayload ) );
-        String basicAuth = BasicAuthUtil.gerarAuthorizationHeader( BasicAuthUtil.username, BasicAuthUtil.password );
+        String basicAuth = BasicAuthUtil.gerarAuthorizationHeader(ConstantesFEUtil.USERNAME, ConstantesFEUtil.PASSWORD );
 
         System.out.println( basicAuth );
 

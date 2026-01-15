@@ -18,6 +18,7 @@ import entity.FormaPagamentoItem;
 import entity.TbItemVenda;
 import entity.Moeda;
 import entity.PagamentoMensalidade;
+import entity.Series;
 import entity.TbArmazem;
 import entity.TbBanco;
 import entity.TbCliente;
@@ -35,10 +36,8 @@ import exemplos.PermitirNumeros;
 import hotel.controller.MesasController;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -50,9 +49,7 @@ import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.Normalizer;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -64,11 +61,9 @@ import java.util.regex.Pattern;
 import javax.swing.*;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
-import static kitanda.util.CfConstantes.YYYYMMDD_HHMMSS;
 import kitanda.util.CfMethods;
 import kitanda.util.CfMethodsSwing;
 import lista.ListaVenda1;
@@ -85,6 +80,15 @@ import static util.DVML.DOC_FACTURA_RECIBO_FR;
 import static util.DVML.DOC_FACTURA_FT;
 import util.FinanceUtils;
 import util.MetodosUtil;
+import util.fe.DataUtil;
+import util.fe.dto.*;
+import java.util.Collections;
+import java.util.Map;
+import util.fe.BasicAuthUtil;
+import util.fe.FEConfig;
+import util.fe.JsonUtil;
+import util.fe.http.HttpClientUtil;
+import util.fe.payloads.PayloadFactory;
 
 /**
  *
@@ -131,6 +135,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private static PagamentoMensalidadeController pagamentoMensalidadeController;
     private static MesRhController mesRhController;
     private static RetencaoController retencaoController;
+    private static SeriesController seriesController;
 
     /**
      * OUTROS
@@ -170,13 +175,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
         this.setExtendedState( JFrame.MAXIMIZED_BOTH ); // abre maximizado
 
-        btnSemFormaPagamento.setVisible( false );
         cmbMoeda.setVisible( false );
-        rbArmazem.setVisible( false );
-        rbArmazem1.setVisible( false );
-        rbMostrar.setVisible( false );
-        jlStockNegativo.setVisible( false );
-        rbTranstorno.setVisible( false );
         txtLocal.setVisible( false );
         lb_proximo_documento.setVisible( false );
 
@@ -204,6 +203,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         moedasController = new MoedasController( FormVendaResponsivaVisaoTop.conexao );
         descontosController = new DescontosController( FormVendaResponsivaVisaoTop.conexao );
         usuariosController = new UsuariosController( FormVendaResponsivaVisaoTop.conexao );
+        seriesController = new SeriesController( FormVendaResponsivaVisaoTop.conexao );
         dadosInstituicaoController = new DadosInstituicaoController( FormVendaResponsivaVisaoTop.conexao );
         produtosImpostoController = new ProdutosImpostoController( FormVendaResponsivaVisaoTop.conexao );
         produtosIsentoController = new ProdutosIsentoController( FormVendaResponsivaVisaoTop.conexao );
@@ -225,11 +225,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
         this.cod_usuario = cod_usuario;
 //        lbPreco7.setVisible( false );
-        jlStockNegativo.setVisible( false );
-        rbTranstorno.setVisible( false );
-        rbMostrar.setVisible( false );
-        rbArmazem1.setVisible( false );
-        rbArmazem.setVisible( false );
+
         txtTotal_AOA_Retencao.setVisible( false );
         try
         {
@@ -511,7 +507,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                             cod_usuario,
                             RootVisao.btn_abertura_dia_root,
                             RootVisao.btn_abertura_dia_root,
-                            btnFormaPagamento, btnSemFormaPagamento );
+                            btnFormaPagamento );
 
                 }
                 catch ( Exception ex )
@@ -526,28 +522,49 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     }
 
+    private static int getIdSerie()
+    {
+
+        try
+        {
+            Series serie = seriesController
+                    .findByDocumentoEAno( getIdDocumento(), getIdAnoEconomico() );
+            return serie.getId();
+        }
+        catch ( Exception e )
+        {
+        }
+        return 0;
+
+    }
+
     private static void mostrar_proximo_codigo_documento()
     {
 
         try
         {
-            BDConexao conexaoLocal = BDConexao.getInstancia();
-            documentosController = new DocumentosController( conexaoLocal );
-            anoEconomicoController = new AnoEconomicoController( conexaoLocal );
-            vendasController = new VendasController( conexaoLocal );
-
-            documento = ( Documento ) documentosController.findById( getIdDocumento( documentosController ) );
-            anoEconomico = ( AnoEconomico ) anoEconomicoController.findById( getIdAnoEconomico( anoEconomicoController ) );
-            doc_prox_cod = vendasController.getUltimaContagemByIdDocumentoAndAnoEconomico(
-                    getIdDocumento( documentosController ), getIdAnoEconomico( anoEconomicoController ) ) + 1;
-            prox_doc = documento.getAbreviacao();
+            prox_doc = vendasController.gerarCodDoc( getIdDocumento(), getIdAnoEconomico(), getIdSerie() );
+//            BDConexao conexaoLocal = BDConexao.getInstancia();
+//            documentosController = new DocumentosController( conexaoLocal );
+//            anoEconomicoController = new AnoEconomicoController( conexaoLocal );
+//            vendasController = new VendasController( conexaoLocal );
+//
+//            documento = ( Documento ) documentosController.findById( getIdDocumento( documentosController ) );
+//            anoEconomico = ( AnoEconomico ) anoEconomicoController.findById( getIdAnoEconomico( anoEconomicoController ) );
+//            doc_prox_cod = vendasController.getUltimaContagemByIdDocumentoAndAnoEconomico(
+//                    getIdDocumento( documentosController ), getIdAnoEconomico( anoEconomicoController ) ) + 1;
+//            prox_doc = documento.getAbreviacao();
             //FA Série / codigo
-            prox_doc += " " + anoEconomico.getSerie() + "/" + doc_prox_cod;
-            lb_proximo_documento.setText( "PRÓX.DOC. :" + prox_doc );
+//            prox_doc += " " + anoEconomico.getSerie() + "/" + doc_prox_cod;
+//            vendasController.
 
+            lb_proximo_documento.setText( prox_doc );
+
+            System.out.println( prox_doc );
         }
         catch ( Exception e )
         {
+            e.printStackTrace();
             documento = null;
             lb_proximo_documento.setText( "" );
 
@@ -579,20 +596,11 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         txtNomeConsumidorFinal = new javax.swing.JTextField();
         cmbCliente = new javax.swing.JComboBox();
         jButton5 = new javax.swing.JButton();
-        spnCopia = new javax.swing.JSpinner();
-        rbTranstorno = new javax.swing.JRadioButton();
-        rbMostrar = new javax.swing.JRadioButton();
-        jlStockNegativo = new javax.swing.JLabel();
         cmbTipoDocumento = new javax.swing.JComboBox();
         lb_proximo_documento = new javax.swing.JLabel();
-        lb_nome_usuario = new javax.swing.JLabel();
-        cmbAnoEconomico = new javax.swing.JComboBox<>();
-        rbArmazem1 = new javax.swing.JRadioButton();
-        rbArmazem = new javax.swing.JRadioButton();
-        cmbMoeda = new javax.swing.JComboBox();
-        btnSemFormaPagamento = new javax.swing.JButton();
         lbClienteConsumidorFinal1 = new javax.swing.JLabel();
         txtTelClientePesquisa = new javax.swing.JTextField();
+        cmbSeries = new javax.swing.JComboBox();
         painelDir = new javax.swing.JPanel();
         txtPreco = new javax.swing.JTextField();
         jButton4 = new javax.swing.JButton();
@@ -633,6 +641,10 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         txtTotal_AOA_Retencao = new javax.swing.JLabel();
         txtLocal = new javax.swing.JTextField();
         dc_data_documento = new com.toedter.calendar.JDateChooser();
+        cmbMoeda = new javax.swing.JComboBox();
+        lb_nome_usuario = new javax.swing.JLabel();
+        cmbAnoEconomico = new javax.swing.JComboBox<>();
+        spnCopia = new javax.swing.JSpinner();
         painelTabela = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
@@ -642,7 +654,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         painelEsq.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
-        jLabel9.setText("DATA VENCIMENTO");
+        jLabel9.setText("DATA VENC.");
 
         dc_data_vencimento.setEnabled(false);
         dc_data_vencimento.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
@@ -719,28 +731,6 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             }
         });
 
-        rbTranstorno.setSelected(true);
-        rbTranstorno.setEnabled(false);
-        rbTranstorno.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                rbTranstornoActionPerformed(evt);
-            }
-        });
-
-        rbMostrar.setSelected(true);
-        rbMostrar.setEnabled(false);
-        rbMostrar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                rbMostrarActionPerformed(evt);
-            }
-        });
-
-        jlStockNegativo.setText("Stock Negativo");
-
         cmbTipoDocumento.setBackground(new java.awt.Color(0, 255, 255));
         cmbTipoDocumento.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
         cmbTipoDocumento.addActionListener(new java.awt.event.ActionListener()
@@ -754,61 +744,6 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         lb_proximo_documento.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
         lb_proximo_documento.setText("PRÓX. DOC. : XX PP/A1");
 
-        lb_nome_usuario.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
-        lb_nome_usuario.setForeground(new java.awt.Color(0, 102, 102));
-        lb_nome_usuario.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lb_nome_usuario.setText("Usuario");
-
-        cmbAnoEconomico.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
-        cmbAnoEconomico.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cmbAnoEconomico.setEnabled(false);
-        cmbAnoEconomico.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                cmbAnoEconomicoActionPerformed(evt);
-            }
-        });
-
-        rbArmazem1.setEnabled(false);
-        rbArmazem1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                rbArmazem1ActionPerformed(evt);
-            }
-        });
-
-        rbArmazem.setSelected(true);
-        rbArmazem.setEnabled(false);
-        rbArmazem.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                rbArmazemActionPerformed(evt);
-            }
-        });
-
-        cmbMoeda.setBackground(new java.awt.Color(0, 255, 255));
-        cmbMoeda.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
-        cmbMoeda.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                cmbMoedaActionPerformed(evt);
-            }
-        });
-
-        btnSemFormaPagamento.setText("Finalizar");
-        btnSemFormaPagamento.setEnabled(false);
-        btnSemFormaPagamento.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                btnSemFormaPagamentoActionPerformed(evt);
-            }
-        });
-
         lbClienteConsumidorFinal1.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         lbClienteConsumidorFinal1.setText("TEL:");
 
@@ -820,6 +755,16 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             }
         });
 
+        cmbSeries.setBackground(new java.awt.Color(0, 255, 255));
+        cmbSeries.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
+        cmbSeries.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                cmbSeriesActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout painelEsqLayout = new javax.swing.GroupLayout(painelEsq);
         painelEsq.setLayout(painelEsqLayout);
         painelEsqLayout.setHorizontalGroup(
@@ -828,64 +773,47 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                 .addContainerGap()
                 .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(painelEsqLayout.createSequentialGroup()
-                        .addComponent(cmbAnoEconomico, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6)
+                        .addComponent(lbClienteConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(spnCopia, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lb_nome_usuario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(painelEsqLayout.createSequentialGroup()
-                        .addComponent(lbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel2))
-                    .addGroup(painelEsqLayout.createSequentialGroup()
-                        .addComponent(rbTranstorno)
-                        .addGap(31, 31, 31)
-                        .addComponent(jlStockNegativo, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(14, 14, 14)
-                        .addComponent(rbMostrar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(rbArmazem1)
+                        .addComponent(txtNifClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(rbArmazem)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lb_proximo_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(40, 40, 40)
-                        .addComponent(cmbMoeda, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnSemFormaPagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelEsqLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(lbClienteConsumidorFinal1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtTelClientePesquisa))
+                    .addGroup(painelEsqLayout.createSequentialGroup()
                         .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(painelEsqLayout.createSequentialGroup()
-                                .addGap(6, 6, 6)
-                                .addComponent(lbClienteConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtNifClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelEsqLayout.createSequentialGroup()
                                     .addComponent(cmbTipoDocumento, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(48, 48, 48)
+                                    .addComponent(jLabel9)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(dc_data_vencimento, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(cmbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(painelEsqLayout.createSequentialGroup()
-                                        .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                            .addGroup(painelEsqLayout.createSequentialGroup()
-                                                .addComponent(lbClienteConsumidorFinal1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(txtTelClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                            .addGroup(painelEsqLayout.createSequentialGroup()
-                                                .addComponent(txtIniciaisCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                                    .addComponent(txtNomeConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                    .addComponent(lbCliente1, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(txtCodClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
+                                .addComponent(cmbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(painelEsqLayout.createSequentialGroup()
+                                    .addComponent(txtIniciaisCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(txtNomeConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(18, 18, 18)
+                                    .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(painelEsqLayout.createSequentialGroup()
+                                            .addComponent(jLabel2)
+                                            .addGap(0, 22, Short.MAX_VALUE))
+                                        .addComponent(txtCodClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(painelEsqLayout.createSequentialGroup()
+                                    .addComponent(cmbSeries, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addGap(224, 224, 224)))
+                            .addGroup(painelEsqLayout.createSequentialGroup()
+                                .addComponent(lbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(lbCliente1, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 20, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelEsqLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(lb_proximo_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         painelEsqLayout.setVerticalGroup(
@@ -897,54 +825,34 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                     .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtNomeConsumidorFinal, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(txtNomeConsumidorFinal)
+                        .addComponent(txtIniciaisCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(txtCodClientePesquisa, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(txtIniciaisCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
+                        .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
                 .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(lbClienteConsumidorFinal1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txtTelClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtTelClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(lbClienteConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txtNifClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txtNifClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lbClienteConsumidorFinal1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cmbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(dc_data_vencimento, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(cmbTipoDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(painelEsqLayout.createSequentialGroup()
+                        .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cmbTipoDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(cmbMoeda, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(btnSemFormaPagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(lb_proximo_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(rbTranstorno, javax.swing.GroupLayout.PREFERRED_SIZE, 7, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(rbMostrar, javax.swing.GroupLayout.PREFERRED_SIZE, 9, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jlStockNegativo, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))))
-                        .addGap(7, 7, 7))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelEsqLayout.createSequentialGroup()
-                        .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(rbArmazem1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                            .addComponent(rbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lb_nome_usuario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(cmbAnoEconomico, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(spnCopia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(13, 13, 13))
+                        .addComponent(cmbSeries, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addComponent(lb_proximo_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18))
         );
-
-        painelEsqLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btnSemFormaPagamento, cmbMoeda});
 
         painelDir.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
@@ -1270,6 +1178,32 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         dc_data_documento.setEnabled(false);
         dc_data_documento.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
 
+        cmbMoeda.setBackground(new java.awt.Color(0, 255, 255));
+        cmbMoeda.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
+        cmbMoeda.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                cmbMoedaActionPerformed(evt);
+            }
+        });
+
+        lb_nome_usuario.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
+        lb_nome_usuario.setForeground(new java.awt.Color(0, 102, 102));
+        lb_nome_usuario.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lb_nome_usuario.setText("Usuario");
+
+        cmbAnoEconomico.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
+        cmbAnoEconomico.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbAnoEconomico.setEnabled(false);
+        cmbAnoEconomico.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                cmbAnoEconomicoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout painelDirLayout = new javax.swing.GroupLayout(painelDir);
         painelDir.setLayout(painelDirLayout);
         painelDirLayout.setHorizontalGroup(
@@ -1277,76 +1211,6 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             .addGroup(painelDirLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(painelDirLayout.createSequentialGroup()
-                        .addGap(9, 9, 9)
-                        .addComponent(btn_adicionar)
-                        .addGap(18, 18, 18)
-                        .addComponent(btn_remover)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnFormaPagamento)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnProcessar, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jlEmpresa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(14, 14, 14))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelDirLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(lbValorPorExtenco, javax.swing.GroupLayout.PREFERRED_SIZE, 457, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtTotal_AOA_Retencao, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
-                    .addGroup(painelDirLayout.createSequentialGroup()
-                        .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(painelDirLayout.createSequentialGroup()
-                                    .addComponent(lbQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txtQuatindade, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(lbCodigoProduto1, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txtCodigoBarra, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(lbCodigoProduto)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txtCodigoProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(lbCodigoProduto2)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txtCodigoManual)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(painelDirLayout.createSequentialGroup()
-                                    .addComponent(ck_S_A6)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(ck_ComVirgula, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(ck_A7, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(ck_simplificada_O_S, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(ck_simplificada_O, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(ck_simplificada)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(ck_Duplicada)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(ck_A4, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(lbCodigoProduto3)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txtPreco, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(painelDirLayout.createSequentialGroup()
-                                .addComponent(cmbSubFamilia, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cmbProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtLocal, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(dc_data_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(painelDirLayout.createSequentialGroup()
                         .addComponent(txtReferencia, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1362,7 +1226,86 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lbCodigoProduto4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtTotalPagar))))
+                        .addComponent(txtTotalPagar))
+                    .addGroup(painelDirLayout.createSequentialGroup()
+                        .addGap(9, 9, 9)
+                        .addComponent(btn_adicionar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btn_remover)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnFormaPagamento)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnProcessar, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lb_nome_usuario, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(painelDirLayout.createSequentialGroup()
+                                .addComponent(jlEmpresa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(14, 14, 14))))))
+            .addGroup(painelDirLayout.createSequentialGroup()
+                .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(painelDirLayout.createSequentialGroup()
+                        .addComponent(cmbSubFamilia, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cmbProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtLocal, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(dc_data_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(painelDirLayout.createSequentialGroup()
+                        .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(painelDirLayout.createSequentialGroup()
+                                .addComponent(lbQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtQuatindade, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lbCodigoProduto1, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtCodigoBarra, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lbCodigoProduto)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtCodigoProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lbCodigoProduto2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtCodigoManual)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(painelDirLayout.createSequentialGroup()
+                                .addComponent(ck_S_A6)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(ck_ComVirgula, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(ck_A7, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(ck_simplificada_O_S, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(ck_simplificada_O, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(ck_simplificada)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(ck_Duplicada)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(ck_A4, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(lbCodigoProduto3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtPreco, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 70, Short.MAX_VALUE)
+                        .addComponent(cmbMoeda, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelDirLayout.createSequentialGroup()
+                        .addComponent(cmbAnoEconomico, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(spnCopia, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lbValorPorExtenco, javax.swing.GroupLayout.PREFERRED_SIZE, 457, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtTotal_AOA_Retencao, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         painelDirLayout.setVerticalGroup(
             painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1378,10 +1321,17 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                         .addComponent(sp_desconto_financeiro, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(lbDescontoFinanceiro, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(lbCodigoProduto4, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, Short.MAX_VALUE)
-                .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbValorPorExtenco, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtTotal_AOA_Retencao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(painelDirLayout.createSequentialGroup()
+                        .addGap(18, 41, Short.MAX_VALUE)
+                        .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(lbValorPorExtenco, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtTotal_AOA_Retencao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(painelDirLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(cmbAnoEconomico)
+                            .addComponent(spnCopia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(painelDirLayout.createSequentialGroup()
@@ -1404,7 +1354,9 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                     .addGroup(painelDirLayout.createSequentialGroup()
                         .addComponent(dc_data_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(4, 4, 4)
-                        .addComponent(jButton4)))
+                        .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton4)
+                            .addComponent(cmbMoeda, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(painelDirLayout.createSequentialGroup()
                         .addGap(3, 3, 3)
@@ -1430,7 +1382,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                             .addComponent(btnProcessar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jlEmpresa)))
                     .addComponent(btn_adicionar, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(25, Short.MAX_VALUE))
+                .addGap(14, 14, 14)
+                .addComponent(lb_nome_usuario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         painelDirLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btn_adicionar, btn_remover});
@@ -1442,9 +1395,10 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         painelTopoLayout.setHorizontalGroup(
             painelTopoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(painelTopoLayout.createSequentialGroup()
-                .addComponent(painelEsq, javax.swing.GroupLayout.PREFERRED_SIZE, 356, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addComponent(painelEsq, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(painelDir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(painelDir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         painelTopoLayout.setVerticalGroup(
@@ -1684,16 +1638,6 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         actualizar_abreviacao();
     }//GEN-LAST:event_cmbAnoEconomicoActionPerformed
 
-    private void rbTranstornoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_rbTranstornoActionPerformed
-    {//GEN-HEADEREND:event_rbTranstornoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_rbTranstornoActionPerformed
-
-    private void rbMostrarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_rbMostrarActionPerformed
-    {//GEN-HEADEREND:event_rbMostrarActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_rbMostrarActionPerformed
-
     private void txtQuatindadeActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtQuatindadeActionPerformed
     {//GEN-HEADEREND:event_txtQuatindadeActionPerformed
         // TODO add your handling code here:
@@ -1824,6 +1768,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private void cmbTipoDocumentoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbTipoDocumentoActionPerformed
     {//GEN-HEADEREND:event_cmbTipoDocumentoActionPerformed
+
+        visualizarSeries();
         mostrar_proximo_codigo_documento();
         actualizar_abreviacao();
         desabilitar_campos();
@@ -1942,55 +1888,11 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         // TODO add your handling code here:
     }//GEN-LAST:event_sp_desconto_financeiroKeyTyped
 
-    private void rbArmazem1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_rbArmazem1ActionPerformed
-    {//GEN-HEADEREND:event_rbArmazem1ActionPerformed
-        try
-        {
-            configurar_armazens();
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace();
-        }
-    }//GEN-LAST:event_rbArmazem1ActionPerformed
-
-    private void rbArmazemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_rbArmazemActionPerformed
-    {//GEN-HEADEREND:event_rbArmazemActionPerformed
-        try
-        {
-            configurar_armazens();
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace();
-        }
-    }//GEN-LAST:event_rbArmazemActionPerformed
-
     private void cmbMoedaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbMoedaActionPerformed
     {//GEN-HEADEREND:event_cmbMoedaActionPerformed
         // TODO add your handling code here:
         actualizar_moeda();
     }//GEN-LAST:event_cmbMoedaActionPerformed
-
-    private void btnSemFormaPagamentoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnSemFormaPagamentoActionPerformed
-    {//GEN-HEADEREND:event_btnSemFormaPagamentoActionPerformed
-        // TODO add your handling code here:
-        if ( MetodosUtil.licencaValidada( conexao ) )
-        {
-            if ( !MetodosUtil.tabela_vazia( table ) )
-            {
-                if ( !validarPrecos_tabela( table ) )
-                {
-                    return; // Se houver erro, não abre forma de pagamento
-                }
-                procedimento_salvar_venda_comercial( false );
-            }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Caro usuário, adicione itens na tabela" );
-            }
-        }
-    }//GEN-LAST:event_btnSemFormaPagamentoActionPerformed
 
     private void tablePropertyChange(java.beans.PropertyChangeEvent evt)//GEN-FIRST:event_tablePropertyChange
     {//GEN-HEADEREND:event_tablePropertyChange
@@ -2013,6 +1915,11 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     {//GEN-HEADEREND:event_txtTelClientePesquisaActionPerformed
         pesquisa_cliente_by_tel();
     }//GEN-LAST:event_txtTelClientePesquisaActionPerformed
+
+    private void cmbSeriesActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbSeriesActionPerformed
+    {//GEN-HEADEREND:event_cmbSeriesActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmbSeriesActionPerformed
 
     /**
      * @param args the command line arguments
@@ -2681,47 +2588,54 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             // Construção do objeto venda
             TbVenda venda = construirVenda();
 
-            // Salvar a venda e obter o ID
-            idVendaGerada = vendasController.salvarRetornaID( venda );
-//            venda.setHashCod( MetodosUtil.criptografia_hash( vendasController.findById( idVendaGerada), getGrossTotal().doubleValue(), conexaoTransaction ) );
+            boolean respostaAGT = criarFE( venda );
 
-            vendasController.actualizar_hash_and_assinatura( idVendaGerada, getGrossTotal().doubleValue() );
-
-            if ( idVendaGerada == null || idVendaGerada == 0 )
+            if ( respostaAGT )
             {
-                throw new Exception( "Falha ao obter o ID da venda gravada." );
-            }
-
-            // Ações específicas por tipo de documento
-            if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR )
-            {
-                MetodosUtil.adicionar_saldo_banco( venda.getTotalVenda().doubleValue(), venda.getIdBanco().getIdBanco(), conexaoTransactionLocal );
-            }
-
-            if ( getIdDocumento() == DOC_FACTURA_FT )
-            {
-                ExtratoContaClienteController.registro_movimento_conta_cliente( venda, conexaoTransactionLocal );
-            }
-
-            // Salvar os itens da venda
-            salvar_item_venda_comercial( idVendaGerada, conexaoTransactionLocal, stocksControllerLocal );
-
-            // Registrar formas de pagamento
-            if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR )
-            {
-                registrarFormaPagamento( idVendaGerada, venda.getTotalVenda(), frNormal );
-
-            }
-
-            //actualizar precos antigos
-            actualizarPrecosAntigos();
-
-            // Finaliza transação
-            DocumentosController.commit( conexaoTransactionLocal );
-
-            JOptionPane.showMessageDialog( null, "Factura efectuada com sucesso!" );
-            txtNomeConsumidorFinal.setVisible( true );
+                System.out.println( "AGT-Factura Valida" );
+                // Salvar a venda e obter o ID
+//                idVendaGerada = vendasController.salvarRetornaID( venda );
+////            venda.setHashCod( MetodosUtil.criptografia_hash( vendasController.findById( idVendaGerada), getGrossTotal().doubleValue(), conexaoTransaction ) );
+//
+//                vendasController.actualizar_hash_and_assinatura( idVendaGerada, getGrossTotal().doubleValue() );
+//
+//                if ( idVendaGerada == null || idVendaGerada == 0 )
+//                {
+//                    throw new Exception( "Falha ao obter o ID da venda gravada." );
+//                }
+//
+//                // Ações específicas por tipo de documento
+//                if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR )
+//                {
+//                    MetodosUtil.adicionar_saldo_banco( venda.getTotalVenda().doubleValue(), venda.getIdBanco().getIdBanco(), conexaoTransactionLocal );
+//                }
+//
+//                if ( getIdDocumento() == DOC_FACTURA_FT )
+//                {
+//                    ExtratoContaClienteController.registro_movimento_conta_cliente( venda, conexaoTransactionLocal );
+//                }
+//
+//                // Salvar os itens da venda
+//                salvar_item_venda_comercial( idVendaGerada, conexaoTransactionLocal, stocksControllerLocal );
+//
+//                // Registrar formas de pagamento
+//                if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR )
+//                {
+//                    registrarFormaPagamento( idVendaGerada, venda.getTotalVenda(), frNormal );
+//
+//                }
+//
+//                //actualizar precos antigos
+//                actualizarPrecosAntigos();
+//
+//                // Finaliza transação
+//                DocumentosController.commit( conexaoTransactionLocal );
+//
+//                JOptionPane.showMessageDialog( null, "Factura efectuada com sucesso!" );
+//                txtNomeConsumidorFinal.setVisible( true );
 //            imprimir_factura( idVendaGerada ); // Imprime a factura
+
+            }
 
         }
         catch ( Exception e )
@@ -3325,7 +3239,6 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private javax.swing.JButton btnCancelar;
     private static javax.swing.JButton btnFormaPagamento;
     private static javax.swing.JButton btnProcessar;
-    private javax.swing.JButton btnSemFormaPagamento;
     public static javax.swing.JButton btn_adicionar;
     public static javax.swing.JButton btn_remover;
     private javax.swing.JCheckBox ck_A4;
@@ -3341,6 +3254,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     public static javax.swing.JComboBox cmbCliente;
     private static javax.swing.JComboBox cmbMoeda;
     public static javax.swing.JComboBox cmbProduto;
+    public static javax.swing.JComboBox cmbSeries;
     public static javax.swing.JComboBox cmbSubFamilia;
     public static javax.swing.JComboBox cmbTipoDocumento;
     private static com.toedter.calendar.JDateChooser dc_data_documento;
@@ -3351,7 +3265,6 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel jlEmpresa;
-    private javax.swing.JLabel jlStockNegativo;
     private javax.swing.JLabel lbCliente;
     private javax.swing.JLabel lbCliente1;
     private javax.swing.JLabel lbClienteConsumidorFinal;
@@ -3371,10 +3284,6 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private javax.swing.JPanel painelEsq;
     private javax.swing.JPanel painelTabela;
     private javax.swing.JPanel painelTopo;
-    private static javax.swing.JRadioButton rbArmazem;
-    private static javax.swing.JRadioButton rbArmazem1;
-    private static javax.swing.JRadioButton rbMostrar;
-    private static javax.swing.JRadioButton rbTranstorno;
     private static javax.swing.JSpinner sp_desconto_financeiro;
     private static javax.swing.JSpinner spnCopia;
     private static javax.swing.JTable table;
@@ -3695,7 +3604,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             if ( !Objects.isNull( produto ) )
             {
                 adicionar_preco_quantidade_anitgo();
-                if ( rbTranstorno.isSelected() )
+//                if ( rbTranstorno.isSelected() )
+                if ( false )
                 {
                     procedimento_adicionar_sem_transtorno( "" );
                 }
@@ -4463,7 +4373,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                 cmbProduto.setModel( new DefaultComboBoxModel( produtosController.getVector() ) );
                 cmbProduto.setSelectedItem( produto.getDesignacao() );
                 adicionar_preco_quantidade_anitgo();
-                if ( rbTranstorno.isSelected() )
+//                if ( rbTranstorno.isSelected() )
+                if ( false )
                 {
                     procedimento_adicionar_sem_transtorno( mes );
                 }
@@ -5236,14 +5147,11 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     {
         if ( transtorno.equalsIgnoreCase( "Activo" ) )
         {
-            rbTranstorno.setSelected( true );
 //            jlStockNegativo.setVisible( true );
 
         }
         else
         {
-            rbTranstorno.setSelected( false );
-            rbTranstorno.setVisible( false );
 //            jlStockNegativo.setVisible( false );
 
         }
@@ -5322,17 +5230,17 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private void setArmazem( String armazem )
     {
-        if ( armazem.equalsIgnoreCase( "Multi_armazem" ) )
-        {
-            rbArmazem.setSelected( true );
-            rbArmazem1.setSelected( false );
-
-        }
-        else
-        {
-            rbArmazem.setSelected( false );
-            rbArmazem1.setSelected( true );
-        }
+//        if ( armazem.equalsIgnoreCase( "Multi_armazem" ) )
+//        {
+//            rbArmazem.setSelected( true );
+//            rbArmazem1.setSelected( false );
+//
+//        }
+//        else
+//        {
+//            rbArmazem.setSelected( false );
+//            rbArmazem1.setSelected( true );
+//        }
     }
 
     private void mostrar_nome()
@@ -7213,6 +7121,167 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                 System.out.println( "Salvei o preco groso" );
             }
             listaPrecoTemp.clear();
+        }
+    }
+
+    private static boolean criarFE( TbVenda venda )
+    {
+        String taxRegistrationNumber = dadosInstituicaoController.findByCodigo( 1 ).getNif();;
+
+        Documento documento = ( Documento ) documentosController.findById(
+                venda.getFkDocumento().getPkDocumento() );
+
+        TbCliente cliente = ( TbCliente ) clientesController.findById(
+                venda.getCodigoCliente().getCodigo() );
+
+        List<DocumentDTO> documentDTOs = new ArrayList<>();
+        DocumentDTO doc = new DocumentDTO();
+
+        doc.setDocumentNo( venda.getCodFact() );
+        doc.setDocumentStatus( "N" );
+        doc.setDocumentDate( DataUtil.converterNormal( venda.getDataVenda() ) );
+        doc.setDocumentType( documento.getAbreviacao() );
+        doc.setEacCode( "1234" );
+        doc.setSystemEntryDate( DataUtil.converter( venda.getDataVenda() ) );
+        doc.setCustomerTaxID( cliente.getNif() );
+        doc.setCustomerCountry( cliente.getPaisISO() );
+        doc.setCompanyName( cliente.getNome() ); // era morada, agora nome
+
+        List<LineDTO> lines = new ArrayList<>();
+
+        double totalBase = 0;
+        double totalIva = 0;
+        double totalFinal = 0;
+        double totalRetencao = 0;
+
+        for ( int i = 0; i < table.getRowCount(); i++ )
+        {
+
+            int idProduto = Integer.parseInt( table.getValueAt( i, 0 ).toString() );
+            String designacaoItem = table.getValueAt( i, 1 ).toString();
+            double qtd = Double.parseDouble( table.getValueAt( i, 4 ).toString() );
+            double desconto = Double.parseDouble( table.getValueAt( i, 5 ).toString() );
+            double taxa = Double.parseDouble( table.getValueAt( i, 6 ).toString() );
+            double retencaoLinha = CfMethods.parseMoedaFormatada( table.getValueAt( i, 7 ).toString() );
+            double unitPrice = CfMethods.parseMoedaFormatada( table.getValueAt( i, 10 ).toString() );
+
+            double unitPriceBase = unitPrice - desconto;
+            double base = unitPriceBase * qtd;
+            double iva = base * ( taxa / 100.0 );
+            double totalLinha = base + iva;
+
+            LineDTO line = new LineDTO();
+            line.setLineNumber( i + 1 );
+            line.setProductCode( String.valueOf( idProduto ) );
+            line.setProductDescription( designacaoItem );
+            line.setQuantity( String.valueOf( qtd ) );
+            line.setUnitOfMeasure( "UN" );
+            line.setUnitPrice( unitPrice );
+            line.setUnitPriceBase( unitPriceBase );
+            line.setDebitAmount( 0 );
+            line.setCreditAmount( totalLinha );
+
+            if ( taxa > 0 )
+            {
+                TaxDTO tax = new TaxDTO();
+                tax.setTaxType( "IVA" );
+                tax.setTaxCountryRegion( "AO" );
+                tax.setTaxCode( "NOR" );
+                tax.setTaxPercentage( String.valueOf( taxa ) );
+                tax.setTaxContribution( iva );
+
+                line.setTaxes( Collections.singletonList( tax ) );
+            }
+
+            lines.add( line );
+
+            totalBase += base;
+            totalIva += iva;
+            totalFinal += totalLinha;
+            totalRetencao += retencaoLinha;
+        }
+
+        doc.setLines( lines );
+
+        DocumentTotalsDTO documentsTotals = new DocumentTotalsDTO();
+        documentsTotals.setNetTotal( totalBase );
+        documentsTotals.setTaxPayable( totalIva );
+        documentsTotals.setGrossTotal( totalFinal );
+        doc.setDocumentTotals( documentsTotals );
+
+        documentDTOs.add( doc );
+
+        Series serie = seriesController
+                .findByDocumentoEAno( getIdDocumento(), getIdAnoEconomico() );
+
+        Documento documentoType = documentosController.findDocumentoById(
+                serie.getFkDocumento() );
+
+        if ( totalRetencao > 0 )
+        {
+            WithholdingTaxDTO ret = new WithholdingTaxDTO();
+            ret.setWithholdingTaxType( "IRT" );
+            ret.setWithholdingTaxDescription( "Retenção na fonte" );
+            ret.setWithholdingTaxAmount( totalRetencao );
+
+            doc.setWithholdingTaxList( Collections.singletonList( ret ) );
+        }
+        Map<String, Object> jsonPayload = PayloadFactory.criarPayloadCriarDocumento(
+                taxRegistrationNumber,
+                cmbAnoEconomico.getSelectedItem().toString(),
+                documentoType.getAbreviacao(),
+                documentDTOs
+        );
+
+        String payload = JsonUtil.toJson( jsonPayload );
+
+        JsonUtil.print( payload );
+        String basicAuth = BasicAuthUtil.gerarAuthorizationHeader( FEConfig.getUsername(), FEConfig.getPassword() );
+        String resposta;
+        try
+        {
+            resposta = HttpClientUtil.postJson( FEConfig.getEndpointSolicitarSerie(),
+                    payload, // o JSON que já tens
+                    basicAuth // SOMENTE o base64 (sem "Basic ")
+            );
+
+            JsonUtil.print( resposta );
+//            String r = JsonUtil.toJson( resposta );
+
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
+        
+        return false;
+
+    }
+
+    private void visualizarSeries()
+    {
+        int idDocumento = getIdDocumento();
+        int idAnoEconomico = getIdAnoEconomico();
+
+        // Recupera todas as séries do documento e ano económico
+        List<Series> listarPorDocumentoEAno = seriesController.listarPorDocumentoEAno( idDocumento, idAnoEconomico );
+
+        // Limpa o combobox antes de preencher
+        cmbSeries.removeAllItems();
+
+        // Verifica se encontrou alguma série
+        if ( listarPorDocumentoEAno.isEmpty() )
+        {
+
+            cmbSeries.addItem( "Nenhuma série disponível" );
+            return;
+        }
+
+        // Preenche o combobox com as séries
+        for ( Series s : listarPorDocumentoEAno )
+        {
+
+            cmbSeries.addItem( s.getDesignacao() );
         }
     }
 

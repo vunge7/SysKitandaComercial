@@ -31,7 +31,7 @@ public class DadosInstituicaoController implements EntidadeFactory
     @Override
     public boolean salvar( Object object )
     {
-        TbDadosInstituicao dadosInstiuicao = (TbDadosInstituicao) object;
+        TbDadosInstituicao dadosInstiuicao = ( TbDadosInstituicao ) object;
         String INSERT = "INSERT INTO tb_dados_instituicao( nome , senha , status , dataNascimento , telefone, email, endereco, "
                 + ")"
                 + " VALUES("
@@ -166,80 +166,95 @@ public class DadosInstituicaoController implements EntidadeFactory
     }
 
     @Override
-public Object findById(int codigo) {
-    TbDadosInstituicao dadosInstituicao = null;
+    public Object findById( int codigo )
+    {
+        TbDadosInstituicao dadosInstituicao = null;
 
-    // ✅ Verificação de segurança: conexão obrigatória
-    if (conexao == null || conexao.getConnectionAtiva() == null) {
-        System.err.println("[DadosInstituicaoController] ❌ Conexão não inicializada ou inativa!");
-        return null;
-    }
-
-    String FIND_BY_CODIGO = 
-        "SELECT * FROM tb_dados_instituicao WHERE idDadosInsitiuicao = " + codigo;
-
-    ResultSet result = null;
-
-    try {
-        // ✅ Executa a consulta
-        result = conexao.executeQuery(FIND_BY_CODIGO);
-
-        // ✅ Verifica se veio resultado
-        if (result != null && result.next()) {
-            dadosInstituicao = new TbDadosInstituicao();
-
-            dadosInstituicao.setIdDadosInsitiuicao(result.getInt("idDadosInsitiuicao"));
-            dadosInstituicao.setNome(result.getString("nome"));
-            dadosInstituicao.setDocpadrao(result.getString("docpadrao"));
-            dadosInstituicao.setNegocio(result.getString("negocio"));
-            dadosInstituicao.setConfigArmazens(result.getString("config_armazens"));
-            dadosInstituicao.setTranstorno(result.getString("transtorno"));
-            dadosInstituicao.setDescontoFinanceiro(result.getString("desconto_financeiro"));
-            dadosInstituicao.setAnoEconomico(result.getString("ano_economico"));
-            dadosInstituicao.setVizualisarStock(result.getString("vizualisar_stock"));
-            dadosInstituicao.setNumeroVias(result.getInt("numero_vias"));
-            dadosInstituicao.setImpressora(result.getString("impressora"));
-            dadosInstituicao.setImpressoraCozinha(result.getString("impressora_cozinha"));
-            dadosInstituicao.setImpressoraSala(result.getString("impressora_sala"));
-            dadosInstituicao.setFoco(result.getString("foco"));
-            dadosInstituicao.setRegime(result.getString("regime"));
-            dadosInstituicao.setUsarDoisPrecos(result.getString("usar_dois_precos"));
-            dadosInstituicao.setDesactivarvias(result.getString("desactivarvias"));
-            dadosInstituicao.setTeclado(result.getString("teclado"));
-            dadosInstituicao.setPrazoProforma(result.getInt("prazo_proforma"));
-            dadosInstituicao.setDesactivarLugares(result.getString("desactivar_lugares"));
-            dadosInstituicao.setHoraTerminoVenda(result.getTimestamp("hora_termino_venda"));
-            dadosInstituicao.setTipoFechoCaixa(result.getString("tipo_fecho_caixa"));
-            dadosInstituicao.setEnviarEmail(result.getString("enviar_email"));
-            dadosInstituicao.setStockConsulta(result.getString("stock_consulta"));
-            dadosInstituicao.setTipoFichaTecnica(result.getString("tipo_ficha_tecnica"));
-        } 
-        else {
-            System.err.println("[DadosInstituicaoController] ⚠ Nenhum registo encontrado para o ID: " + codigo);
+        // ✅ Verificação de segurança: conexão obrigatória
+        if ( conexao == null || conexao.getConnectionAtiva() == null )
+        {
+            System.err.println( "[DadosInstituicaoController] ❌ Conexão não inicializada ou inativa!" );
+            return null;
         }
 
-    } catch (SQLException e) {
-        System.err.println("[DadosInstituicaoController] ❌ Erro ao buscar dados da instituição: " + e.getMessage());
-        e.printStackTrace();
+        String FIND_BY_CODIGO
+                = "SELECT * FROM tb_dados_instituicao WHERE idDadosInsitiuicao = " + codigo;
 
-    } catch (Exception e) {
-        System.err.println("[DadosInstituicaoController] ⚠ Erro inesperado: " + e.getMessage());
-        e.printStackTrace();
+        ResultSet result = null;
 
-    } finally {
-        // ✅ Fecha o ResultSet corretamente para evitar vazamento de recursos
-        try {
-            if (result != null && !result.isClosed()) {
-                result.getStatement().close();
-                result.close();
+        try
+        {
+            // ✅ Executa a consulta
+            result = conexao.executeQuery( FIND_BY_CODIGO );
+
+            // ✅ Verifica se veio resultado
+            if ( result != null && result.next() )
+            {
+                dadosInstituicao = new TbDadosInstituicao();
+
+                dadosInstituicao.setIdDadosInsitiuicao( result.getInt( "idDadosInsitiuicao" ) );
+                dadosInstituicao.setNome( result.getString( "nome" ) );
+                dadosInstituicao.setDocpadrao( result.getString( "docpadrao" ) );
+                dadosInstituicao.setNegocio( result.getString( "negocio" ) );
+                dadosInstituicao.setConfigArmazens( result.getString( "config_armazens" ) );
+                dadosInstituicao.setTranstorno( result.getString( "transtorno" ) );
+                dadosInstituicao.setDescontoFinanceiro( result.getString( "desconto_financeiro" ) );
+                dadosInstituicao.setAnoEconomico( result.getString( "ano_economico" ) );
+                dadosInstituicao.setVizualisarStock( result.getString( "vizualisar_stock" ) );
+                dadosInstituicao.setNumeroVias( result.getInt( "numero_vias" ) );
+                dadosInstituicao.setImpressora( result.getString( "impressora" ) );
+                dadosInstituicao.setImpressoraCozinha( result.getString( "impressora_cozinha" ) );
+                dadosInstituicao.setImpressoraSala( result.getString( "impressora_sala" ) );
+                dadosInstituicao.setFoco( result.getString( "foco" ) );
+                dadosInstituicao.setRegime( result.getString( "regime" ) );
+                dadosInstituicao.setUsarDoisPrecos( result.getString( "usar_dois_precos" ) );
+                dadosInstituicao.setDesactivarvias( result.getString( "desactivarvias" ) );
+                dadosInstituicao.setTeclado( result.getString( "teclado" ) );
+                dadosInstituicao.setPrazoProforma( result.getInt( "prazo_proforma" ) );
+                dadosInstituicao.setDesactivarLugares( result.getString( "desactivar_lugares" ) );
+                dadosInstituicao.setHoraTerminoVenda( result.getTimestamp( "hora_termino_venda" ) );
+                dadosInstituicao.setTipoFechoCaixa( result.getString( "tipo_fecho_caixa" ) );
+                dadosInstituicao.setEnviarEmail( result.getString( "enviar_email" ) );
+                dadosInstituicao.setStockConsulta( result.getString( "stock_consulta" ) );
+                dadosInstituicao.setTipoFichaTecnica( result.getString( "tipo_ficha_tecnica" ) );
             }
-        } catch (SQLException e) {
-            System.err.println("[DadosInstituicaoController] ⚠ Falha ao fechar ResultSet: " + e.getMessage());
-        }
-    }
+            else
+            {
+                System.err.println( "[DadosInstituicaoController] ⚠ Nenhum registo encontrado para o ID: " + codigo );
+            }
 
-    return dadosInstituicao;
-}
+        }
+        catch ( SQLException e )
+        {
+            System.err.println( "[DadosInstituicaoController] ❌ Erro ao buscar dados da instituição: " + e.getMessage() );
+            e.printStackTrace();
+
+        }
+        catch ( Exception e )
+        {
+            System.err.println( "[DadosInstituicaoController] ⚠ Erro inesperado: " + e.getMessage() );
+            e.printStackTrace();
+
+        }
+        finally
+        {
+            // ✅ Fecha o ResultSet corretamente para evitar vazamento de recursos
+            try
+            {
+                if ( result != null && !result.isClosed() )
+                {
+                    result.getStatement().close();
+                    result.close();
+                }
+            }
+            catch ( SQLException e )
+            {
+                System.err.println( "[DadosInstituicaoController] ⚠ Falha ao fechar ResultSet: " + e.getMessage() );
+            }
+        }
+
+        return dadosInstituicao;
+    }
 
     public TbDadosInstituicao getLastUsuario()
     {
@@ -297,6 +312,7 @@ public Object findById(int codigo) {
                 dadosInstituicao = new TbDadosInstituicao();
                 dadosInstituicao.setIdDadosInsitiuicao( result.getInt( "idDadosInsitiuicao" ) );
                 dadosInstituicao.setNome( result.getString( "nome" ) );
+                dadosInstituicao.setNif( result.getString( "nif" ) );
                 dadosInstituicao.setDocpadrao( result.getString( "docpadrao" ) );
                 dadosInstituicao.setNegocio( result.getString( "negocio" ) );
                 dadosInstituicao.setConfigArmazens( result.getString( "config_armazens" ) );

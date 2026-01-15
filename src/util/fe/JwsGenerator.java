@@ -119,9 +119,9 @@ public final class JwsGenerator
 
         Map<String, Object> payload = new java.util.HashMap<>();
 
-        payload.put( "productId", "Kitanda" );
-        payload.put( "productVersion", "1.1" );
-        payload.put( "softwareValidationNumber", "FE/110/AGT/2025" );
+        payload.put( "productId", FEConfig.getSofwareName() );
+        payload.put( "productVersion", FEConfig.getProductionVersion() );
+        payload.put( "softwareValidationNumber", FEConfig.getSoftwareValidationNumber() );
 
         return payload;
 
@@ -182,9 +182,9 @@ public final class JwsGenerator
      */
     public static void main( String[] args )
     {
-//        Map<String, Object> payload = softwareInfoDetail();
+        Map<String, Object> payload = softwareInfoDetail();
 //        Map<String, Object> payload = jwsConsutlarFactura();
-        Map<String, Object> payload = jwsSeriesSignature();
+//        Map<String, Object> payload = jwsSeriesSignature();
 //        Map<String, Object> payload = jwsDocumentSignature();
 
         String jws = gerarJws(

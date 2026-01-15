@@ -88,7 +88,7 @@ public class ClienteVisao extends javax.swing.JDialog
         cmbFamilia.setEnabled( false );
         cmbSubFamilia.setModel( new DefaultComboBoxModel( tipoProdutoController.getVector() ) );
         cmbProduto.setModel( new DefaultComboBoxModel( produtosController.getVector() ) );
-        cmbMesComeco.setModel( new DefaultComboBoxModel( (Vector) mesRhController.getVector() ) );
+        cmbMesComeco.setModel( new DefaultComboBoxModel( ( Vector ) mesRhController.getVector() ) );
 
         try
         {
@@ -98,7 +98,7 @@ public class ClienteVisao extends javax.swing.JDialog
         catch ( Exception e )
         {
         }
-        
+
         txtNomeCliente.requestFocus();
 
     }
@@ -137,6 +137,8 @@ public class ClienteVisao extends javax.swing.JDialog
         txtNif = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         txtEmail = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        cmbPais = new javax.swing.JComboBox<>();
         jPanel4 = new javax.swing.JPanel();
         cmbFamilia = new javax.swing.JComboBox<>();
         cmbSubFamilia = new javax.swing.JComboBox();
@@ -255,7 +257,7 @@ public class ClienteVisao extends javax.swing.JDialog
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 13), new java.awt.Color(51, 153, 0))); // NOI18N
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 15), new java.awt.Color(51, 153, 0))); // NOI18N
         jPanel1.setFont(new java.awt.Font("Showcard Gothic", 0, 24)); // NOI18N
 
         lbTipoProduto.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
@@ -318,6 +320,11 @@ public class ClienteVisao extends javax.swing.JDialog
             }
         });
 
+        jLabel5.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
+        jLabel5.setText("Pais:");
+
+        cmbPais.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--seleccione--", "Afeganistão - AF", "África do Sul - ZA", "Albânia - AL", "Alemanha - DE", "Andorra - AD", "Angola - AO", "Antígua e Barbuda - AG", "Arábia Saudita - SA", "Argélia - DZ", "Argentina - AR", "Arménia - AM", "Austrália - AU", "Áustria - AT", "Azerbaijão - AZ", "Bahamas - BS", "Bangladesh - BD", "Barbados - BB", "Bélgica - BE", "Belize - BZ", "Benim - BJ", "Bielorrússia - BY", "Bolívia - BO", "Bósnia e Herzegovina - BA", "Botswana - BW", "Brasil - BR", "Brunei - BN", "Bulgária - BG", "Burkina Faso - BF", "Burundi - BI", "Butão - BT", "Cabo Verde - CV", "Camarões - CM", "Camboja - KH", "Canadá - CA", "Catar - QA", "Cazaquistão - KZ", "Chade - TD", "Chile - CL", "China - CN", "Chipre - CY", "Colômbia - CO", "Comores - KM", "Congo (Brazzaville) - CG", "Congo (Kinshasa) - CD", "Coreia do Norte - KP", "Coreia do Sul - KR", "Costa do Marfim - CI", "Costa Rica - CR", "Croácia - HR", "Cuba - CU", "Dinamarca - DK", "Djibuti - DJ", "Dominica - DM", "Egito - EG", "El Salvador - SV", "Emirados Árabes Unidos - AE", "Equador - EC", "Eritreia - ER", "Eslováquia - SK", "Eslovénia - SI", "Espanha - ES", "Estados Unidos - US", "Estónia - EE", "Etiópia - ET", "Fiji - FJ", "Filipinas - PH", "Finlândia - FI", "França - FR", "Gabão - GA", "Gâmbia - GM", "Gana - GH", "Geórgia - GE", "Grécia - GR", "Granada - GD", "Guatemala - GT", "Guiné - GN", "Guiné-Bissau - GW", "Guiné Equatorial - GQ", "Guiana - GY", "Haiti - HT", "Honduras - HN", "Hungria - HU", "Iémen - YE", "Ilhas Marshall - MH", "Índia - IN", "Indonésia - ID", "Irão - IR", "Iraque - IQ", "Irlanda - IE", "Islândia - IS", "Israel - IL", "Itália - IT", "Jamaica - JM", "Japão - JP", "Jordânia - JO", "Kuwait - KW", "Laos - LA", "Lesoto - LS", "Letónia - LV", "Líbano - LB", "Libéria - LR", "Líbia - LY", "Liechtenstein - LI", "Lituânia - LT", "Luxemburgo - LU", "Macedónia do Norte - MK", "Madagáscar - MG", "Malásia - MY", "Malawi - MW", "Maldivas - MV", "Mali - ML", "Malta - MT", "Marrocos - MA", "Maurícia - MU", "Mauritânia - MR", "México - MX", "Micronésia - FM", "Moçambique - MZ", "Moldávia - MD", "Mónaco - MC", "Mongólia - MN", "Montenegro - ME", "Myanmar - MM", "Namíbia - NA", "Nauru - NR", "Nepal - NP", "Nicarágua - NI", "Níger - NE", "Nigéria - NG", "Noruega - NO", "Nova Zelândia - NZ", "Omã - OM", "Países Baixos - NL", "Paquistão - PK", "Palau - PW", "Panamá - PA", "Papua-Nova Guiné - PG", "Paraguai - PY", "Peru - PE", "Polónia - PL", "Portugal - PT", "Quénia - KE", "Quirguistão - KG", "Reino Unido - GB", "República Centro-Africana - CF", "República Checa - CZ", "República Dominicana - DO", "Roménia - RO", "Ruanda - RW", "Rússia - RU", "Salvador - SV", "Samoa - WS", "Santa Lúcia - LC", "São Tomé e Príncipe - ST", "Senegal - SN", "Serra Leoa - SL", "Sérvia - RS", "Singapura - SG", "Síria - SY", "Somália - SO", "Sri Lanka - LK", "Suazilândia (Eswatini) - SZ", "Sudão - SD", "Sudão do Sul - SS", "Suécia - SE", "Suíça - CH", "Suriname - SR", "Tailândia - TH", "Taiwan - TW", "Tanzânia - TZ", "Timor-Leste - TL", "Togo - TG", "Tonga - TO", "Trindade e Tobago - TT", "Tunísia - TN", "Turquia - TR", "Ucrânia - UA", "Uganda - UG", "Uruguai - UY", "Uzbequistão - UZ", "Vanuatu - VU", "Vaticano - VA", "Venezuela - VE", "Vietname - VN", "Zâmbia - ZM", "Zimbabué - ZW", " " }));
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -341,10 +348,15 @@ public class ClienteVisao extends javax.swing.JDialog
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addComponent(txtNomeCliente)
                             .addComponent(txtEndereco)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(cmbPais, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(0, 39, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -375,7 +387,11 @@ public class ClienteVisao extends javax.swing.JDialog
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(4, 4, 4)))
-                .addGap(47, 47, 47))
+                .addGap(10, 10, 10)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cmbPais, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(117, 117, 117))
         );
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -392,7 +408,7 @@ public class ClienteVisao extends javax.swing.JDialog
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(15, 15, 15)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(163, Short.MAX_VALUE))
+                .addContainerGap(44, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Ficha do Cliente", jPanel3);
@@ -1023,6 +1039,7 @@ public class ClienteVisao extends javax.swing.JDialog
     public static javax.swing.JComboBox cmbDuracao;
     public static javax.swing.JComboBox<String> cmbFamilia;
     public static javax.swing.JComboBox cmbMesComeco;
+    private javax.swing.JComboBox<String> cmbPais;
     public static javax.swing.JComboBox cmbProduto;
     public static javax.swing.JComboBox cmbSubFamilia;
     private javax.swing.JButton jButton1;
@@ -1032,6 +1049,7 @@ public class ClienteVisao extends javax.swing.JDialog
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -1181,10 +1199,15 @@ public class ClienteVisao extends javax.swing.JDialog
 
         String nomeMorada = normalizarEndereco( txtEndereco.getText() );
         String nif = normalizarNif( txtNif.getText() );
+        String pais = cmbPais.getSelectedItem().toString().replaceAll( " ", "" ).split( "-" )[ 0 ];
+        String iso = cmbPais.getSelectedItem().toString().replaceAll( " ", "" ).split( "-" )[ 1 ];
 
         clienteGlobal.setNome( txtNomeCliente.getText() );
         clienteGlobal.setMorada( nomeMorada );
         clienteGlobal.setNif( nif );
+        clienteGlobal.setPais( pais );
+        clienteGlobal.setPaisISO( iso );
+
         this.clienteGlobal.setTelefone( txtContactos.getText() );
         this.clienteGlobal.setEmail( txtEmail.getText().trim() );
 
@@ -1400,7 +1423,7 @@ public class ClienteVisao extends javax.swing.JDialog
     {
         String servicoSelecionado = cmbProduto.getSelectedItem().toString().trim();
 
-        DefaultTableModel model = (DefaultTableModel) tabelaServicoMensalidade.getModel();
+        DefaultTableModel model = ( DefaultTableModel ) tabelaServicoMensalidade.getModel();
 
         // Verifica se o serviço já foi adicionado
         for ( int i = 0; i < model.getRowCount(); i++ )
@@ -1439,7 +1462,7 @@ public class ClienteVisao extends javax.swing.JDialog
 
     private void setDadosForm()
     {
-        DefaultTableModel modelo = (DefaultTableModel) tabelaServicoMensalidade.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) tabelaServicoMensalidade.getModel();
         int linhaSelecionada = tabelaServicoMensalidade.getSelectedRow();
 
         String cod = modelo.getValueAt( linhaSelecionada, 0 ).toString();
@@ -1449,7 +1472,7 @@ public class ClienteVisao extends javax.swing.JDialog
 
         TbProduto produto = produtosController.findByCod( item.getProdutoId() );
         int idSubFamilia = produto.getCodTipoProduto().getCodigo();
-        TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById( idSubFamilia );
+        TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutoController.findById( idSubFamilia );
         cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
         cmbProduto.setSelectedItem( produto.getDesignacao() );
 
@@ -1463,7 +1486,7 @@ public class ClienteVisao extends javax.swing.JDialog
 
         if ( Objects.nonNull( clienteGlobal ) )
         {
-            DefaultTableModel modelo = (DefaultTableModel) tabelaServicoMensalidade.getModel();
+            DefaultTableModel modelo = ( DefaultTableModel ) tabelaServicoMensalidade.getModel();
             modelo.setRowCount( 0 );
             List<ConfiguracaoMesComeco> listarTodos = configuracaoMesComecoController.listarTodos( clienteGlobal.getCodigo() );
 
@@ -1502,7 +1525,7 @@ public class ClienteVisao extends javax.swing.JDialog
     {
         try
         {
-            DefaultTableModel modelo = (DefaultTableModel) tabelaServicoMensalidade.getModel();
+            DefaultTableModel modelo = ( DefaultTableModel ) tabelaServicoMensalidade.getModel();
             int selectedRow = tabelaServicoMensalidade.getSelectedRow();
             int id = Integer.parseInt( modelo.getValueAt( selectedRow, 0 ).toString() );
             boolean deletar = configuracaoMesComecoController.deletar( id );

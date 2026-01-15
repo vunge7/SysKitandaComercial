@@ -35,15 +35,17 @@ public class ClientesController implements EntidadeFactory
     @Override
     public boolean salvar( Object object )
     {
-        TbCliente clientes = (TbCliente) object;
-        String INSERT = "INSERT INTO tb_cliente( nome , morada , telefone , nif , email"
+        TbCliente clientes = ( TbCliente ) object;
+        String INSERT = "INSERT INTO tb_cliente( nome , morada , telefone , nif , email, pais, paisISO"
                 + ")"
                 + " VALUES("
                 + "'" + clientes.getNome() + "' , "
                 + "'" + clientes.getMorada() + "' , "
                 + "'" + clientes.getTelefone() + "' , "
                 + "'" + clientes.getNif() + "' , "
-                + "'" + clientes.getEmail() + "'"
+                + "'" + clientes.getEmail() + "', "
+                + "'" + clientes.getPais() + "', "
+                + "'" + clientes.getPaisISO() + "'"
                 + " ) ";
 
         return conexao.executeUpdate( INSERT );
@@ -203,6 +205,8 @@ public class ClientesController implements EntidadeFactory
                 cliente.setTelefone( result.getString( "telefone" ) );
                 cliente.setNif( result.getString( "nif" ) );
                 cliente.setEmail( result.getString( "email" ) );
+                cliente.setPais( result.getString( "pais" ) );
+                cliente.setPaisISO( result.getString( "pais_ISO" ) );
 
             }
 
@@ -368,6 +372,8 @@ public class ClientesController implements EntidadeFactory
                 clientes.setTelefone( result.getString( "telefone" ) );
                 clientes.setNif( result.getString( "nif" ) );
                 clientes.setEmail( result.getString( "email" ) );
+                clientes.setPais( result.getString( "pais" ) );
+                clientes.setPaisISO( result.getString( "pais_ISO" ) );
 
             }
 
@@ -398,6 +404,8 @@ public class ClientesController implements EntidadeFactory
                 clientes.setTelefone( result.getString( "telefone" ) );
                 clientes.setNif( result.getString( "nif" ) );
                 clientes.setEmail( result.getString( "email" ) );
+                clientes.setPais( result.getString( "pais" ) );
+                clientes.setPaisISO( result.getString( "pais_ISO" ) );
 
             }
 
@@ -409,7 +417,7 @@ public class ClientesController implements EntidadeFactory
         return clientes;
 
     }
-    
+
     public TbCliente getClienteByTelOrberByNome( String telefone )
     {
 
@@ -428,6 +436,8 @@ public class ClientesController implements EntidadeFactory
                 clientes.setTelefone( result.getString( "telefone" ) );
                 clientes.setNif( result.getString( "nif" ) );
                 clientes.setEmail( result.getString( "email" ) );
+                clientes.setPais( result.getString( "pais" ) );
+                clientes.setPaisISO( result.getString( "paisISO" ) );
 
             }
 
@@ -458,6 +468,8 @@ public class ClientesController implements EntidadeFactory
                 clientes.setTelefone( result.getString( "telefone" ) );
                 clientes.setNif( result.getString( "nif" ) );
                 clientes.setEmail( result.getString( "email" ) );
+                clientes.setPais( result.getString( "pais" ) );
+                clientes.setPaisISO( result.getString( "paisISO" ) );
 
             }
 
@@ -478,7 +490,6 @@ public class ClientesController implements EntidadeFactory
         TbCliente clientes = null;
         try
         {
-
             if ( result.next() )
             {
                 clientes = new TbCliente();
@@ -488,9 +499,9 @@ public class ClientesController implements EntidadeFactory
                 clientes.setTelefone( result.getString( "telefone" ) );
                 clientes.setNif( result.getString( "nif" ) );
                 clientes.setEmail( result.getString( "email" ) );
-
+                clientes.setPais( result.getString( "pais" ) );
+                clientes.setPaisISO( result.getString( "pais_ISO" ) );
             }
-
         }
         catch ( SQLException e )
         {
@@ -643,8 +654,6 @@ public class ClientesController implements EntidadeFactory
 
         return vector;
     }
-
-    
 
     public boolean existeClienteNomeParaOutroCliente( String nome, int codigo, Connection connection )
     {

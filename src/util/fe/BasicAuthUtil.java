@@ -12,6 +12,7 @@ package util.fe;
  */
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import util.fe.http.ConstantesFEUtil;
 
 /**
  * Classe utilitária para gerar Authorization Basic (Base64)
@@ -22,17 +23,6 @@ import java.util.Base64;
  */
 public class BasicAuthUtil
 {
-
-//    public static String username = "ws.kitanda";
-    public static String username = "ws.hml.kitanda";
-    public static String password = "mfn27942026";
-//    public static String password = "mfn538052025";
-    
-    
-    
-
-
-
 
     /**
      * Gera a string Base64 para autenticação Basic
@@ -65,8 +55,8 @@ public class BasicAuthUtil
     public static void main( String[] args )
     {
 
-        String base64 = gerarBase64( username, password );
-        String header = gerarAuthorizationHeader( username, password );
+        String base64 = gerarBase64( FEConfig.getUsername(), FEConfig.getPassword() );
+        String header = gerarAuthorizationHeader( FEConfig.getUsername(), FEConfig.getPassword() );
 
         System.out.println( "Base64:" );
         System.out.println( base64 );
