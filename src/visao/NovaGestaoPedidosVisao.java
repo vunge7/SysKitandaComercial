@@ -331,6 +331,11 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         visualizarCheckbox();
 
         desactivarLugares();
+        
+        
+        
+        
+    
 
 //        jPanelLugares.setVisible( rbNao_lugar.isSelected() );
     }
@@ -991,7 +996,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         {
             boolean[] canEdit = new boolean []
             {
-                false, false, false, false, false
+                false, false, false, true, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex)

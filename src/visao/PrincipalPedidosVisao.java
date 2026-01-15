@@ -27,10 +27,12 @@ import javax.persistence.EntityManagerFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import static kitanda.util.CfConstantes.YYYYMMDD_HHMMSS;
 import util.BDConexao;
 import util.DVML;
 import util.JPAEntityMannagerFactoryUtil;
+import util.MetodosUtil;
 import static util.MetodosUtil.rodarComandoWindows;
 
 /**
@@ -89,6 +91,12 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
             e.printStackTrace();
         }
         setArmazem( dadosInstituicaoDao.findTbDadosInstituicao( 1 ).getConfigArmazens() );
+
+        TelaCozinhaKDS telaCliente = new TelaCozinhaKDS( new ItemPedidosController( conexao.getConnectionAtiva() ) );
+
+        //Abre no segundo monitor, se existir
+        MetodosUtil.abrirNoSegundoMonitor( telaCliente );
+
     }
 
     private void setArmazem( String armazem )

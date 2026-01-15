@@ -10,6 +10,7 @@ package comercial.controller;
  * @created 21/nov/2025
  * @lastModified 21/nov/2025
  */
+import enties.util.CozinhaPedido;
 import entity.TbItemPedidos;
 import entity.TbLugares;
 import entity.TbPedido;
@@ -189,6 +190,52 @@ public class ItemPedidosController
             }
         }
         return 0;
+    }
+
+    public List<CozinhaPedido> listarPedidosCozinha()
+    {
+
+        List<CozinhaPedido> lista = new ArrayList<>();
+
+        String sql
+                = "SELECT "
+                + "   p.pk_pedido, "
+                + "   ip.pk_item_pedidos, "
+                + "   m.designacao AS mesa, "
+                + "   l.designacao AS lugar, "
+                + "   pr.designacao AS produto, "
+                + "   ip.qtd "
+                + "FROM tb_pedido p "
+                + "INNER JOIN tb_item_pedidos ip ON ip.fk_pedidos = p.pk_pedido "
+                + "INNER JOIN tb_produto pr ON pr.codigo = ip.fk_produtos "
+                + "INNER JOIN tb_mesas m ON m.pk_mesas = p.fk_mesas "
+                + "INNER JOIN tb_lugares l ON l.pk_lugares = ip.fk_lugares "
+                + "WHERE pr.cozinha = 'Enviar Ticket' "
+                + "ORDER BY ip.pk_item_pedidos";
+
+        try ( PreparedStatement ps = conexao.prepareStatement( sql ); ResultSet rs = ps.executeQuery() )
+        {
+
+            while ( rs.next() )
+            {
+
+                CozinhaPedido c = new CozinhaPedido();
+                c.setPedido( rs.getInt( "pk_pedido" ) );
+                c.setPkItemPedidos(rs.getInt( "pk_item_pedidos" ) );
+                c.setMesa( rs.getString( "mesa" ) );
+                c.setLugar( rs.getString( "lugar" ) );
+                c.setProduto( rs.getString( "produto" ) );
+                c.setQuantidade( rs.getDouble( "qtd" ) );
+
+                lista.add( c );
+            }
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
+
+        return lista;
     }
 
 }

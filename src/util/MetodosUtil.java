@@ -50,9 +50,12 @@ import entity.TbUsuario;
 import entity.TbValidade;
 import entity.TbVenda;
 import java.awt.Dimension;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.HeadlessException;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
@@ -2769,7 +2772,7 @@ public class MetodosUtil
         return valor;
 
     }
-    
+
 //        public static double convertToDouble( String texto )
 //    {
 //        double valor = 0;
@@ -2782,7 +2785,6 @@ public class MetodosUtil
 //        return valor;
 //
 //    }
-
     public static float convertToFloat( String texto )
     {
         float valor = 0;
@@ -6321,6 +6323,30 @@ public class MetodosUtil
         // Remove espaços no início e fim
         // Substitui múltiplos espaços no meio por apenas 1
         return nif.trim().replaceAll( "\\s+", " " );
+    }
+
+    public static void abrirNoSegundoMonitor( JFrame frame )
+    {
+        // Pega todos os monitores
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+
+        GraphicsDevice[] devices = ge.getScreenDevices();
+
+        if ( devices.length > 1 )
+        {
+            // Segundo monitor existe
+
+            Rectangle bounds = devices[ 1 ].getDefaultConfiguration().getBounds();
+            frame.setBounds( bounds );          // Posiciona e dimensiona
+            frame.setExtendedState( JFrame.MAXIMIZED_BOTH ); // Maximiza
+        }
+        else
+        {
+            // Apenas monitor principal
+            frame.setLocationRelativeTo( null ); // Centraliza
+        }
+
+        frame.setVisible( true );
     }
 
 }

@@ -196,7 +196,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
         TelaCliente telaCliente = new TelaCliente( modelo );
 
         //Abre no segundo monitor, se existir
-        abrirNoSegundoMonitor( telaCliente );
+        MetodosUtil.abrirNoSegundoMonitor( telaCliente );
 
     }
 
@@ -2359,30 +2359,6 @@ public class VendaPOSVisao extends javax.swing.JFrame
         {
             JOptionPane.showMessageDialog( null, "A data do documento a ser emitido deve estar no intervalo do ano economico", "Aviso", JOptionPane.WARNING_MESSAGE );
         }
-    }
-
-    public static void abrirNoSegundoMonitor( JFrame frame )
-    {
-        // Pega todos os monitores
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-
-        GraphicsDevice[] devices = ge.getScreenDevices();
-
-        if ( devices.length > 1 )
-        {
-            // Segundo monitor existe
-
-            Rectangle bounds = devices[ 1 ].getDefaultConfiguration().getBounds();
-            frame.setBounds( bounds );          // Posiciona e dimensiona
-            frame.setExtendedState( JFrame.MAXIMIZED_BOTH ); // Maximiza
-        }
-        else
-        {
-            // Apenas monitor principal
-            frame.setLocationRelativeTo( null ); // Centraliza
-        }
-
-        frame.setVisible( true );
     }
 
 }
