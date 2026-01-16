@@ -965,6 +965,13 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
         txtQuantidadeStock.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         txtQuantidadeStock.setForeground(new java.awt.Color(255, 255, 255));
+        txtQuantidadeStock.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                txtQuantidadeStockActionPerformed(evt);
+            }
+        });
 
         txtQuatindade.setBackground(new java.awt.Color(0, 255, 255));
         txtQuatindade.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
@@ -2013,6 +2020,11 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     {//GEN-HEADEREND:event_txtTelClientePesquisaActionPerformed
         pesquisa_cliente_by_tel();
     }//GEN-LAST:event_txtTelClientePesquisaActionPerformed
+
+    private void txtQuantidadeStockActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtQuantidadeStockActionPerformed
+    {//GEN-HEADEREND:event_txtQuantidadeStockActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtQuantidadeStockActionPerformed
 
     /**
      * @param args the command line arguments

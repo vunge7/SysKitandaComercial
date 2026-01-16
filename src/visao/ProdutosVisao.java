@@ -4127,7 +4127,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         //actualizar
         cmbLocal.setModel( new DefaultComboBoxModel( localController.getVector() ) );
         cmbUnidade.setModel( new DefaultComboBoxModel( unidadesController.getVector() ) );
-        ck_servico.setSelected( true );
+//        ck_servico.setSelected( true );
         txtCodigoProduto.setText( "" );
         txtCodigoBarraProcura.setText( "" );
         txtCodigoManualProcura.setText( "" );
