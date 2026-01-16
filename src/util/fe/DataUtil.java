@@ -21,8 +21,10 @@ public class DataUtil
     private static final DateTimeFormatter FORMATTER
             = DateTimeFormatter.ofPattern( "yyyy-MM-dd'T'HH:mm:ss'Z'" )
                     .withZone( ZoneOffset.UTC );
+    
+    
     private static final DateTimeFormatter FORMATTER_NORMAL
-            = DateTimeFormatter.ofPattern( "yyyy-MM-dd'T'HH:mm:ss'Z'" )
+            = DateTimeFormatter.ofPattern( "yyyy-MM-dd" )
                     .withZone( ZoneOffset.UTC );
 
     public static String converter( Date data )
@@ -32,7 +34,7 @@ public class DataUtil
 
     public static String converterNormal( Date data )
     {
-        return FORMATTER.format( data.toInstant() );
+        return FORMATTER_NORMAL.format( data.toInstant() );
     }
 
     public static void main( String[] args )

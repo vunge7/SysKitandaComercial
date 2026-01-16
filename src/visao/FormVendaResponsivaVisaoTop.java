@@ -7141,7 +7141,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         doc.setDocumentStatus( "N" );
         doc.setDocumentDate( DataUtil.converterNormal( venda.getDataVenda() ) );
         doc.setDocumentType( documento.getAbreviacao() );
-        doc.setEacCode( "1234" );
+        doc.setEacCode( "12345" );
         doc.setSystemEntryDate( DataUtil.converter( venda.getDataVenda() ) );
         doc.setCustomerTaxID( cliente.getNif() );
         doc.setCustomerCountry( cliente.getPaisISO() );
@@ -7168,6 +7168,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             double unitPriceBase = unitPrice - desconto;
             double base = unitPriceBase * qtd;
             double iva = base * ( taxa / 100.0 );
+            double totalLinhaSemIva = base;
             double totalLinha = base + iva;
 
             LineDTO line = new LineDTO();
@@ -7179,7 +7180,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             line.setUnitPrice( unitPrice );
             line.setUnitPriceBase( unitPriceBase );
             line.setDebitAmount( 0 );
-            line.setCreditAmount( totalLinha );
+            line.setCreditAmount( totalLinhaSemIva );
 
             if ( taxa > 0 )
             {
@@ -7240,7 +7241,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         String resposta;
         try
         {
-            resposta = HttpClientUtil.postJson( FEConfig.getEndpointSolicitarSerie(),
+            resposta = HttpClientUtil.postJson( FEConfig.getEndpointRegistrarFactura(),
                     payload, // o JSON que já tens
                     basicAuth // SOMENTE o base64 (sem "Basic ")
             );
@@ -7253,7 +7254,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         {
             e.printStackTrace();
         }
-        
+
         return false;
 
     }

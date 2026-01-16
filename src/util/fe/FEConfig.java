@@ -26,6 +26,17 @@ public class FEConfig
             return "https://sifp.minfin.gov.ao/sigt/fe/v1/solicitarSerie";
         }
     }
+    public static String getEndpointRegistrarFactura()
+    {
+        if ( AMBIENTE_ATUAL == AmbienteFE.HML )
+        {
+            return "https://sifphml.minfin.gov.ao/sigt/fe/v1/registarFactura";
+        }
+        else
+        {
+            return "https://sifp.minfin.gov.ao/sigt/fe/v1/registarFactura";
+        }
+    }
 
     public static String getUsername()
     {

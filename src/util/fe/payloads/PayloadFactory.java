@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import util.fe.DataUtil;
+import util.fe.JsonUtil;
 import util.fe.JwsGenerator;
 import util.fe.SubmissionUUID;
 import util.fe.dto.DocumentDTO;
@@ -71,6 +72,7 @@ public class PayloadFactory
         Map<String, Object> softwareInfoDetail = JwsGenerator.softwareInfoDetail();
         String jwsSoftwareSignature = JwsGenerator.gerarJws( "Chaves/ChavePrivada_2048_PKCS8.pem", softwareInfoDetail );
 
+//        String jwsSoftwareSignature = JwsGenerator.gerarJws( "Chaves/ChavePrivada_2048_PKCS8.pem", softwareInfoDetail );
         // softwareInfo
         Map<String, Object> softwareInfo = new LinkedHashMap<>();
         softwareInfo.put( "softwareInfoDetail", softwareInfoDetail );
@@ -84,12 +86,41 @@ public class PayloadFactory
         payload.put( "submissionTimeStamp", DataUtil.converter( new Date() ) );
         payload.put( "softwareInfo", softwareInfo );
         payload.put( "numberOfEntries", documentDTOs.size() );
-        payload.put( "documents", getDocumentos( documentDTOs ) );
+        payload.put( "documents", getDocumentos( taxRegistrationNumber, documentDTOs ) );
 
         return payload;
     }
 
-    private static List<Map<String, Object>> getDocumentos( List<DocumentDTO> documentDTOs )
+    public static Map<String, Object> consultaPayloadFactura(
+            String taxRegistrationNumber,
+            String requestID )
+    {
+
+        Map<String, Object> softwareInfoDetail = JwsGenerator.softwareInfoDetail();
+        Map<String, Object> jsonJWSignature = JwsGenerator.jwsConsutlarFactura( taxRegistrationNumber, requestID );
+
+        String jwsSoftwareSignature = JwsGenerator.gerarJws( "Chaves/ChavePrivada_2048_PKCS8.pem", softwareInfoDetail );
+        String jwsSignature = JwsGenerator.gerarJws( "Chaves/chave_cliente/ChavePrivada2048Cliente.pem", jsonJWSignature );
+
+        // softwareInfo
+        Map<String, Object> softwareInfo = new LinkedHashMap<>();
+        softwareInfo.put( "softwareInfoDetail", softwareInfoDetail );
+        softwareInfo.put( "jwsSoftwareSignature", jwsSoftwareSignature );
+
+        // payload principal
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put( "schemaVersion", "1.2" );
+        payload.put( "submissionUUID", SubmissionUUID.gerar() );
+        payload.put( "taxRegistrationNumber", taxRegistrationNumber );
+        payload.put( "submissionTimeStamp", DataUtil.converter( new Date() ) );
+        payload.put( "softwareInfo", softwareInfo );
+        payload.put( "jwsSignature", jwsSignature );
+        payload.put( "requestID", requestID );
+
+        return payload;
+    }
+
+    private static List<Map<String, Object>> getDocumentos( String taxRegistrationNumber, List<DocumentDTO> documentDTOs )
     {
         List<Map<String, Object>> documents = new ArrayList<>();
 
@@ -97,9 +128,12 @@ public class PayloadFactory
         {
             Map<String, Object> document = new LinkedHashMap<>();
 
+            Map<String, Object> docSignature = jwsDocumentSignature( taxRegistrationNumber, documentDTO );
+            String jwsDocumentSignature = JwsGenerator.gerarJws( "Chaves/chave_cliente/ChavePrivada2048Cliente.pem", docSignature );
+
             document.put( "documentNo", documentDTO.getDocumentNo() );
             document.put( "documentStatus", documentDTO.getDocumentStatus() );
-            document.put( "jwsDocumentSignature", documentDTO.getJwsDocumentSignature() );
+            document.put( "jwsDocumentSignature", jwsDocumentSignature );
             document.put( "documentDate", documentDTO.getDocumentDate() );
             document.put( "documentType", documentDTO.getDocumentType() );
             document.put( "eacCode", documentDTO.getEacCode() );
@@ -188,6 +222,39 @@ public class PayloadFactory
 
         return payload;
 
+    }
+
+    public static Map jwsDocumentSignature( String taxRegistrationNumber, DocumentDTO documentDTO )
+    {
+
+        Map<String, Object> documentTotals = new LinkedHashMap<>();
+
+        documentTotals.put( "taxPayable", documentDTO.getDocumentTotals().getTaxPayable() );
+        documentTotals.put( "netTotal", documentDTO.getDocumentTotals().getNetTotal() );
+        documentTotals.put( "grossTotal", documentDTO.getDocumentTotals().getGrossTotal() );
+
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put( "documentNo", documentDTO.getDocumentNo() );
+        payload.put( "taxRegistrationNumber", taxRegistrationNumber );
+        payload.put( "documentType", documentDTO.getDocumentType() );
+        payload.put( "documentDate", documentDTO.getDocumentDate() );
+        payload.put( "customerTaxID", documentDTO.getCustomerTaxID() );
+        payload.put( "customerCountry", documentDTO.getCustomerCountry() );
+        payload.put( "companyName", documentDTO.getCompanyName() );
+        payload.put( "documentTotals", documentTotals );
+
+        return payload;
+
+    }
+
+    public static void main( String[] args )
+    {
+        Map<String, Object> payload = PayloadFactory.criarPayloadCriarSerie("5000413178", "2026" , "FR");
+//        Map<String, Object> consultaPayloadFactura = PayloadFactory.consultaPayloadFactura( "5000413178", "202600000138171" );
+
+        String json = JsonUtil.toJson( payload );
+
+        System.out.println( json );
     }
 
 }

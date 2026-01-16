@@ -127,13 +127,12 @@ public final class JwsGenerator
 
     }
 
-    public static Map jwsConsutlarFactura()
+    public static Map jwsConsutlarFactura( String taxRegistrationNumber, String requestID )
     {
 
         Map<String, Object> payload = new java.util.HashMap<>();
-
-        payload.put( "taxRegistrationNumber", "5000413178" );
-        payload.put( "documentNo", "FT FT7825S1917N/1" );
+        payload.put( "taxRegistrationNumber", taxRegistrationNumber );
+        payload.put( "requestID", requestID );
 
         return payload;
 
@@ -149,29 +148,6 @@ public final class JwsGenerator
         payload.put( "documentType", "AF" );
         payload.put( "establishmentNumber", "10" );
         payload.put( "seriesContingencyIndicator", "N" );
-
-        return payload;
-
-    }
-
-    public static Map jwsDocumentSignature()
-    {
-
-        Map<String, Object> documentTotals = new LinkedHashMap<>();
-
-        documentTotals.put( "taxPayable", 70 );
-        documentTotals.put( "netTotal", 500 );
-        documentTotals.put( "grossTotal", 570 );
-
-        Map<String, Object> payload = new LinkedHashMap<>();
-        payload.put( "documentNo", "RG RG7825S17N/2" );
-        payload.put( "taxRegistrationNumber", "5000413178" );
-        payload.put( "documentType", "RG" );
-        payload.put( "documentDate", "2025-12-30" );
-        payload.put( "customerTaxID", "PT987654321" );
-        payload.put( "customerCountry", "PT" );
-        payload.put( "companyName", "Cliente Exemplo Lda" );
-        payload.put( "documentTotals", documentTotals );
 
         return payload;
 
