@@ -6,7 +6,6 @@
 package visao;
 
 
-import java.sql.Connection;
 import comercial.controller.CaixasController;
 import comercial.controller.ItemCaixaController;
 import comercial.controller.LugaresController;

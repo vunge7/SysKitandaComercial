@@ -1,0 +1,70 @@
+{
+    "schemaVersion": "1.2",
+    "submissionUUID": "666b13ae-33ce-468c-8911-66b114325b73",
+    "taxRegistrationNumber": "5000413178",
+    "submissionTimeStamp": "2025-12-30T13:09:00Z",
+
+    "softwareInfo": {
+        "softwareInfoDetail": {
+            "productId": "Kitanda",
+            "productVersion": "1.1",
+            "softwareValidationNumber": "FE/196/AGT/2025"
+        },
+        "jwsSoftwareSignature": "eyJhbGciOiJSUzI1NiJ9.eyJwcm9kdWN0VmVyc2lvbiI6IjEuMSIsInByb2R1Y3RJZCI6IktpdGFuZGEiLCJzb2Z0d2FyZVZhbGlkYXRpb25OdW1iZXIiOiJGRS8xOTYvQUdULzIwMjUifQ.MSbEY5zxWOTCBAgkrtflD5TK6dZb0Kc44QxG6tBzYYfB9c9hynIPZuE1fnJKmy8H7uvTeeWXO2eoVa2QpI4d8T_iBtASOJgmF-az28pW69hFCnnW-hIXMgHOToYILYwqEMD0tX34vIAj1ZKOcFtc99rWG3YnN-lKTw_nePNFF2TVXc0HE4F7-phmMZyjutiJnEoPcDQoKLjDoKv8FlYw_ek0I15ZctOkvPLZ2OEjQZUPf5prt7Hipi5n8VB3Pv5709o_kG6p82bXcV3E7FKgn5WAUA-oz3Gih-WPt2reDL2P7ILuaTDLIBw_IHP1SySQgKikiloYkTvaTymPgm7U8g"
+    },
+    "numberOfEntries": 1,
+    "documents": [
+        {
+            "documentNo": "NC NC7825S757N/4",
+            "documentStatus": "N",
+            "jwsDocumentSignature": "eyJhbGciOiJSUzI1NiJ9.eyJkb2N1bWVudE5vIjoiTkMgTkM3ODI1Uzc1N04vNCIsInRheFJlZ2lzdHJhdGlvbk51bWJlciI6IjUwMDA0MTMxNzgiLCJkb2N1bWVudFR5cGUiOiJOQyIsImRvY3VtZW50RGF0ZSI6IjIwMjUtMTItMzAiLCJjdXN0b21lclRheElEIjoiUFQ5ODc2NTQzMjEiLCJjdXN0b21lckNvdW50cnkiOiJQVCIsImNvbXBhbnlOYW1lIjoiQ2xpZW50ZSBFeGVtcGxvIExkYSIsImRvY3VtZW50VG90YWxzIjp7InRheFBheWFibGUiOjcwLCJuZXRUb3RhbCI6NTAwLCJncm9zc1RvdGFsIjo1NzB9fQ.LrDv0ACxVfgDLeuuueBMshTPLvVkowDTu6NHrQyB90IHhwWeER3PZMCnlcONRrwpc0NRoZS0pK2k_Ranb47evRDXcs-bXLotUPaLbrrU9b6t52mUiz9DA6ipHhc9zIgjfSF5CK7LNv2ZpwzJhhw7rJlQ8rrJuGaLadI-T9zZWTqVVwmSQnpeWoX91xRZwqV-azDa_uDYtgmx1q78YDSZ53Mew6d_7DykyPhY5-vOOSUFBzfuRbWdeVCfe-xAcg3WFDXGXuw5a1U1FDgC_ReTZQ5hhKxMbzZHJaUdYvBcJrUKJKRJNpW4lWaz4RxiJpBUT-ZeAuq4dB05bfqX-XQB9w",        
+            "documentDate": "2025-12-30",
+            "documentType": "NC",
+            "eacCode": "12345",
+            "systemEntryDate": "2025-12-30T13:09:00Z",
+            "customerTaxID": "PT987654321",
+            "customerCountry": "PT",
+            "companyName": "Cliente Exemplo Lda",
+            "lines": [
+                {
+                    "lineNumber": 1,
+                    "productCode": "PROD001",
+                    "productDescription": "Produto Exemplo 1",
+                    "quantity": 2,
+                    "unitOfMeasure": "UN",
+                    "unitPrice": 250,
+                    "unitPriceBase": 250,
+                    "referenceInfo": {
+                        "referenceItemLineNo": 1,
+                        "reference": "FR FR7825S960N/2",
+                        "reason": "Anulação parcial por devolução de mercadoria"
+                    },
+                    "debitAmount": 500,
+                    "creditAmount": 0,
+                    "taxes": [
+                        {
+                            "taxType": "IVA",
+                            "taxCountryRegion": "AO",
+                            "taxCode": "NOR",
+                            "taxPercentage": 14,
+                            "taxContribution": 70
+                        }
+                    ],
+                    "settlementAmount": 0
+                }
+            ],
+            "documentTotals": {
+                "taxPayable": 70,
+                "netTotal": 500,
+                "grossTotal": 570
+            },
+            "withholdingTaxList": [
+                {
+                    "withholdingTaxType": "IRT",
+                    "withholdingTaxDescription": "Retenção na fonte",
+                    "withholdingTaxAmount": 16.5
+                }
+            ]
+        }
+    ]
+}

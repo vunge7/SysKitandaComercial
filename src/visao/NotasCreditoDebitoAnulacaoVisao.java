@@ -506,8 +506,8 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
     public void actualizar_quantidade( double quantidade, TbStock stock )
     {
 
-        double qtd = ( stock.getQuantidadeExistente() - quantidade );
-        stock.setQuantidadeExistente( (double) qtd );
+        double qtd = (stock.getQuantidadeExistente() - quantidade);
+        stock.setQuantidadeExistente( ( double ) qtd );
         try
         {
             stockDao.edit( stock );
@@ -1026,6 +1026,7 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
                 nota_local.setStatusEliminado( ANULADO.toString() );
 //                nota_local.setAreaVenda( venda_local.getAreaVenda() );
                 nota_local.setObs( motivoJTextArea.getText() );
+                nota_local.setGorjeta( venda_local.getGorjeta() );
 
                 try
                 {
@@ -1132,7 +1133,7 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
             TbItemVenda itemVendaLocal = new TbItemVenda();
             itemVendaLocal.setCodigoProduto( itemDocumentos.getCodigoProduto() );
             itemVendaLocal.setCodigoVenda( lastVenda );
-            itemVendaLocal.setQuantidade( (int) itemDocumentos.getQuantidade() );
+            itemVendaLocal.setQuantidade( ( int ) itemDocumentos.getQuantidade() );
             itemVendaLocal.setDesconto( itemDocumentos.getDesconto() );
             itemVendaLocal.setValorIva( itemDocumentos.getValorIva() );
             itemVendaLocal.setMotivoIsensao( itemDocumentos.getMotivoIsensao() );
@@ -1267,7 +1268,7 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
 
     private static double getTotalIliquido()
     {
-        DefaultTableModel modelo = (DefaultTableModel) tabelaItensNotas.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) tabelaItensNotas.getModel();
         int qtd = 0;
         double total_iliquido = 0, preco_unitario = 0;
 
@@ -1291,8 +1292,8 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
 
     private static double getTotalAOALiquido()
     {
-        double valores = ( getTotalIliquido() + getTotalImposto() );
-        double descontos = ( getDescontoComercial() );
+        double valores = (getTotalIliquido() + getTotalImposto());
+        double descontos = (getDescontoComercial());
         System.out.println( "TotalIliquido: " + getTotalIliquido() );
         System.out.println( "TotalImposto: " + getTotalImposto() );
         System.out.println( "TotalDescontoComercial: " + getDescontoComercial() );
@@ -1302,7 +1303,7 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
 
     private static double getDescontoComercial()
     {
-        DefaultTableModel modelo = (DefaultTableModel) tabelaItensNotas.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) tabelaItensNotas.getModel();
         int qtd = 0;
         double desconto_comercial = 0d, preco_unitario = 0d, desconto_valor_linha = 0d;
 
@@ -1312,7 +1313,7 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
             qtd = Integer.parseInt( modelo.getValueAt( i, 3 ).toString() );
             double valor_percentagem = Double.parseDouble( modelo.getValueAt( i, 4 ).toString() );
             desconto_valor_linha = ( ( valor_percentagem ) / 100 );
-            double valor_unitario = ( preco_unitario * qtd );
+            double valor_unitario = (preco_unitario * qtd);
             desconto_comercial += ( valor_unitario * desconto_valor_linha );
 
         }
@@ -1322,7 +1323,7 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
 
     private static double getTotalIncidencia()
     {
-        DefaultTableModel modelo = (DefaultTableModel) tabelaItensNotas.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) tabelaItensNotas.getModel();
         int qtd = 0;
         double incidencia = 0d, preco_unitario = 0d, desconto_valor_linha = 0;
 
@@ -1336,7 +1337,7 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
             if ( taxa != 0 )
             {
                 desconto_valor_linha = ( ( valor_percentagem ) / 100 );
-                double valor_unitario = ( preco_unitario * qtd );
+                double valor_unitario = (preco_unitario * qtd);
                 incidencia += ( ( valor_unitario ) - ( valor_unitario * desconto_valor_linha ) );
 
             }
@@ -1348,7 +1349,7 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
 
     private static double getTotalImposto()
     {
-        DefaultTableModel modelo = (DefaultTableModel) tabelaItensNotas.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) tabelaItensNotas.getModel();
         int qtd = 0;
         double imposto = 0d, preco_unitario = 0d, desconto_valor_linha = 0;
 
@@ -1361,7 +1362,7 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
             // a incidência só é aplicável ao produtos sujeitos a iva 
             if ( taxa != 0 )
             {
-                double valor_unitario = ( preco_unitario * qtd );
+                double valor_unitario = (preco_unitario * qtd);
                 desconto_valor_linha = valor_unitario * ( ( valor_percentagem ) / 100 );
                 imposto += ( ( valor_unitario - desconto_valor_linha ) * ( taxa / 100 ) );
 
@@ -1392,7 +1393,7 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
 
     private List<TbProduto> getProdutosIsentos()
     {
-        DefaultTableModel modelo = (DefaultTableModel) tabelaItensNotas.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) tabelaItensNotas.getModel();
         double taxa = 0.0;
         int codigo_produto = 0;
         List<TbProduto> lista_produtos_isentos = new ArrayList<>();
@@ -1499,7 +1500,7 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
                         {
                             //3.1 preencher a tabela com os itens
                             List<TbItemVenda> linhas = venda_local.getTbItemVendaList();
-                            DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+                            DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
                             //3.1.1 limpa a tabela
                             modelo.setRowCount( 0 );
                             for ( TbItemVenda object : linhas )
@@ -1585,8 +1586,8 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
             int codProduto = Integer.parseInt( table.getValueAt( linha_actual, 0 ).toString() );
             double desconto = Double.parseDouble( table.getValueAt( linha_actual, 4 ).toString() );
 
-            TbProduto produtoLocal = (TbProduto) produtosController.findById( codProduto );
-            TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutosController.findById( produtoLocal.getCodTipoProduto().getCodigo() );
+            TbProduto produtoLocal = ( TbProduto ) produtosController.findById( codProduto );
+            TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutosController.findById( produtoLocal.getCodTipoProduto().getCodigo() );
 
             double qtd;
 
@@ -1630,7 +1631,7 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
 
     private static void actuazlizar_quantidade_tabela_formulario( String quantidade, double desconto )
     {
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         double qtd = Double.parseDouble( quantidade );
         double retencao = 0;
 
@@ -1670,16 +1671,16 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
 
     private static double getValorIliquido( double qtd, double preco_venda, double desconto )
     {
-        double subtotal_linha = ( preco_venda * qtd );
-        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
+        double subtotal_linha = (preco_venda * qtd);
+        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
         return ( ( subtotal_linha - desconto_valor ) );
 
     }
 
     private static double getValorComImpostoIva( double qtd, double taxa, double preco_venda, double desconto )
     {
-        double subtotal_linha = ( preco_venda * qtd );
-        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
+        double subtotal_linha = (preco_venda * qtd);
+        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
         double valor_iva = 1 + ( taxa / 100 );//
         return ( ( subtotal_linha - desconto_valor ) * valor_iva );
 
@@ -1687,9 +1688,9 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
 
     private static double getValorComRetencao( double qtd, double ret, double preco_venda, double desconto )
     {
-        double subtotal_linha = ( preco_venda * qtd );
-        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
-        double valor_ret = ( ( ( subtotal_linha - desconto_valor ) * ret ) / 100 );//
+        double subtotal_linha = (preco_venda * qtd);
+        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
+        double valor_ret = (( ( subtotal_linha - desconto_valor ) * ret ) / 100);//
         return ( valor_ret );
 
     }

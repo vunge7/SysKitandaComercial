@@ -309,13 +309,6 @@
         <Property name="text" type="java.lang.String" value="email: dvml.comerciall@gmail.com"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel1">
-      <Properties>
-        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/imagens/img30.png"/>
-        </Property>
-      </Properties>
-    </Component>
     <Component class="javax.swing.JLabel" name="JLDataFecho">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
@@ -357,8 +350,11 @@
         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="KITANDA 1.2.   Sistema Certificado pela AGT. N&#xba; 258"/>
+        <Property name="text" type="java.lang.String" value="KITANDA 1.1.   Sistema Certificado pela AGT. N&#xba; 258"/>
       </Properties>
+      <AccessibilityProperties>
+        <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="KITANDA 1.1.   Sistema Certificado pela AGT. N&#xba; 258"/>
+      </AccessibilityProperties>
     </Component>
     <Component class="javax.swing.JLabel" name="Soft1">
       <Properties>
@@ -368,7 +364,17 @@
         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="KITANDA 1.2"/>
+        <Property name="text" type="java.lang.String" value="KITANDA 1.1"/>
+      </Properties>
+      <AccessibilityProperties>
+        <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="KITANDA 1.1"/>
+      </AccessibilityProperties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel1">
+      <Properties>
+        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+          <Image iconType="3" name="/imagens/img30.png"/>
+        </Property>
       </Properties>
     </Component>
   </SubComponents>

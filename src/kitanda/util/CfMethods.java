@@ -359,6 +359,7 @@ public class CfMethods
         }
         catch ( NumberFormatException ex )
         {
+            ex.printStackTrace();
             System.err.println( "Erro ao converter valor monetário: \"" + texto + "\" -> \"" + valorLimpo + "\"" );
             return BigDecimal.ZERO;
         }

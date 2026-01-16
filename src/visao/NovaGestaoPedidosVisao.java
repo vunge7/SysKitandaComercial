@@ -331,6 +331,11 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         visualizarCheckbox();
 
         desactivarLugares();
+        
+        
+        
+        
+    
 
 //        jPanelLugares.setVisible( rbNao_lugar.isSelected() );
     }

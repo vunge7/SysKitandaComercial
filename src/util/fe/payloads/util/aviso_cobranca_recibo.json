@@ -1,0 +1,55 @@
+
+{
+    "schemaVersion": "1.2",
+    "submissionUUID": "d95ceb11-f698-499a-9d64-e5a703b3448b",
+    "taxRegistrationNumber": "5000413178",
+    "submissionTimeStamp": "2025-12-30T12:56:00Z",
+    "numberOfEntries": 1,
+
+    "softwareInfo": {
+        "softwareInfoDetail": {
+            "productId": "Kitanda",
+            "productVersion": "1.1",
+            "softwareValidationNumber": "FE/196/AGT/2025"
+        },
+        "jwsSoftwareSignature": "eyJhbGciOiJSUzI1NiJ9.eyJwcm9kdWN0VmVyc2lvbiI6IjEuMSIsInByb2R1Y3RJZCI6IktpdGFuZGEiLCJzb2Z0d2FyZVZhbGlkYXRpb25OdW1iZXIiOiJGRS8xOTYvQUdULzIwMjUifQ.MSbEY5zxWOTCBAgkrtflD5TK6dZb0Kc44QxG6tBzYYfB9c9hynIPZuE1fnJKmy8H7uvTeeWXO2eoVa2QpI4d8T_iBtASOJgmF-az28pW69hFCnnW-hIXMgHOToYILYwqEMD0tX34vIAj1ZKOcFtc99rWG3YnN-lKTw_nePNFF2TVXc0HE4F7-phmMZyjutiJnEoPcDQoKLjDoKv8FlYw_ek0I15ZctOkvPLZ2OEjQZUPf5prt7Hipi5n8VB3Pv5709o_kG6p82bXcV3E7FKgn5WAUA-oz3Gih-WPt2reDL2P7ILuaTDLIBw_IHP1SySQgKikiloYkTvaTymPgm7U8g"
+    },
+
+    "documents": [
+        {
+            "documentNo": "AR AR7825S17N/5",
+            "documentStatus": "N",
+            "jwsDocumentSignature": "eyJhbGciOiJSUzI1NiJ9.eyJkb2N1bWVudE5vIjoiQVIgQVI3ODI1UzE3Ti81IiwidGF4UmVnaXN0cmF0aW9uTnVtYmVyIjoiNTAwMDQxMzE3OCIsImRvY3VtZW50VHlwZSI6IkFSIiwiZG9jdW1lbnREYXRlIjoiMjAyNS0xMi0zMCIsImN1c3RvbWVyVGF4SUQiOiJQVDk4NzY1NDMyMSIsImN1c3RvbWVyQ291bnRyeSI6IlBUIiwiY29tcGFueU5hbWUiOiJDbGllbnRlIEV4ZW1wbG8gTGRhIiwiZG9jdW1lbnRUb3RhbHMiOnsidGF4UGF5YWJsZSI6MTQwLCJuZXRUb3RhbCI6MTAwMCwiZ3Jvc3NUb3RhbCI6MTE0MH19.UvI1Bib4YHHaRgDuP1YgORI1g1j8XADWXENiJLkTM8L1JmIUmQOkPXbEosHsbGBCCwn6-zIldkMeSCyuyDWn6PduF4aYE3uQdDbFFaPOCInN4en6ddiu4NMctfSuV62YlUbIcB0zfsTUDo53x_mIq0MTzQeMvrsRvtS16qn5ReAxgF7WlUOFo-CXin5xBTFBVlfEkXdsvBNdu9_UCilXz-llwTvho1EMzjqexpn_Mi_sb0uGHUfEDahXKJ4CvrtwZdeECWHIWqChJOQa3tH4GJ0BDq9Z-HAUMPveSZIs0aUwogPEDKoIEaTWmd0otKNYrLTWCPJLlt4zYr3Di7iXrQ",
+            "documentDate": "2025-12-30",
+            "documentType": "AR",
+            "eacCode": "12345",
+            "systemEntryDate": "2025-12-30T12:56:00Z",
+            "customerTaxID": "PT987654321",
+            "customerCountry": "PT",
+            "companyName": "Cliente Exemplo Lda",
+
+            "paymentReceipt": {
+                "sourceDocuments": [
+                    {
+                        "lineNo": 1,
+                        "sourceDocumentID": {
+                            "originatingON": "AC AC7825S11N/4",
+                            "documentDate": "2025-12-23"
+                        },
+                        "creditAmount": 1000
+                    }
+                ]
+            },
+
+            "documentTotals": {
+                "taxPayable": 140,
+                "netTotal": 1000,
+                "grossTotal": 1140
+            }
+        }
+    ]
+}
+
+
+
+ 

@@ -1,0 +1,16 @@
+ {
+    "schemaVersion": "1.2",
+    "submissionUUID": "abc422d1-5d05-40ba-9bcc-274fe2c1aeba",
+    "taxRegistrationNumber": "5000413178",
+    "submissionTimeStamp": "2026-01-01T14:30:00Z",
+    "softwareInfo": {
+        "softwareInfoDetail": {
+            "productId": "Kitanda",
+            "productVersion": "1.1",
+            "softwareValidationNumber": "FE/110/AGT/2025"
+        },
+        "jwsSoftwareSignature": "eyJhbGciOiJSUzI1NiJ9.eyJwcm9kdWN0VmVyc2lvbiI6IjEuMSIsInByb2R1Y3RJZCI6IktpdGFuZGEiLCJzb2Z0d2FyZVZhbGlkYXRpb25OdW1iZXIiOiJGRS8xMTAvQUdULzIwMjUifQ.sN1KN6422W84K1hYoJh6jy7hQQA_lk7w-rKJisu2_5inXTZYNZVj0UeCi_dBIU8Oxa_u5rMCejKdDcmvMiRJGrZZYPNtgXYLwAeactEH-Xa_nHB9E9UzWvYHg9vGUvDa7k_xbIudoxTfUXcTA_U-9WBlKqZKHNobN3mTPzctJjZHxIisL7ZpNAhm1sMw-jhPYnfHnhF112GhbvC9ftA4pa4KaLdNNnqFeAX--E-06gcTX-rlukoVUVIwFGKalVznaP25xHN81hErXGOxyU9IWjbDmjCy7HO1DSG1W_T9ACwniURWpvc_W4yrs261zIiTN2ygdIGadB4MNghZ5lYeSw"
+    },
+    "jwsSignature": "eyJhbGciOiJSUzI1NiJ9.eyJkb2N1bWVudE5vIjoiRlQgRlQ3ODI1UzE5MTdOLzEiLCJ0YXhSZWdpc3RyYXRpb25OdW1iZXIiOiI1MDAwNDEzMTc4In0.bq0A4OopWX8bWUAuqs170wrfXvGP6tXBfAgEMolY9F8A6BEiAS3UCKFg0jiCvTngYnMuAkf0R0utlBSFlz7vn3b33BCAi_xDBcfaL_SYjic3sLl3-38_9WQAiT7tEUnkvlZDVN8Xx7oWb8L5im694xNxsncqR2mxhpBnlO4Z_LUFu1qmj2kR8U5Y0At26exLx3hd4ujfs8Y6IvfxqIhxapo8petYFk7bf0EF22BtYTRFaUYUHe8_0zT4oE9-29xPH8coOwEWeCJRBmJtn7hUQEmIjy8cbJf-uShFXol7wQVhRlCV-tJVqY3LOx6jc1NedqNxWvl_iZh3gnT-KZS42g",
+    "invoiceNo": "FT FT7825S1917N/1"
+ }

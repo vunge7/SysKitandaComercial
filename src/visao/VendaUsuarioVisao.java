@@ -198,7 +198,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         servicosRetencaoController = new ServicosRetencaoController( VendaUsuarioVisao.conexao );
         contaController = new ContaController( VendaUsuarioVisao.conexao );
         movimentacaoController = new MovimentacaoController( conexao.getConnection() );
-        dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById( 1 );
+        dadosInstituicao = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
         configuracaoMesComecoController = new ConfiguracaoMesComecoController( conexao.getConnectionAtiva() );
         pagamentoMensalidadeController = new PagamentoMensalidadeController( conexao.getConnectionAtiva() );
         mesRhController = new MesRhController( conexao.getConnectionAtiva() );
@@ -272,7 +272,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         getRootPane().getInputMap( JComponent.WHEN_IN_FOCUSED_WINDOW )
                 .put( KeyStroke.getKeyStroke( "F4" ), "abrirBuscaProduto" );
 
-        getRootPane().getActionMap().put("abrirBuscaProduto", new AbstractAction()
+        getRootPane().getActionMap().put( "abrirBuscaProduto", new AbstractAction()
         {
             @Override
             public void actionPerformed( ActionEvent e )
@@ -1608,7 +1608,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         try
         {
 
-            DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+            DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
             if ( podeRemoverServico( modelo, table.getSelectedRow() ) )
             {
                 remover_item_carrinho();
@@ -1944,7 +1944,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //}
     private boolean validarPrecos_tabela( JTable tabela )
     {
-        DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) tabela.getModel();
         StringBuilder produtosComErro = new StringBuilder();
 
         // Percorrer todas as linhas
@@ -2304,7 +2304,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private static boolean exist_produto_tabela_formulario( String designacao )
     {
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
         {
@@ -2345,7 +2345,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         catch ( Exception ex )
         {
             ex.printStackTrace();
-            Logger.getLogger(VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger( VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
             JOptionPane.showMessageDialog( null, "Não existe produto com este código de barra.", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
         }
 
@@ -2358,7 +2358,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     //actualiza a quantidade na tabela do formulário visão isto é na jTable
     private static void actuazlizar_quantidade_tabela_formulario( String quantidade, double desconto )
     {
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         double qtd = Double.parseDouble( quantidade );
         double retencao = 0;
 
@@ -2458,7 +2458,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //    }
     private static void accao_cliente()
     {
-        String nomeCliente = (String) cmbCliente.getSelectedItem();
+        String nomeCliente = ( String ) cmbCliente.getSelectedItem();
 
         txtNomeConsumidorFinal.setText( nomeCliente );
         String nif = clientesController.findByNome( nomeCliente ).getNif();
@@ -2504,7 +2504,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 if ( !isProdutoExpirado( getCodigoProduto() ) )
                 {
 
-                    TbProduto produto = (TbProduto) produtosController.findById( getCodigoProduto() );
+                    TbProduto produto = ( TbProduto ) produtosController.findById( getCodigoProduto() );
                     if ( isStocavel( produto.getStocavel() ) && documentoIsFR || documentoIsFA )
                     {
                         if ( possivel_quantidade() )
@@ -2551,7 +2551,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             {
                 if ( !isProdutoExpirado( getCodigoProduto() ) )
                 {
-                    TbProduto produto = (TbProduto) produtosController.findById( getCodigoProduto() );
+                    TbProduto produto = ( TbProduto ) produtosController.findById( getCodigoProduto() );
                     if ( isStocavel( produto.getStocavel() ) )
                     {
 
@@ -2597,7 +2597,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         catch ( Exception ex )
         {
             ex.printStackTrace();
-            Logger.getLogger(VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger( VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
             JOptionPane.showMessageDialog( null, "Não existe produto com este código de barra.", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
         }
 
@@ -2611,7 +2611,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             if ( !campos_invalidos() )
             {
 
-                TbProduto produto = (TbProduto) produtosController.findById( getCodigoProduto() );
+                TbProduto produto = ( TbProduto ) produtosController.findById( getCodigoProduto() );
                 if ( isStocavel( produto.getStocavel() ) )
                 {
 
@@ -2696,9 +2696,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             if ( !Objects.isNull( produto ) )
             {
                 Integer codTipoProduto = produto.getCodTipoProduto().getCodigo();
-                TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById( codTipoProduto );
+                TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutoController.findById( codTipoProduto );
                 Integer codFamilia = tipoProduto.getFkFamilia().getPkFamilia();
-                Familia familia = (Familia) familiaController.findById( codFamilia );
+                Familia familia = ( Familia ) familiaController.findById( codFamilia );
                 cmbFamilia.setSelectedItem( familia.getDesignacao() );
                 cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
 
@@ -2740,12 +2740,12 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         {
 
             int codigo = Integer.parseInt( txtCodigoProduto.getText() );
-            TbProduto produto = (TbProduto) produtosController.findById( codigo );
+            TbProduto produto = ( TbProduto ) produtosController.findById( codigo );
 
             Integer codTipoProduto = produto.getCodTipoProduto().getCodigo();
-            TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById( codTipoProduto );
+            TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutoController.findById( codTipoProduto );
             Integer codFamilia = tipoProduto.getFkFamilia().getPkFamilia();
-            Familia familia = (Familia) familiaController.findById( codFamilia );
+            Familia familia = ( Familia ) familiaController.findById( codFamilia );
             cmbFamilia.setSelectedItem( familia.getDesignacao() );
             cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
 
@@ -2776,7 +2776,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         catch ( Exception ex )
         {
 //            ex.printStackTrace();
-            Logger.getLogger(VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger( VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
             JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
         }
         finally
@@ -2792,12 +2792,12 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         {
 
             System.out.println( "ID PRODUTO EXTERIOR: " + codigo );
-            TbProduto produtoLocal = (TbProduto) produtosController.findById( codigo );
+            TbProduto produtoLocal = ( TbProduto ) produtosController.findById( codigo );
 
             Integer codTipoProduto = produtoLocal.getCodTipoProduto().getCodigo();
-            TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById( codTipoProduto );
+            TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutoController.findById( codTipoProduto );
             Integer codFamilia = tipoProduto.getFkFamilia().getPkFamilia();
-            Familia familia = (Familia) familiaController.findById( codFamilia );
+            Familia familia = ( Familia ) familiaController.findById( codFamilia );
             cmbFamilia.setSelectedItem( familia.getDesignacao() );
             cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
 
@@ -2827,7 +2827,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         {
             ex.printStackTrace();
             Logger
-                    .getLogger(VendaUsuarioVisao.class
+                    .getLogger( VendaUsuarioVisao.class
                             .getName() ).log( Level.SEVERE, null, ex );
             JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
         }
@@ -2840,9 +2840,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         try
         {
 
-            produtosController = new ProdutosController(conexao );
+            produtosController = new ProdutosController( conexao );
             System.out.println( "ID PRODUTO EXTERIOR: " + codigo );
-            TbProduto produtoLocal = (TbProduto) produtosController.findById( codigo );
+            TbProduto produtoLocal = ( TbProduto ) produtosController.findById( codigo );
 
             procedimentoAdicionarTabela2( produtoLocal, mes );
 
@@ -2851,7 +2851,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         {
             ex.printStackTrace();
             Logger
-                    .getLogger(VendaUsuarioVisao.class
+                    .getLogger( VendaUsuarioVisao.class
                             .getName() ).log( Level.SEVERE, null, ex );
             JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
         }
@@ -2875,7 +2875,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private void mostrar_nome()
     {
-        TbUsuario usuario = (TbUsuario) usuariosController.getUsuarioByCodigo( this.cod_usuario );
+        TbUsuario usuario = ( TbUsuario ) usuariosController.getUsuarioByCodigo( this.cod_usuario );
         //caso masculino
 //        if (usuario.getCodigoSexo().getCodigo() == 1) {
         lb_nome_usuario.setText( "Operador: " + usuario.getNome() );
@@ -2886,7 +2886,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private void empresa()
     {
-        TbDadosInstituicao dados = (TbDadosInstituicao) dadosInstituicaoController.findById( 1 );
+        TbDadosInstituicao dados = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
 
         jlEmpresa.setText( dados.getNome() );
 
@@ -2898,7 +2898,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         try
         {
 
-            TbProduto produto_local = (TbProduto) produtosController.findById( getCodigoProduto() );
+            TbProduto produto_local = ( TbProduto ) produtosController.findById( getCodigoProduto() );
 
             TbStock stockLocal = stocksController.getStockByIdProdutoAndIdArmazem( getCodigoProduto(), getCodigoArmazem() );
             boolean isStocavel = produto_local.getStocavel().equals( "true" );
@@ -2934,7 +2934,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             ex.printStackTrace();
             txtQuantidadeStock.setText( "0" );
             Logger
-                    .getLogger(VendaUsuarioVisao.class
+                    .getLogger( VendaUsuarioVisao.class
                             .getName() ).log( Level.SEVERE, null, ex );
         }
 
@@ -2974,7 +2974,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         {
             ex.printStackTrace();
             Logger
-                    .getLogger(VendaUsuarioVisao.class
+                    .getLogger( VendaUsuarioVisao.class
                             .getName() ).log( Level.SEVERE, null, ex );
         }
     }
@@ -3012,7 +3012,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         {
             ex.printStackTrace();
             Logger
-                    .getLogger(VendaUsuarioVisao.class
+                    .getLogger( VendaUsuarioVisao.class
                             .getName() ).log( Level.SEVERE, null, ex );
         }
 
@@ -3027,7 +3027,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
                 if ( !isProdutoExpirado( getCodigoProduto() ) )
                 {
-                    TbProduto produtoLocal = (TbProduto) produtosController.findById( getCodigoProduto() );
+                    TbProduto produtoLocal = ( TbProduto ) produtosController.findById( getCodigoProduto() );
                     if ( isStocavel( produtoLocal.getStocavel() ) )
                     {
                         if ( possivel_quantidade() )
@@ -3145,7 +3145,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         double qtd = 0d;
         double qtd_aceite = 0d;
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         boolean transtorno = false;
 
         for ( int i = 0; i < table.getRowCount(); i++ )
@@ -3153,7 +3153,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
             cod_produto = Integer.parseInt( String.valueOf( table.getModel().getValueAt( i, 0 ) ) );
             qtd = Double.parseDouble( String.valueOf( table.getModel().getValueAt( i, 4 ) ) );
-            TbProduto produto_local = (TbProduto) produtosController.findById( cod_produto );
+            TbProduto produto_local = ( TbProduto ) produtosController.findById( cod_produto );
             boolean stocavel = produto_local.getStocavel().equals( "true" ) ? true : false;
 
             if ( !possivel_quantidade( cod_produto, qtd ) && stocavel )
@@ -3165,7 +3165,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 if ( qtd_aceite != 0 )
                 {
 
-                    TbProduto produto = (TbProduto) produtosController.findById( getCodigoProduto() );
+                    TbProduto produto = ( TbProduto ) produtosController.findById( getCodigoProduto() );
                     int opcao = JOptionPane.showConfirmDialog( null, "Desculpe pelo transtorno"
                             + ", o produto " + produto.getDesignacao() + " só é possivel  a " + qtd_aceite + " quantidade(s)" + ", contrariamente de " + qtd + "\n Deseja actualizar(Yes) ou remover da tabela(No) ?" );
 
@@ -3399,7 +3399,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     public static Double getPreco( int idProduto, double qtd, int idMoeda )
     {
 
-        Moeda moeda = (Moeda) moedasController.findById( idMoeda );
+        Moeda moeda = ( Moeda ) moedasController.findById( idMoeda );
         if ( moeda == null )
         {
             return null;
@@ -3430,14 +3430,14 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     public static String getDescricao_Produto()
     {
-        TbProduto produto = (TbProduto) produtosController.findById( getCodigoProduto() );
+        TbProduto produto = ( TbProduto ) produtosController.findById( getCodigoProduto() );
         return produto.getDesignacao();
     }
 
     public static String getUnidade_Produto()
     {
-        TbProduto produto = (TbProduto) produtosController.findById( getCodigoProduto() );
-        Unidade unidade = (Unidade) unidadesController.findById( produto.getCodUnidade().getPkUnidade() );
+        TbProduto produto = ( TbProduto ) produtosController.findById( getCodigoProduto() );
+        Unidade unidade = ( Unidade ) unidadesController.findById( produto.getCodUnidade().getPkUnidade() );
         return unidade.getAbreviacao();
     }
 
@@ -3497,7 +3497,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         {
             double desconto = 0.0;
             double total_pagar = getTotalPagar();
-            double valor_desconto_geral = (double) sp_desconto_financeiro.getValue();
+            double valor_desconto_geral = ( double ) sp_desconto_financeiro.getValue();
 
             if ( valor_desconto_geral > total_pagar )
             {
@@ -3640,8 +3640,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     {
         try
         {
-            documento = (Documento) documentosController.findById( getIdDocumento() );
-            anoEconomico = (AnoEconomico) anoEconomicoController.findById( getIdAnoEconomico() );
+            documento = ( Documento ) documentosController.findById( getIdDocumento() );
+            anoEconomico = ( AnoEconomico ) anoEconomicoController.findById( getIdAnoEconomico() );
             // this.doc_prox_cod = documento.getCodUltimoDoc() + 1;
             doc_prox_cod = vendasController.getUltimaContagemByIdDocumentoAndAnoEconomico(
                     getIdDocumento(), getIdAnoEconomico() ) + 1;
@@ -3794,7 +3794,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 }
                 catch ( Exception ex )
                 {
-                    Logger.getLogger(VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
+                    Logger.getLogger( VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
                 }
 
             }
@@ -3828,7 +3828,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 }
                 catch ( Exception ex )
                 {
-                    Logger.getLogger(VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
+                    Logger.getLogger( VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
                 }
 
             }
@@ -3917,7 +3917,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
 //        boolean editarpreco = dadosInstituicao_local.getEditarPreco();
         boolean editarpreco = true;
-        TbUsuario usuario = (TbUsuario) usuariosController.findById( cod_usuario );
+        TbUsuario usuario = ( TbUsuario ) usuariosController.findById( cod_usuario );
         if ( usuario.getIdTipoUsuario().getIdTipoUsuario() == 1 && editarpreco )
         {
             setEditableColunaPreco( true );
@@ -4033,7 +4033,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //    }
     public static void adicionar_produto( String mes ) throws SQLException
     {
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         int codigo_produto = getCodigoProduto();
 
         String descricao_produto = getDescricao_Produto();
@@ -4097,9 +4097,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 // Impressão de ticket (cozinha ou sala)
                 TbProduto findByDesignacao = produtosController.findByDesignacao( cmbProduto.getSelectedItem().toString() );
                 int idPedido = 0;
-                TbMesas mesaEntity = (TbMesas) mesasController.findById( DVML.MESA_BALCAO );
-                TbLugares lugarEntity = (TbLugares) lugaresController.findById( DVML.LUGAR_BALCAO );
-                TbUsuario usuarioEntity = (TbUsuario) usuariosController.findById( cod_usuario );
+                TbMesas mesaEntity = ( TbMesas ) mesasController.findById( DVML.MESA_BALCAO );
+                TbLugares lugarEntity = ( TbLugares ) lugaresController.findById( DVML.LUGAR_BALCAO );
+                TbUsuario usuarioEntity = ( TbUsuario ) usuariosController.findById( cod_usuario );
                 String usuario = usuarioEntity.getNome();
 
                 if ( findByDesignacao.getCozinha().equals( DVML.ENVIAR_TICKET ) )
@@ -4244,7 +4244,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     public void remover_item_carrinho()
     {
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
 
         String designacao = modelo.getValueAt( table.getSelectedRow(), 1 ).toString();
         if ( designacao.contentEquals( "#" ) )
@@ -4261,20 +4261,20 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         TbProduto findByDesignacao = produtosController.findByDesignacao( cmbProduto.getSelectedItem().toString() );
 
         int idPedido = 0;
-        TbMesas mesaEntity = (TbMesas) mesasController.findById( DVML.MESA_BALCAO );
+        TbMesas mesaEntity = ( TbMesas ) mesasController.findById( DVML.MESA_BALCAO );
         String mesa = mesaEntity.getDesignacao();
-        TbLugares lugarEntity = (TbLugares) lugaresController.findById( DVML.LUGAR_BALCAO );
+        TbLugares lugarEntity = ( TbLugares ) lugaresController.findById( DVML.LUGAR_BALCAO );
         String lugar = lugarEntity.getDesignacao();
-        TbUsuario usuarioEntity = (TbUsuario) usuariosController.findById( cod_usuario );
+        TbUsuario usuarioEntity = ( TbUsuario ) usuariosController.findById( cod_usuario );
         String usuario = usuarioEntity.getNome();
 
         if ( findByDesignacao.getCozinha().equals( "Enviar Ticket" ) )
         {
-            MetodosUtil.imprimir_cozinha( findByDesignacao, idPedido, mesa, lugar, usuario, "Cancelado", (int) getQuantidade(), dadosInstituicaoController );
+            MetodosUtil.imprimir_cozinha( findByDesignacao, idPedido, mesa, lugar, usuario, "Cancelado", ( int ) getQuantidade(), dadosInstituicaoController );
         }
         else if ( findByDesignacao.getCozinha().equals( "Enviar Sala" ) )
         {
-            MetodosUtil.imprimir_sala( findByDesignacao, idPedido, mesa, lugar, usuario, "Cancelado", (int) getQuantidade(), dadosInstituicaoController );
+            MetodosUtil.imprimir_sala( findByDesignacao, idPedido, mesa, lugar, usuario, "Cancelado", ( int ) getQuantidade(), dadosInstituicaoController );
         }
 
         valor_por_extenco();
@@ -4286,7 +4286,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     public void adicionar_produto_teclado( int codigo, String descricao ) throws SQLException
     {
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         double total_deconto = Double.parseDouble( String.valueOf( getPreco() ) ) * Double.parseDouble( String.valueOf( getQuantidade() ) );
 
         modelo.addRow( new Object[]
@@ -4356,7 +4356,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         table.getColumnModel().getColumn( 4 );
         table.getColumnModel().getColumn( 5 );
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
 
         for ( int i = modelo.getRowCount() - 1; i >= 0; i-- )
         {
@@ -4373,7 +4373,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static BigDecimal getTotalRetencaoLiquido()
     {
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         BigDecimal totalRetencao = BigDecimal.ZERO;
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
@@ -4391,7 +4391,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     public static double getTotalPagar()
     {
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
 
         double total_pagar = 0;
         for ( int i = 0; i < modelo.getRowCount(); i++ )
@@ -4406,7 +4406,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     public static double getTotal_Retencao()
     {
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
 
         double total_retencao = 0;
         for ( int i = 0; i < modelo.getRowCount(); i++ )
@@ -4420,7 +4420,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static void calculaTotalIVA()
     {
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         BigDecimal totalIva = BigDecimal.ZERO;
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
@@ -4453,7 +4453,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private static void calculaTotalRet()
     {
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         double ret = 0, preco = 0, desconto = 0;
         double qtd = 0d;
         total_ret = 0;
@@ -4505,7 +4505,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         table.getColumnModel().getColumn( 4 );
         table.getColumnModel().getColumn( 5 );
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
 
         double total_pagar = 0;
 
@@ -4654,7 +4654,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     public static void remover_all_produto()
     {
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         for ( int i = modelo.getRowCount() - 1; i >= 0; i-- )
         {
             modelo.removeRow( i );
@@ -4989,7 +4989,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 int idProduto = Integer.parseInt( table.getModel().getValueAt( i, 0 ).toString() );
                 String designacaoItem = table.getModel().getValueAt( i, 1 ).toString();
 
-                TbProduto produto = (TbProduto) produtosController.findById( idProduto );
+                TbProduto produto = ( TbProduto ) produtosController.findById( idProduto );
 
                 TbItemVenda item = new TbItemVenda();
                 item.setCodigoVenda( new TbVenda( cod_venda ) );
@@ -5005,8 +5005,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 item.setTotal( new BigDecimal( CfMethods.parseMoedaFormatada( table.getModel().getValueAt( i, 10 ).toString() ) ) );
                 item.setFkPreco( precosController.getLastIdPrecoByIdProduto( idProduto, item.getQuantidade() ) );
                 item.setDataServico( new Date() );
-                item.setFkLugares( (TbLugares) lugaresController.findById( DVML.LUGAR_BALCAO ) );
-                item.setFkMesas( (TbMesas) mesasController.findById( DVML.MESA_BALCAO ) );
+                item.setFkLugares( ( TbLugares ) lugaresController.findById( DVML.LUGAR_BALCAO ) );
+                item.setFkMesas( ( TbMesas ) mesasController.findById( DVML.MESA_BALCAO ) );
                 item.setDesignacaoItem( designacaoItem );
                 // Salvar item
                 if ( !itemVendasController.salvar( item ) )
@@ -5244,11 +5244,11 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     public static void registrarFormaPagamento( int idVenda, BigDecimal totalVenda, boolean formaNormal ) throws Exception
     {
 
-        if ( !formaNormal )
-        {
-            registrarPagamentoUnico( idVenda, totalVenda );
-            return;
-        }
+//        if ( !formaNormal )
+//        {
+//            registrarPagamentoUnico( idVenda, totalVenda );
+//            return;
+//        }
         registrarPagamentosMultiplos( idVenda );
     }
 
@@ -5265,7 +5265,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             throw new Exception( "Forma de pagamento não encontrada: " + descricao );
         }
 
-        Contas conta = (Contas) contaController.findById( forma.getFkContaAssociada() );
+        Contas conta = ( Contas ) contaController.findById( forma.getFkContaAssociada() );
         FormaPagamentoItem item = criarItemFormaPagamento( idVenda, idForma, valor, BigDecimal.ZERO, referencia );
         if ( !formaPagamentoItemController.salvar( item ) )
         {
@@ -5290,7 +5290,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static void registrarPagamentosMultiplos( int idVenda ) throws Exception
     {
-        DefaultTableModel modelo = (DefaultTableModel) FormaPagamentoVisao.tabela_forma_pagamento.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) FormaPagamentoVisao.tabela_forma_pagamento.getModel();
         BigDecimal troco = CfMethods.parseMoedaSegura( FormaPagamentoVisao.lb_troco.getText() );
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
@@ -5312,8 +5312,11 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 throw new Exception( "Forma de pagamento não encontrada: " + descricao );
             }
 
-            Contas conta = (Contas) contaController.findById( forma.getFkContaAssociada() );
+            Contas conta = ( Contas ) contaController.findById( forma.getFkContaAssociada() );
 
+            System.out.println( "FORMA PAGAMENTO: " +descricao );
+            System.out.println( "FORMA PAGAMENTO VALOR: " +valor );
+            System.out.println( "FORMA PAGAMENTO TROCO: " +troco );
             FormaPagamentoItem item = criarItemFormaPagamento( idVenda, idForma, valor, troco, referencia );
 
             if ( !formaPagamentoItemController.salvar( item ) )
@@ -5371,12 +5374,12 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         List<TbProduto> lista_produto_isentos = getProdutosIsentos();
         String motivos_isentos = MetodosUtil.getMotivoIsensaoProdutos( lista_produto_isentos );
         conexoaLocal.close();
-        int numeroVias = (int) Double.parseDouble( spnCopia.getValue().toString() );
+        int numeroVias = ( int ) Double.parseDouble( spnCopia.getValue().toString() );
 
         for ( int i = 1; i <= numeroVias; i++ )
         {
             String via;
-            switch ( i )
+            switch (i)
             {
                 case 1:
                     via = "Original";
@@ -5457,7 +5460,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     {
         try
         {
-            TbCliente cliente = (TbCliente) clientesController.findById( getIdCliente() );
+            TbCliente cliente = ( TbCliente ) clientesController.findById( getIdCliente() );
 
             String nif = cliente.getNif();
             System.out.println( "NIF CLIENTE: " + nif );
@@ -5755,8 +5758,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             anoEconomicoController = new AnoEconomicoController( conexaoLocal );
             vendasController = new VendasController( conexaoLocal );
 
-            documento = (Documento) documentosController.findById( getIdDocumento( documentosController ) );
-            anoEconomico = (AnoEconomico) anoEconomicoController.findById( getIdAnoEconomico( anoEconomicoController ) );
+            documento = ( Documento ) documentosController.findById( getIdDocumento( documentosController ) );
+            anoEconomico = ( AnoEconomico ) anoEconomicoController.findById( getIdAnoEconomico( anoEconomicoController ) );
             doc_prox_cod = vendasController.getUltimaContagemByIdDocumentoAndAnoEconomico(
                     getIdDocumento( documentosController ), getIdAnoEconomico( anoEconomicoController ) ) + 1;
             prox_doc = documento.getAbreviacao();
@@ -5781,8 +5784,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             documentosController = new DocumentosController( conexao );
             anoEconomicoController = new AnoEconomicoController( conexao );
 
-            documento = (Documento) documentosController.findById( getIdDocumento() );
-            anoEconomico = (AnoEconomico) anoEconomicoController.findById( getIdAnoEconomico() );
+            documento = ( Documento ) documentosController.findById( getIdDocumento() );
+            anoEconomico = ( AnoEconomico ) anoEconomicoController.findById( getIdAnoEconomico() );
             doc_prox_cod = vendasController.getUltimaContagemByIdDocumentoAndAnoEconomico(
                     getIdDocumento(), getIdAnoEconomico() ) + 1;
             prox_doc = documento.getAbreviacao();
@@ -5813,7 +5816,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getTaxaImposto( int idProduto )
     {
-        TbProduto produto = (TbProduto) produtosController.findById( idProduto );
+        TbProduto produto = ( TbProduto ) produtosController.findById( idProduto );
         //verifca o artigo se eh produto ou servico.
         if ( produto.getStocavel().equals( "true" ) )
         {
@@ -5869,8 +5872,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getValorComImposto( double qtd, double taxa, double preco_venda, double desconto )
     {
-        double subtotal_linha = ( preco_venda * qtd );
-        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
+        double subtotal_linha = (preco_venda * qtd);
+        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
         double valor_iva = 1 + ( taxa / 100 );//
         return ( ( subtotal_linha - desconto_valor ) * valor_iva );
     }
@@ -5894,8 +5897,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getRET( double qtd, double taxa_r, double preco_venda, double desconto )
     {
-        double subtotal_linha = ( preco_venda * qtd );
-        double valor_ret = ( taxa_r / 100 );//
+        double subtotal_linha = (preco_venda * qtd);
+        double valor_ret = (taxa_r / 100);//
         return ( ( subtotal_linha - desconto ) * valor_ret );
 
     }
@@ -5934,7 +5937,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private void actualizar_abreviacao()
     {
 
-        switch ( getIdDocumento() )
+        switch (getIdDocumento())
         {
             case DVML.DOC_FACTURA_RECIBO_FR:
                 if ( ck_A4.isSelected() )
@@ -6028,7 +6031,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static Moeda getMoeda()
     {
-        String moedaSelecionada = (String) cmbMoeda.getSelectedItem();
+        String moedaSelecionada = ( String ) cmbMoeda.getSelectedItem();
 
         if ( moedaSelecionada == null )
         {
@@ -6042,7 +6045,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private void refresh_table()
     {
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
 
         double preco = 0, desconto = 0, sub_total_linha = 0, sub_total_linha_com_iva = 0, taxa = 0, taxa_r = 0, sub_total_linha_retencao = 0;
         int idProduto, qtd;
@@ -6099,8 +6102,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private static void refresh_table( int idMoeda )
     {
 
-        Moeda moeda_local = (Moeda) moedasController.findById( idMoeda );
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        Moeda moeda_local = ( Moeda ) moedasController.findById( idMoeda );
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
 
         double preco = 0, desconto = 0, sub_total_linha = 0, sub_total_linha_com_iva = 0, taxa = 0, taxa_r = 0;
         int idProduto, qtd;
@@ -6155,7 +6158,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private double getValorTotalDescontoLinha()
     {
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
 
         double desconto_linha = 0;
 
@@ -6205,7 +6208,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         {
 
             //busca o objecto para retirar apenas a data do seu procesamento
-            TbVenda venda_local = (TbVenda) vendasController.findById( cod_ultima_venda );
+            TbVenda venda_local = ( TbVenda ) vendasController.findById( cod_ultima_venda );
             //retirando a data do documebto
             Date data_ultimo_documento = venda_local.getDataVenda();
             //pegando a data do documento (data actual do sistema)
@@ -6279,7 +6282,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static List<TbProduto> getProdutosIsentos()
     {
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         double taxa = 0.0;
         int codigo_produto = 0;
         List<TbProduto> lista_produtos_isentos = new ArrayList<>();
@@ -6289,7 +6292,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             taxa = Double.parseDouble( modelo.getValueAt( i, 6 ).toString() );
             if ( taxa == 0.0 )
             {
-                lista_produtos_isentos.add( (TbProduto) produtosController.findById( codigo_produto ) );
+                lista_produtos_isentos.add( ( TbProduto ) produtosController.findById( codigo_produto ) );
             }
         }
 
@@ -6359,7 +6362,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //    }
     private static double getTotalRetencao()
     {
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         double valor_retencao = 0d;
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
@@ -6399,7 +6402,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getTotalRetencao1()
     {
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         double qtd = 0d;
         double imposto = 0d, preco_unitario = 0d, desconto_valor_linha = 0d, valor_taxa = 0d;
 
@@ -6412,7 +6415,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             // a incidência só é aplicável ao produtos sujeitos a iva 
             if ( taxa != 0 )
             {
-                double valor_unitario = ( preco_unitario * qtd );
+                double valor_unitario = (preco_unitario * qtd);
 
                 desconto_valor_linha = valor_unitario * ( ( valor_percentagem ) / 100 );
                 valor_taxa = ( valor_unitario - desconto_valor_linha ) / taxa;
@@ -6478,7 +6481,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getTotalAOARetencoes()
     {
-        double valores = ( getTotalRetencao1() );
+        double valores = (getTotalRetencao1());
         return ( valores );
     }
 
@@ -6486,7 +6489,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     {
         BigDecimal totalIva = BigDecimal.ZERO;
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
         {
@@ -6525,10 +6528,10 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static String iniciais_extenso()
     {
-        Documento documento_local = (Documento) documentosController.findById( getIdDocumento() );
+        Documento documento_local = ( Documento ) documentosController.findById( getIdDocumento() );
         String abreviacao_local = documento_local.getAbreviacao();
 
-        switch ( abreviacao_local )
+        switch (abreviacao_local)
         {
             case "FT":
                 return "Facturamos o valor de: ";
@@ -6546,7 +6549,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         try
         {
 
-            TbCliente cliente = (TbCliente) clientesController.findById( codCliente );
+            TbCliente cliente = ( TbCliente ) clientesController.findById( codCliente );
             String nome_cliente = cliente.getNome();
             cmbCliente.setSelectedItem( nome_cliente.trim() );
             accao_cliente();
@@ -6582,7 +6585,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static boolean verifica_ano_documento_igual_economico()
     {
-        AnoEconomico anoEconomicoLocal = (AnoEconomico) anoEconomicoController.findById( getIdAnoEconomico() );
+        AnoEconomico anoEconomicoLocal = ( AnoEconomico ) anoEconomicoController.findById( getIdAnoEconomico() );
         int ano_economico = Integer.parseInt( anoEconomicoLocal.getDesignacao() );
         int ano_documento = dc_data_documento.getDate().getYear() + 1900;
         return ano_documento == ano_economico;
@@ -6968,8 +6971,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             int codProduto = Integer.parseInt( table.getValueAt( linha_actual, 0 ).toString() );
             double desconto = Double.parseDouble( table.getValueAt( linha_actual, 5 ).toString() );
 
-            TbProduto produtoLocal = (TbProduto) produtosController.findById( codProduto );
-            TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById( produtoLocal.getCodTipoProduto().getCodigo() );
+            TbProduto produtoLocal = ( TbProduto ) produtosController.findById( codProduto );
+            TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutoController.findById( produtoLocal.getCodTipoProduto().getCodigo() );
 
             double qtd;
 
@@ -7095,11 +7098,11 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
         int idPrecoRetalho = PrecosController.getLastIdPrecoByIdProdutoIntAndQTD( idProduto, 1d, conexaoTransaction );
         System.out.println( "ID RETALHO: " + idPrecoRetalho );
-        TbPreco precoAntigoRetalho = (TbPreco) precosControllerLocal.findById( idPrecoRetalho );
+        TbPreco precoAntigoRetalho = ( TbPreco ) precosControllerLocal.findById( idPrecoRetalho );
         System.out.println( "PRECO RETALHO: " + precoAntigoRetalho );
 
         int idPrecoGrosso = PrecosController.getLastIdPrecoByIdProdutoIntAndPrecoAntigoQtdAlto( idProduto, precoAntigoRetalho.getQtdAlto() + 1, conexaoTransaction );
-        TbPreco precoAntigoGrosso = (TbPreco) precosControllerLocal.findById( idPrecoGrosso );
+        TbPreco precoAntigoGrosso = ( TbPreco ) precosControllerLocal.findById( idPrecoGrosso );
         System.out.println( "ID GROSSO: " + idPrecoGrosso );
         System.out.println( "PRECO GROSSO: " + precoAntigoGrosso );
 

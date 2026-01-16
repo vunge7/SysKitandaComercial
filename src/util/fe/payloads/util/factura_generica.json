@@ -1,0 +1,65 @@
+{
+    "schemaVersion": "1.2",
+    "submissionUUID": "905f3050-eba7-4532-895b-fa591b361ac7",
+    "taxRegistrationNumber": "5000413178",
+    "submissionTimeStamp": "2025-12-30T13:09:00Z",
+    "softwareInfo": {
+        "softwareInfoDetail": {
+            "productId": "Kitanda",
+            "productVersion": "1.1",
+            "softwareValidationNumber": "FE/196/AGT/2025"
+        },
+        "jwsSoftwareSignature": "eyJhbGciOiJSUzI1NiJ9.eyJwcm9kdWN0VmVyc2lvbiI6IjEuMSIsInByb2R1Y3RJZCI6IktpdGFuZGEiLCJzb2Z0d2FyZVZhbGlkYXRpb25OdW1iZXIiOiJGRS8xOTYvQUdULzIwMjUifQ.MSbEY5zxWOTCBAgkrtflD5TK6dZb0Kc44QxG6tBzYYfB9c9hynIPZuE1fnJKmy8H7uvTeeWXO2eoVa2QpI4d8T_iBtASOJgmF-az28pW69hFCnnW-hIXMgHOToYILYwqEMD0tX34vIAj1ZKOcFtc99rWG3YnN-lKTw_nePNFF2TVXc0HE4F7-phmMZyjutiJnEoPcDQoKLjDoKv8FlYw_ek0I15ZctOkvPLZ2OEjQZUPf5prt7Hipi5n8VB3Pv5709o_kG6p82bXcV3E7FKgn5WAUA-oz3Gih-WPt2reDL2P7ILuaTDLIBw_IHP1SySQgKikiloYkTvaTymPgm7U8g"
+    },
+
+    "numberOfEntries": 1,
+    "documents": [
+        {
+            "documentNo": "GF GF7825S36N/2",
+            "documentStatus": "N",
+            "jwsDocumentSignature": "eyJhbGciOiJSUzI1NiJ9.eyJkb2N1bWVudE5vIjoiR0YgR0Y3ODI1UzM2Ti8yIiwidGF4UmVnaXN0cmF0aW9uTnVtYmVyIjoiNTAwMDQxMzE3OCIsImRvY3VtZW50VHlwZSI6IkdGIiwiZG9jdW1lbnREYXRlIjoiMjAyNS0xMi0zMCIsImN1c3RvbWVyVGF4SUQiOiJQVDk4NzY1NDMyMSIsImN1c3RvbWVyQ291bnRyeSI6IlBUIiwiY29tcGFueU5hbWUiOiJDbGllbnRlIEV4ZW1wbG8gTGRhIiwiZG9jdW1lbnRUb3RhbHMiOnsidGF4UGF5YWJsZSI6NzAsIm5ldFRvdGFsIjo1MDAsImdyb3NzVG90YWwiOjU3MH19.n0L1Zmk1TCEY0LOHUnR3M5Y10vAVJEXsI516-se1mkk_kCATw7kgRWIdMn6q9pztrKIxXgq3D8F4pkdcuuHnBRgzdcqITOfgK8hhVLjALNAo7QvgoBxF11wSvh3Qn5XuoqyJ0jMhXE55NWgNPvqou3RTih3rWVATw5rQKjgclGA3gAyCTrSO5IHWq2UesA7g5XKeXJF5DeTFU1QfatLx5En_nqVopYb8ihhUiyPFV2GNYd9Nk6xT_SVSo1xEDnSzq-8L6C5M1BIl-qkDGjmcrYYEbWlvdFTvury-iQa-krup6GwrNkA0Q9a99uURZPDpmDkvcNrmOJxrqY19R2DPWA",
+            "documentDate": "2025-12-30",
+            "documentType": "GF",
+            "eacCode": "12345",
+            "systemEntryDate": "2025-12-30T13:09:00Z",
+            "customerTaxID": "PT987654321",
+            "customerCountry": "PT",
+            "companyName": "Cliente Exemplo Lda",
+            "lines": [
+                {
+                    "lineNumber": 1,
+                    "productCode": "PROD001",
+                    "productDescription": "Produto Exemplo 1",
+                    "quantity": 2,
+                    "unitOfMeasure": "UN",
+                    "unitPrice": 250,
+                    "unitPriceBase": 250,
+                    "debitAmount": 0,
+                    "creditAmount": 500,
+                    "taxes": [
+                        {
+                            "taxType": "IVA",
+                            "taxCountryRegion": "AO",
+                            "taxCode": "NOR",
+                            "taxPercentage": 14,
+                            "taxContribution": 70
+                        }
+                    ],
+                    "settlementAmount": 0
+                }
+            ],
+            "documentTotals": {
+                "taxPayable": 70,
+                "netTotal": 500,
+                "grossTotal": 570
+            },
+            "withholdingTaxList": [
+                {
+                    "withholdingTaxType": "IRT",
+                    "withholdingTaxDescription": "Retenção na fonte",
+                    "withholdingTaxAmount": 16.5
+                }
+            ]
+        }
+    ]
+}
