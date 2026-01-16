@@ -1832,7 +1832,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
 
         if ( true )
         {
-                        conexaoTransaction = BDConexao.getInstancia();
+            conexaoTransaction = BDConexao.getInstancia();
             DocumentosController.start( conexaoTransaction );
             TbVenda salvar_venda = salvar_venda();
 
@@ -2599,11 +2599,136 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
         }
     }
 
+//    public static void procedimento_salvar_pedidos_iten_pedidos( String designacao_produto )
+//    {
+//        BDConexao conexaoTransactionLocal = BDConexao.getInstancia();
+//        DocumentosController.start( conexaoTransactionLocal );
+//        try
+//        {
+//
+//            int codigoProduto = produtoDao.getIdByDescricao( designacao_produto );
+//            TbProduto produto = produtoDao.findTbProduto( codigoProduto );
+//
+//            // =============================
+//            // STOCK VISUAL (UI)
+//            // =============================
+//            if ( "true".equals( produto.getStocavel() )
+//                    && produto.getCodTipoProduto().getFkFamilia().getPkFamilia() == DVML.COD_PRODUTO )
+//            {
+//                lbQuantidadeExistente.setVisible( true );
+//                txtQuatidadeExistente.setVisible( true );
+//                txtQuatidadeExistente.setText(
+//                        String.valueOf( conexao.getQtdExistenteStock( codigoProduto, getCodigoArmazem() ) )
+//                );
+//            }
+//            else
+//            {
+//                lbQuantidadeExistente.setVisible( false );
+//                txtQuatidadeExistente.setVisible( false );
+//                txtQuatidadeExistente.setText( "" );
+//            }
+//
+//            // =============================
+//            // BUSCAR PEDIDO ATIVO
+//            // =============================
+//            int codPedido = pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa, conexao );
+//
+////            if ( codPedido == 0 )
+////            {
+////                throw new IllegalStateException( "Nenhum pedido aberto para esta mesa" );
+////            }
+//
+//            TbPedido pedido = pedidoDao.findTbPedido( codPedido );
+//
+//            // =============================
+//            // CRIAR ITEM
+//            // =============================
+//            TbItemPedidos item = new TbItemPedidos();
+//            item.setFkPedidos( pedido );
+//            item.setFkProdutos( produto );
+//            item.setFkLugares( (TbLugares) lugaresController.findByLugar( lugar ) );
+//            item.setQtd( 1 );
+//            item.setObs( "" );
+//            item.setDataEntrega( new Date() );
+//            item.setStatusConvertido( false );
+//            item.setStatusEnviado( true );
+//            item.setStatusEfectuado( false );
+//
+//            BigDecimal precoVenda = precoDao
+//                    .findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( produto.getCodigo() ) )
+//                    .getPrecoVenda();
+//
+//            item.setPreco( precoVenda.doubleValue() );
+//            item.setTotalItem( precoVenda.multiply( BigDecimal.valueOf( item.getQtd() ) ).doubleValue() );
+//
+//            // =============================
+//            // VALIDAÇÕES DE STOCK
+//            // =============================
+//            if ( !possivel_quantidade( produto.getCodigo() ) )
+//            {
+//                throw new IllegalStateException(
+//                        "Quantidade insuficiente para o produto: " + designacao_produto
+//                );
+//            }
+//
+////            if ( produto.getCodTipoProduto().getFkFamilia().getPkFamilia() == DVML.COD_PRODUTO )
+////            {
+//////                if ( estado_critico( produto.getCodigo() ) )
+//////                {
+//////                    JOptionPane.showMessageDialog(
+//////                            null,
+//////                            "O produto: " + designacao_produto + " está em estado crítico de stock",
+//////                            "AVISO",
+//////                            JOptionPane.WARNING_MESSAGE
+//////                    );
+//////                }
+////            }
+//
+//            // =============================
+//            // GRAVAR ITEM (DAO)
+//            // =============================
+//            Integer idItem = itemPedidosDao.criarComProcedimentoLav( item, conexao );
+//
+//            if ( idItem == null )
+//            {
+//                throw new SQLException( "Falha ao inserir ItemPedido" );
+//            }
+//
+//            // =============================
+//            // COMMIT
+//            // =============================
+//            DocumentosController.commit( conexaoTransactionLocal );
+//
+//            actualizar(); // UI
+//
+//        }
+//        catch ( Exception e )
+//        {
+//            try
+//            {
+//                DocumentosController.rollback( conexaoTransactionLocal );
+//            }
+//            catch ( Exception ex )
+//            {
+//                ex.printStackTrace();
+//            }
+//
+//            JOptionPane.showMessageDialog(
+//                    null,
+//                    e.getMessage(),
+//                    "Erro ao salvar item do pedido",
+//                    JOptionPane.ERROR_MESSAGE
+//            );
+//        }
+//    }
     public static void procedimento_salvar_pedidos_iten_pedidos( String designacao_produto )
     {
+        BDConexao conexaoTransactionLocal = BDConexao.getInstancia();
+        DocumentosController.start( conexaoTransactionLocal );
 
         try
         {
+
             /* MOSTRA A QUANTIDADE NO STOCK */
             int codigo_produto = produtoDao.getIdByDescricao( designacao_produto );
 
@@ -2624,23 +2749,29 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
             }
 
             TbItemPedidos itemPedidosLocal = new TbItemPedidos();
-            int cod_pedido = pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa, conexao );
+            int cod_pedido = pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa, conexaoTransactionLocal
+            
+            
+            );
 
+//            itemPedidosLocal.setFkLugares(
+//                    (TbLugares) lugaresController.findByLugar( lugar )
+//            );
             System.err.println( "$$$$CODIGO PEDIDO ACTUAL: " + cod_pedido );
             pedido = pedidoDao.findTbPedido( cod_pedido );
             itemPedidosLocal.setFkLugares( (TbLugares) lugaresController.findByLugar( lugar ) );
-//            itemPedidosLocal.setFkLugares( lugarDao.findTbLugares( lugarDao.getIdByDescricao( getDescricaoLugar() ) ) );
             itemPedidosLocal.setFkProdutos( produtoDao.findTbProduto( produtoDao.getIdByDescricao( designacao_produto ) ) );
             itemPedidosLocal.setQtd( 1 );
             itemPedidosLocal.setObs( "" );
             itemPedidosLocal.setDataEntrega( new Date() );
             itemPedidosLocal.setStatusConvertido( false );
             /*Envia para a área da cozinha*/
-            //para enviar  da cozinha
             itemPedidosLocal.setStatusEnviado( true );
             //para saber se o prato ja foi feito 
             itemPedidosLocal.setStatusEfectuado( false );
 
+            double preco = precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( itemPedidosLocal.getFkProdutos().getCodigo() ) ).getPrecoVenda().doubleValue();
+            itemPedidosLocal.setPreco( preco );
             double total = itemPedidosLocal.getQtd() * precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( itemPedidosLocal.getFkProdutos().getCodigo() ) ).getPrecoVenda().doubleValue();
             itemPedidosLocal.setTotalItem( total );
             itemPedidosLocal.setFkPedidos( pedido );
@@ -2661,7 +2792,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
                     }
 
 //#ped2z
-                    Integer idLastItemPedido = itemPedidosDao.criarComProcedimento( itemPedidosLocal, conexao );
+                    Integer idLastItemPedido = itemPedidosDao.criarComProcedimentoLav( itemPedidosLocal, conexaoTransactionLocal );
 
                     if ( idLastItemPedido != null )
                     {
@@ -2783,15 +2914,6 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
                 Integer idLastPedido = pedidoDao.criarComProcedimentos( pedido_2, conexao );
                 System.out.println( "$$$$$$ SALVAR NOVO PEDIDO >  " + idLastPedido );
 
-//                if ( idLastPedido != null )
-//                {
-//                    PrincipalPedidosVisao.mesas_livres( getLabelMesaByMesa() );
-//                    PrincipalPedidosVisao.pintar_mesas( getLabelMesaByMesa(), this.mesa );
-//                }
-//                else
-//                {
-//                    System.err.println( "ERRO AO SALVAR O PEDIDO...." );
-//                }
             }
             catch ( Exception e )
             {
@@ -2806,54 +2928,26 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
 
     }
 
-//    public static void setSalvarPedidoPosVenda( BDConexao conexaoParm )
-//    {
-//
-//        if ( true )
+    public static void setSalvarPedidoPosVenda( BDConexao conexaoParm )
+    {
+
+//        System.out.println( "ID PEDIDO : " + pedidoDao.getLastPedidoByDefignacaoMesaSemStatus( mesa ) );
+//        TbPedido pedido_local;
+//        //busca o último pedido de uma determinada mesa, senão existe instancia um pedido como 
+//        if ( pedidoDao.getLastPedidoByDefignacaoMesaSemStatus( mesa ) == 0 )
 //        {
-//            try
-//            {
-//                TbPedido pedido_2 = new TbPedido();
-//                pedido_2.setDataPedido( new Date() );
-//                pedido_2.setHoraPedido( new Date() );
-//                pedido_2.setStatusPedido( false );
-//                pedido_2.setFkMesas( mesasDao.findTbMesas( mesasDao.getIdByDescricao( mesa ) ) );
-//            
-//                Integer idLastPedido = pedidoDao.criarComProcedimentos( pedido_2, conexaoParm );
-//                System.out.println( "$$$$$$ SALVAR NOVO PEDIDO >  " + idLastPedido );
-//            }
-//            catch ( Exception e )
-//            {
-//                e.printStackTrace();
-//            }
+//
+//            pedido_local = new TbPedido();
+//            pedido_local.setStatusPedido( true );
 //
 //        }
 //        else
 //        {
-//            //JOptionPane.showMessageDialog(null, "Não Houve Feicho");
+//            pedido_local = pedidoDao.findTbPedido( pedidoDao.getLastPedidoByDefignacaoMesaSemStatus( mesa ) );
 //        }
-//
-//    }
-    
-    public static void setSalvarPedidoPosVenda( BDConexao conexaoParm )
-    {
 
-        System.out.println( "ID PEDIDO : " + pedidoDao.getLastPedidoByDefignacaoMesaSemStatus( mesa ) );
-        TbPedido pedido_local;
-        //busca o último pedido de uma determinada mesa, senão existe instancia um pedido como 
-        if ( pedidoDao.getLastPedidoByDefignacaoMesaSemStatus( mesa ) == 0 )
-        {
-
-            pedido_local = new TbPedido();
-            pedido_local.setStatusPedido( true );
-
-        }
-        else
-        {
-            pedido_local = pedidoDao.findTbPedido( pedidoDao.getLastPedidoByDefignacaoMesaSemStatus( mesa ) );
-        }
-
-        if ( pedido_local.getStatusPedido() )
+      
+        if ( true)
         {
             try
             {
@@ -2863,8 +2957,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
                 pedido_2.setHoraPedido( new Date() );
                 pedido_2.setStatusPedido( false );
                 pedido_2.setFkMesas( mesasDao.findTbMesas( mesasDao.getIdByDescricao( mesa ) ) );
-              
-                Integer idLastPedido = pedidoDao.criarComProcedimentos( pedido_2, conexao );
+
+                Integer idLastPedido = pedidoDao.criarComProcedimentos( pedido_2, conexaoParm );
             }
             catch ( Exception e )
             {
@@ -3913,10 +4007,12 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
             }
             JOptionPane.showMessageDialog( null, "Factura efectuada com sucesso!.." );
             limpar();
+//            setSalvarPedidos();
             txtObs.setText( "" );
             txtTotalApagar.setText( "" );
             txtTotalQTD.setText( "" );
             TbPedido pedido = pedidoDao.findTbPedido( pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa ) );
+            System.out.println( " VARIAVEL PEDIDO: " + pedido );
             PedidoDao.eliminarPedido( pedido, conexaoTransaction ); // Elimina o pedido
             setSalvarPedidoPosVenda( conexaoTransaction );
 

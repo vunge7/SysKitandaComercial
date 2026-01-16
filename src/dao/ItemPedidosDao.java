@@ -528,6 +528,99 @@ public class ItemPedidosDao extends TbItemPedidosJpaController
         return null;
 
     }
+    
+    public Integer criarComProcedimentoLav(TbItemPedidos itemPedido, BDConexao conexao)
+{
+    // =========================
+    // 1. VALIDAÇÕES OBRIGATÓRIAS
+    // =========================
+    if (itemPedido == null) {
+        throw new IllegalArgumentException("ItemPedido é null");
+    }
+
+    if (itemPedido.getFkLugares() == null) {
+        throw new IllegalStateException("fk_lugares não definido");
+    }
+
+    if (itemPedido.getFkProdutos() == null) {
+        throw new IllegalStateException("fk_produto não definido");
+    }
+
+    if (itemPedido.getFkPedidos() == null) {
+        throw new IllegalStateException("fk_pedido não definido");
+    }
+
+    if (itemPedido.getDataEntrega() == null) {
+        throw new IllegalStateException("data_entrega não definida");
+    }
+
+    if (itemPedido.getPreco() == 0) {
+        throw new IllegalStateException("preço não definido");
+    }
+
+    if (itemPedido.getTotalItem() == 0) {
+        throw new IllegalStateException("total_item não definido");
+    }
+
+    // =========================
+    // 2. VALORES LOCAIS (SAFE)
+    // =========================
+    int idLugar   = itemPedido.getFkLugares().getPkLugares();
+    int idProduto = itemPedido.getFkProdutos().getCodigo();
+    int idPedido  = itemPedido.getFkPedidos().getPkPedido();
+    double qtd       = itemPedido.getQtd();
+
+    int statusConvertido = itemPedido.getStatusConvertido() ? 1 : 0;
+    int statusEnviado    = itemPedido.getStatusEnviado() ? 1 : 0;
+    int statusEfectuado  = itemPedido.getStatusEfectuado() ? 1 : 0;
+
+    String dataEntrega = MetodosUtil.getDataBancoFull(itemPedido.getDataEntrega());
+    String obs         = itemPedido.getObs() != null ? itemPedido.getObs() : "";
+
+    double preco       = itemPedido.getPreco();
+    double totalItem   = itemPedido.getTotalItem();
+
+    // =========================
+    // 3. QUERY FINAL (SEGURA)
+    // =========================
+    String inserirVendaQuery =
+        "select ITEM_PEDIDO_CRIAR ( " +
+            idLugar + ", " +
+            idProduto + ", " +
+            qtd + ", " +
+            idPedido + ", " +
+            statusConvertido + ", " +
+            totalItem + ", " +
+            statusEnviado + ", " +
+            statusEfectuado + ", " +
+            "'" + dataEntrega + "', " +
+            "'" + obs.replace("'", "''") + "', " +
+            preco +
+        " ) as ID";
+
+    System.err.println("Query ITEM_PEDIDO: " + inserirVendaQuery);
+
+    // =========================
+    // 4. EXECUÇÃO
+    // =========================
+    ResultSet resultSet = conexao.executeQuery(inserirVendaQuery);
+
+    try
+    {
+        if (resultSet != null && resultSet.next())
+        {
+            return resultSet.getInt("ID");
+        }
+    }
+    catch (SQLException ex)
+    {
+        Logger.getLogger(ItemPedidosDao.class.getName())
+              .log(Level.SEVERE, null, ex);
+    }
+
+    return null;
+}
+
 
     public Integer criarComProcedimentoLugar( TbItemPedidos itemPedido, BDConexao conexao )
     {

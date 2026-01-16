@@ -783,7 +783,7 @@ public class EntregaLavandariaVisao extends javax.swing.JFrame
         nota_levantamento.setIdArmazemFK( venda.getIdArmazemFK() );
         nota_levantamento.setCodigoUsuario( venda.getCodigoUsuario() );
         nota_levantamento.setCodigoCliente( venda.getCodigoCliente() );
-        nota_levantamento.setFkAnoEconomico( venda.getFkAnoEconomico() );
+        nota_levantamento.setFkAnoEconomico( new AnoEconomico(getIdAnoEconomico()) );
         nota_levantamento.setReferencia( venda.getReferencia() );
         nota_levantamento.setNomeConsumidorFinal( venda.getNomeConsumidorFinal() );
 

@@ -2709,9 +2709,6 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
     public static void procedimento_salvar_pedidos_iten_pedidos_lugar_desactivo( String designacao_produto )
     {
-
-//        if ( stock_local.getCodigo() != 0  )
-//        {
         try
         {
 
@@ -2719,12 +2716,6 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
             int codigo_produto = produtoDao.getIdByDescricao( designacao_produto );
 
             TbProduto produto_local = produtoDao.findTbProduto( codigo_produto );
-//            TbStock stock = stockDao.getStockByDescricao( codigo_produto, id_armzem );
-
-//            if ( stock.getCodigo() != 0)
-//            {
-            // txtQuatidadeExistente.setText( String.valueOf(  stock.getQuantidadeExistente() ) );           
-//            if ( stock.getCodProdutoCodigo().getStocavel().equals( "true" ) )
             if ( produto_local.getStocavel().equals( "true" ) && produto_local.getCodTipoProduto().getFkFamilia().getPkFamilia() == DVML.COD_PRODUTO )
             {
                 lbQuantidadeExistente.setVisible( true );
@@ -2764,7 +2755,6 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
             itemPedidosLocal.setDataEntrega( new Date() );
             itemPedidosLocal.setStatusConvertido( false );
             /*Envia para a área da cozinha*/
-            //para enviar  da cozinha
             itemPedidosLocal.setStatusEnviado( true );
             //para saber se o prato ja foi feito 
             itemPedidosLocal.setStatusEfectuado( false );
@@ -2802,32 +2792,13 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                         System.out.println( "VALOR MESA A PINTAR: " + mesa );
                         //adiciona os produtos na tabela
                         actualizar();
-                        //imprimir para a cozinha
-//                        if ( itemPedidosLocal.getFkProdutos().getCodTipoProduto().getFkFamilia().getPkFamilia() == DVML.COD_SERVICO )
-//                        if ( itemPedidosLocal.getFkProdutos().getCozinha().equals(DVML.ENVIAR_TICKET ) );
-//                        {
-//                            System.err.println( "PK_ITEM_PEDIDO_LOCAL" + idLastItemPedido );
-////                      new ImprimirCozinha( itemPedidosLocal.getFkPedidos().getPkPedido(), itemPedidosLocal.getFkProdutos().getCodigo() );
-////                            new Cozinha( idLastItemPedido );
-//
-//
-//
-//                            MetodosUtil.imprimir_cozinha( itemPedidosLocal.getFkProdutos(),
-//                                    "Activo", itemPedidosLocal.getQtd(),
-//                                    dadosInstituicaoController );
-//                            
-//                            
-//                        }
 
                         int idPedido = 0;
 
                         TbLugares lugarEntity = (TbLugares) lugaresController.findById( DVML.LUGAR_BALCAO );
-//                        TbLugares lugarEntity = ( TbLugares ) lugaresController.findById( itemPedidosLocal.getFkLugares().getPkLugares() );
                         String lugarLocal = lugarEntity.getDesignacao();
                         TbUsuario usuarioEntity = (TbUsuario) usuariosController.findById( idUser );
                         String usuario = usuarioEntity.getNome();
-
-//            TbProduto findByDesignacao = produtosController.findByDesignacao( cmbProduto.getSelectedItem().toString() );
                         TbProduto findByDesignacao = produtosController.findByDesignacao( itemPedidosLocal.getFkProdutos().getDesignacao() );
                         if ( ( rbTicketSimples.isSelected() ) && ( findByDesignacao.getCozinha().equals( DVML.ENVIAR_TICKET ) ) )
                         {
@@ -2842,28 +2813,12 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
                         }
 
-                    } //                    Integer idLastPedido = itemPedidosDao.criarComProcedimento( itemPedidosLocal, conexao );
-                    //
-                    //                    if ( idLastPedido != null )
-                    //                    {
-                    //                        PrincipalPedidosVisao.mesas_livres( getLabelMesaByMesa() );
-                    //                        PrincipalPedidosVisao.pintar_mesas( getLabelMesaByMesa(), this.mesa );
-                    //                        //adiciona os produtos na tabela
-                    //                        actualizar();
-                    //
-                    //                        //imprimir para a cozinha
-                    //                        if ( itemPedidosLocal.getFkProdutos().getCodTipoProduto().getFkFamilia().getPkFamilia() == DVML.COD_SERVICO )
-                    //                        {
-                    ////                            new ImprimirCozinha( itemPedidosLocal.getFkPedidos().getPkPedido(), itemPedidosLocal.getFkProdutos().getCodigo() );
-                    //                            new Cozinha( itemPedidosLocal.getFkPedidos().getPkPedido(), itemPedidosLocal.getFkProdutos().getCodigo() );
-                    //                        }
-                    //                    }
+                    } 
+
                     else
                     {
                         System.err.println( "ERRO AO INSERIR O ITEM ..." );
                     }
-
-                    //  }else JOptionPane.showMessageDialog(null, "Este produto já não esta disponível.", "AVISO", JOptionPane.WARNING_MESSAGE  );
                 }
                 else
                 {
@@ -2881,15 +2836,11 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         {
             e.printStackTrace();
         }
-//        }
-
     }
 
     public static void procedimento_salvar_pedidos_iten_pedidos( String designacao_produto )
     {
 
-//        if ( stock_local.getCodigo() != 0  )
-//        {
         try
         {
 
@@ -2897,12 +2848,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
             int codigo_produto = produtoDao.getIdByDescricao( designacao_produto );
 
             TbProduto produto_local = produtoDao.findTbProduto( codigo_produto );
-//            TbStock stock = stockDao.getStockByDescricao( codigo_produto, id_armzem );
 
-//            if ( stock.getCodigo() != 0)
-//            {
-            // txtQuatidadeExistente.setText( String.valueOf(  stock.getQuantidadeExistente() ) );           
-//            if ( stock.getCodProdutoCodigo().getStocavel().equals( "true" ) )
             if ( produto_local.getStocavel().equals( "true" ) && produto_local.getCodTipoProduto().getFkFamilia().getPkFamilia() == DVML.COD_PRODUTO )
             {
                 lbQuantidadeExistente.setVisible( true );
@@ -2994,12 +2940,9 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                             int idPedido = 0;
 
                             TbLugares lugarEntity = (TbLugares) lugaresController.findById( DVML.LUGAR_BALCAO );
-//                        TbLugares lugarEntity = ( TbLugares ) lugaresController.findById( itemPedidosLocal.getFkLugares().getPkLugares() );
                             String lugarLocal = lugarEntity.getDesignacao();
                             TbUsuario usuarioEntity = (TbUsuario) usuariosController.findById( idUser );
                             String usuario = usuarioEntity.getNome();
-
-//            TbProduto findByDesignacao = produtosController.findByDesignacao( cmbProduto.getSelectedItem().toString() );
                             TbProduto findByDesignacao = produtosController.findByDesignacao( itemPedidosLocal.getFkProdutos().getDesignacao() );
                             if ( ( rbTicketSimples.isSelected() ) && ( findByDesignacao.getCozinha().equals( DVML.ENVIAR_TICKET ) ) )
                             {
@@ -3020,7 +2963,6 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                     else if ( rbNao_lugar.isSelected() )
                     {
 
-//                        Integer idLastItemPedido = item( itemPedidosLocal, conexao );
                         Integer idLastItemPedido = itemPedidosDao.criarComProcedimento( itemPedidosLocal, conexao );
 
                         if ( idLastItemPedido != null )
@@ -3035,13 +2977,10 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
                             int idPedido = 0;
 
-//                        TbLugares lugarEntity = ( TbLugares ) lugaresController.findById( DVML.LUGAR_BALCAO );
                             TbLugares lugarEntity = (TbLugares) lugaresController.findById( itemPedidosLocal.getFkLugares().getPkLugares() );
                             String lugarLocal = lugarEntity.getDesignacao();
                             TbUsuario usuarioEntity = (TbUsuario) usuariosController.findById( idUser );
                             String usuario = usuarioEntity.getNome();
-
-//            TbProduto findByDesignacao = produtosController.findByDesignacao( cmbProduto.getSelectedItem().toString() );
                             TbProduto findByDesignacao = produtosController.findByDesignacao( itemPedidosLocal.getFkProdutos().getDesignacao() );
                             if ( ( rbTicketSimples.isSelected() ) && ( findByDesignacao.getCozinha().equals( DVML.ENVIAR_TICKET ) ) )
                             {
@@ -3064,7 +3003,6 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                         System.err.println( "ERRO AO INSERIR O ITEM ..." );
                     }
 
-                    //  }else JOptionPane.showMessageDialog(null, "Este produto já não esta disponível.", "AVISO", JOptionPane.WARNING_MESSAGE  );
                 }
                 else
                 {
@@ -3082,8 +3020,6 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         {
             e.printStackTrace();
         }
-//        }
-
     }
 
 //    public boolean possivel_quantidade( int codigo_produto )
