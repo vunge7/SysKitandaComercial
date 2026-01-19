@@ -7148,8 +7148,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             @Override
             public boolean isCellEditable( int row, int column )
             {
-//                return ( column == 3 ||  column == 4) ; // 3ª coluna editável
-                return ( column == 4 ); // 3ª coluna editável
+//                return ( column == 0 ||  column == 4) ; // 3ª coluna editável
+                return (   column == 4 ); // 3ª coluna editável
             }
         } );
     }
