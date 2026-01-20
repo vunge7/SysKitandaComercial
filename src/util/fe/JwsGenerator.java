@@ -117,7 +117,7 @@ public final class JwsGenerator
     public static Map softwareInfoDetail()
     {
 
-        Map<String, Object> payload = new java.util.HashMap<>();
+        Map<String, Object> payload = new LinkedHashMap<>();
 
         payload.put( "productId", FEConfig.getSofwareName() );
         payload.put( "productVersion", FEConfig.getProductionVersion() );
@@ -130,7 +130,7 @@ public final class JwsGenerator
     public static Map jwsConsutlarFactura( String taxRegistrationNumber, String requestID )
     {
 
-        Map<String, Object> payload = new java.util.HashMap<>();
+        Map<String, Object> payload = new LinkedHashMap<>();
         payload.put( "taxRegistrationNumber", taxRegistrationNumber );
         payload.put( "requestID", requestID );
 
@@ -141,7 +141,7 @@ public final class JwsGenerator
     public static Map jwsSeriesSignature()
     {
 
-        Map<String, Object> payload = new java.util.HashMap<>();
+        Map<String, Object> payload = new LinkedHashMap<>();
 
         payload.put( "taxRegistrationNumber", "5000413178" );
         payload.put( "seriesYear", "2026" );
@@ -158,10 +158,10 @@ public final class JwsGenerator
      */
     public static void main( String[] args )
     {
-        Map<String, Object> payload = softwareInfoDetail();
+//        Map<String, Object> payload = softwareInfoDetail();
 //        Map<String, Object> payload = jwsConsutlarFactura();
-//        Map<String, Object> payload = jwsSeriesSignature();
-//        Map<String, Object> payload = jwsDocumentSignature();
+        Map<String, Object> payload = jwsSeriesSignature();
+//        Map<String, Object> payload = PayloadFactory.jwsDocumentSignature( taxRegistrationNumber, documentDTO )
 
         String jws = gerarJws(
                 "Chaves/ChavePrivada_2048_PKCS8.pem",

@@ -4,6 +4,9 @@
  */
 package visao;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import comercial.controller.*;
 //import hotel.controller.ExtratoContaClienteController;
 import dao.ItemPermissaoDao;
@@ -1779,27 +1782,35 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private void btnFormaPagamentoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnFormaPagamentoActionPerformed
     {//GEN-HEADEREND:event_btnFormaPagamentoActionPerformed
-        removerUltimaLinhaVazia();
 
-        jScrollPane1.repaint();
-        if ( MetodosUtil.licencaValidada( conexao ) )
+        try
         {
-            if ( !MetodosUtil.tabela_vazia( table ) )
+            removerUltimaLinhaVazia();
+
+            jScrollPane1.repaint();
+            if ( MetodosUtil.licencaValidada( conexao ) )
             {
-                if ( !validarPrecos_tabela( table ) )
+                if ( !MetodosUtil.tabela_vazia( table ) )
                 {
-                    return; // Se houver erro, não abre forma de pagamento
+                    if ( !validarPrecos_tabela( table ) )
+                    {
+                        return; // Se houver erro, não abre forma de pagamento
+                    }
+
+                    new FormaPagamentoVisao( this, rootPaneCheckingEnabled, null, DVML.VENDA_PONTUAL_TOP, BDConexao.getInstancia() ).setVisible( true );
                 }
+                else
+                {
+                    JOptionPane.showMessageDialog( null, "Caro usuário, adicione itens na tabela" );
+                }
+            }
 
-                new FormaPagamentoVisao( this, rootPaneCheckingEnabled, null, DVML.VENDA_PONTUAL_TOP, BDConexao.getInstancia() ).setVisible( true );
-            }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Caro usuário, adicione itens na tabela" );
-            }
+            table.getCellEditor().cancelCellEditing();
+
         }
-
-        table.getCellEditor().cancelCellEditing();
+        catch ( Exception e )
+        {
+        }
 
 
     }//GEN-LAST:event_btnFormaPagamentoActionPerformed
@@ -2594,46 +2605,46 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             {
                 System.out.println( "AGT-Factura Valida" );
                 // Salvar a venda e obter o ID
-//                idVendaGerada = vendasController.salvarRetornaID( venda );
-////            venda.setHashCod( MetodosUtil.criptografia_hash( vendasController.findById( idVendaGerada), getGrossTotal().doubleValue(), conexaoTransaction ) );
-//
-//                vendasController.actualizar_hash_and_assinatura( idVendaGerada, getGrossTotal().doubleValue() );
-//
-//                if ( idVendaGerada == null || idVendaGerada == 0 )
-//                {
-//                    throw new Exception( "Falha ao obter o ID da venda gravada." );
-//                }
-//
-//                // Ações específicas por tipo de documento
-//                if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR )
-//                {
-//                    MetodosUtil.adicionar_saldo_banco( venda.getTotalVenda().doubleValue(), venda.getIdBanco().getIdBanco(), conexaoTransactionLocal );
-//                }
-//
-//                if ( getIdDocumento() == DOC_FACTURA_FT )
-//                {
-//                    ExtratoContaClienteController.registro_movimento_conta_cliente( venda, conexaoTransactionLocal );
-//                }
-//
-//                // Salvar os itens da venda
-//                salvar_item_venda_comercial( idVendaGerada, conexaoTransactionLocal, stocksControllerLocal );
-//
-//                // Registrar formas de pagamento
-//                if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR )
-//                {
-//                    registrarFormaPagamento( idVendaGerada, venda.getTotalVenda(), frNormal );
-//
-//                }
-//
-//                //actualizar precos antigos
-//                actualizarPrecosAntigos();
-//
-//                // Finaliza transação
-//                DocumentosController.commit( conexaoTransactionLocal );
-//
-//                JOptionPane.showMessageDialog( null, "Factura efectuada com sucesso!" );
-//                txtNomeConsumidorFinal.setVisible( true );
-//            imprimir_factura( idVendaGerada ); // Imprime a factura
+                idVendaGerada = vendasController.salvarRetornaID( venda );
+//            venda.setHashCod( MetodosUtil.criptografia_hash( vendasController.findById( idVendaGerada), getGrossTotal().doubleValue(), conexaoTransaction ) );
+
+                vendasController.actualizar_hash_and_assinatura( idVendaGerada, getGrossTotal().doubleValue() );
+
+                if ( idVendaGerada == null || idVendaGerada == 0 )
+                {
+                    throw new Exception( "Falha ao obter o ID da venda gravada." );
+                }
+
+                // Ações específicas por tipo de documento
+                if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR )
+                {
+                    MetodosUtil.adicionar_saldo_banco( venda.getTotalVenda().doubleValue(), venda.getIdBanco().getIdBanco(), conexaoTransactionLocal );
+                }
+
+                if ( getIdDocumento() == DOC_FACTURA_FT )
+                {
+                    ExtratoContaClienteController.registro_movimento_conta_cliente( venda, conexaoTransactionLocal );
+                }
+
+                // Salvar os itens da venda
+                salvar_item_venda_comercial( idVendaGerada, conexaoTransactionLocal, stocksControllerLocal );
+
+                // Registrar formas de pagamento
+                if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR )
+                {
+                    registrarFormaPagamento( idVendaGerada, venda.getTotalVenda(), frNormal );
+
+                }
+
+                //actualizar precos antigos
+                actualizarPrecosAntigos();
+
+                // Finaliza transação
+                DocumentosController.commit( conexaoTransactionLocal );
+
+                JOptionPane.showMessageDialog( null, "Factura efectuada com sucesso!" );
+                txtNomeConsumidorFinal.setVisible( true );
+                imprimir_factura( idVendaGerada ); // Imprime a factura
 
             }
 
@@ -7124,15 +7135,153 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         }
     }
 
+//    private static boolean criarFE( TbVenda venda )
+//    {
+//        String taxRegistrationNumber = dadosInstituicaoController.findByCodigo( 1 ).getNif();;
+//
+//        Documento documento = ( Documento ) documentosController.findById(
+//                venda.getFkDocumento().getPkDocumento() );
+//
+//        TbCliente cliente = ( TbCliente ) clientesController.findById(
+//                venda.getCodigoCliente().getCodigo() );
+//
+//        List<DocumentDTO> documentDTOs = new ArrayList<>();
+//        DocumentDTO doc = new DocumentDTO();
+//
+//        doc.setDocumentNo( venda.getCodFact() );
+//        doc.setDocumentStatus( "N" );
+//        doc.setDocumentDate( DataUtil.converterNormal( venda.getDataVenda() ) );
+//        doc.setDocumentType( documento.getAbreviacao() );
+//        doc.setEacCode( "12345" );
+//        doc.setSystemEntryDate( DataUtil.converter( venda.getDataVenda() ) );
+//        doc.setCustomerTaxID( cliente.getNif() );
+//        doc.setCustomerCountry( cliente.getPaisISO() );
+//        doc.setCompanyName( cliente.getNome() ); // era morada, agora nome
+//
+//        List<LineDTO> lines = new ArrayList<>();
+//
+//        double totalBase = 0;
+//        double totalIva = 0;
+//        double totalFinal = 0;
+//        double totalRetencao = 0;
+//
+//        for ( int i = 0; i < table.getRowCount(); i++ )
+//        {
+//
+//            int idProduto = Integer.parseInt( table.getValueAt( i, 0 ).toString() );
+//            String designacaoItem = table.getValueAt( i, 1 ).toString();
+//            double unitPrice = CfMethods.parseMoedaFormatada( table.getValueAt( i, 3 ).toString() );
+//            double qtd = Double.parseDouble( table.getValueAt( i, 4 ).toString() );
+//            double desconto = Double.parseDouble( table.getValueAt( i, 5 ).toString() );
+//            double taxa = Double.parseDouble( table.getValueAt( i, 6 ).toString() );
+//            double retencaoLinha = CfMethods.parseMoedaFormatada( table.getValueAt( i, 7 ).toString() );
+//
+//            double unitPriceBase = unitPrice - desconto;
+//            double base = unitPriceBase * qtd;
+//            double iva = base * ( taxa / 100.0 );
+//            double totalLinhaSemIva = base;
+//            double totalLinha = base + iva;
+//
+//            LineDTO line = new LineDTO();
+//            line.setLineNumber( i + 1 );
+//            line.setProductCode( String.valueOf( idProduto ) );
+//            line.setProductDescription( designacaoItem );
+//            line.setQuantity( String.valueOf( qtd ) );
+//            line.setUnitOfMeasure( "UN" );
+//            line.setUnitPrice( unitPrice );
+//            line.setUnitPriceBase( unitPriceBase );
+//            line.setDebitAmount( 0 );
+//            line.setCreditAmount( totalLinhaSemIva );
+//
+//            if ( taxa > 0 )
+//            {
+//                TaxDTO tax = new TaxDTO();
+//                tax.setTaxType( "IVA" );
+//                tax.setTaxCountryRegion( "AO" );
+//                tax.setTaxCode( "NOR" );
+//                tax.setTaxPercentage( String.valueOf( taxa ) );
+//                tax.setTaxContribution( iva );
+//
+//                line.setTaxes( Collections.singletonList( tax ) );
+//            }
+//
+//            lines.add( line );
+//
+//            totalBase += base;
+//            totalIva += iva;
+//            totalFinal += totalLinha;
+//            totalRetencao += retencaoLinha;
+//        }
+//
+//        doc.setLines( lines );
+//
+//        DocumentTotalsDTO documentsTotals = new DocumentTotalsDTO();
+//        documentsTotals.setNetTotal( totalBase );
+//        documentsTotals.setTaxPayable( totalIva );
+//        documentsTotals.setGrossTotal( totalFinal );
+//        doc.setDocumentTotals( documentsTotals );
+//
+//        documentDTOs.add( doc );
+//
+//        Series serie = seriesController
+//                .findByDocumentoEAno( getIdDocumento(), getIdAnoEconomico() );
+//
+//        Documento documentoType = documentosController.findDocumentoById(
+//                serie.getFkDocumento() );
+//
+//        if ( totalRetencao > 0 )
+//        {
+//            WithholdingTaxDTO ret = new WithholdingTaxDTO();
+//            ret.setWithholdingTaxType( "IRT" );
+//            ret.setWithholdingTaxDescription( "Retenção na fonte" );
+//            ret.setWithholdingTaxAmount( totalRetencao );
+//
+//            doc.setWithholdingTaxList( Collections.singletonList( ret ) );
+//        }
+//        Map<String, Object> jsonPayload = PayloadFactory.criarPayloadCriarDocumento(
+//                taxRegistrationNumber,
+//                cmbAnoEconomico.getSelectedItem().toString(),
+//                documentoType.getAbreviacao(),
+//                documentDTOs
+//        );
+//
+//        String payload = JsonUtil.toJson( jsonPayload );
+//
+//        JsonUtil.print( payload );
+//        String basicAuth = BasicAuthUtil.gerarAuthorizationHeader( FEConfig.getUsername(), FEConfig.getPassword() );
+//        String resposta;
+//        try
+//        {
+//            resposta = HttpClientUtil.postJson( FEConfig.getEndpointRegistrarFactura(),
+//                    payload, // o JSON que já tens
+//                    basicAuth // SOMENTE o base64 (sem "Basic ")
+//            );
+//
+//            JsonUtil.print( resposta );
+//
+//            return obterEstadoFactura( taxRegistrationNumber, resposta );
+////            String r = JsonUtil.toJson( resposta );
+//
+//        }
+//        catch ( Exception e )
+//        {
+//            e.printStackTrace();
+//        }
+//
+//        return false;
+//
+//    }
     private static boolean criarFE( TbVenda venda )
     {
-        String taxRegistrationNumber = dadosInstituicaoController.findByCodigo( 1 ).getNif();;
+        String taxRegistrationNumber = dadosInstituicaoController.findByCodigo( 1 ).getNif();
 
         Documento documento = ( Documento ) documentosController.findById(
-                venda.getFkDocumento().getPkDocumento() );
+                venda.getFkDocumento().getPkDocumento()
+        );
 
         TbCliente cliente = ( TbCliente ) clientesController.findById(
-                venda.getCodigoCliente().getCodigo() );
+                venda.getCodigoCliente().getCodigo()
+        );
 
         List<DocumentDTO> documentDTOs = new ArrayList<>();
         DocumentDTO doc = new DocumentDTO();
@@ -7156,20 +7305,31 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
         for ( int i = 0; i < table.getRowCount(); i++ )
         {
-
             int idProduto = Integer.parseInt( table.getValueAt( i, 0 ).toString() );
             String designacaoItem = table.getValueAt( i, 1 ).toString();
+            double unitPrice = CfMethods.parseMoedaFormatada( table.getValueAt( i, 3 ).toString() );
             double qtd = Double.parseDouble( table.getValueAt( i, 4 ).toString() );
             double desconto = Double.parseDouble( table.getValueAt( i, 5 ).toString() );
             double taxa = Double.parseDouble( table.getValueAt( i, 6 ).toString() );
             double retencaoLinha = CfMethods.parseMoedaFormatada( table.getValueAt( i, 7 ).toString() );
-            double unitPrice = CfMethods.parseMoedaFormatada( table.getValueAt( i, 10 ).toString() );
+
+            // Arredondamento de valores
+            unitPrice = new BigDecimal( unitPrice ).setScale( 6, RoundingMode.HALF_UP ).doubleValue();
+            desconto = new BigDecimal( desconto ).setScale( 2, RoundingMode.HALF_UP ).doubleValue();
+            retencaoLinha = new BigDecimal( retencaoLinha ).setScale( 2, RoundingMode.HALF_UP ).doubleValue();
 
             double unitPriceBase = unitPrice - desconto;
+            unitPriceBase = new BigDecimal( unitPriceBase ).setScale( 6, RoundingMode.HALF_UP ).doubleValue();
+
             double base = unitPriceBase * qtd;
+            base = new BigDecimal( base ).setScale( 2, RoundingMode.HALF_UP ).doubleValue();
+
             double iva = base * ( taxa / 100.0 );
+            iva = new BigDecimal( iva ).setScale( 2, RoundingMode.HALF_UP ).doubleValue();
+
             double totalLinhaSemIva = base;
             double totalLinha = base + iva;
+            totalLinha = new BigDecimal( totalLinha ).setScale( 2, RoundingMode.HALF_UP ).doubleValue();
 
             LineDTO line = new LineDTO();
             line.setLineNumber( i + 1 );
@@ -7196,11 +7356,18 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
             lines.add( line );
 
+            // Acumulando totais com arredondamento
             totalBase += base;
             totalIva += iva;
             totalFinal += totalLinha;
             totalRetencao += retencaoLinha;
         }
+
+        // Arredondar totais finais
+        totalBase = new BigDecimal( totalBase ).setScale( 2, RoundingMode.HALF_UP ).doubleValue();
+        totalIva = new BigDecimal( totalIva ).setScale( 2, RoundingMode.HALF_UP ).doubleValue();
+        totalFinal = new BigDecimal( totalFinal ).setScale( 2, RoundingMode.HALF_UP ).doubleValue();
+        totalRetencao = new BigDecimal( totalRetencao ).setScale( 2, RoundingMode.HALF_UP ).doubleValue();
 
         doc.setLines( lines );
 
@@ -7212,11 +7379,9 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
         documentDTOs.add( doc );
 
-        Series serie = seriesController
-                .findByDocumentoEAno( getIdDocumento(), getIdAnoEconomico() );
+        Series serie = seriesController.findByDocumentoEAno( getIdDocumento(), getIdAnoEconomico() );
 
-        Documento documentoType = documentosController.findDocumentoById(
-                serie.getFkDocumento() );
+        Documento documentoType = documentosController.findDocumentoById( serie.getFkDocumento() );
 
         if ( totalRetencao > 0 )
         {
@@ -7227,6 +7392,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
             doc.setWithholdingTaxList( Collections.singletonList( ret ) );
         }
+
         Map<String, Object> jsonPayload = PayloadFactory.criarPayloadCriarDocumento(
                 taxRegistrationNumber,
                 cmbAnoEconomico.getSelectedItem().toString(),
@@ -7235,19 +7401,19 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         );
 
         String payload = JsonUtil.toJson( jsonPayload );
-
         JsonUtil.print( payload );
+
         String basicAuth = BasicAuthUtil.gerarAuthorizationHeader( FEConfig.getUsername(), FEConfig.getPassword() );
-        String resposta;
         try
         {
-            resposta = HttpClientUtil.postJson( FEConfig.getEndpointRegistrarFactura(),
-                    payload, // o JSON que já tens
-                    basicAuth // SOMENTE o base64 (sem "Basic ")
+            String resposta = HttpClientUtil.postJson(
+                    FEConfig.getEndpointRegistrarFactura(),
+                    payload,
+                    basicAuth
             );
 
             JsonUtil.print( resposta );
-//            String r = JsonUtil.toJson( resposta );
+            return obterEstadoFactura( taxRegistrationNumber, resposta );
 
         }
         catch ( Exception e )
@@ -7256,7 +7422,103 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         }
 
         return false;
+    }
 
+    private static boolean obterEstadoFactura(
+            String taxRegistrationNumber,
+            String resposta
+    ) throws JsonProcessingException
+    {
+        ObjectMapper mapper = new ObjectMapper();
+
+        // 1️⃣ Extrair requestID da resposta anterior
+        JsonNode rootNode = mapper.readTree( resposta );
+        String requestID = rootNode.get( "requestID" ).asText();
+
+        System.out.println( "Request ID: " + requestID );
+
+        // 2️⃣ Criar payload para consultar estado
+        Map<String, Object> jsonPayload = PayloadFactory.consultaPayloadFactura(
+                taxRegistrationNumber,
+                requestID
+        );
+
+        String payload = JsonUtil.toJson( jsonPayload );
+
+        String basicAuth = BasicAuthUtil.gerarAuthorizationHeader(
+                FEConfig.getUsername(),
+                FEConfig.getPassword()
+        );
+
+        try
+        {
+            // 3️⃣ Chamada à FE – obter estado
+            String r = HttpClientUtil.postJson(
+                    FEConfig.getEndpointObterEstado(),
+                    payload,
+                    basicAuth
+            );
+
+            JsonUtil.print( r );
+
+            // 4️⃣ Interpretar resposta do estado
+            JsonNode estadoRoot = mapper.readTree( r );
+
+            JsonNode documentStatusList = estadoRoot.get( "documentStatusList" );
+
+            if ( documentStatusList != null && documentStatusList.isArray()
+                    && documentStatusList.size() > 0 )
+            {
+                JsonNode doc = documentStatusList.get( 0 );
+                String documentStatus = doc.get( "documentStatus" ).asText();
+
+                // ✅ FACTURA VÁLIDA
+                if ( "V".equalsIgnoreCase( documentStatus ) )
+                {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Factura validada com sucesso ✅",
+                            "Factura Válida",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
+                    return true;
+                }
+                // ❌ FACTURA INVÁLIDA
+                else if ( "I".equalsIgnoreCase( documentStatus ) )
+                {
+                    StringBuilder mensagens = new StringBuilder( "Factura inválida ❌\n\n" );
+
+                    JsonNode errorList = doc.get( "errorList" );
+
+                    if ( errorList != null && errorList.isArray() )
+                    {
+                        for ( JsonNode erro : errorList )
+                        {
+                            mensagens.append( "• " )
+                                    .append( erro.get( "descriptionError" ).asText() )
+                                    .append( "\n" );
+                        }
+                    }
+
+                    JOptionPane.showMessageDialog(
+                            null,
+                            mensagens.toString(),
+                            "Erro de Validação",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+
+                    return false;
+                }
+            }
+
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+            return false;
+        }
+
+        return false;
     }
 
     private void visualizarSeries()

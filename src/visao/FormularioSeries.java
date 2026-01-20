@@ -10,6 +10,7 @@ package visao;
  * @created 12/jan/2026
  * @lastModified 12/jan/2026
  */
+import com.fasterxml.jackson.databind.ObjectMapper;
 import comercial.controller.DadosInstituicaoController;
 import javax.swing.*;
 import java.awt.*;
@@ -137,14 +138,14 @@ public class FormularioSeries extends JFrame
         // Eventos
         btnAdicionar.addActionListener( e -> adicionarDocumento() );
         btnPesquisar.addActionListener( e -> solictarSerie() );
-        txtPesquisa.addKeyListener( new KeyAdapter()
-        {
-            @Override
-            public void keyReleased( KeyEvent e )
-            {
-                filtrarDocumentos( txtPesquisa.getText() );
-            }
-        } );
+//        txtPesquisa.addKeyListener( new KeyAdapter()
+//        {
+//            @Override
+//            public void keyReleased( KeyEvent e )
+//            {
+//                filtrarDocumentos( txtPesquisa.getText() );
+//            }
+//        } );
     }
 
     private void carregarCombo()
@@ -181,14 +182,16 @@ public class FormularioSeries extends JFrame
 
     private void solictarSerie()
     {
-//        String taxRegistrationNumber = dadosInstituicaoController.findByCodigo( 1 ).getNif();;
-        String taxRegistrationNumber = "5000413178";
+        String taxRegistrationNumber = dadosInstituicaoController.findByCodigo( 1 ).getNif();;
+//        String taxRegistrationNumber = "5000413178";
         String seriesYear = "2026";
         String documentType = comboDocumentos.getSelectedItem().toString().replaceAll( " ", "" ).split( "-" )[ 0 ];
         System.out.println( "TaxRegistrationNumber" + taxRegistrationNumber );
         System.out.println( "Tipo de Documento " + documentType );
         Map<String, Object> jsonPayload = PayloadFactory.criarPayloadCriarSerie( taxRegistrationNumber, seriesYear, documentType );
         String payLoad = JsonUtil.toJson( jsonPayload );
+
+        System.out.println( payLoad );
 
         String basicAuth = BasicAuthUtil.gerarAuthorizationHeader( FEConfig.getUsername(), FEConfig.getPassword() );
         String resposta;
@@ -200,6 +203,8 @@ public class FormularioSeries extends JFrame
             );
 
             JsonUtil.print( resposta );
+            String seriesCode = getSeriesCode( resposta );
+            txtPesquisa.setText( seriesCode );
 //            String r = JsonUtil.toJson( resposta );
 
         }
@@ -209,4 +214,28 @@ public class FormularioSeries extends JFrame
         }
 
     }
+
+    public static String getSeriesCode( String jsonResponse )
+    {
+        try
+        {
+            ObjectMapper mapper = new ObjectMapper();
+
+            Map<String, Object> root = mapper.readValue( jsonResponse, Map.class );
+
+            Map<String, Object> seriesFEResult
+                    = ( Map<String, Object> ) root.get( "seriesFEResult" );
+
+            return seriesFEResult != null
+                    ? ( String ) seriesFEResult.get( "seriesCode" )
+                    : null;
+
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }

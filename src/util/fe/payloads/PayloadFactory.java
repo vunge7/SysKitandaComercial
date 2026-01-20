@@ -40,12 +40,12 @@ public class PayloadFactory
         String jwsSoftwareSignature = JwsGenerator.gerarJws( "Chaves/ChavePrivada_2048_PKCS8.pem", softwareInfoDetail );
 
         // softwareInfo
-        Map<String, Object> softwareInfo = new HashMap<>();
+        Map<String, Object> softwareInfo = new LinkedHashMap<>();
         softwareInfo.put( "softwareInfoDetail", softwareInfoDetail );
         softwareInfo.put( "jwsSoftwareSignature", jwsSoftwareSignature );
 
         // payload principal
-        Map<String, Object> payload = new HashMap<>();
+        Map<String, Object> payload = new LinkedHashMap<>();
         payload.put( "schemaVersion", "1.2" );
         payload.put( "submissionUUID", SubmissionUUID.gerar() );
         payload.put( "taxRegistrationNumber", taxRegistrationNumber );
@@ -53,7 +53,7 @@ public class PayloadFactory
         payload.put( "softwareInfo", softwareInfo );
         payload.put( "seriesYear", seriesYear );
         payload.put( "documentType", documentType );
-        payload.put( "establishmentNumber", "10" );
+        payload.put( "establishmentNumber", "SEDE" );
         Map<String, Object> HashJwsSignature = getMapJwsSeriesSignature( taxRegistrationNumber, seriesYear, documentType );
         String jwsSignature = JwsGenerator.gerarJws( "Chaves/ChavePrivada_2048_PKCS8.pem", HashJwsSignature );
         payload.put( "jwsSignature", jwsSignature );
@@ -249,9 +249,10 @@ public class PayloadFactory
 
     public static void main( String[] args )
     {
-        Map<String, Object> payload = PayloadFactory.criarPayloadCriarSerie("5000413178", "2026" , "FR");
+        Map<String, Object> payload = PayloadFactory.consultaPayloadFactura("5000413178", "202600000223436" );
+//        Map<String, Object> payload = PayloadFactory.criarPayloadCriarSerie("5000413178", "2026" , "FR");
 //        Map<String, Object> consultaPayloadFactura = PayloadFactory.consultaPayloadFactura( "5000413178", "202600000138171" );
-
+      
         String json = JsonUtil.toJson( payload );
 
         System.out.println( json );

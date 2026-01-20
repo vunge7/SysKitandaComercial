@@ -13,7 +13,7 @@ package util.fe;
 public class FEConfig
 {
 
-    private static final AmbienteFE AMBIENTE_ATUAL = AmbienteFE.HML; // <-- só muda aqui
+    private static final AmbienteFE AMBIENTE_ATUAL = AmbienteFE.HML;
 
     public static String getEndpointSolicitarSerie()
     {
@@ -26,6 +26,7 @@ public class FEConfig
             return "https://sifp.minfin.gov.ao/sigt/fe/v1/solicitarSerie";
         }
     }
+
     public static String getEndpointRegistrarFactura()
     {
         if ( AMBIENTE_ATUAL == AmbienteFE.HML )
@@ -38,11 +39,24 @@ public class FEConfig
         }
     }
 
+    public static String getEndpointObterEstado()
+    {
+        if ( AMBIENTE_ATUAL == AmbienteFE.HML )
+        {
+            return "https://sifphml.minfin.gov.ao/sigt/fe/v1/obterEstado";
+        }
+        else
+        {
+            return "https://sifp.minfin.gov.ao/sigt/fe/v1/obterEstado";
+        }
+    }
+
     public static String getUsername()
     {
         if ( AMBIENTE_ATUAL == AmbienteFE.HML )
         {
             return "ws.hml.kitanda";
+//            return "ws.kitanda";
         }
         else
         {
@@ -55,6 +69,7 @@ public class FEConfig
         if ( AMBIENTE_ATUAL == AmbienteFE.HML )
         {
             return "mfn538052025";
+//            return "mfn27942026";
         }
         else
         {
@@ -67,6 +82,7 @@ public class FEConfig
         if ( AMBIENTE_ATUAL == AmbienteFE.HML )
         {
             return "FE/196/AGT/2025";
+//            return "FE/110/AGT/2025";
         }
         else
         {

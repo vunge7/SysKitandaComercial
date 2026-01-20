@@ -41,6 +41,10 @@ public class HttpClientUtil
         conn.setRequestProperty( "Content-Type", "application/json" );
         conn.setRequestProperty( "Accept", "application/json" );
 
+        // Timeout em milissegundos
+        conn.setConnectTimeout( 10000 ); // timeout de conexão
+        conn.setReadTimeout( 10000 );    // timeout de leitura/resposta
+
         // BODY
         try ( OutputStream os = conn.getOutputStream() )
         {
@@ -80,7 +84,7 @@ public class HttpClientUtil
         Map<String, Object> jsonPayload = PayloadFactory.criarPayloadCriarSerie( "5000413178", "2025", "GF" );
 
 //        System.out.println( "JSON PAYLOAD " + JsonUtil.toJson( jsonPayload ) );
-        String basicAuth = BasicAuthUtil.gerarAuthorizationHeader(ConstantesFEUtil.USERNAME, ConstantesFEUtil.PASSWORD );
+        String basicAuth = BasicAuthUtil.gerarAuthorizationHeader( ConstantesFEUtil.USERNAME, ConstantesFEUtil.PASSWORD );
 
         System.out.println( basicAuth );
 
@@ -92,7 +96,6 @@ public class HttpClientUtil
                     basicAuth // SOMENTE o base64 (sem "Basic ")
             );
 
-            
             System.out.println( resposta );
 
         }
