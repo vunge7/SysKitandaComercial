@@ -320,12 +320,14 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         table.setRowHeight( 25 );
         inserir_uma_linha();
 
-        procedimento_codBarra__jtable();
+
 
         configurarTabela();
 //        configurarTabela( 3 );
 //        configurarTabela( 4 );
 //        initStockListener();
+
+        procedimento_codBarra__jtable();
     }
 
     private void init()
@@ -7162,8 +7164,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             @Override
             public boolean isCellEditable( int row, int column )
             {
-//                return ( column == 3 ||  column == 4) ; // 3ª coluna editável
-                return ( column == 4 ); // 3ª coluna editável
+                return ( column == 0 ||  column == 4) ; // 3ª coluna editável
+//                return ( column == 4 ); // 3ª coluna editável
             }
         } );
     }
