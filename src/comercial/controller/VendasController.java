@@ -906,6 +906,34 @@ public class VendasController implements EntidadeFactory
 
     }
 
+    public int getProximoNumeroFacturaComLock(
+        int pk_documento,
+        int pk_ano_economico
+) throws SQLException
+{
+    String sql =
+        "SELECT CAST(SUBSTRING_INDEX(cod_fact, '/', -1) AS UNSIGNED) AS ultimo_num " +
+        "FROM tb_venda " +
+        "WHERE fk_documento = ? " +
+        "AND fk_ano_economico = ? " +
+        "ORDER BY ultimo_num DESC " +
+        "LIMIT 1 " +
+        "FOR UPDATE";
+
+    PreparedStatement ps = conexao.getConnection().prepareStatement(sql);
+    ps.setInt(1, pk_documento);
+    ps.setInt(2, pk_ano_economico);
+
+    ResultSet rs = ps.executeQuery();
+
+    if (rs.next()) {
+        return rs.getInt("ultimo_num") + 1;
+    }
+
+    return 1; // primeira factura
+}
+
+
     public int getUltimaContagemByIdDocumentoAndAnoEconomico( int pk_documento, int pk_ano_economico )
     {
         try

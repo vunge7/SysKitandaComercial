@@ -215,7 +215,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         servicosRetencaoController = new ServicosRetencaoController( FormVendaResponsivaVisaoTop.conexao );
         contaController = new ContaController( FormVendaResponsivaVisaoTop.conexao );
         movimentacaoController = new MovimentacaoController( conexao.getConnection() );
-        dadosInstituicao = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
+        dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById( 1 );
         configuracaoMesComecoController = new ConfiguracaoMesComecoController( conexao.getConnectionAtiva() );
         pagamentoMensalidadeController = new PagamentoMensalidadeController( conexao.getConnectionAtiva() );
         mesRhController = new MesRhController( conexao.getConnectionAtiva() );
@@ -529,28 +529,58 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     /**
      * Metodo actualizado do proximo doumento
      */
-    private static void mostrar_proximo_codigo_documento()
+//    private static void mostrar_proximo_codigo_documento()
+//    {
+//
+//        try
+//        {
+//
+//            //metodo actualizado
+//            documento = ( Documento ) documentosController.findById( getIdDocumento( documentosController ) );
+//            anoEconomico = ( AnoEconomico ) anoEconomicoController.findById( getIdAnoEconomico( anoEconomicoController ) );
+//            doc_prox_cod = vendasController.getUltimaContagemByIdDocumentoAndAnoEconomico(
+//                    getIdDocumento( documentosController ), getIdAnoEconomico( anoEconomicoController ) ) + 1;
+//            prox_doc = documento.getAbreviacao();
+//            //FA Série / codigo
+//            prox_doc += " " + anoEconomico.getSerie() + "/" + doc_prox_cod;
+////            lb_proximo_documento.setText( "PRÓX.DOC. :" + prox_doc );
+//        }
+//        catch ( Exception e )
+//        {
+//            documento = null;
+//            lb_proximo_documento.setText( "" );
+//        }
+//    }
+    
+private static void mostrar_proximo_codigo_documento()
+{
+    try
     {
+        documento = (Documento) documentosController.findById(
+                getIdDocumento(documentosController)
+        );
 
-        try
-        {
+        anoEconomico = (AnoEconomico) anoEconomicoController.findById(
+                getIdAnoEconomico(anoEconomicoController)
+        );
 
-            //metodo actualizado
-            documento = ( Documento ) documentosController.findById( getIdDocumento( documentosController ) );
-            anoEconomico = ( AnoEconomico ) anoEconomicoController.findById( getIdAnoEconomico( anoEconomicoController ) );
-            doc_prox_cod = vendasController.getUltimaContagemByIdDocumentoAndAnoEconomico(
-                    getIdDocumento( documentosController ), getIdAnoEconomico( anoEconomicoController ) ) + 1;
-            prox_doc = documento.getAbreviacao();
-            //FA Série / codigo
-            prox_doc += " " + anoEconomico.getSerie() + "/" + doc_prox_cod;
-//            lb_proximo_documento.setText( "PRÓX.DOC. :" + prox_doc );
-        }
-        catch ( Exception e )
-        {
-            documento = null;
-            lb_proximo_documento.setText( "" );
-        }
+        int proximoNumero = vendasController.getProximoNumeroFacturaComLock(
+                documento.getPkDocumento(),
+                anoEconomico.getPkAnoEconomico()
+        );
+
+        prox_doc = documento.getAbreviacao()
+                 + " " + anoEconomico.getSerie()
+                 + "/" + proximoNumero;
+
     }
+    catch (Exception e)
+    {
+        e.printStackTrace();
+        prox_doc = null;
+    }
+}
+
 
 //    private static void mostrar_proximo_codigo_documento()
 //    {
@@ -662,965 +692,990 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation( javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE );
 
-        painelEsq.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        painelEsq.setBorder( new javax.swing.border.LineBorder( new java.awt.Color( 0, 0, 0 ), 1, true ) );
 
-        jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
-        jLabel9.setText("DATA VENCIMENTO");
+        jLabel9.setFont( new java.awt.Font( "Segoe UI", 1, 10 ) ); // NOI18N
+        jLabel9.setText( "DATA VENCIMENTO" );
 
-        dc_data_vencimento.setEnabled(false);
-        dc_data_vencimento.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
+        dc_data_vencimento.setEnabled( false );
+        dc_data_vencimento.setFont( new java.awt.Font( "Lucida Grande", 1, 12 ) ); // NOI18N
 
-        txtIniciaisCliente.addActionListener(new java.awt.event.ActionListener()
+        txtIniciaisCliente.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                txtIniciaisClienteActionPerformed(evt);
+                txtIniciaisClienteActionPerformed( evt );
             }
-        });
+        } );
 
-        lbCliente.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        lbCliente.setText("Iniciais Nome:");
+        lbCliente.setFont( new java.awt.Font( "Lucida Grande", 1, 14 ) ); // NOI18N
+        lbCliente.setText( "Iniciais Nome:" );
 
-        lbCliente1.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        lbCliente1.setText("Nome:");
+        lbCliente1.setFont( new java.awt.Font( "Lucida Grande", 1, 14 ) ); // NOI18N
+        lbCliente1.setText( "Nome:" );
 
-        txtNifClientePesquisa.addActionListener(new java.awt.event.ActionListener()
+        txtNifClientePesquisa.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                txtNifClientePesquisaActionPerformed(evt);
+                txtNifClientePesquisaActionPerformed( evt );
             }
-        });
+        } );
 
-        txtCodClientePesquisa.addActionListener(new java.awt.event.ActionListener()
+        txtCodClientePesquisa.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                txtCodClientePesquisaActionPerformed(evt);
+                txtCodClientePesquisaActionPerformed( evt );
             }
-        });
+        } );
 
-        jLabel2.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        jLabel2.setText("Cod.");
+        jLabel2.setFont( new java.awt.Font( "Lucida Grande", 1, 14 ) ); // NOI18N
+        jLabel2.setText( "Cod." );
 
-        lbClienteConsumidorFinal.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        lbClienteConsumidorFinal.setText("NIF:");
+        lbClienteConsumidorFinal.setFont( new java.awt.Font( "Lucida Grande", 1, 14 ) ); // NOI18N
+        lbClienteConsumidorFinal.setText( "NIF:" );
 
-        txtNomeConsumidorFinal.addActionListener(new java.awt.event.ActionListener()
+        txtNomeConsumidorFinal.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                txtNomeConsumidorFinalActionPerformed(evt);
+                txtNomeConsumidorFinalActionPerformed( evt );
             }
-        });
-        txtNomeConsumidorFinal.addKeyListener(new java.awt.event.KeyAdapter()
+        } );
+        txtNomeConsumidorFinal.addKeyListener( new java.awt.event.KeyAdapter()
         {
-            public void keyPressed(java.awt.event.KeyEvent evt)
+            public void keyPressed( java.awt.event.KeyEvent evt )
             {
-                txtNomeConsumidorFinalKeyPressed(evt);
+                txtNomeConsumidorFinalKeyPressed( evt );
             }
-        });
+        } );
 
-        cmbCliente.setBackground(new java.awt.Color(0, 255, 255));
-        cmbCliente.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        cmbCliente.setForeground(new java.awt.Color(0, 0, 51));
-        cmbCliente.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cmbCliente.addActionListener(new java.awt.event.ActionListener()
+        cmbCliente.setBackground( new java.awt.Color( 0, 255, 255 ) );
+        cmbCliente.setFont( new java.awt.Font( "Lucida Grande", 1, 14 ) ); // NOI18N
+        cmbCliente.setForeground( new java.awt.Color( 0, 0, 51 ) );
+        cmbCliente.setModel( new javax.swing.DefaultComboBoxModel( new String[]
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                cmbClienteActionPerformed(evt);
-            }
-        });
-
-        jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/usuario.png"))); // NOI18N
-        jButton5.addActionListener(new java.awt.event.ActionListener()
+            "Item 1", "Item 2", "Item 3", "Item 4"
+        } ) );
+        cmbCliente.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                jButton5ActionPerformed(evt);
+                cmbClienteActionPerformed( evt );
             }
-        });
+        } );
 
-        rbTranstorno.setSelected(true);
-        rbTranstorno.setEnabled(false);
-        rbTranstorno.addActionListener(new java.awt.event.ActionListener()
+        jButton5.setIcon( new javax.swing.ImageIcon( getClass().getResource( "/imagens/usuario.png" ) ) ); // NOI18N
+        jButton5.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                rbTranstornoActionPerformed(evt);
+                jButton5ActionPerformed( evt );
             }
-        });
+        } );
 
-        rbMostrar.setSelected(true);
-        rbMostrar.setEnabled(false);
-        rbMostrar.addActionListener(new java.awt.event.ActionListener()
+        rbTranstorno.setSelected( true );
+        rbTranstorno.setEnabled( false );
+        rbTranstorno.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                rbMostrarActionPerformed(evt);
+                rbTranstornoActionPerformed( evt );
             }
-        });
+        } );
 
-        jlStockNegativo.setText("Stock Negativo");
-
-        cmbTipoDocumento.setBackground(new java.awt.Color(0, 255, 255));
-        cmbTipoDocumento.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
-        cmbTipoDocumento.addActionListener(new java.awt.event.ActionListener()
+        rbMostrar.setSelected( true );
+        rbMostrar.setEnabled( false );
+        rbMostrar.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                cmbTipoDocumentoActionPerformed(evt);
+                rbMostrarActionPerformed( evt );
             }
-        });
+        } );
 
-        lb_proximo_documento.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
-        lb_proximo_documento.setText("PRÓX. DOC. : XX PP/A1");
+        jlStockNegativo.setText( "Stock Negativo" );
 
-        lb_nome_usuario.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
-        lb_nome_usuario.setForeground(new java.awt.Color(0, 102, 102));
-        lb_nome_usuario.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lb_nome_usuario.setText("Usuario");
-
-        cmbAnoEconomico.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
-        cmbAnoEconomico.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cmbAnoEconomico.setEnabled(false);
-        cmbAnoEconomico.addActionListener(new java.awt.event.ActionListener()
+        cmbTipoDocumento.setBackground( new java.awt.Color( 0, 255, 255 ) );
+        cmbTipoDocumento.setFont( new java.awt.Font( "Tw Cen MT Condensed Extra Bold", 0, 14 ) ); // NOI18N
+        cmbTipoDocumento.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                cmbAnoEconomicoActionPerformed(evt);
+                cmbTipoDocumentoActionPerformed( evt );
             }
-        });
+        } );
 
-        rbArmazem1.setEnabled(false);
-        rbArmazem1.addActionListener(new java.awt.event.ActionListener()
+        lb_proximo_documento.setFont( new java.awt.Font( "Lucida Grande", 1, 13 ) ); // NOI18N
+        lb_proximo_documento.setText( "PRÓX. DOC. : XX PP/A1" );
+
+        lb_nome_usuario.setFont( new java.awt.Font( "Lucida Grande", 1, 12 ) ); // NOI18N
+        lb_nome_usuario.setForeground( new java.awt.Color( 0, 102, 102 ) );
+        lb_nome_usuario.setHorizontalAlignment( javax.swing.SwingConstants.RIGHT );
+        lb_nome_usuario.setText( "Usuario" );
+
+        cmbAnoEconomico.setFont( new java.awt.Font( "Segoe UI", 1, 10 ) ); // NOI18N
+        cmbAnoEconomico.setModel( new javax.swing.DefaultComboBoxModel<>( new String[]
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                rbArmazem1ActionPerformed(evt);
-            }
-        });
-
-        rbArmazem.setSelected(true);
-        rbArmazem.setEnabled(false);
-        rbArmazem.addActionListener(new java.awt.event.ActionListener()
+            "Item 1", "Item 2", "Item 3", "Item 4"
+        } ) );
+        cmbAnoEconomico.setEnabled( false );
+        cmbAnoEconomico.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                rbArmazemActionPerformed(evt);
+                cmbAnoEconomicoActionPerformed( evt );
             }
-        });
+        } );
 
-        cmbMoeda.setBackground(new java.awt.Color(0, 255, 255));
-        cmbMoeda.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
-        cmbMoeda.addActionListener(new java.awt.event.ActionListener()
+        rbArmazem1.setEnabled( false );
+        rbArmazem1.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                cmbMoedaActionPerformed(evt);
+                rbArmazem1ActionPerformed( evt );
             }
-        });
+        } );
 
-        btnSemFormaPagamento.setText("Finalizar");
-        btnSemFormaPagamento.setEnabled(false);
-        btnSemFormaPagamento.addActionListener(new java.awt.event.ActionListener()
+        rbArmazem.setSelected( true );
+        rbArmazem.setEnabled( false );
+        rbArmazem.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                btnSemFormaPagamentoActionPerformed(evt);
+                rbArmazemActionPerformed( evt );
             }
-        });
+        } );
 
-        lbClienteConsumidorFinal1.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        lbClienteConsumidorFinal1.setText("TEL:");
-
-        txtTelClientePesquisa.addActionListener(new java.awt.event.ActionListener()
+        cmbMoeda.setBackground( new java.awt.Color( 0, 255, 255 ) );
+        cmbMoeda.setFont( new java.awt.Font( "Tw Cen MT Condensed Extra Bold", 0, 14 ) ); // NOI18N
+        cmbMoeda.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                txtTelClientePesquisaActionPerformed(evt);
+                cmbMoedaActionPerformed( evt );
             }
-        });
+        } );
 
-        javax.swing.GroupLayout painelEsqLayout = new javax.swing.GroupLayout(painelEsq);
-        painelEsq.setLayout(painelEsqLayout);
+        btnSemFormaPagamento.setText( "Finalizar" );
+        btnSemFormaPagamento.setEnabled( false );
+        btnSemFormaPagamento.addActionListener( new java.awt.event.ActionListener()
+        {
+            public void actionPerformed( java.awt.event.ActionEvent evt )
+            {
+                btnSemFormaPagamentoActionPerformed( evt );
+            }
+        } );
+
+        lbClienteConsumidorFinal1.setFont( new java.awt.Font( "Lucida Grande", 1, 14 ) ); // NOI18N
+        lbClienteConsumidorFinal1.setText( "TEL:" );
+
+        txtTelClientePesquisa.addActionListener( new java.awt.event.ActionListener()
+        {
+            public void actionPerformed( java.awt.event.ActionEvent evt )
+            {
+                txtTelClientePesquisaActionPerformed( evt );
+            }
+        } );
+
+        javax.swing.GroupLayout painelEsqLayout = new javax.swing.GroupLayout( painelEsq );
+        painelEsq.setLayout( painelEsqLayout );
         painelEsqLayout.setHorizontalGroup(
-            painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(painelEsqLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(painelEsqLayout.createSequentialGroup()
-                        .addComponent(cmbAnoEconomico, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(spnCopia, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lb_nome_usuario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelEsqLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(painelEsqLayout.createSequentialGroup()
-                                .addGap(6, 6, 6)
-                                .addComponent(lbClienteConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtNifClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelEsqLayout.createSequentialGroup()
-                                    .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addGroup(painelEsqLayout.createSequentialGroup()
-                                            .addComponent(lbClienteConsumidorFinal1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(txtTelClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(painelEsqLayout.createSequentialGroup()
-                                            .addComponent(txtIniciaisCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addGroup(painelEsqLayout.createSequentialGroup()
-                                                    .addGap(14, 14, 14)
-                                                    .addComponent(lbCliente1, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                .addGroup(painelEsqLayout.createSequentialGroup()
-                                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                    .addComponent(txtNomeConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                            .addGap(38, 38, 38)))
-                                    .addGap(27, 27, 27))
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelEsqLayout.createSequentialGroup()
-                                    .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(cmbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGroup(painelEsqLayout.createSequentialGroup()
-                                            .addComponent(cmbTipoDocumento, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(dc_data_vencimento, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addGap(13, 13, 13)))))
-                    .addGroup(painelEsqLayout.createSequentialGroup()
-                        .addComponent(rbTranstorno)
-                        .addGap(31, 31, 31)
-                        .addComponent(jlStockNegativo, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(14, 14, 14)
-                        .addComponent(rbMostrar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(rbArmazem1)
-                        .addGap(18, 18, 18)
-                        .addComponent(rbArmazem)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lb_proximo_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(40, 40, 40)
-                        .addComponent(cmbMoeda, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnSemFormaPagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelEsqLayout.createSequentialGroup()
-                        .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(painelEsqLayout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(txtCodClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(painelEsqLayout.createSequentialGroup()
-                                .addComponent(lbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel2)
-                                .addGap(16, 16, 16)))
-                        .addGap(8, 8, 8)))
-                .addContainerGap())
+                painelEsqLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING )
+                        .addGroup( painelEsqLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup( painelEsqLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING )
+                                        .addGroup( painelEsqLayout.createSequentialGroup()
+                                                .addComponent( cmbAnoEconomico, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                .addComponent( spnCopia, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                .addComponent( lb_nome_usuario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE ) )
+                                        .addGroup( javax.swing.GroupLayout.Alignment.TRAILING, painelEsqLayout.createSequentialGroup()
+                                                .addGap( 0, 0, Short.MAX_VALUE )
+                                                .addGroup( painelEsqLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING )
+                                                        .addGroup( painelEsqLayout.createSequentialGroup()
+                                                                .addGap( 6, 6, 6 )
+                                                                .addComponent( lbClienteConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                                .addComponent( txtNifClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE ) )
+                                                        .addGroup( painelEsqLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING, false )
+                                                                .addGroup( javax.swing.GroupLayout.Alignment.TRAILING, painelEsqLayout.createSequentialGroup()
+                                                                        .addGroup( painelEsqLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.TRAILING )
+                                                                                .addGroup( painelEsqLayout.createSequentialGroup()
+                                                                                        .addComponent( lbClienteConsumidorFinal1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                                        .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                                                        .addComponent( txtTelClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE ) )
+                                                                                .addGroup( painelEsqLayout.createSequentialGroup()
+                                                                                        .addComponent( txtIniciaisCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                                        .addGroup( painelEsqLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING )
+                                                                                                .addGroup( painelEsqLayout.createSequentialGroup()
+                                                                                                        .addGap( 14, 14, 14 )
+                                                                                                        .addComponent( lbCliente1, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE ) )
+                                                                                                .addGroup( painelEsqLayout.createSequentialGroup()
+                                                                                                        .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                                                                        .addComponent( txtNomeConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE ) ) )
+                                                                                        .addGap( 38, 38, 38 ) ) )
+                                                                        .addGap( 27, 27, 27 ) )
+                                                                .addGroup( javax.swing.GroupLayout.Alignment.TRAILING, painelEsqLayout.createSequentialGroup()
+                                                                        .addGroup( painelEsqLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.TRAILING )
+                                                                                .addComponent( cmbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                                .addGroup( painelEsqLayout.createSequentialGroup()
+                                                                                        .addComponent( cmbTipoDocumento, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE )
+                                                                                        .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                                                        .addComponent( jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                                        .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                                                        .addComponent( dc_data_vencimento, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE ) ) )
+                                                                        .addGap( 13, 13, 13 ) ) ) ) )
+                                        .addGroup( painelEsqLayout.createSequentialGroup()
+                                                .addComponent( rbTranstorno )
+                                                .addGap( 31, 31, 31 )
+                                                .addComponent( jlStockNegativo, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                .addGap( 14, 14, 14 )
+                                                .addComponent( rbMostrar )
+                                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                .addComponent( rbArmazem1 )
+                                                .addGap( 18, 18, 18 )
+                                                .addComponent( rbArmazem )
+                                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                .addComponent( lb_proximo_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                .addGap( 40, 40, 40 )
+                                                .addComponent( cmbMoeda, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                .addComponent( btnSemFormaPagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                .addGap( 0, 0, Short.MAX_VALUE ) )
+                                        .addGroup( javax.swing.GroupLayout.Alignment.TRAILING, painelEsqLayout.createSequentialGroup()
+                                                .addGroup( painelEsqLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.TRAILING )
+                                                        .addGroup( painelEsqLayout.createSequentialGroup()
+                                                                .addGap( 0, 0, Short.MAX_VALUE )
+                                                                .addComponent( txtCodClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                                .addComponent( jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE ) )
+                                                        .addGroup( painelEsqLayout.createSequentialGroup()
+                                                                .addComponent( lbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE )
+                                                                .addComponent( jLabel2 )
+                                                                .addGap( 16, 16, 16 ) ) )
+                                                .addGap( 8, 8, 8 ) ) )
+                                .addContainerGap() )
         );
         painelEsqLayout.setVerticalGroup(
-            painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelEsqLayout.createSequentialGroup()
-                .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbCliente1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(txtNomeConsumidorFinal, javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(txtIniciaisCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(txtCodClientePesquisa, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(lbClienteConsumidorFinal1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txtTelClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(lbClienteConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txtNifClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cmbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(dc_data_vencimento, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(cmbTipoDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(painelEsqLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(cmbMoeda, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(btnSemFormaPagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(lb_proximo_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(rbTranstorno, javax.swing.GroupLayout.PREFERRED_SIZE, 7, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(rbMostrar, javax.swing.GroupLayout.PREFERRED_SIZE, 9, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jlStockNegativo, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))))
-                        .addGap(7, 7, 7))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelEsqLayout.createSequentialGroup()
-                        .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(rbArmazem1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                            .addComponent(rbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lb_nome_usuario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(cmbAnoEconomico, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(spnCopia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(13, 13, 13))
+                painelEsqLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING )
+                        .addGroup( javax.swing.GroupLayout.Alignment.TRAILING, painelEsqLayout.createSequentialGroup()
+                                .addGroup( painelEsqLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.BASELINE )
+                                        .addComponent( lbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                        .addComponent( lbCliente1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                        .addComponent( jLabel2 ) )
+                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                .addGroup( painelEsqLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING )
+                                        .addGroup( painelEsqLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING, false )
+                                                .addComponent( txtNomeConsumidorFinal, javax.swing.GroupLayout.Alignment.TRAILING )
+                                                .addComponent( txtIniciaisCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE ) )
+                                        .addGroup( painelEsqLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING )
+                                                .addComponent( txtCodClientePesquisa, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                .addComponent( jButton5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE ) ) )
+                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE )
+                                .addGroup( painelEsqLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING )
+                                        .addGroup( painelEsqLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.BASELINE )
+                                                .addComponent( lbClienteConsumidorFinal1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                .addComponent( txtTelClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE ) )
+                                        .addGroup( painelEsqLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.BASELINE )
+                                                .addComponent( lbClienteConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                .addComponent( txtNifClientePesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE ) ) )
+                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                .addComponent( cmbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                .addGroup( painelEsqLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING )
+                                        .addComponent( dc_data_vencimento, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                        .addGroup( painelEsqLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.BASELINE )
+                                                .addComponent( jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                .addComponent( cmbTipoDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE ) ) )
+                                .addGroup( painelEsqLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING )
+                                        .addGroup( painelEsqLayout.createSequentialGroup()
+                                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                .addGroup( painelEsqLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING )
+                                                        .addGroup( painelEsqLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.BASELINE )
+                                                                .addComponent( cmbMoeda, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                .addComponent( btnSemFormaPagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                .addComponent( lb_proximo_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE ) )
+                                                        .addGroup( painelEsqLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.TRAILING )
+                                                                .addComponent( rbTranstorno, javax.swing.GroupLayout.PREFERRED_SIZE, 7, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                .addGroup( painelEsqLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING, false )
+                                                                        .addComponent( rbMostrar, javax.swing.GroupLayout.PREFERRED_SIZE, 9, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                        .addComponent( jlStockNegativo, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE ) ) ) )
+                                                .addGap( 7, 7, 7 ) )
+                                        .addGroup( javax.swing.GroupLayout.Alignment.TRAILING, painelEsqLayout.createSequentialGroup()
+                                                .addGroup( painelEsqLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.TRAILING, false )
+                                                        .addComponent( rbArmazem1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE )
+                                                        .addComponent( rbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE ) )
+                                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED ) ) )
+                                .addGroup( painelEsqLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.BASELINE )
+                                        .addComponent( lb_nome_usuario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE )
+                                        .addComponent( cmbAnoEconomico, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                        .addComponent( spnCopia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE ) )
+                                .addGap( 13, 13, 13 ) )
         );
 
-        painelEsqLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btnSemFormaPagamento, cmbMoeda});
-
-        painelDir.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-
-        txtPreco.setEditable(false);
-        txtPreco.setBackground(new java.awt.Color(0, 255, 255));
-        txtPreco.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        txtPreco.setForeground(new java.awt.Color(0, 0, 51));
-        txtPreco.setCaretColor(new java.awt.Color(255, 255, 255));
-
-        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/proucura.png"))); // NOI18N
-        jButton4.addActionListener(new java.awt.event.ActionListener()
+        painelEsqLayout.linkSize( javax.swing.SwingConstants.VERTICAL, new java.awt.Component[]
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                jButton4ActionPerformed(evt);
-            }
-        });
+            btnSemFormaPagamento, cmbMoeda
+        } );
 
-        txtQuantidadeStock.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        txtQuantidadeStock.setForeground(new java.awt.Color(255, 255, 255));
-        txtQuantidadeStock.addActionListener(new java.awt.event.ActionListener()
+        painelDir.setBorder( new javax.swing.border.LineBorder( new java.awt.Color( 0, 0, 0 ), 1, true ) );
+
+        txtPreco.setEditable( false );
+        txtPreco.setBackground( new java.awt.Color( 0, 255, 255 ) );
+        txtPreco.setFont( new java.awt.Font( "Tahoma", 1, 14 ) ); // NOI18N
+        txtPreco.setForeground( new java.awt.Color( 0, 0, 51 ) );
+        txtPreco.setCaretColor( new java.awt.Color( 255, 255, 255 ) );
+
+        jButton4.setIcon( new javax.swing.ImageIcon( getClass().getResource( "/imagens/proucura.png" ) ) ); // NOI18N
+        jButton4.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                txtQuantidadeStockActionPerformed(evt);
+                jButton4ActionPerformed( evt );
             }
-        });
+        } );
 
-        txtQuatindade.setBackground(new java.awt.Color(0, 255, 255));
-        txtQuatindade.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        txtQuatindade.setForeground(new java.awt.Color(0, 0, 51));
-        txtQuatindade.setText("1");
-        txtQuatindade.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtQuatindade.addActionListener(new java.awt.event.ActionListener()
+        txtQuantidadeStock.setFont( new java.awt.Font( "Tahoma", 1, 14 ) ); // NOI18N
+        txtQuantidadeStock.setForeground( new java.awt.Color( 255, 255, 255 ) );
+        txtQuantidadeStock.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                txtQuatindadeActionPerformed(evt);
+                txtQuantidadeStockActionPerformed( evt );
             }
-        });
+        } );
 
-        lbQuantidade.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        lbQuantidade.setText("Qtd:");
-
-        btn_adicionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Button-Add-icon.png"))); // NOI18N
-        btn_adicionar.setToolTipText("click para adicionar no carrinho");
-        btn_adicionar.addActionListener(new java.awt.event.ActionListener()
+        txtQuatindade.setBackground( new java.awt.Color( 0, 255, 255 ) );
+        txtQuatindade.setFont( new java.awt.Font( "Tahoma", 1, 18 ) ); // NOI18N
+        txtQuatindade.setForeground( new java.awt.Color( 0, 0, 51 ) );
+        txtQuatindade.setText( "1" );
+        txtQuatindade.setCaretColor( new java.awt.Color( 255, 255, 255 ) );
+        txtQuatindade.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                btn_adicionarActionPerformed(evt);
+                txtQuatindadeActionPerformed( evt );
             }
-        });
+        } );
 
-        btn_remover.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/2934_32x32.png"))); // NOI18N
-        btn_remover.setToolTipText("click para remover produtos do carrinho");
-        btn_remover.addActionListener(new java.awt.event.ActionListener()
+        lbQuantidade.setFont( new java.awt.Font( "Lucida Grande", 1, 14 ) ); // NOI18N
+        lbQuantidade.setText( "Qtd:" );
+
+        btn_adicionar.setIcon( new javax.swing.ImageIcon( getClass().getResource( "/imagens/Button-Add-icon.png" ) ) ); // NOI18N
+        btn_adicionar.setToolTipText( "click para adicionar no carrinho" );
+        btn_adicionar.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                btn_removerActionPerformed(evt);
+                btn_adicionarActionPerformed( evt );
             }
-        });
+        } );
 
-        ck_A4.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
-        ck_A4.setText("A4");
-        ck_A4.addActionListener(new java.awt.event.ActionListener()
+        btn_remover.setIcon( new javax.swing.ImageIcon( getClass().getResource( "/imagens/2934_32x32.png" ) ) ); // NOI18N
+        btn_remover.setToolTipText( "click para remover produtos do carrinho" );
+        btn_remover.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                ck_A4ActionPerformed(evt);
+                btn_removerActionPerformed( evt );
             }
-        });
+        } );
 
-        lbCodigoProduto.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        lbCodigoProduto.setText("CodBarra:");
-
-        txtCodigoProduto.setBackground(new java.awt.Color(0, 255, 255));
-        txtCodigoProduto.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        txtCodigoProduto.setForeground(new java.awt.Color(0, 0, 51));
-        txtCodigoProduto.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtCodigoProduto.addActionListener(new java.awt.event.ActionListener()
+        ck_A4.setFont( new java.awt.Font( "Lucida Grande", 0, 10 ) ); // NOI18N
+        ck_A4.setText( "A4" );
+        ck_A4.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                txtCodigoProdutoActionPerformed(evt);
+                ck_A4ActionPerformed( evt );
             }
-        });
+        } );
 
-        lbCodigoProduto1.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
-        lbCodigoProduto1.setText("Cod:");
+        lbCodigoProduto.setFont( new java.awt.Font( "Lucida Grande", 1, 14 ) ); // NOI18N
+        lbCodigoProduto.setText( "CodBarra:" );
 
-        ck_A7.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
-        ck_A7.setText("A7");
-        ck_A7.addActionListener(new java.awt.event.ActionListener()
+        txtCodigoProduto.setBackground( new java.awt.Color( 0, 255, 255 ) );
+        txtCodigoProduto.setFont( new java.awt.Font( "Tahoma", 1, 18 ) ); // NOI18N
+        txtCodigoProduto.setForeground( new java.awt.Color( 0, 0, 51 ) );
+        txtCodigoProduto.setCaretColor( new java.awt.Color( 255, 255, 255 ) );
+        txtCodigoProduto.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                ck_A7ActionPerformed(evt);
+                txtCodigoProdutoActionPerformed( evt );
             }
-        });
+        } );
 
-        ck_S_A6.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
-        ck_S_A6.setText("S_A6");
-        ck_S_A6.addActionListener(new java.awt.event.ActionListener()
+        lbCodigoProduto1.setFont( new java.awt.Font( "Lucida Grande", 1, 12 ) ); // NOI18N
+        lbCodigoProduto1.setText( "Cod:" );
+
+        ck_A7.setFont( new java.awt.Font( "Lucida Grande", 0, 10 ) ); // NOI18N
+        ck_A7.setText( "A7" );
+        ck_A7.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                ck_S_A6ActionPerformed(evt);
+                ck_A7ActionPerformed( evt );
             }
-        });
+        } );
 
-        ck_ComVirgula.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
-        ck_ComVirgula.setText("A6V");
-        ck_ComVirgula.addActionListener(new java.awt.event.ActionListener()
+        ck_S_A6.setFont( new java.awt.Font( "Lucida Grande", 0, 10 ) ); // NOI18N
+        ck_S_A6.setText( "S_A6" );
+        ck_S_A6.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                ck_ComVirgulaActionPerformed(evt);
+                ck_S_A6ActionPerformed( evt );
             }
-        });
+        } );
 
-        ck_simplificada_O_S.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
-        ck_simplificada_O_S.setText("S_A6_O");
-        ck_simplificada_O_S.addActionListener(new java.awt.event.ActionListener()
+        ck_ComVirgula.setFont( new java.awt.Font( "Lucida Grande", 0, 10 ) ); // NOI18N
+        ck_ComVirgula.setText( "A6V" );
+        ck_ComVirgula.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                ck_simplificada_O_SActionPerformed(evt);
+                ck_ComVirgulaActionPerformed( evt );
             }
-        });
+        } );
 
-        ck_simplificada_O.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
-        ck_simplificada_O.setSelected(true);
-        ck_simplificada_O.setText("A6_O");
-        ck_simplificada_O.addActionListener(new java.awt.event.ActionListener()
+        ck_simplificada_O_S.setFont( new java.awt.Font( "Lucida Grande", 0, 10 ) ); // NOI18N
+        ck_simplificada_O_S.setText( "S_A6_O" );
+        ck_simplificada_O_S.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                ck_simplificada_OActionPerformed(evt);
+                ck_simplificada_O_SActionPerformed( evt );
             }
-        });
+        } );
 
-        ck_simplificada.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
-        ck_simplificada.setText("A6");
-        ck_simplificada.addActionListener(new java.awt.event.ActionListener()
+        ck_simplificada_O.setFont( new java.awt.Font( "Lucida Grande", 0, 10 ) ); // NOI18N
+        ck_simplificada_O.setSelected( true );
+        ck_simplificada_O.setText( "A6_O" );
+        ck_simplificada_O.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                ck_simplificadaActionPerformed(evt);
+                ck_simplificada_OActionPerformed( evt );
             }
-        });
+        } );
 
-        ck_Duplicada.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
-        ck_Duplicada.setText("A5");
-        ck_Duplicada.addActionListener(new java.awt.event.ActionListener()
+        ck_simplificada.setFont( new java.awt.Font( "Lucida Grande", 0, 10 ) ); // NOI18N
+        ck_simplificada.setText( "A6" );
+        ck_simplificada.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                ck_DuplicadaActionPerformed(evt);
+                ck_simplificadaActionPerformed( evt );
             }
-        });
+        } );
 
-        btnFormaPagamento.setFont(new java.awt.Font("Lucida Grande", 0, 12)); // NOI18N
-        btnFormaPagamento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/confirmacao.png"))); // NOI18N
-        btnFormaPagamento.setText("F. Pagamento");
-        btnFormaPagamento.addActionListener(new java.awt.event.ActionListener()
+        ck_Duplicada.setFont( new java.awt.Font( "Lucida Grande", 0, 10 ) ); // NOI18N
+        ck_Duplicada.setText( "A5" );
+        ck_Duplicada.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                btnFormaPagamentoActionPerformed(evt);
+                ck_DuplicadaActionPerformed( evt );
             }
-        });
+        } );
 
-        btnProcessar.setFont(new java.awt.Font("Lucida Grande", 0, 12)); // NOI18N
-        btnProcessar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/pauta academica 16x16.png"))); // NOI18N
-        btnProcessar.setText("Processar");
-        btnProcessar.addActionListener(new java.awt.event.ActionListener()
+        btnFormaPagamento.setFont( new java.awt.Font( "Lucida Grande", 0, 12 ) ); // NOI18N
+        btnFormaPagamento.setIcon( new javax.swing.ImageIcon( getClass().getResource( "/imagens/confirmacao.png" ) ) ); // NOI18N
+        btnFormaPagamento.setText( "F. Pagamento" );
+        btnFormaPagamento.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                btnProcessarActionPerformed(evt);
+                btnFormaPagamentoActionPerformed( evt );
             }
-        });
+        } );
 
-        txtCodigoBarra.setBackground(new java.awt.Color(0, 255, 255));
-        txtCodigoBarra.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        txtCodigoBarra.setForeground(new java.awt.Color(0, 0, 51));
-        txtCodigoBarra.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtCodigoBarra.addActionListener(new java.awt.event.ActionListener()
+        btnProcessar.setFont( new java.awt.Font( "Lucida Grande", 0, 12 ) ); // NOI18N
+        btnProcessar.setIcon( new javax.swing.ImageIcon( getClass().getResource( "/imagens/pauta academica 16x16.png" ) ) ); // NOI18N
+        btnProcessar.setText( "Processar" );
+        btnProcessar.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                txtCodigoBarraActionPerformed(evt);
+                btnProcessarActionPerformed( evt );
             }
-        });
+        } );
 
-        txtCodigoManual.setBackground(new java.awt.Color(0, 255, 255));
-        txtCodigoManual.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        txtCodigoManual.setForeground(new java.awt.Color(0, 0, 51));
-        txtCodigoManual.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtCodigoManual.addActionListener(new java.awt.event.ActionListener()
+        txtCodigoBarra.setBackground( new java.awt.Color( 0, 255, 255 ) );
+        txtCodigoBarra.setFont( new java.awt.Font( "Tahoma", 1, 18 ) ); // NOI18N
+        txtCodigoBarra.setForeground( new java.awt.Color( 0, 0, 51 ) );
+        txtCodigoBarra.setCaretColor( new java.awt.Color( 255, 255, 255 ) );
+        txtCodigoBarra.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                txtCodigoManualActionPerformed(evt);
+                txtCodigoBarraActionPerformed( evt );
             }
-        });
+        } );
 
-        cmbSubFamilia.setBackground(new java.awt.Color(0, 255, 255));
-        cmbSubFamilia.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        cmbSubFamilia.setForeground(new java.awt.Color(0, 0, 51));
-        cmbSubFamilia.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cmbSubFamilia.addActionListener(new java.awt.event.ActionListener()
+        txtCodigoManual.setBackground( new java.awt.Color( 0, 255, 255 ) );
+        txtCodigoManual.setFont( new java.awt.Font( "Tahoma", 1, 18 ) ); // NOI18N
+        txtCodigoManual.setForeground( new java.awt.Color( 0, 0, 51 ) );
+        txtCodigoManual.setCaretColor( new java.awt.Color( 255, 255, 255 ) );
+        txtCodigoManual.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                cmbSubFamiliaActionPerformed(evt);
+                txtCodigoManualActionPerformed( evt );
             }
-        });
+        } );
 
-        cmbProduto.setBackground(new java.awt.Color(0, 255, 255));
-        cmbProduto.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        cmbProduto.setForeground(new java.awt.Color(0, 0, 51));
-        cmbProduto.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cmbProduto.addActionListener(new java.awt.event.ActionListener()
+        cmbSubFamilia.setBackground( new java.awt.Color( 0, 255, 255 ) );
+        cmbSubFamilia.setFont( new java.awt.Font( "Lucida Grande", 1, 14 ) ); // NOI18N
+        cmbSubFamilia.setForeground( new java.awt.Color( 0, 0, 51 ) );
+        cmbSubFamilia.setModel( new javax.swing.DefaultComboBoxModel( new String[]
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                cmbProdutoActionPerformed(evt);
-            }
-        });
-
-        cmbArmazem.setBackground(new java.awt.Color(0, 255, 255));
-        cmbArmazem.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 1, 10)); // NOI18N
-        cmbArmazem.addActionListener(new java.awt.event.ActionListener()
+            "Item 1", "Item 2", "Item 3", "Item 4"
+        } ) );
+        cmbSubFamilia.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                cmbArmazemActionPerformed(evt);
+                cmbSubFamiliaActionPerformed( evt );
             }
-        });
+        } );
 
-        lbQuantidadeStock.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        lbQuantidadeStock.setText("Stock:");
-
-        txtTotalPagar.setEditable(false);
-        txtTotalPagar.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
-        txtTotalPagar.setForeground(new java.awt.Color(255, 0, 0));
-        txtTotalPagar.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtTotalPagar.addActionListener(new java.awt.event.ActionListener()
+        cmbProduto.setBackground( new java.awt.Color( 0, 255, 255 ) );
+        cmbProduto.setFont( new java.awt.Font( "Lucida Grande", 1, 14 ) ); // NOI18N
+        cmbProduto.setForeground( new java.awt.Color( 0, 0, 51 ) );
+        cmbProduto.setModel( new javax.swing.DefaultComboBoxModel( new String[]
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                txtTotalPagarActionPerformed(evt);
-            }
-        });
-
-        lbCodigoProduto2.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        lbCodigoProduto2.setText("CodManual:");
-
-        btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LOGOUT - VERMELHO/Logout 32x32.png"))); // NOI18N
-        btnCancelar.setAlignmentX(0.5F);
-        btnCancelar.addActionListener(new java.awt.event.ActionListener()
+            "Item 1", "Item 2", "Item 3", "Item 4"
+        } ) );
+        cmbProduto.addActionListener( new java.awt.event.ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                btnCancelarActionPerformed(evt);
+                cmbProdutoActionPerformed( evt );
             }
-        });
+        } );
 
-        lbCodigoProduto3.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        lbCodigoProduto3.setText("Preço:");
-
-        lbCodigoProduto4.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        lbCodigoProduto4.setText("TOTAL:");
-
-        lbValorPorExtenco.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        lbValorPorExtenco.setForeground(new java.awt.Color(204, 0, 0));
-        lbValorPorExtenco.setText("VALOR POR EXTENSO");
-
-        jlEmpresa.setFont(new java.awt.Font("Lucida Grande", 1, 16)); // NOI18N
-        jlEmpresa.setForeground(new java.awt.Color(0, 0, 102));
-        jlEmpresa.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jlEmpresa.setText("Empresa");
-
-        sp_desconto_financeiro.addChangeListener(new javax.swing.event.ChangeListener()
+        cmbArmazem.setBackground( new java.awt.Color( 0, 255, 255 ) );
+        cmbArmazem.setFont( new java.awt.Font( "Tw Cen MT Condensed Extra Bold", 1, 10 ) ); // NOI18N
+        cmbArmazem.addActionListener( new java.awt.event.ActionListener()
         {
-            public void stateChanged(javax.swing.event.ChangeEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                sp_desconto_financeiroStateChanged(evt);
+                cmbArmazemActionPerformed( evt );
             }
-        });
-        sp_desconto_financeiro.addInputMethodListener(new java.awt.event.InputMethodListener()
+        } );
+
+        lbQuantidadeStock.setFont( new java.awt.Font( "Lucida Grande", 1, 14 ) ); // NOI18N
+        lbQuantidadeStock.setText( "Stock:" );
+
+        txtTotalPagar.setEditable( false );
+        txtTotalPagar.setFont( new java.awt.Font( "Tahoma", 1, 20 ) ); // NOI18N
+        txtTotalPagar.setForeground( new java.awt.Color( 255, 0, 0 ) );
+        txtTotalPagar.setCaretColor( new java.awt.Color( 255, 255, 255 ) );
+        txtTotalPagar.addActionListener( new java.awt.event.ActionListener()
         {
-            public void caretPositionChanged(java.awt.event.InputMethodEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
+                txtTotalPagarActionPerformed( evt );
             }
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt)
-            {
-                sp_desconto_financeiroInputMethodTextChanged(evt);
-            }
-        });
-        sp_desconto_financeiro.addPropertyChangeListener(new java.beans.PropertyChangeListener()
+        } );
+
+        lbCodigoProduto2.setFont( new java.awt.Font( "Lucida Grande", 1, 14 ) ); // NOI18N
+        lbCodigoProduto2.setText( "CodManual:" );
+
+        btnCancelar.setIcon( new javax.swing.ImageIcon( getClass().getResource( "/imagens/LOGOUT - VERMELHO/Logout 32x32.png" ) ) ); // NOI18N
+        btnCancelar.setAlignmentX( 0.5F );
+        btnCancelar.addActionListener( new java.awt.event.ActionListener()
         {
-            public void propertyChange(java.beans.PropertyChangeEvent evt)
+            public void actionPerformed( java.awt.event.ActionEvent evt )
             {
-                sp_desconto_financeiroPropertyChange(evt);
+                btnCancelarActionPerformed( evt );
             }
-        });
-        sp_desconto_financeiro.addKeyListener(new java.awt.event.KeyAdapter()
+        } );
+
+        lbCodigoProduto3.setFont( new java.awt.Font( "Lucida Grande", 1, 14 ) ); // NOI18N
+        lbCodigoProduto3.setText( "Preço:" );
+
+        lbCodigoProduto4.setFont( new java.awt.Font( "Lucida Grande", 1, 14 ) ); // NOI18N
+        lbCodigoProduto4.setText( "TOTAL:" );
+
+        lbValorPorExtenco.setFont( new java.awt.Font( "Lucida Grande", 1, 14 ) ); // NOI18N
+        lbValorPorExtenco.setForeground( new java.awt.Color( 204, 0, 0 ) );
+        lbValorPorExtenco.setText( "VALOR POR EXTENSO" );
+
+        jlEmpresa.setFont( new java.awt.Font( "Lucida Grande", 1, 16 ) ); // NOI18N
+        jlEmpresa.setForeground( new java.awt.Color( 0, 0, 102 ) );
+        jlEmpresa.setHorizontalAlignment( javax.swing.SwingConstants.RIGHT );
+        jlEmpresa.setText( "Empresa" );
+
+        sp_desconto_financeiro.addChangeListener( new javax.swing.event.ChangeListener()
         {
-            public void keyPressed(java.awt.event.KeyEvent evt)
+            public void stateChanged( javax.swing.event.ChangeEvent evt )
             {
-                sp_desconto_financeiroKeyPressed(evt);
+                sp_desconto_financeiroStateChanged( evt );
             }
-            public void keyTyped(java.awt.event.KeyEvent evt)
+        } );
+        sp_desconto_financeiro.addInputMethodListener( new java.awt.event.InputMethodListener()
+        {
+            public void caretPositionChanged( java.awt.event.InputMethodEvent evt )
             {
-                sp_desconto_financeiroKeyTyped(evt);
             }
-        });
 
-        lbDescontoFinanceiro.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        lbDescontoFinanceiro.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lbDescontoFinanceiro.setText("Desc:");
+            public void inputMethodTextChanged( java.awt.event.InputMethodEvent evt )
+            {
+                sp_desconto_financeiroInputMethodTextChanged( evt );
+            }
+        } );
+        sp_desconto_financeiro.addPropertyChangeListener( new java.beans.PropertyChangeListener()
+        {
+            public void propertyChange( java.beans.PropertyChangeEvent evt )
+            {
+                sp_desconto_financeiroPropertyChange( evt );
+            }
+        } );
+        sp_desconto_financeiro.addKeyListener( new java.awt.event.KeyAdapter()
+        {
+            public void keyPressed( java.awt.event.KeyEvent evt )
+            {
+                sp_desconto_financeiroKeyPressed( evt );
+            }
 
-        txtTotal_AOA_Retencao.setForeground(new java.awt.Color(255, 51, 51));
-        txtTotal_AOA_Retencao.setText("Retencao");
+            public void keyTyped( java.awt.event.KeyEvent evt )
+            {
+                sp_desconto_financeiroKeyTyped( evt );
+            }
+        } );
 
-        dc_data_documento.setEnabled(false);
-        dc_data_documento.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
+        lbDescontoFinanceiro.setFont( new java.awt.Font( "Lucida Grande", 1, 14 ) ); // NOI18N
+        lbDescontoFinanceiro.setHorizontalAlignment( javax.swing.SwingConstants.RIGHT );
+        lbDescontoFinanceiro.setText( "Desc:" );
 
-        javax.swing.GroupLayout painelDirLayout = new javax.swing.GroupLayout(painelDir);
-        painelDir.setLayout(painelDirLayout);
+        txtTotal_AOA_Retencao.setForeground( new java.awt.Color( 255, 51, 51 ) );
+        txtTotal_AOA_Retencao.setText( "Retencao" );
+
+        dc_data_documento.setEnabled( false );
+        dc_data_documento.setFont( new java.awt.Font( "Lucida Grande", 1, 12 ) ); // NOI18N
+
+        javax.swing.GroupLayout painelDirLayout = new javax.swing.GroupLayout( painelDir );
+        painelDir.setLayout( painelDirLayout );
         painelDirLayout.setHorizontalGroup(
-            painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(painelDirLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(painelDirLayout.createSequentialGroup()
-                        .addGap(9, 9, 9)
-                        .addComponent(btn_adicionar)
-                        .addGap(18, 18, 18)
-                        .addComponent(btn_remover)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnFormaPagamento)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnProcessar, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jlEmpresa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(14, 14, 14))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelDirLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(lbValorPorExtenco, javax.swing.GroupLayout.PREFERRED_SIZE, 457, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtTotal_AOA_Retencao, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
-                    .addGroup(painelDirLayout.createSequentialGroup()
-                        .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(painelDirLayout.createSequentialGroup()
-                                    .addComponent(lbQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txtQuatindade, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(lbCodigoProduto1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txtCodigoProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(lbCodigoProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txtCodigoBarra, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(lbCodigoProduto2)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txtCodigoManual)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(painelDirLayout.createSequentialGroup()
-                                    .addComponent(ck_S_A6)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(ck_ComVirgula, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(ck_A7, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(ck_simplificada_O_S, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(ck_simplificada_O, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(ck_simplificada)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(ck_Duplicada)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(ck_A4, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(lbCodigoProduto3)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txtPreco, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(painelDirLayout.createSequentialGroup()
-                                .addComponent(cmbSubFamilia, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cmbProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtLocal, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(dc_data_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(painelDirLayout.createSequentialGroup()
-                        .addComponent(txtReferencia, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lbQuantidadeStock)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtQuantidadeStock, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lbDescontoFinanceiro, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(sp_desconto_financeiro, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lbCodigoProduto4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtTotalPagar))))
+                painelDirLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING )
+                        .addGroup( painelDirLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup( painelDirLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING )
+                                        .addGroup( painelDirLayout.createSequentialGroup()
+                                                .addGap( 9, 9, 9 )
+                                                .addComponent( btn_adicionar )
+                                                .addGap( 18, 18, 18 )
+                                                .addComponent( btn_remover )
+                                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                .addComponent( btnFormaPagamento )
+                                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                .addComponent( btnProcessar, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                .addComponent( jlEmpresa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE )
+                                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                .addComponent( btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                .addGap( 14, 14, 14 ) )
+                                        .addGroup( javax.swing.GroupLayout.Alignment.TRAILING, painelDirLayout.createSequentialGroup()
+                                                .addGap( 0, 0, Short.MAX_VALUE )
+                                                .addComponent( lbValorPorExtenco, javax.swing.GroupLayout.PREFERRED_SIZE, 457, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                .addComponent( txtTotal_AOA_Retencao, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                .addContainerGap() )
+                                        .addGroup( painelDirLayout.createSequentialGroup()
+                                                .addGroup( painelDirLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING )
+                                                        .addGroup( painelDirLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING, false )
+                                                                .addGroup( painelDirLayout.createSequentialGroup()
+                                                                        .addComponent( lbQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                        .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                                        .addComponent( txtQuatindade, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                        .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                                        .addComponent( lbCodigoProduto1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                        .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                                        .addComponent( txtCodigoProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                        .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                                        .addComponent( lbCodigoProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                        .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                                        .addComponent( txtCodigoBarra, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                        .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                                        .addComponent( lbCodigoProduto2 )
+                                                                        .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                                        .addComponent( txtCodigoManual )
+                                                                        .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                                        .addComponent( jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE ) )
+                                                                .addGroup( painelDirLayout.createSequentialGroup()
+                                                                        .addComponent( ck_S_A6 )
+                                                                        .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                                        .addComponent( ck_ComVirgula, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                        .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                                        .addComponent( ck_A7, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                        .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                                        .addComponent( ck_simplificada_O_S, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                        .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                                        .addComponent( ck_simplificada_O, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                        .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                                        .addComponent( ck_simplificada )
+                                                                        .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                                        .addComponent( ck_Duplicada )
+                                                                        .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                                        .addComponent( ck_A4, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                        .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.UNRELATED )
+                                                                        .addComponent( lbCodigoProduto3 )
+                                                                        .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                                        .addComponent( txtPreco, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE ) ) )
+                                                        .addGroup( painelDirLayout.createSequentialGroup()
+                                                                .addComponent( cmbSubFamilia, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                                .addComponent( cmbProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                                .addComponent( txtLocal, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                                .addComponent( dc_data_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE ) ) )
+                                                .addContainerGap( javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE ) )
+                                        .addGroup( painelDirLayout.createSequentialGroup()
+                                                .addComponent( txtReferencia, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                .addComponent( cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                .addComponent( lbQuantidadeStock )
+                                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                .addComponent( txtQuantidadeStock, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                .addComponent( lbDescontoFinanceiro, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                .addComponent( sp_desconto_financeiro, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                .addComponent( lbCodigoProduto4 )
+                                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                .addComponent( txtTotalPagar ) ) ) )
         );
         painelDirLayout.setVerticalGroup(
-            painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(painelDirLayout.createSequentialGroup()
-                .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtReferencia, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtTotalPagar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lbQuantidadeStock, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtQuantidadeStock, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(sp_desconto_financeiro, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lbDescontoFinanceiro, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lbCodigoProduto4, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 19, Short.MAX_VALUE)
-                .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbValorPorExtenco, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtTotal_AOA_Retencao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(painelDirLayout.createSequentialGroup()
-                        .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(cmbSubFamilia, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
-                            .addComponent(txtLocal, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(cmbProduto))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(lbCodigoProduto2, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(txtQuatindade, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(lbCodigoProduto1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(txtCodigoBarra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(txtCodigoProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(lbCodigoProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(lbQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(painelDirLayout.createSequentialGroup()
-                        .addComponent(dc_data_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(4, 4, 4)
-                        .addComponent(jButton4)))
-                .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(painelDirLayout.createSequentialGroup()
-                        .addGap(3, 3, 3)
-                        .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(ck_S_A6)
-                            .addComponent(ck_ComVirgula)
-                            .addComponent(ck_A7)
-                            .addComponent(ck_simplificada_O_S)
-                            .addComponent(ck_simplificada_O)
-                            .addComponent(ck_simplificada)
-                            .addComponent(ck_Duplicada)
-                            .addComponent(ck_A4)))
-                    .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtPreco, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lbCodigoProduto3, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(btnCancelar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btn_remover, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnFormaPagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnProcessar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jlEmpresa)))
-                    .addComponent(btn_adicionar, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(30, Short.MAX_VALUE))
+                painelDirLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING )
+                        .addGroup( painelDirLayout.createSequentialGroup()
+                                .addGroup( painelDirLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING )
+                                        .addComponent( txtReferencia, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                        .addComponent( txtTotalPagar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                        .addGroup( painelDirLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.BASELINE )
+                                                .addComponent( cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                .addComponent( lbQuantidadeStock, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE ) )
+                                        .addGroup( painelDirLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.BASELINE )
+                                                .addComponent( txtQuantidadeStock, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                .addComponent( sp_desconto_financeiro, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                .addComponent( lbDescontoFinanceiro, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                .addComponent( lbCodigoProduto4, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE ) ) )
+                                .addGap( 18, 19, Short.MAX_VALUE )
+                                .addGroup( painelDirLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.BASELINE )
+                                        .addComponent( lbValorPorExtenco, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                        .addComponent( txtTotal_AOA_Retencao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE ) )
+                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                .addGroup( painelDirLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING )
+                                        .addGroup( painelDirLayout.createSequentialGroup()
+                                                .addGroup( painelDirLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING, false )
+                                                        .addComponent( cmbSubFamilia, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE )
+                                                        .addComponent( txtLocal, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                        .addComponent( cmbProduto ) )
+                                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                                .addGroup( painelDirLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING, false )
+                                                        .addGroup( painelDirLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.BASELINE )
+                                                                .addComponent( txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                .addComponent( lbCodigoProduto2, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE ) )
+                                                        .addGroup( painelDirLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.BASELINE )
+                                                                .addComponent( txtQuatindade, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                .addComponent( lbCodigoProduto1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                .addComponent( txtCodigoBarra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                .addComponent( txtCodigoProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                                .addComponent( lbCodigoProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE ) )
+                                                        .addComponent( lbQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE ) ) )
+                                        .addGroup( painelDirLayout.createSequentialGroup()
+                                                .addComponent( dc_data_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                .addGap( 4, 4, 4 )
+                                                .addComponent( jButton4 ) ) )
+                                .addGroup( painelDirLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING )
+                                        .addGroup( painelDirLayout.createSequentialGroup()
+                                                .addGap( 3, 3, 3 )
+                                                .addGroup( painelDirLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.BASELINE )
+                                                        .addComponent( ck_S_A6 )
+                                                        .addComponent( ck_ComVirgula )
+                                                        .addComponent( ck_A7 )
+                                                        .addComponent( ck_simplificada_O_S )
+                                                        .addComponent( ck_simplificada_O )
+                                                        .addComponent( ck_simplificada )
+                                                        .addComponent( ck_Duplicada )
+                                                        .addComponent( ck_A4 ) ) )
+                                        .addGroup( painelDirLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.BASELINE )
+                                                .addComponent( txtPreco, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                .addComponent( lbCodigoProduto3, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE ) ) )
+                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                .addGroup( painelDirLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING )
+                                        .addGroup( painelDirLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING )
+                                                .addComponent( btnCancelar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                .addComponent( btn_remover, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                .addGroup( javax.swing.GroupLayout.Alignment.TRAILING, painelDirLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.BASELINE )
+                                                        .addComponent( btnFormaPagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                        .addComponent( btnProcessar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                                        .addComponent( jlEmpresa ) ) )
+                                        .addComponent( btn_adicionar, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE ) )
+                                .addContainerGap( 30, Short.MAX_VALUE ) )
         );
 
-        painelDirLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btn_adicionar, btn_remover});
+        painelDirLayout.linkSize( javax.swing.SwingConstants.VERTICAL, new java.awt.Component[]
+        {
+            btn_adicionar, btn_remover
+        } );
 
-        painelDirLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {txtCodigoBarra, txtCodigoManual, txtCodigoProduto, txtQuatindade});
+        painelDirLayout.linkSize( javax.swing.SwingConstants.VERTICAL, new java.awt.Component[]
+        {
+            txtCodigoBarra, txtCodigoManual, txtCodigoProduto, txtQuatindade
+        } );
 
-        javax.swing.GroupLayout painelTopoLayout = new javax.swing.GroupLayout(painelTopo);
-        painelTopo.setLayout(painelTopoLayout);
+        javax.swing.GroupLayout painelTopoLayout = new javax.swing.GroupLayout( painelTopo );
+        painelTopo.setLayout( painelTopoLayout );
         painelTopoLayout.setHorizontalGroup(
-            painelTopoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(painelTopoLayout.createSequentialGroup()
-                .addComponent(painelEsq, javax.swing.GroupLayout.PREFERRED_SIZE, 356, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(painelDir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                painelTopoLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING )
+                        .addGroup( painelTopoLayout.createSequentialGroup()
+                                .addComponent( painelEsq, javax.swing.GroupLayout.PREFERRED_SIZE, 356, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+                                .addComponent( painelDir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE )
+                                .addContainerGap() )
         );
         painelTopoLayout.setVerticalGroup(
-            painelTopoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(painelTopoLayout.createSequentialGroup()
-                .addGroup(painelTopoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(painelEsq, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(painelDir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                painelTopoLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING )
+                        .addGroup( painelTopoLayout.createSequentialGroup()
+                                .addGroup( painelTopoLayout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING )
+                                        .addComponent( painelEsq, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE )
+                                        .addComponent( painelDir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE ) )
+                                .addContainerGap() )
         );
 
-        painelTabela.setLayout(new java.awt.BorderLayout());
+        painelTabela.setLayout( new java.awt.BorderLayout() );
 
-        jScrollPane1.addPropertyChangeListener(new java.beans.PropertyChangeListener()
+        jScrollPane1.addPropertyChangeListener( new java.beans.PropertyChangeListener()
         {
-            public void propertyChange(java.beans.PropertyChangeEvent evt)
+            public void propertyChange( java.beans.PropertyChangeEvent evt )
             {
-                jScrollPane1PropertyChange(evt);
+                jScrollPane1PropertyChange( evt );
             }
-        });
+        } );
 
-        table.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][]
-            {
-                {null, null, null, null, null, null, null, null, null, null, null}
-            },
-            new String []
-            {
-                "Codigo", "Descrição", "Unidade", "Preço", "Quantidade", "Desconto (%)", "Taxa", "Retenção", "Valor Retenção", "Valor", "Valor C/ Imposto"
-            }
+        table.setModel( new javax.swing.table.DefaultTableModel(
+                new Object[][]
+                {
+                    {
+                        null, null, null, null, null, null, null, null, null, null, null
+                    }
+                },
+                new String[]
+                {
+                    "Codigo", "Descrição", "Unidade", "Preço", "Quantidade", "Desconto (%)", "Taxa", "Retenção", "Valor Retenção", "Valor", "Valor C/ Imposto"
+                }
         )
         {
-            boolean[] canEdit = new boolean []
+            boolean[] canEdit = new boolean[]
             {
                 true, false, false, false, true, true, false, false, false, true, false
             };
 
-            public boolean isCellEditable(int rowIndex, int columnIndex)
+            public boolean isCellEditable( int rowIndex, int columnIndex )
             {
-                return canEdit [columnIndex];
+                return canEdit[ columnIndex ];
             }
-        });
-        table.addPropertyChangeListener(new java.beans.PropertyChangeListener()
+        } );
+        table.addPropertyChangeListener( new java.beans.PropertyChangeListener()
         {
-            public void propertyChange(java.beans.PropertyChangeEvent evt)
+            public void propertyChange( java.beans.PropertyChangeEvent evt )
             {
-                tablePropertyChange(evt);
+                tablePropertyChange( evt );
             }
-        });
-        jScrollPane1.setViewportView(table);
-        if (table.getColumnModel().getColumnCount() > 0)
+        } );
+        jScrollPane1.setViewportView( table );
+        if ( table.getColumnModel().getColumnCount() > 0 )
         {
-            table.getColumnModel().getColumn(0).setPreferredWidth(70);
-            table.getColumnModel().getColumn(1).setPreferredWidth(300);
-            table.getColumnModel().getColumn(2).setPreferredWidth(5);
-            table.getColumnModel().getColumn(3).setPreferredWidth(40);
-            table.getColumnModel().getColumn(4).setPreferredWidth(10);
-            table.getColumnModel().getColumn(5).setPreferredWidth(20);
-            table.getColumnModel().getColumn(6).setPreferredWidth(5);
-            table.getColumnModel().getColumn(7).setPreferredWidth(10);
-            table.getColumnModel().getColumn(8).setPreferredWidth(20);
-            table.getColumnModel().getColumn(9).setPreferredWidth(50);
-            table.getColumnModel().getColumn(10).setPreferredWidth(70);
+            table.getColumnModel().getColumn( 0 ).setPreferredWidth( 70 );
+            table.getColumnModel().getColumn( 1 ).setPreferredWidth( 300 );
+            table.getColumnModel().getColumn( 2 ).setPreferredWidth( 5 );
+            table.getColumnModel().getColumn( 3 ).setPreferredWidth( 40 );
+            table.getColumnModel().getColumn( 4 ).setPreferredWidth( 10 );
+            table.getColumnModel().getColumn( 5 ).setPreferredWidth( 20 );
+            table.getColumnModel().getColumn( 6 ).setPreferredWidth( 5 );
+            table.getColumnModel().getColumn( 7 ).setPreferredWidth( 10 );
+            table.getColumnModel().getColumn( 8 ).setPreferredWidth( 20 );
+            table.getColumnModel().getColumn( 9 ).setPreferredWidth( 50 );
+            table.getColumnModel().getColumn( 10 ).setPreferredWidth( 70 );
         }
 
-        painelTabela.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+        painelTabela.add( jScrollPane1, java.awt.BorderLayout.CENTER );
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout( getContentPane() );
+        getContentPane().setLayout( layout );
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(painelTopo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(painelTabela, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                layout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING )
+                        .addComponent( painelTopo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE )
+                        .addComponent( painelTabela, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE )
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(painelTopo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(painelTabela, javax.swing.GroupLayout.PREFERRED_SIZE, 723, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                layout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING )
+                        .addGroup( layout.createSequentialGroup()
+                                .addComponent( painelTopo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                .addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.UNRELATED )
+                                .addComponent( painelTabela, javax.swing.GroupLayout.PREFERRED_SIZE, 723, javax.swing.GroupLayout.PREFERRED_SIZE )
+                                .addContainerGap( javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE ) )
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void cmbClienteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbClienteActionPerformed
+    private void cmbClienteActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_cmbClienteActionPerformed
     {//GEN-HEADEREND:event_cmbClienteActionPerformed
         // TODO add your handling code here:
         accao_cliente();
         mostra_consumidor_final();
     }//GEN-LAST:event_cmbClienteActionPerformed
 
-    private void txtIniciaisClienteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtIniciaisClienteActionPerformed
+    private void txtIniciaisClienteActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_txtIniciaisClienteActionPerformed
     {//GEN-HEADEREND:event_txtIniciaisClienteActionPerformed
 //        txtQuatindade.requestFocus();
     }//GEN-LAST:event_txtIniciaisClienteActionPerformed
 
-    private void txtNomeConsumidorFinalActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtNomeConsumidorFinalActionPerformed
+    private void txtNomeConsumidorFinalActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_txtNomeConsumidorFinalActionPerformed
     {//GEN-HEADEREND:event_txtNomeConsumidorFinalActionPerformed
 //        txtQuatindade.requestFocus();
 
     }//GEN-LAST:event_txtNomeConsumidorFinalActionPerformed
 
-    private void txtNomeConsumidorFinalKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event_txtNomeConsumidorFinalKeyPressed
+    private void txtNomeConsumidorFinalKeyPressed( java.awt.event.KeyEvent evt )//GEN-FIRST:event_txtNomeConsumidorFinalKeyPressed
     {//GEN-HEADEREND:event_txtNomeConsumidorFinalKeyPressed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNomeConsumidorFinalKeyPressed
 
-    private void txtNifClientePesquisaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtNifClientePesquisaActionPerformed
+    private void txtNifClientePesquisaActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_txtNifClientePesquisaActionPerformed
     {//GEN-HEADEREND:event_txtNifClientePesquisaActionPerformed
         pesquisa_cliente_by_nif();
     }//GEN-LAST:event_txtNifClientePesquisaActionPerformed
 
-    private void txtCodClientePesquisaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtCodClientePesquisaActionPerformed
+    private void txtCodClientePesquisaActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_txtCodClientePesquisaActionPerformed
     {//GEN-HEADEREND:event_txtCodClientePesquisaActionPerformed
         pesquisa_cliente_by_cod();
     }//GEN-LAST:event_txtCodClientePesquisaActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton5ActionPerformed
+    private void jButton5ActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_jButton5ActionPerformed
     {//GEN-HEADEREND:event_jButton5ActionPerformed
         new ClienteVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia() ).setVisible( true );
     }//GEN-LAST:event_jButton5ActionPerformed
 
-    private void txtTotalPagarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtTotalPagarActionPerformed
+    private void txtTotalPagarActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_txtTotalPagarActionPerformed
     {//GEN-HEADEREND:event_txtTotalPagarActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtTotalPagarActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton4ActionPerformed
+    private void jButton4ActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_jButton4ActionPerformed
     {//GEN-HEADEREND:event_jButton4ActionPerformed
 
         try
@@ -1639,7 +1694,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         }
     }//GEN-LAST:event_jButton4ActionPerformed
 
-    private void cmbProdutoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbProdutoActionPerformed
+    private void cmbProdutoActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_cmbProdutoActionPerformed
     {//GEN-HEADEREND:event_cmbProdutoActionPerformed
         // TODO add your handling code here:
         try
@@ -1658,7 +1713,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         try
         {
 
-            TbCliente cliente = ( TbCliente ) clientesController.findById( codCliente );
+            TbCliente cliente = (TbCliente) clientesController.findById( codCliente );
             String nome_cliente = cliente.getNome();
             cmbCliente.setSelectedItem( nome_cliente.trim() );
             accao_cliente();
@@ -1711,36 +1766,36 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         txtTelClientePesquisa.requestFocus();
     }
 
-    private void cmbArmazemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbArmazemActionPerformed
+    private void cmbArmazemActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_cmbArmazemActionPerformed
     {//GEN-HEADEREND:event_cmbArmazemActionPerformed
         // TODO add your handling code here:
 //        adicionar_preco_quantidade();
         //        configurar_armazens();
     }//GEN-LAST:event_cmbArmazemActionPerformed
 
-    private void txtCodigoManualActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtCodigoManualActionPerformed
+    private void txtCodigoManualActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_txtCodigoManualActionPerformed
     {//GEN-HEADEREND:event_txtCodigoManualActionPerformed
         accao_codigo_manual_enter();
     }//GEN-LAST:event_txtCodigoManualActionPerformed
 
-    private void cmbAnoEconomicoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbAnoEconomicoActionPerformed
+    private void cmbAnoEconomicoActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_cmbAnoEconomicoActionPerformed
     {//GEN-HEADEREND:event_cmbAnoEconomicoActionPerformed
         // TODO add your handling code here:
 //        mostrar_proximo_codigo_documento();
         actualizar_abreviacao();
     }//GEN-LAST:event_cmbAnoEconomicoActionPerformed
 
-    private void rbTranstornoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_rbTranstornoActionPerformed
+    private void rbTranstornoActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_rbTranstornoActionPerformed
     {//GEN-HEADEREND:event_rbTranstornoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_rbTranstornoActionPerformed
 
-    private void rbMostrarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_rbMostrarActionPerformed
+    private void rbMostrarActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_rbMostrarActionPerformed
     {//GEN-HEADEREND:event_rbMostrarActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_rbMostrarActionPerformed
 
-    private void txtQuatindadeActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtQuatindadeActionPerformed
+    private void txtQuatindadeActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_txtQuatindadeActionPerformed
     {//GEN-HEADEREND:event_txtQuatindadeActionPerformed
         // TODO add your handling code here:
         if ( validar() )
@@ -1751,7 +1806,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         }
     }//GEN-LAST:event_txtQuatindadeActionPerformed
 
-    private void btn_adicionarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_adicionarActionPerformed
+    private void btn_adicionarActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_btn_adicionarActionPerformed
     {//GEN-HEADEREND:event_btn_adicionarActionPerformed
 
         if ( validar() )
@@ -1775,12 +1830,12 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         }
     }//GEN-LAST:event_btn_adicionarActionPerformed
 
-    private void btn_removerActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_removerActionPerformed
+    private void btn_removerActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_btn_removerActionPerformed
     {//GEN-HEADEREND:event_btn_removerActionPerformed
         try
         {
 
-            DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+            DefaultTableModel modelo = (DefaultTableModel) table.getModel();
             if ( podeRemoverServico( modelo, table.getSelectedRow() ) )
             {
                 actualizarPrecosAntigos2();
@@ -1798,13 +1853,13 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     }//GEN-LAST:event_btn_removerActionPerformed
 
-    private void ck_A4ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ck_A4ActionPerformed
+    private void ck_A4ActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_ck_A4ActionPerformed
     {//GEN-HEADEREND:event_ck_A4ActionPerformed
         // TODO add your handling code here:
 //        actualizar_abreviacao();
     }//GEN-LAST:event_ck_A4ActionPerformed
 
-    private void txtCodigoProdutoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtCodigoProdutoActionPerformed
+    private void txtCodigoProdutoActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_txtCodigoProdutoActionPerformed
     {//GEN-HEADEREND:event_txtCodigoProdutoActionPerformed
         if ( validar() )
         {
@@ -1814,61 +1869,60 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         }
     }//GEN-LAST:event_txtCodigoProdutoActionPerformed
 
-    private void cmbSubFamiliaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbSubFamiliaActionPerformed
+    private void cmbSubFamiliaActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_cmbSubFamiliaActionPerformed
     {//GEN-HEADEREND:event_cmbSubFamiliaActionPerformed
 
 //        cmbProduto.setModel( new DefaultComboBoxModel( ( produtosController.getVectorByIdTipoProduto( getIdTipoProduto() ) ) ) );
     }//GEN-LAST:event_cmbSubFamiliaActionPerformed
 
-    private void txtCodigoBarraActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtCodigoBarraActionPerformed
+    private void txtCodigoBarraActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_txtCodigoBarraActionPerformed
     {//GEN-HEADEREND:event_txtCodigoBarraActionPerformed
 //        accao_codigo_barra_enter();
 //        accao_codigo_barra_enter_cb();
         accao_codigo_barra_enter_cb();
         scrolltable();
 
-
     }//GEN-LAST:event_txtCodigoBarraActionPerformed
 
-    private void ck_A7ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ck_A7ActionPerformed
+    private void ck_A7ActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_ck_A7ActionPerformed
     {//GEN-HEADEREND:event_ck_A7ActionPerformed
         // TODO add your handling code here:
 //        actualizar_abreviacao();
     }//GEN-LAST:event_ck_A7ActionPerformed
 
-    private void ck_S_A6ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ck_S_A6ActionPerformed
+    private void ck_S_A6ActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_ck_S_A6ActionPerformed
     {//GEN-HEADEREND:event_ck_S_A6ActionPerformed
 //        actualizar_abreviacao();
     }//GEN-LAST:event_ck_S_A6ActionPerformed
 
-    private void ck_ComVirgulaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ck_ComVirgulaActionPerformed
+    private void ck_ComVirgulaActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_ck_ComVirgulaActionPerformed
     {//GEN-HEADEREND:event_ck_ComVirgulaActionPerformed
 //        actualizar_abreviacao();
     }//GEN-LAST:event_ck_ComVirgulaActionPerformed
 
-    private void ck_simplificada_O_SActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ck_simplificada_O_SActionPerformed
+    private void ck_simplificada_O_SActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_ck_simplificada_O_SActionPerformed
     {//GEN-HEADEREND:event_ck_simplificada_O_SActionPerformed
 //        actualizar_abreviacao();
     }//GEN-LAST:event_ck_simplificada_O_SActionPerformed
 
-    private void ck_simplificada_OActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ck_simplificada_OActionPerformed
+    private void ck_simplificada_OActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_ck_simplificada_OActionPerformed
     {//GEN-HEADEREND:event_ck_simplificada_OActionPerformed
 //        actualizar_abreviacao();
     }//GEN-LAST:event_ck_simplificada_OActionPerformed
 
-    private void ck_simplificadaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ck_simplificadaActionPerformed
+    private void ck_simplificadaActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_ck_simplificadaActionPerformed
     {//GEN-HEADEREND:event_ck_simplificadaActionPerformed
         // TODO add your handling code here:
 //        actualizar_abreviacao();
     }//GEN-LAST:event_ck_simplificadaActionPerformed
 
-    private void ck_DuplicadaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ck_DuplicadaActionPerformed
+    private void ck_DuplicadaActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_ck_DuplicadaActionPerformed
     {//GEN-HEADEREND:event_ck_DuplicadaActionPerformed
         // TODO add your handling code here:
 //        actualizar_abreviacao();
     }//GEN-LAST:event_ck_DuplicadaActionPerformed
 
-    private void cmbTipoDocumentoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbTipoDocumentoActionPerformed
+    private void cmbTipoDocumentoActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_cmbTipoDocumentoActionPerformed
     {//GEN-HEADEREND:event_cmbTipoDocumentoActionPerformed
 //        mostrar_proximo_codigo_documento();
         actualizar_abreviacao();
@@ -1877,7 +1931,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         atualizarDataVencimentoFA();
     }//GEN-LAST:event_cmbTipoDocumentoActionPerformed
 
-    private void btnFormaPagamentoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnFormaPagamentoActionPerformed
+    private void btnFormaPagamentoActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_btnFormaPagamentoActionPerformed
     {//GEN-HEADEREND:event_btnFormaPagamentoActionPerformed
         removerUltimaLinhaVazia();
 
@@ -1900,7 +1954,6 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         }
 
         table.getCellEditor().cancelCellEditing();
-
 
     }//GEN-LAST:event_btnFormaPagamentoActionPerformed
 
@@ -1938,8 +1991,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         table.getCellEditor().cancelCellEditing();
     }
 
-
-    private void btnProcessarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnProcessarActionPerformed
+    private void btnProcessarActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_btnProcessarActionPerformed
     {//GEN-HEADEREND:event_btnProcessarActionPerformed
         if ( validar() )
         {
@@ -1955,40 +2007,40 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         }
     }//GEN-LAST:event_btnProcessarActionPerformed
 
-    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnCancelarActionPerformed
+    private void btnCancelarActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_btnCancelarActionPerformed
     {//GEN-HEADEREND:event_btnCancelarActionPerformed
         // TODO add your handling code here:
         actualizarPrecosAntigos2();
         dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
-    private void sp_desconto_financeiroStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_sp_desconto_financeiroStateChanged
+    private void sp_desconto_financeiroStateChanged( javax.swing.event.ChangeEvent evt )//GEN-FIRST:event_sp_desconto_financeiroStateChanged
     {//GEN-HEADEREND:event_sp_desconto_financeiroStateChanged
         // TODO add your handling code here:
         tratar_desconto();
     }//GEN-LAST:event_sp_desconto_financeiroStateChanged
 
-    private void sp_desconto_financeiroInputMethodTextChanged(java.awt.event.InputMethodEvent evt)//GEN-FIRST:event_sp_desconto_financeiroInputMethodTextChanged
+    private void sp_desconto_financeiroInputMethodTextChanged( java.awt.event.InputMethodEvent evt )//GEN-FIRST:event_sp_desconto_financeiroInputMethodTextChanged
     {//GEN-HEADEREND:event_sp_desconto_financeiroInputMethodTextChanged
         // TODO add your handling code here:
     }//GEN-LAST:event_sp_desconto_financeiroInputMethodTextChanged
 
-    private void sp_desconto_financeiroPropertyChange(java.beans.PropertyChangeEvent evt)//GEN-FIRST:event_sp_desconto_financeiroPropertyChange
+    private void sp_desconto_financeiroPropertyChange( java.beans.PropertyChangeEvent evt )//GEN-FIRST:event_sp_desconto_financeiroPropertyChange
     {//GEN-HEADEREND:event_sp_desconto_financeiroPropertyChange
         // TODO add your handling code here:
     }//GEN-LAST:event_sp_desconto_financeiroPropertyChange
 
-    private void sp_desconto_financeiroKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event_sp_desconto_financeiroKeyPressed
+    private void sp_desconto_financeiroKeyPressed( java.awt.event.KeyEvent evt )//GEN-FIRST:event_sp_desconto_financeiroKeyPressed
     {//GEN-HEADEREND:event_sp_desconto_financeiroKeyPressed
         // TODO add your handling code here:
     }//GEN-LAST:event_sp_desconto_financeiroKeyPressed
 
-    private void sp_desconto_financeiroKeyTyped(java.awt.event.KeyEvent evt)//GEN-FIRST:event_sp_desconto_financeiroKeyTyped
+    private void sp_desconto_financeiroKeyTyped( java.awt.event.KeyEvent evt )//GEN-FIRST:event_sp_desconto_financeiroKeyTyped
     {//GEN-HEADEREND:event_sp_desconto_financeiroKeyTyped
         // TODO add your handling code here:
     }//GEN-LAST:event_sp_desconto_financeiroKeyTyped
 
-    private void rbArmazem1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_rbArmazem1ActionPerformed
+    private void rbArmazem1ActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_rbArmazem1ActionPerformed
     {//GEN-HEADEREND:event_rbArmazem1ActionPerformed
         try
         {
@@ -2000,7 +2052,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         }
     }//GEN-LAST:event_rbArmazem1ActionPerformed
 
-    private void rbArmazemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_rbArmazemActionPerformed
+    private void rbArmazemActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_rbArmazemActionPerformed
     {//GEN-HEADEREND:event_rbArmazemActionPerformed
         try
         {
@@ -2012,13 +2064,13 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         }
     }//GEN-LAST:event_rbArmazemActionPerformed
 
-    private void cmbMoedaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbMoedaActionPerformed
+    private void cmbMoedaActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_cmbMoedaActionPerformed
     {//GEN-HEADEREND:event_cmbMoedaActionPerformed
         // TODO add your handling code here:
         actualizar_moeda();
     }//GEN-LAST:event_cmbMoedaActionPerformed
 
-    private void btnSemFormaPagamentoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnSemFormaPagamentoActionPerformed
+    private void btnSemFormaPagamentoActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_btnSemFormaPagamentoActionPerformed
     {//GEN-HEADEREND:event_btnSemFormaPagamentoActionPerformed
         // TODO add your handling code here:
         if ( MetodosUtil.licencaValidada( conexao ) )
@@ -2038,7 +2090,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         }
     }//GEN-LAST:event_btnSemFormaPagamentoActionPerformed
 
-    private void tablePropertyChange(java.beans.PropertyChangeEvent evt)//GEN-FIRST:event_tablePropertyChange
+    private void tablePropertyChange( java.beans.PropertyChangeEvent evt )//GEN-FIRST:event_tablePropertyChange
     {//GEN-HEADEREND:event_tablePropertyChange
         // TODO add your handling code here:
         if ( table.getSelectedColumn() == 3 || table.getSelectedColumn() == 4 || table.getSelectedColumn() == 5 )
@@ -2050,17 +2102,17 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         }
     }//GEN-LAST:event_tablePropertyChange
 
-    private void jScrollPane1PropertyChange(java.beans.PropertyChangeEvent evt)//GEN-FIRST:event_jScrollPane1PropertyChange
+    private void jScrollPane1PropertyChange( java.beans.PropertyChangeEvent evt )//GEN-FIRST:event_jScrollPane1PropertyChange
     {//GEN-HEADEREND:event_jScrollPane1PropertyChange
 
     }//GEN-LAST:event_jScrollPane1PropertyChange
 
-    private void txtTelClientePesquisaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtTelClientePesquisaActionPerformed
+    private void txtTelClientePesquisaActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_txtTelClientePesquisaActionPerformed
     {//GEN-HEADEREND:event_txtTelClientePesquisaActionPerformed
         pesquisa_cliente_by_tel();
     }//GEN-LAST:event_txtTelClientePesquisaActionPerformed
 
-    private void txtQuantidadeStockActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtQuantidadeStockActionPerformed
+    private void txtQuantidadeStockActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_txtQuantidadeStockActionPerformed
     {//GEN-HEADEREND:event_txtQuantidadeStockActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtQuantidadeStockActionPerformed
@@ -2286,7 +2338,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static double getTaxaImposto( int idProduto )
     {
-        TbProduto produto = ( TbProduto ) produtosController.findById( idProduto );
+        TbProduto produto = (TbProduto) produtosController.findById( idProduto );
         //verifca o artigo se eh produto ou servico.
         if ( produto.getStocavel().equals( "true" ) )
         {
@@ -2397,7 +2449,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     public static Double getPreco( int idProduto, double qtd, int idMoeda )
     {
 
-        Moeda moeda = ( Moeda ) moedasController.findById( idMoeda );
+        Moeda moeda = (Moeda) moedasController.findById( idMoeda );
         if ( moeda == null )
         {
             return null;
@@ -2428,20 +2480,20 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     public static String getDescricao_Produto()
     {
-        TbProduto produto = ( TbProduto ) produtosController.findById( getCodigoProduto() );
+        TbProduto produto = (TbProduto) produtosController.findById( getCodigoProduto() );
         return produto.getDesignacao();
     }
 
     public static String getUnidade_Produto()
     {
-        TbProduto produto = ( TbProduto ) produtosController.findById( getCodigoProduto() );
-        Unidade unidade = ( Unidade ) unidadesController.findById( produto.getCodUnidade().getPkUnidade() );
+        TbProduto produto = (TbProduto) produtosController.findById( getCodigoProduto() );
+        Unidade unidade = (Unidade) unidadesController.findById( produto.getCodUnidade().getPkUnidade() );
         return unidade.getAbreviacao();
     }
 
     private static Moeda getMoeda()
     {
-        String moedaSelecionada = ( String ) cmbMoeda.getSelectedItem();
+        String moedaSelecionada = (String) cmbMoeda.getSelectedItem();
 
         if ( moedaSelecionada == null )
         {
@@ -2615,7 +2667,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     public static void remover_all_produto()
     {
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         for ( int i = modelo.getRowCount() - 1; i >= 0; i-- )
         {
             modelo.removeRow( i );
@@ -2840,7 +2892,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             throw new Exception( "Forma de pagamento não encontrada: " + descricao );
         }
 
-        Contas conta = ( Contas ) contaController.findById( forma.getFkContaAssociada() );
+        Contas conta = (Contas) contaController.findById( forma.getFkContaAssociada() );
         FormaPagamentoItem item = criarItemFormaPagamento( idVenda, idForma, valor, BigDecimal.ZERO, referencia );
         if ( !formaPagamentoItemController.salvar( item ) )
         {
@@ -2865,7 +2917,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static void registrarPagamentosMultiplos( int idVenda ) throws Exception
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) FormaPagamentoVisao.tabela_forma_pagamento.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) FormaPagamentoVisao.tabela_forma_pagamento.getModel();
         double trocoExterno = CfMethods.parseMoedaFormatada( FormaPagamentoVisao.lb_troco.getText() );
         BigDecimal troco = new BigDecimal( trocoExterno );
 
@@ -2888,7 +2940,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                 throw new Exception( "Forma de pagamento não encontrada: " + descricao );
             }
 
-            Contas conta = ( Contas ) contaController.findById( forma.getFkContaAssociada() );
+            Contas conta = (Contas) contaController.findById( forma.getFkContaAssociada() );
 
             System.out.println( "FORMA PAGAMENTO: " + descricao );
             System.out.println( "FORMA PAGAMENTO VALOR: " + valor );
@@ -2941,7 +2993,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         List<TbProduto> lista_produto_isentos = getProdutosIsentos();
         String motivos_isentos = MetodosUtil.getMotivoIsensaoProdutos( lista_produto_isentos );
         conexoaLocal.close();
-        int numeroVias = ( int ) Double.parseDouble( spnCopia.getValue().toString() );
+        int numeroVias = (int) Double.parseDouble( spnCopia.getValue().toString() );
 
         for ( int i = 1; i <= numeroVias; i++ )
         {
@@ -2974,7 +3026,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static void accao_cliente()
     {
-        String nomeCliente = ( String ) cmbCliente.getSelectedItem();
+        String nomeCliente = (String) cmbCliente.getSelectedItem();
 
         txtNomeConsumidorFinal.setText( nomeCliente );
         String nif = clientesController.findByNome( nomeCliente ).getNif();
@@ -2983,7 +3035,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static void accao_cliente_tel()
     {
-        String nomeCliente = ( String ) cmbCliente.getSelectedItem();
+        String nomeCliente = (String) cmbCliente.getSelectedItem();
 
         txtNomeConsumidorFinal.setText( nomeCliente );
         String telefone = clientesController.findByNome( nomeCliente ).getTelefone();
@@ -3033,7 +3085,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static List<TbProduto> getProdutosIsentos()
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         double taxa = 0.0;
         int codigo_produto = 0;
         List<TbProduto> lista_produtos_isentos = new ArrayList<>();
@@ -3043,7 +3095,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             taxa = Double.parseDouble( modelo.getValueAt( i, 6 ).toString() );
             if ( taxa == 0.0 )
             {
-                lista_produtos_isentos.add( ( TbProduto ) produtosController.findById( codigo_produto ) );
+                lista_produtos_isentos.add( (TbProduto) produtosController.findById( codigo_produto ) );
             }
         }
 
@@ -3197,7 +3249,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                 int idProduto = Integer.parseInt( table.getModel().getValueAt( i, 0 ).toString() );
                 String designacaoItem = table.getModel().getValueAt( i, 1 ).toString();
 
-                TbProduto produto = ( TbProduto ) produtosController.findById( idProduto );
+                TbProduto produto = (TbProduto) produtosController.findById( idProduto );
 
                 TbItemVenda item = new TbItemVenda();
                 item.setCodigoVenda( new TbVenda( cod_venda ) );
@@ -3213,8 +3265,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                 item.setTotal( new BigDecimal( CfMethods.parseMoedaFormatada( table.getModel().getValueAt( i, 10 ).toString() ) ) );
                 item.setFkPreco( precosController.getLastIdPrecoByIdProduto( idProduto, item.getQuantidade() ) );
                 item.setDataServico( new Date() );
-                item.setFkLugares( ( TbLugares ) lugaresController.findById( DVML.LUGAR_BALCAO ) );
-                item.setFkMesas( ( TbMesas ) mesasController.findById( DVML.MESA_BALCAO ) );
+                item.setFkLugares( (TbLugares) lugaresController.findById( DVML.LUGAR_BALCAO ) );
+                item.setFkMesas( (TbMesas) mesasController.findById( DVML.MESA_BALCAO ) );
                 item.setDesignacaoItem( designacaoItem );
                 // Salvar item
                 if ( !itemVendasController.salvar( item ) )
@@ -3300,7 +3352,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         {
 
             //busca o objecto para retirar apenas a data do seu procesamento
-            TbVenda venda_local = ( TbVenda ) vendasController.findById( cod_ultima_venda );
+            TbVenda venda_local = (TbVenda) vendasController.findById( cod_ultima_venda );
             //retirando a data do documebto
             Date data_ultimo_documento = venda_local.getDataVenda();
             //pegando a data do documento (data actual do sistema)
@@ -3325,7 +3377,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     {
         try
         {
-            TbCliente cliente = ( TbCliente ) clientesController.findById( getIdCliente() );
+            TbCliente cliente = (TbCliente) clientesController.findById( getIdCliente() );
 
             String nif = cliente.getNif();
             System.out.println( "NIF CLIENTE: " + nif );
@@ -3368,7 +3420,6 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         return 0d;
 
     }
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
@@ -3475,7 +3526,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private void refresh_table()
     {
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
         double preco = 0, desconto = 0, sub_total_linha = 0, sub_total_linha_com_iva = 0, taxa = 0, taxa_r = 0, sub_total_linha_retencao = 0;
         int idProduto, qtd;
@@ -3531,7 +3582,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static void calculaTotalIVA()
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         BigDecimal totalIva = BigDecimal.ZERO;
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
@@ -3633,8 +3684,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private static void refresh_table( int idMoeda )
     {
 
-        Moeda moeda_local = ( Moeda ) moedasController.findById( idMoeda );
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        Moeda moeda_local = (Moeda) moedasController.findById( idMoeda );
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
         double preco = 0, desconto = 0, sub_total_linha = 0, sub_total_linha_com_iva = 0, taxa = 0, taxa_r = 0;
         int idProduto, qtd;
@@ -3694,7 +3745,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             {
                 if ( !isProdutoExpirado( getCodigoProduto() ) )
                 {
-                    TbProduto produto = ( TbProduto ) produtosController.findById( getCodigoProduto() );
+                    TbProduto produto = (TbProduto) produtosController.findById( getCodigoProduto() );
                     if ( isStocavel( produto.getStocavel() ) )
                     {
 
@@ -3742,7 +3793,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             {
                 if ( !isProdutoExpirado( getCodigoProduto() ) )
                 {
-                    TbProduto produto = ( TbProduto ) produtosController.findById( getCodigoProduto() );
+                    TbProduto produto = (TbProduto) produtosController.findById( getCodigoProduto() );
                     System.out.println( "PRODUTO STOCAVEL: " + produto.getStocavel() );
                     boolean valorStocacel = isStocavel( produto.getStocavel() );
                     System.out.println( "VALOR STOCACEL" + valorStocacel );
@@ -3816,7 +3867,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             if ( !campos_invalidos() )
             {
 
-                TbProduto produto = ( TbProduto ) produtosController.findById( getCodigoProduto() );
+                TbProduto produto = (TbProduto) produtosController.findById( getCodigoProduto() );
                 if ( isStocavel( produto.getStocavel() ) )
                 {
 
@@ -3856,7 +3907,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     public static void adicionar_produto( String mes ) throws SQLException
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         table.setRowHeight( 28 );
 
         // --------------------------
@@ -3985,9 +4036,9 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         );
 
         int idPedido = 0;
-        TbMesas mesaEntity = ( TbMesas ) mesasController.findById( DVML.MESA_BALCAO );
-        TbLugares lugarEntity = ( TbLugares ) lugaresController.findById( DVML.LUGAR_BALCAO );
-        TbUsuario usuarioEntity = ( TbUsuario ) usuariosController.findById( cod_usuario );
+        TbMesas mesaEntity = (TbMesas) mesasController.findById( DVML.MESA_BALCAO );
+        TbLugares lugarEntity = (TbLugares) lugaresController.findById( DVML.LUGAR_BALCAO );
+        TbUsuario usuarioEntity = (TbUsuario) usuariosController.findById( cod_usuario );
         String usuario = usuarioEntity.getNome();
 
         if ( findByDesignacao.getCozinha().equals( DVML.ENVIAR_TICKET ) )
@@ -4378,7 +4429,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private static boolean exist_produto_tabela_formulario( String designacao )
     {
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
         {
@@ -4417,9 +4468,9 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             if ( !Objects.isNull( produto ) )
             {
                 Integer codTipoProduto = produto.getCodTipoProduto().getCodigo();
-                TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutoController.findById( codTipoProduto );
+                TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById( codTipoProduto );
                 Integer codFamilia = tipoProduto.getFkFamilia().getPkFamilia();
-                Familia familia = ( Familia ) familiaController.findById( codFamilia );
+                Familia familia = (Familia) familiaController.findById( codFamilia );
 //                cmbFamilia.setSelectedItem( familia.getDesignacao() );
                 cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
 
@@ -4541,7 +4592,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
                 if ( !isProdutoExpirado( getCodigoProduto() ) )
                 {
-                    TbProduto produtoLocal = ( TbProduto ) produtosController.findById( getCodigoProduto() );
+                    TbProduto produtoLocal = (TbProduto) produtosController.findById( getCodigoProduto() );
                     if ( isStocavel( produtoLocal.getStocavel() ) )
                     {
                         if ( possivel_quantidade() )
@@ -4665,7 +4716,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         table.getColumnModel().getColumn( 4 );
         table.getColumnModel().getColumn( 5 );
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
         for ( int i = modelo.getRowCount() - 1; i >= 0; i-- )
         {
@@ -4706,7 +4757,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private static BigDecimal getTotalRetencaoLiquido()
     {
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         BigDecimal totalRetencao = BigDecimal.ZERO;
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
@@ -4750,7 +4801,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     public static double getTotalPagar()
     {
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
         double total_pagar = 0;
         for ( int i = 0; i < modelo.getRowCount(); i++ )
@@ -4765,7 +4816,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     public static double getTotal_Retencao()
     {
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
         double total_retencao = 0;
         for ( int i = 0; i < modelo.getRowCount(); i++ )
@@ -4796,7 +4847,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 //        String valorFormatado = CfMethods.formatarComoMoeda( total );
 //        txtTotalPagar.setText( valorFormatado );
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         double total_liquido = 0;
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
@@ -4839,7 +4890,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static double getTotalRetencao1()
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         double qtd = 0d;
         double imposto = 0d, preco_unitario = 0d, desconto_valor_linha = 0d, valor_taxa = 0d;
 
@@ -4869,7 +4920,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     {
         BigDecimal totalIva = BigDecimal.ZERO;
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
         {
@@ -4908,7 +4959,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private boolean validarPrecos_tabela( JTable tabela )
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) tabela.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
         StringBuilder produtosComErro = new StringBuilder();
 
         // Percorrer todas as linhas
@@ -5019,7 +5070,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static String iniciais_extenso()
     {
-        Documento documento_local = ( Documento ) documentosController.findById( getIdDocumento() );
+        Documento documento_local = (Documento) documentosController.findById( getIdDocumento() );
         String abreviacao_local = documento_local.getAbreviacao();
 
         switch (abreviacao_local)
@@ -5300,14 +5351,14 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private void mostrar_nome()
     {
-        TbUsuario usuario = ( TbUsuario ) usuariosController.getUsuarioByCodigo( this.cod_usuario );
+        TbUsuario usuario = (TbUsuario) usuariosController.getUsuarioByCodigo( this.cod_usuario );
         lb_nome_usuario.setText( "Operador: " + usuario.getNome() );
         System.out.println( "&&&&&&&&Conn::::" + cod_usuario );
     }
 
     private void empresa()
     {
-        TbDadosInstituicao dados = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
+        TbDadosInstituicao dados = (TbDadosInstituicao) dadosInstituicaoController.findById( 1 );
 
         jlEmpresa.setText( "KITANDA 1.2                      " + dados.getNome() );
 
@@ -5465,7 +5516,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         try
         {
 
-            TbProduto produto_local = ( TbProduto ) produtosController.findById( getCodigoProduto() );
+            TbProduto produto_local = (TbProduto) produtosController.findById( getCodigoProduto() );
 
             TbStock stockLocal = stocksController.getStockByIdProdutoAndIdArmazem( getCodigoProduto(), getCodigoArmazem() );
             boolean isStocavel = produto_local.getStocavel().equals( "true" );
@@ -5526,7 +5577,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     public void remover_item_carrinho()
     {
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
         String designacao = modelo.getValueAt( table.getSelectedRow(), 1 ).toString();
         if ( designacao.contentEquals( "#" ) )
@@ -5543,20 +5594,20 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         TbProduto findByDesignacao = produtosController.findByDesignacao( cmbProduto.getSelectedItem().toString() );
 
         int idPedido = 0;
-        TbMesas mesaEntity = ( TbMesas ) mesasController.findById( DVML.MESA_BALCAO );
+        TbMesas mesaEntity = (TbMesas) mesasController.findById( DVML.MESA_BALCAO );
         String mesa = mesaEntity.getDesignacao();
-        TbLugares lugarEntity = ( TbLugares ) lugaresController.findById( DVML.LUGAR_BALCAO );
+        TbLugares lugarEntity = (TbLugares) lugaresController.findById( DVML.LUGAR_BALCAO );
         String lugar = lugarEntity.getDesignacao();
-        TbUsuario usuarioEntity = ( TbUsuario ) usuariosController.findById( cod_usuario );
+        TbUsuario usuarioEntity = (TbUsuario) usuariosController.findById( cod_usuario );
         String usuario = usuarioEntity.getNome();
 
         if ( findByDesignacao.getCozinha().equals( "Enviar Ticket" ) )
         {
-            MetodosUtil.imprimir_cozinha( findByDesignacao, idPedido, mesa, lugar, usuario, "Cancelado", ( int ) getQuantidade(), dadosInstituicaoController );
+            MetodosUtil.imprimir_cozinha( findByDesignacao, idPedido, mesa, lugar, usuario, "Cancelado", (int) getQuantidade(), dadosInstituicaoController );
         }
         else if ( findByDesignacao.getCozinha().equals( "Enviar Sala" ) )
         {
-            MetodosUtil.imprimir_sala( findByDesignacao, idPedido, mesa, lugar, usuario, "Cancelado", ( int ) getQuantidade(), dadosInstituicaoController );
+            MetodosUtil.imprimir_sala( findByDesignacao, idPedido, mesa, lugar, usuario, "Cancelado", (int) getQuantidade(), dadosInstituicaoController );
         }
 
         valor_por_extenco();
@@ -5572,12 +5623,12 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         {
 
             System.out.println( "ID PRODUTO EXTERIOR: " + codigo );
-            TbProduto produtoLocal = ( TbProduto ) produtosController.findById( codigo );
+            TbProduto produtoLocal = (TbProduto) produtosController.findById( codigo );
 
             Integer codTipoProduto = produtoLocal.getCodTipoProduto().getCodigo();
-            TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutoController.findById( codTipoProduto );
+            TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById( codTipoProduto );
             Integer codFamilia = tipoProduto.getFkFamilia().getPkFamilia();
-            Familia familia = ( Familia ) familiaController.findById( codFamilia );
+            Familia familia = (Familia) familiaController.findById( codFamilia );
             cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
 
             cmbProduto.setModel( new DefaultComboBoxModel( produtosController.getVector() ) );
@@ -5827,7 +5878,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static boolean primeiraLinhaVazia()
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
         if ( modelo.getRowCount() == 0 )
         {
@@ -5841,7 +5892,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static void inserir_uma_linha()
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         if ( modelo.getRowCount() == 0 )
         {
             modelo.addRow( new Object[]
@@ -5930,12 +5981,12 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         {
 
             int codigo = Integer.parseInt( txtCodigoProduto.getText() );
-            TbProduto produto = ( TbProduto ) produtosController.findByIdStatus( codigo );
+            TbProduto produto = (TbProduto) produtosController.findByIdStatus( codigo );
 
             Integer codTipoProduto = produto.getCodTipoProduto().getCodigo();
-            TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutoController.findById( codTipoProduto );
+            TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById( codTipoProduto );
             Integer codFamilia = tipoProduto.getFkFamilia().getPkFamilia();
-            Familia familia = ( Familia ) familiaController.findById( codFamilia );
+            Familia familia = (Familia) familiaController.findById( codFamilia );
             cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
 
             cmbProduto.setModel( new DefaultComboBoxModel( produtosController.getVector() ) );
@@ -6008,7 +6059,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
             // Preenche combos (igual ao original)
             Integer codTipoProduto = produto.getCodTipoProduto().getCodigo();
-            TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutoController.findById( codTipoProduto );
+            TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById( codTipoProduto );
             cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
             cmbProduto.setModel( new DefaultComboBoxModel( produtosController.getVector() ) );
             cmbProduto.setSelectedItem( produto.getDesignacao() );
@@ -6093,7 +6144,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                 if ( possivel_quantidade() )
                 {
 
-                    DefaultTableModel model = ( DefaultTableModel ) table.getModel();
+                    DefaultTableModel model = (DefaultTableModel) table.getModel();
 
                     // --- Corrigir: confirmar edição atual ---
                     if ( table.isEditing() )
@@ -6242,7 +6293,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
         try
         {
-            DefaultTableModel model = ( DefaultTableModel ) table.getModel();
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
 
             // Lê o código digitado na coluna 0
             String codigoBarra = model.getValueAt( row, 0 ).toString().trim();
@@ -6395,7 +6446,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private void preencherLinhaTabelaComProduto( int row, TbProduto produto )
     {
 
-        DefaultTableModel model = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
 //
         int codigoProduto = produto.getCodigo();
         String descricao = produto.getDesignacao();
@@ -6505,7 +6556,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 //}
     private void adicionarLinhaVaziaSeNecessario()
     {
-        DefaultTableModel model = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
 
         int last = model.getRowCount() - 1;
         boolean vazia = true;
@@ -6596,7 +6647,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
         try
         {
-            DefaultTableModel model = ( DefaultTableModel ) table.getModel();
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
 
             String valorDigitado = model.getValueAt( row, 0 ).toString().trim();
 
@@ -6623,7 +6674,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                     int codigo = Integer.parseInt( valorDigitado );
 
                     // tenta buscar por ID interno
-                    produto = ( TbProduto ) produtosController.findById( codigo );
+                    produto = (TbProduto) produtosController.findById( codigo );
                 }
                 catch ( Exception e )
                 {
@@ -6698,7 +6749,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static void cursorLinha()
     {
-        DefaultTableModel model = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
         int last = model.getRowCount() - 1;
         table.getModel().setValueAt( "", last, 0 );
         table.changeSelection( last, 0, false, false );
@@ -6815,7 +6866,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static void removerUltimaLinhaVazia()
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         int lastRow = modelo.getRowCount() - 1;
 
         if ( lastRow < 0 )
@@ -6868,12 +6919,12 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
         int idPrecoRetalho = PrecosController.getLastIdPrecoByIdProdutoIntAndQTD( idProduto, 0d, conexaoTransaction );
         System.out.println( "ID RETALHO: " + idPrecoRetalho );
-        TbPreco precoAntigoRetalho = ( TbPreco ) precosControllerLocal.findById( idPrecoRetalho );
+        TbPreco precoAntigoRetalho = (TbPreco) precosControllerLocal.findById( idPrecoRetalho );
 
         System.out.println( "PRECO RETALHO: " + precoAntigoRetalho );
 
         int idPrecoGrosso = PrecosController.getLastIdPrecoByIdProdutoIntAndPrecoAntigoQtdAlto( idProduto, precoAntigoRetalho.getQtdAlto() + 1, conexaoTransaction );
-        TbPreco precoAntigoGrosso = ( TbPreco ) precosControllerLocal.findById( idPrecoGrosso );
+        TbPreco precoAntigoGrosso = (TbPreco) precosControllerLocal.findById( idPrecoGrosso );
         System.out.println( "ID GROSSO: " + idPrecoGrosso );
         System.out.println( "PRECO GROSSO: " + precoAntigoGrosso );
 
@@ -6986,8 +7037,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             int codProduto = Integer.parseInt( table.getValueAt( linha_actual, 0 ).toString() );
             double desconto = Double.parseDouble( table.getValueAt( linha_actual, 5 ).toString() );
 
-            TbProduto produtoLocal = ( TbProduto ) produtosController.findById( codProduto );
-            TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutoController.findById( produtoLocal.getCodTipoProduto().getCodigo() );
+            TbProduto produtoLocal = (TbProduto) produtosController.findById( codProduto );
+            TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById( produtoLocal.getCodTipoProduto().getCodigo() );
 
             double qtd;
 
@@ -7035,7 +7086,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static void actuazlizar_quantidade_tabela_formulario( String quantidade, double desconto )
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         double qtd = Double.parseDouble( quantidade );
         double retencao = 0;
 
@@ -7091,7 +7142,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
             produtosController = new ProdutosController( conexao );
             System.out.println( "ID PRODUTO EXTERIOR: " + codigo );
-            TbProduto produtoLocal = ( TbProduto ) produtosController.findById( codigo );
+            TbProduto produtoLocal = (TbProduto) produtosController.findById( codigo );
 
             procedimentoAdicionarTabela2( produtoLocal, mes );
 
@@ -7113,7 +7164,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         {
             double desconto = 0.0;
             double total_pagar = getTotalPagar();
-            double valor_desconto_geral = ( double ) sp_desconto_financeiro.getValue();
+            double valor_desconto_geral = (double) sp_desconto_financeiro.getValue();
 
             if ( valor_desconto_geral > total_pagar )
             {
@@ -7189,7 +7240,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private void configurarTabela()
     {
 
-        DefaultTableModel model = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
 
         table.setModel( new DefaultTableModel(
                 model.getDataVector(),
@@ -7209,7 +7260,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private void configurarTabela( int coluna )
     {
 
-        DefaultTableModel model = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
 
         table.setModel( new DefaultTableModel(
                 model.getDataVector(),
