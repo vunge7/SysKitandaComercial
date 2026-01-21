@@ -4,7 +4,6 @@
  */
 package util;
 
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
@@ -22,7 +21,7 @@ import javax.swing.JOptionPane;
  * @author Domingos Dala Vunge & Martinho Canhongo Luis
  */
 public class JPAEntityMannagerFactoryUtil
-        
+
 {
 
 //    public static EntityManagerFactory em  =  Persistence.createEntityManagerFactory("SGCMINIMERCADOPU");
@@ -41,7 +40,8 @@ public class JPAEntityMannagerFactoryUtil
     public static EntityManager createEntityManager()
     {
 
-        try{
+        try
+        {
 
             return em.createEntityManager();
         }
