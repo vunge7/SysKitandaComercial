@@ -503,7 +503,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             @Override
             public void windowActivated( WindowEvent e )
             {
-                mostrar_proximo_codigo_documento();
+//                mostrar_proximo_codigo_documento();
 
                 try
                 {
@@ -526,15 +526,15 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     }
 
-    private static void mostrar_proximo_codigo_documento()
+    private static void mostrar_proximo_codigo_documento( BDConexao conexaoLocal)
     {
 
         try
         {
-            BDConexao conexaoLocal = BDConexao.getInstancia();
+//            BDConexao conexaoLocal = BDConexao.getInstancia();
             documentosController = new DocumentosController( conexaoLocal );
             anoEconomicoController = new AnoEconomicoController( conexaoLocal );
-            vendasController = new VendasController( conexaoLocal );
+//            vendasController = new VendasController( conexaoLocal );
 
             documento = ( Documento ) documentosController.findById( getIdDocumento( documentosController ) );
             anoEconomico = ( AnoEconomico ) anoEconomicoController.findById( getIdAnoEconomico( anoEconomicoController ) );
@@ -554,6 +554,34 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         }
 
     }
+//    private static void mostrar_proximo_codigo_documento()
+//    {
+//
+//        try
+//        {
+//            BDConexao conexaoLocal = BDConexao.getInstancia();
+//            documentosController = new DocumentosController( conexaoLocal );
+//            anoEconomicoController = new AnoEconomicoController( conexaoLocal );
+//            vendasController = new VendasController( conexaoLocal );
+//
+//            documento = ( Documento ) documentosController.findById( getIdDocumento( documentosController ) );
+//            anoEconomico = ( AnoEconomico ) anoEconomicoController.findById( getIdAnoEconomico( anoEconomicoController ) );
+//            doc_prox_cod = vendasController.getUltimaContagemByIdDocumentoAndAnoEconomico(
+//                    getIdDocumento( documentosController ), getIdAnoEconomico( anoEconomicoController ) ) + 1;
+//            prox_doc = documento.getAbreviacao();
+//            //FA Série / codigo
+//            prox_doc += " " + anoEconomico.getSerie() + "/" + doc_prox_cod;
+////            lb_proximo_documento.setText( "PRÓX.DOC. :" + prox_doc );
+//
+//        }
+//        catch ( Exception e )
+//        {
+//            documento = null;
+//            lb_proximo_documento.setText( "" );
+//
+//        }
+//
+//    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -1701,7 +1729,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private void cmbAnoEconomicoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbAnoEconomicoActionPerformed
     {//GEN-HEADEREND:event_cmbAnoEconomicoActionPerformed
         // TODO add your handling code here:
-        mostrar_proximo_codigo_documento();
+//        mostrar_proximo_codigo_documento();
         actualizar_abreviacao();
     }//GEN-LAST:event_cmbAnoEconomicoActionPerformed
 
@@ -1845,7 +1873,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private void cmbTipoDocumentoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbTipoDocumentoActionPerformed
     {//GEN-HEADEREND:event_cmbTipoDocumentoActionPerformed
-        mostrar_proximo_codigo_documento();
+//        mostrar_proximo_codigo_documento();
         actualizar_abreviacao();
         desabilitar_campos();
         atualizarCliente1();
@@ -3105,7 +3133,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         }
 
         //###
-        mostrar_proximo_codigo_documento();
+        mostrar_proximo_codigo_documento(conexaoTransaction);
         venda.setCodFact( prox_doc );
         venda.setPerformance( "false" ); // ou pegar de um campo
         venda.setCredito( "false" );        // depende se venda é a crédito
