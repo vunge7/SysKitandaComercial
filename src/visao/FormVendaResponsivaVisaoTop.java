@@ -526,12 +526,14 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     }
 
+    
     private static void mostrar_proximo_codigo_documento()
     {
 
         try
         {
 
+            //metodo actualizado
             documento = ( Documento ) documentosController.findById( getIdDocumento( documentosController ) );
             anoEconomico = ( AnoEconomico ) anoEconomicoController.findById( getIdAnoEconomico( anoEconomicoController ) );
             doc_prox_cod = vendasController.getUltimaContagemByIdDocumentoAndAnoEconomico(
