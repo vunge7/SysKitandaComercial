@@ -7192,6 +7192,9 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 //            line.setUnitPriceBase( unitPriceBase );
 //            line.setDebitAmount( 0 );
 //            line.setCreditAmount( totalLinhaSemIva );
+//            
+//            
+//            
 //
 //            if ( taxa > 0 )
 //            {
@@ -7294,14 +7297,14 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         doc.setSystemEntryDate( DataUtil.converter( venda.getDataVenda() ) );
         doc.setCustomerTaxID( cliente.getNif() );
         doc.setCustomerCountry( cliente.getPaisISO() );
-        doc.setCompanyName( cliente.getNome() ); // era morada, agora nome
+        doc.setCompanyName( cliente.getNome() );
 
         List<LineDTO> lines = new ArrayList<>();
 
-        double totalBase = 0;
-        double totalIva = 0;
-        double totalFinal = 0;
-        double totalRetencao = 0;
+        BigDecimal totalBase = BigDecimal.ZERO;
+        BigDecimal totalIva = BigDecimal.ZERO;
+        BigDecimal totalFinal = BigDecimal.ZERO;
+        BigDecimal totalRetencao = BigDecimal.ZERO;
 
         for ( int i = 0; i < table.getRowCount(); i++ )
         {
@@ -7313,23 +7316,16 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             double taxa = Double.parseDouble( table.getValueAt( i, 6 ).toString() );
             double retencaoLinha = CfMethods.parseMoedaFormatada( table.getValueAt( i, 7 ).toString() );
 
-            // Arredondamento de valores
-            unitPrice = new BigDecimal( unitPrice ).setScale( 6, RoundingMode.HALF_UP ).doubleValue();
-            desconto = new BigDecimal( desconto ).setScale( 2, RoundingMode.HALF_UP ).doubleValue();
-            retencaoLinha = new BigDecimal( retencaoLinha ).setScale( 2, RoundingMode.HALF_UP ).doubleValue();
+            // Cálculos com BigDecimal e arredondamento
+            BigDecimal bdUnitPrice = BigDecimal.valueOf( unitPrice );
+            BigDecimal bdDesconto = BigDecimal.valueOf( desconto );
+            BigDecimal bdQtd = BigDecimal.valueOf( qtd );
+            BigDecimal bdTaxa = BigDecimal.valueOf( taxa ).divide( BigDecimal.valueOf( 100 ) );
 
-            double unitPriceBase = unitPrice - desconto;
-            unitPriceBase = new BigDecimal( unitPriceBase ).setScale( 6, RoundingMode.HALF_UP ).doubleValue();
-
-            double base = unitPriceBase * qtd;
-            base = new BigDecimal( base ).setScale( 2, RoundingMode.HALF_UP ).doubleValue();
-
-            double iva = base * ( taxa / 100.0 );
-            iva = new BigDecimal( iva ).setScale( 2, RoundingMode.HALF_UP ).doubleValue();
-
-            double totalLinhaSemIva = base;
-            double totalLinha = base + iva;
-            totalLinha = new BigDecimal( totalLinha ).setScale( 2, RoundingMode.HALF_UP ).doubleValue();
+            BigDecimal unitPriceBase = bdUnitPrice.subtract( bdDesconto ).setScale( 2, BigDecimal.ROUND_HALF_UP );
+            BigDecimal base = unitPriceBase.multiply( bdQtd ).setScale( 2, BigDecimal.ROUND_HALF_UP );
+            BigDecimal iva = base.multiply( bdTaxa ).setScale( 2, BigDecimal.ROUND_CEILING );
+            BigDecimal totalLinha = base.add( iva ).setScale( 2, BigDecimal.ROUND_CEILING );
 
             LineDTO line = new LineDTO();
             line.setLineNumber( i + 1 );
@@ -7338,9 +7334,9 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             line.setQuantity( String.valueOf( qtd ) );
             line.setUnitOfMeasure( "UN" );
             line.setUnitPrice( unitPrice );
-            line.setUnitPriceBase( unitPriceBase );
+            line.setUnitPriceBase( unitPriceBase.doubleValue() );
             line.setDebitAmount( 0 );
-            line.setCreditAmount( totalLinhaSemIva );
+            line.setCreditAmount( base.doubleValue() );
 
             if ( taxa > 0 )
             {
@@ -7349,46 +7345,38 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                 tax.setTaxCountryRegion( "AO" );
                 tax.setTaxCode( "NOR" );
                 tax.setTaxPercentage( String.valueOf( taxa ) );
-                tax.setTaxContribution( iva );
+                tax.setTaxContribution( iva.doubleValue() );
 
                 line.setTaxes( Collections.singletonList( tax ) );
             }
 
             lines.add( line );
 
-            // Acumulando totais com arredondamento
-            totalBase += base;
-            totalIva += iva;
-            totalFinal += totalLinha;
-            totalRetencao += retencaoLinha;
+            totalBase = totalBase.add( base );
+            totalIva = totalIva.add( iva );
+            totalFinal = totalFinal.add( totalLinha );
+            totalRetencao = totalRetencao.add( BigDecimal.valueOf( retencaoLinha ) );
         }
-
-        // Arredondar totais finais
-        totalBase = new BigDecimal( totalBase ).setScale( 2, RoundingMode.HALF_UP ).doubleValue();
-        totalIva = new BigDecimal( totalIva ).setScale( 2, RoundingMode.HALF_UP ).doubleValue();
-        totalFinal = new BigDecimal( totalFinal ).setScale( 2, RoundingMode.HALF_UP ).doubleValue();
-        totalRetencao = new BigDecimal( totalRetencao ).setScale( 2, RoundingMode.HALF_UP ).doubleValue();
 
         doc.setLines( lines );
 
         DocumentTotalsDTO documentsTotals = new DocumentTotalsDTO();
-        documentsTotals.setNetTotal( totalBase );
-        documentsTotals.setTaxPayable( totalIva );
-        documentsTotals.setGrossTotal( totalFinal );
+        documentsTotals.setNetTotal( totalBase.doubleValue() );
+        documentsTotals.setTaxPayable( totalIva.doubleValue() );
+        documentsTotals.setGrossTotal( totalFinal.doubleValue() );
         doc.setDocumentTotals( documentsTotals );
 
         documentDTOs.add( doc );
 
         Series serie = seriesController.findByDocumentoEAno( getIdDocumento(), getIdAnoEconomico() );
-
         Documento documentoType = documentosController.findDocumentoById( serie.getFkDocumento() );
 
-        if ( totalRetencao > 0 )
+        if ( totalRetencao.compareTo( BigDecimal.ZERO ) > 0 )
         {
             WithholdingTaxDTO ret = new WithholdingTaxDTO();
             ret.setWithholdingTaxType( "IRT" );
             ret.setWithholdingTaxDescription( "Retenção na fonte" );
-            ret.setWithholdingTaxAmount( totalRetencao );
+            ret.setWithholdingTaxAmount( totalRetencao.doubleValue() );
 
             doc.setWithholdingTaxList( Collections.singletonList( ret ) );
         }
@@ -7406,15 +7394,9 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         String basicAuth = BasicAuthUtil.gerarAuthorizationHeader( FEConfig.getUsername(), FEConfig.getPassword() );
         try
         {
-            String resposta = HttpClientUtil.postJson(
-                    FEConfig.getEndpointRegistrarFactura(),
-                    payload,
-                    basicAuth
-            );
-
+            String resposta = HttpClientUtil.postJson( FEConfig.getEndpointRegistrarFactura(), payload, basicAuth );
             JsonUtil.print( resposta );
             return obterEstadoFactura( taxRegistrationNumber, resposta );
-
         }
         catch ( Exception e )
         {
@@ -7444,6 +7426,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         );
 
         String payload = JsonUtil.toJson( jsonPayload );
+
+        System.out.println( payload );
 
         String basicAuth = BasicAuthUtil.gerarAuthorizationHeader(
                 FEConfig.getUsername(),
