@@ -531,10 +531,13 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
         try
         {
-//            BDConexao conexaoLocal = BDConexao.getInstancia();
-            documentosController = new DocumentosController( conexaoLocal );
-            anoEconomicoController = new AnoEconomicoController( conexaoLocal );
-//            vendasController = new VendasController( conexaoLocal );
+//<<<<<<< HEAD
+////            BDConexao conexaoLocal = BDConexao.getInstancia();
+//            documentosController = new DocumentosController( conexaoLocal );
+//            anoEconomicoController = new AnoEconomicoController( conexaoLocal );
+////            vendasController = new VendasController( conexaoLocal );
+//=======
+//>>>>>>> f61d68e99a85f51543cad56b0764f9971cd29250
 
             documento = ( Documento ) documentosController.findById( getIdDocumento( documentosController ) );
             anoEconomico = ( AnoEconomico ) anoEconomicoController.findById( getIdAnoEconomico( anoEconomicoController ) );
@@ -544,15 +547,12 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             //FA Série / codigo
             prox_doc += " " + anoEconomico.getSerie() + "/" + doc_prox_cod;
 //            lb_proximo_documento.setText( "PRÓX.DOC. :" + prox_doc );
-
         }
         catch ( Exception e )
         {
             documento = null;
             lb_proximo_documento.setText( "" );
-
         }
-
     }
 //    private static void mostrar_proximo_codigo_documento()
 //    {
@@ -583,6 +583,34 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 //
 //    }
 
+//    private static void mostrar_proximo_codigo_documento()
+//    {
+//
+//        try
+//        {
+//            BDConexao conexaoLocal = BDConexao.getInstancia();
+//            documentosController = new DocumentosController( conexaoLocal );
+//            anoEconomicoController = new AnoEconomicoController( conexaoLocal );
+//            vendasController = new VendasController( conexaoLocal );
+//
+//            documento = ( Documento ) documentosController.findById( getIdDocumento( documentosController ) );
+//            anoEconomico = ( AnoEconomico ) anoEconomicoController.findById( getIdAnoEconomico( anoEconomicoController ) );
+//            doc_prox_cod = vendasController.getUltimaContagemByIdDocumentoAndAnoEconomico(
+//                    getIdDocumento( documentosController ), getIdAnoEconomico( anoEconomicoController ) ) + 1;
+//            prox_doc = documento.getAbreviacao();
+//            //FA Série / codigo
+//            prox_doc += " " + anoEconomico.getSerie() + "/" + doc_prox_cod;
+////            lb_proximo_documento.setText( "PRÓX.DOC. :" + prox_doc );
+//
+//        }
+//        catch ( Exception e )
+//        {
+//            documento = null;
+//            lb_proximo_documento.setText( "" );
+//
+//        }
+//
+//    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -2133,11 +2161,14 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     {
         try
         {
+            String toString = cmbTipoDocumento.getSelectedItem().toString();
+            System.out.println( "Designacao: " + toString );
             Documento documentoLocal = documentosController.getDocumentoByDesignacao( cmbTipoDocumento.getSelectedItem().toString() );
             return documentoLocal.getPkDocumento();
         }
         catch ( Exception e )
         {
+            e.printStackTrace();
             return 0;
         }
     }
@@ -2712,6 +2743,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         BDConexao conexaoTransactionLocal = BDConexao.getInstancia();
         vendasController = new VendasController( conexaoTransactionLocal );
         itemVendasController = new ItemVendasController( conexaoTransactionLocal );
+        documentosController = new DocumentosController( conexaoTransactionLocal );
+        anoEconomicoController = new AnoEconomicoController( conexaoTransactionLocal );
         formaPagamentoItemController = new FormaPagamentoItemController( conexaoTransactionLocal );
         pagamentoMensalidadeController = new PagamentoMensalidadeController( conexaoTransactionLocal.getConnectionAtiva() );
         precosController = new PrecosController( conexaoTransactionLocal );
