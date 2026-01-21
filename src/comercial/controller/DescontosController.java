@@ -6,7 +6,6 @@
 package comercial.controller;
 
 
-import java.sql.Connection;
 import entity.TbCliente;
 import entity.TbDesconto;
 import entity.TbProduto;
@@ -121,5 +120,6 @@ public class DescontosController implements EntidadeFactory
         return desconto;
 
     }
+   
 
 }

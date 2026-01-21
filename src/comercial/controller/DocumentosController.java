@@ -33,7 +33,7 @@ public class DocumentosController implements EntidadeFactory
     @Override
     public boolean salvar( Object object )
     {
-        Documento documento = (Documento) object;
+        Documento documento = ( Documento ) object;
         String INSERT = "INSERT INTO documento( designacao , abreviacao , cod_ultimo_doc , descricao_ultimo_doc , ultima_data "
                 + ")"
                 + " VALUES("
@@ -335,45 +335,59 @@ public class DocumentosController implements EntidadeFactory
         return documento;
     }
 
-   public static void start(BDConexao conexao) {
-        try {
+    public static void start( BDConexao conexao )
+    {
+        try
+        {
             Connection conn = conexao.getConnectionAtiva();
-            if (conn.getAutoCommit()) {
-                conn.setAutoCommit(false);
-                System.out.println("[TRANSAÇÃO] 🔹 Iniciada");
+            if ( conn.getAutoCommit() )
+            {
+                conn.setAutoCommit( false );
+                System.out.println( "[TRANSAÇÃO] 🔹 Iniciada" );
             }
-        } catch (SQLException e) {
-            System.err.println("[TRANSAÇÃO] ❌ Erro ao iniciar: " + e.getMessage());
+        }
+        catch ( SQLException e )
+        {
+            System.err.println( "[TRANSAÇÃO] ❌ Erro ao iniciar: " + e.getMessage() );
         }
     }
 
-    public static void commit(BDConexao conexao) {
-        try {
+    public static void commit( BDConexao conexao )
+    {
+        try
+        {
             Connection conn = conexao.getConnectionAtiva();
-            if (!conn.getAutoCommit()) {
+            if ( !conn.getAutoCommit() )
+            {
                 conn.commit();
-                conn.setAutoCommit(true);
-                System.out.println("[TRANSAÇÃO] ✅ Commit concluído");
+                conn.setAutoCommit( true );
+                System.out.println( "[TRANSAÇÃO] ✅ Commit concluído" );
             }
-        } catch (SQLException e) {
-            System.err.println("[TRANSAÇÃO] ❌ Erro ao fazer commit: " + e.getMessage());
+        }
+        catch ( SQLException e )
+        {
+            System.err.println( "[TRANSAÇÃO] ❌ Erro ao fazer commit: " + e.getMessage() );
         }
     }
 
-    public static void rollback(BDConexao conexao) {
-        try {
+    public static void rollback( BDConexao conexao )
+    {
+        try
+        {
             Connection conn = conexao.getConnectionAtiva();
-            if (!conn.getAutoCommit()) {
+            if ( !conn.getAutoCommit() )
+            {
                 conn.rollback();
-                conn.setAutoCommit(true);
-                System.out.println("[TRANSAÇÃO] 🔄 Rollback efetuado");
+                conn.setAutoCommit( true );
+                System.out.println( "[TRANSAÇÃO] 🔄 Rollback efetuado" );
             }
-        } catch (SQLException e) {
-            System.err.println("[TRANSAÇÃO] ❌ Erro ao fazer rollback: " + e.getMessage());
+        }
+        catch ( SQLException e )
+        {
+            System.err.println( "[TRANSAÇÃO] ❌ Erro ao fazer rollback: " + e.getMessage() );
         }
     }
-    
- 
+
 //    public static void startTransactionOperacoes( BDConexaoOperacoes conexao )
 //    {
 //        try
@@ -409,4 +423,8 @@ public class DocumentosController implements EntidadeFactory
 //            e.printStackTrace();
 //        }
 //    }
+    public static void main( String[] args )
+    {
+        new DocumentosController( new BDConexao() ) ;
+    }
 }
