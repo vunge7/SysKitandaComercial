@@ -907,32 +907,43 @@ public class VendasController implements EntidadeFactory
     }
 
     public int getProximoNumeroFacturaComLock(
-        int pk_documento,
-        int pk_ano_economico
-) throws SQLException
-{
-    String sql =
-        "SELECT CAST(SUBSTRING_INDEX(cod_fact, '/', -1) AS UNSIGNED) AS ultimo_num " +
-        "FROM tb_venda " +
-        "WHERE fk_documento = ? " +
-        "AND fk_ano_economico = ? " +
-        "ORDER BY ultimo_num DESC " +
-        "LIMIT 1 " +
-        "FOR UPDATE";
+            int pk_documento,
+            int pk_ano_economico
+    ) throws SQLException
+    {
+        String sql
+                = "SELECT CAST(SUBSTRING_INDEX(cod_fact, '/', -1) AS UNSIGNED) AS ultimo_num "
+                + "FROM tb_venda "
+                + "WHERE fk_documento = ? "
+                + "AND fk_ano_economico = ? "
+                + "ORDER BY ultimo_num DESC "
+                + "LIMIT 1 "
+                + "FOR UPDATE";
 
-    PreparedStatement ps = conexao.getConnection().prepareStatement(sql);
-    ps.setInt(1, pk_documento);
-    ps.setInt(2, pk_ano_economico);
+        PreparedStatement ps = conexao.getConnection().prepareStatement( sql );
+        ps.setInt( 1, pk_documento );
+        ps.setInt( 2, pk_ano_economico );
 
-    ResultSet rs = ps.executeQuery();
+        ResultSet rs = ps.executeQuery();
 
-    if (rs.next()) {
-        return rs.getInt("ultimo_num") + 1;
+        if ( rs.next() )
+        {
+            return rs.getInt( "ultimo_num" ) + 1;
+        }
+
+        return 1; // primeira factura
     }
 
-    return 1; // primeira factura
-}
+    public boolean existeCodFact( String codFact ) throws SQLException
+    {
+        String sql = "SELECT 1 FROM tb_venda WHERE cod_fact = ? LIMIT 1";
 
+        PreparedStatement ps = conexao.getConnection().prepareStatement( sql );
+        ps.setString( 1, codFact );
+
+        ResultSet rs = ps.executeQuery();
+        return rs.next();
+    }
 
     public int getUltimaContagemByIdDocumentoAndAnoEconomico( int pk_documento, int pk_ano_economico )
     {

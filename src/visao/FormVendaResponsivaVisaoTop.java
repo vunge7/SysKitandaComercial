@@ -551,36 +551,34 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 //            lb_proximo_documento.setText( "" );
 //        }
 //    }
-    
-private static void mostrar_proximo_codigo_documento()
-{
-    try
+    private static void mostrar_proximo_codigo_documento()
     {
-        documento = (Documento) documentosController.findById(
-                getIdDocumento(documentosController)
-        );
+        try
+        {
+            documento = (Documento) documentosController.findById(
+                    getIdDocumento( documentosController )
+            );
 
-        anoEconomico = (AnoEconomico) anoEconomicoController.findById(
-                getIdAnoEconomico(anoEconomicoController)
-        );
+            anoEconomico = (AnoEconomico) anoEconomicoController.findById(
+                    getIdAnoEconomico( anoEconomicoController )
+            );
 
-        int proximoNumero = vendasController.getProximoNumeroFacturaComLock(
-                documento.getPkDocumento(),
-                anoEconomico.getPkAnoEconomico()
-        );
+            int proximoNumero = vendasController.getProximoNumeroFacturaComLock(
+                    documento.getPkDocumento(),
+                    anoEconomico.getPkAnoEconomico()
+            );
 
-        prox_doc = documento.getAbreviacao()
-                 + " " + anoEconomico.getSerie()
-                 + "/" + proximoNumero;
+            prox_doc = documento.getAbreviacao()
+                    + " " + anoEconomico.getSerie()
+                    + "/" + proximoNumero;
 
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+            prox_doc = null;
+        }
     }
-    catch (Exception e)
-    {
-        e.printStackTrace();
-        prox_doc = null;
-    }
-}
-
 
 //    private static void mostrar_proximo_codigo_documento()
 //    {
@@ -3116,7 +3114,7 @@ private static void mostrar_proximo_codigo_documento()
         }
     }
 
-    private static TbVenda construirVenda()
+    private static TbVenda construirVenda() throws SQLException, InterruptedException, Exception
     {
         TbVenda venda = new TbVenda();
 
@@ -3187,7 +3185,34 @@ private static void mostrar_proximo_codigo_documento()
         }
 
 //###
-        mostrar_proximo_codigo_documento();
+//        mostrar_proximo_codigo_documento();
+
+        String codFactGerado = null;
+        int tentativas = 0;
+
+        while ( tentativas < 3 )
+        {
+            tentativas++;
+
+            mostrar_proximo_codigo_documento();
+            codFactGerado = prox_doc;
+
+            if ( !vendasController.existeCodFact( codFactGerado ) )
+            {
+                break;
+            }
+
+            // Pequena pausa para evitar colisão simultânea
+            Thread.sleep( 50 );
+        }
+
+        if ( codFactGerado == null )
+        {
+            throw new Exception( "Não foi possível gerar número de factura único." );
+        }
+
+        venda.setCodFact( codFactGerado );
+
         venda.setCodFact( prox_doc );
         venda.setPerformance( "false" ); // ou pegar de um campo
         venda.setCredito( "false" );        // depende se venda é a crédito
