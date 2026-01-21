@@ -3130,7 +3130,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             venda.setClienteNif( getClienteNif() );
         }
 
-        //###
+        
+//###
         mostrar_proximo_codigo_documento();
         venda.setCodFact( prox_doc );
         venda.setPerformance( "false" ); // ou pegar de um campo
