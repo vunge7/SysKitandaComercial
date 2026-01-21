@@ -3494,7 +3494,6 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
         venda_local.setTotalIncidencia( new BigDecimal( getTotalIncidencia() ) );
         venda_local.setTotalIncidenciaIsento( new BigDecimal( getTotalIncidenciaIsento() ) );
 //        venda_local.setTotalRetencao( getTotalRetencao() );
-
         /*outros campos*/
         venda_local.setDescontoTotal( new BigDecimal( getDescontoComercial() + getDescontoFinanceiro() ) );
 //        venda_local.setIdBanco( bancoDao.findTbBanco( getIdBanco() ) );
@@ -3515,17 +3514,14 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
         venda_local.setTotalPorExtenso( iniciais_extenso() + lbValorPorExtenco.getText() );
 //        venda_local.setTotalPorExtenso( MetodosUtil.iniciais_extenso( DOC_FACTURA_RECIBO_FR, documentoDao ) + MetodosUtil.valorPorExtenso( venda_local.getTotalVenda().doubleValue(), "Kwanza" ) );
         System.out.println( "STATUS:hash cod processado." );
-
         venda_local.setHashCod( MetodosUtil.criptografia_hash( venda_local, getGrossTotal(), conexao ) );
         venda_local.setAssinatura( MetodosUtil.assinatura_doc( venda_local.getHashCod() ) );
 //        venda_local.setAreaVenda( String.valueOf( cmb_area_venda_restaurante.getSelectedItem() ) );
 //        venda_local.setQuarto( "" );
 //        venda_local.setRefDataFact( CfMethods.fullDateToText( venda_local.getDataVenda() ) );
-
         //System.out.println( "STATUS:documento assinado com sucesso." );
         venda_local.setFkCambio( cambiosController.findByCodigo( ID_CAMBIO_NACIONAL ) );
 //        venda_local.setFkCambio( cambioDao.findCambio( ID_CAMBIO_NACIONAL ) );
-
 
         /*status documento*/
         venda_local.setStatusEliminado( "false" );
