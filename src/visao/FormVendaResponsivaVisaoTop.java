@@ -543,7 +543,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             prox_doc = documento.getAbreviacao();
             //FA Série / codigo
             prox_doc += " " + anoEconomico.getSerie() + "/" + doc_prox_cod;
-            lb_proximo_documento.setText( "PRÓX.DOC. :" + prox_doc );
+//            lb_proximo_documento.setText( "PRÓX.DOC. :" + prox_doc );
 
         }
         catch ( Exception e )
@@ -3090,6 +3090,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             venda.setClienteNif( getClienteNif() );
         }
 
+        //###
+        mostrar_proximo_codigo_documento();
         venda.setCodFact( prox_doc );
 //    venda.setRefCodFact(txtRefCodFact.getText());
         venda.setPerformance( "false" ); // ou pegar de um campo
@@ -7149,7 +7151,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             public boolean isCellEditable( int row, int column )
             {
 //                return ( column == 0 ||  column == 4) ; // 3ª coluna editável
-                return (   column == 4 ); // 3ª coluna editável
+                return ( column == 4 ); // 3ª coluna editável
             }
         } );
     }

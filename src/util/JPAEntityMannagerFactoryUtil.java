@@ -4,7 +4,6 @@
  */
 package util;
 
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
@@ -40,7 +39,8 @@ public class JPAEntityMannagerFactoryUtil
     public static EntityManager createEntityManager()
     {
 
-        try{
+        try
+        {
 
             return em.createEntityManager();
         }
@@ -68,7 +68,7 @@ public class JPAEntityMannagerFactoryUtil
                     String ip = informacao.get( 0 );
                     String porta = informacao.get( 1 );
 
-                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_fo?zeroDateTimeBehavior=convertToNull";
+                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db?zeroDateTimeBehavior=convertToNull";
 
                     String user = "root";
                     String password = "DoV90x?#";
