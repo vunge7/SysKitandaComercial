@@ -2772,8 +2772,9 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         pagamentoMensalidadeController = new PagamentoMensalidadeController( conexaoTransactionLocal.getConnectionAtiva() );
         precosController = new PrecosController( conexaoTransactionLocal );
         usuariosController = new UsuariosController( conexaoTransactionLocal );
-        lugaresController = new LugaresController(conexaoTransactionLocal );
-        mesasController = new MesasController(conexaoTransactionLocal );
+        lugaresController = new LugaresController( conexaoTransactionLocal );
+        mesasController = new MesasController( conexaoTransactionLocal );
+        contaController = new ContaController( conexaoTransactionLocal );
 
         StoksController stocksControllerLocal = new StoksController( conexaoTransactionLocal );
         DocumentosController.start( conexaoTransactionLocal ); // Inicia a transação
@@ -2822,7 +2823,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             // Registrar formas de pagamento
             if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR )
             {
-                registrarFormaPagamento( idVendaGerada, venda.getTotalVenda(), frNormal );
+                registrarFormaPagamento( idVendaGerada, venda.getTotalVenda(), frNormal, conexaoTransactionLocal );
 
             }
 
@@ -2873,7 +2874,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         return item;
     }
 
-    public static void registrarFormaPagamento( int idVenda, BigDecimal totalVenda, boolean formaNormal ) throws Exception
+    public static void registrarFormaPagamento( int idVenda, BigDecimal totalVenda, boolean formaNormal, BDConexao conexaoLocal ) throws Exception
     {
 //
 //        if ( !formaNormal )
@@ -2881,7 +2882,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 //            registrarPagamentoUnico( idVenda, totalVenda );
 //            return;
 //        }
-        registrarPagamentosMultiplos( idVenda );
+        registrarPagamentosMultiplos( idVenda, conexaoLocal );
     }
 
     private static void registrarPagamentoUnico( int idVenda, BigDecimal totalVenda ) throws Exception
@@ -2920,7 +2921,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         }
     }
 
-    private static void registrarPagamentosMultiplos( int idVenda ) throws Exception
+    private static void registrarPagamentosMultiplos( int idVenda, BDConexao conexaoLocal ) throws Exception
     {
         DefaultTableModel modelo = ( DefaultTableModel ) FormaPagamentoVisao.tabela_forma_pagamento.getModel();
         double trocoExterno = CfMethods.parseMoedaFormatada( FormaPagamentoVisao.lb_troco.getText() );
@@ -2969,7 +2970,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                         cod_usuario,
                         usuariosController,
                         cmc,
-                        conexao
+                        conexaoLocal
                 );
             }
 
