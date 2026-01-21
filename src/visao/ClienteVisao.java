@@ -740,17 +740,17 @@ public class ClienteVisao extends javax.swing.JDialog
 
     private void txtNifActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtNifActionPerformed
     {//GEN-HEADEREND:event_txtNifActionPerformed
-        txtEmail.requestFocus();
+        txtContactos.requestFocus();
     }//GEN-LAST:event_txtNifActionPerformed
 
     private void txtEmailActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtEmailActionPerformed
     {//GEN-HEADEREND:event_txtEmailActionPerformed
-        txtContactos.requestFocus();
+        procedimento_salvar();
     }//GEN-LAST:event_txtEmailActionPerformed
 
     private void txtContactosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtContactosActionPerformed
     {//GEN-HEADEREND:event_txtContactosActionPerformed
-        procedimento_salvar();
+        txtEmail.requestFocus();
     }//GEN-LAST:event_txtContactosActionPerformed
 
     private void cmbFamiliaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbFamiliaActionPerformed

@@ -3472,6 +3472,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
         venda_local.setNomeConsumidorFinal( cmbCliente.getSelectedItem().toString() );
 
         venda_local.setClienteNif( getClienteNif() );
+//        venda_local.setCodigoCliente( new TbCliente( getIdCliente() ) );
         venda_local.setCodigoCliente( clientesController.findByCodigo( getIdCliente() ) );
 //        venda_local.setNomeConsumidorFinal( getNomeCliente() );
 //        venda_local.setNomeConsumidorFinal ( txtNomeConsumidorFinal.getText () );
@@ -3578,19 +3579,38 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
 
     }
 
-    public static int getIdCliente()
+public static int getIdCliente()
+{
+    try
     {
-        try
-        {
-            TbCliente cliente = clientesController.getClienteByNome( cmbCliente.getSelectedItem().toString() );
-            return cliente.getCodigo();
-        }
-        catch ( Exception e )
+        if (cmbCliente.getSelectedItem() == null)
         {
             return 0;
         }
 
+        String nomeCliente = cmbCliente.getSelectedItem().toString().trim();
+
+        if (nomeCliente.isEmpty())
+        {
+            return 0;
+        }
+
+        TbCliente cliente = clientesController.getClienteByNome(nomeCliente);
+
+        if (cliente == null)
+        {
+            return 0;
+        }
+
+        return cliente.getCodigo();
     }
+    catch (Exception e)
+    {
+        // logger.error("Erro ao obter ID do cliente", e);
+        return 0;
+    }
+}
+
 
     private static double getTotalRetencao()
     {
@@ -3824,26 +3844,55 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame
 //        System.out.println( "Valor XXXXXXX: " + CfMethods.parseMoedaFormatada( txtTotalApagar.getText() ) );
 //        lbValorPorExtenco.setText( MetodosUtil.valorPorExtenso( CfMethods.parseMoedaFormatada( txtTotalApagar.getText() ), moeda.getDesignacao() ) );
 //    }
+    
     private static String getClienteNif()
+{
+    try
     {
-        try
-        {
-            TbCliente cliente = (TbCliente) clientesController.findById( getIdCliente() );
+        TbCliente cliente = (TbCliente) clientesController.findById(getIdCliente());
 
-            String nif = cliente.getNif();
-            System.out.println( "NIF CLIENTE: " + nif );
-            if ( nif.equals( "" ) )
-            {
-                return DVML.NUMBER_NIF_GENERICO;
-            }
-            return nif;
-        }
-        catch ( Exception e )
+        if (cliente == null)
         {
-            e.printStackTrace();
-            return "";
+            return DVML.NUMBER_NIF_GENERICO;
         }
+
+        String nif = cliente.getNif();
+
+        if (nif == null || nif.trim().isEmpty())
+        {
+            return DVML.NUMBER_NIF_GENERICO;
+        }
+
+        return nif.trim();
     }
+    catch (Exception e)
+    {
+        // logger.error("Erro ao obter NIF do cliente", e);
+        return DVML.NUMBER_NIF_GENERICO;
+    }
+}
+
+    
+//    private static String getClienteNif()
+//    {
+//        try
+//        {
+//            TbCliente cliente = (TbCliente) clientesController.findById( getIdCliente() );
+//
+//            String nif = cliente.getNif();
+//            System.out.println( "NIF CLIENTE: " + nif );
+//            if ( nif.equals( "" ) )
+//            {
+//                return DVML.NUMBER_NIF_GENERICO;
+//            }
+//            return nif;
+//        }
+//        catch ( Exception e )
+//        {
+//            e.printStackTrace();
+//            return "";
+//        }
+//    }
 
     private static List<TbProduto> getProdutosIsentos()
     {

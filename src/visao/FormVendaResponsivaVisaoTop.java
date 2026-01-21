@@ -215,7 +215,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         servicosRetencaoController = new ServicosRetencaoController( FormVendaResponsivaVisaoTop.conexao );
         contaController = new ContaController( FormVendaResponsivaVisaoTop.conexao );
         movimentacaoController = new MovimentacaoController( conexao.getConnection() );
-        dadosInstituicao = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
+        dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById( 1 );
         configuracaoMesComecoController = new ConfiguracaoMesComecoController( conexao.getConnectionAtiva() );
         pagamentoMensalidadeController = new PagamentoMensalidadeController( conexao.getConnectionAtiva() );
         mesRhController = new MesRhController( conexao.getConnectionAtiva() );
@@ -319,8 +319,6 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
         table.setRowHeight( 25 );
         inserir_uma_linha();
-
-
 
         configurarTabela();
 //        configurarTabela( 3 );
@@ -538,8 +536,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             anoEconomicoController = new AnoEconomicoController( conexaoLocal );
             vendasController = new VendasController( conexaoLocal );
 
-            documento = ( Documento ) documentosController.findById( getIdDocumento( documentosController ) );
-            anoEconomico = ( AnoEconomico ) anoEconomicoController.findById( getIdAnoEconomico( anoEconomicoController ) );
+            documento = (Documento) documentosController.findById( getIdDocumento( documentosController ) );
+            anoEconomico = (AnoEconomico) anoEconomicoController.findById( getIdAnoEconomico( anoEconomicoController ) );
             doc_prox_cod = vendasController.getUltimaContagemByIdDocumentoAndAnoEconomico(
                     getIdDocumento( documentosController ), getIdAnoEconomico( anoEconomicoController ) ) + 1;
             prox_doc = documento.getAbreviacao();
@@ -1635,7 +1633,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         try
         {
 
-            TbCliente cliente = ( TbCliente ) clientesController.findById( codCliente );
+            TbCliente cliente = (TbCliente) clientesController.findById( codCliente );
             String nome_cliente = cliente.getNome();
             cmbCliente.setSelectedItem( nome_cliente.trim() );
             accao_cliente();
@@ -1757,7 +1755,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         try
         {
 
-            DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+            DefaultTableModel modelo = (DefaultTableModel) table.getModel();
             if ( podeRemoverServico( modelo, table.getSelectedRow() ) )
             {
                 actualizarPrecosAntigos2();
@@ -2260,7 +2258,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static double getTaxaImposto( int idProduto )
     {
-        TbProduto produto = ( TbProduto ) produtosController.findById( idProduto );
+        TbProduto produto = (TbProduto) produtosController.findById( idProduto );
         //verifca o artigo se eh produto ou servico.
         if ( produto.getStocavel().equals( "true" ) )
         {
@@ -2371,7 +2369,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     public static Double getPreco( int idProduto, double qtd, int idMoeda )
     {
 
-        Moeda moeda = ( Moeda ) moedasController.findById( idMoeda );
+        Moeda moeda = (Moeda) moedasController.findById( idMoeda );
         if ( moeda == null )
         {
             return null;
@@ -2402,20 +2400,20 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     public static String getDescricao_Produto()
     {
-        TbProduto produto = ( TbProduto ) produtosController.findById( getCodigoProduto() );
+        TbProduto produto = (TbProduto) produtosController.findById( getCodigoProduto() );
         return produto.getDesignacao();
     }
 
     public static String getUnidade_Produto()
     {
-        TbProduto produto = ( TbProduto ) produtosController.findById( getCodigoProduto() );
-        Unidade unidade = ( Unidade ) unidadesController.findById( produto.getCodUnidade().getPkUnidade() );
+        TbProduto produto = (TbProduto) produtosController.findById( getCodigoProduto() );
+        Unidade unidade = (Unidade) unidadesController.findById( produto.getCodUnidade().getPkUnidade() );
         return unidade.getAbreviacao();
     }
 
     private static Moeda getMoeda()
     {
-        String moedaSelecionada = ( String ) cmbMoeda.getSelectedItem();
+        String moedaSelecionada = (String) cmbMoeda.getSelectedItem();
 
         if ( moedaSelecionada == null )
         {
@@ -2589,7 +2587,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     public static void remover_all_produto()
     {
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         for ( int i = modelo.getRowCount() - 1; i >= 0; i-- )
         {
             modelo.removeRow( i );
@@ -2812,7 +2810,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             throw new Exception( "Forma de pagamento não encontrada: " + descricao );
         }
 
-        Contas conta = ( Contas ) contaController.findById( forma.getFkContaAssociada() );
+        Contas conta = (Contas) contaController.findById( forma.getFkContaAssociada() );
         FormaPagamentoItem item = criarItemFormaPagamento( idVenda, idForma, valor, BigDecimal.ZERO, referencia );
         if ( !formaPagamentoItemController.salvar( item ) )
         {
@@ -2837,7 +2835,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static void registrarPagamentosMultiplos( int idVenda ) throws Exception
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) FormaPagamentoVisao.tabela_forma_pagamento.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) FormaPagamentoVisao.tabela_forma_pagamento.getModel();
         double trocoExterno = CfMethods.parseMoedaFormatada( FormaPagamentoVisao.lb_troco.getText() );
         BigDecimal troco = new BigDecimal( trocoExterno );
 
@@ -2860,7 +2858,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                 throw new Exception( "Forma de pagamento não encontrada: " + descricao );
             }
 
-            Contas conta = ( Contas ) contaController.findById( forma.getFkContaAssociada() );
+            Contas conta = (Contas) contaController.findById( forma.getFkContaAssociada() );
 
             System.out.println( "FORMA PAGAMENTO: " + descricao );
             System.out.println( "FORMA PAGAMENTO VALOR: " + valor );
@@ -2913,7 +2911,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         List<TbProduto> lista_produto_isentos = getProdutosIsentos();
         String motivos_isentos = MetodosUtil.getMotivoIsensaoProdutos( lista_produto_isentos );
         conexoaLocal.close();
-        int numeroVias = ( int ) Double.parseDouble( spnCopia.getValue().toString() );
+        int numeroVias = (int) Double.parseDouble( spnCopia.getValue().toString() );
 
         for ( int i = 1; i <= numeroVias; i++ )
         {
@@ -2946,7 +2944,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static void accao_cliente()
     {
-        String nomeCliente = ( String ) cmbCliente.getSelectedItem();
+        String nomeCliente = (String) cmbCliente.getSelectedItem();
 
         txtNomeConsumidorFinal.setText( nomeCliente );
         String nif = clientesController.findByNome( nomeCliente ).getNif();
@@ -2955,7 +2953,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static void accao_cliente_tel()
     {
-        String nomeCliente = ( String ) cmbCliente.getSelectedItem();
+        String nomeCliente = (String) cmbCliente.getSelectedItem();
 
         txtNomeConsumidorFinal.setText( nomeCliente );
         String telefone = clientesController.findByNome( nomeCliente ).getTelefone();
@@ -3005,7 +3003,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static List<TbProduto> getProdutosIsentos()
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         double taxa = 0.0;
         int codigo_produto = 0;
         List<TbProduto> lista_produtos_isentos = new ArrayList<>();
@@ -3015,7 +3013,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             taxa = Double.parseDouble( modelo.getValueAt( i, 6 ).toString() );
             if ( taxa == 0.0 )
             {
-                lista_produtos_isentos.add( ( TbProduto ) produtosController.findById( codigo_produto ) );
+                lista_produtos_isentos.add( (TbProduto) produtosController.findById( codigo_produto ) );
             }
         }
 
@@ -3105,32 +3103,24 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             venda.setNomeCliente( getNomeCliente() );
             venda.setClienteNif( getClienteNif() );
         }
-
         venda.setCodFact( prox_doc );
-//    venda.setRefCodFact(txtRefCodFact.getText());
         venda.setPerformance( "false" ); // ou pegar de um campo
         venda.setCredito( "false" );        // depende se venda é a crédito
         venda.setHashCod( "" );           // actualiza o hash depois de salvar
-//        venda.setHashCod( MetodosUtil.criptografia_hash( venda, getGrossTotal().doubleValue(), conexaoTransaction ) );
-//        venda.setAssinatura( MetodosUtil.assinatura_doc( venda.getHashCod() ) );
         venda.setAssinatura( "" );        // preencher se estiver em uso
         venda.setObs( "" );
         venda.setStatusEliminado( "false" );
         venda.setStatusRecibo( false ); // ou true se for o caso
-
         // Cliente / usuário / banco / armazém
         venda.setIdBanco( new TbBanco( 1 ) );
         venda.setCodigoUsuario( new TbUsuario( cod_usuario ) );
         venda.setCodigoCliente( new TbCliente( getIdCliente() ) );
         venda.setIdArmazemFK( new TbArmazem( getCodigoArmazem() ) );
-
         // Documento, ano econômico, câmbio
         venda.setFkDocumento( new Documento( getIdDocumento() ) );
         venda.setFkAnoEconomico( new AnoEconomico( getIdAnoEconomico() ) );
-
         int id = cambiosController.getLastId( getIdMoeda() );
         venda.setFkCambio( new Cambio( id ) );
-
         // Dados adicionais do carro (se aplicável)
         venda.setLocalCarga( "" );
         venda.setLocalDescarga( "" );
@@ -3145,10 +3135,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         venda.setMarcaCarro( "" );
         venda.setCorCarro( "" );
         venda.setNDocMotorista( "" );
-
         // Contador do documento
         venda.setCont( 0 ); // por exemplo
-
         return venda;
     }
 
@@ -3176,7 +3164,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                 int idProduto = Integer.parseInt( table.getModel().getValueAt( i, 0 ).toString() );
                 String designacaoItem = table.getModel().getValueAt( i, 1 ).toString();
 
-                TbProduto produto = ( TbProduto ) produtosController.findById( idProduto );
+                TbProduto produto = (TbProduto) produtosController.findById( idProduto );
 
                 TbItemVenda item = new TbItemVenda();
                 item.setCodigoVenda( new TbVenda( cod_venda ) );
@@ -3192,8 +3180,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                 item.setTotal( new BigDecimal( CfMethods.parseMoedaFormatada( table.getModel().getValueAt( i, 10 ).toString() ) ) );
                 item.setFkPreco( precosController.getLastIdPrecoByIdProduto( idProduto, item.getQuantidade() ) );
                 item.setDataServico( new Date() );
-                item.setFkLugares( ( TbLugares ) lugaresController.findById( DVML.LUGAR_BALCAO ) );
-                item.setFkMesas( ( TbMesas ) mesasController.findById( DVML.MESA_BALCAO ) );
+                item.setFkLugares( (TbLugares) lugaresController.findById( DVML.LUGAR_BALCAO ) );
+                item.setFkMesas( (TbMesas) mesasController.findById( DVML.MESA_BALCAO ) );
                 item.setDesignacaoItem( designacaoItem );
                 // Salvar item
                 if ( !itemVendasController.salvar( item ) )
@@ -3279,7 +3267,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         {
 
             //busca o objecto para retirar apenas a data do seu procesamento
-            TbVenda venda_local = ( TbVenda ) vendasController.findById( cod_ultima_venda );
+            TbVenda venda_local = (TbVenda) vendasController.findById( cod_ultima_venda );
             //retirando a data do documebto
             Date data_ultimo_documento = venda_local.getDataVenda();
             //pegando a data do documento (data actual do sistema)
@@ -3304,7 +3292,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     {
         try
         {
-            TbCliente cliente = ( TbCliente ) clientesController.findById( getIdCliente() );
+            TbCliente cliente = (TbCliente) clientesController.findById( getIdCliente() );
 
             String nif = cliente.getNif();
             System.out.println( "NIF CLIENTE: " + nif );
@@ -3451,61 +3439,10 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         return true;
     }
 
-    private void accao_codigo_interno_enter()
-    {
-
-        try
-        {
-
-            int codigo = Integer.parseInt( txtCodigoProduto.getText() );
-            TbProduto produto = ( TbProduto ) produtosController.findByIdStatus( codigo );
-
-            Integer codTipoProduto = produto.getCodTipoProduto().getCodigo();
-            TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutoController.findById( codTipoProduto );
-            Integer codFamilia = tipoProduto.getFkFamilia().getPkFamilia();
-            Familia familia = ( Familia ) familiaController.findById( codFamilia );
-            cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
-
-            cmbProduto.setModel( new DefaultComboBoxModel( produtosController.getVector() ) );
-            cmbProduto.setSelectedItem( produto.getDesignacao() );
-
-            configuracaoMesComecoController = new ConfiguracaoMesComecoController( conexao.getConnectionAtiva() );
-
-            System.out.println( "***** Chegue 0" );
-            boolean existeConfiguracaoDoCliente = configuracaoMesComecoController
-                    .existeConfiguracaoDoCliente(
-                            getIdCliente(),
-                            getCodigoProduto() );
-
-            if ( existeConfiguracaoDoCliente )
-            {
-                new MesesPagoClienteVisao( this,
-                        rootPaneCheckingEnabled,
-                        getIdCliente(),
-                        getCodigoProduto(), conexao ).setVisible( true );
-            }
-            else
-            {
-                procedimentoAdicionarTabela( produto );
-
-            }
-
-        }
-        catch ( Exception ex )
-        {
-            Logger.getLogger( FormVendaResponsivaVisaoTop.class.getName() ).log( Level.SEVERE, null, ex );
-            JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
-        }
-        finally
-        {
-        }
-
-    }
-
     private void refresh_table()
     {
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
         double preco = 0, desconto = 0, sub_total_linha = 0, sub_total_linha_com_iva = 0, taxa = 0, taxa_r = 0, sub_total_linha_retencao = 0;
         int idProduto, qtd;
@@ -3561,7 +3498,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static void calculaTotalIVA()
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         BigDecimal totalIva = BigDecimal.ZERO;
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
@@ -3663,8 +3600,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private static void refresh_table( int idMoeda )
     {
 
-        Moeda moeda_local = ( Moeda ) moedasController.findById( idMoeda );
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        Moeda moeda_local = (Moeda) moedasController.findById( idMoeda );
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
         double preco = 0, desconto = 0, sub_total_linha = 0, sub_total_linha_com_iva = 0, taxa = 0, taxa_r = 0;
         int idProduto, qtd;
@@ -3716,41 +3653,6 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     }
 
-    private static void procedimentoAdicionarTabela( TbProduto produto )
-    {
-        try
-        {
-            if ( !Objects.isNull( produto ) )
-            {
-                adicionar_preco_quantidade_anitgo();
-                if ( rbTranstorno.isSelected() )
-                {
-                    procedimento_adicionar_sem_transtorno( "" );
-                }
-                else
-                {
-                    procedimento_adicionar( "" );
-                }
-                txtCodigoProduto.setText( "" );
-                txtCodigoBarra.setText( "" );
-                txtQuatindade.setText( "1" );
-                txtQuatindade.requestFocus();
-
-            }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Nao existe produto/servico relacionado com esta referencia" );
-            }
-
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace();
-
-        }
-
-    }
-
     public static void procedimento_adicionar_sem_transtorno( String mes )
     {
         try
@@ -3759,7 +3661,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             {
                 if ( !isProdutoExpirado( getCodigoProduto() ) )
                 {
-                    TbProduto produto = ( TbProduto ) produtosController.findById( getCodigoProduto() );
+                    TbProduto produto = (TbProduto) produtosController.findById( getCodigoProduto() );
                     if ( isStocavel( produto.getStocavel() ) )
                     {
 
@@ -3807,7 +3709,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             {
                 if ( !isProdutoExpirado( getCodigoProduto() ) )
                 {
-                    TbProduto produto = ( TbProduto ) produtosController.findById( getCodigoProduto() );
+                    TbProduto produto = (TbProduto) produtosController.findById( getCodigoProduto() );
                     System.out.println( "PRODUTO STOCAVEL: " + produto.getStocavel() );
                     boolean valorStocacel = isStocavel( produto.getStocavel() );
                     System.out.println( "VALOR STOCACEL" + valorStocacel );
@@ -3881,7 +3783,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             if ( !campos_invalidos() )
             {
 
-                TbProduto produto = ( TbProduto ) produtosController.findById( getCodigoProduto() );
+                TbProduto produto = (TbProduto) produtosController.findById( getCodigoProduto() );
                 if ( isStocavel( produto.getStocavel() ) )
                 {
 
@@ -3921,7 +3823,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     public static void adicionar_produto( String mes ) throws SQLException
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         table.setRowHeight( 28 );
 
         // --------------------------
@@ -4050,9 +3952,9 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         );
 
         int idPedido = 0;
-        TbMesas mesaEntity = ( TbMesas ) mesasController.findById( DVML.MESA_BALCAO );
-        TbLugares lugarEntity = ( TbLugares ) lugaresController.findById( DVML.LUGAR_BALCAO );
-        TbUsuario usuarioEntity = ( TbUsuario ) usuariosController.findById( cod_usuario );
+        TbMesas mesaEntity = (TbMesas) mesasController.findById( DVML.MESA_BALCAO );
+        TbLugares lugarEntity = (TbLugares) lugaresController.findById( DVML.LUGAR_BALCAO );
+        TbUsuario usuarioEntity = (TbUsuario) usuariosController.findById( cod_usuario );
         String usuario = usuarioEntity.getNome();
 
         if ( findByDesignacao.getCozinha().equals( DVML.ENVIAR_TICKET ) )
@@ -4443,7 +4345,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private static boolean exist_produto_tabela_formulario( String designacao )
     {
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
         {
@@ -4482,9 +4384,9 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             if ( !Objects.isNull( produto ) )
             {
                 Integer codTipoProduto = produto.getCodTipoProduto().getCodigo();
-                TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutoController.findById( codTipoProduto );
+                TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById( codTipoProduto );
                 Integer codFamilia = tipoProduto.getFkFamilia().getPkFamilia();
-                Familia familia = ( Familia ) familiaController.findById( codFamilia );
+                Familia familia = (Familia) familiaController.findById( codFamilia );
 //                cmbFamilia.setSelectedItem( familia.getDesignacao() );
                 cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
 
@@ -4606,7 +4508,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
                 if ( !isProdutoExpirado( getCodigoProduto() ) )
                 {
-                    TbProduto produtoLocal = ( TbProduto ) produtosController.findById( getCodigoProduto() );
+                    TbProduto produtoLocal = (TbProduto) produtosController.findById( getCodigoProduto() );
                     if ( isStocavel( produtoLocal.getStocavel() ) )
                     {
                         if ( possivel_quantidade() )
@@ -4730,7 +4632,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         table.getColumnModel().getColumn( 4 );
         table.getColumnModel().getColumn( 5 );
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
         for ( int i = modelo.getRowCount() - 1; i >= 0; i-- )
         {
@@ -4771,7 +4673,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private static BigDecimal getTotalRetencaoLiquido()
     {
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         BigDecimal totalRetencao = BigDecimal.ZERO;
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
@@ -4815,7 +4717,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     public static double getTotalPagar()
     {
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
         double total_pagar = 0;
         for ( int i = 0; i < modelo.getRowCount(); i++ )
@@ -4830,7 +4732,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     public static double getTotal_Retencao()
     {
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
         double total_retencao = 0;
         for ( int i = 0; i < modelo.getRowCount(); i++ )
@@ -4861,7 +4763,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 //        String valorFormatado = CfMethods.formatarComoMoeda( total );
 //        txtTotalPagar.setText( valorFormatado );
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         double total_liquido = 0;
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
@@ -4904,7 +4806,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static double getTotalRetencao1()
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         double qtd = 0d;
         double imposto = 0d, preco_unitario = 0d, desconto_valor_linha = 0d, valor_taxa = 0d;
 
@@ -4934,7 +4836,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     {
         BigDecimal totalIva = BigDecimal.ZERO;
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
         {
@@ -4973,7 +4875,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private boolean validarPrecos_tabela( JTable tabela )
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) tabela.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
         StringBuilder produtosComErro = new StringBuilder();
 
         // Percorrer todas as linhas
@@ -5084,7 +4986,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static String iniciais_extenso()
     {
-        Documento documento_local = ( Documento ) documentosController.findById( getIdDocumento() );
+        Documento documento_local = (Documento) documentosController.findById( getIdDocumento() );
         String abreviacao_local = documento_local.getAbreviacao();
 
         switch (abreviacao_local)
@@ -5365,14 +5267,14 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private void mostrar_nome()
     {
-        TbUsuario usuario = ( TbUsuario ) usuariosController.getUsuarioByCodigo( this.cod_usuario );
+        TbUsuario usuario = (TbUsuario) usuariosController.getUsuarioByCodigo( this.cod_usuario );
         lb_nome_usuario.setText( "Operador: " + usuario.getNome() );
         System.out.println( "&&&&&&&&Conn::::" + cod_usuario );
     }
 
     private void empresa()
     {
-        TbDadosInstituicao dados = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
+        TbDadosInstituicao dados = (TbDadosInstituicao) dadosInstituicaoController.findById( 1 );
 
         jlEmpresa.setText( "KITANDA 1.2                      " + dados.getNome() );
 
@@ -5530,7 +5432,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         try
         {
 
-            TbProduto produto_local = ( TbProduto ) produtosController.findById( getCodigoProduto() );
+            TbProduto produto_local = (TbProduto) produtosController.findById( getCodigoProduto() );
 
             TbStock stockLocal = stocksController.getStockByIdProdutoAndIdArmazem( getCodigoProduto(), getCodigoArmazem() );
             boolean isStocavel = produto_local.getStocavel().equals( "true" );
@@ -5591,7 +5493,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     public void remover_item_carrinho()
     {
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
         String designacao = modelo.getValueAt( table.getSelectedRow(), 1 ).toString();
         if ( designacao.contentEquals( "#" ) )
@@ -5608,20 +5510,20 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         TbProduto findByDesignacao = produtosController.findByDesignacao( cmbProduto.getSelectedItem().toString() );
 
         int idPedido = 0;
-        TbMesas mesaEntity = ( TbMesas ) mesasController.findById( DVML.MESA_BALCAO );
+        TbMesas mesaEntity = (TbMesas) mesasController.findById( DVML.MESA_BALCAO );
         String mesa = mesaEntity.getDesignacao();
-        TbLugares lugarEntity = ( TbLugares ) lugaresController.findById( DVML.LUGAR_BALCAO );
+        TbLugares lugarEntity = (TbLugares) lugaresController.findById( DVML.LUGAR_BALCAO );
         String lugar = lugarEntity.getDesignacao();
-        TbUsuario usuarioEntity = ( TbUsuario ) usuariosController.findById( cod_usuario );
+        TbUsuario usuarioEntity = (TbUsuario) usuariosController.findById( cod_usuario );
         String usuario = usuarioEntity.getNome();
 
         if ( findByDesignacao.getCozinha().equals( "Enviar Ticket" ) )
         {
-            MetodosUtil.imprimir_cozinha( findByDesignacao, idPedido, mesa, lugar, usuario, "Cancelado", ( int ) getQuantidade(), dadosInstituicaoController );
+            MetodosUtil.imprimir_cozinha( findByDesignacao, idPedido, mesa, lugar, usuario, "Cancelado", (int) getQuantidade(), dadosInstituicaoController );
         }
         else if ( findByDesignacao.getCozinha().equals( "Enviar Sala" ) )
         {
-            MetodosUtil.imprimir_sala( findByDesignacao, idPedido, mesa, lugar, usuario, "Cancelado", ( int ) getQuantidade(), dadosInstituicaoController );
+            MetodosUtil.imprimir_sala( findByDesignacao, idPedido, mesa, lugar, usuario, "Cancelado", (int) getQuantidade(), dadosInstituicaoController );
         }
 
         valor_por_extenco();
@@ -5637,12 +5539,12 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         {
 
             System.out.println( "ID PRODUTO EXTERIOR: " + codigo );
-            TbProduto produtoLocal = ( TbProduto ) produtosController.findById( codigo );
+            TbProduto produtoLocal = (TbProduto) produtosController.findById( codigo );
 
             Integer codTipoProduto = produtoLocal.getCodTipoProduto().getCodigo();
-            TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutoController.findById( codTipoProduto );
+            TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById( codTipoProduto );
             Integer codFamilia = tipoProduto.getFkFamilia().getPkFamilia();
-            Familia familia = ( Familia ) familiaController.findById( codFamilia );
+            Familia familia = (Familia) familiaController.findById( codFamilia );
             cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
 
             cmbProduto.setModel( new DefaultComboBoxModel( produtosController.getVector() ) );
@@ -5892,7 +5794,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static boolean primeiraLinhaVazia()
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
         if ( modelo.getRowCount() == 0 )
         {
@@ -5906,7 +5808,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static void inserir_uma_linha()
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         if ( modelo.getRowCount() == 0 )
         {
             modelo.addRow( new Object[]
@@ -5988,6 +5890,57 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 //        // Nada por agora
 //    }
 //}
+    private void accao_codigo_interno_enter()
+    {
+
+        try
+        {
+
+            int codigo = Integer.parseInt( txtCodigoProduto.getText() );
+            TbProduto produto = (TbProduto) produtosController.findByIdStatus( codigo );
+
+            Integer codTipoProduto = produto.getCodTipoProduto().getCodigo();
+            TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById( codTipoProduto );
+            Integer codFamilia = tipoProduto.getFkFamilia().getPkFamilia();
+            Familia familia = (Familia) familiaController.findById( codFamilia );
+            cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
+
+            cmbProduto.setModel( new DefaultComboBoxModel( produtosController.getVector() ) );
+            cmbProduto.setSelectedItem( produto.getDesignacao() );
+
+            configuracaoMesComecoController = new ConfiguracaoMesComecoController( conexao.getConnectionAtiva() );
+
+            System.out.println( "***** Chegue 0" );
+            boolean existeConfiguracaoDoCliente = configuracaoMesComecoController
+                    .existeConfiguracaoDoCliente(
+                            getIdCliente(),
+                            getCodigoProduto() );
+
+            if ( existeConfiguracaoDoCliente )
+            {
+                new MesesPagoClienteVisao( this,
+                        rootPaneCheckingEnabled,
+                        getIdCliente(),
+                        getCodigoProduto(), conexao ).setVisible( true );
+            }
+            else
+            {
+                procedimentoAdicionarTabela( produto );
+
+            }
+
+        }
+        catch ( Exception ex )
+        {
+            Logger.getLogger( FormVendaResponsivaVisaoTop.class.getName() ).log( Level.SEVERE, null, ex );
+            JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+        }
+        finally
+        {
+        }
+
+    }
+
     private void accao_codigo_barra_enter_cb()
     {
         try
@@ -6022,7 +5975,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
             // Preenche combos (igual ao original)
             Integer codTipoProduto = produto.getCodTipoProduto().getCodigo();
-            TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutoController.findById( codTipoProduto );
+            TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById( codTipoProduto );
             cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
             cmbProduto.setModel( new DefaultComboBoxModel( produtosController.getVector() ) );
             cmbProduto.setSelectedItem( produto.getDesignacao() );
@@ -6061,11 +6014,52 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         }
     }
 
+    private static void procedimentoAdicionarTabela( TbProduto produto )
+    {
+        try
+        {
+            if ( !Objects.isNull( produto ) )
+            {
+                adicionar_preco_quantidade_anitgo();
+                if ( rbTranstorno.isSelected() )
+                {
+                    procedimento_adicionar_sem_transtorno( "" );
+                }
+                else
+                {
+                    procedimento_adicionar( "" );
+                }
+                txtCodigoProduto.setText( "" );
+                txtCodigoBarra.setText( "" );
+                txtQuatindade.setText( "1" );
+                txtQuatindade.requestFocus();
+
+            }
+            else
+            {
+                JOptionPane.showMessageDialog( null, "Nao existe produto/servico relacionado com esta referencia" );
+            }
+
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+
+        }
+
+    }
+
     private void adicionarProdutoNaTabelaComLinhaVazia( TbProduto produto )
     {
         try
         {
-            DefaultTableModel model = ( DefaultTableModel ) table.getModel();
+            
+            if ( !rbTranstorno.isSelected() ){
+                
+                                    if ( possivel_quantidade() )
+                    {
+            
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
 
             // --- Corrigir: confirmar edição atual ---
             if ( table.isEditing() )
@@ -6153,6 +6147,12 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             table.changeSelection( novaLinha, 0, false, false );
             table.editCellAt( novaLinha, 0 );
             table.requestFocus();
+            
+                                    }
+                        else
+                        {
+                            JOptionPane.showMessageDialog( null, "O produto: " + produto.getDesignacao() + " não pode ser vendido pra esta quantidade", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+                        }
 
             // --------------------------
             // 7. Totais
@@ -6161,7 +6161,10 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             setTotalPagar();
             calculaTotalIVA();
             valor_por_extenco();
-
+            
+           
+            
+        }
         }
         catch ( Exception e )
         {
@@ -6207,7 +6210,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
         try
         {
-            DefaultTableModel model = ( DefaultTableModel ) table.getModel();
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
 
             // Lê o código digitado na coluna 0
             String codigoBarra = model.getValueAt( row, 0 ).toString().trim();
@@ -6360,7 +6363,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private void preencherLinhaTabelaComProduto( int row, TbProduto produto )
     {
 
-        DefaultTableModel model = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
 //
         int codigoProduto = produto.getCodigo();
         String descricao = produto.getDesignacao();
@@ -6470,7 +6473,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 //}
     private void adicionarLinhaVaziaSeNecessario()
     {
-        DefaultTableModel model = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
 
         int last = model.getRowCount() - 1;
         boolean vazia = true;
@@ -6561,7 +6564,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
         try
         {
-            DefaultTableModel model = ( DefaultTableModel ) table.getModel();
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
 
             String valorDigitado = model.getValueAt( row, 0 ).toString().trim();
 
@@ -6588,7 +6591,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                     int codigo = Integer.parseInt( valorDigitado );
 
                     // tenta buscar por ID interno
-                    produto = ( TbProduto ) produtosController.findById( codigo );
+                    produto = (TbProduto) produtosController.findById( codigo );
                 }
                 catch ( Exception e )
                 {
@@ -6663,7 +6666,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static void cursorLinha()
     {
-        DefaultTableModel model = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
         int last = model.getRowCount() - 1;
         table.getModel().setValueAt( "", last, 0 );
         table.changeSelection( last, 0, false, false );
@@ -6780,7 +6783,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static void removerUltimaLinhaVazia()
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         int lastRow = modelo.getRowCount() - 1;
 
         if ( lastRow < 0 )
@@ -6833,12 +6836,12 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
         int idPrecoRetalho = PrecosController.getLastIdPrecoByIdProdutoIntAndQTD( idProduto, 0d, conexaoTransaction );
         System.out.println( "ID RETALHO: " + idPrecoRetalho );
-        TbPreco precoAntigoRetalho = ( TbPreco ) precosControllerLocal.findById( idPrecoRetalho );
+        TbPreco precoAntigoRetalho = (TbPreco) precosControllerLocal.findById( idPrecoRetalho );
 
         System.out.println( "PRECO RETALHO: " + precoAntigoRetalho );
 
         int idPrecoGrosso = PrecosController.getLastIdPrecoByIdProdutoIntAndPrecoAntigoQtdAlto( idProduto, precoAntigoRetalho.getQtdAlto() + 1, conexaoTransaction );
-        TbPreco precoAntigoGrosso = ( TbPreco ) precosControllerLocal.findById( idPrecoGrosso );
+        TbPreco precoAntigoGrosso = (TbPreco) precosControllerLocal.findById( idPrecoGrosso );
         System.out.println( "ID GROSSO: " + idPrecoGrosso );
         System.out.println( "PRECO GROSSO: " + precoAntigoGrosso );
 
@@ -6951,8 +6954,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             int codProduto = Integer.parseInt( table.getValueAt( linha_actual, 0 ).toString() );
             double desconto = Double.parseDouble( table.getValueAt( linha_actual, 5 ).toString() );
 
-            TbProduto produtoLocal = ( TbProduto ) produtosController.findById( codProduto );
-            TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutoController.findById( produtoLocal.getCodTipoProduto().getCodigo() );
+            TbProduto produtoLocal = (TbProduto) produtosController.findById( codProduto );
+            TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById( produtoLocal.getCodTipoProduto().getCodigo() );
 
             double qtd;
 
@@ -7000,7 +7003,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static void actuazlizar_quantidade_tabela_formulario( String quantidade, double desconto )
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         double qtd = Double.parseDouble( quantidade );
         double retencao = 0;
 
@@ -7056,7 +7059,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
             produtosController = new ProdutosController( conexao );
             System.out.println( "ID PRODUTO EXTERIOR: " + codigo );
-            TbProduto produtoLocal = ( TbProduto ) produtosController.findById( codigo );
+            TbProduto produtoLocal = (TbProduto) produtosController.findById( codigo );
 
             procedimentoAdicionarTabela2( produtoLocal, mes );
 
@@ -7078,7 +7081,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         {
             double desconto = 0.0;
             double total_pagar = getTotalPagar();
-            double valor_desconto_geral = ( double ) sp_desconto_financeiro.getValue();
+            double valor_desconto_geral = (double) sp_desconto_financeiro.getValue();
 
             if ( valor_desconto_geral > total_pagar )
             {
@@ -7154,7 +7157,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private void configurarTabela()
     {
 
-        DefaultTableModel model = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
 
         table.setModel( new DefaultTableModel(
                 model.getDataVector(),
@@ -7165,7 +7168,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             public boolean isCellEditable( int row, int column )
             {
 //<<<<<<< HEAD
-                return ( column == 0 ||  column == 4) ; // 3ª coluna editável
+                return ( column == 0 || column == 4 ); // 3ª coluna editável
 ////                return ( column == 4 ); // 3ª coluna editável
 //=======
 ////                return ( column == 0 ||  column == 4) ; // 3ª coluna editável
@@ -7178,7 +7181,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private void configurarTabela( int coluna )
     {
 
-        DefaultTableModel model = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
 
         table.setModel( new DefaultTableModel(
                 model.getDataVector(),
