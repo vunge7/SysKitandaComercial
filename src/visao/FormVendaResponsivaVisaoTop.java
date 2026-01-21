@@ -526,7 +526,9 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     }
 
-    
+    /**
+     * Metodo actualizado do proximo doumento
+     */
     private static void mostrar_proximo_codigo_documento()
     {
 
@@ -3132,7 +3134,6 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             venda.setClienteNif( getClienteNif() );
         }
 
-        
 //###
         mostrar_proximo_codigo_documento();
         venda.setCodFact( prox_doc );
