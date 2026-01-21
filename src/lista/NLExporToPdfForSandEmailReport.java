@@ -46,7 +46,7 @@ public final class NLExporToPdfForSandEmailReport
             exportReportToPdf( "relatorio_diario_resumo_caixa_lavandaria.jasper", "relatorio_diario_resumo_caixa_lavandaria.pdf" );
             exportReportToPdf( "reconciliacao_caixa_lavandaria.jasper", "reconciliacao_caixa_lavandaria.pdf" );
             exportReportToPdf( "relatorio_diario_mes_caixa.jasper", "relatorio_diario_mes_caixa.pdf" );
-            exportReportToPdf( "relatorio_mensal.jasper", "relatorio_mensal.pdf" );
+//            exportReportToPdf( "relatorio_mensal.jasper", "relatorio_mensal.pdf" );
 
         }
         catch ( SQLException e )

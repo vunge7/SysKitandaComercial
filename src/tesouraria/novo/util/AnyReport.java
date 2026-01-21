@@ -225,13 +225,13 @@ public class AnyReport
         {
             jex.printStackTrace();
             System.err.println( "Erro: " + jex.getLocalizedMessage() );
-            JOptionPane.showMessageDialog( null, "Falha ao visualizar o documento", "Falha", JOptionPane.ERROR_MESSAGE );
+//            JOptionPane.showMessageDialog( null, "Falha ao visualizar o documento", "Falha", JOptionPane.ERROR_MESSAGE );
         }
         catch ( Exception ex )
         {
             ex.printStackTrace();
             System.err.println( "Erro: " + ex.getLocalizedMessage() );
-            JOptionPane.showMessageDialog( null, "Falha ao visualizar o documento", "Falha", JOptionPane.ERROR_MESSAGE );
+//            JOptionPane.showMessageDialog( null, "Falha ao visualizar o documento", "Falha", JOptionPane.ERROR_MESSAGE );
         }
 
     }

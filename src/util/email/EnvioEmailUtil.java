@@ -268,10 +268,16 @@ public class EnvioEmailUtil
 
     private static void adicionarFicheiros()
     {
+
+        File file_1 = new File( CAMINHO, "relatorio_diario_mes_caixa.pdf" );
+//        File file_2 = new File( CAMINHO, "relatorio_mensal.pdf" );
+//        File file_2 = new File( CAMINHO, "relatorio_diario_resumo_caixa_lavandaria.pdf" );
+
 //        File file_1 = new File( CAMINHO, "relatorio_diario_mes_caixa.pdf" );
 //        File file_1 = new File( CAMINHO, "relatorio_diario_resumo_caixa_lavandaria.pdf" );
-        File file_1 = new File( CAMINHO, "reconciliacao_caixa_lavandaria.pdf" );
+//        File file_1 = new File( CAMINHO, "reconciliacao_caixa_lavandaria.pdf" );
         File file_2 = new File( CAMINHO, "relatorio_mensal.pdf" );
+
 
         files.add( file_1 );
         files.add( file_2 );

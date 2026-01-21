@@ -138,13 +138,9 @@ public class ProdutosVisao extends javax.swing.JFrame
         set_combos();
 
         setRegime( dadosInstituicao.getRegime() );
-
         txtPrecoDeVendaComIva.setVisible( false );
         TotalIvaLabel.setVisible( false );
         cmbImposto.setVisible( false );
-//        TotalIvaLabel.setVisible( false );
-//        txtPrecoDeVendaComIva.setVisible( false );
-
         this.conexao = conexao;
         jPanel_retencao.setVisible( true );
         ck_produto.setSelected( true );
@@ -159,10 +155,12 @@ public class ProdutosVisao extends javax.swing.JFrame
 //        txtPrecoCompra.addKeyListener( new PrecoCompraPercentagem() );
 //        txtPrecoVendaRetalho.addKeyListener( new PrecoVendaPercentagem() );
         setFocus( dadosInstituicao.getFoco() );
+        
         txtPrecoCompra.setHorizontalAlignment( JTextField.RIGHT );
         txtPrecoVendaRetalho.setHorizontalAlignment( JTextField.RIGHT );
         txtPercentagemGanhoRetalho.setHorizontalAlignment( JTextField.RIGHT );
         txtPrecoVendaGrosso.setHorizontalAlignment( JTextField.RIGHT );
+        
         popularComponentes();
         configurar_dois_precos();
         setArmazem( dadosInstituicaoController.findByCodigo( 1 ).getConfigArmazens() );
@@ -1285,6 +1283,7 @@ public class ProdutosVisao extends javax.swing.JFrame
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
 
+        
         procedimento_salvar_produto();
 
 
@@ -3348,11 +3347,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         {
             e.printStackTrace();
         }
-
-//        TotalIvaLabel.setVisible( true );
-//        txtPrecoDeVendaComIva.setVisible( true );
         cmbImposto.setVisible( ivaAplicarJRadioButton.isSelected() );
-//        ivaTaxaJLabel.setVisible( cmbImposto.isVisible() );
         ivaMotivoJComboBox.setVisible( !cmbImposto.isVisible() );
         ivaMotivoJLabel.setVisible( ivaMotivoJComboBox.isVisible() );
 
