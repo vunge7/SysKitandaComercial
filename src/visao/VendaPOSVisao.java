@@ -5,9 +5,11 @@
  */
 package visao;
 
+import comercial.controller.AnoEconomicoController;
 import comercial.controller.ArmazensController;
 import comercial.controller.CaixasController;
 import comercial.controller.ClientesController;
+import comercial.controller.DocumentosController;
 import comercial.controller.FormaPagamentoController;
 import comercial.controller.FormaPagamentoItemController;
 import comercial.controller.ProdutosController;
@@ -45,9 +47,6 @@ import entity.TbProduto;
 import entity.TbStock;
 import entity.TbUsuario;
 import entity.TbVenda;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -69,7 +68,6 @@ import javax.persistence.EntityManagerFactory;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
@@ -140,6 +138,8 @@ public class VendaPOSVisao extends javax.swing.JFrame
     private static CaixasController caixa_controller;
     private static ClientesController clientesController;
     private static ArmazensController armazensController;
+    private static DocumentosController documentosController;
+    private static AnoEconomicoController anoEconomicoController;
     private static ContaMovimentosController cmc;
 //    private static int id_usuario;
 
@@ -220,6 +220,50 @@ public class VendaPOSVisao extends javax.swing.JFrame
         }
     }
 
+//    
+//    private static void mostrar_proximo_codigo_documento()
+//    {
+//        try
+//        {
+//            documento = ( Documento ) documentosController.findById(
+//                    getIdDocumento( documentosController )
+//            );
+//
+//            anoEconomico = ( AnoEconomico ) anoEconomicoController.findById(
+//                    getIdAnoEconomico( anoEconomicoController )
+//            );
+//
+//            int proximoNumero = vendasController.getProximoNumeroFacturaComLock(
+//                    documento.getPkDocumento(),
+//                    anoEconomico.getPkAnoEconomico()
+//            );
+//
+//            prox_doc = documento.getAbreviacao()
+//                    + " " + anoEconomico.getSerie()
+//                    + "/" + proximoNumero;
+//
+//        }
+//        catch ( Exception e )
+//        {
+//            e.printStackTrace();
+//            prox_doc = null;
+//        }
+//    }
+//    
+    
+//    public static int getIdAnoEconomico( AnoEconomicoController anoEconomicoControllerLocal )
+//    {
+//        try
+//        {
+//            AnoEconomico anoEconomicoLocal = anoEconomicoControllerLocal
+//                    .getAnoEconomicoByDesignacao( cmbAnoEconomico.getSelectedItem().toString() );
+//            return anoEconomicoLocal.getPkAnoEconomico();
+//        }
+//        catch ( Exception e )
+//        {
+//            return 0;
+//        }
+//    }
     private static String getCodDocActualizador()
     {
         try
@@ -1123,7 +1167,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
             {
 
                 TbStock stock_local_1 = stockDao.getStockByCodBarra(
-                        Integer.parseInt( cod_barra ), id_armazem );
+                        Long.parseLong( cod_barra ), id_armazem );
 
                 if ( !Objects.isNull( stock_local_1 ) )
                 {
@@ -2159,6 +2203,7 @@ public class VendaPOSVisao extends javax.swing.JFrame
 //                qtd = ( peso / 1000 ); // que e a quantidade do produto
 
             }
+            return text;
 
         }
         return text;

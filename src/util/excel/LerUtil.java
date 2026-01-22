@@ -23,8 +23,8 @@ public class LerUtil
 {
 
     // Colunas do Excel
-    private final int POS_CATEGORIA = 2;
     private final int POS_COD_MANUAL = 0;
+    private final int POS_CATEGORIA = 2;
     private final int POS_DESIGNACAO = 3;
     private final int POS_PRECO_COMPRA = 5;
     private final int POS_PRECO = 6;
@@ -134,8 +134,10 @@ public class LerUtil
             for ( DadosUtil item : listaItens )
             {
                 posicao++;
-                System.out.println( "Importando " + posicao + " de " + listaItens.size() + ": " + item.getDesignacao() );
+//                System.out.println( "Importando " + posicao + " de " + listaItens.size() + ": " + item.getDesignacao() );
                 importarProduto( item );
+//                importarCategoria( item );
+
             }
 
         }
@@ -218,35 +220,50 @@ public class LerUtil
     {
         try
         {
-            String categoria = dados.getCategoria();
-            TbTipoProduto tipo;
+            if ( Objects.nonNull( dados ) )
+            {
 
-            if ( categoria == null || categoria.trim().isEmpty() )
-            {
-                System.err.println( "Categoria não informada -> usando categoria padrão" );
-                tipo = tipoProdutosController.getTipoFamiliaByDesignacao( "SEM CATEGORIA" );
-            }
-            else
-            {
-                tipo = tipoProdutosController.getTipoFamiliaByDesignacao( categoria );
-                if ( tipo == null )
+                if ( Objects.nonNull( dados.getDesignacao() ) )
                 {
-                    System.err.println( "Categoria não encontrada: " + categoria + " -> usando categoria padrão" );
-                    tipo = tipoProdutosController.getTipoFamiliaByDesignacao( "SEM CATEGORIA" );
+
+                    if ( !dados.getDesignacao().equals( "" ) )
+                    {
+                        String categoria = dados.getCategoria();
+                        System.out.println( "Categoria::" + categoria );
+                        TbTipoProduto tipo;
+
+                        if ( !categoria.equals( "" ) )
+                        {
+                            tipo = tipoProdutosController.getTipoFamiliaByDesignacao( categoria );
+
+                            if ( tipo == null )
+                            {
+                                throw new RuntimeException( "Categoria padrão 'SEM CATEGORIA' não existe no banco!" );
+                            }
+
+                            TbProduto produto = new TbProduto();
+                            prepararProduto( produto, dados, tipo.getCodigo() );
+
+                            if ( !produtosController.exist_designacao_produto( conexao, produto.getDesignacao() ) )
+                            {
+                                if ( !produtosController.existProdutoByCodigoBarra( produto.getCodBarra() ) )
+                                {
+                                    System.out.println( "Produto: " + produto.getDesignacao() );
+                                    if ( produtosController.salvar( produto ) )
+                                    {
+                                        TbProduto produtoLast = produtosController.findByDesignacao( produto.getDesignacao() );
+                                        registrarPreco( produtoLast.getCodigo(), dados.getPrecoCompra(), dados.getPrecoVenda() );
+                                    }
+                                }
+
+                            }
+
+                        }
+
+                    }
+
                 }
-            }
 
-            if ( tipo == null )
-            {
-                throw new RuntimeException( "Categoria padrão 'SEM CATEGORIA' não existe no banco!" );
-            }
-
-            TbProduto produto = new TbProduto();
-            prepararProduto( produto, dados, tipo.getCodigo() );
-            if ( produtosController.salvar( produto ) )
-            {
-                TbProduto produtoLast = produtosController.findByDesignacao( produto.getDesignacao() );
-                registrarPreco( produtoLast.getCodigo(), dados.getPrecoCompra(), dados.getPrecoVenda() );
             }
 
         }
@@ -301,7 +318,7 @@ public class LerUtil
         preco.setData( new Date() );
         preco.setHora( new Date() );
         preco.setQtdBaixo( 0 );
-        preco.setQtdAlto( (int) DVML.QTD_DEFAULT - 1 );
+        preco.setQtdAlto( ( int ) DVML.QTD_DEFAULT - 1 );
         preco.setRetalho( true );
         preco.setFkUsuario( new TbUsuario( 15 ) );
         precosController.salvar( preco );
@@ -314,44 +331,38 @@ public class LerUtil
         precoGrosso.setPercentagemGanho( BigDecimal.ZERO );
         precoGrosso.setData( new Date() );
         precoGrosso.setHora( new Date() );
-        precoGrosso.setQtdBaixo( (int) DVML.QTD_DEFAULT );
+        precoGrosso.setQtdBaixo( ( int ) DVML.QTD_DEFAULT );
         precoGrosso.setQtdAlto( Integer.MAX_VALUE );
         precoGrosso.setRetalho( false );
         precoGrosso.setFkUsuario( new TbUsuario( 15 ) );
         precosController.salvar( precoGrosso );
     }
+
+    private void importarCategoria( DadosUtil dadosUtil )
+    {
+
+        if ( !dadosUtil.getCategoria().equals( "" ) )
+        {
+            TbTipoProduto categoria = new TbTipoProduto();
+            categoria.setDesignacao( dadosUtil.getCategoria() );
+            categoria.setFkFamilia( new Familia( 2 ) );
+
+            System.out.println( "Categoria: " + categoria.getDesignacao() );
+
+            if ( !tipoProdutosController.exist_tipo_produto( categoria.getDesignacao() ) )
+            {
+                if ( tipoProdutosController.salvar( categoria ) )
+                {
+                    System.out.println( "categoria salva com sucesso!..." );
+                }
+                else
+                {
+                    System.out.println( "Erro ao cadastrar a categoria" );
+                }
+
+            }
+
+        }
+    }
+
 }
-
-//    private void preparar_produto( TbProduto produto, String designacao, BigDecimal preco, String codManual, int idTipoProduto )
-//    {
-//
-//        boolean isStocavel = false;
-//
-//        String designacao_produto = designacao;
-//        produto.setDesignacao( designacao_produto );
-//        produto.setPreco( preco );
-//        produto.setDataFabrico( new Date() );
-//        produto.setDataExpiracao( new Date() );
-//        produto.setCodBarra( "2147483647" );
-//        produto.setStatus( "Activo" );
-//        produto.setDataEntrada( new Date() );
-//        produto.setStocavel( isStocavel ? "true" : "false" );
-//        produto.setPrecoVenda( 0d );
-//        produto.setQuantidadeDesconto( 0 );
-//        produto.setCodigoManual( codManual );
-//        produto.setCodUnidade( new Unidade( 1 ) );
-//        produto.setCodLocal( new TbLocal( 1 ) );
-//        produto.setCodFornecedores( new TbFornecedor( 1 ) );
-//        produto.setCodTipoProduto( new TbTipoProduto( idTipoProduto ) );
-//        produto.setFkModelo( new Modelo( 1 ) );
-//        produto.setFkGrupo( new Grupo( 1 ) );
-//        produto.setStatusIva( "true" );
-////        produto.setPercentagemDesconto( 0d );
-//        produto.setCozinha( "Nao Enviar Ticket" );
-//        produto.setPhoto( null );
-//        produto.setCodPai(0 );
-//        produto.setUnidadeCompra(0d );
-//
-//    }
-
-//}

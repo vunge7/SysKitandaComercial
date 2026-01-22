@@ -128,6 +128,49 @@ group  by u.codigo;]]>
 			</textField>
 		</band>
 	</title>
+	<detail>
+		<band height="24">
+			<subreport>
+				<reportElement uuid="ebde59f7-ae4d-4ffc-ab95-0bf9e9737f0b" x="-10" y="0" width="175" height="24"/>
+				<subreportParameter name="ID_DOCUMENTO">
+					<subreportParameterExpression><![CDATA[$P{ID_DOCUMENTO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DATA_1">
+					<subreportParameterExpression><![CDATA[$P{DATA_1}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DATA_2">
+					<subreportParameterExpression><![CDATA[$P{DATA_2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_USUARIO">
+					<subreportParameterExpression><![CDATA[$P{ID_USUARIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_CAIXA">
+					<subreportParameterExpression><![CDATA[$P{ID_CAIXA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_reconciliacao_caixa_lavandaria.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="13">
+			<subreport>
+				<reportElement uuid="c71975cf-4210-4933-9edc-1ca448112c4a" x="-10" y="0" width="200" height="13"/>
+				<subreportParameter name="PARM_DATA_2">
+					<subreportParameterExpression><![CDATA[$P{DATA_2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PARM_DATA_1">
+					<subreportParameterExpression><![CDATA[$P{DATA_1}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PARM_ID_ARMAZEM">
+					<subreportParameterExpression><![CDATA[2]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PARM_ID_USUARIO">
+					<subreportParameterExpression><![CDATA[$P{ID_USUARIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_relatorio_diario_produtos_A6.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
 	<columnFooter>
 		<band splitType="Stretch"/>
 	</columnFooter>
