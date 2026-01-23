@@ -72,6 +72,7 @@ public class ProdutosVisao extends javax.swing.JFrame
     private static StoksController stoksController;
     private static UsuariosController usuariosController;
     private static DadosInstituicaoController dadosInstituicaoController;
+    private static ReferenciasController referenciasController;
 
     /**
      * ENTIDADES
@@ -126,8 +127,9 @@ public class ProdutosVisao extends javax.swing.JFrame
         usuariosController = new UsuariosController( conexao );
         stoksController = new StoksController( conexao );
         dadosInstituicaoController = new DadosInstituicaoController( conexao );
+        referenciasController = new ReferenciasController( conexao );
 
-        dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById( 1 );
+        dadosInstituicao = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
 
         confiLabel();
         setWindowsListener();
@@ -155,12 +157,12 @@ public class ProdutosVisao extends javax.swing.JFrame
 //        txtPrecoCompra.addKeyListener( new PrecoCompraPercentagem() );
 //        txtPrecoVendaRetalho.addKeyListener( new PrecoVendaPercentagem() );
         setFocus( dadosInstituicao.getFoco() );
-        
+
         txtPrecoCompra.setHorizontalAlignment( JTextField.RIGHT );
         txtPrecoVendaRetalho.setHorizontalAlignment( JTextField.RIGHT );
         txtPercentagemGanhoRetalho.setHorizontalAlignment( JTextField.RIGHT );
         txtPrecoVendaGrosso.setHorizontalAlignment( JTextField.RIGHT );
-        
+
         popularComponentes();
         configurar_dois_precos();
         setArmazem( dadosInstituicaoController.findByCodigo( 1 ).getConfigArmazens() );
@@ -220,7 +222,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         try
         {
             // TODO add your handling code here
-            setStatusUsuario( (Vector) itemPermissaoDao.getAllPermissoesByIdUsuarioAndModulo( idUser, DVML.MODULO_GESTAO_COMERCIAL ) );
+            setStatusUsuario( ( Vector ) itemPermissaoDao.getAllPermissoesByIdUsuarioAndModulo( idUser, DVML.MODULO_GESTAO_COMERCIAL ) );
         }
         catch ( Exception ex )
         {
@@ -1096,6 +1098,7 @@ public class ProdutosVisao extends javax.swing.JFrame
             }
         });
 
+        jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/alterar_32x32.png"))); // NOI18N
         jButton5.setText("Referências");
         jButton5.addActionListener(new java.awt.event.ActionListener()
         {
@@ -1119,46 +1122,45 @@ public class ProdutosVisao extends javax.swing.JFrame
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lbStatus1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(painel_stockLayout.createSequentialGroup()
-                        .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(painel_stockLayout.createSequentialGroup()
-                                    .addComponent(lbBarra1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(painel_stockLayout.createSequentialGroup()
-                                    .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(lbPrecoVenda1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE))
-                                    .addGap(30, 30, 30)
-                                    .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(painel_stockLayout.createSequentialGroup()
-                                            .addComponent(txtQtdGrosso, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addGap(0, 0, Short.MAX_VALUE))
-                                        .addComponent(txtPrecoVendaGrosso)))
-                                .addGroup(painel_stockLayout.createSequentialGroup()
-                                    .addComponent(lbCategoria3, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(cmbLocal, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(painel_stockLayout.createSequentialGroup()
-                                    .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(llbDataFabrico, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(lbDataExpiracao, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(jcDataFabrico, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jcDataExpiracao, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addComponent(txtPrecoVendaRetalho)
-                                .addComponent(lbPrecoVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 11, Short.MAX_VALUE)))
+                        .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(painel_stockLayout.createSequentialGroup()
+                                .addComponent(lbBarra1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(painel_stockLayout.createSequentialGroup()
+                                .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(lbPrecoVenda1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE))
+                                .addGap(30, 30, 30)
+                                .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(painel_stockLayout.createSequentialGroup()
+                                        .addComponent(txtQtdGrosso, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(0, 0, Short.MAX_VALUE))
+                                    .addComponent(txtPrecoVendaGrosso)))
+                            .addGroup(painel_stockLayout.createSequentialGroup()
+                                .addComponent(lbCategoria3, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(cmbLocal, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(painel_stockLayout.createSequentialGroup()
+                                .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(llbDataFabrico, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lbDataExpiracao, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jcDataFabrico, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jcDataExpiracao, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(txtPrecoVendaRetalho)
+                            .addComponent(lbPrecoVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 11, Short.MAX_VALUE))
+                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         painel_stockLayout.setVerticalGroup(
             painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painel_stockLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton5)
-                .addGap(55, 55, 55)
+                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(34, 34, 34)
                 .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbCategoria3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cmbLocal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1297,7 +1299,6 @@ public class ProdutosVisao extends javax.swing.JFrame
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
 
-        
         procedimento_salvar_produto();
 
 
@@ -1330,7 +1331,7 @@ public class ProdutosVisao extends javax.swing.JFrame
             btnAlterar2.setEnabled( true );
             String codInternoString = txtCodigoProduto.getText();
             Integer codigoInternoInt = (codInternoString.isEmpty() ? 0 : Integer.parseInt( codInternoString ));
-            produto = (TbProduto) produtosController.findById( codigoInternoInt );
+            produto = ( TbProduto ) produtosController.findById( codigoInternoInt );
 
             ver_dados_produtos( codigoInternoInt );
             if ( ivaAplicarJRadioButton.isSelected() )
@@ -1700,9 +1701,16 @@ public class ProdutosVisao extends javax.swing.JFrame
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton5ActionPerformed
     {//GEN-HEADEREND:event_jButton5ActionPerformed
-               new ReferenciasVisao( idUser,
-                getCodigoProduto(),
-                getCodigoArmazem( cmbarmazem1.getSelectedItem().toString() ), BDConexao.getInstancia() ).setVisible( true );
+
+        if ( getCodigoProduto() > 0 )
+        {
+            new ReferenciasVisao( idUser,
+                    getCodigoProduto(),
+                    getCodigoArmazem( cmbarmazem1.getSelectedItem().toString() ),
+                    BDConexao.getInstancia() ).setVisible( true );
+
+        }
+
     }//GEN-LAST:event_jButton5ActionPerformed
 
     /**
@@ -2101,7 +2109,7 @@ public class ProdutosVisao extends javax.swing.JFrame
     {
         try
         {
-            TbProduto produto_local = (TbProduto) produtosController.findByIdStatus( codigo );
+            TbProduto produto_local = ( TbProduto ) produtosController.findByIdStatus( codigo );
             if ( !Objects.isNull( produto_local ) )
             {
                 ver_dados( produto_local.getCodigo() );
@@ -2406,7 +2414,7 @@ public class ProdutosVisao extends javax.swing.JFrame
                     DocumentoDao.startTransaction( conexaoTransaction ); // inicia uma nova transacao
                     if ( !ivaAplicarJRadioButton.isSelected() )//APLICAR ISENÇÃO
                     {
-                        String regimeIsencao = (String) ivaMotivoJComboBox.getSelectedItem();
+                        String regimeIsencao = ( String ) ivaMotivoJComboBox.getSelectedItem();
                         ProdutosMotivosIsensao motivosIsensao = produtosMotivosIsensaoControllerLocal.getRegime( regimeIsencao );
 
                         if ( Objects.nonNull( motivosIsensao ) )
@@ -2484,7 +2492,7 @@ public class ProdutosVisao extends javax.swing.JFrame
                         Vector<String> armazens = armazensController.getVector();
                         for ( String designacaoArmazem : armazens )
                         {
-                            TbArmazem armazem = (TbArmazem) armazensController.findByName( designacaoArmazem );
+                            TbArmazem armazem = ( TbArmazem ) armazensController.findByName( designacaoArmazem );
                             procedimento_registrar_stock( produto.getCodigo(), armazem.getCodigo() );
                         }
                     }
@@ -2790,13 +2798,13 @@ public class ProdutosVisao extends javax.swing.JFrame
     public static void ver_dados( int codigo )
     {
 
-        TbProduto produto_local = (TbProduto) produtosController.findById( codigo );
+        TbProduto produto_local = ( TbProduto ) produtosController.findById( codigo );
         produto = produto_local;
         if ( !Objects.isNull( produto_local ) )
         {
             mostrar_painel( produto_local );
 
-            preco = (TbPreco) precosController.getLastIdPrecoByIdProduto( codigo, 1 );
+            preco = ( TbPreco ) precosController.getLastIdPrecoByIdProduto( codigo, 1 );
 
             if ( Objects.isNull( preco ) )
             {
@@ -2804,19 +2812,19 @@ public class ProdutosVisao extends javax.swing.JFrame
             }
 
             Integer pkModelo = produto_local.getFkModelo().getPkModelo();
-            Modelo modeloLocal = (Modelo) modelosController.findById( pkModelo );
+            Modelo modeloLocal = ( Modelo ) modelosController.findById( pkModelo );
 
             Integer pkGrupo = produto_local.getFkGrupo().getPkGrupo();
-            Grupo grupoLocal = (Grupo) gruposController.findById( pkGrupo );
+            Grupo grupoLocal = ( Grupo ) gruposController.findById( pkGrupo );
 
             Integer pkMarca = modeloLocal.getFkMarca().getPkMarca();
-            Marca marcaLocal = (Marca) marcasController.findById( pkMarca );
+            Marca marcaLocal = ( Marca ) marcasController.findById( pkMarca );
 
             Integer idTipoProduto = produto_local.getCodTipoProduto().getCodigo();
-            TbTipoProduto tipoProdutoLocal = (TbTipoProduto) tipoProdutosController.findById( idTipoProduto );
+            TbTipoProduto tipoProdutoLocal = ( TbTipoProduto ) tipoProdutosController.findById( idTipoProduto );
 
             Integer pkFamilia = tipoProdutoLocal.getFkFamilia().getPkFamilia();
-            Familia familiaLocal = (Familia) familiasController.findById( pkFamilia );
+            Familia familiaLocal = ( Familia ) familiasController.findById( pkFamilia );
 
             String marca = marcaLocal.getDesignacao();
             String modelo = modeloLocal.getDesignacao();
@@ -2851,7 +2859,7 @@ public class ProdutosVisao extends javax.swing.JFrame
                 lbPhoto.setIcon( null );
             }
 
-            Unidade unidadeLocal = (Unidade) unidadesController.findById( produto_local.getCodUnidade().getPkUnidade() );
+            Unidade unidadeLocal = ( Unidade ) unidadesController.findById( produto_local.getCodUnidade().getPkUnidade() );
             cmbUnidade.setSelectedItem( unidadeLocal.getDescricao() );
             txtDesignacao.setText( produto_local.getDesignacao() );
 
@@ -3025,40 +3033,45 @@ public class ProdutosVisao extends javax.swing.JFrame
             return false;
         }
     }
-    
+
     private void buscar_by_cod_barra()
-{
-    TbProduto produto_local =
-        produtosController.findByCodBarra(txtCodigoBarraProcura.getText().trim());
-
-    if (produto_local != null)
     {
-        ver_dados(produto_local.getCodigo());
+        TbProduto produto_local
+                = produtosController.findByCodBarra( txtCodigoBarraProcura.getText().trim() );
 
-        txtCodigoBarraProcura.requestFocus();
-
-        if (ivaAplicarJRadioButton.isSelected())
+        if ( Objects.isNull( produto_local ) )
         {
-            calcularTotalComIva();
+            int idProdutoByCodigoBarra = referenciasController.getIdProdutoByCodigoBarra( txtCodigoBarraProcura.getText().trim() );
+            produto_local = produtosController.findByCodInterno( idProdutoByCodigoBarra );
+        }
+
+        if ( produto_local != null )
+        {
+            ver_dados( produto_local.getCodigo() );
+
+            txtCodigoBarraProcura.requestFocus();
+
+            if ( ivaAplicarJRadioButton.isSelected() )
+            {
+                calcularTotalComIva();
+            }
+            else
+            {
+                txtPrecoDeVendaComIva.setVisible( false );
+                ivaTaxaJLabel.setVisible( false );
+            }
         }
         else
         {
-            txtPrecoDeVendaComIva.setVisible(false);
-            ivaTaxaJLabel.setVisible(false);
+            procedimento_limpar();
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Não existe produto com este código",
+                    "Alerta",
+                    JOptionPane.WARNING_MESSAGE
+            );
         }
     }
-    else
-    {
-        procedimento_limpar();
-        JOptionPane.showMessageDialog(
-            null,
-            "Não existe produto com este código",
-            "Alerta",
-            JOptionPane.WARNING_MESSAGE
-        );
-    }
-}
-
 
 //    private void buscar_by_cod_barra()
 //    {
@@ -3095,10 +3108,9 @@ public class ProdutosVisao extends javax.swing.JFrame
 //            procedimento_limpar();
 //        }
 //    }
-
     private void buscar_by_cod_manual1()
     {
-        
+
         //            if ( !Objects.isNull( produto_local ) )
 //            {
 //                ver_dados( produto_local.getCodigo() );
@@ -3108,7 +3120,6 @@ public class ProdutosVisao extends javax.swing.JFrame
 //                procedimento_limpar();
 //                JOptionPane.showMessageDialog( null, "Não existe produto com este código", "Alerta", JOptionPane.WARNING_MESSAGE );
 //            }
-
         TbProduto produto_local = produtosController.findByCodManual1( txtCodigoManualProcura.getText().trim() );
         if ( !Objects.isNull( produto_local ) )
         {
@@ -3136,7 +3147,7 @@ public class ProdutosVisao extends javax.swing.JFrame
     private void detalhe_produto()
     {
 
-        Unidade unidade = (Unidade) unidadesController.findById( produto.getCodUnidade().getPkUnidade() );
+        Unidade unidade = ( Unidade ) unidadesController.findById( produto.getCodUnidade().getPkUnidade() );
 
         String output = "";
         TbPreco preco_local = precosController.getLastIdPrecoByIdProduto( produto.getCodigo(), 1 );
@@ -3194,7 +3205,7 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         String designacao_produto = getDesignacaoText();
 
-        TbUsuario usuarioLocal = (TbUsuario) usuariosController.findById( idUser );
+        TbUsuario usuarioLocal = ( TbUsuario ) usuariosController.findById( idUser );
 
         if ( designacao_produto.equals( "" ) )
         {
@@ -3419,7 +3430,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         else
         {
 
-            String regimeIsencao = (String) ivaMotivoJComboBox.getSelectedItem();
+            String regimeIsencao = ( String ) ivaMotivoJComboBox.getSelectedItem();
             ProdutosMotivosIsensao isensao = produtosMotivosIsensaoController.getRegime( regimeIsencao );
             if ( !Objects.isNull( isensao ) )
             {
@@ -3509,7 +3520,7 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         if ( dadosInstituicao.getUsarDoisPrecos().equals( "nao" ) )
         {
-            txtQtdGrosso.setText( String.valueOf( (int) DVML.QTD_DEFAULT ) );
+            txtQtdGrosso.setText( String.valueOf( ( int ) DVML.QTD_DEFAULT ) );
             txtPrecoVendaGrosso.setText( txtPrecoVendaRetalho.getText() );
         }
 
@@ -3861,12 +3872,12 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         if ( retencaoAplicarJRadioButton.isSelected() )
         {
-            retencao = (Retencao) retencaoController.findById( 1 );
+            retencao = ( Retencao ) retencaoController.findById( 1 );
             retencaoTaxaJTextField.setText( MetodosUtil.formatarComoPercentagem( retencao.getTaxa() ) );
         }
         else
         {
-            retencao = (Retencao) retencaoController.findById( 2 );
+            retencao = ( Retencao ) retencaoController.findById( 2 );
             retencaoZeroTaxaJTextField.setText( MetodosUtil.formatarComoPercentagem( 0.0 ) );
         }
         retencaoTaxaJTextField.setVisible( retencaoAplicarJRadioButton.isSelected() );
@@ -4168,7 +4179,7 @@ public class ProdutosVisao extends javax.swing.JFrame
 
     private void activarCampoPreco()
     {
-        TbUsuario usuario = (TbUsuario) usuariosController.findById( idUser );
+        TbUsuario usuario = ( TbUsuario ) usuariosController.findById( idUser );
 
         if ( usuario.getIdTipoUsuario().getIdTipoUsuario() == 1 )
         {
@@ -4226,8 +4237,8 @@ public class ProdutosVisao extends javax.swing.JFrame
         stockLocal.setPrecoVenda( new BigDecimal( MetodosUtil.convertToDouble( "0.0" ) ) );
         stockLocal.setPrecoVendaGrosso( new BigDecimal( stockLocal.getPrecoVenda().doubleValue() ) );
         stockLocal.setQtdGrosso( DVML.QTD_DEFAULT );
-        stockLocal.setQuantCritica( (int) qtdCritica );
-        stockLocal.setQuantBaixa( (int) qtdbaixa );
+        stockLocal.setQuantCritica( ( int ) qtdCritica );
+        stockLocal.setQuantBaixa( ( int ) qtdbaixa );
         stockLocal.setQuantidadeAntiga( 0d );
         stockLocal.setCodArmazem( new TbArmazem( idArmazem ) );
         stockLocal.setCodProdutoCodigo( new TbProduto( produto_local.getCodigo() ) );

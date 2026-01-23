@@ -37,11 +37,11 @@ public class ReferenciasController implements EntidadeFactory
     @Override
     public boolean salvar( Object object )
     {
-        Referencias referencias = (Referencias) object;
+        Referencias referencias = ( Referencias ) object;
         String INSERT = "INSERT INTO referencias( cod_barra , produto_id , obs , data_referencia , usuario_id"
                 + ")"
                 + " VALUES("
-                + "'" + referencias.getCodBarra()+ "' , "
+                + "'" + referencias.getCodBarra() + "' , "
                 + referencias.getProdutoId() + " , "
                 + "'" + referencias.getObs() + "' , "
                 + "'" + referencias.getDataReferencia() + "' , "
@@ -51,41 +51,50 @@ public class ReferenciasController implements EntidadeFactory
         return conexao.executeUpdate( INSERT );
 
     }
-    
-    public boolean salvar(Referencias referencias) {
 
-    String sql = "INSERT INTO referencias "
-               + "(cod_barra, produto_id, obs, data_referencia, usuario_id) "
-               + "VALUES (?, ?, ?, ?, ?)";
+    public boolean salvar( Referencias referencias )
+    {
 
-    try (PreparedStatement ps = conexao.getConnection().prepareStatement(sql)) {
+        String sql = "INSERT INTO referencias "
+                + "(cod_barra, produto_id, obs, data_referencia, usuario_id) "
+                + "VALUES (?, ?, ?, ?, ?)";
 
-        ps.setString(1, referencias.getCodBarra());
-        ps.setInt(2, referencias.getProdutoId());
+        try ( PreparedStatement ps = conexao.getConnection().prepareStatement( sql ) )
+        {
 
-        if (referencias.getObs() != null) {
-            ps.setString(3, referencias.getObs());
-        } else {
-            ps.setNull(3, Types.VARCHAR);
+            ps.setString( 1, referencias.getCodBarra() );
+            ps.setInt( 2, referencias.getProdutoId() );
+
+            if ( referencias.getObs() != null )
+            {
+                ps.setString( 3, referencias.getObs() );
+            }
+            else
+            {
+                ps.setNull( 3, Types.VARCHAR );
+            }
+
+            if ( referencias.getDataReferencia() != null )
+            {
+                ps.setDate( 4, new java.sql.Date( referencias.getDataReferencia().getTime() ) );
+            }
+            else
+            {
+                ps.setNull( 4, Types.DATE );
+            }
+
+            ps.setInt( 5, referencias.getUsuarioId() );
+
+            ps.executeUpdate();
+            return true;
+
         }
-
-        if (referencias.getDataReferencia() != null) {
-            ps.setDate(4, new java.sql.Date(referencias.getDataReferencia().getTime()));
-        } else {
-            ps.setNull(4, Types.DATE);
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
+            return false;
         }
-
-        ps.setInt(5, referencias.getUsuarioId());
-
-        ps.executeUpdate();
-        return true;
-
-    } catch (SQLException e) {
-        e.printStackTrace();
-        return false;
     }
-}
-
 
     public Vector<String> listarTodosDaVenda( Date data_1, Date data_2 )
     {
@@ -125,9 +134,9 @@ public class ReferenciasController implements EntidadeFactory
     }
 
     @Override
-    public boolean eliminar( int codigo )
+    public boolean eliminar( int id )
     {
-        String DELETE = "DELETE FROM referencias WHERE codigo = " + codigo;
+        String DELETE = "DELETE FROM referencias WHERE id = " + id;
         return conexao.executeUpdate( DELETE );
     }
 
@@ -144,13 +153,13 @@ public class ReferenciasController implements EntidadeFactory
 
             while ( result.next() )
             {
-                
+
                 referencias = new Referencias();
-                referencias.setCodBarra(result.getString( "cod_barra" ) );
-                referencias.setProdutoId(result.getInt( "produto_id" ) );
-                referencias.setObs(result.getString( "obs" ) );
-                referencias.setDataReferencia(  result.getDate( "data_referencia" ) );
-                referencias.setUsuarioId(   result.getInt( "usuario_id" ) );
+                referencias.setCodBarra( result.getString( "cod_barra" ) );
+                referencias.setProdutoId( result.getInt( "produto_id" ) );
+                referencias.setObs( result.getString( "obs" ) );
+                referencias.setDataReferencia( result.getDate( "data_referencia" ) );
+                referencias.setUsuarioId( result.getInt( "usuario_id" ) );
                 lista_referencias.add( referencias );
 
             }
@@ -176,11 +185,11 @@ public class ReferenciasController implements EntidadeFactory
             while ( result.next() )
             {
                 referencias = new Referencias();
-                referencias.setCodBarra(result.getString( "cod_barra" ) );
-                referencias.setProdutoId(result.getInt( "produto_id" ) );
-                referencias.setObs(result.getString( "obs" ) );
-                referencias.setDataReferencia(  result.getDate( "data_referencia" ) );
-                referencias.setUsuarioId(   result.getInt( "usuario_id" ) );
+                referencias.setCodBarra( result.getString( "cod_barra" ) );
+                referencias.setProdutoId( result.getInt( "produto_id" ) );
+                referencias.setObs( result.getString( "obs" ) );
+                referencias.setDataReferencia( result.getDate( "data_referencia" ) );
+                referencias.setUsuarioId( result.getInt( "usuario_id" ) );
                 lista_referencias.add( referencias );
             }
         }
@@ -204,12 +213,11 @@ public class ReferenciasController implements EntidadeFactory
             if ( result.next() )
             {
                 referencias = new Referencias();
-                referencias.setCodBarra(result.getString( "cod_barra" ) );
-                referencias.setProdutoId(result.getInt( "produto_id" ) );
-                referencias.setObs(result.getString( "obs" ) );
-                referencias.setDataReferencia(  result.getDate( "data_referencia" ) );
-                referencias.setUsuarioId(   result.getInt( "usuario_id" ) );
-    
+                referencias.setCodBarra( result.getString( "cod_barra" ) );
+                referencias.setProdutoId( result.getInt( "produto_id" ) );
+                referencias.setObs( result.getString( "obs" ) );
+                referencias.setDataReferencia( result.getDate( "data_referencia" ) );
+                referencias.setUsuarioId( result.getInt( "usuario_id" ) );
 
             }
 
@@ -239,49 +247,105 @@ public class ReferenciasController implements EntidadeFactory
         {
             e.printStackTrace();
         }
-        
+
         return vector;
     }
-    
-    public List<Referencias> listarTodos1() {
-    String FIND_ALL = "SELECT * FROM referencias ORDER BY id ASC";
-    List<Referencias> lista_referencias = new ArrayList<>();
 
-    try (ResultSet result = conexao.executeQuery(FIND_ALL)) {
+    public List<Referencias> listarTodos1()
+    {
+        String FIND_ALL = "SELECT * FROM referencias ORDER BY id ASC";
+        List<Referencias> lista_referencias = new ArrayList<>();
 
-        while (result.next()) {
-            Referencias ref = new Referencias();
+        try ( ResultSet result = conexao.executeQuery( FIND_ALL ) )
+        {
 
-            // ID
-            ref.setId(result.getInt("id"));
+            while ( result.next() )
+            {
+                Referencias ref = new Referencias();
 
-            // Produto ID
-            int produtoId = result.getInt("produto_id");
-            if (result.wasNull()) produtoId = 0; // ou null se campo Integer
-            ref.setProdutoId(produtoId);
+                // ID
+                ref.setId( result.getInt( "id" ) );
 
-            // Usuario ID
-            int usuarioId = result.getInt("usuario_id");
-            if (result.wasNull()) usuarioId = 0; // ou null se campo Integer
-            ref.setUsuarioId(usuarioId);
+                // Produto ID
+                int produtoId = result.getInt( "produto_id" );
+                if ( result.wasNull() )
+                {
+                    produtoId = 0; // ou null se campo Integer
+                }
+                ref.setProdutoId( produtoId );
 
-            // Outros campos
-            ref.setCodBarra(result.getString("cod_barra"));
-            ref.setObs(result.getString("obs"));
-            ref.setDataReferencia(result.getDate("data_referencia"));
+                // Usuario ID
+                int usuarioId = result.getInt( "usuario_id" );
+                if ( result.wasNull() )
+                {
+                    usuarioId = 0; // ou null se campo Integer
+                }
+                ref.setUsuarioId( usuarioId );
 
-            lista_referencias.add(ref);
+                // Outros campos
+                ref.setCodBarra( result.getString( "cod_barra" ) );
+                ref.setObs( result.getString( "obs" ) );
+                ref.setDataReferencia( result.getDate( "data_referencia" ) );
+
+                lista_referencias.add( ref );
+            }
+
+        }
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog( null, "Erro ao listar referências: " + e.getMessage(),
+                    "Erro", JOptionPane.ERROR_MESSAGE );
         }
 
-    } catch (SQLException e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Erro ao listar referências: " + e.getMessage(),
-                                      "Erro", JOptionPane.ERROR_MESSAGE);
+        return lista_referencias;
     }
 
-    return lista_referencias;
-}
+    public List<Referencias> listarTodosByIdProduto( int idProduto )
+    {
+        String FIND_ALL = "SELECT * FROM referencias WHERE produto_id = " + idProduto;
+        List<Referencias> lista_referencias = new ArrayList<>();
 
+        try ( ResultSet result = conexao.executeQuery( FIND_ALL ) )
+        {
+
+            while ( result.next() )
+            {
+                Referencias ref = new Referencias();
+                // ID
+                ref.setId( result.getInt( "id" ) );
+                // Produto ID
+                int produtoId = result.getInt( "produto_id" );
+                if ( result.wasNull() )
+                {
+                    produtoId = 0; // ou null se campo Integer
+                }
+                ref.setProdutoId( produtoId );
+
+                // Usuario ID
+                int usuarioId = result.getInt( "usuario_id" );
+                if ( result.wasNull() )
+                {
+                    usuarioId = 0; // ou null se campo Integer
+                }
+                ref.setUsuarioId( usuarioId );
+                // Outros campos
+                ref.setCodBarra( result.getString( "cod_barra" ) );
+                ref.setObs( result.getString( "obs" ) );
+                ref.setDataReferencia( result.getDate( "data_referencia" ) );
+                lista_referencias.add( ref );
+            }
+
+        }
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog( null, "Erro ao listar referências: " + e.getMessage(),
+                    "Erro", JOptionPane.ERROR_MESSAGE );
+        }
+
+        return lista_referencias;
+    }
 
     @Override
     public Object findById( int codigo )
@@ -289,5 +353,35 @@ public class ReferenciasController implements EntidadeFactory
         throw new UnsupportedOperationException( "Not supported yet." ); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
+    public boolean existReferenciaByCodigoBarra( String codBarra )
+    {
+        String sql = "SELECT * FROM referencias p WHERE p.cod_barra = '" + codBarra + "'";
+        ResultSet rs = conexao.executeQuery( sql );
+        try
+        {
+            return rs.next();
+        }
+        catch ( SQLException e )
+        {
+        }
+        return false;
+    }
 
+    public int getIdProdutoByCodigoBarra( String codBarra )
+    {
+        String sql = "SELECT produto_id FROM referencias  WHERE cod_barra = '" + codBarra + "'";
+        ResultSet rs = conexao.executeQuery( sql );
+        int idProduto = 0;
+        try
+        {
+            if ( rs.next() )
+            {
+                idProduto = rs.getInt( "produto_id" );
+            }
+        }
+        catch ( SQLException e )
+        {
+        }
+        return idProduto;
+    }
 }

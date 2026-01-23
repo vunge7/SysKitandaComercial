@@ -8,8 +8,6 @@ import comercial.controller.ProdutosController;
 import comercial.controller.ReferenciasController;
 import entity.Referencias;
 import entity.TbProduto;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -17,9 +15,7 @@ import java.util.Map;
 import java.util.Objects;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 import util.BDConexao;
 import util.DVML;
 
@@ -49,14 +45,8 @@ public class ReferenciasVisao extends javax.swing.JDialog
         produtosController = new ProdutosController( conexao );
         referenciasController = new ReferenciasController( conexao );
 
-        setWindowsListener();
-        try
-        {
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace();
-        }
+        adicionar_dados( codProduto );
+        carregarDados();
 //        carregarProdutos();
 
     }
@@ -73,7 +63,6 @@ public class ReferenciasVisao extends javax.swing.JDialog
 
         jPanel1 = new javax.swing.JPanel();
         lbProduto = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
@@ -96,33 +85,25 @@ public class ReferenciasVisao extends javax.swing.JDialog
         jPanel1.setBackground(new java.awt.Color(0, 0, 102));
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        lbProduto.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lbProduto.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         lbProduto.setForeground(new java.awt.Color(255, 255, 255));
         lbProduto.setText("XXX");
-
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel7.setText("REFERÊNCIAS PRODUTOS");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(8, 8, 8)
-                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(lbProduto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(78, 78, 78))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(lbProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(7, Short.MAX_VALUE))
         );
 
         jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -141,19 +122,10 @@ public class ReferenciasVisao extends javax.swing.JDialog
             }
         )
         {
-            Class[] types = new Class []
-            {
-                java.lang.Object.class, java.lang.Object.class, java.lang.Double.class, java.lang.Object.class
-            };
             boolean[] canEdit = new boolean []
             {
                 false, false, false, false
             };
-
-            public Class getColumnClass(int columnIndex)
-            {
-                return types [columnIndex];
-            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex)
             {
@@ -174,6 +146,8 @@ public class ReferenciasVisao extends javax.swing.JDialog
                 jButton4ActionPerformed(evt);
             }
         });
+
+        txtProduto.setEditable(false);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel1.setText("Produto: ");
@@ -203,6 +177,14 @@ public class ReferenciasVisao extends javax.swing.JDialog
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
                 jButton2ActionPerformed(evt);
+            }
+        });
+
+        txtCodigo.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                txtCodigoActionPerformed(evt);
             }
         });
 
@@ -260,9 +242,9 @@ public class ReferenciasVisao extends javax.swing.JDialog
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(55, 55, 55)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(7, 7, 7))
+                .addContainerGap())
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -320,7 +302,7 @@ public class ReferenciasVisao extends javax.swing.JDialog
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton2ActionPerformed
     {//GEN-HEADEREND:event_jButton2ActionPerformed
-
+        procedimento_eliminar();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton3ActionPerformed
@@ -332,7 +314,7 @@ public class ReferenciasVisao extends javax.swing.JDialog
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton4ActionPerformed
     {//GEN-HEADEREND:event_jButton4ActionPerformed
         new BuscaProdutoVisao(
-                (java.awt.Frame) SwingUtilities.getWindowAncestor( this ),
+                ( java.awt.Frame ) SwingUtilities.getWindowAncestor( this ),
                 true,
                 codArmazem,
                 DVML.JANELA_REFERENCIAS,
@@ -352,6 +334,11 @@ public class ReferenciasVisao extends javax.swing.JDialog
             e.printStackTrace();
         }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtCodigoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtCodigoActionPerformed
+    {//GEN-HEADEREND:event_txtCodigoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCodigoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -419,38 +406,18 @@ public class ReferenciasVisao extends javax.swing.JDialog
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JLabel lbProduto;
+    private static javax.swing.JLabel lbProduto;
     private static javax.swing.JTable table;
     private javax.swing.JTextArea txAreaObs;
     private javax.swing.JTextField txtCodBarra;
     private static javax.swing.JTextField txtCodigo;
     private static javax.swing.JTextField txtProduto;
     // End of variables declaration//GEN-END:variables
-
-    public void actualizar_tabela()
-    {
-
-    }
-
-    private void setWindowsListener()
-    {
-
-        this.addWindowListener( new WindowAdapter()
-        {
-            @Override
-            public void windowActivated( WindowEvent e )
-            {
-            }
-
-        } );
-
-    }
 
     private void salvarReferencia()
     {
@@ -465,6 +432,19 @@ public class ReferenciasVisao extends javax.swing.JDialog
             {
                 JOptionPane.showMessageDialog( this, "Informe o código de barras", "Atenção", JOptionPane.WARNING_MESSAGE );
                 txtCodBarra.requestFocus();
+                return;
+            }
+
+            if ( produtosController.existProdutoByCodigoBarra( codBarra ) )
+            {
+                JOptionPane.showMessageDialog( this, "Já existe uma produto com este código de barra.", "Atenção", JOptionPane.WARNING_MESSAGE );
+                txtCodigo.requestFocus();
+                return;
+            }
+            if ( referenciasController.existReferenciaByCodigoBarra( codBarra ) )
+            {
+                JOptionPane.showMessageDialog( this, "Já existe uma referência com este código de barra.", "Atenção", JOptionPane.WARNING_MESSAGE );
+                txtCodigo.requestFocus();
                 return;
             }
 
@@ -510,21 +490,7 @@ public class ReferenciasVisao extends javax.swing.JDialog
 
             if ( sucesso )
             {
-                // 6️⃣ Atualiza JTable
-                DefaultTableModel model = (DefaultTableModel) table.getModel();
-                model.addRow( new Object[]
-                {
-                    codigoProduto, // ✅ Primeira coluna = código do produto
-                    p.getDesignacao(), // Segunda coluna = designação
-                    codBarra, // Terceira coluna = cod_barra
-                    obs                // Quarta coluna = obs
-                } );
-
-                // Foca na nova linha
-                int ultimaLinha = model.getRowCount() - 1;
-                table.setRowSelectionInterval( ultimaLinha, ultimaLinha );
-                table.scrollRectToVisible( table.getCellRect( ultimaLinha, 0, true ) );
-
+                carregarDados();
                 // 7️⃣ Feedback e limpar campos
                 JOptionPane.showMessageDialog( this, "Referência salva com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE );
                 limparCampos();
@@ -543,73 +509,29 @@ public class ReferenciasVisao extends javax.swing.JDialog
         }
     }
 
-//private void salvarReferencia() {
-//    try {
-//        // 1️⃣ Validação dos campos
-//        String codBarra = txtCodBarra.getText().trim();
-//        String produtoCodigoStr = txtProduto.getText().trim();
-//        String obs = txAreaObs.getText().trim();
-//
-//        if (codBarra.isEmpty()) {
-//            JOptionPane.showMessageDialog(this, "Informe o código de barras", "Atenção", JOptionPane.WARNING_MESSAGE);
-//            txtCodBarra.requestFocus();
-//            return;
-//        }
-//
-//        if (produtoCodigoStr.isEmpty()) {
-//            JOptionPane.showMessageDialog(this, "Produto não selecionado", "Atenção", JOptionPane.WARNING_MESSAGE);
-//            txtProduto.requestFocus();
-//            return;
-//        }
-//
-//        // 2️⃣ Converte ID do produto
-//        int produtoId;
-//        try {
-//            produtoId = Integer.parseInt(produtoCodigoStr);
-//        } catch (NumberFormatException e) {
-//            JOptionPane.showMessageDialog(this, "ID do produto inválido", "Erro", JOptionPane.ERROR_MESSAGE);
-//            txtProduto.requestFocus();
-//            return;
-//        }
-//
-//        // 3️⃣ Monta entity
-//        Referencias ref = new Referencias();
-//        ref.setProdutoId(produtoId);
-//        ref.setCodBarra(codBarra);
-//        ref.setObs(obs.isEmpty() ? null : obs);       // null se vazio
-//        ref.setDataReferencia(new Date());
-//        ref.setUsuarioId(15);              // pega ID do usuário logado
-//
-//        // 4️⃣ Salva no banco via controller/DAO
-//        boolean sucesso = referenciasController.salvar(ref);
-//
-//        if (sucesso) {
-//            // 5️⃣ Pega a designação do produto do Map
-//            String produtoNome = produtosMap.getOrDefault(produtoId, "Produto não encontrado");
-//
-//            // 6️⃣ Atualiza JTable e foca na nova linha
-//            DefaultTableModel model = (DefaultTableModel) table.getModel();
-//            model.addRow(new Object[]{produtoId, produtoNome, codBarra, obs});
-//
-//            int ultimaLinha = model.getRowCount() - 1;
-//            table.setRowSelectionInterval(ultimaLinha, ultimaLinha);
-//            table.scrollRectToVisible(table.getCellRect(ultimaLinha, 0, true));
-//
-//            // 7️⃣ Feedback ao usuário
-//            JOptionPane.showMessageDialog(this, "Referência salva com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-//
-//            // 8️⃣ Limpa campos para nova entrada
-////            limparCampos();
-//
-//        } else {
-//            JOptionPane.showMessageDialog(this, "Erro ao salvar referência!", "Erro", JOptionPane.ERROR_MESSAGE);
-//        }
-//
-//    } catch (Exception e) {
-//        e.printStackTrace();
-//        JOptionPane.showMessageDialog(this, "Erro inesperado ao salvar referência", "Erro", JOptionPane.ERROR_MESSAGE);
-//    }
-//}
+    private void carregarDados()
+    {
+        List<Referencias> listarTodosByIdProduto = referenciasController.listarTodosByIdProduto( codProduto );
+        DefaultTableModel model = ( DefaultTableModel ) table.getModel();
+        model.setRowCount( 0 );
+        TbProduto produto_local = ( TbProduto ) produtosController.findById( codProduto );
+
+        for ( Referencias referencias : listarTodosByIdProduto )
+        {
+            // 6️⃣ Atualiza JTable
+
+            model.addRow( new Object[]
+            {
+                referencias.getId(), // ✅ Primeira coluna = código do produto
+                produto_local.getDesignacao(), // Segunda coluna = designação
+                referencias.getCodBarra(), // Terceira coluna = cod_barra
+                referencias.getObs()                // Quarta coluna = obs
+            } );
+
+        }
+
+    }
+
     private void carregarProdutos()
     {
         try
@@ -631,19 +553,55 @@ public class ReferenciasVisao extends javax.swing.JDialog
     public static void adicionar_dados( int codigo )
     {
 
-        TbProduto produto_local = (TbProduto) produtosController.findById( codigo );
+        TbProduto produto_local = ( TbProduto ) produtosController.findById( codigo );
 
         if ( !Objects.isNull( produto_local ) )
         {
 
             txtCodigo.setText( String.valueOf( produto_local.getCodigo() ) );
             txtProduto.setText( produto_local.getDesignacao() );
+            lbProduto.setText( produto_local.getDesignacao() );
 
         }
         else
         {
             JOptionPane.showMessageDialog( null, "O Produto não existe. ", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
 
+        }
+
+    }
+
+    private void procedimento_eliminar()
+    {
+
+        int linhaSeleccionada = table.getSelectedRow();
+
+        long idReferencia = Long.parseLong( table.getModel().getValueAt( linhaSeleccionada, 0 ).toString() );
+
+        int opcao = JOptionPane.showConfirmDialog( null, "Tens a plena certeza que pretendes eliminar essa referencia?" );
+
+        if ( opcao == JOptionPane.YES_OPTION )
+        {
+
+            try
+            {
+
+                referenciasController.eliminar( ( int ) idReferencia );
+                carregarDados();
+                JOptionPane.showMessageDialog( null, "Referencia eliminada com sucesso!...", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
+
+            }
+            catch ( Exception e )
+            {
+
+                e.printStackTrace();
+                JOptionPane.showMessageDialog( null, "Erro ao eliminar essa referencia.\nPossivelmente já esta realcionada", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+            }
+
+        }
+        else
+        {
+            JOptionPane.showMessageDialog( null, "Referencia não eliminada", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
         }
 
     }
@@ -655,11 +613,5 @@ public class ReferenciasVisao extends javax.swing.JDialog
         txAreaObs.setText( "" );
         txtCodBarra.requestFocus();
     }
-
-
-
-
-
-
 
 }

@@ -131,6 +131,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private static PagamentoMensalidadeController pagamentoMensalidadeController;
     private static MesRhController mesRhController;
     private static RetencaoController retencaoController;
+    private static ReferenciasController referenciasController;
 
     /**
      * OUTROS
@@ -219,6 +220,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         dadosInstituicao = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
         configuracaoMesComecoController = new ConfiguracaoMesComecoController( conexao.getConnectionAtiva() );
         pagamentoMensalidadeController = new PagamentoMensalidadeController( conexao.getConnectionAtiva() );
+        referenciasController = new ReferenciasController( conexao );
         mesRhController = new MesRhController( conexao.getConnectionAtiva() );
         cmc = new ContaMovimentosController( conexao );
         txtQuatindade.setText( "1" );
@@ -2778,6 +2780,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             // Finaliza transação
             DocumentosController.commit( conexaoTransactionLocal );
 
+            txtCodigoBarra.requestFocus();
             JOptionPane.showMessageDialog( null, "Factura efectuada com sucesso!" );
             txtNomeConsumidorFinal.setVisible( true );
 //            imprimir_factura( idVendaGerada ); // Imprime a factura
@@ -2805,7 +2808,6 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             ex.printStackTrace();
             JOptionPane.showMessageDialog( null, "Erro ao imprimir factura: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE );
         }
-        txtCodigoBarra.requestFocus();
     }
 
     private static FormaPagamentoItem criarItemFormaPagamento( int idVenda, int idForma, BigDecimal valor, BigDecimal troco, String referencia )
@@ -6002,12 +6004,27 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private void accao_codigo_barra_enter_cb()
     {
+
         try
         {
             String codigoBarra = txtCodigoBarra.getText().trim();
             // Busca o produto pelo código de barra
             TbProduto produtoLocal = produtosController.findByCodBarra( codigoBarra );
-            System.out.println( "ID PRODUTO: " + produtoLocal.getCodigo() );
+//            System.out.println( "ID PRODUTO: " + produtoLocal.getCodigo() );
+
+            /**
+             * Realiza a busca nas referencias caso na primeira instancia for
+             * nula
+             */
+            if ( Objects.isNull( produtoLocal ) )
+            {
+                int idProdutoByCodigoBarra = referenciasController.getIdProdutoByCodigoBarra( codigoBarra );
+                produtoLocal = produtosController.findByCodInterno( idProdutoByCodigoBarra );
+            }
+
+            /**
+             * Verrifica se nao existe na tabela.
+             */
             if ( !existProduto( produtoLocal.getCodigo() ) )
             {
                 if ( codigoBarra.isEmpty() )
@@ -6067,9 +6084,10 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             {
                 DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
                 int cod_interno = Integer.parseInt( modelo.getValueAt( linha_existente_produto, 0 ).toString() );
-                double preco = CfMethods.parseMoedaFormatada( modelo.getValueAt( linha_existente_produto, 3 ).toString() );
                 double qtd = Double.parseDouble( modelo.getValueAt( linha_existente_produto, 4 ).toString() );
                 qtd = qtd + 1;
+
+                double preco = precosController.getLastIdPrecoByIdProduto( cod_interno, qtd ).getPrecoVenda().doubleValue();
                 double taxa = Double.parseDouble( modelo.getValueAt( linha_existente_produto, 6 ).toString() );
                 double desconto = Double.parseDouble( modelo.getValueAt( linha_existente_produto, 5 ).toString() );
 
@@ -6078,6 +6096,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
                     BigDecimal valorIliquido = FinanceUtils.getValorIliquido( new BigDecimal( qtd ), new BigDecimal( preco ), new BigDecimal( desconto ) );
                     modelo.setValueAt( qtd, linha_existente_produto, 4 );
+                    modelo.setValueAt( CfMethods.formatarComoMoeda( preco ), linha_existente_produto, 3 );
 
                     double valorLiquidoDouble = FinanceUtils.getValorComIVA(
                             qtd,
@@ -6225,7 +6244,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                     String descricao = produto.getDesignacao();
                     String unidade = getUnidade_Produto();
 
-                    BigDecimal qtd = BigDecimal.valueOf( 1 );
+                    BigDecimal qtd = BigDecimal.valueOf( Double.parseDouble( txtQuatindade.getText() ) );
                     BigDecimal preco = BigDecimal.valueOf( getPreco() );
                     BigDecimal descontoPercent = BigDecimal.valueOf( produto.getPercentagemDesconto() );
                     BigDecimal taxaIva = BigDecimal.valueOf( getTaxaImpostoIva( codigoProduto ) );
@@ -6504,7 +6523,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
         String unidade = getUnidade_Produto();
 
-        BigDecimal qtd = new BigDecimal( "1" );
+        BigDecimal qtd = new BigDecimal( txtQuatindade.getText() );
         BigDecimal preco = BigDecimal.valueOf( getPreco( codigoProduto, qtd.doubleValue() ) );
         BigDecimal descontoPercent = BigDecimal.valueOf( getDescontoPercentagem() );
         BigDecimal taxaIva = BigDecimal.valueOf( getTaxaImpostoIva( codigoProduto ) );
