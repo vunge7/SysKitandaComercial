@@ -853,6 +853,13 @@ public class BuscaProdutoVisao extends javax.swing.JDialog
             dispose();
 
         }
+        else if ( DVML.JANELA_REFERENCIAS == cod_janela )
+        {
+
+            ReferenciasVisao.adicionar_dados( codigo );
+            dispose();
+
+        }
 
     }
 

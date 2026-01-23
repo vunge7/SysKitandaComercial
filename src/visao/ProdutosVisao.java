@@ -365,6 +365,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         txtPrecoVendaGrosso = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         txtQtdGrosso = new javax.swing.JTextField();
+        jButton5 = new javax.swing.JButton();
         txtArmazen1 = new javax.swing.JTextField();
         txtArmazen2 = new javax.swing.JTextField();
         txtArmazen3 = new javax.swing.JTextField();
@@ -1095,6 +1096,15 @@ public class ProdutosVisao extends javax.swing.JFrame
             }
         });
 
+        jButton5.setText("Referências");
+        jButton5.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout painel_stockLayout = new javax.swing.GroupLayout(painel_stock);
         painel_stock.setLayout(painel_stockLayout);
         painel_stockLayout.setHorizontalGroup(
@@ -1109,42 +1119,46 @@ public class ProdutosVisao extends javax.swing.JFrame
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lbStatus1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(painel_stockLayout.createSequentialGroup()
-                        .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(painel_stockLayout.createSequentialGroup()
-                                .addComponent(lbBarra1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(painel_stockLayout.createSequentialGroup()
-                                .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(lbPrecoVenda1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE))
-                                .addGap(30, 30, 30)
-                                .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(painel_stockLayout.createSequentialGroup()
-                                        .addComponent(txtQtdGrosso, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(0, 0, Short.MAX_VALUE))
-                                    .addComponent(txtPrecoVendaGrosso)))
-                            .addGroup(painel_stockLayout.createSequentialGroup()
-                                .addComponent(lbCategoria3, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(cmbLocal, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(painel_stockLayout.createSequentialGroup()
-                                .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(llbDataFabrico, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lbDataExpiracao, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jcDataFabrico, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jcDataExpiracao, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(txtPrecoVendaRetalho)
-                            .addComponent(lbPrecoVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(painel_stockLayout.createSequentialGroup()
+                                    .addComponent(lbBarra1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(painel_stockLayout.createSequentialGroup()
+                                    .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(lbPrecoVenda1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE))
+                                    .addGap(30, 30, 30)
+                                    .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(painel_stockLayout.createSequentialGroup()
+                                            .addComponent(txtQtdGrosso, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(0, 0, Short.MAX_VALUE))
+                                        .addComponent(txtPrecoVendaGrosso)))
+                                .addGroup(painel_stockLayout.createSequentialGroup()
+                                    .addComponent(lbCategoria3, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(cmbLocal, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(painel_stockLayout.createSequentialGroup()
+                                    .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(llbDataFabrico, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(lbDataExpiracao, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jcDataFabrico, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jcDataExpiracao, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(txtPrecoVendaRetalho)
+                                .addComponent(lbPrecoVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 11, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         painel_stockLayout.setVerticalGroup(
             painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painel_stockLayout.createSequentialGroup()
-                .addGap(83, 83, 83)
+                .addContainerGap()
+                .addComponent(jButton5)
+                .addGap(55, 55, 55)
                 .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbCategoria3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cmbLocal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1684,6 +1698,13 @@ public class ProdutosVisao extends javax.swing.JFrame
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCodigoManualActionPerformed
 
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton5ActionPerformed
+    {//GEN-HEADEREND:event_jButton5ActionPerformed
+               new ReferenciasVisao( idUser,
+                getCodigoProduto(),
+                getCodigoArmazem( cmbarmazem1.getSelectedItem().toString() ), BDConexao.getInstancia() ).setVisible( true );
+    }//GEN-LAST:event_jButton5ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1851,6 +1872,7 @@ public class ProdutosVisao extends javax.swing.JFrame
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private static javax.swing.JButton jButtonCompras;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

@@ -286,7 +286,7 @@ public boolean desactivar(BDConexao conexao, TbProduto produto) {
             while ( result.next() )
             {
                 produto = new TbProduto();
-                produto.setCodigo( result.getInt( "maximo_id" ) );
+                produto.setCodigo( result.getInt( "codigo" ) );
                 produto.setDesignacao( result.getString( "designacao" ) );
                 produto.setPreco( result.getBigDecimal( "preco" ) );
                 produto.setDataFabrico( result.getDate( "data_fabrico" ) );
