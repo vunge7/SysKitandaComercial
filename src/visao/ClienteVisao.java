@@ -6,6 +6,7 @@ package visao;
 
 import comercial.controller.ClientesController;
 import comercial.controller.ConfiguracaoMesComecoController;
+import comercial.controller.DocumentosController;
 import comercial.controller.FamiliasController;
 import comercial.controller.MesRhController;
 import comercial.controller.ProdutosController;
@@ -88,7 +89,7 @@ public class ClienteVisao extends javax.swing.JDialog
         cmbFamilia.setEnabled( false );
         cmbSubFamilia.setModel( new DefaultComboBoxModel( tipoProdutoController.getVector() ) );
         cmbProduto.setModel( new DefaultComboBoxModel( produtosController.getVector() ) );
-        cmbMesComeco.setModel( new DefaultComboBoxModel( (Vector) mesRhController.getVector() ) );
+        cmbMesComeco.setModel( new DefaultComboBoxModel( ( Vector ) mesRhController.getVector() ) );
 
         try
         {
@@ -98,7 +99,7 @@ public class ClienteVisao extends javax.swing.JDialog
         catch ( Exception e )
         {
         }
-        
+
         txtNomeCliente.requestFocus();
 
     }
@@ -1060,10 +1061,14 @@ public class ClienteVisao extends javax.swing.JDialog
     private void procedimento_salvar()
     {
 
+        BDConexao conexaoTransaction = BDConexao.getInstancia();
+        DocumentosController.start( conexaoTransaction );
+        clientesController = new ClientesController( conexaoTransaction );
         try
         {
             if ( validar() )
             {
+
                 if ( !clientesController.existeClienteNome( txtNomeCliente.getText(), BDConexao.getConexao() ) )
                 {
 
@@ -1074,6 +1079,7 @@ public class ClienteVisao extends javax.swing.JDialog
                         try
                         {
                             clientesController.salvar( clienteGlobal );
+                            DocumentosController.commit( conexaoTransaction );
                             limpar();
                             scrolltable();
                             btnNovo.setEnabled( true );
@@ -1135,6 +1141,8 @@ public class ClienteVisao extends javax.swing.JDialog
         {
             Logger.getLogger( ClienteVisao.class.getName() ).log( Level.SEVERE, null, ex );
         }
+        
+        conexaoTransaction.close();
 
     }
 
@@ -1400,7 +1408,7 @@ public class ClienteVisao extends javax.swing.JDialog
     {
         String servicoSelecionado = cmbProduto.getSelectedItem().toString().trim();
 
-        DefaultTableModel model = (DefaultTableModel) tabelaServicoMensalidade.getModel();
+        DefaultTableModel model = ( DefaultTableModel ) tabelaServicoMensalidade.getModel();
 
         // Verifica se o serviço já foi adicionado
         for ( int i = 0; i < model.getRowCount(); i++ )
@@ -1439,7 +1447,7 @@ public class ClienteVisao extends javax.swing.JDialog
 
     private void setDadosForm()
     {
-        DefaultTableModel modelo = (DefaultTableModel) tabelaServicoMensalidade.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) tabelaServicoMensalidade.getModel();
         int linhaSelecionada = tabelaServicoMensalidade.getSelectedRow();
 
         String cod = modelo.getValueAt( linhaSelecionada, 0 ).toString();
@@ -1449,7 +1457,7 @@ public class ClienteVisao extends javax.swing.JDialog
 
         TbProduto produto = produtosController.findByCod( item.getProdutoId() );
         int idSubFamilia = produto.getCodTipoProduto().getCodigo();
-        TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById( idSubFamilia );
+        TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutoController.findById( idSubFamilia );
         cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
         cmbProduto.setSelectedItem( produto.getDesignacao() );
 
@@ -1463,7 +1471,7 @@ public class ClienteVisao extends javax.swing.JDialog
 
         if ( Objects.nonNull( clienteGlobal ) )
         {
-            DefaultTableModel modelo = (DefaultTableModel) tabelaServicoMensalidade.getModel();
+            DefaultTableModel modelo = ( DefaultTableModel ) tabelaServicoMensalidade.getModel();
             modelo.setRowCount( 0 );
             List<ConfiguracaoMesComeco> listarTodos = configuracaoMesComecoController.listarTodos( clienteGlobal.getCodigo() );
 
@@ -1502,7 +1510,7 @@ public class ClienteVisao extends javax.swing.JDialog
     {
         try
         {
-            DefaultTableModel modelo = (DefaultTableModel) tabelaServicoMensalidade.getModel();
+            DefaultTableModel modelo = ( DefaultTableModel ) tabelaServicoMensalidade.getModel();
             int selectedRow = tabelaServicoMensalidade.getSelectedRow();
             int id = Integer.parseInt( modelo.getValueAt( selectedRow, 0 ).toString() );
             boolean deletar = configuracaoMesComecoController.deletar( id );
