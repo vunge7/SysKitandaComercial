@@ -433,7 +433,31 @@ public class FinanceUtils
         BigDecimal base = subtotal.subtract( descontoBD );
         BigDecimal iva = BigDecimal.ONE.add( BigDecimal.valueOf( taxa ).divide( BigDecimal.valueOf( 100 ) ) );
         BigDecimal total = base.multiply( iva );
-        return total.setScale( 2, RoundingMode.HALF_UP ).doubleValue();
+        return total.setScale( 2, RoundingMode.CEILING ).doubleValue();
+    }
+
+    public static BigDecimal getValorIVA( double qtd, double taxa, double preco, double desconto )
+    {
+        BigDecimal precoBD = BigDecimal.valueOf( preco );
+        BigDecimal qtdBD = BigDecimal.valueOf( qtd );
+
+        // Subtotal
+        BigDecimal subtotal = precoBD.multiply( qtdBD );
+
+        // Desconto
+        BigDecimal descontoBD = subtotal.multiply(
+                BigDecimal.valueOf( desconto ).divide( BigDecimal.valueOf( 100 ) )
+        );
+
+        // Base tributável
+        BigDecimal base = subtotal.subtract( descontoBD );
+
+        // Valor do IVA (SÓ O IMPOSTO)
+        BigDecimal ivaValor = base.multiply(
+                BigDecimal.valueOf( taxa ).divide( BigDecimal.valueOf( 100 ) )
+        );
+
+        return ivaValor.setScale( 2, RoundingMode.CEILING );
     }
 
     public static BigDecimal getValorIliquido( BigDecimal qtd, BigDecimal precoVenda, BigDecimal desconto )
@@ -443,11 +467,11 @@ public class FinanceUtils
 
         // desconto = subtotal × (desconto / 100)
         BigDecimal descontoValor = subtotal.multiply( desconto )
-                .divide( BigDecimal.valueOf( 100 ), 2, RoundingMode.HALF_UP );
+                .divide( BigDecimal.valueOf( 100 ), 2, RoundingMode.CEILING );
 
         // valor ilíquido = subtotal - desconto
         BigDecimal valorIliquido = subtotal.subtract( descontoValor );
         // retorna com 2 casas decimais
-        return valorIliquido.setScale( 2, RoundingMode.HALF_UP );
+        return valorIliquido.setScale( 2, RoundingMode.CEILING );
     }
 }

@@ -2059,24 +2059,63 @@ public class VendasController implements EntidadeFactory
 //
 //        return vendas;
 //    }
-    public String gerarCodDoc( int fkDocumento, int fkAnoEconomico, int fkSerie ) throws SQLException
+//    public String gerarCodDoc( int fkDocumento, int fkAnoEconomico, int fkSerie ) throws SQLException
+//    {
+//        int proximo = getProximoNumeroDocumento( fkDocumento, fkAnoEconomico );
+//
+//        String sql
+//                = "SELECT d.abreviacao, s.designacao "
+//                + "FROM series s "
+//                + "JOIN documento d ON d.pk_documento = s.fk_documento "
+//                + "WHERE s.id = " + fkSerie;
+//        ResultSet rs = conexao.executeQuery( sql );
+//
+//        if ( !rs.next() )
+//        {
+//            throw new RuntimeException( "Série inválida" );
+//        }
+//
+//        String tipo = rs.getString( "abreviacao" );   // FR
+//        String serie = rs.getString( "designacao" );  // 7825S960N
+//
+//        return tipo + " " + serie + "/" + proximo;
+//    }
+    public String gerarCodFact( int fkSerie ) throws SQLException
     {
-        int proximo = getProximoNumeroDocumento( fkDocumento, fkAnoEconomico );
-
-        String sql
+        String sqlSerie
                 = "SELECT d.abreviacao, s.designacao "
                 + "FROM series s "
                 + "JOIN documento d ON d.pk_documento = s.fk_documento "
-                + "WHERE s.id = " + fkSerie;
-        ResultSet rs = conexao.executeQuery( sql );
+                + "WHERE s.id = ?";
 
-        if ( !rs.next() )
+        PreparedStatement psSerie = conexao.prepareStatement( sqlSerie );
+        psSerie.setInt( 1, fkSerie );
+        ResultSet rsSerie = psSerie.executeQuery();
+
+        if ( !rsSerie.next() )
         {
             throw new RuntimeException( "Série inválida" );
         }
 
-        String tipo = rs.getString( "abreviacao" );   // FR
-        String serie = rs.getString( "designacao" );  // 7825S960N
+        String tipo = rsSerie.getString( "abreviacao" );   // FR
+        String serie = rsSerie.getString( "designacao" );  // FR7826S1200N
+
+        String sqlUltimo
+                = "SELECT MAX(CAST(SUBSTRING_INDEX(cod_fact, '/', -1) AS UNSIGNED)) AS ultimo "
+                + "FROM tb_venda "
+                + "WHERE REPLACE(cod_fact,' ','') LIKE ?";
+
+        PreparedStatement psUltimo = conexao.prepareStatement( sqlUltimo );
+        psUltimo.setString( 1, "%" + serie + "/%" );
+
+        ResultSet rsUltimo = psUltimo.executeQuery();
+
+        int proximo = 1;
+
+        if ( rsUltimo.next() && rsUltimo.getObject( "ultimo" ) != null )
+        {
+            proximo = rsUltimo.getInt( "ultimo" ) + 1;
+        }
 
         return tipo + " " + serie + "/" + proximo;
     }
@@ -2085,7 +2124,15 @@ public class VendasController implements EntidadeFactory
     {
         BDConexao conexao = BDConexao.getInstancia();
         VendasController v = new VendasController( conexao );
-        v.actualizarContagem();
+
+        try
+        {
+            System.out.println( "" + v.gerarCodFact( 1 ) );
+        }
+        catch ( Exception e )
+        {
+        }
+
     }
 
 }

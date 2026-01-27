@@ -50,6 +50,17 @@ public class FEConfig
             return "https://sifp.minfin.gov.ao/sigt/fe/v1/obterEstado";
         }
     }
+    public static String getEndpointListarFacturas()
+    {
+        if ( AMBIENTE_ATUAL == AmbienteFE.HML )
+        {
+            return "https://sifphml.minfin.gov.ao/sigt/fe/ws/v1/listarFacturas";
+        }
+        else
+        {
+            return "https://sifp.minfin.gov.ao/sigt/fe/v1/listarFacturas";
+        }
+    }
 
     public static String getUsername()
     {

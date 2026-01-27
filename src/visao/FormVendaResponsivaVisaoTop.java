@@ -530,8 +530,11 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
         try
         {
-            Series serie = seriesController
-                    .findByDocumentoEAno( getIdDocumento(), getIdAnoEconomico() );
+//            Series serie = seriesController
+//                    .findByDocumentoEAno( getIdDocumento(), getIdAnoEconomico() );
+//            
+//            
+            Series serie = seriesController.findByDesignacao( cmbSeries.getSelectedItem().toString() );
             return serie.getId();
         }
         catch ( Exception e )
@@ -546,7 +549,9 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
         try
         {
-            prox_doc = vendasController.gerarCodDoc( getIdDocumento(), getIdAnoEconomico(), getIdSerie() );
+//            prox_doc = vendasController.gerarCodDoc( getIdDocumento(), getIdAnoEconomico(), getIdSerie() );
+
+            prox_doc = vendasController.gerarCodFact( getIdSerie() );
 //            BDConexao conexaoLocal = BDConexao.getInstancia();
 //            documentosController = new DocumentosController( conexaoLocal );
 //            anoEconomicoController = new AnoEconomicoController( conexaoLocal );
@@ -1930,6 +1935,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private void cmbSeriesActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbSeriesActionPerformed
     {//GEN-HEADEREND:event_cmbSeriesActionPerformed
         // TODO add your handling code here:
+        mostrar_proximo_codigo_documento();
     }//GEN-LAST:event_cmbSeriesActionPerformed
 
     /**
@@ -2504,12 +2510,12 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         BigDecimal baseCalculo = subtotal.subtract( desconto );
 
         // taxa/100 → para obter o fator de imposto
-        BigDecimal fatorIva = taxa.divide( BigDecimal.valueOf( 100 ), 4, RoundingMode.HALF_UP );
+        BigDecimal fatorIva = taxa.divide( BigDecimal.valueOf( 100 ), 4, RoundingMode.CEILING );
 
         // valor do IVA
         BigDecimal valorIva = baseCalculo.multiply( fatorIva );
 
-        return valorIva.setScale( 2, RoundingMode.HALF_UP );
+        return valorIva.setScale( 2, RoundingMode.CEILING );
     }
 
     private static double getRET( double qtd, double taxa_r, double preco_venda, double desconto )
@@ -3002,7 +3008,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             venda.setNomeCliente( getNomeCliente() );
             venda.setClienteNif( getClienteNif() );
         }
-
+        mostrar_proximo_codigo_documento();
         venda.setCodFact( prox_doc );
 //    venda.setRefCodFact(txtRefCodFact.getText());
         venda.setPerformance( "false" ); // ou pegar de um campo
@@ -4660,7 +4666,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 //            totalRetencao = totalRetencao.add( valorRetencao );
 //        }
 //
-//        return totalRetencao.setScale( 2, RoundingMode.HALF_UP );
+//        return totalRetencao.setScale( 2, RoundingMode.CEILING );
 //    }
     private static BigDecimal getTotalRetencaoLiquido()
     {
@@ -4703,7 +4709,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             }
         }
 
-        return totalRetencao.setScale( 2, RoundingMode.HALF_UP );
+        return totalRetencao.setScale( 2, RoundingMode.CEILING );
     }
 
     public static double getTotalPagar()
@@ -4746,7 +4752,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         return totalIliquido
                 .add( totalImposto )
                 .subtract( descontoComercial.add( descontoFinanceiro ) )
-                .setScale( 2, RoundingMode.HALF_UP );
+                .setScale( 2, RoundingMode.CEILING );
     }
 
     public static void setTotalPagar()
@@ -4767,7 +4773,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     public static String formatarComoMoeda( BigDecimal valor )
     {
-        return valor.setScale( 2, RoundingMode.HALF_UP ).toString().replace( ".", "," ) + " Kz";
+        return valor.setScale( 2, RoundingMode.CEILING ).toString().replace( ".", "," ) + " Kz";
     }
 
     private static void valor_por_extenco()
@@ -4847,13 +4853,13 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             BigDecimal subtotal = precoUnitarioLocal.multiply( quantidade );
 
             // valor do IVA = subtotal * (taxa / 100)
-            BigDecimal valorIva = subtotal.multiply( taxaIva ).divide( BigDecimal.valueOf( 100 ), 2, RoundingMode.HALF_UP );
+            BigDecimal valorIva = subtotal.multiply( taxaIva ).divide( BigDecimal.valueOf( 100 ), 2, RoundingMode.CEILING );
 
             // somar ao total
             totalIva = totalIva.add( valorIva );
         }
 
-        return totalIva.setScale( 2, RoundingMode.HALF_UP );
+        return totalIva.setScale( 2, RoundingMode.CEILING );
     }
 
     private static BigDecimal getGrossTotal()
@@ -4862,7 +4868,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                 INDEX_TABLE_PRECO,
                 INDEX_TABLE_QTD, table )
                 .add( getTotalVendaIVASemIncluirDesconto() )
-                .setScale( 2, RoundingMode.HALF_UP );
+                .setScale( 2, RoundingMode.CEILING );
     }
 
     private boolean validarPrecos_tabela( JTable tabela )
@@ -6222,7 +6228,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 //            descontoPercent.doubleValue()
 //    );
 //    BigDecimal totalComIva = BigDecimal.valueOf(valorComIvaDouble)
-//            .setScale(2, RoundingMode.HALF_UP);
+//            .setScale(2, RoundingMode.CEILING);
 //
 //    double valorComRetDouble = MetodosUtil.getValorComRetencao(
 //            qtd.doubleValue(),
@@ -6231,7 +6237,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 //            descontoPercent.doubleValue()
 //    );
 //    BigDecimal totalComRetencao = BigDecimal.valueOf(valorComRetDouble)
-//            .setScale(2, RoundingMode.HALF_UP);
+//            .setScale(2, RoundingMode.CEILING);
 //
 //    // ------------------------------
 //    // PREENCHER LINHA
@@ -6326,9 +6332,9 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 //    // ------------------------------
 //    BigDecimal preco = produto.getPreco(); // preço do produto (pode vir com IVA)
 //    BigDecimal precoSemIva = preco.divide(
-//            BigDecimal.ONE.add(taxaIva.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP)),
+//            BigDecimal.ONE.add(taxaIva.divide(BigDecimal.valueOf(100), 4, RoundingMode.CEILING)),
 //            2,
-//            RoundingMode.HALF_UP
+//            RoundingMode.CEILING
 //    );
 //
 //    // ------------------------------
@@ -6337,12 +6343,12 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 //    BigDecimal valorIliquido = FinanceUtils.getValorIliquido(qtd, precoSemIva, descontoPercent);
 //
 //    BigDecimal totalComIva = valorIliquido
-//            .multiply(BigDecimal.ONE.add(taxaIva.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP)))
-//            .setScale(2, RoundingMode.HALF_UP);
+//            .multiply(BigDecimal.ONE.add(taxaIva.divide(BigDecimal.valueOf(100), 4, RoundingMode.CEILING)))
+//            .setScale(2, RoundingMode.CEILING);
 //
 //    BigDecimal totalComRetencao = valorIliquido
-//            .multiply(BigDecimal.ONE.add(taxaRet.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP)))
-//            .setScale(2, RoundingMode.HALF_UP);
+//            .multiply(BigDecimal.ONE.add(taxaRet.divide(BigDecimal.valueOf(100), 4, RoundingMode.CEILING)))
+//            .setScale(2, RoundingMode.CEILING);
 //
 //    // ------------------------------
 //    // PREENCHER LINHA
@@ -7315,17 +7321,23 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             double desconto = Double.parseDouble( table.getValueAt( i, 5 ).toString() );
             double taxa = Double.parseDouble( table.getValueAt( i, 6 ).toString() );
             double retencaoLinha = CfMethods.parseMoedaFormatada( table.getValueAt( i, 7 ).toString() );
+            double subTotal = CfMethods.parseMoedaFormatada( table.getValueAt( i, 10 ).toString() );
 
             // Cálculos com BigDecimal e arredondamento
             BigDecimal bdUnitPrice = BigDecimal.valueOf( unitPrice );
             BigDecimal bdDesconto = BigDecimal.valueOf( desconto );
             BigDecimal bdQtd = BigDecimal.valueOf( qtd );
-            BigDecimal bdTaxa = BigDecimal.valueOf( taxa ).divide( BigDecimal.valueOf( 100 ) );
+//            BigDecimal bdTaxa = BigDecimal.valueOf( taxa ).divide( BigDecimal.valueOf( 100 ) );
 
-            BigDecimal unitPriceBase = bdUnitPrice.subtract( bdDesconto ).setScale( 2, BigDecimal.ROUND_HALF_UP );
-            BigDecimal base = unitPriceBase.multiply( bdQtd ).setScale( 2, BigDecimal.ROUND_HALF_UP );
-            BigDecimal iva = base.multiply( bdTaxa ).setScale( 2, BigDecimal.ROUND_CEILING );
-            BigDecimal totalLinha = base.add( iva ).setScale( 2, BigDecimal.ROUND_CEILING );
+//            BigDecimal unitPriceBase = bdUnitPrice.subtract( bdDesconto ).setScale( 2, BigDecimal.ROUND_CEILING );
+            BigDecimal unitPriceBase = bdUnitPrice.subtract( bdDesconto );
+//            BigDecimal base = unitPriceBase.multiply( bdQtd ).setScale( 2, BigDecimal.ROUND_CEILING );
+            BigDecimal base = unitPriceBase.multiply( bdQtd ).setScale( 2, RoundingMode.CEILING );;
+//            BigDecimal iva = base.multiply( bdTaxa ).setScale( 2, BigDecimal.ROUND_CEILING );
+            BigDecimal iva = FinanceUtils.getValorIVA( qtd, taxa, unitPriceBase.doubleValue(), desconto );
+//            BigDecimal totalLinha = base.add( iva ).setScale( 2, BigDecimal.ROUND_CEILING );
+
+            BigDecimal totalLinha = base.add( iva );
 
             LineDTO line = new LineDTO();
             line.setLineNumber( i + 1 );
@@ -7413,20 +7425,19 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     {
         ObjectMapper mapper = new ObjectMapper();
 
-        // 1️⃣ Extrair requestID da resposta anterior
+        // 1️⃣ Extrair requestID
         JsonNode rootNode = mapper.readTree( resposta );
         String requestID = rootNode.get( "requestID" ).asText();
 
         System.out.println( "Request ID: " + requestID );
 
-        // 2️⃣ Criar payload para consultar estado
+        // 2️⃣ Criar payload de consulta
         Map<String, Object> jsonPayload = PayloadFactory.consultaPayloadFactura(
                 taxRegistrationNumber,
                 requestID
         );
 
         String payload = JsonUtil.toJson( jsonPayload );
-
         System.out.println( payload );
 
         String basicAuth = BasicAuthUtil.gerarAuthorizationHeader(
@@ -7436,7 +7447,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
         try
         {
-            // 3️⃣ Chamada à FE – obter estado
+            // 3️⃣ Chamada à FE
             String r = HttpClientUtil.postJson(
                     FEConfig.getEndpointObterEstado(),
                     payload,
@@ -7445,13 +7456,47 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
             JsonUtil.print( r );
 
-            // 4️⃣ Interpretar resposta do estado
             JsonNode estadoRoot = mapper.readTree( r );
 
             JsonNode documentStatusList = estadoRoot.get( "documentStatusList" );
+            JsonNode requestErrorList = estadoRoot.get( "requestErrorList" );
 
-            if ( documentStatusList != null && documentStatusList.isArray()
-                    && documentStatusList.size() > 0 )
+            // =====================================================
+            // 🔎 1º VERIFICAR ERROS DO PEDIDO (ANTES DO DOCUMENTO)
+            // =====================================================
+            if ( requestErrorList != null && requestErrorList.isArray() && requestErrorList.size() > 0 )
+            {
+                for ( JsonNode erro : requestErrorList )
+                {
+
+                    if ( Objects.nonNull( erro.get( "idError" ) ) )
+                    {
+                        String idErro = erro.get( "idError" ).asText();
+
+                        // ✅ REGRA DE NEGÓCIO
+                        if ( "E94".equalsIgnoreCase( idErro ) )
+                        {
+                            System.out.println( "E94 - Solicitação não encontrada. Considerando TRUE." );
+                            return true;
+                        }
+
+                        // Outros erros reais
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "Erro da FE: " + erro.get( "descriptionError" ).asText(),
+                                "Erro na Consulta",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                        return false;
+                    }
+
+                }
+            }
+
+            // =====================================================
+            // 🔎 2º VERIFICAR STATUS DA FACTURA
+            // =====================================================
+            if ( documentStatusList != null && documentStatusList.isArray() && documentStatusList.size() > 0 )
             {
                 JsonNode doc = documentStatusList.get( 0 );
                 String documentStatus = doc.get( "documentStatus" ).asText();
@@ -7502,6 +7547,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             return false;
         }
 
+        // Caso inesperado
         return false;
     }
 
