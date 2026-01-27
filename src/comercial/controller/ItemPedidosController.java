@@ -94,6 +94,16 @@ public class ItemPedidosController
             ps.executeUpdate();
         }
     }
+    // Deletar TbItemPedidos
+    public void deleteByIdPedido( int idPedido ) throws SQLException
+    {
+        String sql = "DELETE FROM tb_item_pedidos WHERE fk_pedidos=?";
+        try ( PreparedStatement ps = conexao.prepareStatement( sql ) )
+        {
+            ps.setInt( 1, idPedido );
+            ps.executeUpdate();
+        }
+    }
 
     // Buscar por ID
     public TbItemPedidos findById( int id ) throws SQLException

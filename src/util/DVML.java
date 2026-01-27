@@ -138,7 +138,9 @@ public class DVML
     public static int NOVEMBRO = 11;
     public static int DEZEMBRO = 12;
     public static Integer MESA_BALCAO = 16;
+    public static Integer MESA_PENDENTE = 41;
     public static Integer LUGAR_BALCAO = 1;
+    public static Integer LUGAR_PENDENTE = 11;
     public static Integer COD_TIPO_USUARIO_ADMINISTRADOR = 1;
     public static Integer COD_TIPO_USUARIO_SUB_ADMINISTRADOR = 2;
     public static String CLIENTE_SINGULAR = "Singular";

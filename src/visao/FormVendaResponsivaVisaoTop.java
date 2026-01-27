@@ -22,8 +22,10 @@ import entity.TbArmazem;
 import entity.TbBanco;
 import entity.TbCliente;
 import entity.TbDadosInstituicao;
+import entity.TbItemPedidos;
 import entity.TbLugares;
 import entity.TbMesas;
+import entity.TbPedido;
 import entity.TbPreco;
 import entity.TbProduto;
 import entity.TbStock;
@@ -132,6 +134,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private static MesRhController mesRhController;
     private static RetencaoController retencaoController;
     private static ReferenciasController referenciasController;
+    private static PedidosController pedidosController;
+    private static ItemPedidosController itemPedidosController;
 
     /**
      * OUTROS
@@ -220,6 +224,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         dadosInstituicao = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
         configuracaoMesComecoController = new ConfiguracaoMesComecoController( conexao.getConnectionAtiva() );
         pagamentoMensalidadeController = new PagamentoMensalidadeController( conexao.getConnectionAtiva() );
+        itemPedidosController = new ItemPedidosController( conexao.getConnectionAtiva() );
+        pedidosController = new PedidosController( conexao.getConnectionAtiva() );
         referenciasController = new ReferenciasController( conexao );
         mesRhController = new MesRhController( conexao.getConnectionAtiva() );
         cmc = new ContaMovimentosController( conexao );
@@ -313,6 +319,46 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                 }
             }
         } );
+        // No construtor ou método de inicialização do formulário
+        getRootPane().getInputMap( JComponent.WHEN_IN_FOCUSED_WINDOW )
+                .put( KeyStroke.getKeyStroke( "F7" ), "abrirDocumentosPendentes" );
+
+        getRootPane().getActionMap().put( "abrirDocumentosPendentes", new AbstractAction()
+        {
+            @Override
+            public void actionPerformed( ActionEvent e )
+            {
+                try
+                {
+                    procedimentoCharFacturasPendentes();
+                }
+                catch ( Exception ex )
+                {
+                    ex.printStackTrace();
+                }
+            }
+
+        } );
+//        // No construtor ou método de inicialização do formulário
+//        getRootPane().getInputMap( JComponent.WHEN_IN_FOCUSED_WINDOW )
+//                .put( KeyStroke.getKeyStroke( "F10" ), "pendurarFactura" );
+//
+//        getRootPane().getActionMap().put( "pendurarFactura", new AbstractAction()
+//        {
+//            @Override
+//            public void actionPerformed( ActionEvent e )
+//            {
+//                try
+//                {
+//                    procedimentoPenderFactura();
+//                }
+//                catch ( Exception ex )
+//                {
+//                    ex.printStackTrace();
+//                }
+//            }
+//
+//        } );
 
 //        habilitarColunas();
         MetodosUtil.setArmazemByCampoConfigArmazem( cmbArmazem, conexao, cod_usuario );
@@ -321,7 +367,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 //        btnSemFormaPagamento.setVisible( false );
 
         table.setRowHeight( 25 );
-        inserir_uma_linha();
+        inserirLinhaEmBranco();
 
         configurarTabela();
 //        configurarTabela( 3 );
@@ -687,6 +733,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         lbDescontoFinanceiro = new javax.swing.JLabel();
         txtTotal_AOA_Retencao = new javax.swing.JLabel();
         txtLocal = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
         painelTabela = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
@@ -1313,6 +1361,26 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         txtTotal_AOA_Retencao.setForeground(new java.awt.Color(255, 51, 51));
         txtTotal_AOA_Retencao.setText("Retencao");
 
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/pendente_32x32.png"))); // NOI18N
+        jButton1.setToolTipText("Pendurar Factura");
+        jButton1.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/1323287592_stock_task.png"))); // NOI18N
+        jButton2.setToolTipText("Ver facturas pendentes.");
+        jButton2.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout painelDirLayout = new javax.swing.GroupLayout(painelDir);
         painelDir.setLayout(painelDirLayout);
         painelDirLayout.setHorizontalGroup(
@@ -1390,19 +1458,25 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(painelDirLayout.createSequentialGroup()
                                 .addGap(9, 9, 9)
+                                .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(btn_adicionar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(18, 18, 18)
+                                .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(btn_remover, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnFormaPagamento)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnProcessar, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jlEmpresa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addGroup(painelDirLayout.createSequentialGroup()
-                                        .addComponent(btn_adicionar)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(btn_remover)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(btnFormaPagamento)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(btnProcessar, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(21, 21, 21)
                                         .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(0, 0, Short.MAX_VALUE)))))
+                                        .addGap(0, 0, Short.MAX_VALUE))
+                                    .addGroup(painelDirLayout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jlEmpresa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                         .addContainerGap())))
         );
         painelDirLayout.setVerticalGroup(
@@ -1430,24 +1504,17 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                     .addComponent(cmbProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelDirLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lbCodigoProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lbQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelDirLayout.createSequentialGroup()
-                                .addGap(3, 3, 3)
-                                .addComponent(lbCodigoProduto2, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(7, 7, 7))))
-                    .addComponent(txtCodigoProduto)
-                    .addGroup(painelDirLayout.createSequentialGroup()
-                        .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(txtCodigoProduto, javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE)
+                    .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtQuatindade)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelDirLayout.createSequentialGroup()
-                        .addGap(3, 3, 3)
-                        .addComponent(jButton4)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(lbCodigoProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lbQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelDirLayout.createSequentialGroup()
+                            .addGap(3, 3, 3)
+                            .addComponent(lbCodigoProduto2, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(7, 7, 7)))
+                    .addComponent(jButton4, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(painelDirLayout.createSequentialGroup()
                         .addGap(3, 3, 3)
@@ -1473,8 +1540,15 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(btnFormaPagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(btnProcessar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addGap(21, 21, 21)
-                .addComponent(jlEmpresa)
+                .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(painelDirLayout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addComponent(jlEmpresa))
+                    .addGroup(painelDirLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -1782,7 +1856,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             {
                 actualizarPrecosAntigos2();
                 remover_item_carrinho();
-                inserir_uma_linha();
+                inserirLinhaEmBranco();
             }
 
             txtCodigoBarra.setText( "" );
@@ -1955,6 +2029,17 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private void btnCancelarActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_btnCancelarActionPerformed
     {//GEN-HEADEREND:event_btnCancelarActionPerformed
         // TODO add your handling code here:
+
+        if ( table.getRowCount() > 1 )
+        {
+            int opcao = JOptionPane.showConfirmDialog( null, "Existem itens na tabela deseja pendurar?" );
+
+            if ( opcao == JOptionPane.YES_OPTION )
+            {
+                procedimentoPenderFactura();
+            }
+        }
+
         actualizarPrecosAntigos2();
         dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
@@ -2061,6 +2146,20 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     {//GEN-HEADEREND:event_txtQuantidadeStockActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtQuantidadeStockActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
+    {//GEN-HEADEREND:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+
+        procedimentoPenderFactura();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton2ActionPerformed
+    {//GEN-HEADEREND:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+
+        procedimentoCharFacturasPendentes();
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -2771,9 +2870,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR )
             {
                 registrarFormaPagamento( idVendaGerada, venda.getTotalVenda(), frNormal, conexaoTransactionLocal );
-
             }
-
             //actualizar precos antigos
             actualizarPrecosAntigos();
 
@@ -3425,6 +3522,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     public static javax.swing.JComboBox cmbTipoDocumento;
     private static com.toedter.calendar.JDateChooser dc_data_documento;
     private static com.toedter.calendar.JDateChooser dc_data_vencimento;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel2;
@@ -3455,7 +3554,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private static javax.swing.JRadioButton rbTranstorno;
     private static javax.swing.JSpinner sp_desconto_financeiro;
     private static javax.swing.JSpinner spnCopia;
-    private static javax.swing.JTable table;
+    public static javax.swing.JTable table;
     private javax.swing.JTextField txtCodClientePesquisa;
     public static javax.swing.JTextField txtCodigoBarra;
     public static javax.swing.JTextField txtCodigoManual;
@@ -5867,7 +5966,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         return codigo == null || codigo.toString().trim().isEmpty();
     }
 
-    private static void inserir_uma_linha()
+    private static void inserirLinhaEmBranco()
     {
         DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         if ( modelo.getRowCount() == 0 )
@@ -7401,4 +7500,138 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         }
     }
 
+    private void procedimentoPenderFactura()
+    {
+
+        BDConexao conexaoTransactionLocal = new BDConexao();
+
+        pedidosController = new PedidosController( conexaoTransactionLocal.getConnectionAtiva() );
+        itemPedidosController = new ItemPedidosController( conexaoTransactionLocal.getConnectionAtiva() );
+        mesasController = new MesasController( conexaoTransactionLocal );
+        lugaresController = new LugaresController( conexaoTransactionLocal );
+
+        DocumentosController.start( conexaoTransactionLocal ); // Inicia a transação
+
+        if ( table.getModel().getRowCount() > 1 )
+        {
+            removerUltimaLinhaVazia();
+            try
+            {
+                TbMesas mesa = ( TbMesas ) mesasController.findById( DVML.MESA_PENDENTE );
+                System.out.println( "Mesa ID: " + mesa );
+                TbLugares lugar = ( TbLugares ) lugaresController.findById( DVML.LUGAR_PENDENTE );
+                TbPedido pedido = new TbPedido();
+                pedido.setDataPedido( new Date() );
+                pedido.setHoraPedido( new Date() );
+                pedido.setStatusPedido( false );
+                pedido.setDeposito( 0d );
+                pedido.setValorEmFalta( 0d );
+                pedido.setFkMesas( mesa );
+
+                try
+                {
+                    pedidosController.create( pedido );
+                    int lastPedidoByMesa = pedidosController.getLastPedidoByMesa( mesa.getDesignacao() );
+
+                    for ( int i = 0; i < table.getRowCount(); i++ )
+                    {
+                        TbItemPedidos itemPedidos = new TbItemPedidos();
+
+                        int idProduto = Integer.parseInt( table.getModel().getValueAt( i, 0 ).toString() );
+                        double qtd = Double.parseDouble( table.getModel().getValueAt( i, 4 ).toString() );
+                        double preco = CfMethods.parseMoedaFormatada( table.getModel().getValueAt( i, 3 ).toString() );
+                        double totalItem = CfMethods.parseMoedaFormatada( table.getModel().getValueAt( i, 10 ).toString() );
+
+                        itemPedidos.setFkProdutos( new TbProduto( idProduto ) );
+                        itemPedidos.setFkLugares( lugar );
+                        itemPedidos.setFkPedidos( new TbPedido( lastPedidoByMesa ) );
+                        itemPedidos.setStatusConvertido( false );
+                        itemPedidos.setStatusEnviado( false );
+                        itemPedidos.setStatusEfectuado( false );
+                        itemPedidos.setDataEntrega( new Date() );
+                        itemPedidos.setObs( "" );
+                        itemPedidos.setQtd( qtd );
+                        itemPedidos.setPreco( preco );
+                        itemPedidos.setTotalItem( totalItem );
+
+                        try
+                        {
+                            itemPedidosController.create( itemPedidos );
+                            System.out.println( "Item do pedido criado com sucesso!" );
+
+                        }
+                        catch ( SQLException e )
+                        {
+                            JOptionPane.showMessageDialog( null,
+                                    "Falha ao pendurar a factura",
+                                    "FALHA",
+                                    JOptionPane.ERROR_MESSAGE );
+
+                            DocumentosController.rollback( conexaoTransactionLocal );
+                            break;
+                        }
+                    }
+
+                    DocumentosController.commit( conexaoTransactionLocal );
+                    MetodosUtil.esvaziar_tabela( table );
+                    JOptionPane.showMessageDialog( null, "Factura pendurada." );
+                    inserirLinhaEmBranco();
+                    configurarTabela();
+
+                }
+                catch ( SQLException e )
+                {
+                    JOptionPane.showMessageDialog( null,
+                            "Falha ao pendurar a factura",
+                            "FALHA",
+                            JOptionPane.ERROR_MESSAGE );
+
+                    System.out.println( "Erro ao finalizar a pendencia., " + e.getMessage() );
+                    DocumentosController.rollback( conexaoTransactionLocal );
+                }
+            }
+            catch ( Exception e )
+            {
+                JOptionPane.showMessageDialog( null,
+                        "Falha ao pendurar a factura",
+                        "FALHA",
+                        JOptionPane.ERROR_MESSAGE );
+
+                e.printStackTrace();
+                DocumentosController.rollback( conexaoTransactionLocal );
+            }
+        }
+        else
+        {
+            System.out.println( "NAO EXISTE ITENS NA TABELA." );
+            JOptionPane.showMessageDialog( null, "Adiciona itens na tabela" );
+            DocumentosController.rollback( conexaoTransactionLocal );
+        }
+
+        conexaoTransactionLocal.close();
+
+    }
+
+    private void procedimentoCharFacturasPendentes()
+    {
+
+        if ( table.getRowCount() > 1 )
+        {
+            int opcao = JOptionPane.showConfirmDialog( null, "Existem itens na tabela deseja pendurar?" );
+
+            if ( opcao == JOptionPane.YES_OPTION )
+            {
+                procedimentoPenderFactura();
+            }
+
+        }
+        else
+        {
+            MetodosUtil.esvaziar_tabela( FormVendaResponsivaVisaoTop.table );
+            inserirLinhaEmBranco();
+            configurarTabela();
+        }
+
+        new FacturasPendentesVisao( null, rootPaneCheckingEnabled, conexao ).setVisible( true );
+    }
 }
