@@ -4,6 +4,7 @@
  */
 package lista;
 
+import comercial.controller.DadosInstituicaoController;
 import java.sql.Connection;
 import dao.DadosInstituicaoDao;
 import dao.VendaDao;
@@ -40,6 +41,8 @@ public class ListaVenda1
     private VendaDao vendaDao = new VendaDao( emf );
     private DadosInstituicaoDao dadosInstituicaoDao = new DadosInstituicaoDao( emf );
     private TbDadosInstituicao dadosInstituicao;
+
+    private DadosInstituicaoController dadosInstituicaoController;
 
     private BDConexao conexao;
     private int codigo;
@@ -141,7 +144,10 @@ public class ListaVenda1
         // 🔹 QR com logo
         try
         {
-            BufferedImage qrImage = QrCodeUtil.gerarQrComLogo( "5701017125", vendaDao.findTbVenda( codigo ).getCodFact() );
+            
+            dadosInstituicaoController = new DadosInstituicaoController( BDConexao.getInstancia() );
+            String nif = dadosInstituicaoController.findByCodigo( 1 ).getNif();
+            BufferedImage qrImage = QrCodeUtil.gerarQrComLogo( nif, vendaDao.findTbVenda( codigo ).getCodFact() );
             hashMap.put( "QR_IMAGE", qrImage );
         }
         catch ( Exception e )

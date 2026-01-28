@@ -316,8 +316,8 @@ public class VendasController implements EntidadeFactory
                 + "total_iva, total_geral, cod_fact, assinatura, hash_cod, obs, ref_cod_fact, total_por_extenso, status_recibo, desconto_comercial, "
                 + "desconto_financeiro, total_incidencia, local_carga, local_descarga, idBanco, codigo_usuario, codigo_cliente, idArmazemFK, fk_documento, fk_ano_economico, "
                 + "fk_cambio, dataVencimento, cliente_nif, total_incidencia_isento, ref_data_fact, cont, nome_consumidor_final, referencia, matricula, modelo, "
-                + "num_chassi, num_motor, kilometro, nome_motorista, marca_carro, cor_carro, n_doc_motorista, total_retencao, gorjeta"
-                + ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                + "num_chassi, num_motor, kilometro, nome_motorista, marca_carro, cor_carro, n_doc_motorista, total_retencao, gorjeta, estado,requestID, submissionUUID  "
+                + ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
         try ( PreparedStatement stmt = conexao.getConnectionAtiva().prepareStatement( sql, Statement.RETURN_GENERATED_KEYS ) )
         {
@@ -399,6 +399,9 @@ public class VendasController implements EntidadeFactory
             stmt.setString( 47, venda.getNDocMotorista() );
             stmt.setBigDecimal( 48, venda.getTotalRetencao() );
             stmt.setBigDecimal( 49, venda.getGorjeta() );
+            stmt.setString( 50, venda.getEstado() );
+            stmt.setString( 51, venda.getRequestID() );
+            stmt.setString( 52, venda.getSubmissionUUID() );
 
             int resultado = stmt.executeUpdate();
 
@@ -649,6 +652,9 @@ public class VendasController implements EntidadeFactory
                 venda.setCorCarro( result.getString( "cor_carro" ) );
                 venda.setNDocMotorista( result.getString( "n_doc_motorista" ) );
                 venda.setGorjeta( result.getBigDecimal( "gorjeta" ) );
+                venda.setRequestID( result.getString( "requestID" ) );
+                venda.setEstado( result.getString( "estado" ) );
+                venda.setSubmissionUUID( result.getString( "submissionUUID" ) );
 
                 lista_venda.add( venda );
 
@@ -792,6 +798,9 @@ public class VendasController implements EntidadeFactory
             venda.setTotalRetencao( result.getBigDecimal( "total_retencao" ) );
             venda.setGorjeta( result.getBigDecimal( "gorjeta" ) );
             venda.setCodigoCliente( new TbCliente( result.getInt( "codigo_cliente" ) ) );
+            venda.setRequestID( result.getString( "requestID" ) );
+            venda.setEstado( result.getString( "estado" ) );
+            venda.setSubmissionUUID( result.getString( "submissionUUID" ) );
 
         }
         catch ( Exception e )
@@ -1173,6 +1182,9 @@ public class VendasController implements EntidadeFactory
                 venda.setNDocMotorista( result.getString( "n_doc_motorista" ) );
                 venda.setTotalRetencao( result.getBigDecimal( "total_retencao" ) );
                 venda.setGorjeta( result.getBigDecimal( "gorjeta" ) );
+                venda.setRequestID( result.getString( "requestID" ) );
+                venda.setEstado( result.getString( "estado" ) );
+                venda.setSubmissionUUID( result.getString( "submissionUUID" ) );
             }
 
         }
@@ -1366,6 +1378,9 @@ public class VendasController implements EntidadeFactory
                 venda.setNDocMotorista( result.getString( "n_doc_motorista" ) );
                 venda.setTotalRetencao( result.getBigDecimal( "total_retencao" ) );
                 venda.setGorjeta( result.getBigDecimal( "gorjeta" ) );
+                venda.setRequestID( result.getString( "requestID" ) );
+                venda.setEstado( result.getString( "estado" ) );
+                venda.setSubmissionUUID( result.getString( "submissionUUID" ) );
 //                venda.setAreaVenda( result.getString( "area_venda" ) );
 
             }
@@ -1840,6 +1855,9 @@ public class VendasController implements EntidadeFactory
                     venda.setNDocMotorista( rs.getString( "n_doc_motorista" ) );
                     venda.setGorjeta( rs.getBigDecimal( "gorjeta" ) );
                     venda.setTotalRetencao( rs.getBigDecimal( "total_retencao" ) );
+                    venda.setRequestID( rs.getString( "requestID" ) );
+                    venda.setEstado( rs.getString( "estado" ) );
+                    venda.setSubmissionUUID( rs.getString( "submissionUUID" ) );
                     // Adiciona mais campos conforme tua entidade TbVenda
                 }
             }

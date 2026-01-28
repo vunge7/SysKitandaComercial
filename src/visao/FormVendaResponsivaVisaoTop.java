@@ -2609,7 +2609,10 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
             if ( respostaAGT )
             {
-                System.out.println( "AGT-Factura Valida" );
+                System.out.println( "AGT-Factura ESTADO: " + venda.getEstado() );
+                System.out.println( "AGT-Factura requestID: " + venda.getRequestID() );
+                System.out.println( "AGT-Factura submissionUUID: " + venda.getSubmissionUUID() );
+
                 // Salvar a venda e obter o ID
                 idVendaGerada = vendasController.salvarRetornaID( venda );
 //            venda.setHashCod( MetodosUtil.criptografia_hash( vendasController.findById( idVendaGerada), getGrossTotal().doubleValue(), conexaoTransaction ) );
@@ -2978,7 +2981,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                 INDEX_TABLE_QTD,
                 INDEX_TABLE_DESCONTO,
                 INDEX_TABLE_TAXA_IVA,
-                table ) )
+                table ) ).setScale( 2, RoundingMode.CEILING )
         );
 
         venda.setTotalIncidenciaIsento( FinanceUtils.getTotalIncidenciaIsento(
@@ -4744,15 +4747,26 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static BigDecimal getTotalAOALiquido()
     {
-        BigDecimal totalIliquido = FinanceUtils.getTotalIliquidoTable( INDEX_TABLE_PRECO, INDEX_TABLE_QTD, table );
-        BigDecimal totalImposto = BigDecimal.valueOf( FinanceUtils.getTotalImpostoTable( INDEX_TABLE_PRECO, INDEX_TABLE_QTD, INDEX_TABLE_DESCONTO, INDEX_TABLE_TAXA_IVA, table ) );
-        BigDecimal descontoComercial = FinanceUtils.getDescontoComercial( INDEX_TABLE_PRECO, INDEX_TABLE_QTD, INDEX_TABLE_DESCONTO, table );
-        BigDecimal descontoFinanceiro = BigDecimal.valueOf( getDescontoFinanceiro() );
+//        BigDecimal totalIliquido = FinanceUtils.getTotalIliquidoTable( INDEX_TABLE_PRECO, INDEX_TABLE_QTD, table );
+//        BigDecimal totalImposto = BigDecimal.valueOf( FinanceUtils.getTotalImpostoTable( INDEX_TABLE_PRECO, INDEX_TABLE_QTD, INDEX_TABLE_DESCONTO, INDEX_TABLE_TAXA_IVA, table ) );
+//        BigDecimal descontoComercial = FinanceUtils.getDescontoComercial( INDEX_TABLE_PRECO, INDEX_TABLE_QTD, INDEX_TABLE_DESCONTO, table );
+//        BigDecimal descontoFinanceiro = BigDecimal.valueOf( getDescontoFinanceiro() );
+//
+//        return totalIliquido
+//                .add( totalImposto )
+//                .subtract( descontoComercial.add( descontoFinanceiro ) )
+//                .setScale( 2, RoundingMode.CEILING );
 
-        return totalIliquido
-                .add( totalImposto )
-                .subtract( descontoComercial.add( descontoFinanceiro ) )
-                .setScale( 2, RoundingMode.CEILING );
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+
+        double total_iliquido = 0;
+        for ( int i = 0; i < modelo.getRowCount(); i++ )
+        {
+            total_iliquido += CfMethods.parseMoedaFormatada( String.valueOf( modelo.getValueAt( i, 10 ) ) );
+
+        }
+        return new BigDecimal( total_iliquido );
+
     }
 
     public static void setTotalPagar()
@@ -6915,6 +6929,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
         double totalComIva = FinanceUtils.getValorComIVA( 1, taxa, CfMethods.parseMoedaFormatada( total_iliquido_linha ), 0 );
         totalComIva = totalComIva * qtd;
+        
 
         String total_liquido_linha = CfMethods.formatarComoMoeda( totalComIva );
 
@@ -6923,6 +6938,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         String total_retencao = CfMethods.formatarComoMoeda( retencao );
 
         double totalIliquidoItem = CfMethods.parseMoedaFormatada( total_iliquido_linha ) * qtd;
+        
+        
         String totalIlquidoString = CfMethods.formatarComoMoeda( totalIliquidoItem );
 
         modelo.setValueAt( qtd, linha_actual, 4 );
@@ -7034,7 +7051,14 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             }
         }
 
-        table.getCellEditor().cancelCellEditing();
+        try
+        {
+
+            table.getCellEditor().cancelCellEditing();
+        }
+        catch ( Exception e )
+        {
+        }
     }
 
 //    private void configurarTabela() {
@@ -7379,6 +7403,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         doc.setDocumentTotals( documentsTotals );
 
         documentDTOs.add( doc );
+        venda.setTotalIva( totalIva );
+        venda.setTotalGeral( totalBase );
 
         Series serie = seriesController.findByDocumentoEAno( getIdDocumento(), getIdAnoEconomico() );
         Documento documentoType = documentosController.findDocumentoById( serie.getFkDocumento() );
@@ -7400,7 +7426,12 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                 documentDTOs
         );
 
+        String submissionUUID = ( String ) jsonPayload.get( "submissionUUID" );
+        System.out.println( "UUID: " + submissionUUID );
+
+        venda.setSubmissionUUID( submissionUUID );
         String payload = JsonUtil.toJson( jsonPayload );
+
         JsonUtil.print( payload );
 
         String basicAuth = BasicAuthUtil.gerarAuthorizationHeader( FEConfig.getUsername(), FEConfig.getPassword() );
@@ -7408,7 +7439,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         {
             String resposta = HttpClientUtil.postJson( FEConfig.getEndpointRegistrarFactura(), payload, basicAuth );
             JsonUtil.print( resposta );
-            return obterEstadoFactura( taxRegistrationNumber, resposta );
+            return obterEstadoFactura( taxRegistrationNumber, resposta, venda );
         }
         catch ( Exception e )
         {
@@ -7420,7 +7451,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     private static boolean obterEstadoFactura(
             String taxRegistrationNumber,
-            String resposta
+            String resposta,
+            TbVenda venda
     ) throws JsonProcessingException
     {
         ObjectMapper mapper = new ObjectMapper();
@@ -7428,6 +7460,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         // 1️⃣ Extrair requestID
         JsonNode rootNode = mapper.readTree( resposta );
         String requestID = rootNode.get( "requestID" ).asText();
+        venda.setRequestID( requestID );
 
         System.out.println( "Request ID: " + requestID );
 
@@ -7472,10 +7505,12 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                     if ( Objects.nonNull( erro.get( "idError" ) ) )
                     {
                         String idErro = erro.get( "idError" ).asText();
+                        venda.setEstado( "P" );
 
                         // ✅ REGRA DE NEGÓCIO
                         if ( "E94".equalsIgnoreCase( idErro ) )
                         {
+                            JOptionPane.showMessageDialog( null, "Factura processada no estado PENDENTE.\nAguardando a resposta da AGT." );
                             System.out.println( "E94 - Solicitação não encontrada. Considerando TRUE." );
                             return true;
                         }
@@ -7510,11 +7545,13 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                             "Factura Válida",
                             JOptionPane.INFORMATION_MESSAGE
                     );
+                    venda.setEstado( "V" );
                     return true;
                 }
                 // ❌ FACTURA INVÁLIDA
                 else if ( "I".equalsIgnoreCase( documentStatus ) )
                 {
+                    venda.setEstado( "I" );
                     StringBuilder mensagens = new StringBuilder( "Factura inválida ❌\n\n" );
 
                     JsonNode errorList = doc.get( "errorList" );

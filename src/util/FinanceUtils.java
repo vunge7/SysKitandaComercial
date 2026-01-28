@@ -66,7 +66,7 @@ public class FinanceUtils
             totalIliquido = totalIliquido.add( subtotal );
         }
 
-        return totalIliquido.setScale( 2, RoundingMode.HALF_UP );
+        return totalIliquido.setScale( 2, RoundingMode.CEILING );
     }
 
 //    public static double getTotalImpostoTable(
@@ -246,7 +246,7 @@ public class FinanceUtils
 
     private static double round2( double valor )
     {
-        return new BigDecimal( valor ).setScale( 2, RoundingMode.HALF_UP ).doubleValue();
+        return new BigDecimal( valor ).setScale( 2, RoundingMode.CEILING ).doubleValue();
     }
 
     public static double getTotalIncidenciaTable(
@@ -421,14 +421,14 @@ public class FinanceUtils
         }
 
         // Retorna arredondado a 2 casas decimais
-        return incidenciaIsento.setScale( 2, RoundingMode.HALF_UP );
+        return incidenciaIsento.setScale( 2, RoundingMode.CEILING );
     }
 
     public static double getValorComIVA( double qtd, double taxa, double preco, double desconto )
     {
         BigDecimal precoBD = BigDecimal.valueOf( preco );
         BigDecimal qtdBD = BigDecimal.valueOf( qtd );
-        BigDecimal subtotal = precoBD.multiply( qtdBD );
+        BigDecimal subtotal = precoBD.multiply( qtdBD ).setScale( 2, RoundingMode.CEILING );
         BigDecimal descontoBD = subtotal.multiply( BigDecimal.valueOf( desconto ).divide( BigDecimal.valueOf( 100 ) ) );
         BigDecimal base = subtotal.subtract( descontoBD );
         BigDecimal iva = BigDecimal.ONE.add( BigDecimal.valueOf( taxa ).divide( BigDecimal.valueOf( 100 ) ) );
