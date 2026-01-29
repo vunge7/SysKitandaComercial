@@ -681,6 +681,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jmGerarSaftVendas = new javax.swing.JMenuItem();
         jmGerarSaftCompras = new javax.swing.JMenuItem();
         jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem10 = new javax.swing.JMenuItem();
         jMenu7 = new javax.swing.JMenu();
         jmFamilia = new javax.swing.JMenuItem();
         jmSubFamilia = new javax.swing.JMenuItem();
@@ -1638,6 +1639,16 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         });
         jMenu6.add(jMenuItem1);
 
+        jMenuItem10.setText("Configurar Multa");
+        jMenuItem10.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jMenuItem10ActionPerformed(evt);
+            }
+        });
+        jMenu6.add(jMenuItem10);
+
         jMenuBar1.add(jMenu6);
 
         jMenu7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/1588_32x32.png"))); // NOI18N
@@ -2489,8 +2500,17 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem5ActionPerformed
     {//GEN-HEADEREND:event_jMenuItem5ActionPerformed
-        new FrmRelatorioVendasMes().setVisible( true);
+        new FrmRelatorioVendasMes().setVisible( true );
     }//GEN-LAST:event_jMenuItem5ActionPerformed
+
+    private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem10ActionPerformed
+    {//GEN-HEADEREND:event_jMenuItem10ActionPerformed
+
+//        new ConfiguracaoMultasVisao( cod_utilizador,BDConexao.getInstancia() ).setVisible( true );
+        new ConfiguracaoMultasVisao( cod_utilizador, WIDTH, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+
+
+    }//GEN-LAST:event_jMenuItem10ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -2569,6 +2589,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuConfiguracoesSistema;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem10;
     private javax.swing.JMenuItem jMenuItem13;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;

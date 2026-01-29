@@ -50,7 +50,7 @@ public class MesesPagoClienteVisao extends javax.swing.JDialog
         setLocationRelativeTo( null );
 
         mesRhController = new MesRhController( conexao.getConnectionAtiva() );
-        multaServicoController = new MultaServicoController( conexao.getConnectionAtiva() );
+        multaServicoController = new MultaServicoController( conexao );
         precosController = new PrecosController( conexao );
 
         precoServico = precosController.getLastIdPrecoByIdProduto( produtoId, 1 );

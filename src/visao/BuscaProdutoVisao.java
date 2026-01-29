@@ -860,6 +860,13 @@ public class BuscaProdutoVisao extends javax.swing.JDialog
             dispose();
 
         }
+        else if ( DVML.JANELA_MULTAS == cod_janela )
+        {
+
+            ConfiguracaoMultasVisao.adicionar_dados( codigo );
+            dispose();
+
+        }
 
     }
 
