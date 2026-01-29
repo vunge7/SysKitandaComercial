@@ -91,6 +91,7 @@ public class DVML
     public final static String CONTRATRO_DETERMINADO = "Determinado";
     public final static String CONTRATRO_INDETERMINADO = "Indeterminado";
     public static String AGENDA_FUNCIONARIO_ANEXO_PATH = "funcionario_anexos/";
+    public static String DVML_COMERCIAL_LDA = "DVML-COMERCIAL, Lda";
     public static final String PATH_DOCS_UTIL = "DocsUtil/";
     public final static String REMOVER = "R.";
     public final static String JUSTIFICAR = "J.";
@@ -179,6 +180,7 @@ public class DVML
     public static int VENDA_LAVANDARIA = 10;
     public static int JANELA_ASSOCIACAO = 12;
     public static int JANELA_REFERENCIAS = 19;
+    public static int JANELA_MULTAS = 20;
     public static int EMISSAO_RECIBOS = 6;
     public static int VENDA_PONTUAL = 3;
     public static int VENDA_PONTUAL_TOP = 15;

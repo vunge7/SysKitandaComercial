@@ -110,49 +110,6 @@ public class ProdutosController implements EntidadeFactory
         return false;
 
     }
-//    public boolean salvar( Object object )
-//    {
-//
-//        TbProduto produto = ( TbProduto ) object;
-//        System.out.println( "UNIDADE CONTROLLER: " + produto.getCodUnidade() );
-//        String INSERT = "INSERT INTO tb_produto( "
-//                + " designacao, preco, data_fabrico, data_expiracao, "
-//                + " codBarra, status, data_entrada, stocavel, "
-//                + " preco_venda, percentagem_desconto, "
-//                + " quantidade_desconto , codigo_manual , cod_unidade , cod_local  ,"
-//                + "  cod_fornecedores , cod_Tipo_Produto , fk_modelo , fk_grupo ,"
-//                + " photo , status_iva , cozinha "
-//                + ")"
-//                + ""
-//                + ""
-//                + " VALUES("
-//                + "'" + produto.getDesignacao() + "' , "
-//                + produto.getPreco() + " , "
-//                + "'" + MetodosUtil.getDataBanco( produto.getDataFabrico() ) + "' , "
-//                + "'" + MetodosUtil.getDataBanco( produto.getDataExpiracao() ) + "' , "
-//                + "'" + produto.getCodBarra() + "' , "
-//                + "'" + produto.getStatus() + "' , "
-//                + "'" + MetodosUtil.getDataBanco( produto.getDataEntrada() ) + "' , "
-//                + "'" + produto.getStocavel() + "' , "
-//                + produto.getPrecoVenda() + " , "
-//                + produto.getPercentagemDesconto() + " , "
-//                + "'" + produto.getQuantidadeDesconto() + "' , "
-//                + "'" + produto.getCodigoManual() + "' , "
-//                + produto.getCodUnidade().getPkUnidade() + " , "
-//                + produto.getCodLocal().getCodigo() + " , "
-//                + produto.getCodFornecedores().getCodigo() + " , "
-//                + produto.getCodTipoProduto().getCodigo() + " , "
-//                + produto.getFkModelo().getPkModelo() + " , "
-//                + produto.getFkGrupo().getPkGrupo() + " , "
-////                + produto.getPhoto() + " , "
-//                + "'" + produto.getStatusIva() + "' , "
-//                + "'" + produto.getPhoto() + "' , "
-//                + "'" + produto.getCozinha() + "'  "
-//                + " ) ";
-//
-//        return conexao.executeUpdate( INSERT );
-//
-//    }
 
     public int getIdProduto( String designacao )
     {
