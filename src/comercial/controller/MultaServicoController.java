@@ -1,7 +1,7 @@
 package comercial.controller;
 
 import entity.MultaServico;
-import entity.TbUsuario;
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ public class MultaServicoController
     // 🔹 Criar multa
     public void create( MultaServico multa ) throws SQLException
     {
-        String sql = "INSERT INTO multa_servico (day_start, day_end, valor, data_registro, usuario_id) "
+        String sql = "INSERT INTO multa_servico (day_start, day_end, valor, data_registro, produto_id, usuario_id) "
                 + "VALUES (?, ?, ?, ?, ?)";
 
         try ( PreparedStatement ps = conexao.prepareStatement( sql, Statement.RETURN_GENERATED_KEYS ) )
@@ -29,7 +29,8 @@ public class MultaServicoController
             ps.setInt( 2, multa.getDayEnd() );
             ps.setBigDecimal( 3, multa.getValor() );
             ps.setTimestamp( 4, new Timestamp( multa.getDataRegistro().getTime() ) );
-            ps.setInt( 5, multa.getUsuario().getCodigo() );
+            ps.setInt( 5, multa.getProdutoId() );
+            ps.setInt( 5, multa.getUsuarioId() );
 
             ps.executeUpdate();
 
@@ -56,8 +57,9 @@ public class MultaServicoController
             ps.setInt( 2, multa.getDayEnd() );
             ps.setBigDecimal( 3, multa.getValor() );
             ps.setTimestamp( 4, new Timestamp( multa.getDataRegistro().getTime() ) );
-            ps.setInt( 5, multa.getUsuario().getCodigo() );
-            ps.setInt( 6, multa.getId() );
+            ps.setInt( 5, multa.getProdutoId() );
+            ps.setInt( 6, multa.getUsuarioId() );
+            ps.setInt( 7, multa.getId() );
 
             ps.executeUpdate();
         }
@@ -138,11 +140,29 @@ public class MultaServicoController
         multa.setDayEnd( rs.getInt( "day_end" ) );
         multa.setValor( rs.getBigDecimal( "valor" ) );
         multa.setDataRegistro( rs.getTimestamp( "data_registro" ) );
-
-        TbUsuario usuario = new TbUsuario();
-        usuario.setCodigo( rs.getInt( "usuario_id" ) );
-        multa.setUsuario( usuario );
+        multa.setProdutoId( rs.getInt( "produto_id" ) );
+        multa.setUsuarioId( rs.getInt( "usuario_id" ) );
 
         return multa;
     }
+
+    public BigDecimal getValorMultaByDay( int day ) throws SQLException
+    {
+        BigDecimal decimal = new BigDecimal( 0 );
+        String sql = "SELECT valor FROM multa_servico WHERE ? BETWEEN  day_start and day_end LIMIT 1";
+
+        try ( PreparedStatement ps = conexao.prepareStatement( sql ) )
+        {
+            ps.setInt( 1, day );
+            try ( ResultSet rs = ps.executeQuery() )
+            {
+                if ( rs.next() )
+                {
+                    decimal = rs.getBigDecimal( "valor" );
+                }
+            }
+        }
+        return decimal;
+    }
+
 }

@@ -5,7 +5,6 @@
  */
 package util;
 
-
 import java.sql.Connection;
 import comercial.controller.DadosInstituicaoController;
 import comercial.controller.DocumentosController;
@@ -191,6 +190,8 @@ public class DVML
     public static int ALOJAMENTO_PAINEL_0 = 0;
     public static int ALOJAMENTO_PAINEL_2 = 2;
     public static Integer COD_USUARIO_MASTER = 1;
+    public static Integer COD_SERVICO_MULTA = 1;
+    public static String DESIGNACAO_SERVICO_MULTA = "MULTA";
 
     public static String ESTADO_DOCUMENTO_NENHUM = "Nenhum";
     public static String ESTADO_DOCUMENTO_ANULADO = "Anulado";
@@ -760,7 +761,7 @@ public class DVML
 
         if ( ( posicao + 1 ) == tamanho )
         {
-            return (int) vector.get( posicao );
+            return ( int ) vector.get( posicao );
         }
         else
         {
@@ -1183,7 +1184,7 @@ public class DVML
     {
         try
         {
-            Documento documento = (Documento) documentosController.findById( 1 );
+            Documento documento = ( Documento ) documentosController.findById( 1 );
             AnoEconomico anoEconomico = new AnoEconomico( 4 );
             // this.doc_prox_cod = documento.getCodUltimoDoc() + 1;
             int doc_prox_cod = vendasController.getUltimaContagemByIdDocumentoAndAnoEconomico(

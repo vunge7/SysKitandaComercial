@@ -25,15 +25,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table( name = "multa_servico" )
 @XmlRootElement
-@NamedQueries( 
-{
-    @NamedQuery( name = "MultaServico.findAll", query = "SELECT m FROM MultaServico m" ),
-    @NamedQuery( name = "MultaServico.findById", query = "SELECT m FROM MultaServico m WHERE m.id = :id" ),
-    @NamedQuery( name = "MultaServico.findByDayStart", query = "SELECT m FROM MultaServico m WHERE m.dayStart = :dayStart" ),
-    @NamedQuery( name = "MultaServico.findByDayEnd", query = "SELECT m FROM MultaServico m WHERE m.dayEnd = :dayEnd" ),
-    @NamedQuery( name = "MultaServico.findByValor", query = "SELECT m FROM MultaServico m WHERE m.valor = :valor" ),
-    @NamedQuery( name = "MultaServico.findByDataRegistro", query = "SELECT m FROM MultaServico m WHERE m.dataRegistro = :dataRegistro" )
-} )
+@NamedQueries(
+                {
+            @NamedQuery( name = "MultaServico.findAll", query = "SELECT m FROM MultaServico m" ),
+            @NamedQuery( name = "MultaServico.findById", query = "SELECT m FROM MultaServico m WHERE m.id = :id" ),
+            @NamedQuery( name = "MultaServico.findByDayStart", query = "SELECT m FROM MultaServico m WHERE m.dayStart = :dayStart" ),
+            @NamedQuery( name = "MultaServico.findByDayEnd", query = "SELECT m FROM MultaServico m WHERE m.dayEnd = :dayEnd" ),
+            @NamedQuery( name = "MultaServico.findByValor", query = "SELECT m FROM MultaServico m WHERE m.valor = :valor" ),
+            @NamedQuery( name = "MultaServico.findByDataRegistro", query = "SELECT m FROM MultaServico m WHERE m.dataRegistro = :dataRegistro" )
+        } )
 public class MultaServico implements Serializable
 {
 
@@ -62,10 +62,13 @@ public class MultaServico implements Serializable
     @Temporal( TemporalType.TIMESTAMP )
     private Date dataRegistro;
 
-    // 🔗 Relacionamento com usuário
-    @JoinColumn( name = "usuario_id", referencedColumnName = "codigo" )
-    @ManyToOne( optional = false )
-    private TbUsuario usuario;
+    @Basic( optional = false )
+    @Column( name = "produto_id" )
+    private Integer produtoId;
+
+    @Basic( optional = false )
+    @Column( name = "usuario_id" )
+    private Integer usuarioId;
 
     public MultaServico()
     {
@@ -135,16 +138,29 @@ public class MultaServico implements Serializable
         this.dataRegistro = dataRegistro;
     }
 
-    public TbUsuario getUsuario()
+    public Integer getProdutoId()
     {
-        return usuario;
+        return produtoId;
     }
 
-    public void setUsuario( TbUsuario usuario )
+    public void setProdutoId( Integer produtoId )
     {
-        this.usuario = usuario;
+        this.produtoId = produtoId;
     }
 
+    public Integer getUsuarioId()
+    {
+        return usuarioId;
+    }
+
+    public void setUsuarioId( Integer usuarioId )
+    {
+        this.usuarioId = usuarioId;
+    }
+    
+    
+
+  
     @Override
     public int hashCode()
     {

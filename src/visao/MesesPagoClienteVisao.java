@@ -7,13 +7,22 @@ package visao;
 
 import comercial.controller.ClientesController;
 import comercial.controller.MesRhController;
+import comercial.controller.MultaServicoController;
+import comercial.controller.PrecosController;
 import dao.MesRhDao;
 import entity.TbCliente;
+import entity.TbPreco;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.util.Date;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityManagerFactory;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import util.BDConexao;
+import util.DVML;
 import util.JPAEntityMannagerFactoryUtil;
 
 /**
@@ -28,6 +37,9 @@ public class MesesPagoClienteVisao extends javax.swing.JDialog
     private static MesRhDao mesRhDao = new MesRhDao( emf );
     private static MesRhController mesRhController;
     private int clienteId, produtoId;
+    private static PrecosController precosController;
+    private static MultaServicoController multaServicoController;
+    private static TbPreco precoServico;
 
     public MesesPagoClienteVisao( java.awt.Frame parent, boolean modal, int clienteId, int produtoId, BDConexao conexao )
     {
@@ -36,6 +48,11 @@ public class MesesPagoClienteVisao extends javax.swing.JDialog
         setLocationRelativeTo( null );
 
         mesRhController = new MesRhController( conexao.getConnectionAtiva() );
+        multaServicoController = new MultaServicoController( conexao.getConnectionAtiva() );
+        precosController = new PrecosController( conexao );
+
+        precoServico = precosController.getLastIdPrecoByIdProduto( produtoId, 1 );
+
         this.clienteId = clienteId;
         this.produtoId = produtoId;
 
@@ -50,11 +67,27 @@ public class MesesPagoClienteVisao extends javax.swing.JDialog
             if ( cmbMesPagar.getItemCount() > 0 )
             {
 
-                String mes = (String) cmbMesPagar.getItemAt( 0 ); // pega o primeiro mês
-                ( (DefaultTableModel) tabela_mes_por_enviar.getModel() ).addRow( new Object[]
+                String mes = ( String ) cmbMesPagar.getItemAt( 0 ); // pega o primeiro mês
+                ( ( DefaultTableModel ) tabela_mes_por_enviar.getModel() ).addRow( new Object[]
                 {
-                    mes
+                    mes,
+                    precoServico.getPrecoVenda().doubleValue()
                 } );
+
+                double multa = getMulta( mes );
+
+                if ( multa > 0 )
+                {
+
+                    ( ( DefaultTableModel ) tabela_mes_por_enviar.getModel() ).addRow( new Object[]
+                    {
+                        DVML.DESIGNACAO_SERVICO_MULTA,
+                        multa
+                    } );
+
+                }
+//                String multa = "Multa";
+
                 cmbMesPagar.removeItemAt( 0 ); // remove da combobox
 
                 cmbMesPagar.setSelectedIndex( 0 );
@@ -95,6 +128,8 @@ public class MesesPagoClienteVisao extends javax.swing.JDialog
         btnAdicionar = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         btnRemover = new javax.swing.JButton();
+        dcDataPagamento = new com.toedter.calendar.JDateChooser();
+        lbProduto3 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -110,14 +145,23 @@ public class MesesPagoClienteVisao extends javax.swing.JDialog
             },
             new String []
             {
-                "Designação"
+                "Designação", "Valor"
             }
         )
         {
+            Class[] types = new Class []
+            {
+                java.lang.Object.class, java.lang.Double.class
+            };
             boolean[] canEdit = new boolean []
             {
-                false
+                false, false
             };
+
+            public Class getColumnClass(int columnIndex)
+            {
+                return types [columnIndex];
+            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex)
             {
@@ -220,6 +264,10 @@ public class MesesPagoClienteVisao extends javax.swing.JDialog
             }
         });
 
+        lbProduto3.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        lbProduto3.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lbProduto3.setText("Data de Pagamento:");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -227,41 +275,61 @@ public class MesesPagoClienteVisao extends javax.swing.JDialog
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 424, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbProduto1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                    .addComponent(lbProduto1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 399, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 424, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbProduto2, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(cmbMesPagar, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnAdicionar, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(cmbMesPagar, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lbProduto2, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(dcDataPagamento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(lbProduto3, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnAdicionar, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnRemover, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(btnRemover, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbProduto1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbProduto2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(53, 53, 53)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(cmbMesPagar, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAdicionar)
-                    .addComponent(btnRemover))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(11, 11, 11)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(4, 4, 4)
+                        .addComponent(lbProduto1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(lbProduto2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(405, 405, 405))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addComponent(btnAdicionar)
+                                            .addComponent(btnRemover))
+                                        .addGap(12, 12, 12))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(lbProduto3, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(cmbMesPagar, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
+                                            .addComponent(dcDataPagamento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap())))
         );
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LOGOUT - VERMELHO/Logout 32x32.png"))); // NOI18N
@@ -436,6 +504,7 @@ public class MesesPagoClienteVisao extends javax.swing.JDialog
     private javax.swing.JButton btnAdicionar;
     private javax.swing.JButton btnRemover;
     public static javax.swing.JComboBox cmbMesPagar;
+    private com.toedter.calendar.JDateChooser dcDataPagamento;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JPanel jPanel1;
@@ -443,6 +512,7 @@ public class MesesPagoClienteVisao extends javax.swing.JDialog
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lbProduto1;
     private javax.swing.JLabel lbProduto2;
+    private javax.swing.JLabel lbProduto3;
     private javax.swing.JTable tabela_mes_por_enviar;
     private javax.swing.JTable tabela_meses_pagos;
     // End of variables declaration//GEN-END:variables
@@ -467,14 +537,26 @@ public class MesesPagoClienteVisao extends javax.swing.JDialog
 
     private void remover_mes()
     {
-        DefaultTableModel modelo = (DefaultTableModel) tabela_mes_por_enviar.getModel();
-        String mes;
+        DefaultTableModel modelo = ( DefaultTableModel ) tabela_mes_por_enviar.getModel();
+        String designacao;
         if ( tabela_mes_por_enviar.getRowCount() - 1 >= 0 )
         {
-            mes = modelo.getValueAt( tabela_mes_por_enviar.getRowCount() - 1, 0 ).toString();
-            cmbMesPagar.insertItemAt( mes, 0 );
-            cmbMesPagar.setSelectedIndex( 0 );
-            modelo.removeRow( tabela_mes_por_enviar.getRowCount() - 1 );
+            designacao = modelo.getValueAt( tabela_mes_por_enviar.getRowCount() - 1, 0 ).toString();
+
+            if ( designacao.equals( DVML.DESIGNACAO_SERVICO_MULTA ) )
+            {
+                modelo.removeRow( tabela_mes_por_enviar.getRowCount() - 1 );
+                designacao = modelo.getValueAt( tabela_mes_por_enviar.getRowCount() - 1, 0 ).toString();
+                cmbMesPagar.insertItemAt( designacao, 0 );
+                cmbMesPagar.setSelectedIndex( 0 );
+                modelo.removeRow( tabela_mes_por_enviar.getRowCount() - 1 );
+            }
+            else
+            {
+                cmbMesPagar.insertItemAt( designacao, 0 );
+                cmbMesPagar.setSelectedIndex( 0 );
+                modelo.removeRow( tabela_mes_por_enviar.getRowCount() - 1 );
+            }
 
         }
         else
@@ -486,17 +568,63 @@ public class MesesPagoClienteVisao extends javax.swing.JDialog
 
     private void procedimentoEnviar()
     {
-        DefaultTableModel modelo = (DefaultTableModel) tabela_mes_por_enviar.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) tabela_mes_por_enviar.getModel();
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
         {
             String mes = modelo.getValueAt( i, 0 ).toString();
-            FormVendaResponsivaVisaoTop.accao_codigo_interno_enter_busca_exterior_2(
-                    produtoId, mes );
-        }
 
+            if ( !mes.equals( DVML.DESIGNACAO_SERVICO_MULTA ) )
+            {
+                FormVendaResponsivaVisaoTop.accao_codigo_interno_enter_busca_exterior_2(
+                        produtoId, mes );
+            }
+            else
+            {
+                FormVendaResponsivaVisaoTop.accao_codigo_interno_enter_busca_exterior_2(
+                        DVML.COD_SERVICO_MULTA, mes );
+            }
+
+        }
         dispose();
 
+    }
+
+    private double getMulta( String mes )
+    {
+
+        double multa = 0;
+        Date dataActual = new Date();
+
+        int mesActual = (dataActual.getMonth() + 1);
+        int diaActual = dataActual.getDate();
+
+        int mesPago = mesRhController.getIdByDescricao( mes );
+        if ( mesPago == mesActual )
+        {
+            try
+            {
+                int diaPagamento = dcDataPagamento.getDate().getDate();
+                BigDecimal valorMultaByDay = multaServicoController.getValorMultaByDay( diaPagamento );
+
+                multa = valorMultaByDay.doubleValue();
+            }
+            catch ( SQLException ex )
+            {
+                Logger.getLogger( MesesPagoClienteVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            }
+        }
+        else if ( mesPago < mesActual )
+        {
+            System.out.println( "Pega a ultima multa aplicada deste servico" );
+            multa = 0;
+        }
+        else
+        {
+            multa = 0;
+        }
+
+        return multa;
     }
 
 }

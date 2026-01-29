@@ -4,7 +4,6 @@
  */
 package visao;
 
-import java.sql.Connection;
 import dao.DadosInstituicaoDao;
 import dao.ItemPermissaoDao;
 import dao.ProdutoDao;
