@@ -12,7 +12,9 @@ import comercial.controller.PrecosController;
 import dao.MesRhDao;
 import entity.TbCliente;
 import entity.TbPreco;
+import entity.TbProduto;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.Vector;
@@ -39,7 +41,7 @@ public class MesesPagoClienteVisao extends javax.swing.JDialog
     private int clienteId, produtoId;
     private static PrecosController precosController;
     private static MultaServicoController multaServicoController;
-    private static TbPreco precoServico;
+    private TbPreco precoServico;
 
     public MesesPagoClienteVisao( java.awt.Frame parent, boolean modal, int clienteId, int produtoId, BDConexao conexao )
     {
@@ -538,32 +540,48 @@ public class MesesPagoClienteVisao extends javax.swing.JDialog
     private void remover_mes()
     {
         DefaultTableModel modelo = ( DefaultTableModel ) tabela_mes_por_enviar.getModel();
-        String designacao;
-        if ( tabela_mes_por_enviar.getRowCount() - 1 >= 0 )
+        int totalLinhas = modelo.getRowCount();
+
+        if ( totalLinhas == 0 )
         {
-            designacao = modelo.getValueAt( tabela_mes_por_enviar.getRowCount() - 1, 0 ).toString();
+            JOptionPane.showMessageDialog( null,
+                    "Impossível remover, tabela vazia",
+                    "ERRO",
+                    JOptionPane.ERROR_MESSAGE );
+            return;
+        }
 
-            if ( designacao.equals( DVML.DESIGNACAO_SERVICO_MULTA ) )
-            {
-                modelo.removeRow( tabela_mes_por_enviar.getRowCount() - 1 );
-                designacao = modelo.getValueAt( tabela_mes_por_enviar.getRowCount() - 1, 0 ).toString();
-                cmbMesPagar.insertItemAt( designacao, 0 );
-                cmbMesPagar.setSelectedIndex( 0 );
-                modelo.removeRow( tabela_mes_por_enviar.getRowCount() - 1 );
-            }
-            else
-            {
-                cmbMesPagar.insertItemAt( designacao, 0 );
-                cmbMesPagar.setSelectedIndex( 0 );
-                modelo.removeRow( tabela_mes_por_enviar.getRowCount() - 1 );
-            }
+        // Última linha
+        int ultimaLinha = totalLinhas - 1;
+        String designacao = modelo.getValueAt( ultimaLinha, 0 ).toString();
 
+        // 🔥 Se for MULTA
+        if ( designacao.equals( DVML.DESIGNACAO_SERVICO_MULTA ) )
+        {
+            // Remove a multa
+            modelo.removeRow( ultimaLinha );
+            // Verifica se ainda existe mês abaixo
+            if ( modelo.getRowCount() > 0 )
+            {
+                int novaUltima = modelo.getRowCount() - 1;
+                String mes = modelo.getValueAt( novaUltima, 0 ).toString();
+
+                devolverMesParaCombo( mes );
+                modelo.removeRow( novaUltima );
+            }
         }
         else
         {
-            JOptionPane.showMessageDialog( null, "Impossivel remover , tabela vazia", "ERRO", JOptionPane.ERROR_MESSAGE );
+            // Caso normal (só mês)
+            devolverMesParaCombo( designacao );
+            modelo.removeRow( ultimaLinha );
         }
+    }
 
+    private void devolverMesParaCombo( String mes )
+    {
+        cmbMesPagar.insertItemAt( mes, 0 );
+        cmbMesPagar.setSelectedIndex( 0 );
     }
 
     private void procedimentoEnviar()
@@ -573,6 +591,7 @@ public class MesesPagoClienteVisao extends javax.swing.JDialog
         for ( int i = 0; i < modelo.getRowCount(); i++ )
         {
             String mes = modelo.getValueAt( i, 0 ).toString();
+            double valor = Double.parseDouble( modelo.getValueAt( i, 1 ).toString() );
 
             if ( !mes.equals( DVML.DESIGNACAO_SERVICO_MULTA ) )
             {
@@ -581,8 +600,10 @@ public class MesesPagoClienteVisao extends javax.swing.JDialog
             }
             else
             {
+
+                actualizarpreco( valor );
                 FormVendaResponsivaVisaoTop.accao_codigo_interno_enter_busca_exterior_2(
-                        DVML.COD_SERVICO_MULTA, mes );
+                        DVML.COD_SERVICO_MULTA, "" );
             }
 
         }
@@ -593,7 +614,7 @@ public class MesesPagoClienteVisao extends javax.swing.JDialog
     private double getMulta( String mes )
     {
 
-        double multa = 0;
+        double multaPercentagem = 0;
         Date dataActual = new Date();
 
         int mesActual = (dataActual.getMonth() + 1);
@@ -607,7 +628,19 @@ public class MesesPagoClienteVisao extends javax.swing.JDialog
                 int diaPagamento = dcDataPagamento.getDate().getDate();
                 BigDecimal valorMultaByDay = multaServicoController.getValorMultaByDay( diaPagamento );
 
-                multa = valorMultaByDay.doubleValue();
+//                multaPercentagem = valorMultaByDay.doubleValue();
+//                double precoVenda = precoServico.getPrecoVenda().doubleValue();
+//                
+//                
+//                BigDecimal multaPercentagem = valorMultaByDay;     // ex: 10 = 10%
+                BigDecimal precoVenda = precoServico.getPrecoVenda();
+
+                BigDecimal multaValor = precoVenda
+                        .multiply( valorMultaByDay )
+                        .divide( new BigDecimal( "100" ), 2, RoundingMode.HALF_UP );
+
+                multaPercentagem = multaValor.doubleValue();
+
             }
             catch ( SQLException ex )
             {
@@ -617,14 +650,37 @@ public class MesesPagoClienteVisao extends javax.swing.JDialog
         else if ( mesPago < mesActual )
         {
             System.out.println( "Pega a ultima multa aplicada deste servico" );
-            multa = 0;
+            multaPercentagem = 0;
         }
         else
         {
-            multa = 0;
+            multaPercentagem = 0;
         }
 
-        return multa;
+        return multaPercentagem;
+    }
+
+    private void actualizarpreco( double valor )
+    {
+        try
+        {
+            precoServico.setPrecoVenda( new BigDecimal( valor ) );
+            precoServico.setFkProduto( new TbProduto( DVML.COD_SERVICO_MULTA ) );
+            precoServico.setQtdBaixo( 1 );
+            precoServico.setQtdAlto( ( int ) DVML.QTD_DEFAULT );
+            precosController.salvar( precoServico );
+
+            precoServico.setPrecoVenda( new BigDecimal( valor ) );
+            precoServico.setFkProduto( new TbProduto( DVML.COD_SERVICO_MULTA ) );
+            precoServico.setQtdBaixo( ( int ) DVML.QTD_DEFAULT + 1 );
+            precoServico.setQtdAlto( 214748364 );
+            precosController.salvar( precoServico );
+            System.out.println( "Preco actualizado com sucesso!..." );
+        }
+        catch ( Exception e )
+        {
+            System.err.println( "Falhao ao actualizar o preco" );
+        }
     }
 
 }
