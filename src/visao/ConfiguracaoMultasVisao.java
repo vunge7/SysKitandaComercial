@@ -4,23 +4,23 @@
  */
 package visao;
 
+import comercial.controller.FamiliasController;
 import comercial.controller.MultaServicoController;
 import comercial.controller.ProdutosController;
+import comercial.controller.TipoProdutosController;
 import comercial.controller.UsuariosController;
 import entity.MultaServico;
 import entity.TbProduto;
 import entity.TbUsuario;
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import util.BDConexao;
 import util.DVML;
@@ -38,6 +38,8 @@ public class ConfiguracaoMultasVisao extends javax.swing.JDialog
     private static ProdutosController produtosController;
     private static MultaServicoController multaServicoController;
     private static UsuariosController usuarioController;
+    private static TipoProdutosController tipoProdutosController;
+    private static FamiliasController familiasController;
     private static int codProduto;
     private int codArmazem;
     private Map<Integer, String> produtosMap = new HashMap<>();
@@ -57,9 +59,23 @@ public class ConfiguracaoMultasVisao extends javax.swing.JDialog
         produtosController = new ProdutosController( conexao );
         multaServicoController = new MultaServicoController( conexao );
         usuarioController = new UsuariosController( conexao );
+        tipoProdutosController = new TipoProdutosController( conexao );
+        produtosController = new ProdutosController( conexao );
+        familiasController = new FamiliasController( conexao );
         try
         {
-            preparar_tabela();
+
+            cmbFamilia.setModel( new DefaultComboBoxModel( familiasController.getVector() ) );
+            cmbFamilia.setSelectedIndex( 1 );
+            cmbSubFamilia.setModel( new DefaultComboBoxModel( tipoProdutosController.getVectorByIdFamilia( getIdFamilia() ) ) );
+            cmbProduto.setModel( new DefaultComboBoxModel( ( produtosController.getVectorByIdTipoProduto( getIdTipoProduto() ) ) ) );
+        }
+        catch ( Exception e )
+        {
+        }
+
+        try
+        {
             procedimento_adcionar_dados_tabela();
         }
         catch ( Exception e )
@@ -81,17 +97,19 @@ public class ConfiguracaoMultasVisao extends javax.swing.JDialog
 
         jPanel1 = new javax.swing.JPanel();
         lbProduto = new javax.swing.JLabel();
+        jButton3 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTableMulta = new javax.swing.JTable();
-        jButton4 = new javax.swing.JButton();
-        txtProduto = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        txtCodigo = new javax.swing.JTextField();
-        jPanel2 = new javax.swing.JPanel();
-        jButton3 = new javax.swing.JButton();
+        cmbSubFamilia = new javax.swing.JComboBox();
+        cmbProduto = new javax.swing.JComboBox();
+        cmbFamilia = new javax.swing.JComboBox<>();
+        lbCategoria = new javax.swing.JLabel();
+        lbCategoria1 = new javax.swing.JLabel();
+        lbCategoria2 = new javax.swing.JLabel();
+        jButton4 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("MULTAS");
@@ -101,7 +119,17 @@ public class ConfiguracaoMultasVisao extends javax.swing.JDialog
 
         lbProduto.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         lbProduto.setForeground(new java.awt.Color(255, 255, 255));
-        lbProduto.setText("XXX");
+        lbProduto.setText("GESTÃO DE MULTA DE SERVIÇOS");
+
+        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LOGOUT - VERMELHO/Logout 32x32.png"))); // NOI18N
+        jButton3.setText("Sair");
+        jButton3.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -109,15 +137,23 @@ public class ConfiguracaoMultasVisao extends javax.swing.JDialog
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lbProduto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(lbProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 676, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(15, 15, 15))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lbProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(7, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(1, 1, 1)
+                        .addComponent(lbProduto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 1, Short.MAX_VALUE)))
+                .addContainerGap())
         );
 
         jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -152,20 +188,6 @@ public class ConfiguracaoMultasVisao extends javax.swing.JDialog
             jTableMulta.getColumnModel().getColumn(0).setMaxWidth(50);
         }
 
-        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/proucura.png"))); // NOI18N
-        jButton4.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                jButton4ActionPerformed(evt);
-            }
-        });
-
-        txtProduto.setEditable(false);
-
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel1.setText("Serviços: ");
-
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Button-Add-icon.png"))); // NOI18N
         jButton1.addActionListener(new java.awt.event.ActionListener()
         {
@@ -175,7 +197,7 @@ public class ConfiguracaoMultasVisao extends javax.swing.JDialog
             }
         });
 
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/adicionar.png"))); // NOI18N
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/actualizar_1_32x32.png"))); // NOI18N
         jButton2.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -184,11 +206,58 @@ public class ConfiguracaoMultasVisao extends javax.swing.JDialog
             }
         });
 
-        txtCodigo.addActionListener(new java.awt.event.ActionListener()
+        cmbSubFamilia.setBackground(new java.awt.Color(0, 255, 255));
+        cmbSubFamilia.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        cmbSubFamilia.setForeground(new java.awt.Color(0, 0, 51));
+        cmbSubFamilia.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbSubFamilia.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                txtCodigoActionPerformed(evt);
+                cmbSubFamiliaActionPerformed(evt);
+            }
+        });
+
+        cmbProduto.setBackground(new java.awt.Color(0, 255, 255));
+        cmbProduto.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        cmbProduto.setForeground(new java.awt.Color(0, 0, 51));
+        cmbProduto.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbProduto.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                cmbProdutoActionPerformed(evt);
+            }
+        });
+
+        cmbFamilia.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        cmbFamilia.setEnabled(false);
+        cmbFamilia.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                cmbFamiliaActionPerformed(evt);
+            }
+        });
+
+        lbCategoria.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        lbCategoria.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lbCategoria.setText("Família:");
+
+        lbCategoria1.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        lbCategoria1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lbCategoria1.setText("Sub Família:");
+
+        lbCategoria2.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        lbCategoria2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lbCategoria2.setText("Serviço:");
+
+        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/adicionar.png"))); // NOI18N
+        jButton4.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButton4ActionPerformed(evt);
             }
         });
 
@@ -199,73 +268,55 @@ public class ConfiguracaoMultasVisao extends javax.swing.JDialog
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 610, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGap(17, 17, 17)
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(lbCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 425, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(cmbFamilia, javax.swing.GroupLayout.PREFERRED_SIZE, 301, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(17, 17, 17)
+                        .addGap(6, 6, 6)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(lbCategoria1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cmbSubFamilia, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(lbCategoria2, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cmbProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 511, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(18, 18, 18)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+            .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtProduto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addGap(59, 59, 59)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton1))
+                    .addComponent(lbCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cmbFamilia, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-
-        jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LOGOUT - VERMELHO/Logout 32x32.png"))); // NOI18N
-        jButton3.setText("Sair");
-        jButton3.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                jButton3ActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(16, 16, 16))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lbCategoria1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cmbSubFamilia, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(lbCategoria2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(cmbProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jButton1)
+                            .addComponent(jButton2))
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton4))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -275,8 +326,6 @@ public class ConfiguracaoMultasVisao extends javax.swing.JDialog
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(36, 36, 36)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -284,10 +333,8 @@ public class ConfiguracaoMultasVisao extends javax.swing.JDialog
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 6, Short.MAX_VALUE))
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
@@ -295,7 +342,7 @@ public class ConfiguracaoMultasVisao extends javax.swing.JDialog
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton2ActionPerformed
     {//GEN-HEADEREND:event_jButton2ActionPerformed
-        procedimento_eliminar();
+        actualizar();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton3ActionPerformed
@@ -303,18 +350,6 @@ public class ConfiguracaoMultasVisao extends javax.swing.JDialog
         // TODO add your handling code here:
         dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
-
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton4ActionPerformed
-    {//GEN-HEADEREND:event_jButton4ActionPerformed
-        new BuscaProdutoVisao(
-                ( java.awt.Frame ) SwingUtilities.getWindowAncestor( this ),
-                true,
-                codArmazem,
-                DVML.JANELA_MULTAS,
-                BDConexao.getInstancia()
-        ).setVisible( true );
-
-    }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
     {//GEN-HEADEREND:event_jButton1ActionPerformed
@@ -325,7 +360,7 @@ public class ConfiguracaoMultasVisao extends javax.swing.JDialog
             int dayEnd = ultimoDia + 9;
             if ( dayEnd <= 31 )
             {
-                salvarLinhasEmBranco( dayStart, dayEnd, BigDecimal.ZERO );
+                salvarLinhaMulta( dayStart, dayEnd, BigDecimal.ZERO );
 
                 procedimento_adcionar_dados_tabela();
             }
@@ -336,118 +371,32 @@ public class ConfiguracaoMultasVisao extends javax.swing.JDialog
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private TbUsuario getUsuarioById( int idUser ) throws SQLException
-    {
-        // Supondo que você tenha um controller para usuários
-        return usuarioController.getUsuarioByCodigo( idUser ); // ou o método equivalente no seu projeto
-    }
 
-//    private void salvarLinhasEmBranco( int dayStart, int dayEnd, BigDecimal valor )
-//    {
-//        multa = new MultaServico();
-//
-//        multa.setDayStart( dayStart );
-//        multa.setDayEnd( dayEnd );
-//        multa.setValor( valor );
-//        multaServicoController.create( multa );
-//    }
-    private void salvarLinhasEmBranco( int dayStart, int dayEnd, BigDecimal valor )
-    {
-        try
-        {
-            TbUsuario usuarioLogado = getUsuarioById( this.idUser );
-            if ( usuarioLogado == null )
-            {
-                throw new IllegalStateException( "Usuário logado não encontrado." );
-            }
+    private void cmbSubFamiliaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbSubFamiliaActionPerformed
+    {//GEN-HEADEREND:event_cmbSubFamiliaActionPerformed
 
-            MultaServico multa = new MultaServico();
-            multa.setDayStart( dayStart );
-            multa.setDayEnd( dayEnd );
-            multa.setValor( valor );
-            multa.setDataRegistro( new Date() );
-            multa.setUsuarioId( this.idUser ); // 🔹 Aqui o usuário não será null
+        //        cmbProduto.setModel( new DefaultComboBoxModel( ( produtosController.getVectorByIdTipoProduto( getIdTipoProduto() ) ) ) );
+    }//GEN-LAST:event_cmbSubFamiliaActionPerformed
 
-            multaServicoController.create( multa );
-        }
-        catch ( SQLException e )
-        {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog( this, "Erro ao salvar multa: " + e.getMessage() );
-        }
-    }
-
-    private int getUltimoDia()
-    {
-        int numeroLinhas = jTableMulta.getRowCount();
-
-        int ultimoDia = 0;
-
-        try
-        {
-            String valor = jTableMulta.getModel().getValueAt( numeroLinhas - 1, 2 ).toString();
-            ultimoDia = Integer.parseInt( valor ) + 1;
-        }
-        catch ( Exception e )
-        {
-            ultimoDia = 1;
-        }
-
-        return ultimoDia;
-    }
-
-    public void actualizar()
-    {
-        DefaultTableModel modelo = ( DefaultTableModel ) jTableMulta.getModel();
-
-        try
-        {
-            for ( int i = 0; i < modelo.getRowCount(); i++ )
-            {
-                int idMulta = Integer.parseInt( modelo.getValueAt( i, 0 ).toString() );
-
-                MultaServico multaServico = multaServicoController.findMulta( idMulta );
-
-                if ( multaServico != null )
-                {
-                    multaServico.setDayStart(
-                            Integer.parseInt( modelo.getValueAt( i, 1 ).toString() ) );
-
-                    multaServico.setDayEnd(
-                            Integer.parseInt( modelo.getValueAt( i, 2 ).toString() ) );
-
-                    multaServico.setValor(
-                            new BigDecimal( modelo.getValueAt( i, 3 ).toString().replace( ",", "." ) ) );
-
-                    multaServicoController.alterar( multaServico );
-                }
-            }
-
-            JOptionPane.showMessageDialog(
-                    null,
-                    "Multa actualizada com sucesso!",
-                    DVML.DVML_COMERCIAL_LDA,
-                    JOptionPane.INFORMATION_MESSAGE
-            );
-
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(
-                    null,
-                    "Erro ao actualizar a multa",
-                    DVML.DVML_COMERCIAL_LDA,
-                    JOptionPane.ERROR_MESSAGE
-            );
-        }
-    }
-
-
-    private void txtCodigoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtCodigoActionPerformed
-    {//GEN-HEADEREND:event_txtCodigoActionPerformed
+    private void cmbProdutoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbProdutoActionPerformed
+    {//GEN-HEADEREND:event_cmbProdutoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtCodigoActionPerformed
+        procedimento_adcionar_dados_tabela();
+
+    }//GEN-LAST:event_cmbProdutoActionPerformed
+
+    private void cmbFamiliaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbFamiliaActionPerformed
+    {//GEN-HEADEREND:event_cmbFamiliaActionPerformed
+
+        cmbSubFamilia.setModel( new DefaultComboBoxModel( tipoProdutosController.getVectorByIdFamilia( getIdFamilia() ) ) );
+        cmbProduto.setModel( new DefaultComboBoxModel( ( produtosController.getVectorByIdTipoProduto( getIdTipoProduto() ) ) ) );
+    }//GEN-LAST:event_cmbFamiliaActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton4ActionPerformed
+    {//GEN-HEADEREND:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        procedimento_eliminar();
+    }//GEN-LAST:event_jButton4ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -515,35 +464,35 @@ public class ConfiguracaoMultasVisao extends javax.swing.JDialog
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    public static javax.swing.JComboBox<String> cmbFamilia;
+    public static javax.swing.JComboBox cmbProduto;
+    public static javax.swing.JComboBox cmbSubFamilia;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private static javax.swing.JTable jTableMulta;
+    private javax.swing.JLabel lbCategoria;
+    private javax.swing.JLabel lbCategoria1;
+    private javax.swing.JLabel lbCategoria2;
     private static javax.swing.JLabel lbProduto;
-    private static javax.swing.JTextField txtCodigo;
-    private static javax.swing.JTextField txtProduto;
     // End of variables declaration//GEN-END:variables
-
 
     private void procedimento_adcionar_dados_tabela()
     {
-
         try
         {
             if ( multaServicoController.existMulta() )
             {
-                adicionar_dados_tabela( multaServicoController.buscaTodos() );
-
+                System.out.println( "Multa adicionada. ID " + getIdProduto() );
+                adicionar_dados_tabela( multaServicoController.buscaTodos( getIdProduto() ) );
             }
             else
             {
-                preparar_tabela();
+                MetodosUtil.esvaziar_tabela( jTableMulta );
             }
         }
         catch ( Exception e )
@@ -551,13 +500,6 @@ public class ConfiguracaoMultasVisao extends javax.swing.JDialog
             e.printStackTrace();
         }
 
-    }
-
-    private void preparar_tabela()
-    {
-        DefaultTableModel modelo = ( DefaultTableModel ) jTableMulta.getModel();
-
-        MetodosUtil.esvaziar_tabela( jTableMulta );
     }
 
     public void adicionar_dados_tabela( List<MultaServico> vector )
@@ -607,11 +549,7 @@ public class ConfiguracaoMultasVisao extends javax.swing.JDialog
 
         if ( !Objects.isNull( produto_local ) )
         {
-
-            txtCodigo.setText( String.valueOf( produto_local.getCodigo() ) );
-            txtProduto.setText( produto_local.getDesignacao() );
             lbProduto.setText( produto_local.getDesignacao() );
-
         }
         else
         {
@@ -635,9 +573,8 @@ public class ConfiguracaoMultasVisao extends javax.swing.JDialog
 
             try
             {
-
                 multaServicoController.delete( ( int ) idReferencia );
-//                carregarDados();
+                procedimento_adcionar_dados_tabela();
                 JOptionPane.showMessageDialog( null, "Referencia eliminada com sucesso!...", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
 
             }
@@ -656,9 +593,130 @@ public class ConfiguracaoMultasVisao extends javax.swing.JDialog
 
     }
 
-    private void limparCampos()
+    private int getIdFamilia()
     {
-        txtProduto.setText( "" );
+        try
+        {
+            return familiasController.getFamiliaByDesignacao( String.valueOf( cmbFamilia.getSelectedItem() ) ).getPkFamilia();
+        }
+        catch ( Exception e )
+        {
+            return 0;
+        }
+    }
+
+    private int getIdTipoProduto()
+    {
+        try
+        {
+            return tipoProdutosController.getTipoFamiliaByDesignacao( String.valueOf( cmbSubFamilia.getSelectedItem() ) ).getCodigo();
+        }
+        catch ( Exception e )
+        {
+            return 0;
+        }
+
+    }
+
+    private TbUsuario getUsuarioById( int idUser ) throws SQLException
+    {
+        // Supondo que você tenha um controller para usuários
+        return usuarioController.getUsuarioByCodigo( idUser ); // ou o método equivalente no seu projeto
+    }
+
+    private void salvarLinhaMulta( int dayStart, int dayEnd, BigDecimal valor )
+    {
+        try
+        {
+            MultaServico multa = new MultaServico();
+            multa.setDayStart( dayStart );
+            multa.setDayEnd( dayEnd );
+            multa.setValor( valor );
+            multa.setDataRegistro( new Date() );
+            multa.setUsuarioId( this.idUser ); // 🔹 Aqui o usuário não será null
+            multa.setProdutoId( getIdProduto() );
+            multaServicoController.create( multa );
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog( this, "Erro ao salvar multa: " + e.getMessage() );
+        }
+    }
+
+    private int getUltimoDia()
+    {
+        int numeroLinhas = jTableMulta.getRowCount();
+
+        int ultimoDia = 0;
+
+        try
+        {
+            String valor = jTableMulta.getModel().getValueAt( numeroLinhas - 1, 2 ).toString();
+            ultimoDia = Integer.parseInt( valor ) + 1;
+        }
+        catch ( Exception e )
+        {
+            ultimoDia = 1;
+        }
+
+        return ultimoDia;
+    }
+
+    public void actualizar()
+    {
+        DefaultTableModel modelo = ( DefaultTableModel ) jTableMulta.getModel();
+
+        try
+        {
+            for ( int i = 0; i < modelo.getRowCount(); i++ )
+            {
+                int idMulta = Integer.parseInt( modelo.getValueAt( i, 0 ).toString() );
+
+                MultaServico multaServico = multaServicoController.findMulta( idMulta );
+
+                if ( multaServico != null )
+                {
+                    multaServico.setDayStart(
+                            Integer.parseInt( modelo.getValueAt( i, 1 ).toString() ) );
+
+                    multaServico.setDayEnd(
+                            Integer.parseInt( modelo.getValueAt( i, 2 ).toString() ) );
+
+                    multaServico.setValor(
+                            new BigDecimal( modelo.getValueAt( i, 3 ).toString().replace( ",", "." ) ) );
+
+                    multaServicoController.alterar( multaServico );
+
+                }
+            }
+
+            procedimento_adcionar_dados_tabela();
+
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Multa actualizada com sucesso!",
+                    DVML.DVML_COMERCIAL_LDA,
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Erro ao actualizar a multa",
+                    DVML.DVML_COMERCIAL_LDA,
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+    }
+
+    private int getIdProduto()
+    {
+        String desigancao = cmbProduto.getSelectedItem().toString();
+        return produtosController.findByDesignacao( desigancao ).getCodigo();
     }
 
 }

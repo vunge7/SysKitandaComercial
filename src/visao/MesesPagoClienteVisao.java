@@ -49,6 +49,8 @@ public class MesesPagoClienteVisao extends javax.swing.JDialog
         initComponents();
         setLocationRelativeTo( null );
 
+        dcDataPagamento.setDate( new Date() );
+
         mesRhController = new MesRhController( conexao.getConnectionAtiva() );
         multaServicoController = new MultaServicoController( conexao );
         precosController = new PrecosController( conexao );
@@ -626,7 +628,7 @@ public class MesesPagoClienteVisao extends javax.swing.JDialog
             try
             {
                 int diaPagamento = dcDataPagamento.getDate().getDate();
-                BigDecimal valorMultaByDay = multaServicoController.getValorMultaByDay( diaPagamento );
+                BigDecimal valorMultaByDay = multaServicoController.getValorMultaByDay( diaPagamento, produtoId );
 
 //                multaPercentagem = valorMultaByDay.doubleValue();
 //                double precoVenda = precoServico.getPrecoVenda().doubleValue();

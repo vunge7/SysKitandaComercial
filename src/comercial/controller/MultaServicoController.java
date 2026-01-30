@@ -26,7 +26,7 @@ public class MultaServicoController
     public boolean create( MultaServico multa )
     {
         String sql = "INSERT INTO multa_servico (day_start, day_end, valor, data_registro, produto_id, usuario_id) "
-                + "VALUES (?, ?, ?, ?, ?)";
+                + "VALUES (?, ?, ?, ?, ?, ?)";
 
         try ( PreparedStatement ps
                 = conexao.getConnectionAtiva().prepareStatement( sql, Statement.RETURN_GENERATED_KEYS ) )
@@ -36,7 +36,7 @@ public class MultaServicoController
             ps.setBigDecimal( 3, multa.getValor().setScale( 2, RoundingMode.HALF_UP ) );
             ps.setTimestamp( 4, new Timestamp( multa.getDataRegistro().getTime() ) );
             ps.setInt( 5, multa.getProdutoId() );
-            ps.setInt( 5, multa.getUsuarioId() );
+            ps.setInt( 6, multa.getUsuarioId() );
 
             ps.executeUpdate();
 
@@ -131,7 +131,7 @@ public class MultaServicoController
     {
         List<MultaServico> lista = new ArrayList<>();
 
-        String sql = "SELECT id, day_start, day_end, valor, data_registro, usuario_id "
+        String sql = "SELECT * "
                 + "FROM multa_servico "
                 + "ORDER BY day_start";
 
@@ -149,6 +149,44 @@ public class MultaServicoController
                 multa.setProdutoId( rs.getInt( "produto_id" ) );
                 multa.setUsuarioId( rs.getInt( "usuario_id" ) );
                 lista.add( multa );
+            }
+        }
+
+        return lista;
+    }
+
+    public List<MultaServico> buscaTodos( int produtoId ) throws SQLException
+    {
+
+        List<MultaServico> lista = new ArrayList<>();
+
+        String sql = "SELECT * "
+                + "FROM multa_servico "
+                + "WHERE produto_id = ? "
+                + "ORDER BY day_start";
+
+        try ( PreparedStatement ps = conexao.prepareStatement( sql ) )
+        {
+
+            ps.setInt( 1, produtoId );  // 🔥 aqui liga o parâmetro
+
+            try ( ResultSet rs = ps.executeQuery() )
+            {
+
+                while ( rs.next() )
+                {
+                    MultaServico multa = new MultaServico();
+
+                    multa.setId( rs.getInt( "id" ) );
+                    multa.setDayStart( rs.getInt( "day_start" ) );
+                    multa.setDayEnd( rs.getInt( "day_end" ) );
+                    multa.setValor( rs.getBigDecimal( "valor" ) );
+                    multa.setDataRegistro( rs.getTimestamp( "data_registro" ) );
+                    multa.setProdutoId( rs.getInt( "produto_id" ) );
+                    multa.setUsuarioId( rs.getInt( "usuario_id" ) );
+
+                    lista.add( multa );
+                }
             }
         }
 
@@ -207,7 +245,7 @@ public class MultaServicoController
 
     public MultaServico findMulta( int id )
     {
-        String sql = "SELECT id, day_start, day_end, valor, data_registro, usuario_id "
+        String sql = "SELECT * "
                 + "FROM multa_servico "
                 + "WHERE id = ?";
 
@@ -293,14 +331,15 @@ public class MultaServicoController
         return multa;
     }
 
-    public BigDecimal getValorMultaByDay( int day ) throws SQLException
+    public BigDecimal getValorMultaByDay( int day, int produtoId ) throws SQLException
     {
         BigDecimal decimal = new BigDecimal( 0 );
-        String sql = "SELECT valor FROM multa_servico WHERE ? BETWEEN  day_start and day_end LIMIT 1";
+        String sql = "SELECT valor FROM multa_servico WHERE   produto_id = ? AND  ? BETWEEN  day_start and day_end LIMIT 1";
 
         try ( PreparedStatement ps = conexao.prepareStatement( sql ) )
         {
-            ps.setInt( 1, day );
+            ps.setInt( 1, produtoId );
+            ps.setInt( 2, day );
             try ( ResultSet rs = ps.executeQuery() )
             {
                 if ( rs.next() )
