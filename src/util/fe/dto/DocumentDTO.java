@@ -29,6 +29,7 @@ public class DocumentDTO
     private List<LineDTO> lines;
     private DocumentTotalsDTO documentTotals;
     private List<WithholdingTaxDTO> withholdingTaxList;
+    private List<SourceDocumentDTO> sourceDocuments;
 
     // getters & setters
     public String getDocumentNo()
@@ -160,5 +161,17 @@ public class DocumentDTO
     {
         this.withholdingTaxList = withholdingTaxList;
     }
+
+    public List<SourceDocumentDTO> getSourceDocuments()
+    {
+        return sourceDocuments;
+    }
+
+    public void setSourceDocuments( List<SourceDocumentDTO> sourceDocuments )
+    {
+        this.sourceDocuments = sourceDocuments;
+    }
+    
+    
 
 }

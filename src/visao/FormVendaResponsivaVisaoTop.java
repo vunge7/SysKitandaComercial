@@ -6929,7 +6929,6 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
         double totalComIva = FinanceUtils.getValorComIVA( 1, taxa, CfMethods.parseMoedaFormatada( total_iliquido_linha ), 0 );
         totalComIva = totalComIva * qtd;
-        
 
         String total_liquido_linha = CfMethods.formatarComoMoeda( totalComIva );
 
@@ -6938,8 +6937,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         String total_retencao = CfMethods.formatarComoMoeda( retencao );
 
         double totalIliquidoItem = CfMethods.parseMoedaFormatada( total_iliquido_linha ) * qtd;
-        
-        
+
         String totalIlquidoString = CfMethods.formatarComoMoeda( totalIliquidoItem );
 
         modelo.setValueAt( qtd, linha_actual, 4 );
@@ -7421,8 +7419,6 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
         Map<String, Object> jsonPayload = PayloadFactory.criarPayloadCriarDocumento(
                 taxRegistrationNumber,
-                cmbAnoEconomico.getSelectedItem().toString(),
-                documentoType.getAbreviacao(),
                 documentDTOs
         );
 
