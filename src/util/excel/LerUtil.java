@@ -1,5 +1,7 @@
 package util.excel;
 
+import comercial.controller.ClientesController;
+import comercial.controller.FornecedoresController;
 import comercial.controller.PrecosController;
 import comercial.controller.ProdutosController;
 import comercial.controller.StoksController;
@@ -14,6 +16,7 @@ import java.math.RoundingMode;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import util.BDConexao;
@@ -21,6 +24,11 @@ import util.DVML;
 
 public class LerUtil
 {
+
+    /**
+     * NUMERO DA FOLHA
+     */
+    private final int NUMERO_FOLHA = 2;
 
     // Colunas do Excel
     private final int POS_COD_MANUAL = 0;
@@ -31,11 +39,30 @@ public class LerUtil
     private final int POS_COD_BARRA = 7;
     private final int POS_QTD_EXISTENTE = 8;
 
+    /**
+     * DADOS DO CLIENTE
+     */
+    private final int NOME_CLIENTE = 0;
+    private final int MORADA_CLIENTE = 1;
+    private final int TELEFONE_CLIENTE = 2;
+    private final int NIF_CLIENTE = 3;
+    private final int EMAIL_CLIENTE = 4;
+    /**
+     * DADOS DO CLIENTE
+     */
+    private final int NOME_FORNECEDOR = 0;
+    private final int MORADA_FORNECEDOR = 1;
+    private final int TELEFONE_FORNECEDOR = 2;
+    private final int NIF_FORNECEDOR = 3;
+    private final int EMAIL_FORNECEDOR = 4;
+
     private static BDConexao conexao = BDConexao.getInstancia();
     private ProdutosController produtosController;
     private PrecosController precosController;
     private TipoProdutosController tipoProdutosController;
     private StoksController stoksController;
+    private ClientesController clientesController;
+    private FornecedoresController fornecedoresController;
 
     public LerUtil()
     {
@@ -43,6 +70,8 @@ public class LerUtil
         precosController = new PrecosController( conexao );
         tipoProdutosController = new TipoProdutosController( conexao );
         stoksController = new StoksController( conexao );
+        clientesController = new ClientesController( conexao );
+        fornecedoresController = new FornecedoresController( conexao );
     }
 
     public static void main( String[] args )
@@ -52,6 +81,227 @@ public class LerUtil
     }
 
     public void ler()
+    {
+        System.out.println( "Iniciando importação..." );
+
+        String file = DVML.CAMINHO_DOCUMENTO + "/TABELA_PRODUTOS_SAUDE_VIDA.xls";
+        File arquivoExcel = new File( file );
+        List<DadosUtil> listaItens = new ArrayList<>();
+
+        try ( BufferedInputStream buf = new BufferedInputStream( new FileInputStream( arquivoExcel ) ) )
+        {
+            POIFSFileSystem fs = new POIFSFileSystem( buf );
+            HSSFWorkbook workbook = new HSSFWorkbook( fs );
+
+            if ( NUMERO_FOLHA == 0 )
+            {
+                HSSFSheet sheet = workbook.getSheetAt( 0 );
+                for ( int i = 1; i <= sheet.getLastRowNum(); i++ )
+                { // Ignora cabeçalho
+                    HSSFRow row = sheet.getRow( i );
+                    if ( row == null )
+                    {
+                        continue;
+                    }
+
+                    DadosUtil dados = new DadosUtil();
+
+                    for ( int j = 0; j < row.getLastCellNum(); j++ )
+                    {
+                        HSSFCell cell = row.getCell( j );
+                        if ( cell == null )
+                        {
+                            continue;
+                        }
+
+                        switch (j)
+                        {
+                            case POS_CATEGORIA:
+                                dados.setCategoria( cell.toString().trim() );
+                                break;
+                            case POS_COD_MANUAL:
+                                dados.setCodManual( cell.toString().trim() );
+                                break;
+                            case POS_DESIGNACAO:
+                                dados.setDesignacao( cell.toString().trim() );
+                                break;
+                            case POS_COD_BARRA:
+                                switch (cell.getCellType())
+                                {
+                                    case HSSFCell.CELL_TYPE_STRING:
+                                        dados.setCodBarra( cell.getStringCellValue().trim() );
+                                        break;
+
+                                    case HSSFCell.CELL_TYPE_NUMERIC:
+                                        // Força a leitura como texto sem notação científica
+                                        String codigo = new BigDecimal( cell.getNumericCellValue() )
+                                                .toPlainString();
+                                        dados.setCodBarra( codigo );
+                                        break;
+
+                                    default:
+                                        dados.setCodBarra( "" );
+                                }
+                                break;
+//                        case POS_COD_BARRA:
+//                            dados.setCodBarra(cell.toString().trim());
+//                            break;
+                            case POS_QTD_EXISTENTE:
+                                dados.setStock_actual( parseDouble( cell ) );
+                                break;
+                            case POS_PRECO:
+                                dados.setPrecoVenda( parseBigDecimal( cell ) );
+                                break;
+                            case POS_PRECO_COMPRA:
+                                dados.setPrecoCompra( parseBigDecimal( cell ) );
+                                break;
+                        }
+                    }
+                    listaItens.add( dados );
+                }
+
+            }
+            else if ( NUMERO_FOLHA == 1 )
+            {
+                HSSFSheet sheet = workbook.getSheetAt( 1 );
+                for ( int i = 1; i <= sheet.getLastRowNum(); i++ )
+                { // Ignora cabeçalho
+                    HSSFRow row = sheet.getRow( i );
+                    if ( row == null )
+                    {
+                        continue;
+                    }
+
+                    DadosUtil dados = new DadosUtil();
+
+                    for ( int j = 0; j < row.getLastCellNum(); j++ )
+                    {
+                        HSSFCell cell = row.getCell( j );
+                        if ( cell == null )
+                        {
+                            continue;
+                        }
+
+                        switch (j)
+                        {
+                            case NOME_CLIENTE:
+                                dados.setNomeCliente( cell.toString().trim() );
+                                break;
+                            case MORADA_CLIENTE:
+                                dados.setMoradaliente( cell.toString().trim() );
+                                break;
+                            case TELEFONE_CLIENTE:
+                                dados.setTelefoneCliente( cell.toString().trim() );
+                                break;
+                            case NIF_CLIENTE:
+                                dados.setNifCliente( cell.toString().trim() );
+                                break;
+                            case EMAIL_CLIENTE:
+                                dados.setEmailCliente( cell.toString().trim() );
+                                break;
+
+                        }
+                    }
+                    listaItens.add( dados );
+                }
+            }
+            else
+            {
+                HSSFSheet sheet = workbook.getSheetAt( 2 );
+                for ( int i = 1; i <= sheet.getLastRowNum(); i++ )
+                { // Ignora cabeçalho
+                    HSSFRow row = sheet.getRow( i );
+                    if ( row == null )
+                    {
+                        continue;
+                    }
+
+                    DadosUtil dados = new DadosUtil();
+
+                    for ( int j = 0; j < row.getLastCellNum(); j++ )
+                    {
+                        HSSFCell cell = row.getCell( j );
+                        if ( cell == null )
+                        {
+                            continue;
+                        }
+
+                        switch (j)
+                        {
+                            case NOME_FORNECEDOR:
+                                dados.setNomeFornecedor( cell.toString().trim() );
+                                break;
+                            case MORADA_FORNECEDOR:
+                                dados.setMoradaFornecedor( cell.toString().trim() );
+                                break;
+                            case TELEFONE_FORNECEDOR:
+                                dados.setTelefoneFornecedor( cell.toString().trim() );
+                                break;
+                            case NIF_FORNECEDOR:
+                                dados.setNifFornecedor( cell.toString().trim() );
+                                break;
+                            case EMAIL_FORNECEDOR:
+                                dados.setEmailFornecedor( cell.toString().trim() );
+                                break;
+
+                        }
+                    }
+                    listaItens.add( dados );
+                }
+            }
+
+            // Importar dados
+            int posicao = 0;
+            for ( DadosUtil item : listaItens )
+            {
+                posicao++;
+
+                if ( NUMERO_FOLHA == 0 )
+                {
+//                     importarCategoria( item );
+                    importarProduto( item );
+                }
+
+//                System.out.println( "Importando " + posicao + " de " + listaItens.size() + ": " + item.getDesignacao() );
+                else if ( NUMERO_FOLHA == 1 )
+                {
+                    TbCliente cliente = new TbCliente();
+                    try
+                    {
+                        importarCliente( cliente, item );
+                    }
+                    catch ( Exception e )
+                    {
+                        JOptionPane.showMessageDialog( null, "Falha ao importar o cliente" );
+                        break;
+                    }
+//                importarCategoria( item );
+                }
+                else if ( NUMERO_FOLHA == 2 )
+                {
+                    TbFornecedor fornecedor = new TbFornecedor();
+                    try
+                    {
+                        importarFornecedor( fornecedor, item );
+                    }
+                    catch ( Exception e )
+                    {
+                        e.printStackTrace();
+                        JOptionPane.showMessageDialog( null, "Falha ao importar o cliente" );
+                        break;
+                    }
+                }
+
+            }
+
+        }
+        catch ( IOException ex )
+        {
+            Logger.getLogger( LerUtil.class.getName() ).log( Level.SEVERE, null, ex );
+        }
+    }
+
+    public void lerClientes()
     {
         System.out.println( "Iniciando importação..." );
 
@@ -363,6 +613,41 @@ public class LerUtil
             }
 
         }
+    }
+
+    private void importarCliente( TbCliente cliente, DadosUtil dadosUtil )
+    {
+        cliente.setNome( dadosUtil.getNomeCliente() );
+        cliente.setMorada( dadosUtil.getMoradaliente() );
+        cliente.setNif( dadosUtil.getNifCliente() );
+        cliente.setTelefone( dadosUtil.getTelefoneCliente() );
+        cliente.setEmail( dadosUtil.getEmailCliente() );
+
+        System.out.println( "************************************" );
+        System.out.println( "Cliente NOME: " + dadosUtil.getNomeCliente() );
+        System.out.println( "Cliente NIF: " + dadosUtil.getNifCliente() );
+        System.out.println( "Cliente TELEFONE: " + dadosUtil.getTelefoneCliente() );
+        clientesController.salvar( cliente );
+        System.out.println( "************************************" );
+    }
+
+    private void importarFornecedor( TbFornecedor fornecedor, DadosUtil dadosUtil )
+    {
+        fornecedor.setNome( dadosUtil.getNomeFornecedor() );
+        fornecedor.setEndereco( dadosUtil.getMoradaFornecedor() );
+        fornecedor.setNif( dadosUtil.getNifFornecedor() );
+        fornecedor.setTelefone( dadosUtil.getTelefoneFornecedor() );
+        fornecedor.setEmail( dadosUtil.getEmailFornecedor() );
+        fornecedor.setSite( "n/a" );
+        fornecedor.setFkRegime( new Regime( 1 ) );
+
+        System.out.println( "************************************" );
+        System.out.println( "Fornecedor NOME: " + dadosUtil.getNomeFornecedor() );
+        System.out.println( "Fornecedor NIF: " + dadosUtil.getNifFornecedor() );
+        System.out.println( "Fornecedor TELEFONE: " + dadosUtil.getTelefoneFornecedor() );
+        System.out.println( "Fornecedor MORADA(ENDERECO): " + dadosUtil.getMoradaFornecedor() );
+        fornecedoresController.salvar( fornecedor );
+        System.out.println( "************************************" );
     }
 
 }

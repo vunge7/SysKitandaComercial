@@ -22,6 +22,26 @@ public class DadosUtil
     private String codBarra;
     private double stock_actual;
     private BigDecimal precoCompra;
+    
+    
+    /**
+     * DADOS CLIENTE
+     */
+    private String nomeCliente;
+    private String moradaliente;
+    private String telefoneCliente;
+    private String nifCliente;
+    private String emailCliente;
+    
+    /**
+     * DADOS FORNECEDOR
+     */
+    private String nomeFornecedor;
+    private String moradaFornecedor;
+    private String telefoneFornecedor;
+    private String nifFornecedor;
+    private String emailFornecedor;
+    
 
     public DadosUtil()
     {
@@ -98,6 +118,108 @@ public class DadosUtil
     {
         this.codBarra = codBarra;
     }
+
+    public String getNomeCliente()
+    {
+        return nomeCliente;
+    }
+
+    public void setNomeCliente( String nomeCliente )
+    {
+        this.nomeCliente = nomeCliente;
+    }
+
+    public String getMoradaliente()
+    {
+        return moradaliente;
+    }
+
+    public void setMoradaliente( String moradaliente )
+    {
+        this.moradaliente = moradaliente;
+    }
+
+    public String getTelefoneCliente()
+    {
+        return telefoneCliente;
+    }
+
+    public void setTelefoneCliente( String telefoneCliente )
+    {
+        this.telefoneCliente = telefoneCliente;
+    }
+
+    public String getNifCliente()
+    {
+        return nifCliente;
+    }
+
+    public void setNifCliente( String nifCliente )
+    {
+        this.nifCliente = nifCliente;
+    }
+
+    public String getEmailCliente()
+    {
+        return emailCliente;
+    }
+
+    public void setEmailCliente( String emailCliente )
+    {
+        this.emailCliente = emailCliente;
+    }
+
+    public String getNomeFornecedor()
+    {
+        return nomeFornecedor;
+    }
+
+    public void setNomeFornecedor( String nomeFornecedor )
+    {
+        this.nomeFornecedor = nomeFornecedor;
+    }
+
+    public String getMoradaFornecedor()
+    {
+        return moradaFornecedor;
+    }
+
+    public void setMoradaFornecedor( String moradaFornecedor )
+    {
+        this.moradaFornecedor = moradaFornecedor;
+    }
+
+    public String getTelefoneFornecedor()
+    {
+        return telefoneFornecedor;
+    }
+
+    public void setTelefoneFornecedor( String telefoneFornecedor )
+    {
+        this.telefoneFornecedor = telefoneFornecedor;
+    }
+
+    public String getNifFornecedor()
+    {
+        return nifFornecedor;
+    }
+
+    public void setNifFornecedor( String nifFornecedor )
+    {
+        this.nifFornecedor = nifFornecedor;
+    }
+
+    public String getEmailFornecedor()
+    {
+        return emailFornecedor;
+    }
+
+    public void setEmailFornecedor( String emailFornecedor )
+    {
+        this.emailFornecedor = emailFornecedor;
+    }
+    
+    
     
     
     

@@ -5,7 +5,6 @@
 package visao;
 
 import comercial.controller.*;
-//import hotel.controller.ExtratoContaClienteController;
 import dao.ItemPermissaoDao;
 import entity.AnoEconomico;
 import entity.Cambio;
