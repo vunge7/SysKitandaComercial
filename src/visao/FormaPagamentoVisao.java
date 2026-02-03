@@ -669,7 +669,13 @@ public class FormaPagamentoVisao extends javax.swing.JFrame
                 }
                 else if ( formulario == DVML.EMISSAO_RECIBOS )
                 {
-                    EmissaoRecibos.salvar( get_total_valor().doubleValue() );
+                    try
+                    {
+                        EmissaoRecibos.salvar( get_total_valor().doubleValue() );
+                    }
+                    catch ( SQLException e )
+                    {
+                    }
                 }
 
             }

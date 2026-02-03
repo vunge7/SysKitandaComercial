@@ -2123,6 +2123,8 @@ public class VendasController implements EntidadeFactory
                 + "FROM tb_venda "
                 + "WHERE REPLACE(cod_fact,' ','') LIKE ?";
 
+        
+        
         PreparedStatement psUltimo = conexao.prepareStatement( sqlUltimo );
         psUltimo.setString( 1, "%" + serie + "/%" );
 

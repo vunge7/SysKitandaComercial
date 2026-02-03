@@ -42,8 +42,8 @@ public class HttpClientUtil
         conn.setRequestProperty( "Accept", "application/json" );
 
         // Timeout em milissegundos
-        conn.setConnectTimeout( 10000 ); // timeout de conexão
-        conn.setReadTimeout( 10000 );    // timeout de leitura/resposta
+        conn.setConnectTimeout( 20000 ); // timeout de conexão
+        conn.setReadTimeout( 20000 );    // timeout de leitura/resposta
 
         // BODY
         try ( OutputStream os = conn.getOutputStream() )

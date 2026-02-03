@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a324e3e4-0754-4ede-83c0-92dc73708a0e">
-	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="38"/>
-	<property name="ireport.y" value="49"/>
+	<property name="ireport.zoom" value="1.1289478601075549"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<style name="cliente_style" mode="Transparent" forecolor="#000000">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$P{NIF_CLIENTE_CONSOMIDOR_FINAL}.equals("Consumidor Final")]]></conditionExpression>
@@ -16,6 +16,7 @@
 	<parameter name="NIF_CLIENTE_CONSOMIDOR_FINAL" class="java.lang.String"/>
 	<parameter name="STATUS_DOCUMENTO" class="java.lang.String"/>
 	<parameter name="SOFTWARE_NAME" class="java.lang.String"/>
+	<parameter name="QR_IMAGE" class="java.lang.Object"/>
 	<queryString>
 		<![CDATA[SELECT
      tb_venda.`codigo` AS tb_venda_codigo,
@@ -717,7 +718,7 @@ WHERE
 		</band>
 	</detail>
 	<lastPageFooter>
-		<band height="99">
+		<band height="135">
 			<staticText>
 				<reportElement uuid="954d2aef-8bf4-486b-acb3-0c3967ae7b4f" key="staticText-9" x="5" y="86" width="360" height="13"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
@@ -725,14 +726,6 @@ WHERE
 				</textElement>
 				<text><![CDATA[Software de gestão comercial, desenvolvido pela DVML-COMERCIAL,Lda / Contactos: 940537124 - 923409284]]></text>
 			</staticText>
-			<textField>
-				<reportElement uuid="82180302-3a4a-4c40-8a6f-2ee1f0da9c14" x="0" y="1" width="552" height="14"/>
-				<box rightPadding="3"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Times New Roman"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Processado por programa validado n.º " + "258/AGT/2020 " +"Kitanda" + "/dvml"]]></textFieldExpression>
-			</textField>
 			<staticText>
 				<reportElement uuid="ab8d9109-5652-4836-acaf-ab6ade16af21" x="45" y="32" width="63" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -747,15 +740,26 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_usuario_nome}]]></textFieldExpression>
 			</textField>
+			<image scaleImage="RealHeight">
+				<reportElement uuid="83536d83-5c21-4687-8acc-bea3b7c02748" x="437" y="24" width="78" height="85"/>
+				<imageExpression><![CDATA[$P{QR_IMAGE}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement uuid="21929e79-e6de-439a-856e-88ffca098cc4" x="401" y="109" width="154" height="23"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Software de Certififcação Factura Electrónica\nFE/196/AGT/2025"]]></textFieldExpression>
+			</textField>
 		</band>
 	</lastPageFooter>
 	<summary>
-		<band height="82" splitType="Stretch">
+		<band height="100" splitType="Stretch">
 			<line>
 				<reportElement uuid="65a16e65-fc74-4d9c-9cdb-f49a77d899f8" x="117" y="4" width="218" height="1"/>
 			</line>
 			<staticText>
-				<reportElement uuid="53e801ca-7173-417d-a748-a5cc6f9f68a2" x="287" y="61" width="174" height="20"/>
+				<reportElement uuid="53e801ca-7173-417d-a748-a5cc6f9f68a2" x="12" y="69" width="174" height="20"/>
 				<textElement>
 					<font fontName="Arial"/>
 				</textElement>

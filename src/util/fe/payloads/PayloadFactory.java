@@ -1,11 +1,20 @@
 package util.fe.payloads;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import entity.TbVenda;
 import java.util.*;
 import java.util.stream.Collectors;
+import javax.swing.JOptionPane;
+import util.fe.BasicAuthUtil;
 import util.fe.DataUtil;
+import util.fe.FEConfig;
+import util.fe.JsonUtil;
 import util.fe.JwsGenerator;
 import util.fe.SubmissionUUID;
 import util.fe.dto.*;
+import util.fe.http.HttpClientUtil;
 
 public class PayloadFactory
 {
@@ -200,24 +209,52 @@ public class PayloadFactory
 
     // =====================================================
     // RECIBO
+//    // =====================================================
+//    private static void montarRecibo( Map<String, Object> document, DocumentDTO dto )
+//    {
+//
+//        List<Map<String, Object>> sourceDocs = dto.getSourceDocuments().stream()
+//                .map( sd ->
+//                {
+//                    Map<String, Object> m = new LinkedHashMap<>();
+//                    m.put( "lineNo", sd.getLineNo() );
+//
+//                    Map<String, Object> id = new LinkedHashMap<>();
+//                    id.put( "originatingON", sd.getOriginatingON() );
+//                    id.put( "documentDate", sd.getDocumentDate() );
+//
+//                    m.put( "sourceDocumentID", id );
+//                    m.put( "creditAmount", sd.getCreditAmount() );
+//                    return m;
+//                } ).collect( Collectors.toList() );
+//
+//        Map<String, Object> paymentReceipt = new LinkedHashMap<>();
+//        paymentReceipt.put( "sourceDocuments", sourceDocs );
+//
+//        document.put( "paymentReceipt", paymentReceipt );
+//        document.put( "documentTotals", totaisToMap( dto ) );
+//    }
     // =====================================================
+// RECIBO
+// =====================================================
     private static void montarRecibo( Map<String, Object> document, DocumentDTO dto )
     {
+        List<Map<String, Object>> sourceDocs = new ArrayList<>();
 
-        List<Map<String, Object>> sourceDocs = dto.getSourceDocuments().stream()
-                .map( sd ->
-                {
-                    Map<String, Object> m = new LinkedHashMap<>();
-                    m.put( "lineNo", sd.getLineNo() );
+        for ( SourceDocumentDTO sd : dto.getSourceDocuments() )
+        {
+            Map<String, Object> m = new LinkedHashMap<>();
+            m.put( "lineNo", sd.getLineNo() );
 
-                    Map<String, Object> id = new LinkedHashMap<>();
-                    id.put( "originatingON", sd.getOriginatingON() );
-                    id.put( "documentDate", sd.getDocumentDate() );
+            Map<String, Object> id = new LinkedHashMap<>();
+            id.put( "originatingON", sd.getOriginatingON() );
+            id.put( "documentDate", sd.getDocumentDate() );
 
-                    m.put( "sourceDocumentID", id );
-                    m.put( "creditAmount", sd.getCreditAmount() );
-                    return m;
-                } ).collect( Collectors.toList() );
+            m.put( "sourceDocumentID", id );
+            m.put( "creditAmount", sd.getCreditAmount() );
+
+            sourceDocs.add( m );
+        }
 
         Map<String, Object> paymentReceipt = new LinkedHashMap<>();
         paymentReceipt.put( "sourceDocuments", sourceDocs );
@@ -303,6 +340,145 @@ public class PayloadFactory
         payload.put( "requestID", requestID );
 
         return payload;
+    }
+
+    public static boolean obterEstadoFactura(
+            String taxRegistrationNumber,
+            String resposta,
+            TbVenda venda
+    ) throws JsonProcessingException
+    {
+        ObjectMapper mapper = new ObjectMapper();
+
+        // 1️⃣ Extrair requestID
+        JsonNode rootNode = mapper.readTree( resposta );
+        String requestID = rootNode.get( "requestID" ).asText();
+        venda.setRequestID( requestID );
+
+        System.out.println( "Request ID: " + requestID );
+
+        // 2️⃣ Criar payload de consulta
+        Map<String, Object> jsonPayload = PayloadFactory.consultaPayloadFactura(
+                taxRegistrationNumber,
+                requestID
+        );
+
+        String payload = JsonUtil.toJson( jsonPayload );
+        System.out.println( payload );
+
+        String basicAuth = BasicAuthUtil.gerarAuthorizationHeader(
+                FEConfig.getUsername(),
+                FEConfig.getPassword()
+        );
+
+        try
+        {
+            // 3️⃣ Chamada à FE
+            String r = HttpClientUtil.postJson(
+                    FEConfig.getEndpointObterEstado(),
+                    payload,
+                    basicAuth
+            );
+
+            JsonUtil.print( r );
+
+            JsonNode estadoRoot = mapper.readTree( r );
+
+            JsonNode documentStatusList = estadoRoot.get( "documentStatusList" );
+            JsonNode requestErrorList = estadoRoot.get( "requestErrorList" );
+
+            // =====================================================
+            // 🔎 1º VERIFICAR ERROS DO PEDIDO (ANTES DO DOCUMENTO)
+            // =====================================================
+            if ( requestErrorList != null && requestErrorList.isArray() && requestErrorList.size() > 0 )
+            {
+                for ( JsonNode erro : requestErrorList )
+                {
+
+                    if ( Objects.nonNull( erro.get( "idError" ) ) )
+                    {
+                        String idErro = erro.get( "idError" ).asText();
+                        venda.setEstado( "P" );
+
+                        // ✅ REGRA DE NEGÓCIO
+                        if ( "E94".equalsIgnoreCase( idErro ) )
+                        {
+                            JOptionPane.showMessageDialog( null, "Documeto processado no estado PENDENTE.\nAguardando a resposta da AGT." );
+                            System.out.println( "E94 - Solicitação não encontrada. Considerando TRUE." );
+                            return true;
+                        }
+
+                        // Outros erros reais
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "Erro da FE: " + erro.get( "descriptionError" ).asText(),
+                                "Erro na Consulta",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                        return false;
+                    }
+
+                }
+            }
+
+            // =====================================================
+            // 🔎 2º VERIFICAR STATUS DA FACTURA
+            // =====================================================
+            if ( documentStatusList != null && documentStatusList.isArray() && documentStatusList.size() > 0 )
+            {
+                JsonNode doc = documentStatusList.get( 0 );
+                String documentStatus = doc.get( "documentStatus" ).asText();
+
+                // ✅ FACTURA VÁLIDA
+                if ( "V".equalsIgnoreCase( documentStatus ) )
+                {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Documento validado com sucesso ✅",
+                            "Factura Válida",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
+                    venda.setEstado( "V" );
+                    return true;
+                }
+                // ❌ FACTURA INVÁLIDA
+                else if ( "I".equalsIgnoreCase( documentStatus ) )
+                {
+                    venda.setEstado( "I" );
+                    StringBuilder mensagens = new StringBuilder( "Documento inválido ❌\n\n" );
+
+                    JsonNode errorList = doc.get( "errorList" );
+
+                    if ( errorList != null && errorList.isArray() )
+                    {
+                        for ( JsonNode erro : errorList )
+                        {
+                            mensagens.append( "• " )
+                                    .append( erro.get( "descriptionError" ).asText() )
+                                    .append( "\n" );
+                        }
+                    }
+
+                    JOptionPane.showMessageDialog(
+                            null,
+                            mensagens.toString(),
+                            "Erro de Validação",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+
+                    return false;
+                }
+            }
+
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+            return false;
+        }
+
+        // Caso inesperado
+        return false;
     }
 
 }

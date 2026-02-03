@@ -2670,16 +2670,16 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             conexaoTransactionLocal.close();
         }
 
-        // fora do try-catch da transação
-        try
-        {
-            imprimir_factura( idVendaGerada );
-        }
-        catch ( Exception ex )
-        {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog( null, "Erro ao imprimir factura: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE );
-        }
+//        // fora do try-catch da transação
+//        try
+//        {
+//            imprimir_factura( idVendaGerada );
+//        }
+//        catch ( Exception ex )
+//        {
+//            ex.printStackTrace();
+//            JOptionPane.showMessageDialog( null, "Erro ao imprimir factura: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE );
+//        }
     }
 
     private static FormaPagamentoItem criarItemFormaPagamento( int idVenda, int idForma, BigDecimal valor, BigDecimal troco, String referencia )
@@ -7163,145 +7163,6 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         }
     }
 
-//    private static boolean criarFE( TbVenda venda )
-//    {
-//        String taxRegistrationNumber = dadosInstituicaoController.findByCodigo( 1 ).getNif();;
-//
-//        Documento documento = ( Documento ) documentosController.findById(
-//                venda.getFkDocumento().getPkDocumento() );
-//
-//        TbCliente cliente = ( TbCliente ) clientesController.findById(
-//                venda.getCodigoCliente().getCodigo() );
-//
-//        List<DocumentDTO> documentDTOs = new ArrayList<>();
-//        DocumentDTO doc = new DocumentDTO();
-//
-//        doc.setDocumentNo( venda.getCodFact() );
-//        doc.setDocumentStatus( "N" );
-//        doc.setDocumentDate( DataUtil.converterNormal( venda.getDataVenda() ) );
-//        doc.setDocumentType( documento.getAbreviacao() );
-//        doc.setEacCode( "12345" );
-//        doc.setSystemEntryDate( DataUtil.converter( venda.getDataVenda() ) );
-//        doc.setCustomerTaxID( cliente.getNif() );
-//        doc.setCustomerCountry( cliente.getPaisISO() );
-//        doc.setCompanyName( cliente.getNome() ); // era morada, agora nome
-//
-//        List<LineDTO> lines = new ArrayList<>();
-//
-//        double totalBase = 0;
-//        double totalIva = 0;
-//        double totalFinal = 0;
-//        double totalRetencao = 0;
-//
-//        for ( int i = 0; i < table.getRowCount(); i++ )
-//        {
-//
-//            int idProduto = Integer.parseInt( table.getValueAt( i, 0 ).toString() );
-//            String designacaoItem = table.getValueAt( i, 1 ).toString();
-//            double unitPrice = CfMethods.parseMoedaFormatada( table.getValueAt( i, 3 ).toString() );
-//            double qtd = Double.parseDouble( table.getValueAt( i, 4 ).toString() );
-//            double desconto = Double.parseDouble( table.getValueAt( i, 5 ).toString() );
-//            double taxa = Double.parseDouble( table.getValueAt( i, 6 ).toString() );
-//            double retencaoLinha = CfMethods.parseMoedaFormatada( table.getValueAt( i, 7 ).toString() );
-//
-//            double unitPriceBase = unitPrice - desconto;
-//            double base = unitPriceBase * qtd;
-//            double iva = base * ( taxa / 100.0 );
-//            double totalLinhaSemIva = base;
-//            double totalLinha = base + iva;
-//
-//            LineDTO line = new LineDTO();
-//            line.setLineNumber( i + 1 );
-//            line.setProductCode( String.valueOf( idProduto ) );
-//            line.setProductDescription( designacaoItem );
-//            line.setQuantity( String.valueOf( qtd ) );
-//            line.setUnitOfMeasure( "UN" );
-//            line.setUnitPrice( unitPrice );
-//            line.setUnitPriceBase( unitPriceBase );
-//            line.setDebitAmount( 0 );
-//            line.setCreditAmount( totalLinhaSemIva );
-//            
-//            
-//            
-//
-//            if ( taxa > 0 )
-//            {
-//                TaxDTO tax = new TaxDTO();
-//                tax.setTaxType( "IVA" );
-//                tax.setTaxCountryRegion( "AO" );
-//                tax.setTaxCode( "NOR" );
-//                tax.setTaxPercentage( String.valueOf( taxa ) );
-//                tax.setTaxContribution( iva );
-//
-//                line.setTaxes( Collections.singletonList( tax ) );
-//            }
-//
-//            lines.add( line );
-//
-//            totalBase += base;
-//            totalIva += iva;
-//            totalFinal += totalLinha;
-//            totalRetencao += retencaoLinha;
-//        }
-//
-//        doc.setLines( lines );
-//
-//        DocumentTotalsDTO documentsTotals = new DocumentTotalsDTO();
-//        documentsTotals.setNetTotal( totalBase );
-//        documentsTotals.setTaxPayable( totalIva );
-//        documentsTotals.setGrossTotal( totalFinal );
-//        doc.setDocumentTotals( documentsTotals );
-//
-//        documentDTOs.add( doc );
-//
-//        Series serie = seriesController
-//                .findByDocumentoEAno( getIdDocumento(), getIdAnoEconomico() );
-//
-//        Documento documentoType = documentosController.findDocumentoById(
-//                serie.getFkDocumento() );
-//
-//        if ( totalRetencao > 0 )
-//        {
-//            WithholdingTaxDTO ret = new WithholdingTaxDTO();
-//            ret.setWithholdingTaxType( "IRT" );
-//            ret.setWithholdingTaxDescription( "Retenção na fonte" );
-//            ret.setWithholdingTaxAmount( totalRetencao );
-//
-//            doc.setWithholdingTaxList( Collections.singletonList( ret ) );
-//        }
-//        Map<String, Object> jsonPayload = PayloadFactory.criarPayloadCriarDocumento(
-//                taxRegistrationNumber,
-//                cmbAnoEconomico.getSelectedItem().toString(),
-//                documentoType.getAbreviacao(),
-//                documentDTOs
-//        );
-//
-//        String payload = JsonUtil.toJson( jsonPayload );
-//
-//        JsonUtil.print( payload );
-//        String basicAuth = BasicAuthUtil.gerarAuthorizationHeader( FEConfig.getUsername(), FEConfig.getPassword() );
-//        String resposta;
-//        try
-//        {
-//            resposta = HttpClientUtil.postJson( FEConfig.getEndpointRegistrarFactura(),
-//                    payload, // o JSON que já tens
-//                    basicAuth // SOMENTE o base64 (sem "Basic ")
-//            );
-//
-//            JsonUtil.print( resposta );
-//
-//            return obterEstadoFactura( taxRegistrationNumber, resposta );
-////            String r = JsonUtil.toJson( resposta );
-//
-//        }
-//        catch ( Exception e )
-//        {
-//            e.printStackTrace();
-//        }
-//
-//        return false;
-//
-//    }
     private static boolean criarFE( TbVenda venda )
     {
         String taxRegistrationNumber = dadosInstituicaoController.findByCodigo( 1 ).getNif();
@@ -7435,152 +7296,13 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         {
             String resposta = HttpClientUtil.postJson( FEConfig.getEndpointRegistrarFactura(), payload, basicAuth );
             JsonUtil.print( resposta );
-            return obterEstadoFactura( taxRegistrationNumber, resposta, venda );
+            return PayloadFactory.obterEstadoFactura( taxRegistrationNumber, resposta, venda );
         }
         catch ( Exception e )
         {
             e.printStackTrace();
         }
 
-        return false;
-    }
-
-    private static boolean obterEstadoFactura(
-            String taxRegistrationNumber,
-            String resposta,
-            TbVenda venda
-    ) throws JsonProcessingException
-    {
-        ObjectMapper mapper = new ObjectMapper();
-
-        // 1️⃣ Extrair requestID
-        JsonNode rootNode = mapper.readTree( resposta );
-        String requestID = rootNode.get( "requestID" ).asText();
-        venda.setRequestID( requestID );
-
-        System.out.println( "Request ID: " + requestID );
-
-        // 2️⃣ Criar payload de consulta
-        Map<String, Object> jsonPayload = PayloadFactory.consultaPayloadFactura(
-                taxRegistrationNumber,
-                requestID
-        );
-
-        String payload = JsonUtil.toJson( jsonPayload );
-        System.out.println( payload );
-
-        String basicAuth = BasicAuthUtil.gerarAuthorizationHeader(
-                FEConfig.getUsername(),
-                FEConfig.getPassword()
-        );
-
-        try
-        {
-            // 3️⃣ Chamada à FE
-            String r = HttpClientUtil.postJson(
-                    FEConfig.getEndpointObterEstado(),
-                    payload,
-                    basicAuth
-            );
-
-            JsonUtil.print( r );
-
-            JsonNode estadoRoot = mapper.readTree( r );
-
-            JsonNode documentStatusList = estadoRoot.get( "documentStatusList" );
-            JsonNode requestErrorList = estadoRoot.get( "requestErrorList" );
-
-            // =====================================================
-            // 🔎 1º VERIFICAR ERROS DO PEDIDO (ANTES DO DOCUMENTO)
-            // =====================================================
-            if ( requestErrorList != null && requestErrorList.isArray() && requestErrorList.size() > 0 )
-            {
-                for ( JsonNode erro : requestErrorList )
-                {
-
-                    if ( Objects.nonNull( erro.get( "idError" ) ) )
-                    {
-                        String idErro = erro.get( "idError" ).asText();
-                        venda.setEstado( "P" );
-
-                        // ✅ REGRA DE NEGÓCIO
-                        if ( "E94".equalsIgnoreCase( idErro ) )
-                        {
-                            JOptionPane.showMessageDialog( null, "Factura processada no estado PENDENTE.\nAguardando a resposta da AGT." );
-                            System.out.println( "E94 - Solicitação não encontrada. Considerando TRUE." );
-                            return true;
-                        }
-
-                        // Outros erros reais
-                        JOptionPane.showMessageDialog(
-                                null,
-                                "Erro da FE: " + erro.get( "descriptionError" ).asText(),
-                                "Erro na Consulta",
-                                JOptionPane.ERROR_MESSAGE
-                        );
-                        return false;
-                    }
-
-                }
-            }
-
-            // =====================================================
-            // 🔎 2º VERIFICAR STATUS DA FACTURA
-            // =====================================================
-            if ( documentStatusList != null && documentStatusList.isArray() && documentStatusList.size() > 0 )
-            {
-                JsonNode doc = documentStatusList.get( 0 );
-                String documentStatus = doc.get( "documentStatus" ).asText();
-
-                // ✅ FACTURA VÁLIDA
-                if ( "V".equalsIgnoreCase( documentStatus ) )
-                {
-                    JOptionPane.showMessageDialog(
-                            null,
-                            "Factura validada com sucesso ✅",
-                            "Factura Válida",
-                            JOptionPane.INFORMATION_MESSAGE
-                    );
-                    venda.setEstado( "V" );
-                    return true;
-                }
-                // ❌ FACTURA INVÁLIDA
-                else if ( "I".equalsIgnoreCase( documentStatus ) )
-                {
-                    venda.setEstado( "I" );
-                    StringBuilder mensagens = new StringBuilder( "Factura inválida ❌\n\n" );
-
-                    JsonNode errorList = doc.get( "errorList" );
-
-                    if ( errorList != null && errorList.isArray() )
-                    {
-                        for ( JsonNode erro : errorList )
-                        {
-                            mensagens.append( "• " )
-                                    .append( erro.get( "descriptionError" ).asText() )
-                                    .append( "\n" );
-                        }
-                    }
-
-                    JOptionPane.showMessageDialog(
-                            null,
-                            mensagens.toString(),
-                            "Erro de Validação",
-                            JOptionPane.ERROR_MESSAGE
-                    );
-
-                    return false;
-                }
-            }
-
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace();
-            return false;
-        }
-
-        // Caso inesperado
         return false;
     }
 

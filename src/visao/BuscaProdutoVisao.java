@@ -720,6 +720,7 @@ public class BuscaProdutoVisao extends javax.swing.JDialog
 //            }
             try
             {
+              
                 FormVendaResponsivaVisaoTop.accao_codigo_interno_enter_busca_exterior( codigo );
 
             }

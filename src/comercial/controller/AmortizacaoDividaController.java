@@ -5,9 +5,9 @@
  */
 package comercial.controller;
 
-
 import java.sql.Connection;
 import dao.VendaDao;
+import entity.AmortizacaoDivida;
 import entity.AnoEconomico;
 import entity.Cambio;
 import entity.Documento;
@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import util.BDConexao;
@@ -33,7 +34,7 @@ import static visao.FicheiroSAFTVisao.jProgressBar1;
  *
  * @author Domingos Dala Vunge
  */
-public class AmortizacaoDividaController
+public class AmortizacaoDividaController implements EntidadeFactory
 {
 
     private BDConexao conexao;
@@ -41,6 +42,62 @@ public class AmortizacaoDividaController
     public AmortizacaoDividaController( BDConexao conexao )
     {
         this.conexao = conexao;
+    }
+
+    @Override
+    public boolean salvar( Object object )
+    {
+        AmortizacaoDivida a = ( AmortizacaoDivida ) object;
+
+        String INSERT = "INSERT INTO amortizacao_divida ("
+                + "data, valor_pendente, valor_entregue, troco, obs, desconto, "
+                + "ref_cod_fact, total_venda_fact, valor_pago, net_total, tax, "
+                + "fk_usuario, fk_venda"
+                + ") VALUES ("
+                + "'" + MetodosUtil.getDataBancoFull( a.getData() ) + "', "
+                + a.getValorPendente() + ", "
+                + a.getValorEntregue() + ", "
+                + a.getTroco() + ", "
+                + "'" + a.getObs() + "', "
+                + a.getDesconto() + ", "
+                + "'" + a.getRefCodFact() + "', "
+                + a.getTotalVendaFact() + ", "
+                + a.getValorPago() + ", "
+                + a.getNetTotal() + ", "
+                + a.getTax() + ", "
+                + a.getFkUsuario().getCodigo() + ", "
+                + a.getFkVenda().getCodigo()
+                + ")";
+
+        System.out.println( "INSERT AMORTIZACAO: " + INSERT );
+        return conexao.executeUpdate( INSERT );
+    }
+
+    @Override
+    public boolean actualizar( Object object )
+    {
+        AmortizacaoDivida a = ( AmortizacaoDivida ) object;
+
+        String UPDATE = "UPDATE amortizacao_divida SET "
+                + "valor_pendente = " + a.getValorPendente()
+                + ", valor_entregue = " + a.getValorEntregue()
+                + ", troco = " + a.getTroco()
+                + ", obs = '" + a.getObs() + "'"
+                + ", desconto = " + a.getDesconto()
+                + ", valor_pago = " + a.getValorPago()
+                + ", net_total = " + a.getNetTotal()
+                + ", tax = " + a.getTax()
+                + " WHERE pk_amortizacao_divida = " + a.getPkAmortizacaoDivida();
+
+        System.out.println( "UPDATE AMORTIZACAO: " + UPDATE );
+        return conexao.executeUpdate( UPDATE );
+    }
+
+    @Override
+    public boolean eliminar( int codigo )
+    {
+        String DELETE = "DELETE FROM amortizacao_divida WHERE pk_amortizacao_divida = " + codigo;
+        return conexao.executeUpdate( DELETE );
     }
 
     public List<TbVenda> listarTodosByData1AndData2AndTipoDocumento( Date data_1, Date data_2, int pk_documento )
@@ -495,6 +552,24 @@ public class AmortizacaoDividaController
         }
 
         return 0.0;
+    }
+
+    @Override
+    public Object findById( int codigo )
+    {
+        throw new UnsupportedOperationException( "Not supported yet." ); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<?> listarTodos()
+    {
+        throw new UnsupportedOperationException( "Not supported yet." ); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Vector<String> getVector()
+    {
+        throw new UnsupportedOperationException( "Not supported yet." ); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }
