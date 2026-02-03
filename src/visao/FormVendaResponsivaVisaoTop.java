@@ -1740,7 +1740,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
             if ( podeRemoverServico( modelo, table.getSelectedRow() ) )
             {
-                actualizarPrecosAntigos2();
+//                actualizarPrecosAntigos2();
                 remover_item_carrinho();
                 inserirLinhaEmBranco();
             }
@@ -1926,7 +1926,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             }
         }
 
-        actualizarPrecosAntigos2();
+//        actualizarPrecosAntigos2();
         dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
@@ -2012,7 +2012,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         if ( table.getSelectedColumn() == 3 || table.getSelectedColumn() == 4 || table.getSelectedColumn() == 5 )
         {
             System.out.println( "Preparar para actualiza a Qtd......" );
-            actualizarPreco();
+//            actualizarPreco();
 //            JOptionPane.showMessageDialog( null, "Preparar para actualizar qtd" );
             actualizarQtdTable();
         }
@@ -2756,7 +2756,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                 registrarFormaPagamento( idVendaGerada, venda.getTotalVenda(), frNormal, conexaoTransactionLocal );
             }
             //actualizar precos antigos
-            actualizarPrecosAntigos();
+//            actualizarPrecosAntigos();
 
             // Finaliza transação
             DocumentosController.commit( conexaoTransactionLocal );
@@ -3911,21 +3911,21 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         String unidade = getUnidade_Produto();
 
         BigDecimal quantidade = BigDecimal.valueOf( qtd );
-        BigDecimal preco = BigDecimal.valueOf( getPreco() );
+        BigDecimal preco = BigDecimal.valueOf( getPreco( codigoProdutoLocal, quantidade.doubleValue() ) );
         BigDecimal descontoPercent = BigDecimal.valueOf( getDescontoPercentagem() );
         BigDecimal taxaIva = BigDecimal.valueOf( getTaxaImpostoIva( codigoProdutoLocal ) );
         BigDecimal taxaRet = BigDecimal.valueOf( getTaxaImpostoRet( codigoProdutoLocal ) );
 
         BigDecimal valorIliquidoUnit = FinanceUtils.getValorIliquido(
-                quantidade, preco, descontoPercent
-        );
+                new BigDecimal( 1d ), preco, descontoPercent
+        );//valor unitario
 
         double valorLiquidoDoubleUnit = FinanceUtils.getValorComIVA(
-                quantidade.doubleValue(),
+                1d,
                 taxaIva.doubleValue(),
                 valorIliquidoUnit.doubleValue(),
                 descontoPercent.doubleValue()
-        );
+        ); // valor unitario
 
         BigDecimal valorIliquido = valorIliquidoUnit.multiply( quantidade );
         BigDecimal totalComIva = BigDecimal.valueOf( valorLiquidoDoubleUnit * quantidade.doubleValue() );
@@ -6963,7 +6963,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         String precoUnitario = CfMethods.formatarComoMoeda( Double.parseDouble( preco ) );
         table.setValueAt( precoUnitario, table.getSelectedRow(), 3 );
 
-        actualizarPrecoVendaManual( idProduto, CfMethods.parseMoedaFormatada( precoUnitario ), precosController );
+//        actualizarPrecoVendaManual( idProduto, CfMethods.parseMoedaFormatada( precoUnitario ), precosController );
     }
 
     private static void actualizarPrecoVendaManual( int idProduto, Double precoVenda, PrecosController precosControllerLocal )
@@ -7148,7 +7148,14 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         double qtd = Double.parseDouble( quantidade );
         double retencao = 0;
 
-        double preco_venda = CfMethods.parseMoedaFormatada( String.valueOf( modelo.getValueAt( linha_actual, 3 ) ) );
+        int idProduto = Integer.parseInt( String.valueOf( modelo.getValueAt( linha_actual, 0 ) ) );
+
+//        double preco_venda = CfMethods.parseMoedaFormatada( String.valueOf( modelo.getValueAt( linha_actual, 3 ) ) );
+        System.err.println( "QUANTIDADE:  " + qtd );
+
+        double preco_venda = getPreco( idProduto, qtd );
+
+        System.out.println( "PRECO VENDA: " + preco_venda );
         double taxa = Double.parseDouble( String.valueOf( modelo.getValueAt( linha_actual, 6 ) ) );
 //        double ret = CfMethods.parseMoedaFormatada( String.valueOf( modelo.getValueAt( linha_actual, 7) ) );
         double ret = Double.parseDouble( String.valueOf( modelo.getValueAt( linha_actual, 7 ) ) );
@@ -7158,9 +7165,9 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                 new BigDecimal( 1 ),
                 new BigDecimal( preco_venda ),
                 new BigDecimal( desconto )
-        ) );
+        ) );//Unidade
 
-        double totalComIva = FinanceUtils.getValorComIVA( 1, taxa, CfMethods.parseMoedaFormatada( total_iliquido_linha ), 0 );
+        double totalComIva = FinanceUtils.getValorComIVA( 1, taxa, CfMethods.parseMoedaFormatada( total_iliquido_linha ), 0 ); //Unidade
         totalComIva = totalComIva * qtd;
 
         String total_liquido_linha = CfMethods.formatarComoMoeda( totalComIva );
@@ -7170,8 +7177,10 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         String total_retencao = CfMethods.formatarComoMoeda( retencao );
 
         double totalIliquidoItem = CfMethods.parseMoedaFormatada( total_iliquido_linha ) * qtd;
+        String precoString = CfMethods.formatarComoMoeda( preco_venda );
         String totalIlquidoString = CfMethods.formatarComoMoeda( totalIliquidoItem );
 
+        modelo.setValueAt( precoString, linha_actual, 3 );
         modelo.setValueAt( qtd, linha_actual, 4 );
         modelo.setValueAt( desconto, linha_actual, 5 );
         modelo.setValueAt( total_retencao, linha_actual, 8 );
