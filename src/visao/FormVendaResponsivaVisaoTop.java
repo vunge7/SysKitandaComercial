@@ -1386,7 +1386,6 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                     .addGroup(painelDirLayout.createSequentialGroup()
                         .addComponent(lbCodigoProduto4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(3, 3, 3)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbValorPorExtenco, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -1458,6 +1457,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
         painelTabela.setLayout(new java.awt.BorderLayout());
 
+        jScrollPane1.setAutoscrolls(true);
         jScrollPane1.addPropertyChangeListener(new java.beans.PropertyChangeListener()
         {
             public void propertyChange(java.beans.PropertyChangeEvent evt)
@@ -1526,8 +1526,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             .addGroup(layout.createSequentialGroup()
                 .addComponent(painelTopo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(painelTabela, javax.swing.GroupLayout.PREFERRED_SIZE, 711, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(painelTabela, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(139, Short.MAX_VALUE))
         );
 
         pack();
@@ -1710,6 +1710,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private void btn_adicionarActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_btn_adicionarActionPerformed
     {//GEN-HEADEREND:event_btn_adicionarActionPerformed
 
+        double qtd = Double.parseDouble( txtQuatindade.getText() );
         if ( validar() )
         {
 
@@ -1724,7 +1725,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             }
             else
             {
-                adicionar_botao();
+                adicionar_botao( qtd );
                 scrolltable();
             }
 
@@ -2342,11 +2343,9 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         refresh_table( 1 );
     }
 
-    public void scrolltable()
+    public static void scrolltable()
     {
-
         table.scrollRectToVisible( table.getCellRect( table.getRowCount() - 1, table.getColumnCount(), true ) );
-
     }
 
     public void configurar_armazens()
@@ -3698,7 +3697,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     }
 
-    public static void procedimento_adicionar_sem_transtorno( String mes )
+    public static void procedimento_adicionar_sem_transtorno( String mes, double qtd )
     {
         try
         {
@@ -3714,12 +3713,12 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                         {
                             JOptionPane.showMessageDialog( null, "O produto: " + produto.getDesignacao() + " precisa de ser actualizado no stock", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
                         }
-                        adicionar_produto( mes );
+                        adicionar_produto( mes, qtd );
 
                     }
                     else
                     {
-                        adicionar_produto( mes );
+                        adicionar_produto( mes, qtd );
                     }
                 }
                 else
@@ -3741,7 +3740,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     }
 
-    public static void procedimento_adicionar( String mes )
+    public static void procedimento_adicionar( String mes, double qtd )
     {
         boolean documentoIsFA = DVML.DOC_FACTURA_FT == getIdDocumento();
         boolean documentoIsPP = DVML.DOC_FACTURA_PROFORMA_PP == getIdDocumento();
@@ -3766,7 +3765,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                             {
                                 JOptionPane.showMessageDialog( null, "O produto: " + produto.getDesignacao() + " precisa de ser actualizado no stock", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
                             }
-                            adicionar_produto( mes );
+                            adicionar_produto( mes, qtd );
                         }
                         else
                         {
@@ -3775,7 +3774,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                     }
                     else
                     {
-                        adicionar_produto( mes );
+                        adicionar_produto( mes, qtd );
                     }
                 }
                 else
@@ -3809,7 +3808,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         {
             String codigo_barra = txtCodigoBarra.getText().trim();
             TbProduto produtoLocal = produtosController.findByCodBarra( codigo_barra );
-            procedimentoAdicionarTabela( produtoLocal );
+            double qtd = Double.parseDouble( txtQuatindade.getText() );
+            procedimentoAdicionarTabela( produtoLocal, qtd );
         }
         catch ( Exception ex )
         {
@@ -3820,7 +3820,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     }
 
-    public void adicionar_botao_retificar( String mes )
+    public void adicionar_botao_retificar( String mes, double qtd )
     {
 
         try
@@ -3839,7 +3839,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                         {
                             JOptionPane.showMessageDialog( null, "O produto: " + produto.getDesignacao() + " precisa de ser actualizado no stock", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
                         }
-                        adicionar_produto( mes );
+                        adicionar_produto( mes, qtd );
                     }
                     else
                     {
@@ -3849,7 +3849,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                 }
                 else
                 {
-                    adicionar_produto( mes );
+                    adicionar_produto( mes, qtd );
                 }
 
             }
@@ -3866,7 +3866,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     }
 
-    public static void adicionar_produto( String mes ) throws SQLException
+    public static void adicionar_produto( String mes, double qtd ) throws SQLException
     {
         DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         table.setRowHeight( 28 );
@@ -3910,29 +3910,29 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         // --------------------------
         String unidade = getUnidade_Produto();
 
-        BigDecimal qtd = BigDecimal.valueOf( getQuantidade() );
+        BigDecimal quantidade = BigDecimal.valueOf( qtd );
         BigDecimal preco = BigDecimal.valueOf( getPreco() );
         BigDecimal descontoPercent = BigDecimal.valueOf( getDescontoPercentagem() );
         BigDecimal taxaIva = BigDecimal.valueOf( getTaxaImpostoIva( codigoProdutoLocal ) );
         BigDecimal taxaRet = BigDecimal.valueOf( getTaxaImpostoRet( codigoProdutoLocal ) );
 
         BigDecimal valorIliquidoUnit = FinanceUtils.getValorIliquido(
-                BigDecimal.ONE, preco, descontoPercent
+                quantidade, preco, descontoPercent
         );
 
         double valorLiquidoDoubleUnit = FinanceUtils.getValorComIVA(
-                1d,
+                quantidade.doubleValue(),
                 taxaIva.doubleValue(),
                 valorIliquidoUnit.doubleValue(),
                 descontoPercent.doubleValue()
         );
 
-        BigDecimal valorIliquido = valorIliquidoUnit.multiply( qtd );
-        BigDecimal totalComIva = BigDecimal.valueOf( valorLiquidoDoubleUnit * qtd.doubleValue() );
+        BigDecimal valorIliquido = valorIliquidoUnit.multiply( quantidade );
+        BigDecimal totalComIva = BigDecimal.valueOf( valorLiquidoDoubleUnit * quantidade.doubleValue() );
 
         String totalRetencao = CfMethods.formatarComoMoeda(
                 MetodosUtil.getValorComRetencao(
-                        qtd.doubleValue(),
+                        quantidade.doubleValue(),
                         taxaRet.doubleValue(),
                         preco.doubleValue(),
                         descontoPercent.doubleValue()
@@ -4007,7 +4007,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             MetodosUtil.imprimir_cozinha(
                     findByDesignacao, idPedido,
                     mesaEntity.getDesignacao(), lugarEntity.getDesignacao(),
-                    usuario, "Activo", qtd.intValue(), dadosInstituicaoController
+                    usuario, "Activo", quantidade.intValue(), dadosInstituicaoController
             );
         }
         else if ( findByDesignacao.getCozinha().equals( DVML.ENVIAR_SALA ) )
@@ -4015,7 +4015,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             MetodosUtil.imprimir_sala(
                     findByDesignacao, idPedido,
                     mesaEntity.getDesignacao(), lugarEntity.getDesignacao(),
-                    usuario, "Activo", qtd.intValue(), dadosInstituicaoController
+                    usuario, "Activo", quantidade.intValue(), dadosInstituicaoController
             );
         }
 
@@ -4422,7 +4422,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     }
 
-    private static void procedimentoAdicionarTabela2( TbProduto produto, String mes )
+    private static void procedimentoAdicionarTabela2( TbProduto produto, String mes, double qtd )
     {
         try
         {
@@ -4440,11 +4440,11 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                 adicionar_preco_quantidade_anitgo();
                 if ( rbTranstorno.isSelected() )
                 {
-                    procedimento_adicionar_sem_transtorno( mes );
+                    procedimento_adicionar_sem_transtorno( mes, qtd );
                 }
                 else
                 {
-                    procedimento_adicionar( mes );
+                    procedimento_adicionar( mes, qtd );
                 }
                 txtCodigoProduto.setText( "" );
                 txtCodigoBarra.setText( "" );
@@ -4544,7 +4544,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     }
 
-    public void adicionar_botao()
+    public void adicionar_botao( double qtd )
     {
         try
         {
@@ -4562,7 +4562,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                             {
                                 JOptionPane.showMessageDialog( null, "O produto: " + produtoLocal.getDesignacao() + " precisa de ser actualizado no stock", "DVML", JOptionPane.WARNING_MESSAGE );
                             }
-                            adicionar_produto( "" );
+                            adicionar_produto( "", qtd );
 
                         }
                         else
@@ -4573,7 +4573,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                     }
                     else
                     {
-                        adicionar_produto( "" );
+                        adicionar_produto( "", qtd );
                     }
                 }
                 else
@@ -5460,7 +5460,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         {
             String codigo_manual = txtCodigoManual.getText();
             TbProduto produtoLocal = produtosController.findByCodManual( codigo_manual );
-            procedimentoAdicionarTabela( produtoLocal );
+            double qtd = Double.parseDouble( txtQuatindade.getText() );
+            procedimentoAdicionarTabela( produtoLocal, qtd );
         }
         catch ( Exception ex )
         {
@@ -5577,7 +5578,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
     }
 
-    public static void accao_codigo_interno_enter_busca_exterior( int codigo )
+    public static void accao_codigo_interno_enter_busca_exterior( int codigo, double qtd )
     {
 
         try
@@ -5599,6 +5600,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
             boolean existeConfiguracaoDoCliente = configuracaoMesComecoController.existeConfiguracaoDoCliente(
                     getIdCliente(), produtoLocal.getCodigo() );
+
             if ( existeConfiguracaoDoCliente )
             {
 
@@ -5610,10 +5612,11 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             else
             {
 
-                procedimentoAdicionarTabela( produtoLocal );
+                procedimentoAdicionarTabela( produtoLocal, qtd );
             }
 
             cursorLinha();
+            scrolltable();
         }
         catch ( Exception ex )
         {
@@ -5941,6 +5944,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         try
         {
 
+            double qtd = Double.parseDouble( txtQuatindade.getText() );
             int codigo = Integer.parseInt( txtCodigoProduto.getText() );
             TbProduto produto = ( TbProduto ) produtosController.findByIdStatus( codigo );
 
@@ -5970,7 +5974,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             }
             else
             {
-                procedimentoAdicionarTabela( produto );
+                procedimentoAdicionarTabela( produto, qtd );
 
             }
 
@@ -6117,7 +6121,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         }
     }
 
-    private static void procedimentoAdicionarTabela( TbProduto produto )
+    private static void procedimentoAdicionarTabela( TbProduto produto, double qtd )
     {
         try
         {
@@ -6126,11 +6130,11 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                 adicionar_preco_quantidade_anitgo();
                 if ( rbTranstorno.isSelected() )
                 {
-                    procedimento_adicionar_sem_transtorno( "" );
+                    procedimento_adicionar_sem_transtorno( "", qtd );
                 }
                 else
                 {
-                    procedimento_adicionar( "" );
+                    procedimento_adicionar( "", qtd );
                 }
                 txtCodigoProduto.setText( "" );
                 txtCodigoBarra.setText( "" );
@@ -7197,8 +7201,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             produtosController = new ProdutosController( conexao );
             System.out.println( "ID PRODUTO EXTERIOR: " + codigo );
             TbProduto produtoLocal = ( TbProduto ) produtosController.findById( codigo );
-
-            procedimentoAdicionarTabela2( produtoLocal, mes );
+            double qtd = Double.parseDouble( txtQuatindade.getText() );
+            procedimentoAdicionarTabela2( produtoLocal, mes, qtd );
 
         }
         catch ( Exception ex )

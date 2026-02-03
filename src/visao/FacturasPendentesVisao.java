@@ -377,9 +377,10 @@ public class FacturasPendentesVisao extends javax.swing.JDialog
         for ( int i = 0; i < modelo.getRowCount(); i++ )
         {
             int idItem = Integer.parseInt( modelo.getValueAt( i, 0 ).toString() );
+            double qtd = Double.parseDouble( modelo.getValueAt( i, 2 ).toString() );
             try
             {
-                FormVendaResponsivaVisaoTop.accao_codigo_interno_enter_busca_exterior( idItem );
+                FormVendaResponsivaVisaoTop.accao_codigo_interno_enter_busca_exterior( idItem, qtd );
             }
             catch ( Exception e )
             {

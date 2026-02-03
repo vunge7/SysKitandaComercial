@@ -13,7 +13,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Iterator;
-import java.util.Objects;
 import java.util.Vector;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -26,7 +25,6 @@ import util.BDConexao;
 import util.DVML;
 import util.Definicoes;
 import util.tabela_manual.render.RenderBusca;
-import static visao.VendaUsuarioVisao.table;
 
 /**
  *
@@ -720,7 +718,8 @@ public class BuscaProdutoVisao extends javax.swing.JDialog
 //            }
             try
             {
-                FormVendaResponsivaVisaoTop.accao_codigo_interno_enter_busca_exterior( codigo );
+                double qtd = Double.parseDouble( FormVendaResponsivaVisaoTop.txtQuatindade.getText() );
+                FormVendaResponsivaVisaoTop.accao_codigo_interno_enter_busca_exterior( codigo, qtd );
 
             }
             catch ( Exception e )
