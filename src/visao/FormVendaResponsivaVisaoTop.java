@@ -89,7 +89,9 @@ import java.util.Collections;
 import java.util.Map;
 import util.fe.BasicAuthUtil;
 import util.fe.FEConfig;
+import util.fe.FacturaElectronicaUtil;
 import util.fe.JsonUtil;
+import util.fe.TableColumIdUtil;
 import util.fe.http.HttpClientUtil;
 import util.fe.payloads.PayloadFactory;
 
@@ -2605,7 +2607,18 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             // Construção do objeto venda
             TbVenda venda = construirVenda();
 
-            boolean respostaAGT = criarFE( venda );
+            TbDadosInstituicao dadosInstituicao = dadosInstituicaoController.findByCodigo( 1 );
+            Documento documento = documentosController.findDocumentoById( getIdDocumento() );
+            TbCliente cliente = clientesController.findByCodigo( getIdCliente() );
+
+            boolean respostaAGT = FacturaElectronicaUtil.criarFE(
+                    venda,
+                    dadosInstituicao,
+                    documento,
+                    cliente,
+                    table,
+                    getObjectsColumnsIds()
+            );
 
             if ( respostaAGT )
             {
@@ -7163,149 +7176,148 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         }
     }
 
-    private static boolean criarFE( TbVenda venda )
-    {
-        String taxRegistrationNumber = dadosInstituicaoController.findByCodigo( 1 ).getNif();
-
-        Documento documento = ( Documento ) documentosController.findById(
-                venda.getFkDocumento().getPkDocumento()
-        );
-
-        TbCliente cliente = ( TbCliente ) clientesController.findById(
-                venda.getCodigoCliente().getCodigo()
-        );
-
-        List<DocumentDTO> documentDTOs = new ArrayList<>();
-        DocumentDTO doc = new DocumentDTO();
-
-        doc.setDocumentNo( venda.getCodFact() );
-        doc.setDocumentStatus( "N" );
-        doc.setDocumentDate( DataUtil.converterNormal( venda.getDataVenda() ) );
-        doc.setDocumentType( documento.getAbreviacao() );
-        doc.setEacCode( "12345" );
-        doc.setSystemEntryDate( DataUtil.converter( venda.getDataVenda() ) );
-        doc.setCustomerTaxID( cliente.getNif() );
-        doc.setCustomerCountry( cliente.getPaisISO() );
-        doc.setCompanyName( cliente.getNome() );
-
-        List<LineDTO> lines = new ArrayList<>();
-
-        BigDecimal totalBase = BigDecimal.ZERO;
-        BigDecimal totalIva = BigDecimal.ZERO;
-        BigDecimal totalFinal = BigDecimal.ZERO;
-        BigDecimal totalRetencao = BigDecimal.ZERO;
-
-        for ( int i = 0; i < table.getRowCount(); i++ )
-        {
-            int idProduto = Integer.parseInt( table.getValueAt( i, 0 ).toString() );
-            String designacaoItem = table.getValueAt( i, 1 ).toString();
-            double unitPrice = CfMethods.parseMoedaFormatada( table.getValueAt( i, 3 ).toString() );
-            double qtd = Double.parseDouble( table.getValueAt( i, 4 ).toString() );
-            double desconto = Double.parseDouble( table.getValueAt( i, 5 ).toString() );
-            double taxa = Double.parseDouble( table.getValueAt( i, 6 ).toString() );
-            double retencaoLinha = CfMethods.parseMoedaFormatada( table.getValueAt( i, 7 ).toString() );
-            double subTotal = CfMethods.parseMoedaFormatada( table.getValueAt( i, 10 ).toString() );
-
-            // Cálculos com BigDecimal e arredondamento
-            BigDecimal bdUnitPrice = BigDecimal.valueOf( unitPrice );
-            BigDecimal bdDesconto = BigDecimal.valueOf( desconto );
-            BigDecimal bdQtd = BigDecimal.valueOf( qtd );
-//            BigDecimal bdTaxa = BigDecimal.valueOf( taxa ).divide( BigDecimal.valueOf( 100 ) );
-
-//            BigDecimal unitPriceBase = bdUnitPrice.subtract( bdDesconto ).setScale( 2, BigDecimal.ROUND_CEILING );
-            BigDecimal unitPriceBase = bdUnitPrice.subtract( bdDesconto );
-//            BigDecimal base = unitPriceBase.multiply( bdQtd ).setScale( 2, BigDecimal.ROUND_CEILING );
-            BigDecimal base = unitPriceBase.multiply( bdQtd ).setScale( 2, RoundingMode.CEILING );;
-//            BigDecimal iva = base.multiply( bdTaxa ).setScale( 2, BigDecimal.ROUND_CEILING );
-            BigDecimal iva = FinanceUtils.getValorIVA( qtd, taxa, unitPriceBase.doubleValue(), desconto );
-//            BigDecimal totalLinha = base.add( iva ).setScale( 2, BigDecimal.ROUND_CEILING );
-
-            BigDecimal totalLinha = base.add( iva );
-
-            LineDTO line = new LineDTO();
-            line.setLineNumber( i + 1 );
-            line.setProductCode( String.valueOf( idProduto ) );
-            line.setProductDescription( designacaoItem );
-            line.setQuantity( String.valueOf( qtd ) );
-            line.setUnitOfMeasure( "UN" );
-            line.setUnitPrice( unitPrice );
-            line.setUnitPriceBase( unitPriceBase.doubleValue() );
-            line.setDebitAmount( 0 );
-            line.setCreditAmount( base.doubleValue() );
-
-            if ( taxa > 0 )
-            {
-                TaxDTO tax = new TaxDTO();
-                tax.setTaxType( "IVA" );
-                tax.setTaxCountryRegion( "AO" );
-                tax.setTaxCode( "NOR" );
-                tax.setTaxPercentage( String.valueOf( taxa ) );
-                tax.setTaxContribution( iva.doubleValue() );
-
-                line.setTaxes( Collections.singletonList( tax ) );
-            }
-
-            lines.add( line );
-
-            totalBase = totalBase.add( base );
-            totalIva = totalIva.add( iva );
-            totalFinal = totalFinal.add( totalLinha );
-            totalRetencao = totalRetencao.add( BigDecimal.valueOf( retencaoLinha ) );
-        }
-
-        doc.setLines( lines );
-
-        DocumentTotalsDTO documentsTotals = new DocumentTotalsDTO();
-        documentsTotals.setNetTotal( totalBase.doubleValue() );
-        documentsTotals.setTaxPayable( totalIva.doubleValue() );
-        documentsTotals.setGrossTotal( totalFinal.doubleValue() );
-        doc.setDocumentTotals( documentsTotals );
-
-        documentDTOs.add( doc );
-        venda.setTotalIva( totalIva );
-        venda.setTotalGeral( totalBase );
-
-        Series serie = seriesController.findByDocumentoEAno( getIdDocumento(), getIdAnoEconomico() );
-        Documento documentoType = documentosController.findDocumentoById( serie.getFkDocumento() );
-
-        if ( totalRetencao.compareTo( BigDecimal.ZERO ) > 0 )
-        {
-            WithholdingTaxDTO ret = new WithholdingTaxDTO();
-            ret.setWithholdingTaxType( "IRT" );
-            ret.setWithholdingTaxDescription( "Retenção na fonte" );
-            ret.setWithholdingTaxAmount( totalRetencao.doubleValue() );
-
-            doc.setWithholdingTaxList( Collections.singletonList( ret ) );
-        }
-
-        Map<String, Object> jsonPayload = PayloadFactory.criarPayloadCriarDocumento(
-                taxRegistrationNumber,
-                documentDTOs
-        );
-
-        String submissionUUID = ( String ) jsonPayload.get( "submissionUUID" );
-        System.out.println( "UUID: " + submissionUUID );
-
-        venda.setSubmissionUUID( submissionUUID );
-        String payload = JsonUtil.toJson( jsonPayload );
-
-        JsonUtil.print( payload );
-
-        String basicAuth = BasicAuthUtil.gerarAuthorizationHeader( FEConfig.getUsername(), FEConfig.getPassword() );
-        try
-        {
-            String resposta = HttpClientUtil.postJson( FEConfig.getEndpointRegistrarFactura(), payload, basicAuth );
-            JsonUtil.print( resposta );
-            return PayloadFactory.obterEstadoFactura( taxRegistrationNumber, resposta, venda );
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace();
-        }
-
-        return false;
-    }
-
+//    private static boolean criarFE( TbVenda venda )
+//    {
+//        String taxRegistrationNumber = dadosInstituicaoController.findByCodigo( 1 ).getNif();
+//
+//        Documento documento = ( Documento ) documentosController.findById(
+//                venda.getFkDocumento().getPkDocumento()
+//        );
+//
+//        TbCliente cliente = ( TbCliente ) clientesController.findById(
+//                venda.getCodigoCliente().getCodigo()
+//        );
+//
+//        List<DocumentDTO> documentDTOs = new ArrayList<>();
+//        DocumentDTO doc = new DocumentDTO();
+//
+//        doc.setDocumentNo( venda.getCodFact() );
+//        doc.setDocumentStatus( "N" );
+//        doc.setDocumentDate( DataUtil.converterNormal( venda.getDataVenda() ) );
+//        doc.setDocumentType( documento.getAbreviacao() );
+//        doc.setEacCode( "12345" );
+//        doc.setSystemEntryDate( DataUtil.converter( venda.getDataVenda() ) );
+//        doc.setCustomerTaxID( cliente.getNif() );
+//        doc.setCustomerCountry( cliente.getPaisISO() );
+//        doc.setCompanyName( cliente.getNome() );
+//
+//        List<LineDTO> lines = new ArrayList<>();
+//
+//        BigDecimal totalBase = BigDecimal.ZERO;
+//        BigDecimal totalIva = BigDecimal.ZERO;
+//        BigDecimal totalFinal = BigDecimal.ZERO;
+//        BigDecimal totalRetencao = BigDecimal.ZERO;
+//
+//        for ( int i = 0; i < table.getRowCount(); i++ )
+//        {
+//            int idProduto = Integer.parseInt( table.getValueAt( i, 0 ).toString() );
+//            String designacaoItem = table.getValueAt( i, 1 ).toString();
+//            double unitPrice = CfMethods.parseMoedaFormatada( table.getValueAt( i, 3 ).toString() );
+//            double qtd = Double.parseDouble( table.getValueAt( i, 4 ).toString() );
+//            double desconto = Double.parseDouble( table.getValueAt( i, 5 ).toString() );
+//            double taxa = Double.parseDouble( table.getValueAt( i, 6 ).toString() );
+//            double retencaoLinha = CfMethods.parseMoedaFormatada( table.getValueAt( i, 7 ).toString() );
+//            double subTotal = CfMethods.parseMoedaFormatada( table.getValueAt( i, 10 ).toString() );
+//
+//            // Cálculos com BigDecimal e arredondamento
+//            BigDecimal bdUnitPrice = BigDecimal.valueOf( unitPrice );
+//            BigDecimal bdDesconto = BigDecimal.valueOf( desconto );
+//            BigDecimal bdQtd = BigDecimal.valueOf( qtd );
+////            BigDecimal bdTaxa = BigDecimal.valueOf( taxa ).divide( BigDecimal.valueOf( 100 ) );
+//
+////            BigDecimal unitPriceBase = bdUnitPrice.subtract( bdDesconto ).setScale( 2, BigDecimal.ROUND_CEILING );
+//            BigDecimal unitPriceBase = bdUnitPrice.subtract( bdDesconto );
+////            BigDecimal base = unitPriceBase.multiply( bdQtd ).setScale( 2, BigDecimal.ROUND_CEILING );
+//            BigDecimal base = unitPriceBase.multiply( bdQtd ).setScale( 2, RoundingMode.CEILING );;
+////            BigDecimal iva = base.multiply( bdTaxa ).setScale( 2, BigDecimal.ROUND_CEILING );
+//            BigDecimal iva = FinanceUtils.getValorIVA( qtd, taxa, unitPriceBase.doubleValue(), desconto );
+////            BigDecimal totalLinha = base.add( iva ).setScale( 2, BigDecimal.ROUND_CEILING );
+//
+//            BigDecimal totalLinha = base.add( iva );
+//
+//            LineDTO line = new LineDTO();
+//            line.setLineNumber( i + 1 );
+//            line.setProductCode( String.valueOf( idProduto ) );
+//            line.setProductDescription( designacaoItem );
+//            line.setQuantity( String.valueOf( qtd ) );
+//            line.setUnitOfMeasure( "UN" );
+//            line.setUnitPrice( unitPrice );
+//            line.setUnitPriceBase( unitPriceBase.doubleValue() );
+//            line.setDebitAmount( 0 );
+//            line.setCreditAmount( base.doubleValue() );
+//
+//            if ( taxa > 0 )
+//            {
+//                TaxDTO tax = new TaxDTO();
+//                tax.setTaxType( "IVA" );
+//                tax.setTaxCountryRegion( "AO" );
+//                tax.setTaxCode( "NOR" );
+//                tax.setTaxPercentage( String.valueOf( taxa ) );
+//                tax.setTaxContribution( iva.doubleValue() );
+//
+//                line.setTaxes( Collections.singletonList( tax ) );
+//            }
+//
+//            lines.add( line );
+//
+//            totalBase = totalBase.add( base );
+//            totalIva = totalIva.add( iva );
+//            totalFinal = totalFinal.add( totalLinha );
+//            totalRetencao = totalRetencao.add( BigDecimal.valueOf( retencaoLinha ) );
+//        }
+//
+//        doc.setLines( lines );
+//
+//        DocumentTotalsDTO documentsTotals = new DocumentTotalsDTO();
+//        documentsTotals.setNetTotal( totalBase.doubleValue() );
+//        documentsTotals.setTaxPayable( totalIva.doubleValue() );
+//        documentsTotals.setGrossTotal( totalFinal.doubleValue() );
+//        doc.setDocumentTotals( documentsTotals );
+//
+//        documentDTOs.add( doc );
+//        venda.setTotalIva( totalIva );
+//        venda.setTotalGeral( totalBase );
+//
+//        Series serie = seriesController.findByDocumentoEAno( getIdDocumento(), getIdAnoEconomico() );
+//        Documento documentoType = documentosController.findDocumentoById( serie.getFkDocumento() );
+//
+//        if ( totalRetencao.compareTo( BigDecimal.ZERO ) > 0 )
+//        {
+//            WithholdingTaxDTO ret = new WithholdingTaxDTO();
+//            ret.setWithholdingTaxType( "IRT" );
+//            ret.setWithholdingTaxDescription( "Retenção na fonte" );
+//            ret.setWithholdingTaxAmount( totalRetencao.doubleValue() );
+//
+//            doc.setWithholdingTaxList( Collections.singletonList( ret ) );
+//        }
+//
+//        Map<String, Object> jsonPayload = PayloadFactory.criarPayloadCriarDocumento(
+//                taxRegistrationNumber,
+//                documentDTOs
+//        );
+//
+//        String submissionUUID = ( String ) jsonPayload.get( "submissionUUID" );
+//        System.out.println( "UUID: " + submissionUUID );
+//
+//        venda.setSubmissionUUID( submissionUUID );
+//        String payload = JsonUtil.toJson( jsonPayload );
+//
+//        JsonUtil.print( payload );
+//
+//        String basicAuth = BasicAuthUtil.gerarAuthorizationHeader( FEConfig.getUsername(), FEConfig.getPassword() );
+//        try
+//        {
+//            String resposta = HttpClientUtil.postJson( FEConfig.getEndpointRegistrarFactura(), payload, basicAuth );
+//            JsonUtil.print( resposta );
+//            return PayloadFactory.obterEstadoFactura( taxRegistrationNumber, resposta, venda );
+//        }
+//        catch ( Exception e )
+//        {
+//            e.printStackTrace();
+//        }
+//
+//        return false;
+//    }
     private void visualizarSeries()
     {
         int idDocumento = getIdDocumento();
@@ -7331,6 +7343,20 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 
             cmbSeries.addItem( s.getDesignacao() );
         }
+    }
+
+    private static TableColumIdUtil getObjectsColumnsIds()
+    {
+        TableColumIdUtil tableColumIdUtil = new TableColumIdUtil();
+        tableColumIdUtil.setCOLUMN_PRODUTO_ID( 0 );
+        tableColumIdUtil.setCOLUMN_DESIGNACAO( 1 );
+        tableColumIdUtil.setCOLUMN_PRECO_UNITARIO( 3 );
+        tableColumIdUtil.setCOLUMN_QTD( 4 );
+        tableColumIdUtil.setCOLUMN_DESCONTO( 5 );
+        tableColumIdUtil.setCOLUMN_TAXA( 6 );
+        tableColumIdUtil.setCOLUMN_RETENCAO( 7 );
+        tableColumIdUtil.setCOLUMN_SUBTOTAL( 9 );
+        return tableColumIdUtil;
     }
 
 }
