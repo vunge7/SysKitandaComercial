@@ -50,6 +50,7 @@ import util.OperacaoSistemaUtil;
 /**
  * @author Domingos Dala Vunge
  */
+
 public class RootVisao extends javax.swing.JFrame
 {
 

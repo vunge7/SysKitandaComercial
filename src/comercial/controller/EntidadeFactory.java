@@ -6,11 +6,8 @@
 package comercial.controller;
 
 
-import java.sql.Connection;
-import controller.*;
 import java.util.List;
 import java.util.Vector;
-import util.BDConexao;
 
 /**
  *

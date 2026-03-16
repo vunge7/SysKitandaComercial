@@ -3359,7 +3359,6 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     {
         //return conexao.getCodigoPublico("tb_produto", String.valueOf(  cmbProduto.getSelectedItem()));   
         return produtosController.findByDesignacao( cmbProduto.getSelectedItem().toString() ).getCodigo();
-
     }
 
     public static BigDecimal getValor_entregue()
