@@ -1001,7 +1001,7 @@ public class VendasController implements EntidadeFactory
     public boolean actualizarContagem()
     {
         List<TbVenda> list = listarTodosIdDocumentoAndIdAnoEconomico(
-                DVML.DOC_FACTURA_RECIBO_FR, 5 );
+                DVML.DOC_RECIBO_RC, 7 );
 
         int cod = 1;
         String codFact;
@@ -1009,7 +1009,7 @@ public class VendasController implements EntidadeFactory
 
         for ( TbVenda documento : list )
         {
-            codFact = "FR 2024/" + cod;
+            codFact = "RE 2026/" + cod;
             actualizarCodFac( codFact, documento.getCodigo() );
             cod++;
         }
