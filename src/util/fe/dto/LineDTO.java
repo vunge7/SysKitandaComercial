@@ -22,12 +22,13 @@ public class LineDTO
     private String unitOfMeasure;
     private double unitPrice;
     private double unitPriceBase;
+    private List<ReferenceInfoDTO> referenceInfoDTOs;
     private double debitAmount;
     private double creditAmount;
     private double settlementAmount;
 
     private List<TaxDTO> taxes;
-
+    
     // getters & setters
     public int getLineNumber()
     {
@@ -138,5 +139,17 @@ public class LineDTO
     {
         this.taxes = taxes;
     }
+
+    public List<ReferenceInfoDTO> getReferenceInfoDTOs()
+    {
+        return referenceInfoDTOs;
+    }
+
+    public void setReferenceInfoDTOs( List<ReferenceInfoDTO> referenceInfoDTOs )
+    {
+        this.referenceInfoDTOs = referenceInfoDTOs;
+    }
+    
+    
 
 }

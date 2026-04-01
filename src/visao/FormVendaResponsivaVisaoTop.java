@@ -4,9 +4,6 @@
  */
 package visao;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import comercial.controller.*;
 //import hotel.controller.ExtratoContaClienteController;
 import dao.ItemPermissaoDao;
@@ -83,17 +80,8 @@ import static util.DVML.DOC_FACTURA_RECIBO_FR;
 import static util.DVML.DOC_FACTURA_FT;
 import util.FinanceUtils;
 import util.MetodosUtil;
-import util.fe.DataUtil;
-import util.fe.dto.*;
-import java.util.Collections;
-import java.util.Map;
-import util.fe.BasicAuthUtil;
-import util.fe.FEConfig;
 import util.fe.FacturaElectronicaUtil;
-import util.fe.JsonUtil;
 import util.fe.TableColumIdUtil;
-import util.fe.http.HttpClientUtil;
-import util.fe.payloads.PayloadFactory;
 
 /**
  *
@@ -2640,12 +2628,20 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
                 // Ações específicas por tipo de documento
                 if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR )
                 {
-                    MetodosUtil.adicionar_saldo_banco( venda.getTotalVenda().doubleValue(), venda.getIdBanco().getIdBanco(), conexaoTransactionLocal );
+                    MetodosUtil.adicionar_saldo_banco(
+                            venda.getTotalVenda().doubleValue(),
+                            venda.getIdBanco().getIdBanco(),
+                            conexaoTransactionLocal
+                    );
                 }
 
                 if ( getIdDocumento() == DOC_FACTURA_FT )
                 {
-                    ExtratoContaClienteController.registro_movimento_conta_cliente( venda, conexaoTransactionLocal );
+                    ExtratoContaClienteController
+                            .registro_movimento_conta_cliente(
+                                    venda,
+                                    conexaoTransactionLocal
+                            );
                 }
 
                 // Salvar os itens da venda

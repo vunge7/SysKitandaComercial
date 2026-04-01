@@ -7,6 +7,7 @@ import entity.TbVenda;
 import java.util.*;
 import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
+import util.DVML;
 import util.fe.BasicAuthUtil;
 import util.fe.DataUtil;
 import util.fe.FEConfig;
@@ -125,6 +126,7 @@ public class PayloadFactory
             {
                 case "FT":
                 case "FR":
+                case "NC":
                     montarFatura( document, dto );
                     break;
                 case "RC":
@@ -166,14 +168,14 @@ public class PayloadFactory
     {
 
         document.put( "lines", dto.getLines().stream()
-                .map( PayloadFactory::linhaToMap )
+                .map( e -> linhaToMap( e, dto.getDocumentType() ) )
                 .collect( Collectors.toList() ) );
 
         document.put( "documentTotals", totaisToMap( dto ) );
         adicionarRetencoes( document, dto );
     }
 
-    private static Map<String, Object> linhaToMap( LineDTO l )
+    private static Map<String, Object> linhaToMap( LineDTO l, String documentType )
     {
 
         Map<String, Object> linha = new LinkedHashMap<>();
@@ -184,6 +186,14 @@ public class PayloadFactory
         linha.put( "unitOfMeasure", l.getUnitOfMeasure() );
         linha.put( "unitPrice", l.getUnitPrice() );
         linha.put( "unitPriceBase", l.getUnitPriceBase() );
+        if ( documentType.endsWith( "NC" ) )
+        {
+            linha.put( "referenceInfo", l.getReferenceInfoDTOs()
+                    .stream()
+                    .map( PayloadFactory::referenceInfo )
+                    .collect( Collectors.toList() )
+            );
+        }
         linha.put( "debitAmount", l.getDebitAmount() );
         linha.put( "creditAmount", l.getCreditAmount() );
         linha.put( "settlementAmount", l.getSettlementAmount() );
@@ -193,6 +203,15 @@ public class PayloadFactory
                 .collect( Collectors.toList() ) );
 
         return linha;
+    }
+
+    private static Map<String, Object> referenceInfo( ReferenceInfoDTO r )
+    {
+        Map<String, Object> referenceInfo = new LinkedHashMap<>();
+        referenceInfo.put( "referenceItemLineNo", r.getReferenceItemLineNo() );
+        referenceInfo.put( "reference", r.getReference() );
+        referenceInfo.put( "reason", r.getReason() );
+        return referenceInfo;
     }
 
     private static Map<String, Object> taxToMap( TaxDTO t )

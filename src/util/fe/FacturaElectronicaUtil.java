@@ -17,10 +17,12 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.JTable;
 import kitanda.util.CfMethods;
+import util.DVML;
 import util.FinanceUtils;
 import util.fe.dto.DocumentDTO;
 import util.fe.dto.DocumentTotalsDTO;
 import util.fe.dto.LineDTO;
+import util.fe.dto.ReferenceInfoDTO;
 import util.fe.dto.TaxDTO;
 import util.fe.dto.WithholdingTaxDTO;
 import util.fe.http.HttpClientUtil;
@@ -34,7 +36,8 @@ import util.fe.payloads.PayloadFactory;
  */
 public class FacturaElectronicaUtil
 {
-    public static boolean criarFE( 
+
+    public static boolean criarFE(
             TbVenda venda,
             TbDadosInstituicao dadosInstituicao,
             Documento documento,
@@ -100,7 +103,26 @@ public class FacturaElectronicaUtil
             line.setUnitOfMeasure( "UN" );
             line.setUnitPrice( unitPrice );
             line.setUnitPriceBase( unitPriceBase.doubleValue() );
-            line.setDebitAmount( 0 );
+
+            if ( venda.getFkDocumento().getPkDocumento()
+                    == DVML.DOC_NOTA_CREDITO_NC )
+            {
+                ReferenceInfoDTO rDTO = new ReferenceInfoDTO();
+                rDTO.setReferenceItemLineNo( String.valueOf( line.getLineNumber() ) );
+                rDTO.setReference( venda.getRefCodFact() );
+                rDTO.setReason( venda.getObs() );
+                line.setReferenceInfoDTOs(
+                        Collections.singletonList( rDTO )
+                );
+                line.setDebitAmount( base.doubleValue() );
+                line.setCreditAmount( 0 );
+            }
+            else
+            {
+                line.setDebitAmount( 0 );
+                line.setCreditAmount( base.doubleValue() );
+            }
+
             line.setCreditAmount( base.doubleValue() );
 
             if ( taxa > 0 )
@@ -135,7 +157,6 @@ public class FacturaElectronicaUtil
         venda.setTotalIva( totalIva );
         venda.setTotalGeral( totalBase );
 
-        
         if ( totalRetencao.compareTo( BigDecimal.ZERO ) > 0 )
         {
             WithholdingTaxDTO ret = new WithholdingTaxDTO();

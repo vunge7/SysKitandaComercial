@@ -15,18 +15,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 import util.BDConexao;
-import util.DVML;
 import util.MetodosUtil;
 
 /**
  *
- * @author Martinho Luis
+ * @author Martinho Luis &  
+ * Domingos Dala Vunge
  */
 public class ClientesController implements EntidadeFactory
 {
-
     private BDConexao conexao;
-
     public ClientesController( BDConexao conexao )
     {
         this.conexao = conexao;
@@ -110,11 +108,7 @@ public class ClientesController implements EntidadeFactory
             while ( result.next() )
             {
                 clientes = new TbCliente();
-                clientes.setNome( result.getString( "nome" ) );
-                clientes.setMorada( result.getString( "morada" ) );
-                clientes.setTelefone( result.getString( "telefone" ) );
-                clientes.setNif( result.getString( "nif" ) );
-                clientes.setEmail( result.getString( "email" ) );
+                setClienteFromResultSet( result, clientes );
                 lista_clientes.add( clientes );
 
             }
@@ -140,12 +134,7 @@ public class ClientesController implements EntidadeFactory
             while ( result.next() )
             {
                 cliente = new TbCliente();
-                cliente.setCodigo( result.getInt( "codigo" ) );
-                cliente.setNome( result.getString( "nome" ) );
-                cliente.setMorada( result.getString( "morada" ) );
-                cliente.setTelefone( result.getString( "telefone" ) );
-                cliente.setNif( result.getString( "nif" ) );
-                cliente.setEmail( result.getString( "email" ) );
+                setClienteFromResultSet( result, cliente );
                 listaClientes.add( cliente );
             }
         }
@@ -169,12 +158,7 @@ public class ClientesController implements EntidadeFactory
             if ( result.next() )
             {
                 cliente = new TbCliente();
-                cliente.setCodigo( result.getInt( "codigo" ) );
-                cliente.setNome( result.getString( "nome" ) );
-                cliente.setMorada( result.getString( "morada" ) );
-                cliente.setTelefone( result.getString( "telefone" ) );
-                cliente.setNif( result.getString( "nif" ) );
-                cliente.setEmail( result.getString( "email" ) );
+                setClienteFromResultSet( result, cliente );
 
             }
 
@@ -199,14 +183,7 @@ public class ClientesController implements EntidadeFactory
             if ( result.next() )
             {
                 cliente = new TbCliente();
-                cliente.setCodigo( result.getInt( "codigo" ) );
-                cliente.setNome( result.getString( "nome" ) );
-                cliente.setMorada( result.getString( "morada" ) );
-                cliente.setTelefone( result.getString( "telefone" ) );
-                cliente.setNif( result.getString( "nif" ) );
-                cliente.setEmail( result.getString( "email" ) );
-                cliente.setPais( result.getString( "pais" ) );
-                cliente.setPaisISO( result.getString( "pais_ISO" ) );
+                setClienteFromResultSet( result, cliente );
 
             }
 
@@ -241,26 +218,6 @@ public class ClientesController implements EntidadeFactory
         return vector;
     }
 
-//    public Vector<String> getVectorExcetoConsumidorFinal()
-//    {
-//        String FIND_ALL = "SELECT nome FROM tb_cliente  WHERE codigo <> 1 ORDER BY nome ASC";
-//        ResultSet result = conexao.executeQuery( FIND_ALL );
-//        Vector<String> vector = new Vector();
-//        try
-//        {
-//            while ( result.next() )
-//            {
-//                vector.add( result.getString( "nome" ) );
-//            }
-//        }
-//        catch ( SQLException e )
-//        {
-//            e.printStackTrace();
-//        }
-//        vector.add( 0, "--Seleccione o Cliente--" );
-//
-//        return vector;
-//    }
     public Vector<String> getVectorExcetoConsumidorFinal()
     {
         String FIND_ALL = "SELECT nome FROM tb_cliente  WHERE codigo <> 1 ORDER BY codigo ASC";
@@ -282,58 +239,6 @@ public class ClientesController implements EntidadeFactory
         return vector;
     }
 
-//    public Vector<TbCliente> getVectorClientes() {
-//    List<TbCliente> lista = listarTodos(); // método que busca todos os clientes do banco
-//    return new Vector<>(lista);
-//}
-//    public Vector<TbCliente> getVectorExcetoConsumidorFinal() {
-//    Vector<TbCliente> clientes = new Vector<>();
-//    String sql = "SELECT codigo, nome FROM tb_cliente WHERE codigo <> ? ORDER BY nome ASC";
-//
-//    try (PreparedStatement stmt = conexao.getConnection().prepareStatement(sql)) {
-//        stmt.setInt(1, DVML.ID_CONSUMIDOR_FINAL); // usa a constante correta
-//        try (ResultSet rs = stmt.executeQuery()) {
-//            while (rs.next()) {
-//                TbCliente c = new TbCliente();
-//                c.setCodigo(rs.getInt("codigo"));
-//                c.setNome(rs.getString("nome"));
-//                clientes.add(c);
-//            }
-//        }
-//    } catch (SQLException e) {
-//        System.err.println("Erro ao carregar clientes (exceto CF): " + e.getMessage());
-//        e.printStackTrace();
-//    }
-//
-//    // placeholder que obriga a selecção (codigo = 0)
-//    TbCliente placeholder = new TbCliente();
-//    placeholder.setCodigo(0);
-//    placeholder.setNome("--Seleccione o Cliente--");
-//    clientes.add(0, placeholder);
-//
-//    return clientes;
-//}
-//    public Vector<String> getVectorExcetoConsumidorFinal() {
-//    Vector<String> clientes = new Vector<>();
-//    String sql = "SELECT nome FROM tb_cliente WHERE codigo <> ? ORDER BY nome ASC";
-//
-//    try (PreparedStatement stmt = conexao.getConnection().prepareStatement(sql)) {
-//        stmt.setInt(1, DVML.ID_CONSUMIDOR_FINAL); // evita código fixo (1)
-//        try (ResultSet rs = stmt.executeQuery()) {
-//            while (rs.next()) {
-//                clientes.add(rs.getString("nome"));
-//            }
-//        }
-//    } catch (SQLException e) {
-//        // Melhor log em vez de e.printStackTrace()
-//        System.err.println("Erro ao carregar clientes: " + e.getMessage());
-//    }
-//
-//    // Adiciona a opção padrão no topo
-//    clientes.add(0, "--Seleccione o Cliente--");
-//
-//    return clientes;
-//}
     public Vector<String> getVectorByIinciais( String prefixo )
     {
         String FIND_ALL = "SELECT nome FROM tb_cliente  WHERE  nome LIKE '%" + prefixo + "%'  ORDER BY codigo ASC";
@@ -359,21 +264,14 @@ public class ClientesController implements EntidadeFactory
 
         String FIND__BY_CODIGO = "SELECT * FROM tb_cliente WHERE codigo = " + codigo;
         ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
-        TbCliente clientes = null;
+        TbCliente cliente = null;
         try
         {
 
             if ( result.next() )
             {
-                clientes = new TbCliente();
-                clientes.setCodigo( result.getInt( "codigo" ) );
-                clientes.setNome( result.getString( "nome" ) );
-                clientes.setMorada( result.getString( "morada" ) );
-                clientes.setTelefone( result.getString( "telefone" ) );
-                clientes.setNif( result.getString( "nif" ) );
-                clientes.setEmail( result.getString( "email" ) );
-                clientes.setPais( result.getString( "pais" ) );
-                clientes.setPaisISO( result.getString( "pais_ISO" ) );
+                cliente = new TbCliente();
+                setClienteFromResultSet( result, cliente );
 
             }
 
@@ -382,7 +280,7 @@ public class ClientesController implements EntidadeFactory
         {
             e.printStackTrace();
         }
-        return clientes;
+        return cliente;
 
     }
 
@@ -391,21 +289,14 @@ public class ClientesController implements EntidadeFactory
 
         String FIND__BY_CODIGO = "SELECT * FROM tb_cliente WHERE nif LIKE '%" + nif + "%'";
         ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
-        TbCliente clientes = null;
+        TbCliente cliente = null;
         try
         {
 
             if ( result.next() )
             {
-                clientes = new TbCliente();
-                clientes.setCodigo( result.getInt( "codigo" ) );
-                clientes.setNome( result.getString( "nome" ) );
-                clientes.setMorada( result.getString( "morada" ) );
-                clientes.setTelefone( result.getString( "telefone" ) );
-                clientes.setNif( result.getString( "nif" ) );
-                clientes.setEmail( result.getString( "email" ) );
-                clientes.setPais( result.getString( "pais" ) );
-                clientes.setPaisISO( result.getString( "pais_ISO" ) );
+                cliente = new TbCliente();
+                setClienteFromResultSet( result, cliente );
 
             }
 
@@ -414,39 +305,28 @@ public class ClientesController implements EntidadeFactory
         {
             e.printStackTrace();
         }
-        return clientes;
+        return cliente;
 
     }
 
     public TbCliente getClienteByTelOrberByNome( String telefone )
     {
-
         String FIND__BY_CODIGO = "SELECT * FROM tb_cliente WHERE telefone LIKE '%" + telefone + "%'";
         ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
-        TbCliente clientes = null;
+        TbCliente cliente = null;
         try
         {
-
             if ( result.next() )
             {
-                clientes = new TbCliente();
-                clientes.setCodigo( result.getInt( "codigo" ) );
-                clientes.setNome( result.getString( "nome" ) );
-                clientes.setMorada( result.getString( "morada" ) );
-                clientes.setTelefone( result.getString( "telefone" ) );
-                clientes.setNif( result.getString( "nif" ) );
-                clientes.setEmail( result.getString( "email" ) );
-                clientes.setPais( result.getString( "pais" ) );
-                clientes.setPaisISO( result.getString( "paisISO" ) );
-
+                cliente = new TbCliente();
+                setClienteFromResultSet( result, cliente );
             }
-
         }
         catch ( SQLException e )
         {
             e.printStackTrace();
         }
-        return clientes;
+        return cliente;
 
     }
 
@@ -455,30 +335,20 @@ public class ClientesController implements EntidadeFactory
 
         String FIND__BY_CODIGO = "SELECT * FROM tb_cliente WHERE telefone LIKE '%" + telefone + "%'";
         ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
-        TbCliente clientes = null;
+        TbCliente cliente = null;
         try
         {
-
             if ( result.next() )
             {
-                clientes = new TbCliente();
-                clientes.setCodigo( result.getInt( "codigo" ) );
-                clientes.setNome( result.getString( "nome" ) );
-                clientes.setMorada( result.getString( "morada" ) );
-                clientes.setTelefone( result.getString( "telefone" ) );
-                clientes.setNif( result.getString( "nif" ) );
-                clientes.setEmail( result.getString( "email" ) );
-                clientes.setPais( result.getString( "pais" ) );
-                clientes.setPaisISO( result.getString( "paisISO" ) );
-
+                cliente = new TbCliente();
+                setClienteFromResultSet( result, cliente );
             }
-
         }
         catch ( SQLException e )
         {
             e.printStackTrace();
         }
-        return clientes;
+        return cliente;
 
     }
 
@@ -493,14 +363,7 @@ public class ClientesController implements EntidadeFactory
             if ( result.next() )
             {
                 clientes = new TbCliente();
-                clientes.setCodigo( result.getInt( "maximo_id" ) );
-                clientes.setNome( result.getString( "nome" ) );
-                clientes.setMorada( result.getString( "morada" ) );
-                clientes.setTelefone( result.getString( "telefone" ) );
-                clientes.setNif( result.getString( "nif" ) );
-                clientes.setEmail( result.getString( "email" ) );
-                clientes.setPais( result.getString( "pais" ) );
-                clientes.setPaisISO( result.getString( "pais_ISO" ) );
+                setClienteFromResultSet( result, clientes );
             }
         }
         catch ( SQLException e )
@@ -513,27 +376,22 @@ public class ClientesController implements EntidadeFactory
 
     public TbCliente getClienteByNome1( String nome )
     {
-
         String FIND__BY_CODIGO = "SELECT *  FROM tb_cliente a WHERE nome = '" + nome + "'";
         ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
-        TbCliente armazem = null;
+        TbCliente cliente = null;
         try
         {
-
             if ( result.next() )
             {
-                armazem = new TbCliente();
-                armazem.setCodigo( result.getInt( "codigo" ) );
-                armazem.setNome( result.getString( "nome" ) );
-
+                cliente = new TbCliente();
+                setClienteFromResultSet( result, cliente );
             }
-
         }
         catch ( SQLException e )
         {
             e.printStackTrace();
         }
-        return armazem;
+        return cliente;
 
     }
 
@@ -549,9 +407,7 @@ public class ClientesController implements EntidadeFactory
             if ( result.next() )
             {
                 armazem = new TbCliente();
-                armazem.setCodigo( result.getInt( "codigo" ) );
-                armazem.setNome( result.getString( "nome" ) );
-
+                setClienteFromResultSet( result, armazem );
             }
 
         }
@@ -677,6 +533,18 @@ public class ClientesController implements EntidadeFactory
             e.printStackTrace();
         }
         return false;
+    }
+
+    private void setClienteFromResultSet( ResultSet rs, TbCliente cliente ) throws SQLException
+    {
+        cliente.setCodigo( rs.getInt( "codigo" ) );
+        cliente.setNome( rs.getString( "nome" ) );
+        cliente.setMorada( rs.getString( "morada" ) );
+        cliente.setTelefone( rs.getString( "telefone" ) );
+        cliente.setNif( rs.getString( "nif" ) );
+        cliente.setEmail( rs.getString( "email" ) );
+        cliente.setPais( rs.getString( "pais" ) );
+        cliente.setPaisISO( rs.getString( "pais_ISO" ) );
     }
 
 }
