@@ -91,6 +91,8 @@ public class DadosInstituicaoController implements EntidadeFactory
                 dadosIntituicao.setEnviarEmail( result.getString( "enviar_email" ) );
                 dadosIntituicao.setStockConsulta( result.getString( "stock_consulta" ) );
                 dadosIntituicao.setTipoFichaTecnica( result.getString( "tipo_ficha_tecnica" ) );
+                dadosIntituicao.setImpressoraCaixa(result.getString( "impressora_caixa" ) );
+                dadosIntituicao.setSegundoMonitor(result.getString( "segundo_monitor" ) );
                 list.add( dadosIntituicao );
             }
 
@@ -213,6 +215,8 @@ public Object findById(int codigo) {
             dadosInstituicao.setEnviarEmail(result.getString("enviar_email"));
             dadosInstituicao.setStockConsulta(result.getString("stock_consulta"));
             dadosInstituicao.setTipoFichaTecnica(result.getString("tipo_ficha_tecnica"));
+            dadosInstituicao.setImpressoraCaixa(result.getString( "impressora_caixa" ) );
+            dadosInstituicao.setSegundoMonitor(result.getString( "segundo_monitor" ) );
         } 
         else {
             System.err.println("[DadosInstituicaoController] ⚠ Nenhum registo encontrado para o ID: " + codigo);
@@ -271,6 +275,8 @@ public Object findById(int codigo) {
                 dadosIntituicao.setEnviarEmail( result.getString( "enviar_email" ) );
                 dadosIntituicao.setStockConsulta( result.getString( "stock_consulta" ) );
                 dadosIntituicao.setTipoFichaTecnica( result.getString( "tipo_ficha_tecnica" ) );
+                dadosIntituicao.setImpressoraCaixa(result.getString( "impressora_caixa" ) );
+                dadosIntituicao.setSegundoMonitor(result.getString( "segundo_monitor" ) );
 
             }
 
@@ -319,6 +325,8 @@ public Object findById(int codigo) {
                 dadosInstituicao.setEnviarEmail( result.getString( "enviar_email" ) );
                 dadosInstituicao.setStockConsulta( result.getString( "stock_consulta" ) );
                 dadosInstituicao.setTipoFichaTecnica( result.getString( "tipo_ficha_tecnica" ) );
+                dadosInstituicao.setImpressoraCaixa(result.getString( "impressora_caixa" ) );
+                dadosInstituicao.setSegundoMonitor(result.getString( "segundo_monitor" ) );
 
             }
 

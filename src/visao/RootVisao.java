@@ -25,6 +25,8 @@ import java.util.Date;
 import java.util.Vector;
 import javax.persistence.EntityManagerFactory;
 import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -138,7 +140,7 @@ public class RootVisao extends javax.swing.JFrame
                 }
             }
         } );
-
+        configurarAtalhoF1Comercial();
         setWindowsListener();
 //        btn_abertura_dia_root.setVisible( false);
 //        btn_feicho_dia_root.setVisible( false);
@@ -601,9 +603,13 @@ public class RootVisao extends javax.swing.JFrame
         {
             new CaixaFechoVisao( idUser, conexao, false ).setVisible( true );
         }
-        else
+        else if ( dadosInstituicao.getTipoFechoCaixa().equals( "Simplificado" ) )
         {
             new CaixaFechoGoldVisao( idUser, conexao, false ).setVisible( true );
+        }
+        else
+        {
+            new CaixaFechoGoldDetalhadoVisao( idUser, conexao, false ).setVisible( true );
         }
 
 //        fazerBackupAgora();
@@ -1072,5 +1078,36 @@ public class RootVisao extends javax.swing.JFrame
         } );
 
     }
+    
+    private void configurarAtalhoF1Comercial() {
+    // Pega o InputMap e ActionMap do RootPane
+    InputMap im = this.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+    ActionMap am = this.getRootPane().getActionMap();
+
+    // Associa F1 à ação "abrirComercial"
+    im.put(KeyStroke.getKeyStroke("F1"), "abrirComercial");
+
+    am.put("abrirComercial", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Cria e mostra o formulário btnComercial
+//            BtnComercialForm form = new BtnComercialForm(); // substituir pelo construtor real
+
+            if ( dadosInstituicao != null && dadosInstituicao.getNegocio() != null )
+            {
+                System.out.println( "Abrindo menu para negócio: " + dadosInstituicao.getNegocio() );
+                getMenuPrincipalByNegocio( dadosInstituicao.getNegocio() );
+            }
+            else
+            {
+                System.err.println( "[Erro] Dados da instituição estão nulos. Abrindo menu padrão..." );
+                getMenuPrincipalByNegocio( "Comercial" );
+            }
+
+//            form.setVisible(true);
+//            form.setLocationRelativeTo(null); // centraliza na tela
+        }
+    });
+}
 
 }

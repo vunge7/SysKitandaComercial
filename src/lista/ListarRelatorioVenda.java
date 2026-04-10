@@ -4,7 +4,6 @@
  */
 package lista;
 
-
 import java.sql.Connection;
 import dao.ArmazemDao;
 import dao.ItemVendaDao;
@@ -43,21 +42,20 @@ import util.tabela_manual.render.RenderTabelaFA;
  *
  * @author Domingos Dala Vunge
  */
-public class ListarRelatorioVenda extends javax.swing.JFrame
-{
+public class ListarRelatorioVenda extends javax.swing.JFrame {
 
     /**
      * Creates new form ListaUsuarioVisao
      */
     private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
-    private VendaDao vendaDao = new VendaDao( emf );
-    private AccessoArmazemDao accessoArmazemDao = new AccessoArmazemDao( emf );
+    private VendaDao vendaDao = new VendaDao(emf);
+    private AccessoArmazemDao accessoArmazemDao = new AccessoArmazemDao(emf);
     private static DadosInstituicaoController dadosInstituicaoController;
     private TbVenda venda;
-    private UsuarioDao usuarioDao = new UsuarioDao( emf );
-    private ItemVendaDao itemVendaDao = new ItemVendaDao( emf );
-    private PrecoDao precoDao = new PrecoDao( emf );
-    private ArmazemDao armazemDao = new ArmazemDao( emf );
+    private UsuarioDao usuarioDao = new UsuarioDao(emf);
+    private ItemVendaDao itemVendaDao = new ItemVendaDao(emf);
+    private PrecoDao precoDao = new PrecoDao(emf);
+    private ArmazemDao armazemDao = new ArmazemDao(emf);
     private double total_geral = 0;
     private List<TbVenda> lista = null;
     private BDConexao conexao;
@@ -68,35 +66,31 @@ public class ListarRelatorioVenda extends javax.swing.JFrame
     private static Abreviacao abreviacao;
     private static TbDadosInstituicao dadosInstituicao;
 
-    public ListarRelatorioVenda( BDConexao conexao, int idUser )
-    {
+    public ListarRelatorioVenda(BDConexao conexao, int idUser) {
 
         initComponents();
-        setResizable( false );
-        setLocationRelativeTo( null );
-        tabela_factura.setDefaultRenderer( Object.class, new RenderTabelaFA() );
+        setResizable(false);
+        setLocationRelativeTo(null);
+        tabela_factura.setDefaultRenderer(Object.class, new RenderTabelaFA());
         this.conexao = conexao;
-        amortizacaoDividaController = new AmortizacaoDividaController( conexao );
-        dadosInstituicaoController = new DadosInstituicaoController( conexao );
-        dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById( 1 );
-        vendasController = new VendasController( conexao );
-        dcDataInicio.setDate( new Date() );
-        dcDataFim.setDate( new Date() );
-        cmbArmazem.setModel( new DefaultComboBoxModel( accessoArmazemDao.getAllArmazemByIdUSuario( idUser ) ) );
+        amortizacaoDividaController = new AmortizacaoDividaController(conexao);
+        dadosInstituicaoController = new DadosInstituicaoController(conexao);
+        dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
+        vendasController = new VendasController(conexao);
+        dcDataInicio.setDate(new Date());
+        dcDataFim.setDate(new Date());
+        cmbArmazem.setModel(new DefaultComboBoxModel(accessoArmazemDao.getAllArmazemByIdUSuario(idUser)));
 //        cmbArmazem.setModel( new DefaultComboBoxModel( armazemDao.buscaTodos3() ) );
         configurar_clientes();
         metodo_radio();
-        try
-        {
-            setFolhaImpressora( dadosInstituicao.getImpressora() );
-        }
-        catch ( Exception e )
-        {
+        try {
+            setFolhaImpressora(dadosInstituicao.getImpressora());
+        } catch (Exception e) {
         }
 
     }
 
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents()
     {
@@ -985,8 +979,7 @@ public class ListarRelatorioVenda extends javax.swing.JFrame
 
     private void tabela_factura_geralMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_tabela_factura_geralMouseClicked
     {//GEN-HEADEREND:event_tabela_factura_geralMouseClicked
-        if ( evt.getClickCount() > 1 )
-        {
+        if (evt.getClickCount() > 1) {
 
             reimprimir_GERAL();
 
@@ -995,8 +988,7 @@ public class ListarRelatorioVenda extends javax.swing.JFrame
 
     private void tabela_factura_ncMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_tabela_factura_ncMouseClicked
     {//GEN-HEADEREND:event_tabela_factura_ncMouseClicked
-        if ( evt.getClickCount() > 1 )
-        {
+        if (evt.getClickCount() > 1) {
 
             reimprimir_NC();
 
@@ -1026,8 +1018,7 @@ public class ListarRelatorioVenda extends javax.swing.JFrame
 
     private void tabela_facturaMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_tabela_facturaMouseClicked
     {//GEN-HEADEREND:event_tabela_facturaMouseClicked
-        if ( evt.getClickCount() > 1 )
-        {
+        if (evt.getClickCount() > 1) {
 
             reimprimir_FT();
 
@@ -1036,8 +1027,7 @@ public class ListarRelatorioVenda extends javax.swing.JFrame
 
     private void tabela_factura_reciboMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_tabela_factura_reciboMouseClicked
     {//GEN-HEADEREND:event_tabela_factura_reciboMouseClicked
-        if ( evt.getClickCount() > 1 )
-        {
+        if (evt.getClickCount() > 1) {
 
             reimprimir_FR();
 
@@ -1046,8 +1036,7 @@ public class ListarRelatorioVenda extends javax.swing.JFrame
 
     private void tabela_reciboMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_tabela_reciboMouseClicked
     {//GEN-HEADEREND:event_tabela_reciboMouseClicked
-        if ( evt.getClickCount() > 1 )
-        {
+        if (evt.getClickCount() > 1) {
 
             reimprimir_R();
 
@@ -1100,8 +1089,7 @@ public class ListarRelatorioVenda extends javax.swing.JFrame
 
     private void tabela_factura_proformaMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_tabela_factura_proformaMouseClicked
     {//GEN-HEADEREND:event_tabela_factura_proformaMouseClicked
-        if ( evt.getClickCount() > 1 )
-        {
+        if (evt.getClickCount() > 1) {
 
             reimprimir_PP();
 
@@ -1147,58 +1135,41 @@ public class ListarRelatorioVenda extends javax.swing.JFrame
     /**
      * @param args the command line arguments
      */
-    public static void main( String args[] )
-    {
+    public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        try
-        {
-            for ( javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels() )
-            {
-                if ( "Windows".equals( info.getName() ) )
-                {
-                    javax.swing.UIManager.setLookAndFeel( info.getClassName() );
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Windows".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
-        }
-        catch ( ClassNotFoundException ex )
-        {
-            java.util.logging.Logger.getLogger( ListarRelatorioVenda.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }
-        catch ( InstantiationException ex )
-        {
-            java.util.logging.Logger.getLogger( ListarRelatorioVenda.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }
-        catch ( IllegalAccessException ex )
-        {
-            java.util.logging.Logger.getLogger( ListarRelatorioVenda.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }
-        catch ( javax.swing.UnsupportedLookAndFeelException ex )
-        {
-            java.util.logging.Logger.getLogger( ListarRelatorioVenda.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(ListarRelatorioVenda.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(ListarRelatorioVenda.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(ListarRelatorioVenda.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(ListarRelatorioVenda.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater( new Runnable()
-        {
-            public void run()
-            {
-                try
-                {
-                    new ListarRelatorioVenda( BDConexao.getInstancia(), 15 ).setVisible( true );
-                }
-                catch ( Exception ex )
-                {
-                    Logger.getLogger( ListarRelatorioVenda.class.getName() ).log( Level.SEVERE, null, ex );
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    new ListarRelatorioVenda(BDConexao.getInstancia(), 15).setVisible(true);
+                } catch (Exception ex) {
+                    Logger.getLogger(ListarRelatorioVenda.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-        } );
+        });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
@@ -1259,160 +1230,120 @@ public class ListarRelatorioVenda extends javax.swing.JFrame
     private javax.swing.JTable tabela_recibo;
     // End of variables declaration//GEN-END:variables
 
-    private void adicionar_tabela()
-    {
+    private void adicionar_tabela() {
 
         configurar_clientes();
 
         DefaultTableModel modelo = null;
 
-        try
-        {
+        try {
             int selectedIndex = jTabbedPane1.getSelectedIndex();
 
             //CASO DA FACTURA RECIBO
-            if ( selectedIndex == 0 )
-            {
-                ck_estrato_cliente.setSelected( false ); //quando o dcumento FR nao e necessario Extrato do Cliente
-                ck_estrato_cliente.setVisible( false );
+            if (selectedIndex == 0) {
+                ck_estrato_cliente.setSelected(false); //quando o dcumento FR nao e necessario Extrato do Cliente
+                ck_estrato_cliente.setVisible(false);
 //                String codFact = txtRefDoc.getText();
                 modelo = (DefaultTableModel) tabela_factura_recibo.getModel();
-                modelo.setRowCount( 0 );
+                modelo.setRowCount(0);
 //                lista = vendaDao.getAllVendaByBetweenDataAndArmazemAndDocumento( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_FACTURA_RECIBO_FR );
-                lista = vendaDao.getAllFRVendaByBetweenDataAndArmazemAndDocumento( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_FACTURA_RECIBO_FR );
+                lista = vendaDao.getAllFRVendaByBetweenDataAndArmazemAndDocumento(dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_FACTURA_RECIBO_FR);
 //                lista = vendaDao.getVendaByCodFact( codFact);
 
-                if ( lista != null )
-                {
-                    for ( TbVenda object : lista )
-                    {
+                if (lista != null) {
+                    for (TbVenda object : lista) {
 
-                        modelo.addRow( new Object[]
-                        {
+                        modelo.addRow(new Object[]{
                             object.getCodFact(),
-                            getNomeCliente( object ),
-                            getData( object.getDataVenda() ),
-                            getHora( object.getHora() ),
+                            getNomeCliente(object),
+                            getData(object.getDataVenda()),
+                            getHora(object.getHora()),
                             object.getCodigoUsuario().getNome(),
-                            object.getTotalVenda(),
-
-                        } );
+                            object.getTotalVenda(),});
 
                     }
-                    lb_total.setText( formatarComoMoeda( getTotal( tabela_factura_recibo ) ) );
+                    lb_total.setText(formatarComoMoeda(getTotal(tabela_factura_recibo)));
                 }
 
             } //CASO DA FACTURA
-            else if ( selectedIndex == 1 )
-            {
+            else if (selectedIndex == 1) {
                 adicionar_relatorio_factura();
-            }
-            else if ( selectedIndex == 2 )
-            {
+            } else if (selectedIndex == 2) {
                 adicionar_relatorio_nota();
-            }
-            else if ( selectedIndex == 3 )
-            {
+            } else if (selectedIndex == 3) {
                 adicionar_relatorio_recibo();
-            }
-            else if ( selectedIndex == 4 )
-            {
+            } else if (selectedIndex == 4) {
                 adicionar_relatorio_proforma();
-            }
-            else if ( selectedIndex == 5 )
-            {
+            } else if (selectedIndex == 5) {
                 adicionar_relatorio_geral();
             }
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
-            lb_total.setText( "" );
-            JOptionPane.showMessageDialog( null, "Não há registro para esse armazém", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+            lb_total.setText("");
+            JOptionPane.showMessageDialog(null, "Não há registro para esse armazém", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
         }
 
     }
 
-    public int getCodigoArmazem()
-    {
-        return armazemDao.getArmazemByDescricao( cmbArmazem.getSelectedItem().toString() ).getCodigo();
+    public int getCodigoArmazem() {
+        return armazemDao.getArmazemByDescricao(cmbArmazem.getSelectedItem().toString()).getCodigo();
     }
 
-    private String getData( Date date )
-    {
-        try
-        {
-            return getNumeroDoisDigitos( date.getDate() )
-                    + "/" + ( getNumeroDoisDigitos( date.getMonth() + 1 ) )
-                    + "/" + ( date.getYear() + 1900 );
-        }
-        catch ( Exception e )
-        {
+    private String getData(Date date) {
+        try {
+            return getNumeroDoisDigitos(date.getDate())
+                    + "/" + (getNumeroDoisDigitos(date.getMonth() + 1))
+                    + "/" + (date.getYear() + 1900);
+        } catch (Exception e) {
         }
 
         return "";
     }
 
-    private String getHora( Date date )
-    {
-        try
-        {
-            return getNumeroDoisDigitos( date.getHours() ) + ":"
-                    + getNumeroDoisDigitos( date.getMinutes() ) + ":"
-                    + getNumeroDoisDigitos( date.getSeconds() );
-        }
-        catch ( Exception e )
-        {
+    private String getHora(Date date) {
+        try {
+            return getNumeroDoisDigitos(date.getHours()) + ":"
+                    + getNumeroDoisDigitos(date.getMinutes()) + ":"
+                    + getNumeroDoisDigitos(date.getSeconds());
+        } catch (Exception e) {
         }
         return "";
 
     }
 
-    private String getNumeroDoisDigitos( int numero )
-    {
-        if ( numero < 10 )
-        {
+    private String getNumeroDoisDigitos(int numero) {
+        if (numero < 10) {
             return "0" + numero;
         }
 
-        return String.valueOf( numero );
+        return String.valueOf(numero);
 
     }
 
-    private BigDecimal getTotal( JTable tabela )
-    {
-        BigDecimal total = new BigDecimal( 0.0 );
+    private BigDecimal getTotal(JTable tabela) {
+        BigDecimal total = new BigDecimal(0.0);
         DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-            total = total.add( new BigDecimal( tabela.getValueAt( i, 5 ).toString() ) ).setScale( 2, RoundingMode.CEILING );
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            total = total.add(new BigDecimal(tabela.getValueAt(i, 5).toString())).setScale(2, RoundingMode.CEILING);
 
         }
-        System.out.println( "Total: " + total.doubleValue() );
+        System.out.println("Total: " + total.doubleValue());
 
         return total;
 
     }
 
-    private int getTipoDocumento()
-    {
+    private int getTipoDocumento() {
         int selectedIndex = jTabbedPane1.getSelectedIndex();
-        if ( selectedIndex == 0 )
-        {
+        if (selectedIndex == 0) {
             return DVML.DOC_FACTURA_RECIBO_FR;
-        }
-        else if ( selectedIndex == 1 )
-        {
+        } else if (selectedIndex == 1) {
             return DVML.DOC_FACTURA_FT;
-        }
-        else if ( selectedIndex == 2 )
-        {
+        } else if (selectedIndex == 2) {
             return DVML.DOC_NOTA_CREDITO_NC;
-        }
-        else if ( selectedIndex == 3 )
-        {
+        } else if (selectedIndex == 3) {
             return DVML.DOC_RECIBO_RC;
         }
 //        else if ( selectedIndex == 3 )
@@ -1423,14 +1354,12 @@ public class ListarRelatorioVenda extends javax.swing.JFrame
 
     }
 
-    private String getNomeCliente( TbVenda venda_local )
-    {
+    private String getNomeCliente(TbVenda venda_local) {
 
-        if ( venda_local.getCodigoCliente().getNome().equals( DVML._CLIENTE_CONSUMIDOR_FINAL ) )
-        {
+        if (venda_local.getCodigoCliente().getNome().equals(DVML._CLIENTE_CONSUMIDOR_FINAL)) {
             String varConsumidorFinal = venda_local.getNomeConsumidorFinal();
-            System.out.println( "Nome Cliente: " + varConsumidorFinal );
-            boolean resultado = !Objects.isNull( varConsumidorFinal ) && !varConsumidorFinal.equalsIgnoreCase( "" );
+            System.out.println("Nome Cliente: " + varConsumidorFinal);
+            boolean resultado = !Objects.isNull(varConsumidorFinal) && !varConsumidorFinal.equalsIgnoreCase("");
             String nome_cliente_consumidor_final = resultado ? " (" + venda_local.getNomeConsumidorFinal() + ")" : "";
 
             return venda_local.getNomeCliente() + nome_cliente_consumidor_final;
@@ -1438,232 +1367,186 @@ public class ListarRelatorioVenda extends javax.swing.JFrame
         return venda_local.getCodigoCliente().getNome();
     }
 
-    private void configurar_clientes()
-    {
-        clientesController = new ClientesController( conexao );
-        lista_all_clientes = clientesController.listarTodosDaVenda( dcDataInicio.getDate(), dcDataFim.getDate() );
-        cmbCliente.setModel( new DefaultComboBoxModel( lista_all_clientes ) );
+    private void configurar_clientes() {
+        clientesController = new ClientesController(conexao);
+        lista_all_clientes = clientesController.listarTodosDaVenda(dcDataInicio.getDate(), dcDataFim.getDate());
+        cmbCliente.setModel(new DefaultComboBoxModel(lista_all_clientes));
     }
 
-    private int getCodigoCliente()
-    {
-        try
-        {
-            return clientesController.findByNome( cmbCliente.getSelectedItem().toString() ).getCodigo();
-        }
-        catch ( Exception e )
-        {
+    private int getCodigoCliente() {
+        try {
+            return clientesController.findByNome(cmbCliente.getSelectedItem().toString()).getCodigo();
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return 0;
     }
 
-    private void procedimento_imprimir()
-    {
+    private void procedimento_imprimir() {
 
-        if ( ck_relatorio_normal.isSelected() || ck_mapa_iva.isSelected() )
-        {
-            ResumoVenda resumoVenda = new ResumoVenda( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), this.lista, getTipoDocumento(), ck_mapa_iva.isSelected() );
+        if (ck_relatorio_normal.isSelected() || ck_mapa_iva.isSelected()) {
+            ResumoVenda resumoVenda = new ResumoVenda(dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), this.lista, getTipoDocumento(), ck_mapa_iva.isSelected());
         }
-        if ( ck_ordemFR.isSelected() )
-        {
+        if (ck_ordemFR.isSelected()) {
 
-            ResumoVenda resumoVenda = new ResumoVenda( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), this.lista, getTipoDocumento(), ck_mapa_iva.isSelected(), ck_ordemFR.isSelected() );
-        }
-        else if ( ck_mapa_iva.isSelected() )
-        {
-            ResumoVenda resumoVenda = new ResumoVenda( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), this.lista, getTipoDocumento(), true );
-        }
-        else if ( ck_estrato_cliente.isSelected() )
-        {
-            new ExtratoContaReport( getCodigoCliente(), dcDataInicio.getDate(), dcDataFim.getDate() );
+            ResumoVenda resumoVenda = new ResumoVenda(dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), this.lista, getTipoDocumento(), ck_mapa_iva.isSelected(), ck_ordemFR.isSelected());
+        } else if (ck_mapa_iva.isSelected()) {
+            ResumoVenda resumoVenda = new ResumoVenda(dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), this.lista, getTipoDocumento(), true);
+        } else if (ck_estrato_cliente.isSelected()) {
+            new ExtratoContaReport(getCodigoCliente(), dcDataInicio.getDate(), dcDataFim.getDate());
         }
 
     }
 
-    private void metodo_radio()
-    {
-        if ( rb_por_cliente.isSelected() )
-        {
-            cmbCliente.setModel( new DefaultComboBoxModel( lista_all_clientes ) );
-            cmbCliente.setVisible( true );
-        }
-        else
-        {
-            cmbCliente.setVisible( false );
+    private void metodo_radio() {
+        if (rb_por_cliente.isSelected()) {
+            cmbCliente.setModel(new DefaultComboBoxModel(lista_all_clientes));
+            cmbCliente.setVisible(true);
+        } else {
+            cmbCliente.setVisible(false);
         }
         adicionar_relatorio_factura();
 //        adicionar_relatorio_recibo();
     }
 
-    private void adicionar_relatorio_factura()
-    {
-        ck_estrato_cliente.setVisible( true );
+    private void adicionar_relatorio_factura() {
+        ck_estrato_cliente.setVisible(true);
 //        rb_todos_clientes.setSelected( true);
-        lista = rb_todos_clientes.isSelected() ? vendaDao.getAllFTVendaByBetweenDataAndArmazemAndDocumento( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_FACTURA_FT ) : vendaDao.getAllVendaByBetweenDataAndArmazemAndDocumentoAndCliente( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_FACTURA_FT, getCodigoCliente() );
+        lista = rb_todos_clientes.isSelected() ? vendaDao.getAllFTVendaByBetweenDataAndArmazemAndDocumento(dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_FACTURA_FT) : vendaDao.getAllVendaByBetweenDataAndArmazemAndDocumentoAndCliente(dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_FACTURA_FT, getCodigoCliente());
 //        lista = vendaDao.getAllVendaByBetweenDataAndArmazemAndDocumento( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_FACTURA_FT );
         DefaultTableModel modelo = (DefaultTableModel) tabela_factura.getModel();
-        modelo.setRowCount( 0 );
-        if ( lista != null )
-        {
-            for ( TbVenda object : lista )
-            {
-                int diferencaData = MetodosUtil.getDiferencaDias( object.getDataVencimento(), new Date(), conexao );
+        modelo.setRowCount(0);
+        if (lista != null) {
+            for (TbVenda object : lista) {
+                int diferencaData = MetodosUtil.getDiferencaDias(object.getDataVencimento(), new Date(), conexao);
 //                BigDecimal valor_pago = ( !Objects.isNull( VendaDao.getTotalPagoByCodFact( object.getCodFact(), conexao ) ) ? VendaDao.getTotalPagoByCodFact( object.getCodFact(), conexao ) : new BigDecimal( 0.0 ) );
-                BigDecimal valor_pago = new BigDecimal( amortizacaoDividaController.getValorAtribuidoByCodFact( object.getCodFact() ) );
+                BigDecimal valor_pago = new BigDecimal(amortizacaoDividaController.getValorAtribuidoByCodFact(object.getCodFact()));
 //                System.out.println( "VALOR PAGO = " + valor_pago );
 
-                modelo.addRow( new Object[]
-                {
+                modelo.addRow(new Object[]{
                     object.getCodFact(),
-                    getNomeCliente( object ),
-                    getData( object.getDataVenda() ),
-                    getHora( object.getHora() ),
+                    getNomeCliente(object),
+                    getData(object.getDataVenda()),
+                    getHora(object.getHora()),
                     object.getCodigoUsuario().getNome(),
                     //                    new BigDecimal( object.getTotalVenda() ).setScale( 2, RoundingMode.CEILING ),
-                    new BigDecimal( object.getTotalVenda().doubleValue() ).setScale( 2, RoundingMode.CEILING ),
+                    new BigDecimal(object.getTotalVenda().doubleValue()).setScale(2, RoundingMode.CEILING),
                     valor_pago,
                     //                            new BigDecimal( object.getTotalVenda() ).subtract( valor_pago ).setScale( 2, RoundingMode.CEILING )
-                    valor_pago.subtract( new BigDecimal( object.getTotalVenda().doubleValue() ) ).setScale( 2, RoundingMode.FLOOR ),
+                    valor_pago.subtract(new BigDecimal(object.getTotalVenda().doubleValue())).setScale(2, RoundingMode.FLOOR),
                     //                    valor_pago.subtract( new BigDecimal( object.getTotalVenda() ) ).setScale( 2, RoundingMode.FLOOR ),
-                    getData( object.getDataVencimento() ),
-                    diferencaData,
-
-                } );
+                    getData(object.getDataVencimento()),
+                    diferencaData,});
 
             }
-            lb_total.setText( formatarComoMoeda( getTotal( tabela_factura ).doubleValue() ) );
+            lb_total.setText(formatarComoMoeda(getTotal(tabela_factura).doubleValue()));
         }
     }
 
-    private void adicionar_relatorio_nota()
-    {
+    private void adicionar_relatorio_nota() {
 
 //        lista = rb_todos_clientes.isSelected() ? vendaDao.getAllNotasByBetweenDataAndArmazemAndDocumento( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_RECIBO_RC) : vendaDao.getAllNotaByBetweenDataAndArmazemAndDocumentoAndCliente( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_RECIBO_RC, getCodigoCliente() );
-        ck_estrato_cliente.setSelected( false ); //quando o dcumento FR nao e necessario Extrato do Cliente
-        ck_estrato_cliente.setVisible( false );
+        ck_estrato_cliente.setSelected(false); //quando o dcumento FR nao e necessario Extrato do Cliente
+        ck_estrato_cliente.setVisible(false);
 //        String codFact = txtRefDoc.getText();
         DefaultTableModel modelo = (DefaultTableModel) tabela_factura_nc.getModel();
-        modelo.setRowCount( 0 );
-        lista = vendaDao.getAllVendaByBetweenDataAndArmazemAndDocumento( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_NOTA_CREDITO_NC );
+        modelo.setRowCount(0);
+        lista = vendaDao.getAllVendaByBetweenDataAndArmazemAndDocumento(dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_NOTA_CREDITO_NC);
 //                lista = vendaDao.getVendaByCodFact( codFact);
 
-        if ( lista != null )
-        {
-            for ( TbVenda object : lista )
-            {
+        if (lista != null) {
+            for (TbVenda object : lista) {
 
-                modelo.addRow( new Object[]
-                {
+                modelo.addRow(new Object[]{
                     object.getCodFact(),
-                    getNomeCliente( object ),
-                    getData( object.getDataVenda() ),
-                    getHora( object.getHora() ),
+                    getNomeCliente(object),
+                    getData(object.getDataVenda()),
+                    getHora(object.getHora()),
                     object.getCodigoUsuario().getNome(),
-                    object.getTotalVenda(),
-
-                } );
+                    object.getTotalVenda(),});
 
             }
-            lb_total.setText( formatarComoMoeda( getTotal( tabela_factura_nc ) ) );
+            lb_total.setText(formatarComoMoeda(getTotal(tabela_factura_nc)));
         }
     }
 
-    private void adicionar_relatorio_proforma()
-    {
+    private void adicionar_relatorio_proforma() {
 //        String codFact = txtRefDoc.getText();
         DefaultTableModel modelo = (DefaultTableModel) tabela_factura_proforma.getModel();
-        modelo.setRowCount( 0 );
-        lista = vendaDao.getAllVendaByBetweenDataAndArmazemAndDocumento( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_FACTURA_PROFORMA_PP );
+        modelo.setRowCount(0);
+        lista = vendaDao.getAllVendaByBetweenDataAndArmazemAndDocumento(dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_FACTURA_PROFORMA_PP);
 //                lista = vendaDao.getVendaByCodFact( codFact);
 
-        if ( lista != null )
-        {
-            for ( TbVenda object : lista )
-            {
+        if (lista != null) {
+            for (TbVenda object : lista) {
 
-                modelo.addRow( new Object[]
-                {
+                modelo.addRow(new Object[]{
                     object.getCodFact(),
-                    getNomeCliente( object ),
-                    getData( object.getDataVenda() ),
-                    getHora( object.getHora() ),
+                    getNomeCliente(object),
+                    getData(object.getDataVenda()),
+                    getHora(object.getHora()),
                     object.getCodigoUsuario().getNome(),
-                    object.getTotalVenda(),
-
-                } );
+                    object.getTotalVenda(),});
 
             }
-            lb_total.setText( formatarComoMoeda( getTotal( tabela_factura_proforma ) ) );
+            lb_total.setText(formatarComoMoeda(getTotal(tabela_factura_proforma)));
         }
     }
 
-    private void adicionar_relatorio_recibo()
-    {
+    private void adicionar_relatorio_recibo() {
 
 //        lista = rb_todos_clientes.isSelected() ? vendaDao.getAllNotasByBetweenDataAndArmazemAndDocumento( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_RECIBO_RC) : vendaDao.getAllNotaByBetweenDataAndArmazemAndDocumentoAndCliente( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_RECIBO_RC, getCodigoCliente() );
-        ck_estrato_cliente.setSelected( false ); //quando o dcumento FR nao e necessario Extrato do Cliente
-        ck_estrato_cliente.setVisible( false );
+        ck_estrato_cliente.setSelected(false); //quando o dcumento FR nao e necessario Extrato do Cliente
+        ck_estrato_cliente.setVisible(false);
 //        String codFact = txtRefDoc.getText();
         DefaultTableModel modelo = (DefaultTableModel) tabela_recibo.getModel();
-        modelo.setRowCount( 0 );
-        lista = vendaDao.getAllVendaByBetweenDataAndArmazemAndDocumento( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_RECIBO_RC );
+        modelo.setRowCount(0);
+        lista = vendaDao.getAllVendaByBetweenDataAndArmazemAndDocumento(dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_RECIBO_RC);
 //                lista = vendaDao.getVendaByCodFact( codFact);
 
-        if ( lista != null )
-        {
-            for ( TbVenda object : lista )
-            {
+        if (lista != null) {
+            for (TbVenda object : lista) {
 
-                modelo.addRow( new Object[]
-                {
+                modelo.addRow(new Object[]{
                     object.getCodFact(),
-                    getNomeCliente( object ),
-                    getData( object.getDataVenda() ),
-                    getHora( object.getHora() ),
+                    getNomeCliente(object),
+                    getData(object.getDataVenda()),
+                    getHora(object.getHora()),
                     object.getCodigoUsuario().getNome(),
-                    object.getTotalVenda(),
-
-                } );
+                    object.getTotalVenda(),});
 
             }
-            lb_total.setText( formatarComoMoeda( getTotal( tabela_recibo ) ) );
+            lb_total.setText(formatarComoMoeda(getTotal(tabela_recibo)));
         }
     }
 
-    private void adicionar_relatorio_recibo1()
-    {
+    private void adicionar_relatorio_recibo1() {
 //        configurar_clientes();
-        ck_estrato_cliente.setVisible( true );
-        lista = rb_todos_clientes.isSelected() ? vendaDao.getAllVendaByBetweenDataAndArmazemAndDocumento( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_RECIBO_RC ) : vendaDao.getAllVendaByBetweenDataAndArmazemAndDocumentoAndCliente( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_RECIBO_RC, getCodigoCliente() );
+        ck_estrato_cliente.setVisible(true);
+        lista = rb_todos_clientes.isSelected() ? vendaDao.getAllVendaByBetweenDataAndArmazemAndDocumento(dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_RECIBO_RC) : vendaDao.getAllVendaByBetweenDataAndArmazemAndDocumentoAndCliente(dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_RECIBO_RC, getCodigoCliente());
 
 //        lista = rb_todos_clientes.isSelected() ? vendaDao.getAllNotasByBetweenDataAndArmazemAndDocumento( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_RECIBO_RC) : vendaDao.getAllNotaByBetweenDataAndArmazemAndDocumentoAndCliente( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_RECIBO_RC, getCodigoCliente() );
 //        ck_estrato_cliente.setSelected( false ); //quando o dcumento FR nao e necessario Extrato do Cliente
-        ck_estrato_cliente.setVisible( false );
+        ck_estrato_cliente.setVisible(false);
 //        String codFact = txtRefDoc.getText();
         DefaultTableModel modelo = (DefaultTableModel) tabela_recibo.getModel();
-        modelo.setRowCount( 0 );
+        modelo.setRowCount(0);
 //        lista = vendaDao.getAllVendaByBetweenDataAndArmazemAndDocumento( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_RECIBO_RC );
 //                lista = vendaDao.getVendaByCodFact( codFact);
 
-        if ( lista != null )
-        {
-            for ( TbVenda object : lista )
-            {
+        if (lista != null) {
+            for (TbVenda object : lista) {
 
-                modelo.addRow( new Object[]
-                {
+                modelo.addRow(new Object[]{
                     object.getCodFact(),
-                    getNomeCliente( object ),
-                    getData( object.getDataVenda() ),
-                    getHora( object.getHora() ),
+                    getNomeCliente(object),
+                    getData(object.getDataVenda()),
+                    getHora(object.getHora()),
                     object.getCodigoUsuario().getNome(),
-                    object.getTotalVenda(),
-
-                } );
+                    object.getTotalVenda(),});
 
             }
-            lb_total.setText( formatarComoMoeda( getTotal( tabela_recibo ) ) );
+            lb_total.setText(formatarComoMoeda(getTotal(tabela_recibo)));
         }
     }
 //    private void adicionar_relatorio_recibo()
@@ -1705,245 +1588,242 @@ public class ListarRelatorioVenda extends javax.swing.JFrame
 //        }
 //    }
 
-    private void adicionar_relatorio_geral()
-    {
-        ck_estrato_cliente.setVisible( true );
-        lista = rb_todos_clientes.isSelected() ? vendaDao.getAllVendasGeraisByBetweenDataAndArmazemAndDocumento( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem() ) : vendaDao.getAllVendasGeraisByBetweenDataAndArmazemAndDocumentoAndCliente( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), getCodigoCliente() );
+    private void adicionar_relatorio_geral() {
+//        ck_estrato_cliente.setVisible(true);
+        lista = rb_todos_clientes.isSelected() ? vendaDao.getAllVendasGeraisByBetweenDataAndArmazemAndDocumento(dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem()) : vendaDao.getAllVendasGeraisByBetweenDataAndArmazemAndDocumentoAndCliente(dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), getCodigoCliente());
 
         DefaultTableModel modelo = (DefaultTableModel) tabela_factura_geral.getModel();
-        modelo.setRowCount( 0 );
-        if ( lista != null )
-        {
-            for ( TbVenda object : lista )
-            {
-//                BigDecimal valor_pago = ( !Objects.isNull( VendaDao.getTotalPagoByCodFact( object.getCodFact(), conexao ) ) ? VendaDao.getTotalPagoByCodFact( object.getCodFact(), conexao ) : new BigDecimal( 0.0 ) );
-                BigDecimal valor_pago = (!Objects.isNull( VendaDao.getTotalPagoByCodFact( object.getCodFact(), conexao ) ) ? VendaDao.getTotalPagoByCodFact( object.getCodFact(), conexao ) : new BigDecimal( 0.0 ));
-                System.out.println( "VALOR PAGO = " + valor_pago );
-                modelo.addRow( new Object[]
-                {
-                    object.getCodFact(),
-                    getNomeCliente( object ),
-                    getData( object.getDataVenda() ),
-                    getHora( object.getHora() ),
-                    object.getCodigoUsuario().getNome(),
-                    new BigDecimal( object.getTotalVenda().doubleValue() ).setScale( 2, RoundingMode.CEILING ),
-                    object.getRefCodFact(),
-                    valor_pago,
-                    //                            new BigDecimal( object.getTotalVenda() ).subtract( valor_pago ).setScale( 2, RoundingMode.CEILING )
-                    valor_pago.subtract( new BigDecimal( object.getTotalVenda().doubleValue() ) ).setScale( 2, RoundingMode.FLOOR )
+        BigDecimal totalBruto = BigDecimal.ZERO;
+BigDecimal totalNC = BigDecimal.ZERO;
+BigDecimal totalLiquido = BigDecimal.ZERO;
 
-                } );
+for (TbVenda object : lista) {
 
-            }
-            lb_total.setText( formatarComoMoeda( getTotal( tabela_factura_geral ).doubleValue() ) );
-        }
+    BigDecimal valorAssinado = getValorAssinado(object);
+
+    if (isNotaCredito(object)) {
+        totalNC = totalNC.add(object.getTotalGeral());
+    } 
+    else if (isVendaValida(object)) {
+        totalBruto = totalBruto.add(object.getTotalGeral());
     }
 
-    private void reimprimir_FR()
-    {
+    totalLiquido = totalLiquido.add(valorAssinado);
+
+    BigDecimal valor_pago = (!Objects.isNull(
+        VendaDao.getTotalPagoByCodFact(object.getCodFact(), conexao)
+    ) ? VendaDao.getTotalPagoByCodFact(object.getCodFact(), conexao)
+      : BigDecimal.ZERO);
+
+    modelo.addRow(new Object[] {
+        object.getCodFact(),
+        getNomeCliente(object),
+        getData(object.getDataVenda()),
+        getHora(object.getHora()),
+        object.getCodigoUsuario().getNome(),
+        valorAssinado.setScale(2, RoundingMode.CEILING),
+        object.getRefCodFact(),
+        valor_pago,
+        valor_pago.subtract(valorAssinado).setScale(2, RoundingMode.FLOOR)
+    });
+}
+//        modelo.setRowCount(0);
+//        if (lista != null) {
+//            for (TbVenda object : lista) {
+////                BigDecimal valor_pago = ( !Objects.isNull( VendaDao.getTotalPagoByCodFact( object.getCodFact(), conexao ) ) ? VendaDao.getTotalPagoByCodFact( object.getCodFact(), conexao ) : new BigDecimal( 0.0 ) );
+//                BigDecimal valor_pago = (!Objects.isNull(VendaDao.getTotalPagoByCodFact(object.getCodFact(), conexao)) ? VendaDao.getTotalPagoByCodFact(object.getCodFact(), conexao) : new BigDecimal(0.0));
+//                System.out.println("VALOR PAGO = " + valor_pago);
+//                modelo.addRow(new Object[]{
+//                    object.getCodFact(),
+//                    getNomeCliente(object),
+//                    getData(object.getDataVenda()),
+//                    getHora(object.getHora()),
+//                    object.getCodigoUsuario().getNome(),
+//                    new BigDecimal(object.getTotalVenda().doubleValue()).setScale(2, RoundingMode.CEILING),
+//                    object.getRefCodFact(),
+//                    valor_pago,
+//                    //                            new BigDecimal( object.getTotalVenda() ).subtract( valor_pago ).setScale( 2, RoundingMode.CEILING )
+//                    valor_pago.subtract(new BigDecimal(object.getTotalVenda().doubleValue())).setScale(2, RoundingMode.FLOOR)
+//
+//                });
+//
+//            }
+            lb_total.setText(formatarComoMoeda(getTotal(tabela_factura_geral).doubleValue()));
+//        }
+    }
+
+    private void reimprimir_FR() {
         DefaultTableModel modelo = (DefaultTableModel) tabela_factura_recibo.getModel();
         int selectedRow = tabela_factura_recibo.getSelectedRow();
-        String codRef = modelo.getValueAt( selectedRow, 0 ).toString();
+        String codRef = modelo.getValueAt(selectedRow, 0).toString();
 
-        procedimento_reimprimir_FR( codRef );
+        procedimento_reimprimir_FR(codRef);
     }
 
-    private void procedimento_reimprimir_FR( String ref_doc )
-    {
+    private void procedimento_reimprimir_FR(String ref_doc) {
 
         HashMap hashMap = new HashMap();
-        TbVenda venda = vendaDao.findByCodFactReemprensao( ref_doc );
+        TbVenda venda = vendaDao.findByCodFactReemprensao(ref_doc);
 
-        if ( venda != null )
-        {
+        if (venda != null) {
 
 //            Abreviacao abreviacao = DVML.getAbreviacao( venda.getFkDocumento().getPkDocumento() );
 //            abreviacao = DVML.Abreviacao.FR_A4;
             List<TbProduto> lista_produto_isentos = new ArrayList<>();
-            lista_produto_isentos = MetodosUtil.getProdutosIsentos( venda.getTbItemVendaList() );
-            String motivos_isentos = MetodosUtil.getMotivoIsensaoProdutos( lista_produto_isentos );
+            lista_produto_isentos = MetodosUtil.getProdutosIsentos(venda.getTbItemVendaList());
+            String motivos_isentos = MetodosUtil.getMotivoIsensaoProdutos(lista_produto_isentos);
 //            ListaVenda1 original = new ListaVenda1( cod_venda, abreviacao, false, ck_simplificada.isSelected(), "Original", motivos_isentos );
 
-            ListaVenda2 listaVenda2 = new ListaVenda2( venda.getCodigo(), abreviacao, false, false, DVML.SEGUNDA_VIA_CONFORMIDADE_COM_ORIGINAL, motivos_isentos );
+            ListaVenda2 listaVenda2 = new ListaVenda2(venda.getCodigo(), abreviacao, false, false, DVML.SEGUNDA_VIA_CONFORMIDADE_COM_ORIGINAL, motivos_isentos);
 //            ListaVenda2 listaVenda2 = new ListaVenda2( venda.getCodigo(), abreviacao, false, false, DVML.SEGUNDA_VIA_CONFORMIDADE_COM_ORIGINAL, motivos_isentos );
-        }
-        else
-        {
-            JOptionPane.showMessageDialog( null, "Atenção\nO Documento não existe na base de dados. \nObs: Verifique a referência. " );
+        } else {
+            JOptionPane.showMessageDialog(null, "Atenção\nO Documento não existe na base de dados. \nObs: Verifique a referência. ");
         }
 
     }
 
-    private void reimprimir_PP()
-    {
+    private void reimprimir_PP() {
         DefaultTableModel modelo = (DefaultTableModel) tabela_factura_proforma.getModel();
         int selectedRow = tabela_factura_proforma.getSelectedRow();
-        String codRef = modelo.getValueAt( selectedRow, 0 ).toString();
+        String codRef = modelo.getValueAt(selectedRow, 0).toString();
 
-        procedimento_reimprimir_PP( codRef );
+        procedimento_reimprimir_PP(codRef);
     }
 
-    private void procedimento_reimprimir_PP( String ref_doc )
-    {
+    private void procedimento_reimprimir_PP(String ref_doc) {
 
         HashMap hashMap = new HashMap();
-        TbVenda venda = vendaDao.findByCodFactReemprensao( ref_doc );
+        TbVenda venda = vendaDao.findByCodFactReemprensao(ref_doc);
 
-        if ( venda != null )
-        {
+        if (venda != null) {
 
 //            Abreviacao abreviacao = DVML.getAbreviacao( venda.getFkDocumento().getPkDocumento() );
 //            abreviacao = DVML.Abreviacao.FR_A4;
             List<TbProduto> lista_produto_isentos = new ArrayList<>();
-            lista_produto_isentos = MetodosUtil.getProdutosIsentos( venda.getTbItemVendaList() );
-            String motivos_isentos = MetodosUtil.getMotivoIsensaoProdutos( lista_produto_isentos );
+            lista_produto_isentos = MetodosUtil.getProdutosIsentos(venda.getTbItemVendaList());
+            String motivos_isentos = MetodosUtil.getMotivoIsensaoProdutos(lista_produto_isentos);
 //            ListaVenda1 original = new ListaVenda1( cod_venda, abreviacao, false, ck_simplificada.isSelected(), "Original", motivos_isentos );
 
-            ListaVenda2 listaVenda2 = new ListaVenda2( venda.getCodigo(), abreviacao, false, false, DVML.SEGUNDA_VIA_CONFORMIDADE_COM_ORIGINAL, motivos_isentos );
+            ListaVenda2 listaVenda2 = new ListaVenda2(venda.getCodigo(), abreviacao, false, false, DVML.SEGUNDA_VIA_CONFORMIDADE_COM_ORIGINAL, motivos_isentos);
 //            ListaVenda2 listaVenda2 = new ListaVenda2( venda.getCodigo(), abreviacao, false, false, DVML.SEGUNDA_VIA_CONFORMIDADE_COM_ORIGINAL, motivos_isentos );
-        }
-        else
-        {
-            JOptionPane.showMessageDialog( null, "Atenção\nO Documento não existe na base de dados. \nObs: Verifique a referência. " );
+        } else {
+            JOptionPane.showMessageDialog(null, "Atenção\nO Documento não existe na base de dados. \nObs: Verifique a referência. ");
         }
 
     }
 
-    private void reimprimir_R()
-    {
+    private void reimprimir_R() {
         DefaultTableModel modelo = (DefaultTableModel) tabela_recibo.getModel();
         int selectedRow = tabela_recibo.getSelectedRow();
-        String codRef = modelo.getValueAt( selectedRow, 0 ).toString();
+        String codRef = modelo.getValueAt(selectedRow, 0).toString();
 
-        procedimento_reimprimir_R( codRef );
+        procedimento_reimprimir_R(codRef);
     }
 
-    private void procedimento_reimprimir_R( String ref_doc )
-    {
+    private void procedimento_reimprimir_R(String ref_doc) {
 
         HashMap hashMap = new HashMap();
-        TbVenda venda = vendaDao.findByCodFactReemprensao( ref_doc );
+        TbVenda venda = vendaDao.findByCodFactReemprensao(ref_doc);
 
-        if ( venda != null )
-        {
+        if (venda != null) {
 
-            Abreviacao abreviacao = DVML.getAbreviacao( venda.getFkDocumento().getPkDocumento() );
+            Abreviacao abreviacao = DVML.getAbreviacao(venda.getFkDocumento().getPkDocumento());
             abreviacao = DVML.Abreviacao.RC;
             List<TbProduto> lista_produto_isentos = new ArrayList<>();
-            lista_produto_isentos = MetodosUtil.getProdutosIsentos( venda.getTbItemVendaList() );
-            String motivos_isentos = MetodosUtil.getMotivoIsensaoProdutos( lista_produto_isentos );
-            ListaVenda2 listaVenda2 = new ListaVenda2( venda.getCodigo(), abreviacao, false, false, DVML.SEGUNDA_VIA_CONFORMIDADE_COM_ORIGINAL, motivos_isentos );
-        }
-        else
-        {
-            JOptionPane.showMessageDialog( null, "Atenção\nO Documento não existe na base de dados. \nObs: Verifique a referência. " );
+            lista_produto_isentos = MetodosUtil.getProdutosIsentos(venda.getTbItemVendaList());
+            String motivos_isentos = MetodosUtil.getMotivoIsensaoProdutos(lista_produto_isentos);
+            ListaVenda2 listaVenda2 = new ListaVenda2(venda.getCodigo(), abreviacao, false, false, DVML.SEGUNDA_VIA_CONFORMIDADE_COM_ORIGINAL, motivos_isentos);
+        } else {
+            JOptionPane.showMessageDialog(null, "Atenção\nO Documento não existe na base de dados. \nObs: Verifique a referência. ");
         }
 
     }
 
-    private void reimprimir_FT()
-    {
+    private void reimprimir_FT() {
         DefaultTableModel modelo = (DefaultTableModel) tabela_factura.getModel();
         int selectedRow = tabela_factura.getSelectedRow();
-        String codRef = modelo.getValueAt( selectedRow, 0 ).toString();
+        String codRef = modelo.getValueAt(selectedRow, 0).toString();
 
-        procedimento_reimprimir_FT( codRef );
+        procedimento_reimprimir_FT(codRef);
     }
 
-    private void procedimento_reimprimir_FT( String ref_doc )
-    {
+    private void procedimento_reimprimir_FT(String ref_doc) {
 
         HashMap hashMap = new HashMap();
-        TbVenda venda = vendaDao.findByCodFactReemprensao( ref_doc );
+        TbVenda venda = vendaDao.findByCodFactReemprensao(ref_doc);
 
-        if ( venda != null )
-        {
+        if (venda != null) {
 
-            Abreviacao abreviacao = DVML.getAbreviacao( venda.getFkDocumento().getPkDocumento() );
+            Abreviacao abreviacao = DVML.getAbreviacao(venda.getFkDocumento().getPkDocumento());
             abreviacao = DVML.Abreviacao.FA;
             List<TbProduto> lista_produto_isentos = new ArrayList<>();
-            lista_produto_isentos = MetodosUtil.getProdutosIsentos( venda.getTbItemVendaList() );
-            String motivos_isentos = MetodosUtil.getMotivoIsensaoProdutos( lista_produto_isentos );
-            ListaVenda2 listaVenda2 = new ListaVenda2( venda.getCodigo(), abreviacao, false, false, DVML.SEGUNDA_VIA_CONFORMIDADE_COM_ORIGINAL, motivos_isentos );
-        }
-        else
-        {
-            JOptionPane.showMessageDialog( null, "Atenção\nO Documento não existe na base de dados. \nObs: Verifique a referência. " );
+            lista_produto_isentos = MetodosUtil.getProdutosIsentos(venda.getTbItemVendaList());
+            String motivos_isentos = MetodosUtil.getMotivoIsensaoProdutos(lista_produto_isentos);
+            ListaVenda2 listaVenda2 = new ListaVenda2(venda.getCodigo(), abreviacao, false, false, DVML.SEGUNDA_VIA_CONFORMIDADE_COM_ORIGINAL, motivos_isentos);
+        } else {
+            JOptionPane.showMessageDialog(null, "Atenção\nO Documento não existe na base de dados. \nObs: Verifique a referência. ");
         }
 
     }
 
-    private void reimprimir_NC()
-    {
+    private void reimprimir_NC() {
         DefaultTableModel modelo = (DefaultTableModel) tabela_factura_nc.getModel();
         int selectedRow = tabela_factura_nc.getSelectedRow();
-        String codRef = modelo.getValueAt( selectedRow, 0 ).toString();
+        String codRef = modelo.getValueAt(selectedRow, 0).toString();
 
-        procedimento_reimprimir_NC( codRef );
+        procedimento_reimprimir_NC(codRef);
     }
 
-    private void procedimento_reimprimir_NC( String ref_doc )
-    {
+    private void procedimento_reimprimir_NC(String ref_doc) {
 
         HashMap hashMap = new HashMap();
-        TbVenda venda = vendaDao.findByCodFactReemprensaoNota1( ref_doc );
+        TbVenda venda = vendaDao.findByCodFactReemprensaoNota1(ref_doc);
 
-        if ( venda != null )
-        {
+        if (venda != null) {
 
-            Abreviacao abreviacao_nota_credito = DVML.getAbreviacao( venda.getFkDocumento().getPkDocumento() );
+            Abreviacao abreviacao_nota_credito = DVML.getAbreviacao(venda.getFkDocumento().getPkDocumento());
             abreviacao_nota_credito = DVML.Abreviacao.NC;
             List<TbProduto> lista_produto_isentos = new ArrayList<>();
-            lista_produto_isentos = MetodosUtil.getProdutosIsentos( venda.getTbItemVendaList() );
-            String motivos_isentos = MetodosUtil.getMotivoIsensaoProdutos( lista_produto_isentos );
-            ListaNotasDebito listaVenda2 = new ListaNotasDebito( venda.getCodigo(), abreviacao_nota_credito, false, true, hashMap, motivos_isentos );
+            lista_produto_isentos = MetodosUtil.getProdutosIsentos(venda.getTbItemVendaList());
+            String motivos_isentos = MetodosUtil.getMotivoIsensaoProdutos(lista_produto_isentos);
+            ListaNotasDebito listaVenda2 = new ListaNotasDebito(venda.getCodigo(), abreviacao_nota_credito, false, true, hashMap, motivos_isentos);
 //            ListaVenda2 listaVenda2 = new ListaVenda2(venda.getCodigo(), abreviacao, false, false, DVML.SEGUNDA_VIA_CONFORMIDADE_COM_ORIGINAL, motivos_isentos);
-        }
-        else
-        {
-            JOptionPane.showMessageDialog( null, "Atenção\nO Documento não existe na base de dados. \nObs: Verifique a referência. " );
+        } else {
+            JOptionPane.showMessageDialog(null, "Atenção\nO Documento não existe na base de dados. \nObs: Verifique a referência. ");
         }
 
     }
 
-    private void reimprimir_GERAL()
-    {
+    private void reimprimir_GERAL() {
         DefaultTableModel modelo = (DefaultTableModel) tabela_factura_geral.getModel();
         int selectedRow = tabela_factura_geral.getSelectedRow();
-        String codRef = modelo.getValueAt( selectedRow, 0 ).toString();
+        String codRef = modelo.getValueAt(selectedRow, 0).toString();
 
-        procedimento_reimprimir_GERAL( codRef );
+        procedimento_reimprimir_GERAL(codRef);
     }
 
-    private void procedimento_reimprimir_GERAL( String ref_doc )
-    {
+    private void procedimento_reimprimir_GERAL(String ref_doc) {
 
         HashMap hashMap = new HashMap();
-        TbVenda venda = vendaDao.findByCodFactReemprensaoGeral( ref_doc );
+        TbVenda venda = vendaDao.findByCodFactReemprensaoGeral(ref_doc);
 
-        if ( venda != null )
-        {
+        if (venda != null) {
 
-            Abreviacao abreviacao = DVML.getAbreviacao( venda.getFkDocumento().getPkDocumento() );
-            Abreviacao abreviacao_nota_credito = DVML.getAbreviacao( venda.getFkDocumento().getPkDocumento() );
+            Abreviacao abreviacao = DVML.getAbreviacao(venda.getFkDocumento().getPkDocumento());
+            Abreviacao abreviacao_nota_credito = DVML.getAbreviacao(venda.getFkDocumento().getPkDocumento());
             abreviacao_nota_credito = DVML.Abreviacao.NC;
             List<TbProduto> lista_produto_isentos = new ArrayList<>();
-            lista_produto_isentos = MetodosUtil.getProdutosIsentos( venda.getTbItemVendaList() );
-            String motivos_isentos = MetodosUtil.getMotivoIsensaoProdutos( lista_produto_isentos );
+            lista_produto_isentos = MetodosUtil.getProdutosIsentos(venda.getTbItemVendaList());
+            String motivos_isentos = MetodosUtil.getMotivoIsensaoProdutos(lista_produto_isentos);
 
-            if ( venda.getStatusEliminado().equals( "ANULADO" ) )
-            {
-                ListaNotasDebito listaVendaDebito = new ListaNotasDebito( venda.getCodigo(), abreviacao_nota_credito, false, true, hashMap, motivos_isentos );
-            }
-            else
-            {
-                ListaVendaGeral listaVendaGeral = new ListaVendaGeral( venda.getCodigo(), abreviacao, false, false, DVML.SEGUNDA_VIA_CONFORMIDADE_COM_ORIGINAL, motivos_isentos );
+            if (venda.getStatusEliminado().equals("ANULADO")) {
+                ListaNotasDebito listaVendaDebito = new ListaNotasDebito(venda.getCodigo(), abreviacao_nota_credito, false, true, hashMap, motivos_isentos);
+            } else {
+                ListaVendaGeral listaVendaGeral = new ListaVendaGeral(venda.getCodigo(), abreviacao, false, false, DVML.SEGUNDA_VIA_CONFORMIDADE_COM_ORIGINAL, motivos_isentos);
             }
 
-        }
-        else
-        {
-            JOptionPane.showMessageDialog( null, "Atenção\nO Documento não existe na base de dados. \nObs: Verifique a referência. " );
+        } else {
+            JOptionPane.showMessageDialog(null, "Atenção\nO Documento não existe na base de dados. \nObs: Verifique a referência. ");
         }
 
     }
@@ -1973,213 +1853,165 @@ public class ListarRelatorioVenda extends javax.swing.JFrame
 //        }
 //
 //    }
-    private void adicionar_tabela_cod_fact()
-    {
+    private void adicionar_tabela_cod_fact() {
 
         configurar_clientes();
 
         DefaultTableModel modelo = null;
 
-        try
-        {
+        try {
             int selectedIndex = jTabbedPane1.getSelectedIndex();
 
             //CASO DA FACTURA RECIBO
-            if ( selectedIndex == 0 )
-            {
-                ck_estrato_cliente.setSelected( false ); //quando o dcumento FR nao e necessario Extrato do Cliente
-                ck_estrato_cliente.setVisible( false );
+            if (selectedIndex == 0) {
+                ck_estrato_cliente.setSelected(false); //quando o dcumento FR nao e necessario Extrato do Cliente
+                ck_estrato_cliente.setVisible(false);
 //                String codFact = txtRefDoc.getText();
                 modelo = (DefaultTableModel) tabela_factura_recibo.getModel();
-                modelo.setRowCount( 0 );
+                modelo.setRowCount(0);
 //                lista = vendaDao.getAllVendaByBetweenDataAndArmazemAndDocumento( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_FACTURA_RECIBO_FR );
 //                lista = vendaDao.getVendaByCodFact( codFact );
 
-                if ( lista != null )
-                {
-                    for ( TbVenda object : lista )
-                    {
+                if (lista != null) {
+                    for (TbVenda object : lista) {
 
-                        modelo.addRow( new Object[]
-                        {
+                        modelo.addRow(new Object[]{
                             object.getCodFact(),
-                            getNomeCliente( object ),
-                            getData( object.getDataVenda() ),
-                            getHora( object.getHora() ),
+                            getNomeCliente(object),
+                            getData(object.getDataVenda()),
+                            getHora(object.getHora()),
                             object.getCodigoUsuario().getNome(),
-                            object.getTotalVenda(),
-
-                        } );
+                            object.getTotalVenda(),});
 
                     }
-                    lb_total.setText( formatarComoMoeda( getTotal( tabela_factura_recibo ) ) );
+                    lb_total.setText(formatarComoMoeda(getTotal(tabela_factura_recibo)));
                 }
 
             } //CASO DA FACTURA
-            else if ( selectedIndex == 1 )
-            {
+            else if (selectedIndex == 1) {
                 adicionar_relatorio_factura();
-            }
-            else if ( selectedIndex == 2 )
-            {
+            } else if (selectedIndex == 2) {
                 adicionar_relatorio_nota();
-            }
-            else if ( selectedIndex == 3 )
-            {
+            } else if (selectedIndex == 3) {
                 adicionar_relatorio_recibo();
-            }
-            else if ( selectedIndex == 4 )
-            {
+            } else if (selectedIndex == 4) {
                 adicionar_relatorio_geral();
             }
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
-            lb_total.setText( "" );
-            JOptionPane.showMessageDialog( null, "Não há registro para esse armazém", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+            lb_total.setText("");
+            JOptionPane.showMessageDialog(null, "Não há registro para esse armazém", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
         }
 
     }
 
-    private void setFolhaImpressora( String folha )
-    {
-        if ( folha.equalsIgnoreCase( "A6" ) )
-        {
-            ck_simplificada.setSelected( true );
-            ck_A7.setSelected( false );
-            ck_A4.setSelected( false );
-            ck_Duplicada.setSelected( false );
-            ck_S_A6.setSelected( false );
-            ck_ComVirgula.setSelected( false );
-            ck_simplificada_O.setSelected( false );
-            ck_simplificada_OS_A6.setSelected( false );
+    private void setFolhaImpressora(String folha) {
+        if (folha.equalsIgnoreCase("A6")) {
+            ck_simplificada.setSelected(true);
+            ck_A7.setSelected(false);
+            ck_A4.setSelected(false);
+            ck_Duplicada.setSelected(false);
+            ck_S_A6.setSelected(false);
+            ck_ComVirgula.setSelected(false);
+            ck_simplificada_O.setSelected(false);
+            ck_simplificada_OS_A6.setSelected(false);
             this.abreviacao = Abreviacao.FR_A6;
         }
-        if ( folha.equalsIgnoreCase( "A6_O" ) )
-        {
-            ck_simplificada_O.setSelected( true );
-            ck_A7.setSelected( false );
-            ck_A4.setSelected( false );
-            ck_Duplicada.setSelected( false );
-            ck_S_A6.setSelected( false );
-            ck_ComVirgula.setSelected( false );
-            ck_simplificada.setSelected( false );
-            ck_simplificada_OS_A6.setSelected( false );
+        if (folha.equalsIgnoreCase("A6_O")) {
+            ck_simplificada_O.setSelected(true);
+            ck_A7.setSelected(false);
+            ck_A4.setSelected(false);
+            ck_Duplicada.setSelected(false);
+            ck_S_A6.setSelected(false);
+            ck_ComVirgula.setSelected(false);
+            ck_simplificada.setSelected(false);
+            ck_simplificada_OS_A6.setSelected(false);
             this.abreviacao = Abreviacao.FR_A6_O;
         }
-        if ( folha.equalsIgnoreCase( "S_A6_O" ) )
-        {
-            ck_simplificada_OS_A6.setSelected( true );
-            ck_simplificada_O.setSelected( false );
-            ck_A7.setSelected( false );
-            ck_A4.setSelected( false );
-            ck_Duplicada.setSelected( false );
-            ck_S_A6.setSelected( false );
-            ck_ComVirgula.setSelected( false );
-            ck_simplificada.setSelected( false );
+        if (folha.equalsIgnoreCase("S_A6_O")) {
+            ck_simplificada_OS_A6.setSelected(true);
+            ck_simplificada_O.setSelected(false);
+            ck_A7.setSelected(false);
+            ck_A4.setSelected(false);
+            ck_Duplicada.setSelected(false);
+            ck_S_A6.setSelected(false);
+            ck_ComVirgula.setSelected(false);
+            ck_simplificada.setSelected(false);
             this.abreviacao = Abreviacao.FR_A6_O;
-        }
-        else if ( folha.equalsIgnoreCase( "A7" ) )
-        {
-            ck_A7.setSelected( true );
-            ck_simplificada_OS_A6.setSelected( false );
-            ck_simplificada.setSelected( false );
-            ck_A4.setSelected( false );
-            ck_Duplicada.setSelected( false );
-            ck_S_A6.setSelected( false );
-            ck_ComVirgula.setSelected( false );
-            ck_simplificada_O.setSelected( false );
+        } else if (folha.equalsIgnoreCase("A7")) {
+            ck_A7.setSelected(true);
+            ck_simplificada_OS_A6.setSelected(false);
+            ck_simplificada.setSelected(false);
+            ck_A4.setSelected(false);
+            ck_Duplicada.setSelected(false);
+            ck_S_A6.setSelected(false);
+            ck_ComVirgula.setSelected(false);
+            ck_simplificada_O.setSelected(false);
             this.abreviacao = Abreviacao.FR_SA7;
-        }
-        else if ( folha.equalsIgnoreCase( "A5" ) )
-        {
-            ck_Duplicada.setSelected( true );
-            ck_simplificada_OS_A6.setSelected( false );
-            ck_simplificada.setSelected( false );
-            ck_A4.setSelected( false );
-            ck_A7.setSelected( false );
-            ck_S_A6.setSelected( false );
-            ck_ComVirgula.setSelected( false );
-            ck_simplificada_O.setSelected( false );
+        } else if (folha.equalsIgnoreCase("A5")) {
+            ck_Duplicada.setSelected(true);
+            ck_simplificada_OS_A6.setSelected(false);
+            ck_simplificada.setSelected(false);
+            ck_A4.setSelected(false);
+            ck_A7.setSelected(false);
+            ck_S_A6.setSelected(false);
+            ck_ComVirgula.setSelected(false);
+            ck_simplificada_O.setSelected(false);
             this.abreviacao = Abreviacao.FT_A4_Duplicado;
-        }
-        else if ( folha.equalsIgnoreCase( "S_A6" ) )
-        {
-            ck_S_A6.setSelected( true );
-            ck_simplificada_OS_A6.setSelected( false );
-            ck_simplificada.setSelected( false );
-            ck_A7.setSelected( false );
-            ck_A4.setSelected( false );
-            ck_Duplicada.setSelected( false );
-            ck_ComVirgula.setSelected( false );
-            ck_simplificada_O.setSelected( false );
+        } else if (folha.equalsIgnoreCase("S_A6")) {
+            ck_S_A6.setSelected(true);
+            ck_simplificada_OS_A6.setSelected(false);
+            ck_simplificada.setSelected(false);
+            ck_A7.setSelected(false);
+            ck_A4.setSelected(false);
+            ck_Duplicada.setSelected(false);
+            ck_ComVirgula.setSelected(false);
+            ck_simplificada_O.setSelected(false);
             this.abreviacao = Abreviacao.FR_S_A6;
-        }
-        else if ( folha.equalsIgnoreCase( "A6V" ) )
-        {
-            ck_ComVirgula.setSelected( true );
-            ck_simplificada_OS_A6.setSelected( false );
-            ck_simplificada.setSelected( false );
-            ck_A7.setSelected( false );
-            ck_A4.setSelected( false );
-            ck_Duplicada.setSelected( false );
-            ck_S_A6.setSelected( false );
-            ck_simplificada_O.setSelected( false );
+        } else if (folha.equalsIgnoreCase("A6V")) {
+            ck_ComVirgula.setSelected(true);
+            ck_simplificada_OS_A6.setSelected(false);
+            ck_simplificada.setSelected(false);
+            ck_A7.setSelected(false);
+            ck_A4.setSelected(false);
+            ck_Duplicada.setSelected(false);
+            ck_S_A6.setSelected(false);
+            ck_simplificada_O.setSelected(false);
             this.abreviacao = Abreviacao.FR_A6_Com_Virgula;
-        }
-
-        else
-        {
-            ck_A4.setSelected( true );
-            ck_simplificada_OS_A6.setSelected( false );
-            ck_simplificada.setSelected( false );
-            ck_A7.setSelected( false );
-            ck_Duplicada.setSelected( false );
-            ck_S_A6.setSelected( false );
-            ck_ComVirgula.setSelected( false );
-            ck_simplificada_O.setSelected( false );
+        } else {
+            ck_A4.setSelected(true);
+            ck_simplificada_OS_A6.setSelected(false);
+            ck_simplificada.setSelected(false);
+            ck_A7.setSelected(false);
+            ck_Duplicada.setSelected(false);
+            ck_S_A6.setSelected(false);
+            ck_ComVirgula.setSelected(false);
+            ck_simplificada_O.setSelected(false);
             this.abreviacao = Abreviacao.FR_A4;
         }
     }
 
-    private void actualizar_abreviacao()
-    {
+    private void actualizar_abreviacao() {
 
 //        switch ( getIdDocumento() )
 //        {
 //            case DVML.DOC_FACTURA_RECIBO_FR:
-        if ( ck_A4.isSelected() )
-        {
+        if (ck_A4.isSelected()) {
             this.abreviacao = Abreviacao.FR_A4;
-        }
-        else if ( ck_simplificada.isSelected() )
-        {
+        } else if (ck_simplificada.isSelected()) {
             this.abreviacao = Abreviacao.FR_A6;
-        }
-        else if ( ck_simplificada_O.isSelected() )
-        {
+        } else if (ck_simplificada_O.isSelected()) {
             this.abreviacao = Abreviacao.FR_A6_O;
-        }
-        else if ( ck_simplificada_OS_A6.isSelected() )
-        {
+        } else if (ck_simplificada_OS_A6.isSelected()) {
             this.abreviacao = Abreviacao.FR_S_A6_O;
-        }
-        else if ( ck_A7.isSelected() )
-        {
+        } else if (ck_A7.isSelected()) {
             this.abreviacao = Abreviacao.FR_SA7;
-        }
-        else if ( ck_S_A6.isSelected() )
-        {
+        } else if (ck_S_A6.isSelected()) {
             this.abreviacao = Abreviacao.FR_S_A6;
-        }
-        else if ( ck_ComVirgula.isSelected() )
-        {
+        } else if (ck_ComVirgula.isSelected()) {
             this.abreviacao = Abreviacao.FR_A6_Com_Virgula;
-        }
-        else
-        {
+        } else {
             this.abreviacao = Abreviacao.FR_A4_Duplicado;
         }
 
@@ -2217,23 +2049,53 @@ public class ListarRelatorioVenda extends javax.swing.JFrame
 //        }
     }
 
-    private void procedimentoVisualizar()
-    {
+    private boolean isNotaCredito(TbVenda v) {
+        return v.getFkDocumento().getPkDocumento() == 5;
+    }
+
+    private boolean isRecibo(TbVenda v) {
+        return v.getFkDocumento().getPkDocumento() == 6;
+    }
+
+    private boolean isVendaValida(TbVenda v) {
+        int tipo = v.getFkDocumento().getPkDocumento();
+        return tipo == 1 || tipo == 2; // FR e FT
+    }
+
+    private BigDecimal getValorAssinado(TbVenda v) {
+        BigDecimal total = v.getTotalGeral() != null
+                ? v.getTotalGeral()
+                : BigDecimal.ZERO;
+
+        if (isNotaCredito(v)) {
+            return total.negate();
+        }
+
+        if (isRecibo(v)) {
+            return BigDecimal.ZERO; // 🔥 RECIBO NÃO CONTA COMO VENDA
+        }
+
+        return total;
+    }
+    
+    
+
+    private void procedimentoVisualizar() {
         HashMap hashMap = new HashMap();
 //        hashMap.put( "COD_REQUISITANTE", getIdRequisitante() );
 //        hashMap.put( "COD_REQUISITANTE", getIdRequisitante() );
 //        hashMap.put("PARM_DATA_1", dcData.getDate() );
 //        hashMap.put( "PARM_DATA_2", dcDataFim.getDate() );
 
-        hashMap.put( "TOP", 20 );
+        hashMap.put("TOP", 20);
 //        hashMap.put( "ANO", ( new Date().getYear() + 1900 ) );
-        hashMap.put( "ANO", dcDataInicio.getDate().getYear() + 1900 );
+        hashMap.put("ANO", dcDataInicio.getDate().getYear() + 1900);
 //        hashMap.put( "MES", MetodosUtil.getMesPagarU( new Date().getMonth() + 1 ) );
-        hashMap.put( "MES", MetodosUtil.getMesPagarU( dcDataInicio.getDate().getMonth() + 1 ) );
-        hashMap.put( "ID_MES", ( dcDataInicio.getDate().getMonth() + 1 ) );
+        hashMap.put("MES", MetodosUtil.getMesPagarU(dcDataInicio.getDate().getMonth() + 1));
+        hashMap.put("ID_MES", (dcDataInicio.getDate().getMonth() + 1));
 
         String file = "relatorio_diario_produto_top.jasper";
-        AnyReport anyReport = new AnyReport( hashMap, file );
+        AnyReport anyReport = new AnyReport(hashMap, file);
     }
 
 }

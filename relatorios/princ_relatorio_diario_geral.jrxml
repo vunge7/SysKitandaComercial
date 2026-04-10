@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lista_venda_order_usuario" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="e2a268c3-f53c-4fca-b778-32eea02972ea">
 	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="142"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.x" value="107"/>
+	<property name="ireport.y" value="48"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -34,6 +34,7 @@
      tb_venda.`total_geral` AS tb_venda_total_geral,
      tb_armazem.`designacao` AS tb_armazem_designacao,
      documento.`pk_documento` AS documento_pk_documento,
+     documento.`abreviacao` AS documento_abreviacao,
      tb_venda.`cod_fact` AS tb_venda_cod_fact,
      tb_venda.`total_iva` AS tb_venda_total_iva,
      tb_venda.`nome_consumidor_final` AS tb_venda_nome_consumidor_final,
@@ -41,38 +42,51 @@
      tb_dados_instituicao.`enderecos` AS tb_dados_instituicao_enderecos,
      tb_venda.`ref_cod_fact` AS tb_venda_ref_cod_fact,
      tb_venda.`obs` AS tb_venda_obs,
+
+     -- 🔥 VALOR CORRIGIDO PARA AGT
      CASE 
-	WHEN fk_documento = 5 THEN 'Normal'
- 	ELSE
-    	     if(status_eliminado = 'false', 'Normal', 'Anulado') 
-     END as status_eliminado
+         WHEN documento.pk_documento = 5 THEN -tb_venda.total_geral  -- NC negativa
+         WHEN documento.pk_documento = 6 THEN 0                      -- RE não entra
+         ELSE tb_venda.total_geral                                   -- FR e FT
+     END AS total_assinado,
+
+     -- 🔍 STATUS
+     CASE 
+         WHEN documento.pk_documento = 5 THEN 'Normal'
+         ELSE IF(tb_venda.status_eliminado = 'false', 'Normal', 'Anulado') 
+     END AS status_eliminado
+
 FROM
-     `tb_usuario` tb_usuario INNER JOIN `tb_venda` tb_venda ON tb_usuario.`codigo` = tb_venda.`codigo_usuario`
-     INNER JOIN `tb_armazem` tb_armazem ON tb_venda.`idArmazemFK` = tb_armazem.`codigo`
-     INNER JOIN `documento` documento ON tb_venda.`fk_documento` = documento.`pk_documento`,
-     `tb_dados_instituicao` tb_dados_instituicao
+     tb_usuario 
+     INNER JOIN tb_venda ON tb_usuario.codigo = tb_venda.codigo_usuario
+     INNER JOIN tb_armazem ON tb_venda.idArmazemFK = tb_armazem.codigo
+     INNER JOIN documento ON tb_venda.fk_documento = documento.pk_documento,
+     tb_dados_instituicao
+
 WHERE
-     DATE(tb_venda.`dataVenda`) BETWEEN $P{PARM_DATA_1} AND $P{PARM_DATA_2}
- AND fk_documento IN(1,2,5,6)]]>
+     DATE(tb_venda.dataVenda) BETWEEN $P{PARM_DATA_1} AND $P{PARM_DATA_2}
+     AND tb_venda.fk_documento IN (1,2,5,6)]]>
 	</queryString>
 	<field name="tb_venda_dataVenda" class="java.sql.Timestamp"/>
 	<field name="tb_venda_codigo" class="java.lang.Integer"/>
 	<field name="tb_usuario_codigo" class="java.lang.Integer"/>
 	<field name="tb_usuario_nome" class="java.lang.String"/>
-	<field name="tb_venda_total_venda" class="java.lang.Double"/>
+	<field name="tb_venda_total_venda" class="java.math.BigDecimal"/>
 	<field name="tb_venda_hora" class="java.sql.Time"/>
 	<field name="tb_venda_nome_cliente" class="java.lang.String"/>
-	<field name="tb_venda_desconto_total" class="java.lang.Double"/>
-	<field name="tb_venda_total_geral" class="java.lang.Double"/>
+	<field name="tb_venda_desconto_total" class="java.math.BigDecimal"/>
+	<field name="tb_venda_total_geral" class="java.math.BigDecimal"/>
 	<field name="tb_armazem_designacao" class="java.lang.String"/>
 	<field name="documento_pk_documento" class="java.lang.Integer"/>
+	<field name="documento_abreviacao" class="java.lang.String"/>
 	<field name="tb_venda_cod_fact" class="java.lang.String"/>
-	<field name="tb_venda_total_iva" class="java.lang.Double"/>
+	<field name="tb_venda_total_iva" class="java.math.BigDecimal"/>
 	<field name="tb_venda_nome_consumidor_final" class="java.lang.String"/>
 	<field name="tb_dados_instituicao_nome" class="java.lang.String"/>
 	<field name="tb_dados_instituicao_enderecos" class="java.lang.String"/>
 	<field name="tb_venda_ref_cod_fact" class="java.lang.String"/>
 	<field name="tb_venda_obs" class="java.lang.String"/>
+	<field name="total_assinado" class="java.math.BigDecimal"/>
 	<field name="status_eliminado" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
@@ -86,7 +100,7 @@ WHERE
 		<variableExpression><![CDATA[$F{tb_venda_total_iva}]]></variableExpression>
 	</variable>
 	<variable name="SOMA_VENDA" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$F{tb_venda_total_venda}]]></variableExpression>
+		<variableExpression><![CDATA[$F{total_assinado}]]></variableExpression>
 	</variable>
 	<background>
 		<band splitType="Stretch"/>
@@ -398,7 +412,7 @@ WHERE
 				<textElement textAlignment="Right">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_venda_total_venda}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{total_assinado}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
 				<reportElement uuid="8b4a2ae1-92e7-45d2-b5de-2be4b676e78c" style="style_degradacao" x="329" y="0" width="40" height="15"/>
@@ -518,20 +532,20 @@ WHERE
 	</pageFooter>
 	<summary>
 		<band height="71">
-			<textField pattern="#,##0.0">
-				<reportElement uuid="247f17f9-7ed3-4e80-ab2d-18c90d56820d" x="399" y="1" width="100" height="20"/>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="247f17f9-7ed3-4e80-ab2d-18c90d56820d" x="399" y="1" width="134" height="20"/>
 				<box rightPadding="3"/>
 				<textElement textAlignment="Right">
-					<font isBold="true"/>
+					<font fontName="Arial" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{SOMA_VENDA}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="ccdd9b9b-ef74-491c-9069-c7eabae3d4ef" x="350" y="1" width="66" height="20"/>
+				<reportElement uuid="ccdd9b9b-ef74-491c-9069-c7eabae3d4ef" x="328" y="1" width="132" height="20"/>
 				<textElement textAlignment="Right">
-					<font isBold="true"/>
+					<font fontName="Arial" isBold="true"/>
 				</textElement>
-				<text><![CDATA[TOTAL]]></text>
+				<text><![CDATA[TOTAL TRIBUTÁVEL]]></text>
 			</staticText>
 		</band>
 	</summary>

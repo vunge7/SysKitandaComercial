@@ -431,7 +431,8 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame
         AGT_SAFT_END_DATE = formateDate( YYYY_MM_DD, saftDataMaximaJDateChooser.getDate() );
         AGT_SAFT_CURRENCY_CODE = "AOA";
         AGT_SAFT_DATE_CREATED = formateDate( YYYY_MM_DD, new Date() );
-        AGT_SAFT_TAX_ENTITY = "Global";
+        AGT_SAFT_TAX_ENTITY = getStringValida( dadosDadosInstituicao.getPosto() );
+//        AGT_SAFT_TAX_ENTITY = "Global";
         AGT_SAFT_PRODUCT_COMPANY_TAX_ID = "5417221951";
         AGT_SAFT_SOFTWARE_VALIDATION_NUMBER = "258/AGT/2020";
         AGT_SAFT_PRODUCT_ID = NAME_SOFTWARE + "/" + NAME_COMPANY;
