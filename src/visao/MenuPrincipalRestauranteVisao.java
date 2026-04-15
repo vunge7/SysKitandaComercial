@@ -598,8 +598,7 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
      */
     @SuppressWarnings( "unchecked" )
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents()
-    {
+    private void initComponents() {
 
         jLabel2 = new javax.swing.JLabel();
         btnProdutosEspirados = new javax.swing.JButton();
@@ -700,6 +699,7 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
         jmListarUsuario = new javax.swing.JMenuItem();
         jmGerarSaftVendas = new javax.swing.JMenuItem();
         jmGerarSaftCompras = new javax.swing.JMenuItem();
+        jMenuItem11 = new javax.swing.JMenuItem();
         jMenu7 = new javax.swing.JMenu();
         jmFamilia = new javax.swing.JMenuItem();
         jmSubFamilia = new javax.swing.JMenuItem();
@@ -723,10 +723,8 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
         btnProdutosEspirados.setForeground(new java.awt.Color(255, 0, 0));
         btnProdutosEspirados.setText("...");
         btnProdutosEspirados.setToolTipText("Produtos Expirados");
-        btnProdutosEspirados.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnProdutosEspirados.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnProdutosEspiradosActionPerformed(evt);
             }
         });
@@ -748,20 +746,16 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
 
         jmVenda.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jmVenda.setText("Venda");
-        jmVenda.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmVenda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmVendaActionPerformed(evt);
             }
         });
         jMenu1.add(jmVenda);
 
         jmFrontOffice.setText("Front Office");
-        jmFrontOffice.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmFrontOffice.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmFrontOfficeActionPerformed(evt);
             }
         });
@@ -769,10 +763,8 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
 
         jmConverterProforma.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jmConverterProforma.setText("Converter Proformas em Facturas");
-        jmConverterProforma.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmConverterProforma.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmConverterProformaActionPerformed(evt);
             }
         });
@@ -780,10 +772,8 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
 
         jmProcessarRecibo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jmProcessarRecibo.setText("Processar Recibos de Factura");
-        jmProcessarRecibo.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmProcessarRecibo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmProcessarReciboActionPerformed(evt);
             }
         });
@@ -792,20 +782,16 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
         jmNotas.setText("Notas de Credito e Debito");
 
         jMenuItem7.setText("Emitir nota de credito para anulação de facturas");
-        jMenuItem7.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem7ActionPerformed(evt);
             }
         });
         jmNotas.add(jMenuItem7);
 
         jMenuItemRectificacao.setText("Emitir nota de credito para rectificação de facturas");
-        jMenuItemRectificacao.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItemRectificacao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemRectificacaoActionPerformed(evt);
             }
         });
@@ -815,10 +801,8 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
 
         jmNotaLevantamento.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jmNotaLevantamento.setText("Nota de Levantamento");
-        jmNotaLevantamento.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmNotaLevantamento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmNotaLevantamentoActionPerformed(evt);
             }
         });
@@ -826,70 +810,56 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
 
         jMenuItemGuiaTransportes.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jMenuItemGuiaTransportes.setText("Guia Transporte");
-        jMenuItemGuiaTransportes.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItemGuiaTransportes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemGuiaTransportesActionPerformed(evt);
             }
         });
         jMenu1.add(jMenuItemGuiaTransportes);
 
         jMenuItemGestaoCreditos.setText("Gestao de Creditos");
-        jMenuItemGestaoCreditos.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItemGestaoCreditos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemGestaoCreditosActionPerformed(evt);
             }
         });
         jMenu1.add(jMenuItemGestaoCreditos);
 
         jmSaidasProdutos.setText("Saidas Produtos");
-        jmSaidasProdutos.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmSaidasProdutos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmSaidasProdutosActionPerformed(evt);
             }
         });
         jMenu1.add(jmSaidasProdutos);
 
         jmEstornos.setText("Quebras");
-        jmEstornos.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmEstornos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmEstornosActionPerformed(evt);
             }
         });
         jMenu1.add(jmEstornos);
 
         jMenuItemAlteracaoGuia.setText("Alteração da Guia Transporte");
-        jMenuItemAlteracaoGuia.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItemAlteracaoGuia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemAlteracaoGuiaActionPerformed(evt);
             }
         });
         jMenu1.add(jMenuItemAlteracaoGuia);
 
         jMenuItemConverterGuia.setText("Converter Guia Transporte Em Documento");
-        jMenuItemConverterGuia.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItemConverterGuia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemConverterGuiaActionPerformed(evt);
             }
         });
         jMenu1.add(jMenuItemConverterGuia);
 
         JMenuPedidosCancelados.setText("Pedidos Cancelados");
-        JMenuPedidosCancelados.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        JMenuPedidosCancelados.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 JMenuPedidosCanceladosActionPerformed(evt);
             }
         });
@@ -897,10 +867,8 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
         jMenu1.add(jSeparator9);
 
         jMenuItem3.setText("Log Out");
-        jMenuItem3.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem3ActionPerformed(evt);
             }
         });
@@ -909,10 +877,8 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
         jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_DOWN_MASK));
         jMenuItem1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LOGOUT - VERMELHO/Logout 16x16.png"))); // NOI18N
         jMenuItem1.setText("Sair");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem1ActionPerformed(evt);
             }
         });
@@ -926,10 +892,8 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
 
         jmListarProdutosStock.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jmListarProdutosStock.setText("Inventario");
-        jmListarProdutosStock.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmListarProdutosStock.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmListarProdutosStockActionPerformed(evt);
             }
         });
@@ -939,10 +903,8 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
 
         jmTodasVendas.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jmTodasVendas.setText("Relatorio de Vendas por Intervalo de Datas");
-        jmTodasVendas.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmTodasVendas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmTodasVendasActionPerformed(evt);
             }
         });
@@ -950,10 +912,8 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
 
         jmRelatorioVendasPorUsuarioData.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jmRelatorioVendasPorUsuarioData.setText("Relatorio de Vendas Por Usuario e Data");
-        jmRelatorioVendasPorUsuarioData.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmRelatorioVendasPorUsuarioData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmRelatorioVendasPorUsuarioDataActionPerformed(evt);
             }
         });
@@ -961,70 +921,56 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
 
         jmRelatorioVendasPorClienteData.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jmRelatorioVendasPorClienteData.setText("Relatorio de Vendas por Cliente e Data");
-        jmRelatorioVendasPorClienteData.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmRelatorioVendasPorClienteData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmRelatorioVendasPorClienteDataActionPerformed(evt);
             }
         });
         jMenu8.add(jmRelatorioVendasPorClienteData);
 
         jmRelatorioDiario.setText("Relatorio de Quatidades de Produtos Vendidos");
-        jmRelatorioDiario.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmRelatorioDiario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmRelatorioDiarioActionPerformed(evt);
             }
         });
         jMenu8.add(jmRelatorioDiario);
 
         jMenuItemRelatorioQtdDetalhado.setText("Relatorio Detalhado de Quantidades Vendidos");
-        jMenuItemRelatorioQtdDetalhado.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItemRelatorioQtdDetalhado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemRelatorioQtdDetalhadoActionPerformed(evt);
             }
         });
         jMenu8.add(jMenuItemRelatorioQtdDetalhado);
 
         jmRelatorioFormaPagamento.setText("Relatorio de Vendas por Formas de Pagamentos");
-        jmRelatorioFormaPagamento.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmRelatorioFormaPagamento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmRelatorioFormaPagamentoActionPerformed(evt);
             }
         });
         jMenu8.add(jmRelatorioFormaPagamento);
 
         jmVendaDetalhadasClientes.setText("Vendas Detalhadas por Clientes");
-        jmVendaDetalhadasClientes.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmVendaDetalhadasClientes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmVendaDetalhadasClientesActionPerformed(evt);
             }
         });
         jMenu8.add(jmVendaDetalhadasClientes);
 
         jmVendaDetalhadasUsuarios.setText("Vendas Detalhadas por Usuarios");
-        jmVendaDetalhadasUsuarios.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmVendaDetalhadasUsuarios.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmVendaDetalhadasUsuariosActionPerformed(evt);
             }
         });
         jMenu8.add(jmVendaDetalhadasUsuarios);
 
         jmRelatorioDiarioTodasVendasTempoReal.setText("Relatorio Diario de Todas Vendas em Tempo Real");
-        jmRelatorioDiarioTodasVendasTempoReal.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmRelatorioDiarioTodasVendasTempoReal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmRelatorioDiarioTodasVendasTempoRealActionPerformed(evt);
             }
         });
@@ -1035,10 +981,8 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
         jMenu9.setText("Relatórios de Compras");
 
         jmRelatorioQTDComprados.setText("Relatorio de Quantidades de Produtos Comprados");
-        jmRelatorioQTDComprados.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmRelatorioQTDComprados.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmRelatorioQTDCompradosActionPerformed(evt);
             }
         });
@@ -1046,10 +990,8 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
 
         jmRelatorioComprasPorFornecedor.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jmRelatorioComprasPorFornecedor.setText("Relatorio de Compras por Fornecedores");
-        jmRelatorioComprasPorFornecedor.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmRelatorioComprasPorFornecedor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmRelatorioComprasPorFornecedorActionPerformed(evt);
             }
         });
@@ -1058,120 +1000,96 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
         jMenu2.add(jMenu9);
 
         jMenuItemRelatorioMensal.setText("Relatorio Mensal");
-        jMenuItemRelatorioMensal.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItemRelatorioMensal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemRelatorioMensalActionPerformed(evt);
             }
         });
         jMenu2.add(jMenuItemRelatorioMensal);
 
         jmListagensTodosProdutos.setText("Relatorio de Todos Produtos");
-        jmListagensTodosProdutos.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmListagensTodosProdutos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmListagensTodosProdutosActionPerformed(evt);
             }
         });
         jMenu2.add(jmListagensTodosProdutos);
 
         jmRelatorioTodosServicos.setText("Relatorio de Todos Servicos");
-        jmRelatorioTodosServicos.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmRelatorioTodosServicos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmRelatorioTodosServicosActionPerformed(evt);
             }
         });
         jMenu2.add(jmRelatorioTodosServicos);
 
         jmListagensTodosProdutoComDesconto.setText("Listagens de Todos os Produtos com Desconto");
-        jmListagensTodosProdutoComDesconto.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmListagensTodosProdutoComDesconto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmListagensTodosProdutoComDescontoActionPerformed(evt);
             }
         });
         jMenu2.add(jmListagensTodosProdutoComDesconto);
 
         jmProdutosActualizar.setText("Compra Por Fazer");
-        jmProdutosActualizar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmProdutosActualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmProdutosActualizarActionPerformed(evt);
             }
         });
         jMenu2.add(jmProdutosActualizar);
 
         jmRelatorioPorFonecedor.setText("Relatório por Fornecedor");
-        jmRelatorioPorFonecedor.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmRelatorioPorFonecedor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmRelatorioPorFonecedorActionPerformed(evt);
             }
         });
         jMenu2.add(jmRelatorioPorFonecedor);
 
         jmReeprmirFacura.setText("Reimprimir Factura");
-        jmReeprmirFacura.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmReeprmirFacura.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmReeprmirFacuraActionPerformed(evt);
             }
         });
         jMenu2.add(jmReeprmirFacura);
 
         jmReeprmirNota.setText("Reimprimir Nota Credito");
-        jmReeprmirNota.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmReeprmirNota.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmReeprmirNotaActionPerformed(evt);
             }
         });
         jMenu2.add(jmReeprmirNota);
 
         jmReimprimirSaidasProdutos.setText("Reimprimir Saidas de Produtos");
-        jmReimprimirSaidasProdutos.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmReimprimirSaidasProdutos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmReimprimirSaidasProdutosActionPerformed(evt);
             }
         });
         jMenu2.add(jmReimprimirSaidasProdutos);
 
         jmRelatoriosSaidasProdutosPorDatas.setText("Relatorios Saidas de Produtos por Datas");
-        jmRelatoriosSaidasProdutosPorDatas.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmRelatoriosSaidasProdutosPorDatas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmRelatoriosSaidasProdutosPorDatasActionPerformed(evt);
             }
         });
         jMenu2.add(jmRelatoriosSaidasProdutosPorDatas);
 
         jmRelatorioNotasCredito.setText("Relatorio de Notas de Creditos");
-        jmRelatorioNotasCredito.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmRelatorioNotasCredito.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmRelatorioNotasCreditoActionPerformed(evt);
             }
         });
         jMenu2.add(jmRelatorioNotasCredito);
 
         jmMapaExistencia.setText("Mapa de Existencia");
-        jmMapaExistencia.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmMapaExistencia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmMapaExistenciaActionPerformed(evt);
             }
         });
@@ -1179,10 +1097,8 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
 
         jmRelatorioAcertoStock.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jmRelatorioAcertoStock.setText("Relatorio de Acerto de Stock");
-        jmRelatorioAcertoStock.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmRelatorioAcertoStock.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmRelatorioAcertoStockActionPerformed(evt);
             }
         });
@@ -1190,40 +1106,32 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
 
         jmHistoricoBonusEmpresa.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jmHistoricoBonusEmpresa.setText("Historico de Bonus da Empresa");
-        jmHistoricoBonusEmpresa.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmHistoricoBonusEmpresa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmHistoricoBonusEmpresaActionPerformed(evt);
             }
         });
         jMenu2.add(jmHistoricoBonusEmpresa);
 
         jmListaClientes.setText("Lista de Clientes");
-        jmListaClientes.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmListaClientes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmListaClientesActionPerformed(evt);
             }
         });
         jMenu2.add(jmListaClientes);
 
         jMenuRelatorioTransferencia.setText("Relatorio Transferencias Armazem");
-        jMenuRelatorioTransferencia.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuRelatorioTransferencia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuRelatorioTransferenciaActionPerformed(evt);
             }
         });
         jMenu2.add(jMenuRelatorioTransferencia);
 
         jMenuItemRelatorioQuebras.setText("Relatorio Quebras");
-        jMenuItemRelatorioQuebras.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItemRelatorioQuebras.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemRelatorioQuebrasActionPerformed(evt);
             }
         });
@@ -1236,10 +1144,8 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
         jMenu3.setText("Sistema");
 
         jmTurno.setText("Gestao de Turno");
-        jmTurno.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmTurno.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmTurnoActionPerformed(evt);
             }
         });
@@ -1247,40 +1153,32 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
 
         jmCadastroUsuario.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jmCadastroUsuario.setText("Cadastrar Usuario");
-        jmCadastroUsuario.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmCadastroUsuario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmCadastroUsuarioActionPerformed(evt);
             }
         });
         jMenu3.add(jmCadastroUsuario);
 
         jmCadastroArmazem.setText("Cadastro de Armazem");
-        jmCadastroArmazem.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmCadastroArmazem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmCadastroArmazemActionPerformed(evt);
             }
         });
         jMenu3.add(jmCadastroArmazem);
 
         jmTransferenciaArmazem.setText("Transferencia de Armazem");
-        jmTransferenciaArmazem.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmTransferenciaArmazem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmTransferenciaArmazemActionPerformed(evt);
             }
         });
         jMenu3.add(jmTransferenciaArmazem);
 
         jmCadastroCliente.setText("Cadastro de Cliente");
-        jmCadastroCliente.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmCadastroCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmCadastroClienteActionPerformed(evt);
             }
         });
@@ -1288,30 +1186,24 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
 
         jmProduto.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.ALT_DOWN_MASK));
         jmProduto.setText("Produto");
-        jmProduto.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmProduto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmProdutoActionPerformed(evt);
             }
         });
         jMenu3.add(jmProduto);
 
         jPercentagemDesconto.setText("Percentagem de Desconto");
-        jPercentagemDesconto.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jPercentagemDesconto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jPercentagemDescontoActionPerformed(evt);
             }
         });
         jMenu3.add(jPercentagemDesconto);
 
         jmImprimirPrecos.setText("Imprimir Precos");
-        jmImprimirPrecos.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmImprimirPrecos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmImprimirPrecosActionPerformed(evt);
             }
         });
@@ -1320,60 +1212,48 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
         jmVasilhame.setText("Vasilhame");
 
         jm_cadastro_vasilhame.setText("Cadastro de Vasilhames");
-        jm_cadastro_vasilhame.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jm_cadastro_vasilhame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jm_cadastro_vasilhameActionPerformed(evt);
             }
         });
         jmVasilhame.add(jm_cadastro_vasilhame);
 
         jm_entrada_vasilhame.setText("Entrada de Vasilhames");
-        jm_entrada_vasilhame.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jm_entrada_vasilhame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jm_entrada_vasilhameActionPerformed(evt);
             }
         });
         jmVasilhame.add(jm_entrada_vasilhame);
 
         jm_saida_vasilhame.setText("Saida de Vasilhames");
-        jm_saida_vasilhame.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jm_saida_vasilhame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jm_saida_vasilhameActionPerformed(evt);
             }
         });
         jmVasilhame.add(jm_saida_vasilhame);
 
         jMenuItem2.setText("Relatório de Entradas");
-        jMenuItem2.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem2ActionPerformed(evt);
             }
         });
         jmVasilhame.add(jMenuItem2);
 
         jmListagemVasilhames.setText("Listar Vasilhames");
-        jmListagemVasilhames.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmListagemVasilhames.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmListagemVasilhamesActionPerformed(evt);
             }
         });
         jmVasilhame.add(jmListagemVasilhames);
 
         jMenuItem4.setText("Relatório de Saidas");
-        jMenuItem4.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem4ActionPerformed(evt);
             }
         });
@@ -1382,10 +1262,8 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
         jMenu3.add(jmVasilhame);
 
         jmAnulamentoSaidasProdutos.setText("Anulamentos Saidas Produtos");
-        jmAnulamentoSaidasProdutos.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmAnulamentoSaidasProdutos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmAnulamentoSaidasProdutosActionPerformed(evt);
             }
         });
@@ -1397,50 +1275,40 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
         jMenu5.setText("Logistica");
 
         jmSolicitacaoCompras.setText("Solicitacao Compras");
-        jmSolicitacaoCompras.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmSolicitacaoCompras.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmSolicitacaoComprasActionPerformed(evt);
             }
         });
         jMenu5.add(jmSolicitacaoCompras);
 
         jmAutorizacaoCompras.setText("Autorizacao Compras");
-        jmAutorizacaoCompras.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmAutorizacaoCompras.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmAutorizacaoComprasActionPerformed(evt);
             }
         });
         jMenu5.add(jmAutorizacaoCompras);
 
         jmEncomendas.setText("Encomendas");
-        jmEncomendas.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmEncomendas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmEncomendasActionPerformed(evt);
             }
         });
         jMenu5.add(jmEncomendas);
 
         jmCompras.setText("Compras");
-        jmCompras.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmCompras.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmComprasActionPerformed(evt);
             }
         });
         jMenu5.add(jmCompras);
 
         jmReeprmirCompra.setText("Reimprimir Compra");
-        jmReeprmirCompra.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmReeprmirCompra.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmReeprmirCompraActionPerformed(evt);
             }
         });
@@ -1449,20 +1317,16 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
         jmNotasCreditoCompra.setText("Notas Credito Compra");
 
         jMenuItem13.setText("Emitir nota de credito para anulação de compras");
-        jMenuItem13.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItem13.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem13ActionPerformed(evt);
             }
         });
         jmNotasCreditoCompra.add(jMenuItem13);
 
         jMenuItem6.setText("Relatorio de Notas de Credito de Compras");
-        jMenuItem6.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem6ActionPerformed(evt);
             }
         });
@@ -1476,40 +1340,32 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
         jMenu10.setText("Economato");
 
         jmSolicitacaoCompras1.setText("Ficha Técnica");
-        jmSolicitacaoCompras1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmSolicitacaoCompras1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmSolicitacaoCompras1ActionPerformed(evt);
             }
         });
         jMenu10.add(jmSolicitacaoCompras1);
 
         jmAutorizacaoCompras1.setText("Entradas de Pratos");
-        jmAutorizacaoCompras1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmAutorizacaoCompras1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmAutorizacaoCompras1ActionPerformed(evt);
             }
         });
         jMenu10.add(jmAutorizacaoCompras1);
 
         jMenuItem5.setText("Criar Pratos");
-        jMenuItem5.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem5ActionPerformed(evt);
             }
         });
         jMenu10.add(jMenuItem5);
 
         jMenuItem10.setText("Criar Ingredientes");
-        jMenuItem10.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItem10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem10ActionPerformed(evt);
             }
         });
@@ -1521,20 +1377,16 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
         jMenu6.setText("Configurações");
 
         jDadosEmpresa.setText("Dados da Empresa");
-        jDadosEmpresa.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jDadosEmpresa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jDadosEmpresaActionPerformed(evt);
             }
         });
         jMenu6.add(jDadosEmpresa);
 
         jmUnidades.setText("Unidades");
-        jmUnidades.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmUnidades.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmUnidadesActionPerformed(evt);
             }
         });
@@ -1542,60 +1394,48 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
 
         jmGavetasPrateleiras.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jmGavetasPrateleiras.setText("Gavetas/Prateleiras");
-        jmGavetasPrateleiras.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmGavetasPrateleiras.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmGavetasPrateleirasActionPerformed(evt);
             }
         });
         jMenu6.add(jmGavetasPrateleiras);
 
         jmAcertoStock.setText("Acerto Stock");
-        jmAcertoStock.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmAcertoStock.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmAcertoStockActionPerformed(evt);
             }
         });
         jMenu6.add(jmAcertoStock);
 
         jmReactivarProdutos.setText("Reactivar Produtos");
-        jmReactivarProdutos.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmReactivarProdutos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmReactivarProdutosActionPerformed(evt);
             }
         });
         jMenu6.add(jmReactivarProdutos);
 
         jmPermissao.setText("Permissões");
-        jmPermissao.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmPermissao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmPermissaoActionPerformed(evt);
             }
         });
         jMenu6.add(jmPermissao);
 
         jMenuItem8.setText("Alteração da Senha");
-        jMenuItem8.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItem8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem8ActionPerformed(evt);
             }
         });
         jMenu6.add(jMenuItem8);
 
         jMenuConfiguracoesSistema.setText("Configuração Sistema");
-        jMenuConfiguracoesSistema.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuConfiguracoesSistema.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuConfiguracoesSistemaActionPerformed(evt);
             }
         });
@@ -1603,34 +1443,36 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
 
         jmListarUsuario.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jmListarUsuario.setText("Listar Usuarios");
-        jmListarUsuario.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmListarUsuario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmListarUsuarioActionPerformed(evt);
             }
         });
         jMenu6.add(jmListarUsuario);
 
         jmGerarSaftVendas.setText("Gerar SAFT de Vendas");
-        jmGerarSaftVendas.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmGerarSaftVendas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmGerarSaftVendasActionPerformed(evt);
             }
         });
         jMenu6.add(jmGerarSaftVendas);
 
         jmGerarSaftCompras.setText("Gerar SAFT de Compras");
-        jmGerarSaftCompras.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmGerarSaftCompras.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmGerarSaftComprasActionPerformed(evt);
             }
         });
         jMenu6.add(jmGerarSaftCompras);
+
+        jMenuItem11.setText("Gerar SAFT de Inventário");
+        jMenuItem11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem11ActionPerformed(evt);
+            }
+        });
+        jMenu6.add(jMenuItem11);
 
         jMenuBar1.add(jMenu6);
 
@@ -1638,60 +1480,48 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
         jMenu7.setText("Tabelas");
 
         jmFamilia.setText("Familia");
-        jmFamilia.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmFamilia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmFamiliaActionPerformed(evt);
             }
         });
         jMenu7.add(jmFamilia);
 
         jmSubFamilia.setText("SubFamilia");
-        jmSubFamilia.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmSubFamilia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmSubFamiliaActionPerformed(evt);
             }
         });
         jMenu7.add(jmSubFamilia);
 
         jmMarca.setText("Marca");
-        jmMarca.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmMarca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmMarcaActionPerformed(evt);
             }
         });
         jMenu7.add(jmMarca);
 
         jmModelo.setText("Modelo");
-        jmModelo.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmModelo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmModeloActionPerformed(evt);
             }
         });
         jMenu7.add(jmModelo);
 
         jmGrupo.setText("Grupo");
-        jmGrupo.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmGrupo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmGrupoActionPerformed(evt);
             }
         });
         jMenu7.add(jmGrupo);
 
         jMenuItemConsultas.setText("Consultas");
-        jMenuItemConsultas.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItemConsultas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemConsultasActionPerformed(evt);
             }
         });
@@ -1703,10 +1533,8 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
         jMenu4.setText("Ajuda");
 
         jMenuItem9.setText("Sobre o Autor");
-        jMenuItem9.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItem9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem9ActionPerformed(evt);
             }
         });
@@ -2487,6 +2315,10 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
         }
     }//GEN-LAST:event_jMenuItem10ActionPerformed
 
+    private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed
+        new FrmSaftInventario().setVisible(true);
+    }//GEN-LAST:event_jMenuItem11ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -2586,6 +2418,7 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
     private javax.swing.JMenuItem jMenuConfiguracoesSistema;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem10;
+    private javax.swing.JMenuItem jMenuItem11;
     private javax.swing.JMenuItem jMenuItem13;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;

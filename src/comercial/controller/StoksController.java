@@ -22,100 +22,213 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
 import util.BDConexao;
 import util.DVML;
+import util.MetodosUtil;
 
 /**
  *
  * @author Martinho Luis & Domingos Dala Vunge
  */
-public class StoksController implements EntidadeFactory
-{
+public class StoksController implements EntidadeFactory {
 
     private BDConexao conexao;
 
-    public StoksController( BDConexao conexao )
-    {
+    public StoksController(BDConexao conexao) {
         this.conexao = conexao;
     }
 
     @Override
-    public boolean salvar( Object object )
-    {
+    public boolean salvar(Object object) {
 
-        TbStock stock = (TbStock) object;
-        String INSERT = "INSERT INTO tb_stock( cod_produto_codigo, quantidade_existente, status, preco_venda, quant_critica, quant_baixa, quantidade_antiga, "
-                + " cod_armazem , preco_venda_grosso , qtd_grosso , preco_venda_fabrica "
-                + ")"
-                + " VALUES("
-                + stock.getCodProdutoCodigo().getCodigo() + " , "
-                + stock.getQuantidadeExistente() + " , "
-                + "'" + stock.getStatus() + "' , "
-                + stock.getPrecoVenda() + " , "
-                + "'" + stock.getQuantCritica() + "' , "
-                + "'" + stock.getQuantBaixa() + "' , "
-                + stock.getQuantidadeAntiga() + " , "
-                + stock.getCodArmazem().getCodigo() + " , "
-                + stock.getPrecoVendaGrosso() + " , "
-                + "'" + stock.getQtdGrosso() + "' , "
-                + stock.getPrecoVendaFabrica()
-                + " ) ";
+    TbStock stock = (TbStock) object;
 
-        return conexao.executeUpdate( INSERT );
+    String sql = "INSERT INTO tb_stock ("
+            + "cod_produto_codigo, quantidade_existente, status, preco_venda, "
+            + "quant_critica, quant_baixa, quantidade_antiga, cod_armazem, "
+            + "preco_venda_grosso, dataEntrada, qtd_grosso, preco_venda_fabrica"
+            + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
+    try (Connection conn = BDConexao.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setInt(1, stock.getCodProdutoCodigo().getCodigo());
+        ps.setDouble(2, stock.getQuantidadeExistente());
+        ps.setString(3, stock.getStatus());
+        ps.setBigDecimal(4, stock.getPrecoVenda());
+        ps.setInt(5, stock.getQuantCritica());
+        ps.setInt(6, stock.getQuantBaixa());
+        ps.setDouble(7, stock.getQuantidadeAntiga());
+        ps.setInt(8, stock.getCodArmazem().getCodigo());
+        ps.setBigDecimal(9, stock.getPrecoVendaGrosso());
+
+        // 🔥 CORREÇÃO DEFINITIVA DA DATA (SEM MILISSEGUNDOS)
+        if (stock.getDataEntrada() != null) {
+            java.sql.Timestamp ts = new java.sql.Timestamp(stock.getDataEntrada().getTime());
+            ts.setNanos(0); // 🔥 remove milissegundos (causa do problema)
+            ps.setTimestamp(10, ts);
+        } else {
+            ps.setNull(10, java.sql.Types.TIMESTAMP);
+        }
+
+        ps.setDouble(11, stock.getQtdGrosso());
+        ps.setBigDecimal(12, stock.getPrecoVendaFabrica());
+
+        // 🔍 Debug útil (podes remover depois)
+        System.out.println("DATA A SER INSERIDA: " + stock.getDataEntrada());
+
+        int linhas = ps.executeUpdate();
+
+        System.out.println("LINHAS INSERIDAS: " + linhas);
+
+        return linhas > 0;
+
+    } catch (Exception e) {
+        System.err.println("ERRO AO SALVAR STOCK:");
+        e.printStackTrace();
+        return false;
     }
+}
+//    public boolean salvar(Object object) {
+//
+//        TbStock stock = (TbStock) object;
+//
+//        String sql = "INSERT INTO tb_stock ("
+//                + "cod_produto_codigo, quantidade_existente, status, preco_venda, "
+//                + "quant_critica, quant_baixa, quantidade_antiga, cod_armazem, "
+//                + "preco_venda_grosso, dataEntrada, qtd_grosso, preco_venda_fabrica"
+//                + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+//
+//        try (Connection conn = BDConexao.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+//
+//            ps.setInt(1, stock.getCodProdutoCodigo().getCodigo());
+//            ps.setDouble(2, stock.getQuantidadeExistente());
+//            ps.setString(3, stock.getStatus());
+//            ps.setBigDecimal(4, stock.getPrecoVenda());
+//            ps.setInt(5, stock.getQuantCritica());
+//            ps.setInt(6, stock.getQuantBaixa());
+//            ps.setDouble(7, stock.getQuantidadeAntiga());
+//            ps.setInt(8, stock.getCodArmazem().getCodigo());
+//            ps.setBigDecimal(9, stock.getPrecoVendaGrosso());
+//
+//            // 🔥 AQUI ESTÁ A CHAVE DO PROBLEMA (DATA)
+//            if (stock.getDataEntrada() != null) {
+//                ps.setTimestamp(10, new java.sql.Timestamp(stock.getDataEntrada().getTime()));
+//            } else {
+//                ps.setNull(10, java.sql.Types.TIMESTAMP);
+//            }
+//
+//            ps.setDouble(11, stock.getQtdGrosso());
+//            ps.setBigDecimal(12, stock.getPrecoVendaFabrica());
+//
+//            int linhas = ps.executeUpdate();
+//
+//            return linhas > 0;
+//
+//        } catch (Exception e) {
+//            e.printStackTrace(); // 👈 MUITO IMPORTANTE para veres erro real
+//            return false;
+//        }
+//    }
+//    public boolean salvar(Object object) {
+//
+//    TbStock stock = (TbStock) object;
+//
+//    String dataFormatada = MetodosUtil.getDataFormatadaFull(stock.getDataEntrada());
+//
+//    String INSERT = "INSERT INTO tb_stock( cod_produto_codigo, quantidade_existente, status, preco_venda, quant_critica, quant_baixa, quantidade_antiga, "
+//            + " cod_armazem , preco_venda_grosso , dataEntrada, qtd_grosso , preco_venda_fabrica "
+//            + ") VALUES ("
+//            + stock.getCodProdutoCodigo().getCodigo() + ", "
+//            + stock.getQuantidadeExistente() + ", "
+//            + "'" + stock.getStatus() + "', "
+//            + stock.getPrecoVenda() + ", "
+//            + stock.getQuantCritica() + ", "
+//            + stock.getQuantBaixa() + ", "
+//            + stock.getQuantidadeAntiga() + ", "
+//            + stock.getCodArmazem().getCodigo() + ", "
+//            + stock.getPrecoVendaGrosso() + ", "
+//            + "'" + dataFormatada + "', "
+//            + stock.getQtdGrosso() + ", "
+//            + stock.getPrecoVendaFabrica()
+//            + ")";
+//
+//    System.out.println("SQL: " + INSERT); // 👈 IMPORTANTE PARA DEBUG
+//
+//    return conexao.executeUpdate(INSERT);
+//}
+//    public boolean salvar( Object object )
+//    {
+//
+//        TbStock stock = (TbStock) object;
+//        String INSERT = "INSERT INTO tb_stock( cod_produto_codigo, quantidade_existente, status, preco_venda, quant_critica, quant_baixa, quantidade_antiga, "
+//                + " cod_armazem , preco_venda_grosso , dataEntrada, qtd_grosso , preco_venda_fabrica "
+//                + ")"
+//                + " VALUES("
+//                + stock.getCodProdutoCodigo().getCodigo() + " , "
+//                + stock.getQuantidadeExistente() + " , "
+//                + "'" + stock.getStatus() + "' , "
+//                + stock.getPrecoVenda() + " , "
+//                + "'" + stock.getQuantCritica() + "' , "
+//                + "'" + stock.getQuantBaixa() + "' , "
+//                + stock.getQuantidadeAntiga() + " , "
+//                + stock.getCodArmazem().getCodigo() + " , "
+//                + stock.getPrecoVendaGrosso() + " , "
+//                 + "'" + MetodosUtil.getDataBancoFull( stock.getDataEntrada() ) + "' , "
+//                + "'" + stock.getQtdGrosso() + "' , "
+//                + stock.getPrecoVendaFabrica()
+//                + " ) ";
+//
+//        return conexao.executeUpdate( INSERT );
+//
+//    }
 
     @Override
-    public boolean actualizar( Object object )
-    {
+    public boolean actualizar(Object object) {
         return true;
     }
 
     @Override
-    public boolean eliminar( int codigo )
-    {
+    public boolean eliminar(int codigo) {
         String DELETE = "DELETE FROM tb_stock WHERE codigo = " + codigo;
-        return conexao.executeUpdate( DELETE );
+        return conexao.executeUpdate(DELETE);
     }
 
     @Override
-    public List<TbStock> listarTodos()
-    {
+    public List<TbStock> listarTodos() {
 
         String FIND_ALL = "SELECT * FROM tb_stock ORDER BY codigo ASC";
-        ResultSet result = conexao.executeQuery( FIND_ALL );
+        ResultSet result = conexao.executeQuery(FIND_ALL);
         List<TbStock> lista_stock = new ArrayList<>();
         TbStock stock;
-        try
-        {
+        try {
 
-            while ( result.next() )
-            {
+            while (result.next()) {
                 stock = new TbStock();
-                stock.setCodigo( result.getInt( "codigo" ) );
-                stock.setCodProdutoCodigo( new TbProduto( result.getInt( "cod_produto_codigo" ) ) );
+                stock.setCodigo(result.getInt("codigo"));
+                stock.setCodProdutoCodigo(new TbProduto(result.getInt("cod_produto_codigo")));
+                stock.setDataEntrada(result.getDate("dataEntrada"));
 //                stock.setDataEntrada( result.getDate( "data_entrada" ) );
-                stock.setQuantidadeExistente( result.getDouble( "quantidade_existente" ) );
-                stock.setStatus( result.getString( "status" ) );
-                stock.setPrecoVenda( result.getBigDecimal( "preco_venda" ) );
-                stock.setQuantCritica( result.getInt( "quant_critica" ) );
-                stock.setQuantBaixa( result.getInt( "quant_baixa" ) );
-                stock.setQuantidadeAntiga( result.getDouble( "quantidade_antiga" ) );
-                stock.setCodArmazem( new TbArmazem( result.getInt( "cod_armazem" ) ) );
-                stock.setPrecoVendaGrosso( result.getBigDecimal( "preco_venda_grosso" ) );
-                stock.setQtdGrosso( result.getInt( "qtd_grosso" ) );
-                stock.setPrecoVendaFabrica( result.getBigDecimal( "preco_venda_fabrica" ) );
+                stock.setQuantidadeExistente(result.getDouble("quantidade_existente"));
+                stock.setStatus(result.getString("status"));
+                stock.setPrecoVenda(result.getBigDecimal("preco_venda"));
+                stock.setQuantCritica(result.getInt("quant_critica"));
+                stock.setQuantBaixa(result.getInt("quant_baixa"));
+                stock.setQuantidadeAntiga(result.getDouble("quantidade_antiga"));
+                stock.setCodArmazem(new TbArmazem(result.getInt("cod_armazem")));
+                stock.setPrecoVendaGrosso(result.getBigDecimal("preco_venda_grosso"));
+                stock.setQtdGrosso(result.getInt("qtd_grosso"));
+                stock.setPrecoVendaFabrica(result.getBigDecimal("preco_venda_fabrica"));
 
-                lista_stock.add( stock );
+                lista_stock.add(stock);
 
             }
 
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
@@ -123,228 +236,301 @@ public class StoksController implements EntidadeFactory
     }
 
     @Override
-    public Vector<String> getVector()
-    {
-        throw new UnsupportedOperationException( "Not supported yet." ); //To change body of generated methods, choose Tools | Templates.
+    public Vector<String> getVector() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Object findById( int codigo )
-    {
+    public Object findById(int codigo) {
 
         String FIND__BY_CODIGO = "SELECT * FROM tb_stock WHERE codigo = " + codigo;
-        ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
+        ResultSet result = conexao.executeQuery(FIND__BY_CODIGO);
         TbStock stock = null;
-        try
-        {
+        try {
 
-            if ( result.next() )
-            {
+            if (result.next()) {
                 stock = new TbStock();
-                stock.setCodigo( result.getInt( "codigo" ) );
-                stock.setCodProdutoCodigo( new TbProduto( result.getInt( "cod_produto_codigo" ) ) );
+                stock.setCodigo(result.getInt("codigo"));
+                stock.setCodProdutoCodigo(new TbProduto(result.getInt("cod_produto_codigo")));
+                stock.setDataEntrada(result.getDate("dataEntrada"));
 //                stock.setDataEntrada( result.getDate( "data_entrada" ) );
-                stock.setQuantidadeExistente( result.getDouble( "quantidade_existente" ) );
-                stock.setStatus( result.getString( "status" ) );
-                stock.setPrecoVenda( result.getBigDecimal( "preco_venda" ) );
-                stock.setQuantCritica( result.getInt( "quant_critica" ) );
-                stock.setQuantBaixa( result.getInt( "quant_baixa" ) );
-                stock.setQuantidadeAntiga( result.getDouble( "quantidade_antiga" ) );
-                stock.setCodArmazem( new TbArmazem( result.getInt( "cod_armazem" ) ) );
-                stock.setPrecoVendaGrosso( result.getBigDecimal( "preco_venda_grosso" ) );
-                stock.setQtdGrosso( result.getInt( "qtd_grosso" ) );
-                stock.setPrecoVendaFabrica( result.getBigDecimal( "preco_venda_fabrica" ) );
+                stock.setQuantidadeExistente(result.getDouble("quantidade_existente"));
+                stock.setStatus(result.getString("status"));
+                stock.setPrecoVenda(result.getBigDecimal("preco_venda"));
+                stock.setQuantCritica(result.getInt("quant_critica"));
+                stock.setQuantBaixa(result.getInt("quant_baixa"));
+                stock.setQuantidadeAntiga(result.getDouble("quantidade_antiga"));
+                stock.setCodArmazem(new TbArmazem(result.getInt("cod_armazem")));
+                stock.setPrecoVendaGrosso(result.getBigDecimal("preco_venda_grosso"));
+                stock.setQtdGrosso(result.getInt("qtd_grosso"));
+                stock.setPrecoVendaFabrica(result.getBigDecimal("preco_venda_fabrica"));
 
             }
 
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return stock;
 
     }
+    
+    public boolean salvarStock(Object object, Connection conn) {
 
-    public TbStock getLasStock()
-    {
+    TbStock stock = (TbStock) object;
+
+    String sql = "INSERT INTO tb_stock ("
+            + "cod_produto_codigo, quantidade_existente, status, preco_venda, "
+            + "quant_critica, quant_baixa, quantidade_antiga, cod_armazem, "
+            + "preco_venda_grosso, dataEntrada, qtd_grosso, preco_venda_fabrica"
+            + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        // 1️⃣ Campos básicos
+        ps.setInt(1, stock.getCodProdutoCodigo().getCodigo());
+        ps.setDouble(2, stock.getQuantidadeExistente());
+        ps.setString(3, stock.getStatus());
+        ps.setBigDecimal(4, stock.getPrecoVenda());
+        ps.setInt(5, stock.getQuantCritica());
+        ps.setInt(6, stock.getQuantBaixa());
+        ps.setDouble(7, stock.getQuantidadeAntiga());
+        ps.setInt(8, stock.getCodArmazem().getCodigo());
+
+        // 2️⃣ Evitar NULL em BigDecimal
+        ps.setBigDecimal(9, 
+            stock.getPrecoVendaGrosso() != null ? stock.getPrecoVendaGrosso() : BigDecimal.ZERO
+        );
+
+        // 🔥 DATA (CORREÇÃO CRÍTICA)
+        if (stock.getDataEntrada() != null) {
+            java.sql.Timestamp ts = new java.sql.Timestamp(stock.getDataEntrada().getTime());
+            ts.setNanos(0); // remove milissegundos
+            ps.setTimestamp(10, ts);
+
+            System.out.println("DATA ENVIADA: " + ts); // debug
+        } else {
+            ps.setTimestamp(10, new java.sql.Timestamp(System.currentTimeMillis()));
+            System.out.println("DATA DEFAULT USADA");
+        }
+
+        // 3️⃣ Restantes campos
+        ps.setDouble(11, stock.getQtdGrosso());
+
+        ps.setBigDecimal(12,
+            stock.getPrecoVendaFabrica() != null ? stock.getPrecoVendaFabrica() : BigDecimal.ZERO
+        );
+
+        // 🔍 DEBUG COMPLETO
+        System.out.println("EXECUTANDO INSERT STOCK...");
+
+        int linhas = ps.executeUpdate();
+
+        System.out.println("LINHAS INSERIDAS: " + linhas);
+
+        return linhas > 0;
+
+    } catch (Exception e) {
+        System.err.println("ERRO AO INSERIR STOCK:");
+        e.printStackTrace();
+        return false;
+    }
+}
+    
+//    public boolean salvarStock(Object object, Connection conn) {
+//
+//    TbStock stock = (TbStock) object;
+//
+//    String sql = "INSERT INTO tb_stock ("
+//            + "cod_produto_codigo, quantidade_existente, status, preco_venda, "
+//            + "quant_critica, quant_baixa, quantidade_antiga, cod_armazem, "
+//            + "preco_venda_grosso, dataEntrada, qtd_grosso, preco_venda_fabrica"
+//            + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+//
+//    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+//
+//        ps.setInt(1, stock.getCodProdutoCodigo().getCodigo());
+//        ps.setDouble(2, stock.getQuantidadeExistente());
+//        ps.setString(3, stock.getStatus());
+//        ps.setBigDecimal(4, stock.getPrecoVenda());
+//        ps.setInt(5, stock.getQuantCritica());
+//        ps.setInt(6, stock.getQuantBaixa());
+//        ps.setDouble(7, stock.getQuantidadeAntiga());
+//        ps.setInt(8, stock.getCodArmazem().getCodigo());
+//        ps.setBigDecimal(9, stock.getPrecoVendaGrosso());
+//
+//        java.sql.Timestamp ts = new java.sql.Timestamp(stock.getDataEntrada().getTime());
+//        ts.setNanos(0);
+//        ps.setTimestamp(10, ts);
+//
+//        ps.setDouble(11, stock.getQtdGrosso());
+//        ps.setBigDecimal(12, stock.getPrecoVendaFabrica());
+//
+//        return ps.executeUpdate() > 0;
+//
+//    } catch (Exception e) {
+//        e.printStackTrace();
+//        return false;
+//    }
+//}
+
+    public TbStock getLasStock() {
 
         String FIND__BY_CODIGO = "SELECT MAX(codigo) as maximo_id, s.*  FROM tb_stock s";
-        ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
+        ResultSet result = conexao.executeQuery(FIND__BY_CODIGO);
         TbStock stock = null;
-        try
-        {
+        try {
 
-            if ( result.next() )
-            {
+            if (result.next()) {
                 stock = new TbStock();
-                stock.setCodigo( result.getInt( "maximo_id" ) );
-                stock.setCodProdutoCodigo( new TbProduto( result.getInt( "cod_produto_codigo" ) ) );
+                stock.setCodigo(result.getInt("maximo_id"));
+                stock.setCodProdutoCodigo(new TbProduto(result.getInt("cod_produto_codigo")));
+                stock.setDataEntrada(result.getDate("dataEntrada"));
 //                stock.setDataEntrada( result.getDate( "data_entrada" ) );
-                stock.setQuantidadeExistente( result.getDouble( "quantidade_existente" ) );
-                stock.setStatus( result.getString( "status" ) );
-                stock.setPrecoVenda( result.getBigDecimal( "preco_venda" ) );
-                stock.setQuantCritica( result.getInt( "quant_critica" ) );
-                stock.setQuantBaixa( result.getInt( "quant_baixa" ) );
-                stock.setQuantidadeAntiga( result.getDouble( "quantidade_antiga" ) );
-                stock.setCodArmazem( new TbArmazem( result.getInt( "cod_armazem" ) ) );
-                stock.setPrecoVendaGrosso( result.getBigDecimal( "preco_venda_grosso" ) );
-                stock.setQtdGrosso( result.getInt( "qtd_grosso" ) );
-                stock.setPrecoVendaFabrica( result.getBigDecimal( "preco_venda_fabrica" ) );
+                stock.setQuantidadeExistente(result.getDouble("quantidade_existente"));
+                stock.setStatus(result.getString("status"));
+                stock.setPrecoVenda(result.getBigDecimal("preco_venda"));
+                stock.setQuantCritica(result.getInt("quant_critica"));
+                stock.setQuantBaixa(result.getInt("quant_baixa"));
+                stock.setQuantidadeAntiga(result.getDouble("quantidade_antiga"));
+                stock.setCodArmazem(new TbArmazem(result.getInt("cod_armazem")));
+                stock.setPrecoVendaGrosso(result.getBigDecimal("preco_venda_grosso"));
+                stock.setQtdGrosso(result.getInt("qtd_grosso"));
+                stock.setPrecoVendaFabrica(result.getBigDecimal("preco_venda_fabrica"));
 
             }
 
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return stock;
 
     }
 
-    public TbStock getStockByIdProdutoAndIdArmazem1( int idProduto, int idArmazem, BDConexao conexao )
-    {
+    public TbStock getStockByIdProdutoAndIdArmazem1(int idProduto, int idArmazem, BDConexao conexao) {
 
         String FIND__BY_CODIGO = "SELECT * FROM tb_stock s WHERE s.cod_produto_codigo = " + idProduto + " AND s.cod_armazem = " + idArmazem;
-        ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
+        ResultSet result = conexao.executeQuery(FIND__BY_CODIGO);
         TbStock stock = null;
-        try
-        {
+        try {
 
-            if ( result.next() )
-            {
+            if (result.next()) {
                 stock = new TbStock();
-                stock.setCodigo( result.getInt( "codigo" ) );
-                stock.setCodProdutoCodigo( new TbProduto( result.getInt( "cod_produto_codigo" ) ) );
+                stock.setCodigo(result.getInt("codigo"));
+                stock.setCodProdutoCodigo(new TbProduto(result.getInt("cod_produto_codigo")));
+                stock.setDataEntrada(result.getDate("dataEntrada"));
 //                stock.setDataEntrada( result.getDate("data_entrada" ) );
-                stock.setQuantidadeExistente( result.getDouble( "quantidade_existente" ) );
-                stock.setStatus( result.getString( "status" ) );
-                stock.setPrecoVenda( result.getBigDecimal( "preco_venda" ) );
-                stock.setQuantCritica( result.getInt( "quant_critica" ) );
-                stock.setQuantBaixa( result.getInt( "quant_baixa" ) );
-                stock.setQuantidadeAntiga( result.getDouble( "quantidade_antiga" ) );
-                stock.setCodArmazem( new TbArmazem( result.getInt( "cod_armazem" ) ) );
-                stock.setPrecoVendaGrosso( result.getBigDecimal( "preco_venda_grosso" ) );
-                stock.setQtdGrosso( result.getInt( "qtd_grosso" ) );
-                stock.setPrecoVendaFabrica( result.getBigDecimal( "preco_venda_fabrica" ) );
+                stock.setQuantidadeExistente(result.getDouble("quantidade_existente"));
+                stock.setStatus(result.getString("status"));
+                stock.setPrecoVenda(result.getBigDecimal("preco_venda"));
+                stock.setQuantCritica(result.getInt("quant_critica"));
+                stock.setQuantBaixa(result.getInt("quant_baixa"));
+                stock.setQuantidadeAntiga(result.getDouble("quantidade_antiga"));
+                stock.setCodArmazem(new TbArmazem(result.getInt("cod_armazem")));
+                stock.setPrecoVendaGrosso(result.getBigDecimal("preco_venda_grosso"));
+                stock.setQtdGrosso(result.getInt("qtd_grosso"));
+                stock.setPrecoVendaFabrica(result.getBigDecimal("preco_venda_fabrica"));
 
             }
 
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return stock;
 
     }
 
-    public List<TbProduto> get_all_produtos_by_id_tipo_produto_and_id_armazem( int idTipoProduto, int idArmazem, BDConexao conexao )
-    {
+    public List<TbProduto> get_all_produtos_by_id_tipo_produto_and_id_armazem(int idTipoProduto, int idArmazem, BDConexao conexao) {
 
 //        String FIND__BY_CODIGO = "SELECT * FROM tb_stock s WHERE s.cod_produto_codigo = " + idProduto + " AND s.cod_armazem = " + idArmazem;s.cod_armazem = " + idArmazem + " AND
         String FIND__BY_CODIGO = " SELECT p.* FROM tb_stock s INNER JOIN tb_produto p ON p.codigo = s.cod_produto_codigo WHERE p.cod_Tipo_Produto = " + idTipoProduto + " AND s.cod_armazem = " + idArmazem;
-        ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
+        ResultSet result = conexao.executeQuery(FIND__BY_CODIGO);
 //        TbStock stock = null;
         List<TbProduto> lista_stock = new ArrayList<>();
         TbProduto produto;
-        try
-        {
+        try {
 
-            while ( result.next() )
-            {
+            while (result.next()) {
                 produto = new TbProduto();
-                produto.setCodigo( result.getInt( "codigo" ) );
-                produto.setDesignacao( result.getString( "designacao" ) );
-                produto.setPreco( result.getBigDecimal( "preco" ) );
-                produto.setDataFabrico( result.getDate( "data_fabrico" ) );
-                produto.setDataExpiracao( result.getDate( "data_expiracao" ) );
-                produto.setCodBarra( result.getString( "codBarra" ) );
-                produto.setStatus( result.getString( "status" ) );
-                produto.setDataEntrada( result.getDate( "data_entrada" ) );
-                produto.setStocavel( result.getString( "stocavel" ) );
-                produto.setPrecoVenda( result.getDouble( "preco_venda" ) );
-                produto.setPercentagemDesconto( result.getDouble( "percentagem_desconto" ) );
-                produto.setQuantidadeDesconto( result.getInt( "quantidade_desconto" ) );
-                produto.setCodigoManual( result.getString( "codigo_manual" ) );
-                produto.setCodUnidade( new Unidade( result.getInt( "cod_unidade" ) ) );
-                produto.setCodLocal( new TbLocal( result.getInt( "cod_local" ) ) );
-                produto.setCodFornecedores( new TbFornecedor( result.getInt( "cod_fornecedores" ) ) );
-                produto.setCodTipoProduto( new TbTipoProduto( result.getInt( "cod_Tipo_Produto" ) ) );
-                produto.setFkModelo( new Modelo( result.getInt( "fk_modelo" ) ) );
-                produto.setFkGrupo( new Grupo( result.getInt( "fk_grupo" ) ) );
-                produto.setPhoto( result.getBytes( "photo" ) );
-                produto.setStatusIva( result.getString( "status_iva" ) );
-                lista_stock.add( produto );
+                produto.setCodigo(result.getInt("codigo"));
+                produto.setDesignacao(result.getString("designacao"));
+
+                produto.setPreco(result.getBigDecimal("preco"));
+                produto.setDataFabrico(result.getDate("data_fabrico"));
+                produto.setDataExpiracao(result.getDate("data_expiracao"));
+                produto.setCodBarra(result.getString("codBarra"));
+                produto.setStatus(result.getString("status"));
+                produto.setDataEntrada(result.getDate("data_entrada"));
+                produto.setStocavel(result.getString("stocavel"));
+                produto.setPrecoVenda(result.getDouble("preco_venda"));
+                produto.setPercentagemDesconto(result.getDouble("percentagem_desconto"));
+                produto.setQuantidadeDesconto(result.getInt("quantidade_desconto"));
+                produto.setCodigoManual(result.getString("codigo_manual"));
+                produto.setCodUnidade(new Unidade(result.getInt("cod_unidade")));
+                produto.setCodLocal(new TbLocal(result.getInt("cod_local")));
+                produto.setCodFornecedores(new TbFornecedor(result.getInt("cod_fornecedores")));
+                produto.setCodTipoProduto(new TbTipoProduto(result.getInt("cod_Tipo_Produto")));
+                produto.setFkModelo(new Modelo(result.getInt("fk_modelo")));
+                produto.setFkGrupo(new Grupo(result.getInt("fk_grupo")));
+                produto.setPhoto(result.getBytes("photo"));
+                produto.setStatusIva(result.getString("status_iva"));
+                lista_stock.add(produto);
             }
 
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return lista_stock;
 
     }
 
-    public TbStock getStockByIdProdutoAndIdArmazem( int idProduto, int idArmazem )
-    {
+    public TbStock getStockByIdProdutoAndIdArmazem(int idProduto, int idArmazem) {
 
         String FIND__BY_CODIGO = "SELECT * FROM tb_stock s WHERE s.cod_produto_codigo = " + idProduto + " AND s.cod_armazem = " + idArmazem;
-        ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
+        ResultSet result = conexao.executeQuery(FIND__BY_CODIGO);
         TbStock stock = null;
-        try
-        {
+        try {
 
-            if ( result.next() )
-            {
+            if (result.next()) {
                 stock = new TbStock();
-                stock.setCodigo( result.getInt( "codigo" ) );
-                stock.setCodProdutoCodigo( new TbProduto( result.getInt( "cod_produto_codigo" ) ) );
+                stock.setCodigo(result.getInt("codigo"));
+                stock.setCodProdutoCodigo(new TbProduto(result.getInt("cod_produto_codigo")));
+                stock.setDataEntrada(result.getDate("dataEntrada"));
 //                stock.setDataEntrada( result.getDate("data_entrada" ) );
-                stock.setQuantidadeExistente( result.getDouble( "quantidade_existente" ) );
-                stock.setStatus( result.getString( "status" ) );
-                stock.setPrecoVenda( result.getBigDecimal( "preco_venda" ) );
-                stock.setQuantCritica( result.getInt( "quant_critica" ) );
-                stock.setQuantBaixa( result.getInt( "quant_baixa" ) );
-                stock.setQuantidadeAntiga( result.getDouble( "quantidade_antiga" ) );
-                stock.setCodArmazem( new TbArmazem( result.getInt( "cod_armazem" ) ) );
-                stock.setPrecoVendaGrosso( result.getBigDecimal( "preco_venda_grosso" ) );
-                stock.setQtdGrosso( result.getInt( "qtd_grosso" ) );
-                stock.setPrecoVendaFabrica( result.getBigDecimal( "preco_venda_fabrica" ) );
+                stock.setQuantidadeExistente(result.getDouble("quantidade_existente"));
+                stock.setStatus(result.getString("status"));
+                stock.setPrecoVenda(result.getBigDecimal("preco_venda"));
+                stock.setQuantCritica(result.getInt("quant_critica"));
+                stock.setQuantBaixa(result.getInt("quant_baixa"));
+                stock.setQuantidadeAntiga(result.getDouble("quantidade_antiga"));
+                stock.setCodArmazem(new TbArmazem(result.getInt("cod_armazem")));
+                stock.setPrecoVendaGrosso(result.getBigDecimal("preco_venda_grosso"));
+                stock.setQtdGrosso(result.getInt("qtd_grosso"));
+                stock.setPrecoVendaFabrica(result.getBigDecimal("preco_venda_fabrica"));
 
             }
 
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return stock;
 
     }
 
-    public boolean existeStock( int codigo, int idArmazem, BDConexao conexao ) throws SQLException
-    {
+    public boolean existeStock(int codigo, int idArmazem, BDConexao conexao) throws SQLException {
         String query = "SELECT * FROM tb_stock s WHERE s.cod_produto_codigo = " + codigo + " AND s.cod_armazem = " + idArmazem;
-        ResultSet resultSet = conexao.executeQuery( query );
+        ResultSet resultSet = conexao.executeQuery(query);
 
         return resultSet.next();
 
     }
 
-    public boolean existe_stock( int codigo, int idArmazem )
-    {
-        try
-        {
+    public boolean existe_stock(int codigo, int idArmazem) {
+        try {
             String query = "SELECT * FROM tb_stock s WHERE s.cod_produto_codigo = " + codigo + " AND s.cod_armazem = " + idArmazem;
-            System.err.println( query );
-            ResultSet resultSet = conexao.executeQuery( query );
+            System.err.println(query);
+            ResultSet resultSet = conexao.executeQuery(query);
             return resultSet.next();
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
 //            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
         }
         return false;
@@ -506,12 +692,11 @@ public class StoksController implements EntidadeFactory
 //        System.out.println( "SIZE_: " + busca.size() );
 //        return busca;
 //    }
-    public Vector<BuscaModeloProduto> getFonte( int idArmazem, int codJanela )
-    {
+    public Vector<BuscaModeloProduto> getFonte(int idArmazem, int codJanela) {
         BDConexao conexao = BDConexao.getInstancia();
         Vector<BuscaModeloProduto> busca = new Vector<>();
 
-        String condicao = ( codJanela != DVML.JANELA_COMPRA ) ? "IN (1,2)" : "IN (2)";
+        String condicao = (codJanela != DVML.JANELA_COMPRA) ? "IN (1,2)" : "IN (2)";
 
         String sql
                 = "SELECT "
@@ -544,65 +729,59 @@ public class StoksController implements EntidadeFactory
                 + "  AND f.pk_familia " + condicao + " "
                 + "ORDER BY p.designacao";
 
-        try ( PreparedStatement ps = conexao.getConnectionAtiva().prepareStatement( sql ) )
-        {
-            ps.setInt( 1, idArmazem );
+        try (PreparedStatement ps = conexao.getConnectionAtiva().prepareStatement(sql)) {
+            ps.setInt(1, idArmazem);
 
-            try ( ResultSet rs = ps.executeQuery() )
-            {
-                while ( rs.next() )
-                {
-                    int codigo = rs.getInt( "codigo" );
-                    String designacao = rs.getString( "designacao" );
-                    String categoria = rs.getString( "categoria" );
-                    long codFamilia = rs.getLong( "cod_familia" );
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int codigo = rs.getInt("codigo");
+                    String designacao = rs.getString("designacao");
+                    String categoria = rs.getString("categoria");
+                    long codFamilia = rs.getLong("cod_familia");
 
-                    String qtd = ( codFamilia == 1 ) ? "-" : String.valueOf( rs.getLong( "qtd" ) );
+                    String qtd = (codFamilia == 1) ? "-" : String.valueOf(rs.getLong("qtd"));
 
                     // Preço com IVA (arredondado)
-                    double precoComIva = new BigDecimal( rs.getDouble( "preco_com_iva" ) )
-                            .setScale( 2, RoundingMode.HALF_UP )
+                    double precoComIva = new BigDecimal(rs.getDouble("preco_com_iva"))
+                            .setScale(2, RoundingMode.HALF_UP)
                             .doubleValue();
 
-                    double taxaImposto = rs.getDouble( "taxa_imposto" );
+                    double taxaImposto = rs.getDouble("taxa_imposto");
 
-                    String estadoCritico = ( codFamilia == 1 )
+                    String estadoCritico = (codFamilia == 1)
                             ? "-"
-                            : ( rs.getBoolean( "estado_critico" ) ? "true" : "false" );
+                            : (rs.getBoolean("estado_critico") ? "true" : "false");
 
                     BuscaModeloProduto bmp = new BuscaModeloProduto();
-                    bmp.setCodigo( codigo );
-                    bmp.setDesignacao( designacao );
-                    bmp.setCategoria( categoria );
-                    bmp.setQtd( qtd );
+                    bmp.setCodigo(codigo);
+                    bmp.setDesignacao(designacao);
+                    bmp.setCategoria(categoria);
+                    bmp.setQtd(qtd);
 
                     // Preço final com IVA
-                    bmp.setPrecoVenda( precoComIva );
+                    bmp.setPrecoVenda(precoComIva);
 
 //                    bmp.setTaxaImposto( taxaImposto );
-                    bmp.setEstadoCritico( estadoCritico );
+                    bmp.setEstadoCritico(estadoCritico);
 
-                    busca.add( bmp );
+                    busca.add(bmp);
                 }
             }
 
-        }
-        catch ( SQLException e )
-        {
-            System.err.println( "[ERRO] Falha ao buscar produtos: " + e.getMessage() );
+        } catch (SQLException e) {
+            System.err.println("[ERRO] Falha ao buscar produtos: " + e.getMessage());
             e.printStackTrace();
         }
 
-        System.out.println( "SIZE_: " + busca.size() );
+        System.out.println("SIZE_: " + busca.size());
         return busca;
     }
 
-    public Vector<BuscaModeloProduto> getFonteRefeicao( int idArmazem, int codJanela )
-    {
+    public Vector<BuscaModeloProduto> getFonteRefeicao(int idArmazem, int codJanela) {
 
         BDConexao conexaoTemp = BDConexao.getInstancia();
 
-        String codicao = ( codJanela != DVML.JANELA_COMPRA ) ? "IN(1,2)" : "IN(2)";
+        String codicao = (codJanela != DVML.JANELA_COMPRA) ? "IN(1,2)" : "IN(2)";
         Vector<BuscaModeloProduto> busca = new Vector<>();
         String sql = "SELECT "
                 + "	p.codigo AS codigo , "
@@ -663,62 +842,54 @@ public class StoksController implements EntidadeFactory
 //                + "GROUP BY p.codigo "
 //                + "ORDER BY p.designacao ";
 
-        System.out.println( sql );
-        ResultSet rs = conexaoTemp.executeQuery( sql );
-        try
-        {
-            while ( rs.next() )
-            {
+        System.out.println(sql);
+        ResultSet rs = conexaoTemp.executeQuery(sql);
+        try {
+            while (rs.next()) {
 
-                int codigo = rs.getInt( "codigo" );
+                int codigo = rs.getInt("codigo");
 //                System.out.println( "CODIGO: " + codigo );
-                String designacao = rs.getString( "designacao" );
-                String categoria = rs.getString( "categoria" );
-                String qtd = ( ( rs.getLong( "cod_familia" ) == 1 ) ? "-" : String.valueOf( rs.getLong( "qtd" ) ) );
-                double precoVenda = rs.getDouble( "preco_venda" );
+                String designacao = rs.getString("designacao");
+                String categoria = rs.getString("categoria");
+                String qtd = ((rs.getLong("cod_familia") == 1) ? "-" : String.valueOf(rs.getLong("qtd")));
+                double precoVenda = rs.getDouble("preco_venda");
 
-                String estadoCritico = ( ( rs.getInt( "cod_familia" ) == 1 ) ? "-" : rs.getString( "estado_critico" ) );
+                String estadoCritico = ((rs.getInt("cod_familia") == 1) ? "-" : rs.getString("estado_critico"));
 
-                if ( Objects.isNull( estadoCritico ) || estadoCritico.equals( "0" ) )
-                {
+                if (Objects.isNull(estadoCritico) || estadoCritico.equals("0")) {
                     estadoCritico = "false";
-                }
-                else if ( estadoCritico.equals( "1" ) )
-                {
+                } else if (estadoCritico.equals("1")) {
                     estadoCritico = "true";
                 }
 
                 BuscaModeloProduto bmp = new BuscaModeloProduto();
-                bmp.setCodigo( codigo );
-                bmp.setDesignacao( designacao );
-                bmp.setCategoria( categoria );
-                bmp.setQtd( qtd );
-                bmp.setPrecoVenda( precoVenda );
-                bmp.setEstadoCritico( estadoCritico );
+                bmp.setCodigo(codigo);
+                bmp.setDesignacao(designacao);
+                bmp.setCategoria(categoria);
+                bmp.setQtd(qtd);
+                bmp.setPrecoVenda(precoVenda);
+                bmp.setEstadoCritico(estadoCritico);
 
-                busca.add( bmp );
+                busca.add(bmp);
 
             }
 
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        System.out.println( "SIZE_: " + busca.size() );
+        System.out.println("SIZE_: " + busca.size());
 
         conexaoTemp.close();
 
         return busca;
     }
 
-    public Vector<BuscaModeloProduto> getFonteIngredientes( int idArmazem, int codJanela )
-    {
+    public Vector<BuscaModeloProduto> getFonteIngredientes(int idArmazem, int codJanela) {
 
         BDConexao conexaoTemp = BDConexao.getInstancia();
 
-        String codicao = ( codJanela != DVML.JANELA_COMPRA ) ? "IN(1,2)" : "IN(2)";
+        String codicao = (codJanela != DVML.JANELA_COMPRA) ? "IN(1,2)" : "IN(2)";
         Vector<BuscaModeloProduto> busca = new Vector<>();
         String sql = "SELECT "
                 + "	p.codigo AS codigo , "
@@ -779,145 +950,128 @@ public class StoksController implements EntidadeFactory
 //                + "GROUP BY p.codigo "
 //                + "ORDER BY p.designacao ";
 
-        System.out.println( sql );
-        ResultSet rs = conexaoTemp.executeQuery( sql );
-        try
-        {
-            while ( rs.next() )
-            {
+        System.out.println(sql);
+        ResultSet rs = conexaoTemp.executeQuery(sql);
+        try {
+            while (rs.next()) {
 
-                int codigo = rs.getInt( "codigo" );
+                int codigo = rs.getInt("codigo");
 //                System.out.println( "CODIGO: " + codigo );
-                String designacao = rs.getString( "designacao" );
-                String categoria = rs.getString( "categoria" );
-                String qtd = ( ( rs.getLong( "cod_familia" ) == 1 ) ? "-" : String.valueOf( rs.getLong( "qtd" ) ) );
-                double precoVenda = rs.getDouble( "preco_venda" );
+                String designacao = rs.getString("designacao");
+                String categoria = rs.getString("categoria");
+                String qtd = ((rs.getLong("cod_familia") == 1) ? "-" : String.valueOf(rs.getLong("qtd")));
+                double precoVenda = rs.getDouble("preco_venda");
 
-                String estadoCritico = ( ( rs.getInt( "cod_familia" ) == 1 ) ? "-" : rs.getString( "estado_critico" ) );
+                String estadoCritico = ((rs.getInt("cod_familia") == 1) ? "-" : rs.getString("estado_critico"));
 
-                if ( Objects.isNull( estadoCritico ) || estadoCritico.equals( "0" ) )
-                {
+                if (Objects.isNull(estadoCritico) || estadoCritico.equals("0")) {
                     estadoCritico = "false";
-                }
-                else if ( estadoCritico.equals( "1" ) )
-                {
+                } else if (estadoCritico.equals("1")) {
                     estadoCritico = "true";
                 }
 
                 BuscaModeloProduto bmp = new BuscaModeloProduto();
-                bmp.setCodigo( codigo );
-                bmp.setDesignacao( designacao );
-                bmp.setCategoria( categoria );
-                bmp.setQtd( qtd );
-                bmp.setPrecoVenda( precoVenda );
-                bmp.setEstadoCritico( estadoCritico );
+                bmp.setCodigo(codigo);
+                bmp.setDesignacao(designacao);
+                bmp.setCategoria(categoria);
+                bmp.setQtd(qtd);
+                bmp.setPrecoVenda(precoVenda);
+                bmp.setEstadoCritico(estadoCritico);
 
-                busca.add( bmp );
+                busca.add(bmp);
 
             }
 
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        System.out.println( "SIZE_: " + busca.size() );
+        System.out.println("SIZE_: " + busca.size());
 
         conexaoTemp.close();
 
         return busca;
     }
 
-    public List<TbStock> findStockByDesignacaoProduto( int idArmazem, String designacao )
-    {
+    public List<TbStock> findStockByDesignacaoProduto(int idArmazem, String designacao) {
 
         String FIND_ALL = "SELECT s.* FROM tb_stock s INNER JOIN tb_produto p ON p.codigo = s.cod_produto_codigo WHERE s.cod_armazem = " + idArmazem + " AND p.designacao LIKE '%" + designacao + "%' ";
-        ResultSet result = conexao.executeQuery( FIND_ALL );
-        System.out.println( "Query " + FIND_ALL );
+        ResultSet result = conexao.executeQuery(FIND_ALL);
+        System.out.println("Query " + FIND_ALL);
         List<TbStock> lista_stock = new ArrayList<>();
         TbStock stock;
-        try
-        {
+        try {
 
-            if ( result.next() )
-            {
+            if (result.next()) {
                 stock = new TbStock();
-                stock.setCodigo( result.getInt( "codigo" ) );
-                stock.setCodProdutoCodigo( new TbProduto( result.getInt( "cod_produto_codigo" ) ) );
+                stock.setCodigo(result.getInt("codigo"));
+                stock.setCodProdutoCodigo(new TbProduto(result.getInt("cod_produto_codigo")));
+                stock.setDataEntrada(result.getDate("dataEntrada"));
 //                stock.setDataEntrada( result.getDate("data_entrada" ) );
-                stock.setQuantidadeExistente( result.getDouble( "quantidade_existente" ) );
-                stock.setStatus( result.getString( "status" ) );
-                stock.setPrecoVenda( result.getBigDecimal( "preco_venda" ) );
-                stock.setQuantCritica( result.getInt( "quant_critica" ) );
-                stock.setQuantBaixa( result.getInt( "quant_baixa" ) );
-                stock.setQuantidadeAntiga( result.getDouble( "quantidade_antiga" ) );
-                stock.setCodArmazem( new TbArmazem( result.getInt( "cod_armazem" ) ) );
-                stock.setPrecoVendaGrosso( result.getBigDecimal( "preco_venda_grosso" ) );
-                stock.setQtdGrosso( result.getInt( "qtd_grosso" ) );
-                stock.setPrecoVendaFabrica( result.getBigDecimal( "preco_venda_fabrica" ) );
-                lista_stock.add( stock );
+                stock.setQuantidadeExistente(result.getDouble("quantidade_existente"));
+                stock.setStatus(result.getString("status"));
+                stock.setPrecoVenda(result.getBigDecimal("preco_venda"));
+                stock.setQuantCritica(result.getInt("quant_critica"));
+                stock.setQuantBaixa(result.getInt("quant_baixa"));
+                stock.setQuantidadeAntiga(result.getDouble("quantidade_antiga"));
+                stock.setCodArmazem(new TbArmazem(result.getInt("cod_armazem")));
+                stock.setPrecoVendaGrosso(result.getBigDecimal("preco_venda_grosso"));
+                stock.setQtdGrosso(result.getInt("qtd_grosso"));
+                stock.setPrecoVendaFabrica(result.getBigDecimal("preco_venda_fabrica"));
+                lista_stock.add(stock);
             }
 
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return lista_stock;
 
     }
 
-    public List<TbProduto> get_all_produtos_by_id_tipo_produto_and_id_armazem( int idTipoProduto, int idArmazem )
-    {
+    public List<TbProduto> get_all_produtos_by_id_tipo_produto_and_id_armazem(int idTipoProduto, int idArmazem) {
 
 //        String FIND__BY_CODIGO = "SELECT * FROM tb_stock s WHERE s.cod_produto_codigo = " + idProduto + " AND s.cod_armazem = " + idArmazem;s.cod_armazem = " + idArmazem + " AND
         String FIND__BY_CODIGO = " SELECT p.* FROM tb_stock s INNER JOIN tb_produto p ON p.codigo = s.cod_produto_codigo WHERE p.cod_Tipo_Produto = " + idTipoProduto + " AND s.cod_armazem = " + idArmazem;
-        ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
+        ResultSet result = conexao.executeQuery(FIND__BY_CODIGO);
 //        TbStock stock = null;
         List<TbProduto> lista_stock = new ArrayList<>();
         TbProduto produto;
-        try
-        {
+        try {
 
-            while ( result.next() )
-            {
+            while (result.next()) {
                 produto = new TbProduto();
-                produto.setCodigo( result.getInt( "codigo" ) );
-                produto.setDesignacao( result.getString( "designacao" ) );
-                produto.setPreco( result.getBigDecimal( "preco" ) );
-                produto.setDataFabrico( result.getDate( "data_fabrico" ) );
-                produto.setDataExpiracao( result.getDate( "data_expiracao" ) );
-                produto.setCodBarra( result.getString( "codBarra" ) );
-                produto.setStatus( result.getString( "status" ) );
-                produto.setDataEntrada( result.getDate( "data_entrada" ) );
-                produto.setStocavel( result.getString( "stocavel" ) );
-                produto.setPrecoVenda( result.getDouble( "preco_venda" ) );
-                produto.setPercentagemDesconto( result.getDouble( "percentagem_desconto" ) );
-                produto.setQuantidadeDesconto( result.getInt( "quantidade_desconto" ) );
-                produto.setCodigoManual( result.getString( "codigo_manual" ) );
-                produto.setCodUnidade( new Unidade( result.getInt( "cod_unidade" ) ) );
-                produto.setCodLocal( new TbLocal( result.getInt( "cod_local" ) ) );
-                produto.setCodFornecedores( new TbFornecedor( result.getInt( "cod_fornecedores" ) ) );
-                produto.setCodTipoProduto( new TbTipoProduto( result.getInt( "cod_Tipo_Produto" ) ) );
-                produto.setFkModelo( new Modelo( result.getInt( "fk_modelo" ) ) );
-                produto.setFkGrupo( new Grupo( result.getInt( "fk_grupo" ) ) );
-                produto.setPhoto( result.getBytes( "photo" ) );
-                produto.setStatusIva( result.getString( "status_iva" ) );
-                lista_stock.add( produto );
+                produto.setCodigo(result.getInt("codigo"));
+                produto.setDesignacao(result.getString("designacao"));
+                produto.setPreco(result.getBigDecimal("preco"));
+                produto.setDataFabrico(result.getDate("data_fabrico"));
+                produto.setDataExpiracao(result.getDate("data_expiracao"));
+                produto.setCodBarra(result.getString("codBarra"));
+                produto.setStatus(result.getString("status"));
+                produto.setDataEntrada(result.getDate("data_entrada"));
+                produto.setStocavel(result.getString("stocavel"));
+                produto.setPrecoVenda(result.getDouble("preco_venda"));
+                produto.setPercentagemDesconto(result.getDouble("percentagem_desconto"));
+                produto.setQuantidadeDesconto(result.getInt("quantidade_desconto"));
+                produto.setCodigoManual(result.getString("codigo_manual"));
+                produto.setCodUnidade(new Unidade(result.getInt("cod_unidade")));
+                produto.setCodLocal(new TbLocal(result.getInt("cod_local")));
+                produto.setCodFornecedores(new TbFornecedor(result.getInt("cod_fornecedores")));
+                produto.setCodTipoProduto(new TbTipoProduto(result.getInt("cod_Tipo_Produto")));
+                produto.setFkModelo(new Modelo(result.getInt("fk_modelo")));
+                produto.setFkGrupo(new Grupo(result.getInt("fk_grupo")));
+                produto.setPhoto(result.getBytes("photo"));
+                produto.setStatusIva(result.getString("status_iva"));
+                lista_stock.add(produto);
             }
 
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return lista_stock;
 
     }
 
-    public List<TbProduto> get_all_produtos_by_id_tipo_produto_and_id_armazem_and_grupo( int idTipoProduto, int idArmazem, int idGrupo )
-    {
+    public List<TbProduto> get_all_produtos_by_id_tipo_produto_and_id_armazem_and_grupo(int idTipoProduto, int idArmazem, int idGrupo) {
 
 //        String FIND__BY_CODIGO = "SELECT * FROM tb_stock s WHERE s.cod_produto_codigo = " + idProduto + " AND s.cod_armazem = " + idArmazem;s.cod_armazem = " + idArmazem + " AND
         String FIND__BY_CODIGO = " SELECT p.* FROM tb_stock s "
@@ -925,169 +1079,210 @@ public class StoksController implements EntidadeFactory
                 + " WHERE p.cod_Tipo_Produto = " + idTipoProduto
                 + " AND s.cod_armazem = " + idArmazem
                 + " AND p.fk_grupo = " + idGrupo;
-        ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
+        ResultSet result = conexao.executeQuery(FIND__BY_CODIGO);
 //        TbStock stock = null;
         List<TbProduto> lista_stock = new ArrayList<>();
         TbProduto produto;
-        try
-        {
+        try {
 
-            while ( result.next() )
-            {
+            while (result.next()) {
                 produto = new TbProduto();
-                produto.setCodigo( result.getInt( "codigo" ) );
-                produto.setDesignacao( result.getString( "designacao" ) );
-                produto.setPreco( result.getBigDecimal( "preco" ) );
-                produto.setDataFabrico( result.getDate( "data_fabrico" ) );
-                produto.setDataExpiracao( result.getDate( "data_expiracao" ) );
-                produto.setCodBarra( result.getString( "codBarra" ) );
-                produto.setStatus( result.getString( "status" ) );
-                produto.setDataEntrada( result.getDate( "data_entrada" ) );
-                produto.setStocavel( result.getString( "stocavel" ) );
-                produto.setPrecoVenda( result.getDouble( "preco_venda" ) );
-                produto.setPercentagemDesconto( result.getDouble( "percentagem_desconto" ) );
-                produto.setQuantidadeDesconto( result.getInt( "quantidade_desconto" ) );
-                produto.setCodigoManual( result.getString( "codigo_manual" ) );
-                produto.setCodUnidade( new Unidade( result.getInt( "cod_unidade" ) ) );
-                produto.setCodLocal( new TbLocal( result.getInt( "cod_local" ) ) );
-                produto.setCodFornecedores( new TbFornecedor( result.getInt( "cod_fornecedores" ) ) );
-                produto.setCodTipoProduto( new TbTipoProduto( result.getInt( "cod_Tipo_Produto" ) ) );
-                produto.setFkModelo( new Modelo( result.getInt( "fk_modelo" ) ) );
-                produto.setFkGrupo( new Grupo( result.getInt( "fk_grupo" ) ) );
-                produto.setPhoto( result.getBytes( "photo" ) );
-                produto.setStatusIva( result.getString( "status_iva" ) );
-                lista_stock.add( produto );
+                produto.setCodigo(result.getInt("codigo"));
+                produto.setDesignacao(result.getString("designacao"));
+                produto.setPreco(result.getBigDecimal("preco"));
+                produto.setDataFabrico(result.getDate("data_fabrico"));
+                produto.setDataExpiracao(result.getDate("data_expiracao"));
+                produto.setCodBarra(result.getString("codBarra"));
+                produto.setStatus(result.getString("status"));
+                produto.setDataEntrada(result.getDate("data_entrada"));
+                produto.setStocavel(result.getString("stocavel"));
+                produto.setPrecoVenda(result.getDouble("preco_venda"));
+                produto.setPercentagemDesconto(result.getDouble("percentagem_desconto"));
+                produto.setQuantidadeDesconto(result.getInt("quantidade_desconto"));
+                produto.setCodigoManual(result.getString("codigo_manual"));
+                produto.setCodUnidade(new Unidade(result.getInt("cod_unidade")));
+                produto.setCodLocal(new TbLocal(result.getInt("cod_local")));
+                produto.setCodFornecedores(new TbFornecedor(result.getInt("cod_fornecedores")));
+                produto.setCodTipoProduto(new TbTipoProduto(result.getInt("cod_Tipo_Produto")));
+                produto.setFkModelo(new Modelo(result.getInt("fk_modelo")));
+                produto.setFkGrupo(new Grupo(result.getInt("fk_grupo")));
+                produto.setPhoto(result.getBytes("photo"));
+                produto.setStatusIva(result.getString("status_iva"));
+                lista_stock.add(produto);
             }
 
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return lista_stock;
 
     }
 
-    public TbStock getStockByCodBarraAndIdArmazem( String codBarra, int idArmazem )
-    {
+    public TbStock getStockByCodBarraAndIdArmazem(String codBarra, int idArmazem) {
 
 //        String FIND__BY_CODIGO = "SELECT * FROM tb_stock s WHERE s.cod_produto_codigo.codBarra = '" + codBarra  + "' AND s.cod_armazem = " + idArmazem;
 //        String FIND_ALL = "SELECT s.* FROM tb_stock s INNER JOIN tb_produto p ON p.codigo = s.cod_produto_codigo WHERE s.cod_armazem = " + idArmazem  + " AND p.designacao LIKE '%" + designacao+ "%' ";
         String FIND__BY_CODIGO = "SELECT s.* FROM tb_stock s "
                 + " INNER JOIN tb_produto p ON p.codigo = s.cod_produto_codigo "
                 + " WHERE p.codBarra = '" + codBarra + "' AND s.cod_armazem = " + idArmazem;
-        ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
+        ResultSet result = conexao.executeQuery(FIND__BY_CODIGO);
         TbStock stock = null;
-        try
-        {
+        try {
 
-            if ( result.next() )
-            {
+            if (result.next()) {
                 stock = new TbStock();
-                stock.setCodigo( result.getInt( "codigo" ) );
-                stock.setCodProdutoCodigo( new TbProduto( result.getInt( "cod_produto_codigo" ) ) );
+                stock.setCodigo(result.getInt("codigo"));
+                stock.setCodProdutoCodigo(new TbProduto(result.getInt("cod_produto_codigo")));
+                stock.setDataEntrada(result.getDate("dataEntrada"));
 //                stock.setDataEntrada( result.getDate("data_entrada" ) );
-                stock.setQuantidadeExistente( result.getDouble( "quantidade_existente" ) );
-                stock.setStatus( result.getString( "status" ) );
-                stock.setPrecoVenda( result.getBigDecimal( "preco_venda" ) );
-                stock.setQuantCritica( result.getInt( "quant_critica" ) );
-                stock.setQuantBaixa( result.getInt( "quant_baixa" ) );
-                stock.setQuantidadeAntiga( result.getDouble( "quantidade_antiga" ) );
-                stock.setCodArmazem( new TbArmazem( result.getInt( "cod_armazem" ) ) );
-                stock.setPrecoVendaGrosso( result.getBigDecimal( "preco_venda_grosso" ) );
-                stock.setQtdGrosso( result.getInt( "qtd_grosso" ) );
-                stock.setPrecoVendaFabrica( result.getBigDecimal( "preco_venda_fabrica" ) );
+                stock.setQuantidadeExistente(result.getDouble("quantidade_existente"));
+                stock.setStatus(result.getString("status"));
+                stock.setPrecoVenda(result.getBigDecimal("preco_venda"));
+                stock.setQuantCritica(result.getInt("quant_critica"));
+                stock.setQuantBaixa(result.getInt("quant_baixa"));
+                stock.setQuantidadeAntiga(result.getDouble("quantidade_antiga"));
+                stock.setCodArmazem(new TbArmazem(result.getInt("cod_armazem")));
+                stock.setPrecoVendaGrosso(result.getBigDecimal("preco_venda_grosso"));
+                stock.setQtdGrosso(result.getInt("qtd_grosso"));
+                stock.setPrecoVendaFabrica(result.getBigDecimal("preco_venda_fabrica"));
 
             }
 
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return stock;
 
     }
 
-    public TbStock getStockByCodManualAndIdArmazem( String codManueal, int idArmazem )
-    {
+    public TbStock getStockByCodManualAndIdArmazem(String codManueal, int idArmazem) {
 
 //        String FIND__BY_CODIGO = "SELECT * FROM tb_stock s WHERE s.cod_produto_codigo.codBarra = '" + codBarra  + "' AND s.cod_armazem = " + idArmazem;
 //        String FIND_ALL = "SELECT s.* FROM tb_stock s INNER JOIN tb_produto p ON p.codigo = s.cod_produto_codigo WHERE s.cod_armazem = " + idArmazem  + " AND p.designacao LIKE '%" + designacao+ "%' ";
         String FIND__BY_CODIGO = "SELECT s.* FROM tb_stock s "
                 + " INNER JOIN tb_produto p ON p.codigo = s.cod_produto_codigo "
                 + " WHERE p.codigo_manual = '" + codManueal + "' AND s.cod_armazem = " + idArmazem;
-        ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
+        ResultSet result = conexao.executeQuery(FIND__BY_CODIGO);
         TbStock stock = null;
-        try
-        {
+        try {
 
-            if ( result.next() )
-            {
+            if (result.next()) {
                 stock = new TbStock();
-                stock.setCodigo( result.getInt( "codigo" ) );
-                stock.setCodProdutoCodigo( new TbProduto( result.getInt( "cod_produto_codigo" ) ) );
+                stock.setCodigo(result.getInt("codigo"));
+                stock.setCodProdutoCodigo(new TbProduto(result.getInt("cod_produto_codigo")));
+                stock.setDataEntrada(result.getDate("dataEntrada"));
 //                stock.setDataEntrada( result.getDate("data_entrada" ) );
-                stock.setQuantidadeExistente( result.getDouble( "quantidade_existente" ) );
-                stock.setStatus( result.getString( "status" ) );
-                stock.setPrecoVenda( result.getBigDecimal( "preco_venda" ) );
-                stock.setQuantCritica( result.getInt( "quant_critica" ) );
-                stock.setQuantBaixa( result.getInt( "quant_baixa" ) );
-                stock.setQuantidadeAntiga( result.getDouble( "quantidade_antiga" ) );
-                stock.setCodArmazem( new TbArmazem( result.getInt( "cod_armazem" ) ) );
-                stock.setPrecoVendaGrosso( result.getBigDecimal( "preco_venda_grosso" ) );
-                stock.setQtdGrosso( result.getInt( "qtd_grosso" ) );
-                stock.setPrecoVendaFabrica( result.getBigDecimal( "preco_venda_fabrica" ) );
+                stock.setQuantidadeExistente(result.getDouble("quantidade_existente"));
+                stock.setStatus(result.getString("status"));
+                stock.setPrecoVenda(result.getBigDecimal("preco_venda"));
+                stock.setQuantCritica(result.getInt("quant_critica"));
+                stock.setQuantBaixa(result.getInt("quant_baixa"));
+                stock.setQuantidadeAntiga(result.getDouble("quantidade_antiga"));
+                stock.setCodArmazem(new TbArmazem(result.getInt("cod_armazem")));
+                stock.setPrecoVendaGrosso(result.getBigDecimal("preco_venda_grosso"));
+                stock.setQtdGrosso(result.getInt("qtd_grosso"));
+                stock.setPrecoVendaFabrica(result.getBigDecimal("preco_venda_fabrica"));
 
             }
 
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return stock;
 
     }
 
-    public boolean adicionar_quantidades( int cod, double quantidade, double qtdCritica, double qtdBaixa, int idArmazem )
-    {
+    public boolean adicionar_quantidades(int cod, double quantidade, double qtdCritica, double qtdBaixa, int idArmazem) {
 
-        double qtdExistente = getQuantidadeProduto( cod, idArmazem );
-        System.out.println( "QTD_EXISTENTE: " + qtdExistente );
-        double qtdUpdate = ( qtdExistente + quantidade );
-        System.out.println( "QTD_UPDATE: " + qtdUpdate );
+        double qtdExistente = getQuantidadeProduto(cod, idArmazem);
+        System.out.println("QTD_EXISTENTE: " + qtdExistente);
+        double qtdUpdate = (qtdExistente + quantidade);
+        System.out.println("QTD_UPDATE: " + qtdUpdate);
         String sql = "UPDATE tb_stock SET quantidade_existente =  " + qtdUpdate + ",  "
                 + " quant_critica = " + qtdCritica + ",  "
                 + " quant_baixa = " + qtdBaixa
                 + " WHERE cod_produto_codigo = " + cod + " AND  cod_armazem = " + idArmazem;
-        return conexao.executeUpdate( sql );
+        return conexao.executeUpdate(sql);
 
     }
+    
+    public boolean adicionar_quantidades(int cod, double quantidade, double qtdCritica,
+                                    double qtdBaixa, Date dataEntrada, int idArmazem) {
 
-    public boolean adicionar_quantidades( int cod, double quantidade, int idArmazem )
-    {
+    double qtdExistente = getQuantidadeProduto(cod, idArmazem);
+    double qtdUpdate = qtdExistente + quantidade;
 
-        double qtdExistente = getQuantidadeProduto( cod, idArmazem );
+    String sql = "UPDATE tb_stock SET quantidade_existente = ?, "
+            + "quant_critica = ?, "
+            + "dataEntrada = ?, "
+            + "quant_baixa = ? "
+            + "WHERE cod_produto_codigo = ? AND cod_armazem = ?";
+
+    try (PreparedStatement ps = conexao.getConnection().prepareStatement(sql)) {
+
+        ps.setDouble(1, qtdUpdate);
+        ps.setDouble(2, qtdCritica);
+
+        // ⚠️ Conversão correta de java.util.Date → java.sql.Date
+        if (dataEntrada != null) {
+    ps.setTimestamp(3, new java.sql.Timestamp(dataEntrada.getTime()));
+} else {
+    ps.setNull(3, java.sql.Types.TIMESTAMP);
+}
+//        if (dataEntrada != null) {
+//            ps.setDate(3, new java.sql.Date(dataEntrada.getTime()));
+//        } else {
+//            ps.setNull(3, java.sql.Types.DATE);
+//        }
+
+        ps.setDouble(4, qtdBaixa);
+        ps.setInt(5, cod);
+        ps.setInt(6, idArmazem);
+
+        return ps.executeUpdate() > 0;
+
+    } catch (Exception e) {
+        e.printStackTrace(); // ⚠️ NÃO ENGOLIR ERROS
+        return false;
+    }
+}
+    
+//    public boolean adicionar_quantidades(int cod, double quantidade, double qtdCritica, double qtdBaixa, Date dataEntrada, int idArmazem) {
+//
+//        double qtdExistente = getQuantidadeProduto(cod, idArmazem);
+//        System.out.println("QTD_EXISTENTE: " + qtdExistente);
+//        double qtdUpdate = (qtdExistente + quantidade);
+//        System.out.println("QTD_UPDATE: " + qtdUpdate);
+//        String sql = "UPDATE tb_stock SET quantidade_existente =  " + qtdUpdate + ",  "
+//                + " quant_critica = " + qtdCritica + ",  "
+//                + " dataEntrada = " + dataEntrada + ",  "
+//                + " quant_baixa = " + qtdBaixa
+//                + " WHERE cod_produto_codigo = " + cod + " AND  cod_armazem = " + idArmazem;
+//        return conexao.executeUpdate(sql);
+//
+//    }
+
+    public boolean adicionar_quantidades(int cod, double quantidade, int idArmazem) {
+
+        double qtdExistente = getQuantidadeProduto(cod, idArmazem);
 //        System.out.println( "QTD_EXISTENTE: " + qtdExistente );
-        double qtdUpdate = ( qtdExistente + quantidade );
+        double qtdUpdate = (qtdExistente + quantidade);
 //        System.out.println( "QTD_UPDATE: " + qtdUpdate );
         String sql = "UPDATE tb_stock SET quantidade_existente =  " + qtdUpdate
                 + " WHERE cod_produto_codigo = " + cod + " AND  cod_armazem = " + idArmazem;
-        return conexao.executeUpdate( sql );
+        return conexao.executeUpdate(sql);
 
     }
 
-    public static boolean adicionar_quantidades( int cod, double quantidade, int idArmazem, BDConexao conexao )
-    {
+    public static boolean adicionar_quantidades(int cod, double quantidade, int idArmazem, BDConexao conexao) {
 
-        double qtdExistente = getQuantidadeProduto( cod, idArmazem, conexao );
+        double qtdExistente = getQuantidadeProduto(cod, idArmazem, conexao);
 //        System.out.println( "QTD_EXISTENTE: " + qtdExistente );
-        double qtdUpdate = ( qtdExistente + quantidade );
+        double qtdUpdate = (qtdExistente + quantidade);
 //        System.out.println( "QTD_UPDATE: " + qtdUpdate );
         String sql = "UPDATE tb_stock SET quantidade_existente =  " + qtdUpdate
                 + " WHERE cod_produto_codigo = " + cod + " AND  cod_armazem = " + idArmazem;
-        return conexao.executeUpdate( sql );
+        return conexao.executeUpdate(sql);
 
     }
 
@@ -1100,43 +1295,36 @@ public class StoksController implements EntidadeFactory
 //        conexao.executeUpdate( sql );
 //
 //    }
-    public boolean subtrair_quantidades( int cod, double quantidade, int idArmazem )
-    {
+    public boolean subtrair_quantidades(int cod, double quantidade, int idArmazem) {
 
-        double qtdExistente = getQuantidadeProduto( cod, idArmazem );
-        double qtdUpdate = ( qtdExistente - quantidade );
+        double qtdExistente = getQuantidadeProduto(cod, idArmazem);
+        double qtdUpdate = (qtdExistente - quantidade);
 //        System.out.println( "QTD_UPDATE: " + qtdUpdate );
         String sql = "UPDATE tb_stock SET quantidade_existente =  " + qtdUpdate
                 + " WHERE cod_produto_codigo = " + cod + " AND  cod_armazem = " + idArmazem;
-        return conexao.executeUpdate( sql );
+        return conexao.executeUpdate(sql);
 
     }
 
-    public static boolean subtrair_quantidades( int cod, double quantidade, int idArmazem, BDConexao conexao )
-    {
+    public static boolean subtrair_quantidades(int cod, double quantidade, int idArmazem, BDConexao conexao) {
 
-        double qtdExistente = getQuantidadeProduto( cod, idArmazem, conexao );
-        double qtdUpdate = ( qtdExistente - quantidade );
+        double qtdExistente = getQuantidadeProduto(cod, idArmazem, conexao);
+        double qtdUpdate = (qtdExistente - quantidade);
 //        System.out.println( "QTD_UPDATE: " + qtdUpdate );
         String sql = "UPDATE tb_stock SET quantidade_existente =  " + qtdUpdate
                 + " WHERE cod_produto_codigo = " + cod + " AND  cod_armazem = " + idArmazem;
-        return conexao.executeUpdate( sql );
+        return conexao.executeUpdate(sql);
 
     }
 
-    public double getQuantidadeProduto( int cod_produto, int idArmazem )
-    {
+    public double getQuantidadeProduto(int cod_produto, int idArmazem) {
         String sql = "SELECT quantidade_existente FROM  tb_stock WHERE  cod_produto_codigo = " + cod_produto + " AND cod_armazem = " + idArmazem;
-        ResultSet rs = conexao.executeQuery( sql );
-        try
-        {
-            if ( rs.next() )
-            {
-                return rs.getDouble( "quantidade_existente" );
+        ResultSet rs = conexao.executeQuery(sql);
+        try {
+            if (rs.next()) {
+                return rs.getDouble("quantidade_existente");
             }
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
             ex.printStackTrace();
             return 0;
         }
@@ -1144,13 +1332,12 @@ public class StoksController implements EntidadeFactory
         return 0;
     }
 
-    public Vector<BuscaModeloProduto> getFonteComprasSemRefeicao( int idArmazem, int codJanela )
-    {
+    public Vector<BuscaModeloProduto> getFonteComprasSemRefeicao(int idArmazem, int codJanela) {
         BDConexao conexaoTemp = BDConexao.getInstancia();
         Vector<BuscaModeloProduto> busca = new Vector<>();
 
         // Define a condição para filtrar famílias de produtos
-        String condicao = ( codJanela != DVML.JANELA_COMPRA ) ? "IN(1,2)" : "IN(2)";
+        String condicao = (codJanela != DVML.JANELA_COMPRA) ? "IN(1,2)" : "IN(2)";
 
         // Query otimizada e sem duplicações
         String sql
@@ -1181,52 +1368,42 @@ public class StoksController implements EntidadeFactory
                 + "WHERE p.fk_grupo <> 3 AND f.pk_familia " + condicao + " "
                 + "ORDER BY p.designacao";
 
-        try ( PreparedStatement ps = conexaoTemp.getConnection().prepareStatement( sql ) )
-        {
-            ps.setInt( 1, idArmazem );
+        try (PreparedStatement ps = conexaoTemp.getConnection().prepareStatement(sql)) {
+            ps.setInt(1, idArmazem);
 
-            try ( ResultSet rs = ps.executeQuery() )
-            {
-                while ( rs.next() )
-                {
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
                     BuscaModeloProduto bmp = new BuscaModeloProduto();
 
-                    int codFamilia = rs.getInt( "cod_familia" );
+                    int codFamilia = rs.getInt("cod_familia");
 
-                    bmp.setCodigo( rs.getInt( "codigo" ) );
-                    bmp.setDesignacao( rs.getString( "designacao" ) );
-                    bmp.setCategoria( rs.getString( "categoria" ) );
+                    bmp.setCodigo(rs.getInt("codigo"));
+                    bmp.setDesignacao(rs.getString("designacao"));
+                    bmp.setCategoria(rs.getString("categoria"));
 
-                    if ( codFamilia == 1 )
-                    {
-                        bmp.setQtd( "-" );
-                        bmp.setEstadoCritico( "-" );
-                    }
-                    else
-                    {
-                        long qtd = rs.getLong( "qtd" );
-                        boolean estadoCritico = rs.getBoolean( "estado_critico" );
-                        bmp.setQtd( String.valueOf( qtd ) );
-                        bmp.setEstadoCritico( String.valueOf( estadoCritico ) );
+                    if (codFamilia == 1) {
+                        bmp.setQtd("-");
+                        bmp.setEstadoCritico("-");
+                    } else {
+                        long qtd = rs.getLong("qtd");
+                        boolean estadoCritico = rs.getBoolean("estado_critico");
+                        bmp.setQtd(String.valueOf(qtd));
+                        bmp.setEstadoCritico(String.valueOf(estadoCritico));
                     }
 
-                    bmp.setPrecoVenda( rs.getDouble( "preco_venda" ) );
-                    busca.add( bmp );
+                    bmp.setPrecoVenda(rs.getDouble("preco_venda"));
+                    busca.add(bmp);
                 }
             }
 
-        }
-        catch ( SQLException e )
-        {
-            System.err.println( "Erro ao buscar produtos: " + e.getMessage() );
+        } catch (SQLException e) {
+            System.err.println("Erro ao buscar produtos: " + e.getMessage());
             e.printStackTrace();
-        }
-        finally
-        {
+        } finally {
             conexaoTemp.close();
         }
 
-        System.out.println( "TOTAL DE REGISTOS: " + busca.size() );
+        System.out.println("TOTAL DE REGISTOS: " + busca.size());
         return busca;
     }
 
@@ -1314,19 +1491,14 @@ public class StoksController implements EntidadeFactory
 //
 //        return busca;
 //    }
-    public static double getQuantidadeProduto( int cod_produto, int idArmazem, BDConexao conexao )
-    {
+    public static double getQuantidadeProduto(int cod_produto, int idArmazem, BDConexao conexao) {
         String sql = "SELECT quantidade_existente FROM  tb_stock WHERE  cod_produto_codigo = " + cod_produto + " AND cod_armazem = " + idArmazem;
-        ResultSet rs = conexao.executeQuery( sql );
-        try
-        {
-            if ( rs.next() )
-            {
-                return rs.getDouble( "quantidade_existente" );
+        ResultSet rs = conexao.executeQuery(sql);
+        try {
+            if (rs.next()) {
+                return rs.getDouble("quantidade_existente");
             }
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
             ex.printStackTrace();
             return 0;
         }
@@ -1334,38 +1506,34 @@ public class StoksController implements EntidadeFactory
         return 0;
     }
 
-    public void salvarAcertos( Connection conn, int codArmazem, List<Object[]> linhas, int usuarioId ) throws SQLException
-    {
+    public void salvarAcertos(Connection conn, int codArmazem, List<Object[]> linhas, int usuarioId) throws SQLException {
         String updateStock = "UPDATE tb_stock SET quantidade_existente = ? WHERE cod_produto_codigo = ? AND cod_armazem = ?";
         String insertAcerto = "INSERT INTO acerto_stock (cod_produto, cod_armazem, quantidade_antes, quantidade_acerto, quantidade_depois, usuario_id, data, hora) VALUES (?, ?, ?, ?, ?, ?, CURRENT_DATE, CURRENT_TIME)";
 
         try (
-                PreparedStatement pstUpdate = conn.prepareStatement( updateStock ); PreparedStatement pstInsert = conn.prepareStatement( insertAcerto ) )
-        {
-            conn.setAutoCommit( false ); // Início da transação
+                PreparedStatement pstUpdate = conn.prepareStatement(updateStock); PreparedStatement pstInsert = conn.prepareStatement(insertAcerto)) {
+            conn.setAutoCommit(false); // Início da transação
 
-            for ( Object[] linha : linhas )
-            {
-                int codProduto = (Integer) linha[ 0 ];
-                double qtdAntes = Double.parseDouble( linha[ 5 ].toString() );
-                double qtdAcerto = Double.parseDouble( linha[ 6 ].toString() );
-                double qtdDepois = Double.parseDouble( linha[ 7 ].toString() );
+            for (Object[] linha : linhas) {
+                int codProduto = (Integer) linha[0];
+                double qtdAntes = Double.parseDouble(linha[5].toString());
+                double qtdAcerto = Double.parseDouble(linha[6].toString());
+                double qtdDepois = Double.parseDouble(linha[7].toString());
 
-                if ( qtdAcerto != 0 )
-                {
+                if (qtdAcerto != 0) {
                     // Atualiza tb_stock
-                    pstUpdate.setDouble( 1, qtdDepois );
-                    pstUpdate.setInt( 2, codProduto );
-                    pstUpdate.setInt( 3, codArmazem );
+                    pstUpdate.setDouble(1, qtdDepois);
+                    pstUpdate.setInt(2, codProduto);
+                    pstUpdate.setInt(3, codArmazem);
                     pstUpdate.addBatch();
 
                     // Insere histórico em acerto_stock
-                    pstInsert.setInt( 1, codProduto );
-                    pstInsert.setInt( 2, codArmazem );
-                    pstInsert.setDouble( 3, qtdAntes );
-                    pstInsert.setDouble( 4, qtdAcerto );
-                    pstInsert.setDouble( 5, qtdDepois );
-                    pstInsert.setInt( 6, usuarioId );
+                    pstInsert.setInt(1, codProduto);
+                    pstInsert.setInt(2, codArmazem);
+                    pstInsert.setDouble(3, qtdAntes);
+                    pstInsert.setDouble(4, qtdAcerto);
+                    pstInsert.setDouble(5, qtdDepois);
+                    pstInsert.setInt(6, usuarioId);
                     pstInsert.addBatch();
                 }
             }
@@ -1374,15 +1542,11 @@ public class StoksController implements EntidadeFactory
             pstInsert.executeBatch();
 
             conn.commit(); // Confirma tudo
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             conn.rollback(); // Desfaz tudo em caso de erro
             throw e;
-        }
-        finally
-        {
-            conn.setAutoCommit( true );
+        } finally {
+            conn.setAutoCommit(true);
         }
     }
 
@@ -1429,7 +1593,7 @@ public class StoksController implements EntidadeFactory
 //        throw e;
 //    }
 //}
-    public void salvarAcertoLinha( Connection conn,
+    public void salvarAcertoLinha(Connection conn,
             int codProduto,
             int codArmazem,
             int usuarioId,
@@ -1438,8 +1602,7 @@ public class StoksController implements EntidadeFactory
             String designacaoArmazem,
             double qtdAntes,
             double qtdAcerto,
-            double qtdDepois ) throws SQLException
-    {
+            double qtdDepois) throws SQLException {
 
         String sqlAcerto = "INSERT INTO acerto_stock "
                 + "(data_hora, cod_produto, designacao_produto, cod_usuario, nome_usuario, "
@@ -1452,42 +1615,37 @@ public class StoksController implements EntidadeFactory
 
         // inicia transação
         boolean autoCommit = conn.getAutoCommit();
-        conn.setAutoCommit( false );
+        conn.setAutoCommit(false);
 
         try (
-                PreparedStatement psAcerto = conn.prepareStatement( sqlAcerto ); PreparedStatement psStock = conn.prepareStatement( sqlStock ) )
-        {
+                PreparedStatement psAcerto = conn.prepareStatement(sqlAcerto); PreparedStatement psStock = conn.prepareStatement(sqlStock)) {
             // --- grava acerto_stock ---
-            psAcerto.setInt( 1, codProduto );
-            psAcerto.setString( 2, designacaoProduto );
-            psAcerto.setInt( 3, usuarioId );
-            psAcerto.setString( 4, nomeUsuario );
-            psAcerto.setDouble( 5, qtdAntes );
-            psAcerto.setDouble( 6, qtdAcerto );
-            psAcerto.setDouble( 7, qtdDepois );
-            psAcerto.setInt( 8, codArmazem );
-            psAcerto.setString( 9, designacaoArmazem );
+            psAcerto.setInt(1, codProduto);
+            psAcerto.setString(2, designacaoProduto);
+            psAcerto.setInt(3, usuarioId);
+            psAcerto.setString(4, nomeUsuario);
+            psAcerto.setDouble(5, qtdAntes);
+            psAcerto.setDouble(6, qtdAcerto);
+            psAcerto.setDouble(7, qtdDepois);
+            psAcerto.setInt(8, codArmazem);
+            psAcerto.setString(9, designacaoArmazem);
             psAcerto.executeUpdate();
 
             // --- atualiza tb_stock ---
-            psStock.setDouble( 1, qtdDepois );
-            psStock.setInt( 2, codProduto );
-            psStock.setInt( 3, codArmazem );
+            psStock.setDouble(1, qtdDepois);
+            psStock.setInt(2, codProduto);
+            psStock.setInt(3, codArmazem);
             psStock.executeUpdate();
 
             // confirma transação
             conn.commit();
 
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
             conn.rollback();
             throw ex;
-        }
-        finally
-        {
+        } finally {
             // restaura autoCommit
-            conn.setAutoCommit( autoCommit );
+            conn.setAutoCommit(autoCommit);
         }
     }
 

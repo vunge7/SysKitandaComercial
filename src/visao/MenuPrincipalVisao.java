@@ -34,13 +34,12 @@ import util.OperacaoSistemaUtil;
  * @author Domingos Dala vunge
  *
  */
-public class MenuPrincipalVisao extends javax.swing.JFrame
-{
+public class MenuPrincipalVisao extends javax.swing.JFrame {
 
     private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
-    private ItemPermissaoDao itemPermissaoDao = new ItemPermissaoDao( emf );
-    private UsuarioDao usuarioDao = new UsuarioDao( emf );
-    private DadosInstituicaoDao dadosInstituicaoDao = new DadosInstituicaoDao( emf );
+    private ItemPermissaoDao itemPermissaoDao = new ItemPermissaoDao(emf);
+    private UsuarioDao usuarioDao = new UsuarioDao(emf);
+    private DadosInstituicaoDao dadosInstituicaoDao = new DadosInstituicaoDao(emf);
     private int cod_utilizador;
     private int idEmpresa;
     private boolean administrador = false;
@@ -48,526 +47,349 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     private BDConexao conexao;
     private OperacaoSistemaUtil osu = new OperacaoSistemaUtil();
 
-    public MenuPrincipalVisao( int cod, int id_empresa, boolean administrador, BDConexao conexao )
-    {
+    public MenuPrincipalVisao(int cod, int id_empresa, boolean administrador, BDConexao conexao) {
 
         this.conexao = conexao;
         initComponents();
-        btnProdutosEspirados.setVisible( false );
-        setLocationRelativeTo( null );
-        jmFamilia.setVisible( false );
+        btnProdutosEspirados.setVisible(false);
+        setLocationRelativeTo(null);
+        jmFamilia.setVisible(false);
 //        jMenuItem11.setVisible( false);
 
-        setDefaultCloseOperation( JFrame.HIDE_ON_CLOSE );
-        setResizable( true );
+        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        setResizable(true);
 
         //DESATIVR ENTRADAS
         //        jmEntradaProdutos.setVisible ( true );
         //DESATIVAR ITENS DO MENU
         //jmRelatorioVendasPorUsuarioData.setVisible ( false);
         //jmRelatorioVendasPorUsuarioData.setVisible ( false);
-        setArmazem( dadosInstituicaoDao.findTbDadosInstituicao( 1 ).getConfigArmazens() );
-        jmVendaDetalhadasClientes.setVisible( false );
-        jmRelatorioVendasPorClienteData.setVisible( true );
+        setArmazem(dadosInstituicaoDao.findTbDadosInstituicao(1).getConfigArmazens());
+        jmVendaDetalhadasClientes.setVisible(false);
+        jmRelatorioVendasPorClienteData.setVisible(true);
 //        jmAnulamentoEntradaProdutos.setVisible( false );
-        jmListagensTodosProdutoComDesconto.setVisible( false );
+        jmListagensTodosProdutoComDesconto.setVisible(false);
 
-        this.setExtendedState( this.getExtendedState() | MenuPrincipalVisao.MAXIMIZED_BOTH );
+        this.setExtendedState(this.getExtendedState() | MenuPrincipalVisao.MAXIMIZED_BOTH);
 
         cod_utilizador = cod;
         idEmpresa = id_empresa;
         this.administrador = administrador;
 
-        jmSolicitacaoCompras.setVisible( false );
-        jmAutorizacaoCompras.setVisible( false );
-        jmEncomendas.setVisible( false );
+        jmSolicitacaoCompras.setVisible(false);
+        jmAutorizacaoCompras.setVisible(false);
+        jmEncomendas.setVisible(false);
 
         boas_vinda();
         busca_permissao();
         mostrarNumeroDeprodutosExpirados();
-        jMenuItemGestaoCreditos.setVisible( false );
+        jMenuItemGestaoCreditos.setVisible(false);
+        activar_opcoes();
     }
 
-    public void busca_permissao()
-    {
+    public void busca_permissao() {
 
-        try
-        {
+        try {
             // TODO add your handling code here
-            setStatusUsuario( (Vector) itemPermissaoDao.getAllPermissoesByIdUsuarioAndModulo( this.cod_utilizador, DVML.MODULO_GESTAO_COMERCIAL ) );
-        }
-        catch ( Exception ex )
-        {
+            setStatusUsuario((Vector) itemPermissaoDao.getAllPermissoesByIdUsuarioAndModulo(this.cod_utilizador, DVML.MODULO_GESTAO_COMERCIAL));
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
     }
 
-    private void boas_vinda()
-    {
-        TbUsuario usuario = usuarioDao.findTbUsuario( this.cod_utilizador );
+    private void boas_vinda() {
+        TbUsuario usuario = usuarioDao.findTbUsuario(this.cod_utilizador);
 
-        System.err.println( "usuario: " + this.cod_utilizador );
-        if ( usuario.getCodigoSexo().getCodigo() == 1 )
-        {
-            lb_nome_usuario.setText( "Seja bem vindo! Sr.º  " + usuario.getNome() );
-        }
-        else
-        {
-            lb_nome_usuario.setText( "Seja bem vinda! Sr.ª  " + usuario.getNome() );
+        System.err.println("usuario: " + this.cod_utilizador);
+        if (usuario.getCodigoSexo().getCodigo() == 1) {
+            lb_nome_usuario.setText("Seja bem vindo! Sr.º  " + usuario.getNome());
+        } else {
+            lb_nome_usuario.setText("Seja bem vinda! Sr.ª  " + usuario.getNome());
         }
 
     }
 
-    public void setStatusUsuario( Vector<TbItemPermissao> vector )
-    {
+    public void setStatusUsuario(Vector<TbItemPermissao> vector) {
 
         String permissao = "";
         //limpa
-        setPermissoes( false );
+        setPermissoes(false);
 
-        for ( int i = 0; i < vector.size(); i++ )
-        {
+        for (int i = 0; i < vector.size(); i++) {
 
-            permissao = vector.get( i ).getIdPermissao().getDescricao();
+            permissao = vector.get(i).getIdPermissao().getDescricao();
 
-            System.out.println( "PERMISSAO PRINCIPAL " + permissao );
+            System.out.println("PERMISSAO PRINCIPAL " + permissao);
 
-            if ( permissao.equals( "Venda" ) )
-            {
-                jmVenda.setEnabled( true );
-            }
-            else if ( permissao.equals( "Relatorio por Fornecedor" ) )
-            {
-                jmRelatorioPorFonecedor.setEnabled( true );
-            }
-            else if ( permissao.equals( jmListarUsuario.getText() ) )
-            {
-                jmListarUsuario.setEnabled( true );
-            }
-            else if ( permissao.equals( jmReactivarProdutos.getText() ) )
-            {
-                jmReactivarProdutos.setEnabled( true );
-            }
-            else if ( permissao.equals( jmReactivarProdutos.getText() ) )
-            {
-                jmReactivarProdutos.setEnabled( true );
-            }
-            else if ( permissao.equals( jMenuItemRelatorioQuebras.getText() ) )
-            {
-                jMenuItemRelatorioQuebras.setEnabled( true );
-            }
-            else if ( permissao.equals( jMenuItemRelatorioQtdDetalhado.getText() ) )
-            {
-                jMenuItemRelatorioQtdDetalhado.setEnabled( true );
-            }
-            else if ( permissao.equals( jmListarProdutosStock.getText() ) )
-            {
-                jmListarProdutosStock.setEnabled( true );
-            }
-            else if ( permissao.equals( jmListagemVasilhames.getText() ) )
-            {
-                jmListagemVasilhames.setEnabled( true );
-            }
-            else if ( permissao.equals( jMenuItemCancelamentoEntradas.getText() ) )
-            {
-                jMenuItemCancelamentoEntradas.setEnabled( true );
-            }
-            else if ( permissao.equals( jmTodasVendas.getText() ) )
-            {
-                jmTodasVendas.setEnabled( true );
-            }
-            else if ( permissao.equals( jmRelatorioVendasPorUsuarioData.getText() ) )
-            {
-                jmRelatorioVendasPorUsuarioData.setEnabled( true );
-            }
-            else if ( permissao.equals( jmRelatorioDiarioTodasVendasTempoReal.getText() ) )
-            {
-                jmRelatorioDiarioTodasVendasTempoReal.setEnabled( true );
-            }
-            else if ( permissao.equals( jmRelatorioDiario.getText() ) )
-            {
-                jmRelatorioDiario.setEnabled( true );
-            }
-            else if ( permissao.equals( jMenuItemEntradasProdutos.getText() ) )
-            {
-                jMenuItemEntradasProdutos.setEnabled( true );
-            }
-            else if ( permissao.equals( jmListagensTodosProdutos.getText() ) )
-            {
-                jmListagensTodosProdutos.setEnabled( true );
-            }
-            else if ( permissao.equals( jmListagensTodosProdutoComDesconto.getText() ) )
-            {
-                jmListagensTodosProdutoComDesconto.setEnabled( true );
-            }
-            else if ( permissao.equals( jmProdutosActualizar.getText() ) )
-            {
-                jmProdutosActualizar.setEnabled( true );
-            }
-            else if ( permissao.equals( jmVendaDetalhadasUsuarios.getText() ) )
-            {
-                jmVendaDetalhadasUsuarios.setEnabled( true );
-            }
-            else if ( permissao.equals( jmRelatorioFormaPagamento.getText() ) )
-            {
-                jmRelatorioFormaPagamento.setEnabled( true );
-            }
-            else if ( permissao.equals( jmRelatorioTodosServicos.getText() ) )
-            {
-                jmRelatorioTodosServicos.setEnabled( true );
-            }
-            else if ( permissao.equals( jmRelatorioNotasCredito.getText() ) )
-            {
-                jmRelatorioNotasCredito.setEnabled( true );
-            }
-
-            else if ( permissao.equals( jmRelatorioAcertoStock.getText() ) )
-            {
-                jmRelatorioAcertoStock.setEnabled( true );
-            }
-            else if ( permissao.equals( jmHistoricoBonusEmpresa.getText() ) )
-            {
-                jmHistoricoBonusEmpresa.setEnabled( true );
-            }
-            else if ( permissao.equals( jmRelatorioComprasPorFornecedor.getText() ) )
-            {
-                jmRelatorioComprasPorFornecedor.setEnabled( true );
-            }
-            else if ( permissao.equals( jmReeprmirCompra.getText() ) )
-            {
-                jmReeprmirCompra.setEnabled( true );
-            }
-            else if ( permissao.equals( jmRelatorioVendasPorClienteData.getText() ) )
-            {
-                jmRelatorioVendasPorClienteData.setEnabled( true );
-            }
-            else if ( permissao.equals( jmVendaDetalhadasClientes.getText() ) )
-            {
-                jmVendaDetalhadasClientes.setEnabled( true );
-            }
-            else if ( permissao.equals( jmNotasCreditoCompra.getText() ) )
-            {
-                jmNotasCreditoCompra.setEnabled( true );
+            if (permissao.equals("Venda")) {
+                jmVenda.setEnabled(true);
+            } else if (permissao.equals("Relatorio por Fornecedor")) {
+                jmRelatorioPorFonecedor.setEnabled(true);
+            } else if (permissao.equals(jmListarUsuario.getText())) {
+                jmListarUsuario.setEnabled(true);
+            } else if (permissao.equals(jmReactivarProdutos.getText())) {
+                jmReactivarProdutos.setEnabled(true);
+            } else if (permissao.equals(jmReactivarProdutos.getText())) {
+                jmReactivarProdutos.setEnabled(true);
+            } else if (permissao.equals(jMenuItemRelatorioQuebras.getText())) {
+                jMenuItemRelatorioQuebras.setEnabled(true);
+            } else if (permissao.equals(jMenuItemRelatorioQtdDetalhado.getText())) {
+                jMenuItemRelatorioQtdDetalhado.setEnabled(true);
+            } else if (permissao.equals(jmListarProdutosStock.getText())) {
+                jmListarProdutosStock.setEnabled(true);
+            } else if (permissao.equals(jmListagemVasilhames.getText())) {
+                jmListagemVasilhames.setEnabled(true);
+            } else if (permissao.equals(jMenuItemCancelamentoEntradas.getText())) {
+                jMenuItemCancelamentoEntradas.setEnabled(true);
+            } else if (permissao.equals(jmTodasVendas.getText())) {
+                jmTodasVendas.setEnabled(true);
+            } else if (permissao.equals(jmRelatorioVendasPorUsuarioData.getText())) {
+                jmRelatorioVendasPorUsuarioData.setEnabled(true);
+            } else if (permissao.equals(jmRelatorioDiarioTodasVendasTempoReal.getText())) {
+                jmRelatorioDiarioTodasVendasTempoReal.setEnabled(true);
+            } else if (permissao.equals(jmRelatorioDiario.getText())) {
+                jmRelatorioDiario.setEnabled(true);
+            } else if (permissao.equals(jMenuItemEntradasProdutos.getText())) {
+                jMenuItemEntradasProdutos.setEnabled(true);
+            } else if (permissao.equals(jmListagensTodosProdutos.getText())) {
+                jmListagensTodosProdutos.setEnabled(true);
+            } else if (permissao.equals(jmListagensTodosProdutoComDesconto.getText())) {
+                jmListagensTodosProdutoComDesconto.setEnabled(true);
+            } else if (permissao.equals(jmProdutosActualizar.getText())) {
+                jmProdutosActualizar.setEnabled(true);
+            } else if (permissao.equals(jmVendaDetalhadasUsuarios.getText())) {
+                jmVendaDetalhadasUsuarios.setEnabled(true);
+            } else if (permissao.equals(jmRelatorioFormaPagamento.getText())) {
+                jmRelatorioFormaPagamento.setEnabled(true);
+            } else if (permissao.equals(jmRelatorioTodosServicos.getText())) {
+                jmRelatorioTodosServicos.setEnabled(true);
+            } else if (permissao.equals(jmRelatorioNotasCredito.getText())) {
+                jmRelatorioNotasCredito.setEnabled(true);
+            } else if (permissao.equals(jmRelatorioAcertoStock.getText())) {
+                jmRelatorioAcertoStock.setEnabled(true);
+            } else if (permissao.equals(jmHistoricoBonusEmpresa.getText())) {
+                jmHistoricoBonusEmpresa.setEnabled(true);
+            } else if (permissao.equals(jmRelatorioComprasPorFornecedor.getText())) {
+                jmRelatorioComprasPorFornecedor.setEnabled(true);
+            } else if (permissao.equals(jmReeprmirCompra.getText())) {
+                jmReeprmirCompra.setEnabled(true);
+            } else if (permissao.equals(jmRelatorioVendasPorClienteData.getText())) {
+                jmRelatorioVendasPorClienteData.setEnabled(true);
+            } else if (permissao.equals(jmVendaDetalhadasClientes.getText())) {
+                jmVendaDetalhadasClientes.setEnabled(true);
+            } else if (permissao.equals(jmNotasCreditoCompra.getText())) {
+                jmNotasCreditoCompra.setEnabled(true);
             } //SISTEMA
-            else if ( permissao.equals( "Cadastrar Usuario" ) )
-            {
-                jmCadastroUsuario.setEnabled( true );
-            }
-            else if ( permissao.equals( jmAcertoStock.getText() ) )
-            {
-                jmAcertoStock.setEnabled( true );
-            }
-
-            else if ( permissao.equals( jmTransferenciaArmazem.getText() ) )
-            {
-                jmTransferenciaArmazem.setEnabled( true );
-            }
-
-            else if ( permissao.equals( jMenuItemRelatorioMensal.getText() ) )
-            {
-                jMenuItemRelatorioMensal.setEnabled( true );
-            }
-
-            else if ( permissao.equals( jmCadastroArmazem.getText() ) )
-            {
-                jmCadastroArmazem.setEnabled( true );
-            }
-            else if ( permissao.equals( "Produto" ) )
-            {
-                jmProduto.setEnabled( true );
-            }
-            else if ( permissao.equals( "Reemprimir Factura" ) )
-            {
-                jmReeprmirFacura.setEnabled( true );
-            }
-
-            else if ( permissao.equals( "Permissao" ) )
-            {
-                jmPermissao.setEnabled( true );
-            }
-            else if ( permissao.equals( "Percentagem de Desconto" ) )
-            {
-                jPercentagemDesconto.setEnabled( true );
-            }
-            else if ( permissao.equals( "Dados da Empresa" ) )
-            {
-                jDadosEmpresa.setEnabled( true );
-            }
-            else if ( permissao.equals( "Cadastro Cliente F" ) )
-            {
-                jmCadastroCliente.setEnabled( true );
-            }
-            else if ( permissao.equals( "Vasilhame" ) )
-            {
-                jmVasilhame.setEnabled( true );
-            }
-            else if ( permissao.equals( jmCadastroCliente.getText() ) )
-            {
-                jmCadastroCliente.setEnabled( true );
-            }
-            else if ( permissao.equals( jmImprimirPrecos.getText() ) )
-            {
-                jmImprimirPrecos.setEnabled( true );
-            }
-            else if ( permissao.equals( jmConverterProforma.getText() ) )
-            {
-                jmConverterProforma.setEnabled( true );
-            }
-            else if ( permissao.equals( jmProcessarRecibo.getText() ) )
-            {
-                jmProcessarRecibo.setEnabled( true );
-            }
-            else if ( permissao.equals( jmNotas.getText() ) )
-            {
-                jmNotas.setEnabled( true );
-            }
-            else if ( permissao.equals( jmGerarSaftVendas.getText() ) )
-            {
-                jmGerarSaftVendas.setEnabled( true );
-            }
-            else if ( permissao.equals( jmGerarSaftCompras.getText() ) )
-            {
-                jmGerarSaftCompras.setEnabled( true );
-            }
-            else if ( permissao.equals( jmEstornos.getText() ) )
-            {
-                jmEstornos.setEnabled( true );
-            }
-            else if ( permissao.equals( jmTurno.getText() ) )
-            {
-                jmTurno.setEnabled( true );
+            else if (permissao.equals("Cadastrar Usuario")) {
+                jmCadastroUsuario.setEnabled(true);
+            } else if (permissao.equals(jmAcertoStock.getText())) {
+                jmAcertoStock.setEnabled(true);
+            } else if (permissao.equals(jmTransferenciaArmazem.getText())) {
+                jmTransferenciaArmazem.setEnabled(true);
+            } else if (permissao.equals(jMenuItemRelatorioMensal.getText())) {
+                jMenuItemRelatorioMensal.setEnabled(true);
+            } else if (permissao.equals(jmCadastroArmazem.getText())) {
+                jmCadastroArmazem.setEnabled(true);
+            } else if (permissao.equals("Produto")) {
+                jmProduto.setEnabled(true);
+            } else if (permissao.equals("Reemprimir Factura")) {
+                jmReeprmirFacura.setEnabled(true);
+            } else if (permissao.equals("Permissao")) {
+                jmPermissao.setEnabled(true);
+            } else if (permissao.equals("Percentagem de Desconto")) {
+                jPercentagemDesconto.setEnabled(true);
+            } else if (permissao.equals("Dados da Empresa")) {
+                jDadosEmpresa.setEnabled(true);
+            } else if (permissao.equals("Cadastro Cliente F")) {
+                jmCadastroCliente.setEnabled(true);
+            } else if (permissao.equals("Vasilhame")) {
+                jmVasilhame.setEnabled(true);
+            } else if (permissao.equals(jmCadastroCliente.getText())) {
+                jmCadastroCliente.setEnabled(true);
+            } else if (permissao.equals(jmImprimirPrecos.getText())) {
+                jmImprimirPrecos.setEnabled(true);
+            } else if (permissao.equals(jmConverterProforma.getText())) {
+                jmConverterProforma.setEnabled(true);
+            } else if (permissao.equals(jmProcessarRecibo.getText())) {
+                jmProcessarRecibo.setEnabled(true);
+            } else if (permissao.equals(jmNotas.getText())) {
+                jmNotas.setEnabled(true);
+            } else if (permissao.equals(jmGerarSaftVendas.getText())) {
+                jmGerarSaftVendas.setEnabled(true);
+            } else if (permissao.equals(jmGerarSaftCompras.getText())) {
+                jmGerarSaftCompras.setEnabled(true);
+            } else if (permissao.equals(jmEstornos.getText())) {
+                jmEstornos.setEnabled(true);
+            } else if (permissao.equals(jmTurno.getText())) {
+                jmTurno.setEnabled(true);
             } //LOGISTICA
-            else if ( permissao.equals( jmSolicitacaoCompras.getText() ) )
-            {
-                jmSolicitacaoCompras.setEnabled( true );
-            }
-            else if ( permissao.equals( jmAutorizacaoCompras.getText() ) )
-            {
-                jmAutorizacaoCompras.setEnabled( true );
-            }
-            else if ( permissao.equals( jmEncomendas.getText() ) )
-            {
-                jmEncomendas.setEnabled( true );
-            }
-            else if ( permissao.equals( jmCompras.getText() ) )
-            {
-                jmCompras.setEnabled( true );
-            }
-            else if ( permissao.equals( jmRelatorioQTDComprados.getText() ) )
-            {
-                jmRelatorioQTDComprados.setEnabled( true );
+            else if (permissao.equals(jmSolicitacaoCompras.getText())) {
+                jmSolicitacaoCompras.setEnabled(true);
+            } else if (permissao.equals(jmAutorizacaoCompras.getText())) {
+                jmAutorizacaoCompras.setEnabled(true);
+            } else if (permissao.equals(jmEncomendas.getText())) {
+                jmEncomendas.setEnabled(true);
+            } else if (permissao.equals(jmCompras.getText())) {
+                jmCompras.setEnabled(true);
+            } else if (permissao.equals(jmRelatorioQTDComprados.getText())) {
+                jmRelatorioQTDComprados.setEnabled(true);
             } //TABELAS
-            else if ( permissao.equals( jmFamilia.getText() ) )
-            {
-                jmFamilia.setEnabled( true );
-            }
-            else if ( permissao.equals( jmSubFamilia.getText() ) )
-            {
-                jmSubFamilia.setEnabled( true );
-            }
-            else if ( permissao.equals( jmMarca.getText() ) )
-            {
-                jmMarca.setEnabled( true );
-            }
-            else if ( permissao.equals( jmModelo.getText() ) )
-            {
-                jmModelo.setEnabled( true );
-            }
-            else if ( permissao.equals( jmGrupo.getText() ) )
-            {
-                jmGrupo.setEnabled( true );
-            }
-            else if ( permissao.equals( jmUnidades.getText() ) )
-            {
-                jmUnidades.setEnabled( true );
-            }
-
-            else if ( permissao.equals( jmReimprimirSaidasProdutos.getText() ) )
-            {
-                jmReimprimirSaidasProdutos.setEnabled( true );
-            }
-            else if ( permissao.equals( jmRelatoriosSaidasProdutosPorDatas.getText() ) )
-            {
-                jmRelatoriosSaidasProdutosPorDatas.setEnabled( true );
-            }
-            else if ( permissao.equals( jmMapaExistencia.getText() ) )
-            {
-                jmMapaExistencia.setEnabled( true );
-            }
-            else if ( permissao.equals( jmAnulamentoSaidasProdutos.getText() ) )
-            {
-                jmAnulamentoSaidasProdutos.setEnabled( true );
-            }
-            else if ( permissao.equals( jmGavetasPrateleiras.getText() ) )
-            {
-                jmGavetasPrateleiras.setEnabled( true );
-            }
-            else if ( permissao.equals( jmFrontOffice.getText() ) )
-            {
-                jmFrontOffice.setEnabled( true );
-            }
-            else if ( permissao.equals( jmSaidasProdutos.getText() ) )
-            {
-                jmSaidasProdutos.setEnabled( true );
-            }
-            else if ( permissao.equals( jmNotaLevantamento.getText() ) )
-            {
-                jmNotaLevantamento.setEnabled( true );
-            }
-            else if ( permissao.equals( jmReeprmirNota.getText() ) )
-            {
-                jmReeprmirNota.setEnabled( true );
-            }
-            else if ( permissao.equals( jmListaClientes.getText() ) )
-            {
-                jmListaClientes.setEnabled( true );
-            }
-            else if ( permissao.equals( jMenuConfiguracoesSistema.getText() ) )
-            {
-                jMenuConfiguracoesSistema.setEnabled( true );
-            }
-            else if ( permissao.equals( jMenuItemRelatorioDeEntradas.getText() ) )
-            {
-                jMenuItemRelatorioDeEntradas.setEnabled( true );
-            }
-            else if ( permissao.equals( jcbGuiaTransporte.getText() ) )
-            {
-                jcbGuiaTransporte.setEnabled( true );
-            }
-            else if ( permissao.equals( jcbConverterGuiaTransporteDocumento.getText() ) )
-            {
-                jcbConverterGuiaTransporteDocumento.setEnabled( true );
-            }
-            else if ( permissao.equals( jcbAnulamentoEntradasProdutos.getText() ) )
-            {
-                jcbAnulamentoEntradasProdutos.setEnabled( true );
-            }
-            else if ( permissao.equals( jcbRelatorioMensalClientesVips.getText() ) )
-            {
-                jcbRelatorioMensalClientesVips.setEnabled( true );
-            }
-            else if ( permissao.equals( jcbCardex.getText() ) )
-            {
-                jcbCardex.setEnabled( true );
-            }
-            else if ( permissao.equals( jcbAcertoStockMassa.getText() ) )
-            {
-                jcbAcertoStockMassa.setEnabled( true );
-            }
-            else if ( permissao.equals( jcbActualizacaoPrecos.getText() ) )
-            {
-                jcbActualizacaoPrecos.setEnabled( true );
-            }
-            else if ( permissao.equals( jcbAlteracaoGuiaTransporte.getText() ) )
-            {
-                jcbAlteracaoGuiaTransporte.setEnabled( true );
-            }
-            else if ( permissao.equals( jcbRelatorioTransferencia.getText() ) )
-            {
-                jcbRelatorioTransferencia.setEnabled( true );
+            else if (permissao.equals(jmFamilia.getText())) {
+                jmFamilia.setEnabled(true);
+            } else if (permissao.equals(jmSubFamilia.getText())) {
+                jmSubFamilia.setEnabled(true);
+            } else if (permissao.equals(jmMarca.getText())) {
+                jmMarca.setEnabled(true);
+            } else if (permissao.equals(jmModelo.getText())) {
+                jmModelo.setEnabled(true);
+            } else if (permissao.equals(jmGrupo.getText())) {
+                jmGrupo.setEnabled(true);
+            } else if (permissao.equals(jmUnidades.getText())) {
+                jmUnidades.setEnabled(true);
+            } else if (permissao.equals(jmReimprimirSaidasProdutos.getText())) {
+                jmReimprimirSaidasProdutos.setEnabled(true);
+            } else if (permissao.equals(jmRelatoriosSaidasProdutosPorDatas.getText())) {
+                jmRelatoriosSaidasProdutosPorDatas.setEnabled(true);
+            } else if (permissao.equals(jmMapaExistencia.getText())) {
+                jmMapaExistencia.setEnabled(true);
+            } else if (permissao.equals(jmAnulamentoSaidasProdutos.getText())) {
+                jmAnulamentoSaidasProdutos.setEnabled(true);
+            } else if (permissao.equals(jmGavetasPrateleiras.getText())) {
+                jmGavetasPrateleiras.setEnabled(true);
+            } else if (permissao.equals(jmFrontOffice.getText())) {
+                jmFrontOffice.setEnabled(true);
+            } else if (permissao.equals(jmSaidasProdutos.getText())) {
+                jmSaidasProdutos.setEnabled(true);
+            } else if (permissao.equals(jmNotaLevantamento.getText())) {
+                jmNotaLevantamento.setEnabled(true);
+            } else if (permissao.equals(jmReeprmirNota.getText())) {
+                jmReeprmirNota.setEnabled(true);
+            } else if (permissao.equals(jmListaClientes.getText())) {
+                jmListaClientes.setEnabled(true);
+            } else if (permissao.equals(jMenuConfiguracoesSistema.getText())) {
+                jMenuConfiguracoesSistema.setEnabled(true);
+            } else if (permissao.equals(jMenuItemRelatorioDeEntradas.getText())) {
+                jMenuItemRelatorioDeEntradas.setEnabled(true);
+            } else if (permissao.equals(jcbGuiaTransporte.getText())) {
+                jcbGuiaTransporte.setEnabled(true);
+            } else if (permissao.equals(jcbConverterGuiaTransporteDocumento.getText())) {
+                jcbConverterGuiaTransporteDocumento.setEnabled(true);
+            } else if (permissao.equals(jcbAnulamentoEntradasProdutos.getText())) {
+                jcbAnulamentoEntradasProdutos.setEnabled(true);
+            } else if (permissao.equals(jcbRelatorioMensalClientesVips.getText())) {
+                jcbRelatorioMensalClientesVips.setEnabled(true);
+            } else if (permissao.equals(jcbCardex.getText())) {
+                jcbCardex.setEnabled(true);
+            } else if (permissao.equals(jcbAcertoStockMassa.getText())) {
+                jcbAcertoStockMassa.setEnabled(true);
+            } else if (permissao.equals(jcbActualizacaoPrecos.getText())) {
+                jcbActualizacaoPrecos.setEnabled(true);
+            } else if (permissao.equals(jcbAlteracaoGuiaTransporte.getText())) {
+                jcbAlteracaoGuiaTransporte.setEnabled(true);
+            } else if (permissao.equals(jcbRelatorioTransferencia.getText())) {
+                jcbRelatorioTransferencia.setEnabled(true);
             }
 
         }
 
     }
 
-    public void setPermissoes( boolean status )
-    {
+    public void setPermissoes(boolean status) {
 
         //FICHEIROS
-        jmVenda.setEnabled( status );
+        jmVenda.setEnabled(status);
 //        jmGestaoCredito.setEnabled ( status );
 
         //LISTAGENS
-        jmListarUsuario.setEnabled( status );
-        jMenuItemRelatorioQuebras.setEnabled( status );
-        jMenuItemRelatorioQtdDetalhado.setEnabled( status );
-        jmRelatorioPorFonecedor.setEnabled( status );
-        jmAcertoStock.setEnabled( status );
-        jmListarProdutosStock.setEnabled( status );
-        jmListagemVasilhames.setEnabled( status );
-        jmTodasVendas.setEnabled( status );
-        jmReactivarProdutos.setEnabled( status );
-        jMenuItemEntradasProdutos.setEnabled( status );
-        jmRelatorioDiario.setEnabled( status );
-        jmListagensTodosProdutos.setEnabled( status );
-        jmListagensTodosProdutoComDesconto.setEnabled( status );
-        jmProdutosActualizar.setEnabled( status );
-        jmVenda.setEnabled( status );
+        jmListarUsuario.setEnabled(status);
+        jMenuItemRelatorioQuebras.setEnabled(status);
+        jMenuItemRelatorioQtdDetalhado.setEnabled(status);
+        jmRelatorioPorFonecedor.setEnabled(status);
+        jmAcertoStock.setEnabled(status);
+        jmListarProdutosStock.setEnabled(status);
+        jmListagemVasilhames.setEnabled(status);
+        jmTodasVendas.setEnabled(status);
+        jmReactivarProdutos.setEnabled(status);
+        jMenuItemEntradasProdutos.setEnabled(status);
+        jmRelatorioDiario.setEnabled(status);
+        jmListagensTodosProdutos.setEnabled(status);
+        jmListagensTodosProdutoComDesconto.setEnabled(status);
+        jmProdutosActualizar.setEnabled(status);
+        jmVenda.setEnabled(status);
 
         //SISTEMA      
-        jmTurno.setEnabled( status );
-        jmCadastroUsuario.setEnabled( status );
-        jmListagensTodosProdutos.setEnabled( status );
-        jmProduto.setEnabled( status );
-        jmCadastroArmazem.setEnabled( status );
-        jmReeprmirFacura.setEnabled( status );
-        jmPermissao.setEnabled( status );
-        jPercentagemDesconto.setEnabled( status );
-        jDadosEmpresa.setEnabled( status );
-        jmCadastroCliente.setEnabled( status );
-        jmVasilhame.setEnabled( status );
-        jmImprimirPrecos.setEnabled( status );
-        jmVendaDetalhadasUsuarios.setEnabled( status );
-        jmConverterProforma.setEnabled( status );
-        jmProcessarRecibo.setEnabled( status );
-        jmNotas.setEnabled( status );
-        jmGerarSaftCompras.setEnabled( status );
-        jmGerarSaftVendas.setEnabled( status );
-        jmSolicitacaoCompras.setEnabled( status );
-        jmAutorizacaoCompras.setEnabled( status );
-        jmEncomendas.setEnabled( status );
-        jmCompras.setEnabled( status );
-        jmRelatorioQTDComprados.setEnabled( status );
+        jmTurno.setEnabled(status);
+        jmCadastroUsuario.setEnabled(status);
+        jmListagensTodosProdutos.setEnabled(status);
+        jmProduto.setEnabled(status);
+        jmCadastroArmazem.setEnabled(status);
+        jmReeprmirFacura.setEnabled(status);
+        jmPermissao.setEnabled(status);
+        jPercentagemDesconto.setEnabled(status);
+        jDadosEmpresa.setEnabled(status);
+        jmCadastroCliente.setEnabled(status);
+        jmVasilhame.setEnabled(status);
+        jmImprimirPrecos.setEnabled(status);
+        jmVendaDetalhadasUsuarios.setEnabled(status);
+        jmConverterProforma.setEnabled(status);
+        jmProcessarRecibo.setEnabled(status);
+        jmNotas.setEnabled(status);
+        jmGerarSaftCompras.setEnabled(status);
+        jmGerarSaftVendas.setEnabled(status);
+        jmSolicitacaoCompras.setEnabled(status);
+        jmAutorizacaoCompras.setEnabled(status);
+        jmEncomendas.setEnabled(status);
+        jmCompras.setEnabled(status);
+        jmRelatorioQTDComprados.setEnabled(status);
 
         //TABELAS
-        jmFamilia.setEnabled( status );
-        jmSubFamilia.setEnabled( status );
-        jmMarca.setEnabled( status );
-        jmModelo.setEnabled( status );
-        jmGrupo.setEnabled( status );
+        jmFamilia.setEnabled(status);
+        jmSubFamilia.setEnabled(status);
+        jmMarca.setEnabled(status);
+        jmModelo.setEnabled(status);
+        jmGrupo.setEnabled(status);
 
         //OUTROS
-        jmUnidades.setEnabled( status );
-        jmEstornos.setEnabled( status );
-        jmSaidasProdutos.setEnabled( status );
+        jmUnidades.setEnabled(status);
+        jmEstornos.setEnabled(status);
+        jmSaidasProdutos.setEnabled(status);
 //        jmGestaoMesas.setEnabled( status );
-        jmReimprimirSaidasProdutos.setEnabled( status );
-        jmRelatoriosSaidasProdutosPorDatas.setEnabled( status );
-        jmMapaExistencia.setEnabled( status );
-        jmAnulamentoSaidasProdutos.setEnabled( status );
-        jmGavetasPrateleiras.setEnabled( status );
-        jmRelatorioFormaPagamento.setEnabled( status );
-        jmRelatorioTodosServicos.setEnabled( status );
-        jmRelatorioNotasCredito.setEnabled( status );
-        jmRelatorioVendasPorUsuarioData.setEnabled( status );
-        jmRelatorioAcertoStock.setEnabled( status );
-        jmHistoricoBonusEmpresa.setEnabled( status );
-        jmRelatorioComprasPorFornecedor.setEnabled( status );
-        jmReeprmirCompra.setEnabled( status );
-        jmRelatorioVendasPorClienteData.setEnabled( status );
-        jmVendaDetalhadasClientes.setEnabled( status );
-        jmRelatorioDiarioTodasVendasTempoReal.setEnabled( status );
-        jmNotasCreditoCompra.setEnabled( status );
-        jmTransferenciaArmazem.setEnabled( status );
-        jmFrontOffice.setEnabled( status );
-        jmNotaLevantamento.setEnabled( status );
-        jmReeprmirNota.setEnabled( status );
-        jmListaClientes.setEnabled( status );
-        jMenuConfiguracoesSistema.setEnabled( status );
-        jcbRelatorioTransferencia.setEnabled( status );
-        jMenuItemRelatorioMensal.setEnabled( status );
-        jMenuItemRelatorioDeEntradas.setEnabled( status );
-        jMenuItemCancelamentoEntradas.setEnabled( status );
-        jcbGuiaTransporte.setEnabled( status );
-        jcbAlteracaoGuiaTransporte.setEnabled( status );
-        jcbAnulamentoEntradasProdutos.setEnabled( status );
-        jcbConverterGuiaTransporteDocumento.setEnabled( status );
-        jcbRelatorioMensalClientesVips.setEnabled( status );
-        jcbCardex.setEnabled( status );
-        jcbAcertoStockMassa.setEnabled( status );
-        jcbActualizacaoPrecos.setEnabled( status );
+        jmReimprimirSaidasProdutos.setEnabled(status);
+        jmRelatoriosSaidasProdutosPorDatas.setEnabled(status);
+        jmMapaExistencia.setEnabled(status);
+        jmAnulamentoSaidasProdutos.setEnabled(status);
+        jmGavetasPrateleiras.setEnabled(status);
+        jmRelatorioFormaPagamento.setEnabled(status);
+        jmRelatorioTodosServicos.setEnabled(status);
+        jmRelatorioNotasCredito.setEnabled(status);
+        jmRelatorioVendasPorUsuarioData.setEnabled(status);
+        jmRelatorioAcertoStock.setEnabled(status);
+        jmHistoricoBonusEmpresa.setEnabled(status);
+        jmRelatorioComprasPorFornecedor.setEnabled(status);
+        jmReeprmirCompra.setEnabled(status);
+        jmRelatorioVendasPorClienteData.setEnabled(status);
+        jmVendaDetalhadasClientes.setEnabled(status);
+        jmRelatorioDiarioTodasVendasTempoReal.setEnabled(status);
+        jmNotasCreditoCompra.setEnabled(status);
+        jmTransferenciaArmazem.setEnabled(status);
+        jmFrontOffice.setEnabled(status);
+        jmNotaLevantamento.setEnabled(status);
+        jmReeprmirNota.setEnabled(status);
+        jmListaClientes.setEnabled(status);
+        jMenuConfiguracoesSistema.setEnabled(status);
+        jcbRelatorioTransferencia.setEnabled(status);
+        jMenuItemRelatorioMensal.setEnabled(status);
+        jMenuItemRelatorioDeEntradas.setEnabled(status);
+        jMenuItemCancelamentoEntradas.setEnabled(status);
+        jcbGuiaTransporte.setEnabled(status);
+        jcbAlteracaoGuiaTransporte.setEnabled(status);
+        jcbAnulamentoEntradasProdutos.setEnabled(status);
+        jcbConverterGuiaTransporteDocumento.setEnabled(status);
+        jcbRelatorioMensalClientesVips.setEnabled(status);
+        jcbCardex.setEnabled(status);
+        jcbAcertoStockMassa.setEnabled(status);
+        jcbActualizacaoPrecos.setEnabled(status);
 
     }
 
@@ -576,10 +398,9 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
      */
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents()
-    {
+    private void initComponents() {
 
         jLabel2 = new javax.swing.JLabel();
         btnProdutosEspirados = new javax.swing.JButton();
@@ -680,7 +501,8 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jmListarUsuario = new javax.swing.JMenuItem();
         jmGerarSaftVendas = new javax.swing.JMenuItem();
         jmGerarSaftCompras = new javax.swing.JMenuItem();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem11 = new javax.swing.JMenuItem();
+        operacaoInverterIva = new javax.swing.JMenuItem();
         jMenuItem10 = new javax.swing.JMenuItem();
         jMenu7 = new javax.swing.JMenu();
         jmFamilia = new javax.swing.JMenuItem();
@@ -705,10 +527,8 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         btnProdutosEspirados.setForeground(new java.awt.Color(255, 0, 0));
         btnProdutosEspirados.setText("...");
         btnProdutosEspirados.setToolTipText("Produtos Expirados");
-        btnProdutosEspirados.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnProdutosEspirados.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnProdutosEspiradosActionPerformed(evt);
             }
         });
@@ -730,50 +550,40 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
         jmVenda.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jmVenda.setText("Venda");
-        jmVenda.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmVenda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmVendaActionPerformed(evt);
             }
         });
         jMenu1.add(jmVenda);
 
         jmFrontOffice.setText("Front Office");
-        jmFrontOffice.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmFrontOffice.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmFrontOfficeActionPerformed(evt);
             }
         });
         jMenu1.add(jmFrontOffice);
 
         jmSaidasProdutos.setText("Saidas Produtos");
-        jmSaidasProdutos.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmSaidasProdutos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmSaidasProdutosActionPerformed(evt);
             }
         });
         jMenu1.add(jmSaidasProdutos);
 
         jMenuItemEntradasProdutos.setText("Entrada de Produtos");
-        jMenuItemEntradasProdutos.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItemEntradasProdutos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemEntradasProdutosActionPerformed(evt);
             }
         });
         jMenu1.add(jMenuItemEntradasProdutos);
 
         jMenuItemCancelamentoEntradas.setText("Cancelamento de Entrada");
-        jMenuItemCancelamentoEntradas.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItemCancelamentoEntradas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemCancelamentoEntradasActionPerformed(evt);
             }
         });
@@ -781,10 +591,8 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
         jmConverterProforma.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jmConverterProforma.setText("Converter Proformas em Facturas");
-        jmConverterProforma.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmConverterProforma.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmConverterProformaActionPerformed(evt);
             }
         });
@@ -792,10 +600,8 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
         jmProcessarRecibo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jmProcessarRecibo.setText("Processar Recibos de Factura");
-        jmProcessarRecibo.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmProcessarRecibo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmProcessarReciboActionPerformed(evt);
             }
         });
@@ -804,20 +610,16 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jmNotas.setText("Notas de Credito e Debito");
 
         jMenuItem7.setText("Emitir nota de credito para anulação de facturas");
-        jMenuItem7.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem7ActionPerformed(evt);
             }
         });
         jmNotas.add(jMenuItem7);
 
         jMenuItemRectificacao.setText("Emitir nota de credito para rectificação de facturas");
-        jMenuItemRectificacao.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItemRectificacao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemRectificacaoActionPerformed(evt);
             }
         });
@@ -827,10 +629,8 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
         jmNotaLevantamento.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jmNotaLevantamento.setText("Nota de Levantamento");
-        jmNotaLevantamento.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmNotaLevantamento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmNotaLevantamentoActionPerformed(evt);
             }
         });
@@ -838,50 +638,40 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
         jcbGuiaTransporte.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jcbGuiaTransporte.setText("Guia Transporte");
-        jcbGuiaTransporte.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jcbGuiaTransporte.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jcbGuiaTransporteActionPerformed(evt);
             }
         });
         jMenu1.add(jcbGuiaTransporte);
 
         jMenuItemGestaoCreditos.setText("Gestao de Creditos");
-        jMenuItemGestaoCreditos.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItemGestaoCreditos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemGestaoCreditosActionPerformed(evt);
             }
         });
         jMenu1.add(jMenuItemGestaoCreditos);
 
         jmEstornos.setText("Quebras");
-        jmEstornos.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmEstornos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmEstornosActionPerformed(evt);
             }
         });
         jMenu1.add(jmEstornos);
 
         jcbAlteracaoGuiaTransporte.setText("Alteração da Guia Transporte");
-        jcbAlteracaoGuiaTransporte.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jcbAlteracaoGuiaTransporte.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jcbAlteracaoGuiaTransporteActionPerformed(evt);
             }
         });
         jMenu1.add(jcbAlteracaoGuiaTransporte);
 
         jcbConverterGuiaTransporteDocumento.setText("Converter Guia Transporte Em Documento");
-        jcbConverterGuiaTransporteDocumento.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jcbConverterGuiaTransporteDocumento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jcbConverterGuiaTransporteDocumentoActionPerformed(evt);
             }
         });
@@ -889,10 +679,8 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jMenu1.add(jSeparator9);
 
         jMenuItem3.setText("Sair");
-        jMenuItem3.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem3ActionPerformed(evt);
             }
         });
@@ -906,10 +694,8 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
         jmListarProdutosStock.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jmListarProdutosStock.setText("Inventario");
-        jmListarProdutosStock.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmListarProdutosStock.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmListarProdutosStockActionPerformed(evt);
             }
         });
@@ -917,20 +703,16 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
         jmTodasVendas.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jmTodasVendas.setText("Relatorio de Vendas por Intervalo de Datas");
-        jmTodasVendas.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmTodasVendas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmTodasVendasActionPerformed(evt);
             }
         });
         jmenuRelatorios.add(jmTodasVendas);
 
         jmVendaDetalhadasUsuarios.setText("Vendas Detalhadas por Usuarios");
-        jmVendaDetalhadasUsuarios.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmVendaDetalhadasUsuarios.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmVendaDetalhadasUsuariosActionPerformed(evt);
             }
         });
@@ -938,10 +720,8 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
         jmRelatorioVendasPorUsuarioData.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jmRelatorioVendasPorUsuarioData.setText("Relatorio de Vendas Por Usuario e Data");
-        jmRelatorioVendasPorUsuarioData.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmRelatorioVendasPorUsuarioData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmRelatorioVendasPorUsuarioDataActionPerformed(evt);
             }
         });
@@ -949,160 +729,128 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
         jmRelatorioVendasPorClienteData.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jmRelatorioVendasPorClienteData.setText("Relatorio de Vendas por Cliente e Data");
-        jmRelatorioVendasPorClienteData.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmRelatorioVendasPorClienteData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmRelatorioVendasPorClienteDataActionPerformed(evt);
             }
         });
         jmenuRelatorios.add(jmRelatorioVendasPorClienteData);
 
         jmRelatorioDiario.setText("Relatorio de Quatidades de Produtos Vendidos");
-        jmRelatorioDiario.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmRelatorioDiario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmRelatorioDiarioActionPerformed(evt);
             }
         });
         jmenuRelatorios.add(jmRelatorioDiario);
 
         jMenuItemRelatorioQtdDetalhado.setText("Relatorio Detalhado de Quantidades Vendidos");
-        jMenuItemRelatorioQtdDetalhado.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItemRelatorioQtdDetalhado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemRelatorioQtdDetalhadoActionPerformed(evt);
             }
         });
         jmenuRelatorios.add(jMenuItemRelatorioQtdDetalhado);
 
         jmRelatorioFormaPagamento.setText("Relatorio de Vendas por Formas de Pagamentos");
-        jmRelatorioFormaPagamento.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmRelatorioFormaPagamento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmRelatorioFormaPagamentoActionPerformed(evt);
             }
         });
         jmenuRelatorios.add(jmRelatorioFormaPagamento);
 
         jmVendaDetalhadasClientes.setText("Vendas Detalhadas por Clientes");
-        jmVendaDetalhadasClientes.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmVendaDetalhadasClientes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmVendaDetalhadasClientesActionPerformed(evt);
             }
         });
         jmenuRelatorios.add(jmVendaDetalhadasClientes);
 
         jmRelatorioDiarioTodasVendasTempoReal.setText("Relatorio Diario de Todas Vendas em Tempo Real");
-        jmRelatorioDiarioTodasVendasTempoReal.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmRelatorioDiarioTodasVendasTempoReal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmRelatorioDiarioTodasVendasTempoRealActionPerformed(evt);
             }
         });
         jmenuRelatorios.add(jmRelatorioDiarioTodasVendasTempoReal);
 
         jmListagensTodosProdutos.setText("Relatorio de Todos Produtos");
-        jmListagensTodosProdutos.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmListagensTodosProdutos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmListagensTodosProdutosActionPerformed(evt);
             }
         });
         jmenuRelatorios.add(jmListagensTodosProdutos);
 
         jmRelatorioTodosServicos.setText("Relatorio de Todos Servicos");
-        jmRelatorioTodosServicos.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmRelatorioTodosServicos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmRelatorioTodosServicosActionPerformed(evt);
             }
         });
         jmenuRelatorios.add(jmRelatorioTodosServicos);
 
         jmListagensTodosProdutoComDesconto.setText("Listagens de Todos os Produtos com Desconto");
-        jmListagensTodosProdutoComDesconto.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmListagensTodosProdutoComDesconto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmListagensTodosProdutoComDescontoActionPerformed(evt);
             }
         });
         jmenuRelatorios.add(jmListagensTodosProdutoComDesconto);
 
         jmProdutosActualizar.setText("Compra Por Fazer");
-        jmProdutosActualizar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmProdutosActualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmProdutosActualizarActionPerformed(evt);
             }
         });
         jmenuRelatorios.add(jmProdutosActualizar);
 
         jmRelatorioPorFonecedor.setText("Relatório por Fornecedor");
-        jmRelatorioPorFonecedor.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmRelatorioPorFonecedor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmRelatorioPorFonecedorActionPerformed(evt);
             }
         });
         jmenuRelatorios.add(jmRelatorioPorFonecedor);
 
         jmReeprmirFacura.setText("Reimprimir Factura");
-        jmReeprmirFacura.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmReeprmirFacura.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmReeprmirFacuraActionPerformed(evt);
             }
         });
         jmenuRelatorios.add(jmReeprmirFacura);
 
         jmReeprmirNota.setText("Reimprimir Nota Credito");
-        jmReeprmirNota.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmReeprmirNota.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmReeprmirNotaActionPerformed(evt);
             }
         });
         jmenuRelatorios.add(jmReeprmirNota);
 
         jmReimprimirSaidasProdutos.setText("Reimprimir Saidas de Produtos");
-        jmReimprimirSaidasProdutos.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmReimprimirSaidasProdutos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmReimprimirSaidasProdutosActionPerformed(evt);
             }
         });
         jmenuRelatorios.add(jmReimprimirSaidasProdutos);
 
         jmRelatorioNotasCredito.setText("Relatorio de Notas de Creditos");
-        jmRelatorioNotasCredito.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmRelatorioNotasCredito.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmRelatorioNotasCreditoActionPerformed(evt);
             }
         });
         jmenuRelatorios.add(jmRelatorioNotasCredito);
 
         jmMapaExistencia.setText("Mapa de Existencia");
-        jmMapaExistencia.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmMapaExistencia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmMapaExistenciaActionPerformed(evt);
             }
         });
@@ -1110,10 +858,8 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
         jmRelatorioAcertoStock.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jmRelatorioAcertoStock.setText("Relatorio de Acerto de Stock");
-        jmRelatorioAcertoStock.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmRelatorioAcertoStock.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmRelatorioAcertoStockActionPerformed(evt);
             }
         });
@@ -1121,10 +867,8 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
         jmHistoricoBonusEmpresa.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jmHistoricoBonusEmpresa.setText("Historico de Bonus da Empresa");
-        jmHistoricoBonusEmpresa.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmHistoricoBonusEmpresa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmHistoricoBonusEmpresaActionPerformed(evt);
             }
         });
@@ -1132,100 +876,80 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
         jmRelatorioComprasPorFornecedor.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jmRelatorioComprasPorFornecedor.setText("Relatorio de Compras por Fornecedores");
-        jmRelatorioComprasPorFornecedor.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmRelatorioComprasPorFornecedor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmRelatorioComprasPorFornecedorActionPerformed(evt);
             }
         });
         jmenuRelatorios.add(jmRelatorioComprasPorFornecedor);
 
         jmListaClientes.setText("Lista de Clientes");
-        jmListaClientes.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmListaClientes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmListaClientesActionPerformed(evt);
             }
         });
         jmenuRelatorios.add(jmListaClientes);
 
         jmRelatorioQTDComprados.setText("Relatorio de Quantidades de Produtos Comprados");
-        jmRelatorioQTDComprados.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmRelatorioQTDComprados.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmRelatorioQTDCompradosActionPerformed(evt);
             }
         });
         jmenuRelatorios.add(jmRelatorioQTDComprados);
 
         jcbRelatorioTransferencia.setText("Relatorio Transferencias Armazem");
-        jcbRelatorioTransferencia.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jcbRelatorioTransferencia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jcbRelatorioTransferenciaActionPerformed(evt);
             }
         });
         jmenuRelatorios.add(jcbRelatorioTransferencia);
 
         jMenuItemRelatorioQuebras.setText("Relatorio Quebras");
-        jMenuItemRelatorioQuebras.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItemRelatorioQuebras.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemRelatorioQuebrasActionPerformed(evt);
             }
         });
         jmenuRelatorios.add(jMenuItemRelatorioQuebras);
 
         jMenuItemRelatorioMensal.setText("Relatorio Mensal");
-        jMenuItemRelatorioMensal.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItemRelatorioMensal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemRelatorioMensalActionPerformed(evt);
             }
         });
         jmenuRelatorios.add(jMenuItemRelatorioMensal);
 
         jcbRelatorioMensalClientesVips.setText("Relatorio Mensal de Clientes Vip");
-        jcbRelatorioMensalClientesVips.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jcbRelatorioMensalClientesVips.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jcbRelatorioMensalClientesVipsActionPerformed(evt);
             }
         });
         jmenuRelatorios.add(jcbRelatorioMensalClientesVips);
 
         jmRelatoriosSaidasProdutosPorDatas.setText("Relatorios Saidas de Produtos por Datas");
-        jmRelatoriosSaidasProdutosPorDatas.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmRelatoriosSaidasProdutosPorDatas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmRelatoriosSaidasProdutosPorDatasActionPerformed(evt);
             }
         });
         jmenuRelatorios.add(jmRelatoriosSaidasProdutosPorDatas);
 
         jMenuItemRelatorioDeEntradas.setText("Relatorio de Entradas");
-        jMenuItemRelatorioDeEntradas.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItemRelatorioDeEntradas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemRelatorioDeEntradasActionPerformed(evt);
             }
         });
         jmenuRelatorios.add(jMenuItemRelatorioDeEntradas);
 
         jMenuItem5.setText("Relatório Mensalidades");
-        jMenuItem5.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem5ActionPerformed(evt);
             }
         });
@@ -1238,10 +962,8 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jMenu3.setText("Sistema");
 
         jmTurno.setText("Gestao de Turno");
-        jmTurno.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmTurno.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmTurnoActionPerformed(evt);
             }
         });
@@ -1249,40 +971,32 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
         jmCadastroUsuario.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jmCadastroUsuario.setText("Cadastrar Usuario");
-        jmCadastroUsuario.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmCadastroUsuario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmCadastroUsuarioActionPerformed(evt);
             }
         });
         jMenu3.add(jmCadastroUsuario);
 
         jmCadastroArmazem.setText("Cadastro de Armazem");
-        jmCadastroArmazem.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmCadastroArmazem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmCadastroArmazemActionPerformed(evt);
             }
         });
         jMenu3.add(jmCadastroArmazem);
 
         jmTransferenciaArmazem.setText("Transferencia de Armazem");
-        jmTransferenciaArmazem.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmTransferenciaArmazem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmTransferenciaArmazemActionPerformed(evt);
             }
         });
         jMenu3.add(jmTransferenciaArmazem);
 
         jmCadastroCliente.setText("Cadastro de Cliente");
-        jmCadastroCliente.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmCadastroCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmCadastroClienteActionPerformed(evt);
             }
         });
@@ -1290,30 +1004,24 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
         jmProduto.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.ALT_DOWN_MASK));
         jmProduto.setText("Produto");
-        jmProduto.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmProduto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmProdutoActionPerformed(evt);
             }
         });
         jMenu3.add(jmProduto);
 
         jPercentagemDesconto.setText("Percentagem de Desconto");
-        jPercentagemDesconto.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jPercentagemDesconto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jPercentagemDescontoActionPerformed(evt);
             }
         });
         jMenu3.add(jPercentagemDesconto);
 
         jmImprimirPrecos.setText("Imprimir Precos");
-        jmImprimirPrecos.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmImprimirPrecos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmImprimirPrecosActionPerformed(evt);
             }
         });
@@ -1322,60 +1030,48 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jmVasilhame.setText("Vasilhame");
 
         jm_cadastro_vasilhame.setText("Cadastro de Vasilhames");
-        jm_cadastro_vasilhame.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jm_cadastro_vasilhame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jm_cadastro_vasilhameActionPerformed(evt);
             }
         });
         jmVasilhame.add(jm_cadastro_vasilhame);
 
         jm_entrada_vasilhame.setText("Entrada de Vasilhames");
-        jm_entrada_vasilhame.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jm_entrada_vasilhame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jm_entrada_vasilhameActionPerformed(evt);
             }
         });
         jmVasilhame.add(jm_entrada_vasilhame);
 
         jm_saida_vasilhame.setText("Saida de Vasilhames");
-        jm_saida_vasilhame.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jm_saida_vasilhame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jm_saida_vasilhameActionPerformed(evt);
             }
         });
         jmVasilhame.add(jm_saida_vasilhame);
 
         jMenuItem2.setText("Relatório de Entradas");
-        jMenuItem2.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem2ActionPerformed(evt);
             }
         });
         jmVasilhame.add(jMenuItem2);
 
         jmListagemVasilhames.setText("Listar Vasilhames");
-        jmListagemVasilhames.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmListagemVasilhames.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmListagemVasilhamesActionPerformed(evt);
             }
         });
         jmVasilhame.add(jmListagemVasilhames);
 
         jMenuItem4.setText("Relatório de Saidas");
-        jMenuItem4.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem4ActionPerformed(evt);
             }
         });
@@ -1384,20 +1080,16 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jMenu3.add(jmVasilhame);
 
         jmAnulamentoSaidasProdutos.setText("Anulamentos Saidas Produtos");
-        jmAnulamentoSaidasProdutos.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmAnulamentoSaidasProdutos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmAnulamentoSaidasProdutosActionPerformed(evt);
             }
         });
         jMenu3.add(jmAnulamentoSaidasProdutos);
 
         jcbAnulamentoEntradasProdutos.setText("Anulamentos Entradas Produtos");
-        jcbAnulamentoEntradasProdutos.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jcbAnulamentoEntradasProdutos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jcbAnulamentoEntradasProdutosActionPerformed(evt);
             }
         });
@@ -1409,50 +1101,40 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jMenu5.setText("Logistica");
 
         jmSolicitacaoCompras.setText("Solicitacao Compras");
-        jmSolicitacaoCompras.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmSolicitacaoCompras.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmSolicitacaoComprasActionPerformed(evt);
             }
         });
         jMenu5.add(jmSolicitacaoCompras);
 
         jmAutorizacaoCompras.setText("Autorizacao Compras");
-        jmAutorizacaoCompras.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmAutorizacaoCompras.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmAutorizacaoComprasActionPerformed(evt);
             }
         });
         jMenu5.add(jmAutorizacaoCompras);
 
         jmEncomendas.setText("Encomendas");
-        jmEncomendas.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmEncomendas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmEncomendasActionPerformed(evt);
             }
         });
         jMenu5.add(jmEncomendas);
 
         jmCompras.setText("Compras");
-        jmCompras.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmCompras.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmComprasActionPerformed(evt);
             }
         });
         jMenu5.add(jmCompras);
 
         jmReeprmirCompra.setText("Reimprimir Compra");
-        jmReeprmirCompra.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmReeprmirCompra.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmReeprmirCompraActionPerformed(evt);
             }
         });
@@ -1461,20 +1143,16 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jmNotasCreditoCompra.setText("Notas Credito Compra");
 
         jMenuItem13.setText("Emitir nota de credito para anulação de compras");
-        jMenuItem13.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItem13.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem13ActionPerformed(evt);
             }
         });
         jmNotasCreditoCompra.add(jMenuItem13);
 
         jMenuItem6.setText("Relatorio de Notas de Credito de Compras");
-        jMenuItem6.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem6ActionPerformed(evt);
             }
         });
@@ -1488,20 +1166,16 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jMenu6.setText("Configurações");
 
         jDadosEmpresa.setText("Dados da Empresa");
-        jDadosEmpresa.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jDadosEmpresa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jDadosEmpresaActionPerformed(evt);
             }
         });
         jMenu6.add(jDadosEmpresa);
 
         jmUnidades.setText("Unidades");
-        jmUnidades.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmUnidades.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmUnidadesActionPerformed(evt);
             }
         });
@@ -1509,90 +1183,72 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
         jmGavetasPrateleiras.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jmGavetasPrateleiras.setText("Gavetas/Prateleiras");
-        jmGavetasPrateleiras.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmGavetasPrateleiras.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmGavetasPrateleirasActionPerformed(evt);
             }
         });
         jMenu6.add(jmGavetasPrateleiras);
 
         jcbCardex.setText("Cardex");
-        jcbCardex.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jcbCardex.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jcbCardexActionPerformed(evt);
             }
         });
         jMenu6.add(jcbCardex);
 
         jmAcertoStock.setText("Acerto Stock");
-        jmAcertoStock.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmAcertoStock.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmAcertoStockActionPerformed(evt);
             }
         });
         jMenu6.add(jmAcertoStock);
 
         jcbAcertoStockMassa.setText("Acerto Stock Em Massa");
-        jcbAcertoStockMassa.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jcbAcertoStockMassa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jcbAcertoStockMassaActionPerformed(evt);
             }
         });
         jMenu6.add(jcbAcertoStockMassa);
 
         jcbActualizacaoPrecos.setText("Actualização de Preços");
-        jcbActualizacaoPrecos.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jcbActualizacaoPrecos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jcbActualizacaoPrecosActionPerformed(evt);
             }
         });
         jMenu6.add(jcbActualizacaoPrecos);
 
         jmReactivarProdutos.setText("Reactivar Produtos");
-        jmReactivarProdutos.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmReactivarProdutos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmReactivarProdutosActionPerformed(evt);
             }
         });
         jMenu6.add(jmReactivarProdutos);
 
         jmPermissao.setText("Permissões");
-        jmPermissao.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmPermissao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmPermissaoActionPerformed(evt);
             }
         });
         jMenu6.add(jmPermissao);
 
         jMenuItem8.setText("Alteração da Senha");
-        jMenuItem8.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItem8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem8ActionPerformed(evt);
             }
         });
         jMenu6.add(jMenuItem8);
 
         jMenuConfiguracoesSistema.setText("Configuração Sistema");
-        jMenuConfiguracoesSistema.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuConfiguracoesSistema.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuConfiguracoesSistemaActionPerformed(evt);
             }
         });
@@ -1600,50 +1256,48 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
         jmListarUsuario.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jmListarUsuario.setText("Listar Usuarios");
-        jmListarUsuario.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmListarUsuario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmListarUsuarioActionPerformed(evt);
             }
         });
         jMenu6.add(jmListarUsuario);
 
         jmGerarSaftVendas.setText("Gerar SAFT de Vendas");
-        jmGerarSaftVendas.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmGerarSaftVendas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmGerarSaftVendasActionPerformed(evt);
             }
         });
         jMenu6.add(jmGerarSaftVendas);
 
         jmGerarSaftCompras.setText("Gerar SAFT de Compras");
-        jmGerarSaftCompras.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmGerarSaftCompras.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmGerarSaftComprasActionPerformed(evt);
             }
         });
         jMenu6.add(jmGerarSaftCompras);
 
-        jMenuItem1.setText("Operação Inverter IVA");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                jMenuItem1ActionPerformed(evt);
+        jMenuItem11.setText("Gerar SAFT de Inventário");
+        jMenuItem11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem11ActionPerformed(evt);
             }
         });
-        jMenu6.add(jMenuItem1);
+        jMenu6.add(jMenuItem11);
+
+        operacaoInverterIva.setText("Operação Inverter IVA");
+        operacaoInverterIva.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                operacaoInverterIvaActionPerformed(evt);
+            }
+        });
+        jMenu6.add(operacaoInverterIva);
 
         jMenuItem10.setText("Configurar Multa");
-        jMenuItem10.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItem10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem10ActionPerformed(evt);
             }
         });
@@ -1655,60 +1309,48 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jMenu7.setText("Tabelas");
 
         jmFamilia.setText("Familia");
-        jmFamilia.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmFamilia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmFamiliaActionPerformed(evt);
             }
         });
         jMenu7.add(jmFamilia);
 
         jmSubFamilia.setText("SubFamilia");
-        jmSubFamilia.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmSubFamilia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmSubFamiliaActionPerformed(evt);
             }
         });
         jMenu7.add(jmSubFamilia);
 
         jmMarca.setText("Marca");
-        jmMarca.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmMarca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmMarcaActionPerformed(evt);
             }
         });
         jMenu7.add(jmMarca);
 
         jmModelo.setText("Modelo");
-        jmModelo.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmModelo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmModeloActionPerformed(evt);
             }
         });
         jMenu7.add(jmModelo);
 
         jmGrupo.setText("Grupo");
-        jmGrupo.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jmGrupo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmGrupoActionPerformed(evt);
             }
         });
         jMenu7.add(jmGrupo);
 
         jMenuItemConsultas.setText("Consultas");
-        jMenuItemConsultas.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItemConsultas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemConsultasActionPerformed(evt);
             }
         });
@@ -1720,10 +1362,8 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jMenu4.setText("Ajuda");
 
         jMenuItem9.setText("Sobre o Autor");
-        jMenuItem9.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItem9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem9ActionPerformed(evt);
             }
         });
@@ -1755,72 +1395,60 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 //            Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( Level.SEVERE, null, ex );
 //        }
 
-        try
-        {
+        try {
 
-            try
-            {
-                new FormVendaResponsivaVisaoTop( cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
-            }
-            catch ( Exception ex )
-            {
+            try {
+                new FormVendaResponsivaVisaoTop(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
 
-        }
-        catch ( Exception ex )
-        {
-            Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( Level.SEVERE, null, ex );
+        } catch (Exception ex) {
+            Logger.getLogger(MenuPrincipalVisao.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }//GEN-LAST:event_jmVendaActionPerformed
 
     private void jDadosEmpresaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jDadosEmpresaActionPerformed
         // TODO add your handling code here:
-        new DadosInstituicaoVisao( this, rootPaneCheckingEnabled ).setVisible( true );
+        new DadosInstituicaoVisao(this, rootPaneCheckingEnabled).setVisible(true);
     }//GEN-LAST:event_jDadosEmpresaActionPerformed
 
     private void jmPermissaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmPermissaoActionPerformed
         // TODO add your handling code here:
 
-        new PermissaoVisao( this.conexao ).setVisible( true );
+        new PermissaoVisao(this.conexao).setVisible(true);
     }//GEN-LAST:event_jmPermissaoActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
         // TODO add your handling code here:
 
-        MetodosUtil.logo_out( this.cod_utilizador, this.idEmpresa );
+        MetodosUtil.logo_out(this.cod_utilizador, this.idEmpresa);
 //        fazerBackupAgora();
 
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
-        new InformacoesEmpresaVisao().setVisible( true );
+        new InformacoesEmpresaVisao().setVisible(true);
     }//GEN-LAST:event_jMenuItem9ActionPerformed
 
     private void jmAcertoStockActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmAcertoStockActionPerformed
         // TODO add your handling code here:
-        try
-        {
+        try {
 
-            new AcertoStockVisao( this.cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
-        }
-        catch ( Exception e )
-        {
+            new AcertoStockVisao(this.cod_utilizador, BDConexao.getInstancia()).setVisible(true);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }//GEN-LAST:event_jmAcertoStockActionPerformed
 
     private void jmConverterProformaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmConverterProformaActionPerformed
 
-        try
-        {
+        try {
             // TODO add your handling code here:
-            new ConverterProformaFacturaVisao( this.cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
-        }
-        catch ( SQLException ex )
-        {
-            Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            new ConverterProformaFacturaVisao(this.cod_utilizador, BDConexao.getInstancia()).setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuPrincipalVisao.class.getName()).log(Level.SEVERE, null, ex);
         }
 
 
@@ -1828,7 +1456,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
     private void jmGerarSaftVendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmGerarSaftVendasActionPerformed
         // TODO add your handling code here:
-        new FicheiroSAFTVisao( conexao ).setVisible( true );
+        new FicheiroSAFTVisao(conexao).setVisible(true);
     }//GEN-LAST:event_jmGerarSaftVendasActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem7ActionPerformed
@@ -1840,64 +1468,52 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     private void jmProcessarReciboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmProcessarReciboActionPerformed
 
 //        new ReciboVisao( cod_utilizador, this.conexao ).setVisible( true );
-        new EmissaoRecibos( cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
+        new EmissaoRecibos(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jmProcessarReciboActionPerformed
 
     private void jmUnidadesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmUnidadesActionPerformed
-        new UnidadeMedidasVisao( this, rootPaneCheckingEnabled ).setVisible( true );
+        new UnidadeMedidasVisao(this, rootPaneCheckingEnabled).setVisible(true);
     }//GEN-LAST:event_jmUnidadesActionPerformed
 
     private void jmGavetasPrateleirasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmGavetasPrateleirasActionPerformed
-        new LocalVisao( this, rootPaneCheckingEnabled ).setVisible( true );
+        new LocalVisao(this, rootPaneCheckingEnabled).setVisible(true);
     }//GEN-LAST:event_jmGavetasPrateleirasActionPerformed
 
     private void jmSolicitacaoComprasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmSolicitacaoComprasActionPerformed
-        try
-        {
+        try {
 
-            new SolicitacaoComprasVisao( cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
+            new SolicitacaoComprasVisao(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }//GEN-LAST:event_jmSolicitacaoComprasActionPerformed
 
     private void jmAutorizacaoComprasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmAutorizacaoComprasActionPerformed
-        try
-        {
+        try {
 
-            new AprovacaoCompraVisao( cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
+            new AprovacaoCompraVisao(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }//GEN-LAST:event_jmAutorizacaoComprasActionPerformed
 
     private void jmEncomendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmEncomendasActionPerformed
-        try
-        {
+        try {
 
-            new EncomendaVisao( cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
+            new EncomendaVisao(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }//GEN-LAST:event_jmEncomendasActionPerformed
 
     private void jmComprasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmComprasActionPerformed
-        try
-        {
+        try {
 
-            new FornecedorOutroVisao( this, cod_utilizador, rootPaneCheckingEnabled, BDConexao.getInstancia() ).setVisible( true );
-        }
-        catch ( Exception e )
-        {
+            new FornecedorOutroVisao(this, cod_utilizador, rootPaneCheckingEnabled, BDConexao.getInstancia()).setVisible(true);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }//GEN-LAST:event_jmComprasActionPerformed
@@ -1905,43 +1521,40 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     private void jmFamiliaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmFamiliaActionPerformed
     {//GEN-HEADEREND:event_jmFamiliaActionPerformed
         // TODO add your handling code here:
-        new FamiliaVisao().setVisible( true );
+        new FamiliaVisao().setVisible(true);
     }//GEN-LAST:event_jmFamiliaActionPerformed
 
     private void jmSubFamiliaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmSubFamiliaActionPerformed
     {//GEN-HEADEREND:event_jmSubFamiliaActionPerformed
         // TODO add your handling code here:
-        new CategoriasVisao( this.conexao ).setVisible( true );
+        new CategoriasVisao(this.conexao).setVisible(true);
     }//GEN-LAST:event_jmSubFamiliaActionPerformed
 
     private void jmMarcaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmMarcaActionPerformed
     {//GEN-HEADEREND:event_jmMarcaActionPerformed
         // TODO add your handling code here:
-        new MarcaVisao().setVisible( true );
+        new MarcaVisao().setVisible(true);
     }//GEN-LAST:event_jmMarcaActionPerformed
 
     private void jmModeloActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmModeloActionPerformed
     {//GEN-HEADEREND:event_jmModeloActionPerformed
         // TODO add your handling code here:
-        new ModeloVisao().setVisible( true );
+        new ModeloVisao().setVisible(true);
     }//GEN-LAST:event_jmModeloActionPerformed
 
     private void jmGrupoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmGrupoActionPerformed
     {//GEN-HEADEREND:event_jmGrupoActionPerformed
         // TODO add your handling code here:
-        new GrupoVisao().setVisible( true );
+        new GrupoVisao().setVisible(true);
     }//GEN-LAST:event_jmGrupoActionPerformed
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem4ActionPerformed
     {//GEN-HEADEREND:event_jMenuItem4ActionPerformed
         // TODO add your handling code here:
 
-        try
-        {
-            new ListarSaidasVasilhamesPorEntervaloData().setVisible( true );
-        }
-        catch ( Exception e )
-        {
+        try {
+            new ListarSaidasVasilhamesPorEntervaloData().setVisible(true);
+        } catch (Exception e) {
         }
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
@@ -1949,18 +1562,15 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jmListagemVasilhamesActionPerformed
         // TODO add your handling code here:
 
-        new ListarVasilhamesStock().setVisible( true );
+        new ListarVasilhamesStock().setVisible(true);
     }//GEN-LAST:event_jmListagemVasilhamesActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem2ActionPerformed
     {//GEN-HEADEREND:event_jMenuItem2ActionPerformed
         // TODO add your handling code here:
-        try
-        {
-            new ListarEntradasVasilhamesPorEntervaloData().setVisible( true );
-        }
-        catch ( Exception e )
-        {
+        try {
+            new ListarEntradasVasilhamesPorEntervaloData().setVisible(true);
+        } catch (Exception e) {
         }
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
@@ -1968,12 +1578,9 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jm_saida_vasilhameActionPerformed
         // TODO add your handling code here:
 
-        try
-        {
-            new SaidaVasilhameVisao( cod_utilizador ).setVisible( true );
-        }
-        catch ( Exception e )
-        {
+        try {
+            new SaidaVasilhameVisao(cod_utilizador).setVisible(true);
+        } catch (Exception e) {
         }
     }//GEN-LAST:event_jm_saida_vasilhameActionPerformed
 
@@ -1981,82 +1588,73 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jm_entrada_vasilhameActionPerformed
         // TODO add your handling code here:
 
-        try
-        {
-            new EntradaVasilhameVisao( this, rootPaneCheckingEnabled, cod_utilizador ).setVisible( true );
-        }
-        catch ( Exception e )
-        {
+        try {
+            new EntradaVasilhameVisao(this, rootPaneCheckingEnabled, cod_utilizador).setVisible(true);
+        } catch (Exception e) {
         }
     }//GEN-LAST:event_jm_entrada_vasilhameActionPerformed
 
     private void jm_cadastro_vasilhameActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jm_cadastro_vasilhameActionPerformed
     {//GEN-HEADEREND:event_jm_cadastro_vasilhameActionPerformed
         // TODO add your handling code here:7
-        new VasilhameVisao( cod_utilizador ).setVisible( true );
+        new VasilhameVisao(cod_utilizador).setVisible(true);
     }//GEN-LAST:event_jm_cadastro_vasilhameActionPerformed
 
     private void jmImprimirPrecosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmImprimirPrecosActionPerformed
     {//GEN-HEADEREND:event_jmImprimirPrecosActionPerformed
         // TODO add your handling code here:
-        new ImprimirPrecoVisao( this.conexao ).setVisible( true );
+        new ImprimirPrecoVisao(this.conexao).setVisible(true);
     }//GEN-LAST:event_jmImprimirPrecosActionPerformed
 
     private void jPercentagemDescontoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jPercentagemDescontoActionPerformed
     {//GEN-HEADEREND:event_jPercentagemDescontoActionPerformed
 
-        try
-        {
-            new PercentagemDesconto( this, rootPaneCheckingEnabled, cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
-        }
-        catch ( SQLException ex )
-        {
-            Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( Level.SEVERE, null, ex );
+        try {
+            new PercentagemDesconto(this, rootPaneCheckingEnabled, cod_utilizador, BDConexao.getInstancia()).setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuPrincipalVisao.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jPercentagemDescontoActionPerformed
 
     private void jmProdutoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmProdutoActionPerformed
     {//GEN-HEADEREND:event_jmProdutoActionPerformed
-        try
-        {
+        try {
             // TODO add your handling code here:
 
-            new ProdutosVisao( this, rootPaneCheckingEnabled, cod_utilizador, this.conexao ).setVisible( true );
-        }
-        catch ( Exception ex )
-        {
-            Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            new ProdutosVisao(this, rootPaneCheckingEnabled, cod_utilizador, this.conexao).setVisible(true);
+        } catch (Exception ex) {
+            Logger.getLogger(MenuPrincipalVisao.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jmProdutoActionPerformed
 
     private void jmCadastroClienteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmCadastroClienteActionPerformed
     {//GEN-HEADEREND:event_jmCadastroClienteActionPerformed
-        new ClienteVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia() ).setVisible( true );
+        new ClienteVisao(this, rootPaneCheckingEnabled, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jmCadastroClienteActionPerformed
 
     private void jmCadastroArmazemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmCadastroArmazemActionPerformed
     {//GEN-HEADEREND:event_jmCadastroArmazemActionPerformed
         // TODO add your handling code here:
-        new ArmazemVisao( this.conexao ).setVisible( true );
+        new ArmazemVisao(this.conexao).setVisible(true);
     }//GEN-LAST:event_jmCadastroArmazemActionPerformed
 
     private void jmCadastroUsuarioActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmCadastroUsuarioActionPerformed
     {//GEN-HEADEREND:event_jmCadastroUsuarioActionPerformed
         // TODO add your handling code here:
-        new UsuarioVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia() ).setVisible( true );
+        new UsuarioVisao(this, rootPaneCheckingEnabled, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jmCadastroUsuarioActionPerformed
 
     private void jmTurnoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmTurnoActionPerformed
     {//GEN-HEADEREND:event_jmTurnoActionPerformed
         // TODO add your handling code here:
-        new TurnoVisao( cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
+        new TurnoVisao(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jmTurnoActionPerformed
 
     private void jmReeprmirFacuraActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmReeprmirFacuraActionPerformed
     {//GEN-HEADEREND:event_jmReeprmirFacuraActionPerformed
         // TODO add your handling code here:
 
-        new ReemprimirDocumentoVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia() ).setVisible( true );
+        new ReemprimirDocumentoVisao(this, rootPaneCheckingEnabled, BDConexao.getInstancia()).setVisible(true);
 
 
     }//GEN-LAST:event_jmReeprmirFacuraActionPerformed
@@ -2064,34 +1662,31 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     private void jmRelatorioPorFonecedorActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmRelatorioPorFonecedorActionPerformed
     {//GEN-HEADEREND:event_jmRelatorioPorFonecedorActionPerformed
         // TODO add your handling code here:
-        new FornecedorRelatorioDiario( this.conexao ).setVisible( true );
+        new FornecedorRelatorioDiario(this.conexao).setVisible(true);
     }//GEN-LAST:event_jmRelatorioPorFonecedorActionPerformed
 
     private void jmVendaDetalhadasUsuariosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmVendaDetalhadasUsuariosActionPerformed
     {//GEN-HEADEREND:event_jmVendaDetalhadasUsuariosActionPerformed
 //        new ListarVendasDetalhadas( this.conexao ).setVisible(true);
-        new ListarRelatorioVendaByIntervalo( this.conexao ).setVisible( true );
+        new ListarRelatorioVendaByIntervalo(this.conexao).setVisible(true);
     }//GEN-LAST:event_jmVendaDetalhadasUsuariosActionPerformed
 
     private void jmListarUsuarioActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmListarUsuarioActionPerformed
     {//GEN-HEADEREND:event_jmListarUsuarioActionPerformed
         // TODO add your handling code here:
 
-        new ListaUsuarioVisao().setVisible( true );
+        new ListaUsuarioVisao().setVisible(true);
     }//GEN-LAST:event_jmListarUsuarioActionPerformed
 
     private void jmProdutosActualizarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmProdutosActualizarActionPerformed
     {//GEN-HEADEREND:event_jmProdutosActualizarActionPerformed
 
-        try
-        {
+        try {
             // TODO add your handling code here
-            new ListarProdutosAcomprar( cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
+            new ListarProdutosAcomprar(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
 
-        }
-        catch ( SQLException ex )
-        {
-            Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( Level.SEVERE, null, ex );
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuPrincipalVisao.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }//GEN-LAST:event_jmProdutosActualizarActionPerformed
@@ -2100,26 +1695,23 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jmListagensTodosProdutosActionPerformed
         // TODO add your handling code here:
 
-        new ListarProdutosVisao( cod_utilizador ).setVisible( true );
+        new ListarProdutosVisao(cod_utilizador).setVisible(true);
     }//GEN-LAST:event_jmListagensTodosProdutosActionPerformed
 
     private void jmRelatorioDiarioTodasVendasTempoRealActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmRelatorioDiarioTodasVendasTempoRealActionPerformed
     {//GEN-HEADEREND:event_jmRelatorioDiarioTodasVendasTempoRealActionPerformed
         // TODO add your handling code here:
-        new RelatorioVendaEmTempoRealVisao( this.conexao ).setVisible( true );
+        new RelatorioVendaEmTempoRealVisao(this.conexao).setVisible(true);
     }//GEN-LAST:event_jmRelatorioDiarioTodasVendasTempoRealActionPerformed
 
     private void jmRelatorioDiarioActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmRelatorioDiarioActionPerformed
     {//GEN-HEADEREND:event_jmRelatorioDiarioActionPerformed
 
-        try
-        {
+        try {
             // TODO add your handling code here:
-            new ListarRelatorioDiario( cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
-        }
-        catch ( SQLException ex )
-        {
-            Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            new ListarRelatorioDiario(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuPrincipalVisao.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }//GEN-LAST:event_jmRelatorioDiarioActionPerformed
@@ -2127,18 +1719,15 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     private void jmRelatorioVendasPorUsuarioDataActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmRelatorioVendasPorUsuarioDataActionPerformed
     {//GEN-HEADEREND:event_jmRelatorioVendasPorUsuarioDataActionPerformed
         // TODO add your handling code here:
-        new ListarVendasByUsuarios( cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
+        new ListarVendasByUsuarios(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jmRelatorioVendasPorUsuarioDataActionPerformed
 
     private void jmTodasVendasActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmTodasVendasActionPerformed
     {//GEN-HEADEREND:event_jmTodasVendasActionPerformed
 
-        try
-        {
-            new ListarRelatorioVenda( this.conexao, cod_utilizador ).setVisible( true );
-        }
-        catch ( Exception e )
-        {
+        try {
+            new ListarRelatorioVenda(this.conexao, cod_utilizador).setVisible(true);
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -2148,12 +1737,9 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jmListarProdutosStockActionPerformed
 
         // TODO add your handling code here:
-        try
-        {
-            new InventarioVisao( cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
-        }
-        catch ( Exception e )
-        {
+        try {
+            new InventarioVisao(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -2161,65 +1747,62 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
     private void jmMapaExistenciaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmMapaExistenciaActionPerformed
         // TODO add your handling code here:
-        new MapaExistenciaVisao( cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
+        new MapaExistenciaVisao(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jmMapaExistenciaActionPerformed
 
     private void jmRelatoriosSaidasProdutosPorDatasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmRelatoriosSaidasProdutosPorDatasActionPerformed
         // TODO add your handling code here:
         //        new ListarSaidasByUsuarios().setVisible(true);
-        new ListarRelatorioSaidaByIntervalo( this.conexao ).setVisible( true );
+        new ListarRelatorioSaidaByIntervalo(this.conexao).setVisible(true);
     }//GEN-LAST:event_jmRelatoriosSaidasProdutosPorDatasActionPerformed
 
     private void jmAnulamentoSaidasProdutosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmAnulamentoSaidasProdutosActionPerformed
-        new AnulamentoSaidasProdutosVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia() ).setVisible( true );
+        new AnulamentoSaidasProdutosVisao(this, rootPaneCheckingEnabled, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jmAnulamentoSaidasProdutosActionPerformed
 
     private void jmReimprimirSaidasProdutosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmReimprimirSaidasProdutosActionPerformed
-        new ReimprimirSaidasProdutos( this.conexao ).setVisible( true );
+        new ReimprimirSaidasProdutos(this.conexao).setVisible(true);
     }//GEN-LAST:event_jmReimprimirSaidasProdutosActionPerformed
 
     private void jmRelatorioNotasCreditoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmRelatorioNotasCreditoActionPerformed
     {//GEN-HEADEREND:event_jmRelatorioNotasCreditoActionPerformed
-        new ListarRelatorioNotasCredito( this.conexao ).setVisible( true );
+        new ListarRelatorioNotasCredito(this.conexao).setVisible(true);
     }//GEN-LAST:event_jmRelatorioNotasCreditoActionPerformed
 
     private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem8ActionPerformed
     {//GEN-HEADEREND:event_jMenuItem8ActionPerformed
-        new UsuarioAlterarSenhaVissao( usuarioDao.findTbUsuario( cod_utilizador ) ).setVisible( true );
+        new UsuarioAlterarSenhaVissao(usuarioDao.findTbUsuario(cod_utilizador)).setVisible(true);
     }//GEN-LAST:event_jMenuItem8ActionPerformed
 
     private void jmRelatorioFormaPagamentoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmRelatorioFormaPagamentoActionPerformed
     {//GEN-HEADEREND:event_jmRelatorioFormaPagamentoActionPerformed
 
-        try
-        {
-            new ListarRelatorioFormaPagamento( BDConexao.getInstancia(), this.cod_utilizador ).setVisible( true );
-        }
-        catch ( Exception e )
-        {
+        try {
+            new ListarRelatorioFormaPagamento(BDConexao.getInstancia(), this.cod_utilizador).setVisible(true);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }//GEN-LAST:event_jmRelatorioFormaPagamentoActionPerformed
 
     private void jmRelatorioVendasPorClienteDataActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmRelatorioVendasPorClienteDataActionPerformed
     {//GEN-HEADEREND:event_jmRelatorioVendasPorClienteDataActionPerformed
-        new ListarVendasByClientes( cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
+        new ListarVendasByClientes(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jmRelatorioVendasPorClienteDataActionPerformed
 
     private void jmVendaDetalhadasClientesActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmVendaDetalhadasClientesActionPerformed
     {//GEN-HEADEREND:event_jmVendaDetalhadasClientesActionPerformed
-        new ListarVendasDetalhadasClientes( this.conexao ).setVisible( true );
+        new ListarVendasDetalhadasClientes(this.conexao).setVisible(true);
     }//GEN-LAST:event_jmVendaDetalhadasClientesActionPerformed
 
     private void jmRelatorioTodosServicosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmRelatorioTodosServicosActionPerformed
     {//GEN-HEADEREND:event_jmRelatorioTodosServicosActionPerformed
-        new ListarServicosVisao( cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
+        new ListarServicosVisao(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jmRelatorioTodosServicosActionPerformed
 
     private void jmRelatorioAcertoStockActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmRelatorioAcertoStockActionPerformed
     {//GEN-HEADEREND:event_jmRelatorioAcertoStockActionPerformed
 //        relatorioAcertoStockVisualizar();
-        new RelatorioAcertoStock( cod_utilizador, this.conexao ).setVisible( true );
+        new RelatorioAcertoStock(cod_utilizador, this.conexao).setVisible(true);
     }//GEN-LAST:event_jmRelatorioAcertoStockActionPerformed
 
     private void jmHistoricoBonusEmpresaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmHistoricoBonusEmpresaActionPerformed
@@ -2229,12 +1812,12 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
     private void jmRelatorioComprasPorFornecedorActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmRelatorioComprasPorFornecedorActionPerformed
     {//GEN-HEADEREND:event_jmRelatorioComprasPorFornecedorActionPerformed
-        new ListarRelatorioCompra( this.conexao ).setVisible( true );
+        new ListarRelatorioCompra(this.conexao).setVisible(true);
     }//GEN-LAST:event_jmRelatorioComprasPorFornecedorActionPerformed
 
     private void jmReeprmirCompraActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmReeprmirCompraActionPerformed
     {//GEN-HEADEREND:event_jmReeprmirCompraActionPerformed
-        new ReemprimirCompraVisao( this, rootPaneCheckingEnabled ).setVisible( true );
+        new ReemprimirCompraVisao(this, rootPaneCheckingEnabled).setVisible(true);
     }//GEN-LAST:event_jmReeprmirCompraActionPerformed
 
     private void jMenuItem13ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem13ActionPerformed
@@ -2244,19 +1827,16 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
     private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem6ActionPerformed
     {//GEN-HEADEREND:event_jMenuItem6ActionPerformed
-        new ListarRelatorioNotasCreditosCompra().setVisible( true );
+        new ListarRelatorioNotasCreditosCompra().setVisible(true);
     }//GEN-LAST:event_jMenuItem6ActionPerformed
 
     private void jmRelatorioQTDCompradosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmRelatorioQTDCompradosActionPerformed
     {//GEN-HEADEREND:event_jmRelatorioQTDCompradosActionPerformed
-        try
-        {
+        try {
             // TODO add your handling code here:
-            new ListarRelatorioComprasDiario( cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
-        }
-        catch ( SQLException ex )
-        {
-            Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            new ListarRelatorioComprasDiario(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuPrincipalVisao.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jmRelatorioQTDCompradosActionPerformed
 
@@ -2264,55 +1844,49 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_btnProdutosEspiradosActionPerformed
         // TODO add your handling code here:
         mostrarNumeroDeprodutosExpirados();
-        new ProdutosExpiradosVisao( this, true ).setVisible( true );
+        new ProdutosExpiradosVisao(this, true).setVisible(true);
     }//GEN-LAST:event_btnProdutosEspiradosActionPerformed
 
     private void jmNotaLevantamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmNotaLevantamentoActionPerformed
         // TODO add your handling code here:
-        new NotaLevantamentoVisao( cod_utilizador, this.conexao ).setVisible( true );
+        new NotaLevantamentoVisao(cod_utilizador, this.conexao).setVisible(true);
     }//GEN-LAST:event_jmNotaLevantamentoActionPerformed
 
     private void jmFrontOfficeActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmFrontOfficeActionPerformed
     {//GEN-HEADEREND:event_jmFrontOfficeActionPerformed
         // TODO add your handling code here:
-        new FrontOfficeVisao( cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
+        new FrontOfficeVisao(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
 //        new PosVisao("", cod_utilizador, this.conexao ).co( true );
     }//GEN-LAST:event_jmFrontOfficeActionPerformed
 
     private void jmTransferenciaArmazemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmTransferenciaArmazemActionPerformed
     {//GEN-HEADEREND:event_jmTransferenciaArmazemActionPerformed
         // TODO add your handling code here:
-        new TranferenciaArmazemVisao( cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
+        new TranferenciaArmazemVisao(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jmTransferenciaArmazemActionPerformed
 
     private void jMenuItemGestaoCreditosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemGestaoCreditosActionPerformed
     {//GEN-HEADEREND:event_jMenuItemGestaoCreditosActionPerformed
-        new GestaoCreditos( this.cod_utilizador ).setVisible( true );
+        new GestaoCreditos(this.cod_utilizador).setVisible(true);
     }//GEN-LAST:event_jMenuItemGestaoCreditosActionPerformed
 
     private void jmSaidasProdutosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmSaidasProdutosActionPerformed
     {//GEN-HEADEREND:event_jmSaidasProdutosActionPerformed
-        try
-        {
+        try {
 
-            new SaidaProdutoVisao( cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
+            new SaidaProdutoVisao(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
 
-        }
-        catch ( Exception ex )
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
-            Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(MenuPrincipalVisao.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jmSaidasProdutosActionPerformed
 
     private void jMenuItemRectificacaoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemRectificacaoActionPerformed
     {//GEN-HEADEREND:event_jMenuItemRectificacaoActionPerformed
-        try
-        {
-            new NotasCreditoParcialVisao( cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
-        }
-        catch ( Exception e )
-        {
+        try {
+            new NotasCreditoParcialVisao(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }//GEN-LAST:event_jMenuItemRectificacaoActionPerformed
@@ -2320,115 +1894,100 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     private void jmListagensTodosProdutoComDescontoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmListagensTodosProdutoComDescontoActionPerformed
         // TODO add your handling code here:
 
-        new ListagemTodosProdutosComDesconto( this.conexao );
+        new ListagemTodosProdutosComDesconto(this.conexao);
     }//GEN-LAST:event_jmListagensTodosProdutoComDescontoActionPerformed
 
     private void jmListaClientesActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmListaClientesActionPerformed
     {//GEN-HEADEREND:event_jmListaClientesActionPerformed
 
         // TODO add your handling code here
-        new ListaClientes( this.conexao );
+        new ListaClientes(this.conexao);
 
     }//GEN-LAST:event_jmListaClientesActionPerformed
 
     private void jmReeprmirNotaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmReeprmirNotaActionPerformed
     {//GEN-HEADEREND:event_jmReeprmirNotaActionPerformed
-        new ReemprimirNotaVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia() ).setVisible( true );
+        new ReemprimirNotaVisao(this, rootPaneCheckingEnabled, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jmReeprmirNotaActionPerformed
 
     private void jMenuConfiguracoesSistemaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuConfiguracoesSistemaActionPerformed
     {//GEN-HEADEREND:event_jMenuConfiguracoesSistemaActionPerformed
-        new ConfiguracoesVisao( this, rootPaneCheckingEnabled ).setVisible( true );
+        new ConfiguracoesVisao(this, rootPaneCheckingEnabled).setVisible(true);
     }//GEN-LAST:event_jMenuConfiguracoesSistemaActionPerformed
 
     private void jmEstornosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmEstornosActionPerformed
     {//GEN-HEADEREND:event_jmEstornosActionPerformed
-        try
-        {
+        try {
 
-            new EstornoVisao( cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
+            new EstornoVisao(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
 
-        }
-        catch ( Exception ex )
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
-            Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(MenuPrincipalVisao.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jmEstornosActionPerformed
 
     private void jMenuItemRelatorioQuebrasActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemRelatorioQuebrasActionPerformed
     {//GEN-HEADEREND:event_jMenuItemRelatorioQuebrasActionPerformed
-        new ListarRelatorioQuebras( this.conexao ).setVisible( true );
+        new ListarRelatorioQuebras(this.conexao).setVisible(true);
     }//GEN-LAST:event_jMenuItemRelatorioQuebrasActionPerformed
 
     private void jmReactivarProdutosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmReactivarProdutosActionPerformed
     {//GEN-HEADEREND:event_jmReactivarProdutosActionPerformed
-        try
-        {
+        try {
             // TODO add your handling code here:
 
-            new ReactivarProdutosVisao( this, rootPaneCheckingEnabled, cod_utilizador, this.conexao ).setVisible( true );
-        }
-        catch ( Exception ex )
-        {
-            Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            new ReactivarProdutosVisao(this, rootPaneCheckingEnabled, cod_utilizador, this.conexao).setVisible(true);
+        } catch (Exception ex) {
+            Logger.getLogger(MenuPrincipalVisao.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jmReactivarProdutosActionPerformed
 
     private void jcbGuiaTransporteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jcbGuiaTransporteActionPerformed
     {//GEN-HEADEREND:event_jcbGuiaTransporteActionPerformed
-        new GuiaTransportesVisao( cod_utilizador, this.conexao ).setVisible( true );
+        new GuiaTransportesVisao(cod_utilizador, this.conexao).setVisible(true);
     }//GEN-LAST:event_jcbGuiaTransporteActionPerformed
 
     private void jcbAlteracaoGuiaTransporteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jcbAlteracaoGuiaTransporteActionPerformed
     {//GEN-HEADEREND:event_jcbAlteracaoGuiaTransporteActionPerformed
-        try
-        {
-            new AlteracaoGuiaTransporteVisao( this.cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
-        }
-        catch ( SQLException ex )
-        {
-            Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( Level.SEVERE, null, ex );
+        try {
+            new AlteracaoGuiaTransporteVisao(this.cod_utilizador, BDConexao.getInstancia()).setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuPrincipalVisao.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jcbAlteracaoGuiaTransporteActionPerformed
 
     private void jcbConverterGuiaTransporteDocumentoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jcbConverterGuiaTransporteDocumentoActionPerformed
     {//GEN-HEADEREND:event_jcbConverterGuiaTransporteDocumentoActionPerformed
-        try
-        {
-            new ConverterGuiaFacturaVisao( this.cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
-        }
-        catch ( SQLException ex )
-        {
-            Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( Level.SEVERE, null, ex );
+        try {
+            new ConverterGuiaFacturaVisao(this.cod_utilizador, BDConexao.getInstancia()).setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuPrincipalVisao.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jcbConverterGuiaTransporteDocumentoActionPerformed
 
     private void jMenuItemRelatorioQtdDetalhadoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemRelatorioQtdDetalhadoActionPerformed
     {//GEN-HEADEREND:event_jMenuItemRelatorioQtdDetalhadoActionPerformed
-        try
-        {
-            new ListarRelatorioDiarioByQtdDetalhado( cod_utilizador, this.conexao ).setVisible( administrador );
-        }
-        catch ( Exception e )
-        {
+        try {
+            new ListarRelatorioDiarioByQtdDetalhado(cod_utilizador, this.conexao).setVisible(administrador);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }//GEN-LAST:event_jMenuItemRelatorioQtdDetalhadoActionPerformed
 
     private void jmGerarSaftComprasActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmGerarSaftComprasActionPerformed
     {//GEN-HEADEREND:event_jmGerarSaftComprasActionPerformed
-        new FicheiroSAFTCompraVisao( conexao ).setVisible( true );
+        new FicheiroSAFTCompraVisao(conexao).setVisible(true);
     }//GEN-LAST:event_jmGerarSaftComprasActionPerformed
 
     private void jMenuItemRelatorioMensalActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemRelatorioMensalActionPerformed
     {//GEN-HEADEREND:event_jMenuItemRelatorioMensalActionPerformed
-        new RelatorioMensal( conexao ).setVisible( true );
+        new RelatorioMensal(conexao).setVisible(true);
     }//GEN-LAST:event_jMenuItemRelatorioMensalActionPerformed
 
     private void jcbRelatorioTransferenciaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jcbRelatorioTransferenciaActionPerformed
     {//GEN-HEADEREND:event_jcbRelatorioTransferenciaActionPerformed
-        new RelatorioTransferenciaArmazem( cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
+        new RelatorioTransferenciaArmazem(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jcbRelatorioTransferenciaActionPerformed
 
     private void jcbRelatorioMensalClientesVipsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jcbRelatorioMensalClientesVipsActionPerformed
@@ -2440,34 +1999,31 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
     private void jMenuItemEntradasProdutosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemEntradasProdutosActionPerformed
     {//GEN-HEADEREND:event_jMenuItemEntradasProdutosActionPerformed
-        try
-        {
-            new EntradaProdutoVisao( this, true, cod_utilizador, "", BDConexao.getInstancia() ).setVisible( true );
-        }
-        catch ( SQLException ex )
-        {
-            Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( Level.SEVERE, null, ex );
+        try {
+            new EntradaProdutoVisao(this, true, cod_utilizador, "", BDConexao.getInstancia()).setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuPrincipalVisao.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jMenuItemEntradasProdutosActionPerformed
 
     private void jMenuItemConsultasActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemConsultasActionPerformed
     {//GEN-HEADEREND:event_jMenuItemConsultasActionPerformed
-        new ListarRelatorioVendaConsultaRestaurante( conexao ).setVisible( true );
+        new ListarRelatorioVendaConsultaRestaurante(conexao).setVisible(true);
     }//GEN-LAST:event_jMenuItemConsultasActionPerformed
 
     private void jcbAnulamentoEntradasProdutosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jcbAnulamentoEntradasProdutosActionPerformed
     {//GEN-HEADEREND:event_jcbAnulamentoEntradasProdutosActionPerformed
-        new AnulamentoEntradaVisao( this, administrador ).setVisible( true );
+        new AnulamentoEntradaVisao(this, administrador).setVisible(true);
     }//GEN-LAST:event_jcbAnulamentoEntradasProdutosActionPerformed
 
     private void jMenuItemRelatorioDeEntradasActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemRelatorioDeEntradasActionPerformed
     {//GEN-HEADEREND:event_jMenuItemRelatorioDeEntradasActionPerformed
-        new ListarRelatorioEntradaByIntervalo( this.conexao ).setVisible( true );
+        new ListarRelatorioEntradaByIntervalo(this.conexao).setVisible(true);
     }//GEN-LAST:event_jMenuItemRelatorioDeEntradasActionPerformed
 
     private void jMenuItemCancelamentoEntradasActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemCancelamentoEntradasActionPerformed
     {//GEN-HEADEREND:event_jMenuItemCancelamentoEntradasActionPerformed
-        new AnulamentoEntradaVisao( this, administrador ).setVisible( true );
+        new AnulamentoEntradaVisao(this, administrador).setVisible(true);
     }//GEN-LAST:event_jMenuItemCancelamentoEntradasActionPerformed
 
     private void jcbAcertoStockMassaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jcbAcertoStockMassaActionPerformed
@@ -2476,78 +2032,70 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 //        int idDoUsuarioLogado = usuarioLogado.getCodigo(); // obténs do objecto de login
 //        AcertoStockEmMassaVisao dlg = new AcertoStockEmMassaVisao( mainFrame, true, idDoUsuarioLogado );
 //        dlg.setVisible( true );
-        new AcertoStockEmMassaVisao( this, administrador, ERROR, YYYYMMDD_HHMMSS, BDConexao.getInstancia() ).setVisible( true );
+        new AcertoStockEmMassaVisao(this, administrador, ERROR, YYYYMMDD_HHMMSS, BDConexao.getInstancia()).setVisible(true);
 
     }//GEN-LAST:event_jcbAcertoStockMassaActionPerformed
 
     private void jcbActualizacaoPrecosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jcbActualizacaoPrecosActionPerformed
     {//GEN-HEADEREND:event_jcbActualizacaoPrecosActionPerformed
         // TODO add your handling code here:
-        new DefinirPrecoEmMassaVisao( this, administrador, cod_utilizador, YYYYMMDD_HHMMSS ).setVisible( true );
+        new DefinirPrecoEmMassaVisao(this, administrador, cod_utilizador, YYYYMMDD_HHMMSS).setVisible(true);
     }//GEN-LAST:event_jcbActualizacaoPrecosActionPerformed
 
     private void jcbCardexActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jcbCardexActionPerformed
     {//GEN-HEADEREND:event_jcbCardexActionPerformed
         // TODO add your handling code here:
-        new CardexVisao( this, administrador, cod_utilizador, YYYYMMDD_HHMMSS, BDConexao.getInstancia() ).setVisible( true );
+        new CardexVisao(this, administrador, cod_utilizador, YYYYMMDD_HHMMSS, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jcbCardexActionPerformed
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem1ActionPerformed
-    {//GEN-HEADEREND:event_jMenuItem1ActionPerformed
-        FrmAplicarIvaPrecos frm = new FrmAplicarIvaPrecos( conexao );
-        frm.setVisible( true );
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    private void operacaoInverterIvaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_operacaoInverterIvaActionPerformed
+    {//GEN-HEADEREND:event_operacaoInverterIvaActionPerformed
+        FrmAplicarIvaPrecos frm = new FrmAplicarIvaPrecos(conexao);
+        frm.setVisible(true);
+    }//GEN-LAST:event_operacaoInverterIvaActionPerformed
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem5ActionPerformed
     {//GEN-HEADEREND:event_jMenuItem5ActionPerformed
-        new FrmRelatorioVendasMes().setVisible( true );
+        new FrmRelatorioVendasMes().setVisible(true);
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem10ActionPerformed
     {//GEN-HEADEREND:event_jMenuItem10ActionPerformed
 
 //        new ConfiguracaoMultasVisao( cod_utilizador,BDConexao.getInstancia() ).setVisible( true );
-        new ConfiguracaoMultasVisao( cod_utilizador, WIDTH, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new ConfiguracaoMultasVisao(cod_utilizador, WIDTH, id_armazem, BDConexao.getInstancia()).setVisible(true);
 
 
     }//GEN-LAST:event_jMenuItem10ActionPerformed
 
+    private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed
+        new FrmSaftInventario().setVisible(true);
+    }//GEN-LAST:event_jMenuItem11ActionPerformed
+
     /**
      * @param args the command line arguments
      */
-    public static void main( String args[] )
-    {
+    public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        try
-        {
-            for ( javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels() )
-            {
-                if ( "Nimbus".equals( info.getName() ) )
-                {
-                    javax.swing.UIManager.setLookAndFeel( info.getClassName() );
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
-        }
-        catch ( ClassNotFoundException ex )
-        {
-            java.util.logging.Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }
-        catch ( InstantiationException ex )
-        {
-            java.util.logging.Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }
-        catch ( IllegalAccessException ex )
-        {
-            java.util.logging.Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }
-        catch ( javax.swing.UnsupportedLookAndFeelException ex )
-        {
-            java.util.logging.Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(MenuPrincipalVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(MenuPrincipalVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(MenuPrincipalVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(MenuPrincipalVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
         //</editor-fold>
@@ -2567,13 +2115,11 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater( new Runnable()
-        {
-            public void run()
-            {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
                 //new MenuPrincipalVisao().setVisible(true);
             }
-        } );
+        });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnProdutosEspirados;
@@ -2588,8 +2134,8 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     private javax.swing.JMenu jMenu7;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuConfiguracoesSistema;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem10;
+    private javax.swing.JMenuItem jMenuItem11;
     private javax.swing.JMenuItem jMenuItem13;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
@@ -2686,98 +2232,86 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     private javax.swing.JMenuItem jm_saida_vasilhame;
     private javax.swing.JMenu jmenuRelatorios;
     private javax.swing.JLabel lb_nome_usuario;
+    private javax.swing.JMenuItem operacaoInverterIva;
     // End of variables declaration//GEN-END:variables
 
-    private void emitirNotaCreditoDebito()
-    {
-        try
-        {
-            new NotasCreditoDebitoVisao( cod_utilizador, this.conexao ).setVisible( true );
-        }
-        catch ( SQLException ex )
-        {
-            Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( Level.SEVERE, null, ex );
+    private void emitirNotaCreditoDebito() {
+        try {
+            new NotasCreditoDebitoVisao(cod_utilizador, this.conexao).setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuPrincipalVisao.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    private void iniciarProcessoAnulacao()
-    {
-        try
-        {
-            new NotasCreditoDebitoAnulacaoVisao( cod_utilizador, this.conexao ).setVisible( true );
-        }
-        catch ( SQLException ex )
-        {
-            Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( Level.SEVERE, null, ex );
+    private void iniciarProcessoAnulacao() {
+        try {
+            new NotasCreditoDebitoAnulacaoVisao(cod_utilizador, this.conexao).setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuPrincipalVisao.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    private void iniciarProcessoRectificacao()
-    {
-        try
-        {
-            new NotasCreditoRetificacaoVisao( cod_utilizador, this.conexao ).setVisible( true );
-        }
-        catch ( SQLException ex )
-        {
-            Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( Level.SEVERE, null, ex );
+    private void iniciarProcessoRectificacao() {
+        try {
+            new NotasCreditoRetificacaoVisao(cod_utilizador, this.conexao).setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuPrincipalVisao.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    private void iniciarProcessoAnulacaoCompras()
-    {
-        try
-        {
-            new NotasCreditoDebitoAnulacaoComprasVisao( cod_utilizador, this.conexao ).setVisible( true );
-        }
-        catch ( SQLException ex )
-        {
-            Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( Level.SEVERE, null, ex );
+    private void iniciarProcessoAnulacaoCompras() {
+        try {
+            new NotasCreditoDebitoAnulacaoComprasVisao(cod_utilizador, this.conexao).setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuPrincipalVisao.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    private void relatorioAcertoStockVisualizar()
-    {
-        new AcertoStockHistoricoVisualizarJFrame().setVisible( true );
+    private void relatorioAcertoStockVisualizar() {
+        new AcertoStockHistoricoVisualizarJFrame().setVisible(true);
     }
 
-    private void exibirRElatorioBonus()
-    {
-        new RelatorioBonusVisao( cod_utilizador ).setVisible( true );
+    private void exibirRElatorioBonus() {
+        new RelatorioBonusVisao(cod_utilizador).setVisible(true);
     }
 
-    private void mostrarNumeroDeprodutosExpirados()
-    {
-        List<TbProduto> listProdutos = new ProdutoDao( emf ).getAllProdutosExpirados();
-        btnProdutosEspirados.setText( ( listProdutos.isEmpty() ? "0" : String.valueOf( listProdutos.size() ) ) );
+    private void mostrarNumeroDeprodutosExpirados() {
+        List<TbProduto> listProdutos = new ProdutoDao(emf).getAllProdutosExpirados();
+        btnProdutosEspirados.setText((listProdutos.isEmpty() ? "0" : String.valueOf(listProdutos.size())));
     }
 
-    private void setArmazem( String armazem )
-    {
-        if ( !armazem.equalsIgnoreCase( "Multi_armazem" ) )
-        {
-            jmTransferenciaArmazem.setVisible( false );
+    private void setArmazem(String armazem) {
+        if (!armazem.equalsIgnoreCase("Multi_armazem")) {
+            jmTransferenciaArmazem.setVisible(false);
 //            jmFrontOffice.setVisible( false );
 
-        }
-        else
-        {
-            jmTransferenciaArmazem.setVisible( true );
+        } else {
+            jmTransferenciaArmazem.setVisible(true);
 //            jmFrontOffice.setVisible( true );
 
         }
     }
 
-    public static void fazerBackupAgora()
-    {
-        String data = new SimpleDateFormat( YYYYMMDD_HHMMSS ).format( new Date() );
+    private void activar_opcoes() {
+
+        if (cod_utilizador == 15) {
+            operacaoInverterIva.setVisible(true);
+
+        } else {
+            operacaoInverterIva.setVisible(false);
+        }
+
+    }
+
+    public static void fazerBackupAgora() {
+        String data = new SimpleDateFormat(YYYYMMDD_HHMMSS).format(new Date());
 //        String rodar_camando = "cmd /c mysqldump -uroot -pDoV90x?# --dump-date --triggers --tables --routines --skip-quote-names --compact --skip-opt --skip-set-charset --hex-blob kitanda_db > \"..\\BD_BACKUP\\_database_backup_" + data + ".sql\"";
         String rodar_camando = "cmd /c mysqldump --single-transaction -uroot -pDoV90x?# --dump-date --triggers --add-drop-database --routines --skip-quote-names --skip-set-charset --add-locks --disable-keys --databases kitanda_db > \"..\\BD_BACKUP\\_database_backup_" + data + ".sql\"";
 //String rodar_camando = "cmd /c mysqldump --single-transaction=TRUE -uroot -pDoV90x?# --dump-date --triggers --add-drop-database  --routines --skip-quote-names --compact --skip-opt --skip-set-charset --hex-blob --add-locks --disable-keys --lock-tables  --databases kitanda_db > \"..\\BD_BACKUP\\_database_backup_" + data + ".sql\"";
-        Process rodarComandoWindows = rodarComandoWindows( rodar_camando, true );
+        Process rodarComandoWindows = rodarComandoWindows(rodar_camando, true);
 
 //        JOptionPane.showMessageDialog ( null, "Backup realizado com sucesso! ", "Notificação", JOptionPane.INFORMATION_MESSAGE );
-        System.err.println( "Backup realizado com sucesso! " );
+        System.err.println("Backup realizado com sucesso! ");
 
     }
 

@@ -29,7 +29,7 @@ public class JPAEntityMannagerFactoryUtil
 
     public static void main( String[] args )
     {
-//        EntityManagerFactory em = JPAEntityMannagerFactoryUtil.em;kitanda_db1_actual
+//        EntityManagerFactory em = JPAEntityMannagerFactoryUtil.em;kitanda_db_actual
 //        UsuarioDao usuarioDao = new UsuarioDao( em );
 //        System.out.println(usuarioDao.exist_usuario("dvml", "mavala"));
 
@@ -69,7 +69,7 @@ public class JPAEntityMannagerFactoryUtil
                     String ip = informacao.get( 0 );
                     String porta = informacao.get( 1 );
 
-                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db1?zeroDateTimeBehavior=convertToNull";
+                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db?zeroDateTimeBehavior=convertToNull";
 
                     String user = "root";
                     String password = "DoV90x?#";

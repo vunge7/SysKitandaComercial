@@ -494,6 +494,11 @@ public class MetodosUtil {
         return (date.getYear() + 1900) + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
     }
 
+    public static String getDataFormatadaFull(Date date) {
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return sdf.format(date);
+    }
+
     public static String getDataBancoFull2(Date date) {
         return date.getDate() + "-"
                 + (date.getMonth() + 1) + "-"

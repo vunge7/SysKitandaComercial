@@ -7,6 +7,7 @@ package comercial.controller;
 
 import java.sql.Connection;
 import entity.TbDadosInstituicao;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -57,6 +58,37 @@ public class DadosInstituicaoController implements EntidadeFactory
     {
         String DELETE = "DELETE FROM tb_dados_instituicao WHERE codigo = " + codigo;
         return conexao.executeUpdate( DELETE );
+    }
+    
+    public static TbDadosInstituicao getDados() {
+
+        TbDadosInstituicao dados = null;
+
+        String sql = "SELECT * FROM tb_dados_instituicao LIMIT 1";
+
+        try (Connection conn = BDConexao.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+
+                dados = new TbDadosInstituicao();
+
+                dados.setIdDadosInsitiuicao(rs.getInt("idDadosInsitiuicao"));
+                dados.setNome(rs.getString("nome"));
+                dados.setTelefone(rs.getString("telefone"));
+                dados.setEnderecos(rs.getString("enderecos"));
+                dados.setEmail(rs.getString("email"));
+                dados.setNif(rs.getString("nif"));
+
+                // Se quiseres podes mapear mais campos depois
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return dados;
     }
 
     @Override

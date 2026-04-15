@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="relatorio_menal" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="fb38a42a-a013-4e6d-bcdb-8677f2899926">
 	<property name="ireport.zoom" value="2.000000000000001"/>
-	<property name="ireport.x" value="465"/>
+	<property name="ireport.x" value="282"/>
 	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Kitanda_Connection"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
@@ -61,6 +61,9 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="bebidas" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="diversos" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="nome" class="java.lang.String">
@@ -126,6 +129,9 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 	<variable name="TOTAL_BEBIDAS" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{bebidas}]]></variableExpression>
 	</variable>
+	<variable name="TOTAL_DIVERSOS" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{diversos}]]></variableExpression>
+	</variable>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -167,17 +173,17 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 	<columnHeader>
 		<band height="15" splitType="Stretch">
 			<staticText>
-				<reportElement uuid="4e9efdd1-aab3-4b3f-9dee-0eba4307e024" style="style3" mode="Opaque" x="82" y="0" width="62" height="15" backcolor="#CCCCCC"/>
+				<reportElement uuid="4e9efdd1-aab3-4b3f-9dee-0eba4307e024" style="style3" mode="Opaque" x="67" y="0" width="58" height="15" backcolor="#CCCCCC"/>
 				<box>
 					<bottomPen lineWidth="1.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="8" isBold="true"/>
+					<font fontName="Times New Roman" size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Carne Bovina]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="be98478a-7f00-4ee0-ba22-546d6e11b643" style="style3" mode="Opaque" x="0" y="0" width="54" height="15" backcolor="#FFFFFF"/>
+				<reportElement uuid="be98478a-7f00-4ee0-ba22-546d6e11b643" style="style3" mode="Opaque" x="0" y="0" width="45" height="15" backcolor="#FFFFFF"/>
 				<box>
 					<pen lineWidth="0.5" lineColor="#999999"/>
 					<topPen lineWidth="0.5" lineColor="#999999"/>
@@ -186,12 +192,12 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 					<rightPen lineWidth="0.5" lineColor="#999999"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="8" isBold="true"/>
+					<font fontName="Times New Roman" size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Data]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="f443d2bb-622e-471a-b9da-9974f6cf5980" style="style3" mode="Opaque" x="54" y="0" width="28" height="15" backcolor="#CCCCCC"/>
+				<reportElement uuid="f443d2bb-622e-471a-b9da-9974f6cf5980" style="style3" mode="Opaque" x="45" y="0" width="22" height="15" backcolor="#CCCCCC"/>
 				<box>
 					<bottomPen lineWidth="1.5"/>
 				</box>
@@ -201,7 +207,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				<text><![CDATA[Diário]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="6fbb5886-8c70-4c48-9a18-77210caef852" style="style3" mode="Opaque" x="268" y="0" width="62" height="15" backcolor="#CCCCCC"/>
+				<reportElement uuid="6fbb5886-8c70-4c48-9a18-77210caef852" style="style3" mode="Opaque" x="241" y="0" width="58" height="15" backcolor="#CCCCCC"/>
 				<box>
 					<bottomPen lineWidth="1.5"/>
 				</box>
@@ -211,7 +217,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				<text><![CDATA[Carne Ovina]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="a510aec9-ed48-4a84-9182-4a31c4370510" style="style3" mode="Opaque" x="144" y="0" width="62" height="15" backcolor="#CCCCCC"/>
+				<reportElement uuid="a510aec9-ed48-4a84-9182-4a31c4370510" style="style3" mode="Opaque" x="125" y="0" width="58" height="15" backcolor="#CCCCCC"/>
 				<box>
 					<bottomPen lineWidth="1.5"/>
 				</box>
@@ -235,7 +241,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				<text><![CDATA[Total]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="b9905ee5-ab04-496f-a90e-0ff651012fcb" style="style3" mode="Opaque" x="330" y="0" width="62" height="15" backcolor="#CCCCCC"/>
+				<reportElement uuid="b9905ee5-ab04-496f-a90e-0ff651012fcb" style="style3" mode="Opaque" x="299" y="0" width="58" height="15" backcolor="#CCCCCC"/>
 				<box>
 					<bottomPen lineWidth="1.5"/>
 				</box>
@@ -245,17 +251,17 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				<text><![CDATA[Aves]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="f27381c5-6dcf-4c51-bda2-a4eb2073de2d" style="style3" mode="Opaque" x="496" y="0" width="57" height="15" backcolor="#CCCCCC"/>
+				<reportElement uuid="f27381c5-6dcf-4c51-bda2-a4eb2073de2d" style="style3" mode="Opaque" x="455" y="0" width="52" height="15" backcolor="#CCCCCC"/>
 				<box>
 					<bottomPen lineWidth="1.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Diversos]]></text>
+				<text><![CDATA[Sal]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="220171c3-0b48-490a-b574-ec1ce30a02c7" style="style3" mode="Opaque" x="392" y="0" width="52" height="15" backcolor="#CCCCCC"/>
+				<reportElement uuid="220171c3-0b48-490a-b574-ec1ce30a02c7" style="style3" mode="Opaque" x="357" y="0" width="49" height="15" backcolor="#CCCCCC"/>
 				<box>
 					<bottomPen lineWidth="1.5"/>
 				</box>
@@ -265,7 +271,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				<text><![CDATA[Ovos]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="e8db1d8b-a7ca-4b8e-bd7d-cd6b96a5214b" style="style3" mode="Opaque" x="553" y="0" width="57" height="15" backcolor="#CCCCCC"/>
+				<reportElement uuid="e8db1d8b-a7ca-4b8e-bd7d-cd6b96a5214b" style="style3" mode="Opaque" x="507" y="0" width="53" height="15" backcolor="#CCCCCC"/>
 				<box>
 					<bottomPen lineWidth="1.5"/>
 				</box>
@@ -275,7 +281,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				<text><![CDATA[Temperos]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="2ae6e451-c712-4517-9fca-5573b8a80e59" style="style3" mode="Opaque" x="444" y="0" width="52" height="15" backcolor="#CCCCCC"/>
+				<reportElement uuid="2ae6e451-c712-4517-9fca-5573b8a80e59" style="style3" mode="Opaque" x="406" y="0" width="49" height="15" backcolor="#CCCCCC"/>
 				<box>
 					<bottomPen lineWidth="1.5"/>
 				</box>
@@ -285,7 +291,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				<text><![CDATA[Enchidos]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="c9af9580-7def-42ca-b21e-2dc0468f5178" style="style3" mode="Opaque" x="206" y="0" width="62" height="15" backcolor="#CCCCCC"/>
+				<reportElement uuid="c9af9580-7def-42ca-b21e-2dc0468f5178" style="style3" mode="Opaque" x="183" y="0" width="58" height="15" backcolor="#CCCCCC"/>
 				<box>
 					<bottomPen lineWidth="1.5"/>
 				</box>
@@ -295,7 +301,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				<text><![CDATA[Carne Caprina]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="f470b929-6ed0-4e9a-b411-c7deb3685389" style="style3" mode="Opaque" x="610" y="0" width="62" height="15" backcolor="#CCCCCC"/>
+				<reportElement uuid="f470b929-6ed0-4e9a-b411-c7deb3685389" style="style3" mode="Opaque" x="560" y="0" width="58" height="15" backcolor="#CCCCCC"/>
 				<box>
 					<bottomPen lineWidth="1.5"/>
 				</box>
@@ -305,7 +311,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				<text><![CDATA[Mariscos/Peixes]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="7dbeaeb1-a401-46ee-8626-2eb577806cab" style="style3" mode="Opaque" x="672" y="0" width="62" height="15" backcolor="#CCCCCC"/>
+				<reportElement uuid="7dbeaeb1-a401-46ee-8626-2eb577806cab" style="style3" mode="Opaque" x="618" y="0" width="58" height="15" backcolor="#CCCCCC"/>
 				<box>
 					<bottomPen lineWidth="1.5"/>
 				</box>
@@ -314,12 +320,22 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				</textElement>
 				<text><![CDATA[Bebidas]]></text>
 			</staticText>
+			<staticText>
+				<reportElement uuid="3dd225be-c41e-4a13-bcfa-2005527f40e7" style="style3" mode="Opaque" x="676" y="0" width="58" height="15" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="1.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Diversos]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="12" splitType="Stretch">
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="6e9732ea-8808-426a-ab59-6fec81159265" key="textField-3" x="54" y="0" width="28" height="12"/>
+				<reportElement uuid="6e9732ea-8808-426a-ab59-6fec81159265" key="textField-3" x="45" y="0" width="22" height="12"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -328,12 +344,12 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="10" isItalic="false"/>
+					<font fontName="Times New Roman" size="8" isItalic="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;(#,##0.00-)">
-				<reportElement uuid="cf665936-ff7f-43e3-af50-1bd6080c52c0" x="82" y="0" width="62" height="12"/>
+				<reportElement uuid="cf665936-ff7f-43e3-af50-1bd6080c52c0" x="67" y="0" width="58" height="12"/>
 				<box leftPadding="0" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -342,12 +358,12 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="10"/>
+					<font fontName="Times New Roman" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{carne_bovina}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;(#,##0.00-)">
-				<reportElement uuid="9b9c4c2b-41bd-4ab3-bf01-20cbf073907f" x="268" y="0" width="62" height="12"/>
+				<reportElement uuid="9b9c4c2b-41bd-4ab3-bf01-20cbf073907f" x="241" y="0" width="58" height="12"/>
 				<box leftPadding="0" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -361,7 +377,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				<textFieldExpression><![CDATA[$F{carne_ovina}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;(#,##0.00-)">
-				<reportElement uuid="d83a287c-927b-478c-a127-7d8adbc3ab70" x="144" y="0" width="62" height="12"/>
+				<reportElement uuid="d83a287c-927b-478c-a127-7d8adbc3ab70" x="125" y="0" width="58" height="12"/>
 				<box leftPadding="0" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -375,7 +391,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				<textFieldExpression><![CDATA[$F{carne_suina}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
-				<reportElement uuid="f26c49d5-cbfc-47de-909e-f5d20417d548" key="textField-3" x="0" y="0" width="54" height="12"/>
+				<reportElement uuid="f26c49d5-cbfc-47de-909e-f5d20417d548" key="textField-3" x="0" y="0" width="45" height="12"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -384,7 +400,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="10" isItalic="false"/>
+					<font fontName="Times New Roman" size="8" isItalic="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{data_relatorio}]]></textFieldExpression>
 			</textField>
@@ -410,10 +426,11 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 .add($F{sal})
 .add($F{temperos})
 .add($F{peixes})
-.add($F{bebidas})]]></textFieldExpression>
+.add($F{bebidas})
+.add($F{diversos})]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;(#,##0.00-)">
-				<reportElement uuid="d158ab76-1f96-417b-a974-6ff1b135fd35" x="330" y="0" width="62" height="12"/>
+				<reportElement uuid="d158ab76-1f96-417b-a974-6ff1b135fd35" x="299" y="0" width="58" height="12"/>
 				<box leftPadding="0" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -427,7 +444,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				<textFieldExpression><![CDATA[$F{aves}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;(#,##0.00-)">
-				<reportElement uuid="8605a84b-bfe3-4cd4-9497-2dfdf6aa9bd2" x="496" y="0" width="57" height="12"/>
+				<reportElement uuid="8605a84b-bfe3-4cd4-9497-2dfdf6aa9bd2" x="455" y="0" width="52" height="12"/>
 				<box leftPadding="0" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -441,7 +458,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				<textFieldExpression><![CDATA[$F{sal}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;(#,##0.00-)">
-				<reportElement uuid="5c953c13-cd04-4e8c-ab6b-3c91598ee215" x="553" y="0" width="57" height="12"/>
+				<reportElement uuid="5c953c13-cd04-4e8c-ab6b-3c91598ee215" x="507" y="0" width="53" height="12"/>
 				<box leftPadding="0" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -455,7 +472,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				<textFieldExpression><![CDATA[$F{temperos}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;(#,##0.00-)">
-				<reportElement uuid="b4b4181e-7123-4e1a-973f-275079249d81" x="392" y="0" width="52" height="12"/>
+				<reportElement uuid="b4b4181e-7123-4e1a-973f-275079249d81" x="357" y="0" width="49" height="12"/>
 				<box leftPadding="0" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -469,7 +486,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				<textFieldExpression><![CDATA[$F{ovos}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;(#,##0.00-)">
-				<reportElement uuid="224324d0-9003-4b6f-8210-1274ae78f489" x="444" y="0" width="52" height="12"/>
+				<reportElement uuid="224324d0-9003-4b6f-8210-1274ae78f489" x="406" y="0" width="49" height="12"/>
 				<box leftPadding="0" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -483,7 +500,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				<textFieldExpression><![CDATA[$F{enchidos}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;(#,##0.00-)">
-				<reportElement uuid="6d893c00-6b2d-4d90-bcc9-b50da7fee95c" x="206" y="0" width="62" height="12"/>
+				<reportElement uuid="6d893c00-6b2d-4d90-bcc9-b50da7fee95c" x="183" y="0" width="58" height="12"/>
 				<box leftPadding="0" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -497,7 +514,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				<textFieldExpression><![CDATA[$F{carne_caprina}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;(#,##0.00-)">
-				<reportElement uuid="d77fccfc-a292-48d5-bd4d-c75e087fde07" x="610" y="0" width="62" height="12"/>
+				<reportElement uuid="d77fccfc-a292-48d5-bd4d-c75e087fde07" x="560" y="0" width="58" height="12"/>
 				<box leftPadding="0" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -511,7 +528,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				<textFieldExpression><![CDATA[$F{peixes}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;(#,##0.00-)">
-				<reportElement uuid="a0c74b8a-749e-402a-a66d-68680d46120b" x="672" y="0" width="62" height="12"/>
+				<reportElement uuid="a0c74b8a-749e-402a-a66d-68680d46120b" x="618" y="0" width="58" height="12"/>
 				<box leftPadding="0" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -523,6 +540,20 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 					<font fontName="Times New Roman" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{bebidas}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00-)">
+				<reportElement uuid="527530dd-b8e7-43dd-9b95-0ba568ed220e" x="676" y="0" width="58" height="12"/>
+				<box leftPadding="0" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{diversos}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -540,7 +571,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 	<summary>
 		<band height="47" splitType="Stretch">
 			<staticText>
-				<reportElement uuid="81797942-b06d-4175-a695-a6ac54269a98" style="style3" mode="Opaque" x="0" y="0" width="82" height="16" backcolor="#CCFFFF"/>
+				<reportElement uuid="81797942-b06d-4175-a695-a6ac54269a98" style="style3" mode="Opaque" x="0" y="0" width="67" height="16" backcolor="#CCFFFF"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -554,7 +585,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				<text><![CDATA[Total Geral]]></text>
 			</staticText>
 			<textField pattern="#,##0.00;(#,##0.00-)">
-				<reportElement uuid="4b0196d9-d51f-4162-b6a7-a8e33ac55645" mode="Opaque" x="82" y="0" width="62" height="16" backcolor="#CCFFFF"/>
+				<reportElement uuid="4b0196d9-d51f-4162-b6a7-a8e33ac55645" mode="Opaque" x="67" y="0" width="58" height="16" backcolor="#CCFFFF"/>
 				<box leftPadding="0" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.75"/>
@@ -568,7 +599,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				<textFieldExpression><![CDATA[$V{TOTAL_BOVINA}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;(#,##0.00-)">
-				<reportElement uuid="8b27db83-06b4-47d9-b731-5963d30b7432" mode="Opaque" x="268" y="0" width="62" height="16" backcolor="#CCFFFF"/>
+				<reportElement uuid="8b27db83-06b4-47d9-b731-5963d30b7432" mode="Opaque" x="241" y="0" width="58" height="16" backcolor="#CCFFFF"/>
 				<box leftPadding="0" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.75"/>
@@ -582,7 +613,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				<textFieldExpression><![CDATA[$V{TOTAL_OVINA}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;(#,##0.00-)">
-				<reportElement uuid="49caf029-21c5-4c9b-a823-53b10cf25b77" mode="Opaque" x="330" y="0" width="62" height="16" backcolor="#CCFFFF"/>
+				<reportElement uuid="49caf029-21c5-4c9b-a823-53b10cf25b77" mode="Opaque" x="299" y="0" width="58" height="16" backcolor="#CCFFFF"/>
 				<box leftPadding="0" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.75"/>
@@ -617,7 +648,8 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 .add($V{TOTAL_SAL})
 .add($V{TOTAL_TEMPEROS})
 .add($V{TOTAL_PEIXES})
-.add($V{TOTAL_BEBIDAS})]]></textFieldExpression>
+.add($V{TOTAL_BEBIDAS})
+.add($V{TOTAL_DIVERSOS})]]></textFieldExpression>
 			</textField>
 			<subreport>
 				<reportElement uuid="dbbbde49-df11-40e8-b2af-d2b63566d0e3" x="-7" y="20" width="296" height="17"/>
@@ -631,7 +663,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_relatorio_mensal.jasper"]]></subreportExpression>
 			</subreport>
 			<textField pattern="#,##0.00;(#,##0.00-)">
-				<reportElement uuid="7a20bd58-3961-492c-a40f-f84c834b3141" mode="Opaque" x="496" y="0" width="57" height="16" backcolor="#CCFFFF"/>
+				<reportElement uuid="7a20bd58-3961-492c-a40f-f84c834b3141" mode="Opaque" x="455" y="0" width="52" height="16" backcolor="#CCFFFF"/>
 				<box leftPadding="0" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.75"/>
@@ -645,7 +677,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				<textFieldExpression><![CDATA[$V{TOTAL_SAL}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;(#,##0.00-)">
-				<reportElement uuid="c70a09b4-8c7e-44e2-8392-4a13dc51c0d6" mode="Opaque" x="144" y="0" width="62" height="16" backcolor="#CCFFFF"/>
+				<reportElement uuid="c70a09b4-8c7e-44e2-8392-4a13dc51c0d6" mode="Opaque" x="125" y="0" width="58" height="16" backcolor="#CCFFFF"/>
 				<box leftPadding="0" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.75"/>
@@ -659,7 +691,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				<textFieldExpression><![CDATA[$V{TOTAL_SUINA}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;(#,##0.00-)">
-				<reportElement uuid="03e8773f-8384-42ca-a528-0a6b4ac64b51" mode="Opaque" x="392" y="0" width="52" height="16" backcolor="#CCFFFF"/>
+				<reportElement uuid="03e8773f-8384-42ca-a528-0a6b4ac64b51" mode="Opaque" x="357" y="0" width="49" height="16" backcolor="#CCFFFF"/>
 				<box leftPadding="0" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.75"/>
@@ -673,7 +705,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				<textFieldExpression><![CDATA[$V{TOTAL_OVOS}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;(#,##0.00-)">
-				<reportElement uuid="93267301-0710-4f2f-86a4-adc663e29d82" mode="Opaque" x="553" y="0" width="57" height="16" backcolor="#CCFFFF"/>
+				<reportElement uuid="93267301-0710-4f2f-86a4-adc663e29d82" mode="Opaque" x="507" y="0" width="53" height="16" backcolor="#CCFFFF"/>
 				<box leftPadding="0" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.75"/>
@@ -687,7 +719,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				<textFieldExpression><![CDATA[$V{TOTAL_TEMPEROS}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;(#,##0.00-)">
-				<reportElement uuid="b6a8a5d5-6acb-47c3-9ee8-abdca8472b86" mode="Opaque" x="444" y="0" width="52" height="16" backcolor="#CCFFFF"/>
+				<reportElement uuid="b6a8a5d5-6acb-47c3-9ee8-abdca8472b86" mode="Opaque" x="406" y="0" width="49" height="16" backcolor="#CCFFFF"/>
 				<box leftPadding="0" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.75"/>
@@ -701,7 +733,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				<textFieldExpression><![CDATA[$V{TOTAL_ENCHIDOS}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;(#,##0.00-)">
-				<reportElement uuid="1970131b-c937-4de4-8e65-bd8bd64488a6" mode="Opaque" x="206" y="0" width="62" height="16" backcolor="#CCFFFF"/>
+				<reportElement uuid="1970131b-c937-4de4-8e65-bd8bd64488a6" mode="Opaque" x="183" y="0" width="58" height="16" backcolor="#CCFFFF"/>
 				<box leftPadding="0" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.75"/>
@@ -715,7 +747,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				<textFieldExpression><![CDATA[$V{TOTAL_CAPRINA}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;(#,##0.00-)">
-				<reportElement uuid="65000be6-48f2-4a7c-952d-99674cf9d198" mode="Opaque" x="610" y="0" width="62" height="16" backcolor="#CCFFFF"/>
+				<reportElement uuid="65000be6-48f2-4a7c-952d-99674cf9d198" mode="Opaque" x="560" y="0" width="58" height="16" backcolor="#CCFFFF"/>
 				<box leftPadding="0" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.75"/>
@@ -729,7 +761,7 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 				<textFieldExpression><![CDATA[$V{TOTAL_PEIXES}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;(#,##0.00-)">
-				<reportElement uuid="57979a34-b185-47e1-87f8-7b8443d6a510" mode="Opaque" x="672" y="0" width="62" height="16" backcolor="#CCFFFF"/>
+				<reportElement uuid="57979a34-b185-47e1-87f8-7b8443d6a510" mode="Opaque" x="618" y="0" width="58" height="16" backcolor="#CCFFFF"/>
 				<box leftPadding="0" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.75"/>
@@ -741,6 +773,20 @@ where  year(data_relatorio) = $P{ANO} and month(data_relatorio) = $P{ID_MES}]]>
 					<font fontName="Times New Roman" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{TOTAL_BEBIDAS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00-)">
+				<reportElement uuid="5bb45ed4-5daa-439c-a1ad-72d17036635f" mode="Opaque" x="676" y="0" width="58" height="16" backcolor="#CCFFFF"/>
+				<box leftPadding="0" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_DIVERSOS}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

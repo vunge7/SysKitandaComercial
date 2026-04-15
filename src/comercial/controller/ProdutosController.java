@@ -10,6 +10,7 @@ import entity.Modelo;
 import entity.TbFornecedor;
 import entity.TbLocal;
 import entity.TbProduto;
+import entity.TbStock;
 import entity.TbTipoProduto;
 import entity.Unidade;
 import java.math.RoundingMode;
@@ -17,6 +18,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -130,6 +132,103 @@ public class ProdutosController implements EntidadeFactory
         return 0;
 
     }
+    
+public static List<TbProduto> buscarProdutosComStock(LocalDate inicio, LocalDate fim) throws Exception {
+
+    List<TbProduto> lista = new ArrayList<>();
+
+    String sql = "SELECT DISTINCT p.* " +
+                 "FROM tb_produto p " +
+                 "INNER JOIN tb_stock s ON s.cod_produto_codigo = p.codigo " +
+                 "WHERE s.dataEntrada BETWEEN ? AND ?";
+
+    try (Connection conn = BDConexao.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setTimestamp(1, java.sql.Timestamp.valueOf(inicio.atStartOfDay()));
+        ps.setTimestamp(2, java.sql.Timestamp.valueOf(fim.atTime(23, 59, 59)));
+
+        try (ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                TbProduto p = new TbProduto();
+
+                p.setCodigo(rs.getInt("codigo"));
+                p.setDesignacao(rs.getString("designacao"));
+                p.setPreco(rs.getBigDecimal("preco"));
+                p.setCodBarra(rs.getString("codBarra"));
+                p.setStatus(rs.getString("status"));
+                p.setStocavel(rs.getString("stocavel"));
+                p.setPrecoVenda(rs.getDouble("preco_venda"));
+                p.setPercentagemDesconto(rs.getDouble("percentagem_desconto"));
+                p.setQuantidadeDesconto(rs.getInt("quantidade_desconto"));
+                p.setCodigoManual(rs.getString("codigo_manual"));
+                p.setCozinha(rs.getString("cozinha"));
+                p.setStatusIva(rs.getString("status_iva"));
+                p.setUnidadeCompra(rs.getDouble("unidade_compra"));
+
+                // Datas
+                p.setDataEntrada(rs.getDate("data_entrada"));
+                p.setDataFabrico(rs.getDate("data_fabrico"));
+                p.setDataExpiracao(rs.getDate("data_expiracao"));
+
+                lista.add(p);
+            }
+        }
+
+    } catch (Exception e) {
+        throw new Exception("Erro ao buscar produtos com stock: " + e.getMessage(), e);
+    }
+
+    return lista;
+}
+
+public static List<TbProduto> buscarProdutosComStockSaft(LocalDate inicio, LocalDate fim) throws Exception {
+
+    List<TbProduto> lista = new ArrayList<>();
+
+    String sql = "SELECT p.codigo, p.designacao, p.stocavel, " +
+                 "s.quantidade_existente, s.preco_venda " +
+                 "FROM tb_produto p " +
+                 "INNER JOIN tb_stock s ON s.cod_produto_codigo = p.codigo " +
+                 "WHERE s.dataEntrada BETWEEN ? AND ?";
+
+    try (Connection conn = BDConexao.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setTimestamp(1, java.sql.Timestamp.valueOf(inicio.atStartOfDay()));
+        ps.setTimestamp(2, java.sql.Timestamp.valueOf(fim.atTime(23, 59, 59)));
+
+        try (ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+
+                TbProduto p = new TbProduto();
+                p.setCodigo(rs.getInt("codigo"));
+                p.setDesignacao(rs.getString("designacao"));
+                p.setStocavel(rs.getString("stocavel"));
+
+                // 🔥 CRIAR STOCK MANUALMENTE
+                TbStock stock = new TbStock();
+                stock.setQuantidadeExistente(rs.getDouble("quantidade_existente"));
+                stock.setPrecoVenda(rs.getBigDecimal("preco_venda"));
+
+                // 🔥 ASSOCIAR AO PRODUTO
+                List<TbStock> listaStock = new ArrayList<>();
+                listaStock.add(stock);
+
+                p.setTbStockList(listaStock);
+
+                lista.add(p);
+            }
+        }
+
+    } catch (Exception e) {
+        throw new Exception("Erro ao buscar produtos com stock: " + e.getMessage(), e);
+    }
+
+    return lista;
+}
 
 public boolean desactivar(BDConexao conexao, TbProduto produto) {
     String sql = "UPDATE tb_produto SET status = ? WHERE codigo = ?";

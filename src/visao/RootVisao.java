@@ -976,6 +976,7 @@ public class RootVisao extends javax.swing.JFrame
             btn_actualiza_hash.setVisible( true );
             btnGerarScriptActualizacao.setVisible( true );
             bt_desencriptar.setVisible( true );
+//            operacaoInverterIva
 
         }
         else
