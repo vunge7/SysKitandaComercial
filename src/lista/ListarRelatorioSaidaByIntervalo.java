@@ -62,8 +62,7 @@ public class ListarRelatorioSaidaByIntervalo extends javax.swing.JFrame
 
     @SuppressWarnings( "unchecked" )
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents()
-    {
+    private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
@@ -92,10 +91,8 @@ public class ListarRelatorioSaidaByIntervalo extends javax.swing.JFrame
         lbData1.setText("à");
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/actualizar_1_32x32.png"))); // NOI18N
-        jButton1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
@@ -143,10 +140,8 @@ public class ListarRelatorioSaidaByIntervalo extends javax.swing.JFrame
         btnSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/impressora1.png"))); // NOI18N
         btnSalvar.setText("Imprimir");
         btnSalvar.setAlignmentX(0.5F);
-        btnSalvar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSalvarActionPerformed(evt);
             }
         });
@@ -154,10 +149,8 @@ public class ListarRelatorioSaidaByIntervalo extends javax.swing.JFrame
         btnCancelar1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LOGOUT - VERMELHO/Logout 32x32.png"))); // NOI18N
         btnCancelar1.setText("Sair");
         btnCancelar1.setAlignmentX(0.5F);
-        btnCancelar1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnCancelar1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelar1ActionPerformed(evt);
             }
         });
@@ -186,45 +179,35 @@ public class ListarRelatorioSaidaByIntervalo extends javax.swing.JFrame
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][]
-            {
+            new Object [][] {
 
             },
-            new String []
-            {
-                "Ref.Doc", "Saida Nº", "Solicitante ", "Motivo", "Data", "Hora", "Armazem", "Usuário"
+            new String [] {
+                "Ref.Doc", "Saida Nº", "Solicitante ", "Motivo", "Data", "Hora", "Destino", "Usuário"
             }
-        )
-        {
-            Class[] types = new Class []
-            {
-                java.lang.Object.class, java.lang.Object.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Object.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Double.class, java.lang.Object.class
             };
-            boolean[] canEdit = new boolean []
-            {
+            boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false, false, false
             };
 
-            public Class getColumnClass(int columnIndex)
-            {
+            public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
 
-            public boolean isCellEditable(int rowIndex, int columnIndex)
-            {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        jTable1.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mouseClicked(java.awt.event.MouseEvent evt)
-            {
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTable1MouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0)
-        {
+        if (jTable1.getColumnModel().getColumnCount() > 0) {
             jTable1.getColumnModel().getColumn(1).setMinWidth(0);
             jTable1.getColumnModel().getColumn(1).setMaxWidth(100);
         }
@@ -437,7 +420,7 @@ public class ListarRelatorioSaidaByIntervalo extends javax.swing.JFrame
                     object.getObs(),
                     getData( object.getDataSaida() ),
                     getHora( object.getHoraSaida() ),
-                    object.getIdArmazemFK().getDesignacao(),
+                    object.getArmazemDestino(),
                     object.getFkUsuario().getNome()
 
                 } );

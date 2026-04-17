@@ -1541,6 +1541,58 @@ public boolean exist_designacao_produto(BDConexao conexao, String designacao) {
 
         return lista;
     }
+    
+    public static List<TbProduto> buscarProdutosComStockSaftFullEmpty(LocalDate inicio, LocalDate fim) throws Exception {
+
+    List<TbProduto> lista = new ArrayList<>();
+
+    String sql = "SELECT p.codigo, p.designacao, p.stocavel, " +
+                 "s.quantidade_existente, s.preco_venda " +
+                 "FROM tb_produto p " +
+                 "LEFT JOIN tb_stock s ON s.cod_produto_codigo = p.codigo " +
+                 "AND s.dataEntrada BETWEEN ? AND ?";
+
+    try (Connection conn = BDConexao.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setTimestamp(1, java.sql.Timestamp.valueOf(inicio.atStartOfDay()));
+        ps.setTimestamp(2, java.sql.Timestamp.valueOf(fim.atTime(23, 59, 59)));
+
+        try (ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+
+                TbProduto p = new TbProduto();
+                p.setCodigo(rs.getInt("codigo"));
+                p.setDesignacao(rs.getString("designacao"));
+                p.setStocavel(rs.getString("stocavel"));
+
+                // 🔥 Só cria stock se existir
+                if (rs.getObject("quantidade_existente") != null) {
+
+                    TbStock stock = new TbStock();
+                    stock.setQuantidadeExistente(rs.getDouble("quantidade_existente"));
+                    stock.setPrecoVenda(rs.getBigDecimal("preco_venda"));
+
+                    List<TbStock> listaStock = new ArrayList<>();
+                    listaStock.add(stock);
+
+                    p.setTbStockList(listaStock);
+                } else {
+                    // produto sem stock
+                    p.setTbStockList(new ArrayList<>());
+                }
+
+                lista.add(p);
+            }
+        }
+
+    } catch (Exception e) {
+        throw new Exception("Erro ao buscar produtos com stock: " + e.getMessage(), e);
+    }
+
+    return lista;
+}
 
     public List<Object[]> listarProdutosByCodigoManual( Connection conn, String codigoManual )
     {

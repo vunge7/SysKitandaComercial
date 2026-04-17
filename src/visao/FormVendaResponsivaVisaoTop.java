@@ -22,6 +22,7 @@ import entity.TbBanco;
 import entity.TbCliente;
 import entity.TbDadosInstituicao;
 import entity.TbItemPedidos;
+import entity.TbItemPermissao;
 import entity.TbLugares;
 import entity.TbMesas;
 import entity.TbPedido;
@@ -356,8 +357,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
 //        habilitarColunas();
         MetodosUtil.setArmazemByCampoConfigArmazem(cmbArmazem, conexao, cod_usuario);
-
-        setWindowsListener();
+//        alterar_status_botao();
+        
 //        btnSemFormaPagamento.setVisible( false );
 
         table.setRowHeight(25);
@@ -370,6 +371,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
         procedimento_codBarra__jtable();
         txtCodigoBarra.requestFocus();
+
+        
     }
 
     private void init() {
@@ -432,8 +435,11 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         spnCopia.setModel(CfMethodsSwing.criarSpinnerDoubleModel(1, 3, numero_copia));
         empresa();
         setFolhaImpressora(dadosInstituicao.getImpressora());
-
+        busca_permissao();
         actualizar_abreviacao();
+        
+        setWindowsListener();
+//        alterar_status_botao();
 
     }// </editor-fold>   
 
@@ -520,10 +526,16 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 //                mostrar_proximo_codigo_documento();
 
                 try {
+//                                    MetodosUtil.verificarCaixa(
+//                        caixa_controller,
+//                        idUser,
+//                        RootVisao.btn_abertura_dia_root,
+//                        RootVisao.btn_feicho_dia_root );
+                    
                     MetodosUtil.verificarCaixa(caixasController,
                             cod_usuario,
-                            RootVisao.btn_abertura_dia_root,
-                            RootVisao.btn_abertura_dia_root,
+                            FormVendaResponsivaVisaoTop.btn_abertura_dia_venda,
+                            FormVendaResponsivaVisaoTop.btn_fecho_dia_venda,
                             btnFormaPagamento, btnSemFormaPagamento);
 
                 } catch (Exception ex) {
@@ -536,6 +548,24 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         });
 
     }
+    
+//        private void setWindowsListener1()
+//    {
+//        this.addWindowListener( new WindowAdapter()
+//        {
+//            @Override
+//            public void windowActivated( WindowEvent e )
+//            {
+//                MetodosUtil.verificarCaixa(
+//                        caixasController,
+//                        cod_usuario,
+//                        RootVisao.btn_abertura_dia_root,
+//                        RootVisao.btn_feicho_dia_root );
+//            }
+//
+//        } );
+//
+//    }
 
     /**
      * Metodo actualizado do proximo doumento
@@ -624,6 +654,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         painelTopo = new javax.swing.JPanel();
         painelEsq = new javax.swing.JPanel();
         dc_data_documento = new com.toedter.calendar.JDateChooser();
@@ -653,11 +684,13 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         btnSemFormaPagamento = new javax.swing.JButton();
         txtCodigoBarra = new javax.swing.JTextField();
         jlEmpresa = new javax.swing.JLabel();
+        btn_abertura_dia_venda = new javax.swing.JButton();
+        txtReferencia = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
         painelDir = new javax.swing.JPanel();
         txtPreco = new javax.swing.JTextField();
         jButton4 = new javax.swing.JButton();
         txtQuantidadeStock = new javax.swing.JTextField();
-        txtReferencia = new javax.swing.JTextField();
         txtQuatindade = new javax.swing.JTextField();
         lbQuantidade = new javax.swing.JLabel();
         btn_adicionar = new javax.swing.JButton();
@@ -692,6 +725,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
+        btn_fecho_dia_venda = new javax.swing.JButton();
         painelTabela = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
@@ -882,7 +916,20 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         jlEmpresa.setForeground(new java.awt.Color(0, 0, 102));
         jlEmpresa.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jlEmpresa.setText("Empresa");
-        painelEsq.add(jlEmpresa, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 324, 360, -1));
+        painelEsq.add(jlEmpresa, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 270, 360, -1));
+
+        btn_abertura_dia_venda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagem/caixa_32x_32.png"))); // NOI18N
+        btn_abertura_dia_venda.setText("Abertura de Caixa");
+        btn_abertura_dia_venda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_abertura_dia_vendaActionPerformed(evt);
+            }
+        });
+        painelEsq.add(btn_abertura_dia_venda, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 290, 210, -1));
+        painelEsq.add(txtReferencia, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 310, 130, 20));
+
+        jLabel1.setText("Referência");
+        painelEsq.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 290, 100, -1));
 
         painelDir.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
@@ -899,7 +946,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             }
         });
 
-        txtQuantidadeStock.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        txtQuantidadeStock.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
         txtQuantidadeStock.setForeground(new java.awt.Color(255, 255, 255));
 
         txtQuatindade.setBackground(new java.awt.Color(0, 255, 255));
@@ -932,6 +979,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             }
         });
 
+        buttonGroup1.add(ck_A4);
         ck_A4.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_A4.setText("A4");
         ck_A4.addActionListener(new java.awt.event.ActionListener() {
@@ -953,6 +1001,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             }
         });
 
+        buttonGroup1.add(ck_A7);
         ck_A7.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_A7.setText("A7");
         ck_A7.addActionListener(new java.awt.event.ActionListener() {
@@ -961,6 +1010,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             }
         });
 
+        buttonGroup1.add(ck_S_A6);
         ck_S_A6.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_S_A6.setText("S_A6");
         ck_S_A6.addActionListener(new java.awt.event.ActionListener() {
@@ -969,6 +1019,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             }
         });
 
+        buttonGroup1.add(ck_ComVirgula);
         ck_ComVirgula.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_ComVirgula.setText("A6V");
         ck_ComVirgula.addActionListener(new java.awt.event.ActionListener() {
@@ -977,6 +1028,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             }
         });
 
+        buttonGroup1.add(ck_simplificada_O_S);
         ck_simplificada_O_S.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_simplificada_O_S.setText("S_A6_O");
         ck_simplificada_O_S.addActionListener(new java.awt.event.ActionListener() {
@@ -985,6 +1037,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             }
         });
 
+        buttonGroup1.add(ck_simplificada_O);
         ck_simplificada_O.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_simplificada_O.setSelected(true);
         ck_simplificada_O.setText("A6_O");
@@ -994,6 +1047,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             }
         });
 
+        buttonGroup1.add(ck_simplificada);
         ck_simplificada.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_simplificada.setText("A6");
         ck_simplificada.addActionListener(new java.awt.event.ActionListener() {
@@ -1002,6 +1056,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             }
         });
 
+        buttonGroup1.add(ck_Duplicada);
         ck_Duplicada.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_Duplicada.setText("A5");
         ck_Duplicada.addActionListener(new java.awt.event.ActionListener() {
@@ -1059,7 +1114,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         });
 
         cmbArmazem.setBackground(new java.awt.Color(0, 255, 255));
-        cmbArmazem.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 1, 10)); // NOI18N
+        cmbArmazem.setFont(new java.awt.Font("Arial", 1, 9)); // NOI18N
         cmbArmazem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbArmazemActionPerformed(evt);
@@ -1156,6 +1211,14 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             }
         });
 
+        btn_fecho_dia_venda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/1323444801_currency_dollar red.png"))); // NOI18N
+        btn_fecho_dia_venda.setText("Fecho");
+        btn_fecho_dia_venda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_fecho_dia_vendaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout painelDirLayout = new javax.swing.GroupLayout(painelDir);
         painelDir.setLayout(painelDirLayout);
         painelDirLayout.setHorizontalGroup(
@@ -1203,20 +1266,6 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                                 .addComponent(ck_Duplicada)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(ck_A4, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(painelDirLayout.createSequentialGroup()
-                                .addComponent(txtReferencia, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lbQuantidadeStock)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtQuantidadeStock, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lbDescontoFinanceiro, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(sp_desconto_financeiro, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                 .addComponent(lbValorPorExtenco, javax.swing.GroupLayout.PREFERRED_SIZE, 541, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGroup(painelDirLayout.createSequentialGroup()
@@ -1234,9 +1283,9 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                             .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGroup(painelDirLayout.createSequentialGroup()
-                                            .addComponent(cmbSubFamilia, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(cmbSubFamilia, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(cmbProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(cmbProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 293, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(txtLocal, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -1245,16 +1294,32 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                                         .addComponent(txtTotal_AOA_Retencao, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))))
                             .addGroup(painelDirLayout.createSequentialGroup()
                                 .addGap(6, 6, 6)
-                                .addComponent(lbCodigoProduto4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(txtTotalPagar, javax.swing.GroupLayout.PREFERRED_SIZE, 493, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(painelDirLayout.createSequentialGroup()
+                                        .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(lbQuantidadeStock, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(txtQuantidadeStock, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(lbDescontoFinanceiro, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(sp_desconto_financeiro, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btn_fecho_dia_venda))
+                                    .addGroup(painelDirLayout.createSequentialGroup()
+                                        .addComponent(lbCodigoProduto4)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(txtTotalPagar, javax.swing.GroupLayout.PREFERRED_SIZE, 493, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                         .addGap(0, 10, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         painelDirLayout.setVerticalGroup(
             painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(painelDirLayout.createSequentialGroup()
-                .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(lbQuantidadeStock, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1262,10 +1327,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                         .addComponent(txtQuantidadeStock, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(sp_desconto_financeiro, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(lbDescontoFinanceiro, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(painelDirLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(txtReferencia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btn_fecho_dia_venda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(txtTotalPagar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1403,7 +1466,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                 .addComponent(painelTopo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(painelTabela, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(139, Short.MAX_VALUE))
+                .addContainerGap(132, Short.MAX_VALUE))
         );
 
         pack();
@@ -1906,6 +1969,70 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Erro ao abrir gaveta: " + e.getMessage());
         }
     }//GEN-LAST:event_jButton6ActionPerformed
+    public void busca_permissao()
+    {
+
+        try
+        {
+            // TODO add your handling code here
+            setStatusUsuario( (Vector) itemPermissaoDao.getAllPermissoesByIdUsuarioAndModulo( this.cod_usuario, DVML.MODULO_GESTAO_COMERCIAL ) );
+        }
+        catch ( Exception ex )
+        {
+            ex.printStackTrace();
+        }
+
+    }
+
+    public void setStatusUsuario( Vector<TbItemPermissao> vector )
+    {
+
+        String permissao = "";
+        //limpa
+        setPermissoes( false );
+
+        for ( int i = 0; i < vector.size(); i++ )
+        {
+
+            permissao = vector.get( i ).getIdPermissao().getDescricao();
+
+            System.out.println( "PERMISSAO PRINCIPAL " + permissao );
+
+            if ( permissao.equals( btn_abertura_dia_venda.getText() ) )
+            {
+                btn_abertura_dia_venda.setEnabled( true );
+            }
+            else if ( permissao.equals( btn_fecho_dia_venda.getText() ) )
+            {
+                btn_fecho_dia_venda.setEnabled( true );
+            }
+
+        }
+
+    }
+
+    public void setPermissoes( boolean status )
+    {
+        btn_abertura_dia_venda.setEnabled( status );
+        btn_fecho_dia_venda.setEnabled( status );
+    }
+    private void btn_abertura_dia_vendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_abertura_dia_vendaActionPerformed
+        // TODO add your handling code here:
+        //        OperacaoSistemaUtil.procedimento_abrir_dia( this.idUser );
+        //        procedimento_abrir_contagem( this.idUser );
+        new CaixaAberturaFactVisao(cod_usuario, conexao, false).setVisible(true);
+
+    }//GEN-LAST:event_btn_abertura_dia_vendaActionPerformed
+
+    private void btn_fecho_dia_vendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_fecho_dia_vendaActionPerformed
+        if (dadosInstituicao.getTipoFechoCaixa().equals("Normal")) {
+            new CaixaFechoVisao(cod_usuario, conexao, false).setVisible(true);
+        } else if (dadosInstituicao.getTipoFechoCaixa().equals("Simplificado")) {
+            new CaixaFechoGoldVisao(cod_usuario, conexao, false).setVisible(true);
+        } else {
+            new CaixaFechoGoldDetalhadoVisao(cod_usuario, conexao, false).setVisible(true);
+        }
+    }//GEN-LAST:event_btn_fecho_dia_vendaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -3018,8 +3145,11 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     private static javax.swing.JButton btnFormaPagamento;
     private static javax.swing.JButton btnProcessar;
     private javax.swing.JButton btnSemFormaPagamento;
+    public static javax.swing.JButton btn_abertura_dia_venda;
     public static javax.swing.JButton btn_adicionar;
+    private static javax.swing.JButton btn_fecho_dia_venda;
     public static javax.swing.JButton btn_remover;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JCheckBox ck_A4;
     public static javax.swing.JCheckBox ck_A7;
     public static javax.swing.JCheckBox ck_ComVirgula;
@@ -3042,6 +3172,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
@@ -6584,5 +6715,19 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         }
 
         new FacturasPendentesVisao(null, rootPaneCheckingEnabled, conexao).setVisible(true);
+    }
+
+    public static void alterar_status_botao_venda() {
+
+        if (!caixasController.existeCaixas()) {
+            btn_abertura_dia_venda.setEnabled(true);
+            btn_fecho_dia_venda.setEnabled(false);
+        } else if (caixasController.existe_abertura() && caixasController.existe_fecho()) {
+            btn_abertura_dia_venda.setEnabled(true);
+            btn_fecho_dia_venda.setEnabled(false);
+        } else {
+            btn_abertura_dia_venda.setEnabled(false);
+            btn_fecho_dia_venda.setEnabled(true);
+        }
     }
 }

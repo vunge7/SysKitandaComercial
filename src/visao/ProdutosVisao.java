@@ -1665,7 +1665,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         btnAlterar2.setEnabled( true );
         try
         {
-
+            
             new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem( cmbarmazem1.getSelectedItem().toString() ), DVML.JANELA_PRODUTO, BDConexao.getInstancia() ).setVisible( true );
             mostrar_qtd_stock_armazem( txtArmazen1, 1 );
             mostrar_qtd_stock_armazem( txtArmazen2, 2 );

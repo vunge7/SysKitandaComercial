@@ -3,8 +3,8 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="2.6620000000000013"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="168"/>
+	<property name="ireport.x" value="368"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -27,11 +27,14 @@
      tb_produto.`codigo` AS tb_produto_codigo,
      tb_saidas_produtos.`documento` AS tb_saidas_produtos_documento,
      tb_item_saidas.`preco_compra` AS tb_item_saidas_preco_compra,
-     tb_produto.`codigo_manual` AS tb_produto_codigo_manual
+     tb_produto.`codigo_manual` AS tb_produto_codigo_manual,
+     tb_armazem.`designacao` AS tb_armazem_designacao,
+     tb_saidas_produtos.`armazem_destino` AS tb_saidas_produtos_armazem_destino
 FROM
      `tb_produto` tb_produto INNER JOIN `tb_item_saidas` tb_item_saidas ON tb_produto.`codigo` = tb_item_saidas.`fk_produtos`
      INNER JOIN `tb_saidas_produtos` tb_saidas_produtos ON tb_item_saidas.`fk_saidas_produtos` = tb_saidas_produtos.`pk_saidas_produtos`
-     INNER JOIN `tb_usuario` tb_usuario ON tb_saidas_produtos.`fk_usuario` = tb_usuario.`codigo`,
+     INNER JOIN `tb_usuario` tb_usuario ON tb_saidas_produtos.`fk_usuario` = tb_usuario.`codigo`
+     INNER JOIN `tb_armazem` tb_armazem ON tb_saidas_produtos.`idArmazemFK` = tb_armazem.`codigo`,
      `tb_dados_instituicao` tb_dados_instituicao
 WHERE
      tb_saidas_produtos.`pk_saidas_produtos` = $P{COD_SAIDA}]]>
@@ -53,6 +56,8 @@ WHERE
 	<field name="tb_saidas_produtos_documento" class="java.lang.String"/>
 	<field name="tb_item_saidas_preco_compra" class="java.math.BigDecimal"/>
 	<field name="tb_produto_codigo_manual" class="java.lang.String"/>
+	<field name="tb_armazem_designacao" class="java.lang.String"/>
+	<field name="tb_saidas_produtos_armazem_destino" class="java.lang.String"/>
 	<variable name="SOMA_TOTAL" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[]]></variableExpression>
 	</variable>
@@ -96,14 +101,14 @@ WHERE
 				<reportElement uuid="47ced854-dec3-4415-9ef3-ad9e4abb0b43" key="rectangle-2" x="308" y="60" width="0" height="0"/>
 			</rectangle>
 			<staticText>
-				<reportElement uuid="34709e4a-b1c5-44e3-bb6d-c808711d9e4f" key="staticText-5" x="1" y="109" width="87" height="31"/>
+				<reportElement uuid="34709e4a-b1c5-44e3-bb6d-c808711d9e4f" key="staticText-5" x="1" y="109" width="57" height="31"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[Cod. Saída Nº: ]]></text>
+				<text><![CDATA[Saída Nº: ]]></text>
 			</staticText>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="4f5d373e-ee2d-4768-a773-0f88cd0dbe3b" key="textField-19" x="88" y="109" width="105" height="31"/>
+				<reportElement uuid="4f5d373e-ee2d-4768-a773-0f88cd0dbe3b" key="textField-19" x="58" y="109" width="54" height="31"/>
 				<box topPadding="2"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="12" isBold="true" isItalic="true" pdfFontName="Helvetica"/>
@@ -139,7 +144,7 @@ WHERE
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_nif}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="e00b72d7-b7e6-4d33-a4d3-98973e2a6fa4" key="textField-19" x="348" y="109" width="122" height="31"/>
+				<reportElement uuid="e00b72d7-b7e6-4d33-a4d3-98973e2a6fa4" key="textField-19" x="316" y="134" width="122" height="31"/>
 				<box topPadding="2"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="12" isBold="true" isItalic="true" pdfFontName="Helvetica"/>
@@ -147,7 +152,7 @@ WHERE
 				<textFieldExpression><![CDATA[$F{tb_saidas_produtos_documento}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="20a4f00b-7667-4dfa-b266-5e4f43f47f38" key="staticText-5" x="213" y="109" width="135" height="31"/>
+				<reportElement uuid="20a4f00b-7667-4dfa-b266-5e4f43f47f38" key="staticText-5" x="181" y="134" width="135" height="31"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
@@ -157,6 +162,21 @@ WHERE
 				<reportElement uuid="adb431c9-0be6-419d-b03f-2d254c38f493" x="-14" y="-4" width="126" height="97"/>
 				<imageExpression><![CDATA["logo/logo_dvml.png"]]></imageExpression>
 			</image>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="2bd2828e-df08-4c8b-8ebe-bd5f8d2fce40" key="textField-19" x="405" y="93" width="129" height="16"/>
+				<box topPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="false" isItalic="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_saidas_produtos_armazem_destino}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="7d478b52-dce4-403e-a439-93f9dd75e491" key="staticText-5" x="359" y="93" width="46" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Destino:]]></text>
+			</staticText>
 		</band>
 	</pageHeader>
 	<columnHeader>

@@ -1746,7 +1746,7 @@ public class MenuPrincipalLavandariaVisao extends javax.swing.JFrame
     private void jmCadastroArmazemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmCadastroArmazemActionPerformed
     {//GEN-HEADEREND:event_jmCadastroArmazemActionPerformed
         // TODO add your handling code here:
-        new ArmazemVisao(this.conexao ).setVisible(true);
+       new ArmazemVisao(cod_utilizador, this.conexao).setVisible(true);
     }//GEN-LAST:event_jmCadastroArmazemActionPerformed
 
     private void jmCadastroUsuarioActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmCadastroUsuarioActionPerformed

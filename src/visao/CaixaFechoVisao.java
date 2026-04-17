@@ -578,6 +578,7 @@ public class CaixaFechoVisao extends javax.swing.JFrame
                 else
                 {
                     RootVisao.alterar_status_botao();
+                    FormVendaResponsivaVisaoTop.alterar_status_botao_venda();
                 }
 
                 try

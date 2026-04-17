@@ -39,17 +39,19 @@ public class ArmazemVisao extends javax.swing.JFrame {
     private DadosInstituicaoDao dadosInstituicaoDao = new DadosInstituicaoDao(emf);
     private TbArmazem armazem;
     private int idArmazem = 0;
+    private static int cod_utilizador;
     private String designacao_antes  = "";
     private BDConexao conexao;
            
     
-    public ArmazemVisao(BDConexao conexao) {
+    public ArmazemVisao(int cod, BDConexao conexao) {
         this.conexao = conexao;
+        cod_utilizador = cod;
         initComponents();
         setLocationRelativeTo(null);
         setArmazem(dadosInstituicaoDao.findTbDadosInstituicao( 1 ).getConfigArmazens() );
          adicionar_tabela(    armazemDao.findTbArmazemEntities() );
-        
+        activar_opcoes();
          
     }
 
@@ -268,7 +270,7 @@ public class ArmazemVisao extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ArmazemVisao(BDConexao.getInstancia()).setVisible(true);
+                new ArmazemVisao(cod_utilizador,BDConexao.getInstancia()).setVisible(true);
             }
         });
     }
@@ -425,7 +427,16 @@ public class ArmazemVisao extends javax.swing.JFrame {
         }
     }
     
+    private void activar_opcoes() {
 
+        if (cod_utilizador == 15) {
+            jButton1.setEnabled(true);
+
+        } else {
+            jButton1.setEnabled(false);
+        }
+
+    }
     
   
 

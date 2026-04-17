@@ -78,31 +78,30 @@ import util.OperacaoSistemaUtil;
  *
  * @author Domingos Dala Vunge
  */
-public class SaidaProdutoVisao extends javax.swing.JFrame
-{
+public class SaidaProdutoVisao extends javax.swing.JFrame {
 
     private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
-    private VasilhameDao vasilhameDao = new VasilhameDao(emf );
-    private ProFormaDao proFormaDao = new ProFormaDao( emf );
-    private ItemProformaDao itemProformaDao = new ItemProformaDao( emf );
-    private DescontoDao descontoDao = new DescontoDao( emf );
-    private PrecoDao precoDao = new PrecoDao( emf );
+    private VasilhameDao vasilhameDao = new VasilhameDao(emf);
+    private ProFormaDao proFormaDao = new ProFormaDao(emf);
+    private ItemProformaDao itemProformaDao = new ItemProformaDao(emf);
+    private DescontoDao descontoDao = new DescontoDao(emf);
+    private PrecoDao precoDao = new PrecoDao(emf);
     private SaidasProdutosController saidasProdutosController;
     private ItemSaidasController itemSaidasController;
     private TbItemSaidas itemSaidas;
     private TbStock stock_local;
     private TbSaidasProdutos saidasProdutos;
-    private ProdutoDao produtoDao = new ProdutoDao( emf );
-    private StockDao stockDao = new StockDao( emf );
-    private UsuarioDao usuarioDao = new UsuarioDao( emf );
-    private ClienteDao clienteDao = new ClienteDao( emf );
-    private SaidasProdutosDao saidasProdutosDao = new SaidasProdutosDao( emf );
-    private ArmazemDao armazemDao = new ArmazemDao( emf );
-    private ItemSaidaDao itemSaidasProdutosDao = new ItemSaidaDao( emf );
+    private ProdutoDao produtoDao = new ProdutoDao(emf);
+    private StockDao stockDao = new StockDao(emf);
+    private UsuarioDao usuarioDao = new UsuarioDao(emf);
+    private ClienteDao clienteDao = new ClienteDao(emf);
+    private SaidasProdutosDao saidasProdutosDao = new SaidasProdutosDao(emf);
+    private ArmazemDao armazemDao = new ArmazemDao(emf);
+    private ItemSaidaDao itemSaidasProdutosDao = new ItemSaidaDao(emf);
     private TbVasilhame vasilhame;
-    private BancoDao bancoDao = new BancoDao( emf );
+    private BancoDao bancoDao = new BancoDao(emf);
     private static BDConexao conexao, conexaoTransaction;
-    
+
     private static int cod_usuario;
     private TipoClienteModelo tipoClienteModelo;
     private StockController stockController;
@@ -121,29 +120,33 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
     private UsuariosController usuariosController;
 //    private final Connection conn;
 
-    public SaidaProdutoVisao( int cod_usuario, BDConexao conexao ) throws SQLException
-    {
+    public SaidaProdutoVisao(int cod_usuario, BDConexao conexao) throws SQLException {
         this.conexao = conexao;
         this.cod_usuario = cod_usuario;
         initComponents();
         confiLabel();
-        setLocationRelativeTo( null );
-        txtQuatindade.setDocument( new PermitirNumeros() );
-        txtCodigoProduto.setDocument( new PermitirNumeros() );
-        txtCodigoBarra.setDocument( new PermitirNumeros() );
+        setLocationRelativeTo(null);
+        txtQuatindade.setDocument(new PermitirNumeros());
+        txtCodigoProduto.setDocument(new PermitirNumeros());
+        txtCodigoBarra.setDocument(new PermitirNumeros());
 
-        produtosController = new ProdutosController( SaidaProdutoVisao.conexao );
-        tipoProdutoController = new TipoProdutosController( SaidaProdutoVisao.conexao );
-        precosController = new PrecosController( SaidaProdutoVisao.conexao );
-        saidasProdutosController = new SaidasProdutosController( conexao.getConnection() );
-        itemSaidasController = new ItemSaidasController( conexao.getConnection() );
-        stoksController = new StoksController( conexao );
-        usuariosController = new UsuariosController( conexao );
-        armazensController = new ArmazensController( conexao );
+        produtosController = new ProdutosController(SaidaProdutoVisao.conexao);
+        tipoProdutoController = new TipoProdutosController(SaidaProdutoVisao.conexao);
+        precosController = new PrecosController(SaidaProdutoVisao.conexao);
+        saidasProdutosController = new SaidasProdutosController(conexao.getConnection());
+        itemSaidasController = new ItemSaidasController(conexao.getConnection());
+        stoksController = new StoksController(conexao);
+        usuariosController = new UsuariosController(conexao);
+        armazensController = new ArmazensController(conexao);
 
-        cmbArmazem.setModel( new DefaultComboBoxModel( armazensController.getVector() ) );
-        DVML.activar_cmb_armazem( cmbArmazem );
-        cmbSubFamilia.setModel( new DefaultComboBoxModel( tipoProdutoController.getVector1() ) );
+        cmbArmazem.setModel(new DefaultComboBoxModel(armazensController.getVectorArmazemLocal()));
+        DVML.activar_cmb_armazem(cmbArmazem);
+
+        cmbArmazemDestino.setModel(
+                new DefaultComboBoxModel(saidasProdutosController.getArmazemDestino())
+        );
+
+        cmbSubFamilia.setModel(new DefaultComboBoxModel(tipoProdutoController.getVector1()));
 //        cmbSubFamilia.setModel( new DefaultComboBoxModel( conexao.getElementos( "tb_tipo_produto", "designacao", false ) ) );
 //        cmbProduto.setModel( new DefaultComboBoxModel( conexao.getElementos2( "tb_produto", "designacao", "cod_Tipo_Produto", getCodigoTipoProduto() ) ) );
 //                        Integer codTipoProduto = produto.getCodTipoProduto().getCodigo();
@@ -151,43 +154,37 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
 //                Integer codFamilia = tipoProduto.getFkFamilia().getPkFamilia();
 //                cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
 //
-        cmbProduto.setModel( new DefaultComboBoxModel( produtosController.getVectorStocavel() ) );
+        cmbProduto.setModel(new DefaultComboBoxModel(produtosController.getVectorStocavel()));
 //        txtQuatindade.setText( "1" );
         txtQuatindade.requestFocus();
 
-        MetodosUtil.setArmazemByCampoConfigArmazem( cmbArmazem, conexao, cod_usuario );
-        ( (AbstractDocument) txtCodigoDoc.getDocument() ).setDocumentFilter( new UppercaseDocumentFilter() );
+//        MetodosUtil.setArmazemByCampoConfigArmazem( cmbArmazem, conexao, cod_usuario );
+        ((AbstractDocument) txtCodigoDoc.getDocument()).setDocumentFilter(new UppercaseDocumentFilter());
 
-        btnNova.setEnabled( false );
-        btnFinalizar.setEnabled( true );
-        btnActualizar.setEnabled( false );
+        btnNova.setEnabled(false);
+        btnFinalizar.setEnabled(true);
+        btnActualizar.setEnabled(false);
     }
 
-    public void confiLabel()
-    {
+    public void confiLabel() {
 
-        lbCodigoProduto.setHorizontalAlignment( JLabel.RIGHT );
-        lbCategoria.setHorizontalAlignment( JLabel.RIGHT );
-        lbProduto.setHorizontalAlignment( JLabel.RIGHT );
-        lbQuantidade.setHorizontalAlignment( JLabel.RIGHT );
-        lbQuantidadeStock.setHorizontalAlignment( JLabel.RIGHT );
+        lbCodigoProduto.setHorizontalAlignment(JLabel.RIGHT);
+        lbCategoria.setHorizontalAlignment(JLabel.RIGHT);
+        lbProduto.setHorizontalAlignment(JLabel.RIGHT);
+        lbQuantidade.setHorizontalAlignment(JLabel.RIGHT);
+        lbQuantidadeStock.setHorizontalAlignment(JLabel.RIGHT);
 
     }
 
-    public int getCodigoTipoProduto() throws SQLException
-    {
-        return conexao.getCodigoPublico( "tb_tipo_produto", String.valueOf( cmbSubFamilia.getSelectedItem() ) );
+    public int getCodigoTipoProduto() throws SQLException {
+        return conexao.getCodigoPublico("tb_tipo_produto", String.valueOf(cmbSubFamilia.getSelectedItem()));
     }
 
-    public static int getCodigoProduto()
-    {
-        try
-        {
-            return produtosController.findByDesignacao( cmbProduto.getSelectedItem().toString() ).getCodigo();
+    public static int getCodigoProduto() {
+        try {
+            return produtosController.findByDesignacao(cmbProduto.getSelectedItem().toString()).getCodigo();
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             return 0;
         }
     }
@@ -202,86 +199,65 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
 //                && qtd_existente <= qtd_critica;
 //
 //    }
-    public static boolean estado_critico() throws SQLException
-    {
+    public static boolean estado_critico() throws SQLException {
 
-        return conexao.getQuantidade_minima_publico( getCodigoProduto(), getCodigoArmazem() )
-                < conexao.getQuantidade_Existente_Publico( getCodigoProduto(), getCodigoArmazem() )
-                && conexao.getQuantidade_Existente_Publico( getCodigoProduto(), getCodigoArmazem() )
-                <= conexao.getQuantidade_critica_public( getCodigoProduto(), getCodigoArmazem() );
+        return conexao.getQuantidade_minima_publico(getCodigoProduto(), getCodigoArmazem())
+                < conexao.getQuantidade_Existente_Publico(getCodigoProduto(), getCodigoArmazem())
+                && conexao.getQuantidade_Existente_Publico(getCodigoProduto(), getCodigoArmazem())
+                <= conexao.getQuantidade_critica_public(getCodigoProduto(), getCodigoArmazem());
     }
 
-    public static boolean possivel_quantidade() throws SQLException
-    {
+    public static boolean possivel_quantidade() throws SQLException {
 
-        double quant_possivel = conexao.getQuantidade_Existente_Publico( getCodigoProduto(), getCodigoArmazem() )
-                - conexao.getQuantidade_minima_publico( getCodigoProduto(), getCodigoArmazem() );
+        double quant_possivel = conexao.getQuantidade_Existente_Publico(getCodigoProduto(), getCodigoArmazem())
+                - conexao.getQuantidade_minima_publico(getCodigoProduto(), getCodigoArmazem());
 
         return quant_possivel >= getQuantidade();
 
     }
 
-    public static boolean possivel_quantidade( int codigo, double qtd )
-    {
+    public static boolean possivel_quantidade(int codigo, double qtd) {
 
-        double quant_possivel = conexao.getQuantidade_Existente_Publico( codigo, getCodigoArmazem() )
-                - conexao.getQuantidade_minima_publico( codigo, getCodigoArmazem() );
+        double quant_possivel = conexao.getQuantidade_Existente_Publico(codigo, getCodigoArmazem())
+                - conexao.getQuantidade_minima_publico(codigo, getCodigoArmazem());
 
         return quant_possivel >= qtd;
 
     }
 
-    public boolean isStocavel( String status )
-    {
-        try
-        {
-            if ( status.equals( "true" ) )
-            {
+    public boolean isStocavel(String status) {
+        try {
+            if (status.equals("true")) {
                 return true;
-            }
-            else
-            {
+            } else {
                 return false;
             }
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             return true;
         }
 
     }
 
-    public double getPrecoProduto( int codProduto, boolean stocavel )
-    {
+    public double getPrecoProduto(int codProduto, boolean stocavel) {
 
         String sql = "";
 
-        if ( stocavel )
-        {
-            return precoDao.getUltimoIdPrecoByIdProduto( getCodigoProduto() );
-        }
-        else
-        {
+        if (stocavel) {
+            return precoDao.getUltimoIdPrecoByIdProduto(getCodigoProduto());
+        } else {
             sql = "SELECT preco FROM tb_produto WHERE( codigo = " + codProduto + ")";
         }
-        ResultSet rs = conexao.executeQuery( sql );
+        ResultSet rs = conexao.executeQuery(sql);
 
-        try
-        {
-            if ( rs.next() )
-            {
-                if ( stocavel )
-                {
-                    return rs.getDouble( "preco_saidasProdutos" );
-                }
-                else
-                {
-                    return rs.getDouble( "preco" );
+        try {
+            if (rs.next()) {
+                if (stocavel) {
+                    return rs.getDouble("preco_saidasProdutos");
+                } else {
+                    return rs.getDouble("preco");
                 }
             }
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
             return 0;
         }
 
@@ -293,10 +269,9 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
      */
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents()
-    {
+    private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
@@ -307,14 +282,16 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
         lbCodigoProduto = new javax.swing.JLabel();
         lbCodigoProduto1 = new javax.swing.JLabel();
         txtCodigoBarra = new javax.swing.JTextField();
-        lbPreco1 = new javax.swing.JLabel();
-        cmbArmazem = new javax.swing.JComboBox();
         txtCodigoSaida = new javax.swing.JTextField();
         lbPreco2 = new javax.swing.JLabel();
         lbCodigoProduto3 = new javax.swing.JLabel();
         txtCodigoManual = new javax.swing.JTextField();
         lbQuantidade = new javax.swing.JLabel();
         txtQuatindade = new javax.swing.JTextField();
+        cmbArmazem = new javax.swing.JComboBox();
+        lbPreco1 = new javax.swing.JLabel();
+        lbPreco3 = new javax.swing.JLabel();
+        cmbArmazemDestino = new javax.swing.JComboBox();
         jPanel8 = new javax.swing.JPanel();
         lbCategoria = new javax.swing.JLabel();
         cmbSubFamilia = new javax.swing.JComboBox();
@@ -353,10 +330,8 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
         jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/proucura.png"))); // NOI18N
-        jButton4.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
             }
         });
@@ -365,10 +340,8 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
         txtCodigoProduto.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         txtCodigoProduto.setForeground(new java.awt.Color(255, 255, 255));
         txtCodigoProduto.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtCodigoProduto.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtCodigoProduto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtCodigoProdutoActionPerformed(evt);
             }
         });
@@ -383,25 +356,9 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
         txtCodigoBarra.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         txtCodigoBarra.setForeground(new java.awt.Color(255, 255, 255));
         txtCodigoBarra.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtCodigoBarra.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtCodigoBarra.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtCodigoBarraActionPerformed(evt);
-            }
-        });
-
-        lbPreco1.setFont(new java.awt.Font("Segoe UI Black", 0, 11)); // NOI18N
-        lbPreco1.setText("Armzém");
-
-        cmbArmazem.setBackground(new java.awt.Color(51, 153, 0));
-        cmbArmazem.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 1, 14)); // NOI18N
-        cmbArmazem.setEnabled(false);
-        cmbArmazem.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                cmbArmazemActionPerformed(evt);
             }
         });
 
@@ -409,10 +366,8 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
         txtCodigoSaida.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         txtCodigoSaida.setForeground(new java.awt.Color(255, 255, 255));
         txtCodigoSaida.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtCodigoSaida.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtCodigoSaida.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtCodigoSaidaActionPerformed(evt);
             }
         });
@@ -427,10 +382,8 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
         txtCodigoManual.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         txtCodigoManual.setForeground(new java.awt.Color(255, 255, 255));
         txtCodigoManual.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtCodigoManual.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtCodigoManual.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtCodigoManualActionPerformed(evt);
             }
         });
@@ -442,11 +395,31 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
         txtQuatindade.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
         txtQuatindade.setForeground(new java.awt.Color(255, 255, 255));
         txtQuatindade.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtQuatindade.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtQuatindade.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtQuatindadeActionPerformed(evt);
+            }
+        });
+
+        cmbArmazem.setBackground(new java.awt.Color(51, 153, 0));
+        cmbArmazem.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 1, 14)); // NOI18N
+        cmbArmazem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbArmazemActionPerformed(evt);
+            }
+        });
+
+        lbPreco1.setFont(new java.awt.Font("Segoe UI Black", 0, 11)); // NOI18N
+        lbPreco1.setText("Armzém Local");
+
+        lbPreco3.setFont(new java.awt.Font("Segoe UI Black", 0, 11)); // NOI18N
+        lbPreco3.setText("Armzém Destino");
+
+        cmbArmazemDestino.setBackground(new java.awt.Color(51, 153, 0));
+        cmbArmazemDestino.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 1, 14)); // NOI18N
+        cmbArmazemDestino.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbArmazemDestinoActionPerformed(evt);
             }
         });
 
@@ -456,70 +429,84 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtCodigoSaida)
+                    .addComponent(lbPreco2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtCodigoSaida, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbPreco2, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(67, 67, 67)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbPreco1, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtQuatindade, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbQuantidade))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtCodigoProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbCodigoProduto))
-                .addGap(18, 18, 18)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                        .addComponent(lbQuantidade)
+                        .addGap(19, 19, 19))
+                    .addComponent(txtQuatindade, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addGap(2, 2, 2)
-                        .addComponent(txtCodigoBarra, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(lbCodigoProduto1))
-                .addGap(18, 18, 18)
+                        .addComponent(lbCodigoProduto)
+                        .addGap(9, 9, 9))
+                    .addComponent(txtCodigoProduto, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addComponent(lbCodigoProduto1)
+                        .addGap(49, 49, 49))
+                    .addComponent(txtCodigoBarra, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lbCodigoProduto3)
-                    .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton4)))
+                .addGap(8, 8, 8)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cmbArmazemDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addComponent(lbPreco1, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(88, 88, 88)
+                        .addComponent(lbPreco3, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(26, Short.MAX_VALUE))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel7Layout.createSequentialGroup()
-                .addGap(7, 7, 7)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
-                            .addComponent(lbPreco1, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(jPanel7Layout.createSequentialGroup()
-                            .addComponent(lbCodigoProduto3)
-                            .addGap(6, 6, 6)
-                            .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txtCodigoSaida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel7Layout.createSequentialGroup()
-                                .addComponent(lbPreco2, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(28, 28, 28)))
-                        .addGroup(jPanel7Layout.createSequentialGroup()
-                            .addComponent(lbCodigoProduto1)
-                            .addGap(2, 2, 2)
-                            .addComponent(txtCodigoBarra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txtQuatindade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel7Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                .addGap(13, 13, 13)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lbCodigoProduto)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                                .addGap(1, 1, 1)
                                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(lbCodigoProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lbQuantidade))
-                                .addGap(2, 2, 2)
-                                .addComponent(txtCodigoProduto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(4, 4, 4)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(lbQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lbPreco2))))
+                        .addGap(4, 4, 4)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addComponent(txtCodigoProduto)
+                                .addGap(1, 1, 1))
+                            .addComponent(txtQuatindade)
+                            .addComponent(txtCodigoSaida, javax.swing.GroupLayout.Alignment.TRAILING)))
+                    .addComponent(lbCodigoProduto3)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(lbPreco1, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lbPreco3, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(4, 4, 4))
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addComponent(lbCodigoProduto1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtCodigoBarra)
+                            .addComponent(txtCodigoManual, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cmbArmazem)
+                            .addComponent(cmbArmazemDestino))))
+                .addContainerGap())
         );
 
         jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
@@ -529,10 +516,8 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
 
         cmbSubFamilia.setBackground(new java.awt.Color(51, 153, 0));
         cmbSubFamilia.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
-        cmbSubFamilia.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbSubFamilia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbSubFamiliaActionPerformed(evt);
             }
         });
@@ -542,10 +527,8 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
 
         cmbProduto.setBackground(new java.awt.Color(51, 153, 0));
         cmbProduto.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
-        cmbProduto.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbProduto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbProdutoActionPerformed(evt);
             }
         });
@@ -560,20 +543,16 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
 
         btn_adicionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Button-Add-icon.png"))); // NOI18N
         btn_adicionar.setToolTipText("click para adicionar no carrinho");
-        btn_adicionar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_adicionar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_adicionarActionPerformed(evt);
             }
         });
 
         btn_remover.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/2934_32x32.png"))); // NOI18N
         btn_remover.setToolTipText("click para remover produtos do carrinho");
-        btn_remover.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_remover.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_removerActionPerformed(evt);
             }
         });
@@ -585,12 +564,12 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbCategoria)
-                    .addComponent(cmbSubFamilia, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cmbSubFamilia, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cmbProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbProduto))
+                    .addComponent(lbProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btn_adicionar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -637,10 +616,10 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -655,48 +634,38 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
 
         table.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
         table.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][]
-            {
+            new Object [][] {
 
             },
-            new String []
-            {
+            new String [] {
                 "Cod Prod", "Designacao", "Preço de Compra", "Qtd."
             }
-        )
-        {
-            Class[] types = new Class []
-            {
+        ) {
+            Class[] types = new Class [] {
                 java.lang.Integer.class, java.lang.String.class, java.lang.Object.class, java.lang.Integer.class
             };
-            boolean[] canEdit = new boolean []
-            {
+            boolean[] canEdit = new boolean [] {
                 false, false, false, false
             };
 
-            public Class getColumnClass(int columnIndex)
-            {
+            public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
 
-            public boolean isCellEditable(int rowIndex, int columnIndex)
-            {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
         table.setCellSelectionEnabled(true);
         table.setGridColor(new java.awt.Color(51, 153, 0));
-        table.addPropertyChangeListener(new java.beans.PropertyChangeListener()
-        {
-            public void propertyChange(java.beans.PropertyChangeEvent evt)
-            {
+        table.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 tablePropertyChange(evt);
             }
         });
         jScrollPane1.setViewportView(table);
         table.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-        if (table.getColumnModel().getColumnCount() > 0)
-        {
+        if (table.getColumnModel().getColumnCount() > 0) {
             table.getColumnModel().getColumn(0).setMinWidth(25);
             table.getColumnModel().getColumn(1).setMinWidth(400);
             table.getColumnModel().getColumn(3).setMaxWidth(50);
@@ -709,10 +678,8 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
         txtCodigoDoc.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         txtCodigoDoc.setForeground(new java.awt.Color(255, 255, 255));
         txtCodigoDoc.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtCodigoDoc.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtCodigoDoc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtCodigoDocActionPerformed(evt);
             }
         });
@@ -723,10 +690,8 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         jLabel1.setText("Motorista :");
 
-        txtMotorista.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtMotorista.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtMotoristaActionPerformed(evt);
             }
         });
@@ -744,36 +709,30 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lbCodigoProduto2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtCodigoDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGap(22, 22, 22)
-                        .addComponent(jLabel2))
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(txtMotorista, javax.swing.GroupLayout.PREFERRED_SIZE, 364, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 386, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtMotorista, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel2))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbCodigoProduto2)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lbCodigoProduto2)
-                            .addComponent(jLabel2))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtCodigoDoc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtMotorista, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(txtCodigoDoc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtMotorista, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -783,12 +742,10 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 2, Short.MAX_VALUE)))
-                .addContainerGap())
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -805,20 +762,17 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
         btnFinalizar.setText("Finalizar");
         btnFinalizar.setAlignmentX(0.5F);
         btnFinalizar.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        btnFinalizar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnFinalizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnFinalizarActionPerformed(evt);
             }
         });
 
         btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LOGOUT - VERMELHO/Logout 32x32.png"))); // NOI18N
+        btnCancelar.setText("Sair");
         btnCancelar.setAlignmentX(0.5F);
-        btnCancelar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelarActionPerformed(evt);
             }
         });
@@ -827,19 +781,16 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
         btnActualizar.setText("Actualizar");
         btnActualizar.setAlignmentX(0.5F);
         btnActualizar.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        btnActualizar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnActualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnActualizarActionPerformed(evt);
             }
         });
 
+        btnNova.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/1323287592_stock_task.png"))); // NOI18N
         btnNova.setText("Nova");
-        btnNova.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnNova.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnNovaActionPerformed(evt);
             }
         });
@@ -851,9 +802,9 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(19, 19, 19)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnActualizar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 125, Short.MAX_VALUE)
-                    .addComponent(btnFinalizar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnActualizar, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
+                    .addComponent(btnFinalizar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnNova, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(0, 14, Short.MAX_VALUE))
         );
@@ -867,8 +818,8 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
                 .addGap(20, 20, 20)
                 .addComponent(btnActualizar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnCancelar)
-                .addContainerGap())
+                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(72, 72, 72))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -876,12 +827,12 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -917,35 +868,27 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
 
     private void cmbSubFamiliaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbSubFamiliaActionPerformed
 
-        try
-        {
+        try {
             // TODO add your handling code here:
 
-            System.err.println( "CODIGO TIPO PRODUTO: " + getCodigoTipoProduto() );
-            cmbProduto.setModel( new DefaultComboBoxModel( conexao.getElementos2( "tb_produto", "designacao", "cod_Tipo_Produto", getCodigoTipoProduto() ) ) );
+            System.err.println("CODIGO TIPO PRODUTO: " + getCodigoTipoProduto());
+            cmbProduto.setModel(new DefaultComboBoxModel(conexao.getElementos2("tb_produto", "designacao", "cod_Tipo_Produto", getCodigoTipoProduto())));
 
-            if ( conexao.getCodigoByCodigo( "tb_stock", "quantidade_existente", "cod_produto_codigo", getCodigoProduto() ) <= 5 )
-            {
-                txtQuantidaStock.setBackground( Color.RED );
-                txtQuantidaStock.setForeground( Color.WHITE );
-            }
-            else
-            {
-                txtQuantidaStock.setBackground( Color.WHITE );
+            if (conexao.getCodigoByCodigo("tb_stock", "quantidade_existente", "cod_produto_codigo", getCodigoProduto()) <= 5) {
+                txtQuantidaStock.setBackground(Color.RED);
+                txtQuantidaStock.setForeground(Color.WHITE);
+            } else {
+                txtQuantidaStock.setBackground(Color.WHITE);
             }
 
-            txtQuantidaStock.setText( String.valueOf( conexao.getCodigoByCodigo( "tb_stock", "quantidade_existente", "cod_produto_codigo", getCodigoProduto() ) ) );
-            TbProduto produto = produtoDao.findTbProduto( getCodigoProduto() );
+            txtQuantidaStock.setText(String.valueOf(conexao.getCodigoByCodigo("tb_stock", "quantidade_existente", "cod_produto_codigo", getCodigoProduto())));
+            TbProduto produto = produtoDao.findTbProduto(getCodigoProduto());
 
             adicionar_preco_quantidade();
 
-        }
-        catch ( SQLException ex )
-        {
-            Logger.getLogger( SaidaProdutoVisao.class.getName() ).log( Level.SEVERE, null, ex );
-        }
-        catch ( Exception ex )
-        {
+        } catch (SQLException ex) {
+            Logger.getLogger(SaidaProdutoVisao.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
 
         }
 
@@ -953,13 +896,10 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
 
     private void cmbProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbProdutoActionPerformed
 
-        try
-        {
-            txtCodigoProduto.setText( "0" );
+        try {
+            txtCodigoProduto.setText("0");
             adicionar_preco_quantidade();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
         }
 
 
@@ -967,15 +907,12 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
 
 
     private void btn_removerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_removerActionPerformed
-        try
-        {
+        try {
 
             remover_item_carrinho();
 
-        }
-        catch ( Exception ex )
-        {
-            JOptionPane.showMessageDialog( null, "Possivelmente não selecionaste \n nenhuma linha ou não existe dados na table", "AVISO", JOptionPane.WARNING_MESSAGE );
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Possivelmente não selecionaste \n nenhuma linha ou não existe dados na table", "AVISO", JOptionPane.WARNING_MESSAGE);
         }
 
 
@@ -1025,14 +962,12 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton4ActionPerformed
     {//GEN-HEADEREND:event_jButton4ActionPerformed
 
-        try
-        {
+        try {
 
-            System.out.println( "Codigo do Armazem em questão: " + getCodigoArmazem() );
-            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_SAIDA, BDConexao.getInstancia()).setVisible(true);
-        }
-        catch ( Exception e )
-        {
+            System.out.println("Codigo do Armazem em questão: " + getCodigoArmazem());
+//            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_SAIDA, BDConexao.getInstancia() ).setVisible( true );
+            new BuscaProdutoVisao(this, rootPaneCheckingEnabled, 1, DVML.JANELA_SAIDA, BDConexao.getInstancia()).setVisible(true);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }//GEN-LAST:event_jButton4ActionPerformed
@@ -1044,14 +979,11 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
 
     private void txtCodigoSaidaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtCodigoSaidaActionPerformed
     {//GEN-HEADEREND:event_txtCodigoSaidaActionPerformed
-        try
-        {
+        try {
             // TODO add your handling code here
             buscaSaida();
-        }
-        catch ( SQLException ex )
-        {
-            JOptionPane.showMessageDialog( null, "Não existe saida com esta referência!" );
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Não existe saida com esta referência!");
 //            Logger.getLogger( SaidaProdutoVisao.class.getName() ).log( Level.SEVERE, null, ex );
         }
 
@@ -1067,14 +999,11 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
     private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnActualizarActionPerformed
     {//GEN-HEADEREND:event_btnActualizarActionPerformed
 
-        try
-        {
+        try {
             // TODO add your handling code here:
             procedimentoActualizarSaida();
-        }
-        catch ( SQLException ex )
-        {
-            Logger.getLogger( SaidaProdutoVisao.class.getName() ).log( Level.SEVERE, null, ex );
+        } catch (SQLException ex) {
+            Logger.getLogger(SaidaProdutoVisao.class.getName()).log(Level.SEVERE, null, ex);
         }
 
 
@@ -1089,246 +1018,188 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
     private void btnNovaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnNovaActionPerformed
     {//GEN-HEADEREND:event_btnNovaActionPerformed
         // TODO add your handling code here:
-        btnNova.setEnabled( true );
-        btnFinalizar.setEnabled( true );
-        btnActualizar.setEnabled( false );
+        btnNova.setEnabled(true);
+        btnFinalizar.setEnabled(true);
+        btnActualizar.setEnabled(false);
     }//GEN-LAST:event_btnNovaActionPerformed
 
-    public static void accao_codigo_interno_enter_busca_exterior( int codigo )
-    {
+    private void cmbArmazemDestinoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbArmazemDestinoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmbArmazemDestinoActionPerformed
 
-        try
-        {
-            System.out.println( "ID PRODUTO EXTERIOR: " + codigo );
-            TbProduto produtoLocal = (TbProduto) produtosController.findById( codigo );
-            procedimentoAdicionarTabela( produtoLocal );
-        }
-        catch ( Exception ex )
-        {
+    public static void accao_codigo_interno_enter_busca_exterior(int codigo) {
+
+        try {
+            System.out.println("ID PRODUTO EXTERIOR: " + codigo);
+            TbProduto produtoLocal = (TbProduto) produtosController.findById(codigo);
+            procedimentoAdicionarTabela(produtoLocal);
+        } catch (Exception ex) {
             ex.printStackTrace();
-            Logger.getLogger( SaidaProdutoVisao.class.getName() ).log( Level.SEVERE, null, ex );
-            JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+            Logger.getLogger(SaidaProdutoVisao.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
         }
 
     }
 
-    private static void procedimentoAdicionarTabela( TbProduto produto )
-    {
-        try
-        {
-            if ( txtQuatindade.getText().isEmpty() )
-            {
-                JOptionPane.showMessageDialog( null, "Não informou a quantidade, por favor informe a quantidade!" );
+    private static void procedimentoAdicionarTabela(TbProduto produto) {
+        try {
+            if (txtQuatindade.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Não informou a quantidade, por favor informe a quantidade!");
                 txtQuatindade.requestFocus();
-            }
-            else if ( !Objects.isNull( produto ) )
-            {
+            } else if (!Objects.isNull(produto)) {
                 Integer codTipoProduto = produto.getCodTipoProduto().getCodigo();
-                TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById( codTipoProduto );
-                cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
-                cmbProduto.setModel( new DefaultComboBoxModel( produtosController.getVector() ) );
-                cmbProduto.setSelectedItem( produto.getDesignacao() );
+                TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById(codTipoProduto);
+                cmbSubFamilia.setSelectedItem(tipoProduto.getDesignacao());
+                cmbProduto.setModel(new DefaultComboBoxModel(produtosController.getVector()));
+                cmbProduto.setSelectedItem(produto.getDesignacao());
 
                 procedimento_adicionar();
-                txtCodigoProduto.setText( "" );
-                txtCodigoBarra.setText( "" );
+                txtCodigoProduto.setText("");
+                txtCodigoBarra.setText("");
                 txtQuatindade.requestFocus();
 
-            }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Não existe produto relacionado a esta referência" );
+            } else {
+                JOptionPane.showMessageDialog(null, "Não existe produto relacionado a esta referência");
             }
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
 
         }
 
     }
 
-    public static void procedimento_adicionar()
-    {
+    public static void procedimento_adicionar() {
 
-        try
-        {
+        try {
 
-            TbProduto produto = (TbProduto) produtosController.findById( getCodigoProduto() );
-            if ( possivel_quantidade() )
-            {
-                if ( estado_critico() )
-                {
-                    JOptionPane.showMessageDialog( null, "O produto: " + produto.getDesignacao() + " precisa ser actualizado no stock", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+            TbProduto produto = (TbProduto) produtosController.findById(getCodigoProduto());
+            if (possivel_quantidade()) {
+                if (estado_critico()) {
+                    JOptionPane.showMessageDialog(null, "O produto: " + produto.getDesignacao() + " precisa ser actualizado no stock", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
                 }
                 adicionar_produto();
-            }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "O produto: " + produto.getDesignacao() + " não pode ser saír com esta quantidade", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+            } else {
+                JOptionPane.showMessageDialog(null, "O produto: " + produto.getDesignacao() + " não pode ser saír com esta quantidade", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
             }
 
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
 
         }
 
     }
 
-    public void adicionar_preco_quantidade()
-    {
+    public void adicionar_preco_quantidade() {
 
-        try
-        {
-            TbProduto produto_local = (TbProduto) produtosController.findById( getCodigoProduto() );
+        try {
+            TbProduto produto_local = (TbProduto) produtosController.findById(getCodigoProduto());
 
 //            TbStock stockLocal = stocksController.getStockByIdProdutoAndIdArmazem( getCodigoProduto(), getCodigoArmazem() );
 //            boolean isStocavel = produto_local.getStocavel().equals( "true" );
-            if ( Objects.nonNull( produto_local ) )
-            {
-                if ( stoksController.getStockByIdProdutoAndIdArmazem( getCodigoProduto(), getCodigoArmazem() ).getQuantidadeExistente()
-                        <= stoksController.getStockByIdProdutoAndIdArmazem( getCodigoProduto(), getCodigoArmazem() ).getQuantCritica() )
-                {
+            if (Objects.nonNull(produto_local)) {
+                if (stoksController.getStockByIdProdutoAndIdArmazem(getCodigoProduto(), getCodigoArmazem()).getQuantidadeExistente()
+                        <= stoksController.getStockByIdProdutoAndIdArmazem(getCodigoProduto(), getCodigoArmazem()).getQuantCritica()) {
 
-                    txtQuantidaStock.setBackground( Color.RED );
-                    txtQuantidaStock.setForeground( Color.BLACK );
-                }
-                else
-                {
-                    txtQuantidaStock.setBackground( new Color( 51, 153, 0, 255 ) );
+                    txtQuantidaStock.setBackground(Color.RED);
+                    txtQuantidaStock.setForeground(Color.BLACK);
+                } else {
+                    txtQuantidaStock.setBackground(new Color(51, 153, 0, 255));
                 }
 
-                TbProduto produto = produtoDao.findTbProduto( getCodigoProduto() );
+                TbProduto produto = produtoDao.findTbProduto(getCodigoProduto());
 
-                if ( stockController.exist_armazem( getCodigoProduto(), getCodigoArmazem() ) )
-                {
-                    txtQuantidaStock.setText( String.valueOf( stockDao.get_stock_by_id_produto_and_id_armazem( getCodigoProduto(), getCodigoArmazem() ).getQuantidadeExistente() ) );
+                if (stockController.exist_armazem(getCodigoProduto(), getCodigoArmazem())) {
+                    txtQuantidaStock.setText(String.valueOf(stockDao.get_stock_by_id_produto_and_id_armazem(getCodigoProduto(), getCodigoArmazem()).getQuantidadeExistente()));
 
+                } else {
+                    txtQuantidaStock.setText("0");
                 }
-                else
-                {
-                    txtQuantidaStock.setText( "0" );
-                }
-                txtCodigoProduto.setText( String.valueOf( produto_local.getCodigo() ) );
-                TbPreco precoLocal = precosController.getLastIdPrecoByIdProduto( produto_local.getCodigo(), Double.parseDouble( txtQuatindade.getText() ) );
+                txtCodigoProduto.setText(String.valueOf(produto_local.getCodigo()));
+                TbPreco precoLocal = precosController.getLastIdPrecoByIdProduto(produto_local.getCodigo(), Double.parseDouble(txtQuatindade.getText()));
             }
 
-        }
-        catch ( Exception ex )
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
-            txtQuantidaStock.setText( "0" );
-            Logger.getLogger( SaidaProdutoVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            txtQuantidaStock.setText("0");
+            Logger.getLogger(SaidaProdutoVisao.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
 
-    public void adicionar_botao()
-    {
+    public void adicionar_botao() {
 
-        try
-        {
+        try {
 
-            if ( !campos_invalidos() )
-            {
-                if ( isStocavel( new ProdutoController( conexao ).getProduto( getCodigoProduto() ).getStocavel() ) )
-                {
-                    if ( possivel_quantidade() )
-                    {
+            if (!campos_invalidos()) {
+                if (isStocavel(new ProdutoController(conexao).getProduto(getCodigoProduto()).getStocavel())) {
+                    if (possivel_quantidade()) {
 
-                        if ( estado_critico() )
-                        {
-                            JOptionPane.showMessageDialog( null, "O produto: " + new ProdutoController( conexao ).getProduto( getCodigoProduto() ).getDesignacao() + " precisa de ser actualizado no stock", "DVML", JOptionPane.WARNING_MESSAGE );
+                        if (estado_critico()) {
+                            JOptionPane.showMessageDialog(null, "O produto: " + new ProdutoController(conexao).getProduto(getCodigoProduto()).getDesignacao() + " precisa de ser actualizado no stock", "DVML", JOptionPane.WARNING_MESSAGE);
                         }
                         adicionar_produto();
 
-                    }
-                    else
-                    {
-                        JOptionPane.showMessageDialog( null, "O produto: " + new ProdutoController( conexao ).getProduto( getCodigoProduto() ).getDesignacao() + " não pode sair pra esta quantidade", "DVML", JOptionPane.ERROR_MESSAGE );
+                    } else {
+                        JOptionPane.showMessageDialog(null, "O produto: " + new ProdutoController(conexao).getProduto(getCodigoProduto()).getDesignacao() + " não pode sair pra esta quantidade", "DVML", JOptionPane.ERROR_MESSAGE);
                     }
 
-                }
-                else
-                {
+                } else {
                     adicionar_produto();
                 }
 
-            }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Por Favor Digite a Quantidade" );
+            } else {
+                JOptionPane.showMessageDialog(null, "Por Favor Digite a Quantidade");
             }
 
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
 
         }
 
     }
 
-    public void adicionar_botao_retificar()
-    {
+    public void adicionar_botao_retificar() {
 
-        try
-        {
+        try {
 
-            if ( !campos_invalidos() )
-            {
-                if ( isStocavel( produtoDao.findTbProduto( getCodigoProduto() ).getStocavel() ) )
-                {
-                    if ( possivel_quantidade() )
-                    {
+            if (!campos_invalidos()) {
+                if (isStocavel(produtoDao.findTbProduto(getCodigoProduto()).getStocavel())) {
+                    if (possivel_quantidade()) {
 
-                        if ( estado_critico() )
-                        {
-                            JOptionPane.showMessageDialog( null, "O produto: " + produtoDao.findTbProduto( getCodigoProduto() ).getDesignacao() + " precisa de ser actualizado no stock", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+                        if (estado_critico()) {
+                            JOptionPane.showMessageDialog(null, "O produto: " + produtoDao.findTbProduto(getCodigoProduto()).getDesignacao() + " precisa de ser actualizado no stock", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
                         }
                         adicionar_produto();
 
-                    }
-                    else
-                    {
-                        JOptionPane.showMessageDialog( null, "O produto: " + produtoDao.findTbProduto( getCodigoProduto() ).getDesignacao() + " não pode ser sair pra esta quantidade", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+                    } else {
+                        JOptionPane.showMessageDialog(null, "O produto: " + produtoDao.findTbProduto(getCodigoProduto()).getDesignacao() + " não pode ser sair pra esta quantidade", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
                     }
 
-                }
-                else
-                {
+                } else {
                     adicionar_produto();
                 }
 
-            }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Por Favor Digite a Quantidade" );
+            } else {
+                JOptionPane.showMessageDialog(null, "Por Favor Digite a Quantidade");
             }
 
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
 
         }
 
     }
 
-    public void limpar()
-    {
+    public void limpar() {
 
-        txtQuatindade.setText( "" );
-        txtCodigoProduto.setText( "" );
-        txtAreaOBS.setText( "" );
-        txtCodigoDoc.setText( "" );
-        txtMotorista.setText( "" );
+        txtQuatindade.setText("");
+        txtCodigoProduto.setText("");
+        txtAreaOBS.setText("");
+        txtCodigoDoc.setText("");
+        txtMotorista.setText("");
 //          soma_total = 0;
 
     }
 
-    private boolean transtorno()
-    {
+    private boolean transtorno() {
 
         int cod_produto = 0;
         double qtd = 0d, qtd_aceite = 0d;
@@ -1336,44 +1207,36 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         boolean transtorno = false;
 
-        for ( int i = 0; i < table.getRowCount(); i++ )
-        {
+        for (int i = 0; i < table.getRowCount(); i++) {
 
-            cod_produto = Integer.parseInt( String.valueOf( table.getModel().getValueAt( i, 0 ) ) );
-            qtd = Double.parseDouble( String.valueOf( table.getModel().getValueAt( i, 3 ) ) );
+            cod_produto = Integer.parseInt(String.valueOf(table.getModel().getValueAt(i, 0)));
+            qtd = Double.parseDouble(String.valueOf(table.getModel().getValueAt(i, 3)));
 
-            if ( !possivel_quantidade( cod_produto, qtd ) )
-            {
+            if (!possivel_quantidade(cod_produto, qtd)) {
 
                 transtorno = true;
-                qtd_aceite = conexao.getQuantidade_Existente_Publico( cod_produto, getCodigoArmazem() );
+                qtd_aceite = conexao.getQuantidade_Existente_Publico(cod_produto, getCodigoArmazem());
 
-                if ( qtd_aceite != 0 )
-                {
+                if (qtd_aceite != 0) {
 
-                    int opcao = JOptionPane.showConfirmDialog( null, "Desculpe pelo transtorno, o produto " + produtoDao.findTbProduto( cod_produto ).getDesignacao() + " só é possivel  a " + qtd_aceite + " quantidade(s)" + ", contrariamente de " + qtd + "\n Deseja actualizar ou remover da table ?" );
+                    int opcao = JOptionPane.showConfirmDialog(null, "Desculpe pelo transtorno, o produto " + produtoDao.findTbProduto(cod_produto).getDesignacao() + " só é possivel  a " + qtd_aceite + " quantidade(s)" + ", contrariamente de " + qtd + "\n Deseja actualizar ou remover da table ?");
 
-                    if ( opcao == JOptionPane.YES_OPTION )
-                    {
+                    if (opcao == JOptionPane.YES_OPTION) {
 
-                        modelo.setValueAt( qtd_aceite, i, 3 );
+                        modelo.setValueAt(qtd_aceite, i, 3);
 
-                    }
-                    else
-                    {
-                        modelo.removeRow( i );
+                    } else {
+                        modelo.removeRow(i);
 
                     }
 
                     adicionar_preco_quantidade_anitgo();
 
-                }
-                else
-                {
+                } else {
 
-                    modelo.removeRow( i );
+                    modelo.removeRow(i);
                     adicionar_preco_quantidade_anitgo();
-                    JOptionPane.showMessageDialog( null, "Desculpe pelo transtorno o produto " + produtoDao.findTbProduto( cod_produto ).getDesignacao() + " já não se encontra disponível no stock", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+                    JOptionPane.showMessageDialog(null, "Desculpe pelo transtorno o produto " + produtoDao.findTbProduto(cod_produto).getDesignacao() + " já não se encontra disponível no stock", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
                 }
             }
         }
@@ -1381,172 +1244,152 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
 
     }
 
-    private boolean validar_campo()
-    {
+    private boolean validar_campo() {
 
-        if ( txtAreaOBS.getText().trim().equalsIgnoreCase( "" ) )
-        {
+        if (cmbArmazemDestino.getSelectedIndex() == 0) {
+            JOptionPane.showMessageDialog(null, "Pf. Seleccione o Armazém de Destino!...", "AVISO", JOptionPane.WARNING_MESSAGE);
+            return true;
+        }
+        if (txtAreaOBS.getText().trim().equalsIgnoreCase("")) {
             txtAreaOBS.requestFocus();
-            txtAreaOBS.setBackground( Color.YELLOW );
-            JOptionPane.showMessageDialog( null, "Pf. Digite o Motivo da Saida de Produtos!...", "AVISO", JOptionPane.WARNING_MESSAGE );
-            txtAreaOBS.setBackground( Color.WHITE );
+            txtAreaOBS.setBackground(Color.YELLOW);
+            JOptionPane.showMessageDialog(null, "Pf. Digite o Motivo da Saida de Produtos!...", "AVISO", JOptionPane.WARNING_MESSAGE);
+            txtAreaOBS.setBackground(Color.WHITE);
             return true;
-        }
-        else if ( txtMotorista.getText().trim().equalsIgnoreCase( "" ) )
-        {
+        } else if (txtMotorista.getText().trim().equalsIgnoreCase("")) {
             txtMotorista.requestFocus();
-            txtMotorista.setBackground( Color.YELLOW );
-            JOptionPane.showMessageDialog( null, "Pf. Digite o nome do responsável da Saída!...", "AVISO", JOptionPane.WARNING_MESSAGE );
-            txtMotorista.setBackground( Color.WHITE );
+            txtMotorista.setBackground(Color.YELLOW);
+            JOptionPane.showMessageDialog(null, "Pf. Digite o nome do responsável da Saída!...", "AVISO", JOptionPane.WARNING_MESSAGE);
+            txtMotorista.setBackground(Color.WHITE);
             return true;
-        }
-        else
-        {
-            txtAreaOBS.setBackground( Color.WHITE );
-            txtMotorista.setBackground( Color.WHITE );
+        } else {
+            txtAreaOBS.setBackground(Color.WHITE);
+            txtMotorista.setBackground(Color.WHITE);
             return false;
         }
 
     }
 
-    public void procedimento_salvar()
-    {
-        if ( !validar_campo() )
-        {
-            if ( !table_vazia() )
-            {
-                try
-                {
-                    if ( !transtorno() )
-                    {
+    public void procedimento_salvar() {
+        if (!validar_campo()) {
+            if (!table_vazia()) {
+                try {
+                    if (!transtorno()) {
                         operacaoSalvar();
 
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                catch ( Exception e )
-                {
+            } else {
+                JOptionPane.showMessageDialog(null, "Impossivel dar saida porque não há produtos para sair", "ERRO", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+    }
+
+    private void operacaoSalvar() throws SQLException {
+        Connection conn = null;
+
+        try {
+            // 🔹 Garante que a transação e os controladores usam a mesma instância de BDConexao
+            this.conexaoTransaction = this.conexao;
+
+            // 🔹 Obtém a conexão ativa para a transação
+            conn = this.conexao.getConnectionAtiva();
+            conn.setAutoCommit(false);
+
+            // 🔹 Inicializa controladores com a MESMA conexão
+            saidasProdutosController = new SaidasProdutosController(conn);
+            itemSaidasController = new ItemSaidasController(conn);
+            stoksController = new StoksController(this.conexao); // mantém BDConexao
+
+            // 🔹 1. Salva saída principal
+            TbSaidasProdutos saidasProdutos = salvar_saidasProdutos();
+
+            // 🔹 2. Salva itens da saída (aqui dentro faz o registrarMovimento)
+            salvarItemsaidasProdutos(saidasProdutos);
+
+            // 🔹 3. Confirma transação
+            conn.commit();
+            JOptionPane.showMessageDialog(null, "Saída de Produtos efectuada com sucesso!..");
+
+            // 🔹 4. Limpeza e atualização da interface
+            limpar();
+            remover_all_produto();
+            adicionar_preco_quantidade_anitgo();
+            txtQuatindade.requestFocus();
+            new ListaSaidaProdutos(saidasProdutos.getPkSaidasProdutos());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            // 🔹 Rollback na MESMA conexão
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                    JOptionPane.showMessageDialog(null, "Erro ao salvar. Transação revertida!");
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        } finally {
+            // 🔹 Fecha a conexão e restaura autoCommit
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException e) {
                     e.printStackTrace();
                 }
             }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Impossivel dar saida porque não há produtos para sair", "ERRO", JOptionPane.ERROR_MESSAGE );
-            }
-        }
 
+            // 🔹 Reabre controladores para próximas operações
+            Connection novaConn = this.conexao.getConnection(); // pode lançar SQLException
+            saidasProdutosController = new SaidasProdutosController(novaConn);
+            itemSaidasController = new ItemSaidasController(novaConn);
+            stoksController = new StoksController(this.conexao);
+        }
     }
 
-private void operacaoSalvar() throws SQLException {
-    Connection conn = null;
-
-    try {
-        // 🔹 Garante que a transação e os controladores usam a mesma instância de BDConexao
-        this.conexaoTransaction = this.conexao;
-
-        // 🔹 Obtém a conexão ativa para a transação
-        conn = this.conexao.getConnectionAtiva();
-        conn.setAutoCommit(false);
-
-        // 🔹 Inicializa controladores com a MESMA conexão
-        saidasProdutosController = new SaidasProdutosController(conn);
-        itemSaidasController = new ItemSaidasController(conn);
-        stoksController = new StoksController(this.conexao); // mantém BDConexao
-
-        // 🔹 1. Salva saída principal
-        TbSaidasProdutos saidasProdutos = salvar_saidasProdutos();
-
-        // 🔹 2. Salva itens da saída (aqui dentro faz o registrarMovimento)
-        salvarItemsaidasProdutos(saidasProdutos);
-
-        // 🔹 3. Confirma transação
-        conn.commit();
-        JOptionPane.showMessageDialog(null, "Saída de Produtos efectuada com sucesso!..");
-
-        // 🔹 4. Limpeza e atualização da interface
-        limpar();
-        remover_all_produto();
-        adicionar_preco_quantidade_anitgo();
-        txtQuatindade.requestFocus();
-        new ListaSaidaProdutos(saidasProdutos.getPkSaidasProdutos());
-
-    } catch (Exception e) {
-        e.printStackTrace();
-        // 🔹 Rollback na MESMA conexão
-        if (conn != null) {
-            try {
-                conn.rollback();
-                JOptionPane.showMessageDialog(null, "Erro ao salvar. Transação revertida!");
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-        }
-    } finally {
-        // 🔹 Fecha a conexão e restaura autoCommit
-        if (conn != null) {
-            try {
-                conn.setAutoCommit(true);
-                conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-        // 🔹 Reabre controladores para próximas operações
-        Connection novaConn = this.conexao.getConnection(); // pode lançar SQLException
-        saidasProdutosController = new SaidasProdutosController(novaConn);
-        itemSaidasController = new ItemSaidasController(novaConn);
-        stoksController = new StoksController(this.conexao);
-    }
-}
-
-
-
-
-
-    public void salvarItemsaidasProdutos( TbSaidasProdutos saidasProdutos ) throws SQLException
-    {
-        for ( int i = 0; i < table.getRowCount(); i++ )
-        {
+    public void salvarItemsaidasProdutos(TbSaidasProdutos saidasProdutos) throws SQLException {
+        for (int i = 0; i < table.getRowCount(); i++) {
             TbItemSaidas itemSaidas = new TbItemSaidas();
-            int codProduto = Integer.parseInt( String.valueOf( table.getModel().getValueAt( i, 0 ) ) );
-            double qtd = Double.parseDouble( String.valueOf( table.getModel().getValueAt( i, 3 ) ) );
+            int codProduto = Integer.parseInt(String.valueOf(table.getModel().getValueAt(i, 0)));
+            double qtd = Double.parseDouble(String.valueOf(table.getModel().getValueAt(i, 3)));
 
-            itemSaidas.setFkProdutos( new TbProduto( codProduto ) );
-            itemSaidas.setFkSaidasProdutos( saidasProdutos );
-            itemSaidas.setQuantidade( qtd );
+            itemSaidas.setFkProdutos(new TbProduto(codProduto));
+            itemSaidas.setFkSaidasProdutos(saidasProdutos);
+            itemSaidas.setQuantidade(qtd);
 
-            BigDecimal precoCompra = getPreco( itemSaidas.getFkProdutos().getCodigo(), itemSaidas.getQuantidade() );
-            itemSaidas.setPrecoCompra( precoCompra );
+            BigDecimal precoCompra = getPreco(itemSaidas.getFkProdutos().getCodigo(), itemSaidas.getQuantidade());
+            itemSaidas.setPrecoCompra(precoCompra);
 
-            itemSaidasController.salvar( itemSaidas );
+            itemSaidasController.salvar(itemSaidas);
 
             // atualizar stock
             this.stock_local = stoksController.getStockByIdProdutoAndIdArmazem(
-                    itemSaidas.getFkProdutos().getCodigo(), getCodigoArmazem() );
+                    itemSaidas.getFkProdutos().getCodigo(), getCodigoArmazem());
 
-            if ( Objects.nonNull( stock_local ) )
-            {
-                if ( MovimentacaoController.registrarMovimento(
+            if (Objects.nonNull(stock_local)) {
+                if (MovimentacaoController.registrarMovimento(
                         itemSaidas.getFkProdutos().getCodigo(),
                         getCodigoArmazem(),
                         cod_usuario,
-                        new BigDecimal( itemSaidas.getQuantidade() ),
+                        new BigDecimal(itemSaidas.getQuantidade()),
                         "SAIDA " + saidasProdutos.getPkSaidasProdutos(),
                         "SAIDA",
-                        conexaoTransaction ) )
-                {
+                        conexaoTransaction)) {
 
                     actualizar_quantidade(
                             itemSaidas.getFkProdutos().getCodigo(),
                             itemSaidas.getQuantidade(),
-                            getCodigoArmazem() );
+                            getCodigoArmazem());
                 }
             }
         }
     }
 
-    private boolean table_vazia()
-    {
+    private boolean table_vazia() {
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         return modelo.getRowCount() == 0;
 
@@ -1554,212 +1397,190 @@ private void operacaoSalvar() throws SQLException {
 
 
     /* CRIACAO DO GETS  */
-    public static int getQuantidade()
-    {
-        System.err.println( "QUANTIDADE DIGTADA:" + txtQuatindade.getText().trim() );
-        return Integer.parseInt( txtQuatindade.getText().trim() );
+    public static int getQuantidade() {
+        System.err.println("QUANTIDADE DIGTADA:" + txtQuatindade.getText().trim());
+        return Integer.parseInt(txtQuatindade.getText().trim());
     }
 
-    public static String getDescricao_Produto() throws SQLException
-    {
+    public static String getDescricao_Produto() throws SQLException {
 
-        return BDConexao.getDescrisoByCodigo( "tb_produto", "designacao", getCodigoProduto() );
-
-    }
-
-    public boolean campos_invalidos()
-    {
-
-        return txtQuatindade.getText().equals( "" );
+        return BDConexao.getDescrisoByCodigo("tb_produto", "designacao", getCodigoProduto());
 
     }
 
-   private void buscaSaida() throws SQLException {
-    Connection conn = null;
-    try {
-        // 🔹 Obtém a conexão ativa
-        conn = this.conexao.getConnectionAtiva();
+    public boolean campos_invalidos() {
 
-        // 🔹 Inicializa controladores com a MESMA conexão
-        saidasProdutosController = new SaidasProdutosController(conn);
-        itemSaidasController = new ItemSaidasController(conn);
+        return txtQuatindade.getText().equals("");
 
-        int codSaida = Integer.parseInt(txtCodigoSaida.getText());
-        listaItemSaida = itemSaidasController.getAllItemSaidasByIdSaida(codSaida);
+    }
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
-        modelo.setRowCount(0);
-        txtMotorista.setText("");
-        txtAreaOBS.setText("");
-        txtCodigoDoc.setText("");
+    private void buscaSaida() throws SQLException {
+        Connection conn = null;
+        try {
+            // 🔹 Obtém a conexão ativa
+            conn = this.conexao.getConnectionAtiva();
 
-        if (Objects.nonNull(listaItemSaida) && !listaItemSaida.isEmpty()) {
-            saidasProdutos = saidasProdutosController.buscarPorId(codSaida);
+            // 🔹 Inicializa controladores com a MESMA conexão
+            saidasProdutosController = new SaidasProdutosController(conn);
+            itemSaidasController = new ItemSaidasController(conn);
 
-            for (TbItemSaidas linha : listaItemSaida) {
-                TbProduto produto = produtosController.findByCod(linha.getFkProdutos().getCodigo());
-                modelo.addRow(new Object[]{
+            int codSaida = Integer.parseInt(txtCodigoSaida.getText());
+            listaItemSaida = itemSaidasController.getAllItemSaidasByIdSaida(codSaida);
+
+            DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+            modelo.setRowCount(0);
+            txtMotorista.setText("");
+            txtAreaOBS.setText("");
+            txtCodigoDoc.setText("");
+
+            if (Objects.nonNull(listaItemSaida) && !listaItemSaida.isEmpty()) {
+                saidasProdutos = saidasProdutosController.buscarPorId(codSaida);
+
+                for (TbItemSaidas linha : listaItemSaida) {
+                    TbProduto produto = produtosController.findByCod(linha.getFkProdutos().getCodigo());
+                    modelo.addRow(new Object[]{
                         linha.getFkProdutos().getCodigo(),
                         produto.getDesignacao(),
                         linha.getPrecoCompra(),
                         linha.getQuantidade()
-                });
+                    });
+                }
+
+                txtMotorista.setText(saidasProdutos.getNomeFuncionario());
+                txtAreaOBS.setText(saidasProdutos.getObs());
+                txtCodigoDoc.setText(saidasProdutos.getDocumento());
+                btnNova.setEnabled(true);
+                btnFinalizar.setEnabled(false);
+                btnActualizar.setEnabled(true);
+
+                configurarColunaDouble(table, 3, true);
+
+            } else {
+                JOptionPane.showMessageDialog(null,
+                        "Não existe saída com esta referência.",
+                        "Aviso",
+                        JOptionPane.WARNING_MESSAGE);
             }
 
-            txtMotorista.setText(saidasProdutos.getNomeFuncionario());
-            txtAreaOBS.setText(saidasProdutos.getObs());
-            txtCodigoDoc.setText(saidasProdutos.getDocumento());
-            btnNova.setEnabled(true);
-            btnFinalizar.setEnabled(false);
-            btnActualizar.setEnabled(true);
-
-            configurarColunaDouble(table, 3, true);
-
-        } else {
-            JOptionPane.showMessageDialog(null,
-                    "Não existe saída com esta referência.",
-                    "Aviso",
-                    JOptionPane.WARNING_MESSAGE);
-        }
-
-    } finally {
-        // 🔹 Fecha a conexão ativa, se necessário
-        if (conn != null && !conn.isClosed()) {
-            conn.close();
+        } finally {
+            // 🔹 Fecha a conexão ativa, se necessário
+            if (conn != null && !conn.isClosed()) {
+                conn.close();
+            }
         }
     }
-}
 
-
-    public String getDataActual()
-    {
+    public String getDataActual() {
         Calendar calendario = Calendar.getInstance();
 
         //buscar data
-        int dia = calendario.get( Calendar.DAY_OF_MONTH );
-        int mes = calendario.get( Calendar.MONTH );
-        int ano = calendario.get( Calendar.YEAR );
+        int dia = calendario.get(Calendar.DAY_OF_MONTH);
+        int mes = calendario.get(Calendar.MONTH);
+        int ano = calendario.get(Calendar.YEAR);
 
-        int hora = calendario.get( Calendar.HOUR_OF_DAY );
-        int minuto = calendario.get( Calendar.MINUTE );
-        int segundo = calendario.get( Calendar.SECOND );
+        int hora = calendario.get(Calendar.HOUR_OF_DAY);
+        int minuto = calendario.get(Calendar.MINUTE);
+        int segundo = calendario.get(Calendar.SECOND);
 
-        String data = ano + "-" + ( mes + 1 ) + "-" + dia + " " + hora + ":" + minuto + ":" + segundo;
+        String data = ano + "-" + (mes + 1) + "-" + dia + " " + hora + ":" + minuto + ":" + segundo;
 
         return data;
 
     }
 
-    public static boolean validar_zero()
-    {
+    public static boolean validar_zero() {
 
-        return Integer.parseInt( txtQuatindade.getText() ) == 0;
+        return Integer.parseInt(txtQuatindade.getText()) == 0;
 
     }
 
-    public static void adicionar_produto() throws SQLException
-    {
+    public static void adicionar_produto() throws SQLException {
 
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
-        if ( !exist_produto( getCodigoProduto() ) )
-        {
-            if ( !validar_zero() )
-            {
-                modelo.addRow( new Object[]
-                {
+        if (!exist_produto(getCodigoProduto())) {
+            if (!validar_zero()) {
+                modelo.addRow(new Object[]{
                     getCodigoProduto(),
                     getDescricao_Produto(),
                     getPreco(),
                     getQuantidade()
 
-                } );
+                });
+            } else {
+                JOptionPane.showMessageDialog(null, "Atenção\nA quantidade a saír não pode ser igual a zero!");
             }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Atenção\nA quantidade a saír não pode ser igual a zero!" );
-            }
-            txtQuatindade.setText( "" );
+            txtQuatindade.setText("");
             txtCodigoProduto.requestFocus();
-        }
-        else
-        {
-            actuazlizar_quantidade( txtQuatindade.getText() );
+        } else {
+            actuazlizar_quantidade(txtQuatindade.getText());
         }
 
         txtQuatindade.requestFocus();
 
     }
 
-    public void remover_item_carrinho()
-    {
+    public void remover_item_carrinho() {
 
-        table.getColumnModel().getColumn( 0 );
-        table.getColumnModel().getColumn( 1 );
-        table.getColumnModel().getColumn( 2 );
-        txtQuatindade.setText( "" );
+        table.getColumnModel().getColumn(0);
+        table.getColumnModel().getColumn(1);
+        table.getColumnModel().getColumn(2);
+        txtQuatindade.setText("");
 
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
-        modelo.removeRow( table.getSelectedRow() );
+        modelo.removeRow(table.getSelectedRow());
     }
 
-    public void adicionar_produto_teclado( int codigo, String descricao ) throws SQLException
-    {
+    public void adicionar_produto_teclado(int codigo, String descricao) throws SQLException {
 
-        table.getColumnModel().getColumn( 0 );
-        table.getColumnModel().getColumn( 1 );
-        table.getColumnModel().getColumn( 2 );
-        table.getColumnModel().getColumn( 3 );
-        table.getColumnModel().getColumn( 4 );
-        table.getColumnModel().getColumn( 5 );
+        table.getColumnModel().getColumn(0);
+        table.getColumnModel().getColumn(1);
+        table.getColumnModel().getColumn(2);
+        table.getColumnModel().getColumn(3);
+        table.getColumnModel().getColumn(4);
+        table.getColumnModel().getColumn(5);
 
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
-        modelo.addRow( new Object[]
-        {
+        modelo.addRow(new Object[]{
             codigo,
             descricao,
             getQuantidade()
-        } );
+        });
     }
 
-    public void salvarItemsaidasProdutos() throws SQLException
-    {
+    public void salvarItemsaidasProdutos() throws SQLException {
         boolean efectuada = true;
         this.saidasProdutos = saidasProdutosController.buscarUltimaSaida();
-        for ( int i = 0; i < table.getRowCount(); i++ )
-        {
-            try
-            {
+        for (int i = 0; i < table.getRowCount(); i++) {
+            try {
                 itemSaidas = new TbItemSaidas();
-                int codProduto = Integer.parseInt( String.valueOf( table.getModel().getValueAt( i, 0 ) ) );
-                double qtd = Double.parseDouble( String.valueOf( table.getModel().getValueAt( i, 3 ) ) );
-                itemSaidas.setFkProdutos( new TbProduto( codProduto ) );
-                BigDecimal precoCompra = getPreco( itemSaidas.getFkProdutos().getCodigo(), itemSaidas.getQuantidade() );
+                int codProduto = Integer.parseInt(String.valueOf(table.getModel().getValueAt(i, 0)));
+                double qtd = Double.parseDouble(String.valueOf(table.getModel().getValueAt(i, 3)));
+                itemSaidas.setFkProdutos(new TbProduto(codProduto));
+                BigDecimal precoCompra = getPreco(itemSaidas.getFkProdutos().getCodigo(), itemSaidas.getQuantidade());
 
-                itemSaidas.setFkSaidasProdutos( this.saidasProdutos );
-                itemSaidas.setQuantidade( qtd );
-                itemSaidas.setPrecoCompra( precoCompra );
-                itemSaidasController.salvar( itemSaidas );
+                itemSaidas.setFkSaidasProdutos(this.saidasProdutos);
+                itemSaidas.setQuantidade(qtd);
+                itemSaidas.setPrecoCompra(precoCompra);
+                itemSaidasController.salvar(itemSaidas);
                 this.stock_local = stoksController.getStockByIdProdutoAndIdArmazem(
-                        itemSaidas.getFkProdutos().getCodigo(), getCodigoArmazem() );
+                        itemSaidas.getFkProdutos().getCodigo(), getCodigoArmazem());
                 //so retirar caso existir mesmo no armazém em questão.
-                if ( Objects.nonNull( stock_local ) )
-                {
-                    if ( MovimentacaoController.registrarMovimento(
+                if (Objects.nonNull(stock_local)) {
+                    if (MovimentacaoController.registrarMovimento(
                             itemSaidas.getFkProdutos().getCodigo(),
                             getCodigoArmazem(),
                             cod_usuario,
-                            new BigDecimal( itemSaidas.getQuantidade() ),
+                            new BigDecimal(itemSaidas.getQuantidade()),
                             "SAIDA " + saidasProdutos.getPkSaidasProdutos(),
                             "SAIDA",
-                            conexao ) )
-                    {
+                            conexao)) {
                         actualizar_quantidade(
                                 itemSaidas.getFkProdutos().getCodigo(),
                                 itemSaidas.getQuantidade(),
-                                getCodigoArmazem() );
+                                getCodigoArmazem());
                     }
 //                    if ( vasilhameDao.exist_vasilhame( itemSaidas.getFkProdutos().getCodigo(), getCodigoArmazem() ) )
 //                    {
@@ -1767,89 +1588,75 @@ private void operacaoSalvar() throws SQLException {
 //                    }
 
                 }
-            }
-            catch ( Exception e )
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
                 efectuada = false;
-                JOptionPane.showMessageDialog( null, "Falha ao registrar o produto: " + itemSaidas.getFkProdutos().getCodigo() );
+                JOptionPane.showMessageDialog(null, "Falha ao registrar o produto: " + itemSaidas.getFkProdutos().getCodigo());
                 break;
             }
         }
 
-        if ( efectuada )
-        {
-            JOptionPane.showMessageDialog( null, "Saída de Produtos efectuada com sucesso!.." );
+        if (efectuada) {
+            JOptionPane.showMessageDialog(null, "Saída de Produtos efectuada com sucesso!..");
 
-            try
-            {
+            try {
                 limpar();
                 remover_all_produto();
                 adicionar_preco_quantidade_anitgo();
 
-            }
-            catch ( Exception e )
-            {
+            } catch (Exception e) {
             }
             txtQuatindade.requestFocus();
-            ListaSaidaProdutos listaSaidas = new ListaSaidaProdutos( saidasProdutos.getPkSaidasProdutos() );
+            ListaSaidaProdutos listaSaidas = new ListaSaidaProdutos(saidasProdutos.getPkSaidasProdutos());
 
         }
 
     }
 
-    public void actluazarItemsaidasProdutos( TbSaidasProdutos saidasProdutos ) throws SQLException
-    {
+    public void actluazarItemsaidasProdutos(TbSaidasProdutos saidasProdutos) throws SQLException {
         boolean efectuada = true;
 
         // remove todos os itens antigos antes de inserir os novos
-        itemSaidasController.deleteAllItemSaidasByIdSaidaReciclagem( saidasProdutos.getPkSaidasProdutos() );
+        itemSaidasController.deleteAllItemSaidasByIdSaidaReciclagem(saidasProdutos.getPkSaidasProdutos());
 
-        for ( int i = 0; i < table.getRowCount(); i++ )
-        {
-            try
-            {
+        for (int i = 0; i < table.getRowCount(); i++) {
+            try {
                 itemSaidas = new TbItemSaidas();
                 itemSaidas.setFkProdutos(
-                        produtoDao.findTbProduto( Integer.parseInt( String.valueOf( table.getModel().getValueAt( i, 0 ) ) ) )
+                        produtoDao.findTbProduto(Integer.parseInt(String.valueOf(table.getModel().getValueAt(i, 0))))
                 );
-                itemSaidas.setFkSaidasProdutos( saidasProdutos );
-                itemSaidas.setQuantidade( Double.parseDouble( String.valueOf( table.getModel().getValueAt( i, 3 ) ) ) );
+                itemSaidas.setFkSaidasProdutos(saidasProdutos);
+                itemSaidas.setQuantidade(Double.parseDouble(String.valueOf(table.getModel().getValueAt(i, 3))));
                 itemSaidas.setPrecoCompra(
-                        getPreco( itemSaidas.getFkProdutos().getCodigo(), itemSaidas.getQuantidade() )
+                        getPreco(itemSaidas.getFkProdutos().getCodigo(), itemSaidas.getQuantidade())
                 );
 
-                itemSaidasController.salvar( itemSaidas );
+                itemSaidasController.salvar(itemSaidas);
 
                 this.stock_local = stoksController.getStockByIdProdutoAndIdArmazem(
                         itemSaidas.getFkProdutos().getCodigo(), getCodigoArmazem()
                 );
 
-                if ( Objects.nonNull( stock_local ) )
-                {
-                    String tipo = getTipo( itemSaidas.getFkProdutos().getCodigo(), itemSaidas.getQuantidade() );
-                    double qtdAcertar = getQtdAcertar( itemSaidas.getFkProdutos().getCodigo(), itemSaidas.getQuantidade() );
+                if (Objects.nonNull(stock_local)) {
+                    String tipo = getTipo(itemSaidas.getFkProdutos().getCodigo(), itemSaidas.getQuantidade());
+                    double qtdAcertar = getQtdAcertar(itemSaidas.getFkProdutos().getCodigo(), itemSaidas.getQuantidade());
 
-                    if ( MovimentacaoController.registrarMovimento(
+                    if (MovimentacaoController.registrarMovimento(
                             itemSaidas.getFkProdutos().getCodigo(),
                             getCodigoArmazem(),
                             cod_usuario,
-                            new BigDecimal( qtdAcertar ),
+                            new BigDecimal(qtdAcertar),
                             "ACTUALIZAÇÃO SAIDA " + saidasProdutos.getPkSaidasProdutos(),
                             tipo,
-                            conexaoTransaction ) )
-                    {
+                            conexaoTransaction)) {
 
-                        if ( tipo.equals( "ENTRADA" ) )
-                        {
+                        if (tipo.equals("ENTRADA")) {
                             stoksController.adicionar_quantidades(
                                     itemSaidas.getFkProdutos().getCodigo(),
                                     qtdAcertar,
                                     getCodigoArmazem()
                             );
-                        }
-                        else
-                        {
+                        } else {
                             stoksController.subtrair_quantidades(
                                     itemSaidas.getFkProdutos().getCodigo(),
                                     qtdAcertar,
@@ -1858,118 +1665,97 @@ private void operacaoSalvar() throws SQLException {
                         }
                     }
                 }
-            }
-            catch ( Exception e )
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
                 efectuada = false;
-                JOptionPane.showMessageDialog( null,
-                        "Falha ao actualizar o produto: " + itemSaidas.getFkProdutos().getCodigo() );
+                JOptionPane.showMessageDialog(null,
+                        "Falha ao actualizar o produto: " + itemSaidas.getFkProdutos().getCodigo());
                 break;
             }
         }
 
-        if ( !efectuada )
-        {
-            throw new SQLException( "Erro ao actualizar itens da saída, transação será revertida." );
+        if (!efectuada) {
+            throw new SQLException("Erro ao actualizar itens da saída, transação será revertida.");
         }
     }
 
-    private boolean actualizar_vasilhame( TbVasilhame vasilhame, double qtd )
-    {
+    private boolean actualizar_vasilhame(TbVasilhame vasilhame, double qtd) {
         double qtd_actualizada = vasilhame.getQtdExistente() + qtd;
-        vasilhame.setQtdExistente( qtd_actualizada );
-        try
-        {
-            vasilhameDao.edit( vasilhame );
+        vasilhame.setQtdExistente(qtd_actualizada);
+        try {
+            vasilhameDao.edit(vasilhame);
             return true;
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             return false;
         }
 
     }
 
-    public void remover_items()
-    {
+    public void remover_items() {
 
-        table.getColumnModel().getColumn( 0 );
-        table.getColumnModel().getColumn( 1 );
-        table.getColumnModel().getColumn( 2 );
+        table.getColumnModel().getColumn(0);
+        table.getColumnModel().getColumn(1);
+        table.getColumnModel().getColumn(2);
 
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
-        for ( int i = modelo.getRowCount() - 1; i >= 0; i-- )
-        {
-            modelo.removeRow( i );
+        for (int i = modelo.getRowCount() - 1; i >= 0; i--) {
+            modelo.removeRow(i);
         }
 
     }
 
-    public void remover_all_produto()
-    {
+    public void remover_all_produto() {
 
-        table.getColumnModel().getColumn( 0 );
-        table.getColumnModel().getColumn( 1 );
-        table.getColumnModel().getColumn( 2 );
+        table.getColumnModel().getColumn(0);
+        table.getColumnModel().getColumn(1);
+        table.getColumnModel().getColumn(2);
 
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
-        for ( int i = modelo.getRowCount() - 1; i >= 0; i-- )
-        {
-            modelo.removeRow( i );
+        for (int i = modelo.getRowCount() - 1; i >= 0; i--) {
+            modelo.removeRow(i);
         }
 
     }
 
-    public void remover_produto() throws SQLException
-    {
+    public void remover_produto() throws SQLException {
 
-        if ( linha > 0 )
-        {
+        if (linha > 0) {
 
-            table.getModel().setValueAt( 0, linha - 1, 0 );
-            table.getModel().setValueAt( "", linha - 1, 1 );
-            table.getModel().setValueAt( 0, linha - 1, 2 );
+            table.getModel().setValueAt(0, linha - 1, 0);
+            table.getModel().setValueAt("", linha - 1, 1);
+            table.getModel().setValueAt(0, linha - 1, 2);
             linha--;
             coordenada--;
 
-        }
-        else
-        {
-            JOptionPane.showMessageDialog( null, "Impossivel Remover Produtos na Tabela!...." );
+        } else {
+            JOptionPane.showMessageDialog(null, "Impossivel Remover Produtos na Tabela!....");
         }
 
     }
 
-    public void actualizar_quantidade( int cod, int quantidade )
-    {
+    public void actualizar_quantidade(int cod, int quantidade) {
 
-        String sql = "UPDATE tb_stock SET quantidade_existente =  " + ( getQuantidadeProduto( cod ) - quantidade ) + " WHERE cod_produto_codigo = " + cod + " AND  cod_armazem = " + getCodigoArmazem();
+        String sql = "UPDATE tb_stock SET quantidade_existente =  " + (getQuantidadeProduto(cod) - quantidade) + " WHERE cod_produto_codigo = " + cod + " AND  cod_armazem = " + getCodigoArmazem();
 
-        System.out.println( "Quantidade   : " + quantidade );
+        System.out.println("Quantidade   : " + quantidade);
 
-        conexao.executeUpdate( sql );
+        conexao.executeUpdate(sql);
 
     }
 
-    public int getQuantidadeProduto( int cod_produto )
-    {
+    public int getQuantidadeProduto(int cod_produto) {
 
         String sql = "SELECT quantidade_existente FROM  tb_stock WHERE  cod_produto_codigo = " + cod_produto + " AND cod_armazem = " + getCodigoArmazem();
 
-        ResultSet rs = conexao.executeQuery( sql );
+        ResultSet rs = conexao.executeQuery(sql);
 
-        try
-        {
-            if ( rs.next() )
-            {
-                return rs.getInt( "quantidade_existente" );
+        try {
+            if (rs.next()) {
+                return rs.getInt("quantidade_existente");
             }
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
             ex.printStackTrace();
             return 0;
         }
@@ -1977,23 +1763,18 @@ private void operacaoSalvar() throws SQLException {
         return 0;
     }
 
-    public int getQuantidadeProduto( int cod_produto, BDConexao conexaoParm )
-    {
+    public int getQuantidadeProduto(int cod_produto, BDConexao conexaoParm) {
 
         String sql = "SELECT quantidade_existente FROM  tb_stock WHERE  cod_produto_codigo = "
-                + cod_produto + " AND cod_armazem = " + getCodigoArmazem( conexaoParm );
+                + cod_produto + " AND cod_armazem = " + getCodigoArmazem(conexaoParm);
 
-        ResultSet rs = conexaoParm.executeQuery( sql );
+        ResultSet rs = conexaoParm.executeQuery(sql);
 
-        try
-        {
-            if ( rs.next() )
-            {
-                return rs.getInt( "quantidade_existente" );
+        try {
+            if (rs.next()) {
+                return rs.getInt("quantidade_existente");
             }
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
             ex.printStackTrace();
             return 0;
         }
@@ -2001,22 +1782,17 @@ private void operacaoSalvar() throws SQLException {
         return 0;
     }
 
-    public int getLastCodigo( String table )
-    {
+    public int getLastCodigo(String table) {
 
         String sql = "SELECT max(codigo) FROM " + table;
 
-        ResultSet rs = conexao.executeQuery( sql );
+        ResultSet rs = conexao.executeQuery(sql);
 
-        try
-        {
-            if ( rs.next() )
-            {
-                return rs.getInt( 1 );
+        try {
+            if (rs.next()) {
+                return rs.getInt(1);
             }
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
             ex.printStackTrace();
             return 0;
         }
@@ -2024,55 +1800,51 @@ private void operacaoSalvar() throws SQLException {
         return 0;
     }
 
-    private static int getCodigoArmazem()
-    {
-        return conexao.getCodigoPublico( "tb_armazem", String.valueOf( cmbArmazem.getSelectedItem() ) );
+    private static int getCodigoArmazem() {
+        return conexao.getCodigoPublico("tb_armazem", String.valueOf(cmbArmazem.getSelectedItem()));
     }
 
-    private static int getCodigoArmazem( BDConexao conexaoParm )
-    {
-        return conexaoParm.getCodigoPublico( "tb_armazem", String.valueOf( cmbArmazem.getSelectedItem() ) );
+    private static int getCodigoArmazem(BDConexao conexaoParm) {
+        return conexaoParm.getCodigoPublico("tb_armazem", String.valueOf(cmbArmazem.getSelectedItem()));
     }
 
-    public TbSaidasProdutos salvar_saidasProdutos() throws SQLException
-    {
+    public TbSaidasProdutos salvar_saidasProdutos() throws SQLException {
         TbSaidasProdutos saidasProdutos = new TbSaidasProdutos();
-        saidasProdutos.setDataSaida( new Date() );
-        saidasProdutos.setFkUsuario( new TbUsuario( cod_usuario ) );
-        saidasProdutos.setIdArmazemFK( new TbArmazem( getCodigoArmazem() ) );
-        saidasProdutos.setHoraSaida( new Date() );
-        saidasProdutos.setObs( txtAreaOBS.getText() );
-        saidasProdutos.setDocumento( txtCodigoDoc.getText() );
-        saidasProdutos.setNomeFuncionario( txtMotorista.getText() );
-        saidasProdutos.setStatusEliminado( "false" );
+        saidasProdutos.setDataSaida(new Date());
+        saidasProdutos.setFkUsuario(new TbUsuario(cod_usuario));
+        saidasProdutos.setIdArmazemFK(new TbArmazem(getCodigoArmazem()));
+        saidasProdutos.setHoraSaida(new Date());
+        saidasProdutos.setObs(txtAreaOBS.getText());
+        saidasProdutos.setDocumento(txtCodigoDoc.getText());
+        saidasProdutos.setArmazemDestino(
+                cmbArmazemDestino.getSelectedItem().toString()
+        );
+        saidasProdutos.setNomeFuncionario(txtMotorista.getText());
 
-        saidasProdutosController.inserir( saidasProdutos );
+        saidasProdutos.setStatusEliminado("false");
+
+        saidasProdutosController.inserir(saidasProdutos);
 
         return saidasProdutosController.buscarUltimaSaida();
     }
 
-    public String isPefromance( boolean performance )
-    {
-        if ( performance )
-        {
+    public String isPefromance(boolean performance) {
+        if (performance) {
             return "true";
         }
         return "false";
     }
 
-    public String isCredito( boolean credito )
-    {
-        if ( credito )
-        {
+    public String isCredito(boolean credito) {
+        if (credito) {
             return "true";
         }
         return "false";
     }
 
-    public static void main( String[] args ) throws SQLException
-    {
+    public static void main(String[] args) throws SQLException {
 
-        new SaidaProdutoVisao( 15, BDConexao.getInstancia() ).show( true );
+        new SaidaProdutoVisao(15, BDConexao.getInstancia()).show(true);
 
     }
 
@@ -2085,6 +1857,7 @@ private void operacaoSalvar() throws SQLException {
     public static javax.swing.JButton btn_remover;
     private javax.swing.ButtonGroup buttonGroup1;
     private static javax.swing.JComboBox cmbArmazem;
+    private static javax.swing.JComboBox cmbArmazemDestino;
     public static javax.swing.JComboBox cmbProduto;
     public static javax.swing.JComboBox cmbSubFamilia;
     private javax.swing.JButton jButton4;
@@ -2106,6 +1879,7 @@ private void operacaoSalvar() throws SQLException {
     private javax.swing.JLabel lbCodigoProduto3;
     private javax.swing.JLabel lbPreco1;
     private javax.swing.JLabel lbPreco2;
+    private javax.swing.JLabel lbPreco3;
     private javax.swing.JLabel lbProduto;
     private javax.swing.JLabel lbQuantidade;
     private javax.swing.JLabel lbQuantidadeStock;
@@ -2121,15 +1895,12 @@ private void operacaoSalvar() throws SQLException {
     public static javax.swing.JTextField txtQuatindade;
     // End of variables declaration//GEN-END:variables
 
-    private static boolean exist_produto( int codigo )
-    {
+    private static boolean exist_produto(int codigo) {
 
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-            if ( Integer.parseInt( String.valueOf( table.getValueAt( i, 0 ) ) ) == codigo )
-            {
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            if (Integer.parseInt(String.valueOf(table.getValueAt(i, 0))) == codigo) {
                 linha_actual = i;
                 return true;
             }
@@ -2140,183 +1911,141 @@ private void operacaoSalvar() throws SQLException {
 
     }
 
-    private static void actuazlizar_quantidade( String quantidade )
-    {
+    private static void actuazlizar_quantidade(String quantidade) {
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
-        modelo.setValueAt( quantidade, linha_actual, 3 );
+        modelo.setValueAt(quantidade, linha_actual, 3);
         linha_actual = -1;
 
     }
 
-    private void accao_codigo_interno_enter()
-    {
+    private void accao_codigo_interno_enter() {
 
-        try
-        {
+        try {
 
-            int codigo = Integer.parseInt( txtCodigoProduto.getText() );
-            TbProduto produto = produtoDao.findTbProduto( codigo );
+            int codigo = Integer.parseInt(txtCodigoProduto.getText());
+            TbProduto produto = produtoDao.findTbProduto(codigo);
 
             //Devo setar a combo dos produtos (Isto porque quando a se faz a busca na cmbCategoria remove todos os produtos exceptos os de categoria actual)
-            cmbProduto.setModel( new DefaultComboBoxModel( produtoDao.getAllDesingnacaoProduto() ) );
-            cmbProduto.setSelectedItem( produto.getDesignacao() );
+            cmbProduto.setModel(new DefaultComboBoxModel(produtoDao.getAllDesingnacaoProduto()));
+            cmbProduto.setSelectedItem(produto.getDesignacao());
             //adicionar_preco_quantidade();   
             adicionar_preco_quantidade_anitgo();
             procedimento_adicionar1();
-            txtCodigoProduto.setText( "" );
-            txtQuatindade.setText( "" );
+            txtCodigoProduto.setText("");
+            txtQuatindade.setText("");
             txtQuatindade.requestFocus();
 
-        }
-        catch ( Exception ex )
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
-            Logger.getLogger( VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
-            JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+            Logger.getLogger(VendaUsuarioVisao.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
         }
 
     }
 
-    public void adicionar_preco_quantidade_anitgo()
-    {
+    public void adicionar_preco_quantidade_anitgo() {
 
-        try
-        {
+        try {
 
-            if ( conexao.getQtdExistenteStock( getCodigoProduto(), getCodigoArmazem() ) <= conexao.getQtdCriticaStock( getCodigoProduto(), getCodigoArmazem() ) )
-            {
-                txtQuantidaStock.setBackground( Color.RED );
-                txtQuantidaStock.setForeground( Color.BLACK );
+            if (conexao.getQtdExistenteStock(getCodigoProduto(), getCodigoArmazem()) <= conexao.getQtdCriticaStock(getCodigoProduto(), getCodigoArmazem())) {
+                txtQuantidaStock.setBackground(Color.RED);
+                txtQuantidaStock.setForeground(Color.BLACK);
+            } else {
+                txtQuantidaStock.setBackground(new Color(51, 153, 0, 255));
             }
 
-            else
-            {
-                txtQuantidaStock.setBackground( new Color( 51, 153, 0, 255 ) );
-            }
+            txtQuantidaStock.setText(String.valueOf(conexao.getQtdExistenteStock(getCodigoProduto(), getCodigoArmazem())));
 
-            txtQuantidaStock.setText( String.valueOf( conexao.getQtdExistenteStock( getCodigoProduto(), getCodigoArmazem() ) ) );
-
-        }
-        catch ( Exception ex )
-        {
-            Logger.getLogger( SaidaProdutoVisao.class.getName() ).log( Level.SEVERE, null, ex );
+        } catch (Exception ex) {
+            Logger.getLogger(SaidaProdutoVisao.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
 
-    public void procedimento_adicionar1()
-    {
+    public void procedimento_adicionar1() {
 
-        try
-        {
+        try {
 
-            if ( !campos_invalidos() )
-            {
+            if (!campos_invalidos()) {
 
-                if ( isStocavel( produtoDao.findTbProduto( getCodigoProduto() ).getStocavel() ) )
-                {
-                    if ( possivel_quantidade() )
-                    {
+                if (isStocavel(produtoDao.findTbProduto(getCodigoProduto()).getStocavel())) {
+                    if (possivel_quantidade()) {
 
-                        if ( estado_critico() )
-                        {
-                            JOptionPane.showMessageDialog( null, "O produto: " + produtoDao.findTbProduto( getCodigoProduto() ).getDesignacao() + " precisa de ser actualizado no stock", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+                        if (estado_critico()) {
+                            JOptionPane.showMessageDialog(null, "O produto: " + produtoDao.findTbProduto(getCodigoProduto()).getDesignacao() + " precisa de ser actualizado no stock", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
                         }
                         adicionar_produto();
 
-                    }
-                    else
-                    {
-                        JOptionPane.showMessageDialog( null, "O produto: " + produtoDao.findTbProduto( getCodigoProduto() ).getDesignacao() + " não pode sair pra esta quantidade", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+                    } else {
+                        JOptionPane.showMessageDialog(null, "O produto: " + produtoDao.findTbProduto(getCodigoProduto()).getDesignacao() + " não pode sair pra esta quantidade", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
                     }
 
-                }
-                else
-                {
+                } else {
                     adicionar_produto();
                 }
 
-            }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Por Favor Digite a Quantidade" );
+            } else {
+                JOptionPane.showMessageDialog(null, "Por Favor Digite a Quantidade");
             }
 
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
 
         }
 
     }
 
-    private void accao_codigo_barra_enter()
-    {
+    private void accao_codigo_barra_enter() {
 
         String codigo_barra = txtCodigoBarra.getText().trim();
 
-        TbProduto produto = produtoDao.getProdutoByCodigoBarra( codigo_barra );
-        cmbProduto.setModel( new DefaultComboBoxModel( produtoDao.getAllDesingnacaoProduto() ) );
-        cmbProduto.setSelectedItem( produto.getDesignacao() );
+        TbProduto produto = produtoDao.getProdutoByCodigoBarra(codigo_barra);
+        cmbProduto.setModel(new DefaultComboBoxModel(produtoDao.getAllDesingnacaoProduto()));
+        cmbProduto.setSelectedItem(produto.getDesignacao());
         adicionar_preco_quantidade_anitgo();
         procedimento_adicionar1();
-        txtCodigoBarra.setText( "" );
-        txtQuatindade.setText( "1" );
+        txtCodigoBarra.setText("");
+        txtQuatindade.setText("1");
         txtQuatindade.requestFocus();
 
     }
 
-    private void accao_codigo_manual_enter()
-    {
+    private void accao_codigo_manual_enter() {
 
         String codigo_barra = txtCodigoManual.getText().trim();
 
-        TbProduto produto = produtoDao.getProdutoByCodigoManual( codigo_barra );
-        cmbProduto.setModel( new DefaultComboBoxModel( produtoDao.getAllDesingnacaoProduto() ) );
-        cmbProduto.setSelectedItem( produto.getDesignacao() );
+        TbProduto produto = produtoDao.getProdutoByCodigoManual(codigo_barra);
+        cmbProduto.setModel(new DefaultComboBoxModel(produtoDao.getAllDesingnacaoProduto()));
+        cmbProduto.setSelectedItem(produto.getDesignacao());
         adicionar_preco_quantidade_anitgo();
         procedimento_adicionar1();
-        txtCodigoManual.setText( "" );
-        txtQuatindade.setText( "1" );
+        txtCodigoManual.setText("");
+        txtQuatindade.setText("1");
         txtQuatindade.requestFocus();
 
     }
 
-    private static BigDecimal getPreco()
-    {
-        try
-        {
-            return precosController.getLastIdPrecoByIdProduto( getCodigoProduto(), getQuantidade() ).getPrecoCompra();
-        }
-        catch ( Exception e )
-        {
-            return new BigDecimal( 0d );
+    private static BigDecimal getPreco() {
+        try {
+            return precosController.getLastIdPrecoByIdProduto(getCodigoProduto(), getQuantidade()).getPrecoCompra();
+        } catch (Exception e) {
+            return new BigDecimal(0d);
         }
     }
 
-    private static BigDecimal getPreco( int codigo, double qtd )
-    {
-        try
-        {
-            return precosController.getLastIdPrecoByIdProduto( codigo, qtd ).getPrecoCompra();
-        }
-        catch ( Exception e )
-        {
-            return new BigDecimal( 0d );
+    private static BigDecimal getPreco(int codigo, double qtd) {
+        try {
+            return precosController.getLastIdPrecoByIdProduto(codigo, qtd).getPrecoCompra();
+        } catch (Exception e) {
+            return new BigDecimal(0d);
         }
 
     }
 
-    public static SaidaProdutoVisao getObj( int cod_usuario )
-    {
-        if ( obj == null )
-        {
-            try
-            {
-                obj = new SaidaProdutoVisao( cod_usuario, conexao );
-            }
-            catch ( Exception e )
-            {
+    public static SaidaProdutoVisao getObj(int cod_usuario) {
+        if (obj == null) {
+            try {
+                obj = new SaidaProdutoVisao(cod_usuario, conexao);
+            } catch (Exception e) {
             }
         }
 
@@ -2324,125 +2053,117 @@ private void operacaoSalvar() throws SQLException {
 
     }
 
-    public void actualizar_quantidade( int cod, double quantidade, int idArmazem, BDConexao conexaoParm )
-    {
+    public void actualizar_quantidade(int cod, double quantidade, int idArmazem, BDConexao conexaoParm) {
 
         String sql = "UPDATE tb_stock SET quantidade_existente =  "
-                + ( getQuantidadeProduto( cod ) - quantidade )
+                + (getQuantidadeProduto(cod) - quantidade)
                 + " WHERE cod_produto_codigo = " + cod + " AND cod_armazem = " + idArmazem;
 
-        conexaoParm.executeUpdate( sql );
+        conexaoParm.executeUpdate(sql);
 
     }
 
-    public void actualizar_quantidade( int cod, double quantidade, int idArmazem )
-    {
+    public void actualizar_quantidade(int cod, double quantidade, int idArmazem) {
 
-        String sql = "UPDATE tb_stock SET quantidade_existente =  " + ( getQuantidadeProduto( cod ) - quantidade ) + " WHERE cod_produto_codigo = " + cod + " AND cod_armazem = " + idArmazem;
+        String sql = "UPDATE tb_stock SET quantidade_existente =  " + (getQuantidadeProduto(cod) - quantidade) + " WHERE cod_produto_codigo = " + cod + " AND cod_armazem = " + idArmazem;
 
-        conexao.executeUpdate( sql );
+        conexao.executeUpdate(sql);
 
     }
 
-    public void actualizar_quantidade_mais( int cod, double quantidade, int idArmazem )
-    {
+    public void actualizar_quantidade_mais(int cod, double quantidade, int idArmazem) {
 
-        String sql = "UPDATE tb_stock SET quantidade_existente =  " + ( getQuantidadeProduto( cod ) + quantidade ) + " WHERE cod_produto_codigo = " + cod + " AND cod_armazem = " + idArmazem;
+        String sql = "UPDATE tb_stock SET quantidade_existente =  " + (getQuantidadeProduto(cod) + quantidade) + " WHERE cod_produto_codigo = " + cod + " AND cod_armazem = " + idArmazem;
 
-        conexao.executeUpdate( sql );
+        conexao.executeUpdate(sql);
 
     }
 
     private void procedimentoActualizarSaida() throws SQLException {
-    Connection conn = null;
+        Connection conn = null;
 
-    try {
-        // 🔹 Obtém a conexão ativa para a transação
-        conn = this.conexao.getConnectionAtiva();
-        conn.setAutoCommit(false);
+        try {
+            // 🔹 Obtém a conexão ativa para a transação
+            conn = this.conexao.getConnectionAtiva();
+            conn.setAutoCommit(false);
 
-        // 🔹 Inicializa controladores com a MESMA conexão
-        saidasProdutosController = new SaidasProdutosController(conn);
-        itemSaidasController = new ItemSaidasController(conn);
-        stoksController = new StoksController(this.conexao); // continua recebendo BDConexao
+            // 🔹 Inicializa controladores com a MESMA conexão
+            saidasProdutosController = new SaidasProdutosController(conn);
+            itemSaidasController = new ItemSaidasController(conn);
+            stoksController = new StoksController(this.conexao); // continua recebendo BDConexao
 
-        // 🔹 1. Atualiza dados principais da saída
-        TbSaidasProdutos saidasProdutos = atualizar_saidasProdutos();
+            // 🔹 1. Atualiza dados principais da saída
+            TbSaidasProdutos saidasProdutos = atualizar_saidasProdutos();
 
-        // 🔹 2. Atualiza os itens vinculados
-        actluazarItemsaidasProdutos(saidasProdutos);
+            // 🔹 2. Atualiza os itens vinculados
+            actluazarItemsaidasProdutos(saidasProdutos);
 
-        // 🔹 3. Confirma transação
-        conn.commit();
-        JOptionPane.showMessageDialog(null, "Saída de Produtos actualizada com sucesso!..");
+            // 🔹 3. Confirma transação
+            conn.commit();
+            JOptionPane.showMessageDialog(null, "Saída de Produtos actualizada com sucesso!..");
 
-        // 🔹 4. Limpeza e atualização da interface
-        limpar();
-        remover_all_produto();
-        txtQuatindade.requestFocus();
-        new ListaSaidaProdutos(saidasProdutos.getPkSaidasProdutos());
+            // 🔹 4. Limpeza e atualização da interface
+            limpar();
+            remover_all_produto();
+            txtQuatindade.requestFocus();
+            new ListaSaidaProdutos(saidasProdutos.getPkSaidasProdutos());
 
-    } catch (Exception e) {
-        e.printStackTrace();
-        // 🔹 Rollback na MESMA conexão em caso de erro
-        if (conn != null) {
-            try {
-                conn.rollback();
-                JOptionPane.showMessageDialog(null, "Erro ao actualizar. Transação revertida!");
-            } catch (SQLException ex) {
-                ex.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+            // 🔹 Rollback na MESMA conexão em caso de erro
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                    JOptionPane.showMessageDialog(null, "Erro ao actualizar. Transação revertida!");
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
             }
-        }
-    } finally {
-        // 🔹 Fecha a conexão e restaura autoCommit
-        if (conn != null) {
-            try {
-                conn.setAutoCommit(true);
-                conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
+        } finally {
+            // 🔹 Fecha a conexão e restaura autoCommit
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
-        }
 
-        // 🔹 Reabre controladores para próximas operações
-        Connection novaConn = this.conexao.getConnection(); // pode lançar SQLException
-        saidasProdutosController = new SaidasProdutosController(novaConn);
-        itemSaidasController = new ItemSaidasController(novaConn);
-        stoksController = new StoksController(this.conexao);
+            // 🔹 Reabre controladores para próximas operações
+            Connection novaConn = this.conexao.getConnection(); // pode lançar SQLException
+            saidasProdutosController = new SaidasProdutosController(novaConn);
+            itemSaidasController = new ItemSaidasController(novaConn);
+            stoksController = new StoksController(this.conexao);
+        }
     }
-}
 
+    public TbSaidasProdutos atualizar_saidasProdutos() throws SQLException {
+        TbSaidasProdutos saidasProdutos = listaItemSaida.get(0).getFkSaidasProdutos();
+        saidasProdutos.setDataSaida(new Date());
+        saidasProdutos.setFkUsuario(new TbUsuario(cod_usuario));
+        saidasProdutos.setIdArmazemFK(new TbArmazem(getCodigoArmazem()));
+        saidasProdutos.setHoraSaida(new Date());
+        saidasProdutos.setObs(txtAreaOBS.getText());
+        saidasProdutos.setDocumento(txtCodigoDoc.getText());
+        saidasProdutos.setNomeFuncionario(txtMotorista.getText());
+        saidasProdutos.setArmazemDestino(
+                cmbArmazemDestino.getSelectedItem().toString()
+        );
+        saidasProdutos.setStatusEliminado("false");
 
-    public TbSaidasProdutos atualizar_saidasProdutos() throws SQLException
-    {
-        TbSaidasProdutos saidasProdutos = listaItemSaida.get( 0 ).getFkSaidasProdutos();
-        saidasProdutos.setDataSaida( new Date() );
-        saidasProdutos.setFkUsuario( new TbUsuario( cod_usuario ) );
-        saidasProdutos.setIdArmazemFK( new TbArmazem( getCodigoArmazem() ) );
-        saidasProdutos.setHoraSaida( new Date() );
-        saidasProdutos.setObs( txtAreaOBS.getText() );
-        saidasProdutos.setDocumento( txtCodigoDoc.getText() );
-        saidasProdutos.setNomeFuncionario( txtMotorista.getText() );
-        saidasProdutos.setStatusEliminado( "false" );
-
-        saidasProdutosController.atualizar( saidasProdutos );
+        saidasProdutosController.atualizar(saidasProdutos);
 
         return saidasProdutos;
     }
 
-    private String getTipo( Integer codigo, double quantidade )
-    {
+    private String getTipo(Integer codigo, double quantidade) {
 
-        for ( TbItemSaidas linha : listaItemSaida )
-        {
-            if ( linha.getFkProdutos().getCodigo() == codigo )
-            {
-                if ( linha.getQuantidade() < quantidade )
-                {
+        for (TbItemSaidas linha : listaItemSaida) {
+            if (linha.getFkProdutos().getCodigo() == codigo) {
+                if (linha.getQuantidade() < quantidade) {
                     return "SAIDA";
-                }
-                else
-                {
+                } else {
                     return "ENTRADA";
                 }
             }
@@ -2450,18 +2171,12 @@ private void operacaoSalvar() throws SQLException {
         return "SAIDA";
     }
 
-    private double getQtdAcertar( Integer codigo, double quantidade )
-    {
-        for ( TbItemSaidas linha : listaItemSaida )
-        {
-            if ( linha.getFkProdutos().getCodigo() == codigo )
-            {
-                if ( linha.getQuantidade() >= quantidade )
-                {
+    private double getQtdAcertar(Integer codigo, double quantidade) {
+        for (TbItemSaidas linha : listaItemSaida) {
+            if (linha.getFkProdutos().getCodigo() == codigo) {
+                if (linha.getQuantidade() >= quantidade) {
                     return linha.getQuantidade() - quantidade;
-                }
-                else
-                {
+                } else {
                     return quantidade - linha.getQuantidade();
                 }
             }
@@ -2469,98 +2184,78 @@ private void operacaoSalvar() throws SQLException {
         return quantidade;
     }
 
-    private double getQtdAnterior( Integer codigo )
-    {
-        System.out.println( "SIZE$$$$$: " + listaItemSaida.size() );
-        for ( TbItemSaidas linha : listaItemSaida )
-        {
-            if ( linha.getFkProdutos().getCodigo() == codigo )
-            {
+    private double getQtdAnterior(Integer codigo) {
+        System.out.println("SIZE$$$$$: " + listaItemSaida.size());
+        for (TbItemSaidas linha : listaItemSaida) {
+            if (linha.getFkProdutos().getCodigo() == codigo) {
                 return linha.getQuantidade();
             }
         }
         return 0;
     }
 
-    public class UppercaseDocumentFilter extends DocumentFilter
-    {
+    public class UppercaseDocumentFilter extends DocumentFilter {
 
         @Override
-        public void insertString( FilterBypass fb, int offset, String text, AttributeSet attr ) throws BadLocationException
-        {
-            if ( text != null )
-            {
-                super.insertString( fb, offset, text.toUpperCase(), attr );
+        public void insertString(FilterBypass fb, int offset, String text, AttributeSet attr) throws BadLocationException {
+            if (text != null) {
+                super.insertString(fb, offset, text.toUpperCase(), attr);
             }
         }
 
         @Override
-        public void replace( FilterBypass fb, int offset, int length, String text, AttributeSet attrs ) throws BadLocationException
-        {
-            if ( text != null )
-            {
-                super.replace( fb, offset, length, text.toUpperCase(), attrs );
+        public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+            if (text != null) {
+                super.replace(fb, offset, length, text.toUpperCase(), attrs);
             }
         }
     }
 
     // Configura a tabela: define se uma coluna é editável ou não, e valida double
-    public void configurarColunaDouble( JTable tabela, int colunaIndex, boolean editavel )
-    {
+    public void configurarColunaDouble(JTable tabela, int colunaIndex, boolean editavel) {
         DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
 
         DefaultTableModel modeloCustom = new DefaultTableModel(
                 modelo.getDataVector(),
-                getColumnNames( modelo )
-        )
-        {
+                getColumnNames(modelo)
+        ) {
             @Override
-            public boolean isCellEditable( int row, int column )
-            {
+            public boolean isCellEditable(int row, int column) {
                 // Só será editável se o parâmetro permitir e for a coluna escolhida
                 return editavel && column == colunaIndex;
             }
         };
 
-        tabela.setModel( modeloCustom );
+        tabela.setModel(modeloCustom);
 
-        if ( editavel )
-        {
-            configurarEditorDouble( tabela, colunaIndex );
+        if (editavel) {
+            configurarEditorDouble(tabela, colunaIndex);
         }
     }
 
 // Retorna os nomes das colunas do modelo
-    private Vector<String> getColumnNames( DefaultTableModel modelo )
-    {
+    private Vector<String> getColumnNames(DefaultTableModel modelo) {
         Vector<String> colunas = new Vector<>();
-        for ( int i = 0; i < modelo.getColumnCount(); i++ )
-        {
-            colunas.add( modelo.getColumnName( i ) );
+        for (int i = 0; i < modelo.getColumnCount(); i++) {
+            colunas.add(modelo.getColumnName(i));
         }
         return colunas;
     }
 
 // Configura o editor da coluna para aceitar apenas double
-    private void configurarEditorDouble( JTable tabela, int colunaIndex )
-    {
+    private void configurarEditorDouble(JTable tabela, int colunaIndex) {
 
-        tabela.getColumnModel().getColumn( colunaIndex ).setCellEditor(
-                new DefaultCellEditor( new JTextField() )
-        {
+        tabela.getColumnModel().getColumn(colunaIndex).setCellEditor(
+                new DefaultCellEditor(new JTextField()) {
             @Override
-            public boolean stopCellEditing()
-            {
-                try
-                {
+            public boolean stopCellEditing() {
+                try {
                     String value = (String) getCellEditorValue();
-                    Double.parseDouble( value ); // valida número decimal
+                    Double.parseDouble(value); // valida número decimal
 
                     return super.stopCellEditing();
-                }
-                catch ( NumberFormatException e )
-                {
-                    JOptionPane.showMessageDialog( null, "Digite um número válido (ex: 1 ou 1.4)!" );
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(null, "Digite um número válido (ex: 1 ou 1.4)!");
                     return false;
                 }
             }
@@ -2568,42 +2263,35 @@ private void operacaoSalvar() throws SQLException {
         );
     }
 
-    private void verificar()
-    {
+    private void verificar() {
 
-        try
-        {
+        try {
             int linhaSelecionada = table.getSelectedRow();
 
-            if ( linhaSelecionada > -1 )
-            {
-                int codigo = Integer.parseInt( table.getValueAt( linhaSelecionada, 0 ).toString() );
-                double qtd = Double.parseDouble( table.getValueAt( linhaSelecionada, 3 ).toString() );
+            if (linhaSelecionada > -1) {
+                int codigo = Integer.parseInt(table.getValueAt(linhaSelecionada, 0).toString());
+                double qtd = Double.parseDouble(table.getValueAt(linhaSelecionada, 3).toString());
 
-                String tipo = getTipo( codigo, qtd );
-                double qtdAcertar = getQtdAcertar( codigo, qtd );
-                System.err.println( "LINHA SELECIONADA: " + linhaSelecionada );
+                String tipo = getTipo(codigo, qtd);
+                double qtdAcertar = getQtdAcertar(codigo, qtd);
+                System.err.println("LINHA SELECIONADA: " + linhaSelecionada);
 
-                System.out.println( "CODIGO: " + codigo );
-                System.out.println( "QTD: " + qtd );
-                System.out.println( "QTD ACERTAR: " + qtdAcertar );
+                System.out.println("CODIGO: " + codigo);
+                System.out.println("QTD: " + qtd);
+                System.out.println("QTD ACERTAR: " + qtdAcertar);
 
-                if ( tipo.equals( "SAIDA" ) )
-                {
-                    if ( !possivel_quantidade( codigo, qtdAcertar ) )
-                    {
-                        double qtdAnterior = getQtdAnterior( codigo );
-                        System.err.println( "Quantidade Anterior: " + qtdAnterior );
-                        table.getModel().setValueAt( qtdAnterior, linhaSelecionada, 3 );
-                        JOptionPane.showMessageDialog( null, "Não é possivel actualizar para esta quantidade" );
+                if (tipo.equals("SAIDA")) {
+                    if (!possivel_quantidade(codigo, qtdAcertar)) {
+                        double qtdAnterior = getQtdAnterior(codigo);
+                        System.err.println("Quantidade Anterior: " + qtdAnterior);
+                        table.getModel().setValueAt(qtdAnterior, linhaSelecionada, 3);
+                        JOptionPane.showMessageDialog(null, "Não é possivel actualizar para esta quantidade");
 
                     }
                 }
             }
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

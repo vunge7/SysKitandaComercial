@@ -256,8 +256,7 @@ public class RootVisao extends javax.swing.JFrame
      */
     @SuppressWarnings( "unchecked" )
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents()
-    {
+    private void initComponents() {
 
         jMenuItem6 = new javax.swing.JMenuItem();
         jRadioButtonMenuItem1 = new javax.swing.JRadioButtonMenuItem();
@@ -304,10 +303,8 @@ public class RootVisao extends javax.swing.JFrame
 
         btnComercial.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/pagamentos diversos.png"))); // NOI18N
         btnComercial.setText("GESTÃO COMERCIAL");
-        btnComercial.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnComercial.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnComercialActionPerformed(evt);
             }
         });
@@ -315,10 +312,8 @@ public class RootVisao extends javax.swing.JFrame
 
         btnRH.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagem/rheste.png"))); // NOI18N
         btnRH.setText("RH");
-        btnRH.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnRH.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRHActionPerformed(evt);
             }
         });
@@ -326,40 +321,32 @@ public class RootVisao extends javax.swing.JFrame
 
         btnTesouraria.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagem/tesoueste.jpg"))); // NOI18N
         btnTesouraria.setText("TESOURARIA");
-        btnTesouraria.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnTesouraria.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnTesourariaActionPerformed(evt);
             }
         });
         jPanel1.add(btnTesouraria, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 40, 220, 210));
 
         btRh.setText("Gestão Recursos Humanos");
-        btRh.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btRh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btRhActionPerformed(evt);
             }
         });
         jPanel1.add(btRh, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 10, 220, 30));
 
         btComercial.setText("Gestão Comercial");
-        btComercial.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btComercial.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btComercialActionPerformed(evt);
             }
         });
         jPanel1.add(btComercial, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 220, 30));
 
         btTesouraria.setText("Gestão Tesouraria");
-        btTesouraria.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btTesouraria.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btTesourariaActionPerformed(evt);
             }
         });
@@ -367,93 +354,73 @@ public class RootVisao extends javax.swing.JFrame
 
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LOGOUT - VERMELHO/Logout 32x32.png"))); // NOI18N
         jButton4.setText("Saír");
-        jButton4.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
             }
         });
 
         bdBackupJButton.setText("Backup");
-        bdBackupJButton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        bdBackupJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bdBackupJButtonActionPerformed(evt);
             }
         });
 
         btn_abertura_dia_root.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagem/caixa_32x_32.png"))); // NOI18N
         btn_abertura_dia_root.setText("Abertura de Caixa");
-        btn_abertura_dia_root.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_abertura_dia_root.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_abertura_dia_rootActionPerformed(evt);
             }
         });
 
         btn_feicho_dia_root.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/1323444801_currency_dollar red.png"))); // NOI18N
         btn_feicho_dia_root.setText("Fecho de Caixa");
-        btn_feicho_dia_root.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_feicho_dia_root.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_feicho_dia_rootActionPerformed(evt);
             }
         });
 
         btnEsvaziaBD.setText("Esvazia BD");
-        btnEsvaziaBD.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnEsvaziaBD.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEsvaziaBDActionPerformed(evt);
             }
         });
 
         btn_actualiza_hash.setText("Act_Hash");
-        btn_actualiza_hash.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_actualiza_hash.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_actualiza_hashActionPerformed(evt);
             }
         });
 
         btConfiguracaoSistema.setText("Configuração Módulos");
-        btConfiguracaoSistema.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btConfiguracaoSistema.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btConfiguracaoSistemaActionPerformed(evt);
             }
         });
 
         btnGerarScriptActualizacao.setText("Gerar Sript de Actualizacao");
-        btnGerarScriptActualizacao.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnGerarScriptActualizacao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnGerarScriptActualizacaoActionPerformed(evt);
             }
         });
 
         bt_desencriptar.setText("Desencriptar");
-        bt_desencriptar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        bt_desencriptar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bt_desencriptarActionPerformed(evt);
             }
         });
 
         jButton1.setText("BK");
-        jButton1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });

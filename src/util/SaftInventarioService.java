@@ -1,23 +1,28 @@
 package util;
 
-import comercial.controller.DadosInstituicaoController;
 import comercial.controller.PrecosController;
-import entity.TbDadosInstituicao;
 import entity.TbPreco;
 import entity.TbProduto;
 import entity.TbStock;
-import org.w3c.dom.*;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Comment;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SaftInventarioService {
 
@@ -25,165 +30,131 @@ public class SaftInventarioService {
             List<TbProduto> produtos,
             String caminho,
             LocalDate dataInicio,
-            LocalDate dataFim) {
+            LocalDate dataFim) throws Exception {
 
-        try {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.newDocument();
 
-            if (produtos == null || produtos.isEmpty()) {
-                throw new RuntimeException("Sem produtos para gerar SAFT!");
-            }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-            // 🔥 Controller de preços
-            PrecosController precosController = new PrecosController(BDConexao.getInstancia());
+        // 🔹 ROOT
+        Element root = doc.createElement("SAFTInventario");
+        doc.appendChild(root);
 
-            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Document doc = builder.newDocument();
+        // 🔹 HEADER
+        Element header = doc.createElement("StockHeader");
+        root.appendChild(header);
 
-            Element root = doc.createElement("SAFTInventario");
-            doc.appendChild(root);
+        add(doc, header, "TaxRegistrationNumber", "123456");
+        add(doc, header, "FiscalYear", String.valueOf(dataInicio.getYear()));
+        add(doc, header, "StartDate", dataInicio.format(formatter));
+        add(doc, header, "EndDate", dataFim.format(formatter));
+        add(doc, header, "CurrencyCode", "AOA");
+        add(doc, header, "DateCreated", LocalDate.now().format(formatter));
+        add(doc, header, "ProductID", "Kitanda");
+        add(doc, header, "ProductVersion", "1.1");
 
-            // ================= HEADER =================
-            TbDadosInstituicao dados = DadosInstituicaoController.getDados();
+        // 🔹 STOCK LINES
+        Element stockLines = doc.createElement("StockLines");
+        root.appendChild(stockLines);
 
-            Element header = doc.createElement("StockHeader");
-            root.appendChild(header);
+        boolean temStock = false;
 
-            add(doc, header, "TaxRegistrationNumber", dados.getNif());
-            add(doc, header, "FiscalYear", String.valueOf(dataInicio.getYear()));
-            add(doc, header, "StartDate", dataInicio.toString());
-            add(doc, header, "EndDate", dataFim.toString());
-            add(doc, header, "CurrencyCode", "AOA");
-            add(doc, header, "DateCreated", LocalDate.now().toString());
-            add(doc, header, "ProductID", "Kitanda");
-            add(doc, header, "ProductVersion", "1.1");
+        // 🔥 CONTROLLER DE PREÇOS
+        BDConexao conexao = BDConexao.getInstancia();
+        PrecosController precosController = new PrecosController(conexao);
 
-            // ================= STOCK =================
-            Element stock = doc.createElement("Stock");
-            root.appendChild(stock);
+        // 🔥 CACHE (evita várias queries)
+        Map<Integer, BigDecimal> cachePrecos = new HashMap<>();
 
-            int totalProdutos = 0;
-
+        if (produtos != null) {
             for (TbProduto p : produtos) {
 
-                System.out.println("Produto: " + p.getDesignacao());
+                if (p.getTbStockList() != null && !p.getTbStockList().isEmpty()) {
 
-                // 🔥 Validar stocável
-                if (!isStocavel(p.getStocavel())) {
-                    System.out.println("❌ Ignorado (não stocável)");
-                    continue;
-                }
+                    for (TbStock s : p.getTbStockList()) {
 
-                if (p.getTbStockList() == null || p.getTbStockList().isEmpty()) {
-                    System.out.println("❌ Ignorado (sem stock)");
-                    continue;
-                }
+                        if (s.getQuantidadeExistente() > 0) {
 
-                // 🔹 Quantidade total
-                double qtdTotal = p.getTbStockList().stream()
-                        .mapToDouble(s -> s.getQuantidadeExistente() != null ? s.getQuantidadeExistente() : 0)
-                        .sum();
+                            temStock = true;
 
-                if (qtdTotal <= 0) {
-                    System.out.println("❌ Ignorado (quantidade zero)");
-                    continue;
-                }
+                            Element stockLine = doc.createElement("StockLine");
 
-                // ================= PREÇO REAL =================
-                BigDecimal preco = BigDecimal.ZERO;
+                            add(doc, stockLine, "ProductCode", String.valueOf(p.getCodigo()));
+                            add(doc, stockLine, "ProductDescription", p.getDesignacao());
+                            add(doc, stockLine, "ProductType", "P");
 
-                try {
-                    TbPreco ultimoPreco = precosController.getLastIdPrecoByIdProduto1(
-                            p.getCodigo(),
-                            BigDecimal.valueOf(qtdTotal)
-                    );
+                            // 🔹 Quantidade formatada
+                            BigDecimal qtd = BigDecimal.valueOf(s.getQuantidadeExistente())
+                                    .setScale(2, RoundingMode.HALF_UP);
 
-                    if (ultimoPreco != null && ultimoPreco.getPrecoVenda() != null) {
-                        preco = ultimoPreco.getPrecoVenda();
-                        System.out.println("✔ Preço encontrado: " + preco);
-                    } else {
-                        System.out.println("⚠ Preço não encontrado, usando 0");
+                            add(doc, stockLine, "ClosingStockQuantity", qtd.toString());
+
+                            // 🔥 BUSCAR PREÇO (COM CACHE)
+                            BigDecimal valor;
+
+                            if (cachePrecos.containsKey(p.getCodigo())) {
+                                valor = cachePrecos.get(p.getCodigo());
+                            } else {
+
+                                TbPreco preco = precosController.getLastIdPrecoByIdProduto1(
+                                        p.getCodigo(),
+                                        qtd
+                                );
+
+                                if (preco != null && preco.getPrecoCompra() != null) {
+                                    valor = preco.getPrecoCompra();
+                                } else {
+                                    valor = BigDecimal.ZERO;
+                                }
+
+                                valor = valor.setScale(2, RoundingMode.HALF_UP);
+
+                                cachePrecos.put(p.getCodigo(), valor);
+                            }
+
+                            add(doc, stockLine, "UnitPrice", valor.toString());
+
+                            stockLines.appendChild(stockLine);
+                        }
                     }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
-
-                BigDecimal total = preco.multiply(BigDecimal.valueOf(qtdTotal))
-                        .setScale(2, RoundingMode.HALF_UP);
-
-                // ================= PRODUCT =================
-                Element prod = doc.createElement("Product");
-
-                add(doc, prod, "ProductType", "M");
-                add(doc, prod, "ProductCode", "P" + p.getCodigo());
-
-                add(doc, prod, "ProductDescription",
-                        p.getDesignacao() != null ? p.getDesignacao() : "SEM DESCRIÇÃO");
-
-                BigDecimal qtd = BigDecimal.valueOf(qtdTotal)
-                        .setScale(2, RoundingMode.HALF_UP);
-
-                add(doc, prod, "Quantity", qtd.toString());
-
-                add(doc, prod, "UnitOfMeasure", getUnidade(
-                        p.getCodUnidade() != null ? p.getCodUnidade().getDescricao() : null
-                ));
-
-                add(doc, prod, "Value", total.toString());
-
-                stock.appendChild(prod);
-                totalProdutos++;
             }
-
-            if (totalProdutos == 0) {
-                System.out.println("⚠ Nenhum produto foi adicionado ao SAFT!");
-            } else {
-                System.out.println("✔ Total produtos no SAFT: " + totalProdutos);
-            }
-
-            // ================= INVENTORY =================
-            Element inv = doc.createElement("InventoryValuation");
-            root.appendChild(inv);
-
-            add(doc, inv, "CostMethod", "CMP");
-
-            // ================= SALVAR =================
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-
-            transformer.transform(new DOMSource(doc), new StreamResult(new File(caminho)));
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+
+        // 🔥 SEM STOCK → COMENTÁRIO
+        if (!temStock) {
+            stockLines.appendChild(doc.createTextNode("\n"));
+            Comment comentario = doc.createComment(" vazio porque não há inventário ");
+            stockLines.appendChild(comentario);
+            stockLines.appendChild(doc.createTextNode("\n"));
+        }
+
+        // 🔹 INVENTORY VALUATION
+        Element valuation = doc.createElement("InventoryValuation");
+        root.appendChild(valuation);
+
+        add(doc, valuation, "CostMethod", "CMP");
+
+        // 🔹 ESCREVER XML
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer transformer = tf.newTransformer();
+
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+
+        DOMSource source = new DOMSource(doc);
+        StreamResult result = new StreamResult(new File(caminho));
+
+        transformer.transform(source, result);
     }
 
-    // ================= AUXILIAR =================
+    // 🔹 MÉTODO AUXILIAR
     private static void add(Document doc, Element parent, String tag, String value) {
-        Element el = doc.createElement(tag);
-        el.appendChild(doc.createTextNode(value != null ? value : ""));
-        parent.appendChild(el);
-    }
-
-    private static boolean isStocavel(String st) {
-        if (st == null) return false;
-        st = st.trim().toLowerCase();
-        return st.equals("true") || st.equals("s") || st.equals("1");
-    }
-
-    private static String getUnidade(String desc) {
-
-        if (desc == null) return "UN";
-
-        desc = desc.toLowerCase();
-
-        if (desc.contains("kg")) return "KG";
-        if (desc.contains("lit")) return "LT";
-        if (desc.contains("g")) return "G";
-        if (desc.contains("un")) return "UN";
-
-        return "UN";
+        Element e = doc.createElement(tag);
+        e.setTextContent(value);
+        parent.appendChild(e);
     }
 }

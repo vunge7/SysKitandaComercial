@@ -2,9 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="factura" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" uuid="0de43986-9be5-410e-aaa3-7f1419d0abca">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="2.415765000000001"/>
-	<property name="ireport.x" value="70"/>
-	<property name="ireport.y" value="720"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="48"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -60,6 +60,7 @@
      tb_venda.`cod_fact` AS tb_venda_cod_fact,
      tb_venda.`assinatura` AS tb_venda_assinatura,
      tb_venda.`obs` AS tb_venda_obs,
+     tb_venda.`referencia` AS tb_venda_referencia,
      tb_venda.`hash_cod` AS tb_venda_hash_cod,
      tb_venda.`total_iva` AS tb_venda_total_iva,
      tb_venda.`performance` AS tb_venda_performance,
@@ -153,6 +154,7 @@ WHERE
 	<field name="tb_venda_cod_fact" class="java.lang.String"/>
 	<field name="tb_venda_assinatura" class="java.lang.String"/>
 	<field name="tb_venda_obs" class="java.lang.String"/>
+	<field name="tb_venda_referencia" class="java.lang.String"/>
 	<field name="tb_venda_hash_cod" class="java.lang.String"/>
 	<field name="tb_venda_total_iva" class="java.math.BigDecimal"/>
 	<field name="tb_venda_performance" class="java.lang.String"/>
@@ -402,6 +404,33 @@ WHERE
 					<font fontName="Times New Roman"/>
 				</textElement>
 				<text><![CDATA[Exmo.(s) Sr.(s)]]></text>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="921fc676-24d6-44cd-8044-6c3dee1f296a" key="textField-14" x="70" y="191" width="127" height="13"/>
+				<box>
+					<pen lineWidth="0.1" lineStyle="Dotted"/>
+					<topPen lineWidth="0.0" lineStyle="Dotted"/>
+					<leftPen lineWidth="0.0" lineStyle="Dotted"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dotted"/>
+					<rightPen lineWidth="0.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Justified">
+					<font fontName="Times New Roman" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_venda_referencia}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="a948aeb4-588a-46c2-8c6f-8c697c54a8e7" key="element-94" x="7" y="191" width="63" height="13" forecolor="#000000"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Times New Roman" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Referência:]]></text>
 			</staticText>
 		</band>
 	</pageHeader>
