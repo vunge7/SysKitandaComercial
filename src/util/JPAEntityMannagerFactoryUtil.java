@@ -29,7 +29,7 @@ public class JPAEntityMannagerFactoryUtil
 
     public static void main( String[] args )
     {
-//        EntityManagerFactory em = JPAEntityMannagerFactoryUtil.em;
+//        EntityManagerFactory em = JPAEntityMannagerFactoryUtil.em;kitanda_db_actual
 //        UsuarioDao usuarioDao = new UsuarioDao( em );
 //        System.out.println(usuarioDao.exist_usuario("dvml", "mavala"));
 

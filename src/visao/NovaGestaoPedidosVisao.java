@@ -54,6 +54,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.print.PrinterJob;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -62,6 +63,11 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManagerFactory;
+import javax.print.Doc;
+import javax.print.DocFlavor;
+import javax.print.DocPrintJob;
+import javax.print.PrintService;
+import javax.print.SimpleDoc;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
@@ -99,8 +105,7 @@ import static visao.PrincipalPedidosVisao.procedimento_mesas_livre;
  *
  * @author Domingos Dala Vunge & Martinho Luís
  */
-public class NovaGestaoPedidosVisao extends javax.swing.JFrame
-{
+public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
 
     private static EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
     private static ClientesController clientesController;
@@ -134,13 +139,13 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //    private static Ite tipoProdutosController;
     private static TbStock stock_local;
     private TbItemPedidos itemPedidos;
-    private static MesasDao mesasDao = new MesasDao( emf );
-    private static PrecoDao precoDao = new PrecoDao( emf );
+    private static MesasDao mesasDao = new MesasDao(emf);
+    private static PrecoDao precoDao = new PrecoDao(emf);
     private static CaixaDao caixaDao;
-    private static PedidoDao pedidoDao = new PedidoDao( emf );
-    private static ProdutoDao produtoDao = new ProdutoDao( emf );
-    private static ItemPedidosDao itemPedidosDao = new ItemPedidosDao( emf );
-    private static StockDao stockDao = new StockDao( emf );
+    private static PedidoDao pedidoDao = new PedidoDao(emf);
+    private static ProdutoDao produtoDao = new ProdutoDao(emf);
+    private static ItemPedidosDao itemPedidosDao = new ItemPedidosDao(emf);
+    private static StockDao stockDao = new StockDao(emf);
     private static ProductoDao productoDao;
     private static String prox_doc;
     private static Documento documento;
@@ -178,19 +183,22 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
     private static ContaController contaController;
     private static ContaMovimentosController cmc;
     private static BDConexao conexaoTransaction;
+    private TelaCliente telaCliente;
 
     /**
      * Creates new form GestaoItemPedidosVisao
      */
-    public NovaGestaoPedidosVisao( String mesa, String lugar, int idUser, int id_armazem, BDConexao conexao )
-    {
+    public NovaGestaoPedidosVisao(String mesa, String lugar, int idUser, int id_armazem, BDConexao conexao) {
 
         initComponents();
-        setLocationRelativeTo( null );
-        cmbMoeda.setVisible( false );
-        BtnFCons.setVisible( false );
-        jButton3.setVisible( false );
-        jPanelLugares.setVisible( false );
+        setLocationRelativeTo(null);
+        cmbMoeda.setVisible(false);
+        BtnFCons.setVisible(false);
+        jButton3.setVisible(false);
+        jPanelLugares.setVisible(false);
+        rbAbrir.setVisible(false);
+        rbEsconder.setVisible(false);
+
         //this.setExtendedState(   this.getExtendedState()|GestaoPedidosVisao.MAXIMIZED_BOTH  );   
         this.conexao = conexao;
 //        this.GRUPO_AREA = GRUPO_AREA;
@@ -198,247 +206,209 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         this.id_armzem = id_armazem;
         this.mesa = "MESA " + mesa.trim();
         this.lugar = "LUGAR " + lugar.trim();
-        txtIniciaisCliente.addKeyListener( new TratarEventoTeclado() );
-        vendasController = new VendasController( NovaGestaoPedidosVisao.conexao );
-        itemVendasController = new ItemVendasController( NovaGestaoPedidosVisao.conexao );
-        mesasController = new MesasController( NovaGestaoPedidosVisao.conexao );
-        lugaresController = new LugaresController( NovaGestaoPedidosVisao.conexao );
-        produtosController = new ProdutosController( NovaGestaoPedidosVisao.conexao );
-        stocksController = new StoksController( NovaGestaoPedidosVisao.conexao );
-        precosController = new PrecosController( NovaGestaoPedidosVisao.conexao );
-        tipoProdutosController = new TipoProdutosController( NovaGestaoPedidosVisao.conexao );
-        familiaController = new FamiliasController( NovaGestaoPedidosVisao.conexao );
-        armazensController = new ArmazensController( NovaGestaoPedidosVisao.conexao );
-        localController = new LocalController( NovaGestaoPedidosVisao.conexao );
-        unidadesController = new UnidadesController( NovaGestaoPedidosVisao.conexao );
-        anoEconomicoController = new AnoEconomicoController( NovaGestaoPedidosVisao.conexao );
-        clientesController = new ClientesController( NovaGestaoPedidosVisao.conexao );
-        documentosController = new DocumentosController( NovaGestaoPedidosVisao.conexao );
-        produtosImpostoController = new ProdutosImpostoController( NovaGestaoPedidosVisao.conexao );
-        cambiosController = new CambiosController( NovaGestaoPedidosVisao.conexao );
-        dadosInstituicaoController = new DadosInstituicaoController( NovaGestaoPedidosVisao.conexao );
-        formaPagamentoItemController = new FormaPagamentoItemController( NovaGestaoPedidosVisao.conexao );
-        gruposController = new GruposController( NovaGestaoPedidosVisao.conexao );
-        armazensAccessoController = new ArmazensAccessoController( NovaGestaoPedidosVisao.conexao );
-        usuariosController = new UsuariosController( NovaGestaoPedidosVisao.conexao );
-        moedasController = new MoedasController( NovaGestaoPedidosVisao.conexao );
-        formaPagamentoController = new FormaPagamentoController( NovaGestaoPedidosVisao.conexao );
-        contaController = new ContaController( NovaGestaoPedidosVisao.conexao );
-        usuariosController = new UsuariosController( NovaGestaoPedidosVisao.conexao );
-        caixasController = new CaixasController( conexao );
+        txtIniciaisCliente.addKeyListener(new TratarEventoTeclado());
+        vendasController = new VendasController(NovaGestaoPedidosVisao.conexao);
+        itemVendasController = new ItemVendasController(NovaGestaoPedidosVisao.conexao);
+        mesasController = new MesasController(NovaGestaoPedidosVisao.conexao);
+        lugaresController = new LugaresController(NovaGestaoPedidosVisao.conexao);
+        produtosController = new ProdutosController(NovaGestaoPedidosVisao.conexao);
+        stocksController = new StoksController(NovaGestaoPedidosVisao.conexao);
+        precosController = new PrecosController(NovaGestaoPedidosVisao.conexao);
+        tipoProdutosController = new TipoProdutosController(NovaGestaoPedidosVisao.conexao);
+        familiaController = new FamiliasController(NovaGestaoPedidosVisao.conexao);
+        armazensController = new ArmazensController(NovaGestaoPedidosVisao.conexao);
+        localController = new LocalController(NovaGestaoPedidosVisao.conexao);
+        unidadesController = new UnidadesController(NovaGestaoPedidosVisao.conexao);
+        anoEconomicoController = new AnoEconomicoController(NovaGestaoPedidosVisao.conexao);
+        clientesController = new ClientesController(NovaGestaoPedidosVisao.conexao);
+        documentosController = new DocumentosController(NovaGestaoPedidosVisao.conexao);
+        produtosImpostoController = new ProdutosImpostoController(NovaGestaoPedidosVisao.conexao);
+        cambiosController = new CambiosController(NovaGestaoPedidosVisao.conexao);
+        dadosInstituicaoController = new DadosInstituicaoController(NovaGestaoPedidosVisao.conexao);
+        formaPagamentoItemController = new FormaPagamentoItemController(NovaGestaoPedidosVisao.conexao);
+        gruposController = new GruposController(NovaGestaoPedidosVisao.conexao);
+        armazensAccessoController = new ArmazensAccessoController(NovaGestaoPedidosVisao.conexao);
+        usuariosController = new UsuariosController(NovaGestaoPedidosVisao.conexao);
+        moedasController = new MoedasController(NovaGestaoPedidosVisao.conexao);
+        formaPagamentoController = new FormaPagamentoController(NovaGestaoPedidosVisao.conexao);
+        contaController = new ContaController(NovaGestaoPedidosVisao.conexao);
+        usuariosController = new UsuariosController(NovaGestaoPedidosVisao.conexao);
+        caixasController = new CaixasController(conexao);
 //        dadosInstituicaoController = new DadosInstituicaoController(NovaGestaoPedidosVisao.conexao );
-        dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById( 1 );
-        cmc = new ContaMovimentosController( conexao );
+        dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
+        cmc = new ContaMovimentosController(conexao);
 
-        rbArmazem1.setVisible( false );
-        rbArmazem.setVisible( false );
-        caixaDao = new CaixaDao( emf );
-        txtMesa.setText( this.mesa );
-        lbValorPorExtenco.setText( "" );
+        rbArmazem1.setVisible(false);
+        rbArmazem.setVisible(false);
+        caixaDao = new CaixaDao(emf);
+        txtMesa.setText(this.mesa);
+        lbValorPorExtenco.setText("");
 
-        cmbTipoDocumento.setModel( new DefaultComboBoxModel( documentosController.getVectorMesas() ) );
+        cmbTipoDocumento.setModel(new DefaultComboBoxModel(documentosController.getVectorMesas()));
 
-        cmbAnoEconomico.setModel( new DefaultComboBoxModel( anoEconomicoController.getVector() ) );
-        cmbMoeda.setModel( new DefaultComboBoxModel( moedasController.getVector() ) );
-        cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );
-        cmbCliente.setSelectedItem( DVML._CLIENTE_CONSUMIDOR_FINAL );
+        cmbAnoEconomico.setModel(new DefaultComboBoxModel(anoEconomicoController.getVector()));
+        cmbMoeda.setModel(new DefaultComboBoxModel(moedasController.getVector()));
+        cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVector()));
+        cmbCliente.setSelectedItem(DVML._CLIENTE_CONSUMIDOR_FINAL);
 
-        try
-        {
+        try {
 //            desactivarLugares();
-            setDocpadrao( dadosInstituicao.getDocpadrao() );
+            setDocpadrao(dadosInstituicao.getDocpadrao());
 //            setDocpadrao1( dadosInstituicao.getDesactivarLugares() );
 //            setDesactivarLugares( dadosInstituicao.getDesactivarLugares() );
-            setFolhaImpressora( dadosInstituicao.getImpressora() );
+            setFolhaImpressora(dadosInstituicao.getImpressora());
 //            setDesactivarvias( dadosInstituicao.getDesactivarvias() );
 
             int numero_copia = dadosInstituicao.getNumeroVias();
-            spnCopia.setModel( CfMethodsSwing.criarSpinnerDoubleModel( 1, 3, numero_copia ) );
-        }
-        catch ( Exception e )
-        {
+            spnCopia.setModel(CfMethodsSwing.criarSpinnerDoubleModel(1, 3, numero_copia));
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         // No construtor ou método de inicialização do formulário
-        getRootPane().getInputMap( JComponent.WHEN_IN_FOCUSED_WINDOW )
-                .put( KeyStroke.getKeyStroke( "F4" ), "abrirBuscaProduto" );
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke("F4"), "abrirBuscaProduto");
 
-        getRootPane().getActionMap().put( "abrirBuscaProduto", new AbstractAction()
-        {
+        getRootPane().getActionMap().put("abrirBuscaProduto", new AbstractAction() {
             @Override
-            public void actionPerformed( ActionEvent e )
-            {
-                try
-                {
-                    if ( validar() )
-                    {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    if (validar()) {
                         new BuscaProdutoVisao(
                                 NovaGestaoPedidosVisao.this,
                                 rootPaneCheckingEnabled,
                                 getCodigoArmazem(),
                                 DVML.JANELA_RETAURANTE,
                                 BDConexao.getInstancia()
-                        ).setVisible( true );
+                        ).setVisible(true);
                     }
-                }
-                catch ( Exception ex )
-                {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
-        } );
+        });
 
-        try
-        {
-            jPanel1.setLayout( new AbsoluteLayout() );
+        try {
+            jPanel1.setLayout(new AbsoluteLayout());
             adicionar_catgorias();
             setSalvarPedidos();
             actualizar();
 //            actualizar_lugar( Ineglugar );
             adicionar_lugares();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        dc_data_documento.setDate( new Date() );
+        dc_data_documento.setDate(new Date());
 //        jPanelLugares.setVisible( true );
-        jPanel4.setVisible( true );
+        jPanel4.setVisible(true);
         //AQUI
-        jPanelLugares.setVisible( false );
+        jPanelLugares.setVisible(false);
 //        rbSim_lugar.setVisible( false );
 //        rbNao_lugar.setVisible( false );
 //        jLabel4.setVisible( false );
-        cmbArmazem.setVisible( false );
-        cmbMoeda.setVisible( false );
+        cmbArmazem.setVisible(false);
+        cmbMoeda.setVisible(false);
 
 //        mostrar_proximo_codigo_documento();
 //        verificarCaixa();
         setWindowsListener();
 
-        try
-        {
+        try {
             configurar_armazens();
 //            setDesactivarLugares(dadosInstituicao.getDesactivarLugares() );
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        setArmazem( dadosInstituicao.getConfigArmazens() );
+        setArmazem(dadosInstituicao.getConfigArmazens());
 
         visualizarCheckbox();
 
         desactivarLugares();
-        
-        
-        
-        
-    
+
+        try {
+
+            setSegundoMonitor(dadosInstituicao.getSegundoMonitor());
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
 
 //        jPanelLugares.setVisible( rbNao_lugar.isSelected() );
     }
 
-    private void setArmazem( String armazem )
-    {
-        if ( armazem.equalsIgnoreCase( "Multi_armazem" ) )
-        {
-            rbArmazem.setSelected( true );
+    private void setArmazem(String armazem) {
+        if (armazem.equalsIgnoreCase("Multi_armazem")) {
+            rbArmazem.setSelected(true);
 
-        }
-        else
-        {
-            rbArmazem1.setSelected( true );
+        } else {
+            rbArmazem1.setSelected(true);
 
         }
     }
 
-    public static int getIdMoeda()
-    {
-        try
-        {
-            Moeda moedaLocal = moedasController.getMoedaByDesignacao( cmbMoeda.getSelectedItem().toString() );
+    public static int getIdMoeda() {
+        try {
+            Moeda moedaLocal = moedasController.getMoedaByDesignacao(cmbMoeda.getSelectedItem().toString());
             return moedaLocal.getPkMoeda();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             return 0;
         }
 
     }
 
-    public void configurar_armazens()
-    {
-        setArmazem( dadosInstituicao.getConfigArmazens() );
-        try
-        {
-            if ( !rbArmazem.isSelected() )
-            {
+    public void configurar_armazens() {
+        setArmazem(dadosInstituicao.getConfigArmazens());
+        try {
+            if (!rbArmazem.isSelected()) {
                 //                Caso for MultiArmazens
-                cmbArmazem.setModel( new DefaultComboBoxModel( armazensController.getVector2() ) );
-            }
-            else if ( rbArmazem.isSelected() )
-            {
+                cmbArmazem.setModel(new DefaultComboBoxModel(armazensController.getVector2()));
+            } else if (rbArmazem.isSelected()) {
                 //                Caso for apenas Um Armazem
-                cmbArmazem.setModel( new DefaultComboBoxModel( armazensAccessoController.getAllArmazemExceptoEconomatoByIdUSuario( idUser ) ) );
+                cmbArmazem.setModel(new DefaultComboBoxModel(armazensAccessoController.getAllArmazemExceptoEconomatoByIdUSuario(idUser)));
             }
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    class TratarEventoTeclado implements KeyListener
-    {
+    class TratarEventoTeclado implements KeyListener {
 
         String prefixo = "";
 
-        public void keyPressed( KeyEvent evt )
-        {
+        public void keyPressed(KeyEvent evt) {
 
-            if ( evt.getKeyCode() != KeyEvent.VK_BACK_SPACE && evt.getKeyCode() != KeyEvent.VK_ENTER )
-            {
+            if (evt.getKeyCode() != KeyEvent.VK_BACK_SPACE && evt.getKeyCode() != KeyEvent.VK_ENTER) {
                 char key = evt.getKeyChar();
 
-                try
-                {
+                try {
 
                     prefixo = txtIniciaisCliente.getText().trim() + key;
-                    cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVectorByIinciais( prefixo ) ) );
+                    cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVectorByIinciais(prefixo)));
 
-                }
-                catch ( Exception e )
-                {
-                    cmbCliente.setSelectedIndex( 0 );
+                } catch (Exception e) {
+                    cmbCliente.setSelectedIndex(0);
                 }
 
-            }
-            else if ( evt.getKeyCode() == KeyEvent.VK_BACK_SPACE )
-            {
-                try
-                {
+            } else if (evt.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+                try {
 
-                    prefixo = prefixo.toString().trim().substring( 0, prefixo.length() - 1 );
-                    System.out.println( "NOME VOLTAR " + prefixo );
-                    cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVectorByIinciais( prefixo ) ) );
-                }
-                catch ( Exception e )
-                {
-                    cmbCliente.setSelectedIndex( 0 );
+                    prefixo = prefixo.toString().trim().substring(0, prefixo.length() - 1);
+                    System.out.println("NOME VOLTAR " + prefixo);
+                    cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVectorByIinciais(prefixo)));
+                } catch (Exception e) {
+                    cmbCliente.setSelectedIndex(0);
                 }
 
             }
         }
 
-        public void keyReleased( KeyEvent evt )
-        {
+        public void keyReleased(KeyEvent evt) {
         }
 
-        public void keyTyped( KeyEvent evt )
-        {
+        public void keyTyped(KeyEvent evt) {
         }
 
     }
@@ -448,10 +418,9 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
      */
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents()
-    {
+    private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
@@ -525,6 +494,9 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         rbSim_lugar = new javax.swing.JRadioButton();
         rbNao_lugar = new javax.swing.JRadioButton();
         jLabel4 = new javax.swing.JLabel();
+        jButton5 = new javax.swing.JButton();
+        rbEsconder = new javax.swing.JRadioButton();
+        rbAbrir = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Pedidos - MESA");
@@ -533,10 +505,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         txtMesa.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         txtMesa.setForeground(new java.awt.Color(204, 0, 0));
         txtMesa.setText("MESA X");
-        txtMesa.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtMesa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtMesaActionPerformed(evt);
             }
         });
@@ -548,17 +518,15 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
         jScrollPane3.setViewportView(jPanel1);
 
-        jPanel4.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 46, 620, 520));
+        jPanel4.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, 620, 510));
 
         btn_voltar.setText("<<");
-        btn_voltar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_voltar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_voltarActionPerformed(evt);
             }
         });
-        jPanel4.add(btn_voltar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 60, 50));
+        jPanel4.add(btn_voltar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 60, 30));
 
         designacao_categoria.setBackground(new java.awt.Color(255, 255, 255));
         designacao_categoria.setFont(new java.awt.Font("Lucida Grande", 3, 22)); // NOI18N
@@ -571,20 +539,16 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
         buttonGroup4.add(rbTicketSimples);
         rbTicketSimples.setSelected(true);
-        rbTicketSimples.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbTicketSimples.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbTicketSimplesActionPerformed(evt);
             }
         });
         jPanel4.add(rbTicketSimples, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 9, -1, 30));
 
         buttonGroup4.add(rbTicketGeral);
-        rbTicketGeral.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbTicketGeral.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbTicketGeralActionPerformed(evt);
             }
         });
@@ -600,100 +564,80 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
         btn_01.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         btn_01.setText("Lugar 01");
-        btn_01.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_01.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_01ActionPerformed(evt);
             }
         });
 
         btn_06.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         btn_06.setText("Lugar 06");
-        btn_06.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_06.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_06ActionPerformed(evt);
             }
         });
 
         btn_07.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         btn_07.setText("Lugar 07");
-        btn_07.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_07.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_07ActionPerformed(evt);
             }
         });
 
         btn_02.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         btn_02.setText("Lugar 02");
-        btn_02.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_02.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_02ActionPerformed(evt);
             }
         });
 
         btn_08.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         btn_08.setText("Lugar 08");
-        btn_08.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_08.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_08ActionPerformed(evt);
             }
         });
 
         btn_03.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         btn_03.setText("Lugar 03");
-        btn_03.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_03.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_03ActionPerformed(evt);
             }
         });
 
         btn_09.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         btn_09.setText("Lugar 09");
-        btn_09.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_09.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_09ActionPerformed(evt);
             }
         });
 
         btn_04.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         btn_04.setText("Lugar 04");
-        btn_04.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_04.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_04ActionPerformed(evt);
             }
         });
 
         btn_05.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         btn_05.setText("Lugar 05");
-        btn_05.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_05.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_05ActionPerformed(evt);
             }
         });
 
         btn_10.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         btn_10.setText("Lugar 10");
-        btn_10.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_10ActionPerformed(evt);
             }
         });
@@ -760,25 +704,19 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
         cmbCliente.setFont(new java.awt.Font("Lucida Grande", 1, 15)); // NOI18N
         cmbCliente.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cmbCliente.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbClienteActionPerformed(evt);
             }
         });
 
-        txtNomeConsumidorFinal.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtNomeConsumidorFinal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtNomeConsumidorFinalActionPerformed(evt);
             }
         });
-        txtNomeConsumidorFinal.addKeyListener(new java.awt.event.KeyAdapter()
-        {
-            public void keyPressed(java.awt.event.KeyEvent evt)
-            {
+        txtNomeConsumidorFinal.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtNomeConsumidorFinalKeyPressed(evt);
             }
         });
@@ -788,10 +726,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
         btCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/usuario.png"))); // NOI18N
         btCliente.setText("jButton1");
-        btCliente.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btClienteActionPerformed(evt);
             }
         });
@@ -799,41 +735,31 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         lbClienteConsumidorFinal1.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         lbClienteConsumidorFinal1.setText("Iniciais:");
 
-        txtIniciaisCliente.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtIniciaisCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtIniciaisClienteActionPerformed(evt);
             }
         });
-        txtIniciaisCliente.addKeyListener(new java.awt.event.KeyAdapter()
-        {
-            public void keyPressed(java.awt.event.KeyEvent evt)
-            {
+        txtIniciaisCliente.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtIniciaisClienteKeyPressed(evt);
             }
         });
 
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LOGOUT - VERMELHO/Logout 32x32.png"))); // NOI18N
-        jButton2.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
 
-        txtTelClientePesquisa.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtTelClientePesquisa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtTelClientePesquisaActionPerformed(evt);
             }
         });
-        txtTelClientePesquisa.addKeyListener(new java.awt.event.KeyAdapter()
-        {
-            public void keyPressed(java.awt.event.KeyEvent evt)
-            {
+        txtTelClientePesquisa.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtTelClientePesquisaKeyPressed(evt);
             }
         });
@@ -910,10 +836,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         BT_Pedidos.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         BT_Pedidos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/alterar_32x32.png"))); // NOI18N
         BT_Pedidos.setText("Ver Conta");
-        BT_Pedidos.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        BT_Pedidos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BT_PedidosActionPerformed(evt);
             }
         });
@@ -921,10 +845,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         BT_Conversao.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         BT_Conversao.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/1323444801_currency_dollar red.png"))); // NOI18N
         BT_Conversao.setText("Facturar");
-        BT_Conversao.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        BT_Conversao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BT_ConversaoActionPerformed(evt);
             }
         });
@@ -932,20 +854,16 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         BtnFCons.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         BtnFCons.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/1588_32x32.png"))); // NOI18N
         BtnFCons.setText("Consulta");
-        BtnFCons.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        BtnFCons.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BtnFConsActionPerformed(evt);
             }
         });
 
         btFT.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         btFT.setText("Processar");
-        btFT.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btFT.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btFTActionPerformed(evt);
             }
         });
@@ -984,47 +902,36 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         jPanel5Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {BT_Conversao, BT_Pedidos});
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][]
-            {
+            new Object [][] {
 
             },
-            new String []
-            {
+            new String [] {
                 "ID", "Lugar", "Consumo", "QTD", "Total"
             }
-        )
-        {
-            boolean[] canEdit = new boolean []
-            {
+        ) {
+            boolean[] canEdit = new boolean [] {
                 false, false, false, true, false
             };
 
-            public boolean isCellEditable(int rowIndex, int columnIndex)
-            {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        jTable1.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mouseClicked(java.awt.event.MouseEvent evt)
-            {
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTable1MouseClicked(evt);
             }
-            public void mouseEntered(java.awt.event.MouseEvent evt)
-            {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
                 jTable1MouseEntered(evt);
             }
         });
-        jTable1.addPropertyChangeListener(new java.beans.PropertyChangeListener()
-        {
-            public void propertyChange(java.beans.PropertyChangeEvent evt)
-            {
+        jTable1.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 jTable1PropertyChange(evt);
             }
         });
         jScrollPane2.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0)
-        {
+        if (jTable1.getColumnModel().getColumnCount() > 0) {
             jTable1.getColumnModel().getColumn(0).setPreferredWidth(10);
             jTable1.getColumnModel().getColumn(1).setPreferredWidth(40);
             jTable1.getColumnModel().getColumn(2).setPreferredWidth(200);
@@ -1063,10 +970,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
         cmbAnoEconomico.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cmbAnoEconomico.setEnabled(false);
-        cmbAnoEconomico.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbAnoEconomico.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbAnoEconomicoActionPerformed(evt);
             }
         });
@@ -1076,10 +981,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
         cmbArmazem.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cmbArmazem.setEnabled(false);
-        cmbArmazem.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbArmazem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbArmazemActionPerformed(evt);
             }
         });
@@ -1089,20 +992,16 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
         buttonGroup2.add(rbArmazem1);
         rbArmazem1.setEnabled(false);
-        rbArmazem1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbArmazem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbArmazem1ActionPerformed(evt);
             }
         });
 
         buttonGroup2.add(rbArmazem);
         rbArmazem.setEnabled(false);
-        rbArmazem.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbArmazem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbArmazemActionPerformed(evt);
             }
         });
@@ -1110,19 +1009,15 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         jButton1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens25x25/play25x25.png"))); // NOI18N
         jButton1.setText("TRANSFERÊNCIAS");
-        jButton1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/proucura.png"))); // NOI18N
-        jButton4.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
             }
         });
@@ -1134,10 +1029,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         cmbMoeda.setBackground(new java.awt.Color(0, 51, 102));
         cmbMoeda.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
         cmbMoeda.setEnabled(false);
-        cmbMoeda.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbMoeda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbMoedaActionPerformed(evt);
             }
         });
@@ -1149,10 +1042,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         cmbTipoDocumento.setBackground(new java.awt.Color(0, 51, 102));
         cmbTipoDocumento.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         cmbTipoDocumento.setForeground(new java.awt.Color(255, 255, 255));
-        cmbTipoDocumento.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbTipoDocumento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbTipoDocumentoActionPerformed(evt);
             }
         });
@@ -1162,10 +1053,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         buttonGroup3.add(ck_simplificada);
         ck_simplificada.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_simplificada.setText("A6");
-        ck_simplificada.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        ck_simplificada.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ck_simplificadaActionPerformed(evt);
             }
         });
@@ -1173,10 +1062,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         buttonGroup3.add(ck_ComVirgula);
         ck_ComVirgula.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_ComVirgula.setText("A6V");
-        ck_ComVirgula.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        ck_ComVirgula.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ck_ComVirgulaActionPerformed(evt);
             }
         });
@@ -1184,10 +1071,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         buttonGroup3.add(ck_S_A6);
         ck_S_A6.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_S_A6.setText("S_A6");
-        ck_S_A6.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        ck_S_A6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ck_S_A6ActionPerformed(evt);
             }
         });
@@ -1196,20 +1081,16 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         ck_A7.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_A7.setSelected(true);
         ck_A7.setText("A7");
-        ck_A7.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        ck_A7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ck_A7ActionPerformed(evt);
             }
         });
 
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/actualizar_1.png"))); // NOI18N
         jButton3.setText("Enviar Ticket $");
-        jButton3.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
             }
         });
@@ -1217,10 +1098,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         buttonGroup5.add(rbSim_lugar);
         rbSim_lugar.setText("Sim");
         rbSim_lugar.setEnabled(false);
-        rbSim_lugar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbSim_lugar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbSim_lugarActionPerformed(evt);
             }
         });
@@ -1229,15 +1108,35 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         rbNao_lugar.setSelected(true);
         rbNao_lugar.setText("Nao");
         rbNao_lugar.setEnabled(false);
-        rbNao_lugar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbNao_lugar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbNao_lugarActionPerformed(evt);
             }
         });
 
         jLabel4.setText("Lugares");
+
+        jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/calendario 16x16.png"))); // NOI18N
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
+        rbEsconder.setSelected(true);
+        rbEsconder.setEnabled(false);
+        rbEsconder.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbEsconderActionPerformed(evt);
+            }
+        });
+
+        rbAbrir.setEnabled(false);
+        rbAbrir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbAbrirActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -1248,17 +1147,22 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(lbValorPorExtenco, javax.swing.GroupLayout.PREFERRED_SIZE, 575, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtMesa, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(rbSim_lugar)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(rbNao_lugar))
-                            .addGroup(layout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(rbEsconder)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(rbAbrir)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(rbNao_lugar))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(rbSim_lugar)))))
                         .addGap(13, 13, 13)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(jPanelLugares, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1275,7 +1179,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                                 .addComponent(ck_S_A6)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(ck_A7)
-                                .addGap(33, 33, 33)))))
+                                .addGap(33, 33, 33))))
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -1287,7 +1192,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
                                 .addGap(6, 6, 6)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1295,16 +1200,16 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(rbArmazem)
                                     .addComponent(rbArmazem1))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jButton3)
                                     .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(cmbMoeda, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jButton3))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(24, 24, 24)
-                                        .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(cmbMoeda, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addContainerGap(150, Short.MAX_VALUE))
+                                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addContainerGap(143, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(lbVias, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1347,21 +1252,25 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jPanelLugares, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(4, 4, 4)
-                                .addComponent(jLabel4)
-                                .addGap(18, 18, 18)
+                                .addGap(2, 2, 2)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(rbSim_lugar)
-                                    .addComponent(rbNao_lugar)))))
+                                    .addComponent(jLabel4)
+                                    .addComponent(rbSim_lugar))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(rbNao_lugar)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(rbEsconder, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                        .addComponent(rbAbrir, javax.swing.GroupLayout.PREFERRED_SIZE, 9, javax.swing.GroupLayout.PREFERRED_SIZE))))))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtQuatidadeExistente, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(lbQuantidadeExistente, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(lb_proximo_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addGroup(layout.createSequentialGroup()
@@ -1371,23 +1280,23 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                                             .addGap(10, 10, 10))
                                         .addComponent(jButton4, javax.swing.GroupLayout.Alignment.TRAILING))
                                     .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
-                                .addComponent(cmbMoeda, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(35, 35, 35))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(8, 8, 8)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addComponent(rbArmazem1, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 7, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(rbArmazem)
-                                        .addGap(13, 13, 13))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jButton3))
-                                    .addComponent(cmbTipoDocumento, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(dc_data_documento, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                                        .addComponent(cmbMoeda, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton3)
+                                .addGap(2, 2, 2))
+                            .addComponent(cmbTipoDocumento, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(dc_data_documento, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(rbArmazem1, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(rbArmazem)
+                                .addGap(13, 13, 13)))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -1407,68 +1316,86 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                 .addGap(11, 11, 11))
         );
 
-        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {cmbAnoEconomico, cmbArmazem});
-
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public static int getCodigoProduto() throws SQLException
-    {
+    public static int getCodigoProduto() throws SQLException {
         return 0;
     }
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        dispose();
+//       fechar_seguro();
+       dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void BT_PedidosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BT_PedidosActionPerformed
 
-        if ( verifica_ano_documento_igual_economico() )
-        {
-            if ( data_documento_superior_ou_igual_ao_ultimo_doc() )
-            {
+        if (verifica_ano_documento_igual_economico()) {
+            if (data_documento_superior_ou_igual_ao_ultimo_doc()) {
 
-                if ( true )
-                {
-                    if ( MetodosUtil.licencaValidada( conexao ) )
-                    {
+                if (true) {
+                    if (MetodosUtil.licencaValidada(conexao)) {
                         procedimento_processar_pedidos();
                     }
+                } else {
+                    JOptionPane.showMessageDialog(null, "O documento não pode ser processado porque possui uma data inferior ao úlimo documento efectuado", "AVISO", JOptionPane.WARNING_MESSAGE);
                 }
-                else
-                {
-                    JOptionPane.showMessageDialog( null, "O documento não pode ser processado porque possui uma data inferior ao úlimo documento efectuado", "AVISO", JOptionPane.WARNING_MESSAGE );
-                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Verificar a ultima da do documento.");
             }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Verificar a ultima da do documento." );
-            }
-        }
-        else
-        {
-            JOptionPane.showMessageDialog( null, "A data do documento a ser emitido deve estar no intervalo do ano economico", "Aviso", JOptionPane.WARNING_MESSAGE );
+        } else {
+            JOptionPane.showMessageDialog(null, "A data do documento a ser emitido deve estar no intervalo do ano economico", "Aviso", JOptionPane.WARNING_MESSAGE);
         }
 
     }//GEN-LAST:event_BT_PedidosActionPerformed
 
+    private void setSegundoMonitor(String segundo_monitor) {
+
+        if (segundo_monitor.equalsIgnoreCase("Abrir")) {
+
+            rbAbrir.setSelected(true);
+
+            DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+
+            telaCliente = new TelaCliente(modelo);
+
+            MetodosUtil.abrirNoSegundoMonitor(telaCliente);
+
+        } else {
+
+            rbEsconder.setSelected(true);
+
+////            telaCliente.dispose();
+//            dispose();
+        }
+
+    }
+
+    private void fechar_seguro() {
+
+        if (rbAbrir.isSelected()) {
+
+            telaCliente.dispose();
+
+            dispose();
+
+        } else {
+
+            dispose();
+
+        }
+
+    }
 
     private void BT_ConversaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BT_ConversaoActionPerformed
-        if ( !MetodosUtil.tabela_vazia( jTable1 ) )
-        {
-            if ( true )
-            {
-                if ( MetodosUtil.licencaValidada( conexao ) )
-                {
+        if (!MetodosUtil.tabela_vazia(jTable1)) {
+            if (true) {
+                if (MetodosUtil.licencaValidada(conexao)) {
 
-                    if ( cmbTipoDocumento.getSelectedIndex() == 0 )
-                    {
-                        JOptionPane.showMessageDialog( null, "Atenção\nSelecione o tipo de documento!" );
-                    }
-                    else
-                    {
-                        if ( validar_cliente() )
-                        {
+                    if (cmbTipoDocumento.getSelectedIndex() == 0) {
+                        JOptionPane.showMessageDialog(null, "Atenção\nSelecione o tipo de documento!");
+                    } else {
+                        if (validar_cliente()) {
                             procedimento_processar_facturacao();
                         }
 
@@ -1477,22 +1404,18 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                 }
 
             }
-        }
-        else
-        {
-            JOptionPane.showMessageDialog( null, "Caro usuário adicione item na tabela", "Aviso", JOptionPane.WARNING_MESSAGE );
+        } else {
+            JOptionPane.showMessageDialog(null, "Caro usuário adicione item na tabela", "Aviso", JOptionPane.WARNING_MESSAGE);
         }
 
 //       
 
     }//GEN-LAST:event_BT_ConversaoActionPerformed
 
-    public boolean validar_cliente()
-    {
-        if ( cmbCliente.getSelectedItem().equals( "--Seleccione o Cliente--" ) )
-        {
+    public boolean validar_cliente() {
+        if (cmbCliente.getSelectedItem().equals("--Seleccione o Cliente--")) {
 
-            JOptionPane.showMessageDialog( null, "Por favor, Seleccione ou Digite o nome do Cliente!" );
+            JOptionPane.showMessageDialog(null, "Por favor, Seleccione ou Digite o nome do Cliente!");
             txtIniciaisCliente.requestFocus();
             return false;
 
@@ -1502,137 +1425,103 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         return true;
     }
 
-    private void procedimento_processar_facturacao()
-    {
+    private void procedimento_processar_facturacao() {
 
-        if ( verifica_ano_documento_igual_economico() )
-        {
-            if ( data_documento_superior_ou_igual_ao_ultimo_doc() )
-            {
-                if ( true )
-                {
-                    int opcao = JOptionPane.showConfirmDialog( null, "Por Favor\nDeseja pagar a Mesa Completa?" );
+        if (verifica_ano_documento_igual_economico()) {
+            if (data_documento_superior_ou_igual_ao_ultimo_doc()) {
+                if (true) {
+                    int opcao = JOptionPane.showConfirmDialog(null, "Por Favor\nDeseja pagar a Mesa Completa?");
 
-                    if ( opcao == JOptionPane.YES_OPTION )
-                    {
+                    if (opcao == JOptionPane.YES_OPTION) {
 
                         dispose();
 
-                        new FormaPagamentoVisao( this, rootPaneCheckingEnabled, emf, DVML.VENDA_RESTAURANTE, BDConexao.getInstancia() ).setVisible( true );
+                        new FormaPagamentoVisao(this, rootPaneCheckingEnabled, emf, DVML.VENDA_RESTAURANTE, BDConexao.getInstancia()).setVisible(true);
 
-                    }
-                    else if ( opcao == JOptionPane.NO_OPTION )
-                    {
+                    } else if (opcao == JOptionPane.NO_OPTION) {
 
-                        try
-                        {
+                        try {
 
-                            int lugar = Integer.parseInt( JOptionPane.showInputDialog( null, "Por favor\nQual lugar deseja facturar?" ) );
+                            int lugar = Integer.parseInt(JOptionPane.showInputDialog(null, "Por favor\nQual lugar deseja facturar?"));
 
-                            System.out.println( "LUGAR ACTUAL1 :" + lugar );
+                            System.out.println("LUGAR ACTUAL1 :" + lugar);
 
-                            System.out.println( "LUGAR ACTUAL2 :" + lugar );
-                            if ( exite_pedido_lugar( lugar ) )
-                            {
+                            System.out.println("LUGAR ACTUAL2 :" + lugar);
+                            if (exite_pedido_lugar(lugar)) {
 
-                                new FormaPagamentoPorLugaresVisao( this, rootPaneCheckingEnabled, emf, DVML.VENDA_RESTAURANTE, conexao, lugar, getTotalAOALiquido( lugar ) ).setVisible( true );
+                                new FormaPagamentoPorLugaresVisao(this, rootPaneCheckingEnabled, emf, DVML.VENDA_RESTAURANTE, conexao, lugar, getTotalAOALiquido(lugar)).setVisible(true);
 //                                new FormaPagamentoLugarVisao( this, rootPaneCheckingEnabled, emf, DVML.VENDA_RESTAURANTE, conexao, lugar, getTotalAOALiquido( lugar ) ).setVisible( true );
 
-                            }
-                            else
-                            {
+                            } else {
 
-                                JOptionPane.showMessageDialog( null, "Nao existe pedido neste lugar" );
+                                JOptionPane.showMessageDialog(null, "Nao existe pedido neste lugar");
                             }
 
+                        } catch (Exception e) {
                         }
-                        catch ( Exception e )
-                        {
-                        }
-                    }
-                    else
-                    {
-                        JOptionPane.showMessageDialog( null, "Operacao cancelada" );
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Operacao cancelada");
                     }
 
-                }
-                else
-                {
-                    JOptionPane.showMessageDialog( null, "O documento não pode ser processado porque possui uma data inferior ao úlimo documento efectuado", "AVISO", JOptionPane.WARNING_MESSAGE );
+                } else {
+                    JOptionPane.showMessageDialog(null, "O documento não pode ser processado porque possui uma data inferior ao úlimo documento efectuado", "AVISO", JOptionPane.WARNING_MESSAGE);
                 }
             }
-        }
-        else
-        {
-            JOptionPane.showMessageDialog( null, "A data do documento a ser emitido deve estar no intervalo do ano economico", "Aviso", JOptionPane.WARNING_MESSAGE );
+        } else {
+            JOptionPane.showMessageDialog(null, "A data do documento a ser emitido deve estar no intervalo do ano economico", "Aviso", JOptionPane.WARNING_MESSAGE);
         }
 
     }
 
-    public static void procedimento_converter_factura() throws SQLException
-    {
+    public static void procedimento_converter_factura() throws SQLException {
 
-        if ( true )
-        {
+        if (true) {
             TbVenda salvar_venda = salvar_venda();
 
-            if ( salvar_venda != null )
-            {
-                vendasController.actualizar_hash_and_assinatura( salvar_venda.getCodigo(), getGrossTotal() );
-                System.err.println( "VENDA AQUI " + salvar_venda.getCodigo() );
-                registrar_forma_pagamento( salvar_venda.getCodigo() );
-                salvarItemvenda( salvar_venda );
+            if (salvar_venda != null) {
+                vendasController.actualizar_hash_and_assinatura(salvar_venda.getCodigo(), getGrossTotal());
+                System.err.println("VENDA AQUI " + salvar_venda.getCodigo());
+                registrar_forma_pagamento(salvar_venda.getCodigo());
+                salvarItemvenda(salvar_venda);
                 remover_dados_tabela();
 
-            }
-            else
-            {
-                System.err.println( "  erro ao salvar venda!!!" );
+            } else {
+                System.err.println("  erro ao salvar venda!!!");
             }
         }
 
     }
 
-    public static void procedimento_converter_factura_FT()
-    {
+    public static void procedimento_converter_factura_FT() {
 
-        if ( true )
-        {
+        if (true) {
             TbVenda salvar_venda = salvar_venda();
 
-            if ( salvar_venda != null )
-            {
-                System.err.println( "VENDA AQUI " + salvar_venda.getCodigo() );
+            if (salvar_venda != null) {
+                System.err.println("VENDA AQUI " + salvar_venda.getCodigo());
 //                registrar_forma_pagamento( salvar_venda.getCodigo() );
-                salvarItemvenda( salvar_venda );
+                salvarItemvenda(salvar_venda);
                 remover_dados_tabela();
 
-            }
-            else
-            {
-                System.err.println( "  erro ao salvar venda!!!" );
+            } else {
+                System.err.println("  erro ao salvar venda!!!");
             }
         }
 
     }
 
-    public static void procedimento_processar_factura_consulta()
-    {
+    public static void procedimento_processar_factura_consulta() {
 
-        if ( true )
-        {
+        if (true) {
             TbVenda salvar_venda = salvar_venda();
 
-            if ( salvar_venda != null )
-            {
-                System.err.println( "VENDA AQUI " + salvar_venda.getCodigo() );
-                salvarItemvenda( salvar_venda );
+            if (salvar_venda != null) {
+                System.err.println("VENDA AQUI " + salvar_venda.getCodigo());
+                salvarItemvenda(salvar_venda);
                 remover_dados_tabela();
 
-            }
-            else
-            {
-                System.err.println( "  erro ao salvar venda!!!" );
+            } else {
+                System.err.println("  erro ao salvar venda!!!");
             }
         }
 
@@ -1642,8 +1531,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
         // TODO add your handling code here:
 
-        if ( evt.getClickCount() >= 2 )
-        {
+        if (evt.getClickCount() >= 2) {
             procedimento_eliminar_item_pedido();
         }
 
@@ -1682,61 +1570,61 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
     private void btn_10ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_10ActionPerformed
     {//GEN-HEADEREND:event_btn_10ActionPerformed
         // TODO add your handling code here:
-        activar_button_lugar( true, true, true, true, true, true, true, true, true, false );
+        activar_button_lugar(true, true, true, true, true, true, true, true, true, false);
     }//GEN-LAST:event_btn_10ActionPerformed
 
     private void btn_05ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_05ActionPerformed
     {//GEN-HEADEREND:event_btn_05ActionPerformed
         // TODO add your handling code here:
-        activar_button_lugar( true, true, true, true, false, true, true, true, true, true );
+        activar_button_lugar(true, true, true, true, false, true, true, true, true, true);
     }//GEN-LAST:event_btn_05ActionPerformed
 
     private void btn_04ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_04ActionPerformed
     {//GEN-HEADEREND:event_btn_04ActionPerformed
         // TODO add your handling code here:
-        activar_button_lugar( true, true, true, false, true, true, true, true, true, true );
+        activar_button_lugar(true, true, true, false, true, true, true, true, true, true);
     }//GEN-LAST:event_btn_04ActionPerformed
 
     private void btn_09ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_09ActionPerformed
     {//GEN-HEADEREND:event_btn_09ActionPerformed
         // TODO add your handling code here:
-        activar_button_lugar( true, true, true, true, true, true, true, true, false, true );
+        activar_button_lugar(true, true, true, true, true, true, true, true, false, true);
     }//GEN-LAST:event_btn_09ActionPerformed
 
     private void btn_03ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_03ActionPerformed
     {//GEN-HEADEREND:event_btn_03ActionPerformed
         // TODO add your handling code here:
-        activar_button_lugar( true, true, false, true, true, true, true, true, true, true );
+        activar_button_lugar(true, true, false, true, true, true, true, true, true, true);
     }//GEN-LAST:event_btn_03ActionPerformed
 
     private void btn_08ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_08ActionPerformed
     {//GEN-HEADEREND:event_btn_08ActionPerformed
         // TODO add your handling code here:
-        activar_button_lugar( true, true, true, true, true, true, true, false, true, true );
+        activar_button_lugar(true, true, true, true, true, true, true, false, true, true);
     }//GEN-LAST:event_btn_08ActionPerformed
 
     private void btn_02ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_02ActionPerformed
     {//GEN-HEADEREND:event_btn_02ActionPerformed
         // TODO add your handling code here:
-        activar_button_lugar( true, false, true, true, true, true, true, true, true, true );
+        activar_button_lugar(true, false, true, true, true, true, true, true, true, true);
     }//GEN-LAST:event_btn_02ActionPerformed
 
     private void btn_07ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_07ActionPerformed
     {//GEN-HEADEREND:event_btn_07ActionPerformed
         // TODO add your handling code here:
-        activar_button_lugar( true, true, true, true, true, true, false, true, true, true );
+        activar_button_lugar(true, true, true, true, true, true, false, true, true, true);
     }//GEN-LAST:event_btn_07ActionPerformed
 
     private void btn_06ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_06ActionPerformed
     {//GEN-HEADEREND:event_btn_06ActionPerformed
         // TODO add your handling code here:
-        activar_button_lugar( true, true, true, true, true, false, true, true, true, true );
+        activar_button_lugar(true, true, true, true, true, false, true, true, true, true);
     }//GEN-LAST:event_btn_06ActionPerformed
 
     private void btn_01ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_01ActionPerformed
     {//GEN-HEADEREND:event_btn_01ActionPerformed
         // TODO add your handling code here:
-        activar_button_lugar( false, true, true, true, true, true, true, true, true, true );
+        activar_button_lugar(false, true, true, true, true, true, true, true, true, true);
     }//GEN-LAST:event_btn_01ActionPerformed
 
     private void cmbArmazemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbArmazemActionPerformed
@@ -1745,23 +1633,17 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
     }//GEN-LAST:event_cmbArmazemActionPerformed
 
     private void rbArmazem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbArmazem1ActionPerformed
-        try
-        {
+        try {
             configurar_armazens();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }//GEN-LAST:event_rbArmazem1ActionPerformed
 
     private void rbArmazemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbArmazemActionPerformed
-        try
-        {
+        try {
             configurar_armazens();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }//GEN-LAST:event_rbArmazemActionPerformed
@@ -1792,8 +1674,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jButton1ActionPerformed
 
         dispose();
-        List<TbItemPedidos> buscaTodosItemPedidos = itemPedidosDao.buscaTodosItemPedidos( pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa ) );
-        new MesasTranferenciasVisao( idUser, "", id_armzem, conexao, buscaTodosItemPedidos ).setVisible( true );
+        List<TbItemPedidos> buscaTodosItemPedidos = itemPedidosDao.buscaTodosItemPedidos(pedidoDao.getLastPedidoByDefignacaoMesaFALSE(mesa));
+        new MesasTranferenciasVisao(idUser, "", id_armzem, conexao, buscaTodosItemPedidos).setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void ck_A7ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ck_A7ActionPerformed
@@ -1803,24 +1685,18 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton4ActionPerformed
     {//GEN-HEADEREND:event_jButton4ActionPerformed
-        try
-        {
-            if ( rbNao_lugar.isSelected() && activo_um_lugar() )
-            {
-                new BuscaProdutoVisao( this,
-                        rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_RETAURANTE, BDConexao.getInstancia() ).setVisible( true );
-            }
-            else
-            {
+        try {
+            if (rbNao_lugar.isSelected() && activo_um_lugar()) {
+                new BuscaProdutoVisao(this,
+                        rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_RETAURANTE, BDConexao.getInstancia()).setVisible(true);
+            } else {
 
-                new BuscaProdutoVisao( this,
+                new BuscaProdutoVisao(this,
                         rootPaneCheckingEnabled,
                         getCodigoArmazem(), DVML.JANELA_RETAURANTE,
-                        BDConexao.getInstancia() ).setVisible( true );
+                        BDConexao.getInstancia()).setVisible(true);
             }
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }//GEN-LAST:event_jButton4ActionPerformed
@@ -1829,9 +1705,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jTable1PropertyChange
         // TODO add your handling code here:
 
-        if ( jTable1.getSelectedColumn() == 3 )
-        {
-            System.out.println( "change" );
+        if (jTable1.getSelectedColumn() == 3) {
+            System.out.println("change");
             actualizarQtdTable();
         }
 
@@ -1846,20 +1721,16 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
     private void BtnFConsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BtnFConsActionPerformed
     {//GEN-HEADEREND:event_BtnFConsActionPerformed
 
-        try
-        {
+        try {
 
-            if ( MetodosUtil.licencaValidada( conexao ) )
-            {
+            if (MetodosUtil.licencaValidada(conexao)) {
 
                 procedimento_processar_factura_consulta();
                 dispose();
 
             }
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
         }
 
     }//GEN-LAST:event_BtnFConsActionPerformed
@@ -1875,7 +1746,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
     private void btClienteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btClienteActionPerformed
     {//GEN-HEADEREND:event_btClienteActionPerformed
-        new ClienteVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia() ).setVisible( true );
+        new ClienteVisao(this, rootPaneCheckingEnabled, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btClienteActionPerformed
 
     private void txtIniciaisClienteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtIniciaisClienteActionPerformed
@@ -1890,12 +1761,12 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
     private void rbTicketGeralActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_rbTicketGeralActionPerformed
     {//GEN-HEADEREND:event_rbTicketGeralActionPerformed
-        jButton3.setVisible( true );
+        jButton3.setVisible(true);
     }//GEN-LAST:event_rbTicketGeralActionPerformed
 
     private void rbTicketSimplesActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_rbTicketSimplesActionPerformed
     {//GEN-HEADEREND:event_rbTicketSimplesActionPerformed
-        jButton3.setVisible( false );
+        jButton3.setVisible(false);
     }//GEN-LAST:event_rbTicketSimplesActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton3ActionPerformed
@@ -1905,20 +1776,18 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
     private void rbSim_lugarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_rbSim_lugarActionPerformed
     {//GEN-HEADEREND:event_rbSim_lugarActionPerformed
-        jPanelLugares.setVisible( false );
+        jPanelLugares.setVisible(false);
     }//GEN-LAST:event_rbSim_lugarActionPerformed
 
     private void rbNao_lugarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_rbNao_lugarActionPerformed
     {//GEN-HEADEREND:event_rbNao_lugarActionPerformed
-        jPanelLugares.setVisible( true );
+        jPanelLugares.setVisible(true);
     }//GEN-LAST:event_rbNao_lugarActionPerformed
 
     private void btFTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btFTActionPerformed
 
-        if ( validar() )
-        {
-            if ( MetodosUtil.licencaValidada( conexao ) )
-            {
+        if (validar()) {
+            if (MetodosUtil.licencaValidada(conexao)) {
                 procedimento_converter_factura_FT();
                 dispose();
 //                procedimento_salvar();
@@ -1937,67 +1806,99 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         // TODO add your handling code here:
     }//GEN-LAST:event_txtTelClientePesquisaKeyPressed
 
-    private void atualizarCliente1()
-    {
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        try {
+
+//            String nomeImpressora = "EPSON TM-T88IV Receipt"; // nome exato no Windows
+            String nomeImpressora = dadosInstituicaoController.findByCodigo(1).getImpressoraCaixa();
+            System.out.println(" IMPRESSORA CAIXA: " + nomeImpressora);
+            PrintService[] services = PrinterJob.lookupPrintServices();
+            PrintService impressora = null;
+
+            for (PrintService ps : services) {
+                if (ps.getName().equalsIgnoreCase(nomeImpressora)) {
+                    impressora = ps;
+                    break;
+                }
+            }
+
+            if (impressora == null) {
+                System.out.println(" IMPRESSORA CAIXA: " + nomeImpressora);
+                JOptionPane.showMessageDialog(null, "Impressora não encontrada! " + nomeImpressora);
+                return;
+            }
+
+            DocPrintJob job = impressora.createPrintJob();
+
+            // Comando oficial Epson para abrir gaveta
+            byte[] abrirGaveta = new byte[]{27, 112, 0, 25, (byte) 250};
+
+            Doc doc = new SimpleDoc(abrirGaveta, DocFlavor.BYTE_ARRAY.AUTOSENSE, null);
+            job.print(doc, null);
+
+            System.out.println("Gaveta aberta com sucesso!");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Erro ao abrir gaveta: " + e.getMessage());
+        }
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void rbEsconderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbEsconderActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rbEsconderActionPerformed
+
+    private void rbAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbAbrirActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rbAbrirActionPerformed
+
+    private void atualizarCliente1() {
         boolean documentoIsFA = DVML.DOC_FACTURA_FT == getIdDocumento();
         boolean documentoIsPP = DVML.DOC_FACTURA_PROFORMA_PP == getIdDocumento();
 //        boolean documentoIsGT = DVML.DOC_GUIA_TRANSPORTE_GT == getIdDocumento();
 
-        if ( documentoIsFA || documentoIsPP )
-        {
+        if (documentoIsFA || documentoIsPP) {
             //EXCLUIR CONSUMIDOR FINAL
-            cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVectorExcetoConsumidorFinal() ) );
-        }
-        else
-        {
-            cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );
-            cmbCliente.setSelectedItem( DVML._CLIENTE_CONSUMIDOR_FINAL );
+            cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVectorExcetoConsumidorFinal()));
+        } else {
+            cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVector()));
+            cmbCliente.setSelectedItem(DVML._CLIENTE_CONSUMIDOR_FINAL);
         }
     }
 
-    private void actualizar_moeda()
-    {
+    private void actualizar_moeda() {
         CfMethods.MOEDA = getMoeda().getAbreviacao();
     }
 
-    private static void actualizar_moeda( String moeda )
-    {
+    private static void actualizar_moeda(String moeda) {
         CfMethods.MOEDA = moeda;
     }
 
-    private void setDocpadrao( String documentos )
-    {
-        System.out.println( "DOCUMENTO PADRAO: " + documentos );
-        if ( documentos.equalsIgnoreCase( "Factura/Recibo" ) )
-        {
-            cmbTipoDocumento.setSelectedIndex( 1 );
+    private void setDocpadrao(String documentos) {
+        System.out.println("DOCUMENTO PADRAO: " + documentos);
+        if (documentos.equalsIgnoreCase("Factura/Recibo")) {
+            cmbTipoDocumento.setSelectedIndex(1);
 
-        }
-        else if ( documentos.equalsIgnoreCase( "Factura" ) )
-        {
-            cmbTipoDocumento.setSelectedIndex( 2 );
+        } else if (documentos.equalsIgnoreCase("Factura")) {
+            cmbTipoDocumento.setSelectedIndex(2);
 
-        }
-        else if ( documentos.equalsIgnoreCase( "Factura-Proforma" ) )
-        {
-            cmbTipoDocumento.setSelectedIndex( 3 );
+        } else if (documentos.equalsIgnoreCase("Factura-Proforma")) {
+            cmbTipoDocumento.setSelectedIndex(3);
 
         }
     }
 
-    public boolean validar()
-    {
-        if ( cmbCliente.getSelectedItem().equals( "--Seleccione o Cliente--" ) )
-        {
+    public boolean validar() {
+        if (cmbCliente.getSelectedItem().equals("--Seleccione o Cliente--")) {
 
-            JOptionPane.showMessageDialog( null, "Por favor, Seleccione ou Digite o nome do Cliente!" );
+            JOptionPane.showMessageDialog(null, "Por favor, Seleccione ou Digite o nome do Cliente!");
             txtIniciaisCliente.requestFocus();
-            txtIniciaisCliente.setBackground( Color.YELLOW );
+            txtIniciaisCliente.setBackground(Color.YELLOW);
             return false;
 
         }
 
-        txtIniciaisCliente.setBackground( Color.WHITE );
+        txtIniciaisCliente.setBackground(Color.WHITE);
         return true;
     }
 
@@ -2019,23 +1920,16 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //
 //        }
 //    }
-    private void actualizar_abreviacao()
-    {
+    private void actualizar_abreviacao() {
 
-        switch (getIdDocumento())
-        {
+        switch (getIdDocumento()) {
             case DVML.DOC_FACTURA_RECIBO_FR:
 
-                if ( ck_simplificada.isSelected() )
-                {
+                if (ck_simplificada.isSelected()) {
                     this.abreviacao = Abreviacao.FR_A6;
-                }
-                else if ( ck_S_A6.isSelected() )
-                {
+                } else if (ck_S_A6.isSelected()) {
                     this.abreviacao = Abreviacao.FR_S_A6;
-                }
-                else if ( ck_ComVirgula.isSelected() )
-                {
+                } else if (ck_ComVirgula.isSelected()) {
                     this.abreviacao = Abreviacao.FR_A6_Com_Virgula;
                 }
                 break;
@@ -2054,47 +1948,34 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
     }
 
-    public int getCodigoTipoProduto() throws SQLException
-    {
+    public int getCodigoTipoProduto() throws SQLException {
         return 0;
     }
 
     /**
      * @param args the command line arguments
      */
-    public static void main( String args[] )
-    {
+    public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        try
-        {
-            for ( javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels() )
-            {
-                if ( "Skin".equals( info.getName() ) )
-                {
-                    javax.swing.UIManager.setLookAndFeel( info.getClassName() );
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Skin".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
-        }
-        catch ( ClassNotFoundException ex )
-        {
-            java.util.logging.Logger.getLogger( NovaGestaoPedidosVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }
-        catch ( InstantiationException ex )
-        {
-            java.util.logging.Logger.getLogger( NovaGestaoPedidosVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }
-        catch ( IllegalAccessException ex )
-        {
-            java.util.logging.Logger.getLogger( NovaGestaoPedidosVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }
-        catch ( javax.swing.UnsupportedLookAndFeelException ex )
-        {
-            java.util.logging.Logger.getLogger( NovaGestaoPedidosVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(NovaGestaoPedidosVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(NovaGestaoPedidosVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(NovaGestaoPedidosVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(NovaGestaoPedidosVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
         //</editor-fold>
@@ -2610,13 +2491,11 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater( new Runnable()
-        {
-            public void run()
-            {
-                new NovaGestaoPedidosVisao( "Mesa 2", "Lugar 2", 1, 1, BDConexao.getInstancia() ).setVisible( true );
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new NovaGestaoPedidosVisao("Mesa 2", "Lugar 2", 1, 1, BDConexao.getInstancia()).setVisible(true);
             }
-        } );
+        });
     }
 
 
@@ -2658,6 +2537,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -2678,8 +2558,10 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
     public static javax.swing.JLabel lbValorPorExtenco;
     private javax.swing.JLabel lbVias;
     private static javax.swing.JLabel lb_proximo_documento;
+    private static javax.swing.JRadioButton rbAbrir;
     private static javax.swing.JRadioButton rbArmazem;
     private static javax.swing.JRadioButton rbArmazem1;
+    private static javax.swing.JRadioButton rbEsconder;
     public static javax.swing.JRadioButton rbNao_lugar;
     public static javax.swing.JRadioButton rbSim_lugar;
     private static javax.swing.JRadioButton rbTicketGeral;
@@ -2695,554 +2577,431 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
     public static javax.swing.JTextField txtTotalApagar;
     // End of variables declaration//GEN-END:variables
 
-    private void adicionar_lugares()
-    {
+    private void adicionar_lugares() {
 
-        try
-        {
+        try {
             List<TbLugares> itens = lugaresController.listarTodos();
             lista_lugares.clear();
-            for ( int i = 0; i < itens.size(); i++ )
-            {
-                lista_lugares.addElement( itens.get( i ).getDesignacao() );
+            for (int i = 0; i < itens.size(); i++) {
+                lista_lugares.addElement(itens.get(i).getDesignacao());
             }
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
         }
     }
 
-    public static void procedimento_salvar_pedidos_iten_pedidos_lugar_desactivo( String designacao_produto )
-    {
-        try
-        {
+    public static void procedimento_salvar_pedidos_iten_pedidos_lugar_desactivo(String designacao_produto) {
+        try {
 
             /* MOSTRA A QUANTIDADE NO STOCK */
-            int codigo_produto = produtoDao.getIdByDescricao( designacao_produto );
+            int codigo_produto = produtoDao.getIdByDescricao(designacao_produto);
 
-            TbProduto produto_local = produtoDao.findTbProduto( codigo_produto );
-            if ( produto_local.getStocavel().equals( "true" ) && produto_local.getCodTipoProduto().getFkFamilia().getPkFamilia() == DVML.COD_PRODUTO )
-            {
-                lbQuantidadeExistente.setVisible( true );
-                txtQuatidadeExistente.setVisible( true );
+            TbProduto produto_local = produtoDao.findTbProduto(codigo_produto);
+            if (produto_local.getStocavel().equals("true") && produto_local.getCodTipoProduto().getFkFamilia().getPkFamilia() == DVML.COD_PRODUTO) {
+                lbQuantidadeExistente.setVisible(true);
+                txtQuatidadeExistente.setVisible(true);
 
 //            txtQuatidadeExistente.setText( String.valueOf( stockDao.get_stock_by_id_produto_and_id_armazem( getCodigoProduto(), getCodigoArmazem() ).getQuantidadeExistente() ) );
-                txtQuatidadeExistente.setText( String.valueOf( conexao.getQtdExistenteStock( codigo_produto, getCodigoArmazem() ) ) );
-            }
-            else
-            {
-                lbQuantidadeExistente.setVisible( false );
-                txtQuatidadeExistente.setVisible( false );
-                txtQuatidadeExistente.setText( "" );
+                txtQuatidadeExistente.setText(String.valueOf(conexao.getQtdExistenteStock(codigo_produto, getCodigoArmazem())));
+            } else {
+                lbQuantidadeExistente.setVisible(false);
+                txtQuatidadeExistente.setVisible(false);
+                txtQuatidadeExistente.setText("");
             }
 
             visualizarQtdStock();
             TbItemPedidos itemPedidosLocal = new TbItemPedidos();
-            int cod_pedido = (pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa ));
-            pedido = pedidoDao.findTbPedido( cod_pedido );
+            int cod_pedido = (pedidoDao.getLastPedidoByDefignacaoMesaFALSE(mesa));
+            pedido = pedidoDao.findTbPedido(cod_pedido);
 
-            if ( rbSim_lugar.isSelected() )
-            {
+            if (rbSim_lugar.isSelected()) {
 
-                itemPedidosLocal.setFkLugares( (TbLugares) lugaresController.findByLugar( String.valueOf( DVML.LUGAR_BALCAO ) ) );
+                itemPedidosLocal.setFkLugares((TbLugares) lugaresController.findByLugar(String.valueOf(DVML.LUGAR_BALCAO)));
 
-            }
-            else
-            {
+            } else {
 
-                itemPedidosLocal.setFkLugares( (TbLugares) lugaresController.findByLugar( getDescricaoLugar() ) );
+                itemPedidosLocal.setFkLugares((TbLugares) lugaresController.findByLugar(getDescricaoLugar()));
 
             }
 
-            itemPedidosLocal.setFkProdutos( produtoDao.findTbProduto( produtoDao.getIdByDescricao( designacao_produto ) ) );
-            itemPedidosLocal.setQtd( 1 );
-            itemPedidosLocal.setObs( "" );
-            itemPedidosLocal.setDataEntrega( new Date() );
-            itemPedidosLocal.setStatusConvertido( false );
+            itemPedidosLocal.setFkProdutos(produtoDao.findTbProduto(produtoDao.getIdByDescricao(designacao_produto)));
+            itemPedidosLocal.setQtd(1);
+            itemPedidosLocal.setObs("");
+            itemPedidosLocal.setDataEntrega(new Date());
+            itemPedidosLocal.setStatusConvertido(false);
             /*Envia para a área da cozinha*/
-            itemPedidosLocal.setStatusEnviado( true );
+            itemPedidosLocal.setStatusEnviado(true);
             //para saber se o prato ja foi feito 
-            itemPedidosLocal.setStatusEfectuado( false );
+            itemPedidosLocal.setStatusEfectuado(false);
 
-            double preco = precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( itemPedidosLocal.getFkProdutos().getCodigo() ) ).getPrecoVenda().doubleValue();
+            double preco = precoDao.findTbPreco(precoDao.getUltimoIdPrecoByIdProduto(itemPedidosLocal.getFkProdutos().getCodigo())).getPrecoVenda().doubleValue();
             double total = itemPedidosLocal.getQtd() * preco;
-            itemPedidosLocal.setPreco( preco );
-            itemPedidosLocal.setTotalItem( total );
-            itemPedidosLocal.setFkPedidos( pedido );
+            itemPedidosLocal.setPreco(preco);
+            itemPedidosLocal.setTotalItem(total);
+            itemPedidosLocal.setFkPedidos(pedido);
 
-            try
-            {
-                if ( possivel_quantidade( itemPedidosLocal.getFkProdutos().getCodigo() ) )
-                {
+            try {
+                if (possivel_quantidade(itemPedidosLocal.getFkProdutos().getCodigo())) {
 
                     // if( (conexao.getQtdSolicitados(  itemPedidos.getFkProdutos().getCodigo() ) + 1 ) <=  conexao.getQtdExistenteStock(codigo_produto, 1)  ){
-                    if ( produto_local.getCodTipoProduto().getFkFamilia().getPkFamilia() == DVML.COD_PRODUTO )
-                    {
-                        if ( estado_critico( itemPedidosLocal.getFkProdutos().getCodigo() ) )
-                        {
-                            JOptionPane.showMessageDialog( null, "O produto: " + designacao_produto + " precisa de ser actualizado no stock", "AVISO", JOptionPane.WARNING_MESSAGE );
+                    if (produto_local.getCodTipoProduto().getFkFamilia().getPkFamilia() == DVML.COD_PRODUTO) {
+                        if (estado_critico(itemPedidosLocal.getFkProdutos().getCodigo())) {
+                            JOptionPane.showMessageDialog(null, "O produto: " + designacao_produto + " precisa de ser actualizado no stock", "AVISO", JOptionPane.WARNING_MESSAGE);
                         }
 
                     }
 
 //#ped2z
-                    Integer idLastItemPedido = itemPedidosDao.criarComProcedimento( itemPedidosLocal, conexao );
+                    Integer idLastItemPedido = itemPedidosDao.criarComProcedimento(itemPedidosLocal, conexao);
 
-                    if ( idLastItemPedido != null )
-                    {
+                    if (idLastItemPedido != null) {
                         //##PINTAR
-                        PrincipalPedidosVisao.mesas_livres( getLabelMesaByMesa() );
-                        PrincipalPedidosVisao.pintar_mesas( getLabelMesaByMesa(), mesa );
-                        System.out.println( "MESA A PINTAR: " + getLabelMesaByMesa().getText() );
-                        System.out.println( "VALOR MESA A PINTAR: " + mesa );
+                        PrincipalPedidosVisao.mesas_livres(getLabelMesaByMesa());
+                        PrincipalPedidosVisao.pintar_mesas(getLabelMesaByMesa(), mesa);
+                        System.out.println("MESA A PINTAR: " + getLabelMesaByMesa().getText());
+                        System.out.println("VALOR MESA A PINTAR: " + mesa);
                         //adiciona os produtos na tabela
                         actualizar();
 
                         int idPedido = 0;
 
-                        TbLugares lugarEntity = (TbLugares) lugaresController.findById( DVML.LUGAR_BALCAO );
+                        TbLugares lugarEntity = (TbLugares) lugaresController.findById(DVML.LUGAR_BALCAO);
                         String lugarLocal = lugarEntity.getDesignacao();
-                        TbUsuario usuarioEntity = (TbUsuario) usuariosController.findById( idUser );
+                        TbUsuario usuarioEntity = (TbUsuario) usuariosController.findById(idUser);
                         String usuario = usuarioEntity.getNome();
-                        TbProduto findByDesignacao = produtosController.findByDesignacao( itemPedidosLocal.getFkProdutos().getDesignacao() );
-                        if ( ( rbTicketSimples.isSelected() ) && ( findByDesignacao.getCozinha().equals( DVML.ENVIAR_TICKET ) ) )
-                        {
-                            MetodosUtil.imprimir_cozinha( findByDesignacao, idPedido, mesa, lugarLocal, usuario, "Activo", (int) itemPedidosLocal.getQtd(), dadosInstituicaoController );
-                        }
-                        else if ( ( rbTicketSimples.isSelected() ) && ( findByDesignacao.getCozinha().equals( DVML.ENVIAR_SALA ) ) )
-                        {
-                            MetodosUtil.imprimir_sala( findByDesignacao, idPedido, mesa, lugarLocal, usuario, "Activo", (int) itemPedidosLocal.getQtd(), dadosInstituicaoController );
-                        }
-                        else
-                        {
+                        TbProduto findByDesignacao = produtosController.findByDesignacao(itemPedidosLocal.getFkProdutos().getDesignacao());
+                        if ((rbTicketSimples.isSelected()) && (findByDesignacao.getCozinha().equals(DVML.ENVIAR_TICKET))) {
+                            MetodosUtil.imprimir_cozinha(findByDesignacao, idPedido, mesa, lugarLocal, usuario, "Activo", (int) itemPedidosLocal.getQtd(), dadosInstituicaoController);
+                        } else if ((rbTicketSimples.isSelected()) && (findByDesignacao.getCozinha().equals(DVML.ENVIAR_SALA))) {
+                            MetodosUtil.imprimir_sala(findByDesignacao, idPedido, mesa, lugarLocal, usuario, "Activo", (int) itemPedidosLocal.getQtd(), dadosInstituicaoController);
+                        } else {
 
                         }
 
-                    } 
-
-                    else
-                    {
-                        System.err.println( "ERRO AO INSERIR O ITEM ..." );
+                    } else {
+                        System.err.println("ERRO AO INSERIR O ITEM ...");
                     }
-                }
-                else
-                {
-                    JOptionPane.showMessageDialog( null, "O Produto " + designacao_produto + " não pode ser vendido para esta quantidade.", "AVISO", JOptionPane.WARNING_MESSAGE );
+                } else {
+                    JOptionPane.showMessageDialog(null, "O Produto " + designacao_produto + " não pode ser vendido para esta quantidade.", "AVISO", JOptionPane.WARNING_MESSAGE);
                 }
 
-            }
-            catch ( Exception e )
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void procedimento_salvar_pedidos_iten_pedidos( String designacao_produto )
-    {
+    public static void procedimento_salvar_pedidos_iten_pedidos(String designacao_produto) {
 
-        try
-        {
+        try {
 
             /* MOSTRA A QUANTIDADE NO STOCK */
-            int codigo_produto = produtoDao.getIdByDescricao( designacao_produto );
+            int codigo_produto = produtoDao.getIdByDescricao(designacao_produto);
 
-            TbProduto produto_local = produtoDao.findTbProduto( codigo_produto );
+            TbProduto produto_local = produtoDao.findTbProduto(codigo_produto);
 
-            if ( produto_local.getStocavel().equals( "true" ) && produto_local.getCodTipoProduto().getFkFamilia().getPkFamilia() == DVML.COD_PRODUTO )
-            {
-                lbQuantidadeExistente.setVisible( true );
-                txtQuatidadeExistente.setVisible( true );
+            if (produto_local.getStocavel().equals("true") && produto_local.getCodTipoProduto().getFkFamilia().getPkFamilia() == DVML.COD_PRODUTO) {
+                lbQuantidadeExistente.setVisible(true);
+                txtQuatidadeExistente.setVisible(true);
 
 //            txtQuatidadeExistente.setText( String.valueOf( stockDao.get_stock_by_id_produto_and_id_armazem( getCodigoProduto(), getCodigoArmazem() ).getQuantidadeExistente() ) );
-                txtQuatidadeExistente.setText( String.valueOf( conexao.getQtdExistenteStock( codigo_produto, getCodigoArmazem() ) ) );
-            }
-            else
-            {
-                lbQuantidadeExistente.setVisible( false );
-                txtQuatidadeExistente.setVisible( false );
-                txtQuatidadeExistente.setText( "" );
+                txtQuatidadeExistente.setText(String.valueOf(conexao.getQtdExistenteStock(codigo_produto, getCodigoArmazem())));
+            } else {
+                lbQuantidadeExistente.setVisible(false);
+                txtQuatidadeExistente.setVisible(false);
+                txtQuatidadeExistente.setText("");
             }
 
             visualizarQtdStock();
             TbItemPedidos itemPedidosLocal = new TbItemPedidos();
-            int cod_pedido = (pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa ));
-            pedido = pedidoDao.findTbPedido( cod_pedido );
+            int cod_pedido = (pedidoDao.getLastPedidoByDefignacaoMesaFALSE(mesa));
+            pedido = pedidoDao.findTbPedido(cod_pedido);
 
-            if ( rbSim_lugar.isSelected() )
-            {
+            if (rbSim_lugar.isSelected()) {
 
-                itemPedidosLocal.setFkLugares( (TbLugares) lugaresController.findByLugar( String.valueOf( DVML.LUGAR_BALCAO ) ) );
+                itemPedidosLocal.setFkLugares((TbLugares) lugaresController.findByLugar(String.valueOf(DVML.LUGAR_BALCAO)));
 
-            }
-            else if ( rbNao_lugar.isSelected() )
-            {
+            } else if (rbNao_lugar.isSelected()) {
 
-                if ( activo_um_lugar() )
-                {
-                    itemPedidosLocal.setFkLugares( (TbLugares) lugaresController.findByLugar( getDescricaoLugar() ) );
-                }
-                else
-                {
+                if (activo_um_lugar()) {
+                    itemPedidosLocal.setFkLugares((TbLugares) lugaresController.findByLugar(getDescricaoLugar()));
+                } else {
                     return;
                 }
 
             }
 
-            itemPedidosLocal.setFkProdutos( produtoDao.findTbProduto( produtoDao.getIdByDescricao( designacao_produto ) ) );
-            itemPedidosLocal.setQtd( 1 );
-            itemPedidosLocal.setObs( "" );
-            itemPedidosLocal.setDataEntrega( new Date() );
-            itemPedidosLocal.setStatusConvertido( false );
+            itemPedidosLocal.setFkProdutos(produtoDao.findTbProduto(produtoDao.getIdByDescricao(designacao_produto)));
+            itemPedidosLocal.setQtd(1);
+            itemPedidosLocal.setObs("");
+            itemPedidosLocal.setDataEntrega(new Date());
+            itemPedidosLocal.setStatusConvertido(false);
             /*Envia para a área da cozinha*/
             //para enviar  da cozinha
-            itemPedidosLocal.setStatusEnviado( true );
+            itemPedidosLocal.setStatusEnviado(true);
             //para saber se o prato ja foi feito 
-            itemPedidosLocal.setStatusEfectuado( false );
+            itemPedidosLocal.setStatusEfectuado(false);
 
-            double preco = precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( itemPedidosLocal.getFkProdutos().getCodigo() ) ).getPrecoVenda().doubleValue();
+            double preco = precoDao.findTbPreco(precoDao.getUltimoIdPrecoByIdProduto(itemPedidosLocal.getFkProdutos().getCodigo())).getPrecoVenda().doubleValue();
             double total = itemPedidosLocal.getQtd() * preco;
-            itemPedidosLocal.setPreco( preco );
-            itemPedidosLocal.setTotalItem( total );
-            itemPedidosLocal.setFkPedidos( pedido );
+            itemPedidosLocal.setPreco(preco);
+            itemPedidosLocal.setTotalItem(total);
+            itemPedidosLocal.setFkPedidos(pedido);
 
-            try
-            {
-                if ( possivel_quantidade( itemPedidosLocal.getFkProdutos().getCodigo() ) )
-                {
+            try {
+                if (possivel_quantidade(itemPedidosLocal.getFkProdutos().getCodigo())) {
 
                     // if( (conexao.getQtdSolicitados(  itemPedidos.getFkProdutos().getCodigo() ) + 1 ) <=  conexao.getQtdExistenteStock(codigo_produto, 1)  ){
-                    if ( produto_local.getCodTipoProduto().getFkFamilia().getPkFamilia() == DVML.COD_PRODUTO )
-                    {
-                        if ( estado_critico( itemPedidosLocal.getFkProdutos().getCodigo() ) )
-                        {
-                            JOptionPane.showMessageDialog( null, "O produto: " + designacao_produto + " precisa de ser actualizado no stock", "AVISO", JOptionPane.WARNING_MESSAGE );
+                    if (produto_local.getCodTipoProduto().getFkFamilia().getPkFamilia() == DVML.COD_PRODUTO) {
+                        if (estado_critico(itemPedidosLocal.getFkProdutos().getCodigo())) {
+                            JOptionPane.showMessageDialog(null, "O produto: " + designacao_produto + " precisa de ser actualizado no stock", "AVISO", JOptionPane.WARNING_MESSAGE);
                         }
 
                     }
 
 //#ped2z
-                    if ( rbSim_lugar.isSelected() )
-                    {
+                    if (rbSim_lugar.isSelected()) {
 
-                        Integer idLastItemPedidoLugarActivo = itemPedidosDao.criarComProcedimentoLugar( itemPedidosLocal, conexao );
+                        Integer idLastItemPedidoLugarActivo = itemPedidosDao.criarComProcedimentoLugar(itemPedidosLocal, conexao);
 
-                        if ( idLastItemPedidoLugarActivo != null )
-                        {
+                        if (idLastItemPedidoLugarActivo != null) {
                             //##PINTAR
-                            PrincipalPedidosVisao.mesas_livres( getLabelMesaByMesa() );
-                            PrincipalPedidosVisao.pintar_mesas( getLabelMesaByMesa(), mesa );
-                            System.out.println( "MESA A PINTAR: " + getLabelMesaByMesa().getText() );
-                            System.out.println( "VALOR MESA A PINTAR: " + mesa );
+                            PrincipalPedidosVisao.mesas_livres(getLabelMesaByMesa());
+                            PrincipalPedidosVisao.pintar_mesas(getLabelMesaByMesa(), mesa);
+                            System.out.println("MESA A PINTAR: " + getLabelMesaByMesa().getText());
+                            System.out.println("VALOR MESA A PINTAR: " + mesa);
                             //adiciona os produtos na tabela
                             actualizar();
 
                             int idPedido = 0;
 
-                            TbLugares lugarEntity = (TbLugares) lugaresController.findById( DVML.LUGAR_BALCAO );
+                            TbLugares lugarEntity = (TbLugares) lugaresController.findById(DVML.LUGAR_BALCAO);
                             String lugarLocal = lugarEntity.getDesignacao();
-                            TbUsuario usuarioEntity = (TbUsuario) usuariosController.findById( idUser );
+                            TbUsuario usuarioEntity = (TbUsuario) usuariosController.findById(idUser);
                             String usuario = usuarioEntity.getNome();
-                            TbProduto findByDesignacao = produtosController.findByDesignacao( itemPedidosLocal.getFkProdutos().getDesignacao() );
-                            if ( ( rbTicketSimples.isSelected() ) && ( findByDesignacao.getCozinha().equals( DVML.ENVIAR_TICKET ) ) )
-                            {
-                                MetodosUtil.imprimir_cozinha( findByDesignacao, idPedido, mesa, lugarLocal, usuario, "Activo", (int) itemPedidosLocal.getQtd(), dadosInstituicaoController );
-                            }
-                            else if ( ( rbTicketSimples.isSelected() ) && ( findByDesignacao.getCozinha().equals( DVML.ENVIAR_SALA ) ) )
-                            {
-                                MetodosUtil.imprimir_sala( findByDesignacao, idPedido, mesa, lugarLocal, usuario, "Activo", (int) itemPedidosLocal.getQtd(), dadosInstituicaoController );
-                            }
-                            else
-                            {
+                            TbProduto findByDesignacao = produtosController.findByDesignacao(itemPedidosLocal.getFkProdutos().getDesignacao());
+                            if ((rbTicketSimples.isSelected()) && (findByDesignacao.getCozinha().equals(DVML.ENVIAR_TICKET))) {
+                                MetodosUtil.imprimir_cozinha(findByDesignacao, idPedido, mesa, lugarLocal, usuario, "Activo", (int) itemPedidosLocal.getQtd(), dadosInstituicaoController);
+                            } else if ((rbTicketSimples.isSelected()) && (findByDesignacao.getCozinha().equals(DVML.ENVIAR_SALA))) {
+                                MetodosUtil.imprimir_sala(findByDesignacao, idPedido, mesa, lugarLocal, usuario, "Activo", (int) itemPedidosLocal.getQtd(), dadosInstituicaoController);
+                            } else {
 
                             }
 
                         }
 
-                    }
-                    else if ( rbNao_lugar.isSelected() )
-                    {
+                    } else if (rbNao_lugar.isSelected()) {
 
-                        Integer idLastItemPedido = itemPedidosDao.criarComProcedimento( itemPedidosLocal, conexao );
+                        Integer idLastItemPedido = itemPedidosDao.criarComProcedimento(itemPedidosLocal, conexao);
 
-                        if ( idLastItemPedido != null )
-                        {
+                        if (idLastItemPedido != null) {
                             //##PINTAR
-                            PrincipalPedidosVisao.mesas_livres( getLabelMesaByMesa() );
-                            PrincipalPedidosVisao.pintar_mesas( getLabelMesaByMesa(), mesa );
-                            System.out.println( "MESA A PINTAR: " + getLabelMesaByMesa().getText() );
-                            System.out.println( "VALOR MESA A PINTAR: " + mesa );
+                            PrincipalPedidosVisao.mesas_livres(getLabelMesaByMesa());
+                            PrincipalPedidosVisao.pintar_mesas(getLabelMesaByMesa(), mesa);
+                            System.out.println("MESA A PINTAR: " + getLabelMesaByMesa().getText());
+                            System.out.println("VALOR MESA A PINTAR: " + mesa);
                             //adiciona os produtos na tabela
                             actualizar();
 
                             int idPedido = 0;
 
-                            TbLugares lugarEntity = (TbLugares) lugaresController.findById( itemPedidosLocal.getFkLugares().getPkLugares() );
+                            TbLugares lugarEntity = (TbLugares) lugaresController.findById(itemPedidosLocal.getFkLugares().getPkLugares());
                             String lugarLocal = lugarEntity.getDesignacao();
-                            TbUsuario usuarioEntity = (TbUsuario) usuariosController.findById( idUser );
+                            TbUsuario usuarioEntity = (TbUsuario) usuariosController.findById(idUser);
                             String usuario = usuarioEntity.getNome();
-                            TbProduto findByDesignacao = produtosController.findByDesignacao( itemPedidosLocal.getFkProdutos().getDesignacao() );
-                            if ( ( rbTicketSimples.isSelected() ) && ( findByDesignacao.getCozinha().equals( DVML.ENVIAR_TICKET ) ) )
-                            {
-                                MetodosUtil.imprimir_cozinha( findByDesignacao, idPedido, mesa, lugarLocal, usuario, "Activo", (int) itemPedidosLocal.getQtd(), dadosInstituicaoController );
-                            }
-                            else if ( ( rbTicketSimples.isSelected() ) && ( findByDesignacao.getCozinha().equals( DVML.ENVIAR_SALA ) ) )
-                            {
-                                MetodosUtil.imprimir_sala( findByDesignacao, idPedido, mesa, lugarLocal, usuario, "Activo", (int) itemPedidosLocal.getQtd(), dadosInstituicaoController );
-                            }
-                            else
-                            {
+                            TbProduto findByDesignacao = produtosController.findByDesignacao(itemPedidosLocal.getFkProdutos().getDesignacao());
+                            if ((rbTicketSimples.isSelected()) && (findByDesignacao.getCozinha().equals(DVML.ENVIAR_TICKET))) {
+                                MetodosUtil.imprimir_cozinha(findByDesignacao, idPedido, mesa, lugarLocal, usuario, "Activo", (int) itemPedidosLocal.getQtd(), dadosInstituicaoController);
+                            } else if ((rbTicketSimples.isSelected()) && (findByDesignacao.getCozinha().equals(DVML.ENVIAR_SALA))) {
+                                MetodosUtil.imprimir_sala(findByDesignacao, idPedido, mesa, lugarLocal, usuario, "Activo", (int) itemPedidosLocal.getQtd(), dadosInstituicaoController);
+                            } else {
 
                             }
 
                         }
 
-                    }
-                    else
-                    {
-                        System.err.println( "ERRO AO INSERIR O ITEM ..." );
+                    } else {
+                        System.err.println("ERRO AO INSERIR O ITEM ...");
                     }
 
-                }
-                else
-                {
-                    JOptionPane.showMessageDialog( null, "O Produto " + designacao_produto + " não pode ser vendido para esta quantidade.", "AVISO", JOptionPane.WARNING_MESSAGE );
+                } else {
+                    JOptionPane.showMessageDialog(null, "O Produto " + designacao_produto + " não pode ser vendido para esta quantidade.", "AVISO", JOptionPane.WARNING_MESSAGE);
                 }
 
-            }
-            catch ( Exception e )
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
 //    public boolean possivel_quantidade( int codigo_produto )
-    public static boolean possivel_quantidade( int codigo_produto )
-    {
+    public static boolean possivel_quantidade(int codigo_produto) {
 
-        TbProduto produtoLocal = (TbProduto) produtosController.findById( codigo_produto );
-        if ( true ) //            ERRORR
+        TbProduto produtoLocal = (TbProduto) produtosController.findById(codigo_produto);
+        if (true) //            ERRORR
         //        if ( produto.getCodTipoProduto().getFkFamilia().getPkFamilia() == DVML.COD_SERVICO )
         {
             return true;
         }
 
-        System.err.println( conexao.getQuantidade_Existente_Publico( codigo_produto, id_armzem ) );
-        System.err.println( "ID ARMAZEM : " + id_armzem );
-        System.err.println( "ID ARMAZEM : " + getCodigoArmazem() );
+        System.err.println(conexao.getQuantidade_Existente_Publico(codigo_produto, id_armzem));
+        System.err.println("ID ARMAZEM : " + id_armzem);
+        System.err.println("ID ARMAZEM : " + getCodigoArmazem());
         double quant_possivel = 0d;
-        try
-        {
-            quant_possivel = ( conexao.getQuantidade_Existente_Publico( codigo_produto, id_armzem ) - conexao.getQuantidade_minima_publico( codigo_produto, id_armzem ) );
-        }
-        catch ( Exception e )
-        {
+        try {
+            quant_possivel = (conexao.getQuantidade_Existente_Publico(codigo_produto, id_armzem) - conexao.getQuantidade_minima_publico(codigo_produto, id_armzem));
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         // int quant_possivel = stock.getQuantidadeExistente() -  stock.getQuantBaixa();
-        System.out.println( "Quantidade Possivel: " + quant_possivel );
-        System.out.println( "Quantidade Itens Pedidos: " + MetodosUtil.getQtdInItemPedidos( conexao, codigo_produto ) );
-        return quant_possivel >= ( 1 + MetodosUtil.getQtdInItemPedidos( conexao, codigo_produto ) );
+        System.out.println("Quantidade Possivel: " + quant_possivel);
+        System.out.println("Quantidade Itens Pedidos: " + MetodosUtil.getQtdInItemPedidos(conexao, codigo_produto));
+        return quant_possivel >= (1 + MetodosUtil.getQtdInItemPedidos(conexao, codigo_produto));
 
     }
 
-    public static boolean possivel_quantidade( int codigo_produto, int qtd )
-    {
-        TbProduto produtoLocal = (TbProduto) produtosController.findById( codigo_produto );
-        TbTipoProduto tipo = tipoProdutosController.getTipoProdutoByCodigo( produtoLocal.getCodTipoProduto().getCodigo() );
+    public static boolean possivel_quantidade(int codigo_produto, int qtd) {
+        TbProduto produtoLocal = (TbProduto) produtosController.findById(codigo_produto);
+        TbTipoProduto tipo = tipoProdutosController.getTipoProdutoByCodigo(produtoLocal.getCodTipoProduto().getCodigo());
 //ESTE
-        if ( tipo.getFkFamilia().getPkFamilia() == DVML.COD_SERVICO ) //        if ( true )
+        if (tipo.getFkFamilia().getPkFamilia() == DVML.COD_SERVICO) //        if ( true )
         {
             return true;
         }
 
-        System.err.println( conexao.getQuantidade_Existente_Publico( codigo_produto, id_armzem ) );
-        System.err.println( "ID ARMAZEM : " + id_armzem );
-        System.err.println( "ID ARMAZEM : " + getCodigoArmazem() );
+        System.err.println(conexao.getQuantidade_Existente_Publico(codigo_produto, id_armzem));
+        System.err.println("ID ARMAZEM : " + id_armzem);
+        System.err.println("ID ARMAZEM : " + getCodigoArmazem());
         double quant_possivel = 0d;
-        try
-        {
-            quant_possivel = ( conexao.getQuantidade_Existente_Publico( codigo_produto, id_armzem ) - conexao.getQuantidade_minima_publico( codigo_produto, id_armzem ) );
-        }
-        catch ( Exception e )
-        {
+        try {
+            quant_possivel = (conexao.getQuantidade_Existente_Publico(codigo_produto, id_armzem) - conexao.getQuantidade_minima_publico(codigo_produto, id_armzem));
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println( "Quantidade Possivel: " + quant_possivel );
-        System.out.println( "Quantidade Itens Pedidos: " + MetodosUtil.getQtdInItemPedidos( conexao, codigo_produto ) );
-        return quant_possivel >= ( qtd + MetodosUtil.getQtdInItemPedidos( conexao, codigo_produto ) );
+        System.out.println("Quantidade Possivel: " + quant_possivel);
+        System.out.println("Quantidade Itens Pedidos: " + MetodosUtil.getQtdInItemPedidos(conexao, codigo_produto));
+        return quant_possivel >= (qtd + MetodosUtil.getQtdInItemPedidos(conexao, codigo_produto));
 
     }
 
-    public void setSalvarPedidos()
-    {
+    public void setSalvarPedidos() {
 
-        System.out.println( "ID PEDIDO : " + pedidoDao.getLastPedidoByDefignacaoMesaSemStatus( mesa ) );
+        System.out.println("ID PEDIDO : " + pedidoDao.getLastPedidoByDefignacaoMesaSemStatus(mesa));
         TbPedido pedido_local;
         //busca o último pedido de uma determinada mesa, senão existe instancia um pedido como 
-        if ( pedidoDao.getLastPedidoByDefignacaoMesaSemStatus( mesa ) == 0 )
-        {
+        if (pedidoDao.getLastPedidoByDefignacaoMesaSemStatus(mesa) == 0) {
 
             pedido_local = new TbPedido();
-            pedido_local.setStatusPedido( true );
+            pedido_local.setStatusPedido(true);
 
-        }
-        else
-        {
-            pedido_local = pedidoDao.findTbPedido( pedidoDao.getLastPedidoByDefignacaoMesaSemStatus( mesa ) );
+        } else {
+            pedido_local = pedidoDao.findTbPedido(pedidoDao.getLastPedidoByDefignacaoMesaSemStatus(mesa));
         }
 
-        if ( pedido_local.getStatusPedido() )
-        {
-            try
-            {
+        if (pedido_local.getStatusPedido()) {
+            try {
 
                 TbPedido pedido_2 = new TbPedido();
-                pedido_2.setDataPedido( new Date() );
-                pedido_2.setHoraPedido( new Date() );
-                pedido_2.setStatusPedido( false );
-                pedido_2.setFkMesas( mesasDao.findTbMesas( mesasDao.getIdByDescricao( mesa ) ) );
-              
-                Integer idLastPedido = pedidoDao.criarComProcedimentos( pedido_2, conexao );
-            }
-            catch ( Exception e )
-            {
+                pedido_2.setDataPedido(new Date());
+                pedido_2.setHoraPedido(new Date());
+                pedido_2.setStatusPedido(false);
+                pedido_2.setFkMesas(mesasDao.findTbMesas(mesasDao.getIdByDescricao(mesa)));
+
+                Integer idLastPedido = pedidoDao.criarComProcedimentos(pedido_2, conexao);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
-        }
-        else
-        {
+        } else {
             //JOptionPane.showMessageDialog(null, "Não Houve Feicho");
         }
 
     }
 
-    public void setSalvarItemPedidos()
-    {
+    public void setSalvarItemPedidos() {
 
-        try
-        {
+        try {
 
             TbItemPedidos itemPedidos = new TbItemPedidos();
-            int cod_pedido = pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa );
+            int cod_pedido = pedidoDao.getLastPedidoByDefignacaoMesaFALSE(mesa);
 
-            this.pedido = pedidoDao.findTbPedido( cod_pedido );
-            itemPedidos.setFkLugares( (TbLugares) lugaresController.findByLugar( getDescricaoLugar() ) );
+            this.pedido = pedidoDao.findTbPedido(cod_pedido);
+            itemPedidos.setFkLugares((TbLugares) lugaresController.findByLugar(getDescricaoLugar()));
 
-            itemPedidos.setFkProdutos( (TbProduto) produtosController.findByDesignacao( getDescricaoProduto() ) );
+            itemPedidos.setFkProdutos((TbProduto) produtosController.findByDesignacao(getDescricaoProduto()));
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-    private String getDescricaoMesa()
-    {
-        return String.valueOf( txtMesa.getText() );
+    private String getDescricaoMesa() {
+        return String.valueOf(txtMesa.getText());
     }
 
-    private static String getDescricaoLugar()
-    {
+    private static String getDescricaoLugar() {
 
-        if ( !btn_01.isEnabled() )
-        {
+        if (!btn_01.isEnabled()) {
             return "LUGAR 1";
-        }
-        else if ( !btn_02.isEnabled() )
-        {
+        } else if (!btn_02.isEnabled()) {
             return "LUGAR 2";
-        }
-        else if ( !btn_03.isEnabled() )
-        {
+        } else if (!btn_03.isEnabled()) {
             return "LUGAR 3";
-        }
-        else if ( !btn_04.isEnabled() )
-        {
+        } else if (!btn_04.isEnabled()) {
             return "LUGAR 4";
-        }
-        else if ( !btn_05.isEnabled() )
-        {
+        } else if (!btn_05.isEnabled()) {
             return "LUGAR 5";
-        }
-        else if ( !btn_06.isEnabled() )
-        {
+        } else if (!btn_06.isEnabled()) {
             return "LUGAR 6";
-        }
-        else if ( !btn_07.isEnabled() )
-        {
+        } else if (!btn_07.isEnabled()) {
             return "LUGAR 7";
-        }
-        else if ( !btn_08.isEnabled() )
-        {
+        } else if (!btn_08.isEnabled()) {
             return "LUGAR 8";
-        }
-        else if ( !btn_09.isEnabled() )
-        {
+        } else if (!btn_09.isEnabled()) {
             return "LUGAR 9";
-        }
-        else if ( !btn_10.isEnabled() )
-        {
+        } else if (!btn_10.isEnabled()) {
             return "LUGAR 10";
         }
 
         return "";
     }
 
-    private String getDescricaoProduto()
-    {
+    private String getDescricaoProduto() {
         //return String.valueOf( cmbProduto.getSelectedItem());    
         return "";
     }
 
-    public static void actualizar()
-    {
-        try
-        {
+    public static void actualizar() {
+        try {
 
-            adicionar_tabela( itemPedidosDao.buscaTodosItemPedidos( pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa ) ) );
+            adicionar_tabela(itemPedidosDao.buscaTodosItemPedidos(pedidoDao.getLastPedidoByDefignacaoMesaFALSE(mesa)));
             valor_por_extenco();
             scrolltable();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-    public static void actualizar_lugar( int lugar )
-    {
-        try
-        {
+    public static void actualizar_lugar(int lugar) {
+        try {
 
-            adicionar_tabela_lugar( itemPedidosDao.buscaTodosItemPedidos2( pedidoDao.getLastPedidoByDefignacaoMesaLugarFALSE( lugar ) ) );
+            adicionar_tabela_lugar(itemPedidosDao.buscaTodosItemPedidos2(pedidoDao.getLastPedidoByDefignacaoMesaLugarFALSE(lugar)));
             scrolltable();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-    public static void adicionar_tabela( List<TbItemPedidos> itemPedidos_list )
-    {
+    public static void adicionar_tabela(List<TbItemPedidos> itemPedidos_list) {
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
         Double preco = 0d, desconto = 0d, taxa = 0d;
         double qtd = 0;
@@ -3253,41 +3012,35 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //            stock_local = stockDao.get_stock_by_id_produto_and_id_armazem( this.itemPedidos.getFkProdutos().getCodigo(), getCodigoArmazem() );
         //so retirar caso existir mesmo no armazém em questão.
 //        if ( stock_local.getCodigo() != 0 && itemPedidos.getFkProdutos().getStocavel().equals( "true" ) )
-        modelo.setRowCount( 0 );
+        modelo.setRowCount(0);
 
-        if ( itemPedidos_list != null )
-        {
+        if (itemPedidos_list != null) {
 
             //define a altura das linhas
-            jTable1.setRowHeight( 25 );
-            try
-            {
-                for ( int i = 0; i < itemPedidos_list.size(); i++ )
-                {
+            jTable1.setRowHeight(25);
+            try {
+                for (int i = 0; i < itemPedidos_list.size(); i++) {
 
-                    qtd = itemPedidos_list.get( i ).getQtd();
+                    qtd = itemPedidos_list.get(i).getQtd();
 
-                    preco = precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( itemPedidos_list.get( i ).getFkProdutos().getCodigo(), qtd ) ).getPrecoVenda().doubleValue();
+                    preco = precoDao.findTbPreco(precoDao.getUltimoIdPrecoByIdProduto(itemPedidos_list.get(i).getFkProdutos().getCodigo(), qtd)).getPrecoVenda().doubleValue();
 //                    preco = precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( itemPedidos_list.get( i ).getFkProdutos().getCodigo(), qtd ) ).getPrecoVenda().doubleValue();
-                    System.err.println( "QTD ADD: " + qtd );
-                    System.err.println( "PU  ADD: " + preco );
+                    System.err.println("QTD ADD: " + qtd);
+                    System.err.println("PU  ADD: " + preco);
 
-                    taxa = MetodosUtil.getTaxaPercantagem( itemPedidos_list.get( i ).getFkProdutos().getCodigo() );
-                    modelo.addRow( new Object[]
-                    {
-                        itemPedidos_list.get( i ).getPkItemPedidos(),
-                        itemPedidos_list.get( i ).getFkLugares().getDesignacao(),
-                        itemPedidos_list.get( i ).getFkProdutos().getDesignacao(),
+                    taxa = MetodosUtil.getTaxaPercantagem(itemPedidos_list.get(i).getFkProdutos().getCodigo());
+                    modelo.addRow(new Object[]{
+                        itemPedidos_list.get(i).getPkItemPedidos(),
+                        itemPedidos_list.get(i).getFkLugares().getDesignacao(),
+                        itemPedidos_list.get(i).getFkProdutos().getDesignacao(),
                         qtd,
                         //                        CfMethods.formatarComoMoeda(FinanceUtils.getValorComIVA( qtd, taxa, preco, desconto ))
                         //                        FinanceUtils.getValorComIVA( qtd, taxa, preco, desconto )
-                        CfMethods.formatarComoMoeda( FinanceUtils.getValorComIVA( qtd, taxa, preco, desconto ) )
+                        CfMethods.formatarComoMoeda(FinanceUtils.getValorComIVA(qtd, taxa, preco, desconto))
                     //itemPedidos.get( i ).getQtd() * precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( itemPedidos.get( i ).getFkProdutos().getCodigo() ) ).getPrecoVenda()
-                    } );
+                    });
                 }
-            }
-            catch ( Exception e )
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -3303,8 +3056,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
     }
 
-    public static void adicionar_tabela_lugar( List<TbItemPedidos> itemPedidos_list )
-    {
+    public static void adicionar_tabela_lugar(List<TbItemPedidos> itemPedidos_list) {
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
         Double preco = 0d, desconto = 0d, taxa = 0d;
         double qtd = 0;
@@ -3315,40 +3067,34 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //            stock_local = stockDao.get_stock_by_id_produto_and_id_armazem( this.itemPedidos.getFkProdutos().getCodigo(), getCodigoArmazem() );
         //so retirar caso existir mesmo no armazém em questão.
 //        if ( stock_local.getCodigo() != 0 && itemPedidos.getFkProdutos().getStocavel().equals( "true" ) )
-        modelo.setRowCount( 0 );
+        modelo.setRowCount(0);
 
-        if ( itemPedidos_list != null )
-        {
+        if (itemPedidos_list != null) {
 
             //define a altura das linhas
-            jTable1.setRowHeight( 50 );
-            try
-            {
-                for ( int i = 0; i < itemPedidos_list.size(); i++ )
-                {
+            jTable1.setRowHeight(50);
+            try {
+                for (int i = 0; i < itemPedidos_list.size(); i++) {
 
-                    qtd = itemPedidos_list.get( i ).getQtd();
+                    qtd = itemPedidos_list.get(i).getQtd();
 
-                    preco = precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( itemPedidos_list.get( i ).getFkProdutos().getCodigo(), qtd ) ).getPrecoVenda().doubleValue();
-                    System.err.println( "QTD ADD: " + qtd );
-                    System.err.println( "PU  ADD: " + preco );
+                    preco = precoDao.findTbPreco(precoDao.getUltimoIdPrecoByIdProduto(itemPedidos_list.get(i).getFkProdutos().getCodigo(), qtd)).getPrecoVenda().doubleValue();
+                    System.err.println("QTD ADD: " + qtd);
+                    System.err.println("PU  ADD: " + preco);
 
-                    taxa = MetodosUtil.getTaxaPercantagem( itemPedidos_list.get( i ).getFkProdutos().getCodigo() );
-                    modelo.addRow( new Object[]
-                    {
-                        itemPedidos_list.get( i ).getPkItemPedidos(),
-                        itemPedidos_list.get( i ).getFkLugares().getDesignacao(),
-                        itemPedidos_list.get( i ).getFkProdutos().getDesignacao(),
+                    taxa = MetodosUtil.getTaxaPercantagem(itemPedidos_list.get(i).getFkProdutos().getCodigo());
+                    modelo.addRow(new Object[]{
+                        itemPedidos_list.get(i).getPkItemPedidos(),
+                        itemPedidos_list.get(i).getFkLugares().getDesignacao(),
+                        itemPedidos_list.get(i).getFkProdutos().getDesignacao(),
                         qtd,
                         //                        CfMethods.formatarComoMoeda(FinanceUtils.getValorComIVA( qtd, taxa, preco, desconto ))
                         //                        FinanceUtils.getValorComIVA( qtd, taxa, preco, desconto )
-                        CfMethods.formatarComoMoeda( FinanceUtils.getValorComIVA( qtd, taxa, preco, desconto ) )
+                        CfMethods.formatarComoMoeda(FinanceUtils.getValorComIVA(qtd, taxa, preco, desconto))
                     //itemPedidos.get( i ).getQtd() * precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( itemPedidos.get( i ).getFkProdutos().getCodigo() ) ).getPrecoVenda()
-                    } );
+                    });
                 }
-            }
-            catch ( Exception e )
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -3363,102 +3109,81 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
     }
 
-    public boolean validar_zero()
-    {
-        if ( Double.parseDouble( txtQuatidadeExistente.getText() ) == 0.0 )
-        {
-            JOptionPane.showMessageDialog( null, "Atenção\nA quantidade a sair não pode ser igual a zero!" );
+    public boolean validar_zero() {
+        if (Double.parseDouble(txtQuatidadeExistente.getText()) == 0.0) {
+            JOptionPane.showMessageDialog(null, "Atenção\nA quantidade a sair não pode ser igual a zero!");
 
             return false;
         }
         return true;
     }
 
-    private Date getDataPedido()
-    {
-        return new Date( Integer.parseInt( String.valueOf( new Date().getYear() ) ) - 1900, new Date().getMonth(), new Date().getDay() );
+    private Date getDataPedido() {
+        return new Date(Integer.parseInt(String.valueOf(new Date().getYear())) - 1900, new Date().getMonth(), new Date().getDay());
     }
 
-    public int getLastCodigo( String tabela )
-    {
+    public int getLastCodigo(String tabela) {
 
         String sql = "SELECT max(pk_pedido) FROM " + tabela;
-        ResultSet rs = conexao.executeQuery( sql );
-        try
-        {
-            if ( rs.next() )
-            {
-                return rs.getInt( 1 );
+        ResultSet rs = conexao.executeQuery(sql);
+        try {
+            if (rs.next()) {
+                return rs.getInt(1);
             }
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return 0;
 
     }
 
-    public void imprimirPedidos()
-    {
+    public void imprimirPedidos() {
 
-        try
-        {
-            TbPedido pedido = pedidoDao.findTbPedido( pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa ) );
+        try {
+            TbPedido pedido = pedidoDao.findTbPedido(pedidoDao.getLastPedidoByDefignacaoMesaFALSE(mesa));
 
-            List<TbItemPedidos> item = itemPedidosDao.buscaTodosItemPedidos( pedido.getPkPedido() );
+            List<TbItemPedidos> item = itemPedidosDao.buscaTodosItemPedidos(pedido.getPkPedido());
             double totalPedidos = 0;
-            for ( TbItemPedidos tbItemPedidos : item )
-            {
+            for (TbItemPedidos tbItemPedidos : item) {
                 totalPedidos += tbItemPedidos.getTotalItem();
             }
 
             //pedido.setStatusPedido(true);
             //pedidoDao.edit(pedido);
-            ListaPedidos listaPedidos = new ListaPedidos( pedido.getPkPedido(), totalPedidos );
+            ListaPedidos listaPedidos = new ListaPedidos(pedido.getPkPedido(), totalPedidos);
             //eliminar_toda_tabela(jTable1);
             //eliminar_toda_tabela(jTable1);
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-    public void imprimirPedidosTicket()
-    {
+    public void imprimirPedidosTicket() {
 
-        try
-        {
+        try {
 
-            ListaPedidos listaPedidos = new ListaPedidos( pedido.getPkPedido() );
+            ListaPedidos listaPedidos = new ListaPedidos(pedido.getPkPedido());
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-    public void imprimirPedidosPorLugar( int opcao )
-    {
+    public void imprimirPedidosPorLugar(int opcao) {
 
-        try
-        {
-            TbPedido pedido = pedidoDao.findTbPedido( pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa ) );
+        try {
+            TbPedido pedido = pedidoDao.findTbPedido(pedidoDao.getLastPedidoByDefignacaoMesaFALSE(mesa));
             //TbPedido pedido = pedidoDao.findTbPedido(   pedidoDao.getLastPedidoByDefignacaoMesaFALSE(mesa)     );
             //pedido.setStatusPedido(true);
-            pedidoDao.edit( pedido );
-            ListaPedidos listaPedidos = new ListaPedidos( pedido.getPkPedido(), opcao );
+            pedidoDao.edit(pedido);
+            ListaPedidos listaPedidos = new ListaPedidos(pedido.getPkPedido(), opcao);
             //eliminar_toda_tabela(jTable1);
             //eliminar_toda_tabela(jTable1);
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
         }
     }
 
@@ -3521,404 +3246,340 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //        }
 //
 //    }
-    private void eliminar()
-    {
+    private void eliminar() {
 
-        int opcao = JOptionPane.showConfirmDialog( null, "Tens a certeza que queres mesmo eliminar esse pedido\n Uma vez eliminado todas as tabelas relacionadas com o mesmo deixaram de existir", "AVISO", JOptionPane.WARNING_MESSAGE );
+        int opcao = JOptionPane.showConfirmDialog(null, "Tens a certeza que queres mesmo eliminar esse pedido\n Uma vez eliminado todas as tabelas relacionadas com o mesmo deixaram de existir", "AVISO", JOptionPane.WARNING_MESSAGE);
 
-        System.out.println( "OPCAO " + opcao );
-        if ( opcao == 0 )
-        {
+        System.out.println("OPCAO " + opcao);
+        if (opcao == 0) {
 
-            try
-            {
+            try {
 
-                itemPedidos = itemPedidosDao.findTbItemPedidos( idpedido );
-                this.itemPedidos.getFkPedidos().setStatusPedido( false );
-                itemPedidosDao.destroy( idpedido );
+                itemPedidos = itemPedidosDao.findTbItemPedidos(idpedido);
+                this.itemPedidos.getFkPedidos().setStatusPedido(false);
+                itemPedidosDao.destroy(idpedido);
                 // limpar();
-                adicionar_tabela( itemPedidosDao.getAllPedidosNovos() );
-                JOptionPane.showMessageDialog( null, "Item eliminado com sucesso!..." );
+                adicionar_tabela(itemPedidosDao.getAllPedidosNovos());
+                JOptionPane.showMessageDialog(null, "Item eliminado com sucesso!...");
 
-            }
-            catch ( Exception e )
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
-                JOptionPane.showMessageDialog( null, "Erro ao eliminar o Item", "ERRO", JOptionPane.ERROR_MESSAGE );
+                JOptionPane.showMessageDialog(null, "Erro ao eliminar o Item", "ERRO", JOptionPane.ERROR_MESSAGE);
             }
 
-        }
-        else
-        {
-            JOptionPane.showMessageDialog( null, "O Item não foi eliminado" );
+        } else {
+            JOptionPane.showMessageDialog(null, "O Item não foi eliminado");
         }
 
     }
 
-    public static void eliminar_item( JTable tabela )
-    {
+    public static void eliminar_item(JTable tabela) {
 
         DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
-        int id_item_pedido = Integer.parseInt( modelo.getValueAt( tabela.getSelectedRow(), 0 ).toString() );
-        TbItemPedidos itemPedidosLocal = itemPedidosDao.findTbItemPedidos( id_item_pedido );
-        try
-        {
+        int id_item_pedido = Integer.parseInt(modelo.getValueAt(tabela.getSelectedRow(), 0).toString());
+        TbItemPedidos itemPedidosLocal = itemPedidosDao.findTbItemPedidos(id_item_pedido);
+        try {
 
             int idPedido = itemPedidosLocal.getPkItemPedidos();
 
-            TbLugares lugarEntity = (TbLugares) lugaresController.findById( itemPedidosLocal.getFkLugares().getPkLugares() );
+            TbLugares lugarEntity = (TbLugares) lugaresController.findById(itemPedidosLocal.getFkLugares().getPkLugares());
             String lugarLocal = lugarEntity.getDesignacao();
-            TbUsuario usuarioEntity = (TbUsuario) usuariosController.findById( idUser );
+            TbUsuario usuarioEntity = (TbUsuario) usuariosController.findById(idUser);
             String usuario = usuarioEntity.getNome();
 
-            TbProduto findByDesignacao = produtosController.findByDesignacao( itemPedidosLocal.getFkProdutos().getDesignacao() );
-            if ( findByDesignacao.getCozinha().equals( DVML.ENVIAR_TICKET ) )
-            {
-                MetodosUtil.imprimir_cozinha( findByDesignacao, idPedido, mesa, lugarLocal, usuario, "Cancelado", (int) itemPedidosLocal.getQtd(), dadosInstituicaoController );
-            }
-            else if ( findByDesignacao.getCozinha().equals( DVML.ENVIAR_SALA ) )
-            {
-                MetodosUtil.imprimir_sala( findByDesignacao, idPedido, mesa, lugarLocal, usuario, "Cancelado", (int) itemPedidosLocal.getQtd(), dadosInstituicaoController );
+            TbProduto findByDesignacao = produtosController.findByDesignacao(itemPedidosLocal.getFkProdutos().getDesignacao());
+            if (findByDesignacao.getCozinha().equals(DVML.ENVIAR_TICKET)) {
+                MetodosUtil.imprimir_cozinha(findByDesignacao, idPedido, mesa, lugarLocal, usuario, "Cancelado", (int) itemPedidosLocal.getQtd(), dadosInstituicaoController);
+            } else if (findByDesignacao.getCozinha().equals(DVML.ENVIAR_SALA)) {
+                MetodosUtil.imprimir_sala(findByDesignacao, idPedido, mesa, lugarLocal, usuario, "Cancelado", (int) itemPedidosLocal.getQtd(), dadosInstituicaoController);
             }
 
-            itemPedidosDao.destroy( id_item_pedido );
+            itemPedidosDao.destroy(id_item_pedido);
             actualizar();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog( null, "Erro:\n Não foi eliminado o Item" );
+            JOptionPane.showMessageDialog(null, "Erro:\n Não foi eliminado o Item");
         }
 
     }
 
-    public static void salvar_item_cancelado( JTable tabela )
-    {
+    public static void salvar_item_cancelado(JTable tabela) {
 
         DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
-        int id_item_pedido = Integer.parseInt( modelo.getValueAt( tabela.getSelectedRow(), 0 ).toString() );
+        int id_item_pedido = Integer.parseInt(modelo.getValueAt(tabela.getSelectedRow(), 0).toString());
 
-        try
-        {
+        try {
 
-            itemPedidosDao.destroy( id_item_pedido );
+            itemPedidosDao.destroy(id_item_pedido);
             actualizar();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog( null, "Erro:\n Não foi eliminado o Item" );
+            JOptionPane.showMessageDialog(null, "Erro:\n Não foi eliminado o Item");
         }
 
     }
 
-    private void actualizar_campo( int qtd )
-    {
+    private void actualizar_campo(int qtd) {
 
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
-        TbItemPedidos itemPedidos = itemPedidosDao.findTbItemPedidos( Integer.parseInt( jTable1.getValueAt( this.linha_actual, 0 ).toString() ) );
-        itemPedidos.setQtd( qtd );
+        TbItemPedidos itemPedidos = itemPedidosDao.findTbItemPedidos(Integer.parseInt(jTable1.getValueAt(this.linha_actual, 0).toString()));
+        itemPedidos.setQtd(qtd);
 
-        try
-        {
-            itemPedidosDao.edit( itemPedidos );
+        try {
+            itemPedidosDao.edit(itemPedidos);
             actualizar();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
         }
 
     }
 
-    public static void gravar_item_eliminado( JTable tabela )
-    {
+    public static void gravar_item_eliminado(JTable tabela) {
 //        linha_acutal = jTable1.getSelectedRow();
         DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
-        TbItemPedidos itemPedidos = itemPedidosDao.findTbItemPedidos( Integer.parseInt( jTable1.getValueAt( linha_actual, 0 ).toString() ) );
+        TbItemPedidos itemPedidos = itemPedidosDao.findTbItemPedidos(Integer.parseInt(jTable1.getValueAt(linha_actual, 0).toString()));
 //        int id_item_pedido = Integer.parseInt( modelo.getValueAt( tabela.getSelectedRow(), 0 ).toString() );
 
-        try
-        {
-            itemPedidosDao.create( itemPedidos );
+        try {
+            itemPedidosDao.create(itemPedidos);
 //            actualizar();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog( null, "Erro:\n Não foi salvo o Item" );
+            JOptionPane.showMessageDialog(null, "Erro:\n Não foi salvo o Item");
         }
 
     }
 
-    private void eliminar_toda_tabela( JTable tabela )
-    {
+    private void eliminar_toda_tabela(JTable tabela) {
 
-        try
-        {
+        try {
             DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
             int filas = tabela.getRowCount();
 
-            for ( int i = 0; filas > i; i++ )
-            {
+            for (int i = 0; filas > i; i++) {
 
-                modelo.removeRow( 0 );
+                modelo.removeRow(0);
                 actualizar();
             }
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog( null, "Erro:\n Não foi eliminado o Item" );
+            JOptionPane.showMessageDialog(null, "Erro:\n Não foi eliminado o Item");
         }
 
     }
 
-    public int getCodigoCliente()
-    {
+    public int getCodigoCliente() {
         return 1;
     }
 
-    public static TbVenda salvar_venda()
-    {
+    public static TbVenda salvar_venda() {
         conexaoTransaction = BDConexao.getInstancia();
-        DocumentosController.start( conexaoTransaction );
+        DocumentosController.start(conexaoTransaction);
 //        Date data_documento = new Date ();
         Date data_documento = dc_data_documento.getDate();
         TbVenda venda_local = new TbVenda();
-        venda_local.setDataVenda( data_documento );
+        venda_local.setDataVenda(data_documento);
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime( data_documento );
-        calendar.add( Calendar.DATE, 15 );
-        venda_local.setDataVencimento( calendar.getTime() );
-        venda_local.setHora( data_documento );
-        venda_local.setNomeCliente( getNomeCliente() );
-        venda_local.setClienteNif( getClienteNif() );
-        TbCliente clienteSelecionado = clientesController.getClienteByNome( (String) cmbCliente.getSelectedItem() );
+        calendar.setTime(data_documento);
+        calendar.add(Calendar.DATE, 15);
+        venda_local.setDataVencimento(calendar.getTime());
+        venda_local.setHora(data_documento);
+        venda_local.setNomeCliente(getNomeCliente());
+        venda_local.setClienteNif(getClienteNif());
+        TbCliente clienteSelecionado = clientesController.getClienteByNome((String) cmbCliente.getSelectedItem());
 
-        if ( !Objects.isNull( clienteSelecionado ) )
-        {
-            venda_local.setNomeCliente( clienteSelecionado.getNome() );
-            venda_local.setClienteNif( clienteSelecionado.getNif() );
-            venda_local.setCodigoCliente( clienteSelecionado );
-        }
-        else
-        {
+        if (!Objects.isNull(clienteSelecionado)) {
+            venda_local.setNomeCliente(clienteSelecionado.getNome());
+            venda_local.setClienteNif(clienteSelecionado.getNif());
+            venda_local.setCodigoCliente(clienteSelecionado);
+        } else {
 //            venda_local.setNomeCliente ( _CLIENTE_CONSUMIDOR_FINAL );
-            venda_local.setNomeCliente( _CLIENTE_CONSUMIDOR_FINAL );
+            venda_local.setNomeCliente(_CLIENTE_CONSUMIDOR_FINAL);
 
-            venda_local.setNomeConsumidorFinal( txtNomeConsumidorFinal.getText() );
-            venda_local.setCodigoCliente( clientesController.findByCodigo( getIdCliente() ) );
-            venda_local.setClienteNif( NUMBER_NIF_GENERICO );
+            venda_local.setNomeConsumidorFinal(txtNomeConsumidorFinal.getText());
+            venda_local.setCodigoCliente(clientesController.findByCodigo(getIdCliente()));
+            venda_local.setClienteNif(NUMBER_NIF_GENERICO);
         }
         //Total Ilíquido
-        venda_local.setTotalGeral( new BigDecimal( getTotalIliquido() ) );
+        venda_local.setTotalGeral(new BigDecimal(getTotalIliquido()));
         //desconto por linha
-        venda_local.setDescontoComercial( new BigDecimal( getDescontoComercial() ) );
+        venda_local.setDescontoComercial(new BigDecimal(getDescontoComercial()));
         //imposto
         //calculaTotalIVA();
-        venda_local.setTotalIva( new BigDecimal( getTotalImposto() ) );
+        venda_local.setTotalIva(new BigDecimal(getTotalImposto()));
         //desconto global
-        venda_local.setDescontoFinanceiro( new BigDecimal( getDescontoFinanceiro() ) );
+        venda_local.setDescontoFinanceiro(new BigDecimal(getDescontoFinanceiro()));
         //Total(AOA) <=> Total Líquido
-        venda_local.setTotalVenda( new BigDecimal( getTotalAOALiquido() ) );
-        venda_local.setValorEntregue( new BigDecimal( getValor_entregue() ) );
-        venda_local.setTroco( new BigDecimal( getTroco() ) );
-        venda_local.setTotalIncidencia( new BigDecimal( getTotalIncidencia() ) );
-        venda_local.setTotalIncidenciaIsento( new BigDecimal( getTotalIncidenciaIsento() ) );
-        venda_local.setDescontoTotal( new BigDecimal( getDescontoComercial() + getDescontoFinanceiro() ) );
-        venda_local.setIdArmazemFK( new TbArmazem( id_armzem ) );
-        venda_local.setCodigoUsuario( new TbUsuario( idUser ) );
-        venda_local.setFkAnoEconomico( anoEconomico );
-        venda_local.setFkDocumento( documento );
-        venda_local.setCodFact( getCodDocActualizador() );
-        venda_local.setRefDataFact( data_documento );
-        venda_local.setTotalPorExtenso( iniciais_extenso() + lbValorPorExtenco.getText() );
+        venda_local.setTotalVenda(new BigDecimal(getTotalAOALiquido()));
+        venda_local.setValorEntregue(new BigDecimal(getValor_entregue()));
+        venda_local.setTroco(new BigDecimal(getTroco()));
+        venda_local.setTotalIncidencia(new BigDecimal(getTotalIncidencia()));
+        venda_local.setTotalIncidenciaIsento(new BigDecimal(getTotalIncidenciaIsento()));
+        venda_local.setDescontoTotal(new BigDecimal(getDescontoComercial() + getDescontoFinanceiro()));
+        venda_local.setIdArmazemFK(new TbArmazem(id_armzem));
+        venda_local.setCodigoUsuario(new TbUsuario(idUser));
+        venda_local.setFkAnoEconomico(anoEconomico);
+        venda_local.setFkDocumento(documento);
+        venda_local.setCodFact(getCodDocActualizador());
+        venda_local.setRefDataFact(data_documento);
+        venda_local.setTotalPorExtenso(iniciais_extenso() + lbValorPorExtenco.getText());
 //        venda_local.setTotalPorExtenso( MetodosUtil.iniciais_extenso( DOC_FACTURA_RECIBO_FR, documentoDao ) + MetodosUtil.valorPorExtenso( venda_local.getTotalVenda().doubleValue(), "Kwanza" ) );
-        System.out.println( "STATUS:hash cod processado." );
+        System.out.println("STATUS:hash cod processado.");
 //        venda_local.setHashCod( MetodosUtil.criptografia_hash( venda_local, getGrossTotal(), conexao ) );
 //        venda_local.setAssinatura( MetodosUtil.assinatura_doc( venda_local.getHashCod() ) );
-        venda_local.setFkCambio( cambiosController.findByCodigo( ID_CAMBIO_NACIONAL ) );
+        venda_local.setFkCambio(cambiosController.findByCodigo(ID_CAMBIO_NACIONAL));
         /*status documento*/
-        venda_local.setStatusEliminado( "false" );
-        venda_local.setPerformance( "false" );
-        venda_local.setCredito( "false" );
-        venda_local.setGorjeta( new BigDecimal( gorjeta ) );
+        venda_local.setStatusEliminado("false");
+        venda_local.setPerformance("false");
+        venda_local.setCredito("false");
+        venda_local.setGorjeta(new BigDecimal(gorjeta));
 
         Integer last_venda = 0;
 
-        try
-        {
+        try {
 
-            if ( vendasController.salvar( venda_local ) )
-            {
+            if (vendasController.salvar(venda_local)) {
                 last_venda = vendasController.getLastVenda().getCodigo();
 
-                if ( Objects.isNull( last_venda ) || last_venda == 0 )
-                {
-                    DocumentosController.rollback( conexaoTransaction );
+                if (Objects.isNull(last_venda) || last_venda == 0) {
+                    DocumentosController.rollback(conexaoTransaction);
                     conexaoTransaction.close();
                     return venda_local;
                 }
-                System.err.println( "last_venda: " + last_venda );
-                System.out.println( "STATUS:factura criada com sucesso." );
+                System.err.println("last_venda: " + last_venda);
+                System.out.println("STATUS:factura criada com sucesso.");
 
-                if ( last_venda != null )
-                {
-                    if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR )
-                    {
+                if (last_venda != null) {
+                    if (getIdDocumento() == DOC_FACTURA_RECIBO_FR) {
 //                        MetodosUtil.adicionar_saldo_banco( venda_local.getTotalVenda().doubleValue(), venda_local.get.getIdBanco(), conexao );
                     }
 //                    salvar_item_venda_comercial( last_venda );
                 }
-            }
-            else
-            {
-                System.out.println( "ERROR: Já existe venda relacionada." );
+            } else {
+                System.out.println("ERROR: Já existe venda relacionada.");
             }
 
-        }
-        catch ( Exception e )
-        {
-            System.err.println( "STATUS: falha ao actualizar a factura" );
+        } catch (Exception e) {
+            System.err.println("STATUS: falha ao actualizar a factura");
             e.printStackTrace();
-            JOptionPane.showMessageDialog( null, "Falha ao Processar a Factura", "FALHA", JOptionPane.ERROR_MESSAGE );
-            DocumentosController.rollback( conexao );
+            JOptionPane.showMessageDialog(null, "Falha ao Processar a Factura", "FALHA", JOptionPane.ERROR_MESSAGE);
+            DocumentosController.rollback(conexao);
 //            conexaoTransaction.close();
         }
 //        return vendaDao.findTbVenda( last_venda );
-        return new TbVenda( last_venda );
+        return new TbVenda(last_venda);
 
     }
 
-    public static int getIdCliente()
-    {
-        try
-        {
-            TbCliente cliente = clientesController.getClienteByNome( cmbCliente.getSelectedItem().toString() );
+    public static int getIdCliente() {
+        try {
+            TbCliente cliente = clientesController.getClienteByNome(cmbCliente.getSelectedItem().toString());
             return cliente.getCodigo();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             return 0;
         }
 
     }
 
-    private static double getTotalRetencao()
-    {
+    private static double getTotalRetencao() {
 //        DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
         double imposto = 0d;
         return imposto;
     }
 
-    public static TbVenda salvar_venda( int lugar )
-    {
+    public static TbVenda salvar_venda(int lugar) {
         conexaoTransaction = BDConexao.getInstancia();
-        DocumentosController.start( conexaoTransaction );
+        DocumentosController.start(conexaoTransaction);
 //        Date data_documento = new Date ();
         Date data_documento = dc_data_documento.getDate();
         TbVenda venda_local = new TbVenda();
-        venda_local.setDataVenda( data_documento );
+        venda_local.setDataVenda(data_documento);
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime( data_documento );
-        calendar.add( Calendar.DATE, 15 );
-        venda_local.setDataVencimento( calendar.getTime() );
-        venda_local.setHora( data_documento );
-        venda_local.setNomeCliente( getNomeCliente() );
-        venda_local.setClienteNif( getClienteNif() );
-        TbCliente clienteSelecionado = clientesController.getClienteByNome( (String) cmbCliente.getSelectedItem() );
+        calendar.setTime(data_documento);
+        calendar.add(Calendar.DATE, 15);
+        venda_local.setDataVencimento(calendar.getTime());
+        venda_local.setHora(data_documento);
+        venda_local.setNomeCliente(getNomeCliente());
+        venda_local.setClienteNif(getClienteNif());
+        TbCliente clienteSelecionado = clientesController.getClienteByNome((String) cmbCliente.getSelectedItem());
 
-        if ( !Objects.isNull( clienteSelecionado ) )
-        {
-            venda_local.setNomeCliente( clienteSelecionado.getNome() );
-            venda_local.setClienteNif( clienteSelecionado.getNif() );
-            venda_local.setCodigoCliente( clienteSelecionado );
-        }
-        else
-        {
+        if (!Objects.isNull(clienteSelecionado)) {
+            venda_local.setNomeCliente(clienteSelecionado.getNome());
+            venda_local.setClienteNif(clienteSelecionado.getNif());
+            venda_local.setCodigoCliente(clienteSelecionado);
+        } else {
 //            venda_local.setNomeCliente ( _CLIENTE_CONSUMIDOR_FINAL );
-            venda_local.setNomeCliente( _CLIENTE_CONSUMIDOR_FINAL );
-            venda_local.setNomeConsumidorFinal( txtNomeConsumidorFinal.getText() );
-            venda_local.setCodigoCliente( clientesController.findByCodigo( getIdCliente() ) );
-            venda_local.setClienteNif( NUMBER_NIF_GENERICO );
+            venda_local.setNomeCliente(_CLIENTE_CONSUMIDOR_FINAL);
+            venda_local.setNomeConsumidorFinal(txtNomeConsumidorFinal.getText());
+            venda_local.setCodigoCliente(clientesController.findByCodigo(getIdCliente()));
+            venda_local.setClienteNif(NUMBER_NIF_GENERICO);
 //            venda_local.setCodigoCliente( clienteDao.findTbCliente( getIdCliente() ) );
         }
 
         //Total Ilíquido
-        venda_local.setTotalGeral( new BigDecimal( getTotalIliquido( lugar ) ) );
-        venda_local.setDescontoComercial( new BigDecimal( getDescontoComercial( lugar ) ) );
-        venda_local.setDescontoFinanceiro( new BigDecimal( getDescontoFinanceiro( lugar ) ) );
-        venda_local.setTotalIva( new BigDecimal( getTotalImposto( lugar ) ) );
-        venda_local.setTotalVenda( new BigDecimal( getTotalAOALiquido( lugar ) ) );
-        venda_local.setValorEntregue( new BigDecimal( getValor_entregue() ) );
-        venda_local.setTroco( new BigDecimal( getTrocoLugar() ) );
-        venda_local.setTotalIncidencia( new BigDecimal( getTotalIncidencia( lugar ) ) );
-        venda_local.setTotalIncidenciaIsento( new BigDecimal( getTotalIncidenciaIsento( lugar ) ) );
-        venda_local.setDescontoTotal( new BigDecimal( getDescontoComercial( lugar ) + getDescontoFinanceiro( lugar ) ) );
-        venda_local.setIdArmazemFK( new TbArmazem( id_armzem ) );
-        venda_local.setCodigoUsuario( new TbUsuario( idUser ) );
-        venda_local.setFkAnoEconomico( anoEconomico );
-        venda_local.setFkDocumento( documento );
-        venda_local.setCodFact( getCodDocActualizador() );
-        venda_local.setRefDataFact( data_documento );
-        venda_local.setTotalPorExtenso( iniciais_extenso() + lbValorPorExtenco.getText() );
-        venda_local.setHashCod( MetodosUtil.criptografia_hash( venda_local, getGrossTotal( lugar ), conexao ) );
-        venda_local.setAssinatura( MetodosUtil.assinatura_doc( venda_local.getHashCod() ) );
-        venda_local.setFkCambio( cambiosController.findByCodigo( ID_CAMBIO_NACIONAL ) );
+        venda_local.setTotalGeral(new BigDecimal(getTotalIliquido(lugar)));
+        venda_local.setDescontoComercial(new BigDecimal(getDescontoComercial(lugar)));
+        venda_local.setDescontoFinanceiro(new BigDecimal(getDescontoFinanceiro(lugar)));
+        venda_local.setTotalIva(new BigDecimal(getTotalImposto(lugar)));
+        venda_local.setTotalVenda(new BigDecimal(getTotalAOALiquido(lugar)));
+        venda_local.setValorEntregue(new BigDecimal(getValor_entregue()));
+        venda_local.setTroco(new BigDecimal(getTrocoLugar()));
+        venda_local.setTotalIncidencia(new BigDecimal(getTotalIncidencia(lugar)));
+        venda_local.setTotalIncidenciaIsento(new BigDecimal(getTotalIncidenciaIsento(lugar)));
+        venda_local.setDescontoTotal(new BigDecimal(getDescontoComercial(lugar) + getDescontoFinanceiro(lugar)));
+        venda_local.setIdArmazemFK(new TbArmazem(id_armzem));
+        venda_local.setCodigoUsuario(new TbUsuario(idUser));
+        venda_local.setFkAnoEconomico(anoEconomico);
+        venda_local.setFkDocumento(documento);
+        venda_local.setCodFact(getCodDocActualizador());
+        venda_local.setRefDataFact(data_documento);
+        venda_local.setTotalPorExtenso(iniciais_extenso() + lbValorPorExtenco.getText());
+        venda_local.setHashCod(MetodosUtil.criptografia_hash(venda_local, getGrossTotal(lugar), conexao));
+        venda_local.setAssinatura(MetodosUtil.assinatura_doc(venda_local.getHashCod()));
+        venda_local.setFkCambio(cambiosController.findByCodigo(ID_CAMBIO_NACIONAL));
         /*status documento*/
-        venda_local.setStatusEliminado( "false" );
-        venda_local.setPerformance( "false" );
-        venda_local.setCredito( "false" );
-        venda_local.setGorjeta( new BigDecimal( gorjeta ) );
+        venda_local.setStatusEliminado("false");
+        venda_local.setPerformance("false");
+        venda_local.setCredito("false");
+        venda_local.setGorjeta(new BigDecimal(gorjeta));
 
         Integer last_venda = 0;
 
-        try
-        {
+        try {
 
-            if ( vendasController.salvar( venda_local ) )
-            {
+            if (vendasController.salvar(venda_local)) {
                 last_venda = vendasController.getLastVenda().getCodigo();
 
-                if ( Objects.isNull( last_venda ) || last_venda == 0 )
-                {
-                    DocumentosController.rollback( conexaoTransaction );
+                if (Objects.isNull(last_venda) || last_venda == 0) {
+                    DocumentosController.rollback(conexaoTransaction);
                     conexaoTransaction.close();
                     return venda_local;
                 }
-                System.err.println( "last_venda: " + last_venda );
-                System.out.println( "STATUS:factura criada com sucesso." );
+                System.err.println("last_venda: " + last_venda);
+                System.out.println("STATUS:factura criada com sucesso.");
 
-                if ( last_venda != null )
-                {
-                    if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR )
-                    {
+                if (last_venda != null) {
+                    if (getIdDocumento() == DOC_FACTURA_RECIBO_FR) {
 //                        MetodosUtil.adicionar_saldo_banco( venda_local.getTotalVenda().doubleValue(), venda_local.get.getIdBanco(), conexao );
                     }
 //                    salvar_item_venda_comercial( last_venda );
                 }
-            }
-            else
-            {
-                System.out.println( "ERROR: Já existe venda relacionada." );
+            } else {
+                System.out.println("ERROR: Já existe venda relacionada.");
             }
 
-        }
-        catch ( Exception e )
-        {
-            System.err.println( "STATUS: falha ao actualizar a factura" );
+        } catch (Exception e) {
+            System.err.println("STATUS: falha ao actualizar a factura");
             e.printStackTrace();
-            JOptionPane.showMessageDialog( null, "Falha ao Processar a Factura", "FALHA", JOptionPane.ERROR_MESSAGE );
-            DocumentosController.rollback( conexao );
+            JOptionPane.showMessageDialog(null, "Falha ao Processar a Factura", "FALHA", JOptionPane.ERROR_MESSAGE);
+            DocumentosController.rollback(conexao);
 //            conexaoTransaction.close();
         }
 //        return vendaDao.findTbVenda( last_venda );
-        return new TbVenda( last_venda );
+        return new TbVenda(last_venda);
 
     }
 
-    private static String getNomeCliente()
-    {
+    private static String getNomeCliente() {
         return cmbCliente.getSelectedItem().toString();
     }
 
@@ -3937,13 +3598,11 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //                return "São: ";
 //        }
 //    }
-    private static String iniciais_extenso()
-    {
-        Documento documento_local = (Documento) documentosController.findById( getIdDocumento() );
+    private static String iniciais_extenso() {
+        Documento documento_local = (Documento) documentosController.findById(getIdDocumento());
         String abreviacao_local = documento_local.getAbreviacao();
 
-        switch (abreviacao_local)
-        {
+        switch (abreviacao_local) {
             case "FT":
                 return "Facturamos o valor de: ";
             case "FR":
@@ -3953,36 +3612,30 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         }
     }
 
-    private static String getCodDocActualizador()
-    {
-        try
-        {
-            documento = (Documento) documentosController.findById( getIdDocumento() );
-            anoEconomico = (AnoEconomico) anoEconomicoController.findById( getIdAnoEconomico() );
+    private static String getCodDocActualizador() {
+        try {
+            documento = (Documento) documentosController.findById(getIdDocumento());
+            anoEconomico = (AnoEconomico) anoEconomicoController.findById(getIdAnoEconomico());
             // this.doc_prox_cod = documento.getCodUltimoDoc() + 1;
             doc_prox_cod = vendasController.getUltimaContagemByIdDocumentoAndAnoEconomico(
-                    getIdDocumento(), getIdAnoEconomico() ) + 1;
+                    getIdDocumento(), getIdAnoEconomico()) + 1;
             prox_doc = documento.getAbreviacao();
             //FA Série / codigo
             prox_doc += " " + anoEconomico.getSerie() + "/" + doc_prox_cod;
             return prox_doc;
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             return "";
         }
     }
 
-    private static Moeda getMoeda()
-    {
+    private static Moeda getMoeda() {
         String moedaSelecionada = (String) cmbMoeda.getSelectedItem();
 
-        if ( moedaSelecionada == null )
-        {
+        if (moedaSelecionada == null) {
             return null;
         }
 
-        return new MoedaDao( emf ).getByDescricao( moedaSelecionada );
+        return new MoedaDao(emf).getByDescricao(moedaSelecionada);
     }
 
 //    private static void valor_por_extenco()
@@ -4000,15 +3653,13 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //
 //        }
 //    }
-    private static void valor_por_extenco()
-    {
+    private static void valor_por_extenco() {
 //        System.out.println( "Valor XXXXXXX: " + CfMethods.parseMoedaFormatada( txtTotalApagar.getText() ) );
 
-        if ( !txtTotalApagar.getText().equals( "" ) && !txtTotalApagar.getText().equals( "0" ) )
-        {
+        if (!txtTotalApagar.getText().equals("") && !txtTotalApagar.getText().equals("0")) {
 
-            System.out.println( "VALOR: " + txtTotalApagar.getText() );
-            lbValorPorExtenco.setText( MetodosUtil.valorPorExtenso( CfMethods.parseMoedaFormatada( txtTotalApagar.getText() ), "Kwanza" ) );
+            System.out.println("VALOR: " + txtTotalApagar.getText());
+            lbValorPorExtenco.setText(MetodosUtil.valorPorExtenso(CfMethods.parseMoedaFormatada(txtTotalApagar.getText()), "Kwanza"));
 
         }
     }
@@ -4018,21 +3669,16 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //        System.out.println( "Valor XXXXXXX: " + CfMethods.parseMoedaFormatada( txtTotalApagar.getText() ) );
 //        lbValorPorExtenco.setText( MetodosUtil.valorPorExtenso( CfMethods.parseMoedaFormatada( txtTotalApagar.getText() ), moeda.getDesignacao() ) );
 //    }
-    private static String getClienteNif()
-    {
-        try
-        {
-            TbCliente cliente = (TbCliente) clientesController.findById( getIdCliente() );
+    private static String getClienteNif() {
+        try {
+            TbCliente cliente = (TbCliente) clientesController.findById(getIdCliente());
             return cliente.getNif();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             return "";
         }
     }
 
-    public static void salvarItemvenda( TbVenda venda )
-    {
+    public static void salvarItemvenda(TbVenda venda) {
 
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
         boolean efectuada = true;
@@ -4044,136 +3690,121 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //        TbStock stock_local;
         double sub_total_iliquido = 0, preco_unitario = 0d, taxa = 0d, desconto = 0d, valor_iva = 0d;
 
-        for ( int i = 0; i < jTable1.getRowCount(); i++ )
-        {
-            try
-            {
+        for (int i = 0; i < jTable1.getRowCount(); i++) {
+            try {
 
                 itemVenda = new TbItemVenda();
-                TbProduto produto_local = (TbProduto) produtosController.findByDesignacao( modelo.getValueAt( i, 2 ).toString() );
-                lugar = modelo.getValueAt( i, 1 ).toString();
-                idProduto = produtosController.findByDesignacao( modelo.getValueAt( i, 2 ).toString() ).getCodigo();
+                TbProduto produto_local = (TbProduto) produtosController.findByDesignacao(modelo.getValueAt(i, 2).toString());
+                lugar = modelo.getValueAt(i, 1).toString();
+                idProduto = produtosController.findByDesignacao(modelo.getValueAt(i, 2).toString()).getCodigo();
 //                idProduto = produtoDao.getProdutoByDescricao( modelo.getValueAt( i, 2 ).toString() ).getCodigo();
-                qtd = Double.parseDouble( modelo.getValueAt( i, 3 ).toString() );
-                preco_unitario = precosController.getLastIdPrecoByIdProduto( idProduto, qtd ).getPrecoVenda().doubleValue();
+                qtd = Double.parseDouble(modelo.getValueAt(i, 3).toString());
+                preco_unitario = precosController.getLastIdPrecoByIdProduto(idProduto, qtd).getPrecoVenda().doubleValue();
 //                preco_unitario = precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( idProduto, qtd ) ).getPrecoVenda().doubleValue();
-                taxa = MetodosUtil.getTaxaPercantagem( idProduto );
+                taxa = MetodosUtil.getTaxaPercantagem(idProduto);
 //                sub_total_iliquido = FinanceUtils.getValorComIVA( qtd, taxa, preco_unitario, desconto );
-                sub_total_iliquido = CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 4 ).toString() );
+                sub_total_iliquido = CfMethods.parseMoedaFormatada(modelo.getValueAt(i, 4).toString());
 
-                itemVenda.setCodigoProduto( produtosController.findByCod( idProduto ) );
-                itemVenda.setCodigoVenda( venda );
-                itemVenda.setQuantidade( qtd );
-                itemVenda.setDesconto( desconto );
-                itemVenda.setValorIva( new BigDecimal( taxa ).doubleValue() );
-                itemVenda.setMotivoIsensao( MetodosUtil.getMotivoIsensao( idProduto ) );
-                itemVenda.setCodigoIsensao( MetodosUtil.getCodigoRegime( idProduto ) );
-                itemVenda.setTotal( new BigDecimal( sub_total_iliquido ) );
-                itemVenda.setFkPreco( precosController.getLastIdPrecoByIdProduto( itemVenda.getCodigoProduto().getCodigo(), itemVenda.getQuantidade() ) );
+                itemVenda.setCodigoProduto(produtosController.findByCod(idProduto));
+                itemVenda.setCodigoVenda(venda);
+                itemVenda.setQuantidade(qtd);
+                itemVenda.setDesconto(desconto);
+                itemVenda.setValorIva(new BigDecimal(taxa).doubleValue());
+                itemVenda.setMotivoIsensao(MetodosUtil.getMotivoIsensao(idProduto));
+                itemVenda.setCodigoIsensao(MetodosUtil.getCodigoRegime(idProduto));
+                itemVenda.setTotal(new BigDecimal(sub_total_iliquido));
+                itemVenda.setFkPreco(precosController.getLastIdPrecoByIdProduto(itemVenda.getCodigoProduto().getCodigo(), itemVenda.getQuantidade()));
 //                itemVenda.setFkPreco( precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( itemVenda.getCodigoProduto().getCodigo(), itemVenda.getQuantidade() ) ) );
 //                itemVenda.setValorRetencao( 0d );
-                itemVenda.setDataServico( new Date() );
+                itemVenda.setDataServico(new Date());
                 /*setando a mesa e lugar para cunprir a formalidade só aplica-se somente para resstauração*/
 //                itemVenda.setFkLugares( ( TbLugares ) lugaresController.findById( DVML.LUGAR_BALCAO ) );
-                itemVenda.setFkLugares( (TbLugares) lugaresController.findByLugar( lugar ) );
+                itemVenda.setFkLugares((TbLugares) lugaresController.findByLugar(lugar));
 //                itemVenda.setFkLugares( lugarDao.findTbLugares( lugarDao.getIdByDescricao( lugar ) ) );
-                itemVenda.setFkMesas( (TbMesas) mesasController.findByDesignacao( mesa ) );
+                itemVenda.setFkMesas((TbMesas) mesasController.findByDesignacao(mesa));
 
                 //cria o item venda
 //                itemVendaDao.create ( itemVenda );
 //                int last_venda = itemVendaDao.criarComProcedimentos( itemVenda, conexao );
-                if ( !itemVendasController.salvar( itemVenda ) )
-                {
-                    DocumentosController.rollback( conexaoTransaction );
+                if (!itemVendasController.salvar(itemVenda)) {
+                    DocumentosController.rollback(conexaoTransaction);
                     conexaoTransaction.close();
                     return;
                 }
 
-                boolean isStocavel = produto_local.getStocavel().equals( "true" );
+                boolean isStocavel = produto_local.getStocavel().equals("true");
 
-                if ( isStocavel )
-                {
-                    stock_local = stocksController.getStockByIdProdutoAndIdArmazem( itemVenda.getCodigoProduto().getCodigo(), getCodigoArmazem() );
+                if (isStocavel) {
+                    stock_local = stocksController.getStockByIdProdutoAndIdArmazem(itemVenda.getCodigoProduto().getCodigo(), getCodigoArmazem());
                 }
 //                stock_local = stockDao.get_stock_by_id_produto_and_id_armazem( idProduto, id_armazem );
 //                stock_local = stockDao.get_stock_by_id_produto_and_id_armazem( itemVenda.getCodigoProduto().getCodigo(), id_armzem );
-                if ( !Objects.isNull( stock_local ) )
-                {
-                    if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR || getIdDocumento() == DOC_FACTURA_FT || getIdDocumento() == DOC_FACTURA_CONSULTA_MESA )
-                    {
-                        System.out.println( "passei quando é FR ou FT" );
+                if (!Objects.isNull(stock_local)) {
+                    if (getIdDocumento() == DOC_FACTURA_RECIBO_FR || getIdDocumento() == DOC_FACTURA_FT || getIdDocumento() == DOC_FACTURA_CONSULTA_MESA) {
+                        System.out.println("passei quando é FR ou FT");
                         //so retirar caso existir mesmo no armazém em questão.
-                        if ( stock_local.getCodigo() != 0 && itemVenda.getCodigoProduto().getStocavel().equals( "true" ) )
-                        {
-                            actualizar_quantidade( itemVenda.getCodigoProduto().getCodigo(), itemVenda.getQuantidade() );
+                        if (stock_local.getCodigo() != 0 && itemVenda.getCodigoProduto().getStocavel().equals("true")) {
+                            actualizar_quantidade(itemVenda.getCodigoProduto().getCodigo(), itemVenda.getQuantidade());
                         }
                     }
 
                 }
 
-            }
-            catch ( Exception e )
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
                 efectuada = false;
-                JOptionPane.showMessageDialog( null, "Falha ao registrar o produto: " + itemVenda.getCodigoProduto().getCodigo() + " na Factura" );
+                JOptionPane.showMessageDialog(null, "Falha ao registrar o produto: " + itemVenda.getCodigoProduto().getCodigo() + " na Factura");
                 break;
             }
         }
 
-        if ( efectuada )
-        {
-            JOptionPane.showMessageDialog( null, "Factura efectuada com sucesso!.." );
-            TbPedido pedido = pedidoDao.findTbPedido( pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa ) );
-            PedidoDao.eliminarPedido( pedido, conexaoTransaction ); // Elimina o pedido
+        if (efectuada) {
+            JOptionPane.showMessageDialog(null, "Factura efectuada com sucesso!..");
+            TbPedido pedido = pedidoDao.findTbPedido(pedidoDao.getLastPedidoByDefignacaoMesaFALSE(mesa));
+            PedidoDao.eliminarPedido(pedido, conexaoTransaction); // Elimina o pedido
 
-            System.err.println( "Codigo Venda: " + venda.getCodigo() );
-            System.err.println( "Venda: " + venda.getCodFact() );
+            System.err.println("Codigo Venda: " + venda.getCodigo());
+            System.err.println("Venda: " + venda.getCodFact());
             gorjeta = 0;
 
-            DocumentosController.commit( conexaoTransaction );
+            DocumentosController.commit(conexaoTransaction);
 
 //            int numeroVias = 1;
-            int numeroVias = (int) Double.parseDouble( spnCopia.getValue().toString() );
-            for ( int i = 1; i <= numeroVias; i++ )
-            {
+            int numeroVias = (int) Double.parseDouble(spnCopia.getValue().toString());
+            for (int i = 1; i <= numeroVias; i++) {
 
-                switch (i)
-                {
+                switch (i) {
                     case 1:
 
-                        ListaVendaPorMesas listaVenda1 = new ListaVendaPorMesas( venda.getCodigo(), abreviacao, false, true, "Original" );
+                        ListaVendaPorMesas listaVenda1 = new ListaVendaPorMesas(venda.getCodigo(), abreviacao, false, true, "Original");
                         break;
                     case 2:
-                        ListaVendaPorMesas listaVenda2 = new ListaVendaPorMesas( venda.getCodigo(), abreviacao, false, true, "Original" );
+                        ListaVendaPorMesas listaVenda2 = new ListaVendaPorMesas(venda.getCodigo(), abreviacao, false, true, "Original");
                         break;
                     case 3:
-                        ListaVendaPorMesas listaVenda3 = new ListaVendaPorMesas( venda.getCodigo(), abreviacao, false, true, "Triplicado" );
+                        ListaVendaPorMesas listaVenda3 = new ListaVendaPorMesas(venda.getCodigo(), abreviacao, false, true, "Triplicado");
                         break;
                 }
 
             }
 
-            PrincipalPedidosVisao.mesas_livres( getLabelMesaByMesa() );
-            PrincipalPedidosVisao.pintar_mesas( getLabelMesaByMesa(), mesa );
+            PrincipalPedidosVisao.mesas_livres(getLabelMesaByMesa());
+            PrincipalPedidosVisao.pintar_mesas(getLabelMesaByMesa(), mesa);
             procedimento_mesas_livre();
 
-        }
-        else
-        {
-            DocumentosController.rollback( conexaoTransaction );
+        } else {
+            DocumentosController.rollback(conexaoTransaction);
         }
 
     }
 
-    public static void salvarItemvendaLugar( TbVenda venda, String lugar )
-    {
+    public static void salvarItemvendaLugar(TbVenda venda, String lugar) {
 
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
         boolean efectuada = true;
         int idProduto = 0;
         double qtd = 0d;
-        int cod_mesa = mesasDao.getIdByDescricao( mesa );
+        int cod_mesa = mesasDao.getIdByDescricao(mesa);
 //        String lugar = "1";
         TbItemVenda itemVenda = null;
         TbProduto produto;
@@ -4181,73 +3812,65 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         double sub_total_iliquido = 0, preco_unitario = 0d, taxa = 0d, desconto = 0d, valor_iva = 0d;
         int valor_lugar_tabela = 0;
 
-        for ( int i = 0; i < jTable1.getRowCount(); i++ )
-        {
-            try
-            {
+        for (int i = 0; i < jTable1.getRowCount(); i++) {
+            try {
 
-                valor_lugar_tabela = getLugarSelecionado( i );
-                if ( valor_lugar_tabela == Integer.parseInt( lugar ) )
-                {
+                valor_lugar_tabela = getLugarSelecionado(i);
+                if (valor_lugar_tabela == Integer.parseInt(lugar)) {
 
                     itemVenda = new TbItemVenda();
-                    TbProduto produto_local = (TbProduto) produtosController.findByDesignacao( modelo.getValueAt( i, 2 ).toString() );
+                    TbProduto produto_local = (TbProduto) produtosController.findByDesignacao(modelo.getValueAt(i, 2).toString());
 //                lugar = modelo.getValueAt( i, 1 ).toString();
-                    idProduto = produtosController.findByDesignacao( modelo.getValueAt( i, 2 ).toString() ).getCodigo();
+                    idProduto = produtosController.findByDesignacao(modelo.getValueAt(i, 2).toString()).getCodigo();
 //                idProduto = produtoDao.getProdutoByDescricao( modelo.getValueAt( i, 2 ).toString() ).getCodigo();
-                    qtd = Double.parseDouble( modelo.getValueAt( i, 3 ).toString() );
-                    preco_unitario = precosController.getLastIdPrecoByIdProduto( idProduto, qtd ).getPrecoVenda().doubleValue();
+                    qtd = Double.parseDouble(modelo.getValueAt(i, 3).toString());
+                    preco_unitario = precosController.getLastIdPrecoByIdProduto(idProduto, qtd).getPrecoVenda().doubleValue();
 //                preco_unitario = precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( idProduto, qtd ) ).getPrecoVenda().doubleValue();
-                    taxa = MetodosUtil.getTaxaPercantagem( idProduto );
+                    taxa = MetodosUtil.getTaxaPercantagem(idProduto);
 //                sub_total_iliquido = FinanceUtils.getValorComIVA( qtd, taxa, preco_unitario, desconto );
-                    sub_total_iliquido = CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 4 ).toString() );
+                    sub_total_iliquido = CfMethods.parseMoedaFormatada(modelo.getValueAt(i, 4).toString());
 
-                    itemVenda.setCodigoProduto( produtosController.findByCod( idProduto ) );
-                    itemVenda.setCodigoVenda( venda );
-                    itemVenda.setQuantidade( qtd );
-                    itemVenda.setDesconto( desconto );
-                    itemVenda.setValorIva( new BigDecimal( taxa ).doubleValue() );
-                    itemVenda.setMotivoIsensao( MetodosUtil.getMotivoIsensao( idProduto ) );
-                    itemVenda.setCodigoIsensao( MetodosUtil.getCodigoRegime( idProduto ) );
-                    itemVenda.setTotal( new BigDecimal( sub_total_iliquido ) );
-                    itemVenda.setFkPreco( precosController.getLastIdPrecoByIdProduto( itemVenda.getCodigoProduto().getCodigo(), itemVenda.getQuantidade() ) );
+                    itemVenda.setCodigoProduto(produtosController.findByCod(idProduto));
+                    itemVenda.setCodigoVenda(venda);
+                    itemVenda.setQuantidade(qtd);
+                    itemVenda.setDesconto(desconto);
+                    itemVenda.setValorIva(new BigDecimal(taxa).doubleValue());
+                    itemVenda.setMotivoIsensao(MetodosUtil.getMotivoIsensao(idProduto));
+                    itemVenda.setCodigoIsensao(MetodosUtil.getCodigoRegime(idProduto));
+                    itemVenda.setTotal(new BigDecimal(sub_total_iliquido));
+                    itemVenda.setFkPreco(precosController.getLastIdPrecoByIdProduto(itemVenda.getCodigoProduto().getCodigo(), itemVenda.getQuantidade()));
 //                itemVenda.setFkPreco( precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( itemVenda.getCodigoProduto().getCodigo(), itemVenda.getQuantidade() ) ) );
 //                itemVenda.setValorRetencao( 0d );
-                    itemVenda.setDataServico( new Date() );
+                    itemVenda.setDataServico(new Date());
                     /*setando a mesa e lugar para cunprir a formalidade só aplica-se somente para resstauração*/
 //                itemVenda.setFkLugares( ( TbLugares ) lugaresController.findById( DVML.LUGAR_BALCAO ) );
 //                    itemVenda.setFkLugares( ( TbLugares ) lugaresController.findByLugar( lugar ) );
-                    itemVenda.setFkLugares( (TbLugares) lugaresController.findById( Integer.parseInt( lugar ) ) );
+                    itemVenda.setFkLugares((TbLugares) lugaresController.findById(Integer.parseInt(lugar)));
 //                itemVenda.setFkLugares( lugarDao.findTbLugares( lugarDao.getIdByDescricao( lugar ) ) );
-                    itemVenda.setFkMesas( (TbMesas) mesasController.findByDesignacao( mesa ) );
+                    itemVenda.setFkMesas((TbMesas) mesasController.findByDesignacao(mesa));
 
                     //cria o item venda
 //                itemVendaDao.create ( itemVenda );
 //                int last_venda = itemVendaDao.criarComProcedimentos( itemVenda, conexao );
-                    if ( !itemVendasController.salvar( itemVenda ) )
-                    {
-                        DocumentosController.rollback( conexaoTransaction );
+                    if (!itemVendasController.salvar(itemVenda)) {
+                        DocumentosController.rollback(conexaoTransaction);
                         conexaoTransaction.close();
                         return;
                     }
 
-                    boolean isStocavel = produto_local.getStocavel().equals( "true" );
+                    boolean isStocavel = produto_local.getStocavel().equals("true");
 
-                    if ( isStocavel )
-                    {
-                        stock_local = stocksController.getStockByIdProdutoAndIdArmazem( itemVenda.getCodigoProduto().getCodigo(), getCodigoArmazem() );
+                    if (isStocavel) {
+                        stock_local = stocksController.getStockByIdProdutoAndIdArmazem(itemVenda.getCodigoProduto().getCodigo(), getCodigoArmazem());
                     }
 //                stock_local = stockDao.get_stock_by_id_produto_and_id_armazem( idProduto, id_armazem );
 //                stock_local = stockDao.get_stock_by_id_produto_and_id_armazem( itemVenda.getCodigoProduto().getCodigo(), id_armzem );
-                    if ( !Objects.isNull( stock_local ) )
-                    {
-                        if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR || getIdDocumento() == DOC_FACTURA_FT )
-                        {
-                            System.out.println( "passei quando é FR ou FT" );
+                    if (!Objects.isNull(stock_local)) {
+                        if (getIdDocumento() == DOC_FACTURA_RECIBO_FR || getIdDocumento() == DOC_FACTURA_FT) {
+                            System.out.println("passei quando é FR ou FT");
                             //so retirar caso existir mesmo no armazém em questão.
-                            if ( stock_local.getCodigo() != 0 && itemVenda.getCodigoProduto().getStocavel().equals( "true" ) )
-                            {
-                                actualizar_quantidade( itemVenda.getCodigoProduto().getCodigo(), itemVenda.getQuantidade() );
+                            if (stock_local.getCodigo() != 0 && itemVenda.getCodigoProduto().getStocavel().equals("true")) {
+                                actualizar_quantidade(itemVenda.getCodigoProduto().getCodigo(), itemVenda.getQuantidade());
                             }
                         }
 
@@ -4255,54 +3878,49 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
                 }
 
-            }
-            catch ( Exception e )
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
                 efectuada = false;
-                JOptionPane.showMessageDialog( null, "Falha ao registrar o produto: " + itemVenda.getCodigoProduto().getCodigo() + " na Factura" );
+                JOptionPane.showMessageDialog(null, "Falha ao registrar o produto: " + itemVenda.getCodigoProduto().getCodigo() + " na Factura");
                 break;
             }
         }
 
-        if ( efectuada )
-        {
-            alterar_status_pedido_lugar( Integer.parseInt( lugar ) );
-            JOptionPane.showMessageDialog( null, "Factura efectuada com sucesso!.." );
-            actualizar_lugar( Integer.parseInt( lugar ) );
+        if (efectuada) {
+            alterar_status_pedido_lugar(Integer.parseInt(lugar));
+            JOptionPane.showMessageDialog(null, "Factura efectuada com sucesso!..");
+            actualizar_lugar(Integer.parseInt(lugar));
             procedimento_mesas_livre();
-            TbPedido pedido = pedidoDao.findTbPedido( pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa ) );
-            int fkLugar = lugaresController.getIdByDescricao( lugar );
+            TbPedido pedido = pedidoDao.findTbPedido(pedidoDao.getLastPedidoByDefignacaoMesaFALSE(mesa));
+            int fkLugar = lugaresController.getIdByDescricao(lugar);
 
-            PedidoDao.eliminarPedidoByLugar( pedido, fkLugar, conexao ); // Elimina o pedido
+            PedidoDao.eliminarPedidoByLugar(pedido, fkLugar, conexao); // Elimina o pedido
 
-            System.err.println( "Codigo Venda: " + venda.getCodigo() );
-            System.err.println( "Venda: " + venda.getCodFact() );
+            System.err.println("Codigo Venda: " + venda.getCodigo());
+            System.err.println("Venda: " + venda.getCodFact());
             gorjeta = 0;
 
 //            int numeroVias = 1;
-            int numeroVias = (int) Double.parseDouble( spnCopia.getValue().toString() );
-            for ( int i = 1; i <= numeroVias; i++ )
-            {
+            int numeroVias = (int) Double.parseDouble(spnCopia.getValue().toString());
+            for (int i = 1; i <= numeroVias; i++) {
 
-                switch (i)
-                {
+                switch (i) {
                     case 1:
-                        ListaVendasMesas listaVenda1 = new ListaVendasMesas( venda.getCodigo(), abreviacao, cod_mesa, Integer.parseInt( lugar ), false, true, "Original" );
+                        ListaVendasMesas listaVenda1 = new ListaVendasMesas(venda.getCodigo(), abreviacao, cod_mesa, Integer.parseInt(lugar), false, true, "Original");
 //                        ListaVendasMesas listaVenda1 = new ListaVendasMesas( venda.getCodigo(), abreviacao, cod_mesa, "", lugar, false, true, "Original" );
 //                        ListaVendaPorMesas listaVenda1 = new ListaVendaPorMesas( venda.getCodigo(), abreviacao, false, true, "Original" );
                         break;
                     case 2:
-                        ListaVendasMesas listaVenda2 = new ListaVendasMesas( venda.getCodigo(), abreviacao, cod_mesa, Integer.parseInt( lugar ), false, true, "Duplicado" );
+                        ListaVendasMesas listaVenda2 = new ListaVendasMesas(venda.getCodigo(), abreviacao, cod_mesa, Integer.parseInt(lugar), false, true, "Duplicado");
                         break;
                     case 3:
-                        ListaVendasMesas listaVenda3 = new ListaVendasMesas( venda.getCodigo(), abreviacao, cod_mesa, Integer.parseInt( lugar ), false, true, "Triplicado" );
+                        ListaVendasMesas listaVenda3 = new ListaVendasMesas(venda.getCodigo(), abreviacao, cod_mesa, Integer.parseInt(lugar), false, true, "Triplicado");
                         break;
                 }
 
             }
-            PrincipalPedidosVisao.mesas_livres( getLabelMesaByMesa() );
-            PrincipalPedidosVisao.pintar_mesas( getLabelMesaByMesa(), mesa );
+            PrincipalPedidosVisao.mesas_livres(getLabelMesaByMesa());
+            PrincipalPedidosVisao.pintar_mesas(getLabelMesaByMesa(), mesa);
 
 //             actualizar();
 //            JOptionPane.showMessageDialog( null, "Factura Convertida com sucesso!.." );
@@ -4310,13 +3928,12 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
     }
 
-    public static void actualizar_quantidade( int cod, double quantidade )
-    {
+    public static void actualizar_quantidade(int cod, double quantidade) {
 
-        System.err.println( "Entrei no actualizar quantidade" );
-        String sql = "UPDATE tb_stock SET quantidade_existente =  " + ( getQuantidadeProduto( cod ) - quantidade ) + " WHERE cod_produto_codigo = " + cod + " AND  cod_armazem = " + id_armzem;
-        System.out.println( "Quantidade   : " + quantidade );
-        conexao.executeUpdate( sql );
+        System.err.println("Entrei no actualizar quantidade");
+        String sql = "UPDATE tb_stock SET quantidade_existente =  " + (getQuantidadeProduto(cod) - quantidade) + " WHERE cod_produto_codigo = " + cod + " AND  cod_armazem = " + id_armzem;
+        System.out.println("Quantidade   : " + quantidade);
+        conexao.executeUpdate(sql);
 
     }
 
@@ -4333,8 +3950,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //    {
 //        return CfMethods.parseMoedaFormatada( FormaPagamentoVisao.lb_troco.getText() );
 //    }
-    public static double getValor_entregue()
-    {
+    public static double getValor_entregue() {
         return 0d;
     }
 
@@ -4342,30 +3958,22 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //    {
 //        return 0d;
 //    }
-    public static double getTroco()
-    {
+    public static double getTroco() {
 
-        try
-        {
-            return CfMethods.parseMoedaFormatada( FormaPagamentoVisao.lb_troco.getText() );
-        }
-        catch ( Exception e )
-        {
+        try {
+            return CfMethods.parseMoedaFormatada(FormaPagamentoVisao.lb_troco.getText());
+        } catch (Exception e) {
         }
 
         return 0d;
 
     }
 
-    public static double getTrocoLugar()
-    {
+    public static double getTrocoLugar() {
 
-        try
-        {
-            return CfMethods.parseMoedaFormatada( FormaPagamentoLugarVisao.lb_troco.getText() );
-        }
-        catch ( Exception e )
-        {
+        try {
+            return CfMethods.parseMoedaFormatada(FormaPagamentoLugarVisao.lb_troco.getText());
+        } catch (Exception e) {
         }
 
         return 0d;
@@ -4385,70 +3993,61 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //
 //        }
 //    };
-    public static void setTotalGeral()
-    {
+    public static void setTotalGeral() {
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
         double total_geral = 0;
-        for ( int i = 0; i <= modelo.getRowCount() - 1; i++ )
-        {
-            total_geral += Double.parseDouble( modelo.getValueAt( i, 4 ).toString() );
+        for (int i = 0; i <= modelo.getRowCount() - 1; i++) {
+            total_geral += Double.parseDouble(modelo.getValueAt(i, 4).toString());
         }
-        txtTotalApagar.setText( CfMethods.formatarComoMoeda( total_geral ) );
+        txtTotalApagar.setText(CfMethods.formatarComoMoeda(total_geral));
     }
 
-    public boolean campos_invalido_imprimir()
-    {
+    public boolean campos_invalido_imprimir() {
 
-        if ( getValor_entregue() < Double.parseDouble( txtTotalApagar.getText() ) )
-        {
-            JOptionPane.showMessageDialog( null, "O valor entregue tem quer ser maior ou igual ao Total a Pagar", "AVISO", JOptionPane.WARNING_MESSAGE );
+        if (getValor_entregue() < Double.parseDouble(txtTotalApagar.getText())) {
+            JOptionPane.showMessageDialog(null, "O valor entregue tem quer ser maior ou igual ao Total a Pagar", "AVISO", JOptionPane.WARNING_MESSAGE);
 //            txtValorEntregue.requestFocus();
             return true;
         }
         return false;
     }
 
-    public static boolean registrar_forma_pagamento( int id_venda )
-    {
+    public static boolean registrar_forma_pagamento(int id_venda) {
 
         DefaultTableModel modelo = (DefaultTableModel) FormaPagamentoVisao.tabela_forma_pagamento.getModel();
 
         FormaPagamentoItem formaPagamentoItem;
         Contas contas;
-        double troco = CfMethods.parseMoedaFormatada( FormaPagamentoVisao.lb_troco.getText() );
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
+        double troco = CfMethods.parseMoedaFormatada(FormaPagamentoVisao.lb_troco.getText());
+        for (int i = 0; i < modelo.getRowCount(); i++) {
 
             formaPagamentoItem = new FormaPagamentoItem();
-            Integer id_forma_pagamento = Integer.parseInt( modelo.getValueAt( i, 0 ).toString() );
-            FormaPagamento formaPagamento = formaPagamentoController.findByDescrisao( modelo.getValueAt( i, 1 ).toString() );
-            contas = (Contas) contaController.findById( formaPagamento.getFkContaAssociada() );
+            Integer id_forma_pagamento = Integer.parseInt(modelo.getValueAt(i, 0).toString());
+            FormaPagamento formaPagamento = formaPagamentoController.findByDescrisao(modelo.getValueAt(i, 1).toString());
+            contas = (Contas) contaController.findById(formaPagamento.getFkContaAssociada());
 
-            String referencia = ( modelo.getValueAt( i, 2 ) != null ) ? modelo.getValueAt( i, 2 ).toString() : "n/a";
+            String referencia = (modelo.getValueAt(i, 2) != null) ? modelo.getValueAt(i, 2).toString() : "n/a";
 //            String valor = ( modelo.getValueAt( i, 3 ) != null ) ? modelo.getValueAt( i, 3 ).toString() : "0";
-            String valor = ( !modelo.getValueAt( i, 3 ).toString().equals( "" ) ) ? modelo.getValueAt( i, 3 ).toString() : "0";
+            String valor = (!modelo.getValueAt(i, 3).toString().equals("")) ? modelo.getValueAt(i, 3).toString() : "0";
 
-            formaPagamentoItem.setValor( new BigDecimal( valor ) );
-            formaPagamentoItem.setReferencia( referencia );
-            formaPagamentoItem.setTroco( new BigDecimal( troco ) );
+            formaPagamentoItem.setValor(new BigDecimal(valor));
+            formaPagamentoItem.setReferencia(referencia);
+            formaPagamentoItem.setTroco(new BigDecimal(troco));
             formaPagamentoItem.setValor_real(
-                    formaPagamentoItem.getValor().subtract( formaPagamentoItem.getTroco() ) );
-            formaPagamentoItem.setFkVenda( new TbVenda( id_venda ) );
-            formaPagamentoItem.setFkFormaPagamento( new FormaPagamento( id_forma_pagamento ) );
+                    formaPagamentoItem.getValor().subtract(formaPagamentoItem.getTroco()));
+            formaPagamentoItem.setFkVenda(new TbVenda(id_venda));
+            formaPagamentoItem.setFkFormaPagamento(new FormaPagamento(id_forma_pagamento));
 
-            try
-            {
-                if ( !valor.equals( "0" ) )
-                {
-                    formaPagamentoItemController.salvar( formaPagamentoItem );
+            try {
+                if (!valor.equals("0")) {
+                    formaPagamentoItemController.salvar(formaPagamentoItem);
 
-                    if ( Objects.nonNull( contas ) )
-                    {
-                        MetodosUtilTS.entradaTesouraria( contas,
+                    if (Objects.nonNull(contas)) {
+                        MetodosUtilTS.entradaTesouraria(contas,
                                 lb_proximo_documento.getText(),
                                 formaPagamento,
                                 referencia,
-                                new BigDecimal( valor ),
+                                new BigDecimal(valor),
                                 idUser,
                                 usuariosController,
                                 cmc,
@@ -4458,9 +4057,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                     troco = 0;
 
                 }
-            }
-            catch ( Exception e )
-            {
+            } catch (Exception e) {
                 return false;
             }
         }
@@ -4468,47 +4065,42 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         return true;
     }
 
-    public static boolean registrar_forma_pagamento_lugar( int id_venda, int lugar )
-    {
+    public static boolean registrar_forma_pagamento_lugar(int id_venda, int lugar) {
 
         DefaultTableModel modelo = (DefaultTableModel) FormaPagamentoPorLugaresVisao.tabela_forma_pagamento.getModel();
 
         FormaPagamentoItem formaPagamentoItem;
         Contas contas;
-        double troco = CfMethods.parseMoedaFormatada( FormaPagamentoPorLugaresVisao.lb_troco.getText() );
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
+        double troco = CfMethods.parseMoedaFormatada(FormaPagamentoPorLugaresVisao.lb_troco.getText());
+        for (int i = 0; i < modelo.getRowCount(); i++) {
 
             formaPagamentoItem = new FormaPagamentoItem();
-            Integer id_forma_pagamento = Integer.parseInt( modelo.getValueAt( i, 0 ).toString() );
-            FormaPagamento formaPagamento = formaPagamentoController.findByDescrisao( modelo.getValueAt( i, 1 ).toString() );
-            contas = (Contas) contaController.findById( formaPagamento.getFkContaAssociada() );
+            Integer id_forma_pagamento = Integer.parseInt(modelo.getValueAt(i, 0).toString());
+            FormaPagamento formaPagamento = formaPagamentoController.findByDescrisao(modelo.getValueAt(i, 1).toString());
+            contas = (Contas) contaController.findById(formaPagamento.getFkContaAssociada());
 
-            String referencia = ( modelo.getValueAt( i, 2 ) != null ) ? modelo.getValueAt( i, 2 ).toString() : "n/a";
+            String referencia = (modelo.getValueAt(i, 2) != null) ? modelo.getValueAt(i, 2).toString() : "n/a";
 //            String valor = ( modelo.getValueAt( i, 3 ) != null ) ? modelo.getValueAt( i, 3 ).toString() : "0";
-            String valor = ( !modelo.getValueAt( i, 3 ).toString().equals( "" ) ) ? modelo.getValueAt( i, 3 ).toString() : "0";
+            String valor = (!modelo.getValueAt(i, 3).toString().equals("")) ? modelo.getValueAt(i, 3).toString() : "0";
 
-            formaPagamentoItem.setValor( new BigDecimal( valor ) );
-            formaPagamentoItem.setReferencia( referencia );
-            formaPagamentoItem.setTroco( new BigDecimal( troco ) );
+            formaPagamentoItem.setValor(new BigDecimal(valor));
+            formaPagamentoItem.setReferencia(referencia);
+            formaPagamentoItem.setTroco(new BigDecimal(troco));
             formaPagamentoItem.setValor_real(
-                    formaPagamentoItem.getValor().subtract( formaPagamentoItem.getTroco() ) );
-            formaPagamentoItem.setFkVenda( new TbVenda( id_venda ) );
-            formaPagamentoItem.setFkFormaPagamento( new FormaPagamento( id_forma_pagamento ) );
+                    formaPagamentoItem.getValor().subtract(formaPagamentoItem.getTroco()));
+            formaPagamentoItem.setFkVenda(new TbVenda(id_venda));
+            formaPagamentoItem.setFkFormaPagamento(new FormaPagamento(id_forma_pagamento));
 
-            try
-            {
-                if ( !valor.equals( "0" ) )
-                {
-                    formaPagamentoItemController.salvar( formaPagamentoItem );
+            try {
+                if (!valor.equals("0")) {
+                    formaPagamentoItemController.salvar(formaPagamentoItem);
 
-                    if ( Objects.nonNull( contas ) )
-                    {
-                        MetodosUtilTS.entradaTesouraria( contas,
+                    if (Objects.nonNull(contas)) {
+                        MetodosUtilTS.entradaTesouraria(contas,
                                 lb_proximo_documento.getText(),
                                 formaPagamento,
                                 referencia,
-                                new BigDecimal( valor ),
+                                new BigDecimal(valor),
                                 idUser,
                                 usuariosController,
                                 cmc,
@@ -4518,9 +4110,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                     troco = 0;
 
                 }
-            }
-            catch ( Exception e )
-            {
+            } catch (Exception e) {
                 return false;
             }
         }
@@ -4600,37 +4190,32 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //
 //        return true;
 //    }
-    public static void setTotalPagar()
-    {
+    public static void setTotalPagar() {
 
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
         double total_pagar = 0;
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-            total_pagar += CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 4 ).toString() );
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            total_pagar += CfMethods.parseMoedaFormatada(modelo.getValueAt(i, 4).toString());
         }
-        txtTotalApagar.setText( CfMethods.formatarComoMoeda( total_pagar ) );
+        txtTotalApagar.setText(CfMethods.formatarComoMoeda(total_pagar));
 
     }
 
-    public static void setTotalPagarByLugar( int lugar )
-    {
+    public static void setTotalPagarByLugar(int lugar) {
 
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
 
         double total_pagar = 0;
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
+        for (int i = 0; i < modelo.getRowCount(); i++) {
 
-            if ( lugaresController.getIdByDescricao( jTable1.getModel().getValueAt( i, 1 ).toString() ) == lugar )
-            {
+            if (lugaresController.getIdByDescricao(jTable1.getModel().getValueAt(i, 1).toString()) == lugar) {
 //                total_pagar += Double.parseDouble( String.valueOf( modelo.getValueAt( i, 4 ) ) );
-                total_pagar += CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 4 ).toString() );
+                total_pagar += CfMethods.parseMoedaFormatada(modelo.getValueAt(i, 4).toString());
             }
 
         }
-        txtTotalApagar.setText( CfMethods.formatarComoMoeda( total_pagar ) );
+        txtTotalApagar.setText(CfMethods.formatarComoMoeda(total_pagar));
 //        txtTotalApagar.setText( String.valueOf( total_pagar ) );
 //        txtValorEntregue.setText( txtTotalApagar.getText() );
 //        valor_por_extenco();
@@ -4701,36 +4286,28 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //
 //    }
     //----------- evento do teclado ---------------------------------------
-    class TratarEventoValorEntregue implements KeyListener
-    {
+    class TratarEventoValorEntregue implements KeyListener {
 
         String prefixo = "";
         int codigo = 0, codigo_categoria = 0, quatidade_produto = 0;
 
-        public void keyPressed( KeyEvent evt )
-        {
+        public void keyPressed(KeyEvent evt) {
 
-            if ( evt.getKeyCode() == KeyEvent.VK_ENTER )
-            {
+            if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
 
-                try
-                {
+                try {
 
-                }
-                catch ( Exception ex )
-                {
-                    Logger.getLogger( VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
+                } catch (Exception ex) {
+                    Logger.getLogger(VendaUsuarioVisao.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
             }
         }
 
-        public void keyReleased( KeyEvent evt )
-        {
+        public void keyReleased(KeyEvent evt) {
         }
 
-        public void keyTyped( KeyEvent evt )
-        {
+        public void keyTyped(KeyEvent evt) {
         }
     }
 
@@ -4738,77 +4315,56 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //    {
 //        //lbValorPorExtenco.setText(    "São: "   +  MetodosUtil .valorPorExtenso(     Double.parseDouble(   txtTotalApagar.getText() )   ) );
 //    }
-    private static void remover_dados_tabela()
-    {
+    private static void remover_dados_tabela() {
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
-        modelo.setRowCount( 0 );
+        modelo.setRowCount(0);
     }
 
-    public static boolean isStocavel( String status )
-    {
-        try
-        {
-            if ( status.equals( "true" ) )
-            {
+    public static boolean isStocavel(String status) {
+        try {
+            if (status.equals("true")) {
                 return true;
-            }
-            else
-            {
+            } else {
                 return false;
             }
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             return true;
         }
 
     }
 
-    private void procedimento_processar_pedidos()
-    {
-        int opcao = JOptionPane.showConfirmDialog( null, "Por Favor\nDeseja ver a Conta da Mesa Completa?" );
+    private void procedimento_processar_pedidos() {
+        int opcao = JOptionPane.showConfirmDialog(null, "Por Favor\nDeseja ver a Conta da Mesa Completa?");
         //Mostra Pedidos Gerais ou seja Pedidos de todos lugares de uma Mesa
-        if ( opcao == JOptionPane.YES_OPTION )
-        {
+        if (opcao == JOptionPane.YES_OPTION) {
             imprimirPedidos();
-        }
-        else if ( opcao == JOptionPane.NO_OPTION )
-        {
-            try
-            {
-                opcao = Integer.parseInt( JOptionPane.showInputDialog( null, "Por Favor\nQual lugar Deseja ver a Conta?" ) );
-                if ( exite_pedido_lugar( opcao ) )
-                {
+        } else if (opcao == JOptionPane.NO_OPTION) {
+            try {
+                opcao = Integer.parseInt(JOptionPane.showInputDialog(null, "Por Favor\nQual lugar Deseja ver a Conta?"));
+                if (exite_pedido_lugar(opcao)) {
                     //Mostra Pedidos Por TbLugares ou seja TbPedido de um lugar na Mesa
-                    imprimirPedidosPorLugar( opcao );
+                    imprimirPedidosPorLugar(opcao);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Não existe pedido neste lugar!", "AVISO", JOptionPane.WARNING_MESSAGE);
                 }
-                else
-                {
-                    JOptionPane.showMessageDialog( null, "Não existe pedido neste lugar!", "AVISO", JOptionPane.WARNING_MESSAGE );
-                }
-            }
-            catch ( Exception e )
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
-                JOptionPane.showMessageDialog( null, "Erro: tem que ser um número." );
+                JOptionPane.showMessageDialog(null, "Erro: tem que ser um número.");
             }
-        }
-        else
-        {
-            JOptionPane.showMessageDialog( null, "Operação cancelada" );
+        } else {
+            JOptionPane.showMessageDialog(null, "Operação cancelada");
         }
     }
 
 //    //Lugar
-    public static void salvarItemvendaLugar( int lugar )
-    {
+    public static void salvarItemvendaLugar(int lugar) {
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
 
         Integer cod_venda = vendasController.getLastVenda().getCodigo();
 //        int cod_venda = vendaDao.getLastVenda();
-        int cod_mesa = mesasDao.getIdByDescricao( mesa );
+        int cod_mesa = mesasDao.getIdByDescricao(mesa);
         boolean efectuada = true;
-        TbVenda venda_local = vendasController.getVendas( cod_venda );
+        TbVenda venda_local = vendasController.getVendas(cod_venda);
 //ESTE
 //        TbVenda venda_local = vendaDao.findTbVenda( cod_venda );
         TbItemVenda itemVenda = null;
@@ -4817,68 +4373,61 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         double total = 0;
         int valor_lugar_tabela = 0;
 
-        for ( int i = 0; i < jTable1.getRowCount(); i++ )
-        {
-            try
-            {
-                valor_lugar_tabela = getLugarSelecionado( i );
-                if ( valor_lugar_tabela == lugar )
-                {
+        for (int i = 0; i < jTable1.getRowCount(); i++) {
+            try {
+                valor_lugar_tabela = getLugarSelecionado(i);
+                if (valor_lugar_tabela == lugar) {
 
                     itemVenda = new TbItemVenda();
-                    TbProduto produto_local = (TbProduto) produtosController.findByDesignacao( modelo.getValueAt( i, 2 ).toString() );
+                    TbProduto produto_local = (TbProduto) produtosController.findByDesignacao(modelo.getValueAt(i, 2).toString());
 
-                    int idProduto = produtosController.findByDesignacao( modelo.getValueAt( i, 2 ).toString() ).getCodigo();
-                    double qtd = Double.parseDouble( modelo.getValueAt( i, 3 ).toString() );
-                    double preco_unitario = precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( idProduto, qtd ) ).getPrecoVenda().doubleValue();
-                    double taxa = MetodosUtil.getTaxaPercantagem( idProduto );
+                    int idProduto = produtosController.findByDesignacao(modelo.getValueAt(i, 2).toString()).getCodigo();
+                    double qtd = Double.parseDouble(modelo.getValueAt(i, 3).toString());
+                    double preco_unitario = precoDao.findTbPreco(precoDao.getUltimoIdPrecoByIdProduto(idProduto, qtd)).getPrecoVenda().doubleValue();
+                    double taxa = MetodosUtil.getTaxaPercantagem(idProduto);
                     double desconto = 0d;
-                    double sub_total_iliquido = FinanceUtils.getValorComIVA( qtd, taxa, preco_unitario, desconto );
+                    double sub_total_iliquido = FinanceUtils.getValorComIVA(qtd, taxa, preco_unitario, desconto);
 
-                    itemVenda.setCodigoProduto( produtosController.findByCod( idProduto ) );
-                    itemVenda.setCodigoVenda( venda_local );
-                    itemVenda.setQuantidade( qtd );
-                    itemVenda.setDesconto( desconto );
-                    itemVenda.setValorIva( new BigDecimal( taxa ).doubleValue() );
+                    itemVenda.setCodigoProduto(produtosController.findByCod(idProduto));
+                    itemVenda.setCodigoVenda(venda_local);
+                    itemVenda.setQuantidade(qtd);
+                    itemVenda.setDesconto(desconto);
+                    itemVenda.setValorIva(new BigDecimal(taxa).doubleValue());
 //                    itemVenda.setValorRetencao( 0d );
-                    itemVenda.setDataServico( new Date() );
-                    itemVenda.setMotivoIsensao( MetodosUtil.getMotivoIsensao( idProduto ) );
-                    itemVenda.setCodigoIsensao( MetodosUtil.getCodigoRegime( idProduto ) );
-                    itemVenda.setTotal( new BigDecimal( sub_total_iliquido ) );
-                    itemVenda.setFkPreco( precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( itemVenda.getCodigoProduto().getCodigo(), itemVenda.getQuantidade() ) ) );
+                    itemVenda.setDataServico(new Date());
+                    itemVenda.setMotivoIsensao(MetodosUtil.getMotivoIsensao(idProduto));
+                    itemVenda.setCodigoIsensao(MetodosUtil.getCodigoRegime(idProduto));
+                    itemVenda.setTotal(new BigDecimal(sub_total_iliquido));
+                    itemVenda.setFkPreco(precoDao.findTbPreco(precoDao.getUltimoIdPrecoByIdProduto(itemVenda.getCodigoProduto().getCodigo(), itemVenda.getQuantidade())));
 
                     /*setando a mesa e lugar para cunprir a formalidade só aplica-se somente para resstauração*/
-                    itemVenda.setFkLugares( (TbLugares) lugaresController.findById( lugar ) );
+                    itemVenda.setFkLugares((TbLugares) lugaresController.findById(lugar));
 //                itemVenda.setFkLugares( lugarDao.findTbLugares( lugarDao.getIdByDescricao( lugar ) ) );
-                    itemVenda.setFkMesas( (TbMesas) mesasController.findByDesignacao( mesa ) );
+                    itemVenda.setFkMesas((TbMesas) mesasController.findByDesignacao(mesa));
 
                     //cria o item venda
 //                    itemVendaDao.create ( itemVenda );
-                    if ( !itemVendasController.salvar( itemVenda ) )
-                    {
-                        DocumentosController.rollback( conexaoTransaction );
+                    if (!itemVendasController.salvar(itemVenda)) {
+                        DocumentosController.rollback(conexaoTransaction);
                         conexaoTransaction.close();
                         return;
                     }
 
-                    boolean isStocavel = produto_local.getStocavel().equals( "true" );
+                    boolean isStocavel = produto_local.getStocavel().equals("true");
 
-                    if ( isStocavel )
-                    {
-                        stock_local = stocksController.getStockByIdProdutoAndIdArmazem( itemVenda.getCodigoProduto().getCodigo(), getCodigoArmazem() );
+                    if (isStocavel) {
+                        stock_local = stocksController.getStockByIdProdutoAndIdArmazem(itemVenda.getCodigoProduto().getCodigo(), getCodigoArmazem());
                     }
 //                if ( stock_local.getCodigo() != 0 && itemVenda.getCodigoProduto().getStocavel().equals( "true" ) )
 //                {
 //                    System.out.println( "chamei o actualizar quantidade" );
 //                    MetodosUtil.subtrai_quantidade( idProduto, qtd, id_armazem, conexao );
 //                }
-                    if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR || getIdDocumento() == DOC_FACTURA_FT )
-                    {
-                        System.out.println( "passei quando é FR ou FT" );
-                        if ( !Objects.isNull( stock_local ) && isStocavel )
-                        {
-                            System.out.println( "chamei o actualizar quantidade" );
-                            actualizar_quantidade( itemVenda.getCodigoProduto().getCodigo(), itemVenda.getQuantidade() );
+                    if (getIdDocumento() == DOC_FACTURA_RECIBO_FR || getIdDocumento() == DOC_FACTURA_FT) {
+                        System.out.println("passei quando é FR ou FT");
+                        if (!Objects.isNull(stock_local) && isStocavel) {
+                            System.out.println("chamei o actualizar quantidade");
+                            actualizar_quantidade(itemVenda.getCodigoProduto().getCodigo(), itemVenda.getQuantidade());
                         }
 
                     }
@@ -4895,31 +4444,28 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                     //
                 }
 
-            }
-            catch ( Exception e )
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
                 efectuada = false;
-                JOptionPane.showMessageDialog( null, "Falha ao registrar o produto: " + itemVenda.getCodigoProduto().getCodigo() + " na Factura" );
-                DocumentosController.rollback( conexaoTransaction );
+                JOptionPane.showMessageDialog(null, "Falha ao registrar o produto: " + itemVenda.getCodigoProduto().getCodigo() + " na Factura");
+                DocumentosController.rollback(conexaoTransaction);
                 conexaoTransaction.close();
                 return;
             }
         }
 
-        if ( efectuada )
-        {
+        if (efectuada) {
 //            DocumentoDao.commitTransaction( conexao );
             gorjeta = 0;
 //          act actualizar_cod_doc ( venda_local.getDataVenda () );
-            alterar_status_pedido_lugar( lugar );
-            JOptionPane.showMessageDialog( null, "Factura Convertida com sucesso!.." );
-            actualizar_lugar( lugar );
+            alterar_status_pedido_lugar(lugar);
+            JOptionPane.showMessageDialog(null, "Factura Convertida com sucesso!..");
+            actualizar_lugar(lugar);
             procedimento_mesas_livre();
 
 //            ListaVenda1 original = new ListaVenda1( last_cod, this.abreviacao, false, ck_simplificada.isSelected(), "Original", motivos_isentos )
-            ListaVendasMesas listaVenda1 = new ListaVendasMesas( cod_venda, abreviacao, cod_mesa, lugar, false, true, "Duplicado" );
-            ListaVendasMesas listaVenda2 = new ListaVendasMesas( cod_venda, abreviacao, cod_mesa, lugar, false, true, "Original" );
+            ListaVendasMesas listaVenda1 = new ListaVendasMesas(cod_venda, abreviacao, cod_mesa, lugar, false, true, "Duplicado");
+            ListaVendasMesas listaVenda2 = new ListaVendasMesas(cod_venda, abreviacao, cod_mesa, lugar, false, true, "Original");
 //            ListaVenda listaVenda1 = new ListaVenda( cod_venda, abreviacao, false, true, "Duplicado" );
 //            ListaVenda listaVenda2 = new ListaVenda( cod_venda, abreviacao, false, true, "Original" );
 
@@ -4930,19 +4476,16 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
     }
 
-    public static double getTotal_por_lugar( int lugar )
-    {
+    public static double getTotal_por_lugar(int lugar) {
 
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
         double total_local = 0d;
-        for ( int i = 0; i < jTable1.getRowCount(); i++ )
-        {
+        for (int i = 0; i < jTable1.getRowCount(); i++) {
 
-            int lugar_local = Integer.parseInt( modelo.getValueAt( i, 1 ).toString() );
-            if ( lugar_local == lugar )
-            {
+            int lugar_local = Integer.parseInt(modelo.getValueAt(i, 1).toString());
+            if (lugar_local == lugar) {
 
-                total_local += Double.parseDouble( modelo.getValueAt( i, 4 ).toString() );
+                total_local += Double.parseDouble(modelo.getValueAt(i, 4).toString());
             }
 
         }
@@ -4953,26 +4496,21 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //        public static void dispose() {
 //        doDispose();
 //    }
-    public static void alterar_status_pedido_lugar( int lugar )
-    {
+    public static void alterar_status_pedido_lugar(int lugar) {
 
-        int cod_pedido = pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa );
-        List<TbItemPedidos> list = itemPedidosDao.buscaTodosItemPedidos( cod_pedido, lugar );
+        int cod_pedido = pedidoDao.getLastPedidoByDefignacaoMesaFALSE(mesa);
+        List<TbItemPedidos> list = itemPedidosDao.buscaTodosItemPedidos(cod_pedido, lugar);
 
-        for ( int i = 0; i < list.size(); i++ )
-        {
+        for (int i = 0; i < list.size(); i++) {
 
-            TbItemPedidos itemPedidos = list.get( i );
-            itemPedidos.setStatusConvertido( true );
+            TbItemPedidos itemPedidos = list.get(i);
+            itemPedidos.setStatusConvertido(true);
 
-            try
-            {
-                itemPedidosDao.edit( itemPedidos );
-                System.out.println( "1:linha do pedido convertido" );
-            }
-            catch ( Exception e )
-            {
-                System.out.println( "0:falha ao actualizar a linha do pedido" );
+            try {
+                itemPedidosDao.edit(itemPedidos);
+                System.out.println("1:linha do pedido convertido");
+            } catch (Exception e) {
+                System.out.println("0:falha ao actualizar a linha do pedido");
                 e.printStackTrace();
             }
 
@@ -4980,35 +4518,27 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
     }
 
-    private static void alterar_status_pedido_all_lugar()
-    {
+    private static void alterar_status_pedido_all_lugar() {
 
-        int cod_pedido = pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa );
-        List<TbItemPedidos> list = itemPedidosDao.buscaTodosItemPedidos( cod_pedido );
-        for ( int i = 0; i < list.size(); i++ )
-        {
+        int cod_pedido = pedidoDao.getLastPedidoByDefignacaoMesaFALSE(mesa);
+        List<TbItemPedidos> list = itemPedidosDao.buscaTodosItemPedidos(cod_pedido);
+        for (int i = 0; i < list.size(); i++) {
 
-            TbItemPedidos itemPedidos = list.get( i );
-            itemPedidos.setStatusConvertido( true );
+            TbItemPedidos itemPedidos = list.get(i);
+            itemPedidos.setStatusConvertido(true);
 
-            try
-            {
-                itemPedidosDao.edit( itemPedidos );
-            }
-            catch ( Exception e )
-            {
+            try {
+                itemPedidosDao.edit(itemPedidos);
+            } catch (Exception e) {
             }
         }
     }
 
-    public static boolean exite_pedido_lugar( int lugar )
-    {
+    public static boolean exite_pedido_lugar(int lugar) {
 
         boolean efectuada = false;
-        for ( int i = 0; i < jTable1.getRowCount(); i++ )
-        {
-            if ( lugaresController.getIdByDescricao( jTable1.getModel().getValueAt( i, 1 ).toString() ) == lugar )
-            {
+        for (int i = 0; i < jTable1.getRowCount(); i++) {
+            if (lugaresController.getIdByDescricao(jTable1.getModel().getValueAt(i, 1).toString()) == lugar) {
                 efectuada = true;
                 break;
             }
@@ -5066,46 +4596,42 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //        }
 //
 //    }
-    private void adicionar_butons()
-    {
+    private void adicionar_butons() {
 
     }
 
-    private void adicionar_catgorias()
-    {
+    private void adicionar_catgorias() {
 
         List<TbTipoProduto> lista_categoria = tipoProdutosController.buscaTodasCategoriasByArea();
 //        List<TbTipoProduto> lista_categoria = tipoProdutoDao.getAll_filtro();
         this.TAMANHO_CENTRO = lista_categoria.size();
 
 //        this.gl = new GridLayout( TAMANHO_CENTRO, 1 );
-        int raiz_quadrada = (int) Math.sqrt( TAMANHO_CENTRO );
+        int raiz_quadrada = (int) Math.sqrt(TAMANHO_CENTRO);
 
         int linhas = raiz_quadrada;
         int colunas = raiz_quadrada;
 
-        painel_central.setLayout( new java.awt.GridLayout( linhas, colunas ) );
+        painel_central.setLayout(new java.awt.GridLayout(linhas, colunas));
         painel_central.removeAll();
-        jScrollPane3.setViewportView( painel_central );
+        jScrollPane3.setViewportView(painel_central);
 
         botoes_object.clear();
-        btn_voltar.setVisible( false );
-        designacao_categoria.setVisible( false );
+        btn_voltar.setVisible(false);
+        designacao_categoria.setVisible(false);
 
-        for ( int i = 0; i < TAMANHO_CENTRO; i++ )
-        {
+        for (int i = 0; i < TAMANHO_CENTRO; i++) {
 
-            JButton jButton = new JButton( lista_categoria.get( i ).getDesignacao() );
-            jButton.addActionListener( new ButtonHandler1() );
-            botoes_object.add( jButton );
-            painel_central.add( jButton );
+            JButton jButton = new JButton(lista_categoria.get(i).getDesignacao());
+            jButton.addActionListener(new ButtonHandler1());
+            botoes_object.add(jButton);
+            painel_central.add(jButton);
 
         }
 
     }
 
-    private void adicionar_centro_botao( int idTipoPorduto )
-    {
+    private void adicionar_centro_botao(int idTipoPorduto) {
 //        try
 //        {
 //
@@ -5190,51 +4716,48 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //
 //        }
 
-        try
-        {
+        try {
 
-            TbTipoProduto tipoProduto = tipoProdutosController.getTipoProdutoByCodigo( idTipoPorduto );
+            TbTipoProduto tipoProduto = tipoProdutosController.getTipoProdutoByCodigo(idTipoPorduto);
 //            TbTipoProduto tipoProduto = tipoProdutoDao.findTbTipoProduto( idTipoPorduto );
-            btn_voltar.setVisible( true );
-            designacao_categoria.setVisible( true );
-            designacao_categoria.setText( tipoProduto.getDesignacao() );
-            System.err.println( "Cod Tipo de Produtos: " + tipoProduto.getDesignacao() );
+            btn_voltar.setVisible(true);
+            designacao_categoria.setVisible(true);
+            designacao_categoria.setText(tipoProduto.getDesignacao());
+            System.err.println("Cod Tipo de Produtos: " + tipoProduto.getDesignacao());
 
 //            Familia familia = familiaController.findById( 0 )
-            System.out.println( " ID ARMAZEM: " + id_armzem );
-            System.out.println( " FAMILIA: " + tipoProduto.getFkFamilia().getPkFamilia() );
-            List<TbProduto> lista_prdutos = ( tipoProduto.getFkFamilia().getPkFamilia() != DVML.COD_SERVICO )
-                    ? stocksController.get_all_produtos_by_id_tipo_produto_and_id_armazem( idTipoPorduto, id_armzem )
-                    : produtosController.getProdutosByTipoProduto( idTipoPorduto );
+            System.out.println(" ID ARMAZEM: " + id_armzem);
+            System.out.println(" FAMILIA: " + tipoProduto.getFkFamilia().getPkFamilia());
+            List<TbProduto> lista_prdutos = (tipoProduto.getFkFamilia().getPkFamilia() != DVML.COD_SERVICO)
+                    ? stocksController.get_all_produtos_by_id_tipo_produto_and_id_armazem(idTipoPorduto, id_armzem)
+                    : produtosController.getProdutosByTipoProduto(idTipoPorduto);
             painel_central.removeAll();
-            jScrollPane3.setViewportView( painel_central );
+            jScrollPane3.setViewportView(painel_central);
 
-            TbUsuario usuarioLocal = (TbUsuario) usuariosController.findById( idUser );
+            TbUsuario usuarioLocal = (TbUsuario) usuariosController.findById(idUser);
 
             botoes_object.clear();
             this.TAMANHO_CENTRO = lista_prdutos.size();
-            if ( !Objects.isNull( lista_prdutos ) && TAMANHO_CENTRO > 0 )
-            {
+            if (!Objects.isNull(lista_prdutos) && TAMANHO_CENTRO > 0) {
 
                 boolean adcionar_imagem = true;
 
-                System.out.println( "TAMANHO CENTRO: " + TAMANHO_CENTRO );
+                System.out.println("TAMANHO CENTRO: " + TAMANHO_CENTRO);
 
-                int raiz_quadrada = (int) Math.sqrt( TAMANHO_CENTRO );
+                int raiz_quadrada = (int) Math.sqrt(TAMANHO_CENTRO);
                 int linhas = raiz_quadrada;
                 int colunas = raiz_quadrada;
 
-                painel_central.setLayout( new java.awt.GridLayout( linhas, colunas ) );
-                jScrollPane3.setViewportView( painel_central );
+                painel_central.setLayout(new java.awt.GridLayout(linhas, colunas));
+                jScrollPane3.setViewportView(painel_central);
 
                 double preco = 0;
                 TbPreco preco_object;
-                for ( int i = 0; i < this.TAMANHO_CENTRO; i++ )
-                {
-                    TbProduto get = lista_prdutos.get( i );
+                for (int i = 0; i < this.TAMANHO_CENTRO; i++) {
+                    TbProduto get = lista_prdutos.get(i);
 
-                    preco_object = precosController.getLastIdPrecoByIdProdutos( lista_prdutos.get( i ).getCodigo() );
-                    double quantidadeProduto = stocksController.getQuantidadeProduto( get.getCodigo(), id_armzem );
+                    preco_object = precosController.getLastIdPrecoByIdProdutos(lista_prdutos.get(i).getCodigo());
+                    double quantidadeProduto = stocksController.getQuantidadeProduto(get.getCodigo(), id_armzem);
 
 //                    preco = ( preco_object != null ? preco_object.getPrecoVenda().doubleValue() : 0.0 );
 //
@@ -5270,20 +4793,16 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //                    }
 //                    jButton.addActionListener( new ButtonHandler() );
 //                    painel_central.add( jButton );
-                    painel_central.add( new ProdutoItemVisao( get.getStocavel(), get.getDesignacao(), get.getPhoto(), quantidadeProduto, preco_object, DVML.FORMULARIO_PEDIDO_RESTAURANTE, usuarioLocal.getIdTipoUsuario().getIdTipoUsuario() ) );
+                    painel_central.add(new ProdutoItemVisao(get.getStocavel(), get.getDesignacao(), get.getPhoto(), quantidadeProduto, preco_object, DVML.FORMULARIO_PEDIDO_RESTAURANTE, usuarioLocal.getIdTipoUsuario().getIdTipoUsuario()));
 //                    painel_central.add( new ProdutoItemVisao(  get.getCodigo(),  get.getStocavel(), get.getDesignacao(), get.getPhoto(), quantidadeProduto, preco_object, DVML.FORMULARIO_PEDIDO_RESTAURANTE, conexao ) );
 
                 }
 
-            }
-            else
-            {
-                System.out.println( "LISTA DE PRODUTO VAZIA." );
+            } else {
+                System.out.println("LISTA DE PRODUTO VAZIA.");
             }
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             painel_central.removeAll();
             botoes_object.clear();
@@ -5292,44 +4811,33 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
     }
 
-    public class ButtonHandler implements ActionListener
-    {
+    public class ButtonHandler implements ActionListener {
 
         @Override
-        public void actionPerformed( ActionEvent evento )
-        {
+        public void actionPerformed(ActionEvent evento) {
 
-            for ( int i = 0; i < TAMANHO_CENTRO; i++ )
-            {
+            for (int i = 0; i < TAMANHO_CENTRO; i++) {
 
-                if ( evento.getSource() == botoes_object.get( i ) )
-                {
+                if (evento.getSource() == botoes_object.get(i)) {
 
-                    String designacao = botoes_object.get( i ).getText();
+                    String designacao = botoes_object.get(i).getText();
 
-                    String[] parts = designacao.split( "-" );
-                    designacao = parts[ 0 ];
+                    String[] parts = designacao.split("-");
+                    designacao = parts[0];
 
-                    if ( activo_um_lugar() && rbNao_lugar.isSelected() )
-                    {
+                    if (activo_um_lugar() && rbNao_lugar.isSelected()) {
 
-                        if ( qtd_possivel( designacao ) )
-                        {
-                            try
-                            {
+                        if (qtd_possivel(designacao)) {
+                            try {
 
-                                procedimento_salvar_pedidos_iten_pedidos( designacao );
-                                status_button_lugar( true );
-                            }
-                            catch ( Exception e )
-                            {
-                                JOptionPane.showMessageDialog( null, "Fallha ao adicionar o pedido", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+                                procedimento_salvar_pedidos_iten_pedidos(designacao);
+                                status_button_lugar(true);
+                            } catch (Exception e) {
+                                JOptionPane.showMessageDialog(null, "Fallha ao adicionar o pedido", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
                                 e.printStackTrace();
                             }
-                        }
-                        else
-                        {
-                            JOptionPane.showMessageDialog( null, "Nao existe quantidade no stock.", "Aviso", JOptionPane.WARNING_MESSAGE );
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Nao existe quantidade no stock.", "Aviso", JOptionPane.WARNING_MESSAGE);
                         }
 
                     }
@@ -5342,25 +4850,21 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
     }
 
-    public class ButtonHandler1 implements ActionListener
-    {
+    public class ButtonHandler1 implements ActionListener {
 
         @Override
-        public void actionPerformed( ActionEvent evento )
-        {
+        public void actionPerformed(ActionEvent evento) {
 
-            for ( int i = 0; i < TAMANHO_CENTRO; i++ )
-            {
+            for (int i = 0; i < TAMANHO_CENTRO; i++) {
 
-                if ( evento.getSource() == botoes_object.get( i ) )
-                {
+                if (evento.getSource() == botoes_object.get(i)) {
 
-                    String categoria = botoes_object.get( i ).getText();
-                    System.out.println( "BOTOES :" + categoria );
+                    String categoria = botoes_object.get(i).getText();
+                    System.out.println("BOTOES :" + categoria);
 //                    System.out.println( "ID : " + tipoProdutoDao.getCategoriaByDescricao( categoria ).getCodigo() );
 //                    int cod_categoria = tipoProdutoDao.getCategoriaByDescricao( categoria ).getCodigo();
-                    int cod_categoria = tipoProdutosController.getTipoFamiliaByDesignacao( categoria ).getCodigo();
-                    adicionar_centro_botao( cod_categoria );
+                    int cod_categoria = tipoProdutosController.getTipoFamiliaByDesignacao(categoria).getCodigo();
+                    adicionar_centro_botao(cod_categoria);
                     break;
 
                 }
@@ -5371,196 +4875,149 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
     }
 
-    private void construir_painel_central()
-    {
-        painel_central.setLayout( new java.awt.GridLayout( 10, 1 ) );
-        jScrollPane3.setViewportView( painel_central );
+    private void construir_painel_central() {
+        painel_central.setLayout(new java.awt.GridLayout(10, 1));
+        jScrollPane3.setViewportView(painel_central);
     }
 
-    private void activar_button_lugar( boolean bt1, boolean bt2, boolean bt3, boolean bt4, boolean bt5, boolean bt6, boolean bt7, boolean bt8, boolean bt9, boolean bt10 )
-    {
+    private void activar_button_lugar(boolean bt1, boolean bt2, boolean bt3, boolean bt4, boolean bt5, boolean bt6, boolean bt7, boolean bt8, boolean bt9, boolean bt10) {
 
-        status_button_lugar( true );
-        btn_01.setEnabled( bt1 );
-        btn_02.setEnabled( bt2 );
-        btn_03.setEnabled( bt3 );
-        btn_04.setEnabled( bt4 );
-        btn_05.setEnabled( bt5 );
-        btn_06.setEnabled( bt6 );
-        btn_07.setEnabled( bt7 );
-        btn_08.setEnabled( bt8 );
-        btn_09.setEnabled( bt9 );
-        btn_10.setEnabled( bt10 );
-
-    }
-
-    private static void status_button_lugar( boolean status )
-    {
-        btn_01.setEnabled( status );
-        btn_02.setEnabled( status );
-        btn_03.setEnabled( status );
-        btn_04.setEnabled( status );
-        btn_05.setEnabled( status );
-        btn_06.setEnabled( status );
-        btn_07.setEnabled( status );
-        btn_08.setEnabled( status );
-        btn_09.setEnabled( status );
-        btn_10.setEnabled( status );
+        status_button_lugar(true);
+        btn_01.setEnabled(bt1);
+        btn_02.setEnabled(bt2);
+        btn_03.setEnabled(bt3);
+        btn_04.setEnabled(bt4);
+        btn_05.setEnabled(bt5);
+        btn_06.setEnabled(bt6);
+        btn_07.setEnabled(bt7);
+        btn_08.setEnabled(bt8);
+        btn_09.setEnabled(bt9);
+        btn_10.setEnabled(bt10);
 
     }
 
-    public void procedimento_eliminar_item_pedido()
-    {
+    private static void status_button_lugar(boolean status) {
+        btn_01.setEnabled(status);
+        btn_02.setEnabled(status);
+        btn_03.setEnabled(status);
+        btn_04.setEnabled(status);
+        btn_05.setEnabled(status);
+        btn_06.setEnabled(status);
+        btn_07.setEnabled(status);
+        btn_08.setEnabled(status);
+        btn_09.setEnabled(status);
+        btn_10.setEnabled(status);
+
+    }
+
+    public void procedimento_eliminar_item_pedido() {
         linha_acutal = jTable1.getSelectedRow();
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
-        try
-        {
+        try {
 
-            new SenhaMestreVisao( this, rootPaneCheckingEnabled, DVML.FORMULARIO_PEDIDO_RESTAURANTE ).setVisible( true );
+            new SenhaMestreVisao(this, rootPaneCheckingEnabled, DVML.FORMULARIO_PEDIDO_RESTAURANTE).setVisible(true);
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
         }
 
     }
 
-    public void procedimento_salver_item_pedido()
-    {
+    public void procedimento_salver_item_pedido() {
         linha_acutal = jTable1.getSelectedRow();
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
 
-        try
-        {
+        try {
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
         }
 
     }
 
-    public static void procedimento_eliminar_item_pedido( String chave_mestre )
-    {
+    public static void procedimento_eliminar_item_pedido(String chave_mestre) {
         linha_actual = jTable1.getSelectedRow();
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
-        String lugar = modelo.getValueAt( linha_actual, 1 ).toString();
-        String consumo = modelo.getValueAt( linha_actual, 2 ).toString();
-        int idProduto = produtosController.getIdProduto( consumo );
-        double qtd = Double.parseDouble( modelo.getValueAt( linha_actual, 3 ).toString() );
-        double preco_unitario = precosController.getLastIdPrecoByIdProduto( idProduto, qtd ).getPrecoVenda().doubleValue();
-        String usuario = usuariosController.getUsuarioByCodigo( idUser ).getNome();
-        String chave_mestre_local = dadosInstituicaoController.findByCodigo( 1 ).getChaveMestre();
-        System.out.println( "Chave Apresentação1: " + chave_mestre );
-        System.out.println( "Chave Apresentação2 sem chave: " + chave_mestre_local );
-        if ( chave_mestre.equals( chave_mestre_local ) )
-        {
-            System.out.println( "Chave Apresentação2: " + chave_mestre );
-            System.out.println( "Chave Real: " + chave_mestre );
-            try
-            {
-                if ( validar1() )
-                {
-                    eliminar_item( jTable1 );
-                    PrincipalPedidosVisao.mesas_livres( getLabelMesaByMesa() );
-                    PrincipalPedidosVisao.pintar_mesas( getLabelMesaByMesa(), mesa );
+        String lugar = modelo.getValueAt(linha_actual, 1).toString();
+        String consumo = modelo.getValueAt(linha_actual, 2).toString();
+        int idProduto = produtosController.getIdProduto(consumo);
+        double qtd = Double.parseDouble(modelo.getValueAt(linha_actual, 3).toString());
+        double preco_unitario = precosController.getLastIdPrecoByIdProduto(idProduto, qtd).getPrecoVenda().doubleValue();
+        String usuario = usuariosController.getUsuarioByCodigo(idUser).getNome();
+        String chave_mestre_local = dadosInstituicaoController.findByCodigo(1).getChaveMestre();
+        System.out.println("Chave Apresentação1: " + chave_mestre);
+        System.out.println("Chave Apresentação2 sem chave: " + chave_mestre_local);
+        if (chave_mestre.equals(chave_mestre_local)) {
+            System.out.println("Chave Apresentação2: " + chave_mestre);
+            System.out.println("Chave Real: " + chave_mestre);
+            try {
+                if (validar1()) {
+                    eliminar_item(jTable1);
+                    PrincipalPedidosVisao.mesas_livres(getLabelMesaByMesa());
+                    PrincipalPedidosVisao.pintar_mesas(getLabelMesaByMesa(), mesa);
                     Productos p = new Productos();
-                    p.setConsumo( consumo );
-                    p.setLugar( lugar );
-                    p.setMesa( mesa );
-                    p.setQtd( qtd );
-                    p.setPreco( preco_unitario );
-                    p.setUsuario( usuario );
-                    p.setDataHora( new Date() );
+                    p.setConsumo(consumo);
+                    p.setLugar(lugar);
+                    p.setMesa(mesa);
+                    p.setQtd(qtd);
+                    p.setPreco(preco_unitario);
+                    p.setUsuario(usuario);
+                    p.setDataHora(new Date());
 
-                    if ( ProductoDao.insert( p, conexao ) )
-                    {
-                        System.err.println( "dados eliminado registrado com successo." );
-                    }
-                    else
-                    {
-                        System.err.println( "Falha ao registrar os dados eliminados" );
+                    if (ProductoDao.insert(p, conexao)) {
+                        System.err.println("dados eliminado registrado com successo.");
+                    } else {
+                        System.err.println("Falha ao registrar os dados eliminados");
                     }
                 }
+            } catch (Exception e) {
             }
-            catch ( Exception e )
-            {
-            }
-        }
-        else
-        {
-            JOptionPane.showMessageDialog( null, "Accesso negado." );
+        } else {
+            JOptionPane.showMessageDialog(null, "Accesso negado.");
         }
 
     }
 
-    private static boolean activo_um_lugar()
-    {
+    private static boolean activo_um_lugar() {
 
-        if ( !btn_01.isEnabled() )
-        {
+        if (!btn_01.isEnabled()) {
             return true;
-        }
-        else if ( !btn_02.isEnabled() )
-        {
+        } else if (!btn_02.isEnabled()) {
             return true;
-        }
-        else if ( !btn_03.isEnabled() )
-        {
+        } else if (!btn_03.isEnabled()) {
             return true;
-        }
-        else if ( !btn_04.isEnabled() )
-        {
+        } else if (!btn_04.isEnabled()) {
             return true;
-        }
-        else if ( !btn_05.isEnabled() )
-        {
+        } else if (!btn_05.isEnabled()) {
             return true;
-        }
-        else if ( !btn_06.isEnabled() )
-        {
+        } else if (!btn_06.isEnabled()) {
             return true;
-        }
-        else if ( !btn_07.isEnabled() )
-        {
+        } else if (!btn_07.isEnabled()) {
             return true;
-        }
-        else if ( !btn_08.isEnabled() )
-        {
+        } else if (!btn_08.isEnabled()) {
             return true;
-        }
-        else if ( !btn_09.isEnabled() )
-        {
+        } else if (!btn_09.isEnabled()) {
             return true;
-        }
-        else if ( !btn_10.isEnabled() )
-        {
+        } else if (!btn_10.isEnabled()) {
             return true;
         }
 
 //        JOptionPane.showMessageDialog( rootPane, "Caro usuário seleccione pelo menos um lugar da " + mesa, DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
-        JOptionPane.showMessageDialog( null, "Caro usuário seleccione pelo menos um lugar da " + mesa, DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+        JOptionPane.showMessageDialog(null, "Caro usuário seleccione pelo menos um lugar da " + mesa, DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
 
         return false;
 
     }
 
-    public static int getQuantidadeProduto( int cod_produto )
-    {
+    public static int getQuantidadeProduto(int cod_produto) {
 
         String sql = "SELECT quantidade_existente FROM  tb_stock WHERE  cod_produto_codigo = " + cod_produto + " AND cod_armazem = " + id_armzem;
 
-        ResultSet rs = conexao.executeQuery( sql );
+        ResultSet rs = conexao.executeQuery(sql);
 
-        try
-        {
-            if ( rs.next() )
-            {
-                return rs.getInt( "quantidade_existente" );
+        try {
+            if (rs.next()) {
+                return rs.getInt("quantidade_existente");
             }
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
             ex.printStackTrace();
             return 0;
         }
@@ -5591,14 +5048,13 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //        return 0;
 //    }
 
-    public void actualizar_quantidade( int cod, int quantidade, int idArmazem )
-    {
+    public void actualizar_quantidade(int cod, int quantidade, int idArmazem) {
 //        public  void actualizar_quantidade(int cod, int quantidade) {
 
-        String sql = "UPDATE tb_stock SET quantidade_existente =  " + ( getQuantidadeProduto( cod ) - quantidade ) + " WHERE cod_produto_codigo = " + cod + " AND cod_armazem = " + idArmazem;
+        String sql = "UPDATE tb_stock SET quantidade_existente =  " + (getQuantidadeProduto(cod) - quantidade) + " WHERE cod_produto_codigo = " + cod + " AND cod_armazem = " + idArmazem;
 //        String sql = "UPDATE tb_stock SET quantidade_existente =  "  + ( getQuantidadeProduto(cod) - quantidade)     +" WHERE cod_produto_codigo = "   +cod;
 
-        conexao.executeUpdate( sql );
+        conexao.executeUpdate(sql);
 
     }
 
@@ -5624,9 +5080,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //        return quant_possivel >= ( 1 + MetodosUtil.getQtdInItemPedidos( conexao, codigo_produto ) );
 //
 //    }
-    public static boolean estado_critico( int codigo_produto ) throws SQLException
-    {
-        TbStock stock = stocksController.getStockByIdProdutoAndIdArmazem( codigo_produto, id_armzem );
+    public static boolean estado_critico(int codigo_produto) throws SQLException {
+        TbStock stock = stocksController.getStockByIdProdutoAndIdArmazem(codigo_produto, id_armzem);
         double qtd_minima = stock.getQuantBaixa(),
                 qtd_existente = stock.getQuantidadeExistente(),
                 qtd_critica = stock.getQuantCritica();
@@ -5664,19 +5119,16 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //        return true;
 //
 //    }
-    public int getQtdPedidosTabela( int cod_produto )
-    {
+    public int getQtdPedidosTabela(int cod_produto) {
 
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
         int soma = 0;
         int cod_produto_local = 0;
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-            cod_produto_local = Integer.parseInt( modelo.getValueAt( i, 0 ).toString() );
-            if ( cod_produto_local == cod_produto )
-            {
-                soma += Integer.parseInt( modelo.getValueAt( i, 3 ).toString() );
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            cod_produto_local = Integer.parseInt(modelo.getValueAt(i, 0).toString());
+            if (cod_produto_local == cod_produto) {
+                soma += Integer.parseInt(modelo.getValueAt(i, 3).toString());
             }
         }
 
@@ -5684,51 +5136,42 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
     }
 
-    public void remover_item_all_pedidos_tabela( int cod_produto )
-    {
+    public void remover_item_all_pedidos_tabela(int cod_produto) {
 
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
         int soma = 0;
         int cod_produto_local = 0;
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-            cod_produto_local = Integer.parseInt( modelo.getValueAt( i, 0 ).toString() );
-            if ( cod_produto_local == cod_produto )
-            {
-                modelo.removeRow( i );
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            cod_produto_local = Integer.parseInt(modelo.getValueAt(i, 0).toString());
+            if (cod_produto_local == cod_produto) {
+                modelo.removeRow(i);
             }
         }
 
     }
 
-    public double qtd_possivel_quantidade( int codigo_produto )
-    {
+    public double qtd_possivel_quantidade(int codigo_produto) {
 
-        TbStock stock = stocksController.getStockByIdProdutoAndIdArmazem( codigo_produto, 1 );
+        TbStock stock = stocksController.getStockByIdProdutoAndIdArmazem(codigo_produto, 1);
         double quant_possivel = stock.getQuantidadeExistente() - stock.getQuantBaixa();
 
-        return quant_possivel + ( 1 + MetodosUtil.getQtdInItemPedidos( conexao, codigo_produto ) );
+        return quant_possivel + (1 + MetodosUtil.getQtdInItemPedidos(conexao, codigo_produto));
 
     }
 
-    public void remover_item_all_pedidos_amais_tabela( int cod_produto, int qtd )
-    {
+    public void remover_item_all_pedidos_amais_tabela(int cod_produto, int qtd) {
 
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
         int cont = 1;
         int cod_produto_local = 0;
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-            cod_produto_local = Integer.parseInt( modelo.getValueAt( i, 0 ).toString() );
-            if ( cod_produto_local == cod_produto && cont <= qtd )
-            {
-                modelo.removeRow( i );
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            cod_produto_local = Integer.parseInt(modelo.getValueAt(i, 0).toString());
+            if (cod_produto_local == cod_produto && cont <= qtd) {
+                modelo.removeRow(i);
                 cont++;
-            }
-            else
-            {
+            } else {
                 break;
             }
         }
@@ -5741,179 +5184,97 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //        return ( stock.getQuantidadeExistente() - stock.getQuantBaixa() );
 //
 //    }
-    private static JLabel getLabelMesaByMesa()
-    {
+    private static JLabel getLabelMesaByMesa() {
 
-        if ( mesa.equals( "MESA 1" ) )
-        {
+        if (mesa.equals("MESA 1")) {
             return PrincipalPedidosVisao.lb_mesa_01;
-        }
-        else if ( mesa.equals( "MESA 2" ) )
-        {
+        } else if (mesa.equals("MESA 2")) {
             return PrincipalPedidosVisao.lb_mesa_02;
-        }
-        else if ( mesa.equals( "MESA 3" ) )
-        {
+        } else if (mesa.equals("MESA 3")) {
             return PrincipalPedidosVisao.lb_mesa_03;
-        }
-        else if ( mesa.equals( "MESA 4" ) )
-        {
+        } else if (mesa.equals("MESA 4")) {
             return PrincipalPedidosVisao.lb_mesa_04;
-        }
-        else if ( mesa.equals( "MESA 5" ) )
-        {
+        } else if (mesa.equals("MESA 5")) {
             return PrincipalPedidosVisao.lb_mesa_05;
-        }
-        else if ( mesa.equals( "MESA 6" ) )
-        {
+        } else if (mesa.equals("MESA 6")) {
             return PrincipalPedidosVisao.lb_mesa_06;
-        }
-        else if ( mesa.equals( "MESA 7" ) )
-        {
+        } else if (mesa.equals("MESA 7")) {
             return PrincipalPedidosVisao.lb_mesa_07;
-        }
-        else if ( mesa.equals( "MESA 8" ) )
-        {
+        } else if (mesa.equals("MESA 8")) {
             return PrincipalPedidosVisao.lb_mesa_08;
-        }
-        else if ( mesa.equals( "MESA 9" ) )
-        {
+        } else if (mesa.equals("MESA 9")) {
             return PrincipalPedidosVisao.lb_mesa_09;
-        }
-        else if ( mesa.equals( "MESA 10" ) )
-        {
+        } else if (mesa.equals("MESA 10")) {
             return PrincipalPedidosVisao.lb_mesa_10;
-        }
-        else if ( mesa.equals( "MESA 11" ) )
-        {
+        } else if (mesa.equals("MESA 11")) {
             return PrincipalPedidosVisao.lb_mesa_11;
-        }
-        else if ( mesa.equals( "MESA 12" ) )
-        {
+        } else if (mesa.equals("MESA 12")) {
             return PrincipalPedidosVisao.lb_mesa_12;
-        }
-        else if ( mesa.equals( "MESA 13" ) )
-        {
+        } else if (mesa.equals("MESA 13")) {
             return PrincipalPedidosVisao.lb_mesa_13;
-        }
-        else if ( mesa.equals( "MESA 14" ) )
-        {
+        } else if (mesa.equals("MESA 14")) {
             return PrincipalPedidosVisao.lb_mesa_14;
-        }
-        else if ( mesa.equals( "MESA 15" ) )
-        {
+        } else if (mesa.equals("MESA 15")) {
             return PrincipalPedidosVisao.lb_mesa_15;
-        }
-        else if ( mesa.equals( "MESA 16" ) )
-        {
+        } else if (mesa.equals("MESA 16")) {
             return PrincipalPedidosVisao.lb_mesa_16;
-        }
-        else if ( mesa.equals( "MESA 17" ) )
-        {
+        } else if (mesa.equals("MESA 17")) {
             return PrincipalPedidosVisao.lb_mesa_17;
-        }
-        else if ( mesa.equals( "MESA 18" ) )
-        {
+        } else if (mesa.equals("MESA 18")) {
             return PrincipalPedidosVisao.lb_mesa_18;
-        }
-        else if ( mesa.equals( "MESA 19" ) )
-        {
+        } else if (mesa.equals("MESA 19")) {
             return PrincipalPedidosVisao.lb_mesa_19;
-        }
-        else if ( mesa.equals( "MESA 20" ) )
-        {
+        } else if (mesa.equals("MESA 20")) {
             return PrincipalPedidosVisao.lb_mesa_20;
-        }
-        else if ( mesa.equals( "MESA 21" ) )
-        {
+        } else if (mesa.equals("MESA 21")) {
             return PrincipalPedidosVisao.lb_mesa_21;
-        }
-        else if ( mesa.equals( "MESA 22" ) )
-        {
+        } else if (mesa.equals("MESA 22")) {
             return PrincipalPedidosVisao.lb_mesa_22;
-        }
-        else if ( mesa.equals( "MESA 23" ) )
-        {
+        } else if (mesa.equals("MESA 23")) {
             return PrincipalPedidosVisao.lb_mesa_23;
-        }
-        else if ( mesa.equals( "MESA 24" ) )
-        {
+        } else if (mesa.equals("MESA 24")) {
             return PrincipalPedidosVisao.lb_mesa_24;
-        }
-        else if ( mesa.equals( "MESA 25" ) )
-        {
+        } else if (mesa.equals("MESA 25")) {
             return PrincipalPedidosVisao.lb_mesa_25;
-        }
-        else if ( mesa.equals( "MESA 26" ) )
-        {
+        } else if (mesa.equals("MESA 26")) {
             return PrincipalPedidosVisao.lb_mesa_26;
-        }
-        else if ( mesa.equals( "MESA 27" ) )
-        {
+        } else if (mesa.equals("MESA 27")) {
             return PrincipalPedidosVisao.lb_mesa_27;
-        }
-        else if ( mesa.equals( "MESA 28" ) )
-        {
+        } else if (mesa.equals("MESA 28")) {
             return PrincipalPedidosVisao.lb_mesa_28;
-        }
-        else if ( mesa.equals( "MESA 29" ) )
-        {
+        } else if (mesa.equals("MESA 29")) {
             return PrincipalPedidosVisao.lb_mesa_29;
-        }
-        else if ( mesa.equals( "MESA 30" ) )
-        {
+        } else if (mesa.equals("MESA 30")) {
             return PrincipalPedidosVisao.lb_mesa_30;
-        }
-        else if ( mesa.equals( "MESA 31" ) )
-        {
+        } else if (mesa.equals("MESA 31")) {
             return PrincipalPedidosVisao.lb_mesa_31;
-        }
-        else if ( mesa.equals( "MESA 32" ) )
-        {
+        } else if (mesa.equals("MESA 32")) {
             return PrincipalPedidosVisao.lb_mesa_32;
-        }
-        else if ( mesa.equals( "MESA 33" ) )
-        {
+        } else if (mesa.equals("MESA 33")) {
             return PrincipalPedidosVisao.lb_mesa_33;
-        }
-        else if ( mesa.equals( "MESA 34" ) )
-        {
+        } else if (mesa.equals("MESA 34")) {
             return PrincipalPedidosVisao.lb_mesa_34;
-        }
-        else if ( mesa.equals( "MESA 35" ) )
-        {
+        } else if (mesa.equals("MESA 35")) {
             return PrincipalPedidosVisao.lb_mesa_35;
-        }
-        else if ( mesa.equals( "MESA 36" ) )
-        {
+        } else if (mesa.equals("MESA 36")) {
             return PrincipalPedidosVisao.lb_mesa_36;
-        }
-        else if ( mesa.equals( "MESA 37" ) )
-        {
+        } else if (mesa.equals("MESA 37")) {
             return PrincipalPedidosVisao.lb_mesa_37;
-        }
-        else if ( mesa.equals( "MESA 38" ) )
-        {
+        } else if (mesa.equals("MESA 38")) {
             return PrincipalPedidosVisao.lb_mesa_38;
-        }
-        else if ( mesa.equals( "MESA 39" ) )
-        {
+        } else if (mesa.equals("MESA 39")) {
             return PrincipalPedidosVisao.lb_mesa_39;
-        }
-        else
-        {
-            System.out.println( "CHEGUEI AQUI NA MESA 40." );
+        } else {
+            System.out.println("CHEGUEI AQUI NA MESA 40.");
             return PrincipalPedidosVisao.lb_mesa_40;
         }
 
     }
 
-    public static boolean validar1()
-    {
+    public static boolean validar1() {
 
-        if ( jTable1.getModel().getRowCount() < 0 )
-        {
-            JOptionPane.showMessageDialog( null, "Atenção\nNão existe itens na tabela!" );
+        if (jTable1.getModel().getRowCount() < 0) {
+            JOptionPane.showMessageDialog(null, "Atenção\nNão existe itens na tabela!");
             return false;
         }
         return true;
@@ -5987,23 +5348,19 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //            lb_proximo_documento.setText( "" );
 //        }
 //    }
-    private void mostrar_proximo_codigo_documento()
-    {
-        try
-        {
-            this.documento = (Documento) documentosController.findById( getIdDocumento() );
-            this.anoEconomico = (AnoEconomico) anoEconomicoController.findById( getIdAnoEconomico() );
+    private void mostrar_proximo_codigo_documento() {
+        try {
+            this.documento = (Documento) documentosController.findById(getIdDocumento());
+            this.anoEconomico = (AnoEconomico) anoEconomicoController.findById(getIdAnoEconomico());
             this.doc_prox_cod = vendasController.getUltimaContagemByIdDocumentoAndAnoEconomico(
-                    getIdDocumento(), getIdAnoEconomico() ) + 1;
+                    getIdDocumento(), getIdAnoEconomico()) + 1;
             prox_doc = documento.getAbreviacao();
             //FA Série / codigo
             prox_doc += " " + this.anoEconomico.getSerie() + "/" + this.doc_prox_cod;
-            lb_proximo_documento.setText( "PRÓX.DOC. :" + prox_doc );
-        }
-        catch ( Exception e )
-        {
+            lb_proximo_documento.setText("PRÓX.DOC. :" + prox_doc);
+        } catch (Exception e) {
             this.documento = null;
-            lb_proximo_documento.setText( "" );
+            lb_proximo_documento.setText("");
         }
     }
 
@@ -6018,125 +5375,105 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //            return 0;
 //        }
 //    }
-    public static int getIdDocumento()
-    {
-        try
-        {
-            Documento documentoLocal = documentosController.getDocumentoByDesignacao( cmbTipoDocumento.getSelectedItem().toString() );
+    public static int getIdDocumento() {
+        try {
+            Documento documentoLocal = documentosController.getDocumentoByDesignacao(cmbTipoDocumento.getSelectedItem().toString());
             return documentoLocal.getPkDocumento();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             return 0;
         }
     }
 
-    public static int getIdAnoEconomico()
-    {
-        try
-        {
+    public static int getIdAnoEconomico() {
+        try {
             AnoEconomico anoEconomicoLocal = anoEconomicoController
-                    .getAnoEconomicoByDesignacao( cmbAnoEconomico.getSelectedItem().toString() );
+                    .getAnoEconomicoByDesignacao(cmbAnoEconomico.getSelectedItem().toString());
             return anoEconomicoLocal.getPkAnoEconomico();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             return 0;
         }
     }
 
-    private static double getTotalIliquido()
-    {
+    private static double getTotalIliquido() {
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
         double qtd = 0;
         int idProduto = 0;
         double total_iliquido = 0, preco_unitario = 0;
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-            idProduto = produtosController.findByDesignacao( modelo.getValueAt( i, 2 ).toString() ).getCodigo();
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            idProduto = produtosController.findByDesignacao(modelo.getValueAt(i, 2).toString()).getCodigo();
 //            idProduto = produtoDao.getProdutoByDescricao( modelo.getValueAt( i, 2 ).toString() ).getCodigo();
-            qtd = Double.parseDouble( modelo.getValueAt( i, 3 ).toString() );
+            qtd = Double.parseDouble(modelo.getValueAt(i, 3).toString());
 //ESTE
 //            preco_unitario = precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( idProduto, qtd ) ).getPrecoVenda().doubleValue();
-            preco_unitario = precosController.getLastIdPrecoByIdProduto( idProduto, qtd ).getPrecoVenda().doubleValue();
-            System.err.println( "PU: " + preco_unitario );
-            System.err.println( "QTD: " + qtd );
-            total_iliquido += ( preco_unitario * qtd );
+            preco_unitario = precosController.getLastIdPrecoByIdProduto(idProduto, qtd).getPrecoVenda().doubleValue();
+            System.err.println("PU: " + preco_unitario);
+            System.err.println("QTD: " + qtd);
+            total_iliquido += (preco_unitario * qtd);
 
         }
 
         return total_iliquido;
     }
 
-    private static double getTotalIliquido( int lugar )
-    {
+    private static double getTotalIliquido(int lugar) {
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
         double qtd = 0;
         int idProduto = 0;
         double total_iliquido = 0, preco_unitario = 0;
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
+        for (int i = 0; i < modelo.getRowCount(); i++) {
 
-            int valor_lugar_tabela = getLugarSelecionado( i );
-            if ( valor_lugar_tabela == lugar )
-            {
+            int valor_lugar_tabela = getLugarSelecionado(i);
+            if (valor_lugar_tabela == lugar) {
 
-                idProduto = produtosController.findByDesignacao( modelo.getValueAt( i, 2 ).toString() ).getCodigo();
-                qtd = Double.parseDouble( modelo.getValueAt( i, 3 ).toString() );
+                idProduto = produtosController.findByDesignacao(modelo.getValueAt(i, 2).toString()).getCodigo();
+                qtd = Double.parseDouble(modelo.getValueAt(i, 3).toString());
 //                ESTE
 //                preco_unitario = precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( idProduto, qtd ) ).getPrecoVenda().doubleValue();
-                preco_unitario = precosController.getLastIdPrecoByIdProduto( idProduto, qtd ).getPrecoVenda().doubleValue();
-                System.err.println( "PU: " + preco_unitario );
-                System.err.println( "QTD: " + qtd );
-                total_iliquido += ( preco_unitario * qtd );
+                preco_unitario = precosController.getLastIdPrecoByIdProduto(idProduto, qtd).getPrecoVenda().doubleValue();
+                System.err.println("PU: " + preco_unitario);
+                System.err.println("QTD: " + qtd);
+                total_iliquido += (preco_unitario * qtd);
             }
         }
 
         return total_iliquido;
     }
 
-    private static double getDescontoComercial()
-    {
+    private static double getDescontoComercial() {
         return 0d;
     }
 
-    private static double getDescontoComercial( int lugar )
-    {
+    private static double getDescontoComercial(int lugar) {
         return 0d;
     }
 
-    private static double getDescontoFinanceiro()
-    {
+    private static double getDescontoFinanceiro() {
         return 0d;
     }
 
-    private static double getDescontoFinanceiro( int lugar )
-    {
+    private static double getDescontoFinanceiro(int lugar) {
         return 0d;
     }
 
-    private static double getTotalImposto()
-    {
+    private static double getTotalImposto() {
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
         double qtd = 0;
         int idProduto = 0;
         double imposto = 0d, preco_unitario = 0d, desconto_valor_linha = 0;
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-            idProduto = produtosController.findByDesignacao( modelo.getValueAt( i, 2 ).toString() ).getCodigo();
-            qtd = Double.parseDouble( modelo.getValueAt( i, 3 ).toString() );
-            preco_unitario = precosController.getLastIdPrecoByIdProduto( idProduto, qtd ).getPrecoVenda().doubleValue();
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            idProduto = produtosController.findByDesignacao(modelo.getValueAt(i, 2).toString()).getCodigo();
+            qtd = Double.parseDouble(modelo.getValueAt(i, 3).toString());
+            preco_unitario = precosController.getLastIdPrecoByIdProduto(idProduto, qtd).getPrecoVenda().doubleValue();
             double valor_percentagem = 0d;
-            double taxa = MetodosUtil.getTaxaPercantagem( idProduto );
+            double taxa = MetodosUtil.getTaxaPercantagem(idProduto);
             // a incidência só é aplicável ao produtos sujeitos a iva 
-            if ( taxa != 0 )
-            {
+            if (taxa != 0) {
                 double valor_unitario = (preco_unitario * qtd);
-                desconto_valor_linha = valor_unitario * ( ( valor_percentagem ) / 100 );
-                imposto += ( ( valor_unitario - desconto_valor_linha ) * ( taxa / 100 ) );
+                desconto_valor_linha = valor_unitario * ((valor_percentagem) / 100);
+                imposto += ((valor_unitario - desconto_valor_linha) * (taxa / 100));
 
             }
 
@@ -6145,30 +5482,26 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         return imposto;
     }
 
-    private static double getTotalImposto( int lugar )
-    {
+    private static double getTotalImposto(int lugar) {
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
         double qtd = 0;
         int idProduto = 0;
         double imposto = 0d, preco_unitario = 0d, desconto_valor_linha = 0;
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-            int valor_lugar_tabela = getLugarSelecionado( i );
-            if ( valor_lugar_tabela == lugar )
-            {
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            int valor_lugar_tabela = getLugarSelecionado(i);
+            if (valor_lugar_tabela == lugar) {
 
-                idProduto = produtosController.findByDesignacao( modelo.getValueAt( i, 2 ).toString() ).getCodigo();
-                qtd = Double.parseDouble( modelo.getValueAt( i, 3 ).toString() );
-                preco_unitario = precosController.getLastIdPrecoByIdProduto( idProduto, qtd ).getPrecoVenda().doubleValue();
+                idProduto = produtosController.findByDesignacao(modelo.getValueAt(i, 2).toString()).getCodigo();
+                qtd = Double.parseDouble(modelo.getValueAt(i, 3).toString());
+                preco_unitario = precosController.getLastIdPrecoByIdProduto(idProduto, qtd).getPrecoVenda().doubleValue();
                 double valor_percentagem = 0d;
-                double taxa = MetodosUtil.getTaxaPercantagem( idProduto );
+                double taxa = MetodosUtil.getTaxaPercantagem(idProduto);
                 // a incidência só é aplicável ao produtos sujeitos a iva 
-                if ( taxa != 0 )
-                {
+                if (taxa != 0) {
                     double valor_unitario = (preco_unitario * qtd);
-                    desconto_valor_linha = valor_unitario * ( ( valor_percentagem ) / 100 );
-                    imposto += ( ( valor_unitario - desconto_valor_linha ) * ( taxa / 100 ) );
+                    desconto_valor_linha = valor_unitario * ((valor_percentagem) / 100);
+                    imposto += ((valor_unitario - desconto_valor_linha) * (taxa / 100));
 
                 }
             }
@@ -6178,52 +5511,47 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         return imposto;
     }
 
-    private static double getTotalAOALiquido()
-    {
+    private static double getTotalAOALiquido() {
         double valores = (getTotalIliquido() + getTotalImposto());
         double descontos = (getDescontoComercial() + getDescontoFinanceiro());
-        System.out.println( "TotalIliquido: " + getTotalIliquido() );
-        System.out.println( "TotalImposto: " + getTotalImposto() );
-        System.out.println( "TotalDescontoComercial: " + getDescontoComercial() );
-        System.out.println( "TotalDescontoFinanceiro: " + getDescontoFinanceiro() );
-        System.out.println( "Total Liquido: " + ( valores - descontos ) );
-        return ( valores - descontos );
+        System.out.println("TotalIliquido: " + getTotalIliquido());
+        System.out.println("TotalImposto: " + getTotalImposto());
+        System.out.println("TotalDescontoComercial: " + getDescontoComercial());
+        System.out.println("TotalDescontoFinanceiro: " + getDescontoFinanceiro());
+        System.out.println("Total Liquido: " + (valores - descontos));
+        return (valores - descontos);
     }
 
-    private static double getTotalAOALiquido( int lugar )
-    {
-        double valores = (getTotalIliquido( lugar ) + getTotalImposto( lugar ));
-        double descontos = (getDescontoComercial( lugar ) + getDescontoFinanceiro( lugar ));
-        System.out.println( "TotalIliquido: " + getTotalIliquido( lugar ) );
-        System.out.println( "TotalImposto: " + getTotalImposto( lugar ) );
-        System.out.println( "TotalDescontoComercial: " + getDescontoComercial( lugar ) );
-        System.out.println( "TotalDescontoFinanceiro: " + getDescontoFinanceiro( lugar ) );
-        System.out.println( "Total Liquido: " + ( valores - descontos ) );
-        return ( valores - descontos );
+    private static double getTotalAOALiquido(int lugar) {
+        double valores = (getTotalIliquido(lugar) + getTotalImposto(lugar));
+        double descontos = (getDescontoComercial(lugar) + getDescontoFinanceiro(lugar));
+        System.out.println("TotalIliquido: " + getTotalIliquido(lugar));
+        System.out.println("TotalImposto: " + getTotalImposto(lugar));
+        System.out.println("TotalDescontoComercial: " + getDescontoComercial(lugar));
+        System.out.println("TotalDescontoFinanceiro: " + getDescontoFinanceiro(lugar));
+        System.out.println("Total Liquido: " + (valores - descontos));
+        return (valores - descontos);
     }
 
-    private static double getTotalIncidencia()
-    {
+    private static double getTotalIncidencia() {
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
         double qtd = 0;
         int idProduto = 0;
         double incidencia = 0d, preco_unitario = 0d, desconto_valor_linha = 0, taxa = 0d;
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
+        for (int i = 0; i < modelo.getRowCount(); i++) {
 
-            idProduto = produtosController.findByDesignacao( modelo.getValueAt( i, 2 ).toString() ).getCodigo();
-            qtd = Double.parseDouble( modelo.getValueAt( i, 3 ).toString() );
-            preco_unitario = precosController.getLastIdPrecoByIdProduto( idProduto, qtd ).getPrecoVenda().doubleValue();
+            idProduto = produtosController.findByDesignacao(modelo.getValueAt(i, 2).toString()).getCodigo();
+            qtd = Double.parseDouble(modelo.getValueAt(i, 3).toString());
+            preco_unitario = precosController.getLastIdPrecoByIdProduto(idProduto, qtd).getPrecoVenda().doubleValue();
 
             double valor_percentagem = 0d;
-            taxa = MetodosUtil.getTaxaPercantagem( idProduto );
+            taxa = MetodosUtil.getTaxaPercantagem(idProduto);
             // a incidência só é aplicável ao produtos sujeitos a iva 
-            if ( taxa != 0 )
-            {
-                desconto_valor_linha = ( ( valor_percentagem ) / 100 );
+            if (taxa != 0) {
+                desconto_valor_linha = ((valor_percentagem) / 100);
                 double valor_unitario = (preco_unitario * qtd);
-                incidencia += ( ( valor_unitario ) - ( valor_unitario * desconto_valor_linha ) );
+                incidencia += ((valor_unitario) - (valor_unitario * desconto_valor_linha));
 
             }
 
@@ -6232,31 +5560,27 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         return incidencia;
     }
 
-    private static double getTotalIncidencia( int lugar )
-    {
+    private static double getTotalIncidencia(int lugar) {
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
         double qtd = 0;
         int idProduto = 0;
         double incidencia = 0d, preco_unitario = 0d, desconto_valor_linha = 0, taxa = 0d;
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
+        for (int i = 0; i < modelo.getRowCount(); i++) {
 
-            int valor_lugar_tabela = getLugarSelecionado( i );
-            if ( valor_lugar_tabela == lugar )
-            {
-                idProduto = produtosController.findByDesignacao( modelo.getValueAt( i, 2 ).toString() ).getCodigo();
-                qtd = Double.parseDouble( modelo.getValueAt( i, 3 ).toString() );
-                preco_unitario = precosController.getLastIdPrecoByIdProduto( idProduto, qtd ).getPrecoVenda().doubleValue();
+            int valor_lugar_tabela = getLugarSelecionado(i);
+            if (valor_lugar_tabela == lugar) {
+                idProduto = produtosController.findByDesignacao(modelo.getValueAt(i, 2).toString()).getCodigo();
+                qtd = Double.parseDouble(modelo.getValueAt(i, 3).toString());
+                preco_unitario = precosController.getLastIdPrecoByIdProduto(idProduto, qtd).getPrecoVenda().doubleValue();
 
                 double valor_percentagem = 0d;
-                taxa = MetodosUtil.getTaxaPercantagem( idProduto );
+                taxa = MetodosUtil.getTaxaPercantagem(idProduto);
                 // a incidência só é aplicável ao produtos sujeitos a iva 
-                if ( taxa != 0 )
-                {
-                    desconto_valor_linha = ( ( valor_percentagem ) / 100 );
+                if (taxa != 0) {
+                    desconto_valor_linha = ((valor_percentagem) / 100);
                     double valor_unitario = (preco_unitario * qtd);
-                    incidencia += ( ( valor_unitario ) - ( valor_unitario * desconto_valor_linha ) );
+                    incidencia += ((valor_unitario) - (valor_unitario * desconto_valor_linha));
 
                 }
             }
@@ -6266,27 +5590,24 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         return incidencia;
     }
 
-    private static double getTotalIncidenciaIsento()
-    {
+    private static double getTotalIncidenciaIsento() {
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
         double qtd = 0;
         int idProduto = 0;
         double incidencia_isento = 0d, preco_unitario = 0d, desconto_valor_linha = 0, taxa = 0;
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-            idProduto = produtosController.findByDesignacao( modelo.getValueAt( i, 2 ).toString() ).getCodigo();
-            qtd = Double.parseDouble( modelo.getValueAt( i, 3 ).toString() );
-            preco_unitario = precosController.getLastIdPrecoByIdProduto( idProduto, qtd ).getPrecoVenda().doubleValue();
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            idProduto = produtosController.findByDesignacao(modelo.getValueAt(i, 2).toString()).getCodigo();
+            qtd = Double.parseDouble(modelo.getValueAt(i, 3).toString());
+            preco_unitario = precosController.getLastIdPrecoByIdProduto(idProduto, qtd).getPrecoVenda().doubleValue();
 
             double valor_percentagem = 0d;
-            taxa = MetodosUtil.getTaxaPercantagem( idProduto );
+            taxa = MetodosUtil.getTaxaPercantagem(idProduto);
             // a incidência também é aplicável à produtos isentos do iva 
-            if ( taxa == 0 )
-            {
-                desconto_valor_linha = ( ( valor_percentagem ) / 100 );
+            if (taxa == 0) {
+                desconto_valor_linha = ((valor_percentagem) / 100);
                 double valor_unitario = (preco_unitario * qtd);
-                incidencia_isento += ( ( valor_unitario ) - ( valor_unitario * desconto_valor_linha ) );
+                incidencia_isento += ((valor_unitario) - (valor_unitario * desconto_valor_linha));
 
             }
 
@@ -6295,30 +5616,26 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         return incidencia_isento;
     }
 
-    private static double getTotalIncidenciaIsento( int lugar )
-    {
+    private static double getTotalIncidenciaIsento(int lugar) {
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
         double qtd = 0;
         int idProduto = 0;
         double incidencia_isento = 0d, preco_unitario = 0d, desconto_valor_linha = 0, taxa = 0;
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-            int valor_lugar_tabela = getLugarSelecionado( i );
-            if ( valor_lugar_tabela == lugar )
-            {
-                idProduto = produtosController.findByDesignacao( modelo.getValueAt( i, 2 ).toString() ).getCodigo();
-                qtd = Double.parseDouble( modelo.getValueAt( i, 3 ).toString() );
-                preco_unitario = precosController.getLastIdPrecoByIdProduto( idProduto, qtd ).getPrecoVenda().doubleValue();
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            int valor_lugar_tabela = getLugarSelecionado(i);
+            if (valor_lugar_tabela == lugar) {
+                idProduto = produtosController.findByDesignacao(modelo.getValueAt(i, 2).toString()).getCodigo();
+                qtd = Double.parseDouble(modelo.getValueAt(i, 3).toString());
+                preco_unitario = precosController.getLastIdPrecoByIdProduto(idProduto, qtd).getPrecoVenda().doubleValue();
 
                 double valor_percentagem = 0d;
-                taxa = MetodosUtil.getTaxaPercantagem( idProduto );
+                taxa = MetodosUtil.getTaxaPercantagem(idProduto);
                 // a incidência também é aplicável à produtos isentos do iva 
-                if ( taxa == 0 )
-                {
-                    desconto_valor_linha = ( ( valor_percentagem ) / 100 );
+                if (taxa == 0) {
+                    desconto_valor_linha = ((valor_percentagem) / 100);
                     double valor_unitario = (preco_unitario * qtd);
-                    incidencia_isento += ( ( valor_unitario ) - ( valor_unitario * desconto_valor_linha ) );
+                    incidencia_isento += ((valor_unitario) - (valor_unitario * desconto_valor_linha));
 
                 }
             }
@@ -6328,58 +5645,51 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         return incidencia_isento;
     }
 
-    private static double getGrossTotal()
-    {
-        System.out.println( "TOTALILIQUIDO: " + getTotalVendaIVASemIncluirDesconto() );
-        System.out.println( "TOTALVENDAIVASEMDESCONTO: " + getTotalVendaIVASemIncluirDesconto() );
+    private static double getGrossTotal() {
+        System.out.println("TOTALILIQUIDO: " + getTotalVendaIVASemIncluirDesconto());
+        System.out.println("TOTALVENDAIVASEMDESCONTO: " + getTotalVendaIVASemIncluirDesconto());
         return getTotalIliquido() + getTotalVendaIVASemIncluirDesconto();
     }
 
-    private static double getGrossTotal( int lugar )
-    {
-        System.out.println( "TOTALILIQUIDO: " + getTotalVendaIVASemIncluirDesconto( lugar ) );
-        System.out.println( "TOTALVENDAIVASEMDESCONTO: " + getTotalVendaIVASemIncluirDesconto( lugar ) );
-        return getTotalIliquido( lugar ) + getTotalVendaIVASemIncluirDesconto( lugar );
+    private static double getGrossTotal(int lugar) {
+        System.out.println("TOTALILIQUIDO: " + getTotalVendaIVASemIncluirDesconto(lugar));
+        System.out.println("TOTALVENDAIVASEMDESCONTO: " + getTotalVendaIVASemIncluirDesconto(lugar));
+        return getTotalIliquido(lugar) + getTotalVendaIVASemIncluirDesconto(lugar);
     }
 
-    private static double getTotalVendaIVASemIncluirDesconto()
-    {
+    private static double getTotalVendaIVASemIncluirDesconto() {
         double taxa = 0, total_iva_local = 0, preco_unitario = 0, sub_total_iliquido = 0;
         double qtd = 0;
         int idProduto = 0;
 
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-            idProduto = produtosController.findByDesignacao( modelo.getValueAt( i, 2 ).toString() ).getCodigo();
-            qtd = Double.parseDouble( modelo.getValueAt( i, 3 ).toString() );
-            preco_unitario = precosController.getLastIdPrecoByIdProduto( idProduto, qtd ).getPrecoVenda().doubleValue();
-            sub_total_iliquido = ( preco_unitario * qtd );
-            taxa = MetodosUtil.getTaxaPercantagem( idProduto );
-            total_iva_local += ( ( ( sub_total_iliquido ) * ( taxa / 100 ) ) );
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            idProduto = produtosController.findByDesignacao(modelo.getValueAt(i, 2).toString()).getCodigo();
+            qtd = Double.parseDouble(modelo.getValueAt(i, 3).toString());
+            preco_unitario = precosController.getLastIdPrecoByIdProduto(idProduto, qtd).getPrecoVenda().doubleValue();
+            sub_total_iliquido = (preco_unitario * qtd);
+            taxa = MetodosUtil.getTaxaPercantagem(idProduto);
+            total_iva_local += (((sub_total_iliquido) * (taxa / 100)));
         }
 
         return total_iva_local;
     }
 
-    private static double getTotalVendaIVASemIncluirDesconto( int lugar )
-    {
+    private static double getTotalVendaIVASemIncluirDesconto(int lugar) {
         double taxa = 0, total_iva_local = 0, preco_unitario = 0, sub_total_iliquido = 0;
         double qtd = 0;
         int idProduto = 0;
 
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-            int valor_lugar_tabela = getLugarSelecionado( i );
-            if ( valor_lugar_tabela == lugar )
-            {
-                idProduto = produtosController.findByDesignacao( modelo.getValueAt( i, 2 ).toString() ).getCodigo();
-                qtd = Double.parseDouble( modelo.getValueAt( i, 3 ).toString() );
-                preco_unitario = precosController.getLastIdPrecoByIdProduto( idProduto, qtd ).getPrecoVenda().doubleValue();
-                sub_total_iliquido = ( preco_unitario * qtd );
-                taxa = MetodosUtil.getTaxaPercantagem( idProduto );
-                total_iva_local += ( ( ( sub_total_iliquido ) * ( taxa / 100 ) ) );
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            int valor_lugar_tabela = getLugarSelecionado(i);
+            if (valor_lugar_tabela == lugar) {
+                idProduto = produtosController.findByDesignacao(modelo.getValueAt(i, 2).toString()).getCodigo();
+                qtd = Double.parseDouble(modelo.getValueAt(i, 3).toString());
+                preco_unitario = precosController.getLastIdPrecoByIdProduto(idProduto, qtd).getPrecoVenda().doubleValue();
+                sub_total_iliquido = (preco_unitario * qtd);
+                taxa = MetodosUtil.getTaxaPercantagem(idProduto);
+                total_iva_local += (((sub_total_iliquido) * (taxa / 100)));
             }
         }
 
@@ -6400,11 +5710,10 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //            System.err.println( "Falha ao actualizar o documento" );
 //        }
 //    }
-    public static int getLugarSelecionado( int linha )
-    {
+    public static int getLugarSelecionado(int linha) {
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
-        String lugar_valor_tabela = modelo.getValueAt( linha, 1 ).toString();
-        return lugaresController.getIdByDescricao( lugar_valor_tabela );
+        String lugar_valor_tabela = modelo.getValueAt(linha, 1).toString();
+        return lugaresController.getIdByDescricao(lugar_valor_tabela);
 //        return lugarDao.getIdByDescricao( lugar_valor_tabela );
 
     }
@@ -6432,76 +5741,62 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //            status_mensagem_primaria.setText( "" );
 //        }
 //    }
-    public static void verificarCaixa( int idUsuarioAtual )
-    {
+    public static void verificarCaixa(int idUsuarioAtual) {
 
-        if ( !caixasController.existeCaixas() )
-        {
-            BT_Pedidos.setEnabled( false );
-            BT_Conversao.setEnabled( false );
-            status_mensagem_primaria.setText( "" );
+        if (!caixasController.existeCaixas()) {
+            BT_Pedidos.setEnabled(false);
+            BT_Conversao.setEnabled(false);
+            status_mensagem_primaria.setText("");
             return;
         }
 
-        boolean abertura = caixasController.existe_abertura( idUsuarioAtual );
-        boolean fecho = caixasController.existe_fecho( idUsuarioAtual );
+        boolean abertura = caixasController.existe_abertura(idUsuarioAtual);
+        boolean fecho = caixasController.existe_fecho(idUsuarioAtual);
 
         // ajusta a lógica conforme o comportamento desejado:
         // se houver abertura e ainda não houve fecho -> caixa aberto -> permitir vendas
-        if ( abertura && !fecho )
-        {
-            BT_Conversao.setEnabled( true );
-            BT_Pedidos.setEnabled( true );
-            status_mensagem_primaria.setText( "" );
-        }
-        // se houver abertura e já houve fecho -> deve abrir novo caixa
-        else if ( abertura && fecho )
-        {
-            BT_Conversao.setEnabled( false );
-            BT_Pedidos.setEnabled( false );
-            status_mensagem_primaria.setText( "Deves abrir o caixa" );
-        }
-        // se não há abertura -> desativa ações
-        else
-        {
-            BT_Conversao.setEnabled( false );
-            BT_Pedidos.setEnabled( false );
-            status_mensagem_primaria.setText( "" );
+        if (abertura && !fecho) {
+            BT_Conversao.setEnabled(true);
+            BT_Pedidos.setEnabled(true);
+            status_mensagem_primaria.setText("");
+        } // se houver abertura e já houve fecho -> deve abrir novo caixa
+        else if (abertura && fecho) {
+            BT_Conversao.setEnabled(false);
+            BT_Pedidos.setEnabled(false);
+            status_mensagem_primaria.setText("Deves abrir o caixa");
+        } // se não há abertura -> desativa ações
+        else {
+            BT_Conversao.setEnabled(false);
+            BT_Pedidos.setEnabled(false);
+            status_mensagem_primaria.setText("");
         }
     }
 
-    private void setWindowsListener()
-    {
+    private void setWindowsListener() {
 
-        this.addWindowListener( new WindowAdapter()
-        {
+        this.addWindowListener(new WindowAdapter() {
             @Override
-            public void windowActivated( WindowEvent e )
-            {
+            public void windowActivated(WindowEvent e) {
                 mostrar_proximo_codigo_documento();
-                MetodosUtil.verificarCaixa( caixasController,
+                MetodosUtil.verificarCaixa(caixasController,
                         idUser,
                         RootVisao.btn_abertura_dia_root,
                         RootVisao.btn_abertura_dia_root,
-                        BT_Conversao );
+                        BT_Conversao);
             }
 
-        } );
+        });
 
     }
 
-    private void mostra_consumidor_final()
-    {
+    private void mostra_consumidor_final() {
 
-        if ( cmbCliente.getSelectedItem().equals( "Consumidor Final" ) )
-        {
-            lbClienteConsumidorFinal.setVisible( true );
-            txtNomeConsumidorFinal.setVisible( true );
-        }
-        else
-        {
-            lbClienteConsumidorFinal.setVisible( false );
-            txtNomeConsumidorFinal.setVisible( false );
+        if (cmbCliente.getSelectedItem().equals("Consumidor Final")) {
+            lbClienteConsumidorFinal.setVisible(true);
+            txtNomeConsumidorFinal.setVisible(true);
+        } else {
+            lbClienteConsumidorFinal.setVisible(false);
+            txtNomeConsumidorFinal.setVisible(false);
 
         }
 
@@ -6536,8 +5831,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //        }
 //
 //    }
-    private static boolean data_documento_superior_ou_igual_ao_ultimo_doc()
-    {
+    private static boolean data_documento_superior_ou_igual_ao_ultimo_doc() {
         //buscando o id do documento.
         int pk_documento = getIdDocumento();
         //buscando o id do ano ecoonomico.
@@ -6545,22 +5839,19 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
         //busca o último documento da série em questão.
         // Integer cod_ultima_venda = vendaDao.getLastVenda( pk_documento );
-        Integer cod_ultima_venda = vendasController.getLastCodigoVenda( pk_documento, pk_ano_economico );
-        if ( cod_ultima_venda != 0 )
-        {
+        Integer cod_ultima_venda = vendasController.getLastCodigoVenda(pk_documento, pk_ano_economico);
+        if (cod_ultima_venda != 0) {
 
             //busca o objecto para retirar apenas a data do seu procesamento
-            TbVenda venda_local = (TbVenda) vendasController.findById( cod_ultima_venda );
+            TbVenda venda_local = (TbVenda) vendasController.findById(cod_ultima_venda);
             //retirando a data do documebto
             Date data_ultimo_documento = venda_local.getDataVenda();
             //pegando a data do documento (data actual do sistema)
             Date data_actual = dc_data_documento.getDate();
-            return MetodosUtil.maior_data_1_data_2( data_actual, data_ultimo_documento )
-                    || MetodosUtil.igual_data_1_data_2( data_actual, data_ultimo_documento );
+            return MetodosUtil.maior_data_1_data_2(data_actual, data_ultimo_documento)
+                    || MetodosUtil.igual_data_1_data_2(data_actual, data_ultimo_documento);
 
-        }
-        else
-        {
+        } else {
             return true;
         }
 
@@ -6597,22 +5888,19 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //        return ano_documento == ano_economico;
 //
 //    }
-    private static boolean verifica_ano_documento_igual_economico()
-    {
-        AnoEconomico anoEconomicoLocal = (AnoEconomico) anoEconomicoController.findById( getIdAnoEconomico() );
-        int ano_economico = Integer.parseInt( anoEconomicoLocal.getDesignacao() );
+    private static boolean verifica_ano_documento_igual_economico() {
+        AnoEconomico anoEconomicoLocal = (AnoEconomico) anoEconomicoController.findById(getIdAnoEconomico());
+        int ano_economico = Integer.parseInt(anoEconomicoLocal.getDesignacao());
         int ano_documento = dc_data_documento.getDate().getYear() + 1900;
         return ano_documento == ano_economico;
 
     }
 
-    private void mostrar_armazem()
-    {
-        TbArmazem armazem = armazensController.findByCodigo( id_armzem );
+    private void mostrar_armazem() {
+        TbArmazem armazem = armazensController.findByCodigo(id_armzem);
 
-        if ( !Objects.isNull( armazem ) )
-        {
-            cmbArmazem.setSelectedItem( armazem.getDesignacao() );
+        if (!Objects.isNull(armazem)) {
+            cmbArmazem.setSelectedItem(armazem.getDesignacao());
         }
     }
 
@@ -6621,23 +5909,18 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //        //return conexao.getCodigoPublico("tb_armazem", String.valueOf(  cmbArmazem.getSelectedItem() ) );   
 //        return armazemDao.getArmazemByDescricao( cmbArmazem.getSelectedItem().toString() ).getCodigo();
 //    }
-    public static int getCodigoArmazem()
-    {
-        return armazensController.getArmazemByDesignacao( cmbArmazem.getSelectedItem().toString() ).getCodigo();
+    public static int getCodigoArmazem() {
+        return armazensController.getArmazemByDesignacao(cmbArmazem.getSelectedItem().toString()).getCodigo();
     }
 
-    private void setDesactivarvias( String desactivarvias )
-    {
-        if ( desactivarvias.equalsIgnoreCase( "Sim" ) )
-        {
-            spnCopia.setVisible( true );
-            lbVias.setVisible( true );
+    private void setDesactivarvias(String desactivarvias) {
+        if (desactivarvias.equalsIgnoreCase("Sim")) {
+            spnCopia.setVisible(true);
+            lbVias.setVisible(true);
 
-        }
-        else
-        {
-            spnCopia.setVisible( false );
-            lbVias.setVisible( false );
+        } else {
+            spnCopia.setVisible(false);
+            lbVias.setVisible(false);
 
         }
     }
@@ -6697,94 +5980,79 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //            return "";
 //        }
 //    }
-    public static void fazerBackupAgora()
-    {
-        String data = new SimpleDateFormat( YYYYMMDD_HHMMSS ).format( new Date() );
+    public static void fazerBackupAgora() {
+        String data = new SimpleDateFormat(YYYYMMDD_HHMMSS).format(new Date());
 //        String rodar_camando = "cmd /c mysqldump -uroot -pDoV90x?# --dump-date --triggers --tables --routines --skip-quote-names --compact --skip-opt --skip-set-charset --hex-blob kitanda_db > \"..\\BD_BACKUP\\_database_backup_" + data + ".sql\"";
         String rodar_camando = "cmd /c mysqldump --single-transaction -uroot -pDoV90x?# --dump-date --triggers --add-drop-database --routines --skip-quote-names --skip-set-charset --add-locks --disable-keys --databases kitanda_db > \"..\\BD_BACKUP\\_database_backup_" + data + ".sql\"";
 //String rodar_camando = "cmd /c mysqldump --single-transaction=TRUE -uroot -pDoV90x?# --dump-date --triggers --add-drop-database  --routines --skip-quote-names --compact --skip-opt --skip-set-charset --hex-blob --add-locks --disable-keys --lock-tables  --databases kitanda_db > \"..\\BD_BACKUP\\_database_backup_" + data + ".sql\"";
-        Process rodarComandoWindows = rodarComandoWindows( rodar_camando, true );
+        Process rodarComandoWindows = rodarComandoWindows(rodar_camando, true);
 
 //        JOptionPane.showMessageDialog ( null, "Backup realizado com sucesso! ", "Notificação", JOptionPane.INFORMATION_MESSAGE );
-        System.err.println( "Backup realizado com sucesso! " );
+        System.err.println("Backup realizado com sucesso! ");
 
     }
 
-    private void setFolhaImpressora( String folha )
-    {
-        if ( folha.equalsIgnoreCase( "A6" ) )
-        {
-            ck_simplificada.setSelected( true );
-            ck_S_A6.setSelected( false );
-            ck_ComVirgula.setSelected( false );
-            ck_A7.setSelected( false );
+    private void setFolhaImpressora(String folha) {
+        if (folha.equalsIgnoreCase("A6")) {
+            ck_simplificada.setSelected(true);
+            ck_S_A6.setSelected(false);
+            ck_ComVirgula.setSelected(false);
+            ck_A7.setSelected(false);
             this.abreviacao = Abreviacao.FR_A6;
-        }
-        else if ( folha.equalsIgnoreCase( "S_A6" ) )
-        {
-            ck_S_A6.setSelected( true );
-            ck_simplificada.setSelected( false );
-            ck_ComVirgula.setSelected( false );
+        } else if (folha.equalsIgnoreCase("S_A6")) {
+            ck_S_A6.setSelected(true);
+            ck_simplificada.setSelected(false);
+            ck_ComVirgula.setSelected(false);
             this.abreviacao = Abreviacao.FR_S_A6;
-            ck_A7.setSelected( false );
-        }
-        else if ( folha.equalsIgnoreCase( "A7" ) )
-        {
-            ck_A7.setSelected( true );
-            ck_S_A6.setSelected( false );
-            ck_simplificada.setSelected( false );
-            ck_ComVirgula.setSelected( false );
+            ck_A7.setSelected(false);
+        } else if (folha.equalsIgnoreCase("A7")) {
+            ck_A7.setSelected(true);
+            ck_S_A6.setSelected(false);
+            ck_simplificada.setSelected(false);
+            ck_ComVirgula.setSelected(false);
             this.abreviacao = Abreviacao.FR_SA7;
-        }
-        else
-        {
-            ck_ComVirgula.setSelected( true );
-            ck_simplificada.setSelected( false );
-            ck_S_A6.setSelected( false );
-            ck_A7.setSelected( false );
+        } else {
+            ck_ComVirgula.setSelected(true);
+            ck_simplificada.setSelected(false);
+            ck_S_A6.setSelected(false);
+            ck_A7.setSelected(false);
             this.abreviacao = Abreviacao.FR_A6_Com_Virgula;
         }
 
     }
 
-    public static void accao_codigo_interno_enter_busca_exterior( int codigo )
-    {
+    public static void accao_codigo_interno_enter_busca_exterior(int codigo) {
 
-        try
-        {
+        try {
 //            int codigo = produtoDao.getIdByDescricao( designacao );
 
-            String designacao1 = produtosController.getDescricaoById( codigo );
-            System.out.println( "Codigo do Produto no Armazem 2" + codigo );
-            System.out.println( "Designacao do Produto no Armazem 2" + designacao1 );
+            String designacao1 = produtosController.getDescricaoById(codigo);
+            System.out.println("Codigo do Produto no Armazem 2" + codigo);
+            System.out.println("Designacao do Produto no Armazem 2" + designacao1);
             //int   codigo = Integer.parseInt(txtCodigoProduto.getText() );
-            TbProduto produto = produtosController.findByCod( codigo );
+            TbProduto produto = produtosController.findByCod(codigo);
 //            cmbFamilia.setSelectedItem( produto.getCodTipoProduto().getFkFamilia().getDesignacao() );
 //            cmbSubFamilia.setSelectedItem( produto.getCodTipoProduto().getDesignacao() );
 //            cmbProduto.setSelectedItem( produto.getDesignacao() );
 
             adicionar_preco_quantidade_anitgo();
 
-            procedimento_adicionar( designacao1 );
+            procedimento_adicionar(designacao1);
 //            }
 //            txtCodigoProduto.setText( "" );
 //            txtQuatindade.setText( "1" );
 //            txtQuatindade.requestFocus();
 
-        }
-        catch ( Exception ex )
-        {
-            Logger.getLogger( NovaGestaoPedidosVisao.class.getName() ).log( Level.SEVERE, null, ex );
-            JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+        } catch (Exception ex) {
+            Logger.getLogger(NovaGestaoPedidosVisao.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
         }
 
     }
 
-    public static void adicionar_preco_quantidade_anitgo()
-    {
+    public static void adicionar_preco_quantidade_anitgo() {
 
-        try
-        {
+        try {
 //            if ( txtQuatindade.getText().isEmpty() )
 //            {
 //                JOptionPane.showMessageDialog( null, "Não informou a quantidade, por favor informe a quantidade!" );
@@ -6795,25 +6063,22 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //Mano
             //if(BDConexao.getCodigoByCodigo("tb_stock", "quantidade_existente", "cod_produto_codigo", getCodigoProduto())<=5)
             //if (conexao.getQtdExistenteStock(getCodigoProduto(), getCodigoArmazem()) <= conexao.getQtdCriticaStock(getCodigoProduto(), getCodigoArmazem())) {
-            TbStock stock = stocksController.getStockByIdProdutoAndIdArmazem( getCodigoProduto(), getCodigoArmazem() );
+            TbStock stock = stocksController.getStockByIdProdutoAndIdArmazem(getCodigoProduto(), getCodigoArmazem());
 
-            if ( stock != ( null ) )
-            {
+            if (stock != (null)) {
 
-                txtQuatidadeExistente.setText( String.valueOf( conexao.getQtdExistenteStock( getCodigoProduto(), getCodigoArmazem() ) ) );
+                txtQuatidadeExistente.setText(String.valueOf(conexao.getQtdExistenteStock(getCodigoProduto(), getCodigoArmazem())));
 
-                System.err.println( "Codigo Produto:  " + getCodigoProduto() );
+                System.err.println("Codigo Produto:  " + getCodigoProduto());
 //                    System.err.println( "Qtd:  " + txtQuatindade.getText() );
                 //txtPreco.setText(String.valueOf(MetodosUtil.retirar_dizimas(precoDao.findTbPreco(precoDao.getUltimoIdPrecoByIdProduto(getCodigoProduto(), Integer.parseInt(txtQuatindade.getText()))).getPrecoVenda())));
 //                    txtPreco.setText( String.valueOf( MetodosUtil.retirar_dizimas( precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( getCodigoProduto(), Double.parseDouble( txtQuatindade.getText() ) ) ).getPrecoVenda().doubleValue() ) ) );
             }
 
 //            }
-        }
-        catch ( Exception ex )
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
-            Logger.getLogger( NovaGestaoPedidosVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(NovaGestaoPedidosVisao.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -6834,42 +6099,32 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //        }
 //
 //    }
-    public static void procedimento_adicionar( String designacao )
-    {
+    public static void procedimento_adicionar(String designacao) {
 
-        int codigo_produto = produtosController.getIdProduto( designacao );
-        System.out.println( "Aqui vai o codigo" + codigo_produto );
-        String designacao1 = produtosController.getDescricaoById( codigo_produto );
-        System.out.println( "Aqui vai a designacao" + designacao1 );
-        TbProduto produto_local = produtosController.findByCod( codigo_produto );
+        int codigo_produto = produtosController.getIdProduto(designacao);
+        System.out.println("Aqui vai o codigo" + codigo_produto);
+        String designacao1 = produtosController.getDescricaoById(codigo_produto);
+        System.out.println("Aqui vai a designacao" + designacao1);
+        TbProduto produto_local = produtosController.findByCod(codigo_produto);
 
 //        if ( activo_um_lugar() && rbNao_lugar.isSelected() )
-        if ( true )
-        {
+        if (true) {
 
-            if ( qtd_possivel( designacao1 ) )
-            {
-                try
-                {
+            if (qtd_possivel(designacao1)) {
+                try {
 
-                    procedimento_salvar_pedidos_iten_pedidos( designacao1 );
-                    status_button_lugar( true );
-                }
-                catch ( Exception e )
-                {
-                    JOptionPane.showMessageDialog( null, "Fallha ao adicionar o pedido", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+                    procedimento_salvar_pedidos_iten_pedidos(designacao1);
+                    status_button_lugar(true);
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Fallha ao adicionar o pedido", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                 }
-            }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Atenção!!!\nNão existe quantidade no stock.", "Aviso", JOptionPane.WARNING_MESSAGE );
+            } else {
+                JOptionPane.showMessageDialog(null, "Atenção!!!\nNão existe quantidade no stock.", "Aviso", JOptionPane.WARNING_MESSAGE);
             }
 
-        }
-        else
-        {
-            JOptionPane.showMessageDialog( null, "Por Favor Digite a Quantidade" );
+        } else {
+            JOptionPane.showMessageDialog(null, "Por Favor Digite a Quantidade");
         }
     }
 
@@ -6877,47 +6132,42 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //    {
 //        return txtQuatindade.getText().equals( "" );
 //    }
-    private static boolean isProdutoExpirado( int codigoProduto )
-    {
+    private static boolean isProdutoExpirado(int codigoProduto) {
         // return produtoDao.produtoExpirado( codigoProduto );
         return false;
     }
 
-    public static boolean estado_critico() throws SQLException
-    {
-        TbStock stock = stocksController.getStockByIdProdutoAndIdArmazem( getCodigoProduto(), getCodigoArmazem() );
+    public static boolean estado_critico() throws SQLException {
+        TbStock stock = stocksController.getStockByIdProdutoAndIdArmazem(getCodigoProduto(), getCodigoArmazem());
         double qtd_minima = stock.getQuantBaixa(),
                 qtd_existente = stock.getQuantidadeExistente(),
                 qtd_critica = stock.getQuantCritica();
 
-        return conexao.getQuantidade_minima_publico( getCodigoProduto(), getCodigoArmazem() )
-                < conexao.getQuantidade_Existente_Publico( getCodigoProduto(), getCodigoArmazem() )
-                && conexao.getQuantidade_Existente_Publico( getCodigoProduto(), getCodigoArmazem() )
-                <= conexao.getQuantidade_critica_public( getCodigoProduto(), getCodigoArmazem() );
+        return conexao.getQuantidade_minima_publico(getCodigoProduto(), getCodigoArmazem())
+                < conexao.getQuantidade_Existente_Publico(getCodigoProduto(), getCodigoArmazem())
+                && conexao.getQuantidade_Existente_Publico(getCodigoProduto(), getCodigoArmazem())
+                <= conexao.getQuantidade_critica_public(getCodigoProduto(), getCodigoArmazem());
 //   
 //        return qtd_minima < qtd_existente
 //                && qtd_existente <= qtd_critica;
 
     }
 
-    private static boolean qtd_possivel( String designacao )
-    {
+    private static boolean qtd_possivel(String designacao) {
 //            TbDadosInstituicao dadosInstituicao = dadosInstituicaoDao.findTbDadosInstituicao( 1 );
-        int idProduto = produtoDao.getIdByDescricao( designacao );
-        TbProduto produto = produtoDao.findTbProduto( idProduto );
+        int idProduto = produtoDao.getIdByDescricao(designacao);
+        TbProduto produto = produtoDao.findTbProduto(idProduto);
 
-        if ( produto.getCodTipoProduto().getFkFamilia().getPkFamilia() == DVML.COD_SERVICO )
-        {
+        if (produto.getCodTipoProduto().getFkFamilia().getPkFamilia() == DVML.COD_SERVICO) {
             return true;
         }
 
-        boolean isStocavel = produto.getStocavel().equals( "true" );
+        boolean isStocavel = produto.getStocavel().equals("true");
 
-        if ( isStocavel )
-        {
-            double qtdExistentesNoutrosPedidos = ItemPedidosDao.getQtdItensByIdPedidoTradicional( idProduto, conexao );
+        if (isStocavel) {
+            double qtdExistentesNoutrosPedidos = ItemPedidosDao.getQtdItensByIdPedidoTradicional(idProduto, conexao);
             qtdExistentesNoutrosPedidos++;// Mais Um porque causa do novo pedido actual
-            double qtdExistente = conexao.getQuantidade_Existente_Publico( idProduto, getCodigoArmazem() );
+            double qtdExistente = conexao.getQuantidade_Existente_Publico(idProduto, getCodigoArmazem());
 
             return qtdExistente >= qtdExistentesNoutrosPedidos;
 
@@ -6953,22 +6203,19 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //        return true;
 //
 //    }
-    public static void scrolltable()
-    {
+    public static void scrolltable() {
 
-        jTable1.scrollRectToVisible( jTable1.getCellRect( jTable1.getRowCount() - 1, jTable1.getColumnCount(), true ) );
+        jTable1.scrollRectToVisible(jTable1.getCellRect(jTable1.getRowCount() - 1, jTable1.getColumnCount(), true));
 
     }
 
-    private void actualizarQtdTable()
-    {
+    private void actualizarQtdTable() {
 
         int linhaSelecionada = jTable1.getSelectedRow();
 
-        if ( linhaSelecionada > -1 )
-        {
-            int idItemPedidos = Integer.parseInt( jTable1.getValueAt( linhaSelecionada, 0 ).toString() );
-            TbItemPedidos itemPedidosLocal = itemPedidosDao.findTbItemPedidos( idItemPedidos );
+        if (linhaSelecionada > -1) {
+            int idItemPedidos = Integer.parseInt(jTable1.getValueAt(linhaSelecionada, 0).toString());
+            TbItemPedidos itemPedidosLocal = itemPedidosDao.findTbItemPedidos(idItemPedidos);
 
 //            try
 //            {
@@ -6981,169 +6228,132 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //            }
             double qtd;
 
-            try
-            {
-                qtd = Double.parseDouble( jTable1.getValueAt( linhaSelecionada, 3 ).toString() );
-            }
-            catch ( NumberFormatException e )
-            {
-                resetQtd( "Erro de formatação da quantidade.\nAtenção: Tem que ser número." );
+            try {
+                qtd = Double.parseDouble(jTable1.getValueAt(linhaSelecionada, 3).toString());
+            } catch (NumberFormatException e) {
+                resetQtd("Erro de formatação da quantidade.\nAtenção: Tem que ser número.");
                 return;
             }
 
-            if ( qtd <= 0 )
-            {
-                resetQtd( "Quantidade não pode ser zero(0) ou número négativo" );
+            if (qtd <= 0) {
+                resetQtd("Quantidade não pode ser zero(0) ou número négativo");
                 qtd = 1;
             }
 
-            double preco = precosController.getLastIdPrecoByIdProdutos( itemPedidosLocal.getFkProdutos().getCodigo() ).getPrecoVenda().doubleValue();
+            double preco = precosController.getLastIdPrecoByIdProdutos(itemPedidosLocal.getFkProdutos().getCodigo()).getPrecoVenda().doubleValue();
 
-            if ( !possivel_quantidade( itemPedidosLocal.getFkProdutos().getCodigo() ) ) //verifica se é possivel adicionar
+            if (!possivel_quantidade(itemPedidosLocal.getFkProdutos().getCodigo())) //verifica se é possivel adicionar
             {
-                resetQtd( "Impossivel para esta quantidade no stock" );
-            }
-            else if ( possivel_quantidade( itemPedidosLocal.getFkProdutos().getCodigo(), (int) qtd ) ) //verifica se  há disponiblidade ao  adicionar depois da  'qtd'  ser lançada.
+                resetQtd("Impossivel para esta quantidade no stock");
+            } else if (possivel_quantidade(itemPedidosLocal.getFkProdutos().getCodigo(), (int) qtd)) //verifica se  há disponiblidade ao  adicionar depois da  'qtd'  ser lançada.
             {
-                itemPedidosLocal.setQtd( (int) qtd );
-                itemPedidosLocal.setPreco( preco );
-                itemPedidosLocal.setTotalItem( preco * qtd );
-                try
-                {
-                    itemPedidosDao.edit( itemPedidosLocal );
+                itemPedidosLocal.setQtd((int) qtd);
+                itemPedidosLocal.setPreco(preco);
+                itemPedidosLocal.setTotalItem(preco * qtd);
+                try {
+                    itemPedidosDao.edit(itemPedidosLocal);
                     actualizar();
+                } catch (Exception e) {
                 }
-                catch ( Exception e )
-                {
-                }
-            }
-            else
-            {
-                resetQtd( "Impossivel para esta quantidade no stock" );
+            } else {
+                resetQtd("Impossivel para esta quantidade no stock");
             }
 
         }
 
     }
 
-    private void selecionar_documento()
-    {
+    private void selecionar_documento() {
 
-        if ( cmbTipoDocumento.getSelectedItem().equals( "Factura/Recibo" ) )
-        {
-            BT_Conversao.setVisible( true );
-            BtnFCons.setVisible( false );
-            btFT.setVisible( false );
-        }
-        else if ( cmbTipoDocumento.getSelectedItem().equals( "Factura" ) )
-        {
-            btFT.setVisible( true );
-            BtnFCons.setVisible( false );
-            BT_Conversao.setVisible( false );
-        }
-        else if ( cmbTipoDocumento.getSelectedItem().equals( "Consulta Mesa" ) )
-        {
-            BtnFCons.setVisible( true );
-            BT_Conversao.setVisible( false );
-            btFT.setVisible( false );
+        if (cmbTipoDocumento.getSelectedItem().equals("Factura/Recibo")) {
+            BT_Conversao.setVisible(true);
+            BtnFCons.setVisible(false);
+            btFT.setVisible(false);
+        } else if (cmbTipoDocumento.getSelectedItem().equals("Factura")) {
+            btFT.setVisible(true);
+            BtnFCons.setVisible(false);
+            BT_Conversao.setVisible(false);
+        } else if (cmbTipoDocumento.getSelectedItem().equals("Consulta Mesa")) {
+            BtnFCons.setVisible(true);
+            BT_Conversao.setVisible(false);
+            btFT.setVisible(false);
         }
 
     }
 
-    private void resetQtd( String msg )
-    {
-        jTable1.setValueAt( 1, jTable1.getSelectedRow(), 3 );
-        JOptionPane.showMessageDialog( null, msg );
+    private void resetQtd(String msg) {
+        jTable1.setValueAt(1, jTable1.getSelectedRow(), 3);
+        JOptionPane.showMessageDialog(null, msg);
         jTable1.clearSelection();
     }
 
-    public static void adicionarImportar( String designacao )
-    {
+    public static void adicionarImportar(String designacao) {
 
 //        if ( activo_um_lugar() )
 //        {
-        if ( qtd_possivel( designacao ) )
-        {
-            try
-            {
+        if (qtd_possivel(designacao)) {
+            try {
 
-                procedimento_salvar_pedidos_iten_pedidos( designacao );
-                status_button_lugar( true );
-            }
-            catch ( Exception e )
-            {
-                JOptionPane.showMessageDialog( null, "Fallha ao adicionar o pedido", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+                procedimento_salvar_pedidos_iten_pedidos(designacao);
+                status_button_lugar(true);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Fallha ao adicionar o pedido", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
             }
-        }
-        else
-        {
-            JOptionPane.showMessageDialog( null, "Nao existe quantidade no stock.", "Aviso", JOptionPane.WARNING_MESSAGE );
+        } else {
+            JOptionPane.showMessageDialog(null, "Nao existe quantidade no stock.", "Aviso", JOptionPane.WARNING_MESSAGE);
         }
 
 //        }
     }
 
-    private void visualizarCheckbox()
-    {
-        TbUsuario usuario = (TbUsuario) usuariosController.findById( idUser );
+    private void visualizarCheckbox() {
+        TbUsuario usuario = (TbUsuario) usuariosController.findById(idUser);
 
-        if ( usuario.getIdTipoUsuario().getIdTipoUsuario() == 1 )
-        {
-            ck_S_A6.setVisible( true );
-            ck_A7.setVisible( true );
-            ck_ComVirgula.setVisible( true );
-            ck_simplificada.setVisible( true );
-        }
-        else
-        {
-            ck_S_A6.setVisible( false );
-            ck_A7.setVisible( false );
-            ck_ComVirgula.setVisible( false );
-            ck_simplificada.setVisible( false );
+        if (usuario.getIdTipoUsuario().getIdTipoUsuario() == 1) {
+            ck_S_A6.setVisible(true);
+            ck_A7.setVisible(true);
+            ck_ComVirgula.setVisible(true);
+            ck_simplificada.setVisible(true);
+        } else {
+            ck_S_A6.setVisible(false);
+            ck_A7.setVisible(false);
+            ck_ComVirgula.setVisible(false);
+            ck_simplificada.setVisible(false);
         }
     }
 
-    private static void visualizarQtdStock()
-    {
-        TbUsuario usuario = (TbUsuario) usuariosController.findById( idUser );
+    private static void visualizarQtdStock() {
+        TbUsuario usuario = (TbUsuario) usuariosController.findById(idUser);
 
-        if ( usuario.getIdTipoUsuario().getIdTipoUsuario() == 1 )
-        {
-            txtQuatidadeExistente.setVisible( true );
-        }
-        else
-        {
-            txtQuatidadeExistente.setVisible( false );
+        if (usuario.getIdTipoUsuario().getIdTipoUsuario() == 1) {
+            txtQuatidadeExistente.setVisible(true);
+        } else {
+            txtQuatidadeExistente.setVisible(false);
         }
     }
 
-    private void pesquisa_cliente_by_tel()
-    {
+    private void pesquisa_cliente_by_tel() {
 
         String tel = txtTelClientePesquisa.getText();
-        try
-        {
-            String nome_cliente = clientesController.getClienteByTelOrberByNome( tel ).getNome();
-            cmbCliente.setSelectedItem( nome_cliente.trim() );
+        try {
+            String nome_cliente = clientesController.getClienteByTelOrberByNome(tel).getNome();
+            cmbCliente.setSelectedItem(nome_cliente.trim());
             accao_cliente_tel();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog( null, "Não existe cliente com este código" );
-            cmbCliente.setSelectedItem( "Consumidor Final" );
+            JOptionPane.showMessageDialog(null, "Não existe cliente com este código");
+            cmbCliente.setSelectedItem("Consumidor Final");
         }
         txtTelClientePesquisa.requestFocus();
     }
 
-    private static void accao_cliente_tel()
-    {
+    private static void accao_cliente_tel() {
         String nomeCliente = (String) cmbCliente.getSelectedItem();
 
-        txtNomeConsumidorFinal.setText( nomeCliente );
-        String telefone = clientesController.findByNome( nomeCliente ).getTelefone();
-        txtTelClientePesquisa.setText( telefone );
+        txtNomeConsumidorFinal.setText(nomeCliente);
+        String telefone = clientesController.findByNome(nomeCliente).getTelefone();
+        txtTelClientePesquisa.setText(telefone);
     }
 
 //    public void setDesactivarLugares( String desactivar_lugares )
@@ -7222,32 +6432,27 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //        }
 //        txtNifClientePesquisa.requestFocus();
 //    }
-    private void desactivarLugares()
-    {
-        TbDadosInstituicao dados = (TbDadosInstituicao) dadosInstituicaoController.findById( 1 );
+    private void desactivarLugares() {
+        TbDadosInstituicao dados = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
 
-        if ( dados.getDesactivarLugares().equalsIgnoreCase( "Nao" ) )
-        {
-            rbNao_lugar.setSelected( true );
-            rbSim_lugar.setSelected( false );
-            jPanelLugares.setVisible( true );
-        }
-        else
-        {
-            rbSim_lugar.setSelected( true );
-            rbNao_lugar.setSelected( false );
-            jLabel4.setVisible( false );
-            jPanelLugares.setVisible( false );
+        if (dados.getDesactivarLugares().equalsIgnoreCase("Nao")) {
+            rbNao_lugar.setSelected(true);
+            rbSim_lugar.setSelected(false);
+            jPanelLugares.setVisible(true);
+        } else {
+            rbSim_lugar.setSelected(true);
+            rbNao_lugar.setSelected(false);
+            jLabel4.setVisible(false);
+            jPanelLugares.setVisible(false);
         }
     }
 
-    private void processar_ticket_geral()
-    {
-        TbPedido pedido_local = pedidoDao.findTbPedido( pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa ) );
+    private void processar_ticket_geral() {
+        TbPedido pedido_local = pedidoDao.findTbPedido(pedidoDao.getLastPedidoByDefignacaoMesaFALSE(mesa));
 //        
 //        TbProduto produtoLocal = ( TbProduto ) produtosController.findByCod(  );
-        MetodosUtil.imprimir_geral_cozinha( pedido_local.getPkPedido(), dadosInstituicaoController );
-        MetodosUtil.imprimir_geral_sala( pedido_local.getPkPedido(), dadosInstituicaoController );
+        MetodosUtil.imprimir_geral_cozinha(pedido_local.getPkPedido(), dadosInstituicaoController);
+        MetodosUtil.imprimir_geral_sala(pedido_local.getPkPedido(), dadosInstituicaoController);
 
 //        imprimirPedidosTicket();
     }

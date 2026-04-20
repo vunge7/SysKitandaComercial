@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="factura_A5_1" language="groovy" pageWidth="200" pageHeight="450" columnWidth="180" leftMargin="10" rightMargin="10" topMargin="2" bottomMargin="20" isIgnorePagination="true" uuid="b0b956b1-8a40-4e81-9057-e608c1e7811d">
 	<property name="ireport.zoom" value="3.897434200000003"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="61"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="ID_PEDIDO" class="java.lang.Integer"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["../relatorios/"]]></defaultValueExpression>
@@ -28,7 +28,8 @@
      tb_item_pedidos.`total_item` AS tb_item_pedidos_total_item,
      tb_lugares.`designacao` AS tb_lugares_designacao,
      tb_lugares.`pk_lugares` AS tb_lugares_pk_lugares,
-     tb_mesas.`pk_mesas` AS tb_mesas_pk_mesas
+     tb_mesas.`pk_mesas` AS tb_mesas_pk_mesas,
+     tb_dados_instituicao.`conta_bancaria4` AS tb_dados_instituicao_conta_bancaria4
 FROM
      `tb_pedido` tb_pedido INNER JOIN `tb_mesas` tb_mesas ON tb_pedido.`fk_mesas` = tb_mesas.`pk_mesas`
      INNER JOIN `tb_item_pedidos` tb_item_pedidos ON tb_pedido.`pk_pedido` = tb_item_pedidos.`fk_pedidos`
@@ -37,8 +38,8 @@ FROM
      `tb_dados_instituicao` tb_dados_instituicao
 WHERE
      tb_pedido.`pk_pedido` = $P{ID_PEDIDO}
-
-GROUP BY  tb_lugares.`pk_lugares`]]>
+GROUP BY
+     tb_lugares.`pk_lugares`]]>
 	</queryString>
 	<field name="tb_dados_instituicao_nome" class="java.lang.String"/>
 	<field name="tb_dados_instituicao_telefone" class="java.lang.String"/>
@@ -59,45 +60,39 @@ GROUP BY  tb_lugares.`pk_lugares`]]>
 	<field name="tb_lugares_designacao" class="java.lang.String"/>
 	<field name="tb_lugares_pk_lugares" class="java.lang.Long"/>
 	<field name="tb_mesas_pk_mesas" class="java.lang.Long"/>
+	<field name="tb_dados_instituicao_conta_bancaria4" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
 		<band height="64">
-			<textField>
-				<reportElement uuid="fff28e17-f795-4913-bff3-1dfe26e6c6c5" x="0" y="2" width="180" height="20"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="fff28e17-f795-4913-bff3-1dfe26e6c6c5" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="180" height="30" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center">
-					<font fontName="Times New Roman" size="12" isBold="true"/>
+					<font fontName="Times New Roman" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_nome}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement uuid="00fff44a-65cd-46e6-a527-c045f4adb861" x="0" y="17" width="180" height="15"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="00fff44a-65cd-46e6-a527-c045f4adb861" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="29" width="180" height="15" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center">
 					<font fontName="Times New Roman" size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_enderecos}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement uuid="2f9f053f-d568-459d-8cff-632d9c2277c3" x="0" y="26" width="180" height="15"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="2f9f053f-d568-459d-8cff-632d9c2277c3" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="43" width="180" height="15" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center">
 					<font fontName="Times New Roman" size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_nif}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement uuid="09bb03db-193a-4ef8-9007-c75c5da9cfb4" x="2" y="36" width="178" height="15"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="09bb03db-193a-4ef8-9007-c75c5da9cfb4" positionType="Float" stretchType="RelativeToTallestObject" x="2" y="53" width="178" height="11" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center">
 					<font fontName="Times New Roman" size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_telefone}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement uuid="61b39239-7935-42ed-b131-2b94b84613bb" x="11" y="51" width="57" height="13"/>
-				<textElement>
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_mesas_designacao}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -150,6 +145,13 @@ GROUP BY  tb_lugares.`pk_lugares`]]>
 				</textElement>
 				<text><![CDATA[Data:]]></text>
 			</staticText>
+			<textField>
+				<reportElement uuid="61b39239-7935-42ed-b131-2b94b84613bb" x="6" y="0" width="57" height="9"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_mesas_designacao}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<detail>
@@ -205,6 +207,13 @@ GROUP BY  tb_lugares.`pk_lugares`]]>
 					<font fontName="Times New Roman" size="6" isItalic="true" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="19738c86-1422-4b6c-b4fc-ffa1312f6d8f" x="0" y="21" width="180" height="12"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["IBAN: "+$F{tb_dados_instituicao_conta_bancaria4}]]></textFieldExpression>
 			</textField>
 		</band>
 	</lastPageFooter>

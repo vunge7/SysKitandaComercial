@@ -5,7 +5,6 @@
  */
 package dao;
 
-
 import java.sql.Connection;
 import comercial.controller.ExtratoContaClienteController;
 import controlador.TbVendaJpaController;
@@ -31,180 +30,159 @@ import util.MetodosUtil;
  *
  * @author Toshiba
  */
-public class VendaDao extends TbVendaJpaController
-{
+public class VendaDao extends TbVendaJpaController {
 
-    public VendaDao( EntityManagerFactory emf )
-    {
-        super( emf );
+    public VendaDao(EntityManagerFactory emf) {
+        super(emf);
     }
 
-    public List<String> buscaTodasFactExceptoAlgumas()
-    {
+    public List<String> buscaTodasFactExceptoAlgumas() {
         EntityManager em = getEntityManager();
 //            Query query = em.createQuery("SELECT s.designacao FROM Documento s  where s.pkDocumento != 4 and  s.pkDocumento != 5 and s.pkDocumento != 6 and s.pkDocumento != 7");
 //            Query query = em.createQuery ( "SELECT v.codFact  FROM TbVenda  v WHERE V.fkDocumento.pkDocumento < "+DVML.DOC_FACTURA_PROFORMA_PP);
-        Query query = em.createQuery( "SELECT v.codFact  FROM TbVenda  v WHERE V.fkDocumento.pkDocumento !=3 and V.fkDocumento.pkDocumento !=4 and V.fkDocumento.pkDocumento !=5 and V.fkDocumento.pkDocumento !=6 and V.fkDocumento.pkDocumento !=7" );
+        Query query = em.createQuery("SELECT v.codFact  FROM TbVenda  v WHERE V.fkDocumento.pkDocumento !=3 and V.fkDocumento.pkDocumento !=4 and V.fkDocumento.pkDocumento !=5 and V.fkDocumento.pkDocumento !=6 and V.fkDocumento.pkDocumento !=7");
         List<String> lista = query.getResultList();
 
-        lista.add( 0, "--Seleccione--" );
+        lista.add(0, "--Seleccione--");
         return lista;
     }
 
-    public void alterar_status_venda( int cod_venda, String status )
-    {
-        try
-        {
-            TbVenda venda = findTbVenda( cod_venda );
-            venda.setStatusEliminado( status );
-            edit( venda );
-        }
-        catch ( Exception e )
-        {
-            System.out.println( "Falha ao alterar o status da venda" );
+    public void alterar_status_venda(int cod_venda, String status) {
+        try {
+            TbVenda venda = findTbVenda(cod_venda);
+            venda.setStatusEliminado(status);
+            edit(venda);
+        } catch (Exception e) {
+            System.out.println("Falha ao alterar o status da venda");
         }
 
     }
 
-    public List<TbVenda> getFacturasEliminadas()
-    {
+    public List<TbVenda> getFacturasEliminadas() {
         EntityManager em = getEntityManager();
-        Query query = em.createQuery( "SELECT v FROM TbVenda  v WHERE v.statusEliminado = 'true' ORDER BY v.codigo ASC" );
+        Query query = em.createQuery("SELECT v FROM TbVenda  v WHERE v.statusEliminado = 'true' ORDER BY v.codigo ASC");
 
         List<TbVenda> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
         return null;
     }
 
-    public TbVenda getFacturasEliminadaByCodVenda( int cod_venda )
-    {
+    public TbVenda getFacturasEliminadaByCodVenda(int cod_venda) {
         EntityManager em = getEntityManager();
-        Query query = em.createQuery( "SELECT v FROM TbVenda  v WHERE v.statusEliminado = 'true' AND v.codigo = :cod_venda" )
-                .setParameter( "cod_venda", cod_venda );
+        Query query = em.createQuery("SELECT v FROM TbVenda  v WHERE v.statusEliminado = 'true' AND v.codigo = :cod_venda")
+                .setParameter("cod_venda", cod_venda);
 
         List<TbVenda> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
-            return result.get( 0 );
+        if (!result.isEmpty()) {
+            return result.get(0);
         }
         return null;
     }
 
-    public List<TbVenda> getAllVendaByUsuario( Integer id_usuario, Date data_inicio, Date data_fim )
-    {
+    public List<TbVenda> getAllVendaByUsuario(Integer id_usuario, Date data_inicio, Date data_fim) {
 
         EntityManager em = getEntityManager();
-        Query query = em.createQuery( "SELECT v FROM TbVenda  v WHERE v.codigoUsuario.codigo = :id_usuario AND v.dataVenda BETWEEN :data_inicio AND :data_fim AND v.statusEliminado = 'false'" )
-                .setParameter( "id_usuario", id_usuario )
-                .setParameter( "data_inicio", data_inicio )
-                .setParameter( "data_fim", data_fim );
+        Query query = em.createQuery("SELECT v FROM TbVenda  v WHERE v.codigoUsuario.codigo = :id_usuario AND v.dataVenda BETWEEN :data_inicio AND :data_fim AND v.statusEliminado = 'false'")
+                .setParameter("id_usuario", id_usuario)
+                .setParameter("data_inicio", data_inicio)
+                .setParameter("data_fim", data_fim);
 
         List<TbVenda> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
 
-        TbVenda venda = new TbVenda( 0 );
-        result.add( venda );
+        TbVenda venda = new TbVenda(0);
+        result.add(venda);
 
         return result;
     }
 
-    public List<TbVenda> getAllVendasAmoritzClientes( int pk_documento )
-    {
+    public List<TbVenda> getAllVendasAmoritzClientes(int pk_documento) {
 
         EntityManager em = getEntityManager();
-        Query query = em.createNativeQuery( "SELECT * FROM tb_venda v, tb_cliente c, amortizacao_divida a WHERE v.codigo_cliente = c.codigo AND v.status_eliminado = 'false' AND v.fk_documento = 2 AND a.total_venda_fact > a.valor_pago GROUP BY c.nome ORDER BY c.nome ASC", TbVenda.class )
+        Query query = em.createNativeQuery("SELECT * FROM tb_venda v, tb_cliente c, amortizacao_divida a WHERE v.codigo_cliente = c.codigo AND v.status_eliminado = 'false' AND v.fk_documento = 2 AND a.total_venda_fact > a.valor_pago GROUP BY c.nome ORDER BY c.nome ASC", TbVenda.class)
                 //        Query query = em.createNativeQuery("SELECT * FROM tb_venda v, tb_cliente c WHERE v.codigo_cliente = c.codigo", TbVenda.class)
-                .setParameter( "pk_documento", pk_documento );
+                .setParameter("pk_documento", pk_documento);
 
         List<TbVenda> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
 
-        TbVenda venda = new TbVenda( 0 );
-        result.add( venda );
+        TbVenda venda = new TbVenda(0);
+        result.add(venda);
 
         return result;
     }
 
-    public List<TbVenda> getAllVendasClientes( int pk_documento )
-    {
+    public List<TbVenda> getAllVendasClientes(int pk_documento) {
 
         EntityManager em = getEntityManager();
-        Query query = em.createNativeQuery( "SELECT * FROM tb_venda v, tb_cliente c WHERE v.codigo_cliente = c.codigo AND v.status_eliminado = 'false' AND v.fk_documento = 2 GROUP BY c.nome ORDER BY c.nome ASC", TbVenda.class )
+        Query query = em.createNativeQuery("SELECT * FROM tb_venda v, tb_cliente c WHERE v.codigo_cliente = c.codigo AND v.status_eliminado = 'false' AND v.fk_documento = 2 GROUP BY c.nome ORDER BY c.nome ASC", TbVenda.class)
                 //        Query query = em.createNativeQuery("SELECT * FROM tb_venda v, tb_cliente c WHERE v.codigo_cliente = c.codigo", TbVenda.class)
-                .setParameter( "pk_documento", pk_documento );
+                .setParameter("pk_documento", pk_documento);
 
         List<TbVenda> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
 
-        TbVenda venda = new TbVenda( 0 );
-        result.add( venda );
+        TbVenda venda = new TbVenda(0);
+        result.add(venda);
 
         return result;
     }
 
-    public List<TbVenda> getAllVenda( Date data_inicio, Date data_fim )
-    {
+    public List<TbVenda> getAllVenda(Date data_inicio, Date data_fim) {
 
         EntityManager em = getEntityManager();
-        Query query = em.createQuery( "SELECT v FROM TbVenda  v WHERE v.dataVenda BETWEEN :data_inicio AND :data_fim AND v.statusEliminado = 'false' " )
-                .setParameter( "data_inicio", data_inicio )
-                .setParameter( "data_fim", data_fim );
+        Query query = em.createQuery("SELECT v FROM TbVenda  v WHERE v.dataVenda BETWEEN :data_inicio AND :data_fim AND v.statusEliminado = 'false' ")
+                .setParameter("data_inicio", data_inicio)
+                .setParameter("data_fim", data_fim);
 
         List<TbVenda> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
 
-        TbVenda venda = new TbVenda( 0 );
-        result.add( venda );
+        TbVenda venda = new TbVenda(0);
+        result.add(venda);
 
         return result;
     }
 
-    public List<TbVenda> getAllVenda( Date data_inicio, Date data_fim, int idDocumento )
-    {
+    public List<TbVenda> getAllVenda(Date data_inicio, Date data_fim, int idDocumento) {
 
         EntityManager em = getEntityManager();
-        Query query = em.createQuery( "SELECT v FROM TbVenda  v WHERE v.dataVenda BETWEEN :data_inicio AND :data_fim AND v.statusEliminado = 'false' AND v.fkDocumento.pkDocumento = :idDocumento " )
-                .setParameter( "data_inicio", data_inicio )
-                .setParameter( "data_fim", data_fim )
-                .setParameter( "idDocumento", idDocumento );
+        Query query = em.createQuery("SELECT v FROM TbVenda  v WHERE v.dataVenda BETWEEN :data_inicio AND :data_fim AND v.statusEliminado = 'false' AND v.fkDocumento.pkDocumento = :idDocumento ")
+                .setParameter("data_inicio", data_inicio)
+                .setParameter("data_fim", data_fim)
+                .setParameter("idDocumento", idDocumento);
 
         List<TbVenda> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
 
-        TbVenda venda = new TbVenda( 0 );
-        result.add( venda );
+        TbVenda venda = new TbVenda(0);
+        result.add(venda);
 
         return result;
     }
@@ -231,8 +209,7 @@ public class VendaDao extends TbVendaJpaController
 //
 //        return result;
 //    }
-    public List<TbCliente> getAllClienteVenda( Date data_inicio, Date data_fim )
-    {
+    public List<TbCliente> getAllClienteVenda(Date data_inicio, Date data_fim) {
 
         EntityManager em = getEntityManager();
 //        Query query = em.createQuery( "SELECT DISTINCT v.codigoCliente FROM TbVenda  v WHERE v.dataVenda BETWEEN :data_inicio AND :data_fim AND v.statusEliminado = 'false'" )
@@ -240,88 +217,81 @@ public class VendaDao extends TbVendaJpaController
 //                .setParameter( "data_inicio", data_inicio )
 //                .setParameter( "data_fim", data_fim );
 
-        String sql = "SELECT DISTINCT c.* FROM tb_venda v , tb_cliente c where  v.codigo_cliente = c.codigo AND  DATE(dataVenda)      between '" + MetodosUtil.getDataBanco( data_inicio ) + "' AND '" + MetodosUtil.getDataBanco( data_fim ) + "' AND fk_documento IN(1,2,3,6)";
 
-        Query query = em.createNativeQuery( sql, TbCliente.class );
+        String sql = "SELECT DISTINCT c.* FROM tb_venda v , tb_cliente c where  v.codigo_cliente = c.codigo AND  DATE(dataVenda)      between '" + MetodosUtil.getDataBanco(data_inicio) + "' AND '" + MetodosUtil.getDataBanco(data_fim) + "' AND fk_documento IN(1,2,6)";
+
+        Query query = em.createNativeQuery(sql, TbCliente.class);
         List<TbCliente> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
 
 //        TbCliente cliente = new TbCliente( 0 );
 //        result.add( cliente );
-
         return result;
     }
 
-    public List<TbCliente> getAllClienteVenda( Date data_inicio, Date data_fim, int idDocumento )
-    {
+    public List<TbCliente> getAllClienteVenda(Date data_inicio, Date data_fim, int idDocumento) {
 
         EntityManager em = getEntityManager();
-        Query query = em.createQuery( "SELECT DISTINCT v.codigoCliente FROM TbVenda  v WHERE v.dataVenda BETWEEN :data_inicio AND :data_fim AND v.statusEliminado = 'false' AND v.fkDocumento.pkDocumento = :idDocumento" )
-                .setParameter( "data_inicio", data_inicio )
-                .setParameter( "data_fim", data_fim )
-                .setParameter( "idDocumento", idDocumento );
+        Query query = em.createQuery("SELECT DISTINCT v.codigoCliente FROM TbVenda  v WHERE v.dataVenda BETWEEN :data_inicio AND :data_fim AND v.statusEliminado = 'false' AND v.fkDocumento.pkDocumento = :idDocumento")
+                .setParameter("data_inicio", data_inicio)
+                .setParameter("data_fim", data_fim)
+                .setParameter("idDocumento", idDocumento);
 
         List<TbCliente> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
 
-        TbCliente cliente = new TbCliente( 0 );
-        result.add( cliente );
+        TbCliente cliente = new TbCliente(0);
+        result.add(cliente);
 
         return result;
     }
 
-    public List<TbProduto> getAllProdutosVenda( Date data_inicio, Date data_fim, int idDocumento )
-    {
+    public List<TbProduto> getAllProdutosVenda(Date data_inicio, Date data_fim, int idDocumento) {
 
         EntityManager em = getEntityManager();
-        Query query = em.createQuery( "SELECT  DISTINCT v.codigoProduto FROM TbItemVenda  v WHERE v.codigoVenda.dataVenda BETWEEN :data_inicio AND :data_fim AND v.codigoVenda.statusEliminado = 'false' AND v.codigoVenda.fkDocumento.pkDocumento = :idDocumento" )
-                .setParameter( "data_inicio", data_inicio )
-                .setParameter( "data_fim", data_fim )
-                .setParameter( "idDocumento", idDocumento );
+        Query query = em.createQuery("SELECT  DISTINCT v.codigoProduto FROM TbItemVenda  v WHERE v.codigoVenda.dataVenda BETWEEN :data_inicio AND :data_fim AND v.codigoVenda.statusEliminado = 'false' AND v.codigoVenda.fkDocumento.pkDocumento = :idDocumento")
+                .setParameter("data_inicio", data_inicio)
+                .setParameter("data_fim", data_fim)
+                .setParameter("idDocumento", idDocumento);
 
         List<TbProduto> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
 
-        TbProduto produto = new TbProduto( 0 );
-        result.add( produto );
+        TbProduto produto = new TbProduto(0);
+        result.add(produto);
 
         return result;
     }
 
-    public List<TbVenda> getAllVendaByBetweenDataAndArmazem( Date data_inicio, Date data_fim, int pk_armazem )
-    {
+    public List<TbVenda> getAllVendaByBetweenDataAndArmazem(Date data_inicio, Date data_fim, int pk_armazem) {
 
         EntityManager em = getEntityManager();
-        Query query = em.createQuery( "SELECT v FROM TbVenda  v WHERE v.dataVenda BETWEEN :data_inicio AND :data_fim AND v.statusEliminado = 'false' AND v.credito = 'false' AND v.idArmazemFK.codigo = :pk_armazem" )
-                .setParameter( "pk_armazem", pk_armazem )
-                .setParameter( "data_inicio", data_inicio )
-                .setParameter( "data_fim", data_fim );
+        Query query = em.createQuery("SELECT v FROM TbVenda  v WHERE v.dataVenda BETWEEN :data_inicio AND :data_fim AND v.statusEliminado = 'false' AND v.credito = 'false' AND v.idArmazemFK.codigo = :pk_armazem")
+                .setParameter("pk_armazem", pk_armazem)
+                .setParameter("data_inicio", data_inicio)
+                .setParameter("data_fim", data_fim);
 
         List<TbVenda> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
 
-        TbVenda venda = new TbVenda( 0 );
-        result.add( venda );
+        TbVenda venda = new TbVenda(0);
+        result.add(venda);
 
         return result;
     }
@@ -352,93 +322,86 @@ public class VendaDao extends TbVendaJpaController
 //        }
 //        return result;
 //    }
-    public List<TbVenda> getAllVendaByBetweenDataAndArmazemAndDocumento( Date data_inicio, Date data_fim, int pk_armazem, int pk_documento )
-    {
+    public List<TbVenda> getAllVendaByBetweenDataAndArmazemAndDocumento(Date data_inicio, Date data_fim, int pk_armazem, int pk_documento) {
 
         EntityManager em = getEntityManager();
 
-        Query query = em.createNativeQuery( "SELECT * FROM tb_venda "
+        Query query = em.createNativeQuery("SELECT * FROM tb_venda "
                 + "WHERE  DATE(dataVenda) BETWEEN ? AND ? "
                 //                + "AND status_eliminado = 'false' "
                 + "AND credito = 'false' "
                 + "AND idArmazemFK = ? "
-                + "AND fk_documento = ? ", TbVenda.class );
+                + "AND fk_documento = ? ", TbVenda.class);
 
-        query.setParameter( 1, MetodosUtil.getDataBanco( data_inicio ) );
-        query.setParameter( 2, MetodosUtil.getDataBanco( data_fim ) );
-        query.setParameter( 3, pk_armazem );
-        query.setParameter( 4, pk_documento );
+        query.setParameter(1, MetodosUtil.getDataBanco(data_inicio));
+        query.setParameter(2, MetodosUtil.getDataBanco(data_fim));
+        query.setParameter(3, pk_armazem);
+        query.setParameter(4, pk_documento);
 
         List<TbVenda> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
         return result;
     }
 
-    public List<TbVenda> getAllFRVendaByBetweenDataAndArmazemAndDocumento( Date data_inicio, Date data_fim, int pk_armazem, int pk_documento )
-    {
+    public List<TbVenda> getAllFRVendaByBetweenDataAndArmazemAndDocumento(Date data_inicio, Date data_fim, int pk_armazem, int pk_documento) {
 
         EntityManager em = getEntityManager();
 
-        Query query = em.createNativeQuery( "SELECT * FROM tb_venda "
+        Query query = em.createNativeQuery("SELECT * FROM tb_venda "
                 + "WHERE  DATE(dataVenda) BETWEEN ? AND ? "
                 + "AND status_eliminado = 'false' "
                 + "AND credito = 'false' "
                 + "AND idArmazemFK = ? "
-                + "AND fk_documento = ? ", TbVenda.class );
+                + "AND fk_documento = ? ", TbVenda.class);
 
-        query.setParameter( 1, MetodosUtil.getDataBanco( data_inicio ) );
-        query.setParameter( 2, MetodosUtil.getDataBanco( data_fim ) );
-        query.setParameter( 3, pk_armazem );
-        query.setParameter( 4, pk_documento );
+        query.setParameter(1, MetodosUtil.getDataBanco(data_inicio));
+        query.setParameter(2, MetodosUtil.getDataBanco(data_fim));
+        query.setParameter(3, pk_armazem);
+        query.setParameter(4, pk_documento);
 
         List<TbVenda> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
         return result;
     }
 
-    public List<TbVenda> getAllFRVendaByBetweenDataAndArmazemAndDocumentoRecolha( Date data_inicio, Date data_fim, int pk_armazem, int pk_documento )
-    {
+    public List<TbVenda> getAllFRVendaByBetweenDataAndArmazemAndDocumentoRecolha(Date data_inicio, Date data_fim, int pk_armazem, int pk_documento) {
 
         EntityManager em = getEntityManager();
 
-        Query query = em.createNativeQuery( "SELECT * FROM tb_venda "
+        Query query = em.createNativeQuery("SELECT * FROM tb_venda "
                 + "WHERE  DATE(dataVenda) BETWEEN ? AND ? "
                 + "AND status_eliminado = 'false' "
                 + "AND credito = 'false' "
                 + "AND idArmazemFK = ? "
                 //                + "ORDER BY cod_fact DESC "
-                + "AND fk_documento = ? ORDER BY cod_fact DESC ", TbVenda.class );
+                + "AND fk_documento = ? ORDER BY cod_fact DESC ", TbVenda.class);
 
-        query.setParameter( 1, MetodosUtil.getDataBanco( data_inicio ) );
-        query.setParameter( 2, MetodosUtil.getDataBanco( data_fim ) );
-        query.setParameter( 3, pk_armazem );
-        query.setParameter( 4, pk_documento );
+        query.setParameter(1, MetodosUtil.getDataBanco(data_inicio));
+        query.setParameter(2, MetodosUtil.getDataBanco(data_fim));
+        query.setParameter(3, pk_armazem);
+        query.setParameter(4, pk_documento);
 
         List<TbVenda> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
         return result;
     }
 
-    public static Integer criarVendaComProceduAnulacao( TbVenda venda, BDConexao conexao )
-    {
-        System.err.println( "Total: " + venda.getTotalVenda() );
+    public static Integer criarVendaComProceduAnulacao(TbVenda venda, BDConexao conexao) {
+        System.err.println("Total: " + venda.getTotalVenda());
 
-        String inserirVendaQuery = String.format( "select VENDA_CRIAR ( "
+        String inserirVendaQuery = String.format("select VENDA_CRIAR ( "
                 + "%d, '%s', %s, '%s', "
                 + "'%s', %s, %s, '%s',"
                 + " '%s', '%s',  %s, %s,"
@@ -448,16 +411,16 @@ public class VendaDao extends TbVendaJpaController
                 + " '%s', %d, '%d',"
                 + " %d,  %d, %d,  %d,"
                 + " '%s',  '%s', %s, '%s', '%s', '%s') "
-//                + " '%s',  '%s', %s, '%s', '%s', '%s', %s, %s , '%s') "
+                //                + " '%s',  '%s', %s, '%s', '%s', '%s', %s, %s , '%s') "
                 + "as ID",
                 0,
-                new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( venda.getDataVenda() ),
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(venda.getDataVenda()),
                 venda.getTotalVenda(),
                 venda.getPerformance(),
                 venda.getCredito(),
                 venda.getValorEntregue(),
                 venda.getTroco(),
-                new SimpleDateFormat( "HH:mm:ss" ).format( venda.getHora() ),
+                new SimpleDateFormat("HH:mm:ss").format(venda.getHora()),
                 venda.getNomeCliente(),
                 venda.getStatusEliminado(),
                 venda.getDescontoTotal(),
@@ -481,39 +444,35 @@ public class VendaDao extends TbVendaJpaController
                 venda.getFkDocumento().getPkDocumento(),
                 venda.getFkAnoEconomico().getPkAnoEconomico(),
                 venda.getFkCambio().getPkCambio(),
-                new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( venda.getDataVencimento() ),
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(venda.getDataVencimento()),
                 venda.getClienteNif(),
                 venda.getTotalIncidenciaIsento(),
-                ( venda.getRefDataFact() != null ? new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( venda.getRefDataFact() ) : new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( new Date() ) ),
+                (venda.getRefDataFact() != null ? new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(venda.getRefDataFact()) : new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())),
                 venda.getNomeConsumidorFinal(),
                 venda.getReferencia()
         );
 
-        System.out.println( inserirVendaQuery );
-        ResultSet resultSet = conexao.executeQuery( inserirVendaQuery );
+        System.out.println(inserirVendaQuery);
+        ResultSet resultSet = conexao.executeQuery(inserirVendaQuery);
 
-        try
-        {
-            if ( resultSet.next() )
-            {
-                return resultSet.getInt( "ID" );
+        try {
+            if (resultSet.next()) {
+                return resultSet.getInt("ID");
 
             }
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
 
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(VendaDao.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return null;
 
     }
-    public static Integer criarVendaComProceduAnulacao2( TbVenda venda, BDConexao conexao )
-    {
-        System.err.println( "Total: " + venda.getTotalVenda() );
 
-        String inserirVendaQuery = String.format( "select NOTA_VENDA_CRIAR ( "
+    public static Integer criarVendaComProceduAnulacao2(TbVenda venda, BDConexao conexao) {
+        System.err.println("Total: " + venda.getTotalVenda());
+
+        String inserirVendaQuery = String.format("select NOTA_VENDA_CRIAR ( "
                 + "%d, '%s', %s, '%s', "
                 + "'%s', %s, %s, '%s',"
                 + " '%s', '%s',  %s, %s,"
@@ -523,16 +482,16 @@ public class VendaDao extends TbVendaJpaController
                 + " '%s', %d, '%d',"
                 + " %d,  %d, %d,  %d,"
                 + " '%s',  '%s', %s, '%s', '%s', '%s') "
-//                + " '%s',  '%s', %s, '%s', '%s', '%s', %s, %s , '%s') "
+                //                + " '%s',  '%s', %s, '%s', '%s', '%s', %s, %s , '%s') "
                 + "as ID",
                 0,
-                new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( venda.getDataVenda() ),
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(venda.getDataVenda()),
                 venda.getTotalVenda(),
                 venda.getPerformance(),
                 venda.getCredito(),
                 venda.getValorEntregue(),
                 venda.getTroco(),
-                new SimpleDateFormat( "HH:mm:ss" ).format( venda.getHora() ),
+                new SimpleDateFormat("HH:mm:ss").format(venda.getHora()),
                 venda.getNomeCliente(),
                 venda.getStatusEliminado(),
                 venda.getDescontoTotal(),
@@ -556,39 +515,35 @@ public class VendaDao extends TbVendaJpaController
                 venda.getFkDocumento().getPkDocumento(),
                 venda.getFkAnoEconomico().getPkAnoEconomico(),
                 venda.getFkCambio().getPkCambio(),
-                new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( venda.getDataVencimento() ),
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(venda.getDataVencimento()),
                 venda.getClienteNif(),
                 venda.getTotalIncidenciaIsento(),
-                ( venda.getRefDataFact() != null ? new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( venda.getRefDataFact() ) : new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( new Date() ) ),
+                (venda.getRefDataFact() != null ? new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(venda.getRefDataFact()) : new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())),
                 venda.getNomeConsumidorFinal(),
                 venda.getReferencia()
         );
 
-        System.out.println( inserirVendaQuery );
-        ResultSet resultSet = conexao.executeQuery( inserirVendaQuery );
+        System.out.println(inserirVendaQuery);
+        ResultSet resultSet = conexao.executeQuery(inserirVendaQuery);
 
-        try
-        {
-            if ( resultSet.next() )
-            {
-                return resultSet.getInt( "ID" );
+        try {
+            if (resultSet.next()) {
+                return resultSet.getInt("ID");
 
             }
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
 
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(VendaDao.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return null;
 
     }
-    public static Integer criarVendaComProceduAnulacao3( TbVenda venda, BDConexao conexao )
-    {
-        System.err.println( "Total: " + venda.getTotalVenda() );
 
-        String inserirVendaQuery = String.format( "select NOTA_VENDA_CRIAR ( "
+    public static Integer criarVendaComProceduAnulacao3(TbVenda venda, BDConexao conexao) {
+        System.err.println("Total: " + venda.getTotalVenda());
+
+        String inserirVendaQuery = String.format("select NOTA_VENDA_CRIAR ( "
                 + "%d, '%s', %s, '%s', "
                 + "'%s', %s, %s, '%s',"
                 + " '%s', '%s',  %s, %s,"
@@ -600,16 +555,16 @@ public class VendaDao extends TbVendaJpaController
                 + " '%s',  '%s', %s, '%s', '%s', '%s') "
                 + " '%s',  '%s', %s, '%s', '%s', '%s') "
                 + " '%s',  '%s', %s, '%s', %s ) "
-//                + " '%s',  '%s', %s, '%s', '%s', '%s', %s, %s , '%s') "
+                //                + " '%s',  '%s', %s, '%s', '%s', '%s', %s, %s , '%s') "
                 + "as ID",
                 0,
-                new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( venda.getDataVenda() ),
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(venda.getDataVenda()),
                 venda.getTotalVenda(),
                 venda.getPerformance(),
                 venda.getCredito(),
                 venda.getValorEntregue(),
                 venda.getTroco(),
-                new SimpleDateFormat( "HH:mm:ss" ).format( venda.getHora() ),
+                new SimpleDateFormat("HH:mm:ss").format(venda.getHora()),
                 venda.getNomeCliente(),
                 venda.getStatusEliminado(),
                 venda.getDescontoTotal(),
@@ -633,10 +588,10 @@ public class VendaDao extends TbVendaJpaController
                 venda.getFkDocumento().getPkDocumento(),
                 venda.getFkAnoEconomico().getPkAnoEconomico(),
                 venda.getFkCambio().getPkCambio(),
-                new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( venda.getDataVencimento() ),
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(venda.getDataVencimento()),
                 venda.getClienteNif(),
                 venda.getTotalIncidenciaIsento(),
-                ( venda.getRefDataFact() != null ? new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( venda.getRefDataFact() ) : new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( new Date() ) ),
+                (venda.getRefDataFact() != null ? new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(venda.getRefDataFact()) : new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())),
                 venda.getNomeConsumidorFinal(),
                 venda.getReferencia(),
                 venda.getMatricula(),
@@ -651,233 +606,217 @@ public class VendaDao extends TbVendaJpaController
                 venda.getGorjeta()
         );
 
-        System.out.println( inserirVendaQuery );
-        ResultSet resultSet = conexao.executeQuery( inserirVendaQuery );
+        System.out.println(inserirVendaQuery);
+        ResultSet resultSet = conexao.executeQuery(inserirVendaQuery);
 
-        try
-        {
-            if ( resultSet.next() )
-            {
-                return resultSet.getInt( "ID" );
+        try {
+            if (resultSet.next()) {
+                return resultSet.getInt("ID");
 
             }
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
 
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(VendaDao.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return null;
 
     }
-    
+
     public static Integer criarVendaComProceduAnulacaoFinal(TbVenda venda, BDConexao conexao) {
-    System.err.println("Total: " + venda.getTotalVenda());
+        System.err.println("Total: " + venda.getTotalVenda());
 
-    // Formata datas uma vez
-    String dataVendaStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(venda.getDataVenda());
-    String horaStr = new SimpleDateFormat("HH:mm:ss").format(venda.getHora());
-    String dataVencimentoStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(venda.getDataVencimento());
-    String refDataFactStr = venda.getRefDataFact() != null
-            ? new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(venda.getRefDataFact())
-            : new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        // Formata datas uma vez
+        String dataVendaStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(venda.getDataVenda());
+        String horaStr = new SimpleDateFormat("HH:mm:ss").format(venda.getHora());
+        String dataVencimentoStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(venda.getDataVencimento());
+        String refDataFactStr = venda.getRefDataFact() != null
+                ? new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(venda.getRefDataFact())
+                : new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
-    // Monta a query de forma organizada
-    String inserirVendaQuery = String.format(
-        "SELECT NOTA_VENDA_CRIAR ("
-        + "%d, '%s', %s, '%s', '%s', %s, %s, '%s', '%s', '%s', %s, %s, "
-        + "%s, '%s', '%s', '%s', '%s', '%s', '%s', %d, %s, %s, %s, '%s', "
-        + "'%s', %d, %d, %d, %d, %d, %d, '%s', '%s', %s, '%s', '%s', '%s'"
-        + ") AS ID",
-        0,
-        dataVendaStr,
-        venda.getTotalVenda(),
-        venda.getPerformance(),
-        venda.getCredito(),
-        venda.getValorEntregue(),
-        venda.getTroco(),
-        horaStr,
-        venda.getNomeCliente(),
-        venda.getStatusEliminado(),
-        venda.getDescontoTotal(),
-        venda.getTotalIva(),
-        venda.getTotalGeral(),
-        venda.getCodFact(),
-        venda.getAssinatura(),
-        venda.getHashCod(),
-        venda.getObs(),
-        venda.getRefCodFact(),
-        venda.getTotalPorExtenso(),
-        venda.getStatusRecibo(),
-        venda.getDescontoComercial(),
-        venda.getDescontoFinanceiro(),
-        venda.getTotalIncidencia(),
-        venda.getLocalCarga(),
-        venda.getLocalDescarga(),
-        venda.getCodigoUsuario().getCodigo(),
-        venda.getCodigoCliente().getCodigo(),
-        venda.getIdArmazemFK().getCodigo(),
-        venda.getFkDocumento().getPkDocumento(),
-        venda.getFkAnoEconomico().getPkAnoEconomico(),
-        venda.getFkCambio().getPkCambio(),
-        dataVencimentoStr,
-        venda.getClienteNif(),
-        venda.getTotalIncidenciaIsento(),
-        refDataFactStr,
-        venda.getNomeConsumidorFinal(),
-        venda.getReferencia(),
-        venda.getMatricula(),
-        venda.getModelo(),
-        venda.getNumChassi(),
-        venda.getNumMotor(),
-        venda.getKilometro(),
-        venda.getNomeMotorista(),
-        venda.getCorCarro(),
-        venda.getNDocMotorista(),
-        venda.getTotalRetencao(),
-        venda.getGorjeta()
-    );
+        // Monta a query de forma organizada
+        String inserirVendaQuery = String.format(
+                "SELECT NOTA_VENDA_CRIAR ("
+                + "%d, '%s', %s, '%s', '%s', %s, %s, '%s', '%s', '%s', %s, %s, "
+                + "%s, '%s', '%s', '%s', '%s', '%s', '%s', %d, %s, %s, %s, '%s', "
+                + "'%s', %d, %d, %d, %d, %d, %d, '%s', '%s', %s, '%s', '%s', '%s'"
+                + ") AS ID",
+                0,
+                dataVendaStr,
+                venda.getTotalVenda(),
+                venda.getPerformance(),
+                venda.getCredito(),
+                venda.getValorEntregue(),
+                venda.getTroco(),
+                horaStr,
+                venda.getNomeCliente(),
+                venda.getStatusEliminado(),
+                venda.getDescontoTotal(),
+                venda.getTotalIva(),
+                venda.getTotalGeral(),
+                venda.getCodFact(),
+                venda.getAssinatura(),
+                venda.getHashCod(),
+                venda.getObs(),
+                venda.getRefCodFact(),
+                venda.getTotalPorExtenso(),
+                venda.getStatusRecibo(),
+                venda.getDescontoComercial(),
+                venda.getDescontoFinanceiro(),
+                venda.getTotalIncidencia(),
+                venda.getLocalCarga(),
+                venda.getLocalDescarga(),
+                venda.getCodigoUsuario().getCodigo(),
+                venda.getCodigoCliente().getCodigo(),
+                venda.getIdArmazemFK().getCodigo(),
+                venda.getFkDocumento().getPkDocumento(),
+                venda.getFkAnoEconomico().getPkAnoEconomico(),
+                venda.getFkCambio().getPkCambio(),
+                dataVencimentoStr,
+                venda.getClienteNif(),
+                venda.getTotalIncidenciaIsento(),
+                refDataFactStr,
+                venda.getNomeConsumidorFinal(),
+                venda.getReferencia(),
+                venda.getMatricula(),
+                venda.getModelo(),
+                venda.getNumChassi(),
+                venda.getNumMotor(),
+                venda.getKilometro(),
+                venda.getNomeMotorista(),
+                venda.getCorCarro(),
+                venda.getNDocMotorista(),
+                venda.getTotalRetencao(),
+                venda.getGorjeta()
+        );
 
-    System.out.println(inserirVendaQuery);
+        System.out.println(inserirVendaQuery);
 
-    try (ResultSet resultSet = conexao.executeQuery(inserirVendaQuery)) {
-        if (resultSet.next()) {
-            return resultSet.getInt("ID");
+        try (ResultSet resultSet = conexao.executeQuery(inserirVendaQuery)) {
+            if (resultSet.next()) {
+                return resultSet.getInt("ID");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(VendaDao.class.getName()).log(Level.SEVERE, null, ex);
         }
-    } catch (SQLException ex) {
-        Logger.getLogger(VendaDao.class.getName()).log(Level.SEVERE, null, ex);
+
+        return null;
     }
 
-    return null;
-}
-
-
-    public List<TbVenda> getAllFRVendaByBetweenDataAndArmazemAndDocumentoRecolha1( Date data_inicio, Date data_fim, int pk_documento )
-    {
+    public List<TbVenda> getAllFRVendaByBetweenDataAndArmazemAndDocumentoRecolha1(Date data_inicio, Date data_fim, int pk_documento) {
 
         EntityManager em = getEntityManager();
 
-        Query query = em.createNativeQuery( "SELECT * FROM tb_venda "
+        Query query = em.createNativeQuery("SELECT * FROM tb_venda "
                 + "WHERE  DATE(dataVenda) BETWEEN ? AND ? "
                 + "AND status_eliminado = 'false' "
                 + "AND credito = 'false' "
                 //                + "ORDER BY cod_fact DESC "
-                + "AND fk_documento = ? ORDER BY cod_fact DESC ", TbVenda.class );
+                + "AND fk_documento = ? ORDER BY cod_fact DESC ", TbVenda.class);
 
-        query.setParameter( 1, MetodosUtil.getDataBanco( data_inicio ) );
-        query.setParameter( 2, MetodosUtil.getDataBanco( data_fim ) );
-        query.setParameter( 3, pk_documento );
+        query.setParameter(1, MetodosUtil.getDataBanco(data_inicio));
+        query.setParameter(2, MetodosUtil.getDataBanco(data_fim));
+        query.setParameter(3, pk_documento);
 
         List<TbVenda> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
         return result;
     }
 
-    public List<TbVenda> getAllFTVendaByBetweenDataAndArmazemAndDocumento( Date data_inicio, Date data_fim, int pk_armazem, int pk_documento )
-    {
+    public List<TbVenda> getAllFTVendaByBetweenDataAndArmazemAndDocumento(Date data_inicio, Date data_fim, int pk_armazem, int pk_documento) {
 
         EntityManager em = getEntityManager();
 
-        Query query = em.createNativeQuery( "SELECT * FROM tb_venda "
+        Query query = em.createNativeQuery("SELECT * FROM tb_venda "
                 + "WHERE  DATE(dataVenda) BETWEEN ? AND ? "
                 + "AND status_eliminado = 'false' "
                 + "AND credito = 'false' "
                 + "AND idArmazemFK = ? "
-                + "AND fk_documento = ? ", TbVenda.class );
+                + "AND fk_documento = ? ", TbVenda.class);
 
-        query.setParameter( 1, MetodosUtil.getDataBanco( data_inicio ) );
-        query.setParameter( 2, MetodosUtil.getDataBanco( data_fim ) );
-        query.setParameter( 3, pk_armazem );
-        query.setParameter( 4, pk_documento );
+        query.setParameter(1, MetodosUtil.getDataBanco(data_inicio));
+        query.setParameter(2, MetodosUtil.getDataBanco(data_fim));
+        query.setParameter(3, pk_armazem);
+        query.setParameter(4, pk_documento);
 
         List<TbVenda> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
         return result;
     }
 
-    public List<TbVenda> getAllVendaByBetweenDataAndArmazem( Date data_inicio, Date data_fim, int pk_armazem, int pk_usuario, int pk_documento )
-    {
+    public List<TbVenda> getAllVendaByBetweenDataAndArmazem(Date data_inicio, Date data_fim, int pk_armazem, int pk_usuario, int pk_documento) {
 
         EntityManager em = getEntityManager();
-        Query query = em.createQuery( "SELECT v FROM TbVenda  v WHERE v.dataVenda BETWEEN :data_inicio AND :data_fim AND v.statusEliminado = 'false'   AND v.credito = 'false' AND v.idArmazemFK.codigo = :pk_armazem AND v.codigoUsuario.codigo = :pk_usuario AND v.fkDocumento.pkDocumento = :pk_documento" )
-                .setParameter( "pk_armazem", pk_armazem )
-                .setParameter( "data_inicio", data_inicio )
-                .setParameter( "data_fim", data_fim )
-                .setParameter( "pk_usuario", pk_usuario )
-                .setParameter( "pk_documento", pk_documento );
+        Query query = em.createQuery("SELECT v FROM TbVenda  v WHERE v.dataVenda BETWEEN :data_inicio AND :data_fim AND v.statusEliminado = 'false'   AND v.credito = 'false' AND v.idArmazemFK.codigo = :pk_armazem AND v.codigoUsuario.codigo = :pk_usuario AND v.fkDocumento.pkDocumento = :pk_documento")
+                .setParameter("pk_armazem", pk_armazem)
+                .setParameter("data_inicio", data_inicio)
+                .setParameter("data_fim", data_fim)
+                .setParameter("pk_usuario", pk_usuario)
+                .setParameter("pk_documento", pk_documento);
 
         List<TbVenda> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
 
-        TbVenda venda = new TbVenda( 0 );
-        result.add( venda );
+        TbVenda venda = new TbVenda(0);
+        result.add(venda);
 
         return result;
     }
 
-    public List<TbVenda> getAllVendaByBetweenDataAndArmazemInverso( Date data_inicio, Date data_fim, int pk_armazem )
-    {
+    public List<TbVenda> getAllVendaByBetweenDataAndArmazemInverso(Date data_inicio, Date data_fim, int pk_armazem) {
 
         EntityManager em = getEntityManager();
-        Query query = em.createQuery( "SELECT v FROM TbVenda  v WHERE v.dataVenda BETWEEN :data_inicio AND :data_fim AND v.statusEliminado = 'false'   AND v.idArmazemFK.codigo = :pk_armazem ORDER BY v.codigo DESC" )
-                .setParameter( "pk_armazem", pk_armazem )
-                .setParameter( "data_inicio", data_inicio )
-                .setParameter( "data_fim", data_fim );
+        Query query = em.createQuery("SELECT v FROM TbVenda  v WHERE v.dataVenda BETWEEN :data_inicio AND :data_fim AND v.statusEliminado = 'false'   AND v.idArmazemFK.codigo = :pk_armazem ORDER BY v.codigo DESC")
+                .setParameter("pk_armazem", pk_armazem)
+                .setParameter("data_inicio", data_inicio)
+                .setParameter("data_fim", data_fim);
 
         List<TbVenda> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
 
-        TbVenda venda = new TbVenda( 0 );
-        result.add( venda );
+        TbVenda venda = new TbVenda(0);
+        result.add(venda);
 
         return result;
     }
 
-    public double getTotalVendaByUsuario( Integer id_usuario, Date data_inicio, Date data_fim )
-    {
+    public double getTotalVendaByUsuario(Integer id_usuario, Date data_inicio, Date data_fim) {
 
         EntityManager em = getEntityManager();
-        Query query = em.createQuery( "SELECT  SUM(v.totalVenda) AS total FROM TbVenda  v WHERE v.codigoUsuario.codigo = :id_usuario AND v.dataVenda BETWEEN :data_inicio AND :data_fim AND v.statusEliminado = 'false'" )
-                .setParameter( "id_usuario", id_usuario )
-                .setParameter( "data_inicio", data_inicio )
-                .setParameter( "data_fim", data_fim );
+        Query query = em.createQuery("SELECT  SUM(v.totalVenda) AS total FROM TbVenda  v WHERE v.codigoUsuario.codigo = :id_usuario AND v.dataVenda BETWEEN :data_inicio AND :data_fim AND v.statusEliminado = 'false'")
+                .setParameter("id_usuario", id_usuario)
+                .setParameter("data_inicio", data_inicio)
+                .setParameter("data_fim", data_fim);
 
         List<Double> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
-            return result.get( 0 );
+        if (!result.isEmpty()) {
+            return result.get(0);
         }
 
         return 0;
     }
 
-    public static double getTotalRetencaoByRefCod( String codFact )
-    {
-        Query query = UtilDao.getEntityManager1().createQuery( "SELECT DISTINCT v.totalRetencao FROM TbVenda v WHERE v.codFact = :codFact " );
-        query.setParameter( "COD_FACT", codFact );
+    public static double getTotalRetencaoByRefCod(String codFact) {
+        Query query = UtilDao.getEntityManager1().createQuery("SELECT DISTINCT v.totalRetencao FROM TbVenda v WHERE v.codFact = :codFact ");
+        query.setParameter("COD_FACT", codFact);
 
 //        EntityManager em = getEntityManager();
 //        Query query = em.createQuery( "SELECT  SUM(v.totalRetencao) AS totalRetencao FROM TbVenda  v WHERE v.codFact = " )
@@ -885,51 +824,43 @@ public class VendaDao extends TbVendaJpaController
 //                .setParameter( "codFact", codFact );
         List<Double> result = query.getResultList();
 
-        if ( !result.isEmpty() )
-        {
-            return result.get( 0 );
+        if (!result.isEmpty()) {
+            return result.get(0);
         }
 
         return 0.0;
     }
 
-    public int getLastVenda()
-    {
+    public int getLastVenda() {
 
         EntityManager em = getEntityManager();
-        Query query = em.createQuery( "SELECT  MAX(v.codigo)  FROM TbVenda  v" );
+        Query query = em.createQuery("SELECT  MAX(v.codigo)  FROM TbVenda  v");
 
         List<Integer> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
-            return result.get( 0 );
+        if (!result.isEmpty()) {
+            return result.get(0);
         }
 
         return 0;
 
     }
 
-    public int getLastVenda( int pk_documento, int pk_ano_economico )
-    {
+    public int getLastVenda(int pk_documento, int pk_ano_economico) {
 
         EntityManager em = getEntityManager();
-        Query query = em.createQuery( "SELECT  MAX(v.codigo)  FROM TbVenda  v WHERE v.fkDocumento.pkDocumento = :pk_documento AND v.fkAnoEconomico.pkAnoEconomico = :pk_ano_economico" )
-                .setParameter( "pk_documento", pk_documento )
-                .setParameter( "pk_ano_economico", pk_ano_economico );
+        Query query = em.createQuery("SELECT  MAX(v.codigo)  FROM TbVenda  v WHERE v.fkDocumento.pkDocumento = :pk_documento AND v.fkAnoEconomico.pkAnoEconomico = :pk_ano_economico")
+                .setParameter("pk_documento", pk_documento)
+                .setParameter("pk_ano_economico", pk_ano_economico);
 
         List<Integer> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
-            try
-            {
-                return result.get( 0 );
-            }
-            catch ( Exception e )
-            {
+        if (!result.isEmpty()) {
+            try {
+                return result.get(0);
+            } catch (Exception e) {
                 return 0;
             }
         }
@@ -938,25 +869,20 @@ public class VendaDao extends TbVendaJpaController
 
     }
 
-    public int getLastVenda( int pk_documento )
-    {
+    public int getLastVenda(int pk_documento) {
 
-        System.out.println( "ID DOCUMENTO: " + pk_documento );
+        System.out.println("ID DOCUMENTO: " + pk_documento);
         EntityManager em = getEntityManager();
-        Query query = em.createQuery( "SELECT  MAX(v.codigo)  FROM TbVenda  v WHERE v.fkDocumento.pkDocumento = :pk_documento" )
-                .setParameter( "pk_documento", pk_documento );
+        Query query = em.createQuery("SELECT  MAX(v.codigo)  FROM TbVenda  v WHERE v.fkDocumento.pkDocumento = :pk_documento")
+                .setParameter("pk_documento", pk_documento);
 
         List<Integer> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
-            try
-            {
-                return result.get( 0 );
-            }
-            catch ( Exception e )
-            {
+        if (!result.isEmpty()) {
+            try {
+                return result.get(0);
+            } catch (Exception e) {
                 return 0;
             }
 
@@ -966,41 +892,37 @@ public class VendaDao extends TbVendaJpaController
 
     }
 
-    public List<TbVenda> getBuscaTodasVendasEntreDatas_e_Banco( int idBanco, Date data_inicio, Date data_fim )
-    {
+    public List<TbVenda> getBuscaTodasVendasEntreDatas_e_Banco(int idBanco, Date data_inicio, Date data_fim) {
 
         EntityManager em = getEntityManager();
-        Query query = em.createQuery( "SELECT v FROM TbVenda  v WHERE v.dataVenda BETWEEN :data_inicio AND :data_fim AND v.statusEliminado = 'false'  AND v.idBanco.idBanco = :idBanco" )
-                .setParameter( "idBanco", idBanco )
-                .setParameter( "data_inicio", data_inicio )
-                .setParameter( "data_fim", data_fim );
+        Query query = em.createQuery("SELECT v FROM TbVenda  v WHERE v.dataVenda BETWEEN :data_inicio AND :data_fim AND v.statusEliminado = 'false'  AND v.idBanco.idBanco = :idBanco")
+                .setParameter("idBanco", idBanco)
+                .setParameter("data_inicio", data_inicio)
+                .setParameter("data_fim", data_fim);
 
         List<TbVenda> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
 
-        TbVenda venda = new TbVenda( 0 );
-        result.add( venda );
+        TbVenda venda = new TbVenda(0);
+        result.add(venda);
 
         return result;
     }
 
-    public double getAllEncomenda()
-    {
+    public double getAllEncomenda() {
 
         EntityManager em = getEntityManager();
-        Query query = em.createQuery( "SELECT SUM(V.totalGeral) AS TOTAL  FROM TbVenda  v WHERE  v.statusEliminado = 'false' AND v.credito = 'true'  " );
+        Query query = em.createQuery("SELECT SUM(V.totalGeral) AS TOTAL  FROM TbVenda  v WHERE  v.statusEliminado = 'false' AND v.credito = 'true'  ");
 
         List<Double> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
-            return result.get( 0 );
+        if (!result.isEmpty()) {
+            return result.get(0);
         }
         return 0;
     }
@@ -1021,97 +943,86 @@ public class VendaDao extends TbVendaJpaController
 //        }
 //        return 0;
 //    }
-    public Object[] listarVendaDoDocumento()
-    {
+    public Object[] listarVendaDoDocumento() {
         EntityManager em = getEntityManager();
-        Query query = em.createQuery( "SELECT DISTINCT v.codFact  FROM TbVenda  v WHERE V.codFact LIKE '%FR%' ORDER BY v.codFact DESC" );
+        Query query = em.createQuery("SELECT DISTINCT v.codFact  FROM TbVenda  v WHERE V.codFact LIKE '%FR%' ORDER BY v.codFact DESC");
         ;
 
         List<TbVenda> documentos = query.getResultList();
         em.close();
 
-        if ( !documentos.isEmpty() )
-        {
+        if (!documentos.isEmpty()) {
             return (Object[]) documentos.toArray();
         }
 
         return null;
     }
 
-    public Object[] listarVendaDoDocumentoValidas()
-    {
+    public Object[] listarVendaDoDocumentoValidas() {
         EntityManager em = getEntityManager();
-        Query query = em.createQuery( "SELECT DISTINCT v.codFact  FROM TbVenda  v WHERE V.codFact LIKE '%FR%'  OR V.codFact LIKE '%FT%'   AND v.codFact NOT IN :FATURAS_INVALIDAS ORDER BY v.codFact DESC" );
+        Query query = em.createQuery("SELECT DISTINCT v.codFact  FROM TbVenda  v WHERE V.codFact LIKE '%FR%'  OR V.codFact LIKE '%FT%'   AND v.codFact NOT IN :FATURAS_INVALIDAS ORDER BY v.codFact DESC");
 
-        Query queryFaturasInvalidas = em.createQuery( "SELECT DISTINCT v.refCodFact  FROM Notas  v WHERE v.estado = :TOTALMENTE_RETIFICADA OR v.estado = :ANULADA" );
+        Query queryFaturasInvalidas = em.createQuery("SELECT DISTINCT v.refCodFact  FROM Notas  v WHERE v.estado = :TOTALMENTE_RETIFICADA OR v.estado = :ANULADA");
 
-        queryFaturasInvalidas.setParameter( "TOTALMENTE_RETIFICADA", TOTALMENTE_RETIFICADO.toString() );
-        queryFaturasInvalidas.setParameter( "ANULADA", ANULADO.toString() );
+        queryFaturasInvalidas.setParameter("TOTALMENTE_RETIFICADA", TOTALMENTE_RETIFICADO.toString());
+        queryFaturasInvalidas.setParameter("ANULADA", ANULADO.toString());
 
         List<String> resultList = queryFaturasInvalidas.getResultList();
 
-        if ( resultList.isEmpty() )
-        {
-            resultList.add( "0" );
+        if (resultList.isEmpty()) {
+            resultList.add("0");
         }
 
-        query.setParameter( "FATURAS_INVALIDAS", resultList );
+        query.setParameter("FATURAS_INVALIDAS", resultList);
 
         List<TbVenda> documentos = query.getResultList();
         em.close();
 
-        if ( !documentos.isEmpty() )
-        {
+        if (!documentos.isEmpty()) {
             return (Object[]) documentos.toArray();
         }
 
         return null;
     }
 
-    public static TbVenda findByCodFact( String codFact )
-    {
-        Query query = UtilDao.getEntityManager1().createQuery( "SELECT DISTINCT v  FROM TbVenda  v WHERE v.codFact = :COD_FACT " );
-        query.setParameter( "COD_FACT", codFact );
+    public static TbVenda findByCodFact(String codFact) {
+        Query query = UtilDao.getEntityManager1().createQuery("SELECT DISTINCT v  FROM TbVenda  v WHERE v.codFact = :COD_FACT ");
+        query.setParameter("COD_FACT", codFact);
 
         List<TbVenda> documentos = query.getResultList();
 
-        if ( !documentos.isEmpty() )
-        {
-            return documentos.get( 0 );
+        if (!documentos.isEmpty()) {
+            return documentos.get(0);
         }
 
         return null;
     }
 
-    public TbVenda findByCodFactReemprensao1( String codFact )
-    {
+    public TbVenda findByCodFactReemprensao1(String codFact) {
         EntityManager em = getEntityManager();
-        Query query = em.createQuery( "SELECT DISTINCT v  FROM TbVenda  v WHERE v.codFact = :codFact AND v.statusEliminado = 'ANULADO' " );
-        query.setParameter( "codFact", codFact );
+        Query query = em.createQuery("SELECT DISTINCT v  FROM TbVenda  v WHERE v.codFact = :codFact AND v.statusEliminado = 'ANULADO' ");
+        query.setParameter("codFact", codFact);
 
         List<TbVenda> documentos = query.getResultList();
         em.close();
 
-        if ( !documentos.isEmpty() )
-        {
-            return documentos.get( 0 );
+        if (!documentos.isEmpty()) {
+            return documentos.get(0);
         }
 
         return null;
     }
 
-    public TbVenda findByCodFactReemprensao( String codFact )
-    {
+    public TbVenda findByCodFactReemprensao(String codFact) {
         EntityManager em = getEntityManager();
-        Query query = em.createQuery( "SELECT DISTINCT v  FROM TbVenda  v WHERE V.codFact = :COD_FACT " );
-        query.setParameter( "COD_FACT", codFact );
+        Query query = em.createQuery("SELECT DISTINCT v  FROM TbVenda  v WHERE V.codFact = :COD_FACT ");
+        query.setParameter("COD_FACT", codFact);
 
         List<TbVenda> vendas = query.getResultList();
         em.close();
 
-        if ( !vendas.isEmpty() )
-        {
-            return vendas.get( 0 );
+        if (!vendas.isEmpty()) {
+            return vendas.get(0);
         }
 
         return null;
@@ -1131,77 +1042,68 @@ public class VendaDao extends TbVendaJpaController
 //
 //        return null;
 //    }
-    public TbVenda findByCodFactReemprensaoNota( String codFact )
-    {
+    public TbVenda findByCodFactReemprensaoNota(String codFact) {
         EntityManager em = getEntityManager();
-        Query query = em.createQuery( "SELECT DISTINCT v  FROM TbVenda  v WHERE V.codFact = :COD_FACT AND V.statusEliminado = 'true' " );
-        query.setParameter( "COD_FACT", codFact );
+        Query query = em.createQuery("SELECT DISTINCT v  FROM TbVenda  v WHERE V.codFact = :COD_FACT AND V.statusEliminado = 'true' ");
+        query.setParameter("COD_FACT", codFact);
 
         List<TbVenda> documentos = query.getResultList();
         em.close();
 
-        if ( !documentos.isEmpty() )
-        {
-            return documentos.get( 0 );
+        if (!documentos.isEmpty()) {
+            return documentos.get(0);
         }
 
         return null;
     }
 
-    public TbVenda findByCodFactReemprensaoNota1( String codFact )
-    {
+    public TbVenda findByCodFactReemprensaoNota1(String codFact) {
         EntityManager em = getEntityManager();
-        Query query = em.createQuery( "SELECT DISTINCT v  FROM TbVenda  v WHERE V.codFact = :codFact AND V.statusEliminado = 'ANULADO' " );
-        query.setParameter( "codFact", codFact );
+        Query query = em.createQuery("SELECT DISTINCT v  FROM TbVenda  v WHERE V.codFact = :codFact AND V.statusEliminado = 'ANULADO' ");
+        query.setParameter("codFact", codFact);
 
         List<TbVenda> documentos = query.getResultList();
         em.close();
 
-        if ( !documentos.isEmpty() )
-        {
-            return documentos.get( 0 );
+        if (!documentos.isEmpty()) {
+            return documentos.get(0);
         }
 
         return null;
     }
 
-    public TbVenda findByCodFact( String codFact, int tipo_documento )
-    {
+    public TbVenda findByCodFact(String codFact, int tipo_documento) {
         EntityManager em = getEntityManager();
-        Query query = em.createQuery( "SELECT DISTINCT v  FROM TbVenda  v WHERE V.codFact = :COD_FACT AND v.fkDocumento.pkDocumento = :TIPO_DOC" );
-        query.setParameter( "COD_FACT", codFact );
-        query.setParameter( "TIPO_DOC", tipo_documento );
+        Query query = em.createQuery("SELECT DISTINCT v  FROM TbVenda  v WHERE V.codFact = :COD_FACT AND v.fkDocumento.pkDocumento = :TIPO_DOC");
+        query.setParameter("COD_FACT", codFact);
+        query.setParameter("TIPO_DOC", tipo_documento);
 
         List<TbVenda> documentos = query.getResultList();
         em.close();
 
-        if ( !documentos.isEmpty() )
-        {
-            return documentos.get( 0 );
+        if (!documentos.isEmpty()) {
+            return documentos.get(0);
         }
 
         return null;
     }
 
-    public TbVenda findByCodFactura( String codFact )
-    {
+    public TbVenda findByCodFactura(String codFact) {
         EntityManager em = getEntityManager();
-        Query query = em.createQuery( "SELECT DISTINCT v  FROM TbVenda  v WHERE V.codFact = :COD_FACT" );
-        query.setParameter( "COD_FACT", codFact );
+        Query query = em.createQuery("SELECT DISTINCT v  FROM TbVenda  v WHERE V.codFact = :COD_FACT");
+        query.setParameter("COD_FACT", codFact);
 
         List<TbVenda> documentos = query.getResultList();
         em.close();
 
-        if ( !documentos.isEmpty() )
-        {
-            return documentos.get( 0 );
+        if (!documentos.isEmpty()) {
+            return documentos.get(0);
         }
 
         return null;
     }
 
-    public List<TbProduto> getAllProdutosVenda( Date data_inicio, Date data_fim )
-    {
+    public List<TbProduto> getAllProdutosVenda(Date data_inicio, Date data_fim) {
 
         EntityManager em = getEntityManager();
 //        Query query = em.createQuery( "SELECT  DISTINCT v.codigoProduto FROM TbItemVenda  v WHERE v.codigoVenda.dataVenda BETWEEN :data_inicio AND :data_fim AND v.codigoVenda.statusEliminado = 'false' " )
@@ -1209,15 +1111,16 @@ public class VendaDao extends TbVendaJpaController
 //                .setParameter( "data_inicio", data_inicio )
 //                .setParameter( "data_fim", data_fim );
 
-        String sql = "SELECT DISTINCT p.* FROM tb_item_venda i, tb_produto p , tb_venda v WHERE i.codigo_produto = p.codigo AND i.codigo_venda =  v.codigo AND DATE(v.dataVenda) BETWEEN '" + MetodosUtil.getDataBanco( data_inicio ) + "' AND '" + MetodosUtil.getDataBanco( data_fim ) + "' AND v.fk_documento IN(1,2, 3)";
-        Query query = em.createNativeQuery( sql, TbProduto.class );
+
+        String sql = "SELECT DISTINCT p.* FROM tb_item_venda i, tb_produto p , tb_venda v WHERE i.codigo_produto = p.codigo AND i.codigo_venda =  v.codigo AND DATE(v.dataVenda) BETWEEN '" + MetodosUtil.getDataBanco(data_inicio) + "' AND '" + MetodosUtil.getDataBanco(data_fim) + "' AND v.fk_documento IN(1,2)";
+        Query query = em.createNativeQuery(sql, TbProduto.class);
+
 
         List<TbProduto> result = query.getResultList();
 
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
 
@@ -1226,45 +1129,41 @@ public class VendaDao extends TbVendaJpaController
         return result;
     }
 
-    public List<TbVenda> getAllVendaExceptoFacturaProformaAndRecibo( Date data_inicio, Date data_fim )
-    {
+    public List<TbVenda> getAllVendaExceptoFacturaProformaAndRecibo(Date data_inicio, Date data_fim) {
         ArrayList<Integer> listaDocAExcluir = new ArrayList<>();
 
-        listaDocAExcluir.add( DVML.DOC_FACTURA_PROFORMA_PP );
-        listaDocAExcluir.add( DVML.DOC_RECIBO_RC );
+        listaDocAExcluir.add(DVML.DOC_FACTURA_PROFORMA_PP);
+        listaDocAExcluir.add(DVML.DOC_RECIBO_RC);
 
         EntityManager em = getEntityManager();
-        Query query = em.createQuery( "SELECT v FROM TbVenda  v WHERE v.dataVenda BETWEEN :data_inicio AND :data_fim AND v.statusEliminado = 'false'  AND v.fkDocumento.pkDocumento NOT IN :DOC_A_EXCLUIR" )
-                .setParameter( "data_inicio", data_inicio )
-                .setParameter( "data_fim", data_fim )
-                .setParameter( "DOC_A_EXCLUIR", listaDocAExcluir );
+        Query query = em.createQuery("SELECT v FROM TbVenda  v WHERE v.dataVenda BETWEEN :data_inicio AND :data_fim AND v.statusEliminado = 'false'  AND v.fkDocumento.pkDocumento NOT IN :DOC_A_EXCLUIR")
+                .setParameter("data_inicio", data_inicio)
+                .setParameter("data_fim", data_fim)
+                .setParameter("DOC_A_EXCLUIR", listaDocAExcluir);
 
         List<TbVenda> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
 
         return null;
     }
 
-    public List<TbVenda> getAllRecibo( Date data_inicio, Date data_fim )
-    {
+    public List<TbVenda> getAllRecibo(Date data_inicio, Date data_fim) {
 
         EntityManager em = getEntityManager();
 
-        String sql = "SELECT * FROM tb_venda where DATE(dataVenda) between '" + MetodosUtil.getDataBanco( data_inicio ) + "' AND '" + MetodosUtil.getDataBanco( data_fim ) + "' AND fk_documento IN(6)";
+        String sql = "SELECT * FROM tb_venda where DATE(dataVenda) between '" + MetodosUtil.getDataBanco(data_inicio) + "' AND '" + MetodosUtil.getDataBanco(data_fim) + "' AND fk_documento IN(6)";
 
-        System.out.println( sql );
-        Query query = em.createNativeQuery( sql, TbVenda.class );
+        System.out.println(sql);
+        Query query = em.createNativeQuery(sql, TbVenda.class);
 
         List<TbVenda> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
 
@@ -1290,193 +1189,159 @@ public class VendaDao extends TbVendaJpaController
 //
 //        return result;
 //    }
-    public List<TbVenda> getAllFacturaProforma( Date data_inicio, Date data_fim )
-    {
+    public List<TbVenda> getAllFacturaProforma(Date data_inicio, Date data_fim) {
 
         int factura_proforma = DVML.DOC_FACTURA_PROFORMA_PP;
         EntityManager em = getEntityManager();
-        Query query = em.createQuery( "SELECT v FROM TbVenda  v WHERE v.dataVenda BETWEEN :data_inicio AND :data_fim AND v.statusEliminado = 'false'  AND v.fkDocumento.pkDocumento = :pk_docummento" )
-                .setParameter( "data_inicio", data_inicio )
-                .setParameter( "data_fim", data_fim )
-                .setParameter( "pk_docummento", factura_proforma );
+        Query query = em.createQuery("SELECT v FROM TbVenda  v WHERE v.dataVenda BETWEEN :data_inicio AND :data_fim AND v.statusEliminado = 'false'  AND v.fkDocumento.pkDocumento = :pk_docummento")
+                .setParameter("data_inicio", data_inicio)
+                .setParameter("data_fim", data_fim)
+                .setParameter("pk_docummento", factura_proforma);
 
         List<TbVenda> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
 
         return result;
     }
 
-    public Object[] listarVendasRetificaveis()
-    {
+    public Object[] listarVendasRetificaveis() {
         EntityManager em = getEntityManager();
-        Query query = em.createQuery( "SELECT DISTINCT v.codFact  FROM TbVenda v WHERE v.codFact NOT IN :IMPRESSORAS_INALTERAVEIS  " );
+        Query query = em.createQuery("SELECT DISTINCT v.codFact  FROM TbVenda v WHERE v.codFact NOT IN :IMPRESSORAS_INALTERAVEIS  ");
 
-        Query queryFaturasAnuladasRetificadas = em.createQuery( "SELECT t.refCodFact FROM Notas t WHERE t.estado = :NOTA_ANULADA OR t.estado = :NOTA_TOTALMENTE_ALTERADA" );
-        queryFaturasAnuladasRetificadas.setParameter( "NOTA_ANULADA", ESTADO_NOTA.ANULADO.toString() );
-        queryFaturasAnuladasRetificadas.setParameter( "NOTA_TOTALMENTE_ALTERADA", ESTADO_NOTA.TOTALMENTE_RETIFICADO.toString() );
+        Query queryFaturasAnuladasRetificadas = em.createQuery("SELECT t.refCodFact FROM Notas t WHERE t.estado = :NOTA_ANULADA OR t.estado = :NOTA_TOTALMENTE_ALTERADA");
+        queryFaturasAnuladasRetificadas.setParameter("NOTA_ANULADA", ESTADO_NOTA.ANULADO.toString());
+        queryFaturasAnuladasRetificadas.setParameter("NOTA_TOTALMENTE_ALTERADA", ESTADO_NOTA.TOTALMENTE_RETIFICADO.toString());
         List resultList = queryFaturasAnuladasRetificadas.getResultList();
-        System.err.println( "faturasAnuladasRetificadas: " + resultList );
-        query.setParameter( "IMPRESSORAS_INALTERAVEIS", resultList );
+        System.err.println("faturasAnuladasRetificadas: " + resultList);
+        query.setParameter("IMPRESSORAS_INALTERAVEIS", resultList);
 
-        if ( resultList.isEmpty() )
-        {
-            resultList.add( "0" );
+        if (resultList.isEmpty()) {
+            resultList.add("0");
         }
 
         List<TbVenda> documentos = query.getResultList();
-        System.err.println( "" );
+        System.err.println("");
 
-        if ( !documentos.isEmpty() )
-        {
+        if (!documentos.isEmpty()) {
             return (Object[]) documentos.toArray();
         }
 
         return null;
     }
 
-    public boolean existe_codFact( String cod_fact )
-    {
+    public boolean existe_codFact(String cod_fact) {
 
         EntityManager em = getEntityManager();
-        Query query = em.createQuery( "SELECT v.codigo FROM TbVenda v WHERE v.statusRecibo = TRUE  AND v.statusEliminado = 'false' AND v.codFact = :cod_fact" )
-                .setParameter( "cod_fact", cod_fact );
+        Query query = em.createQuery("SELECT v.codigo FROM TbVenda v WHERE v.statusRecibo = TRUE  AND v.statusEliminado = 'false' AND v.codFact = :cod_fact")
+                .setParameter("cod_fact", cod_fact);
         return !query.getResultList().isEmpty();
 
     }
 
-    public boolean existe_codFact( String cod_fact, BDConexao conexao )
-    {
-        try
-        {
+    public boolean existe_codFact(String cod_fact, BDConexao conexao) {
+        try {
             //"SELECT v.codigo FROM TbVenda v WHERE v.statusRecibo = TRUE  AND v.statusEliminado = 'false' AND v.codFact = :cod_fact"
             String query = "SELECT * FROM tb_venda WHERE status_recibo = true AND status_eliminado = 'false' AND cod_fact = '" + cod_fact + "' ";
-            System.err.println( query );
-            ResultSet resultSet = conexao.executeQuery( query );
+            System.err.println(query);
+            ResultSet resultSet = conexao.executeQuery(query);
             return resultSet.next();
-        }
-        catch ( SQLException ex )
-        {
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+        } catch (SQLException ex) {
+            Logger.getLogger(VendaDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
 
     }
 
-    public boolean actualiza_status_recibo( String cod_fact, BDConexao conexao )
-    {
+    public boolean actualiza_status_recibo(String cod_fact, BDConexao conexao) {
 
         String sql = "UPDATE tb_venda SET status_recibo = true WHERE cod_fact = '" + cod_fact + "'";
-        return conexao.executeUpdate( sql );
+        return conexao.executeUpdate(sql);
 
     }
 
-    public String getCodFactAnteiror( String cod_fact, BDConexao conexao )
-    {
+    public String getCodFactAnteiror(String cod_fact, BDConexao conexao) {
         String sql = "SELECT cod_fact FROM tb_venda WHERE cod_fact <  '" + cod_fact + "' ORDER BY cod_fact DESC LIMIT 1";
-        ResultSet result = conexao.executeQuery( sql );
+        ResultSet result = conexao.executeQuery(sql);
 
-        try
-        {
-            if ( result.next() )
-            {
-                return result.getString( "cod_fact" );
+        try {
+            if (result.next()) {
+                return result.getString("cod_fact");
             }
-        }
-        catch ( SQLException ex )
-        {
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+        } catch (SQLException ex) {
+            Logger.getLogger(VendaDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return "";
 
     }
 
-    public String getCodFactAnteiror( String cod_fact, int pk_documento, int pk_ano_economico, BDConexao conexao )
-    {
+    public String getCodFactAnteiror(String cod_fact, int pk_documento, int pk_ano_economico, BDConexao conexao) {
         String sql = "SELECT cod_fact FROM tb_venda WHERE fk_documento = " + pk_documento + " AND  fk_ano_economico = " + pk_ano_economico + "   AND cod_fact <  '" + cod_fact + "' ORDER BY cod_fact DESC LIMIT 1";
-        ResultSet result = conexao.executeQuery( sql );
+        ResultSet result = conexao.executeQuery(sql);
 
-        try
-        {
-            if ( result.next() )
-            {
-                return result.getString( "cod_fact" );
+        try {
+            if (result.next()) {
+                return result.getString("cod_fact");
             }
-        }
-        catch ( SQLException ex )
-        {
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+        } catch (SQLException ex) {
+            Logger.getLogger(VendaDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return "";
 
     }
 
-    public String getHashAnterior( String cod_fact, int pk_documento, int pk_ano_economico, BDConexao conexao )
-    {
-        String cod_fact_anteiror = getCodFactAnteiror( cod_fact, pk_documento, pk_ano_economico, conexao );
-        try
-        {
-            return findByCodFact( cod_fact_anteiror ).getHashCod();
-        }
-        catch ( Exception e )
-        {
+    public String getHashAnterior(String cod_fact, int pk_documento, int pk_ano_economico, BDConexao conexao) {
+        String cod_fact_anteiror = getCodFactAnteiror(cod_fact, pk_documento, pk_ano_economico, conexao);
+        try {
+            return findByCodFact(cod_fact_anteiror).getHashCod();
+        } catch (Exception e) {
             return "";
         }
     }
 
-    public String getHashAnterior( String cod_fact, BDConexao conexao )
-    {
-        String cod_fact_anteiror = getCodFactAnteiror( cod_fact, conexao );
-        try
-        {
-            return findByCodFact( cod_fact_anteiror ).getHashCod();
-        }
-        catch ( Exception e )
-        {
+    public String getHashAnterior(String cod_fact, BDConexao conexao) {
+        String cod_fact_anteiror = getCodFactAnteiror(cod_fact, conexao);
+        try {
+            return findByCodFact(cod_fact_anteiror).getHashCod();
+        } catch (Exception e) {
             return "";
         }
     }
 
-    public Object[] listarDocumentoRetificaveisComOsSeguintesPKs( Integer... documentosSelecionados )
-    {
+    public Object[] listarDocumentoRetificaveisComOsSeguintesPKs(Integer... documentosSelecionados) {
         ArrayList<Integer> documentos = new ArrayList<>();
 
-        for ( Integer documentosSelecionado : documentosSelecionados )
-        {
-            documentos.add( documentosSelecionado );
+        for (Integer documentosSelecionado : documentosSelecionados) {
+            documentos.add(documentosSelecionado);
         }
-        if ( documentos.isEmpty() )
-        {
-            documentos.add( 0 );
+        if (documentos.isEmpty()) {
+            documentos.add(0);
         }
 
         EntityManager em = getEntityManager();
 
-        Query query = em.createQuery( "SELECT DISTINCT v.codFact  FROM TbVenda v WHERE (v.codigoCliente.nome != :CONSUMIDOR_FINAL ) AND ( v.codFact NOT IN :IMPRESSORAS_INALTERAVEIS) AND ( v.fkDocumento.pkDocumento IN :DOCUMENTOS_SELECIONADOS )  " );
+        Query query = em.createQuery("SELECT DISTINCT v.codFact  FROM TbVenda v WHERE (v.codigoCliente.nome != :CONSUMIDOR_FINAL ) AND ( v.codFact NOT IN :IMPRESSORAS_INALTERAVEIS) AND ( v.fkDocumento.pkDocumento IN :DOCUMENTOS_SELECIONADOS )  ");
 
-        Query queryFaturasAnuladasRetificadas = em.createQuery( "SELECT t.refCodFact FROM Notas t WHERE t.estado = :NOTA_ANULADA OR t.estado = :NOTA_TOTALMENTE_ALTERADA" );
-        queryFaturasAnuladasRetificadas.setParameter( "NOTA_ANULADA", ESTADO_NOTA.ANULADO.toString() );
-        queryFaturasAnuladasRetificadas.setParameter( "NOTA_TOTALMENTE_ALTERADA", ESTADO_NOTA.TOTALMENTE_RETIFICADO.toString() );
+        Query queryFaturasAnuladasRetificadas = em.createQuery("SELECT t.refCodFact FROM Notas t WHERE t.estado = :NOTA_ANULADA OR t.estado = :NOTA_TOTALMENTE_ALTERADA");
+        queryFaturasAnuladasRetificadas.setParameter("NOTA_ANULADA", ESTADO_NOTA.ANULADO.toString());
+        queryFaturasAnuladasRetificadas.setParameter("NOTA_TOTALMENTE_ALTERADA", ESTADO_NOTA.TOTALMENTE_RETIFICADO.toString());
         List documentosInalteraveis = queryFaturasAnuladasRetificadas.getResultList();
-        System.err.println( "faturasAnuladasRetificadas: " + documentosInalteraveis );
-        query.setParameter( "IMPRESSORAS_INALTERAVEIS", documentosInalteraveis );
-        query.setParameter( "DOCUMENTOS_SELECIONADOS", documentos );
-        query.setParameter( "CONSUMIDOR_FINAL", DVML._CLIENTE_CONSUMIDOR_FINAL );
+        System.err.println("faturasAnuladasRetificadas: " + documentosInalteraveis);
+        query.setParameter("IMPRESSORAS_INALTERAVEIS", documentosInalteraveis);
+        query.setParameter("DOCUMENTOS_SELECIONADOS", documentos);
+        query.setParameter("CONSUMIDOR_FINAL", DVML._CLIENTE_CONSUMIDOR_FINAL);
 
-        if ( documentosInalteraveis.isEmpty() )
-        {
-            documentosInalteraveis.add( "0" );
+        if (documentosInalteraveis.isEmpty()) {
+            documentosInalteraveis.add("0");
         }
 
         List<TbVenda> resultList = query.getResultList();
-        System.err.println( "" );
+        System.err.println("");
 
-        if ( !resultList.isEmpty() )
-        {
+        if (!resultList.isEmpty()) {
             return (Object[]) resultList.toArray();
         }
 
@@ -1510,66 +1375,53 @@ public class VendaDao extends TbVendaJpaController
 //        return 0;
 //
 //    }
-    public Integer getLastCodigoVenda( int pk_documento, int pk_ano_economico, BDConexao conexao )
-    {
-        System.err.println( "PK_DOCUMENTO: " + pk_documento );
-        System.err.println( "PK_ANO_ECONOMICO: " + pk_ano_economico );
+    public Integer getLastCodigoVenda(int pk_documento, int pk_ano_economico, BDConexao conexao) {
+        System.err.println("PK_DOCUMENTO: " + pk_documento);
+        System.err.println("PK_ANO_ECONOMICO: " + pk_ano_economico);
         String query = "SELECT MAX(codigo) AS last_id FROM tb_venda WHERE fk_documento = " + pk_documento + " AND fk_ano_economico = " + pk_ano_economico;
 
-        System.out.println( query );
-        ResultSet resultSet = conexao.executeQuery( query );
+        System.out.println(query);
+        ResultSet resultSet = conexao.executeQuery(query);
 
-        try
-        {
-            if ( resultSet.next() )
-            {
-                Integer last_id = resultSet.getInt( "last_id" );
+        try {
+            if (resultSet.next()) {
+                Integer last_id = resultSet.getInt("last_id");
                 return last_id;
             }
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
             ex.printStackTrace();
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(VendaDao.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return 0;
 
     }
 
-    public int getUltimaContagemByIdDocumentoAndAnoEconomico( int pk_documento, int pk_ano_economico, BDConexao conexao )
-    {
-        try
-        {
-            Integer codVenda = getLastCodigoVenda( pk_documento, pk_ano_economico, conexao );
-            System.out.println( "LastCodVenda: " + codVenda );
-            String codFact = MetodosUtil.getCodFact( codVenda, conexao );
-            System.out.println( "LastCodFact: " + codFact );
+    public int getUltimaContagemByIdDocumentoAndAnoEconomico(int pk_documento, int pk_ano_economico, BDConexao conexao) {
+        try {
+            Integer codVenda = getLastCodigoVenda(pk_documento, pk_ano_economico, conexao);
+            System.out.println("LastCodVenda: " + codVenda);
+            String codFact = MetodosUtil.getCodFact(codVenda, conexao);
+            System.out.println("LastCodFact: " + codFact);
 
-            if ( codFact != null )
-            {
-                String cod = codFact.split( "/" )[ 1 ];
+            if (codFact != null) {
+                String cod = codFact.split("/")[1];
                 //System.out.println( "Codigo Ordem Documento: " + cod );
-                return Integer.parseInt( cod );
-            }
-            else
-            {
+                return Integer.parseInt(cod);
+            } else {
                 return 0;
             }
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
-            System.out.println( "Codigo Ordem Documento: " + 0 );
+            System.out.println("Codigo Ordem Documento: " + 0);
         }
 
         return 0;
 
     }
 
-    public static Integer criarVendaComProcedu( TbVenda venda, BDConexao conexao )
-    {
-        System.err.println( "Total: " + venda.getTotalVenda() );
+    public static Integer criarVendaComProcedu(TbVenda venda, BDConexao conexao) {
+        System.err.println("Total: " + venda.getTotalVenda());
 
         /**
          * codigo int(11), dataVenda datetime, total_venda double , performance
@@ -1591,8 +1443,8 @@ public class VendaDao extends TbVendaJpaController
          * nome_motorista varchar(100), marca_carro varchar(75), cor_carro
          * varchar(45), n_doc_motorista varchar(75)
          */
-        System.out.println( "(DAO )Total Geral (Ilíquido): " + venda.getTotalGeral() );
-        System.out.println( "(DAO) Total Geral (Líquido ) " + venda.getTotalVenda() );
+        System.out.println("(DAO )Total Geral (Ilíquido): " + venda.getTotalGeral());
+        System.out.println("(DAO) Total Geral (Líquido ) " + venda.getTotalVenda());
 //        String inserirVendaQuery = String.format( "select VENDA_CRIAR ( "
 //                + "%d, '%s', %s , '%s', "    //1     // %d int e boolean, '%s' date, %s double, '%s' varchar 
 //                + "'%s', %s, %s, '%s',"      //2
@@ -1699,7 +1551,7 @@ public class VendaDao extends TbVendaJpaController
 //                venda.getNDocMotorista(),
 //                venda.getTotalRetencao()
 //        );
-        String inserirVendaQuery = String.format( "select VENDA_CRIAR ( "
+        String inserirVendaQuery = String.format("select VENDA_CRIAR ( "
                 + "%d, '%s', %s , '%s', "
                 + "'%s', %s, %s, '%s',"
                 + " '%s', '%s',  %s, %s ,"
@@ -1714,13 +1566,13 @@ public class VendaDao extends TbVendaJpaController
                 + "'%s', '%s', '%s', %s, %s ) "
                 + "as ID",
                 0,
-                new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( venda.getDataVenda() ),
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(venda.getDataVenda()),
                 venda.getTotalVenda(),
                 venda.getPerformance(),
                 venda.getCredito(),
                 venda.getValorEntregue(),
                 venda.getTroco(),
-                new SimpleDateFormat( "HH:mm:ss" ).format( venda.getHora() ),
+                new SimpleDateFormat("HH:mm:ss").format(venda.getHora()),
                 venda.getNomeCliente(),
                 venda.getStatusEliminado(),
                 venda.getDescontoTotal(),
@@ -1745,10 +1597,10 @@ public class VendaDao extends TbVendaJpaController
                 venda.getFkDocumento().getPkDocumento(),
                 venda.getFkAnoEconomico().getPkAnoEconomico(),
                 venda.getFkCambio().getPkCambio(),
-                new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( venda.getDataVencimento() ),
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(venda.getDataVencimento()),
                 venda.getClienteNif(),
                 venda.getTotalIncidenciaIsento(),
-                ( venda.getRefDataFact() != null ? new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( venda.getRefDataFact() ) : new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( new Date() ) ),
+                (venda.getRefDataFact() != null ? new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(venda.getRefDataFact()) : new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())),
                 venda.getNomeConsumidorFinal(),
                 venda.getReferencia(),
                 venda.getMatricula(),
@@ -1763,29 +1615,24 @@ public class VendaDao extends TbVendaJpaController
                 venda.getTotalRetencao(),
                 venda.getGorjeta()
         );
-        System.out.println( inserirVendaQuery );
-        ResultSet resultSet = conexao.executeQuery( inserirVendaQuery );
+        System.out.println(inserirVendaQuery);
+        ResultSet resultSet = conexao.executeQuery(inserirVendaQuery);
 
-        try
-        {
-            if ( resultSet.next() )
-            {
+        try {
+            if (resultSet.next()) {
 
-                int ID = resultSet.getInt( "ID" );
+                int ID = resultSet.getInt("ID");
                 //registra o movimento no extrato do cliente
-                if ( venda.getFkDocumento().getPkDocumento().equals( DVML.DOC_FACTURA_FT ) || venda.getFkDocumento().getPkDocumento().equals( DVML.DOC_RECIBO_RC ) )
-                {
-                    System.err.println( "EXTRATO DE CONTA DO CLIENTE" );
-                    ExtratoContaClienteController.registro_movimento_conta_cliente( venda, conexao );
+                if (venda.getFkDocumento().getPkDocumento().equals(DVML.DOC_FACTURA_FT) || venda.getFkDocumento().getPkDocumento().equals(DVML.DOC_RECIBO_RC)) {
+                    System.err.println("EXTRATO DE CONTA DO CLIENTE");
+                    ExtratoContaClienteController.registro_movimento_conta_cliente(venda, conexao);
 
                 }
                 return ID;
             }
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
 
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(VendaDao.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return null;
@@ -1808,10 +1655,9 @@ public class VendaDao extends TbVendaJpaController
 //
 //        return null;
 //    }
-    public static List<TbVenda> findFaturasCliente( String clienteSlecionado, Integer... tiposDoc )
-    {
-        System.err.println( "clienteSlecionado: " + clienteSlecionado );
-        System.err.println( "tiposDoc: " + tiposDoc[ 0 ] );
+    public static List<TbVenda> findFaturasCliente(String clienteSlecionado, Integer... tiposDoc) {
+        System.err.println("clienteSlecionado: " + clienteSlecionado);
+        System.err.println("tiposDoc: " + tiposDoc[0]);
 //        Query query = UtilDao.getEntityManager1().createQuery("SELECT DISTINCT a FROM TbVenda  a WHERE a.codigoCliente.nome = :NOME_CLIENTE AND a.fkDocumento.pkDocumento IN :LISTA_DE_DOCS");
 //        query.setParameter("NOME_CLIENTE", clienteSlecionado);
 //        query.setParameter("LISTA_DE_DOCS", Arrays.asList(tiposDoc));
@@ -1831,44 +1677,40 @@ public class VendaDao extends TbVendaJpaController
                 + " and d.pk_documento = " + DVML.DOC_FACTURA_FT + " AND v.status_eliminado = 'false'";
         EntityManager em = UtilDao.getEntityManager1();
 
-        System.out.println( queryString );
-        Query query = em.createNativeQuery( queryString );
+        System.out.println(queryString);
+        Query query = em.createNativeQuery(queryString);
 
         List<Object[]> result = query.getResultList();
         List<TbVenda> facturas = new ArrayList<>();
-        for ( int i = 0; i < result.size(); i++ )
-        {
-            Object[] get = result.get( i );
-            System.out.println( "OBJECT = " + get[ 13 ] );
+        for (int i = 0; i < result.size(); i++) {
+            Object[] get = result.get(i);
+            System.out.println("OBJECT = " + get[13]);
             TbVenda venda = new TbVenda();
-            venda.setCodFact( get[ 13 ].toString() );
-            facturas.add( venda );
+            venda.setCodFact(get[13].toString());
+            facturas.add(venda);
 
         }
 
         return facturas;
     }
 
-    public static TbVenda findByRefCod( String refCod )
-    {
-        Query query = UtilDao.getEntityManager1().createQuery( "SELECT DISTINCT a FROM TbVenda  a WHERE a.codFact  = :REF_COD " );
-        query.setParameter( "REF_COD", refCod );
+    public static TbVenda findByRefCod(String refCod) {
+        Query query = UtilDao.getEntityManager1().createQuery("SELECT DISTINCT a FROM TbVenda  a WHERE a.codFact  = :REF_COD ");
+        query.setParameter("REF_COD", refCod);
         List<TbVenda> result = query.getResultList();
 
-        if ( !result.isEmpty() )
-        {
-            return result.get( 0 );
+        if (!result.isEmpty()) {
+            return result.get(0);
         }
 
         return null;
     }
 
-    public List<TbCliente> getAllClienteDevedoresFactura()
-    {
+    public List<TbCliente> getAllClienteDevedoresFactura() {
 
         EntityManager em = getEntityManager();
         //Query query = em.createQuery( "SELECT v.codigoCliente FROM TbVenda  v WHERE  v.statusEliminado = 'false'  AND  v.credito = 'true' GROUP BY v.codigoCliente " );
-        Query query = em.createQuery( "SELECT v.codigoCliente FROM TbVenda  v WHERE  v.statusEliminado = 'false'  AND  v.fkDocumento.pkDocumento = 2 GROUP BY v.codigoCliente " );
+        Query query = em.createQuery("SELECT v.codigoCliente FROM TbVenda  v WHERE  v.statusEliminado = 'false'  AND  v.fkDocumento.pkDocumento = 2 GROUP BY v.codigoCliente ");
 
         List<TbCliente> result = query.getResultList();
         em.close();
@@ -1876,170 +1718,141 @@ public class VendaDao extends TbVendaJpaController
         return result;
     }
 
-    public boolean existeItensVenda( Integer last_venda, BDConexao conexao ) throws SQLException
-    {
+    public boolean existeItensVenda(Integer last_venda, BDConexao conexao) throws SQLException {
         String query = "SELECT * FROM tb_item_venda WHERE codigo_venda = " + last_venda;
-        ResultSet resultSet = conexao.executeQuery( query );
+        ResultSet resultSet = conexao.executeQuery(query);
 
         return resultSet.next();
 
     }
 
-    public double getAllEncomendaByCliente( int pk_cliente )
-    {
+    public double getAllEncomendaByCliente(int pk_cliente) {
 
         EntityManager em = getEntityManager();
-        Query query = em.createQuery( "SELECT SUM(V.totalGeral) AS TOTAL  FROM TbVenda  v WHERE   v.statusEliminado = 'false' AND v.credito = 'true'   AND v.codigoCliente.codigo = :pk_cliente" )
-                .setParameter( "pk_cliente", pk_cliente );
+        Query query = em.createQuery("SELECT SUM(V.totalGeral) AS TOTAL  FROM TbVenda  v WHERE   v.statusEliminado = 'false' AND v.credito = 'true'   AND v.codigoCliente.codigo = :pk_cliente")
+                .setParameter("pk_cliente", pk_cliente);
 
         List<Double> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
-            return result.get( 0 );
+        if (!result.isEmpty()) {
+            return result.get(0);
         }
         return 0;
     }
 
-    public Double getValorRealDiario( int idBanco, Date data_1, Date data_2, BDConexao conexao )
-    {
+    public Double getValorRealDiario(int idBanco, Date data_1, Date data_2, BDConexao conexao) {
 
-        System.err.println( "PK_DOCUMENTO: " + idBanco );
+        System.err.println("PK_DOCUMENTO: " + idBanco);
         String query = "SELECT SUM(total_venda) AS TOTAL  FROM tb_venda WHERE  idBanco = " + idBanco + " AND dataVenda  BETWEEN '"
-                + MetodosUtil.getDataBancoFull( data_1 ) + "' AND '" + MetodosUtil.getDataBancoFull( data_2 ) + "'";
+                + MetodosUtil.getDataBancoFull(data_1) + "' AND '" + MetodosUtil.getDataBancoFull(data_2) + "'";
 
-        System.out.println( query );
-        ResultSet resultSet = conexao.executeQuery( query );
+        System.out.println(query);
+        ResultSet resultSet = conexao.executeQuery(query);
 
-        try
-        {
-            if ( resultSet.next() )
-            {
-                Double total_real = resultSet.getDouble( "TOTAL" );
+        try {
+            if (resultSet.next()) {
+                Double total_real = resultSet.getDouble("TOTAL");
                 return total_real;
             }
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
             ex.printStackTrace();
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(VendaDao.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return 0d;
 
     }
 
-    public Double getValorRealDiario( BDConexao conexao )
-    {
+    public Double getValorRealDiario(BDConexao conexao) {
         String query = "SELECT SUM(total_venda) AS TOTAL  FROM tb_venda WHERE DATE(dataVenda) = '"
-                + MetodosUtil.getDataBanco( new Date() ) + "'";
+                + MetodosUtil.getDataBanco(new Date()) + "'";
 
-        System.out.println( query );
-        ResultSet resultSet = conexao.executeQuery( query );
+        System.out.println(query);
+        ResultSet resultSet = conexao.executeQuery(query);
 
-        try
-        {
-            if ( resultSet.next() )
-            {
-                Double total_real = resultSet.getDouble( "TOTAL" );
+        try {
+            if (resultSet.next()) {
+                Double total_real = resultSet.getDouble("TOTAL");
                 return total_real;
             }
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
             ex.printStackTrace();
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(VendaDao.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return 0d;
 
     }
 
-    public Double getValorRealDiario( BDConexao conexao, Date data_1, Date data_2 )
-    {
+    public Double getValorRealDiario(BDConexao conexao, Date data_1, Date data_2) {
         String query = "SELECT SUM(total_venda) AS TOTAL  FROM tb_venda WHERE dataVenda BETWEEN '"
-                + MetodosUtil.getDataBancoFull( data_1 ) + "'  AND  '" + MetodosUtil.getDataBancoFull( data_2 ) + "'";
+                + MetodosUtil.getDataBancoFull(data_1) + "'  AND  '" + MetodosUtil.getDataBancoFull(data_2) + "'";
 
-        System.out.println( query );
-        ResultSet resultSet = conexao.executeQuery( query );
+        System.out.println(query);
+        ResultSet resultSet = conexao.executeQuery(query);
 
-        try
-        {
-            if ( resultSet.next() )
-            {
-                Double total_real = resultSet.getDouble( "TOTAL" );
+        try {
+            if (resultSet.next()) {
+                Double total_real = resultSet.getDouble("TOTAL");
                 return total_real;
             }
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
             ex.printStackTrace();
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(VendaDao.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return 0d;
 
     }
 
-    public Integer getNumeroVendasDiario( BDConexao conexao )
-    {
+    public Integer getNumeroVendasDiario(BDConexao conexao) {
         String query = "SELECT COUNT(codigo) AS NUMERO_VENDAS  FROM tb_venda WHERE DATE(dataVenda) = '"
-                + MetodosUtil.getDataBanco( new Date() ) + "'";
+                + MetodosUtil.getDataBanco(new Date()) + "'";
 
-        System.out.println( query );
-        ResultSet resultSet = conexao.executeQuery( query );
+        System.out.println(query);
+        ResultSet resultSet = conexao.executeQuery(query);
 
-        try
-        {
-            if ( resultSet.next() )
-            {
-                Integer total_real = resultSet.getInt( "NUMERO_VENDAS" );
+        try {
+            if (resultSet.next()) {
+                Integer total_real = resultSet.getInt("NUMERO_VENDAS");
                 return total_real;
             }
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
             ex.printStackTrace();
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(VendaDao.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return 0;
 
     }
 
-    public Integer getNumeroVendasDiario( BDConexao conexao, Date data_1, Date data_2 )
-    {
+    public Integer getNumeroVendasDiario(BDConexao conexao, Date data_1, Date data_2) {
         String query = "SELECT COUNT(codigo) AS NUMERO_VENDAS  FROM tb_venda WHERE dataVenda BETWEEN '"
-                + MetodosUtil.getDataBancoFull( data_1 ) + "'  AND  '" + MetodosUtil.getDataBancoFull( data_2 ) + "'";
+                + MetodosUtil.getDataBancoFull(data_1) + "'  AND  '" + MetodosUtil.getDataBancoFull(data_2) + "'";
 
-        System.out.println( query );
-        ResultSet resultSet = conexao.executeQuery( query );
+        System.out.println(query);
+        ResultSet resultSet = conexao.executeQuery(query);
 
-        try
-        {
-            if ( resultSet.next() )
-            {
-                Integer total_real = resultSet.getInt( "NUMERO_VENDAS" );
+        try {
+            if (resultSet.next()) {
+                Integer total_real = resultSet.getInt("NUMERO_VENDAS");
                 return total_real;
             }
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
             ex.printStackTrace();
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(VendaDao.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return 0;
 
     }
 
-    public List<TbVenda> getAllVendaExceptoFacturaProformaAndReciboAlterado( Date data_inicio, Date data_fim )
-    {
+    public List<TbVenda> getAllVendaExceptoFacturaProformaAndReciboAlterado(Date data_inicio, Date data_fim) {
         ArrayList<Integer> listaDocAExcluir = new ArrayList<>();
 
-        listaDocAExcluir.add( DVML.DOC_FACTURA_PROFORMA_PP );
-        listaDocAExcluir.add( DVML.DOC_RECIBO_RC );
+        listaDocAExcluir.add(DVML.DOC_FACTURA_PROFORMA_PP);
+        listaDocAExcluir.add(DVML.DOC_RECIBO_RC);
 
         EntityManager em = getEntityManager();
 
@@ -2047,96 +1860,77 @@ public class VendaDao extends TbVendaJpaController
 //                .setParameter( "data_inicio", data_inicio )
 //                .setParameter( "data_fim", data_fim );
 //                .setParameter( "DOC_A_EXCLUIR", listaDocAExcluir );
-        String sql = "SELECT * FROM tb_venda where DATE(dataVenda) between '" + MetodosUtil.getDataBanco( data_inicio ) + "' AND '" + MetodosUtil.getDataBanco( data_fim ) + "' AND fk_documento IN(1,2)";
+        String sql = "SELECT * FROM tb_venda where DATE(dataVenda) between '" + MetodosUtil.getDataBanco(data_inicio) + "' AND '" + MetodosUtil.getDataBanco(data_fim) + "' AND fk_documento IN(1,2)";
 //        String sql = "SELECT * FROM tb_venda where DATE(dataVenda) between '" + MetodosUtil.getDataBanco( data_inicio ) + "' AND '" + MetodosUtil.getDataBanco( data_fim ) + "' AND fk_documento IN(6)";
 
-        System.out.println( sql );
-        Query query = em.createNativeQuery( sql, TbVenda.class );
+        System.out.println(sql);
+        Query query = em.createNativeQuery(sql, TbVenda.class);
 
         List<TbVenda> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
 
         return null;
     }
 
-    public static int getLastVendaByTipoDocumento( int pk_documento, BDConexao conexao )
-    {
+    public static int getLastVendaByTipoDocumento(int pk_documento, BDConexao conexao) {
 
         String sql = "SELECT MAX(codigo) AS MAXIMO FROM tb_venda WHERE fk_documento = " + pk_documento;
 
-        System.out.println( sql );
-        ResultSet result = conexao.executeQuery( sql );
+        System.out.println(sql);
+        ResultSet result = conexao.executeQuery(sql);
 
-        try
-        {
-            if ( result.next() )
-            {
-                return result.getInt( "MAXIMO" );
+        try {
+            if (result.next()) {
+                return result.getInt("MAXIMO");
             }
-        }
-        catch ( SQLException ex )
-        {
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+        } catch (SQLException ex) {
+            Logger.getLogger(VendaDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return 0;
 
     }
 
-    public String getHashAnterior( int codigo_venda, String cod_fact, int pk_documento, int pk_ano_economico, BDConexao conexao )
-    {
+    public String getHashAnterior(int codigo_venda, String cod_fact, int pk_documento, int pk_ano_economico, BDConexao conexao) {
 //        String cod_fact_anteiror = getCodFactAnteiror( cod_fact, pk_documento, pk_ano_economico, conexao );
-        String cod_fact_anteiror = getCodFactAnteirorRectificado( codigo_venda, pk_documento, pk_ano_economico, conexao );
-        System.out.println( "COD FACT ANTERIOR: " + cod_fact_anteiror );
-        try
-        {
-            return findByCodFact( cod_fact_anteiror ).getHashCod();
-        }
-        catch ( Exception e )
-        {
+        String cod_fact_anteiror = getCodFactAnteirorRectificado(codigo_venda, pk_documento, pk_ano_economico, conexao);
+        System.out.println("COD FACT ANTERIOR: " + cod_fact_anteiror);
+        try {
+            return findByCodFact(cod_fact_anteiror).getHashCod();
+        } catch (Exception e) {
             e.printStackTrace();
             return "";
         }
     }
 
-    public String getHashAnterior2( int codigo_venda, String cod_fact, int pk_documento, int pk_ano_economico, BDConexao conexao )
-    {
+    public String getHashAnterior2(int codigo_venda, String cod_fact, int pk_documento, int pk_ano_economico, BDConexao conexao) {
 //        String cod_fact_anteiror = getCodFactAnteiror( cod_fact, pk_documento, pk_ano_economico, conexao );
-        String cod_fact_anteiror = getCodFactAnteirorRectificado( codigo_venda, pk_documento, pk_ano_economico, conexao );
-        System.out.println( "COD FACT ANTERIOR: " + cod_fact_anteiror );
-        try
-        {
-            return findByCodFact2( cod_fact_anteiror ).getHashCod();
-        }
-        catch ( Exception e )
-        {
+        String cod_fact_anteiror = getCodFactAnteirorRectificado(codigo_venda, pk_documento, pk_ano_economico, conexao);
+        System.out.println("COD FACT ANTERIOR: " + cod_fact_anteiror);
+        try {
+            return findByCodFact2(cod_fact_anteiror).getHashCod();
+        } catch (Exception e) {
             e.printStackTrace();
             return "";
         }
     }
 
-    public static String getCodFactAnteirorRectificado( int codigo, int pk_documento, int pk_ano_economico, BDConexao conexao )
-    {
+    public static String getCodFactAnteirorRectificado(int codigo, int pk_documento, int pk_ano_economico, BDConexao conexao) {
 
         String sql = "SELECT cod_fact FROM tb_venda WHERE fk_documento = " + pk_documento + " AND  fk_ano_economico = " + pk_ano_economico + "   AND codigo <  " + codigo + " ORDER BY codigo DESC LIMIT 1";
 
-        System.out.println( sql );
-        ResultSet result = conexao.executeQuery( sql );
+        System.out.println(sql);
+        ResultSet result = conexao.executeQuery(sql);
 
-        try
-        {
-            if ( result.next() )
-            {
-                return result.getString( "cod_fact" );
+        try {
+            if (result.next()) {
+                return result.getString("cod_fact");
             }
-        }
-        catch ( SQLException ex )
-        {
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+        } catch (SQLException ex) {
+            Logger.getLogger(VendaDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return "";
 
@@ -2147,22 +1941,19 @@ public class VendaDao extends TbVendaJpaController
 //        }
 //        return 0;
 
-    public static BigDecimal getTotalPagoByCodFact( String cod_fact, BDConexao conexao )
-    {
+    public static BigDecimal getTotalPagoByCodFact(String cod_fact, BDConexao conexao) {
 
 //        String sql = "SELECT sum(valor_entregue) as TOTAL_PAGO FROM tb_venda WHERE ref_cod_fact = '" + cod_fact + "' and fk_documento = 6";
         String sql = "SELECT getTotalPago('" + cod_fact + "') AS TOTAL_PAGO";
-        ResultSet result = conexao.executeQuery( sql );
+        ResultSet result = conexao.executeQuery(sql);
 
-        BigDecimal total_pago = new BigDecimal( 0d );
-        try
-        {
+        BigDecimal total_pago = new BigDecimal(0d);
+        try {
 //            if(!result.isEmpty()){
 //                return result.get( 0 );
 //            }
-            if ( result.next() )
-            {
-                total_pago = result.getBigDecimal( "TOTAL_PAGO" );
+            if (result.next()) {
+                total_pago = result.getBigDecimal("TOTAL_PAGO");
 
             }
 
@@ -2170,55 +1961,43 @@ public class VendaDao extends TbVendaJpaController
 //                
 //                return result.getBigDecimal( 0);
 //            }
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
         }
 
         return total_pago;
     }
 
-    public static BigDecimal getTotalVendaByCodFact( String cod_fact, BDConexao conexao )
-    {
+    public static BigDecimal getTotalVendaByCodFact(String cod_fact, BDConexao conexao) {
 
         String sql = "SELECT total_venda  FROM tb_venda WHERE cod_fact = '" + cod_fact + "'";
-        System.out.println( sql );
-        ResultSet result = conexao.executeQuery( sql );
-        BigDecimal total_venda = new BigDecimal( 0d );
+        System.out.println(sql);
+        ResultSet result = conexao.executeQuery(sql);
+        BigDecimal total_venda = new BigDecimal(0d);
 
-        try
-        {
-            if ( result.next() )
-            {
-                total_venda = result.getBigDecimal( "total_venda" );
+        try {
+            if (result.next()) {
+                total_venda = result.getBigDecimal("total_venda");
             }
 
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
         }
 
         return total_venda;
     }
 
-    public static Double getTotalRetencaoByCodFact( String cod_fact, BDConexao conexao )
-    {
+    public static Double getTotalRetencaoByCodFact(String cod_fact, BDConexao conexao) {
 
         String sql = "SELECT total_retencao  FROM tb_venda WHERE cod_fact = '" + cod_fact + "'";
-        System.out.println( sql );
-        ResultSet result = conexao.executeQuery( sql );
-        Double total_retencao = new Double( 0.0 );
+        System.out.println(sql);
+        ResultSet result = conexao.executeQuery(sql);
+        Double total_retencao = new Double(0.0);
 
-        try
-        {
-            if ( result.next() )
-            {
-                total_retencao = result.getDouble( "total_retencao" );
+        try {
+            if (result.next()) {
+                total_retencao = result.getDouble("total_retencao");
             }
 
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
         }
 
         return total_retencao;
@@ -2268,149 +2047,132 @@ public class VendaDao extends TbVendaJpaController
 //
 //        return total_venda;
 //    }
-    public List<TbVenda> getAllVendaByBetweenDataAndArmazemAndDocumentoAndCliente( Date data_inicio, Date data_fim, int pk_armazem, int pk_documento, int pk_cliente )
-    {
+    public List<TbVenda> getAllVendaByBetweenDataAndArmazemAndDocumentoAndCliente(Date data_inicio, Date data_fim, int pk_armazem, int pk_documento, int pk_cliente) {
 
         EntityManager em = getEntityManager();
 
-        Query query = em.createNativeQuery( "SELECT * FROM tb_venda "
+        Query query = em.createNativeQuery("SELECT * FROM tb_venda "
                 + "WHERE  DATE(dataVenda) BETWEEN ? AND ? "
                 + "AND status_eliminado = 'false' "
                 + "AND credito = 'false' "
                 + "AND idArmazemFK = ? "
                 + "AND fk_documento = ? "
                 + "AND codigo_cliente = ? ",
-                TbVenda.class );
+                TbVenda.class);
 
-        query.setParameter( 1, data_inicio );
-        query.setParameter( 2, data_fim );
-        query.setParameter( 3, pk_armazem );
-        query.setParameter( 4, pk_documento );
-        query.setParameter( 5, pk_cliente );
+        query.setParameter(1, data_inicio);
+        query.setParameter(2, data_fim);
+        query.setParameter(3, pk_armazem);
+        query.setParameter(4, pk_documento);
+        query.setParameter(5, pk_cliente);
 
         List<TbVenda> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
         return result;
     }
 
-    public List<TbVenda> getAllNotasByBetweenDataAndArmazemAndDocumento( Date data_inicio, Date data_fim, int pk_armazem, int pk_documento )
-    {
+    public List<TbVenda> getAllNotasByBetweenDataAndArmazemAndDocumento(Date data_inicio, Date data_fim, int pk_armazem, int pk_documento) {
 
         EntityManager em = getEntityManager();
 
-        Query query = em.createNativeQuery( "SELECT * FROM tb_venda "
+        Query query = em.createNativeQuery("SELECT * FROM tb_venda "
                 + "WHERE  DATE(dataVenda) BETWEEN ? AND ? "
                 + "AND status_eliminado = '" + DVML.ESTADO_DOCUMENTO_ANULADO + "' "
                 + "AND credito = 'false' "
                 + "AND idArmazemFK = ? "
-                + "AND fk_documento = ? ", TbVenda.class );
+                + "AND fk_documento = ? ", TbVenda.class);
 
-        query.setParameter( 1, MetodosUtil.getDataBanco( data_inicio ) );
-        query.setParameter( 2, MetodosUtil.getDataBanco( data_fim ) );
-        query.setParameter( 3, pk_armazem );
-        query.setParameter( 4, pk_documento );
+        query.setParameter(1, MetodosUtil.getDataBanco(data_inicio));
+        query.setParameter(2, MetodosUtil.getDataBanco(data_fim));
+        query.setParameter(3, pk_armazem);
+        query.setParameter(4, pk_documento);
 
         List<TbVenda> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
         return result;
     }
 
-    public static TbVenda findByCodFact2( String codFact )
-    {
-        Query query = UtilDao.getEntityManager1().createQuery( "SELECT DISTINCT v  FROM TbVenda  v WHERE V.codFact = :COD_FACT " );
-        query.setParameter( "COD_FACT", codFact );
+    public static TbVenda findByCodFact2(String codFact) {
+        Query query = UtilDao.getEntityManager1().createQuery("SELECT DISTINCT v  FROM TbVenda  v WHERE V.codFact = :COD_FACT ");
+        query.setParameter("COD_FACT", codFact);
 
         List<TbVenda> documentos = query.getResultList();
 
-        if ( !documentos.isEmpty() )
-        {
-            return documentos.get( 0 );
+        if (!documentos.isEmpty()) {
+            return documentos.get(0);
         }
 
         return null;
     }
 
-    public TbVenda findByCodFactReemprensaoGeral( String codFact )
-    {
+    public TbVenda findByCodFactReemprensaoGeral(String codFact) {
         EntityManager em = getEntityManager();
 //        Query query = em.createQuery("SELECT DISTINCT v  FROM TbVenda  v WHERE v.codFact = :COD_FACT AND v.statusEliminado = 'false'");
-        Query query = em.createQuery( "SELECT DISTINCT v  FROM TbVenda  v WHERE v.codFact = :COD_FACT" );
-        query.setParameter( "COD_FACT", codFact );
+        Query query = em.createQuery("SELECT DISTINCT v  FROM TbVenda  v WHERE v.codFact = :COD_FACT");
+        query.setParameter("COD_FACT", codFact);
 
         List<TbVenda> documentos = query.getResultList();
         em.close();
 
-        if ( !documentos.isEmpty() )
-        {
-            return documentos.get( 0 );
+        if (!documentos.isEmpty()) {
+            return documentos.get(0);
         }
 
         return null;
     }
 
-    public TbVenda findByCodFactReemprensaoNC( String codFact )
-    {
+    public TbVenda findByCodFactReemprensaoNC(String codFact) {
         EntityManager em = getEntityManager();
 //        Query query = em.createQuery("SELECT DISTINCT v  FROM TbVenda  v WHERE V.codFact = :COD_FACT AND V.statusEliminado = 'false' ");
-        Query query = em.createQuery( "SELECT DISTINCT v  FROM TbVenda  v WHERE v.codFact = :codFact AND v.statusEliminado = 'ANULADO' " );
-        query.setParameter( "codFact", codFact );
+        Query query = em.createQuery("SELECT DISTINCT v  FROM TbVenda  v WHERE v.codFact = :codFact AND v.statusEliminado = 'ANULADO' ");
+        query.setParameter("codFact", codFact);
 
         List<TbVenda> documentos = query.getResultList();
         em.close();
 
-        if ( !documentos.isEmpty() )
-        {
-            return documentos.get( 0 );
+        if (!documentos.isEmpty()) {
+            return documentos.get(0);
         }
 
         return null;
     }
 
-    public List<TbVenda> getAllVendasGeraisByBetweenDataAndArmazemAndDocumento( Date data_inicio, Date data_fim, int pk_armazem )
-    {
+    public List<TbVenda> getAllVendasGeraisByBetweenDataAndArmazemAndDocumento(Date data_inicio, Date data_fim, int pk_armazem) {
         ArrayList<Integer> listaDocAExcluir = new ArrayList<>();
 
-        listaDocAExcluir.add( DVML.DOC_FACTURA_PROFORMA_PP );
-        listaDocAExcluir.add( DVML.DOC_FACTURA_CONSULTA_MESA );
+        listaDocAExcluir.add(DVML.DOC_FACTURA_PROFORMA_PP);
+        listaDocAExcluir.add(DVML.DOC_FACTURA_CONSULTA_MESA);
 
         EntityManager em = getEntityManager();
 
-//        Query query = em.createQuery( "SELECT v FROM TbVenda  v WHERE DATE(v.dataVenda) BETWEEN :data_inicio AND :data_fim   AND v.fkDocumento.pkDocumento IN(1,2)" )
-//                .setParameter( "data_inicio", data_inicio )
-//                .setParameter( "data_fim", data_fim );
-//                .setParameter( "DOC_A_EXCLUIR", listaDocAExcluir );
-        String sql = "SELECT * FROM tb_venda where DATE(dataVenda) between '" + MetodosUtil.getDataBanco( data_inicio ) + "' AND '" + MetodosUtil.getDataBanco( data_fim ) + " AND pkArmazem = " + pk_armazem + "' AND fk_documento IN(1,2,5,6)";
+        String sql = "SELECT * FROM tb_venda where DATE(dataVenda) between '" + MetodosUtil.getDataBanco(data_inicio) + "' AND '" + MetodosUtil.getDataBanco(data_fim) + " AND pkArmazem = " + pk_armazem + "' AND fk_documento IN(1,2,5,6)";
 
-        System.out.println( sql );
-        Query query = em.createNativeQuery( sql, TbVenda.class );
+        System.out.println(sql);
+        Query query = em.createNativeQuery(sql, TbVenda.class);
 
         List<TbVenda> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
 
         return null;
     }
 
-    public List<TbVenda> getAllVendasGeraisByBetweenDataAndArmazemAndDocumentoAndCliente( Date data_inicio, Date data_fim, int pk_armazem, int pk_cliente )
-    {
+    public List<TbVenda> getAllVendasGeraisByBetweenDataAndArmazemAndDocumentoAndCliente(Date data_inicio, Date data_fim, int pk_armazem, int pk_cliente) {
         ArrayList<Integer> listaDocAExcluir = new ArrayList<>();
 
-        listaDocAExcluir.add( DVML.DOC_FACTURA_PROFORMA_PP );
-        listaDocAExcluir.add( DVML.DOC_FACTURA_CONSULTA_MESA );
+        listaDocAExcluir.add(DVML.DOC_FACTURA_PROFORMA_PP);
+        listaDocAExcluir.add(DVML.DOC_FACTURA_CONSULTA_MESA);
 
         EntityManager em = getEntityManager();
 
@@ -2420,87 +2182,112 @@ public class VendaDao extends TbVendaJpaController
 //                .setParameter( "DOC_A_EXCLUIR", listaDocAExcluir );
 //        String sql = "SELECT * FROM tb_venda where DATE(dataVenda) between '" + MetodosUtil.getDataBanco(data_inicio) + "' AND '" + MetodosUtil.getDataBanco(data_fim) + "' AND fk_documento IN(1,2,5,6)";
 //                String query = "SELECT MAX(codigo) AS last_id FROM tb_venda WHERE fk_documento = " + pk_documento + " AND fk_ano_economico = " + pk_ano_economico;
-        String sql = "SELECT * FROM tb_venda where DATE(dataVenda) between '" + MetodosUtil.getDataBanco( data_inicio ) + "' AND '" + MetodosUtil.getDataBanco( data_fim ) + " AND pkArmazem = " + pk_armazem + " AND pkCliente = " + pk_cliente + "' AND fk_documento IN(1,2,5,6)";
+        String sql = "SELECT * FROM tb_venda where DATE(dataVenda) between '" + MetodosUtil.getDataBanco(data_inicio) + "' AND '" + MetodosUtil.getDataBanco(data_fim) + " AND pkArmazem = " + pk_armazem + " AND pkCliente = " + pk_cliente + "' AND fk_documento IN(1,2,5,6)";
 
-        System.out.println( sql );
-        Query query = em.createNativeQuery( sql, TbVenda.class );
+        System.out.println(sql);
+        Query query = em.createNativeQuery(sql, TbVenda.class);
 
         List<TbVenda> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
 
         return null;
     }
 
-    public List<TbVenda> getAllVendaForUpdateHash( Date data_inicio, Date data_fim )
-    {
+    public List<TbVenda> getAllVendaForUpdateHash(Date data_inicio, Date data_fim) {
         EntityManager em = getEntityManager();
-        String sql = "SELECT * FROM tb_venda where DATE(dataVenda) between '" + MetodosUtil.getDataBanco( data_inicio ) + "' AND '" + MetodosUtil.getDataBanco( data_fim ) + "' AND fk_documento IN(1, 2, 3, 4, 5, 13)";
+        String sql = "SELECT * FROM tb_venda where DATE(dataVenda) between '" + MetodosUtil.getDataBanco(data_inicio) + "' AND '" + MetodosUtil.getDataBanco(data_fim) + "' AND fk_documento IN(1, 2, 3, 4, 5, 13)";
 
-        System.out.println( sql );
-        Query query = em.createNativeQuery( sql, TbVenda.class );
+        System.out.println(sql);
+        Query query = em.createNativeQuery(sql, TbVenda.class);
 
         List<TbVenda> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
 
         return null;
     }
 
-    public List<TbVenda> getAllVendaAreaByBetweenDataAndArmazemAndDocumento( Date data_inicio, Date data_fim, int pk_armazem, int pk_documento )
-    {
+    public List<TbVenda> getAllVendaAreaByBetweenDataAndArmazemAndDocumento(Date data_inicio, Date data_fim, int pk_armazem, int pk_documento) {
 
         EntityManager em = getEntityManager();
 
-        Query query = em.createNativeQuery( "SELECT * FROM tb_venda "
+        Query query = em.createNativeQuery("SELECT * FROM tb_venda "
                 + "WHERE  DATE(dataVenda) BETWEEN ? AND ? "
                 + "AND status_eliminado = 'false' "
                 //                + "AND area_venda = '" + area + "' "
                 + "AND credito = 'false' "
                 + "AND idArmazemFK = ? "
-                + "AND fk_documento = ? ", TbVenda.class );
+                + "AND fk_documento = ? ", TbVenda.class);
 
-        query.setParameter( 1, MetodosUtil.getDataBanco( data_inicio ) );
-        query.setParameter( 2, MetodosUtil.getDataBanco( data_fim ) );
-        query.setParameter( 3, pk_armazem );
-        query.setParameter( 4, pk_documento );
+        query.setParameter(1, MetodosUtil.getDataBanco(data_inicio));
+        query.setParameter(2, MetodosUtil.getDataBanco(data_fim));
+        query.setParameter(3, pk_armazem);
+        query.setParameter(4, pk_documento);
 
         List<TbVenda> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
         return result;
     }
 
-    public List<TbVenda> getVendaByCodFact( String CodFact )
-    {
+    public List<TbVenda> getVendaByCodFact(String CodFact) {
 
         EntityManager em = getEntityManager();
 
-        Query query = em.createNativeQuery( "SELECT * FROM tb_venda "
-                + "WHERE cod_fact = ? ", TbVenda.class );
+        Query query = em.createNativeQuery("SELECT * FROM tb_venda "
+                + "WHERE cod_fact = ? ", TbVenda.class);
 
-        query.setParameter( 1, CodFact );
+        query.setParameter(1, CodFact);
 
         List<TbVenda> result = query.getResultList();
         em.close();
 
-        if ( !result.isEmpty() )
-        {
+        if (!result.isEmpty()) {
             return result;
         }
         return result;
     }
+
+//    private boolean isNotaCredito(TbVenda v) {
+//        return v.getFkDocumento().getPkDocumento() == 5;
+//    }
+//
+//    private boolean isRecibo(TbVenda v) {
+//        return v.getFkDocumento().getPkDocumento() == 6;
+//    }
+//
+//    private boolean isVendaValida(TbVenda v) {
+//        int tipo = v.getFkDocumento().getPkDocumento();
+//        return tipo == 1 || tipo == 2; // FR e FT
+//    }
+//    
+//    private BigDecimal getValorAssinado(TbVenda v) {
+//    BigDecimal total = v.getTotalGeral() != null 
+//        ? v.getTotalGeral() 
+//        : BigDecimal.ZERO;
+//
+//    if (isNotaCredito(v)) {
+//        return total.negate();
+//    }
+//
+//    if (isRecibo(v)) {
+//        return BigDecimal.ZERO; // 🔥 RECIBO NÃO CONTA COMO VENDA
+//    }
+//
+//    return total;
+//}
+    
+    
+    
 
 }

@@ -810,6 +810,8 @@ public class ItemVendaDao extends TbItemVendaJpaController
 
         try
         {
+
+
             if ( resultSet.next() )
             {
                 return resultSet.getInt( "ID" );

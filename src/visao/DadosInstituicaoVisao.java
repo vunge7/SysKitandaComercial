@@ -53,8 +53,7 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents()
-    {
+    private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
@@ -120,14 +119,14 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
         rbLavandaria = new javax.swing.JRadioButton();
         rbLayout = new javax.swing.JRadioButton();
         rbOficina = new javax.swing.JRadioButton();
+        txtPosto = new javax.swing.JTextField();
+        jLabel16 = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
         jLabel19 = new javax.swing.JLabel();
 
         setTitle("Dados da Empresa");
-        addWindowListener(new java.awt.event.WindowAdapter()
-        {
-            public void windowClosing(java.awt.event.WindowEvent evt)
-            {
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
                 closeDialog(evt);
             }
         });
@@ -161,20 +160,16 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
 
         okButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/confirmacao.png"))); // NOI18N
         okButton.setText("Actualizar");
-        okButton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        okButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 okButtonActionPerformed(evt);
             }
         });
 
         cancelButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Logout 32x32.png"))); // NOI18N
         cancelButton.setText("Sair");
-        cancelButton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
             }
         });
@@ -310,10 +305,8 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
         rbComercial.setFont(new java.awt.Font("Lucida Sans Typewriter", 1, 10)); // NOI18N
         rbComercial.setSelected(true);
         rbComercial.setText("Comercial:");
-        rbComercial.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbComercial.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbComercialActionPerformed(evt);
             }
         });
@@ -324,10 +317,8 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
         buttonGroup9.add(rbFarmacia);
         rbFarmacia.setFont(new java.awt.Font("Lucida Sans Typewriter", 1, 10)); // NOI18N
         rbFarmacia.setText("Farmacia");
-        rbFarmacia.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbFarmacia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbFarmaciaActionPerformed(evt);
             }
         });
@@ -335,10 +326,8 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
         buttonGroup9.add(rbPrestacaoServico);
         rbPrestacaoServico.setFont(new java.awt.Font("Lucida Sans Typewriter", 1, 10)); // NOI18N
         rbPrestacaoServico.setText("Prestação de Serviço");
-        rbPrestacaoServico.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbPrestacaoServico.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbPrestacaoServicoActionPerformed(evt);
             }
         });
@@ -346,10 +335,8 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
         buttonGroup9.add(rbTransportes);
         rbTransportes.setFont(new java.awt.Font("Lucida Sans Typewriter", 1, 10)); // NOI18N
         rbTransportes.setText("Transportes");
-        rbTransportes.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbTransportes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbTransportesActionPerformed(evt);
             }
         });
@@ -360,10 +347,8 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
         buttonGroup9.add(rbRestaurante);
         rbRestaurante.setFont(new java.awt.Font("Lucida Sans Typewriter", 1, 10)); // NOI18N
         rbRestaurante.setText("Restaurante:");
-        rbRestaurante.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbRestaurante.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbRestauranteActionPerformed(evt);
             }
         });
@@ -374,10 +359,8 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
         buttonGroup9.add(rbLavandaria);
         rbLavandaria.setFont(new java.awt.Font("Lucida Sans Typewriter", 1, 10)); // NOI18N
         rbLavandaria.setText("Lavandaria");
-        rbLavandaria.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbLavandaria.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbLavandariaActionPerformed(evt);
             }
         });
@@ -385,10 +368,8 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
         buttonGroup9.add(rbLayout);
         rbLayout.setFont(new java.awt.Font("Lucida Sans Typewriter", 1, 10)); // NOI18N
         rbLayout.setText("Layout:");
-        rbLayout.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbLayout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbLayoutActionPerformed(evt);
             }
         });
@@ -396,10 +377,8 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
         buttonGroup9.add(rbOficina);
         rbOficina.setFont(new java.awt.Font("Lucida Sans Typewriter", 1, 10)); // NOI18N
         rbOficina.setText("Oficina");
-        rbOficina.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbOficina.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbOficinaActionPerformed(evt);
             }
         });
@@ -459,6 +438,10 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
                 .addContainerGap(17, Short.MAX_VALUE))
         );
 
+        txtPosto.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel16.setText("POSTO:");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -501,8 +484,13 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
                             .addComponent(jLabel34, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(51, 51, 51)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtTelefone)
-                            .addComponent(txtNIF))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(txtNIF, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtPosto, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtTelefone))
                         .addGap(30, 30, 30)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -563,7 +551,10 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtSlogan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel14))
+                            .addComponent(jLabel14)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(txtPosto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel16)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel13)
@@ -593,7 +584,7 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addGap(45, 45, 45)
                 .addComponent(jLabel19)
-                .addContainerGap(622, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -739,6 +730,7 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel29;
@@ -780,6 +772,7 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
     private javax.swing.JTextField txtIban4;
     private javax.swing.JTextField txtNIF;
     private javax.swing.JTextField txtNome;
+    private javax.swing.JTextField txtPosto;
     private javax.swing.JTextField txtSlogan;
     private javax.swing.JTextField txtTelefone;
     private javax.swing.JTextField txt_director_geral;
@@ -822,6 +815,7 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
 //        setVizualisarStock( dadoIntituicao.getVizualisarStock() );
         setActivarNegocio( dadoIntituicao.getNegocio() );
         setActivarJanelaServico( dadoIntituicao.getJanelaServico() );
+        txtPosto.setText( dadoIntituicao.getPosto());
 //        setActivarTeclado( dadoIntituicao.getTeclado() );
 //        setArmazem( dadoIntituicao.getConfigArmazens() );
 //        setUsarDoisPrecos(dadoIntituicao.getUsarDoisPrecos() );
@@ -867,6 +861,7 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
 //        dadoIntituicao.setTranstorno( getTranstornos() );
         dadoIntituicao.setNegocio( getNegocio() );
         dadoIntituicao.setJanelaServico( getJanelaServico() );
+        dadoIntituicao.setPosto(txtPosto.getText());
 //        dadoIntituicao.setTeclado( getTeclado() );
 //        dadoIntituicao.setConfigArmazens(getArmazem() );
 //        dadoIntituicao.setUsarDoisPrecos(getUsarDoisPrecos() );

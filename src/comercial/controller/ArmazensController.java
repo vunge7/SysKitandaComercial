@@ -136,6 +136,58 @@ public class ArmazensController implements EntidadeFactory
             return lista_armazens;
         }
     }
+    
+    public Vector<String> getVectorArmazemLocal()
+    {
+        {
+            String FIND_ALL = "SELECT a.designacao FROM tb_armazem a WHERE a.codigo <= 1";
+            ResultSet result = conexao.executeQuery( FIND_ALL );
+            Vector<String> lista_armazens = new Vector<>();
+            try
+            {
+
+                while ( result.next() )
+                {
+
+                    lista_armazens.add( result.getString( "designacao" ) );
+
+                }
+
+            }
+            catch ( SQLException e )
+            {
+                e.printStackTrace();
+            }
+//            lista_armazens.add( 0, "--Seleccione--" );
+            return lista_armazens;
+        }
+    }
+    
+    public Vector<String> getVectorArmazemDestino()
+    {
+        {
+            String FIND_ALL = "SELECT a.designacao FROM tb_armazem a WHERE a.codigo <= 1";
+            ResultSet result = conexao.executeQuery( FIND_ALL );
+            Vector<String> lista_armazens = new Vector<>();
+            try
+            {
+
+                while ( result.next() )
+                {
+
+                    lista_armazens.add( result.getString( "designacao" ) );
+
+                }
+
+            }
+            catch ( SQLException e )
+            {
+                e.printStackTrace();
+            }
+            lista_armazens.add( 0, "--Seleccione--" );
+            return lista_armazens;
+        }
+    }
 
     public Vector<String> getVector( int id )
     {

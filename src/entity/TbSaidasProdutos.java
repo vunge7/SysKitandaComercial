@@ -72,6 +72,8 @@ public class TbSaidasProdutos implements Serializable
     @Basic(optional = false)
     @Column(name = "nome_funcionario")
     private String nomeFuncionario;
+    @Column(name = "armazem_destino")
+    private String armazemDestino;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkSaidasProdutos")
     private List<TbItemSaidas> tbItemSaidasList;
     @JoinColumn(name = "idArmazemFK", referencedColumnName = "codigo")
@@ -98,6 +100,14 @@ public class TbSaidasProdutos implements Serializable
         this.statusEliminado = statusEliminado;
         this.obs = obs;
         this.nomeFuncionario = nomeFuncionario;
+    }
+
+    public String getArmazemDestino() {
+        return armazemDestino;
+    }
+
+    public void setArmazemDestino(String armazemDestino) {
+        this.armazemDestino = armazemDestino;
     }
 
     public Integer getPkSaidasProdutos()

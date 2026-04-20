@@ -7,6 +7,7 @@ package comercial.controller;
 
 import java.sql.Connection;
 import entity.TbDadosInstituicao;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -58,6 +59,37 @@ public class DadosInstituicaoController implements EntidadeFactory
         String DELETE = "DELETE FROM tb_dados_instituicao WHERE codigo = " + codigo;
         return conexao.executeUpdate( DELETE );
     }
+    
+    public static TbDadosInstituicao getDados() {
+
+        TbDadosInstituicao dados = null;
+
+        String sql = "SELECT * FROM tb_dados_instituicao LIMIT 1";
+
+        try (Connection conn = BDConexao.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+
+                dados = new TbDadosInstituicao();
+
+                dados.setIdDadosInsitiuicao(rs.getInt("idDadosInsitiuicao"));
+                dados.setNome(rs.getString("nome"));
+                dados.setTelefone(rs.getString("telefone"));
+                dados.setEnderecos(rs.getString("enderecos"));
+                dados.setEmail(rs.getString("email"));
+                dados.setNif(rs.getString("nif"));
+
+                // Se quiseres podes mapear mais campos depois
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return dados;
+    }
 
     @Override
     public List<TbDadosInstituicao> listarTodos()
@@ -91,6 +123,8 @@ public class DadosInstituicaoController implements EntidadeFactory
                 dadosIntituicao.setEnviarEmail( result.getString( "enviar_email" ) );
                 dadosIntituicao.setStockConsulta( result.getString( "stock_consulta" ) );
                 dadosIntituicao.setTipoFichaTecnica( result.getString( "tipo_ficha_tecnica" ) );
+                dadosIntituicao.setImpressoraCaixa(result.getString( "impressora_caixa" ) );
+                dadosIntituicao.setSegundoMonitor(result.getString( "segundo_monitor" ) );
                 list.add( dadosIntituicao );
             }
 
@@ -213,6 +247,8 @@ public Object findById(int codigo) {
             dadosInstituicao.setEnviarEmail(result.getString("enviar_email"));
             dadosInstituicao.setStockConsulta(result.getString("stock_consulta"));
             dadosInstituicao.setTipoFichaTecnica(result.getString("tipo_ficha_tecnica"));
+            dadosInstituicao.setImpressoraCaixa(result.getString( "impressora_caixa" ) );
+            dadosInstituicao.setSegundoMonitor(result.getString( "segundo_monitor" ) );
         } 
         else {
             System.err.println("[DadosInstituicaoController] ⚠ Nenhum registo encontrado para o ID: " + codigo);
@@ -271,6 +307,8 @@ public Object findById(int codigo) {
                 dadosIntituicao.setEnviarEmail( result.getString( "enviar_email" ) );
                 dadosIntituicao.setStockConsulta( result.getString( "stock_consulta" ) );
                 dadosIntituicao.setTipoFichaTecnica( result.getString( "tipo_ficha_tecnica" ) );
+                dadosIntituicao.setImpressoraCaixa(result.getString( "impressora_caixa" ) );
+                dadosIntituicao.setSegundoMonitor(result.getString( "segundo_monitor" ) );
 
             }
 
@@ -319,6 +357,8 @@ public Object findById(int codigo) {
                 dadosInstituicao.setEnviarEmail( result.getString( "enviar_email" ) );
                 dadosInstituicao.setStockConsulta( result.getString( "stock_consulta" ) );
                 dadosInstituicao.setTipoFichaTecnica( result.getString( "tipo_ficha_tecnica" ) );
+                dadosInstituicao.setImpressoraCaixa(result.getString( "impressora_caixa" ) );
+                dadosInstituicao.setSegundoMonitor(result.getString( "segundo_monitor" ) );
 
             }
 

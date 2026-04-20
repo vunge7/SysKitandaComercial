@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="5.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="695"/>
+	<property name="ireport.y" value="48"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -215,35 +215,35 @@ WHERE
 	<title>
 		<band height="143">
 			<textField>
-				<reportElement uuid="82853475-19ec-484a-a036-949cdd5bd35b" x="1" y="57" width="187" height="12"/>
-				<textElement textAlignment="Center" markup="html">
+				<reportElement uuid="82853475-19ec-484a-a036-949cdd5bd35b" x="1" y="59" width="187" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" markup="html">
 					<font fontName="Times New Roman" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA["<b>Email:</b> " +$F{tb_dados_instituicao_email}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement uuid="608569fd-08f1-46ad-bfab-b75a16a853ba" x="0" y="25" width="187" height="15"/>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="608569fd-08f1-46ad-bfab-b75a16a853ba" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="23" width="188" height="20" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
 					<font fontName="Times New Roman" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_nome}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="a9ba3e70-db19-420e-bdf3-27f09d6bcb77" x="1" y="50" width="187" height="12"/>
+				<reportElement uuid="a9ba3e70-db19-420e-bdf3-27f09d6bcb77" x="1" y="53" width="187" height="12"/>
 				<textElement textAlignment="Center" markup="html">
 					<font fontName="Times New Roman" size="9" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["<b>Telefone:</b> " +$F{tb_dados_instituicao_telefone}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="442689d9-4840-4d31-92a9-c7d9dfb46603" x="1" y="35" width="187" height="12"/>
+				<reportElement uuid="442689d9-4840-4d31-92a9-c7d9dfb46603" x="1" y="38" width="187" height="12"/>
 				<textElement textAlignment="Center" markup="html">
 					<font fontName="Times New Roman" size="9" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["<b>Endereço:</b> " +$F{tb_dados_instituicao_enderecos}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="5be15091-64e8-4c95-a321-fa7fc79d18d4" x="1" y="42" width="187" height="12"/>
+				<reportElement uuid="5be15091-64e8-4c95-a321-fa7fc79d18d4" x="1" y="45" width="187" height="12"/>
 				<textElement textAlignment="Center" markup="html">
 					<font fontName="Times New Roman" size="9" isBold="false"/>
 				</textElement>
@@ -424,8 +424,7 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[($F{tb_item_venda_quantidade}.doubleValue() % 1 == 0) 
     ? String.valueOf($F{tb_item_venda_quantidade}.intValue()) 
-    : String.valueOf($F{tb_item_venda_quantidade})
-]]></textFieldExpression>
+    : String.valueOf($F{tb_item_venda_quantidade})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement uuid="ea5218f4-f3b3-4199-9a0d-3df5df401fde" key="textField-15" x="0" y="1" width="188" height="12"/>

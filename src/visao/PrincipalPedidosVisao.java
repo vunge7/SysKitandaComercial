@@ -18,6 +18,7 @@ import entity.TbPedido;
 import dao.CaixaDao;
 import dao.DadosInstituicaoDao;
 import entity.TbArmazem;
+import entity.TbDadosInstituicao;
 import entity.Turno;
 import java.awt.Color;
 import java.text.SimpleDateFormat;
@@ -34,23 +35,24 @@ import util.DVML;
 import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
 import static util.MetodosUtil.rodarComandoWindows;
+//import static visao.ProdutosVisao.dadosInstituicao;
 
 /**
  *
  * @author MartinhoLuis e Domingos Dala Vunge
  */
-public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnable
-{
+public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnable {
 
     private TbPedido pedidos = new TbPedido();
     private static EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
     private static AccessoArmazemDao accessoArmazemDao;
     private static ArmazemDao armazemDao;
-    private static PedidoDao pedidoDao = new PedidoDao( emf );
-    private static ItemPedidosDao itemPedidosDao = new ItemPedidosDao( emf );
-    private UsuarioDao usuarioDao = new UsuarioDao( emf );
-    private DadosInstituicaoDao dadosInstituicaoDao = new DadosInstituicaoDao( emf );
-    private TurnoDao turnoDao = new TurnoDao( emf );
+    private static PedidoDao pedidoDao = new PedidoDao(emf);
+    private static ItemPedidosDao itemPedidosDao = new ItemPedidosDao(emf);
+    private UsuarioDao usuarioDao = new UsuarioDao(emf);
+    private DadosInstituicaoDao dadosInstituicaoDao = new DadosInstituicaoDao(emf);
+    private TbDadosInstituicao dadosInstituicao;
+    private TurnoDao turnoDao = new TurnoDao(emf);
     private Turno turno;
 //    private static CaixaDao caixaDao;
     private int id_turno = 0;
@@ -60,11 +62,12 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
     private int id_armazem;
     private String lugar = "";
 
-    public PrincipalPedidosVisao( int idUser, String lugar, int id_armazem, BDConexao conexao )
-    {
+    public PrincipalPedidosVisao(int idUser, String lugar, int id_armazem, BDConexao conexao) {
         initComponents();
+        rbAbrir.setVisible(false);
+        rbEsconder.setVisible(false);
         //this.setExtendedState(   this.getExtendedState()|PrincipalPedidosVisao.MAXIMIZED_BOTH  );
-        setLocationRelativeTo( null );
+        setLocationRelativeTo(null);
 //        t = new Thread(this);
 //        t.start();
 
@@ -73,8 +76,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
 
         this.conexao = conexao;
         this.idUser = idUser;
-        armazemDao = new ArmazemDao( emf );
-        accessoArmazemDao = new AccessoArmazemDao( emf );
+        armazemDao = new ArmazemDao(emf);
+        accessoArmazemDao = new AccessoArmazemDao(emf);
 //        cmbArmazem.setModel(new DefaultComboBoxModel(accessoArmazemDao.getAllArmazemByIdUSuario(idUser)));
         procedimento_mesas_livre();
         controlo_turno();
@@ -82,58 +85,87 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
 //        caixaDao = new CaixaDao( emf );
 //        verificarCaixa();
 //        mostrar_armazem();
-        try
-        {
+        try {
             configurar_armazens();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        setArmazem( dadosInstituicaoDao.findTbDadosInstituicao( 1 ).getConfigArmazens() );
-
+        setArmazem(dadosInstituicaoDao.findTbDadosInstituicao(1).getConfigArmazens());
+        
+   
         TelaCozinhaKDS telaCliente = new TelaCozinhaKDS( new ItemPedidosController( conexao.getConnectionAtiva() ) );
+        
+        
+        try {
+
+            setSegundoMonitor(dadosInstituicaoDao.findTbDadosInstituicao(1).getSegundoMonitor(), telaCliente);
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
 
         //Abre no segundo monitor, se existir
-        MetodosUtil.abrirNoSegundoMonitor( telaCliente );
-
+//        MetodosUtil.abrirNoSegundoMonitor( telaCliente );
     }
 
-    private void setArmazem( String armazem )
-    {
-        if ( armazem.equalsIgnoreCase( "Multi_armazem" ) )
-        {
-            rbArmazem.setSelected( true );
+    private void setArmazem(String armazem) {
+        if (armazem.equalsIgnoreCase("Multi_armazem")) {
+            rbArmazem.setSelected(true);
 
-        }
-        else
-        {
-            rbArmazem1.setSelected( true );
+        } else {
+            rbArmazem1.setSelected(true);
 
         }
     }
 
-    public void configurar_armazens()
-    {
-        setArmazem( dadosInstituicaoDao.findTbDadosInstituicao( 1 ).getConfigArmazens() );
-        try
-        {
-            if ( !rbArmazem.isSelected() )
-            {
+private void setSegundoMonitor(String segundo_monitor, TelaCozinhaKDS telaCliente_local) {
+    try {
+        if ("Abrir".equalsIgnoreCase(segundo_monitor)) {
+            rbAbrir.setSelected(true);
+
+            if (telaCliente_local != null) {
+                MetodosUtil.abrirNoSegundoMonitor(telaCliente_local);
+            }
+
+        } else {
+            rbEsconder.setSelected(true);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
+//    private void fechar_seguro() {
+//        TelaCozinhaKDS telaCliente = new TelaCozinhaKDS( new ItemPedidosController( conexao.getConnectionAtiva() ) );
+//        if (rbAbrir.isSelected()) {
+//
+//            telaCliente.dispose();
+//
+//            dispose();
+//
+//        } else {
+//
+//            dispose();
+//
+//        }
+//
+//    }
+    public void configurar_armazens() {
+        setArmazem(dadosInstituicaoDao.findTbDadosInstituicao(1).getConfigArmazens());
+        try {
+            if (!rbArmazem.isSelected()) {
                 //                Caso for MultiArmazens
-                cmbArmazem.setModel( new DefaultComboBoxModel( armazemDao.buscaTodos2() ) );
+                cmbArmazem.setModel(new DefaultComboBoxModel(armazemDao.buscaTodos2()));
 //                cmbArmazem.setModel( new DefaultComboBoxModel( accessoArmazemDao.getAllArmazemByIdUSuario( cod_usuario ) ) );
 
-            }
-            else if ( rbArmazem.isSelected() )
-            {
+            } else if (rbArmazem.isSelected()) {
                 //                Caso for apenas Um Armazem
-                cmbArmazem.setModel( new DefaultComboBoxModel( accessoArmazemDao.getAllArmazemExceptoEconomatoByIdUSuario( idUser ) ) );
+                cmbArmazem.setModel(new DefaultComboBoxModel(accessoArmazemDao.getAllArmazemExceptoEconomatoByIdUSuario(idUser)));
 
             }
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -143,10 +175,9 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
      */
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents()
-    {
+    private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
@@ -156,6 +187,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         cmbArmazem = new javax.swing.JComboBox<>();
         rbArmazem1 = new javax.swing.JRadioButton();
         rbArmazem = new javax.swing.JRadioButton();
+        rbEsconder = new javax.swing.JRadioButton();
+        rbAbrir = new javax.swing.JRadioButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jPanel2 = new javax.swing.JPanel();
         btn_mesa_1 = new javax.swing.JButton();
@@ -257,20 +290,16 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
 
         cmbArmazem.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         cmbArmazem.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cmbArmazem.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbArmazem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbArmazemActionPerformed(evt);
             }
         });
 
         buttonGroup1.add(rbArmazem1);
         rbArmazem1.setEnabled(false);
-        rbArmazem1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbArmazem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbArmazem1ActionPerformed(evt);
             }
         });
@@ -278,11 +307,24 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         buttonGroup1.add(rbArmazem);
         rbArmazem.setSelected(true);
         rbArmazem.setEnabled(false);
-        rbArmazem.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbArmazem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbArmazemActionPerformed(evt);
+            }
+        });
+
+        rbEsconder.setSelected(true);
+        rbEsconder.setEnabled(false);
+        rbEsconder.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbEsconderActionPerformed(evt);
+            }
+        });
+
+        rbAbrir.setEnabled(false);
+        rbAbrir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbAbrirActionPerformed(evt);
             }
         });
 
@@ -307,6 +349,13 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
                             .addComponent(status_mensagem_secundaria, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(status_mensagem_primaria, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 725, Short.MAX_VALUE))))
                 .addContainerGap())
+            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGap(437, 437, 437)
+                    .addComponent(rbEsconder)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(rbAbrir)
+                    .addContainerGap(437, Short.MAX_VALUE)))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -328,6 +377,13 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(49, 49, 49))))
+            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGap(76, 76, 76)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(rbEsconder, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addComponent(rbAbrir, javax.swing.GroupLayout.PREFERRED_SIZE, 9, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addContainerGap(76, Short.MAX_VALUE)))
         );
 
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -335,10 +391,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagem/mesa_teste.jpg"))); // NOI18N
         btn_mesa_1.setText("1");
-        btn_mesa_1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_1ActionPerformed(evt);
             }
         });
@@ -347,10 +401,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_2.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_2.setText("2");
-        btn_mesa_2.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_2ActionPerformed(evt);
             }
         });
@@ -359,10 +411,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_3.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_3.setText("3");
-        btn_mesa_3.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_3ActionPerformed(evt);
             }
         });
@@ -371,10 +421,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_4.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_4.setText("4");
-        btn_mesa_4.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_4ActionPerformed(evt);
             }
         });
@@ -383,10 +431,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_5.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_5.setText("5");
-        btn_mesa_5.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_5ActionPerformed(evt);
             }
         });
@@ -395,10 +441,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_6.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_6.setText("6");
-        btn_mesa_6.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_6ActionPerformed(evt);
             }
         });
@@ -407,10 +451,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_7.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_7.setText("7");
-        btn_mesa_7.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_7ActionPerformed(evt);
             }
         });
@@ -419,10 +461,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_9.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_9.setText("9");
-        btn_mesa_9.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_9ActionPerformed(evt);
             }
         });
@@ -431,10 +471,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_8.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_8.setText("8");
-        btn_mesa_8.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_8ActionPerformed(evt);
             }
         });
@@ -443,10 +481,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_10.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_10.setText("10");
-        btn_mesa_10.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_10ActionPerformed(evt);
             }
         });
@@ -455,10 +491,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_11.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_11.setText("11");
-        btn_mesa_11.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_11ActionPerformed(evt);
             }
         });
@@ -467,10 +501,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_12.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_12.setText("12");
-        btn_mesa_12.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_12.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_12ActionPerformed(evt);
             }
         });
@@ -479,10 +511,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_13.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_13.setText("13");
-        btn_mesa_13.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_13.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_13ActionPerformed(evt);
             }
         });
@@ -491,10 +521,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_14.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_14.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_14.setText("14");
-        btn_mesa_14.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_14.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_14ActionPerformed(evt);
             }
         });
@@ -503,10 +531,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_16.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_16.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_16.setText("16");
-        btn_mesa_16.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_16.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_16ActionPerformed(evt);
             }
         });
@@ -582,10 +608,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_15.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_15.setText("15");
-        btn_mesa_15.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_15.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_15ActionPerformed(evt);
             }
         });
@@ -594,10 +618,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_32.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_32.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_32.setText("32");
-        btn_mesa_32.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_32.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_32ActionPerformed(evt);
             }
         });
@@ -610,10 +632,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_24.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_24.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_24.setText("24");
-        btn_mesa_24.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_24.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_24ActionPerformed(evt);
             }
         });
@@ -631,10 +651,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_23.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_23.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_23.setText("23");
-        btn_mesa_23.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_23.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_23ActionPerformed(evt);
             }
         });
@@ -643,10 +661,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_31.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_31.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_31.setText("31");
-        btn_mesa_31.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_31.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_31ActionPerformed(evt);
             }
         });
@@ -663,10 +679,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_30.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_30.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_30.setText("30");
-        btn_mesa_30.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_30.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_30ActionPerformed(evt);
             }
         });
@@ -675,10 +689,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_22.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_22.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_22.setText("22");
-        btn_mesa_22.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_22.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_22ActionPerformed(evt);
             }
         });
@@ -695,10 +707,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_21.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_21.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_21.setText("21");
-        btn_mesa_21.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_21.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_21ActionPerformed(evt);
             }
         });
@@ -707,10 +717,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_29.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_29.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_29.setText("29");
-        btn_mesa_29.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_29.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_29ActionPerformed(evt);
             }
         });
@@ -727,10 +735,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_28.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_28.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_28.setText("28");
-        btn_mesa_28.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_28.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_28ActionPerformed(evt);
             }
         });
@@ -739,10 +745,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_20.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_20.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_20.setText("20");
-        btn_mesa_20.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_20.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_20ActionPerformed(evt);
             }
         });
@@ -755,10 +759,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_19.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_19.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_19.setText("19");
-        btn_mesa_19.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_19.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_19ActionPerformed(evt);
             }
         });
@@ -771,10 +773,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_27.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_27.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_27.setText("27");
-        btn_mesa_27.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_27.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_27ActionPerformed(evt);
             }
         });
@@ -791,10 +791,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_26.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_26.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_26.setText("26");
-        btn_mesa_26.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_26.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_26ActionPerformed(evt);
             }
         });
@@ -803,10 +801,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_18.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_18.setText("18");
-        btn_mesa_18.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_18.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_18ActionPerformed(evt);
             }
         });
@@ -819,10 +815,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_17.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagem/mesa_teste.jpg"))); // NOI18N
         btn_mesa_17.setText("17");
-        btn_mesa_17.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_17.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_17ActionPerformed(evt);
             }
         });
@@ -831,10 +825,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_25.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_25.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_25.setText("25");
-        btn_mesa_25.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_25.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_25ActionPerformed(evt);
             }
         });
@@ -851,10 +843,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_33.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_33.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_33.setText("33");
-        btn_mesa_33.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_33.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_33ActionPerformed(evt);
             }
         });
@@ -863,10 +853,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_34.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_34.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_34.setText("34");
-        btn_mesa_34.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_34.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_34ActionPerformed(evt);
             }
         });
@@ -883,10 +871,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_35.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_35.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_35.setText("35");
-        btn_mesa_35.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_35.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_35ActionPerformed(evt);
             }
         });
@@ -899,10 +885,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_36.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_36.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_36.setText("36");
-        btn_mesa_36.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_36.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_36ActionPerformed(evt);
             }
         });
@@ -915,10 +899,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_37.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_37.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_37.setText("37");
-        btn_mesa_37.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_37.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_37ActionPerformed(evt);
             }
         });
@@ -931,10 +913,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_38.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_38.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_38.setText("38");
-        btn_mesa_38.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_38.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_38ActionPerformed(evt);
             }
         });
@@ -947,10 +927,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_39.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_39.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_39.setText("39");
-        btn_mesa_39.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_39.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_39ActionPerformed(evt);
             }
         });
@@ -963,10 +941,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         btn_mesa_40.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_mesa_40.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens_mesas/mesa_teste.jpg"))); // NOI18N
         btn_mesa_40.setText("40");
-        btn_mesa_40.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_mesa_40.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_mesa_40ActionPerformed(evt);
             }
         });
@@ -980,10 +956,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
 
         jButton17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LOGOUT - VERMELHO/Logout 32x32.png"))); // NOI18N
         jButton17.setText("SAIR");
-        jButton17.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton17.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton17ActionPerformed(evt);
             }
         });
@@ -1025,190 +999,190 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
 
     private void btn_mesa_1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_1ActionPerformed
 
-        new NovaGestaoPedidosVisao( btn_mesa_1.getText(), lugar, this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_1.getText(), lugar, this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_1ActionPerformed
 
     private void btn_mesa_2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_2ActionPerformed
         // TODO add your handling code here:
-        new NovaGestaoPedidosVisao( btn_mesa_2.getText(), lugar, this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_2.getText(), lugar, this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_2ActionPerformed
 
     private void btn_mesa_3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_3ActionPerformed
         // TODO add your handling code here:
-        new NovaGestaoPedidosVisao( btn_mesa_3.getText(), lugar, this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_3.getText(), lugar, this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_3ActionPerformed
 
     private void btn_mesa_4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_4ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_4.getText(), lugar, this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_4.getText(), lugar, this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_4ActionPerformed
 
     private void btn_mesa_10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_10ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_10.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_10.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_10ActionPerformed
 
     private void btn_mesa_5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_5ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_5.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_5.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_5ActionPerformed
 
     private void btn_mesa_6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_6ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_6.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_6.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_6ActionPerformed
 
     private void btn_mesa_7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_7ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_7.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_7.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_7ActionPerformed
 
     private void btn_mesa_9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_9ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_9.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_9.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_9ActionPerformed
 
     private void btn_mesa_8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_8ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_8.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_8.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_8ActionPerformed
 
     private void btn_mesa_11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_11ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_11.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_11.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_11ActionPerformed
 
     private void btn_mesa_12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_12ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_12.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_12.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_12ActionPerformed
 
     private void btn_mesa_13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_13ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_13.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_13.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_13ActionPerformed
 
     private void btn_mesa_14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_14ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_14.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_14.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_14ActionPerformed
 
     private void btn_mesa_16ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_16ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_16.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_16.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_16ActionPerformed
 
     private void btn_mesa_15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mesa_15ActionPerformed
         // TODO add your handling code here:
-        new NovaGestaoPedidosVisao( btn_mesa_15.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_15.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_15ActionPerformed
 
     private void btn_mesa_32ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_32ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_32ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_32.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_32.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_32ActionPerformed
 
     private void btn_mesa_24ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_24ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_24ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_24.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_24.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_24ActionPerformed
 
     private void btn_mesa_23ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_23ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_23ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_23.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_23.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_23ActionPerformed
 
     private void btn_mesa_31ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_31ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_31ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_31.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_31.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_31ActionPerformed
 
     private void btn_mesa_30ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_30ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_30ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_30.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_30.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_30ActionPerformed
 
     private void btn_mesa_22ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_22ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_22ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_22.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_22.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_22ActionPerformed
 
     private void btn_mesa_21ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_21ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_21ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_21.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_21.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_21ActionPerformed
 
     private void btn_mesa_29ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_29ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_29ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_29.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_29.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_29ActionPerformed
 
     private void btn_mesa_28ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_28ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_28ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_28.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_28.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_28ActionPerformed
 
     private void btn_mesa_20ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_20ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_20ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_20.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_20.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_20ActionPerformed
 
     private void btn_mesa_19ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_19ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_19ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_19.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_19.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_19ActionPerformed
 
     private void btn_mesa_27ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_27ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_27ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_27.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_27.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_27ActionPerformed
 
     private void btn_mesa_26ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_26ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_26ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_26.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_26.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_26ActionPerformed
 
     private void btn_mesa_18ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_18ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_18ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_18.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_18.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_18ActionPerformed
 
     private void btn_mesa_17ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_17ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_17ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_17.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_17.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_17ActionPerformed
 
     private void btn_mesa_25ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_25ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_25ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_25.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_25.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_25ActionPerformed
 
     private void btn_mesa_33ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_33ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_33ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_33.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_33.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_33ActionPerformed
 
     private void btn_mesa_34ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_34ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_34ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_34.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_34.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_34ActionPerformed
 
     private void btn_mesa_35ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_35ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_35ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_35.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_35.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_35ActionPerformed
 
     private void btn_mesa_36ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_36ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_36ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_36.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_36.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_36ActionPerformed
 
     private void btn_mesa_37ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_37ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_37ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_37.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_37.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_37ActionPerformed
 
     private void btn_mesa_38ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_38ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_38ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_38.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_38.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_38ActionPerformed
 
     private void btn_mesa_39ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_39ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_39ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_39.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_39.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_39ActionPerformed
 
     private void btn_mesa_40ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_mesa_40ActionPerformed
     {//GEN-HEADEREND:event_btn_mesa_40ActionPerformed
-        new NovaGestaoPedidosVisao( btn_mesa_40.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+        new NovaGestaoPedidosVisao(btn_mesa_40.getText(), "", this.idUser, id_armazem, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btn_mesa_40ActionPerformed
 
     private void cmbArmazemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbArmazemActionPerformed
@@ -1217,63 +1191,53 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
     }//GEN-LAST:event_cmbArmazemActionPerformed
 
     private void rbArmazem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbArmazem1ActionPerformed
-        try
-        {
+        try {
             configurar_armazens();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }//GEN-LAST:event_rbArmazem1ActionPerformed
 
     private void rbArmazemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbArmazemActionPerformed
-        try
-        {
+        try {
             configurar_armazens();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }//GEN-LAST:event_rbArmazemActionPerformed
 
+    private void rbEsconderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbEsconderActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rbEsconderActionPerformed
+
+    private void rbAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbAbrirActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rbAbrirActionPerformed
+
     /**
      * @param args the command line arguments
      */
-    public static void main( String args[] )
-    {
+    public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        try
-        {
-            for ( javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels() )
-            {
-                if ( "Windows".equals( info.getName() ) )
-                {
-                    javax.swing.UIManager.setLookAndFeel( info.getClassName() );
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Windows".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
-        }
-        catch ( ClassNotFoundException ex )
-        {
-            java.util.logging.Logger.getLogger( PrincipalPedidosVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }
-        catch ( InstantiationException ex )
-        {
-            java.util.logging.Logger.getLogger( PrincipalPedidosVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }
-        catch ( IllegalAccessException ex )
-        {
-            java.util.logging.Logger.getLogger( PrincipalPedidosVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }
-        catch ( javax.swing.UnsupportedLookAndFeelException ex )
-        {
-            java.util.logging.Logger.getLogger( PrincipalPedidosVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(PrincipalPedidosVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(PrincipalPedidosVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(PrincipalPedidosVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(PrincipalPedidosVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
         //</editor-fold>
@@ -1281,13 +1245,11 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater( new Runnable()
-        {
-            public void run()
-            {
-                new PrincipalPedidosVisao( 15, "", DVML.ARMAZEM_DEFAUTL, BDConexao.getInstancia() ).setVisible( true );
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new PrincipalPedidosVisao(15, "", DVML.ARMAZEM_DEFAUTL, BDConexao.getInstancia()).setVisible(true);
             }
-        } );
+        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1378,8 +1340,10 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
     public static javax.swing.JLabel lb_mesa_38;
     public static javax.swing.JLabel lb_mesa_39;
     public static javax.swing.JLabel lb_mesa_40;
+    private static javax.swing.JRadioButton rbAbrir;
     private static javax.swing.JRadioButton rbArmazem;
     private static javax.swing.JRadioButton rbArmazem1;
+    private static javax.swing.JRadioButton rbEsconder;
     public static javax.swing.JLabel status_mensagem_primaria;
     public static javax.swing.JLabel status_mensagem_secundaria;
     // End of variables declaration//GEN-END:variables
@@ -1401,348 +1365,317 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
 //        }
 //
 //    }
-    public static void pintar_mesas( JLabel label_mesa, String mesa )
-    {
+    public static void pintar_mesas(JLabel label_mesa, String mesa) {
 
-        PedidosController pedidosController = new PedidosController( conexao.getConnectionAtiva() );
-        ItemPedidosController itemPedidosController = new ItemPedidosController( conexao.getConnectionAtiva() );
+        PedidosController pedidosController = new PedidosController(conexao.getConnectionAtiva());
+        ItemPedidosController itemPedidosController = new ItemPedidosController(conexao.getConnectionAtiva());
 
         int lastPedidoByMesa = 0;
         long qtdItensByIdPedido = 0;
-        try
-        {
-            lastPedidoByMesa = pedidosController.getLastPedidoByMesa( mesa );
-            qtdItensByIdPedido = itemPedidosController.getQtdItensByIdPedido( lastPedidoByMesa );
-        }
-        catch ( Exception e )
-        {
+        try {
+            lastPedidoByMesa = pedidosController.getLastPedidoByMesa(mesa);
+            qtdItensByIdPedido = itemPedidosController.getQtdItensByIdPedido(lastPedidoByMesa);
+        } catch (Exception e) {
         }
 
         //0 - oucupado - amarelo, 1 - livre - verde 
-        try
-        {
+        try {
 
             long numero_lugares_oucupado = qtdItensByIdPedido;
 
             //Mesa Oucupada
-            if ( numero_lugares_oucupado > 0 )
-            {
-                label_mesa.setBackground( new Color( 255, 153, 51 ) );
-                label_mesa.setOpaque( true );
+            if (numero_lugares_oucupado > 0) {
+                label_mesa.setBackground(new Color(255, 153, 51));
+                label_mesa.setOpaque(true);
             }
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
         }
 
     }
 
-    public static void mesas_livres( JLabel label_mesa )
-    {
-        label_mesa.setBackground( new Color( 51, 153, 0 ) );
-        label_mesa.setOpaque( true );
+    public static void mesas_livres(JLabel label_mesa) {
+        label_mesa.setBackground(new Color(51, 153, 0));
+        label_mesa.setOpaque(true);
     }
 
-    public static void procedimento_mesas_livre()
-    {
+    public static void procedimento_mesas_livre() {
 
-        lb_mesa_01.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_01.setOpaque( true );
-        pintar_mesas( lb_mesa_01, "MESA 1" );
+        lb_mesa_01.setBackground(new Color(51, 153, 0));
+        lb_mesa_01.setOpaque(true);
+        pintar_mesas(lb_mesa_01, "MESA 1");
 
-        lb_mesa_02.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_02.setOpaque( true );
-        pintar_mesas( lb_mesa_02, "MESA 2" );
+        lb_mesa_02.setBackground(new Color(51, 153, 0));
+        lb_mesa_02.setOpaque(true);
+        pintar_mesas(lb_mesa_02, "MESA 2");
 
-        lb_mesa_03.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_03.setOpaque( true );
-        pintar_mesas( lb_mesa_03, "MESA 3" );
+        lb_mesa_03.setBackground(new Color(51, 153, 0));
+        lb_mesa_03.setOpaque(true);
+        pintar_mesas(lb_mesa_03, "MESA 3");
 
-        lb_mesa_04.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_04.setOpaque( true );
-        pintar_mesas( lb_mesa_04, "MESA 4" );
+        lb_mesa_04.setBackground(new Color(51, 153, 0));
+        lb_mesa_04.setOpaque(true);
+        pintar_mesas(lb_mesa_04, "MESA 4");
 
-        lb_mesa_05.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_05.setOpaque( true );
-        pintar_mesas( lb_mesa_05, "MESA 5" );
+        lb_mesa_05.setBackground(new Color(51, 153, 0));
+        lb_mesa_05.setOpaque(true);
+        pintar_mesas(lb_mesa_05, "MESA 5");
 
-        lb_mesa_06.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_06.setOpaque( true );
-        pintar_mesas( lb_mesa_06, "MESA 6" );
+        lb_mesa_06.setBackground(new Color(51, 153, 0));
+        lb_mesa_06.setOpaque(true);
+        pintar_mesas(lb_mesa_06, "MESA 6");
 
-        lb_mesa_07.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_07.setOpaque( true );
-        pintar_mesas( lb_mesa_07, "MESA 7" );
+        lb_mesa_07.setBackground(new Color(51, 153, 0));
+        lb_mesa_07.setOpaque(true);
+        pintar_mesas(lb_mesa_07, "MESA 7");
 
-        lb_mesa_08.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_08.setOpaque( true );
-        pintar_mesas( lb_mesa_08, "MESA 8" );
+        lb_mesa_08.setBackground(new Color(51, 153, 0));
+        lb_mesa_08.setOpaque(true);
+        pintar_mesas(lb_mesa_08, "MESA 8");
 
-        lb_mesa_09.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_09.setOpaque( true );
-        pintar_mesas( lb_mesa_09, "MESA 9" );
+        lb_mesa_09.setBackground(new Color(51, 153, 0));
+        lb_mesa_09.setOpaque(true);
+        pintar_mesas(lb_mesa_09, "MESA 9");
 
-        lb_mesa_10.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_10.setOpaque( true );
-        pintar_mesas( lb_mesa_10, "MESA 10" );
+        lb_mesa_10.setBackground(new Color(51, 153, 0));
+        lb_mesa_10.setOpaque(true);
+        pintar_mesas(lb_mesa_10, "MESA 10");
 
-        lb_mesa_11.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_11.setOpaque( true );
-        pintar_mesas( lb_mesa_11, "MESA 11" );
+        lb_mesa_11.setBackground(new Color(51, 153, 0));
+        lb_mesa_11.setOpaque(true);
+        pintar_mesas(lb_mesa_11, "MESA 11");
 
-        lb_mesa_12.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_12.setOpaque( true );
-        pintar_mesas( lb_mesa_12, "MESA 12" );
+        lb_mesa_12.setBackground(new Color(51, 153, 0));
+        lb_mesa_12.setOpaque(true);
+        pintar_mesas(lb_mesa_12, "MESA 12");
 
-        lb_mesa_13.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_13.setOpaque( true );
-        pintar_mesas( lb_mesa_13, "MESA 13" );
+        lb_mesa_13.setBackground(new Color(51, 153, 0));
+        lb_mesa_13.setOpaque(true);
+        pintar_mesas(lb_mesa_13, "MESA 13");
 
-        lb_mesa_14.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_14.setOpaque( true );
-        pintar_mesas( lb_mesa_14, "MESA 14" );
+        lb_mesa_14.setBackground(new Color(51, 153, 0));
+        lb_mesa_14.setOpaque(true);
+        pintar_mesas(lb_mesa_14, "MESA 14");
 
-        lb_mesa_15.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_15.setOpaque( true );
-        pintar_mesas( lb_mesa_15, "MESA 15" );
+        lb_mesa_15.setBackground(new Color(51, 153, 0));
+        lb_mesa_15.setOpaque(true);
+        pintar_mesas(lb_mesa_15, "MESA 15");
 
-        lb_mesa_16.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_16.setOpaque( true );
-        pintar_mesas( lb_mesa_16, "MESA 16" );
+        lb_mesa_16.setBackground(new Color(51, 153, 0));
+        lb_mesa_16.setOpaque(true);
+        pintar_mesas(lb_mesa_16, "MESA 16");
 
-        lb_mesa_17.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_17.setOpaque( true );
-        pintar_mesas( lb_mesa_17, "MESA 17" );
+        lb_mesa_17.setBackground(new Color(51, 153, 0));
+        lb_mesa_17.setOpaque(true);
+        pintar_mesas(lb_mesa_17, "MESA 17");
 
-        lb_mesa_18.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_18.setOpaque( true );
-        pintar_mesas( lb_mesa_18, "MESA 18" );
+        lb_mesa_18.setBackground(new Color(51, 153, 0));
+        lb_mesa_18.setOpaque(true);
+        pintar_mesas(lb_mesa_18, "MESA 18");
 
-        lb_mesa_19.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_19.setOpaque( true );
-        pintar_mesas( lb_mesa_19, "MESA 19" );
+        lb_mesa_19.setBackground(new Color(51, 153, 0));
+        lb_mesa_19.setOpaque(true);
+        pintar_mesas(lb_mesa_19, "MESA 19");
 
-        lb_mesa_20.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_20.setOpaque( true );
-        pintar_mesas( lb_mesa_20, "MESA 20" );
+        lb_mesa_20.setBackground(new Color(51, 153, 0));
+        lb_mesa_20.setOpaque(true);
+        pintar_mesas(lb_mesa_20, "MESA 20");
 
-        lb_mesa_21.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_21.setOpaque( true );
-        pintar_mesas( lb_mesa_21, "MESA 21" );
+        lb_mesa_21.setBackground(new Color(51, 153, 0));
+        lb_mesa_21.setOpaque(true);
+        pintar_mesas(lb_mesa_21, "MESA 21");
 
-        lb_mesa_22.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_22.setOpaque( true );
-        pintar_mesas( lb_mesa_22, "MESA 22" );
+        lb_mesa_22.setBackground(new Color(51, 153, 0));
+        lb_mesa_22.setOpaque(true);
+        pintar_mesas(lb_mesa_22, "MESA 22");
 
-        lb_mesa_23.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_23.setOpaque( true );
-        pintar_mesas( lb_mesa_23, "MESA 23" );
+        lb_mesa_23.setBackground(new Color(51, 153, 0));
+        lb_mesa_23.setOpaque(true);
+        pintar_mesas(lb_mesa_23, "MESA 23");
 
-        lb_mesa_24.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_24.setOpaque( true );
-        pintar_mesas( lb_mesa_24, "MESA 24" );
+        lb_mesa_24.setBackground(new Color(51, 153, 0));
+        lb_mesa_24.setOpaque(true);
+        pintar_mesas(lb_mesa_24, "MESA 24");
 
-        lb_mesa_25.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_25.setOpaque( true );
-        pintar_mesas( lb_mesa_25, "MESA 25" );
+        lb_mesa_25.setBackground(new Color(51, 153, 0));
+        lb_mesa_25.setOpaque(true);
+        pintar_mesas(lb_mesa_25, "MESA 25");
 
-        lb_mesa_26.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_26.setOpaque( true );
-        pintar_mesas( lb_mesa_26, "MESA 26" );
+        lb_mesa_26.setBackground(new Color(51, 153, 0));
+        lb_mesa_26.setOpaque(true);
+        pintar_mesas(lb_mesa_26, "MESA 26");
 
-        lb_mesa_27.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_27.setOpaque( true );
-        pintar_mesas( lb_mesa_27, "MESA 27" );
+        lb_mesa_27.setBackground(new Color(51, 153, 0));
+        lb_mesa_27.setOpaque(true);
+        pintar_mesas(lb_mesa_27, "MESA 27");
 
-        lb_mesa_28.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_28.setOpaque( true );
-        pintar_mesas( lb_mesa_28, "MESA 28" );
+        lb_mesa_28.setBackground(new Color(51, 153, 0));
+        lb_mesa_28.setOpaque(true);
+        pintar_mesas(lb_mesa_28, "MESA 28");
 
-        lb_mesa_29.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_29.setOpaque( true );
-        pintar_mesas( lb_mesa_29, "MESA 29" );
+        lb_mesa_29.setBackground(new Color(51, 153, 0));
+        lb_mesa_29.setOpaque(true);
+        pintar_mesas(lb_mesa_29, "MESA 29");
 
-        lb_mesa_30.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_30.setOpaque( true );
-        pintar_mesas( lb_mesa_30, "MESA 30" );
+        lb_mesa_30.setBackground(new Color(51, 153, 0));
+        lb_mesa_30.setOpaque(true);
+        pintar_mesas(lb_mesa_30, "MESA 30");
 
-        lb_mesa_31.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_31.setOpaque( true );
-        pintar_mesas( lb_mesa_31, "MESA 31" );
+        lb_mesa_31.setBackground(new Color(51, 153, 0));
+        lb_mesa_31.setOpaque(true);
+        pintar_mesas(lb_mesa_31, "MESA 31");
 
-        lb_mesa_32.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_32.setOpaque( true );
-        pintar_mesas( lb_mesa_32, "MESA 32" );
+        lb_mesa_32.setBackground(new Color(51, 153, 0));
+        lb_mesa_32.setOpaque(true);
+        pintar_mesas(lb_mesa_32, "MESA 32");
 
-        lb_mesa_33.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_33.setOpaque( true );
-        pintar_mesas( lb_mesa_33, "MESA 33" );
+        lb_mesa_33.setBackground(new Color(51, 153, 0));
+        lb_mesa_33.setOpaque(true);
+        pintar_mesas(lb_mesa_33, "MESA 33");
 
-        lb_mesa_34.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_34.setOpaque( true );
-        pintar_mesas( lb_mesa_34, "MESA 34" );
+        lb_mesa_34.setBackground(new Color(51, 153, 0));
+        lb_mesa_34.setOpaque(true);
+        pintar_mesas(lb_mesa_34, "MESA 34");
 
-        lb_mesa_35.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_35.setOpaque( true );
-        pintar_mesas( lb_mesa_35, "MESA 35" );
+        lb_mesa_35.setBackground(new Color(51, 153, 0));
+        lb_mesa_35.setOpaque(true);
+        pintar_mesas(lb_mesa_35, "MESA 35");
 
-        lb_mesa_36.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_36.setOpaque( true );
-        pintar_mesas( lb_mesa_36, "MESA 36" );
+        lb_mesa_36.setBackground(new Color(51, 153, 0));
+        lb_mesa_36.setOpaque(true);
+        pintar_mesas(lb_mesa_36, "MESA 36");
 
-        lb_mesa_37.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_37.setOpaque( true );
-        pintar_mesas( lb_mesa_37, "MESA 37" );
+        lb_mesa_37.setBackground(new Color(51, 153, 0));
+        lb_mesa_37.setOpaque(true);
+        pintar_mesas(lb_mesa_37, "MESA 37");
 
-        lb_mesa_38.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_38.setOpaque( true );
-        pintar_mesas( lb_mesa_38, "MESA 38" );
+        lb_mesa_38.setBackground(new Color(51, 153, 0));
+        lb_mesa_38.setOpaque(true);
+        pintar_mesas(lb_mesa_38, "MESA 38");
 
-        lb_mesa_39.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_39.setOpaque( true );
-        pintar_mesas( lb_mesa_39, "MESA 39" );
+        lb_mesa_39.setBackground(new Color(51, 153, 0));
+        lb_mesa_39.setOpaque(true);
+        pintar_mesas(lb_mesa_39, "MESA 39");
 
-        lb_mesa_40.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_40.setOpaque( true );
-        pintar_mesas( lb_mesa_40, "MESA 40" );
+        lb_mesa_40.setBackground(new Color(51, 153, 0));
+        lb_mesa_40.setOpaque(true);
+        pintar_mesas(lb_mesa_40, "MESA 40");
     }
 
-    private void abertura_primeiro_turno()
-    {
+    private void abertura_primeiro_turno() {
 
         this.turno = new Turno();
-        this.turno.setData( new Date() );
-        this.turno.setHoraAbertura( new Date() );
-        this.turno.setHoraFecho( null );
-        this.turno.setTurno( DVML.PRIMEIRO_TURNO );
-        this.turno.setFkUsuario( usuarioDao.findTbUsuario( this.idUser ) );
+        this.turno.setData(new Date());
+        this.turno.setHoraAbertura(new Date());
+        this.turno.setHoraFecho(null);
+        this.turno.setTurno(DVML.PRIMEIRO_TURNO);
+        this.turno.setFkUsuario(usuarioDao.findTbUsuario(this.idUser));
 
-        try
-        {
-            turnoDao.create( this.turno );
+        try {
+            turnoDao.create(this.turno);
             controlo_turno();
             procedimento_abrir_mesas();
-            JOptionPane.showMessageDialog( null, "Abertura efectuada com sucesso!..." );
-        }
-        catch ( Exception e )
-        {
+            JOptionPane.showMessageDialog(null, "Abertura efectuada com sucesso!...");
+        } catch (Exception e) {
 
-            JOptionPane.showMessageDialog( null, "Falha na abertura do 1º turno!...", "ERRO", JOptionPane.ERROR_MESSAGE );
+            JOptionPane.showMessageDialog(null, "Falha na abertura do 1º turno!...", "ERRO", JOptionPane.ERROR_MESSAGE);
         }
 
     }
 
-    private void abertura_segundo_turno()
-    {
+    private void abertura_segundo_turno() {
 
-        if ( turnoDao.existe_fecho_by_data( new Date(), DVML.PRIMEIRO_TURNO ) )
-        {
+        if (turnoDao.existe_fecho_by_data(new Date(), DVML.PRIMEIRO_TURNO)) {
 
             this.turno = new Turno();
-            this.turno.setData( new Date() );
-            this.turno.setHoraAbertura( new Date() );
-            this.turno.setHoraFecho( null );
-            this.turno.setTurno( DVML.SEGUNDO_TURNO );
-            this.turno.setFkUsuario( usuarioDao.findTbUsuario( this.idUser ) );
+            this.turno.setData(new Date());
+            this.turno.setHoraAbertura(new Date());
+            this.turno.setHoraFecho(null);
+            this.turno.setTurno(DVML.SEGUNDO_TURNO);
+            this.turno.setFkUsuario(usuarioDao.findTbUsuario(this.idUser));
 
-            try
-            {
-                turnoDao.create( this.turno );
+            try {
+                turnoDao.create(this.turno);
                 controlo_turno();
                 procedimento_abrir_mesas();
-                JOptionPane.showMessageDialog( null, "Abertura efectuada com sucesso!..." );
-            }
-            catch ( Exception e )
-            {
-                JOptionPane.showMessageDialog( null, "Falha na abertura do 2º turno!...", "ERRO", JOptionPane.ERROR_MESSAGE );
+                JOptionPane.showMessageDialog(null, "Abertura efectuada com sucesso!...");
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Falha na abertura do 2º turno!...", "ERRO", JOptionPane.ERROR_MESSAGE);
             }
 
-        }
-        else
-        {
-            JOptionPane.showMessageDialog( null, "Impossivel abrir o 2º turno sem fechar o 1º turno!...", "ERRO", JOptionPane.ERROR_MESSAGE );
+        } else {
+            JOptionPane.showMessageDialog(null, "Impossivel abrir o 2º turno sem fechar o 1º turno!...", "ERRO", JOptionPane.ERROR_MESSAGE);
         }
 
     }
 
-    private void controlo_turno()
-    {
+    private void controlo_turno() {
 
     }
 
-    private void enable_mesas( boolean status )
-    {
+    private void enable_mesas(boolean status) {
 
-        btn_mesa_1.setEnabled( status );
-        btn_mesa_2.setEnabled( status );
-        btn_mesa_3.setEnabled( status );
-        btn_mesa_4.setEnabled( status );
-        btn_mesa_5.setEnabled( status );
-        btn_mesa_6.setEnabled( status );
-        btn_mesa_7.setEnabled( status );
-        btn_mesa_8.setEnabled( status );
-        btn_mesa_9.setEnabled( status );
-        btn_mesa_10.setEnabled( status );
-        btn_mesa_11.setEnabled( status );
-        btn_mesa_12.setEnabled( status );
-        btn_mesa_13.setEnabled( status );
-        btn_mesa_14.setEnabled( status );
-        btn_mesa_15.setEnabled( status );
-        btn_mesa_16.setEnabled( status );
-        btn_mesa_17.setEnabled( status );
-        btn_mesa_18.setEnabled( status );
-        btn_mesa_19.setEnabled( status );
-        btn_mesa_20.setEnabled( status );
-        btn_mesa_21.setEnabled( status );
-        btn_mesa_22.setEnabled( status );
-        btn_mesa_23.setEnabled( status );
-        btn_mesa_24.setEnabled( status );
-        btn_mesa_25.setEnabled( status );
-        btn_mesa_26.setEnabled( status );
-        btn_mesa_27.setEnabled( status );
-        btn_mesa_28.setEnabled( status );
-        btn_mesa_29.setEnabled( status );
-        btn_mesa_30.setEnabled( status );
-        btn_mesa_31.setEnabled( status );
-        btn_mesa_32.setEnabled( status );
-        btn_mesa_33.setEnabled( status );
-        btn_mesa_34.setEnabled( status );
-        btn_mesa_35.setEnabled( status );
-        btn_mesa_36.setEnabled( status );
-        btn_mesa_37.setEnabled( status );
-        btn_mesa_38.setEnabled( status );
-        btn_mesa_39.setEnabled( status );
-        btn_mesa_40.setEnabled( status );
+        btn_mesa_1.setEnabled(status);
+        btn_mesa_2.setEnabled(status);
+        btn_mesa_3.setEnabled(status);
+        btn_mesa_4.setEnabled(status);
+        btn_mesa_5.setEnabled(status);
+        btn_mesa_6.setEnabled(status);
+        btn_mesa_7.setEnabled(status);
+        btn_mesa_8.setEnabled(status);
+        btn_mesa_9.setEnabled(status);
+        btn_mesa_10.setEnabled(status);
+        btn_mesa_11.setEnabled(status);
+        btn_mesa_12.setEnabled(status);
+        btn_mesa_13.setEnabled(status);
+        btn_mesa_14.setEnabled(status);
+        btn_mesa_15.setEnabled(status);
+        btn_mesa_16.setEnabled(status);
+        btn_mesa_17.setEnabled(status);
+        btn_mesa_18.setEnabled(status);
+        btn_mesa_19.setEnabled(status);
+        btn_mesa_20.setEnabled(status);
+        btn_mesa_21.setEnabled(status);
+        btn_mesa_22.setEnabled(status);
+        btn_mesa_23.setEnabled(status);
+        btn_mesa_24.setEnabled(status);
+        btn_mesa_25.setEnabled(status);
+        btn_mesa_26.setEnabled(status);
+        btn_mesa_27.setEnabled(status);
+        btn_mesa_28.setEnabled(status);
+        btn_mesa_29.setEnabled(status);
+        btn_mesa_30.setEnabled(status);
+        btn_mesa_31.setEnabled(status);
+        btn_mesa_32.setEnabled(status);
+        btn_mesa_33.setEnabled(status);
+        btn_mesa_34.setEnabled(status);
+        btn_mesa_35.setEnabled(status);
+        btn_mesa_36.setEnabled(status);
+        btn_mesa_37.setEnabled(status);
+        btn_mesa_38.setEnabled(status);
+        btn_mesa_39.setEnabled(status);
+        btn_mesa_40.setEnabled(status);
 //        btn_vendas_pontuais.setEnabled(status);
 
     }
 
-    private void procedimento_abrir_mesas()
-    {
+    private void procedimento_abrir_mesas() {
 
-        if ( turnoDao.existe_abertura_by_data( new Date(), DVML.PRIMEIRO_TURNO ) && !turnoDao.existe_fecho_by_data( new Date(), DVML.PRIMEIRO_TURNO ) )
-        {
-            enable_mesas( true );
-        }
-        else if ( turnoDao.existe_fecho_by_data( new Date(), DVML.PRIMEIRO_TURNO )
-                && turnoDao.existe_abertura_by_data( new Date(), DVML.SEGUNDO_TURNO )
-                && !turnoDao.existe_fecho_by_data( new Date(), DVML.SEGUNDO_TURNO ) )
-        {
-            enable_mesas( true );
-        }
-        else
-        {
-            enable_mesas( false );
+        if (turnoDao.existe_abertura_by_data(new Date(), DVML.PRIMEIRO_TURNO) && !turnoDao.existe_fecho_by_data(new Date(), DVML.PRIMEIRO_TURNO)) {
+            enable_mesas(true);
+        } else if (turnoDao.existe_fecho_by_data(new Date(), DVML.PRIMEIRO_TURNO)
+                && turnoDao.existe_abertura_by_data(new Date(), DVML.SEGUNDO_TURNO)
+                && !turnoDao.existe_fecho_by_data(new Date(), DVML.SEGUNDO_TURNO)) {
+            enable_mesas(true);
+        } else {
+            enable_mesas(false);
         }
 
     }
 
     @Override
-    public void run()
-    {
+    public void run() {
 
-        while ( true )
-        {
+        while (true) {
 
 //            try {
 //                Thread.sleep(6000);
@@ -1755,26 +1688,23 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
 
     }
 
-    private void mostrar_armazem()
-    {
-        TbArmazem armazem = armazemDao.findTbArmazem( id_armazem );
+    private void mostrar_armazem() {
+        TbArmazem armazem = armazemDao.findTbArmazem(id_armazem);
 
-        if ( !Objects.isNull( armazem ) )
-        {
-            cmbArmazem.setSelectedItem( armazem.getDesignacao() );
+        if (!Objects.isNull(armazem)) {
+            cmbArmazem.setSelectedItem(armazem.getDesignacao());
         }
     }
 
-    public static void fazerBackupAgora()
-    {
-        String data = new SimpleDateFormat( YYYYMMDD_HHMMSS ).format( new Date() );
+    public static void fazerBackupAgora() {
+        String data = new SimpleDateFormat(YYYYMMDD_HHMMSS).format(new Date());
 //        String rodar_camando = "cmd /c mysqldump -uroot -pDoV90x?# --dump-date --triggers --tables --routines --skip-quote-names --compact --skip-opt --skip-set-charset --hex-blob kitanda_db > \"..\\BD_BACKUP\\_database_backup_" + data + ".sql\"";
         String rodar_camando = "cmd /c mysqldump --single-transaction -uroot -pDoV90x?# --dump-date --triggers --add-drop-database --routines --skip-quote-names --skip-set-charset --add-locks --disable-keys --databases kitanda_db > \"..\\BD_BACKUP\\_database_backup_" + data + ".sql\"";
 //String rodar_camando = "cmd /c mysqldump --single-transaction=TRUE -uroot -pDoV90x?# --dump-date --triggers --add-drop-database  --routines --skip-quote-names --compact --skip-opt --skip-set-charset --hex-blob --add-locks --disable-keys --lock-tables  --databases kitanda_db > \"..\\BD_BACKUP\\_database_backup_" + data + ".sql\"";
-        Process rodarComandoWindows = rodarComandoWindows( rodar_camando, true );
+        Process rodarComandoWindows = rodarComandoWindows(rodar_camando, true);
 
 //        JOptionPane.showMessageDialog ( null, "Backup realizado com sucesso! ", "Notificação", JOptionPane.INFORMATION_MESSAGE );
-        System.err.println( "Backup realizado com sucesso! " );
+        System.err.println("Backup realizado com sucesso! ");
 
     }
 
