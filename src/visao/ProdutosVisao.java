@@ -4,7 +4,6 @@
  */
 package visao;
 
-import java.sql.Connection;
 import controller.ProdutoController;
 import comercial.controller.*;
 import dao.DocumentoDao;
@@ -42,8 +41,6 @@ import static util.MetodosUtil.normalizarDesignacao;
 import static util.MetodosUtil.rodarComandoWindows;
 import util.PictureChooser;
 import util.TextFieldUtils;
-import static visao.ProdutosPratosVisao.txtCodigoBarra;
-import static visao.ProdutosPratosVisao.txtCodigoManual;
 
 public class ProdutosVisao extends javax.swing.JFrame
 {

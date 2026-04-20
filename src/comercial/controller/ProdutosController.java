@@ -47,7 +47,7 @@ public class ProdutosController implements EntidadeFactory
     public boolean salvar( Object object )
     {
 
-        TbProduto produto = (TbProduto) object;
+        TbProduto produto = ( TbProduto ) object;
         PreparedStatement stmt;
         System.out.println( "UNIDADE CONTROLLER: " + produto.getCodUnidade() );
         String INSERT = "INSERT INTO tb_produto( "
@@ -132,126 +132,139 @@ public class ProdutosController implements EntidadeFactory
         return 0;
 
     }
-    
-public static List<TbProduto> buscarProdutosComStock(LocalDate inicio, LocalDate fim) throws Exception {
 
-    List<TbProduto> lista = new ArrayList<>();
+    public static List<TbProduto> buscarProdutosComStock( LocalDate inicio, LocalDate fim ) throws Exception
+    {
 
-    String sql = "SELECT DISTINCT p.* " +
-                 "FROM tb_produto p " +
-                 "INNER JOIN tb_stock s ON s.cod_produto_codigo = p.codigo " +
-                 "WHERE s.dataEntrada BETWEEN ? AND ?";
+        List<TbProduto> lista = new ArrayList<>();
 
-    try (Connection conn = BDConexao.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+        String sql = "SELECT DISTINCT p.* "
+                + "FROM tb_produto p "
+                + "INNER JOIN tb_stock s ON s.cod_produto_codigo = p.codigo "
+                + "WHERE s.dataEntrada BETWEEN ? AND ?";
 
-        ps.setTimestamp(1, java.sql.Timestamp.valueOf(inicio.atStartOfDay()));
-        ps.setTimestamp(2, java.sql.Timestamp.valueOf(fim.atTime(23, 59, 59)));
+        try ( Connection conn = BDConexao.getConnection(); PreparedStatement ps = conn.prepareStatement( sql ) )
+        {
 
-        try (ResultSet rs = ps.executeQuery()) {
+            ps.setTimestamp( 1, java.sql.Timestamp.valueOf( inicio.atStartOfDay() ) );
+            ps.setTimestamp( 2, java.sql.Timestamp.valueOf( fim.atTime( 23, 59, 59 ) ) );
 
-            while (rs.next()) {
-                TbProduto p = new TbProduto();
+            try ( ResultSet rs = ps.executeQuery() )
+            {
 
-                p.setCodigo(rs.getInt("codigo"));
-                p.setDesignacao(rs.getString("designacao"));
-                p.setPreco(rs.getBigDecimal("preco"));
-                p.setCodBarra(rs.getString("codBarra"));
-                p.setStatus(rs.getString("status"));
-                p.setStocavel(rs.getString("stocavel"));
-                p.setPrecoVenda(rs.getDouble("preco_venda"));
-                p.setPercentagemDesconto(rs.getDouble("percentagem_desconto"));
-                p.setQuantidadeDesconto(rs.getInt("quantidade_desconto"));
-                p.setCodigoManual(rs.getString("codigo_manual"));
-                p.setCozinha(rs.getString("cozinha"));
-                p.setStatusIva(rs.getString("status_iva"));
-                p.setUnidadeCompra(rs.getDouble("unidade_compra"));
+                while ( rs.next() )
+                {
+                    TbProduto p = new TbProduto();
 
-                // Datas
-                p.setDataEntrada(rs.getDate("data_entrada"));
-                p.setDataFabrico(rs.getDate("data_fabrico"));
-                p.setDataExpiracao(rs.getDate("data_expiracao"));
+                    p.setCodigo( rs.getInt( "codigo" ) );
+                    p.setDesignacao( rs.getString( "designacao" ) );
+                    p.setPreco( rs.getBigDecimal( "preco" ) );
+                    p.setCodBarra( rs.getString( "codBarra" ) );
+                    p.setStatus( rs.getString( "status" ) );
+                    p.setStocavel( rs.getString( "stocavel" ) );
+                    p.setPrecoVenda( rs.getDouble( "preco_venda" ) );
+                    p.setPercentagemDesconto( rs.getDouble( "percentagem_desconto" ) );
+                    p.setQuantidadeDesconto( rs.getInt( "quantidade_desconto" ) );
+                    p.setCodigoManual( rs.getString( "codigo_manual" ) );
+                    p.setCozinha( rs.getString( "cozinha" ) );
+                    p.setStatusIva( rs.getString( "status_iva" ) );
+                    p.setUnidadeCompra( rs.getDouble( "unidade_compra" ) );
 
-                lista.add(p);
+                    // Datas
+                    p.setDataEntrada( rs.getDate( "data_entrada" ) );
+                    p.setDataFabrico( rs.getDate( "data_fabrico" ) );
+                    p.setDataExpiracao( rs.getDate( "data_expiracao" ) );
+
+                    lista.add( p );
+                }
             }
+
+        }
+        catch ( Exception e )
+        {
+            throw new Exception( "Erro ao buscar produtos com stock: " + e.getMessage(), e );
         }
 
-    } catch (Exception e) {
-        throw new Exception("Erro ao buscar produtos com stock: " + e.getMessage(), e);
+        return lista;
     }
 
-    return lista;
-}
+    public static List<TbProduto> buscarProdutosComStockSaft( LocalDate inicio, LocalDate fim ) throws Exception
+    {
 
-public static List<TbProduto> buscarProdutosComStockSaft(LocalDate inicio, LocalDate fim) throws Exception {
+        List<TbProduto> lista = new ArrayList<>();
 
-    List<TbProduto> lista = new ArrayList<>();
+        String sql = "SELECT p.codigo, p.designacao, p.stocavel, "
+                + "s.quantidade_existente, s.preco_venda "
+                + "FROM tb_produto p "
+                + "INNER JOIN tb_stock s ON s.cod_produto_codigo = p.codigo "
+                + "WHERE s.dataEntrada BETWEEN ? AND ?";
 
-    String sql = "SELECT p.codigo, p.designacao, p.stocavel, " +
-                 "s.quantidade_existente, s.preco_venda " +
-                 "FROM tb_produto p " +
-                 "INNER JOIN tb_stock s ON s.cod_produto_codigo = p.codigo " +
-                 "WHERE s.dataEntrada BETWEEN ? AND ?";
+        try ( Connection conn = BDConexao.getConnection(); PreparedStatement ps = conn.prepareStatement( sql ) )
+        {
 
-    try (Connection conn = BDConexao.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setTimestamp( 1, java.sql.Timestamp.valueOf( inicio.atStartOfDay() ) );
+            ps.setTimestamp( 2, java.sql.Timestamp.valueOf( fim.atTime( 23, 59, 59 ) ) );
 
-        ps.setTimestamp(1, java.sql.Timestamp.valueOf(inicio.atStartOfDay()));
-        ps.setTimestamp(2, java.sql.Timestamp.valueOf(fim.atTime(23, 59, 59)));
+            try ( ResultSet rs = ps.executeQuery() )
+            {
 
-        try (ResultSet rs = ps.executeQuery()) {
+                while ( rs.next() )
+                {
 
-            while (rs.next()) {
+                    TbProduto p = new TbProduto();
+                    p.setCodigo( rs.getInt( "codigo" ) );
+                    p.setDesignacao( rs.getString( "designacao" ) );
+                    p.setStocavel( rs.getString( "stocavel" ) );
 
-                TbProduto p = new TbProduto();
-                p.setCodigo(rs.getInt("codigo"));
-                p.setDesignacao(rs.getString("designacao"));
-                p.setStocavel(rs.getString("stocavel"));
+                    // 🔥 CRIAR STOCK MANUALMENTE
+                    TbStock stock = new TbStock();
+                    stock.setQuantidadeExistente( rs.getDouble( "quantidade_existente" ) );
+                    stock.setPrecoVenda( rs.getBigDecimal( "preco_venda" ) );
 
-                // 🔥 CRIAR STOCK MANUALMENTE
-                TbStock stock = new TbStock();
-                stock.setQuantidadeExistente(rs.getDouble("quantidade_existente"));
-                stock.setPrecoVenda(rs.getBigDecimal("preco_venda"));
+                    // 🔥 ASSOCIAR AO PRODUTO
+                    List<TbStock> listaStock = new ArrayList<>();
+                    listaStock.add( stock );
 
-                // 🔥 ASSOCIAR AO PRODUTO
-                List<TbStock> listaStock = new ArrayList<>();
-                listaStock.add(stock);
+                    p.setTbStockList( listaStock );
 
-                p.setTbStockList(listaStock);
-
-                lista.add(p);
+                    lista.add( p );
+                }
             }
+
+        }
+        catch ( Exception e )
+        {
+            throw new Exception( "Erro ao buscar produtos com stock: " + e.getMessage(), e );
         }
 
-    } catch (Exception e) {
-        throw new Exception("Erro ao buscar produtos com stock: " + e.getMessage(), e);
+        return lista;
     }
 
-    return lista;
-}
+    public boolean desactivar( BDConexao conexao, TbProduto produto )
+    {
+        String sql = "UPDATE tb_produto SET status = ? WHERE codigo = ?";
 
-public boolean desactivar(BDConexao conexao, TbProduto produto) {
-    String sql = "UPDATE tb_produto SET status = ? WHERE codigo = ?";
+        try ( PreparedStatement stmt = conexao.getConnectionAtiva().prepareStatement( sql ) )
+        {
+            stmt.setString( 1, produto.getStatus() );
+            stmt.setInt( 2, produto.getCodigo() );
+            int linhas = stmt.executeUpdate();
 
-    try (PreparedStatement stmt = conexao.getConnectionAtiva().prepareStatement(sql)) {
-        stmt.setString(1, produto.getStatus());
-        stmt.setInt(2, produto.getCodigo());
-        int linhas = stmt.executeUpdate();
+            return linhas > 0; // true se pelo menos 1 linha foi atualizada
+        }
+        catch ( SQLException e )
+        {
+            System.err.println( "[ERRO] Falha ao desactivar produto: " + e.getMessage() );
+            e.printStackTrace();
+        }
 
-        return linhas > 0; // true se pelo menos 1 linha foi atualizada
-    } catch (SQLException e) {
-        System.err.println("[ERRO] Falha ao desactivar produto: " + e.getMessage());
-        e.printStackTrace();
+        return false;
     }
-
-    return false;
-}
-
 
     @Override
     public boolean actualizar( Object object )
     {
-        TbProduto produto = (TbProduto) object;
+        TbProduto produto = ( TbProduto ) object;
         PreparedStatement stmt;
         String UPDATE = "UPDATE tb_produto SET "
                 + " designacao = ?, "
@@ -484,6 +497,59 @@ public boolean desactivar(BDConexao conexao, TbProduto produto) {
         return lista_produtos;
     }
 
+    public Vector<TbProduto> getProdutosByTipoProduto( List<Integer> idsTipoProduto )
+    {
+        System.out.println( "D:SERVICO" );
+        System.out.println( "IDS_TIPO_PRODUTO: " + idsTipoProduto );
+
+        Vector<TbProduto> lista_produtos = new Vector<>();
+
+        if ( idsTipoProduto == null || idsTipoProduto.isEmpty() )
+        {
+            return lista_produtos;
+        }
+
+        StringBuilder sql = new StringBuilder(
+                "SELECT * FROM tb_produto WHERE cod_Tipo_Produto IN ("
+        );
+
+        // cria ?, ?, ?
+        for ( int i = 0; i < idsTipoProduto.size(); i++ )
+        {
+            sql.append( "?" );
+            if ( i < idsTipoProduto.size() - 1 )
+            {
+                sql.append( "," );
+            }
+        }
+
+        sql.append( ") ORDER BY codigo ASC" );
+
+        try ( PreparedStatement ps = conexao.getConnection().prepareStatement( sql.toString() ) )
+        {
+            // seta os valores
+            for ( int i = 0; i < idsTipoProduto.size(); i++ )
+            {
+                ps.setInt( i + 1, idsTipoProduto.get( i ) );
+            }
+
+            ResultSet result = ps.executeQuery();
+
+            while ( result.next() )
+            {
+                TbProduto produto = new TbProduto();
+                setResultProduto( result, produto );
+                lista_produtos.add( produto );
+            }
+        }
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
+        }
+
+        return lista_produtos;
+    }
+
     public Vector<TbProduto> getProdutosByUnidade( int idUnidade )
     {
 
@@ -600,7 +666,7 @@ public boolean desactivar(BDConexao conexao, TbProduto produto) {
         return produto;
 
     }
-    
+
     public TbProduto buscarPorCodigo( int codigo )
     {
 
@@ -646,7 +712,7 @@ public boolean desactivar(BDConexao conexao, TbProduto produto) {
         return produto;
 
     }
-    
+
     public Object findByIdStatus( int codigo )
     {
 
@@ -1027,25 +1093,29 @@ public boolean desactivar(BDConexao conexao, TbProduto produto) {
         return false;
     }
 
-public boolean exist_designacao_produto(BDConexao conexao, String designacao) {
-    designacao = normalizarDesignacao(designacao);
-    String sql = "SELECT p.codigo FROM tb_produto p WHERE p.designacao = ?";
+    public boolean exist_designacao_produto( BDConexao conexao, String designacao )
+    {
+        designacao = normalizarDesignacao( designacao );
+        String sql = "SELECT p.codigo FROM tb_produto p WHERE p.designacao = ?";
 
-    try (PreparedStatement ps = conexao.getConnectionAtiva().prepareStatement(sql)) {
-        ps.setString(1, designacao);
+        try ( PreparedStatement ps = conexao.getConnectionAtiva().prepareStatement( sql ) )
+        {
+            ps.setString( 1, designacao );
 
-        try (ResultSet rs = ps.executeQuery()) {
-            return rs.next(); // retorna true se encontrou um registro
+            try ( ResultSet rs = ps.executeQuery() )
+            {
+                return rs.next(); // retorna true se encontrou um registro
+            }
+
+        }
+        catch ( SQLException e )
+        {
+            System.err.println( "[ERRO] Falha ao verificar designação do produto: " + e.getMessage() );
+            e.printStackTrace();
         }
 
-    } catch (SQLException e) {
-        System.err.println("[ERRO] Falha ao verificar designação do produto: " + e.getMessage());
-        e.printStackTrace();
+        return false;
     }
-
-    return false;
-}
-
 
     public Object findByName( String designacao )
     {
@@ -1493,6 +1563,7 @@ public boolean exist_designacao_produto(BDConexao conexao, String designacao) {
 
         return lista;
     }
+
     public List<Object[]> listarStockPorCodigoBarra( Connection conn, String codBarra, int codArmazem )
     {
         List<Object[]> lista = new ArrayList<>();
@@ -1541,58 +1612,66 @@ public boolean exist_designacao_produto(BDConexao conexao, String designacao) {
 
         return lista;
     }
-    
-    public static List<TbProduto> buscarProdutosComStockSaftFullEmpty(LocalDate inicio, LocalDate fim) throws Exception {
 
-    List<TbProduto> lista = new ArrayList<>();
+    public static List<TbProduto> buscarProdutosComStockSaftFullEmpty( LocalDate inicio, LocalDate fim ) throws Exception
+    {
 
-    String sql = "SELECT p.codigo, p.designacao, p.stocavel, " +
-                 "s.quantidade_existente, s.preco_venda " +
-                 "FROM tb_produto p " +
-                 "LEFT JOIN tb_stock s ON s.cod_produto_codigo = p.codigo " +
-                 "AND s.dataEntrada BETWEEN ? AND ?";
+        List<TbProduto> lista = new ArrayList<>();
 
-    try (Connection conn = BDConexao.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+        String sql = "SELECT p.codigo, p.designacao, p.stocavel, "
+                + "s.quantidade_existente, s.preco_venda "
+                + "FROM tb_produto p "
+                + "LEFT JOIN tb_stock s ON s.cod_produto_codigo = p.codigo "
+                + "AND s.dataEntrada BETWEEN ? AND ?";
 
-        ps.setTimestamp(1, java.sql.Timestamp.valueOf(inicio.atStartOfDay()));
-        ps.setTimestamp(2, java.sql.Timestamp.valueOf(fim.atTime(23, 59, 59)));
+        try ( Connection conn = BDConexao.getConnection(); PreparedStatement ps = conn.prepareStatement( sql ) )
+        {
 
-        try (ResultSet rs = ps.executeQuery()) {
+            ps.setTimestamp( 1, java.sql.Timestamp.valueOf( inicio.atStartOfDay() ) );
+            ps.setTimestamp( 2, java.sql.Timestamp.valueOf( fim.atTime( 23, 59, 59 ) ) );
 
-            while (rs.next()) {
+            try ( ResultSet rs = ps.executeQuery() )
+            {
 
-                TbProduto p = new TbProduto();
-                p.setCodigo(rs.getInt("codigo"));
-                p.setDesignacao(rs.getString("designacao"));
-                p.setStocavel(rs.getString("stocavel"));
+                while ( rs.next() )
+                {
 
-                // 🔥 Só cria stock se existir
-                if (rs.getObject("quantidade_existente") != null) {
+                    TbProduto p = new TbProduto();
+                    p.setCodigo( rs.getInt( "codigo" ) );
+                    p.setDesignacao( rs.getString( "designacao" ) );
+                    p.setStocavel( rs.getString( "stocavel" ) );
 
-                    TbStock stock = new TbStock();
-                    stock.setQuantidadeExistente(rs.getDouble("quantidade_existente"));
-                    stock.setPrecoVenda(rs.getBigDecimal("preco_venda"));
+                    // 🔥 Só cria stock se existir
+                    if ( rs.getObject( "quantidade_existente" ) != null )
+                    {
 
-                    List<TbStock> listaStock = new ArrayList<>();
-                    listaStock.add(stock);
+                        TbStock stock = new TbStock();
+                        stock.setQuantidadeExistente( rs.getDouble( "quantidade_existente" ) );
+                        stock.setPrecoVenda( rs.getBigDecimal( "preco_venda" ) );
 
-                    p.setTbStockList(listaStock);
-                } else {
-                    // produto sem stock
-                    p.setTbStockList(new ArrayList<>());
+                        List<TbStock> listaStock = new ArrayList<>();
+                        listaStock.add( stock );
+
+                        p.setTbStockList( listaStock );
+                    }
+                    else
+                    {
+                        // produto sem stock
+                        p.setTbStockList( new ArrayList<>() );
+                    }
+
+                    lista.add( p );
                 }
-
-                lista.add(p);
             }
+
+        }
+        catch ( Exception e )
+        {
+            throw new Exception( "Erro ao buscar produtos com stock: " + e.getMessage(), e );
         }
 
-    } catch (Exception e) {
-        throw new Exception("Erro ao buscar produtos com stock: " + e.getMessage(), e);
+        return lista;
     }
-
-    return lista;
-}
 
     public List<Object[]> listarProdutosByCodigoManual( Connection conn, String codigoManual )
     {
@@ -1652,15 +1731,13 @@ public boolean exist_designacao_produto(BDConexao conexao, String designacao) {
 
         return lista;
     }
-    
+
 //    public TbProduto findByCodigoBarra(String codigoBarra) {
 //    return (TbProduto) entityManager
 //        .createQuery("SELECT p FROM TbProduto p WHERE p.codBarra = :cb")
 //        .setParameter("cb", codigoBarra)
 //        .getSingleResult();
 //}
-
-
     public static void main( String[] args )
     {
         BDConexao conexao = BDConexao.getInstancia();
