@@ -58,17 +58,17 @@ public class PayloadFactory
 
         payload.put( "seriesYear", seriesYear );
         payload.put( "documentType", documentType );
-        payload.put( "establishmentNumber", "SEDE" );
-        payload.put( "seriesContingencyIndicator", "N" );
+        payload.put( "establishmentNumber", "I" );
 
         Map<String, Object> signatureMap = new LinkedHashMap<>();
         signatureMap.put( "taxRegistrationNumber", taxRegistrationNumber );
         signatureMap.put( "seriesYear", seriesYear );
         signatureMap.put( "documentType", documentType );
-        signatureMap.put( "establishmentNumber", "SEDE" );
+        signatureMap.put( "establishmentNumber", "I" );
         signatureMap.put( "seriesContingencyIndicator", "N" );
 
         payload.put( "jwsSignature", JwsGenerator.gerarJws( SOFTWARE_KEY, signatureMap ) );
+        payload.put( "seriesContingencyIndicator", "N" );
         return payload;
     }
 

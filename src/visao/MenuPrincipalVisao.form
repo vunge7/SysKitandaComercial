@@ -735,6 +735,14 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jDadosEmpresaActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jDadosEmpresa1">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Solicitar S&#xe9;ries"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jDadosEmpresa1ActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jmUnidades">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Unidades"/>

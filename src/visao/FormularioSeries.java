@@ -10,12 +10,18 @@ package visao;
  * @created 12/jan/2026
  * @lastModified 12/jan/2026
  */
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import comercial.controller.DadosInstituicaoController;
+import comercial.controller.DocumentosController;
+import comercial.controller.SeriesController;
+import entity.AnoEconomico;
+import entity.Series;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.swing.table.DefaultTableModel;
 import util.BDConexao;
@@ -36,6 +42,8 @@ public class FormularioSeries extends JFrame
     private DefaultTableModel modeloTabela;
     private BDConexao conexao;
     private DadosInstituicaoController dadosInstituicaoController;
+    private SeriesController seriesController;
+    private DocumentosController documentosController;
 
     // Simula lista de documentos: código - descrição
 // Lista completa de documentos baseada no decreto e práticas contábeis
@@ -103,6 +111,9 @@ public class FormularioSeries extends JFrame
         setLocationRelativeTo( null );
         this.conexao = conexao;
         dadosInstituicaoController = new DadosInstituicaoController( conexao );
+        seriesController = new SeriesController( conexao );
+
+        documentosController = new DocumentosController( conexao );
 
         JPanel painel = new JPanel( new BorderLayout() );
 
@@ -160,6 +171,15 @@ public class FormularioSeries extends JFrame
     private void adicionarDocumento()
     {
         System.out.println( "Adicionado..." );
+
+        Series series = new Series();
+        series.setDesignacao( txtPesquisa.getText() );
+        series.setFkAnoEconomico( 7 );
+        series.setFkDocumento( getIdDocumento() );
+        if ( seriesController.salvar( series ) )
+        {
+            JOptionPane.showMessageDialog( null, "Série adicionada com sucesso!.." );
+        }
     }
 
     private void filtrarDocumentos( String filtro )
@@ -180,19 +200,27 @@ public class FormularioSeries extends JFrame
         SwingUtilities.invokeLater( () -> new FormularioSeries( new BDConexao() ).setVisible( true ) );
     }
 
+    private int getIdDocumento()
+    {
+        String documentType = comboDocumentos.getSelectedItem()
+                .toString().replaceAll( " ", "" ).split( "-" )[ 0 ];
+        return documentosController
+                .getDocumentoByDesignacao( documentType )
+                .getPkDocumento();
+    }
+
     private void solictarSerie()
     {
         String taxRegistrationNumber = dadosInstituicaoController.findByCodigo( 1 ).getNif();;
 //        String taxRegistrationNumber = "5000413178";
         String seriesYear = "2026";
-        String documentType = comboDocumentos.getSelectedItem().toString().replaceAll( " ", "" ).split( "-" )[ 0 ];
+        String documentType = comboDocumentos.getSelectedItem()
+                .toString().replaceAll( " ", "" ).split( "-" )[ 0 ];
         System.out.println( "TaxRegistrationNumber" + taxRegistrationNumber );
         System.out.println( "Tipo de Documento " + documentType );
         Map<String, Object> jsonPayload = PayloadFactory.criarPayloadCriarSerie( taxRegistrationNumber, seriesYear, documentType );
         String payLoad = JsonUtil.toJson( jsonPayload );
-
         System.out.println( payLoad );
-
         String basicAuth = BasicAuthUtil.gerarAuthorizationHeader( FEConfig.getUsername(), FEConfig.getPassword() );
         String resposta;
         try
@@ -215,27 +243,89 @@ public class FormularioSeries extends JFrame
 
     }
 
+//    public static String getSeriesCode( String jsonResponse )
+//    {
+//        try
+//        {
+//            ObjectMapper mapper = new ObjectMapper();
+//            Map<String, Object> root = mapper.readValue( jsonResponse, Map.class );
+//            Map<String, Object> seriesFEResult
+//                    = ( Map<String, Object> ) root.get( "seriesFEResult" );
+//
+//            return seriesFEResult != null
+//                    ? ( String ) seriesFEResult.get( "seriesCode" )
+//                    : null;
+//
+//        }
+//        catch ( Exception e )
+//        {
+//            e.printStackTrace();
+//            JOptionPane.showMessageDialog( null, "Os dados constantes na assinatura da chamada do serviço “jwsSignature” "
+//                    + " não estão de acordo com a informação constante na chamada do serviço." );
+//            return null;
+//        }
+//    }
     public static String getSeriesCode( String jsonResponse )
     {
         try
         {
             ObjectMapper mapper = new ObjectMapper();
 
-            Map<String, Object> root = mapper.readValue( jsonResponse, Map.class );
+            // 🔥 Caso venham múltiplos JSONs juntos
+            String[] parts = jsonResponse.split( "(?<=\\})\\s*(?=\\{)" );
 
-            Map<String, Object> seriesFEResult
-                    = ( Map<String, Object> ) root.get( "seriesFEResult" );
+            for ( String part : parts )
+            {
+                JsonNode root = mapper.readTree( part );
 
-            return seriesFEResult != null
-                    ? ( String ) seriesFEResult.get( "seriesCode" )
-                    : null;
+                // 🔴 1. Tratar erros primeiro
+                JsonNode errorList = root.path( "errorList" );
 
+                if ( errorList.isArray() && errorList.size() > 0 )
+                {
+                    StringBuilder erros = new StringBuilder();
+
+                    for ( JsonNode erro : errorList )
+                    {
+                        String desc = erro.path( "descriptionError" ).asText( null );
+
+                        if ( desc != null && !desc.trim().isEmpty() )
+                        {
+                            erros.append( desc ).append( "\n" );
+                        }
+                    }
+
+                    if ( erros.length() > 0 )
+                    {
+                        JOptionPane.showMessageDialog( null, erros.toString() );
+                        return null;
+                    }
+                }
+
+                // 🟢 2. Buscar seriesCode
+                JsonNode seriesFEResult = root.path( "seriesFEResult" );
+
+                if ( seriesFEResult.isObject() )
+                {
+                    String code = seriesFEResult.path( "seriesCode" ).asText( null );
+
+                    if ( code != null && !code.trim().isEmpty() )
+                    {
+                        return code;
+                    }
+                }
+            }
+
+            return null;
         }
         catch ( Exception e )
         {
             e.printStackTrace();
+
+            JOptionPane.showMessageDialog( null,
+                    "Erro ao processar resposta do serviço (AGT)." );
+
             return null;
         }
     }
-
 }

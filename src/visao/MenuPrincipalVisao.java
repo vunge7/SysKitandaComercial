@@ -95,7 +95,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         try
         {
             // TODO add your handling code here
-            setStatusUsuario( (Vector) itemPermissaoDao.getAllPermissoesByIdUsuarioAndModulo( this.cod_utilizador, DVML.MODULO_GESTAO_COMERCIAL ) );
+            setStatusUsuario( ( Vector ) itemPermissaoDao.getAllPermissoesByIdUsuarioAndModulo( this.cod_utilizador, DVML.MODULO_GESTAO_COMERCIAL ) );
         }
         catch ( Exception ex )
         {
@@ -668,6 +668,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jMenuItem6 = new javax.swing.JMenuItem();
         jMenu6 = new javax.swing.JMenu();
         jDadosEmpresa = new javax.swing.JMenuItem();
+        jDadosEmpresa1 = new javax.swing.JMenuItem();
         jmUnidades = new javax.swing.JMenuItem();
         jmGavetasPrateleiras = new javax.swing.JMenuItem();
         jcbCardex = new javax.swing.JMenuItem();
@@ -1496,6 +1497,16 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
             }
         });
         jMenu6.add(jDadosEmpresa);
+
+        jDadosEmpresa1.setText("Solicitar Séries");
+        jDadosEmpresa1.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jDadosEmpresa1ActionPerformed(evt);
+            }
+        });
+        jMenu6.add(jDadosEmpresa1);
 
         jmUnidades.setText("Unidades");
         jmUnidades.addActionListener(new java.awt.event.ActionListener()
@@ -2490,8 +2501,14 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem5ActionPerformed
     {//GEN-HEADEREND:event_jMenuItem5ActionPerformed
-        new FrmRelatorioVendasMes().setVisible( true);
+        new FrmRelatorioVendasMes().setVisible( true );
     }//GEN-LAST:event_jMenuItem5ActionPerformed
+
+    private void jDadosEmpresa1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jDadosEmpresa1ActionPerformed
+    {//GEN-HEADEREND:event_jDadosEmpresa1ActionPerformed
+        // TODO add your handling code here:
+        new FormularioSeries( conexao ).setVisible( true );
+    }//GEN-LAST:event_jDadosEmpresa1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -2559,6 +2576,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnProdutosEspirados;
     private javax.swing.JMenuItem jDadosEmpresa;
+    private javax.swing.JMenuItem jDadosEmpresa1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JMenu jMenu1;
