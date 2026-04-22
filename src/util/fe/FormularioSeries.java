@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package visao;
+package util.fe;
 
 /**
  *
@@ -15,19 +15,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import comercial.controller.DadosInstituicaoController;
 import comercial.controller.DocumentosController;
 import comercial.controller.SeriesController;
-import entity.AnoEconomico;
 import entity.Series;
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.swing.table.DefaultTableModel;
 import util.BDConexao;
-import util.fe.BasicAuthUtil;
-import util.fe.FEConfig;
-import util.fe.JsonUtil;
 import util.fe.http.HttpClientUtil;
 import util.fe.payloads.PayloadFactory;
 
@@ -37,7 +32,7 @@ public class FormularioSeries extends JFrame
     private JComboBox<String> comboDocumentos;
     private JTextField txtPesquisa;
     private JButton btnAdicionar;
-    private JButton btnPesquisar;
+    private JButton btnSolicitar;
     private JTable tabelaSeries;
     private DefaultTableModel modeloTabela;
     private BDConexao conexao;
@@ -100,15 +95,19 @@ public class FormularioSeries extends JFrame
         },
         {
             "LD", "Imputação a Co-seguradora Líder"
-        }
+        },
+        {
+            "PP", "Factura Proforma"
+        },
     };
 
     public FormularioSeries( BDConexao conexao )
     {
         setTitle( "Solicitação de Séries" );
-        setSize( 700, 400 );
-        setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+        setSize( 900, 500 );
+        setDefaultCloseOperation( JFrame.DISPOSE_ON_CLOSE );
         setLocationRelativeTo( null );
+        
         this.conexao = conexao;
         dadosInstituicaoController = new DadosInstituicaoController( conexao );
         seriesController = new SeriesController( conexao );
@@ -125,11 +124,11 @@ public class FormularioSeries extends JFrame
 
         txtPesquisa = new JTextField( 15 );
         btnAdicionar = new JButton( "Adicionar" );
-        btnPesquisar = new JButton( "Pesquisar" );
+        btnSolicitar = new JButton( "Solicitar" );
 
         painelTopo.add( new JLabel( "Escolha o Documento:" ) );
         painelTopo.add( comboDocumentos );
-        painelTopo.add( btnPesquisar );
+        painelTopo.add( btnSolicitar );
         painelTopo.add( txtPesquisa );
         painelTopo.add( btnAdicionar );
 
@@ -148,7 +147,9 @@ public class FormularioSeries extends JFrame
 
         // Eventos
         btnAdicionar.addActionListener( e -> adicionarDocumento() );
-        btnPesquisar.addActionListener( e -> solictarSerie() );
+        btnSolicitar.addActionListener( e -> solictarSerie() );
+
+        comboDocumentos.addActionListener( e -> preencherSeriesTabela() );
 //        txtPesquisa.addKeyListener( new KeyAdapter()
 //        {
 //            @Override
@@ -157,6 +158,9 @@ public class FormularioSeries extends JFrame
 //                filtrarDocumentos( txtPesquisa.getText() );
 //            }
 //        } );
+
+        preencherSeriesTabela();
+
     }
 
     private void carregarCombo()
@@ -179,7 +183,38 @@ public class FormularioSeries extends JFrame
         if ( seriesController.salvar( series ) )
         {
             JOptionPane.showMessageDialog( null, "Série adicionada com sucesso!.." );
+
+            preencherSeriesTabela();
+
         }
+    }
+
+    private void preencherSeriesTabela()
+    {
+
+        try
+        {
+            DefaultTableModel modelo = ( DefaultTableModel ) tabelaSeries.getModel();
+            modelo.setRowCount( 0 );
+            List<Series> listarPorDocumentoEAno = seriesController.listarPorDocumentoEAno( getIdDocumento(), 7 );
+
+            for ( Series series : listarPorDocumentoEAno )
+            {
+                
+                String documento= documentosController.findDocumentoById( series.getFkDocumento()).getDesignacao();
+                modelo.addRow( new Object[]
+                {
+                    series.getId(),
+                    documento,
+                    series.getDesignacao(),
+                    ""
+                } );
+            }
+        }
+        catch ( Exception e )
+        {
+        }
+
     }
 
     private void filtrarDocumentos( String filtro )
@@ -203,7 +238,8 @@ public class FormularioSeries extends JFrame
     private int getIdDocumento()
     {
         String documentType = comboDocumentos.getSelectedItem()
-                .toString().replaceAll( " ", "" ).split( "-" )[ 0 ];
+                .toString().split( "-" )[ 1 ];
+        System.out.println( "documento: " + documentType );
         return documentosController
                 .getDocumentoByDesignacao( documentType )
                 .getPkDocumento();
@@ -216,8 +252,8 @@ public class FormularioSeries extends JFrame
         String seriesYear = "2026";
         String documentType = comboDocumentos.getSelectedItem()
                 .toString().replaceAll( " ", "" ).split( "-" )[ 0 ];
-        System.out.println( "TaxRegistrationNumber" + taxRegistrationNumber );
-        System.out.println( "Tipo de Documento " + documentType );
+        System.out.println( "TaxRegistrationNumber: " + taxRegistrationNumber );
+        System.out.println( "Tipo de Documento: " + documentType );
         Map<String, Object> jsonPayload = PayloadFactory.criarPayloadCriarSerie( taxRegistrationNumber, seriesYear, documentType );
         String payLoad = JsonUtil.toJson( jsonPayload );
         System.out.println( payLoad );
@@ -225,7 +261,8 @@ public class FormularioSeries extends JFrame
         String resposta;
         try
         {
-            resposta = HttpClientUtil.postJson( FEConfig.getEndpointSolicitarSerie(),
+            resposta = HttpClientUtil.postJson(
+                    FEConfig.getEndpointSolicitarSerie(),
                     payLoad, // o JSON que já tens
                     basicAuth // SOMENTE o base64 (sem "Basic ")
             );
@@ -270,6 +307,8 @@ public class FormularioSeries extends JFrame
         try
         {
             ObjectMapper mapper = new ObjectMapper();
+            
+            System.out.println( jsonResponse );
 
             // 🔥 Caso venham múltiplos JSONs juntos
             String[] parts = jsonResponse.split( "(?<=\\})\\s*(?=\\{)" );

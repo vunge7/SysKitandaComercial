@@ -4,6 +4,7 @@
  */
 package visao;
 
+import util.fe.FormularioSeries;
 import java.sql.Connection;
 import dao.DadosInstituicaoDao;
 import dao.ItemPermissaoDao;

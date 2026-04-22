@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import util.BDConexao;
-import util.BDConexaoOperacoes;
 import util.MetodosUtil;
 
 /**
@@ -265,8 +264,9 @@ public class DocumentosController implements EntidadeFactory
     public Documento getDocumentoByDesignacao( String designacao )
     {
 
-        String FIND__BY_CODIGO = "SELECT *  FROM documento a WHERE designacao = '" + designacao + "'";
-        ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
+        String query = "SELECT *  FROM documento a WHERE designacao = '" + designacao.trim() + "'";
+        System.out.println( query );
+        ResultSet result = conexao.executeQuery( query );
         Documento documento = null;
         try
         {

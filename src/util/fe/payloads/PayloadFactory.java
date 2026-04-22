@@ -7,7 +7,6 @@ import entity.TbVenda;
 import java.util.*;
 import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
-import util.DVML;
 import util.fe.BasicAuthUtil;
 import util.fe.DataUtil;
 import util.fe.FEConfig;
@@ -29,7 +28,7 @@ public class PayloadFactory
     private static Map<String, Object> criarBasePayload( String taxRegistrationNumber )
     {
         Map<String, Object> payload = new LinkedHashMap<>();
-        payload.put( "schemaVersion", "1.2" );
+        payload.put( "schemaVersion", "1.0" );
         payload.put( "submissionUUID", SubmissionUUID.gerar() );
         payload.put( "taxRegistrationNumber", taxRegistrationNumber );
         payload.put( "submissionTimeStamp", DataUtil.converter( new Date() ) );
@@ -51,10 +50,21 @@ public class PayloadFactory
     // =====================================================
     // CRIAR SÉRIE
     // =====================================================
-    public static Map<String, Object> criarPayloadCriarSerie( String taxRegistrationNumber, String seriesYear, String documentType )
+    public static Map<String, Object> criarPayloadCriarSerie(
+            String taxRegistrationNumber,
+            String seriesYear,
+            String documentType
+    )
     {
 
         Map<String, Object> payload = criarBasePayload( taxRegistrationNumber );
+
+//        System.out.println( "#taxRegistrationNumber: " + taxRegistrationNumber );
+//        System.out.println( "#seriesYear: " + seriesYear );
+//        System.out.println( "#documentType: " + documentType );
+//
+        String submissionUUID = payload.get( "submissionUUID" ).toString();
+//        System.out.println( "submissionUUID" + submissionUUID );
 
         payload.put( "seriesYear", seriesYear );
         payload.put( "documentType", documentType );
@@ -62,12 +72,14 @@ public class PayloadFactory
 
         Map<String, Object> signatureMap = new LinkedHashMap<>();
         signatureMap.put( "taxRegistrationNumber", taxRegistrationNumber );
+        signatureMap.put( "submissionUUID", submissionUUID );
         signatureMap.put( "seriesYear", seriesYear );
         signatureMap.put( "documentType", documentType );
         signatureMap.put( "establishmentNumber", "I" );
-        signatureMap.put( "seriesContingencyIndicator", "N" );
+//        signatureMap.put( "seriesContingencyIndicator", "N" );
 
-        payload.put( "jwsSignature", JwsGenerator.gerarJws( SOFTWARE_KEY, signatureMap ) );
+//        payload.put( "jwsSignature", JwsGenerator.gerarJws( SOFTWARE_KEY, signatureMap ) );
+        payload.put( "jwsSignature", JwsGenerator.gerarJws( CLIENT_KEY, signatureMap ) );
         payload.put( "seriesContingencyIndicator", "N" );
         return payload;
     }
@@ -198,9 +210,12 @@ public class PayloadFactory
         linha.put( "creditAmount", l.getCreditAmount() );
         linha.put( "settlementAmount", l.getSettlementAmount() );
 
-        linha.put( "taxes", l.getTaxes().stream()
-                .map( PayloadFactory::taxToMap )
-                .collect( Collectors.toList() ) );
+        if ( Objects.nonNull( l.getTaxes() ) )
+        {
+            linha.put( "taxes", l.getTaxes().stream()
+                    .map( PayloadFactory::taxToMap )
+                    .collect( Collectors.toList() ) );
+        }
 
         return linha;
     }
@@ -350,7 +365,7 @@ public class PayloadFactory
 
         // payload principal
         Map<String, Object> payload = new LinkedHashMap<>();
-        payload.put( "schemaVersion", "1.2" );
+        payload.put( "schemaVersion", "1.0" );
         payload.put( "submissionUUID", SubmissionUUID.gerar() );
         payload.put( "taxRegistrationNumber", taxRegistrationNumber );
         payload.put( "submissionTimeStamp", DataUtil.converter( new Date() ) );

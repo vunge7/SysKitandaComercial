@@ -34,7 +34,7 @@ public class ClientesController implements EntidadeFactory
     public boolean salvar( Object object )
     {
         TbCliente clientes = ( TbCliente ) object;
-        String INSERT = "INSERT INTO tb_cliente( nome , morada , telefone , nif , email, pais, paisISO"
+        String INSERT = "INSERT INTO tb_cliente( nome , morada , telefone , nif , email, pais, pais_ISO"
                 + ")"
                 + " VALUES("
                 + "'" + clientes.getNome() + "' , "

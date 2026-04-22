@@ -20,6 +20,7 @@ public class DataUtil
 
     private static final DateTimeFormatter FORMATTER
             = DateTimeFormatter.ofPattern( "yyyy-MM-dd'T'HH:mm:ss'Z'" )
+//            = DateTimeFormatter.ofPattern( "yyyy-MM-dd'T'HH:mm:ss" )
                     .withZone( ZoneOffset.UTC );
     
     

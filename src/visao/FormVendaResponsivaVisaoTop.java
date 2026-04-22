@@ -51,7 +51,9 @@ import java.sql.SQLException;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -80,7 +82,9 @@ import static util.DVML.DOC_FACTURA_RECIBO_FR;
 import static util.DVML.DOC_FACTURA_FT;
 import util.FinanceUtils;
 import util.MetodosUtil;
+import util.fe.FEConfig;
 import util.fe.FacturaElectronicaUtil;
+import util.fe.JwsGenerator;
 import util.fe.TableColumIdUtil;
 
 /**
@@ -156,6 +160,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
     private static final int INDEX_TABLE_QTD = 4;
     private static final int INDEX_TABLE_DESCONTO = 5;
     private static final int INDEX_TABLE_TAXA_IVA = 6;
+    private static final String CLIENT_KEY = "Chaves/chave_cliente/ChavePrivada2048Cliente.pem";
 
     private static List<Vector<TbPreco>> listaPrecoTemp = new ArrayList<>();
 
@@ -2592,79 +2597,97 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         Integer idVendaGerada = 0;
         try
         {
+
             // Construção do objeto venda
             TbVenda venda = construirVenda();
+            boolean respostaAGT = false;
 
             TbDadosInstituicao dadosInstituicao = dadosInstituicaoController.findByCodigo( 1 );
             Documento documento = documentosController.findDocumentoById( getIdDocumento() );
             TbCliente cliente = clientesController.findByCodigo( getIdCliente() );
 
-            boolean respostaAGT = FacturaElectronicaUtil.criarFE(
-                    venda,
-                    dadosInstituicao,
-                    documento,
-                    cliente,
-                    table,
-                    getObjectsColumnsIds()
-            );
-
-            if ( respostaAGT )
+            if ( venda.getFkDocumento().getPkDocumento() == DVML.DOC_FACTURA_PROFORMA_PP )
             {
-                System.out.println( "AGT-Factura ESTADO: " + venda.getEstado() );
-                System.out.println( "AGT-Factura requestID: " + venda.getRequestID() );
-                System.out.println( "AGT-Factura submissionUUID: " + venda.getSubmissionUUID() );
-
+                venda.setEstado( "P" );
+                venda.setRequestID( venda.getCodFact() );
+                Map<String, Object> payload = new LinkedHashMap<>();
+                payload.put( "codFact", venda.getCodFact() );
+                venda.setSubmissionUUID( JwsGenerator.gerarJws( CLIENT_KEY, payload ) );
                 // Salvar a venda e obter o ID
                 idVendaGerada = vendasController.salvarRetornaID( venda );
 //            venda.setHashCod( MetodosUtil.criptografia_hash( vendasController.findById( idVendaGerada), getGrossTotal().doubleValue(), conexaoTransaction ) );
 
                 vendasController.actualizar_hash_and_assinatura( idVendaGerada, getGrossTotal().doubleValue() );
+            }
+            else
+            {
+
+                respostaAGT = FacturaElectronicaUtil.criarFE(
+                        venda,
+                        dadosInstituicao,
+                        documento,
+                        cliente,
+                        table,
+                        getObjectsColumnsIds()
+                );
+
+                if ( respostaAGT )
+                {
+                    System.out.println( "AGT-Factura ESTADO: " + venda.getEstado() );
+                    System.out.println( "AGT-Factura requestID: " + venda.getRequestID() );
+                    System.out.println( "AGT-Factura submissionUUID: " + venda.getSubmissionUUID() );
+
+                    // Salvar a venda e obter o ID
+                    idVendaGerada = vendasController.salvarRetornaID( venda );
+//            venda.setHashCod( MetodosUtil.criptografia_hash( vendasController.findById( idVendaGerada), getGrossTotal().doubleValue(), conexaoTransaction ) );
+                    vendasController.actualizar_hash_and_assinatura( idVendaGerada, getGrossTotal().doubleValue() );
+                }
 
                 if ( idVendaGerada == null || idVendaGerada == 0 )
                 {
                     throw new Exception( "Falha ao obter o ID da venda gravada." );
                 }
 
-                // Ações específicas por tipo de documento
-                if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR )
-                {
-                    MetodosUtil.adicionar_saldo_banco(
-                            venda.getTotalVenda().doubleValue(),
-                            venda.getIdBanco().getIdBanco(),
-                            conexaoTransactionLocal
-                    );
-                }
+            }
 
-                if ( getIdDocumento() == DOC_FACTURA_FT )
-                {
-                    ExtratoContaClienteController
-                            .registro_movimento_conta_cliente(
-                                    venda,
-                                    conexaoTransactionLocal
-                            );
-                }
+            // Ações específicas por tipo de documento
+            if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR )
+            {
+                MetodosUtil.adicionar_saldo_banco(
+                        venda.getTotalVenda().doubleValue(),
+                        venda.getIdBanco().getIdBanco(),
+                        conexaoTransactionLocal
+                );
+            }
 
-                // Salvar os itens da venda
-                salvar_item_venda_comercial( idVendaGerada, conexaoTransactionLocal, stocksControllerLocal );
+            if ( getIdDocumento() == DOC_FACTURA_FT )
+            {
+                ExtratoContaClienteController
+                        .registro_movimento_conta_cliente(
+                                venda,
+                                conexaoTransactionLocal
+                        );
+            }
 
-                // Registrar formas de pagamento
-                if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR )
-                {
-                    registrarFormaPagamento( idVendaGerada, venda.getTotalVenda(), frNormal );
+            // Salvar os itens da venda
+            salvar_item_venda_comercial( idVendaGerada, conexaoTransactionLocal, stocksControllerLocal );
 
-                }
-
-                //actualizar precos antigos
-                actualizarPrecosAntigos();
-
-                // Finaliza transação
-                DocumentosController.commit( conexaoTransactionLocal );
-
-                JOptionPane.showMessageDialog( null, "Factura efectuada com sucesso!" );
-                txtNomeConsumidorFinal.setVisible( true );
-                imprimir_factura( idVendaGerada ); // Imprime a factura
+            // Registrar formas de pagamento
+            if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR )
+            {
+                registrarFormaPagamento( idVendaGerada, venda.getTotalVenda(), frNormal );
 
             }
+
+            //actualizar precos antigos
+            actualizarPrecosAntigos();
+
+            // Finaliza transação
+            DocumentosController.commit( conexaoTransactionLocal );
+
+            JOptionPane.showMessageDialog( null, "Factura efectuada com sucesso!" );
+            txtNomeConsumidorFinal.setVisible( true );
+            imprimir_factura( idVendaGerada ); // Imprime a factura
 
         }
         catch ( Exception e )
