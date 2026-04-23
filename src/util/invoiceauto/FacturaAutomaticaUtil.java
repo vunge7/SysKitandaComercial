@@ -90,32 +90,54 @@ public class FacturaAutomaticaUtil
     public static void main( String[] args )
     {
 
+        int MAX_INVOICE_NUMBER = 90;
+        int MAX_INVOICE_LINE_NUMBER = 4;
+        int MAX_INVOICE_LINE_QUANTITY = 1;
+        double MONTHLY_GENERAL_INVOICE_LIMIT = 17185828.44; //#
+        int MONTH_START_DAY = 1;
+        int MONTH_END_DAY = 31;//#
+        double INITIAL_TOTAL_MONTH = 14436095.89;
+        int ECONOMIC_YEAR = 2021;
+        int ECONOMIC_YEAR_ID = 2;//#
+        int DOCUMENT_ID = 1;
+        int MONTH_ID = 12;//#
+        int USER_ID = 15;
+        int CLIENT_ID = 1;
+        int WAREHOUSE_ID = 2;
+
         BDConexao conexao = new BDConexao();
         ProdutosController produtosController = new ProdutosController( conexao );
 
+        /**
+         * 1 - MATRICULAS
+         * 2 - PROPINAS
+         * 3 - TRASNPORTES
+         * 4 - UNIFORMES
+         */
         List<Integer> ids = Arrays.asList( 3, 4 );
+ 
         Vector<TbProduto> produtosByTipoProduto = produtosController.getProdutosByTipoProduto( ids );
-
-        Vector<Integer> vector = produtosByTipoProduto.stream()
+        Vector<Integer> vectorProdutos = produtosByTipoProduto.stream()
                 .map( TbProduto::getCodigo )
                 .collect( Collectors.toCollection( Vector::new ) );
+        
 
         AutoInvoiceConfiguration configuration = new AutoInvoiceConfiguration();
-        configuration.setNumeroMaximoFactura( 20 );
-        configuration.setListaProdutoVenda( vector );
-        configuration.setNumeroMaximoLinha( 5 );
-        configuration.setNumeroMaximoQtd( 3 );
-        configuration.setLimiteFacturacaoGeralMes( 17185828.44 );
-        configuration.setDiaComeco( 10 );
-        configuration.setLimiteDiaMes( 30 );
-        configuration.setContTotalGeralMes( 14436095.89);
-        configuration.setAnoEconomico( 2021 );
-        configuration.setAnoEconomicoId( 2 );
-        configuration.setDocumentoId( 1 );
-        configuration.setMesId( 11 );
-        configuration.setUserId( 15 );
-        configuration.setClienteId( 1 );
-        configuration.setArmazemId( 2 );
+        configuration.setNumeroMaximoFactura( MAX_INVOICE_NUMBER );
+        configuration.setListaProdutoVenda( vectorProdutos );
+        configuration.setNumeroMaximoLinha( MAX_INVOICE_LINE_NUMBER );
+        configuration.setNumeroMaximoQtd( MAX_INVOICE_LINE_QUANTITY);
+        configuration.setLimiteFacturacaoGeralMes( MONTHLY_GENERAL_INVOICE_LIMIT );
+        configuration.setDiaComeco( MONTH_START_DAY );
+        configuration.setLimiteDiaMes( MONTH_END_DAY );
+        configuration.setContTotalGeralMes( INITIAL_TOTAL_MONTH);
+        configuration.setAnoEconomico( ECONOMIC_YEAR );
+        configuration.setAnoEconomicoId( ECONOMIC_YEAR_ID );
+        configuration.setDocumentoId( DOCUMENT_ID );
+        configuration.setMesId( MONTH_ID );
+        configuration.setUserId( USER_ID);
+        configuration.setClienteId( CLIENT_ID );
+        configuration.setArmazemId( WAREHOUSE_ID );
 
         FacturaAutomaticaUtil facturaAutomaticaUtil = new FacturaAutomaticaUtil( configuration, conexao );
         facturaAutomaticaUtil.procedimentoGerar();
@@ -215,8 +237,7 @@ public class FacturaAutomaticaUtil
     private List<Date> getDates()
     {
         List<Date> lista = new ArrayList<>();
-        Random random = new Random();
-        for ( int i = configuration.getDiaComeco(); i <= 30; i++ )
+        for ( int i = configuration.getDiaComeco(); i <= configuration.getLimiteDiaMes(); i++ )
         {
             Date date = new Date();
             date.setYear( configuration.getAnoEconomico() - 1900 );
