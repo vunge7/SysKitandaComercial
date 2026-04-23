@@ -4,6 +4,8 @@
  */
 package util.fe.dto;
 
+import java.math.BigDecimal;
+
 /**
  *
  * @author Engº Domingos Dala Vunge
@@ -13,38 +15,38 @@ package util.fe.dto;
 public class DocumentTotalsDTO
 {
 
-    private double taxPayable;
-    private double netTotal;
-    private double grossTotal;
+    private BigDecimal taxPayable;
+    private BigDecimal netTotal;
+    private BigDecimal grossTotal;
 
     // getters & setters
 
-    public double getTaxPayable()
+    public BigDecimal getTaxPayable()
     {
         return taxPayable;
     }
 
-    public void setTaxPayable( double taxPayable )
+    public void setTaxPayable( BigDecimal taxPayable )
     {
         this.taxPayable = taxPayable;
     }
 
-    public double getNetTotal()
+    public BigDecimal getNetTotal()
     {
         return netTotal;
     }
 
-    public void setNetTotal( double netTotal )
+    public void setNetTotal( BigDecimal netTotal )
     {
         this.netTotal = netTotal;
     }
 
-    public double getGrossTotal()
+    public BigDecimal getGrossTotal()
     {
         return grossTotal;
     }
 
-    public void setGrossTotal( double grossTotal )
+    public void setGrossTotal( BigDecimal grossTotal )
     {
         this.grossTotal = grossTotal;
     }

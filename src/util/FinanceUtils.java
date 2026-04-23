@@ -6,6 +6,7 @@ package util;
 
 import java.sql.Connection;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -455,6 +456,30 @@ public class FinanceUtils
         // Valor do IVA (SÓ O IMPOSTO)
         BigDecimal ivaValor = base.multiply(
                 BigDecimal.valueOf( taxa ).divide( BigDecimal.valueOf( 100 ) )
+        );
+
+        return ivaValor.setScale( 2, RoundingMode.CEILING );
+    }
+
+    public static BigDecimal getValorIVABigDecimal( BigDecimal qtd, BigDecimal taxa, BigDecimal preco, BigDecimal desconto )
+    {
+        BigDecimal precoBD = preco;
+        BigDecimal qtdBD = qtd;
+
+        // Subtotal
+        BigDecimal subtotal = precoBD.multiply( qtdBD );
+
+        // Desconto
+        BigDecimal descontoBD = subtotal.multiply(
+                desconto.divide( BigDecimal.valueOf( 100 ) )
+        );
+
+        // Base tributável
+        BigDecimal base = subtotal.subtract( descontoBD );
+
+        // Valor do IVA (SÓ O IMPOSTO)
+        BigDecimal ivaValor = base.multiply(
+                taxa.divide( BigDecimal.valueOf( 100 ) )
         );
 
         return ivaValor.setScale( 2, RoundingMode.CEILING );

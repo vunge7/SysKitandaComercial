@@ -4,7 +4,6 @@
  */
 package util.fe;
 
-import comercial.controller.DadosInstituicaoController;
 import entity.Documento;
 import entity.TbCliente;
 import entity.TbDadosInstituicao;
@@ -72,17 +71,17 @@ public class FacturaElectronicaUtil
         {
             int idProduto = Integer.parseInt( table.getValueAt( i, tablesColumnIds.COLUMN_PRODUTO_ID ).toString() );
             String designacaoItem = table.getValueAt( i, tablesColumnIds.getCOLUMN_DESIGNACAO() ).toString();
-            double unitPrice = CfMethods.parseMoedaFormatada( table.getValueAt( i, tablesColumnIds.getCOLUMN_PRECO_UNITARIO() ).toString() );
-            double qtd = Double.parseDouble( table.getValueAt( i, tablesColumnIds.getCOLUMN_QTD() ).toString() );
-            double desconto = Double.parseDouble( table.getValueAt( i, tablesColumnIds.getCOLUMN_DESCONTO() ).toString() );
-            double taxa = Double.parseDouble( table.getValueAt( i, tablesColumnIds.getCOLUMN_TAXA() ).toString() );
-            double retencaoLinha = CfMethods.parseMoedaFormatada( table.getValueAt( i, tablesColumnIds.getCOLUMN_RETENCAO() ).toString() );
+            BigDecimal unitPrice = BigDecimal.valueOf( CfMethods.parseMoedaFormatada( table.getValueAt( i, tablesColumnIds.getCOLUMN_PRECO_UNITARIO() ).toString() ) );
+            BigDecimal qtd = BigDecimal.valueOf( Double.parseDouble( table.getValueAt( i, tablesColumnIds.getCOLUMN_QTD() ).toString() ) );
+            BigDecimal desconto = BigDecimal.valueOf( Double.parseDouble( table.getValueAt( i, tablesColumnIds.getCOLUMN_DESCONTO() ).toString() ) );
+            BigDecimal taxa = BigDecimal.valueOf( Double.parseDouble( table.getValueAt( i, tablesColumnIds.getCOLUMN_TAXA() ).toString() ) );
+            BigDecimal retencaoLinha = BigDecimal.valueOf( CfMethods.parseMoedaFormatada( table.getValueAt( i, tablesColumnIds.getCOLUMN_RETENCAO() ).toString() ) );
             double subTotal = CfMethods.parseMoedaFormatada( table.getValueAt( i, tablesColumnIds.COLUMN_SUBTOTAL ).toString() );
 
             // Cálculos com BigDecimal e arredondamento
-            BigDecimal bdUnitPrice = BigDecimal.valueOf( unitPrice );
-            BigDecimal bdDesconto = BigDecimal.valueOf( desconto );
-            BigDecimal bdQtd = BigDecimal.valueOf( qtd );
+            BigDecimal bdUnitPrice = unitPrice;
+            BigDecimal bdDesconto = desconto;
+            BigDecimal bdQtd = qtd;
 //            BigDecimal bdTaxa = BigDecimal.valueOf( taxa ).divide( BigDecimal.valueOf( 100 ) );
 
 //            BigDecimal unitPriceBase = bdUnitPrice.subtract( bdDesconto ).setScale( 2, BigDecimal.ROUND_CEILING );
@@ -90,7 +89,7 @@ public class FacturaElectronicaUtil
 //            BigDecimal base = unitPriceBase.multiply( bdQtd ).setScale( 2, BigDecimal.ROUND_CEILING );
             BigDecimal base = unitPriceBase.multiply( bdQtd ).setScale( 2, RoundingMode.CEILING );;
 //            BigDecimal iva = base.multiply( bdTaxa ).setScale( 2, BigDecimal.ROUND_CEILING );
-            BigDecimal iva = FinanceUtils.getValorIVA( qtd, taxa, unitPriceBase.doubleValue(), desconto );
+            BigDecimal iva = FinanceUtils.getValorIVABigDecimal( qtd, taxa, unitPriceBase, desconto );
 //            BigDecimal totalLinha = base.add( iva ).setScale( 2, BigDecimal.ROUND_CEILING );
 
             BigDecimal totalLinha = base.add( iva );
@@ -102,7 +101,7 @@ public class FacturaElectronicaUtil
             line.setQuantity( String.valueOf( qtd ) );
             line.setUnitOfMeasure( "UN" );
             line.setUnitPrice( unitPrice );
-            line.setUnitPriceBase( unitPriceBase.doubleValue() );
+            line.setUnitPriceBase( unitPriceBase );
 
             if ( venda.getFkDocumento().getPkDocumento()
                     == DVML.DOC_NOTA_CREDITO_NC )
@@ -114,18 +113,18 @@ public class FacturaElectronicaUtil
                 line.setReferenceInfoDTOs(
                         Collections.singletonList( rDTO )
                 );
-                line.setDebitAmount( base.doubleValue() );
-                line.setCreditAmount( 0 );
+                line.setDebitAmount( base );
+                line.setCreditAmount( BigDecimal.ONE );
             }
             else
             {
-                line.setDebitAmount( 0 );
-                line.setCreditAmount( base.doubleValue() );
+                line.setDebitAmount( BigDecimal.ONE );
+                line.setCreditAmount( base );
             }
 
-            line.setCreditAmount( base.doubleValue() );
+            line.setCreditAmount( base );
 
-            if ( taxa > 0 )
+            if ( taxa.doubleValue() > 0 )
             {
                 TaxDTO tax = new TaxDTO();
                 tax.setTaxType( "IVA" );
@@ -142,15 +141,15 @@ public class FacturaElectronicaUtil
             totalBase = totalBase.add( base );
             totalIva = totalIva.add( iva );
             totalFinal = totalFinal.add( totalLinha );
-            totalRetencao = totalRetencao.add( BigDecimal.valueOf( retencaoLinha ) );
+            totalRetencao = totalRetencao.add( retencaoLinha );
         }
 
         doc.setLines( lines );
 
         DocumentTotalsDTO documentsTotals = new DocumentTotalsDTO();
-        documentsTotals.setNetTotal( totalBase.doubleValue() );
-        documentsTotals.setTaxPayable( totalIva.doubleValue() );
-        documentsTotals.setGrossTotal( totalFinal.doubleValue() );
+        documentsTotals.setNetTotal( totalBase );
+        documentsTotals.setTaxPayable( totalIva );
+        documentsTotals.setGrossTotal( totalFinal );
         doc.setDocumentTotals( documentsTotals );
 
         documentDTOs.add( doc );

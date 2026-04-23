@@ -480,7 +480,7 @@ WHERE
 	<lastPageFooter>
 		<band height="108">
 			<image scaleImage="RealHeight">
-				<reportElement uuid="689a85d5-f107-4402-ac64-ec10e8579ffc" x="58" y="0" width="78" height="85"/>
+				<reportElement uuid="689a85d5-f107-4402-ac64-ec10e8579ffc" x="59" y="0" width="78" height="85"/>
 				<imageExpression><![CDATA[$P{QR_IMAGE}]]></imageExpression>
 			</image>
 			<textField>
@@ -488,7 +488,7 @@ WHERE
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[  "Software de Certififcação Factura Electrónica\nFE/196/AGT/2025"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Software de Certififcação Factura Electrónica\nFE/196/AGT/2025"]]></textFieldExpression>
 			</textField>
 		</band>
 	</lastPageFooter>

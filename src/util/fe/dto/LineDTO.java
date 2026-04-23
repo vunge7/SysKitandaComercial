@@ -10,6 +10,7 @@ package util.fe.dto;
  * @created 13/jan/2026
  * @lastModified 13/jan/2026
  */
+import java.math.BigDecimal;
 import java.util.List;
 
 public class LineDTO
@@ -20,15 +21,15 @@ public class LineDTO
     private String productDescription;
     private String quantity;
     private String unitOfMeasure;
-    private double unitPrice;
-    private double unitPriceBase;
+    private BigDecimal unitPrice;
+    private BigDecimal unitPriceBase;
     private List<ReferenceInfoDTO> referenceInfoDTOs;
-    private double debitAmount;
-    private double creditAmount;
-    private double settlementAmount;
+    private BigDecimal debitAmount;
+    private BigDecimal creditAmount;
+    private BigDecimal settlementAmount;
 
     private List<TaxDTO> taxes;
-    
+
     // getters & setters
     public int getLineNumber()
     {
@@ -80,52 +81,52 @@ public class LineDTO
         this.unitOfMeasure = unitOfMeasure;
     }
 
-    public double getUnitPrice()
+    public BigDecimal getUnitPrice()
     {
         return unitPrice;
     }
 
-    public void setUnitPrice( double unitPrice )
+    public void setUnitPrice( BigDecimal unitPrice )
     {
         this.unitPrice = unitPrice;
     }
 
-    public double getUnitPriceBase()
+    public BigDecimal getUnitPriceBase()
     {
         return unitPriceBase;
     }
 
-    public void setUnitPriceBase( double unitPriceBase )
+    public void setUnitPriceBase( BigDecimal unitPriceBase )
     {
         this.unitPriceBase = unitPriceBase;
     }
 
-    public double getDebitAmount()
+    public BigDecimal getDebitAmount()
     {
         return debitAmount;
     }
 
-    public void setDebitAmount( double debitAmount )
+    public void setDebitAmount( BigDecimal debitAmount )
     {
         this.debitAmount = debitAmount;
     }
 
-    public double getCreditAmount()
+    public BigDecimal getCreditAmount()
     {
         return creditAmount;
     }
 
-    public void setCreditAmount( double creditAmount )
+    public void setCreditAmount( BigDecimal creditAmount )
     {
         this.creditAmount = creditAmount;
     }
 
-    public double getSettlementAmount()
+    public BigDecimal getSettlementAmount()
     {
         return settlementAmount;
     }
 
-    public void setSettlementAmount( double settlementAmount )
+    public void setSettlementAmount( BigDecimal settlementAmount )
     {
         this.settlementAmount = settlementAmount;
     }
@@ -149,7 +150,5 @@ public class LineDTO
     {
         this.referenceInfoDTOs = referenceInfoDTOs;
     }
-    
-    
 
 }

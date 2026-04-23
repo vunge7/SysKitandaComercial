@@ -1745,13 +1745,13 @@ public class EmissaoRecibos extends javax.swing.JFrame
 //                }
                     salvarAmortizacaoDivida( last_venda, recibo, conexaoTransation );
                     DocumentosController.commit( conexaoTransation );
-                    ListaVenda1 listaVenda = new ListaVenda1( 
+                    ListaVenda1 listaVenda = new ListaVenda1(
                             last_venda,
                             DVML.Abreviacao.RC,
                             false,
                             false,
                             "Original",
-                            motivos_isentos 
+                            motivos_isentos
                     );
                 }
                 System.out.println( "STATUS:itens adicionado na facrtura com sucesso." );
@@ -2350,9 +2350,9 @@ public class EmissaoRecibos extends javax.swing.JFrame
         doc.setSourceDocuments( listSourceDocumentDTOs );
 
         DocumentTotalsDTO documentsTotals = new DocumentTotalsDTO();
-        documentsTotals.setNetTotal( totalBase.doubleValue() );
-        documentsTotals.setTaxPayable( totalIva.doubleValue() );
-        documentsTotals.setGrossTotal( totalFinal.doubleValue() );
+        documentsTotals.setNetTotal( totalBase );
+        documentsTotals.setTaxPayable( totalIva );
+        documentsTotals.setGrossTotal( totalFinal );
 
         /**
          * PREENCHER OS TOTAIS

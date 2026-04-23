@@ -89,7 +89,7 @@ import util.fe.TableColumIdUtil;
 
 /**
  *
- * @author marti
+ * @author martinho e Domingos Dala Vunge
  */
 public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
 {
