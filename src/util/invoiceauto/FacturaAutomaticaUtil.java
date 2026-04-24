@@ -2,10 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package util;
-
+package util.invoiceauto;
 
 //import java.sql.Connection;
+import util.*;
 import comercial.controller.AnoEconomicoController;
 import comercial.controller.DadosInstituicaoController;
 import comercial.controller.DocumentosController;
@@ -31,11 +31,14 @@ import entity.TbUsuario;
 import entity.TbVenda;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Vector;
+import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 import static util.DVML.ARMAZEM_DEFAUTL;
 import static util.DVML._CLIENTE_CONSUMIDOR_FINAL;
@@ -46,11 +49,7 @@ import static util.DVML._CLIENTE_CONSUMIDOR_FINAL;
  */
 public class FacturaAutomaticaUtil
 {
-    
-    private static final int NUMERO_MAXIMO_FACTURA = 20;
-    private static final int NUMERO_MAXIMO_LINHA = 10;
-    private static final int NUMERO_MAXIMO_QTD = 10;
-    private static final int NUMERO_MAXIMO_PRODUTO = 11;
+
     private BDConexao conexao;
     private PrecosController precosController;
     private ProdutosController produtosController;
@@ -59,12 +58,16 @@ public class FacturaAutomaticaUtil
     private MesasController mesasController;
     private ItemVendasController itemVendasController;
     private BDConexao conexaoTransaction;
-    private final double LIMITE_TOTAL_GERAL_MES = 10001299.94;
-    private final int DIA_COMERCO = 15;
-    private double contTotalGeralMes = 9965140.70;
 
-    public FacturaAutomaticaUtil( BDConexao conexao )
+    private AutoInvoiceConfiguration configuration;
+
+    public FacturaAutomaticaUtil(
+            AutoInvoiceConfiguration configuration,
+            BDConexao conexao )
     {
+
+        this.configuration = configuration;
+
         this.conexao = conexao;
         precosController = new PrecosController( conexao );
         produtosController = new ProdutosController( conexao );
@@ -86,9 +89,58 @@ public class FacturaAutomaticaUtil
      */
     public static void main( String[] args )
     {
-        FacturaAutomaticaUtil facturaAutomaticaUtil = new FacturaAutomaticaUtil( BDConexao.getInstancia() );
-        facturaAutomaticaUtil.procedimentoGerar();
 
+        int MAX_INVOICE_NUMBER = 90;
+        int MAX_INVOICE_LINE_NUMBER = 4;
+        int MAX_INVOICE_LINE_QUANTITY = 1;
+        double MONTHLY_GENERAL_INVOICE_LIMIT = 17185828.44; //#
+        int MONTH_START_DAY = 1;
+        int MONTH_END_DAY = 31;//#
+        double INITIAL_TOTAL_MONTH = 14436095.89;
+        int ECONOMIC_YEAR = 2021;
+        int ECONOMIC_YEAR_ID = 2;//#
+        int DOCUMENT_ID = 1;
+        int MONTH_ID = 12;//#
+        int USER_ID = 15;
+        int CLIENT_ID = 1;
+        int WAREHOUSE_ID = 2;
+
+        BDConexao conexao = new BDConexao();
+        ProdutosController produtosController = new ProdutosController( conexao );
+
+        /**
+         * 1 - MATRICULAS
+         * 2 - PROPINAS
+         * 3 - TRASNPORTES
+         * 4 - UNIFORMES
+         */
+        List<Integer> ids = Arrays.asList( 3, 4 );
+ 
+        Vector<TbProduto> produtosByTipoProduto = produtosController.getProdutosByTipoProduto( ids );
+        Vector<Integer> vectorProdutos = produtosByTipoProduto.stream()
+                .map( TbProduto::getCodigo )
+                .collect( Collectors.toCollection( Vector::new ) );
+        
+
+        AutoInvoiceConfiguration configuration = new AutoInvoiceConfiguration();
+        configuration.setNumeroMaximoFactura( MAX_INVOICE_NUMBER );
+        configuration.setListaProdutoVenda( vectorProdutos );
+        configuration.setNumeroMaximoLinha( MAX_INVOICE_LINE_NUMBER );
+        configuration.setNumeroMaximoQtd( MAX_INVOICE_LINE_QUANTITY);
+        configuration.setLimiteFacturacaoGeralMes( MONTHLY_GENERAL_INVOICE_LIMIT );
+        configuration.setDiaComeco( MONTH_START_DAY );
+        configuration.setLimiteDiaMes( MONTH_END_DAY );
+        configuration.setContTotalGeralMes( INITIAL_TOTAL_MONTH);
+        configuration.setAnoEconomico( ECONOMIC_YEAR );
+        configuration.setAnoEconomicoId( ECONOMIC_YEAR_ID );
+        configuration.setDocumentoId( DOCUMENT_ID );
+        configuration.setMesId( MONTH_ID );
+        configuration.setUserId( USER_ID);
+        configuration.setClienteId( CLIENT_ID );
+        configuration.setArmazemId( WAREHOUSE_ID );
+
+        FacturaAutomaticaUtil facturaAutomaticaUtil = new FacturaAutomaticaUtil( configuration, conexao );
+        facturaAutomaticaUtil.procedimentoGerar();
 //        facturaAutomaticaUtil.mostrarItens();
     }
 
@@ -153,18 +205,29 @@ public class FacturaAutomaticaUtil
 
     private List<ItemUtil> listaIntes = new ArrayList<>();
 
+    private int getIdProduto( int index )
+    {
+
+        Vector<Integer> listaProdutoVenda = configuration.getListaProdutoVenda();
+        return listaProdutoVenda.get( index );
+    }
+
     private void actualizarListItens()
     {
         Random random = new Random();
-        int tamanho = random.nextInt( NUMERO_MAXIMO_LINHA ) + 1;
+        int tamanho = random.nextInt( configuration.getNumeroMaximoLinha() ) + 1;
         for ( int i = 0; i < tamanho; i++ )
         {
-            int codProduto = random.nextInt( NUMERO_MAXIMO_PRODUTO ) + 1; // pega o codigo do produto aleatoriamente 
-            if ( !existeItem( codProduto ) )
+
+            Vector<Integer> listaProdutoVenda = configuration.getListaProdutoVenda();
+            int size = listaProdutoVenda.size();
+            int index = random.nextInt( size ); // pega o codigo do produto aleatoriamente no vector
+            int idProduto = getIdProduto( index );
+            if ( !existeItem( idProduto ) )
             {
-                int qtd = random.nextInt( NUMERO_MAXIMO_QTD ) + 1;
+                int qtd = random.nextInt( configuration.getNumeroMaximoQtd() ) + 1;
                 ItemUtil itemUtil = new ItemUtil();
-                itemUtil.setIdProduto( codProduto );
+                itemUtil.setIdProduto( idProduto );
                 itemUtil.setQtd( qtd );
                 listaIntes.add( itemUtil );
             }
@@ -174,12 +237,11 @@ public class FacturaAutomaticaUtil
     private List<Date> getDates()
     {
         List<Date> lista = new ArrayList<>();
-        Random random = new Random();
-        for ( int i = DIA_COMERCO; i <= 30; i++ )
+        for ( int i = configuration.getDiaComeco(); i <= configuration.getLimiteDiaMes(); i++ )
         {
             Date date = new Date();
-            date.setYear( 2023 - 1900 );
-            date.setMonth( 11 );
+            date.setYear( configuration.getAnoEconomico() - 1900 );
+            date.setMonth( configuration.getMesId() - 1 );
             date.setDate( i );
             lista.add( date );
         }
@@ -188,12 +250,13 @@ public class FacturaAutomaticaUtil
 
     private void procedimentoGerar()
     {
+
         Random random = new Random();
         List<Date> listDate = getDates();
 
         for ( int i = 0; i < listDate.size(); i++ )
         {
-            int numeroFactura = random.nextInt( NUMERO_MAXIMO_FACTURA ) + 1; // determina o numero de factura para cada dia
+            int numeroFactura = random.nextInt( configuration.getNumeroMaximoFactura() ) + 1; // determina o numero de factura para cada dia
             Date dataActual = listDate.get( i );
             dataActual.setMinutes( 8 );
             dataActual.setSeconds( 0 );
@@ -205,8 +268,9 @@ public class FacturaAutomaticaUtil
                 System.out.println( "DATA: " + MetodosUtil.getDataBanco( dataActual ) );
                 //detrermina o número de linhas da factura automáticamente
                 actualizarListItens();
-                contTotalGeralMes += getTotalAOALiquido();
-                if ( contTotalGeralMes <= LIMITE_TOTAL_GERAL_MES )
+                configuration.setContTotalGeralMes( configuration.getContTotalGeralMes() + getTotalAOALiquido() );
+//                System.out.println( "CON TOTAL GERAL: " + contTotalGeralMes );
+                if ( configuration.getContTotalGeralMes() <= configuration.getLimiteFacturacaoGeralMes() )
                 {
                     salvar_venda_comercial_automatico( dataActual );
                 }
@@ -269,14 +333,14 @@ public class FacturaAutomaticaUtil
         /*outros campos*/
         venda_local.setDescontoTotal( new BigDecimal( getDescontoComercial() + getDescontoFinanceiro() ) );
         venda_local.setIdBanco( new TbBanco( 1 ) );
-        venda_local.setIdArmazemFK( new TbArmazem( ARMAZEM_DEFAUTL ) );
+        venda_local.setIdArmazemFK( new TbArmazem( configuration.getArmazemId() ) );
 
-        venda_local.setCodigoUsuario( new TbUsuario( 18 ) );
-        venda_local.setCodigoCliente( new TbCliente( 1 ) );
-        venda_local.setFkAnoEconomico( new AnoEconomico( 4 ) );
+        venda_local.setCodigoUsuario( new TbUsuario( configuration.getUserId() ) );
+        venda_local.setCodigoCliente( new TbCliente( configuration.getClienteId() ) );
+        venda_local.setFkAnoEconomico( new AnoEconomico( configuration.getAnoEconomicoId() ) );
         venda_local.setReferencia( "" );
         venda_local.setNomeConsumidorFinal( _CLIENTE_CONSUMIDOR_FINAL );
-        venda_local.setFkDocumento( new Documento( 1 ) );
+        venda_local.setFkDocumento( new Documento( configuration.getDocumentoId() ) );
 
         String prox_doc = getCodDocActualizador( documentosController, anoEconomicoController, vendasController );
 
@@ -284,7 +348,11 @@ public class FacturaAutomaticaUtil
         venda_local.setCodFact( prox_doc );
         venda_local.setCont( 0 );
 
-        venda_local.setHashCod( MetodosUtil.criptografia_hash( venda_local, getGrossTotal(), conexaoTransaction ) );
+        venda_local.setHashCod( MetodosUtil.criptografia_hash(
+                venda_local,
+                getGrossTotal(),
+                conexaoTransaction )
+        );
 
         venda_local.setTotalPorExtenso( "" );
         venda_local.setModelo( "" );
@@ -318,6 +386,7 @@ public class FacturaAutomaticaUtil
 
             if ( vendasController.salvar( venda_local ) )
             {
+                System.out.println( "venda criada com sucesso!" );
                 Integer last_venda = vendasController.getLastVenda().getCodigo();
                 if ( Objects.isNull( last_venda ) || last_venda == 0 )
                 {
@@ -427,6 +496,7 @@ public class FacturaAutomaticaUtil
         for ( int i = 0; i < listaIntes.size(); i++ )
         {
             ItemUtil item = listaIntes.get( i );
+            System.out.println( "PRODUTO ID: " + item.idProduto );
             TbPreco preco = precosController.getLastIdPrecoByIdProduto( item.getIdProduto(), 1 );
             preco_unitario = preco.getPrecoVenda().doubleValue();
             qtd = item.getQtd();
@@ -458,7 +528,7 @@ public class FacturaAutomaticaUtil
             // a incidência só é aplicável ao produtos sujeitos a iva 
             if ( taxa != 0 )
             {
-                double valor_unitario = ( preco_unitario * qtd );
+                double valor_unitario = (preco_unitario * qtd);
                 desconto_valor_linha = 0;
                 imposto += ( ( valor_unitario - desconto_valor_linha ) * ( taxa / 100 ) );
             }
@@ -479,8 +549,8 @@ public class FacturaAutomaticaUtil
 
     public double getTotalAOALiquido()
     {
-        double valores = ( getTotalIliquido() + getTotalImposto() );
-        double descontos = ( getDescontoComercial() + getDescontoFinanceiro() );
+        double valores = (getTotalIliquido() + getTotalImposto());
+        double descontos = (getDescontoComercial() + getDescontoFinanceiro());
 //        System.out.println( "TotalIliquido: " + getTotalIliquido() );
 //        System.out.println( "TotalImposto: " + getTotalImposto() );
 //        System.out.println( "TotalDescontoComercial: " + getDescontoComercial() );
@@ -518,7 +588,7 @@ public class FacturaAutomaticaUtil
             if ( taxa != 0 )
             {
                 desconto_valor_linha = 0;
-                double valor_unitario = ( preco_unitario * qtd );
+                double valor_unitario = (preco_unitario * qtd);
                 incidencia += ( ( valor_unitario ) - ( valor_unitario * desconto_valor_linha ) );
 
             }
@@ -534,15 +604,26 @@ public class FacturaAutomaticaUtil
         return 0d;
     }
 
-    private static String getCodDocActualizador( DocumentosController documentosController, AnoEconomicoController anoEconomicoController, VendasController vendasController )
+    private String getCodDocActualizador(
+            DocumentosController documentosController,
+            AnoEconomicoController anoEconomicoController,
+            VendasController vendasController )
     {
         try
         {
-            Documento documento = ( Documento ) documentosController.findById( 1 );
-            AnoEconomico anoEconomico = ( AnoEconomico ) anoEconomicoController.findById( 4 );
+            Documento documento = ( Documento ) documentosController.findById(
+                    configuration.getDocumentoId()
+            );
+
+            AnoEconomico anoEconomico = ( AnoEconomico ) anoEconomicoController.findById(
+                    configuration.getAnoEconomicoId()
+            );
+
             // this.doc_prox_cod = documento.getCodUltimoDoc() + 1;
             int doc_prox_cod = vendasController.getUltimaContagemByIdDocumentoAndAnoEconomico(
-                    1, 4 ) + 1;
+                    configuration.getDocumentoId(),
+                    configuration.getAnoEconomicoId() ) + 1;
+
             String prox_doc = documento.getAbreviacao();
             //FA Série / 4codigo
             prox_doc += " " + anoEconomico.getSerie() + "/" + doc_prox_cod;
@@ -588,8 +669,8 @@ public class FacturaAutomaticaUtil
 
     private static double getValorComImposto( double qtd, double taxa, double preco_venda, double desconto )
     {
-        double subtotal_linha = ( preco_venda * qtd );
-        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
+        double subtotal_linha = (preco_venda * qtd);
+        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
         double valor_iva = 1 + ( taxa / 100 );//
         return ( ( subtotal_linha - desconto_valor ) * valor_iva );
 
