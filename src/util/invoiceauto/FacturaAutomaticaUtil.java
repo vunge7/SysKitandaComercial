@@ -89,53 +89,52 @@ public class FacturaAutomaticaUtil
      */
     public static void main( String[] args )
     {
-
+        //25124718.55
+        //21104763.58
         int MAX_INVOICE_NUMBER = 90;
         int MAX_INVOICE_LINE_NUMBER = 4;
         int MAX_INVOICE_LINE_QUANTITY = 1;
-        double MONTHLY_GENERAL_INVOICE_LIMIT = 17185828.44; //#
-        int MONTH_START_DAY = 1;
-        int MONTH_END_DAY = 31;//#
-        double INITIAL_TOTAL_MONTH = 14436095.89;
-        int ECONOMIC_YEAR = 2021;
-        int ECONOMIC_YEAR_ID = 2;//#
+        double MONTHLY_GENERAL_INVOICE_LIMIT = 25124718.55; //#
+//        double MONTHLY_GENERAL_INVOICE_LIMIT = 21104763.58; //#
+        int MONTH_START_DAY = 13;
+        int MONTH_END_DAY = 30;//#
+        double INITIAL_TOTAL_MONTH = 21104763.58;
+//        double INITIAL_TOTAL_MONTH = 0.00;
+        int ECONOMIC_YEAR = 2022;
+        int ECONOMIC_YEAR_ID = 3;//#
         int DOCUMENT_ID = 1;
         int MONTH_ID = 12;//#
         int USER_ID = 15;
         int CLIENT_ID = 1;
         int WAREHOUSE_ID = 2;
 
+        /**
+         * 1 - MATRICULAS 2 - PROPINAS 3 - TRASNPORTES 4 - UNIFORMES
+         */
+        List<Integer> ids = Arrays.asList( 3, 4 );
+//        List<Integer> ids = Arrays.asList( 1, 2 );
         BDConexao conexao = new BDConexao();
         ProdutosController produtosController = new ProdutosController( conexao );
 
-        /**
-         * 1 - MATRICULAS
-         * 2 - PROPINAS
-         * 3 - TRASNPORTES
-         * 4 - UNIFORMES
-         */
-        List<Integer> ids = Arrays.asList( 3, 4 );
- 
         Vector<TbProduto> produtosByTipoProduto = produtosController.getProdutosByTipoProduto( ids );
         Vector<Integer> vectorProdutos = produtosByTipoProduto.stream()
                 .map( TbProduto::getCodigo )
                 .collect( Collectors.toCollection( Vector::new ) );
-        
 
         AutoInvoiceConfiguration configuration = new AutoInvoiceConfiguration();
         configuration.setNumeroMaximoFactura( MAX_INVOICE_NUMBER );
         configuration.setListaProdutoVenda( vectorProdutos );
         configuration.setNumeroMaximoLinha( MAX_INVOICE_LINE_NUMBER );
-        configuration.setNumeroMaximoQtd( MAX_INVOICE_LINE_QUANTITY);
+        configuration.setNumeroMaximoQtd( MAX_INVOICE_LINE_QUANTITY );
         configuration.setLimiteFacturacaoGeralMes( MONTHLY_GENERAL_INVOICE_LIMIT );
         configuration.setDiaComeco( MONTH_START_DAY );
         configuration.setLimiteDiaMes( MONTH_END_DAY );
-        configuration.setContTotalGeralMes( INITIAL_TOTAL_MONTH);
+        configuration.setContTotalGeralMes( INITIAL_TOTAL_MONTH );
         configuration.setAnoEconomico( ECONOMIC_YEAR );
         configuration.setAnoEconomicoId( ECONOMIC_YEAR_ID );
         configuration.setDocumentoId( DOCUMENT_ID );
         configuration.setMesId( MONTH_ID );
-        configuration.setUserId( USER_ID);
+        configuration.setUserId( USER_ID );
         configuration.setClienteId( CLIENT_ID );
         configuration.setArmazemId( WAREHOUSE_ID );
 
