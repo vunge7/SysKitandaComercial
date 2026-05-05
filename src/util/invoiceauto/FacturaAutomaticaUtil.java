@@ -93,14 +93,18 @@ public class FacturaAutomaticaUtil
         int MAX_INVOICE_NUMBER = 90;
         int MAX_INVOICE_LINE_NUMBER = 4;
         int MAX_INVOICE_LINE_QUANTITY = 1;
-        double MONTHLY_GENERAL_INVOICE_LIMIT = 17185828.44; //#
+//        double MONTHLY_GENERAL_INVOICE_LIMIT = 34460725.41; //#
+        double MONTHLY_GENERAL_INVOICE_LIMIT = 9274642.86; //#
+//        double MONTHLY_GENERAL_INVOICE_LIMIT = 28947009.34; //#
         int MONTH_START_DAY = 1;
         int MONTH_END_DAY = 31;//#
-        double INITIAL_TOTAL_MONTH = 14436095.89;
-        int ECONOMIC_YEAR = 2021;
-        int ECONOMIC_YEAR_ID = 2;//#
+//        double INITIAL_TOTAL_MONTH = 28947009.34;
+        double INITIAL_TOTAL_MONTH = 0;
+        int ECONOMIC_YEAR = 2025;
+        int ECONOMIC_YEAR_ID = 6;//#
+//        int ECONOMIC_YEAR_ID = 5;//#
         int DOCUMENT_ID = 1;
-        int MONTH_ID = 12;//#
+        int MONTH_ID = 1;//#
         int USER_ID = 15;
         int CLIENT_ID = 1;
         int WAREHOUSE_ID = 2;
@@ -114,7 +118,7 @@ public class FacturaAutomaticaUtil
          * 3 - TRASNPORTES
          * 4 - UNIFORMES
          */
-        List<Integer> ids = Arrays.asList( 3, 4 );
+        List<Integer> ids = Arrays.asList( 3,4);
  
         Vector<TbProduto> produtosByTipoProduto = produtosController.getProdutosByTipoProduto( ids );
         Vector<Integer> vectorProdutos = produtosByTipoProduto.stream()

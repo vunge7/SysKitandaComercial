@@ -19,7 +19,8 @@ import java.util.Date;
 
 public class BackupUsb {
 
-    private static final String SENHA = "MinhaSenhaForte123"; // 🔑 Trocar por senha segura
+//    private static final String SENHA = "MinhaSenhaForte123"; // 🔑 Trocar por senha segura
+    private static final String SENHA = "DoV90x?#1975Mavala"; // 🔑 Trocar por senha segura
     private static final String ALGORITMO = "AES/CBC/PKCS5Padding";
 
     public static void main(String[] args) {

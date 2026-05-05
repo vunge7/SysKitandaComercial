@@ -198,7 +198,8 @@ public class ResumoVenda
             JasperFillManager.fillReport( obterCaminho, hashMap, connection );
             JasperPrint jasperPrint = JasperFillManager.fillReport( obterCaminho, hashMap, connection );
 
-            if ( jasperPrint.getPages().size() >= 1 )
+            if ( jasperPrint.getPages().size() >= 0 )
+//            if ( jasperPrint.getPages().size() >= 1 )
             {
                 JasperViewer jasperViewer = new JasperViewer( jasperPrint, false );
                 jasperViewer.setVisible( true );
