@@ -1256,7 +1256,7 @@
                     <Column editable="false" title="Cod." type="java.lang.Integer"/>
                     <Column editable="false" title="Descri&#xe7;&#xe3;o" type="java.lang.String"/>
                     <Column editable="false" title="Un." type="java.lang.String"/>
-                    <Column editable="false" title="Pre&#xe7;o" type="java.lang.String"/>
+                    <Column editable="true" title="Pre&#xe7;o" type="java.lang.String"/>
                     <Column editable="true" title="Qtd." type="java.lang.Double"/>
                     <Column editable="true" title="Desc." type="java.lang.Double"/>
                     <Column editable="false" title="Taxa " type="java.lang.String"/>

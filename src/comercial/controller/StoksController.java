@@ -45,54 +45,53 @@ public class StoksController implements EntidadeFactory {
     @Override
     public boolean salvar(Object object) {
 
-    TbStock stock = (TbStock) object;
+        TbStock stock = (TbStock) object;
 
-    String sql = "INSERT INTO tb_stock ("
-            + "cod_produto_codigo, quantidade_existente, status, preco_venda, "
-            + "quant_critica, quant_baixa, quantidade_antiga, cod_armazem, "
-            + "preco_venda_grosso, dataEntrada, qtd_grosso, preco_venda_fabrica"
-            + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO tb_stock ("
+                + "cod_produto_codigo, quantidade_existente, status, preco_venda, "
+                + "quant_critica, quant_baixa, quantidade_antiga, cod_armazem, "
+                + "preco_venda_grosso, dataEntrada, qtd_grosso, preco_venda_fabrica"
+                + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-    try (Connection conn = BDConexao.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = BDConexao.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-        ps.setInt(1, stock.getCodProdutoCodigo().getCodigo());
-        ps.setDouble(2, stock.getQuantidadeExistente());
-        ps.setString(3, stock.getStatus());
-        ps.setBigDecimal(4, stock.getPrecoVenda());
-        ps.setInt(5, stock.getQuantCritica());
-        ps.setInt(6, stock.getQuantBaixa());
-        ps.setDouble(7, stock.getQuantidadeAntiga());
-        ps.setInt(8, stock.getCodArmazem().getCodigo());
-        ps.setBigDecimal(9, stock.getPrecoVendaGrosso());
+            ps.setInt(1, stock.getCodProdutoCodigo().getCodigo());
+            ps.setDouble(2, stock.getQuantidadeExistente());
+            ps.setString(3, stock.getStatus());
+            ps.setBigDecimal(4, stock.getPrecoVenda());
+            ps.setInt(5, stock.getQuantCritica());
+            ps.setInt(6, stock.getQuantBaixa());
+            ps.setDouble(7, stock.getQuantidadeAntiga());
+            ps.setInt(8, stock.getCodArmazem().getCodigo());
+            ps.setBigDecimal(9, stock.getPrecoVendaGrosso());
 
-        // 🔥 CORREÇÃO DEFINITIVA DA DATA (SEM MILISSEGUNDOS)
-        if (stock.getDataEntrada() != null) {
-            java.sql.Timestamp ts = new java.sql.Timestamp(stock.getDataEntrada().getTime());
-            ts.setNanos(0); // 🔥 remove milissegundos (causa do problema)
-            ps.setTimestamp(10, ts);
-        } else {
-            ps.setNull(10, java.sql.Types.TIMESTAMP);
+            // 🔥 CORREÇÃO DEFINITIVA DA DATA (SEM MILISSEGUNDOS)
+            if (stock.getDataEntrada() != null) {
+                java.sql.Timestamp ts = new java.sql.Timestamp(stock.getDataEntrada().getTime());
+                ts.setNanos(0); // 🔥 remove milissegundos (causa do problema)
+                ps.setTimestamp(10, ts);
+            } else {
+                ps.setNull(10, java.sql.Types.TIMESTAMP);
+            }
+
+            ps.setDouble(11, stock.getQtdGrosso());
+            ps.setBigDecimal(12, stock.getPrecoVendaFabrica());
+
+            // 🔍 Debug útil (podes remover depois)
+            System.out.println("DATA A SER INSERIDA: " + stock.getDataEntrada());
+
+            int linhas = ps.executeUpdate();
+
+            System.out.println("LINHAS INSERIDAS: " + linhas);
+
+            return linhas > 0;
+
+        } catch (Exception e) {
+            System.err.println("ERRO AO SALVAR STOCK:");
+            e.printStackTrace();
+            return false;
         }
-
-        ps.setDouble(11, stock.getQtdGrosso());
-        ps.setBigDecimal(12, stock.getPrecoVendaFabrica());
-
-        // 🔍 Debug útil (podes remover depois)
-        System.out.println("DATA A SER INSERIDA: " + stock.getDataEntrada());
-
-        int linhas = ps.executeUpdate();
-
-        System.out.println("LINHAS INSERIDAS: " + linhas);
-
-        return linhas > 0;
-
-    } catch (Exception e) {
-        System.err.println("ERRO AO SALVAR STOCK:");
-        e.printStackTrace();
-        return false;
     }
-}
 //    public boolean salvar(Object object) {
 //
 //        TbStock stock = (TbStock) object;
@@ -273,69 +272,79 @@ public class StoksController implements EntidadeFactory {
         return stock;
 
     }
-    
-    public boolean salvarStock(Object object, Connection conn) {
 
-    TbStock stock = (TbStock) object;
+    public static void inserir_datas_stock(Connection conn) throws SQLException {
 
-    String sql = "INSERT INTO tb_stock ("
-            + "cod_produto_codigo, quantidade_existente, status, preco_venda, "
-            + "quant_critica, quant_baixa, quantidade_antiga, cod_armazem, "
-            + "preco_venda_grosso, dataEntrada, qtd_grosso, preco_venda_fabrica"
-            + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "CALL proc_inserir_data_compra_to_data_stock()";
 
-    try (PreparedStatement ps = conn.prepareStatement(sql)) {
-
-        // 1️⃣ Campos básicos
-        ps.setInt(1, stock.getCodProdutoCodigo().getCodigo());
-        ps.setDouble(2, stock.getQuantidadeExistente());
-        ps.setString(3, stock.getStatus());
-        ps.setBigDecimal(4, stock.getPrecoVenda());
-        ps.setInt(5, stock.getQuantCritica());
-        ps.setInt(6, stock.getQuantBaixa());
-        ps.setDouble(7, stock.getQuantidadeAntiga());
-        ps.setInt(8, stock.getCodArmazem().getCodigo());
-
-        // 2️⃣ Evitar NULL em BigDecimal
-        ps.setBigDecimal(9, 
-            stock.getPrecoVendaGrosso() != null ? stock.getPrecoVendaGrosso() : BigDecimal.ZERO
-        );
-
-        // 🔥 DATA (CORREÇÃO CRÍTICA)
-        if (stock.getDataEntrada() != null) {
-            java.sql.Timestamp ts = new java.sql.Timestamp(stock.getDataEntrada().getTime());
-            ts.setNanos(0); // remove milissegundos
-            ps.setTimestamp(10, ts);
-
-            System.out.println("DATA ENVIADA: " + ts); // debug
-        } else {
-            ps.setTimestamp(10, new java.sql.Timestamp(System.currentTimeMillis()));
-            System.out.println("DATA DEFAULT USADA");
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.execute();
         }
 
-        // 3️⃣ Restantes campos
-        ps.setDouble(11, stock.getQtdGrosso());
-
-        ps.setBigDecimal(12,
-            stock.getPrecoVendaFabrica() != null ? stock.getPrecoVendaFabrica() : BigDecimal.ZERO
-        );
-
-        // 🔍 DEBUG COMPLETO
-        System.out.println("EXECUTANDO INSERT STOCK...");
-
-        int linhas = ps.executeUpdate();
-
-        System.out.println("LINHAS INSERIDAS: " + linhas);
-
-        return linhas > 0;
-
-    } catch (Exception e) {
-        System.err.println("ERRO AO INSERIR STOCK:");
-        e.printStackTrace();
-        return false;
     }
-}
-    
+
+    public boolean salvarStock(Object object, Connection conn) {
+
+        TbStock stock = (TbStock) object;
+
+        String sql = "INSERT INTO tb_stock ("
+                + "cod_produto_codigo, quantidade_existente, status, preco_venda, "
+                + "quant_critica, quant_baixa, quantidade_antiga, cod_armazem, "
+                + "preco_venda_grosso, dataEntrada, qtd_grosso, preco_venda_fabrica"
+                + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            // 1️⃣ Campos básicos
+            ps.setInt(1, stock.getCodProdutoCodigo().getCodigo());
+            ps.setDouble(2, stock.getQuantidadeExistente());
+            ps.setString(3, stock.getStatus());
+            ps.setBigDecimal(4, stock.getPrecoVenda());
+            ps.setInt(5, stock.getQuantCritica());
+            ps.setInt(6, stock.getQuantBaixa());
+            ps.setDouble(7, stock.getQuantidadeAntiga());
+            ps.setInt(8, stock.getCodArmazem().getCodigo());
+
+            // 2️⃣ Evitar NULL em BigDecimal
+            ps.setBigDecimal(9,
+                    stock.getPrecoVendaGrosso() != null ? stock.getPrecoVendaGrosso() : BigDecimal.ZERO
+            );
+
+            // 🔥 DATA (CORREÇÃO CRÍTICA)
+            if (stock.getDataEntrada() != null) {
+                java.sql.Timestamp ts = new java.sql.Timestamp(stock.getDataEntrada().getTime());
+                ts.setNanos(0); // remove milissegundos
+                ps.setTimestamp(10, ts);
+
+                System.out.println("DATA ENVIADA: " + ts); // debug
+            } else {
+                ps.setTimestamp(10, new java.sql.Timestamp(System.currentTimeMillis()));
+                System.out.println("DATA DEFAULT USADA");
+            }
+
+            // 3️⃣ Restantes campos
+            ps.setDouble(11, stock.getQtdGrosso());
+
+            ps.setBigDecimal(12,
+                    stock.getPrecoVendaFabrica() != null ? stock.getPrecoVendaFabrica() : BigDecimal.ZERO
+            );
+
+            // 🔍 DEBUG COMPLETO
+            System.out.println("EXECUTANDO INSERT STOCK...");
+
+            int linhas = ps.executeUpdate();
+
+            System.out.println("LINHAS INSERIDAS: " + linhas);
+
+            return linhas > 0;
+
+        } catch (Exception e) {
+            System.err.println("ERRO AO INSERIR STOCK:");
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 //    public boolean salvarStock(Object object, Connection conn) {
 //
 //    TbStock stock = (TbStock) object;
@@ -372,7 +381,6 @@ public class StoksController implements EntidadeFactory {
 //        return false;
 //    }
 //}
-
     public TbStock getLasStock() {
 
         String FIND__BY_CODIGO = "SELECT MAX(codigo) as maximo_id, s.*  FROM tb_stock s";
@@ -1205,48 +1213,48 @@ public class StoksController implements EntidadeFactory {
         return conexao.executeUpdate(sql);
 
     }
-    
+
     public boolean adicionar_quantidades(int cod, double quantidade, double qtdCritica,
-                                    double qtdBaixa, Date dataEntrada, int idArmazem) {
+            double qtdBaixa, Date dataEntrada, int idArmazem) {
 
-    double qtdExistente = getQuantidadeProduto(cod, idArmazem);
-    double qtdUpdate = qtdExistente + quantidade;
+        double qtdExistente = getQuantidadeProduto(cod, idArmazem);
+        double qtdUpdate = qtdExistente + quantidade;
 
-    String sql = "UPDATE tb_stock SET quantidade_existente = ?, "
-            + "quant_critica = ?, "
-            + "dataEntrada = ?, "
-            + "quant_baixa = ? "
-            + "WHERE cod_produto_codigo = ? AND cod_armazem = ?";
+        String sql = "UPDATE tb_stock SET quantidade_existente = ?, "
+                + "quant_critica = ?, "
+                + "dataEntrada = ?, "
+                + "quant_baixa = ? "
+                + "WHERE cod_produto_codigo = ? AND cod_armazem = ?";
 
-    try (PreparedStatement ps = conexao.getConnection().prepareStatement(sql)) {
+        try (PreparedStatement ps = conexao.getConnection().prepareStatement(sql)) {
 
-        ps.setDouble(1, qtdUpdate);
-        ps.setDouble(2, qtdCritica);
+            ps.setDouble(1, qtdUpdate);
+            ps.setDouble(2, qtdCritica);
 
-        // ⚠️ Conversão correta de java.util.Date → java.sql.Date
-        if (dataEntrada != null) {
-    ps.setTimestamp(3, new java.sql.Timestamp(dataEntrada.getTime()));
-} else {
-    ps.setNull(3, java.sql.Types.TIMESTAMP);
-}
+            // ⚠️ Conversão correta de java.util.Date → java.sql.Date
+            if (dataEntrada != null) {
+                ps.setTimestamp(3, new java.sql.Timestamp(dataEntrada.getTime()));
+            } else {
+                ps.setNull(3, java.sql.Types.TIMESTAMP);
+            }
 //        if (dataEntrada != null) {
 //            ps.setDate(3, new java.sql.Date(dataEntrada.getTime()));
 //        } else {
 //            ps.setNull(3, java.sql.Types.DATE);
 //        }
 
-        ps.setDouble(4, qtdBaixa);
-        ps.setInt(5, cod);
-        ps.setInt(6, idArmazem);
+            ps.setDouble(4, qtdBaixa);
+            ps.setInt(5, cod);
+            ps.setInt(6, idArmazem);
 
-        return ps.executeUpdate() > 0;
+            return ps.executeUpdate() > 0;
 
-    } catch (Exception e) {
-        e.printStackTrace(); // ⚠️ NÃO ENGOLIR ERROS
-        return false;
+        } catch (Exception e) {
+            e.printStackTrace(); // ⚠️ NÃO ENGOLIR ERROS
+            return false;
+        }
     }
-}
-    
+
 //    public boolean adicionar_quantidades(int cod, double quantidade, double qtdCritica, double qtdBaixa, Date dataEntrada, int idArmazem) {
 //
 //        double qtdExistente = getQuantidadeProduto(cod, idArmazem);
@@ -1261,7 +1269,6 @@ public class StoksController implements EntidadeFactory {
 //        return conexao.executeUpdate(sql);
 //
 //    }
-
     public boolean adicionar_quantidades(int cod, double quantidade, int idArmazem) {
 
         double qtdExistente = getQuantidadeProduto(cod, idArmazem);

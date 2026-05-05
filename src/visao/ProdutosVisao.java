@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
@@ -269,8 +270,7 @@ public class ProdutosVisao extends javax.swing.JFrame
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents()
-    {
+    private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
@@ -386,10 +386,8 @@ public class ProdutosVisao extends javax.swing.JFrame
         jPanel5.add(lbTipoProduto, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 80, 90, 22));
 
         cmbTipoProduto.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
-        cmbTipoProduto.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbTipoProduto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbTipoProdutoActionPerformed(evt);
             }
         });
@@ -405,10 +403,8 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         txtPrecoCompra.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
         txtPrecoCompra.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtPrecoCompra.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtPrecoCompra.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtPrecoCompraActionPerformed(evt);
             }
         });
@@ -416,19 +412,15 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         buttonGroup2.add(ck_produto);
         ck_produto.setText("Produto");
-        ck_produto.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        ck_produto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ck_produtoActionPerformed(evt);
             }
         });
         jPanel5.add(ck_produto, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
 
-        cmbUnidade.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbUnidade.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbUnidadeActionPerformed(evt);
             }
         });
@@ -436,19 +428,15 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         buttonGroup2.add(ck_servico);
         ck_servico.setText("Serviço");
-        ck_servico.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        ck_servico.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ck_servicoActionPerformed(evt);
             }
         });
         jPanel5.add(ck_servico, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 10, -1, -1));
 
-        cmbFamilia.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbFamilia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbFamiliaActionPerformed(evt);
             }
         });
@@ -458,10 +446,8 @@ public class ProdutosVisao extends javax.swing.JFrame
         lbTipoProduto2.setText("Marca:");
         jPanel5.add(lbTipoProduto2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 40, 70, 30));
 
-        cmbMarca.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbMarca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbMarcaActionPerformed(evt);
             }
         });
@@ -472,10 +458,8 @@ public class ProdutosVisao extends javax.swing.JFrame
         jPanel5.add(lbTipoProduto3, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 40, 90, 22));
 
         cmbModelo.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
-        cmbModelo.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbModelo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbModeloActionPerformed(evt);
             }
         });
@@ -498,10 +482,8 @@ public class ProdutosVisao extends javax.swing.JFrame
         txtCodigoBarra.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         txtCodigoBarra.setText("0");
         txtCodigoBarra.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtCodigoBarra.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtCodigoBarra.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtCodigoBarraActionPerformed(evt);
             }
         });
@@ -510,10 +492,8 @@ public class ProdutosVisao extends javax.swing.JFrame
         btnSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/salvar_16x16.png"))); // NOI18N
         btnSalvar.setText("Salvar");
         btnSalvar.setAlignmentX(0.5F);
-        btnSalvar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSalvarActionPerformed(evt);
             }
         });
@@ -523,10 +503,8 @@ public class ProdutosVisao extends javax.swing.JFrame
         btnAlterar2.setText("Alterar");
         btnAlterar2.setAlignmentX(0.5F);
         btnAlterar2.setEnabled(false);
-        btnAlterar2.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnAlterar2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAlterar2ActionPerformed(evt);
             }
         });
@@ -535,10 +513,8 @@ public class ProdutosVisao extends javax.swing.JFrame
         btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LOGOUT - VERMELHO/Logout 32x32.png"))); // NOI18N
         btnCancelar.setText("Sair");
         btnCancelar.setAlignmentX(0.5F);
-        btnCancelar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelarActionPerformed(evt);
             }
         });
@@ -553,10 +529,8 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         cmbImposto.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         cmbImposto.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cmbImposto.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbImposto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbImpostoActionPerformed(evt);
             }
         });
@@ -568,10 +542,8 @@ public class ProdutosVisao extends javax.swing.JFrame
         buttonGroup1.add(ivaAplicarJRadioButton);
         ivaAplicarJRadioButton.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
         ivaAplicarJRadioButton.setText("Sim ( Aplicar IVA )");
-        ivaAplicarJRadioButton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        ivaAplicarJRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ivaAplicarJRadioButtonActionPerformed(evt);
             }
         });
@@ -625,17 +597,13 @@ public class ProdutosVisao extends javax.swing.JFrame
         jPanel6.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
         ivaMotivoJComboBox.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
-        ivaMotivoJComboBox.addItemListener(new java.awt.event.ItemListener()
-        {
-            public void itemStateChanged(java.awt.event.ItemEvent evt)
-            {
+        ivaMotivoJComboBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 ivaMotivoJComboBoxItemStateChanged(evt);
             }
         });
-        ivaMotivoJComboBox.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        ivaMotivoJComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ivaMotivoJComboBoxActionPerformed(evt);
             }
         });
@@ -648,10 +616,8 @@ public class ProdutosVisao extends javax.swing.JFrame
         ivaNaoAplicarJRadioButton.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
         ivaNaoAplicarJRadioButton.setSelected(true);
         ivaNaoAplicarJRadioButton.setText("Não (Não aplicar IVA)");
-        ivaNaoAplicarJRadioButton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        ivaNaoAplicarJRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ivaNaoAplicarJRadioButtonActionPerformed(evt);
             }
         });
@@ -690,10 +656,8 @@ public class ProdutosVisao extends javax.swing.JFrame
         buttonGroup4.add(retencaoAplicarJRadioButton);
         retencaoAplicarJRadioButton.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 12)); // NOI18N
         retencaoAplicarJRadioButton.setText("Sim ( Aplicar Retenção )");
-        retencaoAplicarJRadioButton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        retencaoAplicarJRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 retencaoAplicarJRadioButtonActionPerformed(evt);
             }
         });
@@ -702,20 +666,16 @@ public class ProdutosVisao extends javax.swing.JFrame
         retencaoNaoAplicarJRadioButton.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 12)); // NOI18N
         retencaoNaoAplicarJRadioButton.setSelected(true);
         retencaoNaoAplicarJRadioButton.setText("Não (Não aplicar Retenção)");
-        retencaoNaoAplicarJRadioButton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        retencaoNaoAplicarJRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 retencaoNaoAplicarJRadioButtonActionPerformed(evt);
             }
         });
 
         retencaoTaxaJTextField.setEditable(false);
         retencaoTaxaJTextField.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
-        retencaoTaxaJTextField.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        retencaoTaxaJTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 retencaoTaxaJTextFieldActionPerformed(evt);
             }
         });
@@ -724,10 +684,8 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         retencaoZeroTaxaJTextField.setEditable(false);
         retencaoZeroTaxaJTextField.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
-        retencaoZeroTaxaJTextField.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        retencaoZeroTaxaJTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 retencaoZeroTaxaJTextFieldActionPerformed(evt);
             }
         });
@@ -789,20 +747,16 @@ public class ProdutosVisao extends javax.swing.JFrame
         btnLimpar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/lixo.png"))); // NOI18N
         btnLimpar.setText("Limpar");
         btnLimpar.setAlignmentX(0.5F);
-        btnLimpar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnLimpar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnLimparActionPerformed(evt);
             }
         });
         jPanel5.add(btnLimpar, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 510, 130, 40));
 
         jButton1.setText("+");
-        jButton1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
@@ -816,10 +770,8 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagem/eliminar/destroy_32x32.png"))); // NOI18N
         jButton3.setText("Desactivar");
-        jButton3.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
             }
         });
@@ -855,10 +807,8 @@ public class ProdutosVisao extends javax.swing.JFrame
         btnCarregar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/proucura.png"))); // NOI18N
         btnCarregar.setText("Carregar Foto");
         btnCarregar.setToolTipText("Carregue aqui a Foto do Produto");
-        btnCarregar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnCarregar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCarregarActionPerformed(evt);
             }
         });
@@ -881,10 +831,8 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         btnAssociar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens32x32/actualizar_32x32.png"))); // NOI18N
         btnAssociar.setText("associação");
-        btnAssociar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnAssociar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAssociarActionPerformed(evt);
             }
         });
@@ -897,10 +845,8 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/img32x32/_ok.png"))); // NOI18N
         jButton2.setText("Novo");
-        jButton2.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
@@ -912,10 +858,8 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         txtUnidadeCompra.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
         txtUnidadeCompra.setText("1");
-        txtUnidadeCompra.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtUnidadeCompra.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtUnidadeCompraActionPerformed(evt);
             }
         });
@@ -930,10 +874,8 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         txtCodigoProduto.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         txtCodigoProduto.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtCodigoProduto.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtCodigoProduto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtCodigoProdutoActionPerformed(evt);
             }
         });
@@ -945,10 +887,8 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         txtCodigoBarraProcura.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         txtCodigoBarraProcura.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtCodigoBarraProcura.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtCodigoBarraProcura.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtCodigoBarraProcuraActionPerformed(evt);
             }
         });
@@ -964,10 +904,8 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         txtCodigoManualProcura.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         txtCodigoManualProcura.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtCodigoManualProcura.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtCodigoManualProcura.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtCodigoManualProcuraActionPerformed(evt);
             }
         });
@@ -975,10 +913,8 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/proucura.png"))); // NOI18N
         jButton4.setToolTipText("Lupa de Pesquisa de Produtos/Serviços");
-        jButton4.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
             }
         });
@@ -986,10 +922,8 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         rbJanelaServico.setSelected(true);
         rbJanelaServico.setEnabled(false);
-        rbJanelaServico.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbJanelaServico.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbJanelaServicoActionPerformed(evt);
             }
         });
@@ -1002,10 +936,8 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         btLupaEconomato.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/proucura.png"))); // NOI18N
         btLupaEconomato.setToolTipText("Lupa de Pesquisas de Produtos no Economato ou Depósito");
-        btLupaEconomato.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btLupaEconomato.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btLupaEconomatoActionPerformed(evt);
             }
         });
@@ -1030,10 +962,8 @@ public class ProdutosVisao extends javax.swing.JFrame
         txtPercentagemGanhoRetalho.setText("0");
         txtPercentagemGanhoRetalho.setCaretColor(new java.awt.Color(255, 255, 255));
         txtPercentagemGanhoRetalho.setEnabled(false);
-        txtPercentagemGanhoRetalho.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtPercentagemGanhoRetalho.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtPercentagemGanhoRetalhoActionPerformed(evt);
             }
         });
@@ -1046,10 +976,8 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         txtPrecoVendaRetalho.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
         txtPrecoVendaRetalho.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtPrecoVendaRetalho.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtPrecoVendaRetalho.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtPrecoVendaRetalhoActionPerformed(evt);
             }
         });
@@ -1061,10 +989,8 @@ public class ProdutosVisao extends javax.swing.JFrame
         lbBarra1.setText("Cod Manual:");
 
         txtCodigoManual.setText("0");
-        txtCodigoManual.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtCodigoManual.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtCodigoManualActionPerformed(evt);
             }
         });
@@ -1074,10 +1000,8 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         txtPrecoVendaGrosso.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
         txtPrecoVendaGrosso.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtPrecoVendaGrosso.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtPrecoVendaGrosso.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtPrecoVendaGrossoActionPerformed(evt);
             }
         });
@@ -1087,20 +1011,16 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         txtQtdGrosso.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
         txtQtdGrosso.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtQtdGrosso.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtQtdGrosso.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtQtdGrossoActionPerformed(evt);
             }
         });
 
         jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/alterar_32x32.png"))); // NOI18N
         jButton5.setText("Referências");
-        jButton5.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton5ActionPerformed(evt);
             }
         });
@@ -1204,10 +1124,8 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         txtArmazen4.setEditable(false);
         txtArmazen4.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
-        txtArmazen4.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtArmazen4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtArmazen4ActionPerformed(evt);
             }
         });
@@ -1226,10 +1144,8 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         jButtonCompras.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagem/caixa_32x_32.png"))); // NOI18N
         jButtonCompras.setText("Compras");
-        jButtonCompras.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButtonCompras.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonComprasActionPerformed(evt);
             }
         });
@@ -3576,7 +3492,10 @@ public class ProdutosVisao extends javax.swing.JFrame
                 double desconto = 0d;
                 double valorComIVA = FinanceUtils.getValorComIVA( qtd, taxa, precoLocal, desconto );
 
-                txtPrecoDeVendaComIva.setText( String.valueOf( valorComIVA ) );
+                DecimalFormat df = new DecimalFormat("#,##0.00");
+                txtPrecoDeVendaComIva.setText(df.format(valorComIVA));
+                
+//                txtPrecoDeVendaComIva.setText( String.valueOf( valorComIVA ) );
             }
             catch ( Exception e )
             {

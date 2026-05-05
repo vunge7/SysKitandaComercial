@@ -94,6 +94,7 @@ public class FacturaAutomaticaUtil
         int MAX_INVOICE_NUMBER = 90;
         int MAX_INVOICE_LINE_NUMBER = 4;
         int MAX_INVOICE_LINE_QUANTITY = 1;
+
         double MONTHLY_GENERAL_INVOICE_LIMIT = 32231915.20; //#
 //        double MONTHLY_GENERAL_INVOICE_LIMIT = 27074808.77; //#
         int MONTH_START_DAY = 11;
@@ -102,8 +103,9 @@ public class FacturaAutomaticaUtil
 //        double INITIAL_TOTAL_MONTH = 0.00;
         int ECONOMIC_YEAR = 2023;
         int ECONOMIC_YEAR_ID = 4;//#
+
         int DOCUMENT_ID = 1;
-        int MONTH_ID = 12;//#
+        int MONTH_ID = 1;//#
         int USER_ID = 15;
         int CLIENT_ID = 1;
         int WAREHOUSE_ID = 2;
@@ -115,6 +117,7 @@ public class FacturaAutomaticaUtil
 //        List<Integer> ids = Arrays.asList( 1, 2 ); // -- PRIMEIRA EXECUSÃO
         BDConexao conexao = new BDConexao();
         ProdutosController produtosController = new ProdutosController( conexao );
+
 
         Vector<TbProduto> produtosByTipoProduto = produtosController.getProdutosByTipoProduto( ids );
         Vector<Integer> vectorProdutos = produtosByTipoProduto.stream()

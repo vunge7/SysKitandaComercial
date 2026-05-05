@@ -218,8 +218,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         btTransferenciaArmazem.setVisible(status);
     }
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents()
-    {
+    private void initComponents() {
 
         jMenuItem1 = new javax.swing.JMenuItem();
         buttonGroup3 = new javax.swing.ButtonGroup();
@@ -286,45 +285,37 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         lb_data_solicitacao = new javax.swing.JLabel();
         lb_numero_artigos = new javax.swing.JLabel();
         btTransferenciaArmazem = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         jMenuItem1.setText("jMenuItem1");
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
         tabela_busca.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][]
-            {
+            new Object [][] {
 
             },
-            new String []
-            {
+            new String [] {
                 "Cod.", "Designacao", "Categoria", "Qtd"
             }
-        )
-        {
-            Class[] types = new Class []
-            {
+        ) {
+            Class[] types = new Class [] {
                 java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Integer.class
             };
-            boolean[] canEdit = new boolean []
-            {
+            boolean[] canEdit = new boolean [] {
                 false, false, false, false
             };
 
-            public Class getColumnClass(int columnIndex)
-            {
+            public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
 
-            public boolean isCellEditable(int rowIndex, int columnIndex)
-            {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        tabela_busca.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mouseClicked(java.awt.event.MouseEvent evt)
-            {
+        tabela_busca.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tabela_buscaMouseClicked(evt);
             }
         });
@@ -355,10 +346,8 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
 
         jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LOGOUT - VERMELHO/Logout 32x32.png"))); // NOI18N
         jButton6.setText("Sair");
-        jButton6.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton6ActionPerformed(evt);
             }
         });
@@ -400,48 +389,38 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
 
         tableCompra.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
         tableCompra.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][]
-            {
+            new Object [][] {
 
             },
-            new String []
-            {
+            new String [] {
                 "Cod.Art", "Descrição", "Preço", "Qtd.", "Unidade", "Desconto(%)", "Taxa ", "Valor", "Valor C/ Imposto", "Critica", "Baixa"
             }
-        )
-        {
-            Class[] types = new Class []
-            {
+        ) {
+            Class[] types = new Class [] {
                 java.lang.Integer.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Object.class, java.lang.Object.class
             };
-            boolean[] canEdit = new boolean []
-            {
+            boolean[] canEdit = new boolean [] {
                 false, false, true, true, false, true, true, false, false, true, true
             };
 
-            public Class getColumnClass(int columnIndex)
-            {
+            public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
 
-            public boolean isCellEditable(int rowIndex, int columnIndex)
-            {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
         tableCompra.setCellSelectionEnabled(true);
         tableCompra.setGridColor(new java.awt.Color(51, 153, 0));
-        tableCompra.addPropertyChangeListener(new java.beans.PropertyChangeListener()
-        {
-            public void propertyChange(java.beans.PropertyChangeEvent evt)
-            {
+        tableCompra.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 tableCompraPropertyChange(evt);
             }
         });
         jScrollPane1.setViewportView(tableCompra);
         tableCompra.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-        if (tableCompra.getColumnModel().getColumnCount() > 0)
-        {
+        if (tableCompra.getColumnModel().getColumnCount() > 0) {
             tableCompra.getColumnModel().getColumn(0).setPreferredWidth(10);
             tableCompra.getColumnModel().getColumn(1).setPreferredWidth(240);
             tableCompra.getColumnModel().getColumn(2).setPreferredWidth(20);
@@ -472,10 +451,8 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         cmbArmazem.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
         cmbArmazem.setForeground(new java.awt.Color(255, 255, 255));
         cmbArmazem.setOpaque(true);
-        cmbArmazem.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbArmazem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbArmazemActionPerformed(evt);
             }
         });
@@ -541,10 +518,8 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         jPanel3.add(lb_data_apuramento1, new org.netbeans.lib.awtextra.AbsoluteConstraints(930, 160, 90, 20));
 
         txtCodBarra.setFont(new java.awt.Font("SansSerif", 0, 16)); // NOI18N
-        txtCodBarra.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtCodBarra.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtCodBarraActionPerformed(evt);
             }
         });
@@ -561,30 +536,24 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         jPanel3.add(spPrecoCompra, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 110, 160, -1));
 
         jButton_eliminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/adicionar.png"))); // NOI18N
-        jButton_eliminar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton_eliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton_eliminarActionPerformed(evt);
             }
         });
         jPanel3.add(jButton_eliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 150, 50, -1));
 
         jButton_inserir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Button-Add-icon.png"))); // NOI18N
-        jButton_inserir.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton_inserir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton_inserirActionPerformed(evt);
             }
         });
         jPanel3.add(jButton_inserir, new org.netbeans.lib.awtextra.AbsoluteConstraints(820, 150, 50, -1));
 
         cmbFornecedor.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cmbFornecedor.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbFornecedor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbFornecedorActionPerformed(evt);
             }
         });
@@ -602,10 +571,8 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         txtCodigoInterno.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         txtCodigoInterno.setForeground(new java.awt.Color(255, 255, 255));
         txtCodigoInterno.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtCodigoInterno.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtCodigoInterno.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtCodigoInternoActionPerformed(evt);
             }
         });
@@ -644,20 +611,16 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         txtQtdExistente.setForeground(new java.awt.Color(0, 102, 102));
         jPanel3.add(txtQtdExistente, new org.netbeans.lib.awtextra.AbsoluteConstraints(1030, 150, 80, 40));
 
-        txtQtdEntrar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtQtdEntrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtQtdEntrarActionPerformed(evt);
             }
         });
         jPanel3.add(txtQtdEntrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 140, 80, 40));
 
         jButtonLupa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/proucura.png"))); // NOI18N
-        jButtonLupa.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButtonLupa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonLupaActionPerformed(evt);
             }
         });
@@ -673,10 +636,8 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
 
         cmbAnoEconomico.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cmbAnoEconomico.setEnabled(false);
-        cmbAnoEconomico.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbAnoEconomico.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbAnoEconomicoActionPerformed(evt);
             }
         });
@@ -697,10 +658,8 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         txtTotal_AOA_Iliquido.setFont(new java.awt.Font("Tahoma", 1, 15)); // NOI18N
         txtTotal_AOA_Iliquido.setForeground(new java.awt.Color(255, 0, 0));
         txtTotal_AOA_Iliquido.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtTotal_AOA_Iliquido.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtTotal_AOA_Iliquido.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtTotal_AOA_IliquidoActionPerformed(evt);
             }
         });
@@ -720,10 +679,8 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         txtTotal_AOA_liquido.setFont(new java.awt.Font("Tahoma", 1, 15)); // NOI18N
         txtTotal_AOA_liquido.setForeground(new java.awt.Color(255, 0, 0));
         txtTotal_AOA_liquido.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtTotal_AOA_liquido.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtTotal_AOA_liquido.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtTotal_AOA_liquidoActionPerformed(evt);
             }
         });
@@ -738,10 +695,8 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         txtTotal_AOA_IVA.setFont(new java.awt.Font("Tahoma", 1, 15)); // NOI18N
         txtTotal_AOA_IVA.setForeground(new java.awt.Color(255, 0, 0));
         txtTotal_AOA_IVA.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtTotal_AOA_IVA.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtTotal_AOA_IVA.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtTotal_AOA_IVAActionPerformed(evt);
             }
         });
@@ -751,10 +706,8 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         txtTotal_AOA_Desconto.setFont(new java.awt.Font("Tahoma", 1, 15)); // NOI18N
         txtTotal_AOA_Desconto.setForeground(new java.awt.Color(255, 0, 0));
         txtTotal_AOA_Desconto.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtTotal_AOA_Desconto.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtTotal_AOA_Desconto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtTotal_AOA_DescontoActionPerformed(evt);
             }
         });
@@ -764,20 +717,16 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/impressora1.png"))); // NOI18N
         jButton4.setText("Registrar Compra");
         jButton4.setToolTipText("Efectuar Venda");
-        jButton4.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
             }
         });
 
         btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LOGOUT - VERMELHO/Logout 32x32.png"))); // NOI18N
         btnCancelar.setAlignmentX(0.5F);
-        btnCancelar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelarActionPerformed(evt);
             }
         });
@@ -807,11 +756,16 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
 
         btTransferenciaArmazem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/encomenda_16x16.png"))); // NOI18N
         btTransferenciaArmazem.setText("Transferencia de Armazem");
-        btTransferenciaArmazem.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btTransferenciaArmazem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btTransferenciaArmazemActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText("jButton1");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
             }
         });
 
@@ -838,7 +792,9 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jButton4)
                                 .addGap(35, 35, 35)
-                                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton1))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(btTransferenciaArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -863,14 +819,6 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btnCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, 53, Short.MAX_VALUE)
-                            .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -879,7 +827,22 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
                             .addComponent(lb_numero_artigos))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lb_data_solicitacao)
-                        .addGap(60, 60, 60)))
+                        .addGap(60, 60, 60))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(27, 27, 27)
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(btnCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, 53, Short.MAX_VALUE)
+                                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -1039,6 +1002,14 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         new TranferenciaArmazemVisao(cod_usuario, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btTransferenciaArmazemActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        try {
+            stocksController.inserir_datas_stock(conexao.getConnectionAtiva());
+        } catch (SQLException ex) {
+            Logger.getLogger(CompraInformalVisao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public static javax.swing.JButton btTransferenciaArmazem;
@@ -1048,6 +1019,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
     public static javax.swing.JComboBox cmbArmazem;
     private static javax.swing.JComboBox<String> cmbFornecedor;
     private static javax.swing.JComboBox<String> cmbTipoDocumento;
+    private javax.swing.JButton jButton1;
     private static javax.swing.JButton jButton4;
     private javax.swing.JButton jButton6;
     private static javax.swing.JButton jButtonLupa;

@@ -1422,7 +1422,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                true, false, false, false, true, true, false, false, false, true, false
+                true, false, false, true, true, true, false, false, false, true, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {

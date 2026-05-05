@@ -10,7 +10,7 @@ import java.io.File;
  */
 public class BackupService {
 
-    private static final String SENHA_PADRAO = "MinhaSenhaForte123"; // senha de encriptação padrão
+    private static final String SENHA_PADRAO = "DoV90x?#1975Mavala"; // senha de encriptação padrão
 
     // Caminho do projeto
     public static final String CAMINHO_PROJETO = System.getProperty("user.dir") + "\\Before\\bd\\bk_automatico";
