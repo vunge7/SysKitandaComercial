@@ -288,6 +288,7 @@ public class DVML
     public static int JANELA_RECOLHA = 11;
     public static int JANELA_FICHA_TECNICA = 14;
     public static final int CASAS_DECIMAIS = 2;
+    public static final int CASAS_DECIMAIS_TAXA = 7;
     public static final int DOC_FACTURA_RECIBO_FR = 1;
     public static final int DOC_FACTURA_FT = 2;
     public static final int DOC_FACTURA_PROFORMA_PP = 3;
