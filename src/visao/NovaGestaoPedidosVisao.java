@@ -420,7 +420,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+    private void initComponents()
+    {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
@@ -505,8 +506,10 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
         txtMesa.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         txtMesa.setForeground(new java.awt.Color(204, 0, 0));
         txtMesa.setText("MESA X");
-        txtMesa.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        txtMesa.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 txtMesaActionPerformed(evt);
             }
         });
@@ -521,8 +524,10 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
         jPanel4.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, 620, 510));
 
         btn_voltar.setText("<<");
-        btn_voltar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btn_voltar.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 btn_voltarActionPerformed(evt);
             }
         });
@@ -539,16 +544,20 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
 
         buttonGroup4.add(rbTicketSimples);
         rbTicketSimples.setSelected(true);
-        rbTicketSimples.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        rbTicketSimples.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 rbTicketSimplesActionPerformed(evt);
             }
         });
         jPanel4.add(rbTicketSimples, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 9, -1, 30));
 
         buttonGroup4.add(rbTicketGeral);
-        rbTicketGeral.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        rbTicketGeral.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 rbTicketGeralActionPerformed(evt);
             }
         });
@@ -564,80 +573,100 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
 
         btn_01.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         btn_01.setText("Lugar 01");
-        btn_01.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btn_01.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 btn_01ActionPerformed(evt);
             }
         });
 
         btn_06.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         btn_06.setText("Lugar 06");
-        btn_06.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btn_06.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 btn_06ActionPerformed(evt);
             }
         });
 
         btn_07.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         btn_07.setText("Lugar 07");
-        btn_07.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btn_07.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 btn_07ActionPerformed(evt);
             }
         });
 
         btn_02.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         btn_02.setText("Lugar 02");
-        btn_02.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btn_02.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 btn_02ActionPerformed(evt);
             }
         });
 
         btn_08.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         btn_08.setText("Lugar 08");
-        btn_08.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btn_08.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 btn_08ActionPerformed(evt);
             }
         });
 
         btn_03.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         btn_03.setText("Lugar 03");
-        btn_03.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btn_03.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 btn_03ActionPerformed(evt);
             }
         });
 
         btn_09.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         btn_09.setText("Lugar 09");
-        btn_09.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btn_09.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 btn_09ActionPerformed(evt);
             }
         });
 
         btn_04.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         btn_04.setText("Lugar 04");
-        btn_04.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btn_04.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 btn_04ActionPerformed(evt);
             }
         });
 
         btn_05.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         btn_05.setText("Lugar 05");
-        btn_05.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btn_05.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 btn_05ActionPerformed(evt);
             }
         });
 
         btn_10.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         btn_10.setText("Lugar 10");
-        btn_10.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btn_10.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 btn_10ActionPerformed(evt);
             }
         });
@@ -704,19 +733,25 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
 
         cmbCliente.setFont(new java.awt.Font("Lucida Grande", 1, 15)); // NOI18N
         cmbCliente.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cmbCliente.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        cmbCliente.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 cmbClienteActionPerformed(evt);
             }
         });
 
-        txtNomeConsumidorFinal.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        txtNomeConsumidorFinal.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 txtNomeConsumidorFinalActionPerformed(evt);
             }
         });
-        txtNomeConsumidorFinal.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
+        txtNomeConsumidorFinal.addKeyListener(new java.awt.event.KeyAdapter()
+        {
+            public void keyPressed(java.awt.event.KeyEvent evt)
+            {
                 txtNomeConsumidorFinalKeyPressed(evt);
             }
         });
@@ -726,8 +761,10 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
 
         btCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/usuario.png"))); // NOI18N
         btCliente.setText("jButton1");
-        btCliente.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btCliente.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 btClienteActionPerformed(evt);
             }
         });
@@ -735,31 +772,41 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
         lbClienteConsumidorFinal1.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         lbClienteConsumidorFinal1.setText("Iniciais:");
 
-        txtIniciaisCliente.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        txtIniciaisCliente.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 txtIniciaisClienteActionPerformed(evt);
             }
         });
-        txtIniciaisCliente.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
+        txtIniciaisCliente.addKeyListener(new java.awt.event.KeyAdapter()
+        {
+            public void keyPressed(java.awt.event.KeyEvent evt)
+            {
                 txtIniciaisClienteKeyPressed(evt);
             }
         });
 
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LOGOUT - VERMELHO/Logout 32x32.png"))); // NOI18N
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jButton2.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 jButton2ActionPerformed(evt);
             }
         });
 
-        txtTelClientePesquisa.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        txtTelClientePesquisa.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 txtTelClientePesquisaActionPerformed(evt);
             }
         });
-        txtTelClientePesquisa.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
+        txtTelClientePesquisa.addKeyListener(new java.awt.event.KeyAdapter()
+        {
+            public void keyPressed(java.awt.event.KeyEvent evt)
+            {
                 txtTelClientePesquisaKeyPressed(evt);
             }
         });
@@ -836,8 +883,10 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
         BT_Pedidos.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         BT_Pedidos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/alterar_32x32.png"))); // NOI18N
         BT_Pedidos.setText("Ver Conta");
-        BT_Pedidos.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        BT_Pedidos.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 BT_PedidosActionPerformed(evt);
             }
         });
@@ -845,8 +894,10 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
         BT_Conversao.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         BT_Conversao.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/1323444801_currency_dollar red.png"))); // NOI18N
         BT_Conversao.setText("Facturar");
-        BT_Conversao.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        BT_Conversao.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 BT_ConversaoActionPerformed(evt);
             }
         });
@@ -854,16 +905,20 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
         BtnFCons.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         BtnFCons.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/1588_32x32.png"))); // NOI18N
         BtnFCons.setText("Consulta");
-        BtnFCons.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        BtnFCons.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 BtnFConsActionPerformed(evt);
             }
         });
 
         btFT.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         btFT.setText("Processar");
-        btFT.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btFT.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 btFTActionPerformed(evt);
             }
         });
@@ -902,36 +957,47 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
         jPanel5Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {BT_Conversao, BT_Pedidos});
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+            new Object [][]
+            {
 
             },
-            new String [] {
+            new String []
+            {
                 "ID", "Lugar", "Consumo", "QTD", "Total"
             }
-        ) {
-            boolean[] canEdit = new boolean [] {
+        )
+        {
+            boolean[] canEdit = new boolean []
+            {
                 false, false, false, true, false
             };
 
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
+            public boolean isCellEditable(int rowIndex, int columnIndex)
+            {
                 return canEdit [columnIndex];
             }
         });
-        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter()
+        {
+            public void mouseClicked(java.awt.event.MouseEvent evt)
+            {
                 jTable1MouseClicked(evt);
             }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
+            public void mouseEntered(java.awt.event.MouseEvent evt)
+            {
                 jTable1MouseEntered(evt);
             }
         });
-        jTable1.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+        jTable1.addPropertyChangeListener(new java.beans.PropertyChangeListener()
+        {
+            public void propertyChange(java.beans.PropertyChangeEvent evt)
+            {
                 jTable1PropertyChange(evt);
             }
         });
         jScrollPane2.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
+        if (jTable1.getColumnModel().getColumnCount() > 0)
+        {
             jTable1.getColumnModel().getColumn(0).setPreferredWidth(10);
             jTable1.getColumnModel().getColumn(1).setPreferredWidth(40);
             jTable1.getColumnModel().getColumn(2).setPreferredWidth(200);
@@ -970,8 +1036,10 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
 
         cmbAnoEconomico.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cmbAnoEconomico.setEnabled(false);
-        cmbAnoEconomico.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        cmbAnoEconomico.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 cmbAnoEconomicoActionPerformed(evt);
             }
         });
@@ -981,8 +1049,10 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
 
         cmbArmazem.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cmbArmazem.setEnabled(false);
-        cmbArmazem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        cmbArmazem.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 cmbArmazemActionPerformed(evt);
             }
         });
@@ -992,16 +1062,20 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
 
         buttonGroup2.add(rbArmazem1);
         rbArmazem1.setEnabled(false);
-        rbArmazem1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        rbArmazem1.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 rbArmazem1ActionPerformed(evt);
             }
         });
 
         buttonGroup2.add(rbArmazem);
         rbArmazem.setEnabled(false);
-        rbArmazem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        rbArmazem.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 rbArmazemActionPerformed(evt);
             }
         });
@@ -1009,15 +1083,19 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
         jButton1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens25x25/play25x25.png"))); // NOI18N
         jButton1.setText("TRANSFERÊNCIAS");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jButton1.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 jButton1ActionPerformed(evt);
             }
         });
 
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/proucura.png"))); // NOI18N
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jButton4.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 jButton4ActionPerformed(evt);
             }
         });
@@ -1029,8 +1107,10 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
         cmbMoeda.setBackground(new java.awt.Color(0, 51, 102));
         cmbMoeda.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
         cmbMoeda.setEnabled(false);
-        cmbMoeda.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        cmbMoeda.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 cmbMoedaActionPerformed(evt);
             }
         });
@@ -1042,8 +1122,10 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
         cmbTipoDocumento.setBackground(new java.awt.Color(0, 51, 102));
         cmbTipoDocumento.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         cmbTipoDocumento.setForeground(new java.awt.Color(255, 255, 255));
-        cmbTipoDocumento.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        cmbTipoDocumento.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 cmbTipoDocumentoActionPerformed(evt);
             }
         });
@@ -1053,8 +1135,10 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
         buttonGroup3.add(ck_simplificada);
         ck_simplificada.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_simplificada.setText("A6");
-        ck_simplificada.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        ck_simplificada.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 ck_simplificadaActionPerformed(evt);
             }
         });
@@ -1062,8 +1146,10 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
         buttonGroup3.add(ck_ComVirgula);
         ck_ComVirgula.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_ComVirgula.setText("A6V");
-        ck_ComVirgula.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        ck_ComVirgula.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 ck_ComVirgulaActionPerformed(evt);
             }
         });
@@ -1071,8 +1157,10 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
         buttonGroup3.add(ck_S_A6);
         ck_S_A6.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_S_A6.setText("S_A6");
-        ck_S_A6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        ck_S_A6.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 ck_S_A6ActionPerformed(evt);
             }
         });
@@ -1081,16 +1169,20 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
         ck_A7.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_A7.setSelected(true);
         ck_A7.setText("A7");
-        ck_A7.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        ck_A7.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 ck_A7ActionPerformed(evt);
             }
         });
 
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/actualizar_1.png"))); // NOI18N
         jButton3.setText("Enviar Ticket $");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jButton3.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 jButton3ActionPerformed(evt);
             }
         });
@@ -1098,8 +1190,10 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
         buttonGroup5.add(rbSim_lugar);
         rbSim_lugar.setText("Sim");
         rbSim_lugar.setEnabled(false);
-        rbSim_lugar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        rbSim_lugar.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 rbSim_lugarActionPerformed(evt);
             }
         });
@@ -1108,8 +1202,10 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
         rbNao_lugar.setSelected(true);
         rbNao_lugar.setText("Nao");
         rbNao_lugar.setEnabled(false);
-        rbNao_lugar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        rbNao_lugar.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 rbNao_lugarActionPerformed(evt);
             }
         });
@@ -1117,23 +1213,29 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
         jLabel4.setText("Lugares");
 
         jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/calendario 16x16.png"))); // NOI18N
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jButton5.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 jButton5ActionPerformed(evt);
             }
         });
 
         rbEsconder.setSelected(true);
         rbEsconder.setEnabled(false);
-        rbEsconder.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        rbEsconder.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 rbEsconderActionPerformed(evt);
             }
         });
 
         rbAbrir.setEnabled(false);
-        rbAbrir.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        rbAbrir.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 rbAbrirActionPerformed(evt);
             }
         });
@@ -1192,7 +1294,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 192, Short.MAX_VALUE)
                                 .addGap(6, 6, 6)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1247,7 +1349,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
                             .addComponent(ck_A7)
                             .addComponent(cmbAnoEconomico, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(cmb_area_venda_restaurante, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtMesa, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtMesa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jPanelLugares, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
