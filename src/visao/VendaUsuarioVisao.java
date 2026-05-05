@@ -83,8 +83,7 @@ import static util.MetodosUtil.rodarComandoWindows;
  *
  * @author Domingos Dala Vunge
  */
-public class VendaUsuarioVisao extends javax.swing.JFrame
-{
+public class VendaUsuarioVisao extends javax.swing.JFrame {
 
     /**
      * CONTROLLER COMERCIAL
@@ -153,15 +152,14 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private String doc = "";
 
-    public VendaUsuarioVisao( int cod_usuario, BDConexao conexao ) throws SQLException
-    {
+    public VendaUsuarioVisao(int cod_usuario, BDConexao conexao) throws SQLException {
 
         initComponents();
 
         confiLabel();
-        setLocationRelativeTo( null );
-        jLabel7.setVisible( false );
-        txtKilometragem.setVisible( false );
+        setLocationRelativeTo(null);
+        jLabel7.setVisible(false);
+        txtKilometragem.setVisible(false);
 
         //pegarResolucao();
         VendaUsuarioVisao.conexao = conexao;
@@ -169,96 +167,84 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         /**
          * INSTANCIAS DOS CONTROLLER COMERCIAL
          */
-        vendasController = new VendasController( VendaUsuarioVisao.conexao );
-        itemVendasController = new ItemVendasController( VendaUsuarioVisao.conexao );
-        mesasController = new MesasController( VendaUsuarioVisao.conexao );
-        lugaresController = new LugaresController( VendaUsuarioVisao.conexao );
-        produtosController = new ProdutosController( VendaUsuarioVisao.conexao );
-        stocksController = new StoksController( VendaUsuarioVisao.conexao );
-        precosController = new PrecosController( VendaUsuarioVisao.conexao );
-        tipoProdutoController = new TipoProdutosController( VendaUsuarioVisao.conexao );
-        familiaController = new FamiliasController( VendaUsuarioVisao.conexao );
-        armazensController = new ArmazensController( VendaUsuarioVisao.conexao );
-        localController = new LocalController( VendaUsuarioVisao.conexao );
-        unidadesController = new UnidadesController( VendaUsuarioVisao.conexao );
-        anoEconomicoController = new AnoEconomicoController( VendaUsuarioVisao.conexao );
-        clientesController = new ClientesController( VendaUsuarioVisao.conexao );
-        documentosController = new DocumentosController( VendaUsuarioVisao.conexao );
-        moedasController = new MoedasController( VendaUsuarioVisao.conexao );
-        descontosController = new DescontosController( VendaUsuarioVisao.conexao );
-        usuariosController = new UsuariosController( VendaUsuarioVisao.conexao );
-        dadosInstituicaoController = new DadosInstituicaoController( VendaUsuarioVisao.conexao );
-        produtosImpostoController = new ProdutosImpostoController( VendaUsuarioVisao.conexao );
-        produtosIsentoController = new ProdutosIsentoController( VendaUsuarioVisao.conexao );
-        caixasController = new CaixasController( VendaUsuarioVisao.conexao );
-        formaPagamentoController = new FormaPagamentoController( VendaUsuarioVisao.conexao );
-        armazensAccessoController = new ArmazensAccessoController( VendaUsuarioVisao.conexao );
-        cambiosController = new CambiosController( VendaUsuarioVisao.conexao );
-        formaPagamentoItemController = new FormaPagamentoItemController( VendaUsuarioVisao.conexao );
-        servicosRetencaoController = new ServicosRetencaoController( VendaUsuarioVisao.conexao );
-        contaController = new ContaController( VendaUsuarioVisao.conexao );
-        movimentacaoController = new MovimentacaoController( conexao.getConnection() );
-        dadosInstituicao = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
-        configuracaoMesComecoController = new ConfiguracaoMesComecoController( conexao.getConnectionAtiva() );
-        pagamentoMensalidadeController = new PagamentoMensalidadeController( conexao.getConnectionAtiva() );
-        mesRhController = new MesRhController( conexao.getConnectionAtiva() );
-        cmc = new ContaMovimentosController( conexao );
-        txtQuatindade.setText( "1" );
+        vendasController = new VendasController(VendaUsuarioVisao.conexao);
+        itemVendasController = new ItemVendasController(VendaUsuarioVisao.conexao);
+        mesasController = new MesasController(VendaUsuarioVisao.conexao);
+        lugaresController = new LugaresController(VendaUsuarioVisao.conexao);
+        produtosController = new ProdutosController(VendaUsuarioVisao.conexao);
+        stocksController = new StoksController(VendaUsuarioVisao.conexao);
+        precosController = new PrecosController(VendaUsuarioVisao.conexao);
+        tipoProdutoController = new TipoProdutosController(VendaUsuarioVisao.conexao);
+        familiaController = new FamiliasController(VendaUsuarioVisao.conexao);
+        armazensController = new ArmazensController(VendaUsuarioVisao.conexao);
+        localController = new LocalController(VendaUsuarioVisao.conexao);
+        unidadesController = new UnidadesController(VendaUsuarioVisao.conexao);
+        anoEconomicoController = new AnoEconomicoController(VendaUsuarioVisao.conexao);
+        clientesController = new ClientesController(VendaUsuarioVisao.conexao);
+        documentosController = new DocumentosController(VendaUsuarioVisao.conexao);
+        moedasController = new MoedasController(VendaUsuarioVisao.conexao);
+        descontosController = new DescontosController(VendaUsuarioVisao.conexao);
+        usuariosController = new UsuariosController(VendaUsuarioVisao.conexao);
+        dadosInstituicaoController = new DadosInstituicaoController(VendaUsuarioVisao.conexao);
+        produtosImpostoController = new ProdutosImpostoController(VendaUsuarioVisao.conexao);
+        produtosIsentoController = new ProdutosIsentoController(VendaUsuarioVisao.conexao);
+        caixasController = new CaixasController(VendaUsuarioVisao.conexao);
+        formaPagamentoController = new FormaPagamentoController(VendaUsuarioVisao.conexao);
+        armazensAccessoController = new ArmazensAccessoController(VendaUsuarioVisao.conexao);
+        cambiosController = new CambiosController(VendaUsuarioVisao.conexao);
+        formaPagamentoItemController = new FormaPagamentoItemController(VendaUsuarioVisao.conexao);
+        servicosRetencaoController = new ServicosRetencaoController(VendaUsuarioVisao.conexao);
+        contaController = new ContaController(VendaUsuarioVisao.conexao);
+        movimentacaoController = new MovimentacaoController(conexao.getConnection());
+        dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
+        configuracaoMesComecoController = new ConfiguracaoMesComecoController(conexao.getConnectionAtiva());
+        pagamentoMensalidadeController = new PagamentoMensalidadeController(conexao.getConnectionAtiva());
+        mesRhController = new MesRhController(conexao.getConnectionAtiva());
+        cmc = new ContaMovimentosController(conexao);
+        txtQuatindade.setText("1");
 //        txtQuatindade.setDocument( new PermitirNumeros() );
         this.cod_usuario = cod_usuario;
-        lbPreco7.setVisible( false );
-        jlStockNegativo.setVisible( false );
-        rbTranstorno.setVisible( false );
-        rbMostrar.setVisible( false );
-        rbArmazem1.setVisible( false );
-        rbArmazem.setVisible( false );
-        jButton2.setVisible( false );
+        lbPreco7.setVisible(false);
+        jlStockNegativo.setVisible(false);
+        rbTranstorno.setVisible(false);
+        rbMostrar.setVisible(false);
+        rbArmazem1.setVisible(false);
+        rbArmazem.setVisible(false);
+        jButton2.setVisible(false);
 
-        try
-        {
+        try {
 
             init();
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         //pega_ultima_contagem();
 
         KeyboardFocusManager.getCurrentKeyboardFocusManager()
-                .addKeyEventDispatcher( new KeyEventDispatcher()
-                {
+                .addKeyEventDispatcher(new KeyEventDispatcher() {
                     @Override
-                    public boolean dispatchKeyEvent( KeyEvent e )
-                    {
+                    public boolean dispatchKeyEvent(KeyEvent e) {
                         // if ( e.getID() == e.KEY_RELEASED && e.getKeyCode() == KeyEvent.VK_TAB )
-                        if ( e.getID() == e.KEY_RELEASED && e.getKeyCode() == KeyEvent.VK_TAB )
-                        {
+                        if (e.getID() == e.KEY_RELEASED && e.getKeyCode() == KeyEvent.VK_TAB) {
 //                            txtValorEntregue.requestFocus();
                             return true;
 
                         }
                         return false;
                     }
-                } );
+                });
         //new BuscaProdutoVisao( VendaUsuarioVisao.this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_VENDA ).setVisible(true);
 //        MetodosUtil.FUNCAO_F1( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_VENDA);
 
         KeyboardFocusManager.getCurrentKeyboardFocusManager()
-                .addKeyEventDispatcher( new KeyEventDispatcher()
-                {
+                .addKeyEventDispatcher(new KeyEventDispatcher() {
                     @Override
-                    public boolean dispatchKeyEvent( KeyEvent e )
-                    {
-                        if ( e.getID() == KeyEvent.KEY_RELEASED && e.getKeyCode() == KeyEvent.VK_F1 )
-                        {
-                            try
-                            {
-                                new BuscaProdutoVisao( getInstance(), rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_VENDA, BDConexao.getInstancia() ).setVisible( true );
-                            }
-                            catch ( Exception ex )
-                            {
+                    public boolean dispatchKeyEvent(KeyEvent e) {
+                        if (e.getID() == KeyEvent.KEY_RELEASED && e.getKeyCode() == KeyEvent.VK_F1) {
+                            try {
+                                new BuscaProdutoVisao(getInstance(), rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_VENDA, BDConexao.getInstancia()).setVisible(true);
+                            } catch (Exception ex) {
                                 ex.printStackTrace();
                             }
                             return true;
@@ -266,65 +252,60 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                         }
                         return false;
                     }
-                } );
+                });
 
         // No construtor ou método de inicialização da sua janela
-        getRootPane().getInputMap( JComponent.WHEN_IN_FOCUSED_WINDOW )
-                .put( KeyStroke.getKeyStroke( "F4" ), "abrirBuscaProduto" );
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke("F4"), "abrirBuscaProduto");
 
-        getRootPane().getActionMap().put( "abrirBuscaProduto", new AbstractAction()
-        {
+        getRootPane().getActionMap().put("abrirBuscaProduto", new AbstractAction() {
             @Override
-            public void actionPerformed( ActionEvent e )
-            {
-                try
-                {
-                    if ( validar() )
-                    {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    if (validar()) {
                         new BuscaProdutoVisao(
                                 VendaUsuarioVisao.this, // ou "this" conforme contexto
                                 rootPaneCheckingEnabled,
                                 getCodigoArmazem(),
-                                DVML.JANELA_VENDA, BDConexao.getInstancia() ).setVisible( true ); // melhor que .setVisible(true)
+                                DVML.JANELA_VENDA, BDConexao.getInstancia()).setVisible(true); // melhor que .setVisible(true)
                     }
-                }
-                catch ( Exception ex )
-                {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
-        } );
+        });
 
 //        habilitarColunas();
-        MetodosUtil.setArmazemByCampoConfigArmazem( cmbArmazem, conexao, cod_usuario );
+        MetodosUtil.setArmazemByCampoConfigArmazem(cmbArmazem, conexao, cod_usuario);
 
         setWindowsListener();
-        btnSemFormaPagamento.setVisible( false );
+        btnSemFormaPagamento.setVisible(false);
+
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        TelaCliente telaCliente = new TelaCliente(modelo);
+
+        //Abre no segundo monitor, se existir
+        MetodosUtil.abrirNoSegundoMonitor(telaCliente);
     }
 
-    public VendaUsuarioVisao( int cod_usuario, BDConexao conexao, String docPadraoPersonalizado ) throws SQLException
-    {
-        this( cod_usuario, conexao ); // chama o construtor original
+    public VendaUsuarioVisao(int cod_usuario, BDConexao conexao, String docPadraoPersonalizado) throws SQLException {
+        this(cod_usuario, conexao); // chama o construtor original
 
         // Agora força o documento padrão personalizado
-        setDocpadrao( docPadraoPersonalizado );
+        setDocpadrao(docPadraoPersonalizado);
 
-        if ( docPadraoPersonalizado.equalsIgnoreCase( "Factura-Proforma" ) )
-        {
-            cmbTipoDocumento.setEnabled( false );
+        if (docPadraoPersonalizado.equalsIgnoreCase("Factura-Proforma")) {
+            cmbTipoDocumento.setEnabled(false);
         }
     }
 
-    public JFrame getInstance()
-    {
+    public JFrame getInstance() {
         return this;
     }
 
-    public void keypressed( java.awt.event.KeyEvent evt )
-    {
+    public void keypressed(java.awt.event.KeyEvent evt) {
 
-        if ( evt.getKeyCode() == KeyEvent.VK_ENTER )
-        {
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
 
             txtQuatindade.requestFocus();
 
@@ -332,22 +313,19 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     }
 
-    public void keyTyped( KeyEvent evt )
-    {
+    public void keyTyped(KeyEvent evt) {
 
-        if ( evt.getKeyCode() == KeyEvent.VK_ENTER )
-        {
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
 
             dispose();
         }
 
     }
 
-    private void pegarResolucao()
-    {
+    private void pegarResolucao() {
         Toolkit t = Toolkit.getDefaultToolkit();
         Dimension dimensao = t.getScreenSize();
-        this.setSize( ( dimensao.width + 5 ), ( dimensao.height - 38 ) );
+        this.setSize((dimensao.width + 5), (dimensao.height - 38));
 
     }
 
@@ -356,7 +334,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
      */
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents()
     {
@@ -1572,51 +1550,39 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void mostra_consumidor_final()
-    {
+    private void mostra_consumidor_final() {
 
-        if ( cmbCliente.getSelectedItem().equals( "Consumidor Final" ) )
-        {
-            lbClienteConsumidorFinal.setVisible( true );
-            txtNomeConsumidorFinal.setVisible( true );
-        }
-        else
-        {
-            lbClienteConsumidorFinal.setVisible( false );
-            txtNomeConsumidorFinal.setVisible( false );
+        if (cmbCliente.getSelectedItem().equals("Consumidor Final")) {
+            lbClienteConsumidorFinal.setVisible(true);
+            txtNomeConsumidorFinal.setVisible(true);
+        } else {
+            lbClienteConsumidorFinal.setVisible(false);
+            txtNomeConsumidorFinal.setVisible(false);
         }
 
     }
 
-    private static void limpar_consumidor_final()
-    {
+    private static void limpar_consumidor_final() {
 
-        if ( cmbCliente.getSelectedItem().equals( "Consumidor Final" ) )
-        {
+        if (cmbCliente.getSelectedItem().equals("Consumidor Final")) {
 //            lbClienteConsumidorFinal.setVisible( true );
-            txtNomeConsumidorFinal.setVisible( true );
-        }
-        else
-        {
+            txtNomeConsumidorFinal.setVisible(true);
+        } else {
 //            lbClienteConsumidorFinal.setVisible( false );
-            txtNomeConsumidorFinal.setVisible( false );
+            txtNomeConsumidorFinal.setVisible(false);
         }
 
     }
 
     private void btn_removerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_removerActionPerformed
-        try
-        {
+        try {
 
-            DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
-            if ( podeRemoverServico( modelo, table.getSelectedRow() ) )
-            {
+            DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+            if (podeRemoverServico(modelo, table.getSelectedRow())) {
                 remover_item_carrinho();
             }
 
-        }
-        catch ( Exception ex )
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
             //Logger.getLogger(VendaUsuarioVisao.class.getName()).log(Level.SEVERE, null, ex);
 //            JOptionPane.showMessageDialog( null, "Possivelmente não selecionaste \n nenhuma linha ou não existe dados na tabela", "AVISO", JOptionPane.WARNING_MESSAGE );
@@ -1627,24 +1593,20 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private void btn_adicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_adicionarActionPerformed
 
-        if ( validar() )
-        {
+        if (validar()) {
 
-            configuracaoMesComecoController = new ConfiguracaoMesComecoController( conexao.getConnectionAtiva() );
-            boolean existeConfiguracaoDoCliente = configuracaoMesComecoController.existeConfiguracaoDoCliente( getIdCliente(), getCodigoProduto() );
+            configuracaoMesComecoController = new ConfiguracaoMesComecoController(conexao.getConnectionAtiva());
+            boolean existeConfiguracaoDoCliente = configuracaoMesComecoController.existeConfiguracaoDoCliente(getIdCliente(), getCodigoProduto());
 
-            if ( existeConfiguracaoDoCliente )
-            {
+            if (existeConfiguracaoDoCliente) {
                 new MesesPagoClienteVisao(
                         this,
                         rootPaneCheckingEnabled,
                         getIdCliente(),
                         getCodigoProduto(),
                         conexao
-                ).setVisible( true );
-            }
-            else
-            {
+                ).setVisible(true);
+            } else {
                 adicionar_botao();
                 scrolltable();
             }
@@ -1660,8 +1622,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private void txtCodigoProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigoProdutoActionPerformed
         // TODO add your handling code here:
-        if ( validar() )
-        {
+        if (validar()) {
             accao_codigo_interno_enter();
             scrolltable();
 
@@ -1687,11 +1648,10 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private void txtQuatindadeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtQuatindadeActionPerformed
         // TODO add your handling code here:
-        if ( validar() )
-        {
+        if (validar()) {
 
-            setFocus( dadosInstituicao.getFoco() );
-            txtCodigoBarra.setText( "" );
+            setFocus(dadosInstituicao.getFoco());
+            txtCodigoBarra.setText("");
         }
     }//GEN-LAST:event_txtQuatindadeActionPerformed
 
@@ -1701,35 +1661,28 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private void cmbSubFamiliaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbSubFamiliaActionPerformed
 
-        cmbProduto.setModel( new DefaultComboBoxModel( ( produtosController.getVectorByIdTipoProduto( getIdTipoProduto() ) ) ) );
+        cmbProduto.setModel(new DefaultComboBoxModel((produtosController.getVectorByIdTipoProduto(getIdTipoProduto()))));
 
     }//GEN-LAST:event_cmbSubFamiliaActionPerformed
 
     private void cmbProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbProdutoActionPerformed
         // TODO add your handling code here:
-        try
-        {
+        try {
             adicionar_preco_quantidade();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
         }
     }//GEN-LAST:event_cmbProdutoActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
 
-        try
-        {
-            if ( validar() )
-            {
-                new BuscaProdutoVisao( this, rootPaneCheckingEnabled,
+        try {
+            if (validar()) {
+                new BuscaProdutoVisao(this, rootPaneCheckingEnabled,
                         getCodigoArmazem(),
                         DVML.JANELA_VENDA,
-                        BDConexao.getInstancia() ).setVisible( true );
+                        BDConexao.getInstancia()).setVisible(true);
             }
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -1786,7 +1739,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     }//GEN-LAST:event_txtCodigoManualActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        new ClienteVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia() ).setVisible( true );
+        new ClienteVisao(this, rootPaneCheckingEnabled, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void txtNifClientePesquisaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNifClientePesquisaActionPerformed
@@ -1795,8 +1748,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private void cmbFamiliaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbFamiliaActionPerformed
 
-        cmbSubFamilia.setModel( new DefaultComboBoxModel( tipoProdutoController.getVectorByIdFamilia( getIdFamilia() ) ) );
-        cmbProduto.setModel( new DefaultComboBoxModel( ( produtosController.getVectorByIdTipoProduto( getIdTipoProduto() ) ) ) );
+        cmbSubFamilia.setModel(new DefaultComboBoxModel(tipoProdutoController.getVectorByIdFamilia(getIdFamilia())));
+        cmbProduto.setModel(new DefaultComboBoxModel((produtosController.getVectorByIdTipoProduto(getIdTipoProduto()))));
 
     }//GEN-LAST:event_cmbFamiliaActionPerformed
 
@@ -1864,20 +1817,15 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private void btnFormaPagamentoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnFormaPagamentoActionPerformed
     {//GEN-HEADEREND:event_btnFormaPagamentoActionPerformed
 
-        if ( MetodosUtil.licencaValidada( conexao ) )
-        {
-            if ( !MetodosUtil.tabela_vazia( table ) )
-            {
-                if ( !validarPrecos_tabela( table ) )
-                {
+        if (MetodosUtil.licencaValidada(conexao)) {
+            if (!MetodosUtil.tabela_vazia(table)) {
+                if (!validarPrecos_tabela(table)) {
                     return; // Se houver erro, não abre forma de pagamento
                 }
 
-                new FormaPagamentoVisao( this, rootPaneCheckingEnabled, null, DVML.VENDA_PONTUAL, BDConexao.getInstancia() ).setVisible( true );
-            }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Caro usuário, adicione itens na tabela" );
+                new FormaPagamentoVisao(this, rootPaneCheckingEnabled, null, DVML.VENDA_PONTUAL, BDConexao.getInstancia()).setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Caro usuário, adicione itens na tabela");
             }
         }
 
@@ -1886,11 +1834,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private void btnProcessarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnProcessarActionPerformed
     {//GEN-HEADEREND:event_btnProcessarActionPerformed
         // TODO add your handling code here:
-        if ( validar() )
-        {
-            if ( MetodosUtil.licencaValidada( conexao ) )
-            {
-                procedimento_salvar_venda_comercial( true );
+        if (validar()) {
+            if (MetodosUtil.licencaValidada(conexao)) {
+                procedimento_salvar_venda_comercial(true);
 
             }
 
@@ -1942,36 +1888,31 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //    }
 //    return true; // tudo certo
 //}
-    private boolean validarPrecos_tabela( JTable tabela )
-    {
-        DefaultTableModel modelo = ( DefaultTableModel ) tabela.getModel();
+    private boolean validarPrecos_tabela(JTable tabela) {
+        DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
         StringBuilder produtosComErro = new StringBuilder();
 
         // Percorrer todas as linhas
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-            double precoUnitario = extrairValorNumerico( modelo.getValueAt( i, 9 ) );
-            double precoTotal = extrairValorNumerico( modelo.getValueAt( i, 10 ) );
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            double precoUnitario = extrairValorNumerico(modelo.getValueAt(i, 9));
+            double precoTotal = extrairValorNumerico(modelo.getValueAt(i, 10));
 
             // Se qualquer um dos dois preços for zero, marca como erro
-            if ( precoUnitario <= 0 || precoTotal <= 0 )
-            {
-                Object designacaoObj = modelo.getValueAt( i, 1 );
-                String designacao = ( designacaoObj != null && !designacaoObj.toString().isEmpty() )
+            if (precoUnitario <= 0 || precoTotal <= 0) {
+                Object designacaoObj = modelo.getValueAt(i, 1);
+                String designacao = (designacaoObj != null && !designacaoObj.toString().isEmpty())
                         ? designacaoObj.toString()
                         : "Produto sem nome";
 
-                if ( produtosComErro.length() > 0 )
-                {
-                    produtosComErro.append( " e " );
+                if (produtosComErro.length() > 0) {
+                    produtosComErro.append(" e ");
                 }
-                produtosComErro.append( designacao );
+                produtosComErro.append(designacao);
             }
         }
 
         // Se encontrou produtos com erro
-        if ( produtosComErro.length() > 0 )
-        {
+        if (produtosComErro.length() > 0) {
             int opcao = JOptionPane.showConfirmDialog(
                     null,
                     "Atenção\nO(s) produto(s):\n" + produtosComErro
@@ -1982,16 +1923,13 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             );
 
             // Se clicar OK, remover as linhas com erro
-            if ( opcao == JOptionPane.OK_OPTION )
-            {
-                for ( int i = modelo.getRowCount() - 1; i >= 0; i-- )
-                {
-                    double precoUnitario = extrairValorNumerico( modelo.getValueAt( i, 9 ) );
-                    double precoTotal = extrairValorNumerico( modelo.getValueAt( i, 10 ) );
+            if (opcao == JOptionPane.OK_OPTION) {
+                for (int i = modelo.getRowCount() - 1; i >= 0; i--) {
+                    double precoUnitario = extrairValorNumerico(modelo.getValueAt(i, 9));
+                    double precoTotal = extrairValorNumerico(modelo.getValueAt(i, 10));
 
-                    if ( precoUnitario <= 0 || precoTotal <= 0 )
-                    {
-                        modelo.removeRow( i );
+                    if (precoUnitario <= 0 || precoTotal <= 0) {
+                        modelo.removeRow(i);
                     }
                 }
             }
@@ -2002,53 +1940,45 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         return true; // Tudo certo, pode continuar
     }
 
-    private double extrairValorNumerico( Object valorObj )
-    {
-        if ( valorObj == null )
-        {
+    private double extrairValorNumerico(Object valorObj) {
+        if (valorObj == null) {
             return 0.0;
         }
 
         String valor = valorObj.toString().trim();
 
-        if ( valor.isEmpty() )
-        {
+        if (valor.isEmpty()) {
             return 0.0;
         }
 
         // Remove espaços e símbolos de moeda (AOA, KZ, etc.)
-        valor = valor.replaceAll( "(?i)AOA", "" ) // remove AOA (maiúsculo ou minúsculo)
-                .replaceAll( "(?i)KZ", "" )
-                .replaceAll( "\\s+", "" );   // remove espaços
+        valor = valor.replaceAll("(?i)AOA", "") // remove AOA (maiúsculo ou minúsculo)
+                .replaceAll("(?i)KZ", "")
+                .replaceAll("\\s+", "");   // remove espaços
 
         // Substitui vírgulas por pontos
-        valor = valor.replace( ",", "." );
+        valor = valor.replace(",", ".");
 
         // Remove qualquer caracter que não seja número, ponto ou sinal
-        valor = valor.replaceAll( "[^0-9.\\-]", "" );
+        valor = valor.replaceAll("[^0-9.\\-]", "");
 
         // Corrige caso tenha mais de um ponto (ex: "1.600.00" -> "1600.00")
-        int firstDot = valor.indexOf( '.' );
-        if ( firstDot != -1 )
-        {
-            int lastDot = valor.lastIndexOf( '.' );
-            if ( lastDot != firstDot )
-            {
+        int firstDot = valor.indexOf('.');
+        if (firstDot != -1) {
+            int lastDot = valor.lastIndexOf('.');
+            if (lastDot != firstDot) {
                 // remove todos os pontos exceto o último
-                valor = valor.substring( 0, lastDot ).replace( ".", "" ) + valor.substring( lastDot );
+                valor = valor.substring(0, lastDot).replace(".", "") + valor.substring(lastDot);
             }
         }
 
         // Debug opcional
-        System.out.println( "→ Valor processado: '" + valorObj + "' => '" + valor + "'" );
+        System.out.println("→ Valor processado: '" + valorObj + "' => '" + valor + "'");
 
-        try
-        {
-            return Double.parseDouble( valor );
-        }
-        catch ( NumberFormatException e )
-        {
-            System.err.println( "Erro ao converter valor: '" + valorObj + "' -> " + e.getMessage() );
+        try {
+            return Double.parseDouble(valor);
+        } catch (NumberFormatException e) {
+            System.err.println("Erro ao converter valor: '" + valorObj + "' -> " + e.getMessage());
             return 0.0;
         }
     }
@@ -2063,19 +1993,16 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jButton1ActionPerformed
 
         dispose();
-        new LoginVisao( conexao );
-        new CaixaAberturaVisao( cod_usuario, conexao, false ).setVisible( true );
+        new LoginVisao(conexao);
+        new CaixaAberturaVisao(cod_usuario, conexao, false).setVisible(true);
 //        fazerBackupAgora();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void rbArmazemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_rbArmazemActionPerformed
     {//GEN-HEADEREND:event_rbArmazemActionPerformed
-        try
-        {
+        try {
             configurar_armazens();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }//GEN-LAST:event_rbArmazemActionPerformed
@@ -2092,12 +2019,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private void rbArmazem1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_rbArmazem1ActionPerformed
     {//GEN-HEADEREND:event_rbArmazem1ActionPerformed
-        try
-        {
+        try {
             configurar_armazens();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }//GEN-LAST:event_rbArmazem1ActionPerformed
@@ -2114,10 +2038,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //        {
 //           
 //        }
-        if ( table.getSelectedColumn() == 3 || table.getSelectedColumn() == 4 || table.getSelectedColumn() == 5 )
-        {
+        if (table.getSelectedColumn() == 3 || table.getSelectedColumn() == 4 || table.getSelectedColumn() == 5) {
 //            actualizarPreco();
-            System.out.println( "Qtd......" );
+            System.out.println("Qtd......");
             actualizarQtdTable();
         }
 
@@ -2126,9 +2049,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private void tableMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_tableMouseClicked
     {//GEN-HEADEREND:event_tableMouseClicked
         // TODO add your handling code here:
-        if ( evt.getClickCount() > 2 )
-        {
-            System.out.println( "xx" );
+        if (evt.getClickCount() > 2) {
+            System.out.println("xx");
         }
     }//GEN-LAST:event_tableMouseClicked
 
@@ -2144,12 +2066,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton2ActionPerformed
     {//GEN-HEADEREND:event_jButton2ActionPerformed
-        try
-        {
-            new VistoriaVisao( cod_usuario, this.conexao ).setVisible( true );
-        }
-        catch ( Exception e )
-        {
+        try {
+            new VistoriaVisao(cod_usuario, this.conexao).setVisible(true);
+        } catch (Exception e) {
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -2161,19 +2080,14 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private void btnSemFormaPagamentoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnSemFormaPagamentoActionPerformed
     {//GEN-HEADEREND:event_btnSemFormaPagamentoActionPerformed
         // TODO add your handling code here:
-        if ( MetodosUtil.licencaValidada( conexao ) )
-        {
-            if ( !MetodosUtil.tabela_vazia( table ) )
-            {
-                if ( !validarPrecos_tabela( table ) )
-                {
+        if (MetodosUtil.licencaValidada(conexao)) {
+            if (!MetodosUtil.tabela_vazia(table)) {
+                if (!validarPrecos_tabela(table)) {
                     return; // Se houver erro, não abre forma de pagamento
                 }
-                procedimento_salvar_venda_comercial( false );
-            }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Caro usuário, adicione itens na tabela" );
+                procedimento_salvar_venda_comercial(false);
+            } else {
+                JOptionPane.showMessageDialog(null, "Caro usuário, adicione itens na tabela");
             }
         }
 
@@ -2301,15 +2215,12 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     // End of variables declaration//GEN-END:variables
 
     //verifica se o produto existe na tabela do formulário visão isto é na jTable
-    private static boolean exist_produto_tabela_formulario( String designacao )
-    {
+    private static boolean exist_produto_tabela_formulario(String designacao) {
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-            if ( String.valueOf( table.getValueAt( i, 1 ) ).equals( designacao ) )
-            {
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            if (String.valueOf(table.getValueAt(i, 1)).equals(designacao)) {
                 linha_actual = i;
                 return true;
             }
@@ -2334,19 +2245,15 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //
 //    }
 
-    private void accao_codigo_manual_enter()
-    {
-        try
-        {
+    private void accao_codigo_manual_enter() {
+        try {
             String codigo_manual = txtCodigoManual.getText();
-            TbProduto produtoLocal = produtosController.findByCodManual( codigo_manual );
-            procedimentoAdicionarTabela( produtoLocal );
-        }
-        catch ( Exception ex )
-        {
+            TbProduto produtoLocal = produtosController.findByCodManual(codigo_manual);
+            procedimentoAdicionarTabela(produtoLocal);
+        } catch (Exception ex) {
             ex.printStackTrace();
-            Logger.getLogger( VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
-            JOptionPane.showMessageDialog( null, "Não existe produto com este código de barra.", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+            Logger.getLogger(VendaUsuarioVisao.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Não existe produto com este código de barra.", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
         }
 
     }
@@ -2356,37 +2263,36 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //        double valor_iva = 1 + ( taxa / 100 );//
 //        return ( ( subtotal_linha - desconto_valor ) * valor_iva );
     //actualiza a quantidade na tabela do formulário visão isto é na jTable
-    private static void actuazlizar_quantidade_tabela_formulario( String quantidade, double desconto )
-    {
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
-        double qtd = Double.parseDouble( quantidade );
+    private static void actuazlizar_quantidade_tabela_formulario(String quantidade, double desconto) {
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        double qtd = Double.parseDouble(quantidade);
         double retencao = 0;
 
-        double preco_venda = CfMethods.parseMoedaFormatada( String.valueOf( modelo.getValueAt( linha_actual, 3 ) ) );
-        double taxa = Double.parseDouble( String.valueOf( modelo.getValueAt( linha_actual, 6 ) ) );
+        double preco_venda = CfMethods.parseMoedaFormatada(String.valueOf(modelo.getValueAt(linha_actual, 3)));
+        double taxa = Double.parseDouble(String.valueOf(modelo.getValueAt(linha_actual, 6)));
 //        double ret = CfMethods.parseMoedaFormatada( String.valueOf( modelo.getValueAt( linha_actual, 7) ) );
-        double ret = Double.parseDouble( String.valueOf( modelo.getValueAt( linha_actual, 7 ) ) );
+        double ret = Double.parseDouble(String.valueOf(modelo.getValueAt(linha_actual, 7)));
 
 //        double total_iliquido_linha = (( preco_venda * qtd ) - desconto);
-        String total_iliquido_linha = CfMethods.formatarComoMoeda( FinanceUtils.getValorIliquido(
-                new BigDecimal( qtd ),
-                new BigDecimal( preco_venda ),
-                new BigDecimal( desconto )
-        ) );
+        String total_iliquido_linha = CfMethods.formatarComoMoeda(FinanceUtils.getValorIliquido(
+                new BigDecimal(qtd),
+                new BigDecimal(preco_venda),
+                new BigDecimal(desconto)
+        ));
 
-        double totalComIva = FinanceUtils.getValorComIVA( qtd, taxa, preco_venda, desconto );
-        String total_liquido_linha = CfMethods.formatarComoMoeda( totalComIva );
+        double totalComIva = FinanceUtils.getValorComIVA(qtd, taxa, preco_venda, desconto);
+        String total_liquido_linha = CfMethods.formatarComoMoeda(totalComIva);
 
-        retencao = MetodosUtil.getValorComRetencao( qtd, ret, preco_venda, desconto );
+        retencao = MetodosUtil.getValorComRetencao(qtd, ret, preco_venda, desconto);
 
-        String total_retencao = CfMethods.formatarComoMoeda( retencao );
+        String total_retencao = CfMethods.formatarComoMoeda(retencao);
 
-        modelo.setValueAt( qtd, linha_actual, 4 );
-        modelo.setValueAt( desconto, linha_actual, 5 );
-        modelo.setValueAt( total_retencao, linha_actual, 8 );
+        modelo.setValueAt(qtd, linha_actual, 4);
+        modelo.setValueAt(desconto, linha_actual, 5);
+        modelo.setValueAt(total_retencao, linha_actual, 8);
 //
-        modelo.setValueAt( total_iliquido_linha, linha_actual, 9 );
-        modelo.setValueAt( total_liquido_linha, linha_actual, 10 );
+        modelo.setValueAt(total_iliquido_linha, linha_actual, 9);
+        modelo.setValueAt(total_liquido_linha, linha_actual, 10);
         //a linha_actual recebe o default
         linha_actual = -1;
 
@@ -2456,404 +2362,311 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //        }
 //
 //    }
-    private static void accao_cliente()
-    {
-        String nomeCliente = ( String ) cmbCliente.getSelectedItem();
+    private static void accao_cliente() {
+        String nomeCliente = (String) cmbCliente.getSelectedItem();
 
-        txtNomeConsumidorFinal.setText( nomeCliente );
-        String nif = clientesController.findByNome( nomeCliente ).getNif();
-        txtNifClientePesquisa.setText( nif );
+        txtNomeConsumidorFinal.setText(nomeCliente);
+        String nif = clientesController.findByNome(nomeCliente).getNif();
+        txtNifClientePesquisa.setText(nif);
     }
 
-    private void calcularTotalComDesconto()
-    {
+    private void calcularTotalComDesconto() {
         double totalComDesconto = 0;
         double resultado = 0;
         double percentagem_desconto = 0;
         double total_pagar = 0;
-        totalComDesconto = ( total_pagar * percentagem_desconto ) / 100;
+        totalComDesconto = (total_pagar * percentagem_desconto) / 100;
         resultado = total_pagar - totalComDesconto;
-        txtTotalPagar.setText( String.valueOf( MetodosUtil.retirar_dizimas( resultado ) ).trim() );
+        txtTotalPagar.setText(String.valueOf(MetodosUtil.retirar_dizimas(resultado)).trim());
 
     }
 
-    private void calcularTotalSemDesconto()
-    {
+    private void calcularTotalSemDesconto() {
 
         double totalSemDesconto = 0;
         double resultado1 = 0;
         double percentagem_desconto = 0;
-        double total_pagar = Double.parseDouble( txtTotalPagar.getText().trim() );
+        double total_pagar = Double.parseDouble(txtTotalPagar.getText().trim());
 
-        totalSemDesconto = total_pagar + ( percentagem_desconto ) / 100;
+        totalSemDesconto = total_pagar + (percentagem_desconto) / 100;
         resultado1 = total_pagar + totalSemDesconto;
 
     }
 
-    public static void procedimento_adicionar( String mes )
-    {
+    public static void procedimento_adicionar(String mes) {
         boolean documentoIsFA = DVML.DOC_FACTURA_FT == getIdDocumento();
         boolean documentoIsPP = DVML.DOC_FACTURA_PROFORMA_PP == getIdDocumento();
         boolean documentoIsFR = DVML.DOC_FACTURA_RECIBO_FR == getIdDocumento();
 
-        try
-        {
+        try {
 
-            if ( !campos_invalidos() )
-            {
-                if ( !isProdutoExpirado( getCodigoProduto() ) )
-                {
+            if (!campos_invalidos()) {
+                if (!isProdutoExpirado(getCodigoProduto())) {
 
-                    TbProduto produto = ( TbProduto ) produtosController.findById( getCodigoProduto() );
-                    if ( isStocavel( produto.getStocavel() ) && documentoIsFR || documentoIsFA )
-                    {
-                        if ( possivel_quantidade() )
-                        {
-                            if ( estado_critico() )
-                            {
-                                JOptionPane.showMessageDialog( null, "O produto: " + produto.getDesignacao() + " precisa de ser actualizado no stock", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+                    TbProduto produto = (TbProduto) produtosController.findById(getCodigoProduto());
+                    if (isStocavel(produto.getStocavel()) && documentoIsFR || documentoIsFA) {
+                        if (possivel_quantidade()) {
+                            if (estado_critico()) {
+                                JOptionPane.showMessageDialog(null, "O produto: " + produto.getDesignacao() + " precisa de ser actualizado no stock", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
                             }
-                            adicionar_produto( mes );
+                            adicionar_produto(mes);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "O produto: " + produto.getDesignacao() + " não pode ser vendido pra esta quantidade", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
                         }
-                        else
-                        {
-                            JOptionPane.showMessageDialog( null, "O produto: " + produto.getDesignacao() + " não pode ser vendido pra esta quantidade", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
-                        }
+                    } else {
+                        adicionar_produto(mes);
                     }
-                    else
-                    {
-                        adicionar_produto( mes );
-                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Impossivel adicionar o produto porque já foi expirado.", "Aviso", JOptionPane.WARNING_MESSAGE);
                 }
-                else
-                {
-                    JOptionPane.showMessageDialog( null, "Impossivel adicionar o produto porque já foi expirado.", "Aviso", JOptionPane.WARNING_MESSAGE );
-                }
-            }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Por Favor Digite a Quantidade" );
+            } else {
+                JOptionPane.showMessageDialog(null, "Por Favor Digite a Quantidade");
             }
 
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
 
         }
 
     }
 
-    public static void procedimento_adicionar_sem_transtorno( String mes )
-    {
-        try
-        {
-            if ( !campos_invalidos() )
-            {
-                if ( !isProdutoExpirado( getCodigoProduto() ) )
-                {
-                    TbProduto produto = ( TbProduto ) produtosController.findById( getCodigoProduto() );
-                    if ( isStocavel( produto.getStocavel() ) )
-                    {
+    public static void procedimento_adicionar_sem_transtorno(String mes) {
+        try {
+            if (!campos_invalidos()) {
+                if (!isProdutoExpirado(getCodigoProduto())) {
+                    TbProduto produto = (TbProduto) produtosController.findById(getCodigoProduto());
+                    if (isStocavel(produto.getStocavel())) {
 
-                        if ( estado_critico() )
-                        {
-                            JOptionPane.showMessageDialog( null, "O produto: " + produto.getDesignacao() + " precisa de ser actualizado no stock", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+                        if (estado_critico()) {
+                            JOptionPane.showMessageDialog(null, "O produto: " + produto.getDesignacao() + " precisa de ser actualizado no stock", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
                         }
-                        adicionar_produto( mes );
+                        adicionar_produto(mes);
 
+                    } else {
+                        adicionar_produto(mes);
                     }
-                    else
-                    {
-                        adicionar_produto( mes );
-                    }
-                }
-                else
-                {
-                    JOptionPane.showMessageDialog( null, "Impossivel adicionar o produto porque já foi expirado.", "Aviso", JOptionPane.WARNING_MESSAGE );
+                } else {
+                    JOptionPane.showMessageDialog(null, "Impossivel adicionar o produto porque já foi expirado.", "Aviso", JOptionPane.WARNING_MESSAGE);
                 }
 
-            }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Por Favor Digite a Quantidade" );
+            } else {
+                JOptionPane.showMessageDialog(null, "Por Favor Digite a Quantidade");
             }
 
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
 
         }
 
     }
 
-    private void accao_codigo_barra_enter()
-    {
-        try
-        {
+    private void accao_codigo_barra_enter() {
+        try {
             String codigo_barra = txtCodigoBarra.getText().trim();
-            TbProduto produtoLocal = produtosController.findByCodBarra( codigo_barra );
-            procedimentoAdicionarTabela( produtoLocal );
-        }
-        catch ( Exception ex )
-        {
+            TbProduto produtoLocal = produtosController.findByCodBarra(codigo_barra);
+            procedimentoAdicionarTabela(produtoLocal);
+        } catch (Exception ex) {
             ex.printStackTrace();
-            Logger.getLogger( VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
-            JOptionPane.showMessageDialog( null, "Não existe produto com este código de barra.", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+            Logger.getLogger(VendaUsuarioVisao.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Não existe produto com este código de barra.", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
         }
 
     }
 
-    public void adicionar_botao_retificar( String mes )
-    {
+    public void adicionar_botao_retificar(String mes) {
 
-        try
-        {
-            if ( !campos_invalidos() )
-            {
+        try {
+            if (!campos_invalidos()) {
 
-                TbProduto produto = ( TbProduto ) produtosController.findById( getCodigoProduto() );
-                if ( isStocavel( produto.getStocavel() ) )
-                {
+                TbProduto produto = (TbProduto) produtosController.findById(getCodigoProduto());
+                if (isStocavel(produto.getStocavel())) {
 
-                    if ( possivel_quantidade() )
-                    {
+                    if (possivel_quantidade()) {
 
-                        if ( estado_critico() )
-                        {
-                            JOptionPane.showMessageDialog( null, "O produto: " + produto.getDesignacao() + " precisa de ser actualizado no stock", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+                        if (estado_critico()) {
+                            JOptionPane.showMessageDialog(null, "O produto: " + produto.getDesignacao() + " precisa de ser actualizado no stock", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
                         }
-                        adicionar_produto( mes );
-                    }
-                    else
-                    {
-                        JOptionPane.showMessageDialog( null, "O produto: " + produto.getDesignacao() + " nao pode ser vendido pra esta quantidade", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+                        adicionar_produto(mes);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "O produto: " + produto.getDesignacao() + " nao pode ser vendido pra esta quantidade", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
                     }
 
-                }
-                else
-                {
-                    adicionar_produto( mes );
+                } else {
+                    adicionar_produto(mes);
                 }
 
-            }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Por Favor Digite a Quantidade" );
+            } else {
+                JOptionPane.showMessageDialog(null, "Por Favor Digite a Quantidade");
             }
 
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
 
         }
 
     }
 
-    private void habilitar_campos_creditos()
-    {
+    private void habilitar_campos_creditos() {
 
     }
 
-    private static void procedimentoAdicionarTabela( TbProduto produto )
-    {
-        try
-        {
-            if ( !Objects.isNull( produto ) )
-            {
+    private static void procedimentoAdicionarTabela(TbProduto produto) {
+        try {
+            if (!Objects.isNull(produto)) {
                 adicionar_preco_quantidade_anitgo();
-                if ( rbTranstorno.isSelected() )
-                {
-                    procedimento_adicionar_sem_transtorno( "" );
+                if (rbTranstorno.isSelected()) {
+                    procedimento_adicionar_sem_transtorno("");
+                } else {
+                    procedimento_adicionar("");
                 }
-                else
-                {
-                    procedimento_adicionar( "" );
-                }
-                txtCodigoProduto.setText( "" );
-                txtCodigoBarra.setText( "" );
-                txtQuatindade.setText( "1" );
+                txtCodigoProduto.setText("");
+                txtCodigoBarra.setText("");
+                txtQuatindade.setText("1");
                 txtQuatindade.requestFocus();
 
-            }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Nao existe produto/servico relacionado a esta referencia" );
+            } else {
+                JOptionPane.showMessageDialog(null, "Nao existe produto/servico relacionado a esta referencia");
             }
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
 
         }
 
     }
 
-    private static void procedimentoAdicionarTabela2( TbProduto produto, String mes )
-    {
-        try
-        {
-            if ( !Objects.isNull( produto ) )
-            {
+    private static void procedimentoAdicionarTabela2(TbProduto produto, String mes) {
+        try {
+            if (!Objects.isNull(produto)) {
                 Integer codTipoProduto = produto.getCodTipoProduto().getCodigo();
-                TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutoController.findById( codTipoProduto );
+                TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById(codTipoProduto);
                 Integer codFamilia = tipoProduto.getFkFamilia().getPkFamilia();
-                Familia familia = ( Familia ) familiaController.findById( codFamilia );
-                cmbFamilia.setSelectedItem( familia.getDesignacao() );
-                cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
+                Familia familia = (Familia) familiaController.findById(codFamilia);
+                cmbFamilia.setSelectedItem(familia.getDesignacao());
+                cmbSubFamilia.setSelectedItem(tipoProduto.getDesignacao());
 
-                cmbProduto.setModel( new DefaultComboBoxModel( produtosController.getVector() ) );
-                cmbProduto.setSelectedItem( produto.getDesignacao() );
+                cmbProduto.setModel(new DefaultComboBoxModel(produtosController.getVector()));
+                cmbProduto.setSelectedItem(produto.getDesignacao());
                 adicionar_preco_quantidade_anitgo();
-                if ( rbTranstorno.isSelected() )
-                {
-                    procedimento_adicionar_sem_transtorno( mes );
+                if (rbTranstorno.isSelected()) {
+                    procedimento_adicionar_sem_transtorno(mes);
+                } else {
+                    procedimento_adicionar(mes);
                 }
-                else
-                {
-                    procedimento_adicionar( mes );
-                }
-                txtCodigoProduto.setText( "" );
-                txtCodigoBarra.setText( "" );
-                txtQuatindade.setText( "1" );
+                txtCodigoProduto.setText("");
+                txtCodigoBarra.setText("");
+                txtQuatindade.setText("1");
                 txtQuatindade.requestFocus();
 
-            }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Nao existe produto/servico relacionado a esta referencia" );
+            } else {
+                JOptionPane.showMessageDialog(null, "Nao existe produto/servico relacionado a esta referencia");
             }
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
 
         }
 
     }
 
-    private void accao_codigo_interno_enter()
-    {
+    private void accao_codigo_interno_enter() {
 
-        try
-        {
+        try {
 
-            int codigo = Integer.parseInt( txtCodigoProduto.getText() );
-            TbProduto produto = ( TbProduto ) produtosController.findById( codigo );
+            int codigo = Integer.parseInt(txtCodigoProduto.getText());
+            TbProduto produto = (TbProduto) produtosController.findById(codigo);
 
             Integer codTipoProduto = produto.getCodTipoProduto().getCodigo();
-            TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutoController.findById( codTipoProduto );
+            TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById(codTipoProduto);
             Integer codFamilia = tipoProduto.getFkFamilia().getPkFamilia();
-            Familia familia = ( Familia ) familiaController.findById( codFamilia );
-            cmbFamilia.setSelectedItem( familia.getDesignacao() );
-            cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
+            Familia familia = (Familia) familiaController.findById(codFamilia);
+            cmbFamilia.setSelectedItem(familia.getDesignacao());
+            cmbSubFamilia.setSelectedItem(tipoProduto.getDesignacao());
 
-            cmbProduto.setModel( new DefaultComboBoxModel( produtosController.getVector() ) );
-            cmbProduto.setSelectedItem( produto.getDesignacao() );
+            cmbProduto.setModel(new DefaultComboBoxModel(produtosController.getVector()));
+            cmbProduto.setSelectedItem(produto.getDesignacao());
 
-            configuracaoMesComecoController = new ConfiguracaoMesComecoController( conexao.getConnectionAtiva() );
+            configuracaoMesComecoController = new ConfiguracaoMesComecoController(conexao.getConnectionAtiva());
 
-            System.out.println( "***** Chegue 0" );
+            System.out.println("***** Chegue 0");
             boolean existeConfiguracaoDoCliente = configuracaoMesComecoController
                     .existeConfiguracaoDoCliente(
                             getIdCliente(),
-                            getCodigoProduto() );
+                            getCodigoProduto());
 
-            if ( existeConfiguracaoDoCliente )
-            {
-                new MesesPagoClienteVisao( this,
+            if (existeConfiguracaoDoCliente) {
+                new MesesPagoClienteVisao(this,
                         rootPaneCheckingEnabled,
                         getIdCliente(),
-                        getCodigoProduto(), conexao ).setVisible( true );
-            }
-            else
-            {
-                procedimentoAdicionarTabela( produto );
+                        getCodigoProduto(), conexao).setVisible(true);
+            } else {
+                procedimentoAdicionarTabela(produto);
             }
 
-        }
-        catch ( Exception ex )
-        {
+        } catch (Exception ex) {
 //            ex.printStackTrace();
-            Logger.getLogger( VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
-            JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
-        }
-        finally
-        {
+            Logger.getLogger(VendaUsuarioVisao.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
+        } finally {
         }
 
     }
 
-    public static void accao_codigo_interno_enter_busca_exterior( int codigo )
-    {
+    public static void accao_codigo_interno_enter_busca_exterior(int codigo) {
 
-        try
-        {
+        try {
 
-            System.out.println( "ID PRODUTO EXTERIOR: " + codigo );
-            TbProduto produtoLocal = ( TbProduto ) produtosController.findById( codigo );
+            System.out.println("ID PRODUTO EXTERIOR: " + codigo);
+            TbProduto produtoLocal = (TbProduto) produtosController.findById(codigo);
 
             Integer codTipoProduto = produtoLocal.getCodTipoProduto().getCodigo();
-            TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutoController.findById( codTipoProduto );
+            TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById(codTipoProduto);
             Integer codFamilia = tipoProduto.getFkFamilia().getPkFamilia();
-            Familia familia = ( Familia ) familiaController.findById( codFamilia );
-            cmbFamilia.setSelectedItem( familia.getDesignacao() );
-            cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
+            Familia familia = (Familia) familiaController.findById(codFamilia);
+            cmbFamilia.setSelectedItem(familia.getDesignacao());
+            cmbSubFamilia.setSelectedItem(tipoProduto.getDesignacao());
 
-            cmbProduto.setModel( new DefaultComboBoxModel( produtosController.getVector() ) );
-            cmbProduto.setSelectedItem( produtoLocal.getDesignacao() );
+            cmbProduto.setModel(new DefaultComboBoxModel(produtosController.getVector()));
+            cmbProduto.setSelectedItem(produtoLocal.getDesignacao());
 
-            configuracaoMesComecoController = new ConfiguracaoMesComecoController( conexao.getConnectionAtiva() );
+            configuracaoMesComecoController = new ConfiguracaoMesComecoController(conexao.getConnectionAtiva());
 
             boolean existeConfiguracaoDoCliente = configuracaoMesComecoController.existeConfiguracaoDoCliente(
-                    getIdCliente(), produtoLocal.getCodigo() );
-            if ( existeConfiguracaoDoCliente )
-            {
+                    getIdCliente(), produtoLocal.getCodigo());
+            if (existeConfiguracaoDoCliente) {
 
-                new MesesPagoClienteVisao( null,
+                new MesesPagoClienteVisao(null,
                         true,
                         getIdCliente(),
-                        getCodigoProduto(), conexao ).setVisible( true );
-            }
-            else
-            {
+                        getCodigoProduto(), conexao).setVisible(true);
+            } else {
 
-                procedimentoAdicionarTabela( produtoLocal );
+                procedimentoAdicionarTabela(produtoLocal);
             }
 
-        }
-        catch ( Exception ex )
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
             Logger
-                    .getLogger( VendaUsuarioVisao.class
-                            .getName() ).log( Level.SEVERE, null, ex );
-            JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+                    .getLogger(VendaUsuarioVisao.class
+                            .getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
         }
 
     }
 
-    public static void accao_codigo_interno_enter_busca_exterior_2( int codigo, String mes )
-    {
+    public static void accao_codigo_interno_enter_busca_exterior_2(int codigo, String mes) {
 
-        try
-        {
+        try {
 
-            produtosController = new ProdutosController( conexao );
-            System.out.println( "ID PRODUTO EXTERIOR: " + codigo );
-            TbProduto produtoLocal = ( TbProduto ) produtosController.findById( codigo );
+            produtosController = new ProdutosController(conexao);
+            System.out.println("ID PRODUTO EXTERIOR: " + codigo);
+            TbProduto produtoLocal = (TbProduto) produtosController.findById(codigo);
 
-            procedimentoAdicionarTabela2( produtoLocal, mes );
+            procedimentoAdicionarTabela2(produtoLocal, mes);
 
-        }
-        catch ( Exception ex )
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
             Logger
-                    .getLogger( VendaUsuarioVisao.class
-                            .getName() ).log( Level.SEVERE, null, ex );
-            JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+                    .getLogger(VendaUsuarioVisao.class
+                            .getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
         }
 
     }
@@ -2862,256 +2675,198 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //    {
 //        return bancoDao.getIdByDescricao( String.valueOf( cmbFormaPagamento.getSelectedItem() ) );
 //    }
-    private void desactivar_campos()
-    {
+    private void desactivar_campos() {
 //        lbValorEnregue.setVisible( false );
 //        txtValorEntregue.setVisible( false );
 //        lbTroco.setVisible( false );
 //        txtTroco.setVisible( false );
-        lbCliente.setVisible( false );
-        cmbCliente.setVisible( false );
+        lbCliente.setVisible(false);
+        cmbCliente.setVisible(false);
 
     }
 
-    private void mostrar_nome()
-    {
-        TbUsuario usuario = ( TbUsuario ) usuariosController.getUsuarioByCodigo( this.cod_usuario );
+    private void mostrar_nome() {
+        TbUsuario usuario = (TbUsuario) usuariosController.getUsuarioByCodigo(this.cod_usuario);
         //caso masculino
 //        if (usuario.getCodigoSexo().getCodigo() == 1) {
-        lb_nome_usuario.setText( "Operador: " + usuario.getNome() );
+        lb_nome_usuario.setText("Operador: " + usuario.getNome());
 //        } else {
 //            lb_usuario.setText("Operadora: " + usuario.getNome());
 //        }
     }
 
-    private void empresa()
-    {
-        TbDadosInstituicao dados = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
+    private void empresa() {
+        TbDadosInstituicao dados = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
 
-        jlEmpresa.setText( dados.getNome() );
+        jlEmpresa.setText(dados.getNome());
 
     }
 
-    public void adicionar_preco_quantidade()
-    {
+    public void adicionar_preco_quantidade() {
 
-        try
-        {
+        try {
 
-            TbProduto produto_local = ( TbProduto ) produtosController.findById( getCodigoProduto() );
+            TbProduto produto_local = (TbProduto) produtosController.findById(getCodigoProduto());
 
-            TbStock stockLocal = stocksController.getStockByIdProdutoAndIdArmazem( getCodigoProduto(), getCodigoArmazem() );
-            boolean isStocavel = produto_local.getStocavel().equals( "true" );
+            TbStock stockLocal = stocksController.getStockByIdProdutoAndIdArmazem(getCodigoProduto(), getCodigoArmazem());
+            boolean isStocavel = produto_local.getStocavel().equals("true");
 
-            if ( isStocavel && stockLocal.getQuantidadeExistente() <= stockLocal.getQuantCritica() )
-            {
+            if (isStocavel && stockLocal.getQuantidadeExistente() <= stockLocal.getQuantCritica()) {
 
-                txtQuantidadeStock.setBackground( Color.RED );
-                txtQuantidadeStock.setForeground( Color.BLACK );
-            }
-            else
-            {
-                txtQuantidadeStock.setBackground( new Color( 51, 153, 0, 255 ) );
+                txtQuantidadeStock.setBackground(Color.RED);
+                txtQuantidadeStock.setForeground(Color.BLACK);
+            } else {
+                txtQuantidadeStock.setBackground(new Color(51, 153, 0, 255));
             }
 
-            txtCodigoBarra.setText( String.valueOf( produto_local.getCodBarra() ) );
+            txtCodigoBarra.setText(String.valueOf(produto_local.getCodBarra()));
             //actualizar
-            txtLocal.setText( String.valueOf( produto_local.getCodLocal().getDesignacao() ) );
-            txtCodigoProduto.setText( String.valueOf( produto_local.getCodigo() ) );
+            txtLocal.setText(String.valueOf(produto_local.getCodLocal().getDesignacao()));
+            txtCodigoProduto.setText(String.valueOf(produto_local.getCodigo()));
 
-            if ( isStocavel && !Objects.isNull( stockLocal ) )
-            {
-                txtQuantidadeStock.setText( String.valueOf( stockLocal.getQuantidadeExistente() ) );
-            }
-            else
-            {
-                txtQuantidadeStock.setText( "0" );
+            if (isStocavel && !Objects.isNull(stockLocal)) {
+                txtQuantidadeStock.setText(String.valueOf(stockLocal.getQuantidadeExistente()));
+            } else {
+                txtQuantidadeStock.setText("0");
             }
 
-        }
-        catch ( Exception ex )
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
-            txtQuantidadeStock.setText( "0" );
+            txtQuantidadeStock.setText("0");
             Logger
-                    .getLogger( VendaUsuarioVisao.class
-                            .getName() ).log( Level.SEVERE, null, ex );
+                    .getLogger(VendaUsuarioVisao.class
+                            .getName()).log(Level.SEVERE, null, ex);
         }
 
     }
 
-    public static void adicionar_preco_quantidade_anitgo( int codigo_produto )
-    {
+    public static void adicionar_preco_quantidade_anitgo(int codigo_produto) {
 
-        try
-        {
-            if ( txtQuatindade.getText().isEmpty() )
-            {
-                JOptionPane.showMessageDialog( null, "Não informou a quantidade, por favor informe a quantidade!" );
-            }
-            else
-            {
-                TbStock stockLocal = stocksController.getStockByIdProdutoAndIdArmazem( codigo_produto, getCodigoArmazem() );
-                if ( stockLocal != ( null ) )
-                {
-                    if ( stockLocal.getQuantidadeExistente() <= stockLocal.getQuantCritica() )
-                    {
-                        txtQuantidadeStock.setBackground( Color.RED );
-                        txtQuantidadeStock.setForeground( Color.BLACK );
+        try {
+            if (txtQuatindade.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Não informou a quantidade, por favor informe a quantidade!");
+            } else {
+                TbStock stockLocal = stocksController.getStockByIdProdutoAndIdArmazem(codigo_produto, getCodigoArmazem());
+                if (stockLocal != (null)) {
+                    if (stockLocal.getQuantidadeExistente() <= stockLocal.getQuantCritica()) {
+                        txtQuantidadeStock.setBackground(Color.RED);
+                        txtQuantidadeStock.setForeground(Color.BLACK);
+                    } else {
+                        txtQuantidadeStock.setBackground(new Color(51, 153, 0, 255));
                     }
-                    else
-                    {
-                        txtQuantidadeStock.setBackground( new Color( 51, 153, 0, 255 ) );
-                    }
-                    TbPreco precoLocal = precosController.getLastIdPrecoByIdProduto( codigo_produto, Double.parseDouble( txtQuatindade.getText() ) );
-                    txtPreco.setText( String.valueOf( MetodosUtil.retirar_dizimas( precoLocal.getPrecoVenda().doubleValue() ) ) );
-                    txtQuantidadeStock.setText( String.valueOf( stockLocal.getQuantidadeExistente() ) );
+                    TbPreco precoLocal = precosController.getLastIdPrecoByIdProduto(codigo_produto, Double.parseDouble(txtQuatindade.getText()));
+                    txtPreco.setText(String.valueOf(MetodosUtil.retirar_dizimas(precoLocal.getPrecoVenda().doubleValue())));
+                    txtQuantidadeStock.setText(String.valueOf(stockLocal.getQuantidadeExistente()));
                 }
 
             }
-        }
-        catch ( Exception ex )
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
             Logger
-                    .getLogger( VendaUsuarioVisao.class
-                            .getName() ).log( Level.SEVERE, null, ex );
+                    .getLogger(VendaUsuarioVisao.class
+                            .getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public static void adicionar_preco_quantidade_anitgo()
-    {
-        try
-        {
-            if ( txtQuatindade.getText().isEmpty() )
-            {
-                JOptionPane.showMessageDialog( null, "Não informou a quantidade, por favor informe a quantidade!" );
-            }
-            else
-            {
-                TbStock stockLocal = stocksController.getStockByIdProdutoAndIdArmazem( getCodigoProduto(), getCodigoArmazem() );
-                if ( stockLocal != ( null ) )
-                {
-                    if ( stockLocal.getQuantidadeExistente() <= stockLocal.getQuantCritica() )
-                    {
-                        txtQuantidadeStock.setBackground( Color.RED );
-                        txtQuantidadeStock.setForeground( Color.BLACK );
+    public static void adicionar_preco_quantidade_anitgo() {
+        try {
+            if (txtQuatindade.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Não informou a quantidade, por favor informe a quantidade!");
+            } else {
+                TbStock stockLocal = stocksController.getStockByIdProdutoAndIdArmazem(getCodigoProduto(), getCodigoArmazem());
+                if (stockLocal != (null)) {
+                    if (stockLocal.getQuantidadeExistente() <= stockLocal.getQuantCritica()) {
+                        txtQuantidadeStock.setBackground(Color.RED);
+                        txtQuantidadeStock.setForeground(Color.BLACK);
+                    } else {
+                        txtQuantidadeStock.setBackground(new Color(51, 153, 0, 255));
                     }
-                    else
-                    {
-                        txtQuantidadeStock.setBackground( new Color( 51, 153, 0, 255 ) );
-                    }
-                    TbPreco precoLocal = precosController.getLastIdPrecoByIdProduto( getCodigoProduto(), Double.parseDouble( txtQuatindade.getText() ) );
-                    txtPreco.setText( String.valueOf( MetodosUtil.retirar_dizimas( precoLocal.getPrecoVenda().doubleValue() ) ) );
-                    txtQuantidadeStock.setText( String.valueOf( stockLocal.getQuantidadeExistente() ) );
+                    TbPreco precoLocal = precosController.getLastIdPrecoByIdProduto(getCodigoProduto(), Double.parseDouble(txtQuatindade.getText()));
+                    txtPreco.setText(String.valueOf(MetodosUtil.retirar_dizimas(precoLocal.getPrecoVenda().doubleValue())));
+                    txtQuantidadeStock.setText(String.valueOf(stockLocal.getQuantidadeExistente()));
                 }
 
             }
-        }
-        catch ( Exception ex )
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
             Logger
-                    .getLogger( VendaUsuarioVisao.class
-                            .getName() ).log( Level.SEVERE, null, ex );
+                    .getLogger(VendaUsuarioVisao.class
+                            .getName()).log(Level.SEVERE, null, ex);
         }
 
     }
 
-    public void adicionar_botao()
-    {
-        try
-        {
-            if ( !campos_invalidos() )
-            {
+    public void adicionar_botao() {
+        try {
+            if (!campos_invalidos()) {
 
-                if ( !isProdutoExpirado( getCodigoProduto() ) )
-                {
-                    TbProduto produtoLocal = ( TbProduto ) produtosController.findById( getCodigoProduto() );
-                    if ( isStocavel( produtoLocal.getStocavel() ) )
-                    {
-                        if ( possivel_quantidade() )
-                        {
-                            if ( estado_critico() )
-                            {
-                                JOptionPane.showMessageDialog( null, "O produto: " + produtoLocal.getDesignacao() + " precisa de ser actualizado no stock", "DVML", JOptionPane.WARNING_MESSAGE );
+                if (!isProdutoExpirado(getCodigoProduto())) {
+                    TbProduto produtoLocal = (TbProduto) produtosController.findById(getCodigoProduto());
+                    if (isStocavel(produtoLocal.getStocavel())) {
+                        if (possivel_quantidade()) {
+                            if (estado_critico()) {
+                                JOptionPane.showMessageDialog(null, "O produto: " + produtoLocal.getDesignacao() + " precisa de ser actualizado no stock", "DVML", JOptionPane.WARNING_MESSAGE);
                             }
-                            adicionar_produto( "" );
+                            adicionar_produto("");
 
-                        }
-                        else
-                        {
-                            JOptionPane.showMessageDialog( null, "O produto: " + produtoLocal.getDesignacao() + " nao pode ser vendido pra esta quantidade", "DVML", JOptionPane.ERROR_MESSAGE );
+                        } else {
+                            JOptionPane.showMessageDialog(null, "O produto: " + produtoLocal.getDesignacao() + " nao pode ser vendido pra esta quantidade", "DVML", JOptionPane.ERROR_MESSAGE);
                         }
 
+                    } else {
+                        adicionar_produto("");
                     }
-                    else
-                    {
-                        adicionar_produto( "" );
-                    }
-                }
-                else
-                {
-                    JOptionPane.showMessageDialog( null, "Produto não pode ser vendido porque foi expirado.", "Aviso", JOptionPane.WARNING_MESSAGE );
+                } else {
+                    JOptionPane.showMessageDialog(null, "Produto não pode ser vendido porque foi expirado.", "Aviso", JOptionPane.WARNING_MESSAGE);
                 }
 
-            }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Por Favor Digite a Quantidade" );
+            } else {
+                JOptionPane.showMessageDialog(null, "Por Favor Digite a Quantidade");
             }
 
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
 
         }
 
     }
 
-    public static boolean validar_zero()
-    {
-        return Double.parseDouble( txtQuatindade.getText() ) == 0;
+    public static boolean validar_zero() {
+        return Double.parseDouble(txtQuatindade.getText()) == 0;
     }
 
-    public static void limpar()
-    {
+    public static void limpar() {
 
-        txtQuatindade.setText( "1" );
-        txtCodigoProduto.setText( "" );
-        txtCodigoManual.setText( "" );
-        txtTotalPagar.setText( "0" );
-        txtCodigoBarra.setText( "" );
-        txtNomeConsumidorFinal.setText( "" );
-        dc_data_vencimento.setCalendar( null );
-        txtReferencia.setText( "" );
-        txtObs.setText( "" );
+        txtQuatindade.setText("1");
+        txtCodigoProduto.setText("");
+        txtCodigoManual.setText("");
+        txtTotalPagar.setText("0");
+        txtCodigoBarra.setText("");
+        txtNomeConsumidorFinal.setText("");
+        dc_data_vencimento.setCalendar(null);
+        txtReferencia.setText("");
+        txtObs.setText("");
         gorjeta = 0;
         reset_desconto_global();
         reset_valor_entregue();
 
     }
 
-    public static boolean campos_invalido_imprimir()
-    {
+    public static boolean campos_invalido_imprimir() {
 
 //        if ( getValor_entregue() < CfMethods.parseMoedaFormatada( txtTotal_AOA_liquido.getText() ) && ( getIdDocumento() != DVML.DOC_FACTURA_PROFORMA_PP ) && ( getIdDocumento() != DVML.DOC_FACTURA_FT ) )
-        if ( false )
-        {
-            JOptionPane.showMessageDialog( null, "O valor entregue tem quer ser maior ou igual ao Total a Pagar", "AVISO", JOptionPane.WARNING_MESSAGE );
+        if (false) {
+            JOptionPane.showMessageDialog(null, "O valor entregue tem quer ser maior ou igual ao Total a Pagar", "AVISO", JOptionPane.WARNING_MESSAGE);
 //            txtValorEntregue.requestFocus();
             return true;
         }
 
-        if ( cambio == null )
-        {
-            JOptionPane.showMessageDialog( null, "Por favor seleccione a moeda", "AVISO", JOptionPane.WARNING_MESSAGE );
+        if (cambio == null) {
+            JOptionPane.showMessageDialog(null, "Por favor seleccione a moeda", "AVISO", JOptionPane.WARNING_MESSAGE);
             return true;
         }
 
-        if ( cmbTipoDocumento == null )
-        {
-            JOptionPane.showMessageDialog( null, "Por favor seleccione o Tipo de Documento", "AVISO", JOptionPane.WARNING_MESSAGE );
+        if (cmbTipoDocumento == null) {
+            JOptionPane.showMessageDialog(null, "Por favor seleccione o Tipo de Documento", "AVISO", JOptionPane.WARNING_MESSAGE);
             return true;
         }
 
@@ -3119,25 +2874,22 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     }
 
-    public static boolean possivel_quantidade( int cod_produto, double qtd )
-    {
+    public static boolean possivel_quantidade(int cod_produto, double qtd) {
 
         //System.err.println(conexao.getQuantidade_Existente_Publico(getCodigoProduto(), getCodigoArmazem()));  
         //  TbStock stock =  stockDao.getStockByDescricao(getCodigoProduto(), getCodigoArmazem() );
-        double quant_possivel = conexao.getQuantidade_Existente_Publico( cod_produto, getCodigoArmazem() ) - conexao.getQuantidade_minima_publico( cod_produto, getCodigoArmazem() );
+        double quant_possivel = conexao.getQuantidade_Existente_Publico(cod_produto, getCodigoArmazem()) - conexao.getQuantidade_minima_publico(cod_produto, getCodigoArmazem());
         //int quant_possivel = stock.getQuantidadeExistente() -  stock.getQuantBaixa();
 
         return quant_possivel >= qtd;
 
     }
 
-    private static boolean transtorno()
-    {
+    private static boolean transtorno() {
 
-        String statusTranstorno = dadosInstituicaoController.findByCodigo( 1 ).getTranstorno();
+        String statusTranstorno = dadosInstituicaoController.findByCodigo(1).getTranstorno();
 
-        if ( statusTranstorno.equals( "Activo" ) )
-        {
+        if (statusTranstorno.equals("Activo")) {
             return false;
         }
 
@@ -3145,55 +2897,47 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         double qtd = 0d;
         double qtd_aceite = 0d;
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         boolean transtorno = false;
 
-        for ( int i = 0; i < table.getRowCount(); i++ )
-        {
+        for (int i = 0; i < table.getRowCount(); i++) {
 
-            cod_produto = Integer.parseInt( String.valueOf( table.getModel().getValueAt( i, 0 ) ) );
-            qtd = Double.parseDouble( String.valueOf( table.getModel().getValueAt( i, 4 ) ) );
-            TbProduto produto_local = ( TbProduto ) produtosController.findById( cod_produto );
-            boolean stocavel = produto_local.getStocavel().equals( "true" ) ? true : false;
+            cod_produto = Integer.parseInt(String.valueOf(table.getModel().getValueAt(i, 0)));
+            qtd = Double.parseDouble(String.valueOf(table.getModel().getValueAt(i, 4)));
+            TbProduto produto_local = (TbProduto) produtosController.findById(cod_produto);
+            boolean stocavel = produto_local.getStocavel().equals("true") ? true : false;
 
-            if ( !possivel_quantidade( cod_produto, qtd ) && stocavel )
-            {
+            if (!possivel_quantidade(cod_produto, qtd) && stocavel) {
 
                 transtorno = true;
-                qtd_aceite = stocksController.getStockByIdProdutoAndIdArmazem( cod_produto, getCodigoArmazem() ).getQuantidadeExistente();
+                qtd_aceite = stocksController.getStockByIdProdutoAndIdArmazem(cod_produto, getCodigoArmazem()).getQuantidadeExistente();
 
-                if ( qtd_aceite != 0 )
-                {
+                if (qtd_aceite != 0) {
 
-                    TbProduto produto = ( TbProduto ) produtosController.findById( getCodigoProduto() );
-                    int opcao = JOptionPane.showConfirmDialog( null, "Desculpe pelo transtorno"
-                            + ", o produto " + produto.getDesignacao() + " só é possivel  a " + qtd_aceite + " quantidade(s)" + ", contrariamente de " + qtd + "\n Deseja actualizar(Yes) ou remover da tabela(No) ?" );
+                    TbProduto produto = (TbProduto) produtosController.findById(getCodigoProduto());
+                    int opcao = JOptionPane.showConfirmDialog(null, "Desculpe pelo transtorno"
+                            + ", o produto " + produto.getDesignacao() + " só é possivel  a " + qtd_aceite + " quantidade(s)" + ", contrariamente de " + qtd + "\n Deseja actualizar(Yes) ou remover da tabela(No) ?");
 
-                    if ( opcao == JOptionPane.YES_OPTION )
-                    {
+                    if (opcao == JOptionPane.YES_OPTION) {
 
-                        modelo.setValueAt( qtd_aceite, i, 4 );
+                        modelo.setValueAt(qtd_aceite, i, 4);
                         double valor_iva = 0, taxa = 0, desconto = 0;
-                        taxa = Double.parseDouble( modelo.getValueAt( i, 6 ).toString() );
-                        desconto = Double.parseDouble( modelo.getValueAt( i, 5 ).toString() );
-                        modelo.setValueAt( getValorComImposto( qtd_aceite, taxa, getPreco( cod_produto, qtd_aceite ), desconto ), i, 10 );
+                        taxa = Double.parseDouble(modelo.getValueAt(i, 6).toString());
+                        desconto = Double.parseDouble(modelo.getValueAt(i, 5).toString());
+                        modelo.setValueAt(getValorComImposto(qtd_aceite, taxa, getPreco(cod_produto, qtd_aceite), desconto), i, 10);
 
-                    }
-                    else
-                    {
-                        modelo.removeRow( i );
+                    } else {
+                        modelo.removeRow(i);
                     }
                     setTotalPagar();
                     setTotalRetencao();
                     valor_por_extenco();
                     adicionar_preco_quantidade_anitgo();
 
-                }
-                else
-                {
-                    modelo.removeRow( i );
+                } else {
+                    modelo.removeRow(i);
                     adicionar_preco_quantidade_anitgo();
-                    JOptionPane.showMessageDialog( null, "Desculpe pelo transtorno o produto " + produto_local.getDesignacao() + " já não se encontra disponível no stock", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+                    JOptionPane.showMessageDialog(null, "Desculpe pelo transtorno o produto " + produto_local.getDesignacao() + " já não se encontra disponível no stock", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
                 }
 
             }
@@ -3204,31 +2948,26 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     }
 
-    public static void procedimento_salvar_venda_comercial( boolean frNormal )
-    {
-        if ( MetodosUtil.tabela_vazia( table ) )
-        {
-            JOptionPane.showMessageDialog( null, "Caro usuário, adicione item na tabela", "Aviso", JOptionPane.WARNING_MESSAGE );
+    public static void procedimento_salvar_venda_comercial(boolean frNormal) {
+        if (MetodosUtil.tabela_vazia(table)) {
+            JOptionPane.showMessageDialog(null, "Caro usuário, adicione item na tabela", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         // Verifica se a data do documento é válida
-        if ( !data_documento_superior_ou_igual_ao_ultimo_doc() )
-        {
-            JOptionPane.showMessageDialog( null, "A data do documento é inferior ao último documento emitido", "Aviso", JOptionPane.WARNING_MESSAGE );
+        if (!data_documento_superior_ou_igual_ao_ultimo_doc()) {
+            JOptionPane.showMessageDialog(null, "A data do documento é inferior ao último documento emitido", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         // Mostra aviso se for necessário
         data_documento_superior_data_actual();
-        if ( !aviso_continuar_documento )
-        {
+        if (!aviso_continuar_documento) {
             return;
         }
 
         // Valida campos antes de prosseguir
-        if ( campos_invalido_imprimir() )
-        {
+        if (campos_invalido_imprimir()) {
             return;
         }
 
@@ -3238,239 +2977,190 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //            return;
 //        }
         // Moeda estrangeira?
-        if ( !DVML.MOEDA_KWANZA.equalsIgnoreCase( getMoeda().getAbreviacao() ) )
-        {
-            actualizar_moeda( DVML.MOEDA_KWANZA );
+        if (!DVML.MOEDA_KWANZA.equalsIgnoreCase(getMoeda().getAbreviacao())) {
+            actualizar_moeda(DVML.MOEDA_KWANZA);
         }
 
         // Agora chama o método que realmente salva a venda
-        salvar_venda_comercial( frNormal );
+        salvar_venda_comercial(frNormal);
 
         // Atualiza a data após a venda
-        dc_data_documento.setDate( new Date() );
+        dc_data_documento.setDate(new Date());
     }
 
     /* CRIACAO DO GETS  */
-    public static double getQuantidade()
-    {
-        return Double.parseDouble( txtQuatindade.getText() );
+    public static double getQuantidade() {
+        return Double.parseDouble(txtQuatindade.getText());
     }
 
-    public static int getIdCliente()
-    {
-        try
-        {
-            TbCliente cliente = clientesController.getClienteByNome( cmbCliente.getSelectedItem().toString() );
+    public static int getIdCliente() {
+        try {
+            TbCliente cliente = clientesController.getClienteByNome(cmbCliente.getSelectedItem().toString());
             return cliente.getCodigo();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             return 0;
         }
 
     }
 
-    public static int getIdDocumento()
-    {
-        try
-        {
-            Documento documentoLocal = documentosController.getDocumentoByDesignacao( cmbTipoDocumento.getSelectedItem().toString() );
+    public static int getIdDocumento() {
+        try {
+            Documento documentoLocal = documentosController.getDocumentoByDesignacao(cmbTipoDocumento.getSelectedItem().toString());
             return documentoLocal.getPkDocumento();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             return 0;
         }
     }
 
-    public static int getIdDocumento( DocumentosController documentosControllerLocal )
-    {
-        try
-        {
-            Documento documentoLocal = documentosControllerLocal.getDocumentoByDesignacao( cmbTipoDocumento.getSelectedItem().toString() );
+    public static int getIdDocumento(DocumentosController documentosControllerLocal) {
+        try {
+            Documento documentoLocal = documentosControllerLocal.getDocumentoByDesignacao(cmbTipoDocumento.getSelectedItem().toString());
             return documentoLocal.getPkDocumento();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             return 0;
         }
     }
 
-    public static int getIdAnoEconomico()
-    {
-        try
-        {
+    public static int getIdAnoEconomico() {
+        try {
             AnoEconomico anoEconomicoLocal = anoEconomicoController
-                    .getAnoEconomicoByDesignacao( cmbAnoEconomico.getSelectedItem().toString() );
+                    .getAnoEconomicoByDesignacao(cmbAnoEconomico.getSelectedItem().toString());
             return anoEconomicoLocal.getPkAnoEconomico();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             return 0;
         }
     }
 
-    public static int getIdAnoEconomico( AnoEconomicoController anoEconomicoControllerLocal )
-    {
-        try
-        {
+    public static int getIdAnoEconomico(AnoEconomicoController anoEconomicoControllerLocal) {
+        try {
             AnoEconomico anoEconomicoLocal = anoEconomicoControllerLocal
-                    .getAnoEconomicoByDesignacao( cmbAnoEconomico.getSelectedItem().toString() );
+                    .getAnoEconomicoByDesignacao(cmbAnoEconomico.getSelectedItem().toString());
             return anoEconomicoLocal.getPkAnoEconomico();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             return 0;
         }
     }
 
-    public static int getIdMoeda()
-    {
-        try
-        {
-            Moeda moedaLocal = moedasController.getMoedaByDesignacao( cmbMoeda.getSelectedItem().toString() );
+    public static int getIdMoeda() {
+        try {
+            Moeda moedaLocal = moedasController.getMoedaByDesignacao(cmbMoeda.getSelectedItem().toString());
             return moedaLocal.getPkMoeda();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             return 0;
         }
 
     }
 
-    public static Double getPreco()
-    {
+    public static Double getPreco() {
 
         Moeda moeda = getMoeda();
-        if ( moeda == null )
-        {
+        if (moeda == null) {
             return null;
         }
 
-        Cambio lastCambio = cambiosController.getLastObject( moeda.getPkMoeda() );
-        try
-        {
+        Cambio lastCambio = cambiosController.getLastObject(moeda.getPkMoeda());
+        try {
 
             Double valorCambio = lastCambio.getValor();
-            TbPreco precoLocal = precosController.getLastIdPrecoByIdProduto( getCodigoProduto(), Double.parseDouble( txtQuatindade.getText() ) );
+            TbPreco precoLocal = precosController.getLastIdPrecoByIdProduto(getCodigoProduto(), Double.parseDouble(txtQuatindade.getText()));
             double precoVenda = precoLocal.getPrecoVenda().doubleValue();
 
-            return ( precoVenda / valorCambio );
-        }
-        catch ( Exception e )
-        {
+            return (precoVenda / valorCambio);
+        } catch (Exception e) {
             return 0.0;
         }
 
     }
 
-    public static Double getPreco( int idProduto, double qtd )
-    {
+    public static Double getPreco(int idProduto, double qtd) {
 
         Moeda moeda = getMoeda();
-        if ( moeda == null )
-        {
+        if (moeda == null) {
             return null;
         }
 
-        Cambio lastCambio = cambiosController.getLastObject( moeda.getPkMoeda() );
-        try
-        {
+        Cambio lastCambio = cambiosController.getLastObject(moeda.getPkMoeda());
+        try {
             Double valorCambio = lastCambio.getValor();
-            TbPreco precoLocal = precosController.getLastIdPrecoByIdProduto( idProduto, qtd );
+            TbPreco precoLocal = precosController.getLastIdPrecoByIdProduto(idProduto, qtd);
             double precoVenda = precoLocal.getPrecoVenda().doubleValue();
-            if ( moeda.getAbreviacao().equals( DVML.MOEDA_KWANZA ) )
-            {
+            if (moeda.getAbreviacao().equals(DVML.MOEDA_KWANZA)) {
                 return precoVenda;
             }
 
-            return ( precoVenda / valorCambio );
+            return (precoVenda / valorCambio);
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
 
     }
 
-    public static Double getPreco( int idProduto, double qtd, int idMoeda )
-    {
+    public static Double getPreco(int idProduto, double qtd, int idMoeda) {
 
-        Moeda moeda = ( Moeda ) moedasController.findById( idMoeda );
-        if ( moeda == null )
-        {
+        Moeda moeda = (Moeda) moedasController.findById(idMoeda);
+        if (moeda == null) {
             return null;
         }
 
-        Cambio lastCambio = cambiosController.getLastObject( moeda.getPkMoeda() );
-        try
-        {
+        Cambio lastCambio = cambiosController.getLastObject(moeda.getPkMoeda());
+        try {
             Double valorCambio = lastCambio.getValor();
-            TbPreco precoLocal = precosController.getLastIdPrecoByIdProduto( idProduto, qtd );
+            TbPreco precoLocal = precosController.getLastIdPrecoByIdProduto(idProduto, qtd);
             double precoVenda = precoLocal.getPrecoVenda().doubleValue();
 
-            if ( moeda.getAbreviacao().equals( DVML.MOEDA_KWANZA ) )
-            {
+            if (moeda.getAbreviacao().equals(DVML.MOEDA_KWANZA)) {
                 return precoVenda;
             }
 
-            return ( precoVenda / valorCambio );
+            return (precoVenda / valorCambio);
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
 
     }
 
-    public static String getDescricao_Produto()
-    {
-        TbProduto produto = ( TbProduto ) produtosController.findById( getCodigoProduto() );
+    public static String getDescricao_Produto() {
+        TbProduto produto = (TbProduto) produtosController.findById(getCodigoProduto());
         return produto.getDesignacao();
     }
 
-    public static String getUnidade_Produto()
-    {
-        TbProduto produto = ( TbProduto ) produtosController.findById( getCodigoProduto() );
-        Unidade unidade = ( Unidade ) unidadesController.findById( produto.getCodUnidade().getPkUnidade() );
+    public static String getUnidade_Produto() {
+        TbProduto produto = (TbProduto) produtosController.findById(getCodigoProduto());
+        Unidade unidade = (Unidade) unidadesController.findById(produto.getCodUnidade().getPkUnidade());
         return unidade.getAbreviacao();
     }
 
-    public static boolean campos_invalidos()
-    {
-        return txtQuatindade.getText().equals( "" );
+    public static boolean campos_invalidos() {
+        return txtQuatindade.getText().equals("");
     }
 
-    public void calcularTroco()
-    {
+    public void calcularTroco() {
 
         String prefixo = "";
         double troco = 0;
 
 //        System.out.println( "VALOR ENTREGUE " + txtValorEntregue.getText() );
-        System.out.println( "TOTAL A PAGAR " + txtTotalPagar.getText().trim() );
+        System.out.println("TOTAL A PAGAR " + txtTotalPagar.getText().trim());
 
 //        double valor_entregue = Double.parseDouble( txtValorEntregue.getText() );
-        double total_pagar = Double.parseDouble( txtTotalPagar.getText().trim() );
+        double total_pagar = Double.parseDouble(txtTotalPagar.getText().trim());
 //        troco = valor_entregue - total_pagar;
 
-        System.out.println( "TROCO " + troco );
+        System.out.println("TROCO " + troco);
 //        txtTroco.setText( String.valueOf( MetodosUtil.retirar_dizimas( troco ) ).trim() );
 
     }
 
-    private void tratar_troco()
-    {
-        try
-        {
+    private void tratar_troco() {
+        try {
             double troco = 0.0;
 
-            double total_pagar = CfMethods.parseMoedaFormatada( txtTotalPagar.getText() );
+            double total_pagar = CfMethods.parseMoedaFormatada(txtTotalPagar.getText());
 
 //            double valor_entregue = ( txtValorEntregue.getText().isEmpty() ) ? 0 : Double.parseDouble( txtValorEntregue.getText() );
 //            troco = valor_entregue - total_pagar;
@@ -3483,72 +3173,57 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //            {
 //                txtTroco.setText( CfMethods.formatarComoMoeda( troco ) );
 //            }
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-    private void tratar_desconto()
-    {
-        try
-        {
+    private void tratar_desconto() {
+        try {
             double desconto = 0.0;
             double total_pagar = getTotalPagar();
-            double valor_desconto_geral = ( double ) sp_desconto_financeiro.getValue();
+            double valor_desconto_geral = (double) sp_desconto_financeiro.getValue();
 
-            if ( valor_desconto_geral > total_pagar )
-            {
-                JOptionPane.showMessageDialog( null, "O desconto global não pode ser maior que o total à pagar.", "AVISO", JOptionPane.WARNING_MESSAGE );
+            if (valor_desconto_geral > total_pagar) {
+                JOptionPane.showMessageDialog(null, "O desconto global não pode ser maior que o total à pagar.", "AVISO", JOptionPane.WARNING_MESSAGE);
                 //reset desconto global
                 reset_desconto_global();
                 setTotalPagar();
                 sp_desconto_financeiro.requestFocus();
-            }
-            else if ( valor_desconto_geral == total_pagar )
-            {
+            } else if (valor_desconto_geral == total_pagar) {
                 reset_valor_entregue();
 //                txtTroco.setText( "0.0" );
 
-                desconto = ( total_pagar - valor_desconto_geral );
-                txtTotalPagar.setText( CfMethods.formatarComoMoeda( desconto ) );
+                desconto = (total_pagar - valor_desconto_geral);
+                txtTotalPagar.setText(CfMethods.formatarComoMoeda(desconto));
                 valor_por_extenco();
-            }
-            else
-            {
-                desconto = ( total_pagar - valor_desconto_geral );
-                txtTotalPagar.setText( CfMethods.formatarComoMoeda( desconto ) );
+            } else {
+                desconto = (total_pagar - valor_desconto_geral);
+                txtTotalPagar.setText(CfMethods.formatarComoMoeda(desconto));
                 reset_valor_entregue();
 //                txtValorEntregue.setText( String.valueOf( desconto ) );
 //                txtTroco.setText( "0.0" );
                 valor_por_extenco();
 
             }
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-    private void atualizarCliente1()
-    {
+    private void atualizarCliente1() {
         boolean documentoIsFA = DVML.DOC_FACTURA_FT == getIdDocumento();
         boolean documentoIsPP = DVML.DOC_FACTURA_PROFORMA_PP == getIdDocumento();
         boolean documentoIsGT = DVML.DOC_GUIA_TRANSPORTE_GT == getIdDocumento();
 
-        if ( documentoIsFA || documentoIsPP || documentoIsGT )
-        {
+        if (documentoIsFA || documentoIsPP || documentoIsGT) {
             //EXCLUIR CONSUMIDOR FINAL
-            cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVectorExecptoConsumidorFinal() ) );
-        }
-        else
-        {
-            cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );
-            cmbCliente.setSelectedItem( DVML._CLIENTE_CONSUMIDOR_FINAL );
+            cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVectorExecptoConsumidorFinal()));
+        } else {
+            cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVector()));
+            cmbCliente.setSelectedItem(DVML._CLIENTE_CONSUMIDOR_FINAL);
         }
     }
 
@@ -3620,86 +3295,69 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //        cmbCliente.setSelectedItem(DVML._CLIENTE_CONSUMIDOR_FINAL);
 //    }
 //}
-    private void atualizarDataVencimentoFA()
-    {
+    private void atualizarDataVencimentoFA() {
         boolean documentoIsFA = DVML.DOC_FACTURA_FT == getIdDocumento();
         boolean documentoIsPP = DVML.DOC_FACTURA_PROFORMA_PP == getIdDocumento();
 //        boolean documentoIsGT = DVML.DOC_GUIA_TRANSPORTE_GT == getIdDocumento();
 
-        if ( documentoIsFA || documentoIsPP )
-        {
-            dc_data_vencimento.setEnabled( true );
-        }
-        else
-        {
-            dc_data_vencimento.setEnabled( false );
+        if (documentoIsFA || documentoIsPP) {
+            dc_data_vencimento.setEnabled(true);
+        } else {
+            dc_data_vencimento.setEnabled(false);
         }
     }
 
-    private static String getCodDocActualizador()
-    {
-        try
-        {
-            documento = ( Documento ) documentosController.findById( getIdDocumento() );
-            anoEconomico = ( AnoEconomico ) anoEconomicoController.findById( getIdAnoEconomico() );
+    private static String getCodDocActualizador() {
+        try {
+            documento = (Documento) documentosController.findById(getIdDocumento());
+            anoEconomico = (AnoEconomico) anoEconomicoController.findById(getIdAnoEconomico());
             // this.doc_prox_cod = documento.getCodUltimoDoc() + 1;
             doc_prox_cod = vendasController.getUltimaContagemByIdDocumentoAndAnoEconomico(
-                    getIdDocumento(), getIdAnoEconomico() ) + 1;
+                    getIdDocumento(), getIdAnoEconomico()) + 1;
             prox_doc = documento.getAbreviacao();
             //FA Série / codigo
             prox_doc += " " + anoEconomico.getSerie() + "/" + doc_prox_cod;
             return prox_doc;
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             return "";
         }
     }
 
-    private static boolean isProdutoExpirado( int codigoProduto )
-    {
+    private static boolean isProdutoExpirado(int codigoProduto) {
         // return produtoDao.produtoExpirado( codigoProduto );
         return false;
 
     }
 
     //----------- evento do teclado ---------------------------------------
-    class TratarTroco implements KeyListener
-    {
+    class TratarTroco implements KeyListener {
 
         String prefixo = "";
 
-        public void keyPressed( KeyEvent evt )
-        {
+        public void keyPressed(KeyEvent evt) {
 
             String prefixo = "";
-            double total_pagar = CfMethods.parseMoedaFormatada( txtTotalPagar.getText() );
-            if ( evt.getKeyCode() != KeyEvent.VK_BACK_SPACE )
-            {
+            double total_pagar = CfMethods.parseMoedaFormatada(txtTotalPagar.getText());
+            if (evt.getKeyCode() != KeyEvent.VK_BACK_SPACE) {
                 char key = evt.getKeyChar();
 //                prefixo = txtValorEntregue.getText() + key;
                 double troco = 0;
-                double valor_entregue = Double.parseDouble( prefixo );
+                double valor_entregue = Double.parseDouble(prefixo);
 
                 troco = valor_entregue - total_pagar;
 //                txtTroco.setText( String.valueOf( MetodosUtil.retirar_dizimas( troco ) ) );
 
-            }
-            else if ( evt.getKeyCode() == KeyEvent.VK_BACK_SPACE )
-            {
+            } else if (evt.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
                 char key = evt.getKeyChar();
 
 //                prefixo = txtValorEntregue.getText() + key;
                 double valor_entregue = 0;
                 double troco = 0;
 
-                try
-                {
-                    valor_entregue = Double.parseDouble( prefixo.toString().trim().substring( 0, prefixo.length() - 2 ) );
+                try {
+                    valor_entregue = Double.parseDouble(prefixo.toString().trim().substring(0, prefixo.length() - 2));
                     troco = valor_entregue - total_pagar;
-                }
-                catch ( Exception e )
-                {
+                } catch (Exception e) {
                     valor_entregue = 0;
                 }
 
@@ -3710,55 +3368,45 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
         }
 
-        public void keyReleased( KeyEvent evt )
-        {
+        public void keyReleased(KeyEvent evt) {
         }
 
-        public void keyTyped( KeyEvent evt )
-        {
+        public void keyTyped(KeyEvent evt) {
         }
     }
 
 //----------- evento do teclado ---------------------------------------
-    class TratarDesconto implements KeyListener
-    {
+    class TratarDesconto implements KeyListener {
 
         String prefixo = "";
 
-        public void keyPressed( KeyEvent evt )
-        {
+        public void keyPressed(KeyEvent evt) {
 
             String prefixo = "";
 
-            if ( evt.getKeyCode() != KeyEvent.VK_BACK_SPACE )
-            {
+            if (evt.getKeyCode() != KeyEvent.VK_BACK_SPACE) {
                 char key = evt.getKeyChar();
-                double desconto = Double.parseDouble( prefixo );
-                double total_pagar = Double.parseDouble( txtTotalPagar.getText().trim() );
-                double totalComDesconto = ( total_pagar * desconto ) / 100;
+                double desconto = Double.parseDouble(prefixo);
+                double total_pagar = Double.parseDouble(txtTotalPagar.getText().trim());
+                double totalComDesconto = (total_pagar * desconto) / 100;
                 double resultado = total_pagar - totalComDesconto;
 
-                txtTotalPagar.setText( String.valueOf( resultado ).trim() );
+                txtTotalPagar.setText(String.valueOf(resultado).trim());
 
-            }
-            else if ( evt.getKeyCode() == KeyEvent.VK_BACK_SPACE )
-            {
+            } else if (evt.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
                 char key = evt.getKeyChar();
 
                 double desconto = 0;
-                double total_pagar = Double.parseDouble( txtTotalPagar.getText().trim() );
+                double total_pagar = Double.parseDouble(txtTotalPagar.getText().trim());
 
-                try
-                {
-                    desconto = Double.parseDouble( prefixo.toString().trim().substring( 0, prefixo.length() - 2 ) );
-                    desconto = Double.parseDouble( prefixo );
-                    total_pagar = Double.parseDouble( txtTotalPagar.getText().trim() );
-                    double totalComDesconto = ( total_pagar * desconto ) / 100;
+                try {
+                    desconto = Double.parseDouble(prefixo.toString().trim().substring(0, prefixo.length() - 2));
+                    desconto = Double.parseDouble(prefixo);
+                    total_pagar = Double.parseDouble(txtTotalPagar.getText().trim());
+                    double totalComDesconto = (total_pagar * desconto) / 100;
                     double resultado = total_pagar - totalComDesconto;
-                    txtTotalPagar.setText( String.valueOf( resultado ).trim() );
-                }
-                catch ( Exception e )
-                {
+                    txtTotalPagar.setText(String.valueOf(resultado).trim());
+                } catch (Exception e) {
                     desconto = 0;
                 }
 
@@ -3766,165 +3414,131 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
         }
 
-        public void keyReleased( KeyEvent evt )
-        {
+        public void keyReleased(KeyEvent evt) {
         }
 
-        public void keyTyped( KeyEvent evt )
-        {
+        public void keyTyped(KeyEvent evt) {
         }
     }
 
 //----------- evento do teclado ---------------------------------------
-    class TratarEventoValorEntregue implements KeyListener
-    {
+    class TratarEventoValorEntregue implements KeyListener {
 
         String prefixo = "";
         int codigo = 0, codigo_categoria = 0, quatidade_produto = 0;
 
-        public void keyPressed( KeyEvent evt )
-        {
+        public void keyPressed(KeyEvent evt) {
 
-            if ( evt.getKeyCode() == KeyEvent.VK_ENTER )
-            {
+            if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
 
-                try
-                {
+                try {
 //                    txtClienteNome.requestFocus ();
-                }
-                catch ( Exception ex )
-                {
-                    Logger.getLogger( VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
+                } catch (Exception ex) {
+                    Logger.getLogger(VendaUsuarioVisao.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
             }
         }
 
-        public void keyReleased( KeyEvent evt )
-        {
+        public void keyReleased(KeyEvent evt) {
         }
 
-        public void keyTyped( KeyEvent evt )
-        {
+        public void keyTyped(KeyEvent evt) {
         }
     }
 
 //----------- evento do teclado ---------------------------------------
-    class TratarEventoCliente implements KeyListener
-    {
+    class TratarEventoCliente implements KeyListener {
 
         String prefixo = "";
         int codigo = 0, codigo_categoria = 0, quatidade_produto = 0;
 
-        public void keyPressed( KeyEvent evt )
-        {
+        public void keyPressed(KeyEvent evt) {
 
-            if ( evt.getKeyCode() == KeyEvent.VK_ENTER )
-            {
+            if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
 
-                try
-                {
+                try {
 
-                }
-                catch ( Exception ex )
-                {
-                    Logger.getLogger( VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
+                } catch (Exception ex) {
+                    Logger.getLogger(VendaUsuarioVisao.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
             }
         }
 
-        public void keyReleased( KeyEvent evt )
-        {
+        public void keyReleased(KeyEvent evt) {
         }
 
-        public void keyTyped( KeyEvent evt )
-        {
+        public void keyTyped(KeyEvent evt) {
         }
     }
 
 //----------- evento do teclado ---------------------------------------
-    class TratarEventtoTroco implements KeyListener
-    {
+    class TratarEventtoTroco implements KeyListener {
 
         String prefixo = "";
 
-        public void keyPressed( KeyEvent evt )
-        {
+        public void keyPressed(KeyEvent evt) {
 
-            if ( evt.getKeyCode() != KeyEvent.VK_BACK_SPACE && evt.getKeyCode() != KeyEvent.VK_ENTER && evt.getKeyCode() != KeyEvent.VK_BACK_SPACE )
-            {
+            if (evt.getKeyCode() != KeyEvent.VK_BACK_SPACE && evt.getKeyCode() != KeyEvent.VK_ENTER && evt.getKeyCode() != KeyEvent.VK_BACK_SPACE) {
 
             }
         }
 
-        public void keyReleased( KeyEvent evt )
-        {
+        public void keyReleased(KeyEvent evt) {
         }
 
-        public void keyTyped( KeyEvent evt )
-        {
+        public void keyTyped(KeyEvent evt) {
         }
     }
 
-    public static BigDecimal getValor_entregue()
-    {
+    public static BigDecimal getValor_entregue() {
         return getTotalAOALiquido();
     }
 
-    public static double getTroco()
-    {
+    public static double getTroco() {
 
-        try
-        {
-            return CfMethods.parseMoedaFormatada( FormaPagamentoVisao.lb_troco.getText() );
-        }
-        catch ( Exception e )
-        {
+        try {
+            return CfMethods.parseMoedaFormatada(FormaPagamentoVisao.lb_troco.getText());
+        } catch (Exception e) {
         }
 
         return 0d;
 
     }
 
-    public String getDataActual()
-    {
+    public String getDataActual() {
         Calendar calendario = Calendar.getInstance();
 
         //buscar data
-        int dia = calendario.get( Calendar.DAY_OF_MONTH );
-        int mes = calendario.get( Calendar.MONTH );
-        int ano = calendario.get( Calendar.YEAR );
+        int dia = calendario.get(Calendar.DAY_OF_MONTH);
+        int mes = calendario.get(Calendar.MONTH);
+        int ano = calendario.get(Calendar.YEAR);
 
-        int hora = calendario.get( Calendar.HOUR_OF_DAY );
-        int minuto = calendario.get( Calendar.MINUTE );
-        int segundo = calendario.get( Calendar.SECOND );
-        String data = ano + "-" + ( mes + 1 ) + "-" + dia + " " + hora + ":" + minuto + ":" + segundo;
+        int hora = calendario.get(Calendar.HOUR_OF_DAY);
+        int minuto = calendario.get(Calendar.MINUTE);
+        int segundo = calendario.get(Calendar.SECOND);
+        String data = ano + "-" + (mes + 1) + "-" + dia + " " + hora + ":" + minuto + ":" + segundo;
 
         return data;
 
     }
 
-    public static double getTotal()
-    {
+    public static double getTotal() {
         return getQuantidade() * getPreco();
     }
 //Esta
 
-    private static void habilitarColunas()
-    {
+    private static void habilitarColunas() {
 //        TbDadosInstituicao dadosInstituicao_local = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
 
 //        boolean editarpreco = dadosInstituicao_local.getEditarPreco();
         boolean editarpreco = true;
-        TbUsuario usuario = ( TbUsuario ) usuariosController.findById( cod_usuario );
-        if ( usuario.getIdTipoUsuario().getIdTipoUsuario() == 1 && editarpreco )
-        {
-            setEditableColunaPreco( true );
-        }
-        else
-        {
-            setEditableColunaPreco( false );
+        TbUsuario usuario = (TbUsuario) usuariosController.findById(cod_usuario);
+        if (usuario.getIdTipoUsuario().getIdTipoUsuario() == 1 && editarpreco) {
+            setEditableColunaPreco(true);
+        } else {
+            setEditableColunaPreco(false);
         }
     }
 
@@ -4031,33 +3645,29 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //        txtQuatindade.setText( String.valueOf( 1 ) );
 //        txtCodigoProduto.requestFocus();
 //    }
-    public static void adicionar_produto( String mes ) throws SQLException
-    {
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+    public static void adicionar_produto(String mes) throws SQLException {
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         int codigo_produto = getCodigoProduto();
 
         String descricao_produto = getDescricao_Produto();
 
-        if ( !mes.equals( "" ) )
-        {
+        if (!mes.equals("")) {
             descricao_produto = "Pgt. Ref. de " + descricao_produto + " de #" + mes;
         }
 
-        if ( !exist_produto_tabela_formulario( descricao_produto ) )
-        {
-            if ( !validar_zero() )
-            {
+        if (!exist_produto_tabela_formulario(descricao_produto)) {
+            if (!validar_zero()) {
                 String unidade = getUnidade_Produto();
 
                 // Usar BigDecimal para valores monetários
-                BigDecimal qtd = BigDecimal.valueOf( getQuantidade() );
-                BigDecimal preco = BigDecimal.valueOf( getPreco() );
-                BigDecimal descontoPercent = BigDecimal.valueOf( getDescontoPercentagem() );
-                BigDecimal taxaIva = BigDecimal.valueOf( getTaxaImpostoIva( codigo_produto ) );
-                BigDecimal taxaRet = BigDecimal.valueOf( getTaxaImpostoRet( codigo_produto ) );
+                BigDecimal qtd = BigDecimal.valueOf(getQuantidade());
+                BigDecimal preco = BigDecimal.valueOf(getPreco());
+                BigDecimal descontoPercent = BigDecimal.valueOf(getDescontoPercentagem());
+                BigDecimal taxaIva = BigDecimal.valueOf(getTaxaImpostoIva(codigo_produto));
+                BigDecimal taxaRet = BigDecimal.valueOf(getTaxaImpostoRet(codigo_produto));
 //       
 //                BigDecimal totalComDesconto = totalBruto.subtract( descontoValor ).setScale( 6, RoundingMode.HALF_UP );
-                BigDecimal valorIliquido = FinanceUtils.getValorIliquido( qtd, preco, descontoPercent );
+                BigDecimal valorIliquido = FinanceUtils.getValorIliquido(qtd, preco, descontoPercent);
 
                 double valorLiquido = FinanceUtils.getValorComIVA(
                         qtd.doubleValue(),
@@ -4066,7 +3676,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                         descontoPercent.doubleValue()
                 );
 
-                BigDecimal totalComIva = new BigDecimal( valorLiquido );
+                BigDecimal totalComIva = new BigDecimal(valorLiquido);
 
                 // Valor com Retenção
                 String total_linha_retencao = CfMethods.formatarComoMoeda(
@@ -4079,48 +3689,40 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 );
 
                 // Adicionar à tabela
-                modelo.addRow( new Object[]
-                {
+                modelo.addRow(new Object[]{
                     codigo_produto,
                     descricao_produto,
                     unidade,
-                    CfMethods.formatarComoMoeda( preco ),
+                    CfMethods.formatarComoMoeda(preco),
                     qtd,
                     descontoPercent,
                     taxaIva,
                     taxaRet,
                     total_linha_retencao,
-                    CfMethods.formatarComoMoeda( valorIliquido ),
-                    CfMethods.formatarComoMoeda( totalComIva )
-                } );
+                    CfMethods.formatarComoMoeda(valorIliquido),
+                    CfMethods.formatarComoMoeda(totalComIva)
+                });
 
                 // Impressão de ticket (cozinha ou sala)
-                TbProduto findByDesignacao = produtosController.findByDesignacao( cmbProduto.getSelectedItem().toString() );
+                TbProduto findByDesignacao = produtosController.findByDesignacao(cmbProduto.getSelectedItem().toString());
                 int idPedido = 0;
-                TbMesas mesaEntity = ( TbMesas ) mesasController.findById( DVML.MESA_BALCAO );
-                TbLugares lugarEntity = ( TbLugares ) lugaresController.findById( DVML.LUGAR_BALCAO );
-                TbUsuario usuarioEntity = ( TbUsuario ) usuariosController.findById( cod_usuario );
+                TbMesas mesaEntity = (TbMesas) mesasController.findById(DVML.MESA_BALCAO);
+                TbLugares lugarEntity = (TbLugares) lugaresController.findById(DVML.LUGAR_BALCAO);
+                TbUsuario usuarioEntity = (TbUsuario) usuariosController.findById(cod_usuario);
                 String usuario = usuarioEntity.getNome();
 
-                if ( findByDesignacao.getCozinha().equals( DVML.ENVIAR_TICKET ) )
-                {
-                    MetodosUtil.imprimir_cozinha( findByDesignacao, idPedido, mesaEntity.getDesignacao(),
-                            lugarEntity.getDesignacao(), usuario, "Activo", qtd.intValue(), dadosInstituicaoController );
+                if (findByDesignacao.getCozinha().equals(DVML.ENVIAR_TICKET)) {
+                    MetodosUtil.imprimir_cozinha(findByDesignacao, idPedido, mesaEntity.getDesignacao(),
+                            lugarEntity.getDesignacao(), usuario, "Activo", qtd.intValue(), dadosInstituicaoController);
+                } else if (findByDesignacao.getCozinha().equals(DVML.ENVIAR_SALA)) {
+                    MetodosUtil.imprimir_sala(findByDesignacao, idPedido, mesaEntity.getDesignacao(),
+                            lugarEntity.getDesignacao(), usuarioEntity.getNome(), "Activo", qtd.intValue(), dadosInstituicaoController);
                 }
-                else if ( findByDesignacao.getCozinha().equals( DVML.ENVIAR_SALA ) )
-                {
-                    MetodosUtil.imprimir_sala( findByDesignacao, idPedido, mesaEntity.getDesignacao(),
-                            lugarEntity.getDesignacao(), usuarioEntity.getNome(), "Activo", qtd.intValue(), dadosInstituicaoController );
-                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Atenção\nA quantidade a sair não pode ser igual a zero!");
             }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Atenção\nA quantidade a sair não pode ser igual a zero!" );
-            }
-        }
-        else
-        {
-            JOptionPane.showMessageDialog( null, "O produto já consta na tabela." );
+        } else {
+            JOptionPane.showMessageDialog(null, "O produto já consta na tabela.");
         }
 
         // Atualização de totais
@@ -4129,7 +3731,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         calculaTotalIVA();
         valor_por_extenco();
 
-        txtQuatindade.setText( String.valueOf( 1 ) );
+        txtQuatindade.setText(String.valueOf(1));
         txtCodigoProduto.requestFocus();
     }
 
@@ -4168,21 +3770,20 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //        return total_iliquido_local;
 //
 //    }
-    private static BigDecimal getValorComRetencao( BigDecimal qtd, BigDecimal ret, BigDecimal precoVenda, BigDecimal desconto )
-    {
+    private static BigDecimal getValorComRetencao(BigDecimal qtd, BigDecimal ret, BigDecimal precoVenda, BigDecimal desconto) {
         // subtotal_linha = preco_venda * qtd
-        BigDecimal subtotalLinha = precoVenda.multiply( qtd );
+        BigDecimal subtotalLinha = precoVenda.multiply(qtd);
 
         // desconto_valor = subtotal_linha * (desconto / 100)
-        BigDecimal descontoValor = subtotalLinha.multiply( desconto.divide( BigDecimal.valueOf( 100 ), 10, RoundingMode.HALF_UP ) );
+        BigDecimal descontoValor = subtotalLinha.multiply(desconto.divide(BigDecimal.valueOf(100), 10, RoundingMode.HALF_UP));
 
         // valor_ret = ((subtotal_linha - desconto_valor) * ret) / 100
-        BigDecimal valorRet = ( subtotalLinha.subtract( descontoValor ) )
-                .multiply( ret )
-                .divide( BigDecimal.valueOf( 100 ), 10, RoundingMode.HALF_UP );
+        BigDecimal valorRet = (subtotalLinha.subtract(descontoValor))
+                .multiply(ret)
+                .divide(BigDecimal.valueOf(100), 10, RoundingMode.HALF_UP);
 
         // Arredonda para 2 casas decimais
-        return valorRet.setScale( 2, RoundingMode.HALF_UP );
+        return valorRet.setScale(2, RoundingMode.HALF_UP);
     }
 
 //    private static BigDecimal getTotalIliquido()
@@ -4202,79 +3803,69 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //
 //        return totalIliquido.setScale( 2, RoundingMode.HALF_UP );
 //    }
-    private static BigDecimal getTotalAOALiquido()
-    {
-        BigDecimal totalIliquido = FinanceUtils.getTotalIliquidoTable( INDEX_TABLE_PRECO, INDEX_TABLE_QTD, table );
-        BigDecimal totalImposto = BigDecimal.valueOf( FinanceUtils.getTotalImpostoTable( INDEX_TABLE_PRECO, INDEX_TABLE_QTD, INDEX_TABLE_DESCONTO, INDEX_TABLE_TAXA_IVA, table ) );
-        BigDecimal descontoComercial = FinanceUtils.getDescontoComercial( INDEX_TABLE_PRECO, INDEX_TABLE_QTD, INDEX_TABLE_DESCONTO, table );
-        BigDecimal descontoFinanceiro = BigDecimal.valueOf( getDescontoFinanceiro() );
+    private static BigDecimal getTotalAOALiquido() {
+        BigDecimal totalIliquido = FinanceUtils.getTotalIliquidoTable(INDEX_TABLE_PRECO, INDEX_TABLE_QTD, table);
+        BigDecimal totalImposto = BigDecimal.valueOf(FinanceUtils.getTotalImpostoTable(INDEX_TABLE_PRECO, INDEX_TABLE_QTD, INDEX_TABLE_DESCONTO, INDEX_TABLE_TAXA_IVA, table));
+        BigDecimal descontoComercial = FinanceUtils.getDescontoComercial(INDEX_TABLE_PRECO, INDEX_TABLE_QTD, INDEX_TABLE_DESCONTO, table);
+        BigDecimal descontoFinanceiro = BigDecimal.valueOf(getDescontoFinanceiro());
 
         return totalIliquido
-                .add( totalImposto )
-                .subtract( descontoComercial.add( descontoFinanceiro ) )
-                .setScale( 2, RoundingMode.HALF_UP );
+                .add(totalImposto)
+                .subtract(descontoComercial.add(descontoFinanceiro))
+                .setScale(2, RoundingMode.HALF_UP);
     }
 
-    public static void setTotalPagar()
-    {
+    public static void setTotalPagar() {
         BigDecimal total = getTotalAOALiquido();
-        System.out.println( "TOTAL ####### " + total );
-        String valorFormatado = CfMethods.formatarComoMoeda( total );
-        txtTotalPagar.setText( valorFormatado );
+        System.out.println("TOTAL ####### " + total);
+        String valorFormatado = CfMethods.formatarComoMoeda(total);
+        txtTotalPagar.setText(valorFormatado);
     }
 
-    public static String formatarComoMoeda( BigDecimal valor )
-    {
-        return valor.setScale( 2, RoundingMode.HALF_UP ).toString().replace( ".", "," ) + " Kz";
+    public static String formatarComoMoeda(BigDecimal valor) {
+        return valor.setScale(2, RoundingMode.HALF_UP).toString().replace(".", ",") + " Kz";
     }
 
-    private static void valor_por_extenco()
-    {
+    private static void valor_por_extenco() {
 //        BigDecimal total = BigDecimal.valueOf( CfMethods.parseMoedaFormatada( txtTotalPagar.getText() ) );
-        BigDecimal total = CfMethods.parseMoedaFormatadaBigDecimal( txtTotalPagar.getText() );
-        lbValorPorExtenco.setText( MetodosUtil.valorPorExtensoBigDecima( total, getMoeda().getDesignacao() ) );
+        BigDecimal total = CfMethods.parseMoedaFormatadaBigDecimal(txtTotalPagar.getText());
+        lbValorPorExtenco.setText(MetodosUtil.valorPorExtensoBigDecima(total, getMoeda().getDesignacao()));
     }
 
-    private static void valor_por_extenco( Moeda moeda )
-    {
-        System.out.println( "Valor XXXXXXX: " + CfMethods.parseMoedaFormatada( txtTotalPagar.getText() ) );
-        lbValorPorExtenco.setText( MetodosUtil.valorPorExtenso( CfMethods.parseMoedaFormatada( txtTotalPagar.getText() ), moeda.getDesignacao() ) );
+    private static void valor_por_extenco(Moeda moeda) {
+        System.out.println("Valor XXXXXXX: " + CfMethods.parseMoedaFormatada(txtTotalPagar.getText()));
+        lbValorPorExtenco.setText(MetodosUtil.valorPorExtenso(CfMethods.parseMoedaFormatada(txtTotalPagar.getText()), moeda.getDesignacao()));
     }
 
-    public void remover_item_carrinho()
-    {
+    public void remover_item_carrinho() {
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
-        String designacao = modelo.getValueAt( table.getSelectedRow(), 1 ).toString();
-        if ( designacao.contentEquals( "#" ) )
-        {
-            JOptionPane.showMessageDialog( null, "Não é permitido remover um  serviço " );
+        String designacao = modelo.getValueAt(table.getSelectedRow(), 1).toString();
+        if (designacao.contentEquals("#")) {
+            JOptionPane.showMessageDialog(null, "Não é permitido remover um  serviço ");
         }
 
-        modelo.removeRow( table.getSelectedRow() );
+        modelo.removeRow(table.getSelectedRow());
         setTotalPagar();
         setTotalRetencao();
         calculaTotalIVA();
         //txtDesconto.setText("0");
 
-        TbProduto findByDesignacao = produtosController.findByDesignacao( cmbProduto.getSelectedItem().toString() );
+        TbProduto findByDesignacao = produtosController.findByDesignacao(cmbProduto.getSelectedItem().toString());
 
         int idPedido = 0;
-        TbMesas mesaEntity = ( TbMesas ) mesasController.findById( DVML.MESA_BALCAO );
+        TbMesas mesaEntity = (TbMesas) mesasController.findById(DVML.MESA_BALCAO);
         String mesa = mesaEntity.getDesignacao();
-        TbLugares lugarEntity = ( TbLugares ) lugaresController.findById( DVML.LUGAR_BALCAO );
+        TbLugares lugarEntity = (TbLugares) lugaresController.findById(DVML.LUGAR_BALCAO);
         String lugar = lugarEntity.getDesignacao();
-        TbUsuario usuarioEntity = ( TbUsuario ) usuariosController.findById( cod_usuario );
+        TbUsuario usuarioEntity = (TbUsuario) usuariosController.findById(cod_usuario);
         String usuario = usuarioEntity.getNome();
 
-        if ( findByDesignacao.getCozinha().equals( "Enviar Ticket" ) )
-        {
-            MetodosUtil.imprimir_cozinha( findByDesignacao, idPedido, mesa, lugar, usuario, "Cancelado", ( int ) getQuantidade(), dadosInstituicaoController );
-        }
-        else if ( findByDesignacao.getCozinha().equals( "Enviar Sala" ) )
-        {
-            MetodosUtil.imprimir_sala( findByDesignacao, idPedido, mesa, lugar, usuario, "Cancelado", ( int ) getQuantidade(), dadosInstituicaoController );
+        if (findByDesignacao.getCozinha().equals("Enviar Ticket")) {
+            MetodosUtil.imprimir_cozinha(findByDesignacao, idPedido, mesa, lugar, usuario, "Cancelado", (int) getQuantidade(), dadosInstituicaoController);
+        } else if (findByDesignacao.getCozinha().equals("Enviar Sala")) {
+            MetodosUtil.imprimir_sala(findByDesignacao, idPedido, mesa, lugar, usuario, "Cancelado", (int) getQuantidade(), dadosInstituicaoController);
         }
 
         valor_por_extenco();
@@ -4283,21 +3874,19 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     }
 
-    public void adicionar_produto_teclado( int codigo, String descricao ) throws SQLException
-    {
+    public void adicionar_produto_teclado(int codigo, String descricao) throws SQLException {
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
-        double total_deconto = Double.parseDouble( String.valueOf( getPreco() ) ) * Double.parseDouble( String.valueOf( getQuantidade() ) );
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        double total_deconto = Double.parseDouble(String.valueOf(getPreco())) * Double.parseDouble(String.valueOf(getQuantidade()));
 
-        modelo.addRow( new Object[]
-        {
+        modelo.addRow(new Object[]{
             codigo,
             descricao,
             getPreco(),
             getQuantidade(),
-            getDesconto_produto( total_deconto ),
-            getTotal() - getDesconto_produto( total_deconto )
-        } );
+            getDesconto_produto(total_deconto),
+            getTotal() - getDesconto_produto(total_deconto)
+        });
 
         setTotalPagar();
         setTotalRetencao();
@@ -4346,130 +3935,117 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //
 //        return true;
 //    }
-    public void remover_items()
-    {
+    public void remover_items() {
 
-        table.getColumnModel().getColumn( 0 );
-        table.getColumnModel().getColumn( 1 );
-        table.getColumnModel().getColumn( 2 );
-        table.getColumnModel().getColumn( 3 );
-        table.getColumnModel().getColumn( 4 );
-        table.getColumnModel().getColumn( 5 );
+        table.getColumnModel().getColumn(0);
+        table.getColumnModel().getColumn(1);
+        table.getColumnModel().getColumn(2);
+        table.getColumnModel().getColumn(3);
+        table.getColumnModel().getColumn(4);
+        table.getColumnModel().getColumn(5);
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
-        for ( int i = modelo.getRowCount() - 1; i >= 0; i-- )
-        {
-            modelo.removeRow( i );
+        for (int i = modelo.getRowCount() - 1; i >= 0; i--) {
+            modelo.removeRow(i);
         }
 
     }
 
-    public static void setTotalRetencao()
-    {
+    public static void setTotalRetencao() {
         BigDecimal totalRetencao = getTotalRetencaoLiquido();
-        txtTotal_AOA_Retencao.setText( CfMethods.formatarComoMoeda( totalRetencao ) );
+        txtTotal_AOA_Retencao.setText(CfMethods.formatarComoMoeda(totalRetencao));
     }
 
-    private static BigDecimal getTotalRetencaoLiquido()
-    {
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+    private static BigDecimal getTotalRetencaoLiquido() {
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         BigDecimal totalRetencao = BigDecimal.ZERO;
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
+        for (int i = 0; i < modelo.getRowCount(); i++) {
             BigDecimal valorRetencao = BigDecimal.valueOf(
-                    CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 8 ).toString() )
+                    CfMethods.parseMoedaFormatada(modelo.getValueAt(i, 8).toString())
             );
 
-            totalRetencao = totalRetencao.add( valorRetencao );
+            totalRetencao = totalRetencao.add(valorRetencao);
         }
 
-        return totalRetencao.setScale( 2, RoundingMode.HALF_UP );
+        return totalRetencao.setScale(2, RoundingMode.HALF_UP);
     }
 
-    public static double getTotalPagar()
-    {
+    public static double getTotalPagar() {
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
         double total_pagar = 0;
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-            total_pagar += CfMethods.parseMoedaFormatada( String.valueOf( modelo.getValueAt( i, 10 ) ) );
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            total_pagar += CfMethods.parseMoedaFormatada(String.valueOf(modelo.getValueAt(i, 10)));
 
         }
         return total_pagar;
 
     }
 
-    public static double getTotal_Retencao()
-    {
+    public static double getTotal_Retencao() {
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
         double total_retencao = 0;
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-            total_retencao += CfMethods.parseMoedaFormatada( String.valueOf( modelo.getValueAt( i, 8 ) ) );
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            total_retencao += CfMethods.parseMoedaFormatada(String.valueOf(modelo.getValueAt(i, 8)));
 
         }
         return total_retencao;
 
     }
 
-    private static void calculaTotalIVA()
-    {
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+    private static void calculaTotalIVA() {
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         BigDecimal totalIva = BigDecimal.ZERO;
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
+        for (int i = 0; i < modelo.getRowCount(); i++) {
             // Preço unitário (coluna 3)
             BigDecimal preco = BigDecimal.valueOf(
-                    CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 3 ).toString() )
+                    CfMethods.parseMoedaFormatada(modelo.getValueAt(i, 3).toString())
             );
 
             // Quantidade (coluna 4)
-            BigDecimal quantidade = new BigDecimal( modelo.getValueAt( i, 4 ).toString() );
+            BigDecimal quantidade = new BigDecimal(modelo.getValueAt(i, 4).toString());
 
             // Taxa de IVA (coluna 6)
-            BigDecimal taxaIva = new BigDecimal( modelo.getValueAt( i, 6 ).toString() );
+            BigDecimal taxaIva = new BigDecimal(modelo.getValueAt(i, 6).toString());
 
             // Desconto (se aplicável - aqui ainda é zero porque está comentado no original)
             BigDecimal desconto = BigDecimal.ZERO;
 
             // Valor do IVA calculado
-            BigDecimal valorIva = getIVA( quantidade, taxaIva, preco, desconto );
+            BigDecimal valorIva = getIVA(quantidade, taxaIva, preco, desconto);
 
-            totalIva = totalIva.add( valorIva );
+            totalIva = totalIva.add(valorIva);
         }
 
         // Arredondar o total de IVA
-        total_iva = MetodosUtil.valorCasasDecimaisNovo( totalIva.doubleValue(), CASAS_DECIMAIS );
-        System.out.println( "(*)TOTAL IVA: " + total_iva );
+        total_iva = MetodosUtil.valorCasasDecimaisNovo(totalIva.doubleValue(), CASAS_DECIMAIS);
+        System.out.println("(*)TOTAL IVA: " + total_iva);
     }
 
-    private static void calculaTotalRet()
-    {
+    private static void calculaTotalRet() {
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         double ret = 0, preco = 0, desconto = 0;
         double qtd = 0d;
         total_ret = 0;
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
+        for (int i = 0; i < modelo.getRowCount(); i++) {
 
-            preco = CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 3 ).toString() );
-            qtd = Double.parseDouble( modelo.getValueAt( i, 4 ).toString() );
+            preco = CfMethods.parseMoedaFormatada(modelo.getValueAt(i, 3).toString());
+            qtd = Double.parseDouble(modelo.getValueAt(i, 4).toString());
             //desconto = CfMethods.parseMoedaFormatada(modelo.getValueAt(i, 4).toString());
-            ret = Double.parseDouble( modelo.getValueAt( i, 7 ).toString() );
-            total_ret += getRET( qtd, ret, preco, desconto );
+            ret = Double.parseDouble(modelo.getValueAt(i, 7).toString());
+            total_ret += getRET(qtd, ret, preco, desconto);
         }
 
         // System.err.println("Com o método: " + MetodosUtil.valorCasasDecimaisNovo(total_iva, CASAS_DECIMAIS));
-        total_ret = MetodosUtil.valorCasasDecimaisNovo( total_ret, CASAS_DECIMAIS );
-        System.out.println( "(*)TOTAL RET: " + total_ret );
+        total_ret = MetodosUtil.valorCasasDecimaisNovo(total_ret, CASAS_DECIMAIS);
+        System.out.println("(*)TOTAL RET: " + total_ret);
 
     }
 //    private static void calculaTotalIVA()
@@ -4495,83 +4071,65 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //
 //    }
 
-    public void setTotalCompleto()
-    {
+    public void setTotalCompleto() {
 
-        table.getColumnModel().getColumn( 0 );
-        table.getColumnModel().getColumn( 1 );
-        table.getColumnModel().getColumn( 2 );
-        table.getColumnModel().getColumn( 3 );
-        table.getColumnModel().getColumn( 4 );
-        table.getColumnModel().getColumn( 5 );
+        table.getColumnModel().getColumn(0);
+        table.getColumnModel().getColumn(1);
+        table.getColumnModel().getColumn(2);
+        table.getColumnModel().getColumn(3);
+        table.getColumnModel().getColumn(4);
+        table.getColumnModel().getColumn(5);
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
         double total_pagar = 0;
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-            total_pagar += Double.parseDouble( String.valueOf( modelo.getValueAt( i, 5 ) ) );
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            total_pagar += Double.parseDouble(String.valueOf(modelo.getValueAt(i, 5)));
 
         }
 
-        try
-        {
+        try {
 
             calcularTroco();
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             //e.printStackTrace();
         }
 
     }
 
-    public static double getDesconto_produto( double preco_total_produto ) throws SQLException
-    {
+    public static double getDesconto_produto(double preco_total_produto) throws SQLException {
 
         TbDesconto desconto = getDesconto();
         Double quantidade = desconto.getQuantidade();
         double percentagem_desconto = desconto.getValor();
 
-        if ( getQuantidade() >= quantidade )
-        {
-            return preco_total_produto * ( percentagem_desconto / 100 );
-        }
-        else
-        {
+        if (getQuantidade() >= quantidade) {
+            return preco_total_produto * (percentagem_desconto / 100);
+        } else {
             return 0.0;
         }
 
     }
 
-    private static TbDesconto getDesconto()
-    {
-        TbDesconto desconto = descontosController.get_desconto_cliente_produto( getIdCliente(), getCodigoProduto() );
+    private static TbDesconto getDesconto() {
+        TbDesconto desconto = descontosController.get_desconto_cliente_produto(getIdCliente(), getCodigoProduto());
         return desconto;
     }
 
-    private static double getDescontoPercentagem()
-    {
+    private static double getDescontoPercentagem() {
         TbDesconto desconto = getDesconto();
 
-        if ( !Objects.isNull( desconto ) )
-        {
-            try
-            {
+        if (!Objects.isNull(desconto)) {
+            try {
                 Double quantidade = desconto.getQuantidade();
-                if ( getQuantidade() >= quantidade )
-                {
+                if (getQuantidade() >= quantidade) {
                     return desconto.getValor();
-                }
-                else
-                {
+                } else {
                     return 0.0;
                 }
-            }
-            catch ( Exception e )
-            {
+            } catch (Exception e) {
             }
             return 0.0;
 
@@ -4598,120 +4156,97 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //        }
 //
 //    }
-    public static double getDesconto_produto( double preco_total_produto, int qtd )
-    {
+    public static double getDesconto_produto(double preco_total_produto, int qtd) {
 
-        TbDesconto desconto = descontosController.get_desconto_cliente_produto( getIdCliente(), getCodigoProduto() );
+        TbDesconto desconto = descontosController.get_desconto_cliente_produto(getIdCliente(), getCodigoProduto());
         Double quantidade = desconto.getQuantidade();
         double percentagem_desconto = desconto.getValor();
 
-        if ( qtd >= quantidade )
-        {
-            return preco_total_produto * ( percentagem_desconto / 100 );
-        }
-        else
-        {
+        if (qtd >= quantidade) {
+            return preco_total_produto * (percentagem_desconto / 100);
+        } else {
             return 0.0;
         }
 
     }
 
-    public static double getDescontoValorLinha( int codigo_produto, double preco_total_linha, int qtd )
-    {
+    public static double getDescontoValorLinha(int codigo_produto, double preco_total_linha, int qtd) {
 
-        TbDesconto desconto = descontosController.get_desconto_cliente_produto( getIdCliente(), codigo_produto );
+        TbDesconto desconto = descontosController.get_desconto_cliente_produto(getIdCliente(), codigo_produto);
         Double quantidade = desconto.getQuantidade();
         double percentagem_desconto = desconto.getValor();
 
-        if ( qtd >= quantidade )
-        {
-            return preco_total_linha * ( percentagem_desconto / 100 );
-        }
-        else
-        {
+        if (qtd >= quantidade) {
+            return preco_total_linha * (percentagem_desconto / 100);
+        } else {
             return 0.0;
         }
 
     }
 
-    public void getDesconto_Quantidade() throws SQLException
-    {
+    public void getDesconto_Quantidade() throws SQLException {
     }
 
-    public double getDescontoActual() throws SQLException
-    {
+    public double getDescontoActual() throws SQLException {
 
-        ResultSet resultado = conexao.executeQuery( "SELECT valor FROM tb_desconto WHERE idDesconto = 1" );
+        ResultSet resultado = conexao.executeQuery("SELECT valor FROM tb_desconto WHERE idDesconto = 1");
         double valor = 0;
-        if ( resultado.next() )
-        {
-            valor = resultado.getDouble( "valor desconto actual" );
+        if (resultado.next()) {
+            valor = resultado.getDouble("valor desconto actual");
         }
         return valor;
 
     }
 
-    public static void remover_all_produto()
-    {
+    public static void remover_all_produto() {
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
-        for ( int i = modelo.getRowCount() - 1; i >= 0; i-- )
-        {
-            modelo.removeRow( i );
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        for (int i = modelo.getRowCount() - 1; i >= 0; i--) {
+            modelo.removeRow(i);
         }
 
     }
 
-    public void remover_produto() throws SQLException
-    {
+    public void remover_produto() throws SQLException {
 
-        if ( linha > 0 )
-        {
+        if (linha > 0) {
 
-            table.getModel().setValueAt( 0, linha - 1, 0 );
-            table.getModel().setValueAt( "", linha - 1, 1 );
-            table.getModel().setValueAt( 0, linha - 1, 2 );
-            table.getModel().setValueAt( 0, linha - 1, 3 );
-            table.getModel().setValueAt( 0, linha - 1, 4 );
-            table.getModel().setValueAt( 0, linha - 1, 5 );
+            table.getModel().setValueAt(0, linha - 1, 0);
+            table.getModel().setValueAt("", linha - 1, 1);
+            table.getModel().setValueAt(0, linha - 1, 2);
+            table.getModel().setValueAt(0, linha - 1, 3);
+            table.getModel().setValueAt(0, linha - 1, 4);
+            table.getModel().setValueAt(0, linha - 1, 5);
 
             setTotalPagar();
             setTotalRetencao();
             linha--;
             calcularTroco();
-        }
-        else
-        {
-            JOptionPane.showMessageDialog( null, "Impossivel Remover Produtos na Tabela!...." );
+        } else {
+            JOptionPane.showMessageDialog(null, "Impossivel Remover Produtos na Tabela!....");
         }
 
     }
 
-    public static void actualizar_quantidade( int cod, double quantidade, BDConexao conexaoLocal )
-    {
+    public static void actualizar_quantidade(int cod, double quantidade, BDConexao conexaoLocal) {
 
-        String sql = "UPDATE tb_stock SET quantidade_existente =  " + ( getQuantidadeProduto( cod ) - quantidade ) + " WHERE cod_produto_codigo = " + cod + " AND  cod_armazem = " + getCodigoArmazem();
-        System.out.println( "Quantidade   : " + quantidade );
-        conexaoLocal.executeUpdate( sql );
+        String sql = "UPDATE tb_stock SET quantidade_existente =  " + (getQuantidadeProduto(cod) - quantidade) + " WHERE cod_produto_codigo = " + cod + " AND  cod_armazem = " + getCodigoArmazem();
+        System.out.println("Quantidade   : " + quantidade);
+        conexaoLocal.executeUpdate(sql);
 
     }
 
-    public static double getQuantidadeProduto( int cod_produto )
-    {
+    public static double getQuantidadeProduto(int cod_produto) {
 
         String sql = "SELECT quantidade_existente FROM  tb_stock WHERE  cod_produto_codigo = " + cod_produto + " AND cod_armazem = " + getCodigoArmazem();
 
-        ResultSet rs = conexao.executeQuery( sql );
+        ResultSet rs = conexao.executeQuery(sql);
 
-        try
-        {
-            if ( rs.next() )
-            {
-                return rs.getDouble( "quantidade_existente" );
+        try {
+            if (rs.next()) {
+                return rs.getDouble("quantidade_existente");
             }
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
             ex.printStackTrace();
             return 0;
         }
@@ -4719,22 +4254,17 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         return 0;
     }
 
-    public int getLastCodigo( String tabela )
-    {
+    public int getLastCodigo(String tabela) {
 
         String sql = "SELECT max(codigo) FROM " + tabela;
 
-        ResultSet rs = conexao.executeQuery( sql );
+        ResultSet rs = conexao.executeQuery(sql);
 
-        try
-        {
-            if ( rs.next() )
-            {
-                return rs.getInt( 1 );
+        try {
+            if (rs.next()) {
+                return rs.getInt(1);
             }
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
             ex.printStackTrace();
             return 0;
         }
@@ -4742,322 +4272,279 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         return 0;
     }
 
-    public static int getCodigoArmazem()
-    {
-        return armazensController.getArmazemByDesignacao( cmbArmazem.getSelectedItem().toString() ).getCodigo();
+    public static int getCodigoArmazem() {
+        return armazensController.getArmazemByDesignacao(cmbArmazem.getSelectedItem().toString()).getCodigo();
     }
 
-    private static void salvar_venda_comercial( boolean frNormal )
-    {
+    private static void salvar_venda_comercial(boolean frNormal) {
         BDConexao conexaoTransactionLocal = BDConexao.getInstancia();
-        vendasController = new VendasController( conexaoTransactionLocal );
-        itemVendasController = new ItemVendasController( conexaoTransactionLocal );
-        formaPagamentoItemController = new FormaPagamentoItemController( conexaoTransactionLocal );
-        pagamentoMensalidadeController = new PagamentoMensalidadeController( conexaoTransactionLocal.getConnectionAtiva() );
-        StoksController stocksControllerLocal = new StoksController( conexaoTransactionLocal );
-        DocumentosController.start( conexaoTransactionLocal ); // Inicia a transação
-        try
-        {
-            System.out.println( "AutoCommit após iniciar transação? "
-                    + conexaoTransactionLocal.getConnection().getAutoCommit() );
+        vendasController = new VendasController(conexaoTransactionLocal);
+        itemVendasController = new ItemVendasController(conexaoTransactionLocal);
+        formaPagamentoItemController = new FormaPagamentoItemController(conexaoTransactionLocal);
+        pagamentoMensalidadeController = new PagamentoMensalidadeController(conexaoTransactionLocal.getConnectionAtiva());
+        StoksController stocksControllerLocal = new StoksController(conexaoTransactionLocal);
+        DocumentosController.start(conexaoTransactionLocal); // Inicia a transação
+        try {
+            System.out.println("AutoCommit após iniciar transação? "
+                    + conexaoTransactionLocal.getConnection().getAutoCommit());
 
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
         Integer idVendaGerada = 0;
-        try
-        {
+        try {
             // Construção do objeto venda
             TbVenda venda = construirVenda();
 
             // Salvar a venda e obter o ID
-            idVendaGerada = vendasController.salvarRetornaID( venda );
+            idVendaGerada = vendasController.salvarRetornaID(venda);
 //            venda.setHashCod( MetodosUtil.criptografia_hash( vendasController.findById( idVendaGerada), getGrossTotal().doubleValue(), conexaoTransaction ) );
 
-            vendasController.actualizar_hash_and_assinatura( idVendaGerada, getGrossTotal().doubleValue() );
+            vendasController.actualizar_hash_and_assinatura(idVendaGerada, getGrossTotal().doubleValue());
 
-            if ( idVendaGerada == null || idVendaGerada == 0 )
-            {
-                throw new Exception( "Falha ao obter o ID da venda gravada." );
+            if (idVendaGerada == null || idVendaGerada == 0) {
+                throw new Exception("Falha ao obter o ID da venda gravada.");
             }
 
             // Ações específicas por tipo de documento
-            if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR )
-            {
-                MetodosUtil.adicionar_saldo_banco( venda.getTotalVenda().doubleValue(), venda.getIdBanco().getIdBanco(), conexaoTransactionLocal );
+            if (getIdDocumento() == DOC_FACTURA_RECIBO_FR) {
+                MetodosUtil.adicionar_saldo_banco(venda.getTotalVenda().doubleValue(), venda.getIdBanco().getIdBanco(), conexaoTransactionLocal);
             }
 
-            if ( getIdDocumento() == DOC_FACTURA_FT )
-            {
-                ExtratoContaClienteController.registro_movimento_conta_cliente( venda, conexaoTransactionLocal );
+            if (getIdDocumento() == DOC_FACTURA_FT) {
+                ExtratoContaClienteController.registro_movimento_conta_cliente(venda, conexaoTransactionLocal);
             }
 
             // Salvar os itens da venda
-            salvar_item_venda_comercial( idVendaGerada, conexaoTransactionLocal, stocksControllerLocal );
+            salvar_item_venda_comercial(idVendaGerada, conexaoTransactionLocal, stocksControllerLocal);
 
             // Registrar formas de pagamento
-            if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR )
-            {
-                registrarFormaPagamento( idVendaGerada, venda.getTotalVenda(), frNormal );
+            if (getIdDocumento() == DOC_FACTURA_RECIBO_FR) {
+                registrarFormaPagamento(idVendaGerada, venda.getTotalVenda(), frNormal);
 
             }
 
             // Finaliza transação
-            DocumentosController.commit( conexaoTransactionLocal );
+            DocumentosController.commit(conexaoTransactionLocal);
 
-            JOptionPane.showMessageDialog( null, "Factura efectuada com sucesso!" );
+            JOptionPane.showMessageDialog(null, "Factura efectuada com sucesso!");
 //            imprimir_factura( idVendaGerada ); // Imprime a factura
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
 
-            DocumentosController.rollback( conexaoTransactionLocal );
+            DocumentosController.rollback(conexaoTransactionLocal);
             e.printStackTrace();
-            JOptionPane.showMessageDialog( null, "Erro ao processar a venda: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE );
-        }
-        finally
-        {
+            JOptionPane.showMessageDialog(null, "Erro ao processar a venda: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        } finally {
             conexaoTransactionLocal.close();
         }
 
         // fora do try-catch da transação
-        try
-        {
-            imprimir_factura( idVendaGerada );
-        }
-        catch ( Exception ex )
-        {
+        try {
+            imprimir_factura(idVendaGerada);
+        } catch (Exception ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog( null, "Erro ao imprimir factura: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE );
+            JOptionPane.showMessageDialog(null, "Erro ao imprimir factura: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private static Date getDataVencimentoFr()
-    {
+    private static Date getDataVencimentoFr() {
 
-        if ( ( getIdDocumento() == DVML.DOC_FACTURA_PROFORMA_PP ) || ( getIdDocumento() == DVML.DOC_FACTURA_FT ) )
-        {
+        if ((getIdDocumento() == DVML.DOC_FACTURA_PROFORMA_PP) || (getIdDocumento() == DVML.DOC_FACTURA_FT)) {
             return dc_data_vencimento.getDate();
-        }
-        else
-        {
+        } else {
             return new Date();
         }
     }
 
-    private static TbVenda construirVenda()
-    {
+    private static TbVenda construirVenda() {
         TbVenda venda = new TbVenda();
 
         // Datas
-        venda.setDataVenda( dc_data_documento.getDate() );
-        venda.setHora( new java.sql.Time( System.currentTimeMillis() ) );
-        venda.setDataVencimento( getDataVencimentoFr() ); // se aplicável
+        venda.setDataVenda(dc_data_documento.getDate());
+        venda.setHora(new java.sql.Time(System.currentTimeMillis()));
+        venda.setDataVencimento(getDataVencimentoFr()); // se aplicável
 //        venda.setDataVencimento( dc_data_vencimento.getDate() ); // se aplicável
-        venda.setRefDataFact( dc_data_documento.getDate() );       // se aplicável
+        venda.setRefDataFact(dc_data_documento.getDate());       // se aplicável
 
         // Totais
-        venda.setTotalVenda( getTotalAOALiquido() );
-        venda.setValorEntregue( getValor_entregue() );
-        venda.setTroco( new BigDecimal( getTroco() ) );
-        venda.setDescontoTotal( FinanceUtils.getDescontoComercial( INDEX_TABLE_PRECO, INDEX_TABLE_QTD, INDEX_TABLE_DESCONTO, table )
-                .add( BigDecimal.valueOf( getDescontoFinanceiro() ) ) );
+        venda.setTotalVenda(getTotalAOALiquido());
+        venda.setValorEntregue(getValor_entregue());
+        venda.setTroco(new BigDecimal(getTroco()));
+        venda.setDescontoTotal(FinanceUtils.getDescontoComercial(INDEX_TABLE_PRECO, INDEX_TABLE_QTD, INDEX_TABLE_DESCONTO, table)
+                .add(BigDecimal.valueOf(getDescontoFinanceiro())));
 
         venda.setDescontoComercial(
-                FinanceUtils.getDescontoComercial( INDEX_TABLE_PRECO, INDEX_TABLE_QTD, INDEX_TABLE_DESCONTO, table ) );
-        venda.setDescontoFinanceiro( new BigDecimal( getDescontoFinanceiro() ) );
-        venda.setTotalIva( new BigDecimal(
+                FinanceUtils.getDescontoComercial(INDEX_TABLE_PRECO, INDEX_TABLE_QTD, INDEX_TABLE_DESCONTO, table));
+        venda.setDescontoFinanceiro(new BigDecimal(getDescontoFinanceiro()));
+        venda.setTotalIva(new BigDecimal(
                 FinanceUtils.getTotalImpostoTable(
                         INDEX_TABLE_PRECO,
                         INDEX_TABLE_QTD,
                         INDEX_TABLE_DESCONTO,
-                        INDEX_TABLE_TAXA_IVA, table ) )
+                        INDEX_TABLE_TAXA_IVA, table))
         );
         venda.setTotalGeral(
                 FinanceUtils.getTotalIliquidoTable(
                         INDEX_TABLE_PRECO,
                         INDEX_TABLE_QTD,
-                        table ) );
+                        table));
 
-        venda.setTotalIncidencia( new BigDecimal( FinanceUtils.getTotalIncidenciaTable(
+        venda.setTotalIncidencia(new BigDecimal(FinanceUtils.getTotalIncidenciaTable(
                 INDEX_TABLE_PRECO,
                 INDEX_TABLE_QTD,
                 INDEX_TABLE_DESCONTO,
                 INDEX_TABLE_TAXA_IVA,
-                table ) )
+                table))
         );
 
-        venda.setTotalIncidenciaIsento( FinanceUtils.getTotalIncidenciaIsento(
+        venda.setTotalIncidenciaIsento(FinanceUtils.getTotalIncidenciaIsento(
                 INDEX_TABLE_PRECO,
                 INDEX_TABLE_QTD,
-                INDEX_TABLE_DESCONTO, INDEX_TABLE_TAXA_IVA, table ) );
+                INDEX_TABLE_DESCONTO, INDEX_TABLE_TAXA_IVA, table));
 
-        venda.setTotalRetencao( getTotalRetencaoLiquido() );
-        venda.setGorjeta( new BigDecimal( gorjeta ) );
-        venda.setTotalPorExtenso( iniciais_extenso() + lbValorPorExtenco.getText() );
+        venda.setTotalRetencao(getTotalRetencaoLiquido());
+        venda.setGorjeta(new BigDecimal(gorjeta));
+        venda.setTotalPorExtenso(iniciais_extenso() + lbValorPorExtenco.getText());
 
         // Strings
-        if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR && getIdCliente() == 1 )
-        {
+        if (getIdDocumento() == DOC_FACTURA_RECIBO_FR && getIdCliente() == 1) {
 
-            venda.setNomeCliente( txtNomeConsumidorFinal.getText().trim() );
-            venda.setClienteNif( txtNifClientePesquisa.getText().trim() );
-        }
-        else if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR && getIdCliente() > 1 )
-        {
+            venda.setNomeCliente(txtNomeConsumidorFinal.getText().trim());
+            venda.setClienteNif(txtNifClientePesquisa.getText().trim());
+        } else if (getIdDocumento() == DOC_FACTURA_RECIBO_FR && getIdCliente() > 1) {
 
-            venda.setNomeCliente( getNomeCliente() );
-            venda.setClienteNif( getClienteNif() );
-        }
-        else if ( getIdDocumento() != DOC_FACTURA_RECIBO_FR && getIdCliente() > 1 )
-        {
-            venda.setNomeCliente( getNomeCliente() );
-            venda.setClienteNif( getClienteNif() );
+            venda.setNomeCliente(getNomeCliente());
+            venda.setClienteNif(getClienteNif());
+        } else if (getIdDocumento() != DOC_FACTURA_RECIBO_FR && getIdCliente() > 1) {
+            venda.setNomeCliente(getNomeCliente());
+            venda.setClienteNif(getClienteNif());
         }
 
-        venda.setCodFact( prox_doc );
+        venda.setCodFact(prox_doc);
 //    venda.setRefCodFact(txtRefCodFact.getText());
-        venda.setPerformance( "false" ); // ou pegar de um campo
-        venda.setCredito( "false" );        // depende se venda é a crédito
-        venda.setHashCod( "" );           // actualiza o hash depois de salvar
+        venda.setPerformance("false"); // ou pegar de um campo
+        venda.setCredito("false");        // depende se venda é a crédito
+        venda.setHashCod("");           // actualiza o hash depois de salvar
 //        venda.setHashCod( MetodosUtil.criptografia_hash( venda, getGrossTotal().doubleValue(), conexaoTransaction ) );
 //        venda.setAssinatura( MetodosUtil.assinatura_doc( venda.getHashCod() ) );
-        venda.setAssinatura( "" );        // preencher se estiver em uso
-        venda.setObs( txtObs.getText() );
-        venda.setStatusEliminado( "false" );
-        venda.setStatusRecibo( false ); // ou true se for o caso
+        venda.setAssinatura("");        // preencher se estiver em uso
+        venda.setObs(txtObs.getText());
+        venda.setStatusEliminado("false");
+        venda.setStatusRecibo(false); // ou true se for o caso
 
         // Cliente / usuário / banco / armazém
-        venda.setIdBanco( new TbBanco( 1 ) );
-        venda.setCodigoUsuario( new TbUsuario( cod_usuario ) );
-        venda.setCodigoCliente( new TbCliente( getIdCliente() ) );
-        venda.setIdArmazemFK( new TbArmazem( getCodigoArmazem() ) );
+        venda.setIdBanco(new TbBanco(1));
+        venda.setCodigoUsuario(new TbUsuario(cod_usuario));
+        venda.setCodigoCliente(new TbCliente(getIdCliente()));
+        venda.setIdArmazemFK(new TbArmazem(getCodigoArmazem()));
 
         // Documento, ano econômico, câmbio
-        venda.setFkDocumento( new Documento( getIdDocumento() ) );
-        venda.setFkAnoEconomico( new AnoEconomico( getIdAnoEconomico() ) );
+        venda.setFkDocumento(new Documento(getIdDocumento()));
+        venda.setFkAnoEconomico(new AnoEconomico(getIdAnoEconomico()));
 
-        int id = cambiosController.getLastId( getIdMoeda() );
-        venda.setFkCambio( new Cambio( id ) );
+        int id = cambiosController.getLastId(getIdMoeda());
+        venda.setFkCambio(new Cambio(id));
 
         // Dados adicionais do carro (se aplicável)
-        venda.setLocalCarga( "" );
-        venda.setLocalDescarga( "" );
-        venda.setNomeConsumidorFinal( txtNomeConsumidorFinal.getText() );
-        venda.setReferencia( txtReferencia.getText() );
-        venda.setMatricula( txtMatricula.getText() );
-        venda.setModelo( txtMotorista.getText() );
-        venda.setNumChassi( txtNumeroCarta.getText() );
-        venda.setNumMotor( txtMatricula.getText() );
-        venda.setKilometro( txtKilometragem.getText() );
-        venda.setNomeMotorista( txtMotorista.getText() );
-        venda.setMarcaCarro( txtMarca.getText() );
-        venda.setCorCarro( "" );
-        venda.setNDocMotorista( txtNumeroCarta.getText() );
+        venda.setLocalCarga("");
+        venda.setLocalDescarga("");
+        venda.setNomeConsumidorFinal(txtNomeConsumidorFinal.getText());
+        venda.setReferencia(txtReferencia.getText());
+        venda.setMatricula(txtMatricula.getText());
+        venda.setModelo(txtMotorista.getText());
+        venda.setNumChassi(txtNumeroCarta.getText());
+        venda.setNumMotor(txtMatricula.getText());
+        venda.setKilometro(txtKilometragem.getText());
+        venda.setNomeMotorista(txtMotorista.getText());
+        venda.setMarcaCarro(txtMarca.getText());
+        venda.setCorCarro("");
+        venda.setNDocMotorista(txtNumeroCarta.getText());
 
         // Contador do documento
-        venda.setCont( 0 ); // por exemplo
+        venda.setCont(0); // por exemplo
 
         return venda;
     }
 
-    public static String getMes( String designacao )
-    {
+    public static String getMes(String designacao) {
 
-        try
-        {
-            return designacao.split( "#" )[ 1 ];
-        }
-        catch ( Exception e )
-        {
+        try {
+            return designacao.split("#")[1];
+        } catch (Exception e) {
         }
 
         return "N/S";
 
     }
 
-    public static void salvar_item_venda_comercial( Integer cod_venda, BDConexao conexaoLocal, StoksController stoksControllerLocal ) throws Exception
-    {
-        for ( int i = 0; i < table.getRowCount(); i++ )
-        {
-            try
-            {
-                int idProduto = Integer.parseInt( table.getModel().getValueAt( i, 0 ).toString() );
-                String designacaoItem = table.getModel().getValueAt( i, 1 ).toString();
+    public static void salvar_item_venda_comercial(Integer cod_venda, BDConexao conexaoLocal, StoksController stoksControllerLocal) throws Exception {
+        for (int i = 0; i < table.getRowCount(); i++) {
+            try {
+                int idProduto = Integer.parseInt(table.getModel().getValueAt(i, 0).toString());
+                String designacaoItem = table.getModel().getValueAt(i, 1).toString();
 
-                TbProduto produto = ( TbProduto ) produtosController.findById( idProduto );
+                TbProduto produto = (TbProduto) produtosController.findById(idProduto);
 
                 TbItemVenda item = new TbItemVenda();
-                item.setCodigoVenda( new TbVenda( cod_venda ) );
-                item.setCodigoProduto( produto );
-                item.setDesignacaoItem( designacaoItem );
-                item.setQuantidade( Double.parseDouble( table.getModel().getValueAt( i, 4 ).toString() ) );
-                item.setDesconto( Double.parseDouble( table.getModel().getValueAt( i, 5 ).toString() ) );
-                item.setValorIva( Double.parseDouble( table.getModel().getValueAt( i, 6 ).toString() ) );
-                item.setValorRetencao( Double.parseDouble( table.getModel().getValueAt( i, 7 ).toString() ) );
-                TbPreco precoProduto = precosController.getLastIdPrecoByIdProduto( idProduto, item.getQuantidade() );
-                item.setMotivoIsensao( getMotivoIsensao( idProduto ) );
-                item.setCodigoIsensao( MetodosUtil.getCodigoRegime( idProduto ) );
-                item.setTotal( new BigDecimal( CfMethods.parseMoedaFormatada( table.getModel().getValueAt( i, 10 ).toString() ) ) );
-                item.setFkPreco( precosController.getLastIdPrecoByIdProduto( idProduto, item.getQuantidade() ) );
-                item.setDataServico( new Date() );
-                item.setFkLugares( ( TbLugares ) lugaresController.findById( DVML.LUGAR_BALCAO ) );
-                item.setFkMesas( ( TbMesas ) mesasController.findById( DVML.MESA_BALCAO ) );
-                item.setDesignacaoItem( designacaoItem );
+                item.setCodigoVenda(new TbVenda(cod_venda));
+                item.setCodigoProduto(produto);
+                item.setDesignacaoItem(designacaoItem);
+                item.setQuantidade(Double.parseDouble(table.getModel().getValueAt(i, 4).toString()));
+                item.setDesconto(Double.parseDouble(table.getModel().getValueAt(i, 5).toString()));
+                item.setValorIva(Double.parseDouble(table.getModel().getValueAt(i, 6).toString()));
+                item.setValorRetencao(Double.parseDouble(table.getModel().getValueAt(i, 7).toString()));
+                TbPreco precoProduto = precosController.getLastIdPrecoByIdProduto(idProduto, item.getQuantidade());
+                item.setMotivoIsensao(getMotivoIsensao(idProduto));
+                item.setCodigoIsensao(MetodosUtil.getCodigoRegime(idProduto));
+                item.setTotal(new BigDecimal(CfMethods.parseMoedaFormatada(table.getModel().getValueAt(i, 10).toString())));
+                item.setFkPreco(precosController.getLastIdPrecoByIdProduto(idProduto, item.getQuantidade()));
+                item.setDataServico(new Date());
+                item.setFkLugares((TbLugares) lugaresController.findById(DVML.LUGAR_BALCAO));
+                item.setFkMesas((TbMesas) mesasController.findById(DVML.MESA_BALCAO));
+                item.setDesignacaoItem(designacaoItem);
                 // Salvar item
-                if ( !itemVendasController.salvar( item ) )
-                {
-                    throw new Exception( "Erro ao salvar item da venda. Produto: " + produto.getDesignacao() );
-                }
-                else
-                {
-                    String mes = getMes( designacaoItem );
-                    if ( !mes.equals( "N/S" ) )
-                    {
-                        procedimentoPagamentoMensalidadeServico( cod_venda, getIdCliente(), idProduto, mes, conexaoLocal );
-                        System.out.println( "Pagmento de mensalidade pago com sucesso!.." );
+                if (!itemVendasController.salvar(item)) {
+                    throw new Exception("Erro ao salvar item da venda. Produto: " + produto.getDesignacao());
+                } else {
+                    String mes = getMes(designacaoItem);
+                    if (!mes.equals("N/S")) {
+                        procedimentoPagamentoMensalidadeServico(cod_venda, getIdCliente(), idProduto, mes, conexaoLocal);
+                        System.out.println("Pagmento de mensalidade pago com sucesso!..");
                     }
                 }
 
                 int idArmazem = getCodigoArmazem();
                 // Controle de stock (se for estocável)
-                boolean isStocavel = "true".equalsIgnoreCase( produto.getStocavel() );
-                if ( isStocavel )
-                {
+                boolean isStocavel = "true".equalsIgnoreCase(produto.getStocavel());
+                if (isStocavel) {
 
-                    TbStock stock_local_local = stoksControllerLocal.getStockByIdProdutoAndIdArmazem( idProduto, idArmazem );
+                    TbStock stock_local_local = stoksControllerLocal.getStockByIdProdutoAndIdArmazem(idProduto, idArmazem);
 
-                    if ( ( getIdDocumento() == DOC_FACTURA_RECIBO_FR
+                    if ((getIdDocumento() == DOC_FACTURA_RECIBO_FR
                             || getIdDocumento() == DOC_FACTURA_FT
                             || getIdDocumento() == DOC_FACTURA_CONSULTA_MESA
-                            || getIdDocumento() == DVML.DOC_GUIA_TRANSPORTE_GT ) && stock_local_local != null )
-                    {
+                            || getIdDocumento() == DVML.DOC_GUIA_TRANSPORTE_GT) && stock_local_local != null) {
 
                         MovimentacaoController.registrarMovimento(
                                 idProduto,
                                 idArmazem,
                                 cod_usuario,
-                                new BigDecimal( item.getQuantidade() ),
+                                new BigDecimal(item.getQuantidade()),
                                 prox_doc,
                                 "SAIDA",
                                 conexao
                         );
 
-                        if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR || getIdDocumento() == DOC_FACTURA_FT )
-                        {
-                            actualizar_quantidade( idProduto, item.getQuantidade(), conexaoLocal );
+                        if (getIdDocumento() == DOC_FACTURA_RECIBO_FR || getIdDocumento() == DOC_FACTURA_FT) {
+                            actualizar_quantidade(idProduto, item.getQuantidade(), conexaoLocal);
                         }
                     }
                 }
 
-            }
-            catch ( Exception e )
-            {
-                throw new Exception( "Erro ao processar item " + ( i + 1 ) + ": " + e.getMessage() );
+            } catch (Exception e) {
+                throw new Exception("Erro ao processar item " + (i + 1) + ": " + e.getMessage());
             }
         }
     }
@@ -5241,39 +4728,34 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //        }
 //
 //    }
-    public static void registrarFormaPagamento( int idVenda, BigDecimal totalVenda, boolean formaNormal ) throws Exception
-    {
+    public static void registrarFormaPagamento(int idVenda, BigDecimal totalVenda, boolean formaNormal) throws Exception {
 
 //        if ( !formaNormal )
 //        {
 //            registrarPagamentoUnico( idVenda, totalVenda );
 //            return;
 //        }
-        registrarPagamentosMultiplos( idVenda );
+        registrarPagamentosMultiplos(idVenda);
     }
 
-    private static void registrarPagamentoUnico( int idVenda, BigDecimal totalVenda ) throws Exception
-    {
+    private static void registrarPagamentoUnico(int idVenda, BigDecimal totalVenda) throws Exception {
         BigDecimal valor = totalVenda;
         String descricao = "";
-        String referencia = String.valueOf( idVenda );
+        String referencia = String.valueOf(idVenda);
         int idForma = 1;
 
-        FormaPagamento forma = formaPagamentoController.findByCodigo( idForma );
-        if ( forma == null )
-        {
-            throw new Exception( "Forma de pagamento não encontrada: " + descricao );
+        FormaPagamento forma = formaPagamentoController.findByCodigo(idForma);
+        if (forma == null) {
+            throw new Exception("Forma de pagamento não encontrada: " + descricao);
         }
 
-        Contas conta = ( Contas ) contaController.findById( forma.getFkContaAssociada() );
-        FormaPagamentoItem item = criarItemFormaPagamento( idVenda, idForma, valor, BigDecimal.ZERO, referencia );
-        if ( !formaPagamentoItemController.salvar( item ) )
-        {
-            throw new Exception( "Erro ao salvar forma de pagamento: " + descricao );
+        Contas conta = (Contas) contaController.findById(forma.getFkContaAssociada());
+        FormaPagamentoItem item = criarItemFormaPagamento(idVenda, idForma, valor, BigDecimal.ZERO, referencia);
+        if (!formaPagamentoItemController.salvar(item)) {
+            throw new Exception("Erro ao salvar forma de pagamento: " + descricao);
         }
 
-        if ( conta != null )
-        {
+        if (conta != null) {
             MetodosUtilTS.entradaTesouraria(
                     conta,
                     lb_proximo_documento.getText(),
@@ -5288,44 +4770,38 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         }
     }
 
-    private static void registrarPagamentosMultiplos( int idVenda ) throws Exception
-    {
-        DefaultTableModel modelo = ( DefaultTableModel ) FormaPagamentoVisao.tabela_forma_pagamento.getModel();
-        BigDecimal troco = CfMethods.parseMoedaSegura( FormaPagamentoVisao.lb_troco.getText() );
+    private static void registrarPagamentosMultiplos(int idVenda) throws Exception {
+        DefaultTableModel modelo = (DefaultTableModel) FormaPagamentoVisao.tabela_forma_pagamento.getModel();
+        BigDecimal troco = CfMethods.parseMoedaSegura(FormaPagamentoVisao.lb_troco.getText());
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
+        for (int i = 0; i < modelo.getRowCount(); i++) {
 
-            BigDecimal valor = CfMethods.parseMoedaSegura( modelo.getValueAt( i, 3 ).toString() );
-            if ( valor.compareTo( BigDecimal.ZERO ) <= 0 )
-            {
+            BigDecimal valor = CfMethods.parseMoedaSegura(modelo.getValueAt(i, 3).toString());
+            if (valor.compareTo(BigDecimal.ZERO) <= 0) {
                 continue;
             }
 
-            int idForma = Integer.parseInt( modelo.getValueAt( i, 0 ).toString() );
-            String descricao = modelo.getValueAt( i, 1 ).toString();
-            String referencia = modelo.getValueAt( i, 2 ) != null ? modelo.getValueAt( i, 2 ).toString() : "n/a";
+            int idForma = Integer.parseInt(modelo.getValueAt(i, 0).toString());
+            String descricao = modelo.getValueAt(i, 1).toString();
+            String referencia = modelo.getValueAt(i, 2) != null ? modelo.getValueAt(i, 2).toString() : "n/a";
 
-            FormaPagamento forma = formaPagamentoController.findByDescrisao( descricao );
-            if ( forma == null )
-            {
-                throw new Exception( "Forma de pagamento não encontrada: " + descricao );
+            FormaPagamento forma = formaPagamentoController.findByDescrisao(descricao);
+            if (forma == null) {
+                throw new Exception("Forma de pagamento não encontrada: " + descricao);
             }
 
-            Contas conta = ( Contas ) contaController.findById( forma.getFkContaAssociada() );
+            Contas conta = (Contas) contaController.findById(forma.getFkContaAssociada());
 
-            System.out.println( "FORMA PAGAMENTO: " +descricao );
-            System.out.println( "FORMA PAGAMENTO VALOR: " +valor );
-            System.out.println( "FORMA PAGAMENTO TROCO: " +troco );
-            FormaPagamentoItem item = criarItemFormaPagamento( idVenda, idForma, valor, troco, referencia );
+            System.out.println("FORMA PAGAMENTO: " + descricao);
+            System.out.println("FORMA PAGAMENTO VALOR: " + valor);
+            System.out.println("FORMA PAGAMENTO TROCO: " + troco);
+            FormaPagamentoItem item = criarItemFormaPagamento(idVenda, idForma, valor, troco, referencia);
 
-            if ( !formaPagamentoItemController.salvar( item ) )
-            {
-                throw new Exception( "Erro ao salvar forma de pagamento: " + descricao );
+            if (!formaPagamentoItemController.salvar(item)) {
+                throw new Exception("Erro ao salvar forma de pagamento: " + descricao);
             }
 
-            if ( conta != null )
-            {
+            if (conta != null) {
                 MetodosUtilTS.entradaTesouraria(
                         conta,
                         lb_proximo_documento.getText(),
@@ -5346,20 +4822,18 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     /**
      * Cria um objeto FormaPagamentoItem já populado e com cálculos prontos.
      */
-    private static FormaPagamentoItem criarItemFormaPagamento( int idVenda, int idForma, BigDecimal valor, BigDecimal troco, String referencia )
-    {
+    private static FormaPagamentoItem criarItemFormaPagamento(int idVenda, int idForma, BigDecimal valor, BigDecimal troco, String referencia) {
         FormaPagamentoItem item = new FormaPagamentoItem();
-        item.setValor( valor );
-        item.setTroco( troco );
-        item.setValor_real( valor.subtract( troco ) );
-        item.setReferencia( referencia );
-        item.setFkVenda( new TbVenda( idVenda ) );
-        item.setFkFormaPagamento( new FormaPagamento( idForma ) );
+        item.setValor(valor);
+        item.setTroco(troco);
+        item.setValor_real(valor.subtract(troco));
+        item.setReferencia(referencia);
+        item.setFkVenda(new TbVenda(idVenda));
+        item.setFkFormaPagamento(new FormaPagamento(idForma));
         return item;
     }
 
-    private static void imprimir_factura( int cod_venda )
-    {
+    private static void imprimir_factura(int cod_venda) {
 
         BDConexao conexoaLocal = BDConexao.getInstancia();
         limpar();
@@ -5367,20 +4841,18 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         accao_cliente();
         limpar_consumidor_final();
 
-        txtQuatindade.setText( "1" );
+        txtQuatindade.setText("1");
         txtQuatindade.requestFocus();
-        txtQuantidadeStock.setText( String.valueOf( conexoaLocal.getQtdExistenteStock( getCodigoProduto(), getCodigoArmazem() ) ) );
+        txtQuantidadeStock.setText(String.valueOf(conexoaLocal.getQtdExistenteStock(getCodigoProduto(), getCodigoArmazem())));
 
         List<TbProduto> lista_produto_isentos = getProdutosIsentos();
-        String motivos_isentos = MetodosUtil.getMotivoIsensaoProdutos( lista_produto_isentos );
+        String motivos_isentos = MetodosUtil.getMotivoIsensaoProdutos(lista_produto_isentos);
         conexoaLocal.close();
-        int numeroVias = ( int ) Double.parseDouble( spnCopia.getValue().toString() );
+        int numeroVias = (int) Double.parseDouble(spnCopia.getValue().toString());
 
-        for ( int i = 1; i <= numeroVias; i++ )
-        {
+        for (int i = 1; i <= numeroVias; i++) {
             String via;
-            switch (i)
-            {
+            switch (i) {
                 case 1:
                     via = "Original";
                     break;
@@ -5393,14 +4865,11 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 default:
                     via = "Cópia";
             }
-            if ( ( getIdDocumento() == DOC_FACTURA_RECIBO_FR || getIdDocumento() == DOC_FACTURA_FT || getIdDocumento() == DVML.DOC_FACTURA_PROFORMA_PP ) )
-            {
+            if ((getIdDocumento() == DOC_FACTURA_RECIBO_FR || getIdDocumento() == DOC_FACTURA_FT || getIdDocumento() == DVML.DOC_FACTURA_PROFORMA_PP)) {
 
-                ListaVenda1 listaVenda1 = new ListaVenda1( cod_venda, abreviacao, false, ck_simplificada.isSelected(), via, motivos_isentos );
-            }
-            else
-            {
-                ListaVendaConsultas listaVenda1 = new ListaVendaConsultas( cod_venda, abreviacao, false, ck_simplificada.isSelected(), via );
+                ListaVenda1 listaVenda1 = new ListaVenda1(cod_venda, abreviacao, false, ck_simplificada.isSelected(), via, motivos_isentos);
+            } else {
+                ListaVendaConsultas listaVenda1 = new ListaVendaConsultas(cod_venda, abreviacao, false, ck_simplificada.isSelected(), via);
             }
         }
     }
@@ -5451,27 +4920,21 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //            }
 //        }
 //    }
-    private static String getNomeCliente()
-    {
+    private static String getNomeCliente() {
         return cmbCliente.getSelectedItem().toString();
     }
 
-    private static String getClienteNif()
-    {
-        try
-        {
-            TbCliente cliente = ( TbCliente ) clientesController.findById( getIdCliente() );
+    private static String getClienteNif() {
+        try {
+            TbCliente cliente = (TbCliente) clientesController.findById(getIdCliente());
 
             String nif = cliente.getNif();
-            System.out.println( "NIF CLIENTE: " + nif );
-            if ( nif.equals( "" ) )
-            {
+            System.out.println("NIF CLIENTE: " + nif);
+            if (nif.equals("")) {
                 return DVML.NUMBER_NIF_GENERICO;
             }
             return nif;
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             return "";
         }
@@ -5489,487 +4952,382 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //            return "";
 //        }
 //    }
-    public static void main( String[] args ) throws SQLException
-    {
-        new VendaUsuarioVisao( 15, BDConexao.getInstancia() ).show( true );
+    public static void main(String[] args) throws SQLException {
+        new VendaUsuarioVisao(15, BDConexao.getInstancia()).show(true);
     }
 
-    public void confiLabel()
-    {
+    public void confiLabel() {
 
-        lbCodigoProduto.setHorizontalAlignment( JLabel.RIGHT );
-        lbCategoria.setHorizontalAlignment( JLabel.RIGHT );
-        lbProduto.setHorizontalAlignment( JLabel.RIGHT );
-        lbVias.setHorizontalAlignment( JLabel.RIGHT );
-        lbQuantidade.setHorizontalAlignment( JLabel.RIGHT );
-        lbDescontoFinanceiro.setHorizontalAlignment( JLabel.RIGHT );
+        lbCodigoProduto.setHorizontalAlignment(JLabel.RIGHT);
+        lbCategoria.setHorizontalAlignment(JLabel.RIGHT);
+        lbProduto.setHorizontalAlignment(JLabel.RIGHT);
+        lbVias.setHorizontalAlignment(JLabel.RIGHT);
+        lbQuantidade.setHorizontalAlignment(JLabel.RIGHT);
+        lbDescontoFinanceiro.setHorizontalAlignment(JLabel.RIGHT);
 //        lbValorEnregue.setHorizontalAlignment( JLabel.RIGHT );
 //        lbTroco.setHorizontalAlignment( JLabel.RIGHT );
         //lbCliente.setHorizontalAlignment(JLabel.RIGHT);
-        lbQuantidadeStock.setHorizontalAlignment( JLabel.RIGHT );
+        lbQuantidadeStock.setHorizontalAlignment(JLabel.RIGHT);
 
     }
 
-    public int getCodigoTipoProduto() throws SQLException
-    {
-        return conexao.getCodigoPublico( "tb_tipo_produto", String.valueOf( cmbSubFamilia.getSelectedItem() ) );
+    public int getCodigoTipoProduto() throws SQLException {
+        return conexao.getCodigoPublico("tb_tipo_produto", String.valueOf(cmbSubFamilia.getSelectedItem()));
     }
 
-    public static int getCodigoProduto()
-    {
+    public static int getCodigoProduto() {
         //return conexao.getCodigoPublico("tb_produto", String.valueOf(  cmbProduto.getSelectedItem()));   
-        return produtosController.findByDesignacao( cmbProduto.getSelectedItem().toString() ).getCodigo();
+        return produtosController.findByDesignacao(cmbProduto.getSelectedItem().toString()).getCodigo();
 
     }
 
-    public static boolean estado_critico() throws SQLException
-    {
+    public static boolean estado_critico() throws SQLException {
 
-        return conexao.getQuantidade_minima_publico( getCodigoProduto(), getCodigoArmazem() )
-                < conexao.getQuantidade_Existente_Publico( getCodigoProduto(), getCodigoArmazem() )
-                && conexao.getQuantidade_Existente_Publico( getCodigoProduto(), getCodigoArmazem() )
-                <= conexao.getQuantidade_critica_public( getCodigoProduto(), getCodigoArmazem() );
+        return conexao.getQuantidade_minima_publico(getCodigoProduto(), getCodigoArmazem())
+                < conexao.getQuantidade_Existente_Publico(getCodigoProduto(), getCodigoArmazem())
+                && conexao.getQuantidade_Existente_Publico(getCodigoProduto(), getCodigoArmazem())
+                <= conexao.getQuantidade_critica_public(getCodigoProduto(), getCodigoArmazem());
     }
 
-    public static boolean possivel_quantidade() throws SQLException
-    {
+    public static boolean possivel_quantidade() throws SQLException {
 
-        double quant_possivel = conexao.getQuantidade_Existente_Publico( getCodigoProduto(), getCodigoArmazem() )
-                - conexao.getQuantidade_minima_publico( getCodigoProduto(), getCodigoArmazem() );
+        double quant_possivel = conexao.getQuantidade_Existente_Publico(getCodigoProduto(), getCodigoArmazem())
+                - conexao.getQuantidade_minima_publico(getCodigoProduto(), getCodigoArmazem());
 
         return quant_possivel >= getQuantidade();
 
     }
 
-    public static boolean isStocavel( String status )
-    {
-        try
-        {
-            if ( status.equals( "true" ) )
-            {
+    public static boolean isStocavel(String status) {
+        try {
+            if (status.equals("true")) {
                 return true;
-            }
-            else
-            {
+            } else {
                 return false;
             }
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             return true;
         }
 
     }
 
     //devolve o codigo_barra de uma determinada tabela
-    public double getPrecoProduto( int codProduto, boolean stocavel )
-    {
+    public double getPrecoProduto(int codProduto, boolean stocavel) {
 
         String sql = "";
 
-        if ( stocavel )
-        {
+        if (stocavel) {
             sql = "SELECT preco_venda FROM tb_stock WHERE( cod_produto_codigo = " + codProduto + " AND cod_armazem = " + getCodigoArmazem() + ")";
-        }
-        else
-        {
+        } else {
             sql = "SELECT preco FROM tb_produto WHERE( codigo = " + codProduto + ")";
-            JOptionPane.showMessageDialog( null, "O produto provavelmente nao é estocavel!..." );
+            JOptionPane.showMessageDialog(null, "O produto provavelmente nao é estocavel!...");
         }
-        ResultSet rs = conexao.executeQuery( sql );
+        ResultSet rs = conexao.executeQuery(sql);
 
-        try
-        {
-            if ( rs.next() )
-            {
-                if ( stocavel )
-                {
-                    return rs.getDouble( "preco_venda" );
-                }
-                else
-                {
-                    return rs.getDouble( "preco" );
+        try {
+            if (rs.next()) {
+                if (stocavel) {
+                    return rs.getDouble("preco_venda");
+                } else {
+                    return rs.getDouble("preco");
                 }
             }
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
             return 0;
         }
 
         return 0;
     }
 
-    public boolean setCredito()
-    {
+    public boolean setCredito() {
         //return rbCredito.isSelected();
         return false;
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">    
-    private void init()
-    {
-        cmbMoeda.setVisible( false );
-        txtIniciaisCliente.addKeyListener( new TratarEventoTeclado() );
+    private void init() {
+        cmbMoeda.setVisible(false);
+        txtIniciaisCliente.addKeyListener(new TratarEventoTeclado());
 
-        txtCodigoProduto.setDocument( new PermitirNumeros() );
-        txtCodigoBarra.setDocument( new PermitirNumeros() );
-        lbValorPorExtenco.setText( "" );
+        txtCodigoProduto.setDocument(new PermitirNumeros());
+        txtCodigoBarra.setDocument(new PermitirNumeros());
+        lbValorPorExtenco.setText("");
         mostrar_nome();
-        try
-        {
+        try {
             configurar_armazens();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        cmbSubFamilia.setModel( new DefaultComboBoxModel( tipoProdutoController.getVector() ) );
-        cmbProduto.setModel( new DefaultComboBoxModel( produtosController.getVector() ) );
-        cmbMoeda.setModel( new DefaultComboBoxModel( moedasController.getVector() ) );
-        txtCodClientePesquisa.setDocument( new PermitirNumeros() );
+        cmbSubFamilia.setModel(new DefaultComboBoxModel(tipoProdutoController.getVector()));
+        cmbProduto.setModel(new DefaultComboBoxModel(produtosController.getVector()));
+        cmbMoeda.setModel(new DefaultComboBoxModel(moedasController.getVector()));
+        txtCodClientePesquisa.setDocument(new PermitirNumeros());
         //FILIPE TUZA - FORÇAR SELECIONAR UMA MOEDA PADRÃO
-        cmbMoeda.setSelectedIndex( 0 );
-        cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );
-        cmbCliente.setSelectedItem( DVML._CLIENTE_CONSUMIDOR_FINAL );
+        cmbMoeda.setSelectedIndex(0);
+        cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVector()));
+        cmbCliente.setSelectedItem(DVML._CLIENTE_CONSUMIDOR_FINAL);
 
-        cmbFamilia.setModel( new DefaultComboBoxModel( familiaController.getVector() ) );
-        cmbTipoDocumento.setModel( new DefaultComboBoxModel( documentosController.getVector() ) );
-        cmbAnoEconomico.setModel( new DefaultComboBoxModel( anoEconomicoController.getVector() ) );
-        txtQuatindade.setText( "1" );
+        cmbFamilia.setModel(new DefaultComboBoxModel(familiaController.getVector()));
+        cmbTipoDocumento.setModel(new DefaultComboBoxModel(documentosController.getVector()));
+        cmbAnoEconomico.setModel(new DefaultComboBoxModel(anoEconomicoController.getVector()));
+        txtQuatindade.setText("1");
         txtQuatindade.requestFocus();
-        dc_data_documento.setDate( new Date() );
+        dc_data_documento.setDate(new Date());
         mostrar_ano_economico_serie();
-        lb_proximo_documento.setText( "" );
-        txtTotalPagar.setText( CfMethods.formatarComoMoeda( 0.0 ) );
+        lb_proximo_documento.setText("");
+        txtTotalPagar.setText(CfMethods.formatarComoMoeda(0.0));
 
         reset_valor_entregue();
         reset_desconto_global();
 
-        setDocpadrao( dadosInstituicao.getDocpadrao() );
-        setDesactivarvias( dadosInstituicao.getDesactivarvias() );
+        setDocpadrao(dadosInstituicao.getDocpadrao());
+        setDesactivarvias(dadosInstituicao.getDesactivarvias());
 //        setEditarPrecos( dadosInstituicao.getEditarPreco() );
-        setActivarNegocio( dadosInstituicao.getNegocio() );
-        setArmazem( dadosInstituicao.getConfigArmazens() );
-        setTranstorno( dadosInstituicao.getTranstorno() );
-        setActivarDescontoFinanceiro( dadosInstituicao.getDescontoFinanceiro() );
-        setAnoEconomico( dadosInstituicao.getAnoEconomico() );
-        setVizualisarStock( dadosInstituicao.getVizualisarStock() );
+        setActivarNegocio(dadosInstituicao.getNegocio());
+        setArmazem(dadosInstituicao.getConfigArmazens());
+        setTranstorno(dadosInstituicao.getTranstorno());
+        setActivarDescontoFinanceiro(dadosInstituicao.getDescontoFinanceiro());
+        setAnoEconomico(dadosInstituicao.getAnoEconomico());
+        setVizualisarStock(dadosInstituicao.getVizualisarStock());
         int numero_copia = dadosInstituicao.getNumeroVias();
-        spnCopia.setModel( CfMethodsSwing.criarSpinnerDoubleModel( 1, 3, numero_copia ) );
+        spnCopia.setModel(CfMethodsSwing.criarSpinnerDoubleModel(1, 3, numero_copia));
         empresa();
-        setFolhaImpressora( dadosInstituicao.getImpressora() );
+        setFolhaImpressora(dadosInstituicao.getImpressora());
 
         actualizar_abreviacao();
 
     }// </editor-fold>   
 
-    private void mostrar_ano_economico_serie()
-    {
+    private void mostrar_ano_economico_serie() {
         anoEconomico = anoEconomicoController.getLastObject();
 
     }
 
-    private int getIdFamilia()
-    {
-        try
-        {
-            return familiaController.getFamiliaByDesignacao( String.valueOf( cmbFamilia.getSelectedItem() ) ).getPkFamilia();
+    private int getIdFamilia() {
+        try {
+            return familiaController.getFamiliaByDesignacao(String.valueOf(cmbFamilia.getSelectedItem())).getPkFamilia();
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             return 0;
         }
     }
 
-    private int getIdTipoProduto()
-    {
-        try
-        {
-            return tipoProdutoController.getTipoFamiliaByDesignacao( String.valueOf( cmbSubFamilia.getSelectedItem() ) ).getCodigo();
+    private int getIdTipoProduto() {
+        try {
+            return tipoProdutoController.getTipoFamiliaByDesignacao(String.valueOf(cmbSubFamilia.getSelectedItem())).getCodigo();
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             return 0;
 
         }
 
     }
 
-    class TratarEventoTeclado implements KeyListener
-    {
+    class TratarEventoTeclado implements KeyListener {
 
         String prefixo = "";
 
-        public void keyPressed( KeyEvent evt )
-        {
+        public void keyPressed(KeyEvent evt) {
 
-            if ( evt.getKeyCode() != KeyEvent.VK_BACK_SPACE && evt.getKeyCode() != KeyEvent.VK_ENTER )
-            {
+            if (evt.getKeyCode() != KeyEvent.VK_BACK_SPACE && evt.getKeyCode() != KeyEvent.VK_ENTER) {
                 char key = evt.getKeyChar();
 
-                try
-                {
+                try {
                     prefixo = txtIniciaisCliente.getText().trim() + key;
-                    cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVectorByIinciais( prefixo ) ) );
+                    cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVectorByIinciais(prefixo)));
 
-                }
-                catch ( Exception e )
-                {
-                    cmbCliente.setSelectedIndex( 0 );
+                } catch (Exception e) {
+                    cmbCliente.setSelectedIndex(0);
                 }
 
-            }
-            else if ( evt.getKeyCode() == KeyEvent.VK_BACK_SPACE )
-            {
-                try
-                {
-                    prefixo = prefixo.toString().trim().substring( 0, prefixo.length() - 1 );
-                    cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVectorByIinciais( prefixo ) ) );
-                }
-                catch ( Exception e )
-                {
-                    cmbCliente.setSelectedIndex( 0 );
+            } else if (evt.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+                try {
+                    prefixo = prefixo.toString().trim().substring(0, prefixo.length() - 1);
+                    cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVectorByIinciais(prefixo)));
+                } catch (Exception e) {
+                    cmbCliente.setSelectedIndex(0);
                 }
 
             }
         }
 
-        public void keyReleased( KeyEvent evt )
-        {
+        public void keyReleased(KeyEvent evt) {
         }
 
-        public void keyTyped( KeyEvent evt )
-        {
+        public void keyTyped(KeyEvent evt) {
         }
 
     }
 
-    private static void mostrar_proximo_codigo_documento()
-    {
+    private static void mostrar_proximo_codigo_documento() {
 
-        try
-        {
+        try {
             BDConexao conexaoLocal = BDConexao.getInstancia();
-            documentosController = new DocumentosController( conexaoLocal );
-            anoEconomicoController = new AnoEconomicoController( conexaoLocal );
-            vendasController = new VendasController( conexaoLocal );
+            documentosController = new DocumentosController(conexaoLocal);
+            anoEconomicoController = new AnoEconomicoController(conexaoLocal);
+            vendasController = new VendasController(conexaoLocal);
 
-            documento = ( Documento ) documentosController.findById( getIdDocumento( documentosController ) );
-            anoEconomico = ( AnoEconomico ) anoEconomicoController.findById( getIdAnoEconomico( anoEconomicoController ) );
+            documento = (Documento) documentosController.findById(getIdDocumento(documentosController));
+            anoEconomico = (AnoEconomico) anoEconomicoController.findById(getIdAnoEconomico(anoEconomicoController));
             doc_prox_cod = vendasController.getUltimaContagemByIdDocumentoAndAnoEconomico(
-                    getIdDocumento( documentosController ), getIdAnoEconomico( anoEconomicoController ) ) + 1;
+                    getIdDocumento(documentosController), getIdAnoEconomico(anoEconomicoController)) + 1;
             prox_doc = documento.getAbreviacao();
             //FA Série / codigo
             prox_doc += " " + anoEconomico.getSerie() + "/" + doc_prox_cod;
-            lb_proximo_documento.setText( "PRÓX.DOC. :" + prox_doc );
+            lb_proximo_documento.setText("PRÓX.DOC. :" + prox_doc);
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             documento = null;
-            lb_proximo_documento.setText( "" );
+            lb_proximo_documento.setText("");
 
         }
 
     }
 
-    private static void mostrar_proximo_codigo_documento( BDConexao conexao )
-    {
-        try
-        {
-            documentosController = new DocumentosController( conexao );
-            anoEconomicoController = new AnoEconomicoController( conexao );
+    private static void mostrar_proximo_codigo_documento(BDConexao conexao) {
+        try {
+            documentosController = new DocumentosController(conexao);
+            anoEconomicoController = new AnoEconomicoController(conexao);
 
-            documento = ( Documento ) documentosController.findById( getIdDocumento() );
-            anoEconomico = ( AnoEconomico ) anoEconomicoController.findById( getIdAnoEconomico() );
+            documento = (Documento) documentosController.findById(getIdDocumento());
+            anoEconomico = (AnoEconomico) anoEconomicoController.findById(getIdAnoEconomico());
             doc_prox_cod = vendasController.getUltimaContagemByIdDocumentoAndAnoEconomico(
-                    getIdDocumento(), getIdAnoEconomico() ) + 1;
+                    getIdDocumento(), getIdAnoEconomico()) + 1;
             prox_doc = documento.getAbreviacao();
             //FA Série / codigo
             prox_doc += " " + anoEconomico.getSerie() + "/" + doc_prox_cod;
-            lb_proximo_documento.setText( "PRÓX.DOC. :" + prox_doc );
-        }
-        catch ( Exception e )
-        {
+            lb_proximo_documento.setText("PRÓX.DOC. :" + prox_doc);
+        } catch (Exception e) {
             documento = null;
-            lb_proximo_documento.setText( "" );
+            lb_proximo_documento.setText("");
         }
     }
 
-    private static void mostrar_abreviacao_moeda_cambio()
-    {
-        try
-        {
-            cambio = cambiosController.getLastObject( getIdMoeda() );
+    private static void mostrar_abreviacao_moeda_cambio() {
+        try {
+            cambio = cambiosController.getLastObject(getIdMoeda());
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             cambio = null;
             e.printStackTrace();
         }
     }
 
-    private static double getTaxaImposto( int idProduto )
-    {
-        TbProduto produto = ( TbProduto ) produtosController.findById( idProduto );
+    private static double getTaxaImposto(int idProduto) {
+        TbProduto produto = (TbProduto) produtosController.findById(idProduto);
         //verifca o artigo se eh produto ou servico.
-        if ( produto.getStocavel().equals( "true" ) )
-        {
-            return produtosImpostoController.getTaxaByIdProduto( idProduto );
-        }
-        else
-        {
-            return servicosRetencaoController.getTaxaByIdProduto( idProduto );
+        if (produto.getStocavel().equals("true")) {
+            return produtosImpostoController.getTaxaByIdProduto(idProduto);
+        } else {
+            return servicosRetencaoController.getTaxaByIdProduto(idProduto);
         }
 
     }
 
-    private static double getTaxaImpostoIva( int idProduto )
-    {
-        try
-        {
-            return produtosImpostoController.getTaxaByIdProduto( idProduto );
-        }
-        catch ( Exception e )
-        {
+    private static double getTaxaImpostoIva(int idProduto) {
+        try {
+            return produtosImpostoController.getTaxaByIdProduto(idProduto);
+        } catch (Exception e) {
         }
 
         return 0;
 
     }
 
-    private static double getTaxaImpostoRet( int idProduto )
-    {
-        try
-        {
-            return servicosRetencaoController.getTaxaByIdProduto( idProduto );
-        }
-        catch ( Exception e )
-        {
+    private static double getTaxaImpostoRet(int idProduto) {
+        try {
+            return servicosRetencaoController.getTaxaByIdProduto(idProduto);
+        } catch (Exception e) {
         }
         return 0;
 
     }
 
-    private static String getMotivoIsensao( int idProduto )
-    {
-        try
-        {
-            return produtosIsentoController.getRegimeIsensaoByIdProduto( idProduto );
+    private static String getMotivoIsensao(int idProduto) {
+        try {
+            return produtosIsentoController.getRegimeIsensaoByIdProduto(idProduto);
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
         }
 
         return "";
     }
 
-    private static double getValorComImposto( double qtd, double taxa, double preco_venda, double desconto )
-    {
+    private static double getValorComImposto(double qtd, double taxa, double preco_venda, double desconto) {
         double subtotal_linha = (preco_venda * qtd);
-        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
-        double valor_iva = 1 + ( taxa / 100 );//
-        return ( ( subtotal_linha - desconto_valor ) * valor_iva );
+        double desconto_valor = (subtotal_linha * (desconto / 100));
+        double valor_iva = 1 + (taxa / 100);//
+        return ((subtotal_linha - desconto_valor) * valor_iva);
     }
 
-    private static BigDecimal getIVA( BigDecimal qtd, BigDecimal taxa, BigDecimal precoVenda, BigDecimal desconto )
-    {
+    private static BigDecimal getIVA(BigDecimal qtd, BigDecimal taxa, BigDecimal precoVenda, BigDecimal desconto) {
         // subtotal = preco * quantidade
-        BigDecimal subtotal = precoVenda.multiply( qtd );
+        BigDecimal subtotal = precoVenda.multiply(qtd);
 
         // subtrai o desconto (se houver)
-        BigDecimal baseCalculo = subtotal.subtract( desconto );
+        BigDecimal baseCalculo = subtotal.subtract(desconto);
 
         // taxa/100 → para obter o fator de imposto
-        BigDecimal fatorIva = taxa.divide( BigDecimal.valueOf( 100 ), 4, RoundingMode.HALF_UP );
+        BigDecimal fatorIva = taxa.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP);
 
         // valor do IVA
-        BigDecimal valorIva = baseCalculo.multiply( fatorIva );
+        BigDecimal valorIva = baseCalculo.multiply(fatorIva);
 
-        return valorIva.setScale( 2, RoundingMode.HALF_UP );
+        return valorIva.setScale(2, RoundingMode.HALF_UP);
     }
 
-    private static double getRET( double qtd, double taxa_r, double preco_venda, double desconto )
-    {
+    private static double getRET(double qtd, double taxa_r, double preco_venda, double desconto) {
         double subtotal_linha = (preco_venda * qtd);
         double valor_ret = (taxa_r / 100);//
-        return ( ( subtotal_linha - desconto ) * valor_ret );
+        return ((subtotal_linha - desconto) * valor_ret);
 
     }
 
-    private void setWindowsListener()
-    {
+    private void setWindowsListener() {
 
-        this.addWindowListener( new WindowAdapter()
-        {
+        this.addWindowListener(new WindowAdapter() {
             @Override
-            public void windowActivated( WindowEvent e )
-            {
+            public void windowActivated(WindowEvent e) {
                 mostrar_proximo_codigo_documento();
 
-                try
-                {
-                    MetodosUtil.verificarCaixa( caixasController,
+                try {
+                    MetodosUtil.verificarCaixa(caixasController,
                             cod_usuario,
                             RootVisao.btn_abertura_dia_root,
                             RootVisao.btn_abertura_dia_root,
-                            btnFormaPagamento, btnSemFormaPagamento );
+                            btnFormaPagamento, btnSemFormaPagamento);
 
-                }
-                catch ( Exception ex )
-                {
-                    System.err.println( "Não existe abertura para este usuário \n"
-                            + ex.getMessage() );
+                } catch (Exception ex) {
+                    System.err.println("Não existe abertura para este usuário \n"
+                            + ex.getMessage());
                 }
 
             }
 
-        } );
+        });
 
     }
 
-    private void actualizar_abreviacao()
-    {
+    private void actualizar_abreviacao() {
 
-        switch (getIdDocumento())
-        {
+        switch (getIdDocumento()) {
             case DVML.DOC_FACTURA_RECIBO_FR:
-                if ( ck_A4.isSelected() )
-                {
+                if (ck_A4.isSelected()) {
                     this.abreviacao = Abreviacao.FR_A4;
-                }
-                else if ( ck_simplificada.isSelected() )
-                {
+                } else if (ck_simplificada.isSelected()) {
                     this.abreviacao = Abreviacao.FR_A6;
-                }
-                else if ( ck_simplificada_O_S.isSelected() )
-                {
+                } else if (ck_simplificada_O_S.isSelected()) {
                     this.abreviacao = Abreviacao.FR_S_A6_O;
-                }
-                else if ( ck_simplificada_O.isSelected() )
-                {
+                } else if (ck_simplificada_O.isSelected()) {
                     this.abreviacao = Abreviacao.FR_A6_O;
-                }
-                else if ( ck_A7.isSelected() )
-                {
+                } else if (ck_A7.isSelected()) {
                     this.abreviacao = Abreviacao.FR_SA7;
-                }
-                else if ( ck_S_A6.isSelected() )
-                {
+                } else if (ck_S_A6.isSelected()) {
                     this.abreviacao = Abreviacao.FR_S_A6;
-                }
-                else if ( ck_ComVirgula.isSelected() )
-                {
+                } else if (ck_ComVirgula.isSelected()) {
                     this.abreviacao = Abreviacao.FR_A6_Com_Virgula;
-                }
-                else
-                {
+                } else {
                     this.abreviacao = Abreviacao.FR_A4_Duplicado;
                 }
 
@@ -5977,18 +5335,13 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
             case DVML.DOC_FACTURA_FT:
 
-                if ( ck_A4.isSelected() )
-                {
+                if (ck_A4.isSelected()) {
                     this.abreviacao = Abreviacao.FA;
 //                    ck_A4.setSelected( true );
-                }
-                else if ( ck_A7.isSelected() || ck_simplificada.isSelected() || ck_S_A6.isSelected() )
-                {
+                } else if (ck_A7.isSelected() || ck_simplificada.isSelected() || ck_S_A6.isSelected()) {
 //                    JOptionPane.showMessageDialog( null, "Atenção, selecione outro formato pra venda a crédito!" );
-                    ck_A4.setSelected( true );
-                }
-                else
-                {
+                    ck_A4.setSelected(true);
+                } else {
                     this.abreviacao = Abreviacao.FT_A4_Duplicado;
                 }
 
@@ -6012,82 +5365,74 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     }
 
-    private void desabilitar_campos()
-    {
+    private void desabilitar_campos() {
 
-        boolean proformaNaoSelecionado = !( DVML.DOC_FACTURA_PROFORMA_PP == getIdDocumento() );
+        boolean proformaNaoSelecionado = !(DVML.DOC_FACTURA_PROFORMA_PP == getIdDocumento());
 
         boolean documentoIsFA = DVML.DOC_FACTURA_FT == getIdDocumento();
         boolean documentoIsPP = DVML.DOC_FACTURA_PROFORMA_PP == getIdDocumento();
         boolean documentoIsGT = DVML.DOC_GUIA_TRANSPORTE_GT == getIdDocumento();
         boolean documentoIsCM = DVML.DOC_FACTURA_CONSULTA_MESA == getIdDocumento();
-        System.err.println( "documentoIsFA: " + documentoIsFA );
-        System.err.println( "documentoIsPP: " + documentoIsPP );
-        ck_A4.setSelected( !documentoIsFA && !documentoIsPP && !documentoIsGT );
-        btnProcessar.setVisible( documentoIsPP || documentoIsFA || documentoIsGT || documentoIsCM );
-        btnFormaPagamento.setVisible( !documentoIsFA && !documentoIsPP && !documentoIsGT && !documentoIsCM );
-        btnSemFormaPagamento.setVisible( !documentoIsFA && !documentoIsPP && !documentoIsGT && !documentoIsCM );
+        System.err.println("documentoIsFA: " + documentoIsFA);
+        System.err.println("documentoIsPP: " + documentoIsPP);
+        ck_A4.setSelected(!documentoIsFA && !documentoIsPP && !documentoIsGT);
+        btnProcessar.setVisible(documentoIsPP || documentoIsFA || documentoIsGT || documentoIsCM);
+        btnFormaPagamento.setVisible(!documentoIsFA && !documentoIsPP && !documentoIsGT && !documentoIsCM);
+        btnSemFormaPagamento.setVisible(!documentoIsFA && !documentoIsPP && !documentoIsGT && !documentoIsCM);
     }
 
-    private static Moeda getMoeda()
-    {
-        String moedaSelecionada = ( String ) cmbMoeda.getSelectedItem();
+    private static Moeda getMoeda() {
+        String moedaSelecionada = (String) cmbMoeda.getSelectedItem();
 
-        if ( moedaSelecionada == null )
-        {
+        if (moedaSelecionada == null) {
             return null;
         }
 
-        return moedasController.getMoedaByDesignacao( moedaSelecionada );
+        return moedasController.getMoedaByDesignacao(moedaSelecionada);
     }
 //refresh
 
-    private void refresh_table()
-    {
+    private void refresh_table() {
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
         double preco = 0, desconto = 0, sub_total_linha = 0, sub_total_linha_com_iva = 0, taxa = 0, taxa_r = 0, sub_total_linha_retencao = 0;
         int idProduto, qtd;
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
+        for (int i = 0; i < modelo.getRowCount(); i++) {
 
-            try
-            {
+            try {
 
                 /**
                  * Recupera os valores da tabela
                  */
-                idProduto = Integer.parseInt( modelo.getValueAt( i, 0 ).toString() );
-                qtd = Integer.parseInt( modelo.getValueAt( i, 4 ).toString() );
-                taxa = Double.parseDouble( modelo.getValueAt( i, 6 ).toString() );
-                taxa_r = Double.parseDouble( modelo.getValueAt( i, 7 ).toString() );
+                idProduto = Integer.parseInt(modelo.getValueAt(i, 0).toString());
+                qtd = Integer.parseInt(modelo.getValueAt(i, 4).toString());
+                taxa = Double.parseDouble(modelo.getValueAt(i, 6).toString());
+                taxa_r = Double.parseDouble(modelo.getValueAt(i, 7).toString());
                 //desconto_percentagem = Double.parseDouble( modelo.getValueAt( i, 4 ).toString() );
 
                 //busca o preço em função do câmbio
-                preco = getPreco( idProduto, qtd );
+                preco = getPreco(idProduto, qtd);
 
                 /**
                  * Processa os valores para serem actualizados na tabela
                  */
-                desconto = getDesconto_produto( preco, qtd );
+                desconto = getDesconto_produto(preco, qtd);
 
-                sub_total_linha = ( preco * qtd ) - desconto;
-                sub_total_linha_com_iva = getValorComImposto( qtd, getTaxaImposto( idProduto ), preco, desconto );
+                sub_total_linha = (preco * qtd) - desconto;
+                sub_total_linha_com_iva = getValorComImposto(qtd, getTaxaImposto(idProduto), preco, desconto);
 
                 /**
                  * actualiza os valores na tabela
                  */
-                modelo.setValueAt( CfMethods.formatarComoMoeda( preco ), i, 3 );
-                modelo.setValueAt( CfMethods.formatarComoMoeda( desconto ), i, 5 );
-                modelo.setValueAt( CfMethods.formatarComoMoeda( sub_total_linha_retencao ), i, 8 );
-                modelo.setValueAt( CfMethods.formatarComoMoeda( sub_total_linha ), i, 9 );
-                modelo.setValueAt( CfMethods.formatarComoMoeda( sub_total_linha_com_iva ), i, 10 );
+                modelo.setValueAt(CfMethods.formatarComoMoeda(preco), i, 3);
+                modelo.setValueAt(CfMethods.formatarComoMoeda(desconto), i, 5);
+                modelo.setValueAt(CfMethods.formatarComoMoeda(sub_total_linha_retencao), i, 8);
+                modelo.setValueAt(CfMethods.formatarComoMoeda(sub_total_linha), i, 9);
+                modelo.setValueAt(CfMethods.formatarComoMoeda(sub_total_linha_com_iva), i, 10);
 
-            }
-            catch ( Exception e )
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -6099,50 +5444,45 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     }
 
-    private static void refresh_table( int idMoeda )
-    {
+    private static void refresh_table(int idMoeda) {
 
-        Moeda moeda_local = ( Moeda ) moedasController.findById( idMoeda );
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        Moeda moeda_local = (Moeda) moedasController.findById(idMoeda);
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
         double preco = 0, desconto = 0, sub_total_linha = 0, sub_total_linha_com_iva = 0, taxa = 0, taxa_r = 0;
         int idProduto, qtd;
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
+        for (int i = 0; i < modelo.getRowCount(); i++) {
 
-            try
-            {
+            try {
 
                 /**
                  * Recupera os valores da tabela
                  */
-                idProduto = Integer.parseInt( modelo.getValueAt( i, 0 ).toString() );
-                qtd = Integer.parseInt( modelo.getValueAt( i, 4 ).toString() );
-                taxa = Double.parseDouble( modelo.getValueAt( i, 6 ).toString() );
-                taxa_r = Double.parseDouble( modelo.getValueAt( i, 7 ).toString() );
+                idProduto = Integer.parseInt(modelo.getValueAt(i, 0).toString());
+                qtd = Integer.parseInt(modelo.getValueAt(i, 4).toString());
+                taxa = Double.parseDouble(modelo.getValueAt(i, 6).toString());
+                taxa_r = Double.parseDouble(modelo.getValueAt(i, 7).toString());
 
                 //busca o preço em função do câmbio em funcção da moeda
-                preco = getPreco( idProduto, qtd, idMoeda );
+                preco = getPreco(idProduto, qtd, idMoeda);
 
                 /**
                  * Processa os valores para serem actualizados na tabela
                  */
-                desconto = getDesconto_produto( preco, qtd );
-                sub_total_linha = ( preco * qtd ) - desconto;
-                sub_total_linha_com_iva = getValorComImposto( qtd, getTaxaImposto( idProduto ), preco, desconto );
+                desconto = getDesconto_produto(preco, qtd);
+                sub_total_linha = (preco * qtd) - desconto;
+                sub_total_linha_com_iva = getValorComImposto(qtd, getTaxaImposto(idProduto), preco, desconto);
 
                 /**
                  * actualiza os valores na tabela
                  */
-                modelo.setValueAt( CfMethods.formatarComoMoeda( preco ), i, 3 );
-                modelo.setValueAt( CfMethods.formatarComoMoeda( desconto ), i, 5 );
-                modelo.setValueAt( CfMethods.formatarComoMoeda( sub_total_linha ), i, 8 );
-                modelo.setValueAt( CfMethods.formatarComoMoeda( sub_total_linha_com_iva ), i, 9 );
+                modelo.setValueAt(CfMethods.formatarComoMoeda(preco), i, 3);
+                modelo.setValueAt(CfMethods.formatarComoMoeda(desconto), i, 5);
+                modelo.setValueAt(CfMethods.formatarComoMoeda(sub_total_linha), i, 8);
+                modelo.setValueAt(CfMethods.formatarComoMoeda(sub_total_linha_com_iva), i, 9);
 
-            }
-            catch ( Exception e )
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -6151,37 +5491,33 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         setTotalPagar();
         setTotalRetencao();
         calculaTotalIVA();
-        valor_por_extenco( moeda_local );
+        valor_por_extenco(moeda_local);
 
     }
 
-    private double getValorTotalDescontoLinha()
-    {
+    private double getValorTotalDescontoLinha() {
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
         double desconto_linha = 0;
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-            desconto_linha += CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 5 ).toString() );
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            desconto_linha += CfMethods.parseMoedaFormatada(modelo.getValueAt(i, 5).toString());
         }
         return desconto_linha;
 
     }
 
-    private void actualizar_moeda()
-    {
+    private void actualizar_moeda() {
         CfMethods.MOEDA = getMoeda().getAbreviacao();
         mostrar_abreviacao_moeda_cambio();
         refresh_table();
     }
 
-    private static void actualizar_moeda( String moeda )
-    {
+    private static void actualizar_moeda(String moeda) {
         CfMethods.MOEDA = moeda;
         mostrar_abreviacao_moeda_cambio();
-        refresh_table( 1 );
+        refresh_table(1);
     }
 
     /**
@@ -6194,8 +5530,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
      * falso
      * @return
      */
-    private static boolean data_documento_superior_ou_igual_ao_ultimo_doc()
-    {
+    private static boolean data_documento_superior_ou_igual_ao_ultimo_doc() {
         //buscando o id do documento.
         int pk_documento = getIdDocumento();
         //buscando o id do ano ecoonomico.
@@ -6203,22 +5538,19 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
         //busca o último documento da série em questão.
         // Integer cod_ultima_venda = vendaDao.getLastVenda( pk_documento );
-        Integer cod_ultima_venda = vendasController.getLastCodigoVenda( pk_documento, pk_ano_economico );
-        if ( cod_ultima_venda != 0 )
-        {
+        Integer cod_ultima_venda = vendasController.getLastCodigoVenda(pk_documento, pk_ano_economico);
+        if (cod_ultima_venda != 0) {
 
             //busca o objecto para retirar apenas a data do seu procesamento
-            TbVenda venda_local = ( TbVenda ) vendasController.findById( cod_ultima_venda );
+            TbVenda venda_local = (TbVenda) vendasController.findById(cod_ultima_venda);
             //retirando a data do documebto
             Date data_ultimo_documento = venda_local.getDataVenda();
             //pegando a data do documento (data actual do sistema)
             Date data_actual = dc_data_documento.getDate();
-            return MetodosUtil.maior_data_1_data_2( data_actual, data_ultimo_documento )
-                    || MetodosUtil.igual_data_1_data_2( data_actual, data_ultimo_documento );
+            return MetodosUtil.maior_data_1_data_2(data_actual, data_ultimo_documento)
+                    || MetodosUtil.igual_data_1_data_2(data_actual, data_ultimo_documento);
 
-        }
-        else
-        {
+        } else {
             return true;
         }
 
@@ -6255,44 +5587,37 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //        }
 //
 //    }
-    private static void data_documento_superior_data_actual()
-    {
+    private static void data_documento_superior_data_actual() {
 
         //retirando a data do documento
         Date data_documento = dc_data_documento.getDate();
         //pegando a data actual do sistema 
         Date data_sistema = new Date();
         //comparar as datas
-        if ( MetodosUtil.maior_data_1_data_2( data_documento, data_sistema ) )
-        {
-            JOptionPane.showMessageDialog( null, "Após essa emissão, não poderá ser emitido um novo documento\n "
+        if (MetodosUtil.maior_data_1_data_2(data_documento, data_sistema)) {
+            JOptionPane.showMessageDialog(null, "Após essa emissão, não poderá ser emitido um novo documento\n "
                     + "com a data actual ou anterior, dentro da mesma série.",
-                    "AVISO", JOptionPane.WARNING_MESSAGE );
+                    "AVISO", JOptionPane.WARNING_MESSAGE);
 
-            aviso_continuar_documento = JOptionPane.showConfirmDialog( null, "Ainda assim deseja continuar com a operação ?" )
+            aviso_continuar_documento = JOptionPane.showConfirmDialog(null, "Ainda assim deseja continuar com a operação ?")
                     == JOptionPane.YES_OPTION;
 
-        }
-        else
-        {
+        } else {
             aviso_continuar_documento = true;
         }
 
     }
 
-    private static List<TbProduto> getProdutosIsentos()
-    {
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+    private static List<TbProduto> getProdutosIsentos() {
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         double taxa = 0.0;
         int codigo_produto = 0;
         List<TbProduto> lista_produtos_isentos = new ArrayList<>();
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-            codigo_produto = Integer.parseInt( modelo.getValueAt( i, 0 ).toString() );
-            taxa = Double.parseDouble( modelo.getValueAt( i, 6 ).toString() );
-            if ( taxa == 0.0 )
-            {
-                lista_produtos_isentos.add( ( TbProduto ) produtosController.findById( codigo_produto ) );
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            codigo_produto = Integer.parseInt(modelo.getValueAt(i, 0).toString());
+            taxa = Double.parseDouble(modelo.getValueAt(i, 6).toString());
+            if (taxa == 0.0) {
+                lista_produtos_isentos.add((TbProduto) produtosController.findById(codigo_produto));
             }
         }
 
@@ -6300,13 +5625,11 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     }
 
-    private static void reset_desconto_global()
-    {
-        sp_desconto_financeiro.setModel( CfMethodsSwing.criarSpinnerDoubleModel( 0.0, 10000000000.00, 0.0 ) );
+    private static void reset_desconto_global() {
+        sp_desconto_financeiro.setModel(CfMethodsSwing.criarSpinnerDoubleModel(0.0, 10000000000.00, 0.0));
     }
 
-    private static void reset_valor_entregue()
-    {
+    private static void reset_valor_entregue() {
 //        txtValorEntregue.setText( "" );
     }
 
@@ -6360,14 +5683,12 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //
 //        return imposto;
 //    }
-    private static double getTotalRetencao()
-    {
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+    private static double getTotalRetencao() {
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         double valor_retencao = 0d;
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-            valor_retencao = CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 8 ).toString() );
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            valor_retencao = CfMethods.parseMoedaFormatada(modelo.getValueAt(i, 8).toString());
 
         }
 
@@ -6400,25 +5721,22 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //        return imposto;
 //    }
 
-    private static double getTotalRetencao1()
-    {
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+    private static double getTotalRetencao1() {
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         double qtd = 0d;
         double imposto = 0d, preco_unitario = 0d, desconto_valor_linha = 0d, valor_taxa = 0d;
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-            preco_unitario = CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 3 ).toString() );
-            qtd = Double.parseDouble( modelo.getValueAt( i, 4 ).toString() );
-            double valor_percentagem = Double.parseDouble( modelo.getValueAt( i, 5 ).toString() );
-            double taxa = Double.parseDouble( modelo.getValueAt( i, 7 ).toString() );
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            preco_unitario = CfMethods.parseMoedaFormatada(modelo.getValueAt(i, 3).toString());
+            qtd = Double.parseDouble(modelo.getValueAt(i, 4).toString());
+            double valor_percentagem = Double.parseDouble(modelo.getValueAt(i, 5).toString());
+            double taxa = Double.parseDouble(modelo.getValueAt(i, 7).toString());
             // a incidência só é aplicável ao produtos sujeitos a iva 
-            if ( taxa != 0 )
-            {
+            if (taxa != 0) {
                 double valor_unitario = (preco_unitario * qtd);
 
-                desconto_valor_linha = valor_unitario * ( ( valor_percentagem ) / 100 );
-                valor_taxa = ( valor_unitario - desconto_valor_linha ) / taxa;
+                desconto_valor_linha = valor_unitario * ((valor_percentagem) / 100);
+                valor_taxa = (valor_unitario - desconto_valor_linha) / taxa;
 //                imposto += ( ( valor_unitario - desconto_valor_linha ) * ( taxa / 100 ) );
 
             }
@@ -6472,67 +5790,60 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //
 //        return desconto_comercial;
 //    }
-    private static double getDescontoFinanceiro()
-    {
+    private static double getDescontoFinanceiro() {
         double desconto_economico = 0d;
-        desconto_economico = Double.parseDouble( sp_desconto_financeiro.getValue().toString() );
+        desconto_economico = Double.parseDouble(sp_desconto_financeiro.getValue().toString());
         return desconto_economico;
     }
 
-    private static double getTotalAOARetencoes()
-    {
+    private static double getTotalAOARetencoes() {
         double valores = (getTotalRetencao1());
-        return ( valores );
+        return (valores);
     }
 
-    private static BigDecimal getTotalVendaIVASemIncluirDesconto()
-    {
+    private static BigDecimal getTotalVendaIVASemIncluirDesconto() {
         BigDecimal totalIva = BigDecimal.ZERO;
 
-        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
+        for (int i = 0; i < modelo.getRowCount(); i++) {
             // Coluna 3: Preço Unitário formatado
             BigDecimal precoUnitarioLocal = BigDecimal.valueOf(
-                    CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 3 ).toString() )
+                    CfMethods.parseMoedaFormatada(modelo.getValueAt(i, 3).toString())
             );
 
             // Coluna 4: Quantidade
-            BigDecimal quantidade = new BigDecimal( modelo.getValueAt( i, 4 ).toString() );
+            BigDecimal quantidade = new BigDecimal(modelo.getValueAt(i, 4).toString());
 
             // Coluna 6: Taxa de IVA (%)
-            BigDecimal taxaIva = new BigDecimal( modelo.getValueAt( i, 6 ).toString() );
+            BigDecimal taxaIva = new BigDecimal(modelo.getValueAt(i, 6).toString());
 
             // subtotal ilíquido = preco * qtd
-            BigDecimal subtotal = precoUnitarioLocal.multiply( quantidade );
+            BigDecimal subtotal = precoUnitarioLocal.multiply(quantidade);
 
             // valor do IVA = subtotal * (taxa / 100)
-            BigDecimal valorIva = subtotal.multiply( taxaIva ).divide( BigDecimal.valueOf( 100 ), 2, RoundingMode.HALF_UP );
+            BigDecimal valorIva = subtotal.multiply(taxaIva).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
 
             // somar ao total
-            totalIva = totalIva.add( valorIva );
+            totalIva = totalIva.add(valorIva);
         }
 
-        return totalIva.setScale( 2, RoundingMode.HALF_UP );
+        return totalIva.setScale(2, RoundingMode.HALF_UP);
     }
 
-    private static BigDecimal getGrossTotal()
-    {
+    private static BigDecimal getGrossTotal() {
         return FinanceUtils.getTotalIliquidoTable(
                 INDEX_TABLE_PRECO,
-                INDEX_TABLE_QTD, table )
-                .add( getTotalVendaIVASemIncluirDesconto() )
-                .setScale( 2, RoundingMode.HALF_UP );
+                INDEX_TABLE_QTD, table)
+                .add(getTotalVendaIVASemIncluirDesconto())
+                .setScale(2, RoundingMode.HALF_UP);
     }
 
-    private static String iniciais_extenso()
-    {
-        Documento documento_local = ( Documento ) documentosController.findById( getIdDocumento() );
+    private static String iniciais_extenso() {
+        Documento documento_local = (Documento) documentosController.findById(getIdDocumento());
         String abreviacao_local = documento_local.getAbreviacao();
 
-        switch (abreviacao_local)
-        {
+        switch (abreviacao_local) {
             case "FT":
                 return "Facturamos o valor de: ";
             case "FR":
@@ -6542,359 +5853,278 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         }
     }
 
-    private void pesquisa_cliente_by_cod()
-    {
+    private void pesquisa_cliente_by_cod() {
 
-        Integer codCliente = Integer.parseInt( txtCodClientePesquisa.getText() );
-        try
-        {
+        Integer codCliente = Integer.parseInt(txtCodClientePesquisa.getText());
+        try {
 
-            TbCliente cliente = ( TbCliente ) clientesController.findById( codCliente );
+            TbCliente cliente = (TbCliente) clientesController.findById(codCliente);
             String nome_cliente = cliente.getNome();
-            cmbCliente.setSelectedItem( nome_cliente.trim() );
+            cmbCliente.setSelectedItem(nome_cliente.trim());
             accao_cliente();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog( null, "Não existe cliente com código" );
-            cmbCliente.setSelectedItem( "Consumidor Final" );
+            JOptionPane.showMessageDialog(null, "Não existe cliente com código");
+            cmbCliente.setSelectedItem("Consumidor Final");
         }
-        txtCodClientePesquisa.setText( "" );
+        txtCodClientePesquisa.setText("");
         txtCodClientePesquisa.requestFocus();
     }
 
-    private void pesquisa_cliente_by_nif()
-    {
+    private void pesquisa_cliente_by_nif() {
 
         String nif = txtNifClientePesquisa.getText();
-        try
-        {
-            String nome_cliente = clientesController.getClienteByNifOrberByNome( nif ).getNome();
-            cmbCliente.setSelectedItem( nome_cliente.trim() );
+        try {
+            String nome_cliente = clientesController.getClienteByNifOrberByNome(nif).getNome();
+            cmbCliente.setSelectedItem(nome_cliente.trim());
             accao_cliente();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog( null, "Não existe cliente com código" );
-            cmbCliente.setSelectedItem( "Consumidor Final" );
+            JOptionPane.showMessageDialog(null, "Não existe cliente com código");
+            cmbCliente.setSelectedItem("Consumidor Final");
         }
         txtNifClientePesquisa.requestFocus();
     }
 
-    private static boolean verifica_ano_documento_igual_economico()
-    {
-        AnoEconomico anoEconomicoLocal = ( AnoEconomico ) anoEconomicoController.findById( getIdAnoEconomico() );
-        int ano_economico = Integer.parseInt( anoEconomicoLocal.getDesignacao() );
+    private static boolean verifica_ano_documento_igual_economico() {
+        AnoEconomico anoEconomicoLocal = (AnoEconomico) anoEconomicoController.findById(getIdAnoEconomico());
+        int ano_economico = Integer.parseInt(anoEconomicoLocal.getDesignacao());
         int ano_documento = dc_data_documento.getDate().getYear() + 1900;
         return ano_documento == ano_economico;
 
     }
 
-    private void setFolhaImpressora( String folha )
-    {
-        if ( folha.equalsIgnoreCase( "A6" ) )
-        {
-            ck_simplificada.setSelected( true );
-            ck_A7.setSelected( false );
-            ck_A4.setSelected( false );
-            ck_Duplicada.setSelected( false );
-            ck_S_A6.setSelected( false );
-            ck_ComVirgula.setSelected( false );
-            ck_simplificada_O.setSelected( false );
-            ck_simplificada_O_S.setSelected( false );
+    private void setFolhaImpressora(String folha) {
+        if (folha.equalsIgnoreCase("A6")) {
+            ck_simplificada.setSelected(true);
+            ck_A7.setSelected(false);
+            ck_A4.setSelected(false);
+            ck_Duplicada.setSelected(false);
+            ck_S_A6.setSelected(false);
+            ck_ComVirgula.setSelected(false);
+            ck_simplificada_O.setSelected(false);
+            ck_simplificada_O_S.setSelected(false);
             this.abreviacao = Abreviacao.FR_A6;
-        }
-        else if ( folha.equalsIgnoreCase( "A6_O" ) )
-        {
-            ck_simplificada_O.setSelected( true );
-            ck_A7.setSelected( false );
-            ck_A4.setSelected( false );
-            ck_Duplicada.setSelected( false );
-            ck_S_A6.setSelected( false );
-            ck_ComVirgula.setSelected( false );
-            ck_simplificada.setSelected( false );
-            ck_simplificada_O_S.setSelected( false );
+        } else if (folha.equalsIgnoreCase("A6_O")) {
+            ck_simplificada_O.setSelected(true);
+            ck_A7.setSelected(false);
+            ck_A4.setSelected(false);
+            ck_Duplicada.setSelected(false);
+            ck_S_A6.setSelected(false);
+            ck_ComVirgula.setSelected(false);
+            ck_simplificada.setSelected(false);
+            ck_simplificada_O_S.setSelected(false);
             this.abreviacao = Abreviacao.FR_A6_O;
-        }
-        else if ( folha.equalsIgnoreCase( "S_A6_O" ) )
-        {
-            ck_simplificada_O_S.setSelected( true );
-            ck_simplificada_O.setSelected( false );
-            ck_A7.setSelected( false );
-            ck_A4.setSelected( false );
-            ck_Duplicada.setSelected( false );
-            ck_S_A6.setSelected( false );
-            ck_ComVirgula.setSelected( false );
-            ck_simplificada.setSelected( false );
+        } else if (folha.equalsIgnoreCase("S_A6_O")) {
+            ck_simplificada_O_S.setSelected(true);
+            ck_simplificada_O.setSelected(false);
+            ck_A7.setSelected(false);
+            ck_A4.setSelected(false);
+            ck_Duplicada.setSelected(false);
+            ck_S_A6.setSelected(false);
+            ck_ComVirgula.setSelected(false);
+            ck_simplificada.setSelected(false);
             this.abreviacao = Abreviacao.FR_S_A6_O;
-        }
-        else if ( folha.equalsIgnoreCase( "A7" ) )
-        {
-            ck_A7.setSelected( true );
-            ck_simplificada.setSelected( false );
-            ck_A4.setSelected( false );
-            ck_Duplicada.setSelected( false );
-            ck_S_A6.setSelected( false );
-            ck_ComVirgula.setSelected( false );
-            ck_simplificada_O.setSelected( false );
-            ck_simplificada_O_S.setSelected( false );
+        } else if (folha.equalsIgnoreCase("A7")) {
+            ck_A7.setSelected(true);
+            ck_simplificada.setSelected(false);
+            ck_A4.setSelected(false);
+            ck_Duplicada.setSelected(false);
+            ck_S_A6.setSelected(false);
+            ck_ComVirgula.setSelected(false);
+            ck_simplificada_O.setSelected(false);
+            ck_simplificada_O_S.setSelected(false);
             this.abreviacao = Abreviacao.FR_SA7;
-        }
-        else if ( folha.equalsIgnoreCase( "A5" ) )
-        {
-            ck_Duplicada.setSelected( true );
-            ck_simplificada.setSelected( false );
-            ck_A4.setSelected( false );
-            ck_A7.setSelected( false );
-            ck_S_A6.setSelected( false );
-            ck_ComVirgula.setSelected( false );
-            ck_simplificada_O.setSelected( false );
-            ck_simplificada_O_S.setSelected( false );
+        } else if (folha.equalsIgnoreCase("A5")) {
+            ck_Duplicada.setSelected(true);
+            ck_simplificada.setSelected(false);
+            ck_A4.setSelected(false);
+            ck_A7.setSelected(false);
+            ck_S_A6.setSelected(false);
+            ck_ComVirgula.setSelected(false);
+            ck_simplificada_O.setSelected(false);
+            ck_simplificada_O_S.setSelected(false);
             this.abreviacao = Abreviacao.FT_A4_Duplicado;
-        }
-        else if ( folha.equalsIgnoreCase( "S_A6" ) )
-        {
-            ck_S_A6.setSelected( true );
-            ck_simplificada.setSelected( false );
-            ck_A7.setSelected( false );
-            ck_A4.setSelected( false );
-            ck_Duplicada.setSelected( false );
-            ck_ComVirgula.setSelected( false );
-            ck_simplificada_O.setSelected( false );
-            ck_simplificada_O_S.setSelected( false );
+        } else if (folha.equalsIgnoreCase("S_A6")) {
+            ck_S_A6.setSelected(true);
+            ck_simplificada.setSelected(false);
+            ck_A7.setSelected(false);
+            ck_A4.setSelected(false);
+            ck_Duplicada.setSelected(false);
+            ck_ComVirgula.setSelected(false);
+            ck_simplificada_O.setSelected(false);
+            ck_simplificada_O_S.setSelected(false);
             this.abreviacao = Abreviacao.FR_S_A6;
-        }
-        else if ( folha.equalsIgnoreCase( "A6V" ) )
-        {
-            ck_ComVirgula.setSelected( true );
-            ck_simplificada.setSelected( false );
-            ck_A7.setSelected( false );
-            ck_A4.setSelected( false );
-            ck_Duplicada.setSelected( false );
-            ck_S_A6.setSelected( false );
-            ck_simplificada_O.setSelected( false );
-            ck_simplificada_O_S.setSelected( false );
+        } else if (folha.equalsIgnoreCase("A6V")) {
+            ck_ComVirgula.setSelected(true);
+            ck_simplificada.setSelected(false);
+            ck_A7.setSelected(false);
+            ck_A4.setSelected(false);
+            ck_Duplicada.setSelected(false);
+            ck_S_A6.setSelected(false);
+            ck_simplificada_O.setSelected(false);
+            ck_simplificada_O_S.setSelected(false);
             this.abreviacao = Abreviacao.FR_A6_Com_Virgula;
-        }
-        else
-        {
-            ck_A4.setSelected( true );
-            ck_simplificada.setSelected( false );
-            ck_A7.setSelected( false );
-            ck_Duplicada.setSelected( false );
-            ck_S_A6.setSelected( false );
-            ck_ComVirgula.setSelected( false );
-            ck_simplificada_O.setSelected( false );
-            ck_simplificada_O_S.setSelected( false );
+        } else {
+            ck_A4.setSelected(true);
+            ck_simplificada.setSelected(false);
+            ck_A7.setSelected(false);
+            ck_Duplicada.setSelected(false);
+            ck_S_A6.setSelected(false);
+            ck_ComVirgula.setSelected(false);
+            ck_simplificada_O.setSelected(false);
+            ck_simplificada_O_S.setSelected(false);
             this.abreviacao = Abreviacao.FR_A4;
         }
     }
 
-    private void setFocus( String focus )
-    {
-        if ( focus.equalsIgnoreCase( "Codigo Interno" ) )
-        {
+    private void setFocus(String focus) {
+        if (focus.equalsIgnoreCase("Codigo Interno")) {
 
             txtCodigoProduto.requestFocus();
 
-        }
-        else if ( focus.equalsIgnoreCase( "Codigo de Barra" ) )
-        {
+        } else if (focus.equalsIgnoreCase("Codigo de Barra")) {
 
             txtCodigoBarra.requestFocus();
 
-        }
-        else
-        {
+        } else {
 
             txtCodigoManual.requestFocus();
 
         }
     }
 
-    private void setDesactivarvias( String desactivarvias )
-    {
+    private void setDesactivarvias(String desactivarvias) {
 
-        if ( desactivarvias.equalsIgnoreCase( "Sim" ) )
-        {
+        if (desactivarvias.equalsIgnoreCase("Sim")) {
 
-            spnCopia.setVisible( true );
-            lbVias.setVisible( true );
+            spnCopia.setVisible(true);
+            lbVias.setVisible(true);
 
-        }
-        else
-        {
+        } else {
 
-            spnCopia.setVisible( false );
-            lbVias.setVisible( false );
+            spnCopia.setVisible(false);
+            lbVias.setVisible(false);
 
         }
 
     }
 
-    private void setDesactivarLugar( String desactivarLugar )
-    {
+    private void setDesactivarLugar(String desactivarLugar) {
 
-        if ( desactivarLugar.equalsIgnoreCase( "Sim" ) )
-        {
+        if (desactivarLugar.equalsIgnoreCase("Sim")) {
 
-            spnCopia.setVisible( true );
-            lbVias.setVisible( true );
+            spnCopia.setVisible(true);
+            lbVias.setVisible(true);
 
-        }
-        else
-        {
+        } else {
 
-            spnCopia.setVisible( false );
-            lbVias.setVisible( false );
+            spnCopia.setVisible(false);
+            lbVias.setVisible(false);
 
         }
 
     }
 
-    private void setTranstorno( String transtorno )
-    {
-        if ( transtorno.equalsIgnoreCase( "Activo" ) )
-        {
-            rbTranstorno.setSelected( true );
+    private void setTranstorno(String transtorno) {
+        if (transtorno.equalsIgnoreCase("Activo")) {
+            rbTranstorno.setSelected(true);
 //            jlStockNegativo.setVisible( true );
 
-        }
-        else
-        {
-            rbTranstorno.setSelected( false );
-            rbTranstorno.setVisible( false );
+        } else {
+            rbTranstorno.setSelected(false);
+            rbTranstorno.setVisible(false);
 //            jlStockNegativo.setVisible( false );
 
         }
     }
 
-    private void setActivarDescontoFinanceiro( String desconto_financeiro )
-    {
-        if ( desconto_financeiro.equalsIgnoreCase( "Activar" ) )
-        {
-            sp_desconto_financeiro.setVisible( true );
-            lbDescontoFinanceiro.setVisible( true );
+    private void setActivarDescontoFinanceiro(String desconto_financeiro) {
+        if (desconto_financeiro.equalsIgnoreCase("Activar")) {
+            sp_desconto_financeiro.setVisible(true);
+            lbDescontoFinanceiro.setVisible(true);
 
-        }
-        else
-        {
-            sp_desconto_financeiro.setVisible( false );
-            lbDescontoFinanceiro.setVisible( false );
+        } else {
+            sp_desconto_financeiro.setVisible(false);
+            lbDescontoFinanceiro.setVisible(false);
 
         }
     }
 
-    private void setVizualisarStock( String stock )
-    {
-        if ( stock.equalsIgnoreCase( "Vizualisar Stock" ) )
-        {
-            txtQuantidadeStock.setVisible( true );
-            lbQuantidadeStock.setVisible( true );
+    private void setVizualisarStock(String stock) {
+        if (stock.equalsIgnoreCase("Vizualisar Stock")) {
+            txtQuantidadeStock.setVisible(true);
+            lbQuantidadeStock.setVisible(true);
 
-        }
-        else
-        {
-            txtQuantidadeStock.setVisible( false );
-            lbQuantidadeStock.setVisible( false );
+        } else {
+            txtQuantidadeStock.setVisible(false);
+            lbQuantidadeStock.setVisible(false);
 
         }
     }
 
-    private void setAnoEconomico( String ano_economico )
-    {
-        if ( ano_economico.equalsIgnoreCase( "Ocultar" ) )
-        {
-            cmbAnoEconomico.setVisible( true );
+    private void setAnoEconomico(String ano_economico) {
+        if (ano_economico.equalsIgnoreCase("Ocultar")) {
+            cmbAnoEconomico.setVisible(true);
 
-        }
-        else
-        {
-            cmbAnoEconomico.setVisible( false );
+        } else {
+            cmbAnoEconomico.setVisible(false);
 
         }
     }
 
-    private void setDocpadrao( String documentos )
-    {
-        System.out.println( "DOCUMENTO PADRAO: " + documentos );
-        if ( documentos.equalsIgnoreCase( "Factura/Recibo" ) )
-        {
-            cmbTipoDocumento.setSelectedIndex( 1 );
+    private void setDocpadrao(String documentos) {
+        System.out.println("DOCUMENTO PADRAO: " + documentos);
+        if (documentos.equalsIgnoreCase("Factura/Recibo")) {
+            cmbTipoDocumento.setSelectedIndex(1);
 
-        }
-        else if ( documentos.equalsIgnoreCase( "Factura" ) )
-        {
-            cmbTipoDocumento.setSelectedIndex( 2 );
+        } else if (documentos.equalsIgnoreCase("Factura")) {
+            cmbTipoDocumento.setSelectedIndex(2);
 
-        }
-        else if ( documentos.equalsIgnoreCase( "Factura-Proforma" ) )
-        {
-            cmbTipoDocumento.setSelectedIndex( 3 );
+        } else if (documentos.equalsIgnoreCase("Factura-Proforma")) {
+            cmbTipoDocumento.setSelectedIndex(3);
 
-        }
-        else if ( documentos.equalsIgnoreCase( "Guia de Transporte" ) )
-        {
-            cmbTipoDocumento.setSelectedIndex( 4 );
+        } else if (documentos.equalsIgnoreCase("Guia de Transporte")) {
+            cmbTipoDocumento.setSelectedIndex(4);
 
         }
     }
 
-    public void scrolltable()
-    {
+    public void scrolltable() {
 
-        table.scrollRectToVisible( table.getCellRect( table.getRowCount() - 1, table.getColumnCount(), true ) );
+        table.scrollRectToVisible(table.getCellRect(table.getRowCount() - 1, table.getColumnCount(), true));
 
     }
 
-    private void setActivarNegocio( String negocio )
-    {
-        if ( negocio.equalsIgnoreCase( "Comercial" ) )
-        {
-            jPanelCaracteristicas.setVisible( false );
-        }
-        else if ( negocio.equalsIgnoreCase( "Restaurante" ) )
-        {
-            jPanelCaracteristicas.setVisible( false );
-        }
-        else if ( negocio.equalsIgnoreCase( "Farmacia" ) )
-        {
-            jPanelCaracteristicas.setVisible( false );
-        }
-        else if ( negocio.equalsIgnoreCase( "Lavandaria" ) )
-        {
-            jPanelCaracteristicas.setVisible( false );
-        }
-        else if ( negocio.equalsIgnoreCase( "Prestação de Serviço" ) )
-        {
-            jPanelCaracteristicas.setVisible( false );
-        }
-        else
-        {
-            jPanelCaracteristicas.setVisible( true );
+    private void setActivarNegocio(String negocio) {
+        if (negocio.equalsIgnoreCase("Comercial")) {
+            jPanelCaracteristicas.setVisible(false);
+        } else if (negocio.equalsIgnoreCase("Restaurante")) {
+            jPanelCaracteristicas.setVisible(false);
+        } else if (negocio.equalsIgnoreCase("Farmacia")) {
+            jPanelCaracteristicas.setVisible(false);
+        } else if (negocio.equalsIgnoreCase("Lavandaria")) {
+            jPanelCaracteristicas.setVisible(false);
+        } else if (negocio.equalsIgnoreCase("Prestação de Serviço")) {
+            jPanelCaracteristicas.setVisible(false);
+        } else {
+            jPanelCaracteristicas.setVisible(true);
 
         }
     }
 
-    private void setArmazem( String armazem )
-    {
-        if ( armazem.equalsIgnoreCase( "Multi_armazem" ) )
-        {
-            rbArmazem.setSelected( true );
-            rbArmazem1.setSelected( false );
+    private void setArmazem(String armazem) {
+        if (armazem.equalsIgnoreCase("Multi_armazem")) {
+            rbArmazem.setSelected(true);
+            rbArmazem1.setSelected(false);
 
-        }
-        else
-        {
-            rbArmazem.setSelected( false );
-            rbArmazem1.setSelected( true );
+        } else {
+            rbArmazem.setSelected(false);
+            rbArmazem1.setSelected(true);
         }
     }
 
-    public void configurar_armazens()
-    {
+    public void configurar_armazens() {
 //        setArmazem( dadosInstituicao.getConfigArmazens() );
 //        try
 //        {
@@ -6916,131 +6146,107 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //            e.printStackTrace();
 //        }
 
-        cmbArmazem.setModel( new DefaultComboBoxModel( armazensController.getVector2() ) );
+        cmbArmazem.setModel(new DefaultComboBoxModel(armazensController.getVector2()));
     }
 
-    public boolean validar()
-    {
+    public boolean validar() {
         boolean documentoIsFA = DVML.DOC_FACTURA_FT == getIdDocumento();
         boolean documentoIsPP = DVML.DOC_FACTURA_PROFORMA_PP == getIdDocumento();
         boolean seguradoras = DVML.DOC_FACTURA_PROFORMA_PP == getIdDocumento();
-        if ( cmbCliente.getSelectedItem().equals( "--Seleccione o Cliente--" ) )
-        {
+        if (cmbCliente.getSelectedItem().equals("--Seleccione o Cliente--")) {
 
-            JOptionPane.showMessageDialog( null, "Por favor, Seleccione ou Digite o nome do Cliente!" );
+            JOptionPane.showMessageDialog(null, "Por favor, Seleccione ou Digite o nome do Cliente!");
             txtIniciaisCliente.requestFocus();
-            txtIniciaisCliente.setBackground( Color.YELLOW );
+            txtIniciaisCliente.setBackground(Color.YELLOW);
             return false;
 
-        }
-        else if ( documentoIsFA && dc_data_vencimento.getDate() == null || documentoIsPP && dc_data_vencimento.getDate() == null )
-        {
+        } else if (documentoIsFA && dc_data_vencimento.getDate() == null || documentoIsPP && dc_data_vencimento.getDate() == null) {
 
-            JOptionPane.showMessageDialog( null, "Por favor, Seleccione a data de Vencimento para este cliente!" );
+            JOptionPane.showMessageDialog(null, "Por favor, Seleccione a data de Vencimento para este cliente!");
             dc_data_vencimento.requestFocus();
-            dc_data_vencimento.setBackground( Color.YELLOW );
+            dc_data_vencimento.setBackground(Color.YELLOW);
             return false;
 
         }
 
-        txtIniciaisCliente.setBackground( Color.WHITE );
+        txtIniciaisCliente.setBackground(Color.WHITE);
         return true;
     }
 
-    public static void fazerBackupAgora()
-    {
-        String data = new SimpleDateFormat( YYYYMMDD_HHMMSS ).format( new Date() );
+    public static void fazerBackupAgora() {
+        String data = new SimpleDateFormat(YYYYMMDD_HHMMSS).format(new Date());
 //        String rodar_camando = "cmd /c mysqldump -uroot -pDoV90x?# --dump-date --triggers --tables --routines --skip-quote-names --compact --skip-opt --skip-set-charset --hex-blob kitanda_db > \"..\\BD_BACKUP\\_database_backup_" + data + ".sql\"";
         String rodar_camando = "cmd /c mysqldump --single-transaction -uroot -pDoV90x?# --dump-date --triggers --add-drop-database --routines --skip-quote-names --skip-set-charset --add-locks --disable-keys --databases kitanda_db > \"..\\BD_BACKUP\\_database_backup_" + data + ".sql\"";
 //String rodar_camando = "cmd /c mysqldump --single-transaction=TRUE -uroot -pDoV90x?# --dump-date --triggers --add-drop-database  --routines --skip-quote-names --compact --skip-opt --skip-set-charset --hex-blob --add-locks --disable-keys --lock-tables  --databases kitanda_db > \"..\\BD_BACKUP\\_database_backup_" + data + ".sql\"";
-        Process rodarComandoWindows = rodarComandoWindows( rodar_camando, true );
+        Process rodarComandoWindows = rodarComandoWindows(rodar_camando, true);
 
 //        JOptionPane.showMessageDialog ( null, "Backup realizado com sucesso! ", "Notificação", JOptionPane.INFORMATION_MESSAGE );
-        System.err.println( "Backup realizado com sucesso! " );
+        System.err.println("Backup realizado com sucesso! ");
 
     }
 
-    private void actualizarQtdTable()
-    {
+    private void actualizarQtdTable() {
 
         linha_actual = table.getSelectedRow();
 
-        if ( linha_actual > -1 )
-        {
+        if (linha_actual > -1) {
 
-            int codProduto = Integer.parseInt( table.getValueAt( linha_actual, 0 ).toString() );
-            double desconto = Double.parseDouble( table.getValueAt( linha_actual, 5 ).toString() );
+            int codProduto = Integer.parseInt(table.getValueAt(linha_actual, 0).toString());
+            double desconto = Double.parseDouble(table.getValueAt(linha_actual, 5).toString());
 
-            TbProduto produtoLocal = ( TbProduto ) produtosController.findById( codProduto );
-            TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutoController.findById( produtoLocal.getCodTipoProduto().getCodigo() );
+            TbProduto produtoLocal = (TbProduto) produtosController.findById(codProduto);
+            TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById(produtoLocal.getCodTipoProduto().getCodigo());
 
             double qtd;
 
-            try
-            {
-                qtd = Double.parseDouble( table.getValueAt( linha_actual, 4 ).toString() );
-            }
-            catch ( NumberFormatException e )
-            {
-                resetValue( "Erro de formatação da quantidade.\nAtenção: Tem que ser número.", 4 );
+            try {
+                qtd = Double.parseDouble(table.getValueAt(linha_actual, 4).toString());
+            } catch (NumberFormatException e) {
+                resetValue("Erro de formatação da quantidade.\nAtenção: Tem que ser número.", 4);
                 return;
             }
 
-            if ( qtd <= 0 )
-            {
+            if (qtd <= 0) {
                 qtd = 1;
-                resetValue( "Quantidade não pode ser zero(0) ou número negativo", 4 );
+                resetValue("Quantidade não pode ser zero(0) ou número negativo", 4);
             }
 
-            if ( desconto < 0 )
-            {
+            if (desconto < 0) {
                 desconto = 0;
-                resetValue( "O desconto não deve ser um número negativo.", 4 );
-            }
-            else if ( desconto > 100 )
-            {
+                resetValue("O desconto não deve ser um número negativo.", 4);
+            } else if (desconto > 100) {
                 desconto = 0;
-                resetValue( "O desconto não deve ser maior do que 100%", 4 );
+                resetValue("O desconto não deve ser maior do que 100%", 4);
             }
 
-            if ( possivel_quantidade( codProduto, qtd ) || tipoProduto.getFkFamilia().getPkFamilia() == DVML.COD_SERVICO )
-            {
-                actuazlizar_quantidade_tabela_formulario( String.valueOf( qtd ), desconto );
+            if (possivel_quantidade(codProduto, qtd) || tipoProduto.getFkFamilia().getPkFamilia() == DVML.COD_SERVICO) {
+                actuazlizar_quantidade_tabela_formulario(String.valueOf(qtd), desconto);
                 setTotalRetencao();
                 setTotalPagar();
                 calculaTotalIVA();
                 valor_por_extenco();
-            }
-            else
-            {
-                resetValue( "Não é possivel para esta quantidade.", 4 );
+            } else {
+                resetValue("Não é possivel para esta quantidade.", 4);
             }
         }
     }
 
-    private void resetValue( String msg, int columnValue )
-    {
-        System.out.println( "Cheguei aqui..." );
-        table.setValueAt( 1, linha_actual, columnValue );
-        JOptionPane.showMessageDialog( null, msg );
+    private void resetValue(String msg, int columnValue) {
+        System.out.println("Cheguei aqui...");
+        table.setValueAt(1, linha_actual, columnValue);
+        JOptionPane.showMessageDialog(null, msg);
         table.clearSelection();
 
     }
 
-    private static void setEditableColunaPreco( boolean isServico )
-    {
-        table.setModel( new javax.swing.table.DefaultTableModel(
-                new Object[][]
-                {
-                },
-                new String[]
-                {
+    private static void setEditableColunaPreco(boolean isServico) {
+        table.setModel(new javax.swing.table.DefaultTableModel(
+                new Object[][]{},
+                new String[]{
                     "Cod.", "Descrição", "Un.", "Preço", "Qtd.", "Desc.", "Taxa ", "Ret.", "V. Ret.", "Valor", "Valor C/ Imposto"
                 }
-        )
-        {
-            Class[] types = new Class[]
-            {
+        ) {
+            Class[] types = new Class[]{
                 java.lang.Integer.class,
                 java.lang.String.class,
                 java.lang.String.class,
@@ -7054,143 +6260,131 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 java.lang.String.class
 
             };
-            boolean[] canEdit = new boolean[]
-            {
+            boolean[] canEdit = new boolean[]{
                 false, false, false, isServico, true, true, false, false, false, false, false
             };
 
             @Override
-            public Class getColumnClass( int columnIndex )
-            {
-                return types[ columnIndex ];
+            public Class getColumnClass(int columnIndex) {
+                return types[columnIndex];
             }
 
             @Override
-            public boolean isCellEditable( int rowIndex, int columnIndex )
-            {
-                return canEdit[ columnIndex ];
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit[columnIndex];
             }
-        } );
+        });
 
     }
 
-    private void actualizarPreco()
-    {
-        String preco = table.getValueAt( table.getSelectedRow(), 3 ).toString();
-        int idProduto = Integer.parseInt( table.getValueAt( table.getSelectedRow(), 0 ).toString() );
-        preco = preco.replaceAll( "A", "" ).
-                replace( "O", "" ).
-                replace( ".", "" ).
-                replace( ",", "." );
+    private void actualizarPreco() {
+        String preco = table.getValueAt(table.getSelectedRow(), 3).toString();
+        int idProduto = Integer.parseInt(table.getValueAt(table.getSelectedRow(), 0).toString());
+        preco = preco.replaceAll("A", "").
+                replace("O", "").
+                replace(".", "").
+                replace(",", ".");
 
-        String precoUnitario = CfMethods.formatarComoMoeda( Double.parseDouble( preco ) );
-        table.setValueAt( precoUnitario, table.getSelectedRow(), 3 );
+        String precoUnitario = CfMethods.formatarComoMoeda(Double.parseDouble(preco));
+        table.setValueAt(precoUnitario, table.getSelectedRow(), 3);
 
-        actualizarPrecoVendaManual( idProduto, CfMethods.parseMoedaFormatada( precoUnitario ), precosController );
+        actualizarPrecoVendaManual(idProduto, CfMethods.parseMoedaFormatada(precoUnitario), precosController);
     }
 
-    private static void actualizarPrecoVendaManual( int idProduto, Double precoVenda, PrecosController precosControllerLocal )
-    {
+    private static void actualizarPrecoVendaManual(int idProduto, Double precoVenda, PrecosController precosControllerLocal) {
         conexaoTransaction = BDConexao.getInstancia();
-        DocumentosController.start( conexaoTransaction );
+        DocumentosController.start(conexaoTransaction);
 
-        System.out.println( "ID PRODUTO: " + idProduto );
+        System.out.println("ID PRODUTO: " + idProduto);
 
-        int idPrecoRetalho = PrecosController.getLastIdPrecoByIdProdutoIntAndQTD( idProduto, 1d, conexaoTransaction );
-        System.out.println( "ID RETALHO: " + idPrecoRetalho );
-        TbPreco precoAntigoRetalho = ( TbPreco ) precosControllerLocal.findById( idPrecoRetalho );
-        System.out.println( "PRECO RETALHO: " + precoAntigoRetalho );
+        int idPrecoRetalho = PrecosController.getLastIdPrecoByIdProdutoIntAndQTD(idProduto, 1d, conexaoTransaction);
+        System.out.println("ID RETALHO: " + idPrecoRetalho);
+        TbPreco precoAntigoRetalho = (TbPreco) precosControllerLocal.findById(idPrecoRetalho);
+        System.out.println("PRECO RETALHO: " + precoAntigoRetalho);
 
-        int idPrecoGrosso = PrecosController.getLastIdPrecoByIdProdutoIntAndPrecoAntigoQtdAlto( idProduto, precoAntigoRetalho.getQtdAlto() + 1, conexaoTransaction );
-        TbPreco precoAntigoGrosso = ( TbPreco ) precosControllerLocal.findById( idPrecoGrosso );
-        System.out.println( "ID GROSSO: " + idPrecoGrosso );
-        System.out.println( "PRECO GROSSO: " + precoAntigoGrosso );
+        int idPrecoGrosso = PrecosController.getLastIdPrecoByIdProdutoIntAndPrecoAntigoQtdAlto(idProduto, precoAntigoRetalho.getQtdAlto() + 1, conexaoTransaction);
+        TbPreco precoAntigoGrosso = (TbPreco) precosControllerLocal.findById(idPrecoGrosso);
+        System.out.println("ID GROSSO: " + idPrecoGrosso);
+        System.out.println("PRECO GROSSO: " + precoAntigoGrosso);
 
         TbPreco preco_novo_retalho = new TbPreco();
 
-        preco_novo_retalho.setData( precoAntigoRetalho.getData() );
-        preco_novo_retalho.setHora( precoAntigoRetalho.getHora() );
-        preco_novo_retalho.setPercentagemGanho( precoAntigoRetalho.getPercentagemGanho() );
+        preco_novo_retalho.setData(precoAntigoRetalho.getData());
+        preco_novo_retalho.setHora(precoAntigoRetalho.getHora());
+        preco_novo_retalho.setPercentagemGanho(precoAntigoRetalho.getPercentagemGanho());
 
-        preco_novo_retalho.setFkProduto( precoAntigoRetalho.getFkProduto() );
-        preco_novo_retalho.setFkUsuario( precoAntigoRetalho.getFkUsuario() );
-        preco_novo_retalho.setPrecoCompra( precoAntigoRetalho.getPrecoCompra() );
-        preco_novo_retalho.setPrecoVenda( new BigDecimal( precoVenda ) );
-        preco_novo_retalho.setQtdBaixo( precoAntigoRetalho.getQtdBaixo() );
-        preco_novo_retalho.setQtdAlto( precoAntigoRetalho.getQtdAlto() );
-        preco_novo_retalho.setPrecoAnterior( precoAntigoRetalho.getPrecoAnterior() );
-        preco_novo_retalho.setRetalho( precoAntigoRetalho.getRetalho() );
+        preco_novo_retalho.setFkProduto(precoAntigoRetalho.getFkProduto());
+        preco_novo_retalho.setFkUsuario(precoAntigoRetalho.getFkUsuario());
+        preco_novo_retalho.setPrecoCompra(precoAntigoRetalho.getPrecoCompra());
+        preco_novo_retalho.setPrecoVenda(new BigDecimal(precoVenda));
+        preco_novo_retalho.setQtdBaixo(precoAntigoRetalho.getQtdBaixo());
+        preco_novo_retalho.setQtdAlto(precoAntigoRetalho.getQtdAlto());
+        preco_novo_retalho.setPrecoAnterior(precoAntigoRetalho.getPrecoAnterior());
+        preco_novo_retalho.setRetalho(precoAntigoRetalho.getRetalho());
 
-        System.out.println( "HORA RETALHO: " + preco_novo_retalho.getHora() );
-        System.out.println( "DATA RETAHO: " + preco_novo_retalho.getData() );
+        System.out.println("HORA RETALHO: " + preco_novo_retalho.getHora());
+        System.out.println("DATA RETAHO: " + preco_novo_retalho.getData());
 
-        try
-        {
-            precosControllerLocal.salvar( preco_novo_retalho );
-            DocumentosController.commit( conexaoTransaction );
+        try {
+            precosControllerLocal.salvar(preco_novo_retalho);
+            DocumentosController.commit(conexaoTransaction);
             conexaoTransaction.close();
 //            precoDao.create(preco_novo_retalho);
-            System.out.println( "Preco de compra retalho actualizado na venda" );
-        }
-        catch ( Exception e )
-        {
-            DocumentosController.rollback( conexaoTransaction );
+            System.out.println("Preco de compra retalho actualizado na venda");
+        } catch (Exception e) {
+            DocumentosController.rollback(conexaoTransaction);
             e.printStackTrace();
-            System.err.println( "Falha ao actualizar o preço retalho na venda" );
+            System.err.println("Falha ao actualizar o preço retalho na venda");
         }
 
         conexaoTransaction = BDConexao.getInstancia();
-        DocumentosController.start( conexaoTransaction );
-        try
-        {
+        DocumentosController.start(conexaoTransaction);
+        try {
             //        preco_novo_grosso = precoAntigoGrosso;
             TbPreco preco_novo_grosso = new TbPreco();
 
-            preco_novo_grosso.setData( precoAntigoGrosso.getData() );
-            preco_novo_grosso.setHora( precoAntigoGrosso.getHora() );
-            preco_novo_grosso.setPercentagemGanho( precoAntigoGrosso.getPercentagemGanho() );
+            preco_novo_grosso.setData(precoAntigoGrosso.getData());
+            preco_novo_grosso.setHora(precoAntigoGrosso.getHora());
+            preco_novo_grosso.setPercentagemGanho(precoAntigoGrosso.getPercentagemGanho());
 
-            preco_novo_grosso.setFkProduto( precoAntigoGrosso.getFkProduto() );
-            preco_novo_grosso.setFkUsuario( precoAntigoGrosso.getFkUsuario() );
-            preco_novo_grosso.setPrecoCompra( precoAntigoGrosso.getPrecoCompra() );
-            preco_novo_grosso.setPrecoVenda( new BigDecimal( precoVenda ) );
-            preco_novo_grosso.setQtdBaixo( precoAntigoGrosso.getQtdBaixo() );
-            preco_novo_grosso.setQtdAlto( precoAntigoGrosso.getQtdAlto() );
-            preco_novo_grosso.setPrecoAnterior( precoAntigoGrosso.getPrecoAnterior() );
-            preco_novo_grosso.setRetalho( precoAntigoGrosso.getRetalho() );
+            preco_novo_grosso.setFkProduto(precoAntigoGrosso.getFkProduto());
+            preco_novo_grosso.setFkUsuario(precoAntigoGrosso.getFkUsuario());
+            preco_novo_grosso.setPrecoCompra(precoAntigoGrosso.getPrecoCompra());
+            preco_novo_grosso.setPrecoVenda(new BigDecimal(precoVenda));
+            preco_novo_grosso.setQtdBaixo(precoAntigoGrosso.getQtdBaixo());
+            preco_novo_grosso.setQtdAlto(precoAntigoGrosso.getQtdAlto());
+            preco_novo_grosso.setPrecoAnterior(precoAntigoGrosso.getPrecoAnterior());
+            preco_novo_grosso.setRetalho(precoAntigoGrosso.getRetalho());
 
-            System.out.println( "HORA GROSSO: " + precoAntigoGrosso.getHora() );
-            System.out.println( "DATA GROSSO: " + precoAntigoGrosso.getData() );
+            System.out.println("HORA GROSSO: " + precoAntigoGrosso.getHora());
+            System.out.println("DATA GROSSO: " + precoAntigoGrosso.getData());
 
-            precosControllerLocal.salvar( preco_novo_grosso );
+            precosControllerLocal.salvar(preco_novo_grosso);
 
-            DocumentosController.commit( conexaoTransaction );
+            DocumentosController.commit(conexaoTransaction);
             conexaoTransaction.close();
 //            precoDao.create(preco_novo_grosso);
-            System.out.println( "Preco de compra grosso actualizado na compra" );
-        }
-        catch ( Exception e )
-        {
-            DocumentosController.rollback( conexaoTransaction );
+            System.out.println("Preco de compra grosso actualizado na compra");
+        } catch (Exception e) {
+            DocumentosController.rollback(conexaoTransaction);
             e.printStackTrace();
-            System.err.println( "Falha ao actualizar o preço grosso na compra" );
+            System.err.println("Falha ao actualizar o preço grosso na compra");
         }
 
     }
 
-    private static boolean procedimentoPagamentoMensalidadeServico( int vendaId, int idCliente, int idProduto, String mes, BDConexao conexaoParm )
-    {
+    private static boolean procedimentoPagamentoMensalidadeServico(int vendaId, int idCliente, int idProduto, String mes, BDConexao conexaoParm) {
 
-        mesRhController = new MesRhController( conexaoParm.getConnectionAtiva() );
-        int mesId = mesRhController.getIdByDescricao( mes );
+        mesRhController = new MesRhController(conexaoParm.getConnectionAtiva());
+        int mesId = mesRhController.getIdByDescricao(mes);
         PagamentoMensalidade pagamentoMensalidade = new PagamentoMensalidade();
-        pagamentoMensalidade.setClienteId( idCliente );
-        pagamentoMensalidade.setProdutoId( idProduto );
-        pagamentoMensalidade.setMesId( mesId );
-        pagamentoMensalidade.setVendaId( vendaId );
-        pagamentoMensalidade.setDataCadastro( new Date() );
+        pagamentoMensalidade.setClienteId(idCliente);
+        pagamentoMensalidade.setProdutoId(idProduto);
+        pagamentoMensalidade.setMesId(mesId);
+        pagamentoMensalidade.setVendaId(vendaId);
+        pagamentoMensalidade.setDataCadastro(new Date());
 
-        return pagamentoMensalidadeController.salvar( pagamentoMensalidade );
+        return pagamentoMensalidadeController.salvar(pagamentoMensalidade);
 
     }
 
@@ -7198,19 +6392,17 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
      * Normaliza uma string: lower-case, remove acentos, pontuação extra e
      * colapsa espaços.
      */
-    private String normalizar( String s )
-    {
-        if ( s == null )
-        {
+    private String normalizar(String s) {
+        if (s == null) {
             return "";
         }
 
         // remove acentos
-        String n = Normalizer.normalize( s, Normalizer.Form.NFD )
-                .replaceAll( "\\p{M}", "" );
+        String n = Normalizer.normalize(s, Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "");
         // remove pontuação (mas preserva #), transforma espaços múltiplos em 1 e trim
-        n = n.replaceAll( "[\\p{Punct}&&[^#]]+", " " )
-                .replaceAll( "\\s+", " " )
+        n = n.replaceAll("[\\p{Punct}&&[^#]]+", " ")
+                .replaceAll("\\s+", " ")
                 .trim()
                 .toLowerCase();
         return n;
@@ -7220,22 +6412,18 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
      * Extrai (produto, mes) de uma designacao que contenha '#'. Retorna null se
      * não for possível extrair.
      */
-    private String[] extrairProdutoEMes( String designacao )
-    {
-        if ( designacao == null )
-        {
+    private String[] extrairProdutoEMes(String designacao) {
+        if (designacao == null) {
             return null;
         }
-        Pattern p = Pattern.compile( "^(.*?)#(.*)$" ); // grupo 1: tudo antes do #, grupo2: tudo depois
-        Matcher m = p.matcher( designacao );
-        if ( !m.find() )
-        {
+        Pattern p = Pattern.compile("^(.*?)#(.*)$"); // grupo 1: tudo antes do #, grupo2: tudo depois
+        Matcher m = p.matcher(designacao);
+        if (!m.find()) {
             return null;
         }
-        String produto = m.group( 1 ).trim();
-        String mes = m.group( 2 ).trim();
-        return new String[]
-        {
+        String produto = m.group(1).trim();
+        String mes = m.group(2).trim();
+        return new String[]{
             produto, mes
         };
     }
@@ -7248,59 +6436,50 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
      * @param selectedRow índice da linha selecionada
      * @return true se a remoção for permitida, false caso contrário
      */
-    private boolean podeRemoverServico( DefaultTableModel model, int selectedRow )
-    {
-        if ( selectedRow == -1 )
-        {
-            JOptionPane.showMessageDialog( null, "Selecione um serviço para remover!" );
+    private boolean podeRemoverServico(DefaultTableModel model, int selectedRow) {
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(null, "Selecione um serviço para remover!");
             return false;
         }
 
-        String designacaoSelecionada = String.valueOf( model.getValueAt( selectedRow, 1 ) );
-        if ( designacaoSelecionada == null || !designacaoSelecionada.contains( "#" ) )
-        {
+        String designacaoSelecionada = String.valueOf(model.getValueAt(selectedRow, 1));
+        if (designacaoSelecionada == null || !designacaoSelecionada.contains("#")) {
             return true; // não é mensalidade
         }
 
         // mapa de meses em ordem e normalizado
-        String[] meses =
-        {
-            "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-            "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
-        };
+        String[] meses
+                = {
+                    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+                    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+                };
         // criar versão normalizada do array meses para comparação
-        String[] mesesNorm = new String[ meses.length ];
-        for ( int i = 0; i < meses.length; i++ )
-        {
-            mesesNorm[ i ] = normalizar( meses[ i ] );
+        String[] mesesNorm = new String[meses.length];
+        for (int i = 0; i < meses.length; i++) {
+            mesesNorm[i] = normalizar(meses[i]);
         }
 
-        try
-        {
-            String[] pm = extrairProdutoEMes( designacaoSelecionada );
-            if ( pm == null )
-            {
+        try {
+            String[] pm = extrairProdutoEMes(designacaoSelecionada);
+            if (pm == null) {
                 return true;
             }
-            String produtoOriginal = pm[ 0 ];
-            String mesAtual = pm[ 1 ];
+            String produtoOriginal = pm[0];
+            String mesAtual = pm[1];
 
-            String produtoNorm = normalizar( produtoOriginal );
+            String produtoNorm = normalizar(produtoOriginal);
 
             // índice do mês selecionado
-            String mesAtualNorm = normalizar( mesAtual );
+            String mesAtualNorm = normalizar(mesAtual);
             int indexMesAtual = -1;
-            for ( int i = 0; i < mesesNorm.length; i++ )
-            {
-                if ( mesesNorm[ i ].equals( mesAtualNorm ) )
-                {
+            for (int i = 0; i < mesesNorm.length; i++) {
+                if (mesesNorm[i].equals(mesAtualNorm)) {
                     indexMesAtual = i;
                     break;
                 }
             }
-            if ( indexMesAtual == -1 )
-            {
-                JOptionPane.showMessageDialog( null, "Mês inválido: " + mesAtual );
+            if (indexMesAtual == -1) {
+                JOptionPane.showMessageDialog(null, "Mês inválido: " + mesAtual);
                 return false;
             }
 
@@ -7312,92 +6491,76 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             // também vamos registrar as linhas que tem o mês mais recente para garantir remover última ocorrência
             java.util.List<Integer> linhasDoMesMaisRecente = new java.util.ArrayList<>();
 
-            for ( int r = 0; r < model.getRowCount(); r++ )
-            {
-                String d = String.valueOf( model.getValueAt( r, 1 ) );
-                if ( d == null || !d.contains( "#" ) )
-                {
+            for (int r = 0; r < model.getRowCount(); r++) {
+                String d = String.valueOf(model.getValueAt(r, 1));
+                if (d == null || !d.contains("#")) {
                     continue;
                 }
 
-                String[] pmLinha = extrairProdutoEMes( d );
-                if ( pmLinha == null )
-                {
+                String[] pmLinha = extrairProdutoEMes(d);
+                if (pmLinha == null) {
                     continue;
                 }
 
-                String produtoLinhaNorm = normalizar( pmLinha[ 0 ] );
+                String produtoLinhaNorm = normalizar(pmLinha[0]);
 
                 // compara produto por igualdade da string normalizada
-                if ( !produtoLinhaNorm.equals( produtoNorm ) )
-                {
+                if (!produtoLinhaNorm.equals(produtoNorm)) {
                     continue;
                 }
 
                 // extrai mes e normaliza
-                String mesLinhaNorm = normalizar( pmLinha[ 1 ] );
+                String mesLinhaNorm = normalizar(pmLinha[1]);
                 int idxLinha = -1;
-                for ( int m = 0; m < mesesNorm.length; m++ )
-                {
-                    if ( mesesNorm[ m ].equals( mesLinhaNorm ) )
-                    {
+                for (int m = 0; m < mesesNorm.length; m++) {
+                    if (mesesNorm[m].equals(mesLinhaNorm)) {
                         idxLinha = m;
                         break;
                     }
                 }
-                if ( idxLinha == -1 )
-                {
+                if (idxLinha == -1) {
                     continue;
                 }
 
                 totalMesesMesmoProduto++;
 
-                if ( idxLinha > maxIndexPresente )
-                {
+                if (idxLinha > maxIndexPresente) {
                     maxIndexPresente = idxLinha;
-                    mesMaisRecentePresente = meses[ idxLinha ];
+                    mesMaisRecentePresente = meses[idxLinha];
                     linhasDoMesMaisRecente.clear();
-                    linhasDoMesMaisRecente.add( r );
-                }
-                else if ( idxLinha == maxIndexPresente )
-                {
+                    linhasDoMesMaisRecente.add(r);
+                } else if (idxLinha == maxIndexPresente) {
                     // mesma posição do mês mais recente — acrescenta a linha (duplicatas do mesmo mês)
-                    linhasDoMesMaisRecente.add( r );
+                    linhasDoMesMaisRecente.add(r);
                 }
             }
 
             // se existe apenas 1 mês daquele produto -> pode remover
-            if ( totalMesesMesmoProduto <= 1 )
-            {
+            if (totalMesesMesmoProduto <= 1) {
                 return true;
             }
 
             // se o mês do selectedRow não é o mês mais recente -> bloqueia
-            if ( indexMesAtual != maxIndexPresente )
-            {
-                JOptionPane.showMessageDialog( null,
-                        "Não pode remover " + meses[ indexMesAtual ]
-                        + " antes de remover " + mesMaisRecentePresente + " (remova do último para o primeiro)." );
+            if (indexMesAtual != maxIndexPresente) {
+                JOptionPane.showMessageDialog(null,
+                        "Não pode remover " + meses[indexMesAtual]
+                        + " antes de remover " + mesMaisRecentePresente + " (remova do último para o primeiro).");
                 return false;
             }
 
             // se o mês selecionado é o mês mais recente, mas há várias linhas com o mesmo mês,
             // só permita remover se a linha selecionada for a *última ocorrência* daquele mês (maior índice de linha).
-            if ( !linhasDoMesMaisRecente.isEmpty() )
-            {
+            if (!linhasDoMesMaisRecente.isEmpty()) {
                 int maiorLinha = -1;
-                for ( Integer ln : linhasDoMesMaisRecente )
-                {
-                    if ( ln > maiorLinha )
-                    {
+                for (Integer ln : linhasDoMesMaisRecente) {
+                    if (ln > maiorLinha) {
                         maiorLinha = ln;
                     }
                 }
-                if ( selectedRow != maiorLinha )
-                {
-                    JOptionPane.showMessageDialog( null,
+                if (selectedRow != maiorLinha) {
+                    JOptionPane.showMessageDialog(null,
                             "Existem várias entradas para " + mesMaisRecentePresente
-                            + ". Remova a linha mais abaixo (última ocorrência) primeiro." );
+                            + ". Remova a linha mais abaixo (última ocorrência) primeiro.");
                     return false;
                 }
             }
@@ -7405,10 +6568,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             // passou todas as regras -> pode remover
             return true;
 
-        }
-        catch ( Exception ex )
-        {
-            JOptionPane.showMessageDialog( null, "Erro ao verificar serviço: " + ex.getMessage() );
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Erro ao verificar serviço: " + ex.getMessage());
             return false;
         }
     }
