@@ -98,7 +98,7 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         
         try {
 
-            setSegundoMonitor(dadosInstituicaoDao.findTbDadosInstituicao(1).getSegundoMonitor(), telaCliente);
+//            setSegundoMonitor(dadosInstituicaoDao.findTbDadosInstituicao(1).getSegundoMonitor(), telaCliente);
 
         } catch (Exception e) {
 

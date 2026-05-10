@@ -99,6 +99,7 @@ import util.MetodosUtil;
 import static util.DVML.*;
 import util.FinanceUtils;
 import static util.MetodosUtil.rodarComandoWindows;
+import util.TelaClientePrecos;
 import static visao.PrincipalPedidosVisao.procedimento_mesas_livre;
 
 /**
@@ -183,6 +184,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
     private static ContaController contaController;
     private static ContaMovimentosController cmc;
     private static BDConexao conexaoTransaction;
+    private TelaClientePrecos telaClientePrecos;
     private TelaCliente telaCliente;
 
     /**
@@ -1459,7 +1461,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
 
             DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
 
-            telaCliente = new TelaCliente(modelo);
+            telaClientePrecos = new TelaClientePrecos(modelo);
 
             MetodosUtil.abrirNoSegundoMonitor(telaCliente);
 
