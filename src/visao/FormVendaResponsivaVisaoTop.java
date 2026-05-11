@@ -82,7 +82,6 @@ import static util.DVML.DOC_FACTURA_RECIBO_FR;
 import static util.DVML.DOC_FACTURA_FT;
 import util.FinanceUtils;
 import util.MetodosUtil;
-import util.fe.FEConfig;
 import util.fe.FacturaElectronicaUtil;
 import util.fe.JwsGenerator;
 import util.fe.TableColumIdUtil;

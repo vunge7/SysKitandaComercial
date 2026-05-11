@@ -1,0 +1,77 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package util.fe;
+
+import comercial.controller.ClientesController;
+import comercial.controller.DadosInstituicaoController;
+import comercial.controller.DocumentosController;
+import comercial.controller.ItemVendasController;
+import comercial.controller.VendasController;
+import entity.Documento;
+import entity.TbCliente;
+import entity.TbDadosInstituicao;
+import entity.TbItemVenda;
+import entity.TbVenda;
+import java.util.List;
+import util.BDConexao;
+
+/**
+ *
+ * @author Domingos Dala Vunge
+ */
+public class GeracaoAutomaticaFE {
+
+    public void procGenarateFEAuto(List<TbVenda> invoices, BDConexao conexao) {
+
+        DadosInstituicaoController dadosInstituicaoController = new DadosInstituicaoController(conexao);
+        DadosInstituicaoController dadosInstCtrl = new DadosInstituicaoController(conexao);
+        DocumentosController docsCtrl = new DocumentosController(conexao);
+        ClientesController clientesCtrl = new ClientesController(conexao);
+        ItemVendasController itensCtrl = new ItemVendasController(conexao);
+        VendasController vendasCtrl = new VendasController(conexao);
+        TbDadosInstituicao dadosInstituicao = dadosInstCtrl.findByCodigo(1);
+
+        invoices.forEach(invoice -> {
+            try {
+                // Buscando dependências da fatura
+                Documento doc = docsCtrl.findDocumentoById(invoice.getFkDocumento().getPkDocumento());
+                TbCliente customer = clientesCtrl.findByCodigo(invoice.getCodigoCliente().getCodigo());
+                List<TbItemVenda> itens = itensCtrl.listarTodosByCodigoVenda(invoice.getCodigo());
+
+                // 3. Tentativa de criação da FE
+                boolean sucesso = FacturaElectronicaUtil.criarFE(
+                        invoice, dadosInstituicao, doc, customer, itens, conexao
+                );
+
+                if (sucesso) {
+                    vendasCtrl.updateFieldsFE(
+                            invoice.getSubmissionUUID(),
+                            invoice.getRequestID(),
+                            invoice.getEstado(),
+                            invoice.getCodigo()
+                    );
+                    System.out.println("Factura registrada: " + invoice.getCodFact());
+                } else {
+                    System.err.println("Falha na API impoóssivel adicionar a factura: \n"
+                            + "codFact:" + invoice.getCodFact() + "\n"
+                            + "submissnioID: " + invoice.getSubmissionUUID() + "\n"
+                            + "requestID: " + invoice.getRequestID() + "\n"
+                            + "Estado: " + invoice.getEstado()
+                    );
+                }
+
+            } catch (Exception e) {
+                // 4. Tratamento de erro para não interromper o lote
+                System.err.println("Erro crítico ao processar" + invoice.getCodFact() + ": " + e.getMessage());
+                e.printStackTrace();
+            }
+        });
+
+    }
+
+    public static void main(String[] args) {
+    }
+
+}
