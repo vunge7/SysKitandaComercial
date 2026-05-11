@@ -335,6 +335,8 @@ public class ProdutosVisao extends javax.swing.JFrame
         lbUnidade = new javax.swing.JLabel();
         txtUnidadeCompra = new javax.swing.JTextField();
         label_qtd_bruta = new javax.swing.JLabel();
+        label_factor_conversao = new javax.swing.JLabel();
+        txtFactorConversao = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
         txtCodigoProduto = new javax.swing.JTextField();
         lbProdutos2 = new javax.swing.JLabel();
@@ -399,7 +401,7 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         lbCusto.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         lbCusto.setText("Preço Compra Retalho:");
-        jPanel5.add(lbCusto, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 240, 180, 20));
+        jPanel5.add(lbCusto, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 240, 160, 20));
 
         txtPrecoCompra.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
         txtPrecoCompra.setCaretColor(new java.awt.Color(255, 255, 255));
@@ -408,7 +410,7 @@ public class ProdutosVisao extends javax.swing.JFrame
                 txtPrecoCompraActionPerformed(evt);
             }
         });
-        jPanel5.add(txtPrecoCompra, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 260, 200, 30));
+        jPanel5.add(txtPrecoCompra, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 260, 160, 30));
 
         buttonGroup2.add(ck_produto);
         ck_produto.setText("Produto");
@@ -424,7 +426,7 @@ public class ProdutosVisao extends javax.swing.JFrame
                 cmbUnidadeActionPerformed(evt);
             }
         });
-        jPanel5.add(cmbUnidade, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 260, 140, -1));
+        jPanel5.add(cmbUnidade, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 260, 140, 30));
 
         buttonGroup2.add(ck_servico);
         ck_servico.setText("Serviço");
@@ -854,7 +856,7 @@ public class ProdutosVisao extends javax.swing.JFrame
 
         lbUnidade.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         lbUnidade.setText("Unidade:");
-        jPanel5.add(lbUnidade, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 240, 100, 20));
+        jPanel5.add(lbUnidade, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 240, 140, 20));
 
         txtUnidadeCompra.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
         txtUnidadeCompra.setText("1");
@@ -863,11 +865,24 @@ public class ProdutosVisao extends javax.swing.JFrame
                 txtUnidadeCompraActionPerformed(evt);
             }
         });
-        jPanel5.add(txtUnidadeCompra, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 260, 150, 30));
+        jPanel5.add(txtUnidadeCompra, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 260, 90, 30));
 
         label_qtd_bruta.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
-        label_qtd_bruta.setText("Unidade de Compra:");
-        jPanel5.add(label_qtd_bruta, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 240, 140, -1));
+        label_qtd_bruta.setText("Unid. Compra:");
+        jPanel5.add(label_qtd_bruta, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 240, 90, -1));
+
+        label_factor_conversao.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
+        label_factor_conversao.setText("Factor Conversão:");
+        jPanel5.add(label_factor_conversao, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 240, 110, -1));
+
+        txtFactorConversao.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
+        txtFactorConversao.setText("1");
+        txtFactorConversao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtFactorConversaoActionPerformed(evt);
+            }
+        });
+        jPanel5.add(txtFactorConversao, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 260, 110, 30));
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("BUSCA DO SERVIÇO/PRODUTO"));
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -1626,6 +1641,10 @@ public class ProdutosVisao extends javax.swing.JFrame
 
     }//GEN-LAST:event_jButton5ActionPerformed
 
+    private void txtFactorConversaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFactorConversaoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtFactorConversaoActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1808,6 +1827,7 @@ public class ProdutosVisao extends javax.swing.JFrame
     private javax.swing.JScrollPane jScrollPane1;
     public static com.toedter.calendar.JDateChooser jcDataExpiracao;
     public static com.toedter.calendar.JDateChooser jcDataFabrico;
+    private javax.swing.JLabel label_factor_conversao;
     private javax.swing.JLabel label_qtd_bruta;
     private javax.swing.JLabel lbBarra;
     private javax.swing.JLabel lbBarra1;
@@ -1851,6 +1871,7 @@ public class ProdutosVisao extends javax.swing.JFrame
     public static javax.swing.JTextField txtCodigoManualProcura;
     private static javax.swing.JTextField txtCodigoProduto;
     private static javax.swing.JTextArea txtDesignacao;
+    private static javax.swing.JTextField txtFactorConversao;
     public static javax.swing.JTextField txtPercentagemGanhoRetalho;
     public static javax.swing.JTextField txtPrecoCompra;
     private static javax.swing.JTextField txtPrecoDeVendaComIva;
@@ -2100,9 +2121,10 @@ public class ProdutosVisao extends javax.swing.JFrame
     {
         boolean isStocavel = ck_produto.isSelected();
 
+        double factor_conversao = Double.parseDouble(txtFactorConversao.getText());
         String designacao_produto = normalizarDesignacao( txtDesignacao.getText() );
         produto.setDesignacao( designacao_produto );
-
+        
         produto.setPreco( new BigDecimal( MetodosUtil.convertToDouble( txtPrecoCompra.getText() ) ) );
         produto.setDataFabrico( isStocavel ? jcDataFabrico.getDate() : new Date() );
         produto.setDataExpiracao( isStocavel ? jcDataExpiracao.getDate() : new Date() );
@@ -2125,9 +2147,10 @@ public class ProdutosVisao extends javax.swing.JFrame
         produto.setFkGrupo( new Grupo( getIdGrupo() ) );
         produto.setStatusIva( ivaAplicarJRadioButton.isSelected() ? "true" : "false" );
         produto.setCozinha( getCozinha() );
-
+        
         // 🔹 Sempre grava 1 na unidade de compra
         produto.setUnidadeCompra( 1.0 );
+        produto.setFactorConversao(factor_conversao );
 
         try
         {
@@ -2788,6 +2811,7 @@ public class ProdutosVisao extends javax.swing.JFrame
             jcDataExpiracao.setDate( produto_local.getDataExpiracao() );
             jcDataFabrico.setDate( produto_local.getDataFabrico() );
             txtUnidadeCompra.setText( String.valueOf( produto_local.getUnidadeCompra() ) );
+            txtFactorConversao.setText( String.valueOf( produto_local.getFactorConversao() ) );
 
             Integer pkProduto = produto_local.getCodigo();
             boolean temIva = produtosImpostoController.existeProdutoImposto( pkProduto );

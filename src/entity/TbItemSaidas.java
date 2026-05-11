@@ -49,6 +49,10 @@ public class TbItemSaidas implements Serializable
     @Basic( optional = false )
     @Column( name = "preco_compra" )
     private BigDecimal precoCompra;
+    @Column( name = "factor_conversao" )
+    private double factorConversao;
+    @Column( name = "quantidade_retalho" )
+    private double quantidadeRetalho;
     @JoinColumn( name = "fk_produtos", referencedColumnName = "codigo" )
     @ManyToOne( optional = false )
     private TbProduto fkProdutos;
@@ -58,6 +62,22 @@ public class TbItemSaidas implements Serializable
 
     public TbItemSaidas()
     {
+    }
+
+    public double getFactorConversao() {
+        return factorConversao;
+    }
+
+    public void setFactorConversao(double factorConversao) {
+        this.factorConversao = factorConversao;
+    }
+
+    public double getQuantidadeRetalho() {
+        return quantidadeRetalho;
+    }
+
+    public void setQuantidadeRetalho(double quantidadeRetalho) {
+        this.quantidadeRetalho = quantidadeRetalho;
     }
 
     public TbItemSaidas( Integer codigo )

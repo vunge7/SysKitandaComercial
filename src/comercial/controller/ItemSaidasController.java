@@ -31,15 +31,37 @@ public class ItemSaidasController
 
     // CREATE
     public void salvar(TbItemSaidas item) throws SQLException {
-    String sql = "INSERT INTO tb_item_saidas (quantidade, preco_compra, fk_produtos, fk_saidas_produtos) VALUES (?, ?, ?, ?)";
+
+    String sql = "INSERT INTO tb_item_saidas "
+            + "(quantidade, preco_compra, fk_produtos, fk_saidas_produtos, factor_conversao, quantidade_retalho) "
+            + "VALUES (?, ?, ?, ?, ?, ?)";
+
     try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
         stmt.setDouble(1, item.getQuantidade());
         stmt.setBigDecimal(2, item.getPrecoCompra());
         stmt.setInt(3, item.getFkProdutos().getCodigo());
+
+        // CORRECTO
         stmt.setInt(4, item.getFkSaidasProdutos().getPkSaidasProdutos());
+        stmt.setDouble(5, item.getFactorConversao());
+        stmt.setDouble(6, item.getQuantidadeRetalho());
+
         stmt.executeUpdate();
     }
 }
+//    public void salvar(TbItemSaidas item) throws SQLException {
+//    String sql = "INSERT INTO tb_item_saidas (quantidade, preco_compra, fk_produtos, fk_saidas_produtos, factor_conversao, quantidade_retalho) VALUES (?, ?, ?, ?, ?, ?)";
+//    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+//        stmt.setDouble(1, item.getQuantidade());
+//        stmt.setBigDecimal(2, item.getPrecoCompra());
+//        stmt.setInt(3, item.getFkProdutos().getCodigo());
+//        stmt.setDouble(4, item.getFactorConversao());
+//        stmt.setDouble(5, item.getQuantidadeRetalho());
+//        stmt.setInt(6, item.getFkSaidasProdutos().getPkSaidasProdutos());
+//        stmt.executeUpdate();
+//    }
+//}
 
 //    public void salvar( TbItemSaidas item ) throws SQLException
 //    {
@@ -65,10 +87,13 @@ public class ItemSaidasController
             {
                 if ( rs.next() )
                 {
+                    
                     TbItemSaidas item = new TbItemSaidas();
                     item.setCodigo( rs.getInt( "codigo" ) );
                     item.setQuantidade( rs.getDouble( "quantidade" ) );
                     item.setPrecoCompra( rs.getBigDecimal( "preco_compra" ) );
+                    item.setFactorConversao(rs.getDouble( "factor_conversao" ) );
+                    item.setQuantidadeRetalho(rs.getDouble( "quantidade_retalho" ) );
 
                     // Relacionamentos
                     TbProduto produto = new TbProduto( rs.getInt( "fk_produtos" ) );
@@ -97,6 +122,8 @@ public class ItemSaidasController
                 item.setCodigo( rs.getInt( "codigo" ) );
                 item.setQuantidade( rs.getDouble( "quantidade" ) );
                 item.setPrecoCompra( rs.getBigDecimal( "preco_compra" ) );
+                                    item.setFactorConversao(rs.getDouble( "factor_conversao" ) );
+                    item.setQuantidadeRetalho(rs.getDouble( "quantidade_retalho" ) );
 
                 // Relacionamentos
                 TbProduto produto = new TbProduto( rs.getInt( "fk_produtos" ) );
@@ -114,14 +141,16 @@ public class ItemSaidasController
     // UPDATE
     public void atualizar( TbItemSaidas item ) throws SQLException
     {
-        String sql = "UPDATE tb_item_saidas SET quantidade=?, preco_compra=?, fk_produtos=?, fk_saidas_produtos=? WHERE codigo=?";
+        String sql = "UPDATE tb_item_saidas SET quantidade=?, preco_compra=?, fk_produtos=?, factor_conversao=?, quantidade_retalho=?, fk_saidas_produtos=? WHERE codigo=?";
         try ( PreparedStatement stmt = conn.prepareStatement( sql ) )
         {
             stmt.setDouble( 1, item.getQuantidade() );
             stmt.setBigDecimal( 2, item.getPrecoCompra() );
             stmt.setInt( 3, item.getFkProdutos().getCodigo() );
-            stmt.setInt( 4, item.getFkSaidasProdutos().getPkSaidasProdutos() );
-            stmt.setInt( 5, item.getCodigo() );
+            stmt.setDouble( 4, item.getFactorConversao() );
+            stmt.setDouble( 5, item.getQuantidadeRetalho() );
+            stmt.setInt( 6, item.getFkSaidasProdutos().getPkSaidasProdutos() );
+            stmt.setInt( 7, item.getCodigo() );
             stmt.executeUpdate();
         }
     }
@@ -176,6 +205,8 @@ public class ItemSaidasController
         item.setCodigo( rs.getInt( "codigo" ) );
         item.setQuantidade( rs.getDouble( "quantidade" ) );
         item.setPrecoCompra( rs.getBigDecimal( "preco_compra" ) );
+        item.setFactorConversao(rs.getDouble( "factor_conversao" ) );
+        item.setQuantidadeRetalho(rs.getDouble( "quantidade_retalho" ) );
         // Relacionamentos
         TbProduto produto = new TbProduto( rs.getInt( "fk_produtos" ) );
         TbSaidasProdutos saida = new TbSaidasProdutos( rs.getInt( "fk_saidas_produtos" ) );

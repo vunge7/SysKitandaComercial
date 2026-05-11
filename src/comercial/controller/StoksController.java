@@ -1372,7 +1372,7 @@ public class StoksController implements EntidadeFactory {
                 + "    FROM tb_preco "
                 + "    WHERE fk_produto = p.codigo AND qtd_baixo = 0 "
                 + ") "
-                + "WHERE p.fk_grupo <> 3 AND f.pk_familia " + condicao + " "
+                + "WHERE p.status = 'Activo' AND p.fk_grupo <> 3 AND f.pk_familia " + condicao + " "
                 + "ORDER BY p.designacao";
 
         try (PreparedStatement ps = conexaoTemp.getConnection().prepareStatement(sql)) {

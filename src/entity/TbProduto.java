@@ -111,6 +111,8 @@ public class TbProduto implements Serializable
     private String statusIva;
     @Column(name = "unidade_compra")
     private Double unidadeCompra;
+    @Column(name = "factor_conversao")
+    private Double factorConversao;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkProduto")
     private List<ProdutoIsento> produtoIsentoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "codProdutoCodigo")
@@ -171,6 +173,14 @@ public class TbProduto implements Serializable
     public Double getUnidadeCompra()
     {
         return unidadeCompra;
+    }
+
+    public Double getFactorConversao() {
+        return factorConversao;
+    }
+
+    public void setFactorConversao(Double factorConversao) {
+        this.factorConversao = factorConversao;
     }
 
     public void setUnidadeCompra( Double unidadeCompra )

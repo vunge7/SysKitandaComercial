@@ -1056,6 +1056,7 @@ public class EntradaProdutoVisao extends javax.swing.JFrame
     {
 //        TbStock stock = stockDao.get_stock_by_id_produto_and_id_armazem(getIdCodigoProduto(), getIdArmazem());
 //        txtQuatidadeExistente.setText(stock.getQuantidadeExistente().toString());
+        
         System.out.println( "  " + produtoGlobal.getCodigo() + " - " + getCodigoArmazem() );
         System.out.println( "CHEGUEI AQUI ENG." );
         txtQuatidadeExistente.setText( String.valueOf( stoksController.getQuantidadeProduto( produtoGlobal.getCodigo(), getCodigoArmazem() ) ) );
@@ -1282,6 +1283,7 @@ public class EntradaProdutoVisao extends javax.swing.JFrame
         }
     }
 
+    
     public static void busca_produto_by_cod_interno_entrada( int codProduto )
     {
         produtoGlobal = (TbProduto) produtosController.findById( codProduto );
@@ -1305,6 +1307,7 @@ public class EntradaProdutoVisao extends javax.swing.JFrame
         mostrar_dados_stock( produtoGlobal );
 
     }
+    
 
     private static boolean registrar_stock( TbProduto produto_local, double qtd, double qtdCritica, double qtdbaixa, StoksController stocksControllerLocal )
     {
