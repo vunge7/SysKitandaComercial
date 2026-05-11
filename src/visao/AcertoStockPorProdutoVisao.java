@@ -6,13 +6,11 @@
 package visao;
 
 
-import java.sql.Connection;
 import dao.ProdutoDao;
 import entity.TbProduto;
 import entity.TbStock;
 import javax.persistence.EntityManagerFactory;
 import javax.swing.JOptionPane;
-import jdk.nashorn.internal.scripts.JO;
 import util.BDConexao;
 import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
