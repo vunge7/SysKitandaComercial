@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package visao;
 
 import entity.ProdutoImposto;
@@ -10,6 +6,9 @@ import entity.TbProduto;
 import entity.TbStock;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,32 +21,32 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
 import util.JPAEntityMannagerFactoryUtil;
 
-/**
- *
- * @author Martinho
- */
 public class FrmProdutosRepetidos extends JDialog {
 
     private JTable tabela;
     private DefaultTableModel model;
 
-    /*
-     BOTÕES
-     */
     private JButton btActualizar;
     private JButton btGuardarAlteracoes;
     private JButton btSair;
 
-    /*
-     RADIO BUTTONS
-     */
     private JRadioButton rbActivos;
+    private JRadioButton rbTodos;
     private JRadioButton rbOcultos;
 
+    private JTextField txtPesquisa;
+
     private ButtonGroup grupoStatus;
+
+    private boolean carregandoTabela = false;
+    private javax.swing.Timer timerPesquisa;
 
     public FrmProdutosRepetidos(
             java.awt.Frame parent,
@@ -59,11 +58,13 @@ public class FrmProdutosRepetidos extends JDialog {
         initComponents();
 
         carregarTabela();
+
+        activarEdicaoPreco();
     }
 
     private void initComponents() {
 
-        setTitle("Produtos Repetidos");
+        setTitle("Produtos");
 
         setSize(1200, 600);
 
@@ -80,6 +81,11 @@ public class FrmProdutosRepetidos extends JDialog {
                         true
                 );
 
+        rbTodos =
+                new JRadioButton(
+                        "Todos Produtos Activos"
+                );
+
         rbOcultos =
                 new JRadioButton(
                         "Produtos Ocultos"
@@ -89,7 +95,15 @@ public class FrmProdutosRepetidos extends JDialog {
 
         grupoStatus.add(rbActivos);
 
+        grupoStatus.add(rbTodos);
+
         grupoStatus.add(rbOcultos);
+
+        /*
+         PESQUISA
+         */
+        txtPesquisa =
+                new JTextField(30);
 
         JPanel painelTop =
                 new JPanel(
@@ -100,7 +114,11 @@ public class FrmProdutosRepetidos extends JDialog {
 
         painelTop.add(rbActivos);
 
+        painelTop.add(rbTodos);
+
         painelTop.add(rbOcultos);
+
+        painelTop.add(txtPesquisa);
 
         add(painelTop, BorderLayout.NORTH);
 
@@ -147,20 +165,12 @@ public class FrmProdutosRepetidos extends JDialog {
                     int column
             ) {
 
-                /*
-                 EDITÁVEIS:
-                 
-                 0 = checkbox
-                 2 = designação
-                 4 = código barra
-                 5 = código manual
-                 7 = factor conversão
-                 */
                 return column == 0
                         || column == 2
                         || column == 4
                         || column == 5
-                        || column == 7;
+                        || column == 7
+                        || column == 8;
             }
         };
 
@@ -223,15 +233,317 @@ public class FrmProdutosRepetidos extends JDialog {
             carregarTabela();
         });
 
+        rbTodos.addActionListener(e -> {
+
+            btActualizar.setText("Ocultar");
+
+            carregarTabela();
+        });
+
         rbOcultos.addActionListener(e -> {
 
             btActualizar.setText("Reactivar");
 
             carregarTabela();
         });
+
+        /*
+         PESQUISA
+         */
+/*
+ PESQUISA COM TIMER
+ */
+timerPesquisa =
+        new javax.swing.Timer(
+                500,
+                e -> carregarTabela()
+        );
+
+timerPesquisa.setRepeats(false);
+
+txtPesquisa.getDocument().addDocumentListener(
+        new DocumentListener() {
+
+    private void pesquisar() {
+
+        timerPesquisa.restart();
+    }
+
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+
+        pesquisar();
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+
+        pesquisar();
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+
+        pesquisar();
+    }
+});
+    }
+
+    /*
+     ACTIVA EDIÇÃO PREÇO
+     */
+    private void activarEdicaoPreco() {
+
+        tabela.putClientProperty(
+                "terminateEditOnFocusLost",
+                true
+        );
+
+        model.addTableModelListener(e -> {
+
+            try {
+
+                if (carregandoTabela) {
+                    return;
+                }
+
+                if (e.getType() != TableModelEvent.UPDATE) {
+                    return;
+                }
+
+                if (e.getColumn() != 8) {
+                    return;
+                }
+
+                int linha = e.getFirstRow();
+
+                if (linha < 0) {
+                    return;
+                }
+
+                Object objCodigo =
+                        tabela.getValueAt(linha, 1);
+
+                if (objCodigo == null) {
+                    return;
+                }
+
+                Integer codigoProduto =
+                        Integer.parseInt(
+                                objCodigo.toString()
+                        );
+
+                Object objPreco =
+                        tabela.getValueAt(linha, 8);
+
+                if (objPreco == null) {
+                    return;
+                }
+
+                BigDecimal precoComIVA =
+                        new BigDecimal(
+                                objPreco.toString()
+                        );
+
+                EntityManager em =
+                        JPAEntityMannagerFactoryUtil
+                                .createEntityManager();
+
+                try {
+
+                    em.getTransaction().begin();
+
+                    TbProduto produto =
+                            em.find(
+                                    TbProduto.class,
+                                    codigoProduto
+                            );
+
+                    if (produto != null) {
+
+                        /*
+                         IVA
+                         */
+                        BigDecimal taxaIVA =
+                                BigDecimal.ZERO;
+
+                        if (
+                                produto.getProdutoImpostoList() != null
+                                && !produto.getProdutoImpostoList().isEmpty()
+                        ) {
+
+                            for (ProdutoImposto pi
+                                    : produto.getProdutoImpostoList()) {
+
+                                if (
+                                        pi.getFkImposto() != null
+                                        && pi.getFkImposto().getTaxa() != null
+                                ) {
+
+                                    taxaIVA =
+                                            BigDecimal.valueOf(
+                                                    pi.getFkImposto().getTaxa()
+                                            );
+
+                                    break;
+                                }
+                            }
+                        }
+
+                        BigDecimal divisor =
+                                BigDecimal.ONE.add(
+                                        taxaIVA.divide(
+                                                new BigDecimal("100"),
+                                                6,
+                                                RoundingMode.HALF_UP
+                                        )
+                                );
+
+                        BigDecimal precoSemIVA =
+                                precoComIVA.divide(
+                                        divisor,
+                                        2,
+                                        RoundingMode.HALF_UP
+                                ).setScale(
+                                        6,
+                                        RoundingMode.HALF_UP
+                                );
+
+                        if (
+                                produto.getTbPrecoList() == null
+                                || produto.getTbPrecoList().isEmpty()
+                        ) {
+
+                            throw new Exception(
+                                    "Produto sem histórico de preços."
+                            );
+                        }
+
+                        /*
+                         RETALHO
+                         */
+                        TbPreco precoRetalho =
+                                new TbPreco();
+
+                        precoRetalho.setPrecoVenda(
+                                precoSemIVA
+                        );
+
+                        precoRetalho.setPrecoCompra(
+                                precoSemIVA
+                        );
+
+                        precoRetalho.setPercentagemGanho(
+                                BigDecimal.ZERO
+                        );
+
+                        precoRetalho.setQtdBaixo(0);
+
+                        precoRetalho.setQtdAlto(5);
+
+                        precoRetalho.setRetalho(true);
+
+                        precoRetalho.setData(
+                                new Date()
+                        );
+
+                        precoRetalho.setHora(
+                                new Date()
+                        );
+
+                        precoRetalho.setFkProduto(
+                                produto
+                        );
+
+                        precoRetalho.setFkUsuario(
+                                produto.getTbPrecoList()
+                                        .get(0)
+                                        .getFkUsuario()
+                        );
+
+                        em.persist(
+                                precoRetalho
+                        );
+
+                        /*
+                         GROSSO
+                         */
+                        TbPreco precoGrosso =
+                                new TbPreco();
+
+                        precoGrosso.setPrecoVenda(
+                                precoSemIVA
+                        );
+
+                        precoGrosso.setPrecoCompra(
+                                precoSemIVA
+                        );
+
+                        precoGrosso.setPercentagemGanho(
+                                BigDecimal.ZERO
+                        );
+
+                        precoGrosso.setQtdBaixo(6);
+
+                        precoGrosso.setQtdAlto(214748364);
+
+                        precoGrosso.setRetalho(false);
+
+                        precoGrosso.setData(
+                                new Date()
+                        );
+
+                        precoGrosso.setHora(
+                                new Date()
+                        );
+
+                        precoGrosso.setFkProduto(
+                                produto
+                        );
+
+                        precoGrosso.setFkUsuario(
+                                produto.getTbPrecoList()
+                                        .get(0)
+                                        .getFkUsuario()
+                        );
+
+                        em.persist(
+                                precoGrosso
+                        );
+                    }
+
+                    em.getTransaction().commit();
+
+                } catch (Exception ex) {
+
+                    ex.printStackTrace();
+
+                    if (em.getTransaction().isActive()) {
+
+                        em.getTransaction().rollback();
+                    }
+
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "Erro ao actualizar preço:\n"
+                            + ex.getMessage()
+                    );
+
+                } finally {
+
+                    em.close();
+                }
+
+            } catch (Exception ex) {
+
+                ex.printStackTrace();
+            }
+        });
     }
 
     private void carregarTabela() {
+
+        carregandoTabela = true;
 
         model.setRowCount(0);
 
@@ -242,34 +554,86 @@ public class FrmProdutosRepetidos extends JDialog {
         try {
 
             /*
-             STATUS
-             */
-            String status = "Activo";
+ PESQUISA
+ */
+String pesquisa =
+        txtPesquisa.getText()
+                .trim();
 
-            if (rbOcultos.isSelected()) {
+/*
+ QUERY
+ */
+String jpql =
+        "SELECT p "
+        + "FROM TbProduto p "
+        + "WHERE 1 = 1 ";
 
-                status = "false";
-            }
+/*
+ SOMENTE ACTIVOS REPETIDOS
+ */
+if (rbActivos.isSelected()) {
+
+    jpql +=
+            "AND p.status = 'Activo' ";
+}
+
+/*
+ TODOS ACTIVOS
+ */
+if (rbTodos.isSelected()) {
+
+    jpql +=
+            "AND p.status = 'Activo' ";
+}
+
+/*
+ OCULTOS
+ */
+if (rbOcultos.isSelected()) {
+
+    jpql +=
+            "AND p.status = 'false' ";
+}
 
             /*
-             QUERY
+             PESQUISA
              */
-            String jpql =
-                    "SELECT p " +
-                    "FROM TbProduto p " +
-                    "WHERE p.status = :status " +
+            if (!pesquisa.isEmpty()) {
+
+                jpql +=
+ "AND ( "
++ "p.designacao LIKE :pesquisa "
++ "OR p.codBarra LIKE :pesquisa "
++ ") ";
+            }
+
+            jpql +=
                     "ORDER BY p.designacao ASC";
 
-            List<TbProduto> lista =
+            javax.persistence.TypedQuery<TbProduto> query =
                     em.createQuery(
                             jpql,
                             TbProduto.class
-                    )
-                            .setParameter(
-                                    "status",
-                                    status
-                            )
-                            .getResultList();
+                    );
+
+//            if (!rbTodos.isSelected()) {
+//
+//                query.setParameter(
+//                        "status",
+//                        status
+//                );
+//            }
+
+            if (!pesquisa.isEmpty()) {
+
+                query.setParameter(
+                        "pesquisa",
+                        "%" + pesquisa + "%"
+                );
+            }
+
+            List<TbProduto> lista =
+                    query.getResultList();
 
             /*
              MAPA REPETIDOS
@@ -318,13 +682,11 @@ public class FrmProdutosRepetidos extends JDialog {
                 }
 
                 /*
-                 MOSTRA:
-                 
-                 - repetidos activos
-                 - todos ocultos
+                 FILTRO
                  */
                 if (
-                        rbOcultos.isSelected()
+                        rbTodos.isSelected()
+                        || rbOcultos.isSelected()
                         || mapa.get(nome) > 1
                 ) {
 
@@ -356,8 +718,7 @@ public class FrmProdutosRepetidos extends JDialog {
                             ) {
 
                                 stockTotal +=
-                                        stock
-                                                .getQuantidadeExistente();
+                                        stock.getQuantidadeExistente();
                             }
                         }
                     }
@@ -369,8 +730,7 @@ public class FrmProdutosRepetidos extends JDialog {
 
                     if (
                             p.getTbPrecoList() != null
-                            && !p.getTbPrecoList()
-                                    .isEmpty()
+                            && !p.getTbPrecoList().isEmpty()
                     ) {
 
                         TbPreco ultimoPrecoObj = null;
@@ -384,8 +744,7 @@ public class FrmProdutosRepetidos extends JDialog {
 
                             } else if (
                                     pr.getPkPreco()
-                                    > ultimoPrecoObj
-                                            .getPkPreco()
+                                    > ultimoPrecoObj.getPkPreco()
                             ) {
 
                                 ultimoPrecoObj = pr;
@@ -394,14 +753,9 @@ public class FrmProdutosRepetidos extends JDialog {
 
                         if (
                                 ultimoPrecoObj != null
-                                && ultimoPrecoObj
-                                        .getPrecoVenda()
-                                != null
+                                && ultimoPrecoObj.getPrecoVenda() != null
                         ) {
 
-                            /*
-                             PREÇO BASE
-                             */
                             ultimoPreco =
                                     ultimoPrecoObj
                                             .getPrecoVenda()
@@ -411,21 +765,16 @@ public class FrmProdutosRepetidos extends JDialog {
                              IVA
                              */
                             if (
-                                    p.getProdutoImpostoList()
-                                    != null
-                                    && !p.getProdutoImpostoList()
-                                            .isEmpty()
+                                    p.getProdutoImpostoList() != null
+                                    && !p.getProdutoImpostoList().isEmpty()
                             ) {
 
                                 for (ProdutoImposto pi
                                         : p.getProdutoImpostoList()) {
 
                                     if (
-                                            pi.getFkImposto()
-                                            != null
-                                            && pi.getFkImposto()
-                                                    .getTaxa()
-                                            != null
+                                            pi.getFkImposto() != null
+                                            && pi.getFkImposto().getTaxa() != null
                                     ) {
 
                                         double taxaIVA =
@@ -439,11 +788,12 @@ public class FrmProdutosRepetidos extends JDialog {
                                                 );
 
                                         ultimoPreco =
+                                                ultimoPreco
+                                                + valorIVA;
+
+                                        ultimoPreco =
                                                 Math.round(
-                                                        (
-                                                        ultimoPreco
-                                                        + valorIVA
-                                                        ) * 100.0
+                                                        ultimoPreco * 100.0
                                                 ) / 100.0;
 
                                         break;
@@ -467,9 +817,6 @@ public class FrmProdutosRepetidos extends JDialog {
                                 p.getFactorConversao();
                     }
 
-                    /*
-                     LINHA
-                     */
                     model.addRow(new Object[]{
                         false,
                         p.getCodigo(),
@@ -484,46 +831,7 @@ public class FrmProdutosRepetidos extends JDialog {
                 }
             }
 
-            /*
-             VISUAL
-             */
             tabela.setRowHeight(25);
-
-            tabela.getColumnModel()
-                    .getColumn(0)
-                    .setPreferredWidth(40);
-
-            tabela.getColumnModel()
-                    .getColumn(1)
-                    .setPreferredWidth(70);
-
-            tabela.getColumnModel()
-                    .getColumn(2)
-                    .setPreferredWidth(300);
-
-            tabela.getColumnModel()
-                    .getColumn(3)
-                    .setPreferredWidth(150);
-
-            tabela.getColumnModel()
-                    .getColumn(4)
-                    .setPreferredWidth(150);
-
-            tabela.getColumnModel()
-                    .getColumn(5)
-                    .setPreferredWidth(150);
-
-            tabela.getColumnModel()
-                    .getColumn(6)
-                    .setPreferredWidth(100);
-
-            tabela.getColumnModel()
-                    .getColumn(7)
-                    .setPreferredWidth(100);
-
-            tabela.getColumnModel()
-                    .getColumn(8)
-                    .setPreferredWidth(120);
 
         } catch (Exception e) {
 
@@ -536,6 +844,8 @@ public class FrmProdutosRepetidos extends JDialog {
             );
 
         } finally {
+
+            carregandoTabela = false;
 
             em.close();
         }
@@ -583,33 +893,21 @@ public class FrmProdutosRepetidos extends JDialog {
 
                 if (produto != null) {
 
-                    /*
-                     DESIGNAÇÃO
-                     */
                     String designacao =
                             tabela.getValueAt(i, 2)
                                     .toString()
                                     .trim();
 
-                    /*
-                     CÓDIGO BARRA
-                     */
                     String codBarra =
                             tabela.getValueAt(i, 4)
                                     .toString()
                                     .trim();
 
-                    /*
-                     CÓDIGO MANUAL
-                     */
                     String codigoManual =
                             tabela.getValueAt(i, 5)
                                     .toString()
                                     .trim();
 
-                    /*
-                     FACTOR CONVERSÃO
-                     */
                     Double factorConversao = 0.0;
 
                     try {
@@ -626,9 +924,6 @@ public class FrmProdutosRepetidos extends JDialog {
                         factorConversao = 0.0;
                     }
 
-                    /*
-                     ACTUALIZA ENTITY
-                     */
                     produto.setDesignacao(
                             designacao
                     );
@@ -645,9 +940,6 @@ public class FrmProdutosRepetidos extends JDialog {
                             factorConversao
                     );
 
-                    /*
-                     SAVE
-                     */
                     em.merge(produto);
                 }
             }
@@ -685,7 +977,8 @@ public class FrmProdutosRepetidos extends JDialog {
 
         String mensagem = "";
 
-        if (rbActivos.isSelected()) {
+        if (rbActivos.isSelected()
+                || rbTodos.isSelected()) {
 
             mensagem =
                     "Deseja ocultar os produtos seleccionados?";
@@ -741,16 +1034,13 @@ public class FrmProdutosRepetidos extends JDialog {
 
                     if (produto != null) {
 
-                        /*
-                         STATUS
-                         */
-                        if (rbActivos.isSelected()) {
+                        if (rbOcultos.isSelected()) {
 
-                            produto.setStatus("false");
+                            produto.setStatus("Activo");
 
                         } else {
 
-                            produto.setStatus("Activo");
+                            produto.setStatus("false");
                         }
 
                         em.merge(produto);
@@ -762,9 +1052,9 @@ public class FrmProdutosRepetidos extends JDialog {
 
             JOptionPane.showMessageDialog(
                     this,
-                    rbActivos.isSelected()
-                    ? "Produtos ocultados com sucesso!"
-                    : "Produtos reactivados com sucesso!"
+                    rbOcultos.isSelected()
+                    ? "Produtos reactivados com sucesso!"
+                    : "Produtos ocultados com sucesso!"
             );
 
             carregarTabela();

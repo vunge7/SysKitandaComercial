@@ -7201,9 +7201,9 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
         System.out.println( "PREÇO SEM IVA:  " + precoSemIva );
 
         table.setValueAt( precoSemIva, table.getSelectedRow(), 3 );
-        actualizarPrecoVendaManual( idProduto,
-                precoSemIva.doubleValue(),
-                precosController );
+//        actualizarPrecoVendaManual( idProduto,
+//                precoSemIva.doubleValue(),
+//                precosController );
     }
 
     private static void actualizarPrecoVendaManual( int idProduto, Double precoVenda, PrecosController precosControllerLocal )
@@ -7558,7 +7558,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             public boolean isCellEditable( int row, int column )
             {
 
-                return ( column == 0 || column == 3 || column == 4 ); // 3ª coluna editável
+                return ( column == 0 || column == 4 ); // 3ª coluna editável
+//                return ( column == 0 || column == 3 || column == 4 ); // 3ª coluna editável
 
             }
         } );
