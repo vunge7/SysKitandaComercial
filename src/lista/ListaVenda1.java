@@ -192,7 +192,7 @@ public class ListaVenda1
                     break;
                     case FR_SA7:
                     {
-                        jasperViewer.setVisible( false );
+                        jasperViewer.setVisible( true );
                         //Imprime directamente
                         if ( !performance )
                         {
@@ -291,7 +291,7 @@ public class ListaVenda1
                     break;
                     case FR_SA7:
                     {
-                        jasperViewer.setVisible( false );
+                        jasperViewer.setVisible( true );
                         //Imprime directamente
                         if ( !performance )
                         {

@@ -4,6 +4,7 @@ import entity.ProdutoImposto;
 import entity.TbPreco;
 import entity.TbProduto;
 import entity.TbStock;
+import entity.TbUsuario;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.math.BigDecimal;
@@ -292,254 +293,290 @@ txtPesquisa.getDocument().addDocumentListener(
     /*
      ACTIVA EDIÇÃO PREÇO
      */
-    private void activarEdicaoPreco() {
+    /*
+ ACTIVA EDIÇÃO PREÇO
+ */
+/*
+ ACTIVA EDIÇÃO PREÇO
+ */
+private void activarEdicaoPreco() {
 
-        tabela.putClientProperty(
-                "terminateEditOnFocusLost",
-                true
-        );
+    tabela.putClientProperty(
+            "terminateEditOnFocusLost",
+            true
+    );
 
-        model.addTableModelListener(e -> {
+    model.addTableModelListener(e -> {
+
+        try {
+
+            if (carregandoTabela) {
+                return;
+            }
+
+            if (e.getType() != TableModelEvent.UPDATE) {
+                return;
+            }
+
+            if (e.getColumn() != 8) {
+                return;
+            }
+
+            int linha = e.getFirstRow();
+
+            if (linha < 0) {
+                return;
+            }
+
+            Object objCodigo =
+                    tabela.getValueAt(linha, 1);
+
+            if (objCodigo == null) {
+                return;
+            }
+
+            Integer codigoProduto =
+                    Integer.parseInt(
+                            objCodigo.toString()
+                    );
+
+            Object objPreco =
+                    tabela.getValueAt(linha, 8);
+
+            if (objPreco == null) {
+                return;
+            }
+
+            BigDecimal precoComIVA =
+                    new BigDecimal(
+                            objPreco.toString()
+                    );
+
+            EntityManager em =
+                    JPAEntityMannagerFactoryUtil
+                            .createEntityManager();
 
             try {
 
-                if (carregandoTabela) {
-                    return;
-                }
+                em.getTransaction().begin();
 
-                if (e.getType() != TableModelEvent.UPDATE) {
-                    return;
-                }
-
-                if (e.getColumn() != 8) {
-                    return;
-                }
-
-                int linha = e.getFirstRow();
-
-                if (linha < 0) {
-                    return;
-                }
-
-                Object objCodigo =
-                        tabela.getValueAt(linha, 1);
-
-                if (objCodigo == null) {
-                    return;
-                }
-
-                Integer codigoProduto =
-                        Integer.parseInt(
-                                objCodigo.toString()
+                TbProduto produto =
+                        em.find(
+                                TbProduto.class,
+                                codigoProduto
                         );
 
-                Object objPreco =
-                        tabela.getValueAt(linha, 8);
+                if (produto != null) {
 
-                if (objPreco == null) {
-                    return;
-                }
+                    /*
+                     IVA
+                     */
+                    BigDecimal taxaIVA =
+                            BigDecimal.ZERO;
 
-                BigDecimal precoComIVA =
-                        new BigDecimal(
-                                objPreco.toString()
-                        );
+                    if (
+                            produto.getProdutoImpostoList() != null
+                            && !produto.getProdutoImpostoList().isEmpty()
+                    ) {
 
-                EntityManager em =
-                        JPAEntityMannagerFactoryUtil
-                                .createEntityManager();
+                        for (ProdutoImposto pi
+                                : produto.getProdutoImpostoList()) {
 
-                try {
+                            if (
+                                    pi.getFkImposto() != null
+                                    && pi.getFkImposto().getTaxa() != null
+                            ) {
 
-                    em.getTransaction().begin();
+                                taxaIVA =
+                                        BigDecimal.valueOf(
+                                                pi.getFkImposto().getTaxa()
+                                        );
 
-                    TbProduto produto =
-                            em.find(
-                                    TbProduto.class,
-                                    codigoProduto
-                            );
-
-                    if (produto != null) {
-
-                        /*
-                         IVA
-                         */
-                        BigDecimal taxaIVA =
-                                BigDecimal.ZERO;
-
-                        if (
-                                produto.getProdutoImpostoList() != null
-                                && !produto.getProdutoImpostoList().isEmpty()
-                        ) {
-
-                            for (ProdutoImposto pi
-                                    : produto.getProdutoImpostoList()) {
-
-                                if (
-                                        pi.getFkImposto() != null
-                                        && pi.getFkImposto().getTaxa() != null
-                                ) {
-
-                                    taxaIVA =
-                                            BigDecimal.valueOf(
-                                                    pi.getFkImposto().getTaxa()
-                                            );
-
-                                    break;
-                                }
+                                break;
                             }
                         }
+                    }
 
-                        BigDecimal divisor =
-                                BigDecimal.ONE.add(
-                                        taxaIVA.divide(
-                                                new BigDecimal("100"),
-                                                6,
-                                                RoundingMode.HALF_UP
-                                        )
-                                );
-
-                        BigDecimal precoSemIVA =
-                                precoComIVA.divide(
-                                        divisor,
-                                        2,
-                                        RoundingMode.HALF_UP
-                                ).setScale(
-                                        6,
-                                        RoundingMode.HALF_UP
-                                );
-
-                        if (
-                                produto.getTbPrecoList() == null
-                                || produto.getTbPrecoList().isEmpty()
-                        ) {
-
-                            throw new Exception(
-                                    "Produto sem histórico de preços."
+                    BigDecimal divisor =
+                            BigDecimal.ONE.add(
+                                    taxaIVA.divide(
+                                            new BigDecimal("100"),
+                                            6,
+                                            RoundingMode.HALF_UP
+                                    )
                             );
-                        }
 
-                        /*
-                         RETALHO
-                         */
-                        TbPreco precoRetalho =
-                                new TbPreco();
+                    BigDecimal precoSemIVA =
+                            precoComIVA.divide(
+                                    divisor,
+                                    2,
+                                    RoundingMode.HALF_UP
+                            ).setScale(
+                                    6,
+                                    RoundingMode.HALF_UP
+                            );
 
-                        precoRetalho.setPrecoVenda(
-                                precoSemIVA
-                        );
+                    /*
+                     UTILIZADOR
+                     */
+                    TbUsuario usuario = null;
 
-                        precoRetalho.setPrecoCompra(
-                                precoSemIVA
-                        );
+                    /*
+                     PEGA DO HISTÓRICO
+                     */
+                    if (
+                            produto.getTbPrecoList() != null
+                            && !produto.getTbPrecoList().isEmpty()
+                    ) {
 
-                        precoRetalho.setPercentagemGanho(
-                                BigDecimal.ZERO
-                        );
-
-                        precoRetalho.setQtdBaixo(0);
-
-                        precoRetalho.setQtdAlto(5);
-
-                        precoRetalho.setRetalho(true);
-
-                        precoRetalho.setData(
-                                new Date()
-                        );
-
-                        precoRetalho.setHora(
-                                new Date()
-                        );
-
-                        precoRetalho.setFkProduto(
-                                produto
-                        );
-
-                        precoRetalho.setFkUsuario(
+                        usuario =
                                 produto.getTbPrecoList()
                                         .get(0)
-                                        .getFkUsuario()
-                        );
-
-                        em.persist(
-                                precoRetalho
-                        );
-
-                        /*
-                         GROSSO
-                         */
-                        TbPreco precoGrosso =
-                                new TbPreco();
-
-                        precoGrosso.setPrecoVenda(
-                                precoSemIVA
-                        );
-
-                        precoGrosso.setPrecoCompra(
-                                precoSemIVA
-                        );
-
-                        precoGrosso.setPercentagemGanho(
-                                BigDecimal.ZERO
-                        );
-
-                        precoGrosso.setQtdBaixo(6);
-
-                        precoGrosso.setQtdAlto(214748364);
-
-                        precoGrosso.setRetalho(false);
-
-                        precoGrosso.setData(
-                                new Date()
-                        );
-
-                        precoGrosso.setHora(
-                                new Date()
-                        );
-
-                        precoGrosso.setFkProduto(
-                                produto
-                        );
-
-                        precoGrosso.setFkUsuario(
-                                produto.getTbPrecoList()
-                                        .get(0)
-                                        .getFkUsuario()
-                        );
-
-                        em.persist(
-                                precoGrosso
-                        );
+                                        .getFkUsuario();
                     }
 
-                    em.getTransaction().commit();
+                    /*
+                     PRODUTO SEM PREÇO
+                     */
+                    if (usuario == null) {
 
-                } catch (Exception ex) {
-
-                    ex.printStackTrace();
-
-                    if (em.getTransaction().isActive()) {
-
-                        em.getTransaction().rollback();
+                        usuario =
+                                em.createQuery(
+                                        "SELECT u FROM TbUsuario u",
+                                        TbUsuario.class
+                                )
+                                        .setMaxResults(1)
+                                        .getSingleResult();
                     }
 
-                    JOptionPane.showMessageDialog(
-                            this,
-                            "Erro ao actualizar preço:\n"
-                            + ex.getMessage()
+                    /*
+                     RETALHO
+                     */
+                    TbPreco precoRetalho =
+                            new TbPreco();
+                                        TbPreco precoGrosso =
+                            new TbPreco();
+
+                    precoRetalho.setPrecoVenda(
+                            precoSemIVA
                     );
 
-                } finally {
+                    precoRetalho.setPrecoCompra(
+                            precoSemIVA
+                    );
 
-                    em.close();
+                    precoRetalho.setPercentagemGanho(
+                            BigDecimal.ZERO
+                    );
+                    
+
+                    precoRetalho.setQtdBaixo(0);
+
+                    precoRetalho.setQtdAlto(5);
+
+                    precoRetalho.setRetalho(true);
+
+                    precoRetalho.setData(
+                            new Date()
+                    );
+
+                    precoRetalho.setHora(
+                            new Date()
+                    );
+
+                    precoRetalho.setFkProduto(
+                            produto
+                    );
+
+                    precoRetalho.setFkUsuario(
+                            usuario
+                    );
+                    
+                                        em.persist(
+                            precoGrosso
+                    );
+
+//                    em.persist(
+//                            precoRetalho
+//                    );
+
+                    /*
+                     GROSSO
+                     */
+//                    TbPreco precoGrosso =
+//                            new TbPreco();
+
+                    precoGrosso.setPrecoVenda(
+                            precoSemIVA
+                    );
+
+                    precoGrosso.setPrecoCompra(
+                            precoSemIVA
+                    );
+
+                    precoGrosso.setPercentagemGanho(
+                            BigDecimal.ZERO
+                    );
+
+                    precoGrosso.setQtdBaixo(6);
+
+                    precoGrosso.setQtdAlto(214748364);
+
+                    precoGrosso.setRetalho(false);
+
+                    precoGrosso.setData(
+                            new Date()
+                    );
+
+                    precoGrosso.setHora(
+                            new Date()
+                    );
+
+                    precoGrosso.setFkProduto(
+                            produto
+                    );
+
+                    precoGrosso.setFkUsuario(
+                            usuario
+                    );
+                    
+                                        em.persist(
+                            precoRetalho
+                    );
+
+//                    em.persist(
+//                            precoGrosso
+//                    );
                 }
+
+                em.getTransaction().commit();
 
             } catch (Exception ex) {
 
                 ex.printStackTrace();
+
+                if (em.getTransaction().isActive()) {
+
+                    em.getTransaction().rollback();
+                }
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Erro ao actualizar preço:\n"
+                        + ex.getMessage()
+                );
+
+            } finally {
+
+                em.close();
             }
-        });
-    }
+
+        } catch (Exception ex) {
+
+            ex.printStackTrace();
+        }
+    });
+}
 
     private void carregarTabela() {
 
@@ -733,23 +770,49 @@ if (rbOcultos.isSelected()) {
                             && !p.getTbPrecoList().isEmpty()
                     ) {
 
-                        TbPreco ultimoPrecoObj = null;
+//                        TbPreco ultimoPrecoObj = null;
+//
+//                        for (TbPreco pr
+//                                : p.getTbPrecoList()) {
+//
+//                            if (ultimoPrecoObj == null) {
+//
+//                                ultimoPrecoObj = pr;
+//
+//                            } else if (
+//                                    pr.getPkPreco()
+//                                    > ultimoPrecoObj.getPkPreco()
+//                            ) {
+//
+//                                ultimoPrecoObj = pr;
+//                            }
+//                        }
 
-                        for (TbPreco pr
-                                : p.getTbPrecoList()) {
+TbPreco ultimoPrecoObj = null;
 
-                            if (ultimoPrecoObj == null) {
+/*
+ PEGA ÚLTIMO PREÇO RETALHO
+ */
+for (TbPreco pr : p.getTbPrecoList()) {
 
-                                ultimoPrecoObj = pr;
+    if (
+            pr.getRetalho() != null
+            && pr.getRetalho()
+    ) {
 
-                            } else if (
-                                    pr.getPkPreco()
-                                    > ultimoPrecoObj.getPkPreco()
-                            ) {
+        if (ultimoPrecoObj == null) {
 
-                                ultimoPrecoObj = pr;
-                            }
-                        }
+            ultimoPrecoObj = pr;
+
+        } else if (
+                pr.getPkPreco()
+                > ultimoPrecoObj.getPkPreco()
+        ) {
+
+            ultimoPrecoObj = pr;
+        }
+    }
+}
 
                         if (
                                 ultimoPrecoObj != null

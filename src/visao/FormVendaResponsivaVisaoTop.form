@@ -624,7 +624,7 @@
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="ck_ComVirgula" min="-2" pref="49" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="ck_A7" min="-2" pref="42" max="-2" attributes="0"/>
+                                      <Component id="ck_simplificada_A7" min="-2" pref="42" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="ck_simplificada_O_S" min="-2" pref="75" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
@@ -756,7 +756,7 @@
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="ck_S_A6" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="ck_ComVirgula" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="ck_A7" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="ck_simplificada_A7" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="ck_simplificada_O_S" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="ck_simplificada_O" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="ck_simplificada" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -935,7 +935,7 @@
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="9"/>
               </AuxValues>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="ck_A7">
+            <Component class="javax.swing.JCheckBox" name="ck_simplificada_A7">
               <Properties>
                 <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                   <ComponentRef name="buttonGroup1"/>
@@ -946,7 +946,7 @@
                 <Property name="text" type="java.lang.String" value="A7"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ck_A7ActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ck_simplificada_A7ActionPerformed"/>
               </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="9"/>
