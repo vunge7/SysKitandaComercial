@@ -83,6 +83,7 @@ import static util.DVML.DOC_FACTURA_FT;
 import util.FinanceUtils;
 import util.MetodosUtil;
 import util.fe.FacturaElectronicaUtil;
+import util.fe.FacturaElectronicaUtilOriginal;
 import util.fe.JwsGenerator;
 import util.fe.TableColumIdUtil;
 
@@ -2621,6 +2622,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame
             else
             {
 
+//                respostaAGT = FacturaElectronicaUtilOriginal.criarFE(
                 respostaAGT = FacturaElectronicaUtil.criarFE(
                         venda,
                         dadosInstituicao,

@@ -5,7 +5,6 @@
  */
 package util;
 
-
 import java.sql.Connection;
 import comercial.controller.DadosInstituicaoController;
 import comercial.controller.DocumentosController;
@@ -35,8 +34,7 @@ import javax.swing.JOptionPane;
  *
  * @author Domingos Dala Vunge
  */
-public class DVML
-{
+public class DVML {
 
     // <editor-fold defaultstate="collapsed" desc="Chave Privada">
     public static String CHAVE_PRIVADA = "MIICXQIBAAKBgQDlLGwx5Kv4lWstpIGKtrQ+q4eFxQScbAmbaq4dCyQpUdi6h4BE\n"
@@ -220,12 +218,12 @@ public class DVML
     public static int SEGUNDA_SEXTA_MINUTO = 56;
     public final static String STATUS_CONVERTIDO = "Convertido";
     public final static String STATUS_CONVERTIDO_PAGO = "Pago";
+    public static Integer DOC_RECIBO_RG = 15;
     private List<TbProduto> listaProdutosAleatoris = new ArrayList<>();
 
-    static
-    {
+    static {
         PERSISTENCE_UNIT = "SGCMINIMERCADOPU";
-        System.err.println( "emf: " + emf );
+        System.err.println("emf: " + emf);
         MYSQL_USER_NAME = "";
         MYSQL_PASSWORD = "";
         MYSQL_HOST = "";
@@ -308,18 +306,15 @@ public class DVML
     public static final String FORMULARIO_RECOLHA_LAVANDARIA = "Formulario Recolha Lavandaria";
     public static final String UNI_ARMAZEM = "Uni_armazem";
 
-    public static enum ESTADO_NOTA
-    {
+    public static enum ESTADO_NOTA {
         RETIFICADO,
         TOTALMENTE_RETIFICADO,
         ANULADO
     }
 
-    public static Abreviacao getAbreviacao( int doc )
-    {
+    public static Abreviacao getAbreviacao(int doc) {
 
-        switch (doc)
-        {
+        switch (doc) {
             case 1:
                 return Abreviacao.FR_A4;
             case 2:
@@ -358,8 +353,7 @@ public class DVML
         }
     }
 
-    public static enum Abreviacao
-    {
+    public static enum Abreviacao {
         FR_A4,
         FR_A6,
         FR_A6_O,
@@ -595,8 +589,7 @@ public class DVML
                 <!-- Fim adicionar -->
     
      */
-    static
-    {
+    static {
         //recuperar dados da empresa apartir da bd
 
         //CABEÇALHO
@@ -691,10 +684,9 @@ public class DVML
         AGT_SAFT_LINE_GROSS_TOTAL = "0.00";
     }
 
-    public static void activar_cmb_armazem( JComboBox cmb )
-    {
+    public static void activar_cmb_armazem(JComboBox cmb) {
 
-        cmb.setEnabled( true );
+        cmb.setEnabled(true);
 //            if(select_armazem.equals("GERAL") ){
 //                    cmb.setEnabled(false);
 //                    cmb.setSelectedIndex(1);
@@ -709,120 +701,91 @@ public class DVML
 
     }
 
-    private static int fact( int n )
-    {
+    private static int fact(int n) {
 
-        if ( n == 0 || n == 1 )
-        {
+        if (n == 0 || n == 1) {
             return 1;
-        }
-        else
-        {
-            return n * fact( n - 1 );
+        } else {
+            return n * fact(n - 1);
         }
     }
 
-    private static int soma( int posicao, int tamanho, int[] v )
-    {
-        if ( posicao == tamanho )
-        {
+    private static int soma(int posicao, int tamanho, int[] v) {
+        if (posicao == tamanho) {
             return 0;
-        }
-        else
-        {
+        } else {
             int meio = tamanho / 2;
-            return v[ posicao ] + soma( ++posicao, meio, v ) + soma( ++meio, tamanho, v );
+            return v[posicao] + soma(++posicao, meio, v) + soma(++meio, tamanho, v);
         }
     }
 
-    private static int soma_dividir( int posicao, int tamanho, int[] v )
-    {
+    private static int soma_dividir(int posicao, int tamanho, int[] v) {
 
-        if ( ( posicao + 1 ) == tamanho )
-        {
-            return v[ posicao ];
-        }
-        else
-        {
-            int meio = (( tamanho + posicao ) / 2);
-            System.out.println( "MEIO:" + meio );
-            return soma_dividir( posicao, meio, v ) + soma_dividir( meio, tamanho, v );
+        if ((posicao + 1) == tamanho) {
+            return v[posicao];
+        } else {
+            int meio = ((tamanho + posicao) / 2);
+            System.out.println("MEIO:" + meio);
+            return soma_dividir(posicao, meio, v) + soma_dividir(meio, tamanho, v);
 
         }
 
     }
 
-    private static int soma_dividir_vector( int posicao, int tamanho, Vector vector )
-    {
+    private static int soma_dividir_vector(int posicao, int tamanho, Vector vector) {
 
-        if ( ( posicao + 1 ) == tamanho )
-        {
-            return (int) vector.get( posicao );
-        }
-        else
-        {
-            int meio = (( tamanho + posicao ) / 2);
-            return soma_dividir_vector( posicao, meio, vector ) + soma_dividir_vector( meio, tamanho, vector );
+        if ((posicao + 1) == tamanho) {
+            return (int) vector.get(posicao);
+        } else {
+            int meio = ((tamanho + posicao) / 2);
+            return soma_dividir_vector(posicao, meio, vector) + soma_dividir_vector(meio, tamanho, vector);
 
         }
 
     }
 
-    public static Vector< Vector<TbPreco>> actualizar_vector_preco( int posicao, int tamanho, Vector<Vector<TbPreco>> vector )
-    {
+    public static Vector< Vector<TbPreco>> actualizar_vector_preco(int posicao, int tamanho, Vector<Vector<TbPreco>> vector) {
 
-        if ( ( posicao + 1 ) == tamanho )
-        {
-            vector.get( posicao ).get( 0 ).setPrecoCompra( new BigDecimal( "100" ) );
+        if ((posicao + 1) == tamanho) {
+            vector.get(posicao).get(0).setPrecoCompra(new BigDecimal("100"));
 
             return vector;
-        }
-        else
-        {
-            int meio = (( tamanho + posicao ) / 2);
-            System.err.println( "MEIO: " + meio );
+        } else {
+            int meio = ((tamanho + posicao) / 2);
+            System.err.println("MEIO: " + meio);
 
-            return actualizar_vector_preco( meio, tamanho, vector );
+            return actualizar_vector_preco(meio, tamanho, vector);
 
         }
 
     }
 
-    private static Vector< Vector<TbPreco>> unicao( Vector< Vector<TbPreco>> a, Vector< Vector<TbPreco>> b )
-    {
-        a.addAll( b );
+    private static Vector< Vector<TbPreco>> unicao(Vector< Vector<TbPreco>> a, Vector< Vector<TbPreco>> b) {
+        a.addAll(b);
         return a;
 
     }
 
-    public static double soma_dividir_vector_preco( int posicao, int tamanho, Vector<Vector<TbPreco>> vector )
-    {
+    public static double soma_dividir_vector_preco(int posicao, int tamanho, Vector<Vector<TbPreco>> vector) {
 
-        if ( ( posicao + 1 ) == tamanho )
-        {
-            return vector.get( posicao ).get( 0 ).getPrecoCompra().doubleValue();
-        }
-        else
-        {
-            int meio = (( tamanho + posicao ) / 2);
-            return soma_dividir_vector_preco( posicao, meio, vector ) + soma_dividir_vector_preco( meio, tamanho, vector );
+        if ((posicao + 1) == tamanho) {
+            return vector.get(posicao).get(0).getPrecoCompra().doubleValue();
+        } else {
+            int meio = ((tamanho + posicao) / 2);
+            return soma_dividir_vector_preco(posicao, meio, vector) + soma_dividir_vector_preco(meio, tamanho, vector);
 
         }
 
     }
 
-    private static Vector multiplicacao( int p, int u, Vector v )
-    {
+    private static Vector multiplicacao(int p, int u, Vector v) {
 
-        if ( p < u )
-        {
-            v.set( p, 2 );
+        if (p < u) {
+            v.set(p, 2);
             return v;
-        }
-        else
-        {
+        } else {
             //int meio = (p+u)/2;
-            multiplicacao( p + 1, u, v );
+            multiplicacao(p + 1, u, v);
             //return uniao_vector(  multiplicacao(p, meio, v), multiplicacao(meio, u, v) ); 
 
         }
@@ -831,27 +794,24 @@ public class DVML
 
     }
 
-    public static Vector uniao_vector( Vector vector_x, Vector vector_y )
-    {
+    public static Vector uniao_vector(Vector vector_x, Vector vector_y) {
 
         Vector vector = new Vector();
-        vector.addAll( vector_x );
-        vector.addAll( vector_y );
+        vector.addAll(vector_x);
+        vector.addAll(vector_y);
 
-        System.out.println( "Size X: " + vector_x.size() );
-        System.out.println( "Size Y: " + vector_y.size() );
-        System.out.println( "Size Total: " + vector.size() );
+        System.out.println("Size X: " + vector_x.size());
+        System.out.println("Size Y: " + vector_y.size());
+        System.out.println("Size Total: " + vector.size());
 
         return vector;
     }
 
-    public static int getConfirmacaoDialog( String message )
-    {
-        return JOptionPane.showConfirmDialog( null, message, "Aviso", JOptionPane.YES_OPTION );
+    public static int getConfirmacaoDialog(String message) {
+        return JOptionPane.showConfirmDialog(null, message, "Aviso", JOptionPane.YES_OPTION);
     }
 
-    public static void main( String[] args )
-    {
+    public static void main(String[] args) {
 //        int vector_x[] = {4,6,10,14,2}; 
 //        int vector_y[] =
 //        {
@@ -859,7 +819,7 @@ public class DVML
 //        };
 //
 //        //System.out.println("SOMA:"  +soma_dividir(0, vector_y.length, vector_y));
-////        
+        ////        
 ////        int vector[] = uniao(vector_x, vector_y);
 //        Vector vector_x = new Vector();
 //        vector_x.add( 4 );
@@ -890,37 +850,31 @@ public class DVML
 //        ProgressBarDemo obj = new ProgressBarDemo();
 //        obj.setVisible(true);
 //        MetodosUtil.getDias();
-        System.out.println( "Dias Úteis de Trabalho: " + MetodosUtil.getDiasUteis( MetodosUtil.stringToDate( "09/07/2020" ), MetodosUtil.stringToDate( "10/07/2020" ), 1 ) );
+        System.out.println("Dias Úteis de Trabalho: " + MetodosUtil.getDiasUteis(MetodosUtil.stringToDate("09/07/2020"), MetodosUtil.stringToDate("10/07/2020"), 1));
 
-        JOptionPane.showMessageDialog( null, "Apenas para fim de teste." );
+        JOptionPane.showMessageDialog(null, "Apenas para fim de teste.");
 
     }
 
-    private static int getDiasAnos( Date data_inicio, Date data_fim )
-    {
+    private static int getDiasAnos(Date data_inicio, Date data_fim) {
 
-        int dia_mes_entrada = getDias( data_inicio.getMonth(), data_inicio.getYear() );
+        int dia_mes_entrada = getDias(data_inicio.getMonth(), data_inicio.getYear());
         int diferenca_entrada = dia_mes_entrada - data_inicio.getDate() + 1;//1 - porque o ultimo dia  conta.
 
         int dia_actual = 0;
         int dias_intervalo = 0;
         int total_dias = 0;
 
-        if ( data_fim.getMonth() == data_inicio.getMonth() && data_fim.getDate() == data_inicio.getDate() )
-        {
+        if (data_fim.getMonth() == data_inicio.getMonth() && data_fim.getDate() == data_inicio.getDate()) {
             total_dias = 1;
 
-        }
-        else if ( data_inicio.getMonth() == data_fim.getMonth() )
-        {
+        } else if (data_inicio.getMonth() == data_fim.getMonth()) {
             dia_actual = 0;
             total_dias = data_fim.getDate() - data_inicio.getDate() + 1;
-        }
-        else
-        {
+        } else {
 
             dia_actual = data_fim.getDate();
-            dias_intervalo = soma_dia_intervalo( data_inicio, data_fim );
+            dias_intervalo = soma_dia_intervalo(data_inicio, data_fim);
 
             total_dias = diferenca_entrada + dias_intervalo + dia_actual;
 
@@ -930,23 +884,19 @@ public class DVML
 
     }
 
-    private static int soma_dia_intervalo( Date data_entrada, Date data_saida )
-    {
+    private static int soma_dia_intervalo(Date data_entrada, Date data_saida) {
         int soma_dia = 0;
-        for ( int i = data_entrada.getMonth() + 1; i < data_saida.getMonth(); i++ )
-        {
-            soma_dia = soma_dia + getDias( i, data_entrada.getYear() );
+        for (int i = data_entrada.getMonth() + 1; i < data_saida.getMonth(); i++) {
+            soma_dia = soma_dia + getDias(i, data_entrada.getYear());
 
         }
         return soma_dia;
 
     }
 
-    private static int getDias( int mes, int ano )
-    {
+    private static int getDias(int mes, int ano) {
 
-        switch (mes)
-        {
+        switch (mes) {
             case 0:
             case 2:
             case 4:
@@ -960,18 +910,15 @@ public class DVML
             case 8:
             case 10:
                 return 30;
-            default:
-            {
-                return getDiaBissesto( 1900 + ano );
+            default: {
+                return getDiaBissesto(1900 + ano);
             }
         }
 
     }
 
-    private static int getDiaBissesto( int ano )
-    {
-        switch (ano)
-        {
+    private static int getDiaBissesto(int ano) {
+        switch (ano) {
             case 2016:
             case 2020:
             case 2024:
@@ -984,220 +931,195 @@ public class DVML
 
     }
 
-    private void salvar_venda_comercial_automatico( Date dataDocumento )
-    {
+    private void salvar_venda_comercial_automatico(Date dataDocumento) {
 //        mostrar_proximo_codigo_documento();
         BDConexao conexaoTransaction = BDConexao.getInstancia();
-        DadosInstituicaoController dadosInstituicaoController = new DadosInstituicaoController( conexaoTransaction );
-        VendasController vendasController = new VendasController( conexaoTransaction );
-        DocumentosController documentosController = new DocumentosController( conexaoTransaction );
-        DocumentosController.start( conexaoTransaction );
-        int prazo_proforma = dadosInstituicaoController.findByCodigo( 1 ).getPrazoProforma();
+        DadosInstituicaoController dadosInstituicaoController = new DadosInstituicaoController(conexaoTransaction);
+        VendasController vendasController = new VendasController(conexaoTransaction);
+        DocumentosController documentosController = new DocumentosController(conexaoTransaction);
+        DocumentosController.start(conexaoTransaction);
+        int prazo_proforma = dadosInstituicaoController.findByCodigo(1).getPrazoProforma();
         Date data_documento = dataDocumento;
 
         TbVenda venda_local = new TbVenda();
-        venda_local.setDataVenda( data_documento );
-        venda_local.setRefDataFact( data_documento );
-        venda_local.setRefCodFact( "" );
+        venda_local.setDataVenda(data_documento);
+        venda_local.setRefDataFact(data_documento);
+        venda_local.setRefCodFact("");
 
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime( data_documento );
+        calendar.setTime(data_documento);
         //adicionar 15 dias na data do documento.
 
-        calendar.add( Calendar.DATE, prazo_proforma );
-        venda_local.setDataVencimento( calendar.getTime() );
-        venda_local.setHora( data_documento );
-        venda_local.setNomeCliente( _CLIENTE_CONSUMIDOR_FINAL );
-        venda_local.setClienteNif( _CLIENTE_CONSUMIDOR_FINAL );
+        calendar.add(Calendar.DATE, prazo_proforma);
+        venda_local.setDataVencimento(calendar.getTime());
+        venda_local.setHora(data_documento);
+        venda_local.setNomeCliente(_CLIENTE_CONSUMIDOR_FINAL);
+        venda_local.setClienteNif(_CLIENTE_CONSUMIDOR_FINAL);
 
         //Total Ilíquido
-        venda_local.setTotalGeral( new BigDecimal( getTotalIliquido() ) );
+        venda_local.setTotalGeral(new BigDecimal(getTotalIliquido()));
         //desconto por linha
-        venda_local.setDescontoComercial( new BigDecimal( getDescontoComercial() ) );
+        venda_local.setDescontoComercial(new BigDecimal(getDescontoComercial()));
         //imposto
         //calculaTotalIVA();
-        venda_local.setTotalIva( new BigDecimal( getTotalImposto() ) );
+        venda_local.setTotalIva(new BigDecimal(getTotalImposto()));
         //calculaTotalRetencao();
-        venda_local.setTotalRetencao( new BigDecimal( getTotalRetencaoLiquido() ) );
+        venda_local.setTotalRetencao(new BigDecimal(getTotalRetencaoLiquido()));
         //desconto global
-        venda_local.setDescontoFinanceiro( new BigDecimal( getDescontoFinanceiro() ) );
+        venda_local.setDescontoFinanceiro(new BigDecimal(getDescontoFinanceiro()));
         //Total(AOA) <=> Total Líquido
-        venda_local.setTotalVenda( new BigDecimal( getTotalAOALiquido() ) );
-        venda_local.setValorEntregue( new BigDecimal( getValor_entregue() ) );
-        venda_local.setTroco( new BigDecimal( getTroco() ) );
-        venda_local.setTotalIncidencia( new BigDecimal( getTotalIncidencia() ) );
-        venda_local.setTotalIncidenciaIsento( new BigDecimal( getTotalIncidenciaIsento() ) );
+        venda_local.setTotalVenda(new BigDecimal(getTotalAOALiquido()));
+        venda_local.setValorEntregue(new BigDecimal(getValor_entregue()));
+        venda_local.setTroco(new BigDecimal(getTroco()));
+        venda_local.setTotalIncidencia(new BigDecimal(getTotalIncidencia()));
+        venda_local.setTotalIncidenciaIsento(new BigDecimal(getTotalIncidenciaIsento()));
 
         /*outros campos*/
-        venda_local.setDescontoTotal( new BigDecimal( getDescontoComercial() + getDescontoFinanceiro() ) );
-        venda_local.setIdBanco( new TbBanco( 1 ) );
-        venda_local.setIdArmazemFK( new TbArmazem( ARMAZEM_DEFAUTL ) );
+        venda_local.setDescontoTotal(new BigDecimal(getDescontoComercial() + getDescontoFinanceiro()));
+        venda_local.setIdBanco(new TbBanco(1));
+        venda_local.setIdArmazemFK(new TbArmazem(ARMAZEM_DEFAUTL));
 
-        venda_local.setCodigoUsuario( new TbUsuario( 1 ) );
-        venda_local.setCodigoCliente( new TbCliente( 1 ) );
-        venda_local.setFkAnoEconomico( new AnoEconomico( 4 ) );
-        venda_local.setReferencia( "" );
-        venda_local.setNomeConsumidorFinal( _CLIENTE_CONSUMIDOR_FINAL );
-        venda_local.setFkDocumento( new Documento( 1 ) );
+        venda_local.setCodigoUsuario(new TbUsuario(1));
+        venda_local.setCodigoCliente(new TbCliente(1));
+        venda_local.setFkAnoEconomico(new AnoEconomico(4));
+        venda_local.setReferencia("");
+        venda_local.setNomeConsumidorFinal(_CLIENTE_CONSUMIDOR_FINAL);
+        venda_local.setFkDocumento(new Documento(1));
 
-        String prox_doc = getCodDocActualizador( documentosController, vendasController );
+        String prox_doc = getCodDocActualizador(documentosController, vendasController);
 
-        venda_local.setCodFact( prox_doc );
-        venda_local.setCont( 0 );
+        venda_local.setCodFact(prox_doc);
+        venda_local.setCont(0);
 
-        venda_local.setHashCod( MetodosUtil.criptografia_hash( venda_local, getGrossTotal(), conexaoTransaction ) );
+        venda_local.setHashCod(MetodosUtil.criptografia_hash(venda_local, getGrossTotal(), conexaoTransaction));
 
-        venda_local.setTotalPorExtenso( "" );
-        venda_local.setModelo( "" );
-        venda_local.setNumMotor( "" );
+        venda_local.setTotalPorExtenso("");
+        venda_local.setModelo("");
+        venda_local.setNumMotor("");
 
-        venda_local.setNomeMotorista( "" );
-        venda_local.setMatricula( "" );
-        venda_local.setMarcaCarro( "" );
-        venda_local.setKilometro( "" );
-        venda_local.setNumChassi( "" );
-        venda_local.setObs( "" );
-        venda_local.setCorCarro( "" );
-        venda_local.setNDocMotorista( "" );
-        System.out.println( "STATUS:hash cod processado." );
+        venda_local.setNomeMotorista("");
+        venda_local.setMatricula("");
+        venda_local.setMarcaCarro("");
+        venda_local.setKilometro("");
+        venda_local.setNumChassi("");
+        venda_local.setObs("");
+        venda_local.setCorCarro("");
+        venda_local.setNDocMotorista("");
+        System.out.println("STATUS:hash cod processado.");
 
         // venda_local.setAssinatura( this.prox_doc );
-        venda_local.setAssinatura( MetodosUtil.assinatura_doc( venda_local.getHashCod() ) );
+        venda_local.setAssinatura(MetodosUtil.assinatura_doc(venda_local.getHashCod()));
 //        venda_local.setRefDataFact( CfMethods.fullDateToText( venda_local.getDataVenda() ) );
 
         //System.out.println( "STATUS:documento assinado com sucesso." );\\
-        venda_local.setFkCambio( new Cambio( 1 ) );
+        venda_local.setFkCambio(new Cambio(1));
 
 
         /*status documento*/
-        venda_local.setStatusEliminado( "false" );
-        venda_local.setPerformance( "false" );
-        venda_local.setCredito( "false" );
-        venda_local.setGorjeta( new BigDecimal( 0d ) );
+        venda_local.setStatusEliminado("false");
+        venda_local.setPerformance("false");
+        venda_local.setCredito("false");
+        venda_local.setGorjeta(new BigDecimal(0d));
 
-        try
-        {
+        try {
 
-            if ( vendasController.salvar( venda_local ) )
-            {
+            if (vendasController.salvar(venda_local)) {
                 Integer last_venda = vendasController.getLastVenda().getCodigo();
-                if ( Objects.isNull( last_venda ) || last_venda == 0 )
-                {
-                    DocumentosController.rollback( conexaoTransaction );
+                if (Objects.isNull(last_venda) || last_venda == 0) {
+                    DocumentosController.rollback(conexaoTransaction);
                     conexaoTransaction.close();
                     return;
                 }
-                System.err.println( "last_venda: " + last_venda );
-                System.out.println( "STATUS:factura criada com sucesso." );
+                System.err.println("last_venda: " + last_venda);
+                System.out.println("STATUS:factura criada com sucesso.");
 
-                if ( last_venda != null )
-                {
+                if (last_venda != null) {
 
 // salvar_item_venda_comercial( last_venda );
                 }
-            }
-            else
-            {
-                System.out.println( "ERROR: Já existe venda relacionada." );
+            } else {
+                System.out.println("ERROR: Já existe venda relacionada.");
             }
 
-        }
-        catch ( Exception e )
-        {
-            System.err.println( "STATUS: falha ao actualizar a factura" );
+        } catch (Exception e) {
+            System.err.println("STATUS: falha ao actualizar a factura");
             e.printStackTrace();
-            JOptionPane.showMessageDialog( null, "Falha ao Processar a Factura", "FALHA", JOptionPane.ERROR_MESSAGE );
+            JOptionPane.showMessageDialog(null, "Falha ao Processar a Factura", "FALHA", JOptionPane.ERROR_MESSAGE);
 
-            DocumentosController.rollback( conexaoTransaction );
+            DocumentosController.rollback(conexaoTransaction);
 
             conexaoTransaction.close();
         }
 
     }
 
-    public double getTotalIliquido()
-    {
+    public double getTotalIliquido() {
         double qtd = 0d;
         double total_iliquido = 0d, preco_unitario = 0d;
-        for ( int i = 0; i < listaProdutosAleatoris.size(); i++ )
-        {
+        for (int i = 0; i < listaProdutosAleatoris.size(); i++) {
 
             preco_unitario = 0;
             qtd = 1;
-            total_iliquido += ( preco_unitario * qtd );
+            total_iliquido += (preco_unitario * qtd);
 
         }
 
         return total_iliquido;
     }
 
-    public double getDescontoComercial()
-    {
+    public double getDescontoComercial() {
         return 0d;
     }
 
-    public double getTotalImposto()
-    {
+    public double getTotalImposto() {
         return 0d;
     }
 
-    public double getTotalRetencaoLiquido()
-    {
+    public double getTotalRetencaoLiquido() {
         return 0d;
     }
 
-    public double getDescontoFinanceiro()
-    {
+    public double getDescontoFinanceiro() {
         return 0d;
     }
 
-    public double getTotalAOALiquido()
-    {
+    public double getTotalAOALiquido() {
         return 0d;
     }
 
-    public double getValor_entregue()
-    {
+    public double getValor_entregue() {
         return 0d;
     }
 
-    public double getTroco()
-    {
+    public double getTroco() {
         return 0d;
     }
 
-    public double getTotalIncidencia()
-    {
+    public double getTotalIncidencia() {
         return 0d;
     }
 
-    public double getTotalIncidenciaIsento()
-    {
+    public double getTotalIncidenciaIsento() {
         return 0d;
     }
 
-    private static String getCodDocActualizador( DocumentosController documentosController, VendasController vendasController )
-    {
-        try
-        {
-            Documento documento = (Documento) documentosController.findById( 1 );
-            AnoEconomico anoEconomico = new AnoEconomico( 4 );
+    private static String getCodDocActualizador(DocumentosController documentosController, VendasController vendasController) {
+        try {
+            Documento documento = (Documento) documentosController.findById(1);
+            AnoEconomico anoEconomico = new AnoEconomico(4);
             // this.doc_prox_cod = documento.getCodUltimoDoc() + 1;
             int doc_prox_cod = vendasController.getUltimaContagemByIdDocumentoAndAnoEconomico(
-                    1, 4 ) + 1;
+                    1, 4) + 1;
             String prox_doc = documento.getAbreviacao();
             //FA Série / codigo
             prox_doc += " " + anoEconomico.getSerie() + "/" + doc_prox_cod;
             return prox_doc;
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             return "";
         }
     }
 
-    private double getTotalVendaIVASemIncluirDesconto()
-    {
+    private double getTotalVendaIVASemIncluirDesconto() {
         double taxa = 0, total_iva_local = 0, preco_unitario = 0, sub_total_iliquido = 0;
         double qtd = 0d;
 
@@ -1213,10 +1135,9 @@ public class DVML
         return total_iva_local;
     }
 
-    private double getGrossTotal()
-    {
-        System.out.println( "TOTALILIQUIDO: " + getTotalVendaIVASemIncluirDesconto() );
-        System.out.println( "TOTALVENDAIVASEMDESCONTO: " + getTotalVendaIVASemIncluirDesconto() );
+    private double getGrossTotal() {
+        System.out.println("TOTALILIQUIDO: " + getTotalVendaIVASemIncluirDesconto());
+        System.out.println("TOTALVENDAIVASEMDESCONTO: " + getTotalVendaIVASemIncluirDesconto());
         return getTotalIliquido() + getTotalVendaIVASemIncluirDesconto();
     }
 
