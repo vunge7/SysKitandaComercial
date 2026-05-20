@@ -2155,7 +2155,6 @@ public class EmissaoRecibos extends javax.swing.JFrame
             String prox_doc = documento.getAbreviacao();
             //FA Série / codigo
             prox_doc += " " + getAnoEconomicoSerie().getSerie() + "/" + doc_prox_cod;
-
             return doc_prox_cod;
 
         }
@@ -2311,7 +2310,7 @@ public class EmissaoRecibos extends javax.swing.JFrame
         BigDecimal totalBase = BigDecimal.ZERO;
         BigDecimal totalIva = BigDecimal.ZERO;
         BigDecimal totalFinal = BigDecimal.ZERO;
-        BigDecimal totalRetencao = BigDecimal.ZERO;
+//        BigDecimal totalRetencao = BigDecimal.ZERO;
 
         List<SourceDocumentDTO> listSourceDocumentDTOs = new ArrayList<>();
 
