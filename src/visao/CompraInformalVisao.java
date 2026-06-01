@@ -267,6 +267,8 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         txtPrecoVenda = new javax.swing.JTextField();
         cmbAnoEconomico = new javax.swing.JComboBox<>();
         cmbTipoDocumento = new javax.swing.JComboBox<>();
+        lb_data_apuramento3 = new javax.swing.JLabel();
+        txtFactorConversao = new javax.swing.JTextField();
         jPanel8 = new javax.swing.JPanel();
         lbTotalPagar = new javax.swing.JLabel();
         txtTotal_AOA_Iliquido = new javax.swing.JTextField();
@@ -285,7 +287,6 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         lb_data_solicitacao = new javax.swing.JLabel();
         lb_numero_artigos = new javax.swing.JLabel();
         btTransferenciaArmazem = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
 
         jMenuItem1.setText("jMenuItem1");
 
@@ -515,7 +516,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         lb_data_apuramento1.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lb_data_apuramento1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lb_data_apuramento1.setText("Qtd. Existente:");
-        jPanel3.add(lb_data_apuramento1, new org.netbeans.lib.awtextra.AbsoluteConstraints(930, 160, 90, 20));
+        jPanel3.add(lb_data_apuramento1, new org.netbeans.lib.awtextra.AbsoluteConstraints(930, 190, 90, 20));
 
         txtCodBarra.setFont(new java.awt.Font("SansSerif", 0, 16)); // NOI18N
         txtCodBarra.addActionListener(new java.awt.event.ActionListener() {
@@ -541,7 +542,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
                 jButton_eliminarActionPerformed(evt);
             }
         });
-        jPanel3.add(jButton_eliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 150, 50, -1));
+        jPanel3.add(jButton_eliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 180, 50, -1));
 
         jButton_inserir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Button-Add-icon.png"))); // NOI18N
         jButton_inserir.addActionListener(new java.awt.event.ActionListener() {
@@ -549,7 +550,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
                 jButton_inserirActionPerformed(evt);
             }
         });
-        jPanel3.add(jButton_inserir, new org.netbeans.lib.awtextra.AbsoluteConstraints(820, 150, 50, -1));
+        jPanel3.add(jButton_inserir, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 180, 50, -1));
 
         cmbFornecedor.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cmbFornecedor.addActionListener(new java.awt.event.ActionListener() {
@@ -604,19 +605,19 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         lb_data_apuramento2.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lb_data_apuramento2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lb_data_apuramento2.setText("Qtd. a Entrar");
-        jPanel3.add(lb_data_apuramento2, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 150, 80, 20));
+        jPanel3.add(lb_data_apuramento2, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 140, 80, 30));
 
         txtQtdExistente.setEditable(false);
         txtQtdExistente.setFont(new java.awt.Font("Lucida Grande", 1, 24)); // NOI18N
         txtQtdExistente.setForeground(new java.awt.Color(0, 102, 102));
-        jPanel3.add(txtQtdExistente, new org.netbeans.lib.awtextra.AbsoluteConstraints(1030, 150, 80, 40));
+        jPanel3.add(txtQtdExistente, new org.netbeans.lib.awtextra.AbsoluteConstraints(1030, 180, 80, 40));
 
         txtQtdEntrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtQtdEntrarActionPerformed(evt);
             }
         });
-        jPanel3.add(txtQtdEntrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 140, 80, 40));
+        jPanel3.add(txtQtdEntrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 140, 80, 30));
 
         jButtonLupa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/proucura.png"))); // NOI18N
         jButtonLupa.addActionListener(new java.awt.event.ActionListener() {
@@ -645,6 +646,19 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
 
         cmbTipoDocumento.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jPanel3.add(cmbTipoDocumento, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 10, 140, -1));
+
+        lb_data_apuramento3.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        lb_data_apuramento3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lb_data_apuramento3.setText("Factor Conversão:");
+        jPanel3.add(lb_data_apuramento3, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 140, 130, 30));
+
+        txtFactorConversao.setEditable(false);
+        txtFactorConversao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtFactorConversaoActionPerformed(evt);
+            }
+        });
+        jPanel3.add(txtFactorConversao, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 140, 50, 30));
 
         jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
         jPanel8.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -762,20 +776,13 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
             }
         });
 
-        jButton1.setText("jButton1");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 1163, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
@@ -791,10 +798,9 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
                                 .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, 480, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jButton4)
-                                .addGap(35, 35, 35)
-                                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1))
+                                .addGap(18, 18, 18)
+                                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(210, 210, 210))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(btTransferenciaArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -814,12 +820,12 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(20, 20, 20)
@@ -827,22 +833,16 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
                             .addComponent(lb_numero_artigos))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lb_data_solicitacao)
-                        .addGap(60, 60, 60))
+                        .addGap(51, 51, 51))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(27, 27, 27)
-                        .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(10, 10, 10)
+                        .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(btnCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, 53, Short.MAX_VALUE)
-                                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btnCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, 53, Short.MAX_VALUE)
+                            .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addGap(0, 9, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -1002,13 +1002,9 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         new TranferenciaArmazemVisao(cod_usuario, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btTransferenciaArmazemActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        try {
-            stocksController.inserir_datas_stock(conexao.getConnectionAtiva());
-        } catch (SQLException ex) {
-            Logger.getLogger(CompraInformalVisao.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void txtFactorConversaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFactorConversaoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtFactorConversaoActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1019,7 +1015,6 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
     public static javax.swing.JComboBox cmbArmazem;
     private static javax.swing.JComboBox<String> cmbFornecedor;
     private static javax.swing.JComboBox<String> cmbTipoDocumento;
-    private javax.swing.JButton jButton1;
     private static javax.swing.JButton jButton4;
     private javax.swing.JButton jButton6;
     private static javax.swing.JButton jButtonLupa;
@@ -1048,6 +1043,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
     private static javax.swing.JLabel lb_data_apuramento;
     private static javax.swing.JLabel lb_data_apuramento1;
     private static javax.swing.JLabel lb_data_apuramento2;
+    private static javax.swing.JLabel lb_data_apuramento3;
     private static javax.swing.JLabel lb_data_apuramento5;
     private static javax.swing.JLabel lb_data_apuramento6;
     private static javax.swing.JLabel lb_data_apuramento7;
@@ -1069,6 +1065,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
     private static javax.swing.JTextField txtCodBarra;
     private static javax.swing.JTextField txtCodigoInterno;
     private javax.swing.JTextField txtDesignacao;
+    public static javax.swing.JTextField txtFactorConversao;
     private static javax.swing.JTextField txtPrecoVenda;
     public static javax.swing.JTextField txtQtdBaixa;
     public static javax.swing.JTextField txtQtdCritica;
@@ -1650,9 +1647,11 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
             txtCodigoInterno.setText(String.valueOf(produto.getCodigo()));
             spPrecoCompra.setValue(preco.getPrecoCompra());
             txtPrecoVenda.setText(String.valueOf(preco.getPrecoVenda()));
+            txtFactorConversao.setText(String.valueOf(produto.getFactorConversao()));
         } else {
             lb_produto.setText("");
             txtPrecoVenda.setText("");
+            txtFactorConversao.setText("");
             spPrecoCompra.setValue(0);
             txtCodBarra.requestFocus();
         }
@@ -1703,10 +1702,12 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
             txtCodBarra.setText(String.valueOf(produto.getCodBarra()));
             spPrecoCompra.setValue(preco.getPrecoCompra());
             txtPrecoVenda.setText(String.valueOf(preco.getPrecoVenda()));
+            txtFactorConversao.setText(String.valueOf(produto.getFactorConversao()));
         } else {
             lb_produto.setText("");
             txtPrecoVenda.setText("");
             spPrecoCompra.setValue(0);
+            txtFactorConversao.setText("");
             txtCodBarra.requestFocus();
         }
 
@@ -2414,11 +2415,13 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
             txtCodBarra.setText(produto.getCodBarra());
             txtCodigoInterno.setText(String.valueOf(produto.getCodigo()));
             txtPrecoVenda.setText(String.valueOf(preco.getPrecoVenda()));
+            txtFactorConversao.setText(String.valueOf(produto.getFactorConversao()));
         } else {
 
             txtCodBarra.setText("");
             txtCodigoInterno.setText("");
             txtPrecoVenda.setText("");
+            txtFactorConversao.setText("");
             txtCodBarra.requestFocus();
         }
         mostrar_dados_stock(produto);

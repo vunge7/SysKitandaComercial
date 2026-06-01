@@ -56,14 +56,14 @@ public class ProdutosController implements EntidadeFactory
                 + " preco_venda, "
                 + " quantidade_desconto , codigo_manual , cod_unidade , cod_local , "
                 + " cod_fornecedores , cod_Tipo_Produto , fk_modelo , fk_grupo , "
-                + " photo , status_iva , cozinha , unidade_compra "
+                + " photo , status_iva , cozinha , unidade_compra , factor_conversao "
                 + ")"
                 + " VALUES("
                 + " ? , ?, ? , ?, "
                 + " ? , ?, ? , ?, "
                 + " ? , ?, ? , ?, "
                 + " ? , ?, ? , ?, "
-                + " ? , ?, ?, ?, ? "
+                + " ? , ?, ?, ?, ?, ? "
                 //                + " ?"
                 + " ) ";
 
@@ -100,6 +100,7 @@ public class ProdutosController implements EntidadeFactory
             stmt.setString( cod++, produto.getStatusIva() );
             stmt.setString( cod++, produto.getCozinha() );
             stmt.setDouble( cod++, produto.getUnidadeCompra() );
+            stmt.setDouble( cod++, produto.getFactorConversao() );
             stmt.executeUpdate();
             stmt.close();
             return true;
@@ -169,6 +170,7 @@ public class ProdutosController implements EntidadeFactory
                     p.setCozinha( rs.getString( "cozinha" ) );
                     p.setStatusIva( rs.getString( "status_iva" ) );
                     p.setUnidadeCompra( rs.getDouble( "unidade_compra" ) );
+                    p.setFactorConversao(rs.getDouble( "factor_conversao" ) );
 
                     // Datas
                     p.setDataEntrada( rs.getDate( "data_entrada" ) );
@@ -288,7 +290,8 @@ public class ProdutosController implements EntidadeFactory
                 + " photo = ?, "
                 + " status_iva = ? , "
                 + " cozinha = ? , "
-                + " unidade_compra = ? "
+                + " unidade_compra = ? , "
+                + " factor_conversao = ? "
                 + " WHERE codigo = ?";
         try
         {
@@ -319,6 +322,7 @@ public class ProdutosController implements EntidadeFactory
             stmt.setString( cod++, produto.getStatusIva() );
             stmt.setString( cod++, produto.getCozinha() );
             stmt.setDouble( cod++, produto.getUnidadeCompra() );
+            stmt.setDouble( cod++, produto.getFactorConversao() );
             stmt.setInt( cod++, produto.getCodigo() );
             stmt.executeUpdate();
             stmt.close();
@@ -378,6 +382,7 @@ public class ProdutosController implements EntidadeFactory
                 produto.setStatusIva( result.getString( "status_iva" ) );
                 produto.setCozinha( result.getString( "cozinha" ) );
                 produto.setUnidadeCompra( result.getDouble( "unidade_compra" ) );
+                produto.setFactorConversao(result.getDouble( "factor_conversao" ) );
 
                 lista_produto.add( produto );
 
@@ -964,6 +969,7 @@ public class ProdutosController implements EntidadeFactory
             produto.setStatusIva( result.getString( "status_iva" ) );
             produto.setCozinha( result.getString( "cozinha" ) );
             produto.setUnidadeCompra( result.getDouble( "unidade_compra" ) );
+            produto.setFactorConversao(result.getDouble( "factor_conversao" ) );
 
         }
         catch ( SQLException e )
@@ -1152,6 +1158,7 @@ public class ProdutosController implements EntidadeFactory
                 produto.setStatusIva( result.getString( "status_iva" ) );
                 produto.setCozinha( result.getString( "cozinha" ) );
                 produto.setUnidadeCompra( result.getDouble( "unidade_compra" ) );
+                produto.setFactorConversao(result.getDouble( "factor_conversao" ) );
 
             }
 
@@ -1199,6 +1206,7 @@ public class ProdutosController implements EntidadeFactory
                 produto.setCozinha( result.getString( "cozinha" ) );
                 produto.setCodPai( result.getInt( "cod_pai" ) );
                 produto.setUnidadeCompra( result.getDouble( "unidade_compra" ) );
+                produto.setFactorConversao(result.getDouble( "factor_conversao" ) );
                 lista_produto.add( produto );
             }
 

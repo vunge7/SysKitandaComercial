@@ -73,7 +73,7 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
         setLocationRelativeTo( null );
         setResizable( false );
 
-        txtQtdEntrar.setDocument( new PermitirNumeros() );
+        txtQtdTransferir.setDocument( new PermitirNumeros() );
 
         this.cod_usuario = cod_usuario;
        TranferenciaArmazemVisao.conexao = conexao;
@@ -154,8 +154,7 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
      */
     @SuppressWarnings( "unchecked" )
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents()
-    {
+    private void initComponents() {
 
         jMenuItem1 = new javax.swing.JMenuItem();
         buttonGroup3 = new javax.swing.ButtonGroup();
@@ -180,7 +179,7 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
         txtCodigoInterno = new javax.swing.JTextField();
         lbProdutos2 = new javax.swing.JLabel();
         lb_data_apuramento2 = new javax.swing.JLabel();
-        txtQtdEntrar = new javax.swing.JTextField();
+        txtQtdTransferir = new javax.swing.JTextField();
         cmbArmazemOrigem = new javax.swing.JComboBox();
         lbPreco1 = new javax.swing.JLabel();
         lbPreco2 = new javax.swing.JLabel();
@@ -190,6 +189,8 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
         lb_data_apuramento3 = new javax.swing.JLabel();
         txtQtdExistente1 = new javax.swing.JTextField();
         jButton5 = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        txtFactorConversao = new javax.swing.JTextField();
         lb_usuario = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jButton4 = new javax.swing.JButton();
@@ -200,39 +201,30 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
         tabela_busca.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][]
-            {
+            new Object [][] {
 
             },
-            new String []
-            {
+            new String [] {
                 "Cod.", "Designacao", "Categoria", "Qtd"
             }
-        )
-        {
-            Class[] types = new Class []
-            {
+        ) {
+            Class[] types = new Class [] {
                 java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Integer.class
             };
-            boolean[] canEdit = new boolean []
-            {
+            boolean[] canEdit = new boolean [] {
                 false, false, false, false
             };
 
-            public Class getColumnClass(int columnIndex)
-            {
+            public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
 
-            public boolean isCellEditable(int rowIndex, int columnIndex)
-            {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        tabela_busca.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mouseClicked(java.awt.event.MouseEvent evt)
-            {
+        tabela_busca.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tabela_buscaMouseClicked(evt);
             }
         });
@@ -263,10 +255,8 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
 
         jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LOGOUT - VERMELHO/Logout 32x32.png"))); // NOI18N
         jButton6.setText("Sair");
-        jButton6.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton6ActionPerformed(evt);
             }
         });
@@ -308,60 +298,50 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
 
         table.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
         table.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][]
-            {
+            new Object [][] {
 
             },
-            new String []
-            {
-                "Cod.Art", "Designacao", "Origem(-)", "Destino(+)", "Qtd", "Qtd Final(Origem)", "Qtd Final(Destino)"
+            new String [] {
+                "Cod.Art", "Designacao", "Origem(-)", "Destino(+)", "Qtd", "Factor Conversão", "Qtd Final(Origem)", "Qtd Final(Destino)"
             }
-        )
-        {
-            Class[] types = new Class []
-            {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Object.class, java.lang.Double.class, java.lang.Double.class
             };
-            boolean[] canEdit = new boolean []
-            {
-                false, false, false, false, false, true, false
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, true, true, true
             };
 
-            public Class getColumnClass(int columnIndex)
-            {
+            public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
 
-            public boolean isCellEditable(int rowIndex, int columnIndex)
-            {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
         table.setCellSelectionEnabled(true);
         table.setGridColor(new java.awt.Color(51, 153, 0));
-        table.addPropertyChangeListener(new java.beans.PropertyChangeListener()
-        {
-            public void propertyChange(java.beans.PropertyChangeEvent evt)
-            {
+        table.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 tablePropertyChange(evt);
             }
         });
         jScrollPane1.setViewportView(table);
         table.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-        if (table.getColumnModel().getColumnCount() > 0)
-        {
+        if (table.getColumnModel().getColumnCount() > 0) {
             table.getColumnModel().getColumn(0).setPreferredWidth(10);
             table.getColumnModel().getColumn(1).setPreferredWidth(250);
         }
 
-        jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 910, 350));
+        jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 940, 350));
 
         jPanel6.setBackground(new java.awt.Color(4, 41, 144));
         jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText("TRANSFERENCIA DE ARMAZEM");
+        jLabel2.setText("TRANSFERÊNCIA DE ARMAZEM");
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -384,14 +364,12 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txtCodBarra.setFont(new java.awt.Font("SansSerif", 0, 16)); // NOI18N
-        txtCodBarra.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtCodBarra.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtCodBarraActionPerformed(evt);
             }
         });
-        jPanel3.add(txtCodBarra, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, 190, -1));
+        jPanel3.add(txtCodBarra, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, 170, -1));
 
         lb_produto.setFont(new java.awt.Font("SansSerif", 3, 16)); // NOI18N
         lb_produto.setForeground(new java.awt.Color(4, 41, 144));
@@ -401,24 +379,20 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
         jPanel3.add(lb_produto, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, 470, 30));
 
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/adicionar.png"))); // NOI18N
-        jButton2.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
-        jPanel3.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 80, 50, -1));
+        jPanel3.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 80, 50, -1));
 
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Button-Add-icon.png"))); // NOI18N
-        jButton3.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
             }
         });
-        jPanel3.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 80, 50, -1));
+        jPanel3.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 80, 50, -1));
 
         lb_data_apuramento5.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         lb_data_apuramento5.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -429,55 +403,47 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
         txtCodigoInterno.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         txtCodigoInterno.setForeground(new java.awt.Color(255, 255, 255));
         txtCodigoInterno.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtCodigoInterno.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtCodigoInterno.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtCodigoInternoActionPerformed(evt);
             }
         });
-        jPanel3.add(txtCodigoInterno, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 30, 70, 30));
+        jPanel3.add(txtCodigoInterno, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 30, 70, 30));
 
         lbProdutos2.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         lbProdutos2.setText("Cód. Interno");
-        jPanel3.add(lbProdutos2, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 10, 100, 20));
+        jPanel3.add(lbProdutos2, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 10, 100, 20));
 
         lb_data_apuramento2.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lb_data_apuramento2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lb_data_apuramento2.setText("Qtd. a Transferir");
         jPanel3.add(lb_data_apuramento2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, 120, 20));
 
-        txtQtdEntrar.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtQtdEntrar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                txtQtdEntrarActionPerformed(evt);
+        txtQtdTransferir.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtQtdTransferir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtQtdTransferirActionPerformed(evt);
             }
         });
-        jPanel3.add(txtQtdEntrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 90, 150, 30));
+        jPanel3.add(txtQtdTransferir, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, 130, 30));
 
         cmbArmazemOrigem.setBackground(new java.awt.Color(4, 154, 3));
         cmbArmazemOrigem.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
-        cmbArmazemOrigem.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mouseClicked(java.awt.event.MouseEvent evt)
-            {
+        cmbArmazemOrigem.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
                 cmbArmazemOrigemMouseClicked(evt);
             }
         });
-        cmbArmazemOrigem.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbArmazemOrigem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbArmazemOrigemActionPerformed(evt);
             }
         });
-        jPanel3.add(cmbArmazemOrigem, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 30, 220, -1));
+        jPanel3.add(cmbArmazemOrigem, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 30, 220, -1));
 
         lbPreco1.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         lbPreco1.setText("Armazem Origem(-)");
-        jPanel3.add(lbPreco1, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 10, 170, -1));
+        jPanel3.add(lbPreco1, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 10, 170, -1));
 
         lbPreco2.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         lbPreco2.setText("Armazem Destino(+)");
@@ -485,17 +451,13 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
 
         cmbArmazemDestino.setBackground(new java.awt.Color(4, 154, 3));
         cmbArmazemDestino.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
-        cmbArmazemDestino.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mouseClicked(java.awt.event.MouseEvent evt)
-            {
+        cmbArmazemDestino.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
                 cmbArmazemDestinoMouseClicked(evt);
             }
         });
-        cmbArmazemDestino.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbArmazemDestino.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbArmazemDestinoActionPerformed(evt);
             }
         });
@@ -504,12 +466,12 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
         lb_data_apuramento1.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lb_data_apuramento1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lb_data_apuramento1.setText("Qtd. Existente:");
-        jPanel3.add(lb_data_apuramento1, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 90, 90, 20));
+        jPanel3.add(lb_data_apuramento1, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 90, 90, 20));
 
         txtQtdExistente.setEditable(false);
         txtQtdExistente.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         txtQtdExistente.setForeground(new java.awt.Color(204, 0, 0));
-        jPanel3.add(txtQtdExistente, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 70, 110, 50));
+        jPanel3.add(txtQtdExistente, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 70, 110, 50));
 
         lb_data_apuramento3.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lb_data_apuramento3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -522,14 +484,17 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
         jPanel3.add(txtQtdExistente1, new org.netbeans.lib.awtextra.AbsoluteConstraints(810, 70, 110, 50));
 
         jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/proucura.png"))); // NOI18N
-        jButton5.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton5ActionPerformed(evt);
             }
         });
-        jPanel3.add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 30, 40, 40));
+        jPanel3.add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 30, 40, 40));
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel3.setText("Factor de Conversão");
+        jPanel3.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 146, 120, 20));
+        jPanel3.add(txtFactorConversao, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 140, 50, 30));
 
         lb_usuario.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         lb_usuario.setText("Conta:");
@@ -538,20 +503,16 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/salvar_32x32.png"))); // NOI18N
         jButton4.setText("Registrar Transferencia");
         jButton4.setToolTipText("Efectuar Venda");
-        jButton4.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
             }
         });
 
         btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LOGOUT - VERMELHO/Logout 32x32.png"))); // NOI18N
         btnCancelar.setAlignmentX(0.5F);
-        btnCancelar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelarActionPerformed(evt);
             }
         });
@@ -590,9 +551,10 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 929, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 18, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -720,10 +682,10 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
         getVectorOrigem();
     }//GEN-LAST:event_cmbArmazemDestinoMouseClicked
 
-    private void txtQtdEntrarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtQtdEntrarActionPerformed
-    {//GEN-HEADEREND:event_txtQtdEntrarActionPerformed
+    private void txtQtdTransferirActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtQtdTransferirActionPerformed
+    {//GEN-HEADEREND:event_txtQtdTransferirActionPerformed
         procedimento_adicionar();
-    }//GEN-LAST:event_txtQtdEntrarActionPerformed
+    }//GEN-LAST:event_txtQtdTransferirActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton5ActionPerformed
     {//GEN-HEADEREND:event_jButton5ActionPerformed
@@ -732,7 +694,7 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
         {
 
             new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazemOrigem(), DVML.JANELA_COMPRA, BDConexao.getInstancia()).setVisible(true);
-            txtQtdEntrar.requestFocus();
+            txtQtdTransferir.requestFocus();
         }
         catch ( Exception e )
         {
@@ -753,6 +715,7 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
     private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -776,9 +739,10 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
     private static javax.swing.JTextField txtCodBarra;
     private static javax.swing.JTextField txtCodigoInterno;
     private javax.swing.JTextField txtDesignacao;
-    public static javax.swing.JTextField txtQtdEntrar;
+    private static javax.swing.JTextField txtFactorConversao;
     public static javax.swing.JTextField txtQtdExistente;
     public static javax.swing.JTextField txtQtdExistente1;
+    public static javax.swing.JTextField txtQtdTransferir;
     // End of variables declaration//GEN-END:variables
 
     public static void main( String[] args )
@@ -858,18 +822,20 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
             {
                 procedimento_actualizar_quantidade();
                 lb_produto.setText( produto.getDesignacao() );
+                txtFactorConversao.setText( String.valueOf(produto.getFactorConversao() ));
 
             }
             else
             {
                 lb_produto.setText( "" );
+                txtFactorConversao.setText("");
                 txtCodBarra.requestFocus();
 
             }
             mostrar_dados_stock_origem( produto );
             mostrar_dados_stock_destino( produto );
-            txtQtdEntrar.setText( "" );
-            txtQtdEntrar.requestFocus();
+            txtQtdTransferir.setText( "" );
+            txtQtdTransferir.requestFocus();
 
         }
         else
@@ -892,13 +858,15 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
         if ( produto.getCodigo() != 0 )
         {
             lb_produto.setText( produto.getDesignacao() );
-            txtQtdEntrar.setText( "" );
-            txtQtdEntrar.requestFocus();
+            txtFactorConversao.setText( String.valueOf(produto.getFactorConversao() ));
+            txtQtdTransferir.setText( "" );
+            txtQtdTransferir.requestFocus();
         }
         else
         {
 
             lb_produto.setText( "" );
+            txtFactorConversao.setText( "" );
             txtCodBarra.requestFocus();
         }
         mostrar_cod_dados_stock_origem( produto );
@@ -968,11 +936,13 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
             lb_produto.setText( produto.getDesignacao() );
             txtCodBarra.setText( produto.getCodBarra() );
             txtCodigoInterno.setText( String.valueOf( produto.getCodigo() ) );
+            txtFactorConversao.setText( String.valueOf(produto.getFactorConversao() ));
         }
         else
         {
             lb_produto.setText( "" );
             txtCodBarra.setText( "" );
+            txtFactorConversao.setText( "" );
             txtCodigoInterno.setText( "" );
             txtCodBarra.requestFocus();
         }
@@ -990,7 +960,7 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
 
     public static boolean validar_zero()
     {
-        if ( Double.parseDouble( txtQtdEntrar.getText() ) == 0 )
+        if ( Double.parseDouble(txtQtdTransferir.getText() ) == 0 )
         {
             JOptionPane.showMessageDialog( null, "Atenção\nA quantidade a sair não pode ser igual a zero!" );
 
@@ -1008,7 +978,7 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
 
     public static boolean validar_zero_qtd_preco()
     {
-        if ( Double.parseDouble( txtQtdEntrar.getText() ) == 0 )
+        if ( Double.parseDouble(txtQtdTransferir.getText() ) == 0 )
         {
             JOptionPane.showMessageDialog( null, "Atenção\nA quantidade a entrar não pode ser igual a zero!" );
 
@@ -1026,7 +996,7 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
 
     public static Integer getQuantidade()
     {
-        return (int) Double.parseDouble( txtQtdEntrar.getText() );
+        return (int) Double.parseDouble(txtQtdTransferir.getText() );
     }
 
     private void procedimento_salvar()
@@ -1188,9 +1158,12 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
         procedimento_registrar_stock( produto, getIdArmazem( cmbArmazemOrigem ), qtdCriticaOrigem, qtdBaixaOrigem ); //origem
         procedimento_registrar_stock( produto, getIdArmazem( cmbArmazemDestino ), qtdCriticaOrigem, qtdBaixaOrigem ); //origem
 
-        double qtd = Double.parseDouble( txtQtdEntrar.getText() );
+        double factor_conversao = Double.parseDouble(txtFactorConversao.getText() );
+        double qtd_transferir = Double.parseDouble(txtQtdTransferir.getText() );
+        double qtd = factor_conversao * qtd_transferir;
 
-        double qtd_origem = conexao.getQtdExistenteStock( produto.getCodigo(), getIdArmazem( cmbArmazemOrigem ) ) - qtd;
+        double qtd_origem = conexao.getQtdExistenteStock( produto.getCodigo(), getIdArmazem( cmbArmazemOrigem ) ) - qtd_transferir;
+//        double qtd_origem = conexao.getQtdExistenteStock( produto.getCodigo(), getIdArmazem( cmbArmazemOrigem ) ) - qtd;
         double qtd_destino = conexao.getQtdExistenteStock( produto.getCodigo(), getIdArmazem( cmbArmazemDestino ) ) + qtd;
 
         int idArmazemOrigem = getIdArmazem( cmbArmazemOrigem );
@@ -1205,7 +1178,9 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
                 produto.getDesignacao(),
                 getArmazemQtd( getIdArmazem( cmbArmazemOrigem ) ),
                 getArmazemQtd( getIdArmazem( cmbArmazemDestino ) ),
-                qtd,
+                qtd_transferir,
+                factor_conversao,
+//                qtd,
                 qtd_origem,
                 qtd_destino
 
@@ -1213,7 +1188,8 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
 
         }
 
-        txtQtdEntrar.setText( "" );
+        txtQtdTransferir.setText( "" );
+        txtFactorConversao.setText( "" );
         txtCodBarra.setText( "" );
         txtCodBarra.requestFocus();
 
@@ -1233,7 +1209,10 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
 
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         int idProduto = 0;
-        double qtd_before = 0, qtd = 0, qtd_aflter = 0;
+        double qtd_before = 0, qtd = 0, qtd_aflter = 0, factor_conversao = 0, qtd_destino_armazem_1;
+        
+        
+      
         String armazem_origem, armazem_destino = "", valor_origem, valor_destino, produto;
         int fk_armazem_origem = 0, fk_armazem_destino = 0;
         boolean efectuada = true;
@@ -1249,6 +1228,8 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
             produto = modelo.getValueAt( i, 1 ).toString();
 
             qtd = Double.parseDouble( modelo.getValueAt( i, 4 ).toString() );
+            
+            factor_conversao = Double.parseDouble( modelo.getValueAt( i, 5 ).toString() );
 
             valor_origem = modelo.getValueAt( i, 2 ).toString();
             valor_destino = modelo.getValueAt( i, 3 ).toString();
@@ -1304,7 +1285,9 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
                         conexao
                 ) )
                 {
-                    stocksControllerLocal.adicionar_quantidades( idProduto, qtd, fk_armazem_destino );
+                    qtd_destino_armazem_1 = factor_conversao * qtd;
+//                    stocksControllerLocal.adicionar_quantidades( idProduto, qtd, fk_armazem_destino );
+                    stocksControllerLocal.adicionar_quantidades( idProduto, qtd_destino_armazem_1, fk_armazem_destino );
                 }
 
             }
@@ -1399,7 +1382,7 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
     {
 
         double qtdExistenteOrigem = conexao.getQtdExistenteStock( produto.getCodigo(), getIdArmazem( cmbArmazemOrigem ) );
-        double qtd = Double.parseDouble( txtQtdEntrar.getText() );
+        double qtd = Double.parseDouble(txtQtdTransferir.getText() );
 
         if ( qtd > qtdExistenteOrigem )
         {

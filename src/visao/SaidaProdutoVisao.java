@@ -81,6 +81,7 @@ import util.OperacaoSistemaUtil;
 public class SaidaProdutoVisao extends javax.swing.JFrame {
 
     private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
+    private static StoksController stoksController;
     private VasilhameDao vasilhameDao = new VasilhameDao(emf);
     private ProFormaDao proFormaDao = new ProFormaDao(emf);
     private ItemProformaDao itemProformaDao = new ItemProformaDao(emf);
@@ -89,6 +90,7 @@ public class SaidaProdutoVisao extends javax.swing.JFrame {
     private SaidasProdutosController saidasProdutosController;
     private ItemSaidasController itemSaidasController;
     private TbItemSaidas itemSaidas;
+    private static TbProduto produtoGlobal;
     private TbStock stock_local;
     private TbSaidasProdutos saidasProdutos;
     private ProdutoDao produtoDao = new ProdutoDao(emf);
@@ -116,7 +118,7 @@ public class SaidaProdutoVisao extends javax.swing.JFrame {
     private static TipoProdutosController tipoProdutoController;
     private static PrecosController precosController;
     private List<TbItemSaidas> listaItemSaida;
-    private StoksController stoksController;
+//    private StoksController stoksController;
     private UsuariosController usuariosController;
 //    private final Connection conn;
 
@@ -160,7 +162,7 @@ public class SaidaProdutoVisao extends javax.swing.JFrame {
 
 //        MetodosUtil.setArmazemByCampoConfigArmazem( cmbArmazem, conexao, cod_usuario );
         ((AbstractDocument) txtCodigoDoc.getDocument()).setDocumentFilter(new UppercaseDocumentFilter());
-
+        txtQuantidaStock.setText(String.valueOf(conexao.getQtdExistenteStock(getCodigoProduto(), getCodigoArmazem())));
         btnNova.setEnabled(false);
         btnFinalizar.setEnabled(true);
         btnActualizar.setEnabled(false);
@@ -301,6 +303,8 @@ public class SaidaProdutoVisao extends javax.swing.JFrame {
         txtQuantidaStock = new javax.swing.JTextField();
         btn_adicionar = new javax.swing.JButton();
         btn_remover = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        txtFactConversao = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
@@ -467,7 +471,7 @@ public class SaidaProdutoVisao extends javax.swing.JFrame {
                         .addComponent(lbPreco1, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(88, 88, 88)
                         .addComponent(lbPreco3, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(26, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -557,6 +561,9 @@ public class SaidaProdutoVisao extends javax.swing.JFrame {
             }
         });
 
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel3.setText("Fact.Conversão: ");
+
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
@@ -567,10 +574,16 @@ public class SaidaProdutoVisao extends javax.swing.JFrame {
                     .addComponent(cmbSubFamilia, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cmbProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addComponent(lbProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(187, 187, 187)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addComponent(cmbProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtFactConversao, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(btn_adicionar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btn_remover, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -597,9 +610,13 @@ public class SaidaProdutoVisao extends javax.swing.JFrame {
                         .addGap(9, 9, 9)
                         .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jPanel8Layout.createSequentialGroup()
-                                .addComponent(lbProduto)
+                                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(lbProduto)
+                                    .addComponent(jLabel3))
                                 .addGap(2, 2, 2)
-                                .addComponent(cmbProduto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(cmbProduto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtFactConversao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(jPanel8Layout.createSequentialGroup()
                                 .addComponent(lbCategoria)
                                 .addGap(2, 2, 2)
@@ -638,14 +655,14 @@ public class SaidaProdutoVisao extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Cod Prod", "Designacao", "Preço de Compra", "Qtd."
+                "Cod Prod", "Designacao", "Preço de Compra", "Qtd.Grosso", "Factor Conversão", "Qtd.Retalho"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Object.class, java.lang.Integer.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Object.class, java.lang.Integer.class, java.lang.Object.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -667,8 +684,11 @@ public class SaidaProdutoVisao extends javax.swing.JFrame {
         table.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         if (table.getColumnModel().getColumnCount() > 0) {
             table.getColumnModel().getColumn(0).setMinWidth(25);
-            table.getColumnModel().getColumn(1).setMinWidth(400);
-            table.getColumnModel().getColumn(3).setMaxWidth(50);
+            table.getColumnModel().getColumn(1).setMinWidth(350);
+            table.getColumnModel().getColumn(2).setMinWidth(25);
+            table.getColumnModel().getColumn(3).setMinWidth(25);
+            table.getColumnModel().getColumn(4).setMinWidth(25);
+            table.getColumnModel().getColumn(5).setMinWidth(25);
         }
 
         lbCodigoProduto2.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 13)); // NOI18N
@@ -1028,16 +1048,41 @@ public class SaidaProdutoVisao extends javax.swing.JFrame {
     }//GEN-LAST:event_cmbArmazemDestinoActionPerformed
 
     public static void accao_codigo_interno_enter_busca_exterior(int codigo) {
-
+        produtoGlobal = (TbProduto) produtosController.findById(codigo);
         try {
             System.out.println("ID PRODUTO EXTERIOR: " + codigo);
-            TbProduto produtoLocal = (TbProduto) produtosController.findById(codigo);
-            procedimentoAdicionarTabela(produtoLocal);
+//            TbProduto produtoLocal = (TbProduto) produtosController.findById(codigo);
+//            adicionar_produto();
+//           adicionar_preco_quantidade_anitgo_lupa();
+            procedimento_actualizar_quantidade();
+            procedimentoAdicionarTabela(produtoGlobal);
         } catch (Exception ex) {
             ex.printStackTrace();
             Logger.getLogger(SaidaProdutoVisao.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
         }
+        mostrar_dados_stock(produtoGlobal);
+
+    }
+
+    private static void mostrar_dados_stock(TbProduto produto_parm) {
+//        TbStock stockByCodBarra = stockDao.getStockByCodBarra(produto_parm.getCodBarra(), getIdArmazem());
+        TbStock stockByCodBarra = stoksController.getStockByCodBarraAndIdArmazem(produto_parm.getCodBarra(), getCodigoArmazem());
+        if (!Objects.isNull(stockByCodBarra)) {
+            txtQuantidaStock.setText(String.valueOf(stockByCodBarra.getQuantidadeExistente()));
+        } else {
+
+            txtQuantidaStock.setText("0");
+        }
+    }
+
+    private static void procedimento_actualizar_quantidade() {
+//        TbStock stock = stockDao.get_stock_by_id_produto_and_id_armazem(getIdCodigoProduto(), getIdArmazem());
+//        txtQuatidadeExistente.setText(stock.getQuantidadeExistente().toString());
+
+        System.out.println("  " + produtoGlobal.getCodigo() + " - " + getCodigoArmazem());
+        System.out.println("CHEGUEI AQUI ENG.");
+        txtQuantidaStock.setText(String.valueOf(stoksController.getQuantidadeProduto(produtoGlobal.getCodigo(), getCodigoArmazem())));
 
     }
 
@@ -1052,10 +1097,12 @@ public class SaidaProdutoVisao extends javax.swing.JFrame {
                 cmbSubFamilia.setSelectedItem(tipoProduto.getDesignacao());
                 cmbProduto.setModel(new DefaultComboBoxModel(produtosController.getVector()));
                 cmbProduto.setSelectedItem(produto.getDesignacao());
+                txtFactConversao.setText(String.valueOf(produto.getFactorConversao()));
 
                 procedimento_adicionar();
                 txtCodigoProduto.setText("");
                 txtCodigoBarra.setText("");
+                txtFactConversao.setText("");
                 txtQuatindade.requestFocus();
 
             } else {
@@ -1355,11 +1402,15 @@ public class SaidaProdutoVisao extends javax.swing.JFrame {
         for (int i = 0; i < table.getRowCount(); i++) {
             TbItemSaidas itemSaidas = new TbItemSaidas();
             int codProduto = Integer.parseInt(String.valueOf(table.getModel().getValueAt(i, 0)));
-            double qtd = Double.parseDouble(String.valueOf(table.getModel().getValueAt(i, 3)));
+            double qtd_grosso = Double.parseDouble(String.valueOf(table.getModel().getValueAt(i, 3)));
+            double factor_conversao = Double.parseDouble(String.valueOf(table.getModel().getValueAt(i, 4)));
+            double quantidade_retalho = Double.parseDouble(String.valueOf(table.getModel().getValueAt(i, 5)));
 
             itemSaidas.setFkProdutos(new TbProduto(codProduto));
             itemSaidas.setFkSaidasProdutos(saidasProdutos);
-            itemSaidas.setQuantidade(qtd);
+            itemSaidas.setQuantidade(qtd_grosso);
+            itemSaidas.setFactorConversao(factor_conversao);
+            itemSaidas.setQuantidadeRetalho(quantidade_retalho);
 
             BigDecimal precoCompra = getPreco(itemSaidas.getFkProdutos().getCodigo(), itemSaidas.getQuantidade());
             itemSaidas.setPrecoCompra(precoCompra);
@@ -1400,6 +1451,11 @@ public class SaidaProdutoVisao extends javax.swing.JFrame {
     public static int getQuantidade() {
         System.err.println("QUANTIDADE DIGTADA:" + txtQuatindade.getText().trim());
         return Integer.parseInt(txtQuatindade.getText().trim());
+    }
+
+    public static double getFactorConversao() {
+        System.err.println("QUANTIDADE DIGTADA:" + txtFactConversao.getText().trim());
+        return Double.parseDouble(txtFactConversao.getText().trim());
     }
 
     public static String getDescricao_Produto() throws SQLException {
@@ -1498,13 +1554,17 @@ public class SaidaProdutoVisao extends javax.swing.JFrame {
 
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
+        double qtd_retalho = getQuantidade() * getFactorConversao();
+
         if (!exist_produto(getCodigoProduto())) {
             if (!validar_zero()) {
                 modelo.addRow(new Object[]{
                     getCodigoProduto(),
                     getDescricao_Produto(),
                     getPreco(),
-                    getQuantidade()
+                    getQuantidade(),
+                    getFactorConversao(),
+                    qtd_retalho
 
                 });
             } else {
@@ -1863,6 +1923,7 @@ public class SaidaProdutoVisao extends javax.swing.JFrame {
     private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -1890,8 +1951,9 @@ public class SaidaProdutoVisao extends javax.swing.JFrame {
     public static javax.swing.JTextField txtCodigoManual;
     public static javax.swing.JTextField txtCodigoProduto;
     public static javax.swing.JTextField txtCodigoSaida;
+    private static javax.swing.JTextField txtFactConversao;
     private javax.swing.JTextField txtMotorista;
-    private javax.swing.JTextField txtQuantidaStock;
+    private static javax.swing.JTextField txtQuantidaStock;
     public static javax.swing.JTextField txtQuatindade;
     // End of variables declaration//GEN-END:variables
 
@@ -1928,8 +1990,10 @@ public class SaidaProdutoVisao extends javax.swing.JFrame {
             //Devo setar a combo dos produtos (Isto porque quando a se faz a busca na cmbCategoria remove todos os produtos exceptos os de categoria actual)
             cmbProduto.setModel(new DefaultComboBoxModel(produtoDao.getAllDesingnacaoProduto()));
             cmbProduto.setSelectedItem(produto.getDesignacao());
+            txtFactConversao.setText(String.valueOf(produto.getFactorConversao()));
             //adicionar_preco_quantidade();   
             adicionar_preco_quantidade_anitgo();
+
             procedimento_adicionar1();
             txtCodigoProduto.setText("");
             txtQuatindade.setText("");
@@ -1944,6 +2008,25 @@ public class SaidaProdutoVisao extends javax.swing.JFrame {
     }
 
     public void adicionar_preco_quantidade_anitgo() {
+
+        try {
+
+            if (conexao.getQtdExistenteStock(getCodigoProduto(), getCodigoArmazem()) <= conexao.getQtdCriticaStock(getCodigoProduto(), getCodigoArmazem())) {
+                txtQuantidaStock.setBackground(Color.RED);
+                txtQuantidaStock.setForeground(Color.BLACK);
+            } else {
+                txtQuantidaStock.setBackground(new Color(51, 153, 0, 255));
+            }
+
+            txtQuantidaStock.setText(String.valueOf(conexao.getQtdExistenteStock(getCodigoProduto(), getCodigoArmazem())));
+
+        } catch (Exception ex) {
+            Logger.getLogger(SaidaProdutoVisao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    public static void adicionar_preco_quantidade_anitgo_lupa() {
 
         try {
 
