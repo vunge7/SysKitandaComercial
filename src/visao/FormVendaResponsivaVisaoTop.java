@@ -2349,7 +2349,9 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         }
 
         Integer idVendaGerada = 0;
-        try {
+
+        try
+        {
 
             // Construção do objeto venda
             TbVenda venda = construirVenda();

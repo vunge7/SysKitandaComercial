@@ -6,29 +6,13 @@
 package comercial.controller;
 
 
-import java.sql.Connection;
-import entity.AnoEconomico;
-import entity.Cambio;
-import entity.Documento;
-import entity.TbArmazem;
-import entity.TbBanco;
-import entity.TbCliente;
-import entity.TbItemVenda;
-import entity.TbLugares;
 import entity.TbStatus;
-import entity.TbPreco;
-import entity.TbProduto;
-import entity.TbStatus;
-import entity.TbVenda;
-import entity.TbUsuario;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-import javafx.animation.Animation.Status;
 import util.BDConexao;
-import util.MetodosUtil;
 
 /**
  *

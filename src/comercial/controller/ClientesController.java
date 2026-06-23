@@ -329,6 +329,27 @@ public class ClientesController implements EntidadeFactory
         return cliente;
 
     }
+    
+    public TbCliente getClienteLikeByNome( String nome )
+    {
+        String FIND__BY_CODIGO = "SELECT * FROM tb_cliente WHERE nome LIKE '%" + nome + "%'";
+        ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
+        TbCliente cliente = null;
+        try
+        {
+            if ( result.next() )
+            {
+                cliente = new TbCliente();
+                setClienteFromResultSet( result, cliente );
+            }
+        }
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
+        }
+        return cliente;
+
+    }
 
     public TbCliente getClienteByNifOrberByTelefone( String telefone )
     {
