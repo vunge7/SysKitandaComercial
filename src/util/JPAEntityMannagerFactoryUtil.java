@@ -21,7 +21,6 @@ import javax.swing.JOptionPane;
  * @author Domingos Dala Vunge & Martinho Canhongo Luis
  */
 public class JPAEntityMannagerFactoryUtil
-
 {
 
 //    public static EntityManagerFactory em  =  Persistence.createEntityManagerFactory("SGCMINIMERCADOPU");
@@ -29,17 +28,14 @@ public class JPAEntityMannagerFactoryUtil
 
     public static void main( String[] args )
     {
-//        EntityManagerFactory em = JPAEntityMannagerFactoryUtil.em;kitanda_db_rocha_k_actual
+//        EntityManagerFactory em = JPAEntityMannagerFactoryUtil.em;kitanda_db_gulele_actual
 //        UsuarioDao usuarioDao = new UsuarioDao( em );
 //        System.out.println(usuarioDao.exist_usuario("dvml", "mavala"));
-
         leituraFicheiro();
-
     }
 
     public static EntityManager createEntityManager()
     {
-
         try
         {
 
@@ -50,7 +46,6 @@ public class JPAEntityMannagerFactoryUtil
             e.printStackTrace();
             return null;
         }
-
     }
 
     public static class Persistencia
@@ -69,7 +64,7 @@ public class JPAEntityMannagerFactoryUtil
                     String ip = informacao.get( 0 );
                     String porta = informacao.get( 1 );
 
-                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_rocha_k?zeroDateTimeBehavior=convertToNull";
+                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_gulele?zeroDateTimeBehavior=convertToNull";
 
                     String user = "root";
                     String password = "DoV90x?#";
