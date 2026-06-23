@@ -63,18 +63,19 @@ public class FacturaElectronicaUtil {
         );
     }
 
-    private static LineDTO construirLineDTO(int lineNo, 
-            String cod, 
-            String desc, 
-            BigDecimal price, 
-            BigDecimal qtd, 
-            BigDecimal discount, 
-            BigDecimal taxPerc, 
+    private static LineDTO construirLineDTO(int lineNo,
+            String cod,
+            String desc,
+            BigDecimal price,
+            BigDecimal qtd,
+            BigDecimal discount,
+            BigDecimal taxPerc,
             TbVenda venda) {
         BigDecimal unitPriceBase = price.subtract(discount);
         BigDecimal base = unitPriceBase.multiply(qtd).setScale(2, RoundingMode.CEILING);
         BigDecimal iva = FinanceUtils.getValorIVABigDecimal(qtd, taxPerc, unitPriceBase, discount);
 
+        System.out.println(base);
         LineDTO line = new LineDTO();
         line.setLineNumber(lineNo);
         line.setProductCode(cod);
@@ -128,7 +129,7 @@ public class FacturaElectronicaUtil {
         docDTO.setCustomerCountry(cliente.getPaisISO());
         docDTO.setCompanyName(cliente.getNome());
         docDTO.setLines(lines);
-        
+
         if (venda.getFkDocumento().getPkDocumento() != DVML.DOC_RECIBO_RC
                 && venda.getFkDocumento().getPkDocumento() != DVML.DOC_RECIBO_RG) {
             docDTO.setLines(lines);
@@ -137,10 +138,12 @@ public class FacturaElectronicaUtil {
             BigDecimal totalBase = BigDecimal.ZERO;
             BigDecimal totalIva = BigDecimal.ZERO;
             for (LineDTO l : lines) {
-                totalBase = totalBase.add(l.getCreditAmount().equals(BigDecimal.ONE) ? l.getDebitAmount() : l.getCreditAmount());
+
+                totalBase = totalBase.add(l.getCreditAmount().equals(BigDecimal.ZERO) ? l.getDebitAmount() : l.getCreditAmount());
                 if (l.getTaxes() != null && !l.getTaxes().isEmpty()) {
                     totalIva = totalIva.add(BigDecimal.valueOf(l.getTaxes().get(0).getTaxContribution()));
                 }
+                System.out.println("BASE " + totalBase);
             }
 
             DocumentTotalsDTO totals = new DocumentTotalsDTO();
