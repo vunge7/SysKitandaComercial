@@ -33,10 +33,9 @@ FROM
      INNER JOIN `tb_tipo_produto` tb_tipo_produto ON tb_produto.`cod_Tipo_Produto` = tb_tipo_produto.`codigo`
      INNER JOIN `tb_armazem` tb_armazem ON tb_stock.`cod_armazem` = tb_armazem.`codigo`
 WHERE
-     tb_tipo_produto.`codigo` = $P{ID_TIPO_PRODUTO} AND tb_armazem.`codigo` = $P{PARM_ID_ARMAZEM} AND tb_produto.`status` = 'Activo'
+     tb_tipo_produto.`codigo` = $P{ID_TIPO_PRODUTO} AND tb_armazem.`codigo` = $P{PARM_ID_ARMAZEM}
 
-ORDER BY
-     tb_produto.`codigo` ASC]]>
+ORDER BY tb_produto.`designacao` ASC]]>
 	</queryString>
 	<field name="tb_produto_designacao" class="java.lang.String"/>
 	<field name="tb_stock_quantidade_existente" class="java.lang.Double"/>

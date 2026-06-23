@@ -185,6 +185,12 @@ public class TbVenda implements Serializable
     private String corCarro;
     @Column(name = "n_doc_motorista")
     private String nDocMotorista;
+    @Column(name = "requestID")
+    private String requestID;
+    @Column(name = "estado")
+    private String estado;
+    @Column(name = "submissionUUID")
+    private String submissionUUID;
     @Column(name = "total_retencao")
     private BigDecimal totalRetencao;
     @Column(name = "gorjeta")
@@ -789,6 +795,39 @@ public class TbVenda implements Serializable
     {
         this.codigoCliente = codigoCliente;
     }
+
+    public String getRequestID()
+    {
+        return requestID;
+    }
+
+    public void setRequestID( String requestID )
+    {
+        this.requestID = requestID;
+    }
+
+    public String getEstado()
+    {
+        return estado;
+    }
+
+    public void setEstado( String estado )
+    {
+        this.estado = estado;
+    }
+
+    public String getSubmissionUUID()
+    {
+        return submissionUUID;
+    }
+
+    public void setSubmissionUUID( String submissionUUID )
+    {
+        this.submissionUUID = submissionUUID;
+    }
+    
+    
+    
 
     @XmlTransient
     public List<NotasItem> getNotasItemList()

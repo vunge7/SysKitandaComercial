@@ -3,63 +3,144 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package dao;
 
-
+import comercial.controller.ConfiguracaoMesComecoController;
+import comercial.controller.PagamentoMensalidadeController;
 import java.sql.Connection;
 //import controlador.MesJpaController;
 import controlador.TbMesRhJpaController;
+import entity.ConfiguracaoMesComeco;
+import entity.PagamentoMensalidade;
 //import entity.Mes;
 import entity.TbMesRh;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author Domingos Dala Vunge
  */
-public class MesRhDao extends TbMesRhJpaController{
+public class MesRhDao extends TbMesRhJpaController
+{
 
-    public MesRhDao(EntityManagerFactory emf) {
-        super(emf);
+    public MesRhDao( EntityManagerFactory emf )
+    {
+        super( emf );
     }
-    
-       public List <TbMesRh > buscaTodos () 
-     {         
-            EntityManager em = getEntityManager();
-            Query query = em.createQuery ("SELECT s.descricao FROM TbMesRh s");
-            return query.getResultList();
+
+    public List<TbMesRh> buscaTodos()
+    {
+        EntityManager em = getEntityManager();
+        Query query = em.createQuery( "SELECT s.descricao FROM TbMesRh s" );
+        return query.getResultList();
     }
-     
-     
-     public String  getDescricaoByIdMes(long pk_mes_rh) 
-     {         
-            EntityManager em = getEntityManager();
-            Query query = em.createQuery ("SELECT s.descricao FROM TbMesRh s WHERE s.pk_mes_rh = :pk_mes_rh")
-                    .setParameter("pk_mes_rh", pk_mes_rh);
-            
-            List   list = query.getResultList();
-            
-            if( list!=null){
-                    return  String.valueOf( list.get(0) );
+
+    public String getDescricaoByIdMes( long pk_mes_rh )
+    {
+        EntityManager em = getEntityManager();
+        Query query = em.createQuery( "SELECT s.descricao FROM TbMesRh s WHERE s.pk_mes_rh = :pk_mes_rh" )
+                .setParameter( "pk_mes_rh", pk_mes_rh );
+
+        List list = query.getResultList();
+
+        if ( list != null )
+        {
+            return String.valueOf( list.get( 0 ) );
+        }
+        return "";
+    }
+
+    public int getIdByDescricao( String descricao )
+    {
+        EntityManager em = getEntityManager();
+        Query query = em.createQuery( "SELECT s.pkMesRh FROM TbMesRh s WHERE s.descricao = :decricao" )
+                .setParameter( "decricao", descricao );
+
+        List result = query.getResultList();
+
+        if ( result != null )
+        {
+            return Integer.parseInt( String.valueOf( result.get( 0 ) ) );
+        }
+        return 0;
+
+    }
+
+    public void carregarMesesPagosEPorPagar( Connection conexao, int clienteId, int produtoId,
+            JTable tabelaMesesPagos, JComboBox<String> cmbMesesPorPagar )
+    {
+        try
+        {
+            // Controller dos pagamentos
+            PagamentoMensalidadeController pagamentoController = new PagamentoMensalidadeController( conexao );
+
+            // Buscar todos os meses disponíveis (ex: Janeiro, Fevereiro, etc.)
+            List<TbMesRh> todosMeses = findTbMesRhEntities();
+
+            // Buscar todos os pagamentos do cliente
+            List<PagamentoMensalidade> pagamentos = pagamentoController.listarPorClienteEProduto( clienteId, produtoId );
+
+            // Guardar IDs dos meses pagos para o produto e cliente em questão
+            List<Integer> mesesPagosIds = new ArrayList<Integer>();
+            for ( PagamentoMensalidade pag : pagamentos )
+            {
+                if ( pag.getClienteId() == clienteId && pag.getProdutoId() == produtoId )
+                {
+                    mesesPagosIds.add( (int) pag.getMesId() );
+                }
             }
-            return "";
+
+            // Configurar modelo da tabela
+            DefaultTableModel model = (DefaultTableModel) tabelaMesesPagos.getModel();
+            if ( model.getColumnCount() == 0 )
+            {
+                model.addColumn( "Cod." );
+                model.addColumn( "Meses" );
+            }
+
+            // Limpar tabela e combo
+            model.setRowCount( 0 );
+            cmbMesesPorPagar.removeAllItems();
+
+            System.out.println( "========== DEBUG MÊSES ==========" );
+            System.out.println( "Meses pagos IDs: " + mesesPagosIds );
+
+            // Preencher tabela (meses pagos) e combo (meses por pagar)
+            for ( TbMesRh mes : todosMeses )
+            {
+                int idMes = mes.getPkMesRh().intValue();
+                String descricao = mes.getDescricao();
+                boolean pago = mesesPagosIds.contains( idMes );
+
+                if ( pago )
+                {
+                    model.addRow( new Object[]
+                    {
+                        idMes, descricao
+                    } );
+                }
+                else
+                {
+                    cmbMesesPorPagar.addItem( descricao );
+                }
+            }
+
+            tabelaMesesPagos.setModel( model );
+
+        }
+        catch ( Exception e )
+        {
+            JOptionPane.showMessageDialog( null, "Erro ao carregar meses: " + e.getMessage() );
+            e.printStackTrace();
+        }
     }
-    
-     public int getIdByDescricao (String descricao) 
-     {         
-            EntityManager em = getEntityManager();
-            Query query = em.createQuery ("SELECT s.pkMesRh FROM TbMesRh s WHERE s.descricao = :decricao")
-                    .setParameter("decricao", descricao);
-            
-            List result = query.getResultList();
-            
-            if( result!= null )
-                return  Integer.parseInt(  String.valueOf( result.get(0) ) )  ;
-            return 0;
-            
-    }
+
 }

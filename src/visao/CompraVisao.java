@@ -1478,7 +1478,7 @@ public class CompraVisao extends javax.swing.JFrame implements Runnable
         System.err.println( "busca_produto_by_cod_barra: " );
         preco = precosController.getLastIdPrecoByIdProdutos( codigoInternoInt );
         System.err.println( "codInternoString: " + codInternoString );
-        produto = ( TbProduto ) produtosController.findById( codigoInternoInt );
+        produto = ( TbProduto ) produtosController.findByIdStatus(codigoInternoInt );
         if ( produto.getCodigo() != 0 )
         {
             lb_produto.setText( produto.getDesignacao() );
@@ -2176,7 +2176,7 @@ public class CompraVisao extends javax.swing.JFrame implements Runnable
         }
         catch ( SQLException ex )
         {
-            Logger.getLogger( CompraVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(CompraVisao.class.getName() ).log( Level.SEVERE, null, ex );
         }
     }
 

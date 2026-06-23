@@ -58,6 +58,10 @@ public class TbCliente implements Serializable
     private String nif;
     @Column(name = "email")
     private String email;
+    @Column(name = "pais")
+    private String pais;
+    @Column(name = "pais_ISO")
+    private String paisISO;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "codigoCliente")
     private List<Notas> notasList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkCliente")
@@ -135,6 +139,28 @@ public class TbCliente implements Serializable
     {
         this.email = email;
     }
+
+    public String getPais()
+    {
+        return pais;
+    }
+
+    public void setPais( String pais )
+    {
+        this.pais = pais;
+    }
+
+    public String getPaisISO()
+    {
+        return paisISO;
+    }
+
+    public void setPaisISO( String paisISO )
+    {
+        this.paisISO = paisISO;
+    }
+    
+    
 
     @XmlTransient
     public List<Notas> getNotasList()

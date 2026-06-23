@@ -5,10 +5,10 @@
  */
 package dao;
 
-
 import java.sql.Connection;
 import controlador.TbPedidoJpaController;
 import entity.TbPedido;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -39,7 +39,7 @@ public class PedidoDao extends TbPedidoJpaController
         EntityManager em = getEntityManager();
         Query query = em.createQuery( "SELECT c.dataPedido FROM TbPedido  c" );
 
-        Vector<String> result = (Vector) query.getResultList();
+        Vector<String> result = ( Vector ) query.getResultList();
         em.close();
 
         if ( result != null )
@@ -163,6 +163,35 @@ public class PedidoDao extends TbPedidoJpaController
             }
 
         }
+        return 0;
+    }
+
+    public int getLastPedidoByDefignacaoMesaFALSE( String mesa, BDConexao conexao )
+    {
+        String sql = "SELECT MAX(pk_pedido) AS ultimo "
+                + "FROM tb_pedido "
+                + "WHERE fk_mesas IN (SELECT pk_mesas FROM tb_mesas WHERE designacao = ?) "
+                + "AND status_pedido = FALSE";
+
+        try ( Connection conn = conexao.getConexao(); PreparedStatement ps = conn.prepareStatement( sql ) )
+        {
+
+            ps.setString( 1, mesa );
+
+            try ( ResultSet rs = ps.executeQuery() )
+            {
+                if ( rs.next() )
+                {
+                    return rs.getInt( "ultimo" ); // retorna 0 se for NULL
+                }
+            }
+
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
+
         return 0;
     }
 
@@ -359,6 +388,7 @@ public class PedidoDao extends TbPedidoJpaController
         }
         catch ( SQLException ex )
         {
+            ex.printStackTrace();
             Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
         }
 

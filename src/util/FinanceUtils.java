@@ -4,9 +4,9 @@
  */
 package util;
 
-
 import java.sql.Connection;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -21,52 +21,233 @@ public class FinanceUtils
 
     public static BigDecimal getTotalIliquidoTable( int indexColunaPreco, int indexColunaQtd, JTable table )
     {
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         BigDecimal totalIliquido = BigDecimal.ZERO;
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
         {
-            // Coluna 3: Preço Unitário, Coluna 4: Quantidade
-            BigDecimal precoUnitario = BigDecimal.valueOf(
-                    CfMethods.parseMoedaFormatada(
-                            modelo.getValueAt( i, indexColunaPreco ).toString() ) );
-            BigDecimal quantidade = new BigDecimal( modelo.getValueAt( i, indexColunaQtd ).toString() );
 
+            Object precoObj = modelo.getValueAt( i, indexColunaPreco );
+            Object qtdObj = modelo.getValueAt( i, indexColunaQtd );
+
+            // Ignora linhas vazias
+            if ( precoObj == null || qtdObj == null )
+            {
+                continue;
+            }
+
+            String precoTxt = precoObj.toString().trim();
+            String qtdTxt = qtdObj.toString().trim();
+
+            if ( precoTxt.isEmpty() || qtdTxt.isEmpty() )
+            {
+                continue;
+            }
+
+            // Parse seguro
+            BigDecimal precoUnitario = BigDecimal.valueOf(
+                    CfMethods.parseMoedaFormatada( precoTxt )
+            );
+
+            BigDecimal quantidade;
+
+            try
+            {
+                quantidade = new BigDecimal( qtdTxt );
+            }
+            catch ( NumberFormatException e )
+            {
+                System.err.println( "Quantidade inválida na linha " + i + ": " + qtdTxt );
+                continue;
+            }
+
+            // subtotal = preço * quantidade
             BigDecimal subtotal = precoUnitario.multiply( quantidade );
             totalIliquido = totalIliquido.add( subtotal );
         }
-        return totalIliquido.setScale( 2, RoundingMode.HALF_UP );
+
+        return totalIliquido.setScale( 2, RoundingMode.CEILING );
     }
 
-    public static double getTotalImpostoTable(
-            int indexColPreco,
-            int indexColQtd,
-            int indexColDesconto,
-            int indexColTaxaIva,
-            JTable table )
+//    public static double getTotalImpostoTable(
+//            int indexColPreco,
+//            int indexColQtd,
+//            int indexColDesconto,
+//            int indexColTaxaIva,
+//            JTable table )
+//    {
+//        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+//        double qtd = 0d;
+//        double imposto = 0d, preco_unitario = 0d, desconto_valor_linha = 0d;
+//
+//        for ( int i = 0; i < modelo.getRowCount(); i++ )
+//        {
+//            preco_unitario = CfMethods.parseMoedaFormatada( modelo.getValueAt( i, indexColPreco ).toString() );
+//            qtd = Double.parseDouble( modelo.getValueAt( i, indexColQtd ).toString() );
+//            double desconto_percentagem = Double.parseDouble( modelo.getValueAt( i, indexColDesconto ).toString() );
+//            double taxaIva = Double.parseDouble( modelo.getValueAt( i, indexColTaxaIva ).toString() );
+//            // a incidência só é aplicável ao produtos sujeitos a iva 
+//            if ( taxaIva != 0 )
+//            {
+//                double valor_unitario = ( preco_unitario * qtd );
+//                desconto_valor_linha = valor_unitario * ( ( desconto_percentagem ) / 100 );
+//                imposto += ( ( valor_unitario - desconto_valor_linha ) * ( taxaIva / 100 ) );
+//
+//            }
+//
+//        }
+//
+//        return imposto;
+//    }
+//    public static double getTotalImpostoTable( int indexPreco, int indexQtd, int indexDesc, int indexIva, JTable table )
+//    {
+//
+//        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+//        double totalImposto = 0.0;
+//
+//        for ( int i = 0; i < modelo.getRowCount(); i++ )
+//        {
+//
+//            Object precoObj = modelo.getValueAt( i, indexPreco );
+//            Object qtdObj = modelo.getValueAt( i, indexQtd );
+//            Object descObj = modelo.getValueAt( i, indexDesc );
+//            Object ivaObj = modelo.getValueAt( i, indexIva );
+//
+//            // Ignora linha incompleta
+//            if ( precoObj == null || qtdObj == null || ivaObj == null )
+//            {
+//                continue;
+//            }
+//
+//            String precoTxt = precoObj.toString().trim();
+//            String qtdTxt = qtdObj.toString().trim();
+//            String descTxt = descObj == null ? "0" : descObj.toString().trim();
+//            String ivaTxt = ivaObj.toString().trim();
+//
+//            // Ignora se algum obrigatório estiver vazio
+//            if ( precoTxt.isEmpty() || qtdTxt.isEmpty() || ivaTxt.isEmpty() )
+//            {
+//                continue;
+//            }
+//
+//            // ------- PARSE SEGURO -------
+//            double preco = CfMethods.parseMoedaFormatada( precoTxt );
+//
+//            double qtd;
+//            try
+//            {
+//                qtd = Double.parseDouble( qtdTxt );
+//            }
+//            catch ( Exception e )
+//            {
+//                continue;
+//            }
+//
+//            double desconto;
+//            try
+//            {
+//                desconto = Double.parseDouble( descTxt.isEmpty() ? "0" : descTxt );
+//            }
+//            catch ( Exception e )
+//            {
+//                desconto = 0.0;
+//            }
+//
+//            double iva;
+//            try
+//            {
+//                iva = Double.parseDouble( ivaTxt );
+//            }
+//            catch ( Exception e )
+//            {
+//                iva = 0.0;
+//            }
+//
+//            // --------- CÁLCULO DO IMPOSTO ---------
+//            double base = ( preco * qtd ) - desconto;
+//            double imposto = base * ( iva / 100.0 );
+//
+//            totalImposto += imposto;
+//        }
+//
+//        return round2( totalImposto );
+//    }
+    public static double getTotalImpostoTable( int indexPreco, int indexQtd, int indexDesc, int indexIva, JTable table )
     {
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
-        double qtd = 0d;
-        double imposto = 0d, preco_unitario = 0d, desconto_valor_linha = 0d;
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        double totalImposto = 0.0;
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
         {
-            preco_unitario = CfMethods.parseMoedaFormatada( modelo.getValueAt( i, indexColPreco ).toString() );
-            qtd = Double.parseDouble( modelo.getValueAt( i, indexColQtd ).toString() );
-            double desconto_percentagem = Double.parseDouble( modelo.getValueAt( i, indexColDesconto ).toString() );
-            double taxaIva = Double.parseDouble( modelo.getValueAt( i, indexColTaxaIva ).toString() );
-            // a incidência só é aplicável ao produtos sujeitos a iva 
-            if ( taxaIva != 0 )
-            {
-                double valor_unitario = ( preco_unitario * qtd );
-                desconto_valor_linha = valor_unitario * ( ( desconto_percentagem ) / 100 );
-                imposto += ( ( valor_unitario - desconto_valor_linha ) * ( taxaIva / 100 ) );
+            Object precoObj = modelo.getValueAt( i, indexPreco );
+            Object qtdObj = modelo.getValueAt( i, indexQtd );
+            Object descObj = modelo.getValueAt( i, indexDesc );
+            Object ivaObj = modelo.getValueAt( i, indexIva );
 
+            if ( precoObj == null || qtdObj == null || ivaObj == null )
+            {
+                continue;
             }
 
+            String precoTxt = precoObj.toString().trim();
+            String qtdTxt = qtdObj.toString().trim();
+            String descTxt = (descObj == null ? "0" : descObj.toString().trim());
+            String ivaTxt = ivaObj.toString().trim();
+
+            if ( precoTxt.isEmpty() || qtdTxt.isEmpty() || ivaTxt.isEmpty() )
+            {
+                continue;
+            }
+
+            double preco = CfMethods.parseMoedaFormatada( precoTxt );
+
+            double qtd;
+            try
+            {
+                qtd = Double.parseDouble( qtdTxt );
+            }
+            catch ( Exception e )
+            {
+                continue;
+            }
+
+            double desconto;
+            try
+            {
+                desconto = Double.parseDouble( descTxt.isEmpty() ? "0" : descTxt );
+            }
+            catch ( Exception e )
+            {
+                desconto = 0.0;
+            }
+
+            double iva;
+            try
+            {
+                iva = Double.parseDouble( ivaTxt );
+            }
+            catch ( Exception e )
+            {
+                iva = 0.0;
+            }
+
+            // --- CÁLCULO CORRETO DO DESCONTO (%)
+            double valorBruto = preco * qtd;
+            double valorComDesconto = valorBruto * ( 1 - ( desconto / 100.0 ) );
+
+            // ---- CÁLCULO DO IMPOSTO (IVA %)
+            double imposto = valorComDesconto * ( iva / 100.0 );
+
+            totalImposto += imposto;
         }
 
-        return imposto;
+        return round2( totalImposto );
+    }
+
+    private static double round2( double valor )
+    {
+        return new BigDecimal( valor ).setScale( 2, RoundingMode.CEILING ).doubleValue();
     }
 
     public static double getTotalIncidenciaTable(
@@ -76,7 +257,7 @@ public class FinanceUtils
             int indexColTaxaIva,
             JTable table )
     {
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         double qtd = 0;
         double incidencia = 0d, preco_unitario = 0d, desconto_valor_linha = 0;
 
@@ -90,7 +271,7 @@ public class FinanceUtils
             if ( taxaIva != 0 )
             {
                 desconto_valor_linha = ( ( desconto_percentagem ) / 100 );
-                double valor_unitario = ( preco_unitario * qtd );
+                double valor_unitario = (preco_unitario * qtd);
                 incidencia += ( ( valor_unitario ) - ( valor_unitario * desconto_valor_linha ) );
             }
         }
@@ -99,37 +280,103 @@ public class FinanceUtils
     }
 
     public static BigDecimal getDescontoComercial(
-            int indexColPreco,
-            int indexColQtd,
-            int indexColDesconto,
-            JTable table )
+            int indexPreco, int indexQtd, int indexDesconto, JTable table )
     {
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
-        BigDecimal descontoComercial = BigDecimal.ZERO;
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+        BigDecimal totalDesconto = BigDecimal.ZERO;
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
         {
-            // Preço unitário convertido com BigDecimal
-            BigDecimal precoUnitario = BigDecimal.valueOf(
-                    CfMethods.parseMoedaFormatada( modelo.getValueAt( i, indexColPreco ).toString() )
+
+            Object precoObj = modelo.getValueAt( i, indexPreco );
+            Object qtdObj = modelo.getValueAt( i, indexQtd );
+            Object descontoObj = modelo.getValueAt( i, indexDesconto );
+
+            if ( precoObj == null || qtdObj == null || descontoObj == null )
+            {
+                continue;
+            }
+
+            String precoTxt = precoObj.toString().trim();
+            String qtdTxt = qtdObj.toString().trim();
+            String descontoTxt = descontoObj.toString().trim();
+
+            if ( precoTxt.isEmpty() || qtdTxt.isEmpty() )
+            {
+                continue;
+            }
+
+            // ----------------- PARSE SEGURO -----------------
+            BigDecimal preco = BigDecimal.valueOf(
+                    CfMethods.parseMoedaFormatada( precoTxt )
             );
-            // Quantidade
-            BigDecimal qtd = new BigDecimal( modelo.getValueAt( i, indexColQtd ).toString() );
-            // Percentagem do desconto
-            BigDecimal valorPercentagem = new BigDecimal( modelo.getValueAt( i, indexColDesconto ).toString() );
-            // Converte percentagem para fração (ex: 10 -> 0.10)
-            BigDecimal descontoPercentual = valorPercentagem.divide( BigDecimal.valueOf( 100 ), 6, RoundingMode.HALF_UP );
-            // valor_unitario = preco_unitario * qtd
-            BigDecimal valorUnitario = precoUnitario.multiply( qtd );
-            // desconto_comercial += valor_unitario * descontoPercentual
-            descontoComercial = descontoComercial.add( valorUnitario.multiply( descontoPercentual ) );
+
+            BigDecimal qtd;
+            try
+            {
+                qtd = new BigDecimal( qtdTxt );
+            }
+            catch ( Exception e )
+            {
+                continue; // quantidade inválida → ignora linha
+            }
+
+            BigDecimal descontoPercent;
+            try
+            {
+                descontoPercent = new BigDecimal(
+                        descontoTxt.isEmpty() ? "0" : descontoTxt
+                );
+            }
+            catch ( Exception e )
+            {
+                descontoPercent = BigDecimal.ZERO; // desconto inválido vira zero
+            }
+
+            // ----------------- CÁLCULO -----------------
+            BigDecimal subtotal = preco.multiply( qtd );
+            BigDecimal desconto = subtotal
+                    .multiply( descontoPercent )
+                    .divide( new BigDecimal( "100" ), 10, RoundingMode.HALF_UP );
+
+            totalDesconto = totalDesconto.add( desconto );
         }
 
-        // Retorna com 2 casas decimais, arredondado
-        return descontoComercial.setScale( 2, RoundingMode.HALF_UP );
+        return totalDesconto.setScale( 2, RoundingMode.HALF_UP );
     }
 
+//    public static BigDecimal getDescontoComercial(
+//            int indexColPreco,
+//            int indexColQtd,
+//            int indexColDesconto,
+//            JTable table )
+//    {
+//        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+//
+//        BigDecimal descontoComercial = BigDecimal.ZERO;
+//
+//        for ( int i = 0; i < modelo.getRowCount(); i++ )
+//        {
+//            // Preço unitário convertido com BigDecimal
+//            BigDecimal precoUnitario = BigDecimal.valueOf(
+//                    CfMethods.parseMoedaFormatada( modelo.getValueAt( i, indexColPreco ).toString() )
+//            );
+//            // Quantidade
+//            BigDecimal qtd = new BigDecimal( modelo.getValueAt( i, indexColQtd ).toString() );
+//            // Percentagem do desconto
+//            BigDecimal valorPercentagem = new BigDecimal( modelo.getValueAt( i, indexColDesconto ).toString() );
+//            // Converte percentagem para fração (ex: 10 -> 0.10)
+//            BigDecimal descontoPercentual = valorPercentagem.divide( BigDecimal.valueOf( 100 ), 6, RoundingMode.HALF_UP );
+//            // valor_unitario = preco_unitario * qtd
+//            BigDecimal valorUnitario = precoUnitario.multiply( qtd );
+//            // desconto_comercial += valor_unitario * descontoPercentual
+//            descontoComercial = descontoComercial.add( valorUnitario.multiply( descontoPercentual ) );
+//        }
+//
+//        // Retorna com 2 casas decimais, arredondado
+//        return descontoComercial.setScale( 2, RoundingMode.HALF_UP );
+//    }
     public static BigDecimal getTotalIncidenciaIsento(
             int indexColPreco,
             int indexColQtd,
@@ -138,7 +385,7 @@ public class FinanceUtils
             JTable table )
     {
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         BigDecimal incidenciaIsento = BigDecimal.ZERO;
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
@@ -175,19 +422,67 @@ public class FinanceUtils
         }
 
         // Retorna arredondado a 2 casas decimais
-        return incidenciaIsento.setScale( 2, RoundingMode.HALF_UP );
+        return incidenciaIsento.setScale( 2, RoundingMode.CEILING );
     }
 
     public static double getValorComIVA( double qtd, double taxa, double preco, double desconto )
     {
         BigDecimal precoBD = BigDecimal.valueOf( preco );
         BigDecimal qtdBD = BigDecimal.valueOf( qtd );
-        BigDecimal subtotal = precoBD.multiply( qtdBD );
+        BigDecimal subtotal = precoBD.multiply( qtdBD ).setScale( 2, RoundingMode.CEILING );
         BigDecimal descontoBD = subtotal.multiply( BigDecimal.valueOf( desconto ).divide( BigDecimal.valueOf( 100 ) ) );
         BigDecimal base = subtotal.subtract( descontoBD );
         BigDecimal iva = BigDecimal.ONE.add( BigDecimal.valueOf( taxa ).divide( BigDecimal.valueOf( 100 ) ) );
         BigDecimal total = base.multiply( iva );
-        return total.setScale( 2, RoundingMode.HALF_UP ).doubleValue();
+        return total.setScale( 2, RoundingMode.CEILING ).doubleValue();
+    }
+
+    public static BigDecimal getValorIVA( double qtd, double taxa, double preco, double desconto )
+    {
+        BigDecimal precoBD = BigDecimal.valueOf( preco );
+        BigDecimal qtdBD = BigDecimal.valueOf( qtd );
+
+        // Subtotal
+        BigDecimal subtotal = precoBD.multiply( qtdBD );
+
+        // Desconto
+        BigDecimal descontoBD = subtotal.multiply(
+                BigDecimal.valueOf( desconto ).divide( BigDecimal.valueOf( 100 ) )
+        );
+
+        // Base tributável
+        BigDecimal base = subtotal.subtract( descontoBD );
+
+        // Valor do IVA (SÓ O IMPOSTO)
+        BigDecimal ivaValor = base.multiply(
+                BigDecimal.valueOf( taxa ).divide( BigDecimal.valueOf( 100 ) )
+        );
+
+        return ivaValor.setScale( 2, RoundingMode.CEILING );
+    }
+
+    public static BigDecimal getValorIVABigDecimal( BigDecimal qtd, BigDecimal taxa, BigDecimal preco, BigDecimal desconto )
+    {
+        BigDecimal precoBD = preco;
+        BigDecimal qtdBD = qtd;
+
+        // Subtotal
+        BigDecimal subtotal = precoBD.multiply( qtdBD );
+
+        // Desconto
+        BigDecimal descontoBD = subtotal.multiply(
+                desconto.divide( BigDecimal.valueOf( 100 ) )
+        );
+
+        // Base tributável
+        BigDecimal base = subtotal.subtract( descontoBD );
+
+        // Valor do IVA (SÓ O IMPOSTO)
+        BigDecimal ivaValor = base.multiply(
+                taxa.divide( BigDecimal.valueOf( 100 ) )
+        );
+
+        return ivaValor.setScale( 2, RoundingMode.CEILING );
     }
 
     public static BigDecimal getValorIliquido( BigDecimal qtd, BigDecimal precoVenda, BigDecimal desconto )
@@ -197,11 +492,11 @@ public class FinanceUtils
 
         // desconto = subtotal × (desconto / 100)
         BigDecimal descontoValor = subtotal.multiply( desconto )
-                .divide( BigDecimal.valueOf( 100 ), 2, RoundingMode.HALF_UP );
+                .divide( BigDecimal.valueOf( 100 ), 2, RoundingMode.CEILING );
 
         // valor ilíquido = subtotal - desconto
         BigDecimal valorIliquido = subtotal.subtract( descontoValor );
         // retorna com 2 casas decimais
-        return valorIliquido.setScale( 2, RoundingMode.HALF_UP );
+        return valorIliquido.setScale( 2, RoundingMode.CEILING );
     }
 }

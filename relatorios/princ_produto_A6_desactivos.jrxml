@@ -75,7 +75,7 @@ ORDER BY
 					<subreportParameterExpression><![CDATA[$P{ID_ARMAZEM}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_produto_A6.jasper"]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_produto_desactivo_A6.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>

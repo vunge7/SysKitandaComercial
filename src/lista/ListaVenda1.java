@@ -4,12 +4,13 @@
  */
 package lista;
 
-
+import comercial.controller.DadosInstituicaoController;
 import java.sql.Connection;
 import dao.DadosInstituicaoDao;
 import dao.VendaDao;
 import entity.TbDadosInstituicao;
 import entity.TbVenda;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -26,6 +27,7 @@ import static util.DVML.CAMINHO_REPORT;
 import static util.DVML.VERSION_SOFTWARE;
 import static util.DVML.NAME_SOFTWARE;
 import util.JPAEntityMannagerFactoryUtil;
+import util.fe.QrCodeUtil;
 import static visao.NotaLevantamentoVisao.btnProcessar;
 
 /**
@@ -39,6 +41,8 @@ public class ListaVenda1
     private VendaDao vendaDao = new VendaDao( emf );
     private DadosInstituicaoDao dadosInstituicaoDao = new DadosInstituicaoDao( emf );
     private TbDadosInstituicao dadosInstituicao;
+
+    private DadosInstituicaoController dadosInstituicaoController;
 
     private BDConexao conexao;
     private int codigo;
@@ -87,7 +91,7 @@ public class ListaVenda1
         }
 
     }
-    
+
     public ListaVenda1( int codigo, Abreviacao doc_abrevicao, boolean performance, boolean factura_simplificada, String status_documento, String motivo_isencao )
     {
 
@@ -125,6 +129,7 @@ public class ListaVenda1
 
     private HashMap getParamentros()
     {
+
         HashMap hashMap = new HashMap();
         hashMap.put( "CODIGO_VENDA", this.codigo );
         hashMap.put( "DOCUMENTO", vendaDao.findTbVenda( codigo ).getFkDocumento().getDesignacao() );
@@ -135,6 +140,21 @@ public class ListaVenda1
         hashMap.put( "MOTIVO_ISENCAO", this.motivo_isencao );
         hashMap.put( "NIF_CLIENTE_CONSOMIDOR_FINAL", setConsumidorFinal( vendaDao.findTbVenda( codigo ) ) );
 //        hashMap.put( "REGIME", dadosInstituicao.getRegime() );
+
+        // 🔹 QR com logo
+        try
+        {
+            
+            dadosInstituicaoController = new DadosInstituicaoController( BDConexao.getInstancia() );
+            String nif = dadosInstituicaoController.findByCodigo( 1 ).getNif();
+            BufferedImage qrImage = QrCodeUtil.gerarQrComLogo( nif, vendaDao.findTbVenda( codigo ).getCodFact() );
+            hashMap.put( "QR_IMAGE", qrImage );
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
+
         return hashMap;
 
     }
@@ -144,7 +164,6 @@ public class ListaVenda1
 
 //        this.motivo_isencao = "Motivo de Exclusão";x
         //this.motivo_isencao = "Regime Transitório";
-
         String relatorio = getCaminho();
 
         File file = new File( relatorio ).getAbsoluteFile();
@@ -157,7 +176,7 @@ public class ListaVenda1
             if ( jasperPrint.getPages().size() >= 1 )
             {
                 JasperViewer jasperViewer = new JasperViewer( jasperPrint, false );
-                switch ( this.doc_breviacao )
+                switch (this.doc_breviacao)
                 {
 
                     case FR_A6:
@@ -238,12 +257,12 @@ public class ListaVenda1
             JOptionPane.showMessageDialog( null, "DOCUMENTO NÃO FINALIZADO\nPOR FAVOR, REPITA A OPERAÇÃO!..." );
         }
     }
+
     public void mostrarVendaPOS() throws SQLException
     {
 
 //        this.motivo_isencao = "Motivo de Exclusão";
         //this.motivo_isencao = "Regime Transitório";
-
         String relatorio = getCaminho();
 
         File file = new File( relatorio ).getAbsoluteFile();
@@ -256,13 +275,13 @@ public class ListaVenda1
             if ( jasperPrint.getPages().size() >= 1 )
             {
                 JasperViewer jasperViewer = new JasperViewer( jasperPrint, false );
-                switch ( this.doc_breviacao )
+                switch (this.doc_breviacao)
                 {
 
                     case FR_A6:
                     {
                         jasperViewer.setVisible( true );
-                      // Imprime directamente
+                        // Imprime directamente
                         if ( !performance )
                         {
                             JasperPrintManager.printReport( jasperPrint, false );
@@ -354,7 +373,7 @@ public class ListaVenda1
     {
 
         //System.err.println(Abreviacao.FR_A4);
-        switch ( this.doc_breviacao )
+        switch (this.doc_breviacao)
         {
 
             case FR_A4:
@@ -365,17 +384,16 @@ public class ListaVenda1
 
             case FR_A6:
                 return CAMINHO_REPORT + "facturaA6.jasper";
-                
+
             case FR_A6_O:
                 return CAMINHO_REPORT + "facturaA6_O.jasper";
-                
+
             case FR_S_A6_O:
                 return CAMINHO_REPORT + "facturaA6_O.jasper";
 
-
             case FR_S_A6:
                 return CAMINHO_REPORT + "facturaA6.jasper";
-                
+
             case EL:
                 return CAMINHO_REPORT + "facturaA6.jasper";
 
@@ -405,11 +423,11 @@ public class ListaVenda1
                 try
                 {
 //                    MetodosUtil.exportReportToPdf("nota_levantamento_A4.jasper", "nota_levantamento_A4.pdf", getParamentros(), getConexao());                    
-                }
-                catch ( Exception e )
-                {
-                }
-                return CAMINHO_REPORT + "nota_levantamento_A4.jasper";
+            }
+            catch ( Exception e )
+            {
+            }
+            return CAMINHO_REPORT + "nota_levantamento_A4.jasper";
             default:
                 return "";
 
@@ -433,7 +451,7 @@ public class ListaVenda1
     public static void main( String[] args ) throws JRException, SQLException
     {
         Abreviacao abreviacao = Abreviacao.NL;
-        new ListaVenda1( 28, abreviacao, false, false, "Original" );
+        new ListaVenda1( 7, abreviacao, false, false, "Original" );
     }
 
     private String setConsumidorFinal( TbVenda venda )

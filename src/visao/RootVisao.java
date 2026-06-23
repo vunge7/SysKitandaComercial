@@ -4,8 +4,6 @@
  */
 package visao;
 
-
-import java.sql.Connection;
 import comercial.controller.CaixasController;
 import comercial.controller.DadosInstituicaoController;
 import comercial.controller.ItemCaixaController;
@@ -56,12 +54,11 @@ public class RootVisao extends javax.swing.JFrame
 {
 
     private Integer idUser;
-    private boolean administrador = false;
     public static TbDadosInstituicao dadosInstituicao;
     private static DadosInstituicaoController dadosInstituicaoController;
     private static CaixasController caixa_controller;
     private static ItemCaixaController item_caixa_controller;
-    private ItemPermissaoDao itemPermissaoDao = new ItemPermissaoDao(emf );
+    private ItemPermissaoDao itemPermissaoDao = new ItemPermissaoDao( emf );
     private static EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
     private DadosInstituicaoDao dadosInstituicaoDao = new DadosInstituicaoDao( emf );
     private static UsuarioDao usuarioDao = new UsuarioDao( emf );
@@ -69,6 +66,7 @@ public class RootVisao extends javax.swing.JFrame
     private static CaixaDao caixaDao = new CaixaDao( emf );
     private static BDConexao conexao;
     private int codigo = 0;
+    private boolean administrador = false;
     private int idEmpresa = 0;
     private float percentagem_seja_bem_vindo = 0;
     Thread t;
@@ -120,23 +118,26 @@ public class RootVisao extends javax.swing.JFrame
         setRh( dadosInstituicaoDao.findTbDadosInstituicao( 1 ).getRh() );
         setComercial( dadosInstituicaoDao.findTbDadosInstituicao( 1 ).getComercial() );
         busca_permissao();
-        
-        
+
         // Atalho F4 para chamar getMenuPrincipalByNegocio(...)
-getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-    .put(KeyStroke.getKeyStroke("F4"), "abrirMenuPrincipal");
+        getRootPane().getInputMap( JComponent.WHEN_IN_FOCUSED_WINDOW )
+                .put( KeyStroke.getKeyStroke( "F4" ), "abrirMenuPrincipal" );
 
-getRootPane().getActionMap().put("abrirMenuPrincipal", new AbstractAction() {
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        try {
-            getMenuPrincipalByNegocio(dadosInstituicao.getNegocio());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-});
-
+        getRootPane().getActionMap().put( "abrirMenuPrincipal", new AbstractAction()
+        {
+            @Override
+            public void actionPerformed( ActionEvent e )
+            {
+                try
+                {
+                    getMenuPrincipalByNegocio( dadosInstituicao.getNegocio() );
+                }
+                catch ( Exception ex )
+                {
+                    ex.printStackTrace();
+                }
+            }
+        } );
 
         setWindowsListener();
 //        btn_abertura_dia_root.setVisible( false);
@@ -480,12 +481,11 @@ getRootPane().getActionMap().put("abrirMenuPrincipal", new AbstractAction() {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(bt_desencriptar)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(fundo_principalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(fundo_principalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(btn_abertura_dia_root, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
-                                .addComponent(btn_feicho_dia_root, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btConfiguracaoSistema, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                        .addGroup(fundo_principalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btn_abertura_dia_root, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
+                            .addComponent(btn_feicho_dia_root, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btConfiguracaoSistema, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap(135, Short.MAX_VALUE))
         );
         fundo_principalLayout.setVerticalGroup(
@@ -530,18 +530,23 @@ getRootPane().getActionMap().put("abrirMenuPrincipal", new AbstractAction() {
 
     private void btnComercialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnComercialActionPerformed
 
-try {
-    if (dadosInstituicao != null && dadosInstituicao.getNegocio() != null) {
-        System.out.println("Abrindo menu para negócio: " + dadosInstituicao.getNegocio());
-        getMenuPrincipalByNegocio(dadosInstituicao.getNegocio());
-    } else {
-        System.err.println("[Erro] Dados da instituição estão nulos. Abrindo menu padrão...");
-        getMenuPrincipalByNegocio("Comercial");
-    }
-} catch (Exception e) {
-    e.printStackTrace();
-}
-
+        try
+        {
+            if ( dadosInstituicao != null && dadosInstituicao.getNegocio() != null )
+            {
+                System.out.println( "Abrindo menu para negócio: " + dadosInstituicao.getNegocio() );
+                getMenuPrincipalByNegocio( dadosInstituicao.getNegocio() );
+            }
+            else
+            {
+                System.err.println( "[Erro] Dados da instituição estão nulos. Abrindo menu padrão..." );
+                getMenuPrincipalByNegocio( "Comercial" );
+            }
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
 
 
     }//GEN-LAST:event_btnComercialActionPerformed
@@ -550,7 +555,7 @@ try {
     private void btnRHActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRHActionPerformed
 
         dispose();
-        new MenuPrincipalRHNovoVisao( this.idUser, this.idEmpresa, true, BDConexao.getInstancia()).setVisible(true);
+        new MenuPrincipalRHNovoVisao( this.idUser, this.idEmpresa, true, BDConexao.getInstancia() ).setVisible( true );
 
 //                dispose();
 //        new MenuPrincipalNovaRHVisao (idUser, administrador, BDConexao.getInstancia()).setVisible(true);
@@ -562,7 +567,7 @@ try {
         // TODO add your handling code here:
         dispose();
 //        new MenuPrincipalTesourariaVisao( this.idUser, this.idEmpresa, BDConexao.getInstancia()).setVisible(true);
-        new NovoMenuPrincipalTesourariaVisao(idUser, true, BDConexao.getInstancia()).setVisible(true);
+        new NovoMenuPrincipalTesourariaVisao( idUser, true, BDConexao.getInstancia() ).setVisible( true );
     }//GEN-LAST:event_btnTesourariaActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
@@ -635,12 +640,30 @@ try {
 
     private void btComercialActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btComercialActionPerformed
     {//GEN-HEADEREND:event_btComercialActionPerformed
+//        try
+//        {
+//            getMenuPrincipalByNegocio( dadosInstituicao.getNegocio() );
+//        }
+//        catch ( Exception e )
+//        {
+//        }
+
         try
         {
-            getMenuPrincipalByNegocio( dadosInstituicao.getNegocio() );
+            if ( dadosInstituicao != null && dadosInstituicao.getNegocio() != null )
+            {
+                System.out.println( "Abrindo menu para negócio: " + dadosInstituicao.getNegocio() );
+                getMenuPrincipalByNegocio( dadosInstituicao.getNegocio() );
+            }
+            else
+            {
+                System.err.println( "[Erro] Dados da instituição estão nulos. Abrindo menu padrão..." );
+                getMenuPrincipalByNegocio( "Comercial" );
+            }
         }
         catch ( Exception e )
         {
+            e.printStackTrace();
         }
     }//GEN-LAST:event_btComercialActionPerformed
 
@@ -648,13 +671,13 @@ try {
     {//GEN-HEADEREND:event_btTesourariaActionPerformed
         dispose();
 //        new MenuPrincipalTesourariaVisao( this.idUser, this.idEmpresa, BDConexao.getInstancia()).setVisible(true);
-        new NovoMenuPrincipalTesourariaVisao(idUser, true, BDConexao.getInstancia()).setVisible(true);
+        new NovoMenuPrincipalTesourariaVisao( idUser, true, BDConexao.getInstancia() ).setVisible( true );
     }//GEN-LAST:event_btTesourariaActionPerformed
 
     private void btRhActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btRhActionPerformed
     {//GEN-HEADEREND:event_btRhActionPerformed
         dispose();
-        new MenuPrincipalRHNovoVisao( this.idUser, this.idEmpresa, true, BDConexao.getInstancia()).setVisible(true);
+        new MenuPrincipalRHNovoVisao( this.idUser, this.idEmpresa, true, BDConexao.getInstancia() ).setVisible( true );
     }//GEN-LAST:event_btRhActionPerformed
 
     private void btnGerarScriptActualizacaoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnGerarScriptActualizacaoActionPerformed
@@ -671,7 +694,7 @@ try {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
     {//GEN-HEADEREND:event_jButton1ActionPerformed
-        new BackupRestoreJDBC().setVisible( true);
+        new BackupRestoreJDBC().setVisible( true );
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
@@ -926,7 +949,7 @@ try {
     {
         btnEsvaziaBD.setVisible( ( DVML.ID_USUARIO_FORNECEDOR_SOFTWARE == idUser ) );
     }
-    
+
     private void mostrarBotaoBACKUPr()
     {
         bdBackupJButton.setVisible( ( DVML.ID_USUARIO_FORNECEDOR_SOFTWARE == idUser ) );
@@ -947,7 +970,7 @@ try {
             btn_actualiza_hash.setVisible( true );
             btnGerarScriptActualizacao.setVisible( true );
             bt_desencriptar.setVisible( true );
-     
+
         }
         else
         {
@@ -964,39 +987,39 @@ try {
     {
         if ( negocio.equalsIgnoreCase( "Oficina" ) )
         {
-            new MenuPrincipalOficinaVisao( this.idUser, this.idEmpresa, administrador, BDConexao.getInstancia()).setVisible(true);
+            new MenuPrincipalOficinaVisao( this.idUser, this.idEmpresa, administrador, BDConexao.getInstancia() ).setVisible( true );
         }
-        else if (negocio.equalsIgnoreCase( "Transportes" ) )
+        else if ( negocio.equalsIgnoreCase( "Transportes" ) )
         {
-            new MenuPrincipalTransporteVisao( this.idUser, this.idEmpresa, administrador, BDConexao.getInstancia()).setVisible(true);
+            new MenuPrincipalTransporteVisao( this.idUser, this.idEmpresa, administrador, BDConexao.getInstancia() ).setVisible( true );
         }
-        else if (negocio.equalsIgnoreCase( "Comercial" ) )
+        else if ( negocio.equalsIgnoreCase( "Comercial" ) )
         {
-            new MenuPrincipalVisao( this.idUser, this.idEmpresa, administrador, BDConexao.getInstancia()).setVisible(true);
+            new MenuPrincipalVisao( this.idUser, this.idEmpresa, administrador, BDConexao.getInstancia() ).setVisible( true );
 
         }
-        else if (negocio.equalsIgnoreCase( "Farmacia" ) )
+        else if ( negocio.equalsIgnoreCase( "Farmacia" ) )
         {
-            new MenuPrincipalFarmaciaVisao( this.idUser, this.idEmpresa, administrador, BDConexao.getInstancia()).setVisible(true);
+            new MenuPrincipalFarmaciaVisao( this.idUser, this.idEmpresa, administrador, BDConexao.getInstancia() ).setVisible( true );
 
         }
-        else if (negocio.equalsIgnoreCase( "Lavandaria" ) )
+        else if ( negocio.equalsIgnoreCase( "Lavandaria" ) )
         {
-            new MenuPrincipalLavandariaVisao( this.idUser, this.idEmpresa, administrador, BDConexao.getInstancia()).setVisible(true);
+            new MenuPrincipalLavandariaVisao( this.idUser, this.idEmpresa, administrador, BDConexao.getInstancia() ).setVisible( true );
 
         }
-        else if (negocio.equalsIgnoreCase( "Layout" ) )
+        else if ( negocio.equalsIgnoreCase( "Layout" ) )
         {
-            new MenuPrincipalLogoVisao( this.idUser, this.idEmpresa, administrador, BDConexao.getInstancia()).setVisible(true);
+            new MenuPrincipalLogoVisao( this.idUser, this.idEmpresa, administrador, BDConexao.getInstancia() ).setVisible( true );
 
         }
-        else if (negocio.equalsIgnoreCase( "Restaurante" ) )
+        else if ( negocio.equalsIgnoreCase( "Restaurante" ) )
         {
-            new MenuPrincipalRestauranteVisao( this.idUser, this.idEmpresa, administrador, BDConexao.getInstancia()).setVisible(true);
+            new MenuPrincipalRestauranteVisao( this.idUser, this.idEmpresa, administrador, BDConexao.getInstancia() ).setVisible( true );
         }
         else
         {
-            new MenuPrincipalVisao(this.idUser, this.idEmpresa, administrador, BDConexao.getInstancia()).setVisible(true);
+            new MenuPrincipalVisao( this.idUser, this.idEmpresa, administrador, BDConexao.getInstancia() ).setVisible( true );
         }
     }
 

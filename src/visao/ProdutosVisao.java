@@ -52,7 +52,7 @@ public class ProdutosVisao extends javax.swing.JFrame
      * CONTROLLER COMERCIAL
      */
     private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
-    private ItemPermissaoDao itemPermissaoDao = new ItemPermissaoDao(emf );
+    private ItemPermissaoDao itemPermissaoDao = new ItemPermissaoDao( emf );
     private static ProdutosController produtosController;
     private static ModelosController modelosController;
     private static MarcasController marcasController;
@@ -1553,8 +1553,8 @@ public class ProdutosVisao extends javax.swing.JFrame
         try
         {
 
-            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem( cmbarmazem2.getSelectedItem().toString() ), DVML.JANELA_PRODUTO, BDConexao.getInstancia()).setVisible(true);
-            mostrar_qtd_stock_armazem(txtArmazen1, 1 );
+            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem( cmbarmazem2.getSelectedItem().toString() ), DVML.JANELA_PRODUTO, BDConexao.getInstancia() ).setVisible( true );
+            mostrar_qtd_stock_armazem( txtArmazen1, 1 );
             mostrar_qtd_stock_armazem( txtArmazen2, 2 );
             mostrar_qtd_stock_armazem( txtArmazen3, 3 );
             mostrar_qtd_stock_armazem( txtArmazen4, 4 );
@@ -1590,14 +1590,14 @@ public class ProdutosVisao extends javax.swing.JFrame
     }//GEN-LAST:event_cmbUnidadeActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        new CategoriasLugarVisao().setVisible(true);
+        new CategoriasLugarVisao().setVisible( true );
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButtonComprasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonComprasActionPerformed
         try
         {
 
-            new CompraInformalVisao(idUser, BDConexao.getInstancia()).setVisible(true);
+            new CompraInformalVisao( idUser, BDConexao.getInstancia() ).setVisible( true );
 
         }
         catch ( Exception e )
@@ -1636,7 +1636,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         // TODO add your handling code here:
         new AssociacaoServicoVisao( idUser,
                 getCodigoProduto(),
-                getCodigoArmazem( cmbarmazem1.getSelectedItem().toString() ), BDConexao.getInstancia()).setVisible(true);
+                getCodigoArmazem( cmbarmazem1.getSelectedItem().toString() ), BDConexao.getInstancia() ).setVisible( true );
     }//GEN-LAST:event_btnAssociarActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton2ActionPerformed
@@ -1652,7 +1652,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         try
         {
 
-            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem( cmbarmazem1.getSelectedItem().toString() ), DVML.JANELA_PRODUTO, BDConexao.getInstancia()).setVisible(true);
+            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem( cmbarmazem1.getSelectedItem().toString() ), DVML.JANELA_PRODUTO, BDConexao.getInstancia() ).setVisible( true );
             mostrar_qtd_stock_armazem( txtArmazen1, 1 );
             mostrar_qtd_stock_armazem( txtArmazen2, 2 );
             mostrar_qtd_stock_armazem( txtArmazen3, 3 );
@@ -1722,6 +1722,54 @@ public class ProdutosVisao extends javax.swing.JFrame
         {
             java.util.logging.Logger.getLogger( ProdutosVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -2032,7 +2080,7 @@ public class ProdutosVisao extends javax.swing.JFrame
     {
         try
         {
-            TbProduto produto_local = (TbProduto) produtosController.findById( codigo );
+            TbProduto produto_local = (TbProduto) produtosController.findByIdStatus( codigo );
             if ( !Objects.isNull( produto_local ) )
             {
                 ver_dados( produto_local.getCodigo() );
@@ -2956,39 +3004,89 @@ public class ProdutosVisao extends javax.swing.JFrame
             return false;
         }
     }
-
+    
     private void buscar_by_cod_barra()
+{
+    TbProduto produto_local =
+        produtosController.findByCodBarra(txtCodigoBarraProcura.getText().trim());
+
+    if (produto_local != null)
     {
+        ver_dados(produto_local.getCodigo());
 
-        TbProduto produto_local = produtosController.findByCodBarra( txtCodigoBarraProcura.getText().trim() );
-        if ( !Objects.isNull( produto_local ) )
+        txtCodigoBarraProcura.requestFocus();
+
+        if (ivaAplicarJRadioButton.isSelected())
         {
-            ver_dados( produto_local.getCodigo() );
-            txtCodigoBarraProcura.requestFocus();
-            if ( ivaAplicarJRadioButton.isSelected() )
-            {
-                calcularTotalComIva();
-            }
-            else
-            {
-                txtPrecoDeVendaComIva.setVisible( false );
-                ivaTaxaJLabel.setVisible( false );
-
-            }
-//            
-//            mostrar_cod_dados_stock_armazem1cb( produto_local );
-//            mostrar_cod_dados_stock_armazem2ci( produto_local );
-//            mostrar_cod_dados_stock_armazem3ci( produto_local );
-//            mostrar_cod_dados_stock_armazem4ci( produto_local );
+            calcularTotalComIva();
         }
         else
         {
-            procedimento_limpar();
+            txtPrecoDeVendaComIva.setVisible(false);
+            ivaTaxaJLabel.setVisible(false);
         }
     }
+    else
+    {
+        procedimento_limpar();
+        JOptionPane.showMessageDialog(
+            null,
+            "Não existe produto com este código",
+            "Alerta",
+            JOptionPane.WARNING_MESSAGE
+        );
+    }
+}
+
+
+//    private void buscar_by_cod_barra()
+//    {
+//
+//        TbProduto produto_local = produtosController.findByCodBarra( txtCodigoBarraProcura.getText().trim() );
+//        if ( !Objects.isNull( produto_local ) )
+//        {
+//
+//            if ( !Objects.isNull( produto_local ) )
+//            {
+//                ver_dados( produto_local.getCodigo() );
+//            }
+//            else
+//            {
+//                procedimento_limpar();
+//                JOptionPane.showMessageDialog( null, "Não existe produto com este código", "Alerta", JOptionPane.WARNING_MESSAGE );
+//            }
+//
+//            txtCodigoBarraProcura.requestFocus();
+//            if ( ivaAplicarJRadioButton.isSelected() )
+//            {
+//                calcularTotalComIva();
+//            }
+//            else
+//            {
+//                txtPrecoDeVendaComIva.setVisible( false );
+//                ivaTaxaJLabel.setVisible( false );
+//
+//            }
+//
+//        }
+//        else
+//        {
+//            procedimento_limpar();
+//        }
+//    }
 
     private void buscar_by_cod_manual1()
     {
+        
+        //            if ( !Objects.isNull( produto_local ) )
+//            {
+//                ver_dados( produto_local.getCodigo() );
+//            }
+//            else
+//            {
+//                procedimento_limpar();
+//                JOptionPane.showMessageDialog( null, "Não existe produto com este código", "Alerta", JOptionPane.WARNING_MESSAGE );
+//            }
 
         TbProduto produto_local = produtosController.findByCodManual1( txtCodigoManualProcura.getText().trim() );
         if ( !Objects.isNull( produto_local ) )
@@ -3010,6 +3108,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         else
         {
             procedimento_limpar();
+            JOptionPane.showMessageDialog( null, "Não existe produto com este código", "Alerta", JOptionPane.WARNING_MESSAGE );
         }
     }
 

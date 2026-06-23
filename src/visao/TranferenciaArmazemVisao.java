@@ -76,7 +76,7 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
         txtQtdEntrar.setDocument( new PermitirNumeros() );
 
         this.cod_usuario = cod_usuario;
-        TranferenciaArmazemVisao.conexao = conexao;
+       TranferenciaArmazemVisao.conexao = conexao;
         init();
         setWindowsListener();
         try

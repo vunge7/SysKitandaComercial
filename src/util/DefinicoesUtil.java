@@ -1,789 +1,326 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package util;
 
-
-import java.sql.Connection;
 import java.io.File;
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Objects;
-import java.util.Vector;
+import java.security.SecureRandom;
+import java.sql.*;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
-import javax.swing.JTable;
-import javax.swing.JTextField;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableRowSorter;
+
 import static util.DVML.CAMINHO_SCRIP_TO_UPDATE;
 import static util.DVML.FILE_TO_UPDATE;
 
-/**
- *
- * @author Domingos Dala Vunge
- */
 public class DefinicoesUtil
 {
 
-    public static void main( String[] args )
-    {
-        BDConexao conexao = BDConexao.getInstancia();
-        String bd_fd = "kitanda_db";
-        String bd_fb = "kitanda_db_indiano";
-//        System.out.println( gerarScript( bd_fd, bd_fb, conexao ) );
+    private static final Logger LOGGER = Logger.getLogger( DefinicoesUtil.class.getName() );
+    private static final SecureRandom RANDOM = new SecureRandom();
+    private static final ExecutorService EXEC = Executors.newFixedThreadPool( 4 );
 
-        if ( existeTabela( "tb_venda", bd_fb, conexao ) == 0 )
+    // =========================
+    //  PASSWORD
+    // =========================
+    public static String gerarSenha()
+    {
+        String chars = "0123456789abcdefghijklmnopqrstuvwxyz=+\\-/*";
+        StringBuilder sb = new StringBuilder( 8 );
+        for ( int i = 0; i < 8; i++ )
         {
-            System.out.println( "Não existe" );
+            sb.append( chars.charAt( RANDOM.nextInt( chars.length() ) ) );
+        }
+        return sb.toString();
+    }
+
+    // =========================
+    //  SCRIPT PRINCIPAL
+    // =========================
+    public static String gerarScript( String bdOrigem, String bdDestino, BDConexao conexao )
+    {
+        validarSchema( bdOrigem, conexao );
+        validarSchema( bdDestino, conexao );
+
+        StringBuilder out = new StringBuilder();
+        File file = prepararFicheiro();
+
+        out.append( "USE `" ).append( bdDestino ).append( "`;\n\n" );
+
+        Vector<String> tabelasOrigem = getTables( bdOrigem, conexao );
+        Vector<String> tabelasDestino = getTables( bdDestino, conexao );
+
+        for ( String tabela : tabelasOrigem )
+        {
+            if ( !tabelasDestino.contains( tabela ) )
+            {
+                out.append( gerarCreateTable( tabela, bdOrigem, conexao ) ).append( "\n\n" );
+            }
+            else
+            {
+                out.append( gerarAlteracoesTabela( tabela, bdOrigem, bdDestino, conexao ) );
+            }
+        }
+
+        MetodosUtil.escreverNoDocumento( out.toString(), file );
+        JOptionPane.showMessageDialog( null, "Sincronização concluída!", "Info", JOptionPane.INFORMATION_MESSAGE );
+
+        return out.toString();
+    }
+
+    // =========================
+    //  CREATE TABLE
+    // =========================
+    private static String gerarCreateTable( String tabela, String bd, BDConexao conexao )
+    {
+        Vector<EstruturaTabela> cols = getEstrutura( tabela, bd, conexao );
+
+        StringBuilder sql = new StringBuilder();
+        sql.append( "DROP TABLE IF EXISTS `" ).append( tabela ).append( "`;\n" );
+        sql.append( "CREATE TABLE `" ).append( tabela ).append( "` (\n" );
+
+        List<String> pk = new ArrayList<>();
+
+        for ( int i = 0; i < cols.size(); i++ )
+        {
+            EstruturaTabela c = cols.get( i );
+            sql.append( "  `" ).append( c.field ).append( "` " ).append( c.type );
+
+            if ( "NO".equalsIgnoreCase( c.nulo ) )
+            {
+                sql.append( " NOT NULL" );
+            }
+
+            sql.append( buildDefaultClause( c.type, c.defaultValue ) );
+
+            if ( c.extra != null && c.extra.toLowerCase().contains( "auto_increment" ) )
+            {
+                sql.append( " AUTO_INCREMENT" );
+            }
+
+            if ( "PRI".equalsIgnoreCase( c.key ) )
+            {
+                pk.add( c.field );
+            }
+
+            sql.append( ",\n" );
+        }
+
+        if ( !pk.isEmpty() )
+        {
+            sql.append( "  PRIMARY KEY (`" ).append( String.join( "`,`", pk ) ).append( "`)\n" );
         }
         else
         {
-            System.out.println( "Existe" );
+            sql.setLength( sql.length() - 2 );
+            sql.append( "\n" );
         }
 
+        sql.append( ") ENGINE=InnoDB DEFAULT CHARSET=latin1;\n" );
+        return sql.toString();
     }
 
-    public static String gerarSenha()
+    // =========================
+    //  ALTER TABLE
+    // =========================
+    private static String gerarAlteracoesTabela( String tabela, String bd1, String bd2, BDConexao conexao )
     {
-        int qtdeMaximaCaracteres = 8;
-        String[] caracteres =
+        StringBuilder out = new StringBuilder();
+
+        Vector<EstruturaTabela> e1 = getEstrutura( tabela, bd1, conexao );
+        Vector<EstruturaTabela> e2 = getEstrutura( tabela, bd2, conexao );
+
+        for ( int i = 0; i < e1.size(); i++ )
         {
-            "0", "1", "b", "2", "4", "5", "6", "7", "8",
-            "9",
-            "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k",
-            "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w",
-            "x", "y", "z",
-            "=", "+", "-", "/", "*"
+            EstruturaTabela c1 = e1.get( i );
+            EstruturaTabela c2 = find( c1.field, e2 );
 
-//            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
-//            "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W",
-//            "X", "Y", "Z",
-        };
-
-        StringBuilder senha = new StringBuilder();
-
-        for ( int i = 0; i < qtdeMaximaCaracteres; i++ )
-        {
-            int posicao = (int) ( Math.random() * caracteres.length );
-            senha.append( caracteres[ posicao ] );
-        }
-        return senha.toString();
-
-    }
-
-    public static int numeroDeTabelas( String bd, BDConexao conexao )
-    {
-        int number = 0;
-        String sql = "SELECT count(*) AS TOTALNUMBEROFTABLES "
-                + "FROM INFORMATION_SCHEMA.TABLES "
-                + "WHERE TABLE_SCHEMA = '" + bd + "'";
-        try
-        {
-            ResultSet rs = conexao.executeQuery( sql );
-
-            if ( rs.next() )
+            if ( c2 == null )
             {
-                number = rs.getInt( 1 );
+                out.append(
+                        "ALTER TABLE `" ).append( tabela ).append( "` ADD COLUMN `"
+                ).append( c1.field ).append( "` " ).append( c1.type )
+                        .append( buildDefaultClause( c1.type, c1.defaultValue ) )
+                        .append( ";\n" );
             }
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace();
-        }
-
-        return number;
-
-    }
-
-    public static Vector<String> getTables( String bd, BDConexao conexao )
-    {
-        Vector<String> vector_tabelas = new Vector<>();
-
-        String sql = "SELECT TABLE_NAME "
-                + "FROM INFORMATION_SCHEMA.TABLES "
-                + "WHERE TABLE_SCHEMA = '" + bd + "'";
-        try
-        {
-            ResultSet rs = conexao.executeQuery( sql );
-
-//          rs.getMetaData(
-            while ( rs.next() )
+            else if ( !equivalentes( c1, c2 ) )
             {
-                String tabela = rs.getString( 1 );
-                vector_tabelas.add( tabela );
-            }
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace();
-        }
-
-        return vector_tabelas;
-    }
-
-    public static Vector<String> tabelasEmFalta( String bd_1, String bd_2, BDConexao conexao )
-    {
-
-        Vector<String> tabelasEmFalta = new Vector<>();
-
-        Vector<String> tablesBD_1 = getTables( bd_1, conexao );
-        Vector<String> tablesBD_2 = getTables( bd_2, conexao );
-
-        boolean existe = false;
-        for ( int i = 0; i < tablesBD_1.size(); i++ )
-        {
-            String elementAt1 = tablesBD_1.elementAt( i );
-            existe = false;
-            for ( int j = 0; j < tablesBD_2.size(); j++ )
-            {
-                String elementAt2 = tablesBD_2.elementAt( j );
-
-                if ( elementAt1.equals( elementAt2 ) )
-                {
-                    existe = true;
-                    break;
-                }
-
-            }
-            if ( !existe )
-            {
-                tabelasEmFalta.add( elementAt1 );
-            }
-
-        }
-
-        return tabelasEmFalta;
-
-    }
-
-    private static File gerarFicheiro()
-    {
-
-        File path = new File( CAMINHO_SCRIP_TO_UPDATE );
-        File file = null;
-        //ELIMINAR O FICHEIRO SAFT CASO EXISTA
-        if ( !path.exists() )
-        {
-            try
-            {
-
-                path.mkdirs();
-                file = new File( CAMINHO_SCRIP_TO_UPDATE + "/" + FILE_TO_UPDATE );
-                file.createNewFile();
-                System.out.println( "Script criado com successo." );
-            }
-            catch ( IOException e )
-            {
-                System.err.println( "Falha ao criar o ficheiro  " + e.getLocalizedMessage() );
-            }
-
-        }
-        else if ( path.exists() )
-        {
-            path.delete();
-
-            try
-            {
-                file = new File( CAMINHO_SCRIP_TO_UPDATE + "/" + FILE_TO_UPDATE );
-                file.createNewFile();
-            }
-            catch ( IOException e )
-            {
-            }
-
-        }
-        return file;
-
-    }
-
-    public static String gerarScript( String bd_1, String bd_2, BDConexao conexao )
-    {
-
-        StringBuilder buffer = new StringBuilder();
-        File file = gerarFicheiro();
-        Vector<Vector<ColunasFalta>> vectorColunasEmFalta = new Vector<>();
-        Vector<Vector<ColunasUpdate>> vectorColunasUpdate = new Vector<>();
-        Vector<String> tablesBD_1 = getTables( bd_1, conexao );
-        Vector<String> tables = tabelasEmFalta( bd_1, bd_2, conexao );
-
-        String out = "";
-
-        out += "USE `" + bd_2 + "`;\n\n";
-
-        System.out.println( "TMANHO 1 = " + numeroDeTabelas( bd_1, conexao ) );
-        System.out.println( "TMANHO 2 = " + numeroDeTabelas( bd_2, conexao ) );
-//        if ( numeroDeTabelas( bd_1, conexao ) == numeroDeTabelas( bd_2, conexao ) )
-        if ( true )
-        {
-
-            int size = tablesBD_1.size();
-
-            for ( int i = 0; i < size; i++ )
-            {
-                String tabela = tablesBD_1.elementAt( i );
-
-                String sql1 = getSql( tabela, bd_1 );
-                String sql2 = getSql( tabela, bd_2 );
-
-                if ( existeTabela( tabela, bd_2, conexao ) != 0 )
-                {
-                    Vector<EstruturaTabela> e1 = getLinhasTabela( sql1, conexao ); //Estrutura da tabela na BD 1.
-                    Vector<EstruturaTabela> e2 = getLinhasTabela( sql2, conexao ); //Estrutura da tabela na BD 2.
-
-                    Vector<ColunasFalta> cf = getColunasEmFaltas( tabela, e1, e2 ); //Retorna as colunas em falta.
-                    Vector<ColunasUpdate> cu = getColunasUpdate( tabela, e1, e2 ); // Retorna as colunas por actualizar.
-
-                    vectorColunasEmFalta.add( cf );
-                    vectorColunasUpdate.add( cu );
-
-                }
-
-            }
-
-            /**
-             * ADIÇÃO COLUNAS EM FATLAS.
-             */
-            out += gerarScriptColumnAdd( bd_2, vectorColunasEmFalta );
-            System.out.println( out );
-
-            /**
-             * ACTUALIZAR AS COLUNAS.
-             */
-            out += gerarScriptColumnUpdate( bd_2, vectorColunasUpdate );
-            System.out.println( out );
-
-            /**
-             * GERAÇÃO DE SCRIPTS DA TABELA EM FALTA.
-             */
-            for ( int i = 0; i < tables.size(); i++ )
-            {
-                String elementAt = tables.elementAt( i );
-                String sql = getSql( elementAt, bd_1 );
-                Vector<EstruturaTabela> e = getLinhasTabela( sql, conexao );
-                out += gerarScriptTable( elementAt, e ) + "\n\n";
-            }
-
-        }
-
-        buffer.append( out );
-        MetodosUtil.escreverNoDocumento( buffer.toString(), file );
-
-        return out;
-
-    }
-
-    private static String gerarScriptTable( String tabela, Vector<EstruturaTabela> e )
-    {
-
-        EstruturaTabela chave_primaria = e.get( 0 );
-
-        String sql = "DROP TABLE IF EXISTS `" + tabela + "`; \n"
-                + "CREATE TABLE `" + tabela + "` ( \n";
-
-        sql += "    `" + chave_primaria.getField() + "` " + chave_primaria.getType() + " NOT NULL AUTO_INCREMENT, \n";
-        for ( int i = 1; i < e.size(); i++ )
-        {
-            EstruturaTabela elementAt = e.elementAt( i );
-            sql += "    `" + elementAt.getField() + "` " + elementAt.getType() + " " + ( ( elementAt.getNulo().equals( "YES" ) ) ? " DEFAULT NULL" : " NOT NULL" ) + " , \n";
-        }
-
-        sql += "  PRIMARY KEY (`" + chave_primaria.getField() + "`)\n";
-//        sql += ") ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;\n";
-        sql += ") ENGINE=InnoDB DEFAULT CHARSET=latin1;\n";
-//
-        System.out.println( sql );
-        return sql;
-
-    }
-
-    private static String gerarScriptColumnAdd( String bd, Vector<Vector<ColunasFalta>> v )
-    {
-        String out = "";
-        for ( int i = 0; i < v.size(); i++ )
-        {
-            Vector<ColunasFalta> get = v.get( i );
-            if ( !Objects.isNull( get ) )
-            {
-
-                for ( int j = 0; j < get.size(); j++ )
-                {
-                    ColunasFalta elementAt = get.elementAt( j );
-                    out += addColumnAfter( bd, elementAt.getTabela(), elementAt.getAnterior(), elementAt.getNome(), elementAt.getTipo(), elementAt.getValorDefault() ) + "\n";
-                }
+                out.append(
+                        "ALTER TABLE `" ).append( tabela ).append( "` CHANGE COLUMN `"
+                ).append( c1.field ).append( "` `" ).append( c1.field ).append( "` " )
+                        .append( c1.type )
+                        .append( buildDefaultClause( c1.type, c1.defaultValue ) )
+                        .append( ";\n" );
             }
         }
 
-        return out;
+        return out.toString();
     }
 
-    private static String gerarScriptColumnUpdate( String bd, Vector<Vector<ColunasUpdate>> v )
+    // =========================
+    //  DEFAULT (MySQL 5)
+    // =========================
+    private static String buildDefaultClause( String tipo, String valor )
     {
-        String out = "";
-        for ( int i = 0; i < v.size(); i++ )
+        if ( valor == null || valor.trim().isEmpty() )
         {
-            Vector<ColunasUpdate> get = v.get( i );
-            if ( !Objects.isNull( get ) )
-            {
-
-                for ( int j = 0; j < get.size(); j++ )
-                {
-                    ColunasUpdate elementAt = get.elementAt( j );
-                    out += updateColumn( bd, elementAt.getTabela(),
-                            elementAt.getNome(),
-                            elementAt.getNewType(),
-                            elementAt.getValorDefault() ) + "\n";
-                }
-            }
+            return "";
         }
-        return out;
-    }
 
-    private static String addColumnAfter( String bd, String tabela, String coluna_anterior, String coluna, String tipo, String padraDefault )
-    {
+        String t = tipo.toLowerCase();
+        String v = valor.trim().toUpperCase();
 
-        String padrao = Objects.isNull( padraDefault ) ? "" : " DEFAULT '" + padraDefault + "' ";
-
-        String sql = "ALTER TABLE `" + bd + "`.`" + tabela + "` "
-                + "ADD COLUMN `" + coluna + "`  " + tipo + " NULL  " + padrao + "AFTER `" + coluna_anterior + "`;";
-
-        return sql;
-
-    }
-
-    private static String updateColumn( String bd, String tabela, String coluna, String novoTipo, String valorDefault )
-    {
-
-        /*
-            
-         */
-        String padrao = ( novoTipo.contentEquals( "int" )
-                || novoTipo.contentEquals( "double" )
-                || novoTipo.contentEquals( "decimal" ) )
-                ? //                valorDefault : "'" + valorDefault + "'";
-                "0.0" : "'" + valorDefault + "'";
-
-        String sql = "ALTER TABLE `" + bd + "`.`" + tabela + "` \n"
-                //                + "CHANGE COLUMN `" + coluna + "` `" + coluna + "` " + novoTipo + " NULL DEFAULT " + padrao + ";";
-                + "CHANGE COLUMN `" + coluna + "` `" + coluna + "` " + novoTipo + ";";
-
-        return sql;
-    }
-
-    private static Vector<EstruturaTabela> getLinhasTabela( String sql, BDConexao conexao )
-    {
-
-        ResultSet rs = conexao.executeQuery( sql );
-        Vector<EstruturaTabela> extruturaTabela = new Vector<>();
-
-        try
+        if ( t.startsWith( "timestamp" ) )
         {
+            if ( "CURRENT_TIMESTAMP".equals( v ) )
+            {
+                return " DEFAULT CURRENT_TIMESTAMP";
+            }
+            return "";
+        }
 
+        if ( t.startsWith( "datetime" ) )
+        {
+            return "";
+        }
+
+        return " DEFAULT '" + valor.replace( "'", "''" ) + "'";
+    }
+
+    // =========================
+    //  ESTRUTURA
+    // =========================
+    private static Vector<EstruturaTabela> getEstrutura( String tabela, String bd, BDConexao conexao )
+    {
+        Vector<EstruturaTabela> v = new Vector<>();
+        String sql = "SHOW COLUMNS FROM `" + tabela + "` FROM `" + bd + "`";
+
+        try ( Connection c = conexao.getConnection(); PreparedStatement ps = c.prepareStatement( sql ); ResultSet rs = ps.executeQuery() )
+        {
             while ( rs.next() )
             {
                 EstruturaTabela e = new EstruturaTabela();
-                e.setField( rs.getString( 1 ) );
-                e.setType( rs.getString( 2 ) );
-                e.setNulo( rs.getString( 3 ) );
-                e.setKey( rs.getString( 4 ) );
-                e.setPadrao_default( rs.getString( 5 ) );
-                e.setExtra( rs.getString( 6 ) );
-                extruturaTabela.add( e );
-
+                e.field = rs.getString( 1 );
+                e.type = rs.getString( 2 );
+                e.nulo = rs.getString( 3 );
+                e.key = rs.getString( 4 );
+                e.defaultValue = rs.getString( 5 );
+                e.extra = rs.getString( 6 );
+                v.add( e );
             }
         }
-        catch ( SQLException e )
+        catch ( SQLException ex )
         {
+            LOGGER.log( Level.SEVERE, "Erro estrutura " + tabela, ex );
         }
-
-        return extruturaTabela;
+        return v;
     }
 
-    private static String getSql( String tabela, String bd )
+    private static EstruturaTabela find( String field, Vector<EstruturaTabela> v )
     {
-//        System.out.println( "SHOW COLUMNS FROM " + tabela + "  FROM " + bd + "");
-
-        return "SHOW COLUMNS FROM " + tabela + "  FROM " + bd + "";
-
-    }
-
-    private static void mostrarEstrtura( Vector<EstruturaTabela> e )
-    {
-
-        for ( int i = 0; i < e.size(); i++ )
+        for ( EstruturaTabela e : v )
         {
-            EstruturaTabela elementAt = e.elementAt( i );
-            System.out.println( "Field: " + elementAt.getField() + "                Type: " + elementAt.getType() + "                Null: " + elementAt.getNulo() + "                Key: " + elementAt.getKey() );
-
-        }
-        System.out.println( "\n\n" );
-
-    }
-
-    private static Vector<ColunasFalta> getColunasEmFaltas( String tabela, Vector<EstruturaTabela> e1, Vector<EstruturaTabela> e2 )
-    {
-
-        Vector<ColunasFalta> cf = new Vector<>();
-        boolean encontrou;
-        for ( int i = 0; i < e1.size(); i++ )
-        {
-            EstruturaTabela elementA1 = e1.elementAt( i );
-            encontrou = false;
-            for ( int j = 0; j < e2.size(); j++ )
+            if ( e.field.equals( field ) )
             {
-                EstruturaTabela elementA2 = e2.elementAt( j );
+                return e;
+            }
+        }
+        return null;
+    }
 
-                if ( elementA1.getField().equals( elementA2.getField() ) )
+    private static boolean equivalentes( EstruturaTabela a, EstruturaTabela b )
+    {
+        return Objects.equals( a.type, b.type )
+                && Objects.equals( a.defaultValue, b.defaultValue );
+    }
+
+    // =========================
+    //  SCHEMAS / TABLES
+    // =========================
+    private static Vector<String> getTables( String bd, BDConexao conexao )
+    {
+        Vector<String> v = new Vector<>();
+        String sql = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA=?";
+
+        try ( Connection c = conexao.getConnection(); PreparedStatement ps = c.prepareStatement( sql ) )
+        {
+            ps.setString( 1, bd );
+            try ( ResultSet rs = ps.executeQuery() )
+            {
+                while ( rs.next() )
                 {
-                    encontrou = true;
-                    break;
+                    v.add( rs.getString( 1 ) );
                 }
-
             }
-
-            if ( !encontrou && i > 1 )
-            {
-                ColunasFalta colunasFalta = new ColunasFalta();
-                colunasFalta.setTabela( tabela );
-                colunasFalta.setNome( elementA1.getField() );
-                colunasFalta.setTipo( elementA1.getType() );
-
-                colunasFalta.setAnterior( e1.get( i - 1 ).field );
-                colunasFalta.setValorDefault( e1.get( i ).padrao_default );
-
-                cf.add( colunasFalta );
-            }
-
         }
-
-        return cf;
-
+        catch ( SQLException ex )
+        {
+            LOGGER.log( Level.SEVERE, "Erro getTables", ex );
+        }
+        return v;
     }
 
-    private static Vector<ColunasUpdate> getColunasUpdate( String tabela, Vector<EstruturaTabela> e1, Vector<EstruturaTabela> e2 )
+    private static void validarSchema( String bd, BDConexao conexao )
     {
-
-        Vector<ColunasUpdate> cf = new Vector<>();
-        boolean encontrou;
-        String typeOld;
-        for ( int i = 0; i < e1.size(); i++ )
+        String sql = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME=?";
+        try ( Connection c = conexao.getConnection(); PreparedStatement ps = c.prepareStatement( sql ) )
         {
-            typeOld = "";
-            EstruturaTabela elementA1 = e1.elementAt( i );
-            encontrou = false;
-            for ( int j = 0; j < e2.size(); j++ )
+            ps.setString( 1, bd );
+            try ( ResultSet rs = ps.executeQuery() )
             {
-                EstruturaTabela elementA2 = e2.elementAt( j );
-
-                if ( elementA1.getField().equals( elementA2.getField() ) )
+                if ( rs.next() && rs.getInt( 1 ) == 0 )
                 {
-
-                    if ( !elementA1.getType().equals( elementA2.getType() ) )
-                    {
-                        System.out.println( "diferente" );
-                        typeOld = elementA2.getType();
-                        encontrou = true;
-                        break;
-                    }
-
+                    throw new IllegalArgumentException( "Schema inválido: " + bd );
                 }
-
-            }
-
-            if ( encontrou )
-            {
-                ColunasUpdate cu = new ColunasUpdate();
-                cu.setTabela( tabela );
-                cu.setNome( elementA1.getField() );
-                cu.setNewType( elementA1.getType() );
-                cu.setOldType( typeOld );
-                cu.setValorDefault( elementA1.getPadrao_default() );
-
-                cf.add( cu );
-            }
-
-        }
-
-        return cf;
-
-    }
-
-    private static class EstruturaTabela
-    {
-
-        private String field;
-        private String type;
-        private String nulo;
-        private String key;
-        private String padrao_default;
-        private String extra;
-
-        public EstruturaTabela()
-        {
-        }
-
-        public String getField()
-        {
-            return field;
-        }
-
-        public void setField( String field )
-        {
-            this.field = field;
-        }
-
-        public String getType()
-        {
-            return type;
-        }
-
-        public void setType( String type )
-        {
-            this.type = type;
-        }
-
-        public String getNulo()
-        {
-            return nulo;
-        }
-
-        public void setNulo( String nulo )
-        {
-            this.nulo = nulo;
-        }
-
-        public String getKey()
-        {
-            return key;
-        }
-
-        public void setKey( String key )
-        {
-            this.key = key;
-        }
-
-        public String getPadrao_default()
-        {
-            return padrao_default;
-        }
-
-        public void setPadrao_default( String padrao_default )
-        {
-            this.padrao_default = padrao_default;
-        }
-
-        public String getExtra()
-        {
-            return extra;
-        }
-
-        public void setExtra( String extra )
-        {
-            this.extra = extra;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "EstruturaTabela{" + "field=" + field + "\n type=" + type + "\n nulo=" + nulo + "\n key=" + key + "\n padrao_default=" + padrao_default + "\n extra=" + extra + '}';
-        }
-
-    }
-
-    private static class ColunasFalta
-    {
-
-        private String tabela;
-        private String nome;
-        private String tipo;
-        private String anterior;
-        private String valorDefault;
-
-        public ColunasFalta()
-        {
-        }
-
-        public String getAnterior()
-        {
-            return anterior;
-        }
-
-        public void setAnterior( String anterior )
-        {
-            this.anterior = anterior;
-        }
-
-        public String getTabela()
-        {
-            return tabela;
-        }
-
-        public void setTabela( String tabela )
-        {
-            this.tabela = tabela;
-        }
-
-        public String getNome()
-        {
-            return nome;
-        }
-
-        public void setNome( String nome )
-        {
-            this.nome = nome;
-        }
-
-        public String getTipo()
-        {
-            return tipo;
-        }
-
-        public void setTipo( String tipo )
-        {
-            this.tipo = tipo;
-        }
-
-        public String getValorDefault()
-        {
-            return valorDefault;
-        }
-
-        public void setValorDefault( String valorDefault )
-        {
-            this.valorDefault = valorDefault;
-        }
-
-    }
-
-    private static class ColunasUpdate
-    {
-
-        private String tabela;
-        private String nome;
-        private String oldType;
-        private String newType;
-        private String valorDefault;
-
-        public ColunasUpdate()
-        {
-        }
-
-        public String getTabela()
-        {
-            return tabela;
-        }
-
-        public void setTabela( String tabela )
-        {
-            this.tabela = tabela;
-        }
-
-        public String getNome()
-        {
-            return nome;
-        }
-
-        public void setNome( String nome )
-        {
-            this.nome = nome;
-        }
-
-        public String getValorDefault()
-        {
-            return valorDefault;
-        }
-
-        public void setValorDefault( String valorDefault )
-        {
-            this.valorDefault = valorDefault;
-        }
-
-        public String getOldType()
-        {
-            return oldType;
-        }
-
-        public void setOldType( String oldType )
-        {
-            this.oldType = oldType;
-        }
-
-        public String getNewType()
-        {
-            return newType;
-        }
-
-        public void setNewType( String newType )
-        {
-            this.newType = newType;
-        }
-
-    }
-
-    private static int existeTabela( String tabela, String bd, BDConexao conexao )
-    {
-        String sql = "select count(table_name) as n "
-                + "FROM INFORMATION_SCHEMA.TABLES "
-                + "WHERE table_schema = '" + bd + "' and table_name like '" + tabela + "'";
-
-        System.out.println( sql );
-        ResultSet rs = conexao.executeQuery( sql );
-
-        try
-        {
-            if ( rs.next() )
-            {
-                return rs.getInt( "n" );
             }
         }
-        catch ( SQLException e )
+        catch ( SQLException ex )
         {
-
+            throw new RuntimeException( ex );
         }
-        return -1;
     }
 
-    private void sort( final JTable jTable, final JTextField field, TableRowSorter trs, int[] indexs )
+    private static File prepararFicheiro()
     {
-//         field.addKeyListener( new KeyAdapter()
-//        {
-//            @Override
-//            public void keyReleased( KeyEvent e )
-//            {
-//                trs.setRowFilter( RowFilter.regexFilter( "(?i)" + field.getText(), indexs ) );
-//            }
-//
-//            
-//
-//            
-//
-//        } );
-//
-//        trs = new TableRowSorter( jTable.getModel() );
-//        jTable.setRowSorter( trs );
-
+        File dir = new File( CAMINHO_SCRIP_TO_UPDATE );
+        dir.mkdirs();
+        return new File( dir, FILE_TO_UPDATE );
     }
 
-    public static void executarComBotao( JButton botao, Runnable acao )
+    // =========================
+    //  EXEC BOTÃO
+    // =========================
+    public static void executarComBotao( JButton b, Runnable r )
     {
-        botao.setEnabled( false );
-
-        new Thread( () ->
+        b.setEnabled( false );
+        EXEC.submit( () ->
         {
             try
             {
-                acao.run(); // executa a ação recebida
-            }
-            catch ( Exception ex )
-            {
-                ex.printStackTrace();
+                r.run();
             }
             finally
             {
-                SwingUtilities.invokeLater( () -> botao.setEnabled( true ) );
+                SwingUtilities.invokeLater( () -> b.setEnabled( true ) );
             }
-        } ).start();
+        } );
     }
 
+    // =========================
+    //  INNER CLASS
+    // =========================
+    private static class EstruturaTabela
+    {
+
+        String field;
+        String type;
+        String nulo;
+        String key;
+        String defaultValue;
+        String extra;
+    }
 }

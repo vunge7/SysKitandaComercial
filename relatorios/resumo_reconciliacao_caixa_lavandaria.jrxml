@@ -61,7 +61,7 @@ WHERE
 	<title>
 		<band height="18">
 			<staticText>
-				<reportElement x="0" y="0" width="184" height="17" uuid="7f2bda7b-d313-4a3d-82f3-7d5d0755ba17"/>
+				<reportElement uuid="7f2bda7b-d313-4a3d-82f3-7d5d0755ba17" x="0" y="0" width="184" height="17"/>
 				<box leftPadding="2" rightPadding="0"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="12" isBold="true"/>
@@ -73,7 +73,7 @@ WHERE
 	<columnHeader>
 		<band height="12" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="0" width="97" height="12" uuid="c1e2789b-cf31-4ced-8e23-3a6286cd96ce"/>
+				<reportElement uuid="c1e2789b-cf31-4ced-8e23-3a6286cd96ce" x="0" y="0" width="97" height="12"/>
 				<box leftPadding="2" rightPadding="0"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Arial" size="6" isBold="false"/>
@@ -81,7 +81,7 @@ WHERE
 				<text><![CDATA[F.Pagamento]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="97" y="0" width="87" height="12" uuid="babffab3-5a25-4eac-a7e3-e43af78f109a"/>
+				<reportElement uuid="babffab3-5a25-4eac-a7e3-e43af78f109a" x="97" y="0" width="87" height="12"/>
 				<box leftPadding="0" rightPadding="2"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Arial" size="6" isBold="true"/>
@@ -93,7 +93,7 @@ WHERE
 	<detail>
 		<band height="17" splitType="Stretch">
 			<textField pattern="#,##0.00">
-				<reportElement x="97" y="0" width="87" height="17" uuid="d0351c73-83dc-4283-b5ff-b6b0940a2ee1"/>
+				<reportElement uuid="d0351c73-83dc-4283-b5ff-b6b0940a2ee1" x="97" y="0" width="87" height="17"/>
 				<box rightPadding="2">
 					<bottomPen lineWidth="1.0"/>
 				</box>
@@ -103,7 +103,7 @@ WHERE
 				<textFieldExpression><![CDATA[$F{item_caixa_valor_real}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="0" width="97" height="17" uuid="00c70211-0722-408b-a165-705a40a27c15"/>
+				<reportElement uuid="00c70211-0722-408b-a165-705a40a27c15" x="0" y="0" width="97" height="17"/>
 				<box leftPadding="2">
 					<bottomPen lineWidth="1.0"/>
 				</box>
@@ -120,7 +120,7 @@ WHERE
 	<summary>
 		<band height="17">
 			<textField pattern="#,##0.00">
-				<reportElement x="98" y="0" width="87" height="17" uuid="c2e564bb-ce22-4938-a50d-a31c26f3f6aa"/>
+				<reportElement uuid="c2e564bb-ce22-4938-a50d-a31c26f3f6aa" x="98" y="0" width="87" height="17"/>
 				<box rightPadding="2">
 					<bottomPen lineWidth="1.0"/>
 				</box>
@@ -130,7 +130,7 @@ WHERE
 				<textFieldExpression><![CDATA[$V{TOTAL}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="1" y="0" width="97" height="17" uuid="d3cc73a3-eaa3-44a3-b792-1a6bc374b63a"/>
+				<reportElement uuid="d3cc73a3-eaa3-44a3-b792-1a6bc374b63a" x="1" y="0" width="97" height="17"/>
 				<box leftPadding="2" rightPadding="0"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Arial" size="8" isBold="true"/>

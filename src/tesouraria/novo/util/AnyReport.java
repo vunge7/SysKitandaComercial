@@ -4,9 +4,12 @@
  */
 package tesouraria.novo.util;
 
+import entity.TbCliente;
+import entity.TbUsuario;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.HashMap;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
@@ -15,6 +18,7 @@ import javax.print.attribute.HashPrintServiceAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.PrintServiceAttributeSet;
 import javax.print.attribute.standard.Copies;
+import javax.print.attribute.standard.MediaPrintableArea;
 import javax.print.attribute.standard.PrinterName;
 import javax.swing.JOptionPane;
 import net.sf.jasperreports.engine.JRException;
@@ -49,6 +53,7 @@ public class AnyReport
         }
         catch ( Exception e )
         {
+            e.printStackTrace();
         }
 
     }
@@ -66,8 +71,8 @@ public class AnyReport
         }
 
     }
-    
-    public AnyReport( HashMap hashMap, int codigo, String file)
+
+    public AnyReport( HashMap hashMap, int codigo, String file )
     {
         this.file = file;
         this.hashMap = hashMap;
@@ -153,7 +158,7 @@ public class AnyReport
         }
 
     }
-    
+
     public void mostrar3() throws SQLException
     {
         Connection connection = BDConexao.getConexao();
@@ -231,6 +236,62 @@ public class AnyReport
 
     }
 
+//    public void mostrar2() throws SQLException
+//    {
+//        try
+//        {
+//            Connection connection = BDConexao.getConexao();
+//
+//            String jasper = getWays();
+//            JasperPrint print = JasperFillManager.fillReport( jasper, hashMap, connection );
+//            JasperViewer jasperViewer = new JasperViewer( print, false );
+////                jasperViewer.setVisible(true);
+//            jasperViewer.setVisible( true );
+//
+////                JasperPrintManager.printReport(jasperPrint, false);  
+//            String impressoraSelecionada = impressora;
+//
+//            System.out.println( "Impressora da Cozinha: " + impressoraSelecionada );
+//            PrintService[] services = PrintServiceLookup.lookupPrintServices( null, null );
+//            PrintService psSelected = null;
+//
+//            for ( PrintService ps : services )
+//            {
+//                if ( ps.getName().equals( impressoraSelecionada ) )
+//                {
+//                    psSelected = ps;
+//                    break;
+//                }
+//
+//            }
+//            if ( psSelected != null )
+//            {
+//                
+//
+//                
+//                PrintRequestAttributeSet printRequestAttributeSet = new HashPrintRequestAttributeSet();
+//                PrintServiceAttributeSet printServiceAttributeSet = new HashPrintServiceAttributeSet();
+//                printServiceAttributeSet.add( new PrinterName( impressoraSelecionada, null ) );
+//                printRequestAttributeSet.add( new Copies( 1 ) );
+//                JRPrintServiceExporter exporter = new JRPrintServiceExporter();
+//                exporter.setParameter( JRPrintServiceExporterParameter.PRINT_SERVICE, psSelected );
+//                exporter.setParameter( JRExporterParameter.JASPER_PRINT, print );
+//                exporter.setParameter( JRPrintServiceExporterParameter.PRINT_REQUEST_ATTRIBUTE_SET, printRequestAttributeSet );
+//                exporter.setParameter( JRPrintServiceExporterParameter.PRINT_SERVICE_ATTRIBUTE_SET, printServiceAttributeSet );
+//                exporter.setParameter( JRPrintServiceExporterParameter.DISPLAY_PAGE_DIALOG, Boolean.FALSE );
+//                exporter.setParameter( JRPrintServiceExporterParameter.DISPLAY_PRINT_DIALOG, Boolean.FALSE );
+//                exporter.exportReport();
+//            }
+//
+//        }
+//        catch ( Exception ex )
+//        {
+//            ex.printStackTrace();
+//        }
+//
+//    }
+    
+    
     public void mostrar2() throws SQLException
     {
         try
@@ -240,13 +301,11 @@ public class AnyReport
             String jasper = getWays();
             JasperPrint print = JasperFillManager.fillReport( jasper, hashMap, connection );
             JasperViewer jasperViewer = new JasperViewer( print, false );
-//                jasperViewer.setVisible(true);
-            jasperViewer.setVisible( true );
+            jasperViewer.setVisible( false );
 
-//                JasperPrintManager.printReport(jasperPrint, false);  
             String impressoraSelecionada = impressora;
-
             System.out.println( "Impressora da Cozinha: " + impressoraSelecionada );
+
             PrintService[] services = PrintServiceLookup.lookupPrintServices( null, null );
             PrintService psSelected = null;
 
@@ -257,14 +316,22 @@ public class AnyReport
                     psSelected = ps;
                     break;
                 }
-
             }
+
             if ( psSelected != null )
             {
+
                 PrintRequestAttributeSet printRequestAttributeSet = new HashPrintRequestAttributeSet();
                 PrintServiceAttributeSet printServiceAttributeSet = new HashPrintServiceAttributeSet();
+
                 printServiceAttributeSet.add( new PrinterName( impressoraSelecionada, null ) );
                 printRequestAttributeSet.add( new Copies( 1 ) );
+
+                // 🔥 FORÇAR MARGENS 0 mm NA IMPRESSORA
+                printRequestAttributeSet.add(
+                        new MediaPrintableArea( 0, 0, 80, 297, MediaPrintableArea.MM )
+                );
+
                 JRPrintServiceExporter exporter = new JRPrintServiceExporter();
                 exporter.setParameter( JRPrintServiceExporterParameter.PRINT_SERVICE, psSelected );
                 exporter.setParameter( JRExporterParameter.JASPER_PRINT, print );
@@ -272,6 +339,7 @@ public class AnyReport
                 exporter.setParameter( JRPrintServiceExporterParameter.PRINT_SERVICE_ATTRIBUTE_SET, printServiceAttributeSet );
                 exporter.setParameter( JRPrintServiceExporterParameter.DISPLAY_PAGE_DIALOG, Boolean.FALSE );
                 exporter.setParameter( JRPrintServiceExporterParameter.DISPLAY_PRINT_DIALOG, Boolean.FALSE );
+
                 exporter.exportReport();
             }
 
@@ -280,8 +348,8 @@ public class AnyReport
         {
             ex.printStackTrace();
         }
-
     }
+
     public void mostrar_reimpressao() throws SQLException
     {
         try
@@ -296,7 +364,6 @@ public class AnyReport
 
 //                JasperPrintManager.printReport(jasperPrint, false);  
 //            String impressoraSelecionada = impressora;
-
 //            System.out.println( "Impressora da Cozinha: " + impressoraSelecionada );
             PrintService[] services = PrintServiceLookup.lookupPrintServices( null, null );
             PrintService psSelected = null;
@@ -392,15 +459,20 @@ public class AnyReport
 
     public static void main( String[] args )
     {
+        String file = "ticket_recolha_singular.jasper";
         HashMap hashMap = new HashMap();
-        hashMap.put( "CODIGO_VENDA", 1 );
-        hashMap.put( "SOFTWARE_VERSION", "" );
-        hashMap.put( "SOFTWARE_NAME", "" );
-        hashMap.put( "MOTIVO_ISENCAO", "" );
+        hashMap.put( "designacao", "Lava" );
+        hashMap.put( "designacao_pai", "" );
+        hashMap.put( "data_entrega", new Date() );
+        hashMap.put( "cod_fact", "sdfg" );
+        hashMap.put( "posicao", 1 );
+        hashMap.put( "Obs", "Tem noduas" );
 
-        new AnyReport( hashMap, "recolha_lavandaria.jasper", false );
-//        new AnyReport( hashMap, "ticket_recolha.jasper", false );
-//        new AnyReport( hashMap, "ld/factura_recolha_02.jasper", false );
+        hashMap.put( "nome_cliente", "Venancio" );
+        hashMap.put( "telefone_cliente", "923647584" );
+        hashMap.put( "usuario", "Cardoso" );
+        System.out.println( "Chamei o REPORT" );
+        AnyReport anyReport = new AnyReport( hashMap, file );
 
     }
 

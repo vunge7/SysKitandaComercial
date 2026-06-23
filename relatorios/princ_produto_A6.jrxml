@@ -67,7 +67,7 @@ ORDER BY
 	<detail>
 		<band height="11" splitType="Stretch">
 			<subreport>
-				<reportElement uuid="38fab99a-634a-464b-a9ef-5975f48280f0" x="-8" y="0" width="188" height="11"/>
+				<reportElement uuid="38fab99a-634a-464b-a9ef-5975f48280f0" x="-7" y="0" width="188" height="11"/>
 				<subreportParameter name="ID_TIPO_PRODUTO">
 					<subreportParameterExpression><![CDATA[$F{tb_tipo_produto_codigo}]]></subreportParameterExpression>
 				</subreportParameter>

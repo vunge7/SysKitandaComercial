@@ -544,12 +544,58 @@ public boolean desactivar(BDConexao conexao, TbProduto produto) {
         return produto;
 
     }
+    
+    public TbProduto buscarPorCodigo( int codigo )
+    {
+
+        String FIND__BY_CODIGO = "SELECT * FROM tb_produto WHERE codigo = " + codigo + "";
+        ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
+        TbProduto produto = null;
+
+        try
+        {
+            if ( result.next() )
+            {
+                produto = new TbProduto();
+                setResultProduto( result, produto );
+            }
+        }
+        catch ( SQLException e )
+        {
+        }
+        return produto;
+
+    }
 
     @Override
     public Object findById( int codigo )
     {
 
         String sql = "SELECT * FROM tb_produto WHERE codigo = " + codigo;
+        System.out.println( sql );
+        ResultSet result = conexao.executeQuery( sql );
+        TbProduto produto = null;
+
+        try
+        {
+            if ( result.next() )
+            {
+                produto = new TbProduto();
+                setResultProduto( result, produto );
+            }
+        }
+        catch ( SQLException e )
+        {
+        }
+        return produto;
+
+    }
+    
+    public Object findByIdStatus( int codigo )
+    {
+
+        String sql = "SELECT * FROM tb_produto WHERE codigo = " + codigo + " AND status = 'Activo'";
+        System.out.println( sql );
         ResultSet result = conexao.executeQuery( sql );
         TbProduto produto = null;
 
@@ -615,7 +661,7 @@ public boolean desactivar(BDConexao conexao, TbProduto produto) {
     public TbProduto findByCodBarra( String codBarra )
     {
 
-        String FIND_BY_COD_BARRA = "SELECT * FROM tb_produto WHERE codBarra = '" + codBarra + "'";
+        String FIND_BY_COD_BARRA = "SELECT * FROM tb_produto WHERE status = 'Activo' AND codBarra = '" + codBarra + "'";
         ResultSet result = conexao.executeQuery( FIND_BY_COD_BARRA );
         TbProduto produto = null;
 
@@ -637,7 +683,7 @@ public boolean desactivar(BDConexao conexao, TbProduto produto) {
     public TbProduto findByCodManual1( String codigo_manual )
     {
 
-        String FIND_BY_COD_BARRA = "SELECT * FROM tb_produto WHERE codigo_manual = '" + codigo_manual + "'";
+        String FIND_BY_COD_BARRA = "SELECT * FROM tb_produto WHERE status = 'Activo' AND codigo_manual = '" + codigo_manual + "'";
         ResultSet result = conexao.executeQuery( FIND_BY_COD_BARRA );
         TbProduto produto = null;
 
@@ -703,7 +749,7 @@ public boolean desactivar(BDConexao conexao, TbProduto produto) {
     public TbProduto findByCodManual( String codManual )
     {
 
-        String FIND_BY_COD_BARRA = "SELECT * FROM tb_produto WHERE codigo_manual = '" + codManual + "'";
+        String FIND_BY_COD_BARRA = "SELECT * FROM tb_produto WHERE status = 'Activo' AND codigo_manual = '" + codManual + "'";
         ResultSet result = conexao.executeQuery( FIND_BY_COD_BARRA );
         TbProduto produto = null;
 
@@ -1498,6 +1544,14 @@ public boolean exist_designacao_produto(BDConexao conexao, String designacao) {
 
         return lista;
     }
+    
+//    public TbProduto findByCodigoBarra(String codigoBarra) {
+//    return (TbProduto) entityManager
+//        .createQuery("SELECT p FROM TbProduto p WHERE p.codBarra = :cb")
+//        .setParameter("cb", codigoBarra)
+//        .getSingleResult();
+//}
+
 
     public static void main( String[] args )
     {

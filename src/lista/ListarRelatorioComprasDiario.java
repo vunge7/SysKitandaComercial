@@ -5,10 +5,8 @@
 package lista;
 
 
-import java.sql.Connection;
 import dao.AccessoArmazemDao;
 import dao.ArmazemDao;
-import dao.FornecedorDao;
 import dao.ItemComprasDao;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -17,7 +15,6 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,7 +22,6 @@ import javax.persistence.EntityManagerFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -34,9 +30,7 @@ import net.sf.jasperreports.engine.export.JRXlsAbstractExporterParameter;
 import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
 import net.sf.jasperreports.view.JasperViewer;
 import util.BDConexao;
-import util.DVML;
 import util.JPAEntityMannagerFactoryUtil;
-import util.RelatorioDiarioUtil;
 
 /**
  *
@@ -61,8 +55,8 @@ public class ListarRelatorioComprasDiario extends javax.swing.JFrame {
         
         dcDataInicio.setDate( new Date() );
         dcDataFim.setDate( new Date() );
-        cmbArmazem.setModel( new DefaultComboBoxModel( accessoArmazemDao.getAllArmazemByIdUSuario( idUser ) ) );
-//        cmbArmazem.setModel(new DefaultComboBoxModel(armazemDao.buscaTodos()));
+//        cmbArmazem.setModel( new DefaultComboBoxModel( accessoArmazemDao.getAllArmazemByIdUSuario( idUser ) ) );
+        cmbArmazem.setModel(new DefaultComboBoxModel(armazemDao.buscaTodos()));
 //        accao_mostar_campo_fornecedor(false);
 //        cmbFornecedor.setModel(new DefaultComboBoxModel(fornecedorDao.buscaTodos()));
        // conexao = BDConexao.getInstancia();

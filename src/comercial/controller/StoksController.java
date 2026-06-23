@@ -15,6 +15,8 @@ import entity.TbProduto;
 import entity.TbStock;
 import entity.TbTipoProduto;
 import entity.Unidade;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -431,74 +433,169 @@ public class StoksController implements EntidadeFactory
 //        System.out.println( "SIZE_: " + busca.size() );
 //        return busca;
 //    }
+//    public Vector<BuscaModeloProduto> getFonte( int idArmazem, int codJanela )
+//    {
+//        BDConexao conexao = BDConexao.getInstancia();
+//        Vector<BuscaModeloProduto> busca = new Vector<>();
+//
+//        String condicao = ( codJanela != DVML.JANELA_COMPRA ) ? "IN (1,2)" : "IN (2)";
+//
+//        String sql
+//                = "SELECT "
+//                + "    p.codigo AS codigo, "
+//                + "    p.designacao AS designacao, "
+//                + "    tp.designacao AS categoria, "
+//                + "    f.pk_familia AS cod_familia, "
+//                + "    s.quantidade_existente AS qtd, "
+//                + "    (s.quant_baixa < s.quantidade_existente AND s.quantidade_existente < s.quant_critica) AS estado_critico, "
+//                + "    pr.preco_venda AS preco_venda "
+//                + "FROM tb_produto p "
+//                + "INNER JOIN tb_tipo_produto tp ON tp.codigo = p.cod_Tipo_Produto "
+//                + "INNER JOIN familia f ON f.pk_familia = tp.fk_familia "
+//                + "LEFT JOIN tb_stock s ON s.cod_produto_codigo = p.codigo AND s.cod_armazem = ? "
+//                + "LEFT JOIN ( "
+//                + "    SELECT fk_produto, MAX(pk_preco) AS ultimo_preco_id "
+//                + "    FROM tb_preco "
+//                + "    WHERE qtd_baixo = 0 "
+//                + "    GROUP BY fk_produto "
+//                + ") ult_preco ON ult_preco.fk_produto = p.codigo "
+//                + "LEFT JOIN tb_preco pr ON pr.pk_preco = ult_preco.ultimo_preco_id "
+//                + "WHERE p.fk_grupo = 1 "
+//                + "  AND f.pk_familia " + condicao + " "
+//                + "ORDER BY p.designacao";
+//
+//        try ( PreparedStatement ps = conexao.getConnectionAtiva().prepareStatement( sql ) )
+//        {
+//            ps.setInt( 1, idArmazem );
+//
+//            try ( ResultSet rs = ps.executeQuery() )
+//            {
+//                while ( rs.next() )
+//                {
+//                    int codigo = rs.getInt( "codigo" );
+//                    String designacao = rs.getString( "designacao" );
+//                    String categoria = rs.getString( "categoria" );
+//                    long codFamilia = rs.getLong( "cod_familia" );
+//
+//                    String qtd = ( codFamilia == 1 ) ? "-" : String.valueOf( rs.getLong( "qtd" ) );
+//                    double precoVenda = rs.getDouble( "preco_venda" );
+//
+//                    String estadoCritico = ( codFamilia == 1 )
+//                            ? "-"
+//                            : ( rs.getBoolean( "estado_critico" ) ? "true" : "false" );
+//
+//                    BuscaModeloProduto bmp = new BuscaModeloProduto();
+//                    bmp.setCodigo( codigo );
+//                    bmp.setDesignacao( designacao );
+//                    bmp.setCategoria( categoria );
+//                    bmp.setQtd( qtd );
+//                    bmp.setPrecoVenda( precoVenda );
+//                    bmp.setEstadoCritico( estadoCritico );
+//
+//                    busca.add( bmp );
+//                }
+//            }
+//
+//        }
+//        catch ( SQLException e )
+//        {
+//            System.err.println( "[ERRO] Falha ao buscar produtos: " + e.getMessage() );
+//            e.printStackTrace();
+//        }
+//
+//        System.out.println( "SIZE_: " + busca.size() );
+//        return busca;
+//    }
+    public Vector<BuscaModeloProduto> getFonte( int idArmazem, int codJanela )
+    {
+        BDConexao conexao = BDConexao.getInstancia();
+        Vector<BuscaModeloProduto> busca = new Vector<>();
 
-public Vector<BuscaModeloProduto> getFonte(int idArmazem, int codJanela) {
-    BDConexao conexao = BDConexao.getInstancia();
-    Vector<BuscaModeloProduto> busca = new Vector<>();
+        String condicao = ( codJanela != DVML.JANELA_COMPRA ) ? "IN (1,2)" : "IN (2)";
 
-    String condicao = (codJanela != DVML.JANELA_COMPRA) ? "IN (1,2)" : "IN (2)";
+        String sql
+                = "SELECT "
+                + "    p.codigo AS codigo, "
+                + "    p.designacao AS designacao, "
+                + "    tp.designacao AS categoria, "
+                + "    f.pk_familia AS cod_familia, "
+                + "    s.quantidade_existente AS qtd, "
+                + "    (s.quant_baixa < s.quantidade_existente AND s.quantidade_existente < s.quant_critica) AS estado_critico, "
+                + "    pr.preco_venda AS preco_venda, "
+                + "    COALESCE(im.taxa, 0) AS taxa_imposto, "
+                // PREÇO FINAL COM IVA
+                + "    (pr.preco_venda + (pr.preco_venda * (COALESCE(im.taxa, 0) / 100))) AS preco_com_iva "
+                + "FROM tb_produto p "
+                + "INNER JOIN tb_tipo_produto tp ON tp.codigo = p.cod_Tipo_Produto "
+                + "INNER JOIN familia f ON f.pk_familia = tp.fk_familia "
+                + "LEFT JOIN tb_stock s ON s.cod_produto_codigo = p.codigo AND s.cod_armazem = ? "
+                + "LEFT JOIN ( "
+                + "    SELECT fk_produto, MAX(pk_preco) AS ultimo_preco_id "
+                + "    FROM tb_preco "
+                + "    WHERE qtd_baixo = 0 "
+                + "    GROUP BY fk_produto "
+                + ") ult_preco ON ult_preco.fk_produto = p.codigo "
+                + "LEFT JOIN tb_preco pr ON pr.pk_preco = ult_preco.ultimo_preco_id "
+                // Imposto
+                + "LEFT JOIN produto_imposto pi ON pi.fk_produto = p.codigo "
+                + "LEFT JOIN imposto im ON im.pk_imposto = pi.fk_imposto "
+                + "WHERE p.fk_grupo = 1 "
+                + " AND p.status = 'Activo' "
+                + "  AND f.pk_familia " + condicao + " "
+                + "ORDER BY p.designacao";
 
-    String sql = 
-        "SELECT " +
-        "    p.codigo AS codigo, " +
-        "    p.designacao AS designacao, " +
-        "    tp.designacao AS categoria, " +
-        "    f.pk_familia AS cod_familia, " +
-        "    s.quantidade_existente AS qtd, " +
-        "    (s.quant_baixa < s.quantidade_existente AND s.quantidade_existente < s.quant_critica) AS estado_critico, " +
-        "    pr.preco_venda AS preco_venda " +
-        "FROM tb_produto p " +
-        "INNER JOIN tb_tipo_produto tp ON tp.codigo = p.cod_Tipo_Produto " +
-        "INNER JOIN familia f ON f.pk_familia = tp.fk_familia " +
-        "LEFT JOIN tb_stock s ON s.cod_produto_codigo = p.codigo AND s.cod_armazem = ? " +
-        "LEFT JOIN ( " +
-        "    SELECT fk_produto, MAX(pk_preco) AS ultimo_preco_id " +
-        "    FROM tb_preco " +
-        "    WHERE qtd_baixo = 0 " +
-        "    GROUP BY fk_produto " +
-        ") ult_preco ON ult_preco.fk_produto = p.codigo " +
-        "LEFT JOIN tb_preco pr ON pr.pk_preco = ult_preco.ultimo_preco_id " +
-        "WHERE p.fk_grupo = 1 " +
-        "  AND f.pk_familia " + condicao + " " +
-        "ORDER BY p.designacao";
+        try ( PreparedStatement ps = conexao.getConnectionAtiva().prepareStatement( sql ) )
+        {
+            ps.setInt( 1, idArmazem );
 
-    try (PreparedStatement ps = conexao.getConnectionAtiva().prepareStatement(sql)) {
-        ps.setInt(1, idArmazem);
+            try ( ResultSet rs = ps.executeQuery() )
+            {
+                while ( rs.next() )
+                {
+                    int codigo = rs.getInt( "codigo" );
+                    String designacao = rs.getString( "designacao" );
+                    String categoria = rs.getString( "categoria" );
+                    long codFamilia = rs.getLong( "cod_familia" );
 
-        try (ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                int codigo = rs.getInt("codigo");
-                String designacao = rs.getString("designacao");
-                String categoria = rs.getString("categoria");
-                long codFamilia = rs.getLong("cod_familia");
+                    String qtd = ( codFamilia == 1 ) ? "-" : String.valueOf( rs.getLong( "qtd" ) );
 
-                String qtd = (codFamilia == 1) ? "-" : String.valueOf(rs.getLong("qtd"));
-                double precoVenda = rs.getDouble("preco_venda");
+                    // Preço com IVA (arredondado)
+                    double precoComIva = new BigDecimal( rs.getDouble( "preco_com_iva" ) )
+                            .setScale( 2, RoundingMode.HALF_UP )
+                            .doubleValue();
 
-                String estadoCritico = (codFamilia == 1)
-                        ? "-"
-                        : (rs.getBoolean("estado_critico") ? "true" : "false");
+                    double taxaImposto = rs.getDouble( "taxa_imposto" );
 
-                BuscaModeloProduto bmp = new BuscaModeloProduto();
-                bmp.setCodigo(codigo);
-                bmp.setDesignacao(designacao);
-                bmp.setCategoria(categoria);
-                bmp.setQtd(qtd);
-                bmp.setPrecoVenda(precoVenda);
-                bmp.setEstadoCritico(estadoCritico);
+                    String estadoCritico = ( codFamilia == 1 )
+                            ? "-"
+                            : ( rs.getBoolean( "estado_critico" ) ? "true" : "false" );
 
-                busca.add(bmp);
+                    BuscaModeloProduto bmp = new BuscaModeloProduto();
+                    bmp.setCodigo( codigo );
+                    bmp.setDesignacao( designacao );
+                    bmp.setCategoria( categoria );
+                    bmp.setQtd( qtd );
+
+                    // Preço final com IVA
+                    bmp.setPrecoVenda( precoComIva );
+
+//                    bmp.setTaxaImposto( taxaImposto );
+                    bmp.setEstadoCritico( estadoCritico );
+
+                    busca.add( bmp );
+                }
             }
+
+        }
+        catch ( SQLException e )
+        {
+            System.err.println( "[ERRO] Falha ao buscar produtos: " + e.getMessage() );
+            e.printStackTrace();
         }
 
-    } catch (SQLException e) {
-        System.err.println("[ERRO] Falha ao buscar produtos: " + e.getMessage());
-        e.printStackTrace();
+        System.out.println( "SIZE_: " + busca.size() );
+        return busca;
     }
-
-    System.out.println("SIZE_: " + busca.size());
-    return busca;
-}
 
     public Vector<BuscaModeloProduto> getFonteRefeicao( int idArmazem, int codJanela )
     {
@@ -577,10 +674,10 @@ public Vector<BuscaModeloProduto> getFonte(int idArmazem, int codJanela) {
 //                System.out.println( "CODIGO: " + codigo );
                 String designacao = rs.getString( "designacao" );
                 String categoria = rs.getString( "categoria" );
-                String qtd = (( rs.getLong( "cod_familia" ) == 1 ) ? "-" : String.valueOf( rs.getLong( "qtd" ) ));
+                String qtd = ( ( rs.getLong( "cod_familia" ) == 1 ) ? "-" : String.valueOf( rs.getLong( "qtd" ) ) );
                 double precoVenda = rs.getDouble( "preco_venda" );
 
-                String estadoCritico = (( rs.getInt( "cod_familia" ) == 1 ) ? "-" : rs.getString( "estado_critico" ));
+                String estadoCritico = ( ( rs.getInt( "cod_familia" ) == 1 ) ? "-" : rs.getString( "estado_critico" ) );
 
                 if ( Objects.isNull( estadoCritico ) || estadoCritico.equals( "0" ) )
                 {
@@ -693,10 +790,10 @@ public Vector<BuscaModeloProduto> getFonte(int idArmazem, int codJanela) {
 //                System.out.println( "CODIGO: " + codigo );
                 String designacao = rs.getString( "designacao" );
                 String categoria = rs.getString( "categoria" );
-                String qtd = (( rs.getLong( "cod_familia" ) == 1 ) ? "-" : String.valueOf( rs.getLong( "qtd" ) ));
+                String qtd = ( ( rs.getLong( "cod_familia" ) == 1 ) ? "-" : String.valueOf( rs.getLong( "qtd" ) ) );
                 double precoVenda = rs.getDouble( "preco_venda" );
 
-                String estadoCritico = (( rs.getInt( "cod_familia" ) == 1 ) ? "-" : rs.getString( "estado_critico" ));
+                String estadoCritico = ( ( rs.getInt( "cod_familia" ) == 1 ) ? "-" : rs.getString( "estado_critico" ) );
 
                 if ( Objects.isNull( estadoCritico ) || estadoCritico.equals( "0" ) )
                 {
@@ -958,7 +1055,7 @@ public Vector<BuscaModeloProduto> getFonte(int idArmazem, int codJanela) {
 
         double qtdExistente = getQuantidadeProduto( cod, idArmazem );
         System.out.println( "QTD_EXISTENTE: " + qtdExistente );
-        double qtdUpdate = (qtdExistente + quantidade);
+        double qtdUpdate = ( qtdExistente + quantidade );
         System.out.println( "QTD_UPDATE: " + qtdUpdate );
         String sql = "UPDATE tb_stock SET quantidade_existente =  " + qtdUpdate + ",  "
                 + " quant_critica = " + qtdCritica + ",  "
@@ -973,7 +1070,7 @@ public Vector<BuscaModeloProduto> getFonte(int idArmazem, int codJanela) {
 
         double qtdExistente = getQuantidadeProduto( cod, idArmazem );
 //        System.out.println( "QTD_EXISTENTE: " + qtdExistente );
-        double qtdUpdate = (qtdExistente + quantidade);
+        double qtdUpdate = ( qtdExistente + quantidade );
 //        System.out.println( "QTD_UPDATE: " + qtdUpdate );
         String sql = "UPDATE tb_stock SET quantidade_existente =  " + qtdUpdate
                 + " WHERE cod_produto_codigo = " + cod + " AND  cod_armazem = " + idArmazem;
@@ -986,7 +1083,7 @@ public Vector<BuscaModeloProduto> getFonte(int idArmazem, int codJanela) {
 
         double qtdExistente = getQuantidadeProduto( cod, idArmazem, conexao );
 //        System.out.println( "QTD_EXISTENTE: " + qtdExistente );
-        double qtdUpdate = (qtdExistente + quantidade);
+        double qtdUpdate = ( qtdExistente + quantidade );
 //        System.out.println( "QTD_UPDATE: " + qtdUpdate );
         String sql = "UPDATE tb_stock SET quantidade_existente =  " + qtdUpdate
                 + " WHERE cod_produto_codigo = " + cod + " AND  cod_armazem = " + idArmazem;
@@ -1007,7 +1104,7 @@ public Vector<BuscaModeloProduto> getFonte(int idArmazem, int codJanela) {
     {
 
         double qtdExistente = getQuantidadeProduto( cod, idArmazem );
-        double qtdUpdate = (qtdExistente - quantidade);
+        double qtdUpdate = ( qtdExistente - quantidade );
 //        System.out.println( "QTD_UPDATE: " + qtdUpdate );
         String sql = "UPDATE tb_stock SET quantidade_existente =  " + qtdUpdate
                 + " WHERE cod_produto_codigo = " + cod + " AND  cod_armazem = " + idArmazem;
@@ -1019,7 +1116,7 @@ public Vector<BuscaModeloProduto> getFonte(int idArmazem, int codJanela) {
     {
 
         double qtdExistente = getQuantidadeProduto( cod, idArmazem, conexao );
-        double qtdUpdate = (qtdExistente - quantidade);
+        double qtdUpdate = ( qtdExistente - quantidade );
 //        System.out.println( "QTD_UPDATE: " + qtdUpdate );
         String sql = "UPDATE tb_stock SET quantidade_existente =  " + qtdUpdate
                 + " WHERE cod_produto_codigo = " + cod + " AND  cod_armazem = " + idArmazem;

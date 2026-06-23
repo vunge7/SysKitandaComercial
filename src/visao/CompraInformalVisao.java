@@ -141,7 +141,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
 //        cmbArmazem.setModel( new DefaultComboBoxModel( armazemDao.buscaTodos1() ) );
 //        lista_compras_apuradas.setModel ( lista_model_compras_apuradas );
 
-        txtQtdEntrar.setDocument( new PermitirNumeros() );
+//        txtQtdEntrar.setDocument( new PermitirNumeros() );
         init();
         initJDialogue();
         //DESATIVAR COMVERTER COMPRAS
@@ -2511,13 +2511,10 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
         TbProduto prod = produtosController.findByDesignacao( designacao );
 
         String armazemSelecionado = (String) cmbArmazem.getSelectedItem();
-//        TbArmazem armazem = ArmazemDao.findByDesigncao(armazemSelecionado);
         armazem = (TbArmazem) armazensController.findByName( armazemSelecionado );
         if ( Objects.nonNull( armazem ) )
         {
             produtosController.findByCodBarra( String.valueOf( cod_usuario ) );
-//            ProdutoDao.findProdutoByCodigoBarra(String.valueOf(cod_usuario));
-//            List<TbStock> stocks = StockDao.findByProdutoWhitDesignacaoLike(armazem.getCodigo(), designacao);
             List<TbStock> stocks = stocksController.findStockByDesignacaoProduto( armazem.getCodigo(), designacao );
             stocks = ( designacao.isEmpty() ) ? stocksController.listarTodos() : stocks;
             DefaultTableModel modelo = (DefaultTableModel) tabela_busca.getModel();
@@ -2544,10 +2541,10 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
             }
         }
 
-        System.out.println( "Codigo Produto:" + stock_local.getCodProdutoCodigo().getCodigo() );
-        System.out.println( "Designacao Produto:" + stock_local.getCodProdutoCodigo().getDesignacao() );
-        System.out.println( "Designacao Tipo Produto:" + stock_local.getCodProdutoCodigo().getCodTipoProduto().getDesignacao() );
-        System.out.println( "Quantidade Existente:" + stock_local.getQuantidadeExistente() );
+//        System.out.println( "Codigo Produto:" + stock_local.getCodProdutoCodigo().getCodigo() );
+//        System.out.println( "Designacao Produto:" + stock_local.getCodProdutoCodigo().getDesignacao() );
+//        System.out.println( "Designacao Tipo Produto:" + stock_local.getCodProdutoCodigo().getCodTipoProduto().getDesignacao() );
+//        System.out.println( "Quantidade Existente:" + stock_local.getQuantidadeExistente() );
 
     }
 

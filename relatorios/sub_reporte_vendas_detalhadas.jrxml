@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report8" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="2" bottomMargin="2" uuid="14a5c603-3910-4354-a13b-9ffd737cdff8">
-	<property name="ireport.zoom" value="4.0"/>
-	<property name="ireport.x" value="0"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report8" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="2" bottomMargin="2" uuid="14a5c603-3910-4354-a13b-9ffd737cdff8">
+	<property name="ireport.zoom" value="7.7948684000000075"/>
+	<property name="ireport.x" value="503"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="PARM_COD_VENDA" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -47,7 +47,7 @@ FROM
 WHERE
      tb_venda.`codigo` = $P{PARM_COD_VENDA}]]>
 	</queryString>
-	<field name="tb_item_venda_quantidade" class="java.lang.Long"/>
+	<field name="tb_item_venda_quantidade" class="java.lang.Double"/>
 	<field name="tb_item_venda_valor_iva" class="java.lang.Double"/>
 	<field name="tb_item_venda_motivo_isensao" class="java.lang.String"/>
 	<field name="tb_item_venda_desconto" class="java.lang.Double"/>

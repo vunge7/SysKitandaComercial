@@ -2311,7 +2311,7 @@ public class NovaEncomendaVisao extends javax.swing.JFrame implements Runnable
         }
         catch ( SQLException ex )
         {
-            Logger.getLogger( NovaEncomendaVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(NovaEncomendaVisao.class.getName() ).log( Level.SEVERE, null, ex );
         }
     }
 
@@ -2413,7 +2413,7 @@ public class NovaEncomendaVisao extends javax.swing.JFrame implements Runnable
         catch ( Exception ex )
         {
             //  ex.printStackTrace();
-            Logger.getLogger( NovaEncomendaVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(NovaEncomendaVisao.class.getName() ).log( Level.SEVERE, null, ex );
 //            JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
         }
 

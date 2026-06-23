@@ -199,7 +199,7 @@ public class AcertoStockVisao extends javax.swing.JFrame
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(12, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lbQuantidadeExistente)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtQuatidadeExistente, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -358,23 +358,25 @@ public class AcertoStockVisao extends javax.swing.JFrame
         }
         catch ( ClassNotFoundException ex )
         {
-            java.util.logging.Logger.getLogger( AcertoStockVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            java.util.logging.Logger.getLogger(AcertoStockVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
         catch ( InstantiationException ex )
         {
-            java.util.logging.Logger.getLogger( AcertoStockVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            java.util.logging.Logger.getLogger(AcertoStockVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
         catch ( IllegalAccessException ex )
         {
-            java.util.logging.Logger.getLogger( AcertoStockVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            java.util.logging.Logger.getLogger(AcertoStockVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
         catch ( javax.swing.UnsupportedLookAndFeelException ex )
         {
-            java.util.logging.Logger.getLogger( AcertoStockVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+            java.util.logging.Logger.getLogger(AcertoStockVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         }
-        //</editor-fold>
+        //</editor-fold>        //</editor-fold>
+
 
         /* Create and display the form */
+  
         java.awt.EventQueue.invokeLater( new Runnable()
         {
             public void run()
@@ -498,7 +500,7 @@ public class AcertoStockVisao extends javax.swing.JFrame
         }
         catch ( Exception ex )
         {
-            Logger.getLogger( AcertoStockVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(AcertoStockVisao.class.getName() ).log( Level.SEVERE, null, ex );
             JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
         }
 

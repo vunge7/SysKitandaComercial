@@ -4,7 +4,6 @@
  */
 package visao;
 
-
 import comercial.controller.*;
 //import hotel.controller.ExtratoContaClienteController;
 import dao.ItemPermissaoDao;
@@ -18,6 +17,7 @@ import entity.FormaPagamento;
 import entity.FormaPagamentoItem;
 import entity.TbItemVenda;
 import entity.Moeda;
+import entity.PagamentoMensalidade;
 import entity.TbArmazem;
 import entity.TbBanco;
 import entity.TbCliente;
@@ -47,6 +47,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -55,6 +56,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import static kitanda.util.CfConstantes.YYYYMMDD_HHMMSS;
@@ -117,6 +120,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private static MovimentacaoController movimentacaoController;
     private static ContaMovimentosController cmc;
     private static TbPreco precoUnitario;
+    private static ConfiguracaoMesComecoController configuracaoMesComecoController;
+    private static PagamentoMensalidadeController pagamentoMensalidadeController;
+    private static MesRhController mesRhController;
 
     /**
      * OUTROS
@@ -144,9 +150,10 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private static final int INDEX_TABLE_QTD = 4;
     private static final int INDEX_TABLE_DESCONTO = 5;
     private static final int INDEX_TABLE_TAXA_IVA = 6;
+
     private String doc = "";
 
-    public VendaUsuarioVisao(int cod_usuario, BDConexao conexao ) throws SQLException
+    public VendaUsuarioVisao( int cod_usuario, BDConexao conexao ) throws SQLException
     {
 
         initComponents();
@@ -190,8 +197,11 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         formaPagamentoItemController = new FormaPagamentoItemController( VendaUsuarioVisao.conexao );
         servicosRetencaoController = new ServicosRetencaoController( VendaUsuarioVisao.conexao );
         contaController = new ContaController( VendaUsuarioVisao.conexao );
-        movimentacaoController = new MovimentacaoController(conexao.getConnection());
-        dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById( 1 );
+        movimentacaoController = new MovimentacaoController( conexao.getConnection() );
+        dadosInstituicao = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
+        configuracaoMesComecoController = new ConfiguracaoMesComecoController( conexao.getConnectionAtiva() );
+        pagamentoMensalidadeController = new PagamentoMensalidadeController( conexao.getConnectionAtiva() );
+        mesRhController = new MesRhController( conexao.getConnectionAtiva() );
         cmc = new ContaMovimentosController( conexao );
         txtQuatindade.setText( "1" );
 //        txtQuatindade.setDocument( new PermitirNumeros() );
@@ -245,9 +255,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                         {
                             try
                             {
-                                new BuscaProdutoVisao( getInstance(), rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_VENDA, BDConexao.getInstancia()).setVisible(true);
+                                new BuscaProdutoVisao( getInstance(), rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_VENDA, BDConexao.getInstancia() ).setVisible( true );
                             }
-                            catch (Exception ex )
+                            catch ( Exception ex )
                             {
                                 ex.printStackTrace();
                             }
@@ -275,7 +285,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                                 VendaUsuarioVisao.this, // ou "this" conforme contexto
                                 rootPaneCheckingEnabled,
                                 getCodigoArmazem(),
-                                DVML.JANELA_VENDA, BDConexao.getInstancia()).setVisible(true); // melhor que .setVisible(true)
+                                DVML.JANELA_VENDA, BDConexao.getInstancia() ).setVisible( true ); // melhor que .setVisible(true)
                     }
                 }
                 catch ( Exception ex )
@@ -625,7 +635,6 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         jlEmpresa.setText("Empresa");
         jPanel3.add(jlEmpresa, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, 460, -1));
 
-        btnSemFormaPagamento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/impressora1.png"))); // NOI18N
         btnSemFormaPagamento.setText("Finalizar");
         btnSemFormaPagamento.addActionListener(new java.awt.event.ActionListener()
         {
@@ -634,7 +643,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 btnSemFormaPagamentoActionPerformed(evt);
             }
         });
-        jPanel3.add(btnSemFormaPagamento, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 0, 150, 30));
+        jPanel3.add(btnSemFormaPagamento, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 0, 70, 20));
 
         lb_usuario.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         lb_usuario.setText("Conta:");
@@ -659,7 +668,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                         .addComponent(lb_usuario, javax.swing.GroupLayout.PREFERRED_SIZE, 363, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, 516, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 481, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())
@@ -1072,12 +1081,23 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             {
                 tableMouseClicked(evt);
             }
+            public void mouseEntered(java.awt.event.MouseEvent evt)
+            {
+                tableMouseEntered(evt);
+            }
         });
         table.addPropertyChangeListener(new java.beans.PropertyChangeListener()
         {
             public void propertyChange(java.beans.PropertyChangeEvent evt)
             {
                 tablePropertyChange(evt);
+            }
+        });
+        table.addKeyListener(new java.awt.event.KeyAdapter()
+        {
+            public void keyPressed(java.awt.event.KeyEvent evt)
+            {
+                tableKeyPressed(evt);
             }
         });
         jScrollPane1.setViewportView(table);
@@ -1103,14 +1123,11 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 958, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 991, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(0, 6, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
         );
 
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
@@ -1373,8 +1390,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                         .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(txtMarca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanelCaracteristicasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtMatricula, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                        .addComponent(txtKilometragem, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                        .addComponent(txtMatricula)
+                        .addComponent(txtKilometragem)))
                 .addGroup(jPanelCaracteristicasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanelCaracteristicasLayout.createSequentialGroup()
                         .addGap(7, 7, 7)
@@ -1486,7 +1503,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                                 .addComponent(jLabel9)))
                         .addGap(10, 10, 10)
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(dc_data_vencimento, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
+                            .addComponent(dc_data_vencimento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(dc_data_documento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
         );
         jPanel5Layout.setVerticalGroup(
@@ -1528,12 +1545,12 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 484, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 476, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1542,8 +1559,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1591,11 +1608,16 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         try
         {
 
-            remover_item_carrinho();
+            DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+            if ( podeRemoverServico( modelo, table.getSelectedRow() ) )
+            {
+                remover_item_carrinho();
+            }
 
         }
         catch ( Exception ex )
         {
+            ex.printStackTrace();
             //Logger.getLogger(VendaUsuarioVisao.class.getName()).log(Level.SEVERE, null, ex);
 //            JOptionPane.showMessageDialog( null, "Possivelmente não selecionaste \n nenhuma linha ou não existe dados na tabela", "AVISO", JOptionPane.WARNING_MESSAGE );
         }
@@ -1604,10 +1626,29 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     }//GEN-LAST:event_btn_removerActionPerformed
 
     private void btn_adicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_adicionarActionPerformed
+
         if ( validar() )
         {
-            adicionar_botao();
-            scrolltable();
+
+            configuracaoMesComecoController = new ConfiguracaoMesComecoController( conexao.getConnectionAtiva() );
+            boolean existeConfiguracaoDoCliente = configuracaoMesComecoController.existeConfiguracaoDoCliente( getIdCliente(), getCodigoProduto() );
+
+            if ( existeConfiguracaoDoCliente )
+            {
+                new MesesPagoClienteVisao(
+                        this,
+                        rootPaneCheckingEnabled,
+                        getIdCliente(),
+                        getCodigoProduto(),
+                        conexao
+                ).setVisible( true );
+            }
+            else
+            {
+                adicionar_botao();
+                scrolltable();
+            }
+
         }
 
     }//GEN-LAST:event_btn_adicionarActionPerformed
@@ -1623,6 +1664,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         {
             accao_codigo_interno_enter();
             scrolltable();
+
         }
     }//GEN-LAST:event_txtCodigoProdutoActionPerformed
 
@@ -1680,10 +1722,13 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         {
             if ( validar() )
             {
-                new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_VENDA, BDConexao.getInstancia()).setVisible(true);
+                new BuscaProdutoVisao( this, rootPaneCheckingEnabled,
+                        getCodigoArmazem(),
+                        DVML.JANELA_VENDA,
+                        BDConexao.getInstancia() ).setVisible( true );
             }
         }
-        catch (Exception e )
+        catch ( Exception e )
         {
             e.printStackTrace();
         }
@@ -1741,7 +1786,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     }//GEN-LAST:event_txtCodigoManualActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        new ClienteVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia()).setVisible(true);
+        new ClienteVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia() ).setVisible( true );
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void txtNifClientePesquisaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNifClientePesquisaActionPerformed
@@ -1818,15 +1863,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private void btnFormaPagamentoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnFormaPagamentoActionPerformed
     {//GEN-HEADEREND:event_btnFormaPagamentoActionPerformed
-        // TODO add your handling code here:
-//         new FormaPagamentoVisao( this, rootPaneCheckingEnabled, DVML.VENDA_PONTUAL, emf ).setVisible( true );
-//        if ( MetodosUtil.licencaValidada( conexao ) )
-//        {
-//            new FormaPagamentoVisao( this, rootPaneCheckingEnabled, null, DVML.VENDA_PONTUAL, BDConexao.getInstancia()).setVisible(true);
-//
-//        }
 
-        if (MetodosUtil.licencaValidada( conexao ) )
+        if ( MetodosUtil.licencaValidada( conexao ) )
         {
             if ( !MetodosUtil.tabela_vazia( table ) )
             {
@@ -1835,7 +1873,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                     return; // Se houver erro, não abre forma de pagamento
                 }
 
-                new FormaPagamentoVisao( this, rootPaneCheckingEnabled, null, DVML.VENDA_PONTUAL, BDConexao.getInstancia()).setVisible(true);
+                new FormaPagamentoVisao( this, rootPaneCheckingEnabled, null, DVML.VENDA_PONTUAL, BDConexao.getInstancia() ).setVisible( true );
             }
             else
             {
@@ -1906,7 +1944,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //}
     private boolean validarPrecos_tabela( JTable tabela )
     {
-        DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) tabela.getModel();
         StringBuilder produtosComErro = new StringBuilder();
 
         // Percorrer todas as linhas
@@ -2078,7 +2116,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //        }
         if ( table.getSelectedColumn() == 3 || table.getSelectedColumn() == 4 || table.getSelectedColumn() == 5 )
         {
-            actualizarPreco();
+//            actualizarPreco();
             System.out.println( "Qtd......" );
             actualizarQtdTable();
         }
@@ -2140,6 +2178,16 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         }
 
     }//GEN-LAST:event_btnSemFormaPagamentoActionPerformed
+
+    private void tableKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event_tableKeyPressed
+    {//GEN-HEADEREND:event_tableKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tableKeyPressed
+
+    private void tableMouseEntered(java.awt.event.MouseEvent evt)//GEN-FIRST:event_tableMouseEntered
+    {//GEN-HEADEREND:event_tableMouseEntered
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tableMouseEntered
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -2253,14 +2301,14 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     // End of variables declaration//GEN-END:variables
 
     //verifica se o produto existe na tabela do formulário visão isto é na jTable
-    private static boolean exist_produto_tabela_formulario( int codigo )
+    private static boolean exist_produto_tabela_formulario( String designacao )
     {
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
         {
-            if ( Integer.parseInt( String.valueOf( table.getValueAt( i, 0 ) ) ) == codigo )
+            if ( String.valueOf( table.getValueAt( i, 1 ) ).equals( designacao ) )
             {
                 linha_actual = i;
                 return true;
@@ -2269,6 +2317,22 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         return false;
 
     }
+//    private static boolean exist_produto_tabela_formulario( int codigo )
+//    {
+//
+//        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+//
+//        for ( int i = 0; i < modelo.getRowCount(); i++ )
+//        {
+//            if ( Integer.parseInt( String.valueOf( table.getValueAt( i, 0 ) ) ) == codigo )
+//            {
+//                linha_actual = i;
+//                return true;
+//            }
+//        }
+//        return false;
+//
+//    }
 
     private void accao_codigo_manual_enter()
     {
@@ -2294,7 +2358,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     //actualiza a quantidade na tabela do formulário visão isto é na jTable
     private static void actuazlizar_quantidade_tabela_formulario( String quantidade, double desconto )
     {
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         double qtd = Double.parseDouble( quantidade );
         double retencao = 0;
 
@@ -2394,7 +2458,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //    }
     private static void accao_cliente()
     {
-        String nomeCliente = (String) cmbCliente.getSelectedItem();
+        String nomeCliente = ( String ) cmbCliente.getSelectedItem();
 
         txtNomeConsumidorFinal.setText( nomeCliente );
         String nif = clientesController.findByNome( nomeCliente ).getNif();
@@ -2426,7 +2490,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     }
 
-    public static void procedimento_adicionar()
+    public static void procedimento_adicionar( String mes )
     {
         boolean documentoIsFA = DVML.DOC_FACTURA_FT == getIdDocumento();
         boolean documentoIsPP = DVML.DOC_FACTURA_PROFORMA_PP == getIdDocumento();
@@ -2440,36 +2504,31 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 if ( !isProdutoExpirado( getCodigoProduto() ) )
                 {
 
-                    TbProduto produto = (TbProduto) produtosController.findById( getCodigoProduto() );
+                    TbProduto produto = ( TbProduto ) produtosController.findById( getCodigoProduto() );
                     if ( isStocavel( produto.getStocavel() ) && documentoIsFR || documentoIsFA )
                     {
-
                         if ( possivel_quantidade() )
                         {
                             if ( estado_critico() )
                             {
                                 JOptionPane.showMessageDialog( null, "O produto: " + produto.getDesignacao() + " precisa de ser actualizado no stock", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
                             }
-                            adicionar_produto();
-
+                            adicionar_produto( mes );
                         }
                         else
                         {
                             JOptionPane.showMessageDialog( null, "O produto: " + produto.getDesignacao() + " não pode ser vendido pra esta quantidade", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
                         }
-
                     }
                     else
                     {
-                        adicionar_produto();
+                        adicionar_produto( mes );
                     }
-
                 }
                 else
                 {
                     JOptionPane.showMessageDialog( null, "Impossivel adicionar o produto porque já foi expirado.", "Aviso", JOptionPane.WARNING_MESSAGE );
                 }
-
             }
             else
             {
@@ -2484,17 +2543,15 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     }
 
-    public static void procedimento_adicionar_sem_transtorno()
+    public static void procedimento_adicionar_sem_transtorno( String mes )
     {
-
         try
         {
-
             if ( !campos_invalidos() )
             {
                 if ( !isProdutoExpirado( getCodigoProduto() ) )
                 {
-                    TbProduto produto = (TbProduto) produtosController.findById( getCodigoProduto() );
+                    TbProduto produto = ( TbProduto ) produtosController.findById( getCodigoProduto() );
                     if ( isStocavel( produto.getStocavel() ) )
                     {
 
@@ -2502,12 +2559,12 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                         {
                             JOptionPane.showMessageDialog( null, "O produto: " + produto.getDesignacao() + " precisa de ser actualizado no stock", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
                         }
-                        adicionar_produto();
+                        adicionar_produto( mes );
 
                     }
                     else
                     {
-                        adicionar_produto();
+                        adicionar_produto( mes );
                     }
                 }
                 else
@@ -2546,7 +2603,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     }
 
-    public void adicionar_botao_retificar()
+    public void adicionar_botao_retificar( String mes )
     {
 
         try
@@ -2554,7 +2611,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             if ( !campos_invalidos() )
             {
 
-                TbProduto produto = (TbProduto) produtosController.findById( getCodigoProduto() );
+                TbProduto produto = ( TbProduto ) produtosController.findById( getCodigoProduto() );
                 if ( isStocavel( produto.getStocavel() ) )
                 {
 
@@ -2565,7 +2622,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                         {
                             JOptionPane.showMessageDialog( null, "O produto: " + produto.getDesignacao() + " precisa de ser actualizado no stock", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
                         }
-                        adicionar_produto();
+                        adicionar_produto( mes );
                     }
                     else
                     {
@@ -2575,7 +2632,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 }
                 else
                 {
-                    adicionar_produto();
+                    adicionar_produto( mes );
                 }
 
             }
@@ -2603,10 +2660,45 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         {
             if ( !Objects.isNull( produto ) )
             {
+                adicionar_preco_quantidade_anitgo();
+                if ( rbTranstorno.isSelected() )
+                {
+                    procedimento_adicionar_sem_transtorno( "" );
+                }
+                else
+                {
+                    procedimento_adicionar( "" );
+                }
+                txtCodigoProduto.setText( "" );
+                txtCodigoBarra.setText( "" );
+                txtQuatindade.setText( "1" );
+                txtQuatindade.requestFocus();
+
+            }
+            else
+            {
+                JOptionPane.showMessageDialog( null, "Nao existe produto/servico relacionado a esta referencia" );
+            }
+
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+
+        }
+
+    }
+
+    private static void procedimentoAdicionarTabela2( TbProduto produto, String mes )
+    {
+        try
+        {
+            if ( !Objects.isNull( produto ) )
+            {
                 Integer codTipoProduto = produto.getCodTipoProduto().getCodigo();
-                TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById( codTipoProduto );
+                TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutoController.findById( codTipoProduto );
                 Integer codFamilia = tipoProduto.getFkFamilia().getPkFamilia();
-                Familia familia = (Familia) familiaController.findById( codFamilia );
+                Familia familia = ( Familia ) familiaController.findById( codFamilia );
                 cmbFamilia.setSelectedItem( familia.getDesignacao() );
                 cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
 
@@ -2615,11 +2707,11 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 adicionar_preco_quantidade_anitgo();
                 if ( rbTranstorno.isSelected() )
                 {
-                    procedimento_adicionar_sem_transtorno();
+                    procedimento_adicionar_sem_transtorno( mes );
                 }
                 else
                 {
-                    procedimento_adicionar();
+                    procedimento_adicionar( mes );
                 }
                 txtCodigoProduto.setText( "" );
                 txtCodigoBarra.setText( "" );
@@ -2643,17 +2735,52 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private void accao_codigo_interno_enter()
     {
+
         try
         {
+
             int codigo = Integer.parseInt( txtCodigoProduto.getText() );
-            TbProduto produto = (TbProduto) produtosController.findById( codigo );
-            procedimentoAdicionarTabela( produto );
+            TbProduto produto = ( TbProduto ) produtosController.findById( codigo );
+
+            Integer codTipoProduto = produto.getCodTipoProduto().getCodigo();
+            TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutoController.findById( codTipoProduto );
+            Integer codFamilia = tipoProduto.getFkFamilia().getPkFamilia();
+            Familia familia = ( Familia ) familiaController.findById( codFamilia );
+            cmbFamilia.setSelectedItem( familia.getDesignacao() );
+            cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
+
+            cmbProduto.setModel( new DefaultComboBoxModel( produtosController.getVector() ) );
+            cmbProduto.setSelectedItem( produto.getDesignacao() );
+
+            configuracaoMesComecoController = new ConfiguracaoMesComecoController( conexao.getConnectionAtiva() );
+
+            System.out.println( "***** Chegue 0" );
+            boolean existeConfiguracaoDoCliente = configuracaoMesComecoController
+                    .existeConfiguracaoDoCliente(
+                            getIdCliente(),
+                            getCodigoProduto() );
+
+            if ( existeConfiguracaoDoCliente )
+            {
+                new MesesPagoClienteVisao( this,
+                        rootPaneCheckingEnabled,
+                        getIdCliente(),
+                        getCodigoProduto(), conexao ).setVisible( true );
+            }
+            else
+            {
+                procedimentoAdicionarTabela( produto );
+            }
+
         }
         catch ( Exception ex )
         {
 //            ex.printStackTrace();
             Logger.getLogger( VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
             JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+        }
+        finally
+        {
         }
 
     }
@@ -2663,14 +2790,69 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
         try
         {
+
             System.out.println( "ID PRODUTO EXTERIOR: " + codigo );
-            TbProduto produtoLocal = (TbProduto) produtosController.findById( codigo );
-            procedimentoAdicionarTabela( produtoLocal );
+            TbProduto produtoLocal = ( TbProduto ) produtosController.findById( codigo );
+
+            Integer codTipoProduto = produtoLocal.getCodTipoProduto().getCodigo();
+            TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutoController.findById( codTipoProduto );
+            Integer codFamilia = tipoProduto.getFkFamilia().getPkFamilia();
+            Familia familia = ( Familia ) familiaController.findById( codFamilia );
+            cmbFamilia.setSelectedItem( familia.getDesignacao() );
+            cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
+
+            cmbProduto.setModel( new DefaultComboBoxModel( produtosController.getVector() ) );
+            cmbProduto.setSelectedItem( produtoLocal.getDesignacao() );
+
+            configuracaoMesComecoController = new ConfiguracaoMesComecoController( conexao.getConnectionAtiva() );
+
+            boolean existeConfiguracaoDoCliente = configuracaoMesComecoController.existeConfiguracaoDoCliente(
+                    getIdCliente(), produtoLocal.getCodigo() );
+            if ( existeConfiguracaoDoCliente )
+            {
+
+                new MesesPagoClienteVisao( null,
+                        true,
+                        getIdCliente(),
+                        getCodigoProduto(), conexao ).setVisible( true );
+            }
+            else
+            {
+
+                procedimentoAdicionarTabela( produtoLocal );
+            }
+
         }
         catch ( Exception ex )
         {
             ex.printStackTrace();
-            Logger.getLogger( VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger
+                    .getLogger( VendaUsuarioVisao.class
+                            .getName() ).log( Level.SEVERE, null, ex );
+            JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+        }
+
+    }
+
+    public static void accao_codigo_interno_enter_busca_exterior_2( int codigo, String mes )
+    {
+
+        try
+        {
+
+            produtosController = new ProdutosController( conexao );
+            System.out.println( "ID PRODUTO EXTERIOR: " + codigo );
+            TbProduto produtoLocal = ( TbProduto ) produtosController.findById( codigo );
+
+            procedimentoAdicionarTabela2( produtoLocal, mes );
+
+        }
+        catch ( Exception ex )
+        {
+            ex.printStackTrace();
+            Logger
+                    .getLogger( VendaUsuarioVisao.class
+                            .getName() ).log( Level.SEVERE, null, ex );
             JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
         }
 
@@ -2693,7 +2875,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private void mostrar_nome()
     {
-        TbUsuario usuario = (TbUsuario) usuariosController.getUsuarioByCodigo( this.cod_usuario );
+        TbUsuario usuario = ( TbUsuario ) usuariosController.getUsuarioByCodigo( this.cod_usuario );
         //caso masculino
 //        if (usuario.getCodigoSexo().getCodigo() == 1) {
         lb_nome_usuario.setText( "Operador: " + usuario.getNome() );
@@ -2704,7 +2886,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private void empresa()
     {
-        TbDadosInstituicao dados = (TbDadosInstituicao) dadosInstituicaoController.findById( 1 );
+        TbDadosInstituicao dados = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
 
         jlEmpresa.setText( dados.getNome() );
 
@@ -2716,7 +2898,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         try
         {
 
-            TbProduto produto_local = (TbProduto) produtosController.findById( getCodigoProduto() );
+            TbProduto produto_local = ( TbProduto ) produtosController.findById( getCodigoProduto() );
 
             TbStock stockLocal = stocksController.getStockByIdProdutoAndIdArmazem( getCodigoProduto(), getCodigoArmazem() );
             boolean isStocavel = produto_local.getStocavel().equals( "true" );
@@ -2751,7 +2933,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         {
             ex.printStackTrace();
             txtQuantidadeStock.setText( "0" );
-            Logger.getLogger( VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger
+                    .getLogger( VendaUsuarioVisao.class
+                            .getName() ).log( Level.SEVERE, null, ex );
         }
 
     }
@@ -2789,7 +2973,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         catch ( Exception ex )
         {
             ex.printStackTrace();
-            Logger.getLogger( VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger
+                    .getLogger( VendaUsuarioVisao.class
+                            .getName() ).log( Level.SEVERE, null, ex );
         }
     }
 
@@ -2825,7 +3011,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         catch ( Exception ex )
         {
             ex.printStackTrace();
-            Logger.getLogger( VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger
+                    .getLogger( VendaUsuarioVisao.class
+                            .getName() ).log( Level.SEVERE, null, ex );
         }
 
     }
@@ -2839,7 +3027,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
                 if ( !isProdutoExpirado( getCodigoProduto() ) )
                 {
-                    TbProduto produtoLocal = (TbProduto) produtosController.findById( getCodigoProduto() );
+                    TbProduto produtoLocal = ( TbProduto ) produtosController.findById( getCodigoProduto() );
                     if ( isStocavel( produtoLocal.getStocavel() ) )
                     {
                         if ( possivel_quantidade() )
@@ -2848,7 +3036,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                             {
                                 JOptionPane.showMessageDialog( null, "O produto: " + produtoLocal.getDesignacao() + " precisa de ser actualizado no stock", "DVML", JOptionPane.WARNING_MESSAGE );
                             }
-                            adicionar_produto();
+                            adicionar_produto( "" );
 
                         }
                         else
@@ -2859,7 +3047,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                     }
                     else
                     {
-                        adicionar_produto();
+                        adicionar_produto( "" );
                     }
                 }
                 else
@@ -2957,7 +3145,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         double qtd = 0d;
         double qtd_aceite = 0d;
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         boolean transtorno = false;
 
         for ( int i = 0; i < table.getRowCount(); i++ )
@@ -2965,7 +3153,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
             cod_produto = Integer.parseInt( String.valueOf( table.getModel().getValueAt( i, 0 ) ) );
             qtd = Double.parseDouble( String.valueOf( table.getModel().getValueAt( i, 4 ) ) );
-            TbProduto produto_local = (TbProduto) produtosController.findById( cod_produto );
+            TbProduto produto_local = ( TbProduto ) produtosController.findById( cod_produto );
             boolean stocavel = produto_local.getStocavel().equals( "true" ) ? true : false;
 
             if ( !possivel_quantidade( cod_produto, qtd ) && stocavel )
@@ -2977,7 +3165,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 if ( qtd_aceite != 0 )
                 {
 
-                    TbProduto produto = (TbProduto) produtosController.findById( getCodigoProduto() );
+                    TbProduto produto = ( TbProduto ) produtosController.findById( getCodigoProduto() );
                     int opcao = JOptionPane.showConfirmDialog( null, "Desculpe pelo transtorno"
                             + ", o produto " + produto.getDesignacao() + " só é possivel  a " + qtd_aceite + " quantidade(s)" + ", contrariamente de " + qtd + "\n Deseja actualizar(Yes) ou remover da tabela(No) ?" );
 
@@ -3081,7 +3269,6 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         }
 
     }
-    
 
     public static int getIdDocumento()
     {
@@ -3212,7 +3399,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     public static Double getPreco( int idProduto, double qtd, int idMoeda )
     {
 
-        Moeda moeda = (Moeda) moedasController.findById( idMoeda );
+        Moeda moeda = ( Moeda ) moedasController.findById( idMoeda );
         if ( moeda == null )
         {
             return null;
@@ -3243,14 +3430,14 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     public static String getDescricao_Produto()
     {
-        TbProduto produto = (TbProduto) produtosController.findById( getCodigoProduto() );
+        TbProduto produto = ( TbProduto ) produtosController.findById( getCodigoProduto() );
         return produto.getDesignacao();
     }
 
     public static String getUnidade_Produto()
     {
-        TbProduto produto = (TbProduto) produtosController.findById( getCodigoProduto() );
-        Unidade unidade = (Unidade) unidadesController.findById( produto.getCodUnidade().getPkUnidade() );
+        TbProduto produto = ( TbProduto ) produtosController.findById( getCodigoProduto() );
+        Unidade unidade = ( Unidade ) unidadesController.findById( produto.getCodUnidade().getPkUnidade() );
         return unidade.getAbreviacao();
     }
 
@@ -3310,7 +3497,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         {
             double desconto = 0.0;
             double total_pagar = getTotalPagar();
-            double valor_desconto_geral = (double) sp_desconto_financeiro.getValue();
+            double valor_desconto_geral = ( double ) sp_desconto_financeiro.getValue();
 
             if ( valor_desconto_geral > total_pagar )
             {
@@ -3453,8 +3640,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     {
         try
         {
-            documento = (Documento) documentosController.findById( getIdDocumento() );
-            anoEconomico = (AnoEconomico) anoEconomicoController.findById( getIdAnoEconomico() );
+            documento = ( Documento ) documentosController.findById( getIdDocumento() );
+            anoEconomico = ( AnoEconomico ) anoEconomicoController.findById( getIdAnoEconomico() );
             // this.doc_prox_cod = documento.getCodUltimoDoc() + 1;
             doc_prox_cod = vendasController.getUltimaContagemByIdDocumentoAndAnoEconomico(
                     getIdDocumento(), getIdAnoEconomico() ) + 1;
@@ -3473,6 +3660,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     {
         // return produtoDao.produtoExpirado( codigoProduto );
         return false;
+
     }
 
     //----------- evento do teclado ---------------------------------------
@@ -3531,7 +3719,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         }
     }
 
-    //----------- evento do teclado ---------------------------------------
+//----------- evento do teclado ---------------------------------------
     class TratarDesconto implements KeyListener
     {
 
@@ -3587,7 +3775,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         }
     }
 
-    //----------- evento do teclado ---------------------------------------
+//----------- evento do teclado ---------------------------------------
     class TratarEventoValorEntregue implements KeyListener
     {
 
@@ -3621,7 +3809,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         }
     }
 
-    //----------- evento do teclado ---------------------------------------
+//----------- evento do teclado ---------------------------------------
     class TratarEventoCliente implements KeyListener
     {
 
@@ -3655,7 +3843,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         }
     }
 
-    //----------- evento do teclado ---------------------------------------
+//----------- evento do teclado ---------------------------------------
     class TratarEventtoTroco implements KeyListener
     {
 
@@ -3729,7 +3917,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
 //        boolean editarpreco = dadosInstituicao_local.getEditarPreco();
         boolean editarpreco = true;
-        TbUsuario usuario = (TbUsuario) usuariosController.findById( cod_usuario );
+        TbUsuario usuario = ( TbUsuario ) usuariosController.findById( cod_usuario );
         if ( usuario.getIdTipoUsuario().getIdTipoUsuario() == 1 && editarpreco )
         {
             setEditableColunaPreco( true );
@@ -3843,17 +4031,23 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //        txtQuatindade.setText( String.valueOf( 1 ) );
 //        txtCodigoProduto.requestFocus();
 //    }
-    public static void adicionar_produto() throws SQLException
+    public static void adicionar_produto( String mes ) throws SQLException
     {
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         int codigo_produto = getCodigoProduto();
 
-        if ( !exist_produto_tabela_formulario( codigo_produto ) )
+        String descricao_produto = getDescricao_Produto();
+
+        if ( !mes.equals( "" ) )
+        {
+            descricao_produto = "Pgt. Ref. de " + descricao_produto + " de #" + mes;
+        }
+
+        if ( !exist_produto_tabela_formulario( descricao_produto ) )
         {
             if ( !validar_zero() )
             {
                 String unidade = getUnidade_Produto();
-                String descricao_produto = getDescricao_Produto();
 
                 // Usar BigDecimal para valores monetários
                 BigDecimal qtd = BigDecimal.valueOf( getQuantidade() );
@@ -3903,9 +4097,9 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 // Impressão de ticket (cozinha ou sala)
                 TbProduto findByDesignacao = produtosController.findByDesignacao( cmbProduto.getSelectedItem().toString() );
                 int idPedido = 0;
-                TbMesas mesaEntity = (TbMesas) mesasController.findById( DVML.MESA_BALCAO );
-                TbLugares lugarEntity = (TbLugares) lugaresController.findById( DVML.LUGAR_BALCAO );
-                TbUsuario usuarioEntity = (TbUsuario) usuariosController.findById( cod_usuario );
+                TbMesas mesaEntity = ( TbMesas ) mesasController.findById( DVML.MESA_BALCAO );
+                TbLugares lugarEntity = ( TbLugares ) lugaresController.findById( DVML.LUGAR_BALCAO );
+                TbUsuario usuarioEntity = ( TbUsuario ) usuariosController.findById( cod_usuario );
                 String usuario = usuarioEntity.getNome();
 
                 if ( findByDesignacao.getCozinha().equals( DVML.ENVIAR_TICKET ) )
@@ -4024,6 +4218,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     public static void setTotalPagar()
     {
         BigDecimal total = getTotalAOALiquido();
+        System.out.println( "TOTAL ####### " + total );
         String valorFormatado = CfMethods.formatarComoMoeda( total );
         txtTotalPagar.setText( valorFormatado );
     }
@@ -4035,8 +4230,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static void valor_por_extenco()
     {
-        BigDecimal total = BigDecimal.valueOf( CfMethods.parseMoedaFormatada( txtTotalPagar.getText() ) );
-//        BigDecimal total = CfMethods.parseMoedaFormatadaBigDecimal( txtTotalPagar.getText() );
+//        BigDecimal total = BigDecimal.valueOf( CfMethods.parseMoedaFormatada( txtTotalPagar.getText() ) );
+        BigDecimal total = CfMethods.parseMoedaFormatadaBigDecimal( txtTotalPagar.getText() );
         lbValorPorExtenco.setText( MetodosUtil.valorPorExtensoBigDecima( total, getMoeda().getDesignacao() ) );
     }
 
@@ -4049,7 +4244,14 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     public void remover_item_carrinho()
     {
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
+
+        String designacao = modelo.getValueAt( table.getSelectedRow(), 1 ).toString();
+        if ( designacao.contentEquals( "#" ) )
+        {
+            JOptionPane.showMessageDialog( null, "Não é permitido remover um  serviço " );
+        }
+
         modelo.removeRow( table.getSelectedRow() );
         setTotalPagar();
         setTotalRetencao();
@@ -4059,20 +4261,20 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         TbProduto findByDesignacao = produtosController.findByDesignacao( cmbProduto.getSelectedItem().toString() );
 
         int idPedido = 0;
-        TbMesas mesaEntity = (TbMesas) mesasController.findById( DVML.MESA_BALCAO );
+        TbMesas mesaEntity = ( TbMesas ) mesasController.findById( DVML.MESA_BALCAO );
         String mesa = mesaEntity.getDesignacao();
-        TbMesas lugarEntity = (TbMesas) lugaresController.findById( DVML.LUGAR_BALCAO );
+        TbLugares lugarEntity = ( TbLugares ) lugaresController.findById( DVML.LUGAR_BALCAO );
         String lugar = lugarEntity.getDesignacao();
-        TbUsuario usuarioEntity = (TbUsuario) usuariosController.findById( cod_usuario );
+        TbUsuario usuarioEntity = ( TbUsuario ) usuariosController.findById( cod_usuario );
         String usuario = usuarioEntity.getNome();
 
         if ( findByDesignacao.getCozinha().equals( "Enviar Ticket" ) )
         {
-            MetodosUtil.imprimir_cozinha( findByDesignacao, idPedido, mesa, lugar, usuario, "Cancelado", (int) getQuantidade(), dadosInstituicaoController );
+            MetodosUtil.imprimir_cozinha( findByDesignacao, idPedido, mesa, lugar, usuario, "Cancelado", ( int ) getQuantidade(), dadosInstituicaoController );
         }
         else if ( findByDesignacao.getCozinha().equals( "Enviar Sala" ) )
         {
-            MetodosUtil.imprimir_sala( findByDesignacao, idPedido, mesa, lugar, usuario, "Cancelado", (int) getQuantidade(), dadosInstituicaoController );
+            MetodosUtil.imprimir_sala( findByDesignacao, idPedido, mesa, lugar, usuario, "Cancelado", ( int ) getQuantidade(), dadosInstituicaoController );
         }
 
         valor_por_extenco();
@@ -4084,7 +4286,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     public void adicionar_produto_teclado( int codigo, String descricao ) throws SQLException
     {
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         double total_deconto = Double.parseDouble( String.valueOf( getPreco() ) ) * Double.parseDouble( String.valueOf( getQuantidade() ) );
 
         modelo.addRow( new Object[]
@@ -4154,7 +4356,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         table.getColumnModel().getColumn( 4 );
         table.getColumnModel().getColumn( 5 );
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
 
         for ( int i = modelo.getRowCount() - 1; i >= 0; i-- )
         {
@@ -4171,7 +4373,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static BigDecimal getTotalRetencaoLiquido()
     {
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         BigDecimal totalRetencao = BigDecimal.ZERO;
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
@@ -4189,7 +4391,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     public static double getTotalPagar()
     {
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
 
         double total_pagar = 0;
         for ( int i = 0; i < modelo.getRowCount(); i++ )
@@ -4204,7 +4406,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     public static double getTotal_Retencao()
     {
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
 
         double total_retencao = 0;
         for ( int i = 0; i < modelo.getRowCount(); i++ )
@@ -4218,7 +4420,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static void calculaTotalIVA()
     {
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         BigDecimal totalIva = BigDecimal.ZERO;
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
@@ -4251,7 +4453,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private static void calculaTotalRet()
     {
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         double ret = 0, preco = 0, desconto = 0;
         double qtd = 0d;
         total_ret = 0;
@@ -4303,7 +4505,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         table.getColumnModel().getColumn( 4 );
         table.getColumnModel().getColumn( 5 );
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
 
         double total_pagar = 0;
 
@@ -4452,7 +4654,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     public static void remover_all_produto()
     {
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         for ( int i = modelo.getRowCount() - 1; i >= 0; i-- )
         {
             modelo.removeRow( i );
@@ -4551,12 +4753,13 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         vendasController = new VendasController( conexaoTransactionLocal );
         itemVendasController = new ItemVendasController( conexaoTransactionLocal );
         formaPagamentoItemController = new FormaPagamentoItemController( conexaoTransactionLocal );
+        pagamentoMensalidadeController = new PagamentoMensalidadeController( conexaoTransactionLocal.getConnectionAtiva() );
         StoksController stocksControllerLocal = new StoksController( conexaoTransactionLocal );
         DocumentosController.start( conexaoTransactionLocal ); // Inicia a transação
         try
         {
-            System.out.println("AutoCommit após iniciar transação? " 
-    + conexaoTransactionLocal.getConnection().getAutoCommit());
+            System.out.println( "AutoCommit após iniciar transação? "
+                    + conexaoTransactionLocal.getConnection().getAutoCommit() );
 
         }
         catch ( SQLException e )
@@ -4603,7 +4806,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             }
 
             // Finaliza transação
-            DocumentosController.commit(conexaoTransactionLocal );
+            DocumentosController.commit( conexaoTransactionLocal );
 
             JOptionPane.showMessageDialog( null, "Factura efectuada com sucesso!" );
 //            imprimir_factura( idVendaGerada ); // Imprime a factura
@@ -4612,7 +4815,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         catch ( Exception e )
         {
 
-            DocumentosController.rollback(conexaoTransactionLocal );
+            DocumentosController.rollback( conexaoTransactionLocal );
             e.printStackTrace();
             JOptionPane.showMessageDialog( null, "Erro ao processar a venda: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE );
         }
@@ -4762,6 +4965,21 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         return venda;
     }
 
+    public static String getMes( String designacao )
+    {
+
+        try
+        {
+            return designacao.split( "#" )[ 1 ];
+        }
+        catch ( Exception e )
+        {
+        }
+
+        return "N/S";
+
+    }
+
     public static void salvar_item_venda_comercial( Integer cod_venda, BDConexao conexaoLocal, StoksController stoksControllerLocal ) throws Exception
     {
         for ( int i = 0; i < table.getRowCount(); i++ )
@@ -4769,11 +4987,14 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             try
             {
                 int idProduto = Integer.parseInt( table.getModel().getValueAt( i, 0 ).toString() );
-                TbProduto produto = (TbProduto) produtosController.findById( idProduto );
+                String designacaoItem = table.getModel().getValueAt( i, 1 ).toString();
+
+                TbProduto produto = ( TbProduto ) produtosController.findById( idProduto );
 
                 TbItemVenda item = new TbItemVenda();
                 item.setCodigoVenda( new TbVenda( cod_venda ) );
                 item.setCodigoProduto( produto );
+                item.setDesignacaoItem( designacaoItem );
                 item.setQuantidade( Double.parseDouble( table.getModel().getValueAt( i, 4 ).toString() ) );
                 item.setDesconto( Double.parseDouble( table.getModel().getValueAt( i, 5 ).toString() ) );
                 item.setValorIva( Double.parseDouble( table.getModel().getValueAt( i, 6 ).toString() ) );
@@ -4784,13 +5005,22 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 item.setTotal( new BigDecimal( CfMethods.parseMoedaFormatada( table.getModel().getValueAt( i, 10 ).toString() ) ) );
                 item.setFkPreco( precosController.getLastIdPrecoByIdProduto( idProduto, item.getQuantidade() ) );
                 item.setDataServico( new Date() );
-                item.setFkLugares( (TbLugares) lugaresController.findById( DVML.LUGAR_BALCAO ) );
-                item.setFkMesas( (TbMesas) mesasController.findById( DVML.MESA_BALCAO ) );
-
+                item.setFkLugares( ( TbLugares ) lugaresController.findById( DVML.LUGAR_BALCAO ) );
+                item.setFkMesas( ( TbMesas ) mesasController.findById( DVML.MESA_BALCAO ) );
+                item.setDesignacaoItem( designacaoItem );
                 // Salvar item
                 if ( !itemVendasController.salvar( item ) )
                 {
                     throw new Exception( "Erro ao salvar item da venda. Produto: " + produto.getDesignacao() );
+                }
+                else
+                {
+                    String mes = getMes( designacaoItem );
+                    if ( !mes.equals( "N/S" ) )
+                    {
+                        procedimentoPagamentoMensalidadeServico( cod_venda, getIdCliente(), idProduto, mes, conexaoLocal );
+                        System.out.println( "Pagmento de mensalidade pago com sucesso!.." );
+                    }
                 }
 
                 int idArmazem = getCodigoArmazem();
@@ -5014,11 +5244,11 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     public static void registrarFormaPagamento( int idVenda, BigDecimal totalVenda, boolean formaNormal ) throws Exception
     {
 
-        if ( !formaNormal )
-        {
-            registrarPagamentoUnico( idVenda, totalVenda );
-            return;
-        }
+//        if ( !formaNormal )
+//        {
+//            registrarPagamentoUnico( idVenda, totalVenda );
+//            return;
+//        }
         registrarPagamentosMultiplos( idVenda );
     }
 
@@ -5035,7 +5265,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             throw new Exception( "Forma de pagamento não encontrada: " + descricao );
         }
 
-        Contas conta = (Contas) contaController.findById( forma.getFkContaAssociada() );
+        Contas conta = ( Contas ) contaController.findById( forma.getFkContaAssociada() );
         FormaPagamentoItem item = criarItemFormaPagamento( idVenda, idForma, valor, BigDecimal.ZERO, referencia );
         if ( !formaPagamentoItemController.salvar( item ) )
         {
@@ -5060,7 +5290,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static void registrarPagamentosMultiplos( int idVenda ) throws Exception
     {
-        DefaultTableModel modelo = (DefaultTableModel) FormaPagamentoVisao.tabela_forma_pagamento.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) FormaPagamentoVisao.tabela_forma_pagamento.getModel();
         BigDecimal troco = CfMethods.parseMoedaSegura( FormaPagamentoVisao.lb_troco.getText() );
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
@@ -5082,8 +5312,11 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
                 throw new Exception( "Forma de pagamento não encontrada: " + descricao );
             }
 
-            Contas conta = (Contas) contaController.findById( forma.getFkContaAssociada() );
+            Contas conta = ( Contas ) contaController.findById( forma.getFkContaAssociada() );
 
+            System.out.println( "FORMA PAGAMENTO: " +descricao );
+            System.out.println( "FORMA PAGAMENTO VALOR: " +valor );
+            System.out.println( "FORMA PAGAMENTO TROCO: " +troco );
             FormaPagamentoItem item = criarItemFormaPagamento( idVenda, idForma, valor, troco, referencia );
 
             if ( !formaPagamentoItemController.salvar( item ) )
@@ -5141,12 +5374,12 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         List<TbProduto> lista_produto_isentos = getProdutosIsentos();
         String motivos_isentos = MetodosUtil.getMotivoIsensaoProdutos( lista_produto_isentos );
         conexoaLocal.close();
-        int numeroVias = (int) Double.parseDouble( spnCopia.getValue().toString() );
+        int numeroVias = ( int ) Double.parseDouble( spnCopia.getValue().toString() );
 
         for ( int i = 1; i <= numeroVias; i++ )
         {
             String via;
-            switch ( i )
+            switch (i)
             {
                 case 1:
                     via = "Original";
@@ -5227,7 +5460,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     {
         try
         {
-            TbCliente cliente = (TbCliente) clientesController.findById( getIdCliente() );
+            TbCliente cliente = ( TbCliente ) clientesController.findById( getIdCliente() );
 
             String nif = cliente.getNif();
             System.out.println( "NIF CLIENTE: " + nif );
@@ -5461,6 +5694,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         catch ( Exception e )
         {
             return 0;
+
         }
 
     }
@@ -5524,8 +5758,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             anoEconomicoController = new AnoEconomicoController( conexaoLocal );
             vendasController = new VendasController( conexaoLocal );
 
-            documento = (Documento) documentosController.findById( getIdDocumento( documentosController ) );
-            anoEconomico = (AnoEconomico) anoEconomicoController.findById( getIdAnoEconomico( anoEconomicoController ) );
+            documento = ( Documento ) documentosController.findById( getIdDocumento( documentosController ) );
+            anoEconomico = ( AnoEconomico ) anoEconomicoController.findById( getIdAnoEconomico( anoEconomicoController ) );
             doc_prox_cod = vendasController.getUltimaContagemByIdDocumentoAndAnoEconomico(
                     getIdDocumento( documentosController ), getIdAnoEconomico( anoEconomicoController ) ) + 1;
             prox_doc = documento.getAbreviacao();
@@ -5550,8 +5784,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             documentosController = new DocumentosController( conexao );
             anoEconomicoController = new AnoEconomicoController( conexao );
 
-            documento = (Documento) documentosController.findById( getIdDocumento() );
-            anoEconomico = (AnoEconomico) anoEconomicoController.findById( getIdAnoEconomico() );
+            documento = ( Documento ) documentosController.findById( getIdDocumento() );
+            anoEconomico = ( AnoEconomico ) anoEconomicoController.findById( getIdAnoEconomico() );
             doc_prox_cod = vendasController.getUltimaContagemByIdDocumentoAndAnoEconomico(
                     getIdDocumento(), getIdAnoEconomico() ) + 1;
             prox_doc = documento.getAbreviacao();
@@ -5582,7 +5816,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getTaxaImposto( int idProduto )
     {
-        TbProduto produto = (TbProduto) produtosController.findById( idProduto );
+        TbProduto produto = ( TbProduto ) produtosController.findById( idProduto );
         //verifca o artigo se eh produto ou servico.
         if ( produto.getStocavel().equals( "true" ) )
         {
@@ -5638,25 +5872,10 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getValorComImposto( double qtd, double taxa, double preco_venda, double desconto )
     {
-        double subtotal_linha = ( preco_venda * qtd );
-        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
+        double subtotal_linha = (preco_venda * qtd);
+        double desconto_valor = (subtotal_linha * ( desconto / 100 ));
         double valor_iva = 1 + ( taxa / 100 );//
         return ( ( subtotal_linha - desconto_valor ) * valor_iva );
-
-//        double valor_iva = 1 + ( taxa / 100 );//
-//        double desconto_valor =  ( preco_venda * ( desconto / 100 ) );
-//        double preco_unitario_com_taxa = ( preco_venda - desconto_valor ) * valor_iva;
-//        double subtotal_linha = preco_unitario_com_taxa * qtd;
-//
-//        return subtotal_linha;
-    }
-
-    private static double getValorComRetencao( double qtd, double ret, double preco_venda, double desconto )
-    {
-        double subtotal_linha = ( preco_venda * qtd );
-        double desconto_valor = ( subtotal_linha * ( desconto / 100 ) );
-        double valor_ret = ( ( ( subtotal_linha - desconto_valor ) * ret ) / 100 );//
-        return ( valor_ret );
     }
 
     private static BigDecimal getIVA( BigDecimal qtd, BigDecimal taxa, BigDecimal precoVenda, BigDecimal desconto )
@@ -5678,8 +5897,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getRET( double qtd, double taxa_r, double preco_venda, double desconto )
     {
-        double subtotal_linha = ( preco_venda * qtd );
-        double valor_ret = ( taxa_r / 100 );//
+        double subtotal_linha = (preco_venda * qtd);
+        double valor_ret = (taxa_r / 100);//
         return ( ( subtotal_linha - desconto ) * valor_ret );
 
     }
@@ -5694,11 +5913,20 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             {
                 mostrar_proximo_codigo_documento();
 
-                MetodosUtil.verificarCaixa( caixasController,
-                        cod_usuario,
-                        RootVisao.btn_abertura_dia_root,
-                        RootVisao.btn_abertura_dia_root,
-                        btnFormaPagamento, btnSemFormaPagamento );
+                try
+                {
+                    MetodosUtil.verificarCaixa( caixasController,
+                            cod_usuario,
+                            RootVisao.btn_abertura_dia_root,
+                            RootVisao.btn_abertura_dia_root,
+                            btnFormaPagamento, btnSemFormaPagamento );
+
+                }
+                catch ( Exception ex )
+                {
+                    System.err.println( "Não existe abertura para este usuário \n"
+                            + ex.getMessage() );
+                }
 
             }
 
@@ -5709,7 +5937,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private void actualizar_abreviacao()
     {
 
-        switch ( getIdDocumento() )
+        switch (getIdDocumento())
         {
             case DVML.DOC_FACTURA_RECIBO_FR:
                 if ( ck_A4.isSelected() )
@@ -5803,7 +6031,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static Moeda getMoeda()
     {
-        String moedaSelecionada = (String) cmbMoeda.getSelectedItem();
+        String moedaSelecionada = ( String ) cmbMoeda.getSelectedItem();
 
         if ( moedaSelecionada == null )
         {
@@ -5817,7 +6045,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private void refresh_table()
     {
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
 
         double preco = 0, desconto = 0, sub_total_linha = 0, sub_total_linha_com_iva = 0, taxa = 0, taxa_r = 0, sub_total_linha_retencao = 0;
         int idProduto, qtd;
@@ -5874,8 +6102,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private static void refresh_table( int idMoeda )
     {
 
-        Moeda moeda_local = (Moeda) moedasController.findById( idMoeda );
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        Moeda moeda_local = ( Moeda ) moedasController.findById( idMoeda );
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
 
         double preco = 0, desconto = 0, sub_total_linha = 0, sub_total_linha_com_iva = 0, taxa = 0, taxa_r = 0;
         int idProduto, qtd;
@@ -5930,7 +6158,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     private double getValorTotalDescontoLinha()
     {
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
 
         double desconto_linha = 0;
 
@@ -5980,7 +6208,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         {
 
             //busca o objecto para retirar apenas a data do seu procesamento
-            TbVenda venda_local = (TbVenda) vendasController.findById( cod_ultima_venda );
+            TbVenda venda_local = ( TbVenda ) vendasController.findById( cod_ultima_venda );
             //retirando a data do documebto
             Date data_ultimo_documento = venda_local.getDataVenda();
             //pegando a data do documento (data actual do sistema)
@@ -6054,7 +6282,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static List<TbProduto> getProdutosIsentos()
     {
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         double taxa = 0.0;
         int codigo_produto = 0;
         List<TbProduto> lista_produtos_isentos = new ArrayList<>();
@@ -6064,7 +6292,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             taxa = Double.parseDouble( modelo.getValueAt( i, 6 ).toString() );
             if ( taxa == 0.0 )
             {
-                lista_produtos_isentos.add( (TbProduto) produtosController.findById( codigo_produto ) );
+                lista_produtos_isentos.add( ( TbProduto ) produtosController.findById( codigo_produto ) );
             }
         }
 
@@ -6134,7 +6362,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 //    }
     private static double getTotalRetencao()
     {
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         double valor_retencao = 0d;
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
@@ -6174,7 +6402,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getTotalRetencao1()
     {
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
         double qtd = 0d;
         double imposto = 0d, preco_unitario = 0d, desconto_valor_linha = 0d, valor_taxa = 0d;
 
@@ -6187,7 +6415,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             // a incidência só é aplicável ao produtos sujeitos a iva 
             if ( taxa != 0 )
             {
-                double valor_unitario = ( preco_unitario * qtd );
+                double valor_unitario = (preco_unitario * qtd);
 
                 desconto_valor_linha = valor_unitario * ( ( valor_percentagem ) / 100 );
                 valor_taxa = ( valor_unitario - desconto_valor_linha ) / taxa;
@@ -6253,7 +6481,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static double getTotalAOARetencoes()
     {
-        double valores = ( getTotalRetencao1() );
+        double valores = (getTotalRetencao1());
         return ( valores );
     }
 
@@ -6261,7 +6489,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
     {
         BigDecimal totalIva = BigDecimal.ZERO;
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo = ( DefaultTableModel ) table.getModel();
 
         for ( int i = 0; i < modelo.getRowCount(); i++ )
         {
@@ -6300,10 +6528,10 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     private static String iniciais_extenso()
     {
-        Documento documento_local = (Documento) documentosController.findById( getIdDocumento() );
+        Documento documento_local = ( Documento ) documentosController.findById( getIdDocumento() );
         String abreviacao_local = documento_local.getAbreviacao();
 
-        switch ( abreviacao_local )
+        switch (abreviacao_local)
         {
             case "FT":
                 return "Facturamos o valor de: ";
@@ -6321,7 +6549,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         try
         {
 
-            TbCliente cliente = (TbCliente) clientesController.findById( codCliente );
+            TbCliente cliente = ( TbCliente ) clientesController.findById( codCliente );
             String nome_cliente = cliente.getNome();
             cmbCliente.setSelectedItem( nome_cliente.trim() );
             accao_cliente();
@@ -6335,7 +6563,6 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         txtCodClientePesquisa.setText( "" );
         txtCodClientePesquisa.requestFocus();
     }
-//    5417221915
 
     private void pesquisa_cliente_by_nif()
     {
@@ -6353,13 +6580,12 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             JOptionPane.showMessageDialog( null, "Não existe cliente com código" );
             cmbCliente.setSelectedItem( "Consumidor Final" );
         }
-//        txtNifClientePesquisa.setText( "" );
         txtNifClientePesquisa.requestFocus();
     }
 
     private static boolean verifica_ano_documento_igual_economico()
     {
-        AnoEconomico anoEconomicoLocal = (AnoEconomico) anoEconomicoController.findById( getIdAnoEconomico() );
+        AnoEconomico anoEconomicoLocal = ( AnoEconomico ) anoEconomicoController.findById( getIdAnoEconomico() );
         int ano_economico = Integer.parseInt( anoEconomicoLocal.getDesignacao() );
         int ano_documento = dc_data_documento.getDate().getYear() + 1900;
         return ano_documento == ano_economico;
@@ -6465,94 +6691,6 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             this.abreviacao = Abreviacao.FR_A4;
         }
     }
-//    private void setFolhaImpressora( String folha )
-//    {
-//        if ( folha.equalsIgnoreCase( "A6" ) )
-//        {
-//            ck_simplificada.setSelected( true );
-//            ck_A4.setSelected( false );
-//            this.abreviacao = Abreviacao.FR_S;
-//        }
-//        else
-//        {
-//            ck_A4.setSelected( true );
-//            ck_simplificada.setSelected( false );
-//            this.abreviacao = Abreviacao.FR_A4;
-//        }
-//    }
-//    
-//    private void actualizarPreco( PropertyChangeEvent evt )
-//    {
-//        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
-//        int linhaSelecionada = table.getSelectedRow();
-//
-//        try
-//        {
-//            Float precoDigitado = Float.parseFloat( modelo.getValueAt( linhaSelecionada, 3 ).toString() );
-//            System.out.println( "Preco: " + precoDigitado );
-//
-//            int codProduto = Integer.parseInt( modelo.getValueAt( linhaSelecionada, 0 ).toString() );
-//            TbPreco precoAnterior = precoDao.getLastPrecoByIdProduto( codProduto );
-//            System.out.println( "Preco Anterior: " + precoAnterior.getPrecoVenda() );
-//            if ( precoDigitado != precoAnterior.getPrecoVenda() )
-//            {
-//                //criar um preco temprario
-//                TbPreco precoTemporario = new TbPreco();
-//                precoTemporario.setPercentagemGanho( 0d );
-//                precoTemporario.setPrecoCompra( precoAnterior.getPrecoCompra() );
-//                precoTemporario.setPrecoVenda( precoDigitado );
-//                precoTemporario.setQtdBaixo( 0 );
-//                precoTemporario.setQtdAlto( precoAnterior.getQtdAlto() );
-//                precoTemporario.setFkUsuario( usuarioDao.findTbUsuario( cod_usuario ) );
-//                precoTemporario.setFkProduto( produtoDao.findTbProduto( codProduto ) );
-//                precoTemporario.setData( new Date() );
-//                precoTemporario.setHora( new Date() );
-//                precoTemporario.setPrecoAnterior( precoAnterior.getPrecoAnterior() );
-//
-//                precoDao.create( precoTemporario );
-//                System.out.println( "preco temprario criado" );
-//                map.put( codProduto, precoAnterior );
-//                System.out.println( "adicionado na tabela hash" );
-//            }
-//
-//            int qtd = Integer.parseInt( modelo.getValueAt( linhaSelecionada, 4 ).toString() );
-//            Float desconto = Float.parseFloat( modelo.getValueAt( linhaSelecionada, 5 ).toString() );
-//            Float subtotal = ( precoDigitado * qtd );
-//
-//            modelo.setValueAt( MetodosUtil.retirar_dizimas( getDesconto_produto( subtotal ) ), linhaSelecionada, 5 );
-//            modelo.setValueAt( subtotal, linhaSelecionada, 8 );
-//
-//            setTotalPagar();
-//            setTotalCompleto();
-//            valor_por_extenco();
-//
-//        }
-//        catch ( Exception e )
-//        {
-//            e.printStackTrace();
-//        }
-//
-//    }
-//
-//    private void restaurarPrecos(){
-//        
-//        if( !map.isEmpty()){
-//            
-//            for ( Map.Entry<Integer, TbPreco> entry : map.entrySet() ){
-//                
-//                Integer codProduto = entry.getKey();
-//                TbPreco preco = entry.getValue();
-//                precoDao.create( preco );
-//                
-//            }
-//            map.clear();
-//            
-//            
-//        }
-//        
-//        
-//        
-//    }
 
     private void setFocus( String focus )
     {
@@ -6616,26 +6754,6 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
     }
 
-//    private static void setEditarPrecos( String editarPrecos )
-//    {
-//
-//        if ( editarPrecos.equalsIgnoreCase( "Nao" ) )
-//        {
-//
-//            jRadioButtonEditarPreco.setEnabled(true );
-//       
-//            
-//
-//        }
-//        else
-//        {
-//
-//            jRadioButtonEditarPreco.setEnabled( false );
-//           
-//            
-//        }
-//
-//    }
     private void setTranstorno( String transtorno )
     {
         if ( transtorno.equalsIgnoreCase( "Activo" ) )
@@ -6653,19 +6771,6 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         }
     }
 
-//    private void setImprimirA6( String imprimirA6 )
-//    {
-//        if ( imprimirA6.equalsIgnoreCase( "Directamente" ) )
-//        {
-//            rbMostrar.setSelected(true);
-//
-//        }
-//        else
-//        {
-//            rbMostrar.setSelected(false);
-//
-//        }
-//    }
     private void setActivarDescontoFinanceiro( String desconto_financeiro )
     {
         if ( desconto_financeiro.equalsIgnoreCase( "Activar" ) )
@@ -6737,29 +6842,6 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         }
     }
 
-//    public static void verificarCaixa()
-//    {
-//
-//        if ( !caixasController.existeCaixas() )
-//        {
-//            btnFormaPagamento.setEnabled( false );
-//            btnProcessar.setEnabled( false );
-//            status_mensagem_primaria.setText( "" );
-//        }
-//        else if ( caixasController.existe_abertura() && caixasController.existe_fecho() )
-//        {
-//            btnFormaPagamento.setEnabled( false );
-//            btnProcessar.setEnabled( false );
-//            status_mensagem_primaria.setText( "Deves abrir o caixa." );
-//
-//        }
-//        else
-//        {
-//            btnFormaPagamento.setEnabled( true );
-//            btnProcessar.setEnabled( true );
-//            status_mensagem_primaria.setText( "" );
-//        }
-//    }
     public void scrolltable()
     {
 
@@ -6889,8 +6971,8 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
             int codProduto = Integer.parseInt( table.getValueAt( linha_actual, 0 ).toString() );
             double desconto = Double.parseDouble( table.getValueAt( linha_actual, 5 ).toString() );
 
-            TbProduto produtoLocal = (TbProduto) produtosController.findById( codProduto );
-            TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById( produtoLocal.getCodTipoProduto().getCodigo() );
+            TbProduto produtoLocal = ( TbProduto ) produtosController.findById( codProduto );
+            TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutoController.findById( produtoLocal.getCodTipoProduto().getCodigo() );
 
             double qtd;
 
@@ -6942,6 +7024,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         table.setValueAt( 1, linha_actual, columnValue );
         JOptionPane.showMessageDialog( null, msg );
         table.clearSelection();
+
     }
 
     private static void setEditableColunaPreco( boolean isServico )
@@ -6958,7 +7041,18 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         {
             Class[] types = new Class[]
             {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class,
+                java.lang.String.class,
+                java.lang.String.class,
+                java.lang.String.class,
+                java.lang.Double.class,
+                java.lang.Double.class,
+                java.lang.String.class,
+                java.lang.String.class,
+                java.lang.String.class,
+                java.lang.String.class,
+                java.lang.String.class
+
             };
             boolean[] canEdit = new boolean[]
             {
@@ -7002,13 +7096,13 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
 
         System.out.println( "ID PRODUTO: " + idProduto );
 
-        int idPrecoRetalho = PrecosController.getLastIdPrecoByIdProdutoIntAndQTD( idProduto, 0d, conexao );
+        int idPrecoRetalho = PrecosController.getLastIdPrecoByIdProdutoIntAndQTD( idProduto, 1d, conexaoTransaction );
         System.out.println( "ID RETALHO: " + idPrecoRetalho );
-        TbPreco precoAntigoRetalho = (TbPreco) precosControllerLocal.findById( idPrecoRetalho );
+        TbPreco precoAntigoRetalho = ( TbPreco ) precosControllerLocal.findById( idPrecoRetalho );
         System.out.println( "PRECO RETALHO: " + precoAntigoRetalho );
 
-        int idPrecoGrosso = PrecosController.getLastIdPrecoByIdProdutoIntAndPrecoAntigoQtdAlto( idProduto, precoAntigoRetalho.getQtdAlto() + 1, conexao );
-        TbPreco precoAntigoGrosso = (TbPreco) precosControllerLocal.findById( idPrecoGrosso );
+        int idPrecoGrosso = PrecosController.getLastIdPrecoByIdProdutoIntAndPrecoAntigoQtdAlto( idProduto, precoAntigoRetalho.getQtdAlto() + 1, conexaoTransaction );
+        TbPreco precoAntigoGrosso = ( TbPreco ) precosControllerLocal.findById( idPrecoGrosso );
         System.out.println( "ID GROSSO: " + idPrecoGrosso );
         System.out.println( "PRECO GROSSO: " + precoAntigoGrosso );
 
@@ -7040,7 +7134,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         }
         catch ( Exception e )
         {
-            DocumentosController.rollback(conexaoTransaction );
+            DocumentosController.rollback( conexaoTransaction );
             e.printStackTrace();
             System.err.println( "Falha ao actualizar o preço retalho na venda" );
         }
@@ -7077,22 +7171,246 @@ public class VendaUsuarioVisao extends javax.swing.JFrame
         }
         catch ( Exception e )
         {
-            DocumentosController.rollback(conexaoTransaction );
+            DocumentosController.rollback( conexaoTransaction );
             e.printStackTrace();
             System.err.println( "Falha ao actualizar o preço grosso na compra" );
         }
 
     }
 
-//    public class TbCliente {
-//    private int codigo;
-//    private String nome;
-//
-//    // getters / setters
-//
-//    @Override
-//    public String toString() {
-//        return nome == null ? "" : nome;
-//    }
-//}
+    private static boolean procedimentoPagamentoMensalidadeServico( int vendaId, int idCliente, int idProduto, String mes, BDConexao conexaoParm )
+    {
+
+        mesRhController = new MesRhController( conexaoParm.getConnectionAtiva() );
+        int mesId = mesRhController.getIdByDescricao( mes );
+        PagamentoMensalidade pagamentoMensalidade = new PagamentoMensalidade();
+        pagamentoMensalidade.setClienteId( idCliente );
+        pagamentoMensalidade.setProdutoId( idProduto );
+        pagamentoMensalidade.setMesId( mesId );
+        pagamentoMensalidade.setVendaId( vendaId );
+        pagamentoMensalidade.setDataCadastro( new Date() );
+
+        return pagamentoMensalidadeController.salvar( pagamentoMensalidade );
+
+    }
+
+    /**
+     * Normaliza uma string: lower-case, remove acentos, pontuação extra e
+     * colapsa espaços.
+     */
+    private String normalizar( String s )
+    {
+        if ( s == null )
+        {
+            return "";
+        }
+
+        // remove acentos
+        String n = Normalizer.normalize( s, Normalizer.Form.NFD )
+                .replaceAll( "\\p{M}", "" );
+        // remove pontuação (mas preserva #), transforma espaços múltiplos em 1 e trim
+        n = n.replaceAll( "[\\p{Punct}&&[^#]]+", " " )
+                .replaceAll( "\\s+", " " )
+                .trim()
+                .toLowerCase();
+        return n;
+    }
+
+    /**
+     * Extrai (produto, mes) de uma designacao que contenha '#'. Retorna null se
+     * não for possível extrair.
+     */
+    private String[] extrairProdutoEMes( String designacao )
+    {
+        if ( designacao == null )
+        {
+            return null;
+        }
+        Pattern p = Pattern.compile( "^(.*?)#(.*)$" ); // grupo 1: tudo antes do #, grupo2: tudo depois
+        Matcher m = p.matcher( designacao );
+        if ( !m.find() )
+        {
+            return null;
+        }
+        String produto = m.group( 1 ).trim();
+        String mes = m.group( 2 ).trim();
+        return new String[]
+        {
+            produto, mes
+        };
+    }
+
+    /**
+     * Verifica se o serviço selecionado pode ser removido da tabela. Permite
+     * remoção somente do último mês (mais recente) para trás.
+     *
+     * @param model o modelo da JTable
+     * @param selectedRow índice da linha selecionada
+     * @return true se a remoção for permitida, false caso contrário
+     */
+    private boolean podeRemoverServico( DefaultTableModel model, int selectedRow )
+    {
+        if ( selectedRow == -1 )
+        {
+            JOptionPane.showMessageDialog( null, "Selecione um serviço para remover!" );
+            return false;
+        }
+
+        String designacaoSelecionada = String.valueOf( model.getValueAt( selectedRow, 1 ) );
+        if ( designacaoSelecionada == null || !designacaoSelecionada.contains( "#" ) )
+        {
+            return true; // não é mensalidade
+        }
+
+        // mapa de meses em ordem e normalizado
+        String[] meses =
+        {
+            "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+            "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+        };
+        // criar versão normalizada do array meses para comparação
+        String[] mesesNorm = new String[ meses.length ];
+        for ( int i = 0; i < meses.length; i++ )
+        {
+            mesesNorm[ i ] = normalizar( meses[ i ] );
+        }
+
+        try
+        {
+            String[] pm = extrairProdutoEMes( designacaoSelecionada );
+            if ( pm == null )
+            {
+                return true;
+            }
+            String produtoOriginal = pm[ 0 ];
+            String mesAtual = pm[ 1 ];
+
+            String produtoNorm = normalizar( produtoOriginal );
+
+            // índice do mês selecionado
+            String mesAtualNorm = normalizar( mesAtual );
+            int indexMesAtual = -1;
+            for ( int i = 0; i < mesesNorm.length; i++ )
+            {
+                if ( mesesNorm[ i ].equals( mesAtualNorm ) )
+                {
+                    indexMesAtual = i;
+                    break;
+                }
+            }
+            if ( indexMesAtual == -1 )
+            {
+                JOptionPane.showMessageDialog( null, "Mês inválido: " + mesAtual );
+                return false;
+            }
+
+            // percorre todas as linhas e identifica as que pertencem EXATAMENTE ao mesmo produto
+            int totalMesesMesmoProduto = 0;
+            int maxIndexPresente = -1;
+            String mesMaisRecentePresente = null;
+
+            // também vamos registrar as linhas que tem o mês mais recente para garantir remover última ocorrência
+            java.util.List<Integer> linhasDoMesMaisRecente = new java.util.ArrayList<>();
+
+            for ( int r = 0; r < model.getRowCount(); r++ )
+            {
+                String d = String.valueOf( model.getValueAt( r, 1 ) );
+                if ( d == null || !d.contains( "#" ) )
+                {
+                    continue;
+                }
+
+                String[] pmLinha = extrairProdutoEMes( d );
+                if ( pmLinha == null )
+                {
+                    continue;
+                }
+
+                String produtoLinhaNorm = normalizar( pmLinha[ 0 ] );
+
+                // compara produto por igualdade da string normalizada
+                if ( !produtoLinhaNorm.equals( produtoNorm ) )
+                {
+                    continue;
+                }
+
+                // extrai mes e normaliza
+                String mesLinhaNorm = normalizar( pmLinha[ 1 ] );
+                int idxLinha = -1;
+                for ( int m = 0; m < mesesNorm.length; m++ )
+                {
+                    if ( mesesNorm[ m ].equals( mesLinhaNorm ) )
+                    {
+                        idxLinha = m;
+                        break;
+                    }
+                }
+                if ( idxLinha == -1 )
+                {
+                    continue;
+                }
+
+                totalMesesMesmoProduto++;
+
+                if ( idxLinha > maxIndexPresente )
+                {
+                    maxIndexPresente = idxLinha;
+                    mesMaisRecentePresente = meses[ idxLinha ];
+                    linhasDoMesMaisRecente.clear();
+                    linhasDoMesMaisRecente.add( r );
+                }
+                else if ( idxLinha == maxIndexPresente )
+                {
+                    // mesma posição do mês mais recente — acrescenta a linha (duplicatas do mesmo mês)
+                    linhasDoMesMaisRecente.add( r );
+                }
+            }
+
+            // se existe apenas 1 mês daquele produto -> pode remover
+            if ( totalMesesMesmoProduto <= 1 )
+            {
+                return true;
+            }
+
+            // se o mês do selectedRow não é o mês mais recente -> bloqueia
+            if ( indexMesAtual != maxIndexPresente )
+            {
+                JOptionPane.showMessageDialog( null,
+                        "Não pode remover " + meses[ indexMesAtual ]
+                        + " antes de remover " + mesMaisRecentePresente + " (remova do último para o primeiro)." );
+                return false;
+            }
+
+            // se o mês selecionado é o mês mais recente, mas há várias linhas com o mesmo mês,
+            // só permita remover se a linha selecionada for a *última ocorrência* daquele mês (maior índice de linha).
+            if ( !linhasDoMesMaisRecente.isEmpty() )
+            {
+                int maiorLinha = -1;
+                for ( Integer ln : linhasDoMesMaisRecente )
+                {
+                    if ( ln > maiorLinha )
+                    {
+                        maiorLinha = ln;
+                    }
+                }
+                if ( selectedRow != maiorLinha )
+                {
+                    JOptionPane.showMessageDialog( null,
+                            "Existem várias entradas para " + mesMaisRecentePresente
+                            + ". Remova a linha mais abaixo (última ocorrência) primeiro." );
+                    return false;
+                }
+            }
+
+            // passou todas as regras -> pode remover
+            return true;
+
+        }
+        catch ( Exception ex )
+        {
+            JOptionPane.showMessageDialog( null, "Erro ao verificar serviço: " + ex.getMessage() );
+            return false;
+        }
+    }
+
 }

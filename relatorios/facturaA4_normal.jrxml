@@ -2,9 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="factura" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" uuid="0de43986-9be5-410e-aaa3-7f1419d0abca">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="1.948717100000002"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="672"/>
+	<property name="ireport.y" value="463"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -30,6 +30,7 @@
 	<parameter name="IMPOSTO_IVA" class="java.lang.Double"/>
 	<parameter name="MOTIVO_ISENCAO" class="java.lang.String"/>
 	<parameter name="NIF_CLIENTE_CONSOMIDOR_FINAL" class="java.lang.String"/>
+	<parameter name="QR_IMAGE" class="java.lang.Object"/>
 	<queryString>
 		<![CDATA[SELECT
      tb_cliente.`nome` AS tb_cliente_nome,
@@ -310,11 +311,11 @@ WHERE
 				<textFieldExpression><![CDATA["Valor transportado: "]]></textFieldExpression>
 			</textField>
 			<image scaleImage="FillFrame">
-				<reportElement uuid="20ec1823-c902-430d-a5e6-c9a34547ccd5" x="-22" y="-15" width="136" height="97"/>
+				<reportElement uuid="20ec1823-c902-430d-a5e6-c9a34547ccd5" x="5" y="30" width="160" height="52"/>
 				<imageExpression><![CDATA["logo/logo_dvml.png"]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement uuid="21065baa-a51f-4d7d-b3e7-547c79d4a38b" x="301" y="56" width="234" height="20"/>
+				<reportElement uuid="21065baa-a51f-4d7d-b3e7-547c79d4a38b" x="301" y="80" width="234" height="20"/>
 				<box rightPadding="5"/>
 				<textElement textAlignment="Right" markup="none">
 					<font isBold="true"/>
@@ -454,6 +455,10 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_venda_referencia}]]></textFieldExpression>
 			</textField>
+			<image scaleImage="RealHeight">
+				<reportElement uuid="2ea2b213-643c-4994-947f-cf7dab1e0880" x="469" y="0" width="64" height="67"/>
+				<imageExpression><![CDATA[$P{QR_IMAGE}]]></imageExpression>
+			</image>
 		</band>
 	</pageHeader>
 	<columnHeader>
@@ -727,7 +732,7 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="7" isBold="true" isItalic="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[Incidência]]></text>
+				<text><![CDATA[Base]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="39bfbfe4-e4b6-4db3-a1e2-2398d7cc6ef9" key="staticText-9" x="169" y="92" width="223" height="12"/>
@@ -747,13 +752,6 @@ WHERE
 				</textElement>
 				<text><![CDATA[IVA:]]></text>
 			</staticText>
-			<textField>
-				<reportElement uuid="cb48d489-9042-4eec-ba8c-9e2726917490" x="0" y="134" width="534" height="11"/>
-				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font fontName="Arial" size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_venda_assinatura} + "-Processado por programa validado nº " + "258/AGT/2020 " +$P{SOFTWARE_NAME} + "/dvml"]]></textFieldExpression>
-			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="e5689039-48bd-42e0-ab37-9f36aeef6ba2" key="staticText-9" x="169" y="71" width="223" height="12"/>
 				<textElement verticalAlignment="Bottom" markup="none">
@@ -854,7 +852,7 @@ WHERE
 				<textElement textAlignment="Left">
 					<font fontName="Times New Roman" size="6"/>
 				</textElement>
-				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tb_venda_total_incidencia}.add($F{tb_venda_total_iva})]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement uuid="6f201256-88aa-4bb6-90d7-33c44a4e6c39" key="textField-20" x="467" y="53" width="68" height="10"/>
@@ -918,7 +916,7 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="7" isBold="true" isItalic="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[Imposto]]></text>
+				<text><![CDATA[Iva]]></text>
 			</staticText>
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement uuid="14a29f81-04fe-4e52-9649-fae4922d43c7" key="textField-20" x="467" y="63" width="68" height="10"/>
@@ -952,18 +950,6 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_venda_total_por_extenso}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00" isBlankWhenNull="false">
-				<reportElement uuid="dd7befd5-f0bd-46c1-8e47-9bac50601429" key="textField-16" x="0" y="61" width="38" height="8"/>
-				<box leftPadding="0" rightPadding="2">
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="6"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_venda_total_incidencia_isento}]]></textFieldExpression>
-			</textField>
 			<staticText>
 				<reportElement uuid="529b9b82-8342-4eb8-a2f1-5aed71920451" x="2" y="144" width="259" height="10"/>
 				<textElement>
@@ -982,18 +968,6 @@ WHERE
 				</textElement>
 				<text><![CDATA[Total(AOA):]]></text>
 			</staticText>
-			<textField pattern="#,##0.00" isBlankWhenNull="false">
-				<reportElement uuid="5c2d6598-2b2b-4f56-995c-036b43cda6da" key="textField-16" x="38" y="61" width="39" height="8"/>
-				<box leftPadding="0" rightPadding="2">
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="6"/>
-				</textElement>
-				<textFieldExpression><![CDATA[0.0]]></textFieldExpression>
-			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement uuid="b26f47a7-1bb6-4b44-ac7a-db183c69b3e1" key="textField-20" x="467" y="43" width="68" height="10"/>
 				<box>
@@ -1042,21 +1016,8 @@ WHERE
 				</textElement>
 				<text><![CDATA[6.5]]></text>
 			</staticText>
-			<textField pattern="#,##0.00" isBlankWhenNull="false">
-				<reportElement uuid="3c979784-523f-4082-a619-36c599d1d02f" key="textField-16" x="77" y="78" width="37" height="8"/>
-				<box leftPadding="0" rightPadding="2">
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="6"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_venda_total_geral}]]></textFieldExpression>
-			</textField>
 			<staticText>
-				<reportElement uuid="c17158c0-1a97-40f9-8fa2-2c489c1f72a3" key="textField-16" x="0" y="78" width="77" height="8"/>
+				<reportElement uuid="c17158c0-1a97-40f9-8fa2-2c489c1f72a3" key="textField-16" x="0" y="78" width="114" height="8"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<bottomPen lineWidth="0.25"/>
@@ -1080,7 +1041,7 @@ WHERE
 				<text><![CDATA[%]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="5f992e24-921f-45b2-9636-484bc7890bde" key="staticText-11" mode="Opaque" x="0" y="70" width="77" height="8" backcolor="#CCCCCC"/>
+				<reportElement uuid="5f992e24-921f-45b2-9636-484bc7890bde" key="staticText-11" mode="Opaque" x="0" y="70" width="114" height="8" backcolor="#CCCCCC"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.75"/>
 					<leftPen lineWidth="0.75"/>
@@ -1091,19 +1052,6 @@ WHERE
 					<font fontName="Times New Roman" size="6" isBold="true" isItalic="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<text><![CDATA[Entidade]]></text>
-			</staticText>
-			<staticText>
-				<reportElement uuid="6f9d2e33-bea3-4f8d-9b08-b80656a985bb" key="staticText-11" mode="Opaque" x="77" y="70" width="37" height="8" backcolor="#CCCCCC"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.75"/>
-					<leftPen lineWidth="0.75"/>
-					<bottomPen lineWidth="0.75"/>
-					<rightPen lineWidth="0.75"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="6" isBold="true" isItalic="false" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<text><![CDATA[Incidência]]></text>
 			</staticText>
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement uuid="bbd25038-a499-4364-a09e-49347a32575e" key="textField-16" x="126" y="78" width="39" height="8"/>
@@ -1190,21 +1138,8 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="7" isBold="true" isItalic="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[Motivo de Exclusão]]></text>
+				<text><![CDATA[Total]]></text>
 			</staticText>
-			<textField isBlankWhenNull="false">
-				<reportElement uuid="e777169b-1ab9-4c2c-96c1-9f3b6d221615" key="textField-15" x="77" y="61" width="88" height="8"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Top" markup="html">
-					<font fontName="Times New Roman" size="6"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{MOTIVO_ISENCAO}]]></textFieldExpression>
-			</textField>
 			<textField>
 				<reportElement uuid="5c713df8-8382-4d29-85f9-6c63110d6f90" x="2" y="89" width="158" height="10"/>
 				<box rightPadding="3"/>
@@ -1227,10 +1162,17 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_slogan}]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement uuid="570c6269-362b-4031-b036-e6c48050aa28" x="0" y="135" width="535" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Software de Certififcação Factura Electrónica  (Kitanda 1.1) - FE/110/AGT/2025"]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageFooter>
 	<lastPageFooter>
-		<band height="138">
+		<band height="140">
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="4bbad57e-9a2f-4f77-a2d3-d939996ba9b7" key="staticText-9" x="170" y="38" width="222" height="12"/>
 				<textElement verticalAlignment="Bottom" markup="none">
@@ -1263,7 +1205,7 @@ WHERE
 				<text><![CDATA[IVA:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="d4b1f267-b3d0-4a97-9b60-e10d05e92243" x="2" y="127" width="259" height="10"/>
+				<reportElement uuid="d4b1f267-b3d0-4a97-9b60-e10d05e92243" x="2" y="130" width="259" height="10"/>
 				<textElement>
 					<font fontName="Times New Roman" size="6"/>
 				</textElement>
@@ -1318,13 +1260,6 @@ WHERE
 					<font fontName="Times New Roman" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_venda_total_por_extenso}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement uuid="edd14f93-5426-4baf-85cc-94dba54db5ed" x="0" y="117" width="534" height="11"/>
-				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font fontName="Arial" size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_venda_assinatura} + "-Processado por programa validado nº " + "258/AGT/2020 " +$P{SOFTWARE_NAME} + "/dvml"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="eb6690d8-2559-4f56-a237-ceb17cf44a47" key="staticText-9" x="169" y="89" width="223" height="12"/>
@@ -1457,31 +1392,6 @@ WHERE
 				<textFieldExpression><![CDATA[$F{tb_venda_total_incidencia}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
-				<reportElement uuid="7d08af73-62a5-471e-83bb-6bd94afed401" key="textField-16" x="77" y="64" width="37" height="9"/>
-				<box leftPadding="0" rightPadding="2">
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="6"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_venda_total_geral}]]></textFieldExpression>
-			</textField>
-			<textField pattern="#,##0.00" isBlankWhenNull="false">
-				<reportElement uuid="0cabaa8e-aced-4b35-8404-d2c802809790" key="textField-16" x="0" y="47" width="38" height="8"/>
-				<box leftPadding="0" rightPadding="2">
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="6"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_venda_total_incidencia_isento}]]></textFieldExpression>
-			</textField>
-			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement uuid="b626ec5d-1a60-45db-a155-43bba84f6dc4" key="textField-16" x="126" y="64" width="39" height="9"/>
 				<box leftPadding="0" rightPadding="5">
 					<topPen lineWidth="0.25"/>
@@ -1505,7 +1415,7 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="7" isBold="true" isItalic="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[Incidência]]></text>
+				<text><![CDATA[Base]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="19d1994a-1aa5-45f2-a4b7-bb23a3ee8c1f" x="0" y="83" width="165" height="16"/>
@@ -1514,19 +1424,6 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_obs_ft}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement uuid="80843f89-14bb-4421-9b99-5322beb5bb5e" key="staticText-11" mode="Opaque" x="77" y="56" width="37" height="8" backcolor="#CCCCCC"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.75"/>
-					<leftPen lineWidth="0.75"/>
-					<bottomPen lineWidth="0.75"/>
-					<rightPen lineWidth="0.75"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="6" isBold="true" isItalic="false" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<text><![CDATA[Incidência]]></text>
-			</staticText>
 			<staticText>
 				<reportElement uuid="55cbc855-8662-4f17-a711-c19d064e7d25" key="staticText-11" mode="Opaque" x="38" y="30" width="39" height="9" backcolor="#CCCCCC"/>
 				<box leftPadding="2">
@@ -1538,20 +1435,8 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="7" isBold="true" isItalic="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[Imposto]]></text>
+				<text><![CDATA[Iva]]></text>
 			</staticText>
-			<textField pattern="#,##0.00" isBlankWhenNull="false">
-				<reportElement uuid="54f01fa3-fd1b-4dcd-8ddd-e444ed2a9697" key="textField-16" x="38" y="47" width="39" height="8"/>
-				<box leftPadding="0" rightPadding="2">
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="6"/>
-				</textElement>
-				<textFieldExpression><![CDATA[0.0]]></textFieldExpression>
-			</textField>
 			<staticText>
 				<reportElement uuid="4b09c052-94c8-4cf5-b400-666aee163a0e" key="staticText-11" mode="Opaque" x="126" y="56" width="39" height="8" backcolor="#CCCCCC"/>
 				<box leftPadding="0" rightPadding="5">
@@ -1566,7 +1451,7 @@ WHERE
 				<text><![CDATA[Valor]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="23a987aa-f650-4e8f-938a-467932d7514e" key="textField-16" x="0" y="64" width="77" height="9"/>
+				<reportElement uuid="23a987aa-f650-4e8f-938a-467932d7514e" key="textField-16" x="0" y="64" width="114" height="9"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<bottomPen lineWidth="0.25"/>
@@ -1600,7 +1485,7 @@ WHERE
 				<text><![CDATA[6.5]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="fa503147-1db3-44b5-b219-ecb76a00f571" key="staticText-11" mode="Opaque" x="0" y="56" width="77" height="8" backcolor="#CCCCCC"/>
+				<reportElement uuid="fa503147-1db3-44b5-b219-ecb76a00f571" key="staticText-11" mode="Opaque" x="0" y="56" width="114" height="8" backcolor="#CCCCCC"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.75"/>
 					<leftPen lineWidth="0.75"/>
@@ -1635,7 +1520,7 @@ WHERE
 				<textElement textAlignment="Left">
 					<font fontName="Times New Roman" size="6"/>
 				</textElement>
-				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tb_venda_total_incidencia}.add($F{tb_venda_total_iva})]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement uuid="4f48f004-4e38-4d31-8781-923b1657658a" key="textField-20" x="467" y="60" width="68" height="10"/>
@@ -1698,21 +1583,8 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="7" isBold="true" isItalic="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[Motivo de Exclusão]]></text>
+				<text><![CDATA[Total]]></text>
 			</staticText>
-			<textField isBlankWhenNull="false">
-				<reportElement uuid="18996de5-8b4a-43ff-8728-33fc76eee7d9" key="textField-15" x="77" y="47" width="88" height="8"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Top" markup="html">
-					<font fontName="Times New Roman" size="6"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{MOTIVO_ISENCAO}]]></textFieldExpression>
-			</textField>
 			<textField>
 				<reportElement uuid="b69fd181-71eb-4d0c-b5b7-7d0f972fb174" x="-1" y="74" width="158" height="10"/>
 				<box rightPadding="3"/>
@@ -1734,6 +1606,13 @@ WHERE
 					<font fontName="Times New Roman" size="8" isBold="false" isItalic="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_slogan}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="cc778ea0-bbe6-4d47-9581-b791aa87671e" x="-1" y="119" width="535" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Software de Certififcação Factura Electrónica (Kitanda 1.1) - FE/110/AGT/2025"]]></textFieldExpression>
 			</textField>
 		</band>
 	</lastPageFooter>

@@ -24,7 +24,6 @@
 FROM
      `familia` familia INNER JOIN `tb_tipo_produto` tb_tipo_produto ON familia.`pk_familia` = tb_tipo_produto.`fk_familia`,
      `tb_dados_instituicao` tb_dados_instituicao
-WHERE familia.`pk_familia` <> 1
 ORDER BY
      tb_tipo_produto.`designacao` ASC]]>
 	</queryString>
@@ -70,7 +69,7 @@ ORDER BY
 	<detail>
 		<band height="33" splitType="Stretch">
 			<subreport>
-				<reportElement uuid="a8b7f803-47c0-4587-85a3-8bfbd0247b82" x="-29" y="0" width="295" height="33"/>
+				<reportElement uuid="a8b7f803-47c0-4587-85a3-8bfbd0247b82" x="-28" y="0" width="295" height="33"/>
 				<subreportParameter name="ID_TIPO_PRODUTO">
 					<subreportParameterExpression><![CDATA[$F{tb_tipo_produto_codigo}]]></subreportParameterExpression>
 				</subreportParameter>

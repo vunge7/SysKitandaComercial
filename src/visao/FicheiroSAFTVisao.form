@@ -149,12 +149,10 @@
                           <Component id="saftDataMinimaJDateChoose" min="-2" pref="30" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="saftDataMinimaJLabel" min="-2" pref="30" max="-2" attributes="0"/>
-                              <Component id="saftDataMaximaJDateChooser" min="-2" pref="30" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="btnSalvar" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                          <Component id="saftDataMinimaJLabel" pref="30" max="32767" attributes="0"/>
+                          <Component id="saftDataMaximaJDateChooser" pref="30" max="32767" attributes="0"/>
+                          <Component id="btnSalvar" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jProgressBar1" min="-2" max="-2" attributes="0"/>

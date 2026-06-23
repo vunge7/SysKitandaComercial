@@ -5,7 +5,6 @@
  */
 package kitanda.util;
 
-
 import java.sql.Connection;
 import java.awt.*;
 import java.io.File;
@@ -16,6 +15,7 @@ import java.net.URL;
 import java.text.*;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.*;
@@ -93,29 +93,118 @@ public class CfMethods
         return decimalFormat.format( valor );
     }
 
-    public static Double parseMoedaFormatada( String valor )
-    {
-        Double d = null;
+//    public static Double parseMoedaFormatada( String valor )
+//    {
+//        Double d = null;
+////
+//        System.err.println( "valor: " + valor );
+//        try
+//        {
+//            DecimalFormat decimalFormat = new DecimalFormat( "###,###.##### " + MOEDA );
 //
-        System.err.println( "valor: " + valor );
+//            decimalFormat.setGroupingSize( 3 );
+//            decimalFormat.setMinimumIntegerDigits( 1 );
+//
+//            decimalFormat.setMinimumFractionDigits( 6 );
+//            decimalFormat.setDecimalSeparatorAlwaysShown( true );
+//            d = decimalFormat.parse( valor ).doubleValue();
+//
+//        }
+//        catch ( ParseException ex )
+//        {
+//            Logger.getLogger( CfMethods.class.getName() ).log( Level.SEVERE, null, ex );
+//        }
+//
+//        return d;
+//    }
+    public static double parseMoedaFormatada( String valor )
+    {
+
+        if ( valor == null )
+        {
+            return 0.0;
+        }
+
+        valor = valor.trim();
+
+        // Valores vazios ou inválidos retornam zero
+        if ( valor.isEmpty() || valor.equals( "--" ) || valor.equals( "AOA" ) )
+        {
+            return 0.0;
+        }
+
         try
         {
-            DecimalFormat decimalFormat = new DecimalFormat( "###,###.##### " + MOEDA );
+            // Remove espaços, AOA, e outros caracteres que possam atrapalhar
+            valor = valor.replace( "AOA", "" ).trim();
 
-            decimalFormat.setGroupingSize( 3 );
-            decimalFormat.setMinimumIntegerDigits( 1 );
+            NumberFormat format = NumberFormat.getNumberInstance( new Locale( "pt", "PT" ) );
+            Number numero;
 
-            decimalFormat.setMinimumFractionDigits( 6 );
-            decimalFormat.setDecimalSeparatorAlwaysShown( true );
-            d = decimalFormat.parse( valor ).doubleValue();
+            try
+            {
+                numero = format.parse( valor );
+            }
+            catch ( ParseException e )
+            {
+                // Tenta novamente removendo pontos separadores
+                valor = valor.replace( ".", "" );
+                numero = format.parse( valor );
+            }
 
+            return numero.doubleValue();
         }
-        catch ( ParseException ex )
+        catch ( Exception ex )
         {
-            Logger.getLogger( CfMethods.class.getName() ).log( Level.SEVERE, null, ex );
+            System.err.println( "parseMoedaFormatada ERRO: valor='" + valor + "'" );
+            return 0.0; // Fallback definitivo
+        }
+    }
+
+//    public static String formatarComoMoeda(BigDecimal valor)
+//{
+//    DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+//    symbols.setDecimalSeparator(',');
+//    symbols.setGroupingSeparator('.'); // ponto para milhares
+//
+//    DecimalFormat df = new DecimalFormat("#,##0.00 'Kz'", symbols);
+//    df.setRoundingMode(RoundingMode.HALF_UP);
+//
+//    return df.format(valor);
+//}
+    public static BigDecimal parseMoedaFormatadaBD( String valor )
+    {
+
+        if ( valor == null )
+        {
+            return BigDecimal.ZERO;
         }
 
-        return d;
+        valor = valor.trim();
+
+        if ( valor.isEmpty() || valor.equals( "--" ) || valor.equals( "AOA" ) )
+        {
+            return BigDecimal.ZERO;
+        }
+
+        // Remove "AOA" e espaços
+        valor = valor.replace( "AOA", "" ).trim();
+
+        // Remove separador de milhares (ponto)
+        valor = valor.replace( ".", "" );
+
+        // Troca vírgula decimal por ponto
+        valor = valor.replace( ",", "." );
+
+        try
+        {
+            return new BigDecimal( valor );
+        }
+        catch ( Exception ex )
+        {
+            System.err.println( "parseMoedaFormatadaBD ERRO: '" + valor + "'" );
+            return BigDecimal.ZERO;
+        }
     }
 
     public static BigDecimal parseMoedaFormatadaBigDecimal( String valorFormatado )
@@ -270,6 +359,7 @@ public class CfMethods
         }
         catch ( NumberFormatException ex )
         {
+            ex.printStackTrace();
             System.err.println( "Erro ao converter valor monetário: \"" + texto + "\" -> \"" + valorLimpo + "\"" );
             return BigDecimal.ZERO;
         }
