@@ -1014,6 +1014,8 @@ public class VendasController implements EntidadeFactory {
 
         return venda;
     }
+    
+    
 
     public TbVenda findByCodFactAndDoc(String cod_fact, int pk_documento) {
 
@@ -1925,6 +1927,8 @@ public class VendasController implements EntidadeFactory {
 
         return tipo + " " + serie + "/" + proximo;
     }
+    
+    
 
     public static void main(String[] args) {
         BDConexao conexao = BDConexao.getInstancia();

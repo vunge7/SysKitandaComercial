@@ -217,6 +217,7 @@ public class DadosInstituicaoController implements EntidadeFactory
                 dadosInstituicao.setEnviarEmail( result.getString( "enviar_email" ) );
                 dadosInstituicao.setStockConsulta( result.getString( "stock_consulta" ) );
                 dadosInstituicao.setTipoFichaTecnica( result.getString( "tipo_ficha_tecnica" ) );
+                dadosInstituicao.setNif(result.getString( "nif" ) );
             }
             else
             {
