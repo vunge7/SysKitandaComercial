@@ -91,6 +91,7 @@ import util.FinanceUtils;
 import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
 import util.fe.FacturaElectronicaUtil;
+import util.fe.FacturaElectronicaUtilOriginal;
 import util.fe.JwsGenerator;
 import util.fe.TableColumIdUtil;
 
@@ -375,7 +376,10 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         int numero_copia = dadosInstituicao.getNumeroVias();
         spnCopia.setModel(CfMethodsSwing.criarSpinnerDoubleModel(1, 3, numero_copia));
         empresa();
+<<<<<<< HEAD
         empresa_sistema();
+=======
+>>>>>>> c299b7b16a05d02d225d9bf0b1ee25d083e0949f
         setFolhaImpressora(dadosInstituicao.getImpressora());
 
         actualizar_abreviacao();
@@ -518,6 +522,11 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 //            vendasController.
             lb_proximo_documento.setText(prox_doc);
 
+<<<<<<< HEAD
+=======
+            lb_proximo_documento.setText(prox_doc);
+
+>>>>>>> c299b7b16a05d02d225d9bf0b1ee25d083e0949f
             System.out.println(prox_doc);
         } catch (Exception e) {
             e.printStackTrace();
@@ -2317,7 +2326,12 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
         Integer idVendaGerada = 0;
 
+<<<<<<< HEAD
         try {
+=======
+        try
+        {
+>>>>>>> c299b7b16a05d02d225d9bf0b1ee25d083e0949f
 
             // Construção do objeto venda
             TbVenda venda = construirVenda();
@@ -2340,6 +2354,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                 vendasController.actualizar_hash_and_assinatura(idVendaGerada, getGrossTotal().doubleValue());
             } else {
 
+//                respostaAGT = FacturaElectronicaUtilOriginal.criarFE(
                 respostaAGT = FacturaElectronicaUtil.criarFE(
                         venda,
                         dadosInstituicao,
@@ -2353,6 +2368,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                     System.out.println("AGT-Factura ESTADO: " + venda.getEstado());
                     System.out.println("AGT-Factura requestID: " + venda.getRequestID());
                     System.out.println("AGT-Factura submissionUUID: " + venda.getSubmissionUUID());
+<<<<<<< HEAD
 
                     // Salvar a venda e obter o ID
                     idVendaGerada = vendasController.salvarRetornaID(venda);
@@ -2360,6 +2376,18 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                     vendasController.actualizar_hash_and_assinatura(idVendaGerada, getGrossTotal().doubleValue());
                 }
 
+=======
+                    //actualiza como 'P' o estado dependendo da resposta 
+//                    venda.setEstado(prox_doc);
+
+                } else {
+                    venda.setEstado("P");// força o estado para o 'P'
+                }
+
+                idVendaGerada = vendasController.salvarRetornaID(venda);
+                vendasController.actualizar_hash_and_assinatura(idVendaGerada, getGrossTotal().doubleValue());
+
+>>>>>>> c299b7b16a05d02d225d9bf0b1ee25d083e0949f
                 if (idVendaGerada == null || idVendaGerada == 0) {
                     throw new Exception("Falha ao obter o ID da venda gravada.");
                 }
@@ -2400,8 +2428,11 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
             JOptionPane.showMessageDialog(null, "Factura efectuada com sucesso!");
             txtNomeConsumidorFinal.setVisible(true);
+<<<<<<< HEAD
             lbNomeCliente.setVisible(true);
             txtBuscaRef.setEnabled(true);
+=======
+>>>>>>> c299b7b16a05d02d225d9bf0b1ee25d083e0949f
             imprimir_factura(idVendaGerada); // Imprime a factura
 
         } catch (Exception e) {
@@ -2540,7 +2571,10 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         accao_cliente();
         limpar_consumidor_final();
         txtNomeConsumidorFinal.setVisible(true);
+<<<<<<< HEAD
         lbNomeCliente.setVisible(true);
+=======
+>>>>>>> c299b7b16a05d02d225d9bf0b1ee25d083e0949f
         txtNomeConsumidorFinal.getText().equals("Consumidor Final");
 
         txtQuatindade.setText("1");
@@ -2597,11 +2631,17 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         if (cmbCliente.getSelectedItem().equals("Consumidor Final")) {
 //            lbClienteConsumidorFinal.setVisible( true );
             txtNomeConsumidorFinal.setVisible(true);
+<<<<<<< HEAD
             lbNomeCliente.setVisible(true);
         } else {
 //            lbClienteConsumidorFinal.setVisible( false );
             txtNomeConsumidorFinal.setVisible(false);
             lbNomeCliente.setVisible(false);
+=======
+        } else {
+//            lbClienteConsumidorFinal.setVisible( false );
+            txtNomeConsumidorFinal.setVisible(false);
+>>>>>>> c299b7b16a05d02d225d9bf0b1ee25d083e0949f
         }
 
     }
@@ -3569,7 +3609,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 //        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 //        table.setRowHeight( 28 );
 //
-////        // --- 1. CONFIRMAR edição atual para não perder o valor da coluna 0 ---
+    ////        // --- 1. CONFIRMAR edição atual para não perder o valor da coluna 0 ---
 ////        if ( table.isEditing() )
 ////        {
 ////            table.getCellEditor().stopCellEditing();
@@ -4667,6 +4707,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     private void empresa() {
         TbDadosInstituicao dados = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
 
+<<<<<<< HEAD
         jlEmpresa.setText("ESTABELECIMENTO: " + dados.getNome() + "                  NIF: " + dados.getNif());
 
     }
@@ -4680,6 +4721,14 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
     private void actualizar_abreviacao() {
 
+=======
+        jlEmpresa.setText("KITANDA 1.2                      " + dados.getNome());
+
+    }
+
+    private void actualizar_abreviacao() {
+
+>>>>>>> c299b7b16a05d02d225d9bf0b1ee25d083e0949f
         switch (getIdDocumento()) {
             case DVML.DOC_FACTURA_RECIBO_FR:
                 if (ck_A4.isSelected()) {
@@ -4739,11 +4788,17 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         if (cmbCliente.getSelectedItem().equals("Consumidor Final")) {
 //            lbClienteConsumidorFinal.setVisible( true );
             txtNomeConsumidorFinal.setVisible(true);
+<<<<<<< HEAD
             lbNomeCliente.setVisible(true);
         } else {
 //            lbClienteConsumidorFinal.setVisible( false );
             txtNomeConsumidorFinal.setVisible(false);
             lbNomeCliente.setVisible(false);
+=======
+        } else {
+//            lbClienteConsumidorFinal.setVisible( false );
+            txtNomeConsumidorFinal.setVisible(false);
+>>>>>>> c299b7b16a05d02d225d9bf0b1ee25d083e0949f
         }
 
     }
@@ -4758,7 +4813,11 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         boolean documentoIsCM = DVML.DOC_FACTURA_CONSULTA_MESA == getIdDocumento();
         System.err.println("documentoIsFA: " + documentoIsFA);
         System.err.println("documentoIsPP: " + documentoIsPP);
+<<<<<<< HEAD
 //        ck_A4.setSelected(!documentoIsFA && !documentoIsPP && !documentoIsGT);
+=======
+        ck_A4.setSelected(!documentoIsFA && !documentoIsPP && !documentoIsGT);
+>>>>>>> c299b7b16a05d02d225d9bf0b1ee25d083e0949f
         btnProcessar.setVisible(documentoIsPP || documentoIsFA || documentoIsGT || documentoIsCM);
         btnFormaPagamento.setVisible(!documentoIsFA && !documentoIsPP && !documentoIsGT && !documentoIsCM);
 //        btnSemFormaPagamento.setVisible( !documentoIsFA && !documentoIsPP && !documentoIsGT && !documentoIsCM );
@@ -5675,7 +5734,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 //                int col = table.getSelectedColumn();
 //
 //                if (col == 0) {
-////                    accao_codigo_barra_enter_jtable(row);
+    ////                    accao_codigo_barra_enter_jtable(row);
 //                    accao_codigo_produto_enter_jtable(row);
 //                    e.consume();
 //                    return;
@@ -6353,7 +6412,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 //            BigDecimal bdUnitPrice = BigDecimal.valueOf( unitPrice );
 //            BigDecimal bdDesconto = BigDecimal.valueOf( desconto );
 //            BigDecimal bdQtd = BigDecimal.valueOf( qtd );
-////            BigDecimal bdTaxa = BigDecimal.valueOf( taxa ).divide( BigDecimal.valueOf( 100 ) );
+    ////            BigDecimal bdTaxa = BigDecimal.valueOf( taxa ).divide( BigDecimal.valueOf( 100 ) );
 //
 ////            BigDecimal unitPriceBase = bdUnitPrice.subtract( bdDesconto ).setScale( 2, BigDecimal.ROUND_CEILING );
 //            BigDecimal unitPriceBase = bdUnitPrice.subtract( bdDesconto );
@@ -6472,6 +6531,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         }
     }
 
+<<<<<<< HEAD
     private void procedimento_busca() {
         String referencia = txtBuscaRef.getText().trim();
 
@@ -7018,6 +7078,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         });
     }
 
+=======
+>>>>>>> c299b7b16a05d02d225d9bf0b1ee25d083e0949f
     private static TableColumIdUtil getObjectsColumnsIds() {
         TableColumIdUtil tableColumIdUtil = new TableColumIdUtil();
         tableColumIdUtil.setCOLUMN_PRODUTO_ID(0);
