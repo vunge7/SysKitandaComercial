@@ -10,38 +10,30 @@
  */
 package visao;
 
-
-import java.sql.Connection;
 import dao.DadosInstituicaoDao;
 import entity.TbDadosInstituicao;
 import javax.persistence.EntityManagerFactory;
 import javax.swing.JOptionPane;
-import kitanda.util.CfMethodsSwing;
 import util.JPAEntityMannagerFactoryUtil;
 
 /**
  *
  * @author Domingos Dala Vunge
  */
-public class DadosInstituicaoVisao extends javax.swing.JDialog
-{
+public class DadosInstituicaoVisao extends javax.swing.JDialog {
 
     private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
-    private DadosInstituicaoDao dadoIntituicaoDao = new DadosInstituicaoDao( emf );
+    private DadosInstituicaoDao dadoIntituicaoDao = new DadosInstituicaoDao(emf);
     private TbDadosInstituicao dadoIntituicao;
 
-    public DadosInstituicaoVisao( java.awt.Frame parent, boolean modal )
-    {
-        super( parent, modal );
+    public DadosInstituicaoVisao(java.awt.Frame parent, boolean modal) {
+        super(parent, modal);
         initComponents();
-        setLocationRelativeTo( null );
-        rbJanelaServico.setVisible( false );
-        try
-        {
+        setLocationRelativeTo(null);
+        rbJanelaServico.setVisible(false);
+        try {
             mostrar_dados();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -53,8 +45,7 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents()
-    {
+    private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
@@ -120,14 +111,14 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
         rbLavandaria = new javax.swing.JRadioButton();
         rbLayout = new javax.swing.JRadioButton();
         rbOficina = new javax.swing.JRadioButton();
+        jLabel16 = new javax.swing.JLabel();
+        txtNumeroEstabelecimento = new javax.swing.JTextField();
         jPanel7 = new javax.swing.JPanel();
         jLabel19 = new javax.swing.JLabel();
 
         setTitle("Dados da Empresa");
-        addWindowListener(new java.awt.event.WindowAdapter()
-        {
-            public void windowClosing(java.awt.event.WindowEvent evt)
-            {
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
                 closeDialog(evt);
             }
         });
@@ -161,20 +152,16 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
 
         okButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/confirmacao.png"))); // NOI18N
         okButton.setText("Actualizar");
-        okButton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        okButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 okButtonActionPerformed(evt);
             }
         });
 
         cancelButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Logout 32x32.png"))); // NOI18N
         cancelButton.setText("Sair");
-        cancelButton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
             }
         });
@@ -310,10 +297,8 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
         rbComercial.setFont(new java.awt.Font("Lucida Sans Typewriter", 1, 10)); // NOI18N
         rbComercial.setSelected(true);
         rbComercial.setText("Comercial:");
-        rbComercial.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbComercial.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbComercialActionPerformed(evt);
             }
         });
@@ -324,10 +309,8 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
         buttonGroup9.add(rbFarmacia);
         rbFarmacia.setFont(new java.awt.Font("Lucida Sans Typewriter", 1, 10)); // NOI18N
         rbFarmacia.setText("Farmacia");
-        rbFarmacia.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbFarmacia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbFarmaciaActionPerformed(evt);
             }
         });
@@ -335,10 +318,8 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
         buttonGroup9.add(rbPrestacaoServico);
         rbPrestacaoServico.setFont(new java.awt.Font("Lucida Sans Typewriter", 1, 10)); // NOI18N
         rbPrestacaoServico.setText("Prestação de Serviço");
-        rbPrestacaoServico.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbPrestacaoServico.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbPrestacaoServicoActionPerformed(evt);
             }
         });
@@ -346,10 +327,8 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
         buttonGroup9.add(rbTransportes);
         rbTransportes.setFont(new java.awt.Font("Lucida Sans Typewriter", 1, 10)); // NOI18N
         rbTransportes.setText("Transportes");
-        rbTransportes.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbTransportes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbTransportesActionPerformed(evt);
             }
         });
@@ -360,10 +339,8 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
         buttonGroup9.add(rbRestaurante);
         rbRestaurante.setFont(new java.awt.Font("Lucida Sans Typewriter", 1, 10)); // NOI18N
         rbRestaurante.setText("Restaurante:");
-        rbRestaurante.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbRestaurante.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbRestauranteActionPerformed(evt);
             }
         });
@@ -374,10 +351,8 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
         buttonGroup9.add(rbLavandaria);
         rbLavandaria.setFont(new java.awt.Font("Lucida Sans Typewriter", 1, 10)); // NOI18N
         rbLavandaria.setText("Lavandaria");
-        rbLavandaria.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbLavandaria.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbLavandariaActionPerformed(evt);
             }
         });
@@ -385,10 +360,8 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
         buttonGroup9.add(rbLayout);
         rbLayout.setFont(new java.awt.Font("Lucida Sans Typewriter", 1, 10)); // NOI18N
         rbLayout.setText("Layout:");
-        rbLayout.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbLayout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbLayoutActionPerformed(evt);
             }
         });
@@ -396,10 +369,8 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
         buttonGroup9.add(rbOficina);
         rbOficina.setFont(new java.awt.Font("Lucida Sans Typewriter", 1, 10)); // NOI18N
         rbOficina.setText("Oficina");
-        rbOficina.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbOficina.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbOficinaActionPerformed(evt);
             }
         });
@@ -431,7 +402,7 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(27, 27, 27)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(rbLayout, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(rbLayout, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
                     .addComponent(rbPrestacaoServico, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
@@ -458,6 +429,10 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
                     .addComponent(rbLayout))
                 .addContainerGap(17, Short.MAX_VALUE))
         );
+
+        jLabel16.setText("NÚMERO DE ESTABELECIMENTO:");
+
+        txtNumeroEstabelecimento.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -518,7 +493,11 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(txt_director_geral))
+                                .addComponent(txt_director_geral, javax.swing.GroupLayout.PREFERRED_SIZE, 312, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel16)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtNumeroEstabelecimento))
                             .addComponent(txtEndereco))))
                 .addContainerGap())
             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -557,7 +536,9 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txt_director_geral, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txt_director_geral, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtNumeroEstabelecimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel33))
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -682,15 +663,11 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
         // TODO add your handling code here:
     }//GEN-LAST:event_rbOficinaActionPerformed
 
-    private void selecionar_radioJanelaServico()
-    {
-        if ( rbPrestacaoServico.isSelected() )
-        {
-            rbJanelaServico.setSelected( true );
-        }
-        else
-        {
-            rbJanelaServico.setSelected( false );
+    private void selecionar_radioJanelaServico() {
+        if (rbPrestacaoServico.isSelected()) {
+            rbJanelaServico.setSelected(true);
+        } else {
+            rbJanelaServico.setSelected(false);
         }
 
     }
@@ -698,23 +675,18 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
     /**
      * @param args the command line arguments
      */
-    public static void main( String args[] )
-    {
-        java.awt.EventQueue.invokeLater( new Runnable()
-        {
-            public void run()
-            {
-                DadosInstituicaoVisao dialog = new DadosInstituicaoVisao( new javax.swing.JFrame(), true );
-                dialog.addWindowListener( new java.awt.event.WindowAdapter()
-                {
-                    public void windowClosing( java.awt.event.WindowEvent e )
-                    {
-                        System.exit( 0 );
+    public static void main(String args[]) {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                DadosInstituicaoVisao dialog = new DadosInstituicaoVisao(new javax.swing.JFrame(), true);
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
                     }
-                } );
-                dialog.setVisible( true );
+                });
+                dialog.setVisible(true);
             }
-        } );
+        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -739,6 +711,7 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel29;
@@ -780,37 +753,38 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
     private javax.swing.JTextField txtIban4;
     private javax.swing.JTextField txtNIF;
     private javax.swing.JTextField txtNome;
+    private javax.swing.JTextField txtNumeroEstabelecimento;
     private javax.swing.JTextField txtSlogan;
     private javax.swing.JTextField txtTelefone;
     private javax.swing.JTextField txt_director_geral;
     private javax.swing.JTextArea txt_obs;
     // End of variables declaration//GEN-END:variables
 
-    private void mostrar_dados()
-    {
-        dadoIntituicao = dadoIntituicaoDao.findTbDadosInstituicao( 1 );
+    private void mostrar_dados() {
+        dadoIntituicao = dadoIntituicaoDao.findTbDadosInstituicao(1);
 
-        txtNome.setText( dadoIntituicao.getNome() );
-        txtTelefone.setText( dadoIntituicao.getTelefone() );
-        txtNIF.setText( dadoIntituicao.getNif() );
-        txtEmail.setText( dadoIntituicao.getEmail() );
-        txtEndereco.setText( dadoIntituicao.getEnderecos() );
-        txtConta1.setText( dadoIntituicao.getContaBancaria1() );
-        txtConta2.setText( dadoIntituicao.getContaBancaria2() );
-        txtConta3.setText( dadoIntituicao.getContaBancaria3() );
-        txtIban1.setText( dadoIntituicao.getContaBancaria4() );
-        txtIban2.setText( dadoIntituicao.getContaBancaria5() );
-        txtIban3.setText( dadoIntituicao.getContaBancaria6() );
-        txt_director_geral.setText( dadoIntituicao.getDirectorGeral() );
+        txtNome.setText(dadoIntituicao.getNome());
+        txtTelefone.setText(dadoIntituicao.getTelefone());
+        txtNIF.setText(dadoIntituicao.getNif());
+        txtEmail.setText(dadoIntituicao.getEmail());
+        txtEndereco.setText(dadoIntituicao.getEnderecos());
+        txtConta1.setText(dadoIntituicao.getContaBancaria1());
+        txtConta2.setText(dadoIntituicao.getContaBancaria2());
+        txtConta3.setText(dadoIntituicao.getContaBancaria3());
+        txtIban1.setText(dadoIntituicao.getContaBancaria4());
+        txtIban2.setText(dadoIntituicao.getContaBancaria5());
+        txtIban3.setText(dadoIntituicao.getContaBancaria6());
+        txt_director_geral.setText(dadoIntituicao.getDirectorGeral());
 //        txtPrazoFT.setText( dadoIntituicao.getPrazoFt() );
 //        TxtAObsFT.setText( dadoIntituicao.getObsFt() );
-        txtConta4.setText( dadoIntituicao.getContaBancaria7() );
-        txtIban4.setText( dadoIntituicao.getContaBancaria8() );
+        txtConta4.setText(dadoIntituicao.getContaBancaria7());
+        txtIban4.setText(dadoIntituicao.getContaBancaria8());
 //        txtProveniencia.setText( dadoIntituicao.getLocalCarregamento() );
 //        txtImpressoraCozinha.setText( dadoIntituicao.getImpressoraCozinha() );
-        txt_obs.setText( dadoIntituicao.getObsDevolucao() );
-        txtSlogan.setText( dadoIntituicao.getSlogan() );
-        cmb_regime.setSelectedItem( dadoIntituicao.getRegime() );
+        txt_obs.setText(dadoIntituicao.getObsDevolucao());
+        txtSlogan.setText(dadoIntituicao.getSlogan());
+        txtNumeroEstabelecimento.setText(dadoIntituicao.getNumeroEstabelecimento());
+        cmb_regime.setSelectedItem(dadoIntituicao.getRegime());
 
 //        setFolhaImpressora( dadoIntituicao.getImpressora() );
 //        setFocusTextField( dadoIntituicao.getFoco() );
@@ -820,119 +794,54 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
 //        setActivarDesconto( dadoIntituicao.getDescontoFinanceiro() );
 //        setAnoEconomico( dadoIntituicao.getAnoEconomico() );
 //        setVizualisarStock( dadoIntituicao.getVizualisarStock() );
-        setActivarNegocio( dadoIntituicao.getNegocio() );
-        setActivarJanelaServico( dadoIntituicao.getJanelaServico() );
+        setActivarNegocio(dadoIntituicao.getNegocio());
+        setActivarJanelaServico(dadoIntituicao.getJanelaServico());
+
 //        setActivarTeclado( dadoIntituicao.getTeclado() );
 //        setArmazem( dadoIntituicao.getConfigArmazens() );
 //        setUsarDoisPrecos(dadoIntituicao.getUsarDoisPrecos() );
-        int numero_copia = ( dadoIntituicao.getNumeroVias() == null ) ? 0 : dadoIntituicao.getNumeroVias();
+        int numero_copia = (dadoIntituicao.getNumeroVias() == null) ? 0 : dadoIntituicao.getNumeroVias();
 //        spnCopia.setModel( CfMethodsSwing.criarSpinnerDoubleModel( 1, 3, numero_copia ) );
 
     }
 
-    private void actulizar_dados()
-    {
+    private void actulizar_dados() {
 
-        dadoIntituicao = dadoIntituicaoDao.findTbDadosInstituicao( 1 );
+        dadoIntituicao = dadoIntituicaoDao.findTbDadosInstituicao(1);
 
-        dadoIntituicao.setNome( txtNome.getText() );
-        dadoIntituicao.setTelefone( txtTelefone.getText() );
-        dadoIntituicao.setNif( txtNIF.getText() );
-        dadoIntituicao.setEmail( txtEmail.getText() );
-        dadoIntituicao.setEnderecos( txtEndereco.getText() );
+        dadoIntituicao.setNome(txtNome.getText());
+        dadoIntituicao.setTelefone(txtTelefone.getText());
+        dadoIntituicao.setNif(txtNIF.getText());
+        dadoIntituicao.setEmail(txtEmail.getText());
+        dadoIntituicao.setEnderecos(txtEndereco.getText());
+        dadoIntituicao.setContaBancaria1(txtConta1.getText());
+        dadoIntituicao.setContaBancaria4(txtIban1.getText());
+        dadoIntituicao.setContaBancaria2(txtConta2.getText());
+        dadoIntituicao.setContaBancaria5(txtIban2.getText());
+        dadoIntituicao.setContaBancaria3(txtConta3.getText());
+        dadoIntituicao.setContaBancaria6(txtIban3.getText());
+        dadoIntituicao.setContaBancaria7(txtConta4.getText());
+        dadoIntituicao.setContaBancaria8(txtIban4.getText());
+        dadoIntituicao.setObsDevolucao(txt_obs.getText());
+        dadoIntituicao.setSlogan(txtSlogan.getText());
+        dadoIntituicao.setRegime(cmb_regime.getSelectedItem().toString());
+        dadoIntituicao.setDirectorGeral(txt_director_geral.getText());
+        dadoIntituicao.setNegocio(getNegocio());
+        dadoIntituicao.setJanelaServico(getJanelaServico());
+        dadoIntituicao.setNumeroEstabelecimento(txtNumeroEstabelecimento.getText());
 
-        dadoIntituicao.setContaBancaria1( txtConta1.getText() );
-        dadoIntituicao.setContaBancaria4( txtIban1.getText() );
-        dadoIntituicao.setContaBancaria2( txtConta2.getText() );
-        dadoIntituicao.setContaBancaria5( txtIban2.getText() );
-        dadoIntituicao.setContaBancaria3( txtConta3.getText() );
-        dadoIntituicao.setContaBancaria6( txtIban3.getText() );
-        dadoIntituicao.setContaBancaria7( txtConta4.getText() );
-        dadoIntituicao.setContaBancaria8( txtIban4.getText() );
-        dadoIntituicao.setObsDevolucao( txt_obs.getText() );
-        dadoIntituicao.setSlogan( txtSlogan.getText() );
-//        dadoIntituicao.setImpressoraCozinha( txtImpressoraCozinha.getText() );
-        dadoIntituicao.setRegime( cmb_regime.getSelectedItem().toString() );
 
-        dadoIntituicao.setDirectorGeral( txt_director_geral.getText() );
-//        dadoIntituicao.setPrazoFt( txtPrazoFT.getText() );
-//        dadoIntituicao.setObsFt( TxtAObsFT.getText() );
-//        dadoIntituicao.setImpressora( getFolhaImpressora() );
-//        dadoIntituicao.setFoco( getFocusTextField() );
-//        dadoIntituicao.setDocpadrao( getDocPadrao() );
-//        dadoIntituicao.setDesactivarvias( getDesactivarvias() );
-//        dadoIntituicao.setDescontoFinanceiro( getDescontoFinanceiro() );
-//        dadoIntituicao.setAnoEconomico( getAnoEconomico() );
-//        dadoIntituicao.setVizualisarStock( getAVizualisarStock() );
-//        dadoIntituicao.setTranstorno( getTranstornos() );
-        dadoIntituicao.setNegocio( getNegocio() );
-        dadoIntituicao.setJanelaServico( getJanelaServico() );
-//        dadoIntituicao.setTeclado( getTeclado() );
-//        dadoIntituicao.setConfigArmazens(getArmazem() );
-//        dadoIntituicao.setUsarDoisPrecos(getUsarDoisPrecos() );
-////        dadoIntituicao.setNumeroVias( ( int ) Double.parseDouble( spnCopia.getValue().toString() ) );
-//        dadoIntituicao.setLocalCarregamento( txtProveniencia.getText() );
-
-        try
-        {
-            dadoIntituicaoDao.edit( dadoIntituicao );
-            JOptionPane.showMessageDialog( null, "Dados actualizados com sucesso!...." );
-        }
-        catch ( Exception e )
-        {
-            JOptionPane.showMessageDialog( null, "Falha ao tentar actualizar os dados", "AVISO", JOptionPane.WARNING_MESSAGE );
+        try {
+            dadoIntituicaoDao.edit(dadoIntituicao);
+            JOptionPane.showMessageDialog(null, "Dados actualizados com sucesso!....");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Falha ao tentar actualizar os dados", "AVISO", JOptionPane.WARNING_MESSAGE);
 
         }
 
     }
 
-//
-//    private String getFocusTextField()
-//    {
-//        return rbCI.isSelected() ? "Codigo Interno" : "Codigo de Barra";
-//    }
-//
-//    //AQUI
-//    private String getDocPadrao()
-//    {
-//        return rbFacturaRecibo.isSelected() ? "Factura/Recibo" : "Factura";
-//    }
-//
-//    private String getDesactivarvias()
-//    {
-//        return rbSim.isSelected() ? "Sim" : "Nao";
-//    }
-//
-//    private String getTranstornos()
-//    {
-//        return rbActivo.isSelected() ? "Activo" : "Desactivo";
-//    }
-//
-//    private String getDescontoFinanceiro()
-//    {
-//        return rbActivar.isSelected() ? "Activar" : "Desactivar";
-//    }
-//
-//    private String getAnoEconomico()
-//    {
-//        return rbOcultar.isSelected() ? "Ocultar" : "Mostrar";
-//    }
-//
-//    private String getAVizualisarStock()
-//    {
-//        return rbVizualisarStock.isSelected() ? "Vizualisar Stock" : "Nao Vizualisar Stock";
-//    }
-//    private String getFolhaImpressora()
-//    {
-//        return rbA6.isSelected() ? "A6"
-//                : rbS_A6.isSelected() ? "S_A6"
-//                : rbA5.isSelected() ? "A5"
-//                : rbA6V.isSelected() ? "A6V"
-//                : rbA4.isSelected() ? "A4" : "A7";
-//
-//    }
-    private String getNegocio()
-    {
+    private String getNegocio() {
 //        return rbComercial.isSelected() ? "Comercial" : "Oficina";
         return rbComercial.isSelected() ? "Comercial"
                 : rbOficina.isSelected() ? "Oficina"
@@ -946,362 +855,95 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
     }
 //
 
-    private String getJanelaServico()
-    {
+    private String getJanelaServico() {
         return rbJanelaServico.isSelected() ? "Manter fixa" : "Não Manter fixa";
     }
-//    
-//    private String getArmazem()
-//    {
-//        return rbMultiArmazens.isSelected() ? "Multi_armazem" : "Uni_armazem";
-//    }
-//    
-//    private String getUsarDoisPrecos()
-//    {
-//        return rbNaoUmPreco.isSelected() ? "nao" : "sim";
-//    }
-//
-//    private String getInteiro()
-//    {
-//        return rbA6V.isSelected() ? "Sem Virgula" : "Com Virgula";
-//    }
-//
-//    private void getDocPadrao( String documento )
-//    {
-//        if ( documento.equalsIgnoreCase( "Factura/Recibo" ) )
-//        {
-//            rbFacturaRecibo.setSelected( true );
-//            rbFactura.setSelected( false );
-//            rbFacturaProforma.setSelected( false );
-//        }
-//        else if ( documento.equalsIgnoreCase( "Factura" ) )
-//        {
-//            rbFactura.setSelected( true );
-//            rbFacturaRecibo.setSelected( false );
-//            rbFacturaProforma.setSelected( false );
-//        }
-//        else
-//        {
-//            rbFacturaProforma.setSelected( true );
-//            rbFacturaRecibo.setSelected( false );
-//            rbFactura.setSelected( false );
-//        }
-//    }
-//
-//    private void setFolhaImpressora( String folha )
-//    {
-//        if ( folha.equalsIgnoreCase( "A6" ) )
-//        {
-//            rbA6.setSelected( true );
-//            rbA4.setSelected( false );
-//            rbA5.setSelected( false );
-//            rbA7.setSelected( false );
-//            rbS_A6.setSelected( false );
-//            rbA6V.setSelected( false );
-//        }
-//
-//        else if ( folha.equalsIgnoreCase( "S_A6" ) )
-//        {
-//            rbS_A6.setSelected( true );
-//            rbA6.setSelected( false );
-//            rbA4.setSelected( false );
-//            rbA5.setSelected( false );
-//            rbA7.setSelected( false );
-//            rbA6V.setSelected( false );
-//        }
-//        else if ( folha.equalsIgnoreCase( "A7" ) )
-//        {
-//            rbA7.setSelected( true );
-//            rbA4.setSelected( false );
-//            rbA5.setSelected( false );
-//            rbA6.setSelected( false );
-//            rbS_A6.setSelected( false );
-//            rbA6V.setSelected( false );
-//        }
-//        else if ( folha.equalsIgnoreCase( "A5" ) )
-//        {
-//            rbA5.setSelected( true );
-//            rbA4.setSelected( false );
-//            rbA7.setSelected( false );
-//            rbA6.setSelected( false );
-//            rbS_A6.setSelected( false );
-//            rbA6V.setSelected( false );
-//        }
-//        else if ( folha.equalsIgnoreCase( "A6V" ) )
-//        {
-//            rbA6V.setSelected( true );
-//            rbA5.setSelected( false );
-//            rbA4.setSelected( false );
-//            rbA7.setSelected( false );
-//            rbA6.setSelected( false );
-//            rbS_A6.setSelected( false );
-//        }
-//        else
-//        {
-//            rbA4.setSelected( true );
-//            rbA6.setSelected( false );
-//            rbA5.setSelected( false );
-//            rbA7.setSelected( false );
-//            rbS_A6.setSelected( false );
-//            rbA6V.setSelected( false );
-//        }
-//    }
-//
-//    private void setFocusTextField( String focus )
-//    {
-//        if ( focus.equalsIgnoreCase( "Codigo Interno" ) )
-//        {
-//            rbCI.setSelected( true );
-//            rbCB.setSelected( false );
-////            ProdutoVisao.bloquearCampoCodBarra();
-//        }
-//        else
-//        {
-//            rbCB.setSelected( true );
-//            rbCI.setSelected( false );
-//        }
-//    }
-//
-//    private void setDocPadrao( String documento )
-//    {
-//        if ( documento.equalsIgnoreCase( "Factura/Recibo" ) )
-//        {
-//            rbFacturaRecibo.setSelected( true );
-//            rbFactura.setSelected( false );
-//            rbFacturaProforma.setSelected( false );
-//        }
-//        else if ( documento.equalsIgnoreCase( "Factura" ) )
-//        {
-//            rbFactura.setSelected( true );
-//            rbFacturaRecibo.setSelected( false );
-//            rbFacturaProforma.setSelected( false );
-//        }
-//        else
-//        {
-//            rbFacturaProforma.setSelected( true );
-//            rbFacturaRecibo.setSelected( false );
-//            rbFactura.setSelected( false );
-//        }
-//    }
-//
-//    private void setActivarVias( String activarvias )
-//    {
-//        if ( activarvias.equalsIgnoreCase( "Sim" ) )
-//        {
-//            rbSim.setSelected( true );
-//            rbNao.setSelected( false );
-//        }
-//        else
-//        {
-//            rbNao.setSelected( true );
-//            rbSim.setSelected( false );
-//        }
-//    }
-//
-//    private void setTranstorno( String transtorno )
-//    {
-//        if ( transtorno.equalsIgnoreCase( "Activo" ) )
-//        {
-//            rbActivo.setSelected( true );
-//            rbDesactivo.setSelected( false );
-//        }
-//        else
-//        {
-//            rbDesactivo.setSelected( true );
-//            rbActivo.setSelected( false );
-//        }
-//    }
-//
-//    private void setActivarDesconto( String desconto_financeiro )
-//    {
-//        if ( desconto_financeiro.equalsIgnoreCase( "Activar" ) )
-//        {
-//            rbActivar.setSelected( true );
-//            rbDesactivar.setSelected( false );
-//        }
-//        else
-//        {
-//            rbDesactivar.setSelected( true );
-//            rbActivar.setSelected( false );
-//        }
-//    }
-//
-//    private void setVizualisarStock( String stock )
-//    {
-//        if ( stock.equalsIgnoreCase( "Vizualisar Stock" ) )
-//        {
-//            rbVizualisarStock.setSelected( true );
-//            rbNaoVizualisarStock.setSelected( false );
-//        }
-//        else
-//        {
-//            rbNaoVizualisarStock.setSelected( true );
-//            rbVizualisarStock.setSelected( false );
-//        }
-//    }
-//
-//    private void setAnoEconomico( String ano_economico )
-//    {
-//        if ( ano_economico.equalsIgnoreCase( "Ocultar" ) )
-//        {
-//            rbOcultar.setSelected( true );
-//            rbMostrar.setSelected( false );
-//        }
-//        else
-//        {
-//            rbMostrar.setSelected( true );
-//            rbOcultar.setSelected( false );
-//        }
-//    }
-//
 
-    private void setActivarNegocio( String negocio )
-    {
-        if ( negocio.equalsIgnoreCase( "Comercial" ) )
-        {
-            rbComercial.setSelected( true );
-            rbTransportes.setSelected( false );
-            rbRestaurante.setSelected( false );
-            rbFarmacia.setSelected( false );
-            rbLavandaria.setSelected( false );
-            rbPrestacaoServico.setSelected( false );
-            rbLayout.setSelected( false );
-            rbOficina.setSelected( false );
-        }
-        else if ( negocio.equalsIgnoreCase( "Oficina" ) )
-        {
-            rbOficina.setSelected( true );
-            rbTransportes.setSelected( false );
-            rbComercial.setSelected( false );
-            rbPrestacaoServico.setSelected( false );
-            rbRestaurante.setSelected( false );
-            rbFarmacia.setSelected( false );
-            rbLavandaria.setSelected( false );
-            rbLayout.setSelected( false );
-        }
-        else if ( negocio.equalsIgnoreCase( "Transportes" ) )
-        {
-            rbTransportes.setSelected( true );
-            rbComercial.setSelected( false );
-            rbPrestacaoServico.setSelected( false );
-            rbRestaurante.setSelected( false );
-            rbFarmacia.setSelected( false );
-            rbLavandaria.setSelected( false );
-            rbLayout.setSelected( false );
-            rbOficina.setSelected( false );
-        }
-        else if ( negocio.equalsIgnoreCase( "Restaurante" ) )
-        {
-            rbRestaurante.setSelected( true );
-            rbTransportes.setSelected( false );
-            rbComercial.setSelected( false );
-            rbPrestacaoServico.setSelected( false );
-            rbFarmacia.setSelected( false );
-            rbLavandaria.setSelected( false );
-            rbLayout.setSelected( false );
-            rbOficina.setSelected( false );
-        }
-        else if ( negocio.equalsIgnoreCase( "Farmacia" ) )
-        {
-            rbFarmacia.setSelected( true );
-            rbLavandaria.setSelected( false );
-            rbTransportes.setSelected( false );
-            rbComercial.setSelected( false );
-            rbPrestacaoServico.setSelected( false );
-            rbRestaurante.setSelected( false );
-            rbLayout.setSelected( false );
-            rbOficina.setSelected( false );
-        }
-        else if ( negocio.equalsIgnoreCase( "Lavandaria" ) )
-        {
-            rbLavandaria.setSelected( true );
-            rbTransportes.setSelected( false );
-            rbComercial.setSelected( false );
-            rbPrestacaoServico.setSelected( false );
-            rbFarmacia.setSelected( false );
-            rbRestaurante.setSelected( false );
-            rbLayout.setSelected( false );
-            rbOficina.setSelected( false );
-        }
-        else if ( negocio.equalsIgnoreCase( "Layout" ) )
-        {
-            rbLayout.setSelected( true );
-            rbLavandaria.setSelected( false );
-            rbTransportes.setSelected( false );
-            rbComercial.setSelected( false );
-            rbPrestacaoServico.setSelected( false );
-            rbFarmacia.setSelected( false );
-            rbRestaurante.setSelected( false );
-            rbOficina.setSelected( false );
-        }
-        else
-        {
-            rbPrestacaoServico.setSelected( true );
-            rbLayout.setSelected( false );
-            rbTransportes.setSelected( false );
-            rbComercial.setSelected( false );
-            rbLavandaria.setSelected( false );
-            rbFarmacia.setSelected( false );
-            rbLavandaria.setSelected( false );
-            rbOficina.setSelected( false );
+    private void setActivarNegocio(String negocio) {
+        if (negocio.equalsIgnoreCase("Comercial")) {
+            rbComercial.setSelected(true);
+            rbTransportes.setSelected(false);
+            rbRestaurante.setSelected(false);
+            rbFarmacia.setSelected(false);
+            rbLavandaria.setSelected(false);
+            rbPrestacaoServico.setSelected(false);
+            rbLayout.setSelected(false);
+            rbOficina.setSelected(false);
+        } else if (negocio.equalsIgnoreCase("Oficina")) {
+            rbOficina.setSelected(true);
+            rbTransportes.setSelected(false);
+            rbComercial.setSelected(false);
+            rbPrestacaoServico.setSelected(false);
+            rbRestaurante.setSelected(false);
+            rbFarmacia.setSelected(false);
+            rbLavandaria.setSelected(false);
+            rbLayout.setSelected(false);
+        } else if (negocio.equalsIgnoreCase("Transportes")) {
+            rbTransportes.setSelected(true);
+            rbComercial.setSelected(false);
+            rbPrestacaoServico.setSelected(false);
+            rbRestaurante.setSelected(false);
+            rbFarmacia.setSelected(false);
+            rbLavandaria.setSelected(false);
+            rbLayout.setSelected(false);
+            rbOficina.setSelected(false);
+        } else if (negocio.equalsIgnoreCase("Restaurante")) {
+            rbRestaurante.setSelected(true);
+            rbTransportes.setSelected(false);
+            rbComercial.setSelected(false);
+            rbPrestacaoServico.setSelected(false);
+            rbFarmacia.setSelected(false);
+            rbLavandaria.setSelected(false);
+            rbLayout.setSelected(false);
+            rbOficina.setSelected(false);
+        } else if (negocio.equalsIgnoreCase("Farmacia")) {
+            rbFarmacia.setSelected(true);
+            rbLavandaria.setSelected(false);
+            rbTransportes.setSelected(false);
+            rbComercial.setSelected(false);
+            rbPrestacaoServico.setSelected(false);
+            rbRestaurante.setSelected(false);
+            rbLayout.setSelected(false);
+            rbOficina.setSelected(false);
+        } else if (negocio.equalsIgnoreCase("Lavandaria")) {
+            rbLavandaria.setSelected(true);
+            rbTransportes.setSelected(false);
+            rbComercial.setSelected(false);
+            rbPrestacaoServico.setSelected(false);
+            rbFarmacia.setSelected(false);
+            rbRestaurante.setSelected(false);
+            rbLayout.setSelected(false);
+            rbOficina.setSelected(false);
+        } else if (negocio.equalsIgnoreCase("Layout")) {
+            rbLayout.setSelected(true);
+            rbLavandaria.setSelected(false);
+            rbTransportes.setSelected(false);
+            rbComercial.setSelected(false);
+            rbPrestacaoServico.setSelected(false);
+            rbFarmacia.setSelected(false);
+            rbRestaurante.setSelected(false);
+            rbOficina.setSelected(false);
+        } else {
+            rbPrestacaoServico.setSelected(true);
+            rbLayout.setSelected(false);
+            rbTransportes.setSelected(false);
+            rbComercial.setSelected(false);
+            rbLavandaria.setSelected(false);
+            rbFarmacia.setSelected(false);
+            rbLavandaria.setSelected(false);
+            rbOficina.setSelected(false);
         }
     }
 
-    private void setActivarJanelaServico( String janela_servico )
-    {
-        if ( janela_servico.equalsIgnoreCase( "Manter fixa" ) )
-        {
-            rbJanelaServico.setSelected( true );
+    private void setActivarJanelaServico(String janela_servico) {
+        if (janela_servico.equalsIgnoreCase("Manter fixa")) {
+            rbJanelaServico.setSelected(true);
 
-        }
-        else
-        {
-            rbJanelaServico.setSelected( false );
+        } else {
+            rbJanelaServico.setSelected(false);
         }
 
     }
-//
-//    private void setActivarTeclado( String teclado )
-//    {
-//        if ( teclado.equalsIgnoreCase( "Normal" ) )
-//        {
-//            rbNormal.setSelected( true );
-//            rbToutch.setSelected( false );
-//        }
-//        else
-//        {
-//            rbToutch.setSelected( true );
-//            rbNormal.setSelected( false );
-//
-//        }
-//    }
-//
-//    private void setArmazem( String armazem )
-//    {
-//        if ( armazem.equalsIgnoreCase( "Multi_armazem" ) )
-//        {
-//            rbMultiArmazens.setSelected( true );
-//            rbUniArmazem.setSelected( false );
-//        }
-//        else
-//        {
-//            rbUniArmazem.setSelected( true );
-//            rbMultiArmazens.setSelected( false );
-//        }
-//    }
-//    
-//    private void setUsarDoisPrecos( String usar_dois_precos )
-//    {
-//        if ( usar_dois_precos.equalsIgnoreCase( "sim" ) )
-//        {
-//            rbSimDoisPrecos.setSelected( true );
-//            rbNaoUmPreco.setSelected( false );
-//        }
-//        else
-//        {
-//            rbNaoUmPreco.setSelected( true );
-//            rbSimDoisPrecos.setSelected( false );
-//        }
-//    }
+
 
 }
