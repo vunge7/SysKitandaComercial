@@ -42,6 +42,7 @@ public class FormaPagamentoVisao extends javax.swing.JFrame
     // ÍNDICE DA COLUNA VALOR (ex.: 3)
     private static final int COL_VALOR = 3;
     double totalVenda = 10100.00; // ← pode vir do banco, variável, etc.
+//    double totalRetencao = 10100.00; // ← pode vir do banco, variável, etc.
     private boolean bloqueio = false;       // evita loops infinitos
 
     /**
@@ -70,8 +71,8 @@ public class FormaPagamentoVisao extends javax.swing.JFrame
         this.formulario = formulario;
         inicializar_componentes();
 
-        totalVenda = CfMethods.parseMoedaFormatada( lb_total_geral.getText() );
-
+        totalVenda = CfMethods.parseMoedaFormatada( lb_total_geral.getText());
+        
         aplicarRegraValor( tabela_forma_pagamento );
 //        }
 //        else
@@ -87,8 +88,7 @@ public class FormaPagamentoVisao extends javax.swing.JFrame
      */
     @SuppressWarnings( "unchecked" )
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents()
-    {
+    private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -130,53 +130,41 @@ public class FormaPagamentoVisao extends javax.swing.JFrame
 
         tabela_forma_pagamento.setFont(new java.awt.Font("Lucida Grande", 0, 24)); // NOI18N
         tabela_forma_pagamento.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][]
-            {
+            new Object [][] {
 
             },
-            new String []
-            {
+            new String [] {
                 "Cod.", "Designação", "Ref.", "Valor"
             }
-        )
-        {
-            Class[] types = new Class []
-            {
+        ) {
+            Class[] types = new Class [] {
                 java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.String.class
             };
-            boolean[] canEdit = new boolean []
-            {
+            boolean[] canEdit = new boolean [] {
                 false, false, true, true
             };
 
-            public Class getColumnClass(int columnIndex)
-            {
+            public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
 
-            public boolean isCellEditable(int rowIndex, int columnIndex)
-            {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
         tabela_forma_pagamento.setRowHeight(60);
-        tabela_forma_pagamento.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mouseClicked(java.awt.event.MouseEvent evt)
-            {
+        tabela_forma_pagamento.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tabela_forma_pagamentoMouseClicked(evt);
             }
         });
-        tabela_forma_pagamento.addPropertyChangeListener(new java.beans.PropertyChangeListener()
-        {
-            public void propertyChange(java.beans.PropertyChangeEvent evt)
-            {
+        tabela_forma_pagamento.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 tabela_forma_pagamentoPropertyChange(evt);
             }
         });
         jScrollPane2.setViewportView(tabela_forma_pagamento);
-        if (tabela_forma_pagamento.getColumnModel().getColumnCount() > 0)
-        {
+        if (tabela_forma_pagamento.getColumnModel().getColumnCount() > 0) {
             tabela_forma_pagamento.getColumnModel().getColumn(0).setPreferredWidth(30);
             tabela_forma_pagamento.getColumnModel().getColumn(1).setPreferredWidth(170);
             tabela_forma_pagamento.getColumnModel().getColumn(2).setPreferredWidth(80);
@@ -189,10 +177,8 @@ public class FormaPagamentoVisao extends javax.swing.JFrame
         jButton3.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagem/salvar/save_32x32.png"))); // NOI18N
         jButton3.setText("Finalizar Processo");
-        jButton3.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
             }
         });
@@ -200,10 +186,8 @@ public class FormaPagamentoVisao extends javax.swing.JFrame
         jButton6.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagem/out/out_32x32.png"))); // NOI18N
         jButton6.setText("Sair");
-        jButton6.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton6ActionPerformed(evt);
             }
         });
@@ -219,7 +203,6 @@ public class FormaPagamentoVisao extends javax.swing.JFrame
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lb_total_geral, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(rdTeclado)
@@ -230,7 +213,9 @@ public class FormaPagamentoVisao extends javax.swing.JFrame
                         .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(44, 44, 44))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 483, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 483, Short.MAX_VALUE)
+                            .addComponent(lb_total_geral, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(0, 0, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
@@ -240,9 +225,9 @@ public class FormaPagamentoVisao extends javax.swing.JFrame
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lb_total_geral, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(lb_troco, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -445,6 +430,7 @@ public class FormaPagamentoVisao extends javax.swing.JFrame
         else if ( formulario == DVML.VENDA_PONTUAL_TOP )
         {
             lb_total_geral.setText( FormVendaResponsivaVisaoTop.txtTotalPagar.getText() );
+
         }
         else if ( formulario == DVML.VENDA_OFICINA )
         {

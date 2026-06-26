@@ -148,8 +148,8 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="jlEmpresa" min="-2" pref="19" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <Component id="jlEmpresa" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
@@ -407,7 +407,7 @@
             <Component class="javax.swing.JLabel" name="jlEmpresa">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Lucida Grande" size="16" style="1"/>
+                  <Font name="Lucida Grande" size="18" style="1"/>
                 </Property>
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="66" green="0" red="0" type="rgb"/>
@@ -444,23 +444,6 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="txtReferencia" min="-2" pref="14" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="txtLocal" max="32767" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="lbQuantidadeStock" min="-2" pref="58" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="txtQuantidadeStock" min="-2" pref="115" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="lbDescontoFinanceiro" min="-2" pref="44" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="sp_desconto_financeiro" min="-2" pref="100" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="lbCodigoProduto4" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="txtTotalPagar" min="-2" pref="282" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="1" attributes="0">
                       <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
                       <Component id="btn_adicionar" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -485,35 +468,6 @@
                   </Group>
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="1" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" attributes="0">
-                                      <Component id="cmbAnoEconomico" min="-2" pref="90" max="-2" attributes="0"/>
-                                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                                      <Component id="spnCopia" min="-2" pref="56" max="-2" attributes="0"/>
-                                      <EmptySpace min="0" pref="537" max="32767" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" alignment="1" attributes="0">
-                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                                      <Component id="lbValorPorExtenco" min="-2" pref="681" max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="txtTotal_AOA_Retencao" min="-2" pref="82" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" attributes="0">
-                                      <Component id="cmbSubFamilia" min="-2" pref="340" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="cmbArmazem" min="-2" pref="226" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="dc_data_documento" min="-2" pref="137" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Component id="cmbProduto" alignment="0" min="-2" pref="696" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                          </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Group type="102" attributes="0">
@@ -560,106 +514,174 @@
                               <EmptySpace max="32767" attributes="0"/>
                               <Component id="cmbMoeda" min="-2" pref="124" max="-2" attributes="0"/>
                           </Group>
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" attributes="0">
+                                      <Component id="cmbSubFamilia" min="-2" pref="340" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="cmbArmazem" min="-2" pref="226" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="dc_data_documento" min="-2" pref="137" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Component id="cmbProduto" alignment="0" min="-2" pref="774" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" attributes="0">
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      <Component id="lbValorPorExtenco" min="-2" pref="681" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="88" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="1" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="txtReferencia" min="-2" pref="14" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="txtLocal" min="-2" pref="7" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="lbQuantidadeStock" min="-2" pref="46" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="txtQuantidadeStock" min="-2" pref="83" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="lbDescontoFinanceiro1" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
+                              <Component id="txtTotalPagarRetencao" min="-2" pref="132" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="lbDescontoFinanceiro" min="-2" pref="48" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="cmbAnoEconomico" min="-2" pref="90" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="spnCopia" min="-2" pref="56" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="280" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Component id="lbCodigoProduto5" max="32767" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="txtTotalPagarGeral" min="-2" pref="222" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="sp_desconto_financeiro" min="-2" pref="72" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="60" max="-2" attributes="0"/>
+                              <Component id="txtTotalPagar" min="-2" pref="222" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
                   </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="103" alignment="0" groupAlignment="3" attributes="0">
                               <Component id="txtReferencia" alignment="3" min="-2" pref="26" max="-2" attributes="0"/>
                               <Component id="txtLocal" alignment="3" min="-2" pref="22" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="txtTotalPagar" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="lbQuantidadeStock" alignment="0" min="-2" pref="26" max="-2" attributes="0"/>
                           <Group type="103" alignment="0" groupAlignment="3" attributes="0">
                               <Component id="txtQuantidadeStock" alignment="3" min="-2" pref="29" max="-2" attributes="0"/>
                               <Component id="sp_desconto_financeiro" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                               <Component id="lbDescontoFinanceiro" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
-                              <Component id="lbCodigoProduto4" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
+                              <Component id="txtTotalPagarRetencao" alignment="3" max="32767" attributes="0"/>
+                              <Component id="lbDescontoFinanceiro1" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
                           </Group>
+                          <Component id="txtTotalPagar" alignment="0" min="-2" pref="30" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="cmbAnoEconomico" alignment="3" max="32767" attributes="0"/>
-                          <Component id="spnCopia" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="txtTotal_AOA_Retencao" max="32767" attributes="0"/>
-                          <Component id="lbValorPorExtenco" alignment="1" min="-2" pref="14" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="cmbSubFamilia" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="cmbArmazem" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Component id="dc_data_documento" min="-2" pref="29" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
-                              <Component id="cmbProduto" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                                      <Component id="txtCodigoManual" linkSize="2" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
-                                      <Component id="lbCodigoProduto2" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="txtQuatindade" linkSize="2" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
-                                      <Component id="lbCodigoProduto1" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
-                                      <Component id="txtCodigoBarra" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="txtCodigoProduto" linkSize="2" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
-                                      <Component id="lbCodigoProduto" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Component id="lbQuantidade" min="-2" pref="25" max="-2" attributes="0"/>
-                                  <Component id="cmbMoeda" alignment="0" min="-2" pref="26" max="-2" attributes="0"/>
-                              </Group>
+                          <Group type="102" attributes="0">
+                              <Component id="lbCodigoProduto5" min="-2" pref="28" max="-2" attributes="0"/>
+                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" attributes="0">
-                              <EmptySpace min="-2" pref="74" max="-2" attributes="0"/>
-                              <Component id="jButton4" min="-2" pref="29" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="ck_S_A6" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="ck_ComVirgula" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="ck_A7" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="ck_simplificada_O_S" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="ck_simplificada_O" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="ck_simplificada" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="ck_Duplicada" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="ck_A4" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="cmbAnoEconomico" alignment="3" max="32767" attributes="0"/>
+                                      <Component id="spnCopia" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                      <Component id="txtTotalPagarGeral" min="-2" max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
-                          </Group>
-                          <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                              <Component id="txtPreco" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
-                              <Component id="lbCodigoProduto3" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="103" alignment="0" groupAlignment="0" attributes="0">
-                              <Component id="btnCancelar" alignment="1" min="-2" pref="30" max="-2" attributes="0"/>
-                              <Component id="btn_remover" linkSize="1" alignment="1" min="-2" pref="30" max="-2" attributes="0"/>
-                              <Group type="103" alignment="1" groupAlignment="3" attributes="0">
-                                  <Component id="btnFormaPagamento" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
-                                  <Component id="btnProcessar" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
-                                  <Component id="jlEmpresa_sistema" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace pref="9" max="32767" attributes="0"/>
+                              <Component id="lbValorPorExtenco" min="-2" pref="14" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Group type="103" groupAlignment="3" attributes="0">
+                                              <Component id="cmbSubFamilia" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="cmbArmazem" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Component id="dc_data_documento" min="-2" pref="29" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
+                                      <Component id="cmbProduto" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                                              <Component id="txtCodigoManual" linkSize="2" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
+                                              <Component id="lbCodigoProduto2" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Group type="103" groupAlignment="3" attributes="0">
+                                              <Component id="txtQuatindade" linkSize="2" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
+                                              <Component id="lbCodigoProduto1" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
+                                              <Component id="txtCodigoBarra" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="txtCodigoProduto" linkSize="2" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
+                                              <Component id="lbCodigoProduto" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Component id="lbQuantidade" min="-2" pref="25" max="-2" attributes="0"/>
+                                          <Component id="cmbMoeda" alignment="0" min="-2" pref="26" max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <EmptySpace min="-2" pref="74" max="-2" attributes="0"/>
+                                      <Component id="jButton4" min="-2" pref="29" max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="3" attributes="0">
+                                          <Component id="ck_S_A6" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="ck_ComVirgula" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="ck_A7" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="ck_simplificada_O_S" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="ck_simplificada_O" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="ck_simplificada" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="ck_Duplicada" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="ck_A4" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                  <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                                      <Component id="txtPreco" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
+                                      <Component id="lbCodigoProduto3" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="103" alignment="0" groupAlignment="0" attributes="0">
+                                      <Component id="btnCancelar" alignment="1" min="-2" pref="30" max="-2" attributes="0"/>
+                                      <Component id="btn_remover" linkSize="1" alignment="1" min="-2" pref="30" max="-2" attributes="0"/>
+                                      <Group type="103" alignment="1" groupAlignment="3" attributes="0">
+                                          <Component id="btnFormaPagamento" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                                          <Component id="btnProcessar" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                                          <Component id="jlEmpresa_sistema" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                  <Component id="btn_adicionar" linkSize="1" min="-2" pref="28" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
+                              <Component id="lb_nome_usuario" pref="33" max="32767" attributes="0"/>
                           </Group>
-                          <Component id="btn_adicionar" linkSize="1" min="-2" pref="28" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
-                      <Component id="lb_nome_usuario" pref="33" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -1032,7 +1054,7 @@
                   <Color blue="ff" green="ff" red="0" type="rgb"/>
                 </Property>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Lucida Grande" size="14" style="1"/>
+                  <Font name="Lucida Grande" size="12" style="1"/>
                 </Property>
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="33" green="0" red="0" type="rgb"/>
@@ -1085,7 +1107,7 @@
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Tahoma" size="20" style="1"/>
+                  <Font name="Tahoma" size="12" style="0"/>
                 </Property>
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="0" green="0" red="ff" type="rgb"/>
@@ -1128,14 +1150,6 @@
                 <Property name="text" type="java.lang.String" value="Pre&#xe7;o:"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="lbCodigoProduto4">
-              <Properties>
-                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Lucida Grande" size="14" style="1"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="TOTAL:"/>
-              </Properties>
-            </Component>
             <Component class="javax.swing.JLabel" name="lbValorPorExtenco">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
@@ -1171,15 +1185,18 @@
                 <Property name="text" type="java.lang.String" value="Desc:"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="txtTotal_AOA_Retencao">
+            <Component class="javax.swing.JLabel" name="txtTotalPagarRetencao">
               <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Segoe UI" size="12" style="1"/>
+                </Property>
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="33" green="33" red="ff" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Retencao"/>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
+                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="9"/>
               </AuxValues>
             </Component>
             <Component class="javax.swing.JTextField" name="txtLocal">
@@ -1264,6 +1281,43 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Sistema"/>
               </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="lbDescontoFinanceiro1">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Lucida Grande" size="14" style="1"/>
+                </Property>
+                <Property name="horizontalAlignment" type="int" value="4"/>
+                <Property name="text" type="java.lang.String" value="Reten&#xe7;&#xe3;o:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="lbCodigoProduto5">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Lucida Grande" size="14" style="1"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="TOTAL GERAL:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="txtTotalPagarGeral">
+              <Properties>
+                <Property name="editable" type="boolean" value="false"/>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Tahoma" size="20" style="1"/>
+                </Property>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="33" green="33" red="0" type="rgb"/>
+                </Property>
+                <Property name="caretColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtTotalPagarGeralActionPerformed"/>
+              </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="9"/>
+              </AuxValues>
             </Component>
           </SubComponents>
         </Container>

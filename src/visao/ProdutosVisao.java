@@ -1313,6 +1313,8 @@ public class ProdutosVisao extends javax.swing.JFrame
         // TODO add your handling code here:
         try
         {
+                 ver_retencao();
+        actualizarRetencaoForm();
             btnSalvar.setEnabled( false );
             btnAlterar2.setEnabled( true );
             String codInternoString = txtCodigoProduto.getText();
@@ -1558,6 +1560,8 @@ public class ProdutosVisao extends javax.swing.JFrame
             mostrar_qtd_stock_armazem( txtArmazen2, 2 );
             mostrar_qtd_stock_armazem( txtArmazen3, 3 );
             mostrar_qtd_stock_armazem( txtArmazen4, 4 );
+                            ver_retencao();
+        actualizarRetencaoForm();
 
             if ( ivaAplicarJRadioButton.isSelected() )
             {

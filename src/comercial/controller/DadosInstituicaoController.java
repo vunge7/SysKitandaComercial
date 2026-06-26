@@ -163,7 +163,7 @@ public class DadosInstituicaoController implements EntidadeFactory {
             if (result != null && result.next()) {
                 dadosInstituicao = new TbDadosInstituicao();
 
-<<<<<<< HEAD
+
                 dadosInstituicao.setIdDadosInsitiuicao( result.getInt( "idDadosInsitiuicao" ) );
                 dadosInstituicao.setNome( result.getString( "nome" ) );
                 dadosInstituicao.setDocpadrao( result.getString( "docpadrao" ) );
@@ -194,36 +194,7 @@ public class DadosInstituicaoController implements EntidadeFactory {
             else
             {
                 System.err.println( "[DadosInstituicaoController] ⚠ Nenhum registo encontrado para o ID: " + codigo );
-=======
-                dadosInstituicao.setIdDadosInsitiuicao(result.getInt("idDadosInsitiuicao"));
-                dadosInstituicao.setNome(result.getString("nome"));
-                dadosInstituicao.setDocpadrao(result.getString("docpadrao"));
-                dadosInstituicao.setNegocio(result.getString("negocio"));
-                dadosInstituicao.setConfigArmazens(result.getString("config_armazens"));
-                dadosInstituicao.setTranstorno(result.getString("transtorno"));
-                dadosInstituicao.setDescontoFinanceiro(result.getString("desconto_financeiro"));
-                dadosInstituicao.setAnoEconomico(result.getString("ano_economico"));
-                dadosInstituicao.setVizualisarStock(result.getString("vizualisar_stock"));
-                dadosInstituicao.setNumeroVias(result.getInt("numero_vias"));
-                dadosInstituicao.setImpressora(result.getString("impressora"));
-                dadosInstituicao.setImpressoraCozinha(result.getString("impressora_cozinha"));
-                dadosInstituicao.setImpressoraSala(result.getString("impressora_sala"));
-                dadosInstituicao.setFoco(result.getString("foco"));
-                dadosInstituicao.setRegime(result.getString("regime"));
-                dadosInstituicao.setUsarDoisPrecos(result.getString("usar_dois_precos"));
-                dadosInstituicao.setDesactivarvias(result.getString("desactivarvias"));
-                dadosInstituicao.setTeclado(result.getString("teclado"));
-                dadosInstituicao.setPrazoProforma(result.getInt("prazo_proforma"));
-                dadosInstituicao.setDesactivarLugares(result.getString("desactivar_lugares"));
-                dadosInstituicao.setHoraTerminoVenda(result.getTimestamp("hora_termino_venda"));
-                dadosInstituicao.setTipoFechoCaixa(result.getString("tipo_fecho_caixa"));
-                dadosInstituicao.setEnviarEmail(result.getString("enviar_email"));
-                dadosInstituicao.setStockConsulta(result.getString("stock_consulta"));
-                dadosInstituicao.setTipoFichaTecnica(result.getString("tipo_ficha_tecnica"));
-                dadosInstituicao.setNumeroEstabelecimento(result.getString("numero_estabelecimento"));
-            } else {
-                System.err.println("[DadosInstituicaoController] ⚠ Nenhum registo encontrado para o ID: " + codigo);
->>>>>>> c299b7b16a05d02d225d9bf0b1ee25d083e0949f
+
             }
 
         } catch (SQLException e) {
