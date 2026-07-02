@@ -11,12 +11,14 @@
 package visao;
 
 
+import comercial.controller.DadosInstituicaoController;
 import java.sql.Connection;
 import dao.DadosInstituicaoDao;
 import entity.TbDadosInstituicao;
 import javax.persistence.EntityManagerFactory;
 import javax.swing.JOptionPane;
 import kitanda.util.CfMethodsSwing;
+import util.BDConexao;
 import util.JPAEntityMannagerFactoryUtil;
 
 /**
@@ -26,16 +28,23 @@ import util.JPAEntityMannagerFactoryUtil;
 public class DadosInstituicaoVisao extends javax.swing.JDialog
 {
 
-    private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
-    private DadosInstituicaoDao dadoIntituicaoDao = new DadosInstituicaoDao( emf );
+//    private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
+//    private DadosInstituicaoDao dadoIntituicaoDao = new DadosInstituicaoDao( emf );
+     private static DadosInstituicaoController dadosInstituicaoController;
     private TbDadosInstituicao dadoIntituicao;
+    private static BDConexao conexao;
 
-    public DadosInstituicaoVisao( java.awt.Frame parent, boolean modal )
+    public DadosInstituicaoVisao( java.awt.Frame parent, boolean modal, BDConexao conexao )
     {
         super( parent, modal );
         initComponents();
         setLocationRelativeTo( null );
         rbJanelaServico.setVisible( false );
+        this.conexao = conexao;
+        
+        dadosInstituicaoController = new DadosInstituicaoController( this.conexao);
+        dadoIntituicao = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
+        
         try
         {
             mostrar_dados();
@@ -549,12 +558,13 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel33))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtSlogan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel14)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(txtPosto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel16)))
+                                .addComponent(jLabel16))
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(txtSlogan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel14)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel13)
@@ -695,7 +705,7 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
         {
             public void run()
             {
-                DadosInstituicaoVisao dialog = new DadosInstituicaoVisao( new javax.swing.JFrame(), true );
+                DadosInstituicaoVisao dialog = new DadosInstituicaoVisao( new javax.swing.JFrame(), true, new BDConexao() );
                 dialog.addWindowListener( new java.awt.event.WindowAdapter()
                 {
                     public void windowClosing( java.awt.event.WindowEvent e )
@@ -781,7 +791,7 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
 
     private void mostrar_dados()
     {
-        dadoIntituicao = dadoIntituicaoDao.findTbDadosInstituicao( 1 );
+//        dadoIntituicao = dadosInstituicaoController.findByCodigo(1 );
 
         txtNome.setText( dadoIntituicao.getNome() );
         txtTelefone.setText( dadoIntituicao.getTelefone() );
@@ -827,7 +837,7 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
     private void actulizar_dados()
     {
 
-        dadoIntituicao = dadoIntituicaoDao.findTbDadosInstituicao( 1 );
+//        dadoIntituicao = dadosInstituicaoController.findByCodigo(1 );
 
         dadoIntituicao.setNome( txtNome.getText() );
         dadoIntituicao.setTelefone( txtTelefone.getText() );
@@ -870,11 +880,12 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
 
         try
         {
-            dadoIntituicaoDao.edit( dadoIntituicao );
+            dadosInstituicaoController.actualizar(dadoIntituicao );
             JOptionPane.showMessageDialog( null, "Dados actualizados com sucesso!...." );
         }
         catch ( Exception e )
         {
+            e.printStackTrace();
             JOptionPane.showMessageDialog( null, "Falha ao tentar actualizar os dados", "AVISO", JOptionPane.WARNING_MESSAGE );
 
         }

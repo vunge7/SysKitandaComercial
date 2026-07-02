@@ -168,6 +168,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     private static final int INDEX_TABLE_DESCONTO = 5;
     private static final int INDEX_TABLE_TAXA_IVA = 6;
     private static int linha_existente_produto;
+    private boolean permitirAlterarPreco = false;
 
     private static List<Vector<TbPreco>> listaPrecoTemp = new ArrayList<>();
 
@@ -305,7 +306,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                         procedimentoChamarFormaPagemnto();
                     } else {
                         // Opcional: feedback ao usuário
-                        System.out.println("Botão desativado. A ação não pode ser executada.");
+                        System.out.println("Botão desactivado. A acção não pode ser executada.");
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -364,19 +365,33 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 //        habilitarColunas();
         MetodosUtil.setArmazemByCampoConfigArmazem(cmbArmazem, conexao, cod_usuario);
 //        alterar_status_botao();
+//        setAlterarPreco(dadosInstituicao.getAlterarPreco());
 
 //        btnSemFormaPagamento.setVisible( false );
         table.setRowHeight(25);
         inserirLinhaEmBranco();
 
-        configurarTabela();
+        System.err.println("####STATUS ALterar Preco: "+dadosInstituicao.getAlterarPreco());
+        if (permitirAlterarPreco) {
+            System.err.println("####Permitir ALterar Preco: "+permitirAlterarPreco);
+            configurarPrecoTabela();
+        }
+        else {
+            System.err.println("####Não Permitir ALterar Preco: "+permitirAlterarPreco);
+              configurarPrecosQTDTabela();
+        }
+//        configurarQTDTabela();
+
+        
+        
+      
 //        configurarTabela( 3 );
 //        configurarTabela( 4 );
 //        initStockListener();
 
         procedimento_codBarra__jtable();
         txtCodigoBarra.requestFocus();
-        
+
         txtBuscaRef.setEnabled(false);
 
     }
@@ -435,6 +450,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         setArmazem(dadosInstituicao.getConfigArmazens());
         setTranstorno(dadosInstituicao.getTranstorno());
         setActivarDescontoFinanceiro(dadosInstituicao.getDescontoFinanceiro());
+        setAlterarPreco(dadosInstituicao.getAlterarPreco());
         setAnoEconomico(dadosInstituicao.getAnoEconomico());
         setVizualisarStock(dadosInstituicao.getVizualisarStock());
         int numero_copia = dadosInstituicao.getNumeroVias();
@@ -451,6 +467,16 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
     private void mostrar_ano_economico_serie() {
         anoEconomico = anoEconomicoController.getLastObject();
+
+    }
+
+    private void setAlterarPreco(String alterarPreco) {
+
+        if (alterarPreco.equalsIgnoreCase("Bloquear")) {
+            permitirAlterarPreco = false;
+        } else {
+            permitirAlterarPreco = true;
+        }
 
     }
 
@@ -6358,9 +6384,10 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         System.out.println("PREÇO SEM IVA:  " + precoSemIva);
 
         table.setValueAt(precoSemIva, table.getSelectedRow(), 3);
-//        actualizarPrecoVendaManual( idProduto,
-//                precoSemIva.doubleValue(),
-//                precosController );
+
+        actualizarPrecoVendaManual(idProduto,
+                precoSemIva.doubleValue(),
+                precosController);
     }
 
     private static void actualizarPrecoVendaManual(int idProduto, Double precoVenda, PrecosController precosControllerLocal) {
@@ -6508,6 +6535,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                 actuazlizar_quantidade_tabela_formulario(String.valueOf(qtd), desconto);
                 setTotalRetencao();
                 setTotalPagar();
+                setTotalPagarGeral();
                 calculaTotalIVA();
                 valor_por_extenco();
             } else {
@@ -6657,7 +6685,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 //        }
 //    });
 //}
-    private void configurarTabela() {
+    private void configurarPrecosQTDTabela() {
 
         DefaultTableModel model = (DefaultTableModel) table.getModel();
 
@@ -6669,12 +6697,81 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             public boolean isCellEditable(int row, int column) {
 
                 return (column == 0 || column == 4); // 3ª coluna editável
-//                return ( column == 0 || column == 3 || column == 4 ); // 3ª coluna editável
+//                return (column == 0 || column == 3 || column == 4); // 3ª coluna editável
+
+            }
+        });
+    }
+    
+    private void configurarQTDTabela() {
+
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+
+        table.setModel(new DefaultTableModel(
+                model.getDataVector(),
+                getColumnNames(model)
+        ) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+
+                return (column == 0 || column == 4); // 3ª coluna editável
+//                return (column == 0 || column == 3 || column == 4); // 3ª coluna editável
 
             }
         });
     }
 
+    private void configurarPrecoTabela() {
+
+//        DefaultTableModel model = (DefaultTableModel) table.getModel();
+//
+//        table.setModel(new DefaultTableModel(
+//                model.getDataVector(),
+//                getColumnNames(model)
+//        ) {
+//
+//            @Override
+//            public boolean isCellEditable(int row, int column) {
+//
+//              if (permitirAlterarPreco) {
+//                     return (column == 0 || column == 3 || column == 4); // 3ª coluna editável
+//                }
+//              
+//              
+//            }
+//        });
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+
+        table.setModel(new DefaultTableModel(
+                model.getDataVector(),
+                getColumnNames(model)
+        ) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+
+//                return (column == 0 || column == 3 ); // 3ª coluna editável
+                return (column == 0 || column == 3 || column == 4); // 3ª coluna editável
+
+            }
+        });
+    }
+
+//    private void configurarPrecoTabela() {
+//
+//        DefaultTableModel model = (DefaultTableModel) table.getModel();
+//
+//        table.setModel(new DefaultTableModel(
+//                model.getDataVector(),
+//                getColumnNames(model)
+//        ) {
+//            @Override
+//            public boolean isCellEditable(int row, int column) {
+//
+//                return column == 3;// 3ª coluna editável
+//
+//            }
+//        });
+//    }
     private void configurarTabela(int coluna) {
 
         DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -6802,7 +6899,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                     MetodosUtil.esvaziar_tabela(table);
                     JOptionPane.showMessageDialog(null, "Factura pendurada.");
                     inserirLinhaEmBranco();
-                    configurarTabela();
+                    configurarQTDTabela();
 
                 } catch (SQLException e) {
                     JOptionPane.showMessageDialog(null,
@@ -6844,7 +6941,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         } else {
             MetodosUtil.esvaziar_tabela(FormVendaResponsivaVisaoTop.table);
             inserirLinhaEmBranco();
-            configurarTabela();
+            configurarQTDTabela();
         }
 
         new FacturasPendentesVisao(null, rootPaneCheckingEnabled, conexao).setVisible(true);

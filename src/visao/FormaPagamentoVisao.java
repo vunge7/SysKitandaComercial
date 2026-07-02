@@ -413,8 +413,11 @@ public class FormaPagamentoVisao extends javax.swing.JFrame {
             lb_total_geral.setText(FormVendaResponsivaVisaoTop.txtTotalPagar.getText());
         } else if (formulario == DVML.VENDA_OFICINA) {
             lb_total_geral.setText(VendaOficinaUsuarioVisao.txtTotal_AOA_liquido.getText());
-        } else if (formulario == DVML.CONVERSAO_PROFORMA_FACTURA_RECIBO) {
-            lb_total_geral.setText(ConverterProformaFacturaVisao.txtTotal_AOA_liquido.getText());
+        
+//        } else 
+//            
+//            if (formulario == DVML.CONVERSAO_PROFORMA_FACTURA_RECIBO) {
+//            lb_total_geral.setText(ConverterProformaFacturaVisao.txtTotal_AOA_liquido.getText());
         } else if (formulario == DVML.CONVERSAO_GUIA_TRANSPORTE) {
             lb_total_geral.setText(ConverterGuiaFacturaVisao.txtTotal_AOA_liquido.getText());
         } else if (formulario == DVML.EMISSAO_RECIBOS) {
@@ -586,8 +589,9 @@ public class FormaPagamentoVisao extends javax.swing.JFrame {
                     FormVendaResponsivaVisaoTop.procedimento_salvar_venda_comercial(true);
                 } else if (formulario == DVML.VENDA_OFICINA) {
                     VendaOficinaUsuarioVisao.procedimento_salvar_venda_comercial();
-                } else if (formulario == DVML.CONVERSAO_PROFORMA_FACTURA_RECIBO) {
-                    ConverterProformaFacturaVisao.procedimento_converter();
+//                } else if (formulario == DVML.CONVERSAO_PROFORMA_FACTURA_RECIBO) {
+//                    ConverterProformaFacturaVisao.procedimento_converter();
+                
                 } else if (formulario == DVML.CONVERSAO_GUIA_TRANSPORTE) {
                     ConverterGuiaFacturaVisao.procedimento_converter();
                 } else if (formulario == DVML.EMISSAO_RECIBOS) {
@@ -928,8 +932,10 @@ public class FormaPagamentoVisao extends javax.swing.JFrame {
                 VendaUsuarioVisao.gorjeta = gorjeta;
             } else if (formulario == DVML.VENDA_OFICINA) {
                 VendaOficinaUsuarioVisao.gorjeta = gorjeta;
-            } else if (formulario == DVML.CONVERSAO_PROFORMA_FACTURA_RECIBO) {
-                ConverterProformaFacturaVisao.gorjeta = 0;
+           
+//            } else if (formulario == DVML.CONVERSAO_PROFORMA_FACTURA_RECIBO) {
+//                ConverterProformaFacturaVisao.gorjeta = 0;
+                
             } else if (formulario == DVML.CONVERSAO_GUIA_TRANSPORTE) {
                 ConverterGuiaFacturaVisao.gorjeta = 0;
             }

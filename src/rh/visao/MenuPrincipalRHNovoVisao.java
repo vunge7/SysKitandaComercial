@@ -280,7 +280,7 @@ public class MenuPrincipalRHNovoVisao extends javax.swing.JFrame
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton10ActionPerformed
     {//GEN-HEADEREND:event_jButton10ActionPerformed
         // TODO add your handling code here:
-        new DadosInstituicaoVisao( this, rootPaneCheckingEnabled ).setVisible( true );
+        new DadosInstituicaoVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia() ).setVisible( true );
     }//GEN-LAST:event_jButton10ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton7ActionPerformed

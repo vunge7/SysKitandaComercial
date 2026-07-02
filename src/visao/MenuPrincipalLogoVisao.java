@@ -336,10 +336,10 @@ public class MenuPrincipalLogoVisao extends javax.swing.JFrame
 //            {
 //                jmPrecosPorPercentagem.setEnabled( true );
 //            }
-            else if ( permissao.equals( jmConverterProforma.getText() ) )
-            {
-                jmConverterProforma.setEnabled( true );
-            }
+//            else if ( permissao.equals( jmConverterProforma.getText() ) )
+//            {
+//                jmConverterProforma.setEnabled( true );
+//            }
             else if ( permissao.equals( jmProcessarRecibo.getText() ) )
             {
                 jmProcessarRecibo.setEnabled( true );
@@ -518,7 +518,7 @@ public class MenuPrincipalLogoVisao extends javax.swing.JFrame
 //        jmRelatorioPreForma.setEnabled ( status );
         jmVendaDetalhadasUsuarios.setEnabled( status );
 //        jmPromocao.setEnabled ( status );
-        jmConverterProforma.setEnabled( status );
+//        jmConverterProforma.setEnabled( status );
         jmProcessarRecibo.setEnabled( status );
         jmNotas.setEnabled( status );
         jmGerarSaftCompras.setEnabled( status );
@@ -587,7 +587,6 @@ public class MenuPrincipalLogoVisao extends javax.swing.JFrame
         jMenu1 = new javax.swing.JMenu();
         jmVenda = new javax.swing.JMenuItem();
         jmFrontOffice = new javax.swing.JMenuItem();
-        jmConverterProforma = new javax.swing.JMenuItem();
         jmProcessarRecibo = new javax.swing.JMenuItem();
         jmNotas = new javax.swing.JMenu();
         jMenuItem7 = new javax.swing.JMenuItem();
@@ -730,15 +729,6 @@ public class MenuPrincipalLogoVisao extends javax.swing.JFrame
             }
         });
         jMenu1.add(jmFrontOffice);
-
-        jmConverterProforma.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
-        jmConverterProforma.setText("Converter Proformas em Facturas");
-        jmConverterProforma.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jmConverterProformaActionPerformed(evt);
-            }
-        });
-        jMenu1.add(jmConverterProforma);
 
         jmProcessarRecibo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jmProcessarRecibo.setText("Processar Recibos de Factura");
@@ -1483,7 +1473,7 @@ public class MenuPrincipalLogoVisao extends javax.swing.JFrame
 
     private void jDadosEmpresaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jDadosEmpresaActionPerformed
         // TODO add your handling code here:
-        new DadosInstituicaoVisao( this, rootPaneCheckingEnabled ).setVisible(true);
+        new DadosInstituicaoVisao( this, rootPaneCheckingEnabled , BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jDadosEmpresaActionPerformed
 
     private void jmPermissaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmPermissaoActionPerformed
@@ -1516,21 +1506,6 @@ public class MenuPrincipalLogoVisao extends javax.swing.JFrame
             e.printStackTrace();
         }
     }//GEN-LAST:event_jmAcertoStockActionPerformed
-
-    private void jmConverterProformaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmConverterProformaActionPerformed
-
-        try
-        {
-            // TODO add your handling code here:
-            new ConverterProformaFacturaVisao(this.cod_utilizador, BDConexao.getInstancia()).setVisible(true);
-        }
-        catch ( SQLException ex )
-        {
-            Logger.getLogger( MenuPrincipalLogoVisao.class.getName() ).log( Level.SEVERE, null, ex );
-        }
-
-
-    }//GEN-LAST:event_jmConverterProformaActionPerformed
 
     private void jmGerarSaftVendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmGerarSaftVendasActionPerformed
         // TODO add your handling code here:
@@ -2043,7 +2018,7 @@ public class MenuPrincipalLogoVisao extends javax.swing.JFrame
 
     private void jMenuConfiguracoesSistemaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuConfiguracoesSistemaActionPerformed
     {//GEN-HEADEREND:event_jMenuConfiguracoesSistemaActionPerformed
-        new ConfiguracoesVisao( this, rootPaneCheckingEnabled ).setVisible(true);
+        new ConfiguracoesVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia() ).setVisible(true);
     }//GEN-LAST:event_jMenuConfiguracoesSistemaActionPerformed
 
     private void jmEstornosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmEstornosActionPerformed
@@ -2262,7 +2237,6 @@ public class MenuPrincipalLogoVisao extends javax.swing.JFrame
     private javax.swing.JMenuItem jmCadastroCliente;
     private javax.swing.JMenuItem jmCadastroUsuario;
     private javax.swing.JMenuItem jmCompras;
-    private javax.swing.JMenuItem jmConverterProforma;
     private javax.swing.JMenuItem jmEncomendas;
     private javax.swing.JMenuItem jmEstornos;
     private javax.swing.JMenuItem jmFamilia;

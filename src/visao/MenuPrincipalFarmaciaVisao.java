@@ -1473,7 +1473,7 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame
 
     private void jDadosEmpresaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jDadosEmpresaActionPerformed
         // TODO add your handling code here:
-        new DadosInstituicaoVisao( this, rootPaneCheckingEnabled ).setVisible(true);
+        new DadosInstituicaoVisao( this, rootPaneCheckingEnabled, BDConexao.getInstancia() ).setVisible(true);
     }//GEN-LAST:event_jDadosEmpresaActionPerformed
 
     private void jmPermissaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmPermissaoActionPerformed
@@ -1509,15 +1509,15 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame
 
     private void jmConverterProformaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmConverterProformaActionPerformed
 
-        try
-        {
-            // TODO add your handling code here:
-            new ConverterProformaFacturaVisao(this.cod_utilizador, BDConexao.getInstancia()).setVisible(true);
-        }
-        catch ( SQLException ex )
-        {
-            Logger.getLogger( MenuPrincipalFarmaciaVisao.class.getName() ).log( Level.SEVERE, null, ex );
-        }
+//        try
+//        {
+//            // TODO add your handling code here:
+//            new ConverterProformaFacturaVisao(this.cod_utilizador, BDConexao.getInstancia()).setVisible(true);
+//        }
+//        catch ( SQLException ex )
+//        {
+//            Logger.getLogger( MenuPrincipalFarmaciaVisao.class.getName() ).log( Level.SEVERE, null, ex );
+//        }
 
 
     }//GEN-LAST:event_jmConverterProformaActionPerformed
@@ -2034,7 +2034,7 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame
 
     private void jMenuConfiguracoesSistemaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuConfiguracoesSistemaActionPerformed
     {//GEN-HEADEREND:event_jMenuConfiguracoesSistemaActionPerformed
-        new ConfiguracoesVisao( this, rootPaneCheckingEnabled ).setVisible(true);
+        new ConfiguracoesVisao( this, rootPaneCheckingEnabled , BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_jMenuConfiguracoesSistemaActionPerformed
 
     private void jmEstornosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmEstornosActionPerformed
