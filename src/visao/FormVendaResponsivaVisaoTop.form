@@ -40,7 +40,7 @@
               <Component id="painelTopo" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="painelTabela" min="-2" pref="287" max="-2" attributes="0"/>
-              <EmptySpace pref="132" max="32767" attributes="0"/>
+              <EmptySpace pref="144" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -118,7 +118,7 @@
               <Properties>
                 <Property name="enabled" type="boolean" value="false"/>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Lucida Grande" size="12" style="1"/>
+                  <Font name="Lucida Grande" size="10" style="1"/>
                 </Property>
               </Properties>
               <AuxValues>
@@ -126,7 +126,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="256" y="141" width="111" height="23"/>
+                  <AbsoluteConstraints x="256" y="141" width="120" height="23"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -548,27 +548,35 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="10" y="290" width="210" height="-1"/>
+                  <AbsoluteConstraints x="10" y="290" width="200" height="-1"/>
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="javax.swing.JTextField" name="txtReferencia">
+            <Component class="javax.swing.JTextField" name="txtBuscaRef">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Segoe UI" size="18" style="1"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtBuscaRefActionPerformed"/>
+              </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="240" y="310" width="130" height="20"/>
+                  <AbsoluteConstraints x="250" y="290" width="130" height="40"/>
                 </Constraint>
               </Constraints>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel1">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Refer&#xea;ncia"/>
+                <Property name="text" type="java.lang.String" value="Ref:"/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="240" y="290" width="100" height="-1"/>
+                  <AbsoluteConstraints x="220" y="290" width="30" height="40"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -664,7 +672,7 @@
                                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="0" attributes="0">
                                               <Component id="jButton4" min="-2" pref="32" max="-2" attributes="0"/>
-                                              <Component id="txtTotal_AOA_Retencao" min="-2" pref="82" max="-2" attributes="0"/>
+                                              <Component id="txtTotalPagarRetencao" min="-2" pref="82" max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
                                   </Group>
@@ -687,14 +695,16 @@
                                               <Component id="btn_fecho_dia_venda" min="-2" max="-2" attributes="0"/>
                                           </Group>
                                           <Group type="102" attributes="0">
-                                              <Component id="lbCodigoProduto4" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                              <Component id="txtTotalPagar" min="-2" pref="493" max="-2" attributes="0"/>
+                                              <Component id="txtTotalPagar" min="-2" pref="187" max="-2" attributes="0"/>
+                                              <EmptySpace max="-2" attributes="0"/>
+                                              <Component id="lbCodigoProduto5" min="-2" pref="101" max="-2" attributes="0"/>
+                                              <EmptySpace max="-2" attributes="0"/>
+                                              <Component id="txtTotalPagarGeral" min="-2" pref="235" max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
                                   </Group>
                               </Group>
-                              <EmptySpace min="0" pref="10" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="17" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -717,21 +727,20 @@
                           <Component id="btn_fecho_dia_venda" alignment="0" max="32767" attributes="0"/>
                           <Component id="jButton6" alignment="0" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace max="32767" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <EmptySpace pref="15" max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="txtTotalPagar" min="-2" max="-2" attributes="0"/>
-                          <Group type="102" attributes="0">
-                              <Component id="lbCodigoProduto4" max="32767" attributes="0"/>
-                              <EmptySpace min="3" pref="3" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="txtTotalPagarGeral" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="lbCodigoProduto5" alignment="0" min="-2" pref="20" max="-2" attributes="0"/>
                       </Group>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="lbValorPorExtenco" min="-2" pref="20" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="cmbSubFamilia" max="32767" attributes="0"/>
                           <Group type="103" alignment="0" groupAlignment="3" attributes="0">
                               <Component id="txtLocal" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
-                              <Component id="txtTotal_AOA_Retencao" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="txtTotalPagarRetencao" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Component id="cmbProduto" alignment="0" min="-2" pref="31" max="-2" attributes="0"/>
                       </Group>
@@ -1194,7 +1203,7 @@
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Tahoma" size="36" style="1"/>
+                  <Font name="Tahoma" size="14" style="1"/>
                 </Property>
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="0" green="0" red="ff" type="rgb"/>
@@ -1237,14 +1246,6 @@
                 <Property name="text" type="java.lang.String" value="Pre&#xe7;o:"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="lbCodigoProduto4">
-              <Properties>
-                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Lucida Grande" size="12" style="1"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="TOTAL:"/>
-              </Properties>
-            </Component>
             <Component class="javax.swing.JLabel" name="lbValorPorExtenco">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
@@ -1280,7 +1281,7 @@
                 <Property name="text" type="java.lang.String" value="Desc:"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="txtTotal_AOA_Retencao">
+            <Component class="javax.swing.JLabel" name="txtTotalPagarRetencao">
               <Properties>
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="33" green="33" red="ff" type="rgb"/>
@@ -1337,6 +1338,34 @@
               </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
+              </AuxValues>
+            </Component>
+            <Component class="javax.swing.JLabel" name="lbCodigoProduto5">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Lucida Grande" size="12" style="1"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="TOTAL GERAL:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="txtTotalPagarGeral">
+              <Properties>
+                <Property name="editable" type="boolean" value="false"/>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Tahoma" size="14" style="1"/>
+                </Property>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="0" green="0" red="ff" type="rgb"/>
+                </Property>
+                <Property name="caretColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtTotalPagarGeralActionPerformed"/>
+              </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="9"/>
               </AuxValues>
             </Component>
           </SubComponents>
