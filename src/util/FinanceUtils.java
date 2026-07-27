@@ -433,6 +433,7 @@ public class FinanceUtils
         BigDecimal base = subtotal.subtract( descontoBD );
         BigDecimal iva = BigDecimal.ONE.add( BigDecimal.valueOf( taxa ).divide( BigDecimal.valueOf( 100 ) ) );
         BigDecimal total = base.multiply( iva );
+        
         return total.setScale( 2, RoundingMode.HALF_UP ).doubleValue();
     }
 

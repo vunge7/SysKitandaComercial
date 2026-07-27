@@ -2731,6 +2731,8 @@ public class MetodosUtil {
         total_iva = total_iva.setScale(2, BigDecimal.ROUND_HALF_EVEN);
         return total_iva;
     }
+    
+    
 
 //    public static double getNetTotal( List<TbItemVenda> list )
 //    {

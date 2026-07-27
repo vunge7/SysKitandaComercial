@@ -28,7 +28,7 @@ public class JPAEntityMannagerFactoryUtil
 
     public static void main( String[] args )
     {
-//        EntityManagerFactory em = JPAEntityMannagerFactoryUtil.em;kitanda_db_percolinho_actual
+//        EntityManagerFactory em = JPAEntityMannagerFactoryUtil.em;kitanda_db_telma_pontes_actual
 //        UsuarioDao usuarioDao = new UsuarioDao( em );
 //        System.out.println(usuarioDao.exist_usuario("dvml", "mavala"));
         leituraFicheiro();
@@ -64,7 +64,7 @@ public class JPAEntityMannagerFactoryUtil
                     String ip = informacao.get( 0 );
                     String porta = informacao.get( 1 );
 
-                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_percolinho?zeroDateTimeBehavior=convertToNull";
+                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_telma_pontes?zeroDateTimeBehavior=convertToNull";
 
                     String user = "root";
                     String password = "DoV90x?#";
