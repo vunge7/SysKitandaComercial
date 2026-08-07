@@ -6367,6 +6367,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                 actuazlizar_quantidade_tabela_formulario(String.valueOf(qtd), desconto);
                 setTotalRetencao();
                 setTotalPagar();
+                setTotalPagarGeral();
                 calculaTotalIVA();
                 valor_por_extenco();
             } else {
