@@ -91,12 +91,34 @@ public class VendaController
 
         return lista_venda;
     }
+    public List<TbVenda> listarAllNotasByCodFact( String cod_fact )
+    {
+        String FIND_ALL = "SELECT * FROM tb_venda WHERE ref_cod_fact = '" + cod_fact + "' AND fk_documento = " + DVML.DOC_NOTA_CREDITO_NC;
+        ResultSet result = conexao.executeQuery( FIND_ALL );
+        List<TbVenda> lista_venda = new ArrayList<>();
+        TbVenda venda;
+        try
+        {
+            while ( result.next() )
+            {
+                System.out.println( result.getString( "cod_fact" ) );
+                venda = new TbVenda();
+                lista_venda.add( getVendaResultSet( venda, result ) );
+            }
+        }
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
+        }
+
+        return lista_venda;
+    }
 
     private TbVenda getVendaResultSet( TbVenda venda, ResultSet result )
     {
         try
         {
-                venda.setCodigo( result.getInt( "maximo_id" ) );
+                venda.setCodigo( result.getInt( "codigo" ) );
                 venda.setDataVenda( result.getDate( "dataVenda" ) );
                 venda.setTotalVenda( result.getBigDecimal( "total_venda" ) );
                 venda.setPerformance( result.getString( "performance" ) );
