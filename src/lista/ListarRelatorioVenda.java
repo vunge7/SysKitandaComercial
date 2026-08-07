@@ -1602,8 +1602,12 @@ public class ListarRelatorioVenda extends javax.swing.JFrame
     {
 
 //        lista = rb_todos_clientes.isSelected() ? vendaDao.getAllNotasByBetweenDataAndArmazemAndDocumento( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_RECIBO_RC) : vendaDao.getAllNotaByBetweenDataAndArmazemAndDocumentoAndCliente( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_RECIBO_RC, getCodigoCliente() );
+
+/*
         ck_estrato_cliente.setSelected( false ); //quando o dcumento FR nao e necessario Extrato do Cliente
         ck_estrato_cliente.setVisible( false );
+*/
+
 //        String codFact = txtRefDoc.getText();
         DefaultTableModel modelo = (DefaultTableModel) tabela_recibo.getModel();
         modelo.setRowCount( 0 );
