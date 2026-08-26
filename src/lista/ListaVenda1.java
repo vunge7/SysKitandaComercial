@@ -141,7 +141,7 @@ public class ListaVenda1
         hashMap.put( "NIF_CLIENTE_CONSOMIDOR_FINAL", setConsumidorFinal( vendaDao.findTbVenda( codigo ) ) );
 //        hashMap.put( "REGIME", dadosInstituicao.getRegime() );
 
-        // 🔹 QR com logo
+        //  QR com logo
         try
         {
             
