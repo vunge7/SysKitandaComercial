@@ -1860,7 +1860,8 @@ public class VendaDao extends TbVendaJpaController {
 //                .setParameter( "data_inicio", data_inicio )
 //                .setParameter( "data_fim", data_fim );
 //                .setParameter( "DOC_A_EXCLUIR", listaDocAExcluir );
-        String sql = "SELECT * FROM tb_venda where DATE(dataVenda) between '" + MetodosUtil.getDataBanco(data_inicio) + "' AND '" + MetodosUtil.getDataBanco(data_fim) + "' AND fk_documento IN(1,2)";
+        String sql = "SELECT * FROM tb_venda where DATE(dataVenda) between '" + MetodosUtil.getDataBanco(data_inicio) + "' AND '" + MetodosUtil.getDataBanco(data_fim) + "' AND fk_documento IN(1,2,4,5)";
+//        String sql = "SELECT * FROM tb_venda where DATE(dataVenda) between '" + MetodosUtil.getDataBanco(data_inicio) + "' AND '" + MetodosUtil.getDataBanco(data_fim) + "' AND fk_documento IN(1,2)";
 //        String sql = "SELECT * FROM tb_venda where DATE(dataVenda) between '" + MetodosUtil.getDataBanco( data_inicio ) + "' AND '" + MetodosUtil.getDataBanco( data_fim ) + "' AND fk_documento IN(6)";
 
         System.out.println(sql);

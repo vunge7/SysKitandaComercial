@@ -21,7 +21,6 @@ import javax.swing.JOptionPane;
  * @author Domingos Dala Vunge & Martinho Canhongo Luis
  */
 public class JPAEntityMannagerFactoryUtil
-
 {
 
 //    public static EntityManagerFactory em  =  Persistence.createEntityManagerFactory("SGCMINIMERCADOPU");
@@ -32,14 +31,11 @@ public class JPAEntityMannagerFactoryUtil
 //        EntityManagerFactory em = JPAEntityMannagerFactoryUtil.em;kitanda_db_neemias_2_actual
 //        UsuarioDao usuarioDao = new UsuarioDao( em );
 //        System.out.println(usuarioDao.exist_usuario("dvml", "mavala"));
-
         leituraFicheiro();
-
     }
 
     public static EntityManager createEntityManager()
     {
-
         try
         {
 
@@ -50,7 +46,6 @@ public class JPAEntityMannagerFactoryUtil
             e.printStackTrace();
             return null;
         }
-
     }
 
     public static class Persistencia

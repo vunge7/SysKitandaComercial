@@ -505,10 +505,10 @@ public class FormaPagamentoPorLugaresVisao extends javax.swing.JFrame
             {
                 VendaUsuarioVisao.gorjeta = gorjeta;
             }
-            else if ( formulario == DVML.CONVERSAO_PROFORMA_FACTURA_RECIBO )
-            {
-                ConverterProformaFacturaVisao.gorjeta = 0;
-            }
+//            else if ( formulario == DVML.CONVERSAO_PROFORMA_FACTURA_RECIBO )
+//            {
+//                ConverterProformaFacturaVisao.gorjeta = 0;
+//            }
             else if ( formulario == DVML.CONVERSAO_GUIA_TRANSPORTE )
             {
                 ConverterGuiaFacturaVisao.gorjeta = 0;
@@ -575,10 +575,12 @@ public class FormaPagamentoPorLugaresVisao extends javax.swing.JFrame
                 {
                     VendaUsuarioVisao.procedimento_salvar_venda_comercial(true);
                 }
-                else if ( formulario == DVML.CONVERSAO_PROFORMA_FACTURA_RECIBO )
-                {
-                    ConverterProformaFacturaVisao.procedimento_converter();
-                }
+               
+//                else if ( formulario == DVML.CONVERSAO_PROFORMA_FACTURA_RECIBO )
+//                {
+//                    ConverterProformaFacturaVisao.procedimento_converter();
+//                }
+                
                 else if ( formulario == DVML.CONVERSAO_GUIA_TRANSPORTE )
                 {
                     ConverterGuiaFacturaVisao.procedimento_converter();

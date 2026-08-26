@@ -95,17 +95,17 @@ public class FacturaAutomaticaUtil
         int MAX_INVOICE_LINE_NUMBER = 4;
         int MAX_INVOICE_LINE_QUANTITY = 1;
 
-        double MONTHLY_GENERAL_INVOICE_LIMIT = 32231915.20; //#
-//        double MONTHLY_GENERAL_INVOICE_LIMIT = 27074808.77; //#
-        int MONTH_START_DAY = 11;
-        int MONTH_END_DAY = 31;//#
-        double INITIAL_TOTAL_MONTH = 27074808.77;
+//        double MONTHLY_GENERAL_INVOICE_LIMIT = 32231915.20; //#
+        double MONTHLY_GENERAL_INVOICE_LIMIT = 2818498.79; //#
+        int MONTH_START_DAY = 22;
+        int MONTH_END_DAY = 24;//#
+        double INITIAL_TOTAL_MONTH = 2796000.00;
 //        double INITIAL_TOTAL_MONTH = 0.00;
-        int ECONOMIC_YEAR = 2023;
-        int ECONOMIC_YEAR_ID = 4;//#
+        int ECONOMIC_YEAR = 2025;
+        int ECONOMIC_YEAR_ID = 6;//#
 
         int DOCUMENT_ID = 1;
-        int MONTH_ID = 1;//#
+        int MONTH_ID = 10;//#
         int USER_ID = 15;
         int CLIENT_ID = 1;
         int WAREHOUSE_ID = 2;
@@ -113,7 +113,7 @@ public class FacturaAutomaticaUtil
         /**
          * 1 - MATRICULAS 2 - PROPINAS 3 - TRASNPORTES 4 - UNIFORMES
          */
-        List<Integer> ids = Arrays.asList(3, 4 ); // -- SEGUNDA EXECUSÃO
+        List<Integer> ids = Arrays.asList(3 ); // -- SEGUNDA EXECUSÃO
 //        List<Integer> ids = Arrays.asList( 1, 2 ); // -- PRIMEIRA EXECUSÃO
         BDConexao conexao = new BDConexao();
         ProdutosController produtosController = new ProdutosController( conexao );

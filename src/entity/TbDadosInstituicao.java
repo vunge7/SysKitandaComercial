@@ -199,6 +199,8 @@ public class TbDadosInstituicao implements Serializable {
     private String impressoraCaixa;
     @Column(name = "segundo_monitor")
     private String segundoMonitor;
+    @Column(name = "alterar_preco")
+    private String alterarPreco;
 
     @Basic(optional = false)
     @Column(name = "hora_comeco_venda")
@@ -224,6 +226,19 @@ public class TbDadosInstituicao implements Serializable {
         this.enderecos = enderecos;
         this.email = email;
         this.nif = nif;
+    }
+
+    
+    
+    
+    
+    
+    public String getAlterarPreco() {
+        return alterarPreco;
+    }
+
+    public void setAlterarPreco(String alterarPreco) {
+        this.alterarPreco = alterarPreco;
     }
 
     public String getSegundoMonitor() {

@@ -2,9 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="factura" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" uuid="0de43986-9be5-410e-aaa3-7f1419d0abca">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="2.1435888100000016"/>
-	<property name="ireport.x" value="44"/>
-	<property name="ireport.y" value="452"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="288"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -30,6 +30,7 @@
 	<parameter name="IMPOSTO_IVA" class="java.lang.Double"/>
 	<parameter name="MOTIVO_ISENCAO" class="java.lang.String"/>
 	<parameter name="NIF_CLIENTE_CONSOMIDOR_FINAL" class="java.lang.String"/>
+	<parameter name="QR_IMAGE" class="java.lang.Object"/>
 	<queryString>
 		<![CDATA[SELECT
      tb_cliente.`nome` AS tb_cliente_nome,
@@ -310,11 +311,11 @@ WHERE
 				<textFieldExpression><![CDATA["Valor transportado: "]]></textFieldExpression>
 			</textField>
 			<image scaleImage="FillFrame">
-				<reportElement uuid="20ec1823-c902-430d-a5e6-c9a34547ccd5" x="-22" y="-15" width="136" height="97"/>
+				<reportElement uuid="20ec1823-c902-430d-a5e6-c9a34547ccd5" x="5" y="30" width="160" height="52"/>
 				<imageExpression><![CDATA["logo/logo_dvml.png"]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement uuid="21065baa-a51f-4d7d-b3e7-547c79d4a38b" x="301" y="56" width="234" height="20"/>
+				<reportElement uuid="21065baa-a51f-4d7d-b3e7-547c79d4a38b" x="301" y="80" width="234" height="20"/>
 				<box rightPadding="5"/>
 				<textElement textAlignment="Right" markup="none">
 					<font isBold="true"/>
@@ -454,6 +455,10 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_venda_referencia}]]></textFieldExpression>
 			</textField>
+			<image scaleImage="RealHeight">
+				<reportElement uuid="2ea2b213-643c-4994-947f-cf7dab1e0880" x="469" y="0" width="64" height="67"/>
+				<imageExpression><![CDATA[$P{QR_IMAGE}]]></imageExpression>
+			</image>
 		</band>
 	</pageHeader>
 	<columnHeader>
@@ -747,13 +752,6 @@ WHERE
 				</textElement>
 				<text><![CDATA[IVA:]]></text>
 			</staticText>
-			<textField>
-				<reportElement uuid="cb48d489-9042-4eec-ba8c-9e2726917490" x="0" y="134" width="534" height="11"/>
-				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font fontName="Arial" size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_venda_assinatura} + "-Processado por programa validado nº " + "258/AGT/2020 " +$P{SOFTWARE_NAME} + "/dvml"]]></textFieldExpression>
-			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="e5689039-48bd-42e0-ab37-9f36aeef6ba2" key="staticText-9" x="169" y="71" width="223" height="12"/>
 				<textElement verticalAlignment="Bottom" markup="none">
@@ -879,7 +877,7 @@ WHERE
 					<font fontName="Arial" size="8" isBold="false"/>
 					<paragraph rightIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_venda_total_venda}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tb_venda_total_venda}.doubleValue() - $F{tb_venda_total_retencao}.doubleValue()]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement uuid="6b1f8e02-ef33-4e22-860e-3f526fa58fb5" key="staticText-9" x="170" y="43" width="180" height="12"/>
@@ -1164,10 +1162,17 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_slogan}]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement uuid="263fd8b2-8b4b-4287-aa9e-90b623f93558" x="1" y="134" width="534" height="11"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_venda_assinatura} + "-Processado por programa validado nº " + "258/AGT/2020 " +$P{SOFTWARE_NAME} + "/dvml"]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageFooter>
 	<lastPageFooter>
-		<band height="138">
+		<band height="140">
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="4bbad57e-9a2f-4f77-a2d3-d939996ba9b7" key="staticText-9" x="170" y="38" width="222" height="12"/>
 				<textElement verticalAlignment="Bottom" markup="none">
@@ -1200,7 +1205,7 @@ WHERE
 				<text><![CDATA[IVA:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="d4b1f267-b3d0-4a97-9b60-e10d05e92243" x="2" y="127" width="259" height="10"/>
+				<reportElement uuid="d4b1f267-b3d0-4a97-9b60-e10d05e92243" x="2" y="130" width="259" height="10"/>
 				<textElement>
 					<font fontName="Times New Roman" size="6"/>
 				</textElement>
@@ -1255,13 +1260,6 @@ WHERE
 					<font fontName="Times New Roman" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_venda_total_por_extenso}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement uuid="edd14f93-5426-4baf-85cc-94dba54db5ed" x="0" y="117" width="534" height="11"/>
-				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font fontName="Arial" size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_venda_assinatura} + "-Processado por programa validado nº " + "258/AGT/2020 " +$P{SOFTWARE_NAME} + "/dvml"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="eb6690d8-2559-4f56-a237-ceb17cf44a47" key="staticText-9" x="169" y="89" width="223" height="12"/>
@@ -1353,7 +1351,7 @@ WHERE
 					<font fontName="Arial" size="8" isBold="false"/>
 					<paragraph rightIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_venda_total_venda}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tb_venda_total_venda}.doubleValue() - $F{tb_venda_total_retencao}.doubleValue()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement uuid="ff473572-8145-4986-9ca0-3fac9fc52d81" key="textField-20" x="467" y="40" width="68" height="10"/>
@@ -1608,6 +1606,13 @@ WHERE
 					<font fontName="Times New Roman" size="8" isBold="false" isItalic="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_slogan}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="dda51620-55df-4ad9-a56b-b7048fbb6ab1" x="1" y="119" width="534" height="11"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tb_venda_assinatura} + "-Processado por programa validado nº " + "258/AGT/2020 " +$P{SOFTWARE_NAME} + "/dvml"]]></textFieldExpression>
 			</textField>
 		</band>
 	</lastPageFooter>

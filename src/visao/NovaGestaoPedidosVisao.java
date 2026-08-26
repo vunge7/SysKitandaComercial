@@ -186,6 +186,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
     private static BDConexao conexaoTransaction;
     private TelaClientePrecos telaClientePrecos;
     private TelaCliente telaCliente;
+    public static String observacaoCozinha = "";
 
     /**
      * Creates new form GestaoItemPedidosVisao
@@ -1429,7 +1430,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
 //       fechar_seguro();
-       dispose();
+        dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void BT_PedidosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BT_PedidosActionPerformed
@@ -5000,7 +5001,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
 
     }
 
-    private static void status_button_lugar(boolean status) {
+    public static void status_button_lugar(boolean status) {
         btn_01.setEnabled(status);
         btn_02.setEnabled(status);
         btn_03.setEnabled(status);
@@ -6217,8 +6218,22 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
             if (qtd_possivel(designacao1)) {
                 try {
 
-                    procedimento_salvar_pedidos_iten_pedidos(designacao1);
-                    status_button_lugar(true);
+//                    if (produto_local.getCozinha().equals(DVML.ENVIAR_TICKET)) {
+//
+//                        new ObservacaoCozinhaVisao(
+//                                null,
+//                                true,
+//                                produto_local, observacaoCozinha)
+//                                .setVisible(true);
+//
+//                    } else {
+
+                        procedimento_salvar_pedidos_iten_pedidos(designacao1);
+
+                        status_button_lugar(true);
+
+//                    }
+
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(null, "Fallha ao adicionar o pedido", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();

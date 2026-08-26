@@ -117,6 +117,7 @@ import visao.LoginVisao;
 import visao.RootVisao;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import javax.swing.JTextArea;
 import kitanda.util.CfMethods;
 //import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 //import org.apache.poi.xwpf.usermodel.XWPFRun;
@@ -1606,6 +1607,12 @@ public class MetodosUtil {
         return dados;
 
     }
+
+    public static void ativiarQuebraLinha(JTextArea textArea) {
+
+        textArea.setLineWrap(true);  // Ativa quebra de linha
+        textArea.setWrapStyleWord(true); // Evita quebrar palavras no meio
+    }
 //    public static DadosIrt taxas_tributacao( double salario_base )
 //    {
 //
@@ -2724,6 +2731,8 @@ public class MetodosUtil {
         total_iva = total_iva.setScale(2, BigDecimal.ROUND_HALF_EVEN);
         return total_iva;
     }
+    
+    
 
 //    public static double getNetTotal( List<TbItemVenda> list )
 //    {

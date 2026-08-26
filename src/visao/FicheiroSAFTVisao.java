@@ -745,6 +745,15 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame {
                                 //INICIO LINHA
                                 for (TbItemVenda item_venda : list_item_venda) {
 
+                                    System.out.println("Venda: " + venda.getCodigo());
+                                    System.out.println("Produto: " + item_venda.getCodigoProduto());
+                                    System.out.println("Preço: " + item_venda.getFkPreco());
+                                    System.out.println("Quantidade: " + item_venda.getQuantidade());
+
+                                    System.out.println("Factura: " + venda.getCodigo());
+                                    System.out.println("Produto: " + item_venda.getCodigoProduto().getCodigo());
+                                    System.out.println("Valor IVA: " + item_venda.getValorIva());
+
                                     AGT_SAFT_LINE_NUMBER = "" + line_number;
                                     AGT_SAFT_LINE_PRODUCT_CODE = String.valueOf(item_venda.getCodigoProduto().getCodigo());
                                     AGT_SAFT_LINE_QUANTITY = String.valueOf(item_venda.getQuantidade());
@@ -756,12 +765,26 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame {
                                     AGT_SAFT_LINE_CREDIT_AMOUNT = String.valueOf(getValorCasasDecimais(item_venda.getFkPreco().getPrecoVenda().doubleValue() * item_venda.getQuantidade(), CASAS_DECIMAIS));
                                     AGT_SAFT_LINE_DEBIT_AMOUNT = String.valueOf(getValorCasasDecimais(item_venda.getFkPreco().getPrecoVenda().doubleValue() * item_venda.getQuantidade(), CASAS_DECIMAIS));
 //                                AGT_SAFT_LINE_TAX_TYPE = String.valueOf( getTaxType( item_venda.getCodigoProduto().getCodigo() ) );
-                                    AGT_SAFT_LINE_TAX_TYPE = String.valueOf(item_venda.getValorIva().doubleValue() > 0 ? "IVA" : "NS");
+
+                                    Double valorIva = item_venda.getValorIva();
+
+                                    if (valorIva == null) {
+                                        valorIva = 0.0;
+                                    }
+
+                                    AGT_SAFT_LINE_TAX_TYPE = valorIva > 0 ? "IVA" : "NS";
                                     AGT_SAFT_LINE_TAX_COUNTRY_REGION = "AO";
-//                                AGT_SAFT_LINE_TAX_CODE = String.valueOf( getTaxCode( item_venda.getCodigoProduto().getCodigo() ) );
-                                    AGT_SAFT_LINE_TAX_CODE = String.valueOf(item_venda.getValorIva().doubleValue() > 0 ? "NOR" : "NS");
+                                    AGT_SAFT_LINE_TAX_CODE = valorIva > 0 ? "NOR" : "NS";
+                                    AGT_SAFT_LINE_TAX_PERCENTAGE = String.valueOf(valorIva);
+
+//                                    AGT_SAFT_LINE_TAX_TYPE = String.valueOf(item_venda.getValorIva().doubleValue() > 0 ? "IVA" : "NS");
+//                                    AGT_SAFT_LINE_TAX_COUNTRY_REGION = "AO";
+                                    ////                                AGT_SAFT_LINE_TAX_CODE = String.valueOf( getTaxCode( item_venda.getCodigoProduto().getCodigo() ) );
+//                                    AGT_SAFT_LINE_TAX_CODE = String.valueOf(item_venda.getValorIva().doubleValue() > 0 ? "NOR" : "NS");
+                                    
+                                    
 //                                AGT_SAFT_LINE_TAX_PERCENTAGE = String.valueOf( getTaxaPercantagem( item_venda.getCodigoProduto().getCodigo() ) );
-                                    AGT_SAFT_LINE_TAX_PERCENTAGE = String.valueOf(item_venda.getValorIva());
+//                                    AGT_SAFT_LINE_TAX_PERCENTAGE = String.valueOf(item_venda.getValorIva());
                                     //AGT_SAFT_LINE_SETTLEMENT_AMOUNT = String.valueOf(getValorCasasDecimais((item_venda.getDesconto() * item_venda.getQuantidade()), CASAS_DECIMAIS));
                                     AGT_SAFT_LINE_SETTLEMENT_AMOUNT = String.valueOf(getValorCasasDecimais(item_venda.getDesconto(), CASAS_DECIMAIS));
                                     AGT_SAFT_LINE_TAX_EXEMPTION_REASON = getStringValida(getMotivoIsensao(item_venda.getCodigoProduto().getCodigo()));
@@ -1471,6 +1494,7 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame {
     }
 
     private static String getStringValida(String valor) {
+        Pattern pattern;
         try {
             String valor_valido = valor;
             valor_valido = valor_valido
@@ -1481,13 +1505,12 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame {
                     .replaceAll("ª", " ")
                     .replaceAll("º", " ");
             String nfdNormalizedString = Normalizer.normalize(valor_valido, Normalizer.Form.NFD);
-            Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+            pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
 
             return pattern.matcher(nfdNormalizedString).replaceAll("");
         } catch (Exception e) {
             return "";
         }
-
     }
 
     private static String getStringValidaNomeUSuario(String valor) {
