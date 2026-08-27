@@ -768,7 +768,8 @@ public class LoginVisao extends javax.swing.JFrame
                 }
 
                 // INICIAR PROCESSOS EM BACKGROUND
-                if ( startBackGroundProcesses() )
+               // if ( startBackGroundProcesses() )
+                if ( true )
                 {
                     BDConexao conexao = BDConexao.getInstancia();
                     StockAutoCheckService service = new StockAutoCheckService( conexao.getConnectionAtiva() );
