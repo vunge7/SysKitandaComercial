@@ -782,7 +782,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         painelEsqLayout.setVerticalGroup(
             painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelEsqLayout.createSequentialGroup()
-                .addComponent(jlEmpresa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jlEmpresa, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel5)
                 .addGap(6, 6, 6)
@@ -1682,7 +1682,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         txtBuscaRef.requestFocus();
         visualizarSeries();
         mostrar_proximo_codigo_documento();
-        actualizar_abreviacao();
+//        actualizar_abreviacao();
         desabilitar_campos();
         atualizarCliente1();
         atualizarDataVencimentoFA();
