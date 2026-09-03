@@ -131,6 +131,7 @@ public class FacturaElectronicaUtil {
         BigDecimal unitPrice = unitPriceBase.subtract(discount);
 //        BigDecimal base = unitPriceBase.multiply(qtd).setScale(2, RoundingMode.CEILING);
         BigDecimal settlementAmount = unitPriceBase.subtract(unitPrice);
+        //novo teste
 
 //        System.out.println(base);
         LineDTO line = new LineDTO();
