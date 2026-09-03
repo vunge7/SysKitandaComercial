@@ -83,7 +83,6 @@ import static util.DVML.DOC_FACTURA_FT;
 import util.FinanceUtils;
 import util.MetodosUtil;
 import util.fe.FacturaElectronicaUtil;
-import util.fe.FacturaElectronicaUtilOriginal;
 import util.fe.JwsGenerator;
 import util.fe.TableColumIdUtil;
 
@@ -522,8 +521,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents()
-    {
+    private void initComponents() {
 
         painelTopo = new javax.swing.JPanel();
         painelEsq = new javax.swing.JPanel();
@@ -544,6 +542,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         lbClienteConsumidorFinal1 = new javax.swing.JLabel();
         txtTelClientePesquisa = new javax.swing.JTextField();
         cmbSeries = new javax.swing.JComboBox();
+        txtRef = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
         painelDir = new javax.swing.JPanel();
         txtPreco = new javax.swing.JTextField();
         jButton4 = new javax.swing.JButton();
@@ -602,10 +602,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         dc_data_vencimento.setEnabled(false);
         dc_data_vencimento.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
 
-        txtIniciaisCliente.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtIniciaisCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtIniciaisClienteActionPerformed(evt);
             }
         });
@@ -616,18 +614,14 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         lbCliente1.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         lbCliente1.setText("Nome:");
 
-        txtNifClientePesquisa.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtNifClientePesquisa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtNifClientePesquisaActionPerformed(evt);
             }
         });
 
-        txtCodClientePesquisa.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtCodClientePesquisa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtCodClientePesquisaActionPerformed(evt);
             }
         });
@@ -638,17 +632,13 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         lbClienteConsumidorFinal.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         lbClienteConsumidorFinal.setText("NIF:");
 
-        txtNomeConsumidorFinal.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtNomeConsumidorFinal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtNomeConsumidorFinalActionPerformed(evt);
             }
         });
-        txtNomeConsumidorFinal.addKeyListener(new java.awt.event.KeyAdapter()
-        {
-            public void keyPressed(java.awt.event.KeyEvent evt)
-            {
+        txtNomeConsumidorFinal.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtNomeConsumidorFinalKeyPressed(evt);
             }
         });
@@ -657,29 +647,23 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         cmbCliente.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         cmbCliente.setForeground(new java.awt.Color(0, 0, 51));
         cmbCliente.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cmbCliente.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbClienteActionPerformed(evt);
             }
         });
 
         jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/usuario.png"))); // NOI18N
-        jButton5.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton5ActionPerformed(evt);
             }
         });
 
         cmbTipoDocumento.setBackground(new java.awt.Color(0, 255, 255));
         cmbTipoDocumento.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
-        cmbTipoDocumento.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbTipoDocumento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbTipoDocumentoActionPerformed(evt);
             }
         });
@@ -690,23 +674,21 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         lbClienteConsumidorFinal1.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         lbClienteConsumidorFinal1.setText("TEL:");
 
-        txtTelClientePesquisa.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtTelClientePesquisa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtTelClientePesquisaActionPerformed(evt);
             }
         });
 
         cmbSeries.setBackground(new java.awt.Color(0, 255, 255));
         cmbSeries.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
-        cmbSeries.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbSeries.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbSeriesActionPerformed(evt);
             }
         });
+
+        jLabel1.setText("Ref:");
 
         javax.swing.GroupLayout painelEsqLayout = new javax.swing.GroupLayout(painelEsq);
         painelEsq.setLayout(painelEsqLayout);
@@ -755,7 +737,10 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                                 .addComponent(lbCliente1, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 20, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelEsqLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtRef, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
                         .addComponent(lb_proximo_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -793,7 +778,10 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cmbSeries, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
-                .addComponent(lb_proximo_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(painelEsqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lb_proximo_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtRef, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
                 .addGap(18, 18, 18))
         );
 
@@ -806,10 +794,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         txtPreco.setCaretColor(new java.awt.Color(255, 255, 255));
 
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/proucura.png"))); // NOI18N
-        jButton4.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
             }
         });
@@ -822,10 +808,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         txtQuatindade.setForeground(new java.awt.Color(0, 0, 51));
         txtQuatindade.setText("1");
         txtQuatindade.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtQuatindade.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtQuatindade.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtQuatindadeActionPerformed(evt);
             }
         });
@@ -835,30 +819,24 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
         btn_adicionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Button-Add-icon.png"))); // NOI18N
         btn_adicionar.setToolTipText("click para adicionar no carrinho");
-        btn_adicionar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_adicionar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_adicionarActionPerformed(evt);
             }
         });
 
         btn_remover.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/2934_32x32.png"))); // NOI18N
         btn_remover.setToolTipText("click para remover produtos do carrinho");
-        btn_remover.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_remover.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_removerActionPerformed(evt);
             }
         });
 
         ck_A4.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_A4.setText("A4");
-        ck_A4.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        ck_A4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ck_A4ActionPerformed(evt);
             }
         });
@@ -870,10 +848,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         txtCodigoProduto.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         txtCodigoProduto.setForeground(new java.awt.Color(0, 0, 51));
         txtCodigoProduto.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtCodigoProduto.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtCodigoProduto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtCodigoProdutoActionPerformed(evt);
             }
         });
@@ -883,40 +859,32 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
         ck_A7.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_A7.setText("A7");
-        ck_A7.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        ck_A7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ck_A7ActionPerformed(evt);
             }
         });
 
         ck_S_A6.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_S_A6.setText("S_A6");
-        ck_S_A6.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        ck_S_A6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ck_S_A6ActionPerformed(evt);
             }
         });
 
         ck_ComVirgula.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_ComVirgula.setText("A6V");
-        ck_ComVirgula.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        ck_ComVirgula.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ck_ComVirgulaActionPerformed(evt);
             }
         });
 
         ck_simplificada_O_S.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_simplificada_O_S.setText("S_A6_O");
-        ck_simplificada_O_S.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        ck_simplificada_O_S.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ck_simplificada_O_SActionPerformed(evt);
             }
         });
@@ -924,30 +892,24 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         ck_simplificada_O.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_simplificada_O.setSelected(true);
         ck_simplificada_O.setText("A6_O");
-        ck_simplificada_O.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        ck_simplificada_O.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ck_simplificada_OActionPerformed(evt);
             }
         });
 
         ck_simplificada.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_simplificada.setText("A6");
-        ck_simplificada.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        ck_simplificada.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ck_simplificadaActionPerformed(evt);
             }
         });
 
         ck_Duplicada.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_Duplicada.setText("A5");
-        ck_Duplicada.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        ck_Duplicada.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ck_DuplicadaActionPerformed(evt);
             }
         });
@@ -955,10 +917,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         btnFormaPagamento.setFont(new java.awt.Font("Lucida Grande", 0, 12)); // NOI18N
         btnFormaPagamento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/confirmacao.png"))); // NOI18N
         btnFormaPagamento.setText("F. Pagamento");
-        btnFormaPagamento.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnFormaPagamento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnFormaPagamentoActionPerformed(evt);
             }
         });
@@ -966,10 +926,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         btnProcessar.setFont(new java.awt.Font("Lucida Grande", 0, 12)); // NOI18N
         btnProcessar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/pauta academica 16x16.png"))); // NOI18N
         btnProcessar.setText("Processar");
-        btnProcessar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnProcessar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnProcessarActionPerformed(evt);
             }
         });
@@ -978,10 +936,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         txtCodigoBarra.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         txtCodigoBarra.setForeground(new java.awt.Color(0, 0, 51));
         txtCodigoBarra.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtCodigoBarra.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtCodigoBarra.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtCodigoBarraActionPerformed(evt);
             }
         });
@@ -990,10 +946,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         txtCodigoManual.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         txtCodigoManual.setForeground(new java.awt.Color(0, 0, 51));
         txtCodigoManual.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtCodigoManual.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtCodigoManual.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtCodigoManualActionPerformed(evt);
             }
         });
@@ -1002,10 +956,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         cmbSubFamilia.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         cmbSubFamilia.setForeground(new java.awt.Color(0, 0, 51));
         cmbSubFamilia.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cmbSubFamilia.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbSubFamilia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbSubFamiliaActionPerformed(evt);
             }
         });
@@ -1014,20 +966,16 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         cmbProduto.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         cmbProduto.setForeground(new java.awt.Color(0, 0, 51));
         cmbProduto.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cmbProduto.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbProduto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbProdutoActionPerformed(evt);
             }
         });
 
         cmbArmazem.setBackground(new java.awt.Color(0, 255, 255));
         cmbArmazem.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 1, 10)); // NOI18N
-        cmbArmazem.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbArmazem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbArmazemActionPerformed(evt);
             }
         });
@@ -1039,10 +987,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         txtTotalPagar.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
         txtTotalPagar.setForeground(new java.awt.Color(255, 0, 0));
         txtTotalPagar.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtTotalPagar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtTotalPagar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtTotalPagarActionPerformed(evt);
             }
         });
@@ -1052,10 +998,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
         btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LOGOUT - VERMELHO/Logout 32x32.png"))); // NOI18N
         btnCancelar.setAlignmentX(0.5F);
-        btnCancelar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelarActionPerformed(evt);
             }
         });
@@ -1075,38 +1019,28 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         jlEmpresa.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jlEmpresa.setText("Empresa");
 
-        sp_desconto_financeiro.addChangeListener(new javax.swing.event.ChangeListener()
-        {
-            public void stateChanged(javax.swing.event.ChangeEvent evt)
-            {
+        sp_desconto_financeiro.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 sp_desconto_financeiroStateChanged(evt);
             }
         });
-        sp_desconto_financeiro.addInputMethodListener(new java.awt.event.InputMethodListener()
-        {
-            public void caretPositionChanged(java.awt.event.InputMethodEvent evt)
-            {
+        sp_desconto_financeiro.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
             }
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt)
-            {
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
                 sp_desconto_financeiroInputMethodTextChanged(evt);
             }
         });
-        sp_desconto_financeiro.addPropertyChangeListener(new java.beans.PropertyChangeListener()
-        {
-            public void propertyChange(java.beans.PropertyChangeEvent evt)
-            {
+        sp_desconto_financeiro.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 sp_desconto_financeiroPropertyChange(evt);
             }
         });
-        sp_desconto_financeiro.addKeyListener(new java.awt.event.KeyAdapter()
-        {
-            public void keyPressed(java.awt.event.KeyEvent evt)
-            {
+        sp_desconto_financeiro.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
                 sp_desconto_financeiroKeyPressed(evt);
             }
-            public void keyTyped(java.awt.event.KeyEvent evt)
-            {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
                 sp_desconto_financeiroKeyTyped(evt);
             }
         });
@@ -1123,10 +1057,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
         cmbMoeda.setBackground(new java.awt.Color(0, 255, 255));
         cmbMoeda.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
-        cmbMoeda.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbMoeda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbMoedaActionPerformed(evt);
             }
         });
@@ -1139,10 +1071,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         cmbAnoEconomico.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
         cmbAnoEconomico.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cmbAnoEconomico.setEnabled(false);
-        cmbAnoEconomico.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbAnoEconomico.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbAnoEconomicoActionPerformed(evt);
             }
         });
@@ -1355,45 +1285,35 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
         painelTabela.setLayout(new java.awt.BorderLayout());
 
-        jScrollPane1.addPropertyChangeListener(new java.beans.PropertyChangeListener()
-        {
-            public void propertyChange(java.beans.PropertyChangeEvent evt)
-            {
+        jScrollPane1.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 jScrollPane1PropertyChange(evt);
             }
         });
 
         table.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][]
-            {
+            new Object [][] {
                 {null, null, null, null, null, null, null, null, null, null, null}
             },
-            new String []
-            {
+            new String [] {
                 "Codigo", "Descrição", "Unidade", "Preço", "Quantidade", "Desconto (%)", "Taxa", "Retenção", "Valor Retenção", "Valor", "Valor C/ Imposto"
             }
-        )
-        {
-            boolean[] canEdit = new boolean []
-            {
+        ) {
+            boolean[] canEdit = new boolean [] {
                 true, false, false, false, true, true, false, false, false, true, false
             };
 
-            public boolean isCellEditable(int rowIndex, int columnIndex)
-            {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        table.addPropertyChangeListener(new java.beans.PropertyChangeListener()
-        {
-            public void propertyChange(java.beans.PropertyChangeEvent evt)
-            {
+        table.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 tablePropertyChange(evt);
             }
         });
         jScrollPane1.setViewportView(table);
-        if (table.getColumnModel().getColumnCount() > 0)
-        {
+        if (table.getColumnModel().getColumnCount() > 0) {
             table.getColumnModel().getColumn(0).setPreferredWidth(70);
             table.getColumnModel().getColumn(1).setPreferredWidth(300);
             table.getColumnModel().getColumn(2).setPreferredWidth(5);
@@ -2986,6 +2906,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     private static com.toedter.calendar.JDateChooser dc_data_vencimento;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
@@ -3023,6 +2944,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     public static javax.swing.JTextField txtPreco;
     public static javax.swing.JTextField txtQuantidadeStock;
     public static javax.swing.JTextField txtQuatindade;
+    private javax.swing.JTextField txtRef;
     private static javax.swing.JTextField txtReferencia;
     private static javax.swing.JTextField txtTelClientePesquisa;
     public static javax.swing.JTextField txtTotalPagar;

@@ -29,6 +29,7 @@ import comercial.controller.ClientesController;
 import hotel.controller.ClienteController;
 import comercial.controller.DadosInstituicaoController;
 import comercial.controller.DocumentosController;
+import comercial.controller.ExtratoContaClienteController;
 import comercial.controller.FormaPagamentoController;
 import comercial.controller.FormaPagamentoItemController;
 import comercial.controller.SeriesController;
@@ -79,21 +80,20 @@ import util.fe.payloads.PayloadFactory;
  *
  * @author lenovo
  */
-public class EmissaoRecibos extends javax.swing.JFrame
-{
+public class EmissaoRecibos extends javax.swing.JFrame {
 
     private static EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
     private static AmortizacaoDivida amortizacaoDivida = new AmortizacaoDivida();
     private static DVML.Abreviacao abreviacao;
-    private static VendaDao vendaDao = new VendaDao( emf );
-    private static UsuarioDao usuarioDao = new UsuarioDao( emf );
+    private static VendaDao vendaDao = new VendaDao(emf);
+    private static UsuarioDao usuarioDao = new UsuarioDao(emf);
     private static DocumentoDao documentoDao;
-    private static ClienteDao clienteDao = new ClienteDao( emf );
-    private static CambioDao cambioDao = new CambioDao( emf );
-    private static ArmazemDao armazemDao = new ArmazemDao( emf );
+    private static ClienteDao clienteDao = new ClienteDao(emf);
+    private static CambioDao cambioDao = new CambioDao(emf);
+    private static ArmazemDao armazemDao = new ArmazemDao(emf);
 //    private BancoDao bancoDao = new BancoDao( emf );
-    private static AnoEconomicoDao anoEconomicoDao = new AnoEconomicoDao( emf );
-    private static AmortizacaoDividaDao amortizacaoDividaDao = new AmortizacaoDividaDao( emf );
+    private static AnoEconomicoDao anoEconomicoDao = new AnoEconomicoDao(emf);
+    private static AmortizacaoDividaDao amortizacaoDividaDao = new AmortizacaoDividaDao(emf);
 //    private static ClienteDao clienteDao = new ClienteDao( emf );
     private static DefaultListModel listModelHospedes = new DefaultListModel();
     private static DefaultListModel listModelClientes = new DefaultListModel();
@@ -128,129 +128,107 @@ public class EmissaoRecibos extends javax.swing.JFrame
     /**
      * Creates new form EmissaoRecibos
      */
-    public EmissaoRecibos( int idUser, BDConexao conexao )
-    {
+    public EmissaoRecibos(int idUser, BDConexao conexao) {
         initComponents();
-        setLocationRelativeTo( null );
-        cmbArmazem.setVisible( false );
-        cmb_area_venda_restaurante.setVisible( false );
+        setLocationRelativeTo(null);
+        cmbArmazem.setVisible(false);
+        cmb_area_venda_restaurante.setVisible(false);
 //        txtIniciaisNome.requestFocus();
 //        txtIniciaisNome.addKeyListener( new TratarEvento() );
 //        jListClientesDevedores.setModel( listModelHospedes );
 //        cmb_area_venda_restaurante.setVisible( false );
-        dc_data_documento.setDate( new Date() );
-        anoEconomicoDao = new AnoEconomicoDao( emf );
-        lbValorPorExtenco.setText( "" );
-        clienteController = new ClienteController( conexao );
-        vendasController = new VendasController( conexao );
-        usuariosController = new UsuariosController( EmissaoRecibos.conexao );
-        formaPagamentoItemController = new FormaPagamentoItemController( EmissaoRecibos.conexao );
-        formaPagamentoController = new FormaPagamentoController( EmissaoRecibos.conexao );
-        dadosInstituicaoController = new DadosInstituicaoController( conexao );
-        contaController = new ContaController( EmissaoRecibos.conexao );
-        clientesController = new ClientesController( conexao );
-        documentosController = new DocumentosController( conexao );
-        seriesController = new SeriesController( conexao );
-        cmc = new ContaMovimentosController( conexao );
-        documentoDao = new DocumentoDao( emf );
-        cmbArmazem.setModel( new DefaultComboBoxModel( armazemDao.buscaTodos1() ) );
+        dc_data_documento.setDate(new Date());
+        anoEconomicoDao = new AnoEconomicoDao(emf);
+        lbValorPorExtenco.setText("");
+        clienteController = new ClienteController(conexao);
+        vendasController = new VendasController(conexao);
+        usuariosController = new UsuariosController(EmissaoRecibos.conexao);
+        formaPagamentoItemController = new FormaPagamentoItemController(EmissaoRecibos.conexao);
+        formaPagamentoController = new FormaPagamentoController(EmissaoRecibos.conexao);
+        dadosInstituicaoController = new DadosInstituicaoController(conexao);
+        contaController = new ContaController(EmissaoRecibos.conexao);
+        clientesController = new ClientesController(conexao);
+        documentosController = new DocumentosController(conexao);
+        seriesController = new SeriesController(conexao);
+        cmc = new ContaMovimentosController(conexao);
+        documentoDao = new DocumentoDao(emf);
+        cmbArmazem.setModel(new DefaultComboBoxModel(armazemDao.buscaTodos1()));
         setWindowsListener();
         this.idUser = idUser;
         this.conexao = conexao;
-        clienteController = new ClienteController( conexao );
-        amortizacaoDividaController = new AmortizacaoDividaController( conexao );
+        clienteController = new ClienteController(conexao);
+        amortizacaoDividaController = new AmortizacaoDividaController(conexao);
 
-        jListClientesDevedores.setModel( listModelClientes );
+        jListClientesDevedores.setModel(listModelClientes);
 
 //        actualizar_lista_clientes();
 //        actulizar_lista_modelo_clientes1();
-        try
-        {
+        try {
             listar_all_clientes_ft();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        try
-        {
-            cmbTipoDocumento.setModel( new DefaultComboBoxModel( ( Vector ) documentoDao.buscaTodos6() ) );
+        try {
+            cmbTipoDocumento.setModel(new DefaultComboBoxModel((Vector) documentoDao.buscaTodos6()));
 //        cmbTipoDocumento.setSelectedItem("Factura-Proforma");
-            cmbAnoEconomico.setModel( new DefaultComboBoxModel( ( Vector ) anoEconomicoDao.buscaTodos() ) );
-            lbValorPorExtenco.setText( "" );
-        }
-        catch ( Exception e )
-        {
+            cmbAnoEconomico.setModel(new DefaultComboBoxModel((Vector) anoEconomicoDao.buscaTodos()));
+            lbValorPorExtenco.setText("");
+            visualizarSeries();
+        } catch (Exception e) {
         }
 
     }
 
-    private void setWindowsListener()
-    {
+    private void setWindowsListener() {
 
-        this.addWindowListener( new WindowAdapter()
-        {
+        this.addWindowListener(new WindowAdapter() {
             @Override
-            public void windowActivated( WindowEvent e )
-            {
+            public void windowActivated(WindowEvent e) {
                 mostrar_proximo_codigo_documento();
             }
 
-        } );
+        });
 
     }
 
-    class TratarEvento implements KeyListener
-    {
+    class TratarEvento implements KeyListener {
 
         String prefixo = "";
 
-        public void keyPressed( KeyEvent evt )
-        {
+        public void keyPressed(KeyEvent evt) {
 
-            if ( evt.getKeyCode() != KeyEvent.VK_BACK_SPACE && evt.getKeyCode() != KeyEvent.VK_ENTER )
-            {
+            if (evt.getKeyCode() != KeyEvent.VK_BACK_SPACE && evt.getKeyCode() != KeyEvent.VK_ENTER) {
                 char key = evt.getKeyChar();
 //                prefixo = txtIniciaisNome.getText().trim() + key;
-                adicionar( prefixo );
+                adicionar(prefixo);
 
-            }
-            else if ( evt.getKeyCode() == KeyEvent.VK_BACK_SPACE )
-            {
-                try
-                {
-                    prefixo = prefixo.toString().trim().substring( 0, prefixo.length() - 1 );
-                    adicionar( prefixo );
-                }
-                catch ( Exception e )
-                {
+            } else if (evt.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+                try {
+                    prefixo = prefixo.toString().trim().substring(0, prefixo.length() - 1);
+                    adicionar(prefixo);
+                } catch (Exception e) {
 
                 }
             }
         }
 
-        public void keyReleased( KeyEvent evt )
-        {
+        public void keyReleased(KeyEvent evt) {
 
         }
 
-        public void keyTyped( KeyEvent evt )
-        {
+        public void keyTyped(KeyEvent evt) {
         }
 
     }
 
-    private void adicionar( String nome )
-    {
+    private void adicionar(String nome) {
         Iterator<TbCliente> iterator = lista_cliente.iterator();
         listModelHospedes.clear();
-        while ( iterator.hasNext() )
-        {
+        while (iterator.hasNext()) {
             TbCliente next = iterator.next();
-            if ( next.getNome().replaceAll( " ", "" ).toLowerCase().contains( nome.replaceAll( " ", "" ).toLowerCase() ) )
-            {
-                listModelHospedes.addElement( next.getNome() );
+            if (next.getNome().replaceAll(" ", "").toLowerCase().contains(nome.replaceAll(" ", "").toLowerCase())) {
+                listModelHospedes.addElement(next.getNome());
             }
 
         }
@@ -262,10 +240,9 @@ public class EmissaoRecibos extends javax.swing.JFrame
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
      */
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents()
-    {
+    private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -282,7 +259,6 @@ public class EmissaoRecibos extends javax.swing.JFrame
         cmbAnoEconomico = new javax.swing.JComboBox<>();
         lbPreco3 = new javax.swing.JLabel();
         cmbTipoDocumento = new javax.swing.JComboBox();
-        lb_proximo_documento = new javax.swing.JLabel();
         lbPreco6 = new javax.swing.JLabel();
         dc_data_documento = new com.toedter.calendar.JDateChooser();
         cmbArmazem = new javax.swing.JComboBox();
@@ -300,8 +276,8 @@ public class EmissaoRecibos extends javax.swing.JFrame
         lb_email = new javax.swing.JLabel();
         lb_telefone = new javax.swing.JLabel();
         lb_hospede_cliente = new javax.swing.JLabel();
-        cmbTipoDocumento1 = new javax.swing.JComboBox();
         cmbSeries = new javax.swing.JComboBox();
+        lbPreco4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Recibos");
@@ -313,52 +289,40 @@ public class EmissaoRecibos extends javax.swing.JFrame
         jLabel1.setText("EMISSÃO DE RECIBOS");
 
         tabela_linhas.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][]
-            {
+            new Object [][] {
 
             },
-            new String []
-            {
+            new String [] {
                 "Selec.", "Abrev.", "Doc.", "Cliente", "Contacto", "Data", "Total", "V. a Pagar", "V. Pago", "Desconto", "Retenção", "V. Pendente"
             }
-        )
-        {
-            Class[] types = new Class []
-            {
+        ) {
+            Class[] types = new Class [] {
                 java.lang.Boolean.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
-            boolean[] canEdit = new boolean []
-            {
+            boolean[] canEdit = new boolean [] {
                 true, false, false, false, false, false, false, true, false, false, false, false
             };
 
-            public Class getColumnClass(int columnIndex)
-            {
+            public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
 
-            public boolean isCellEditable(int rowIndex, int columnIndex)
-            {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        tabela_linhas.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mouseClicked(java.awt.event.MouseEvent evt)
-            {
+        tabela_linhas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tabela_linhasMouseClicked(evt);
             }
         });
-        tabela_linhas.addPropertyChangeListener(new java.beans.PropertyChangeListener()
-        {
-            public void propertyChange(java.beans.PropertyChangeEvent evt)
-            {
+        tabela_linhas.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 tabela_linhasPropertyChange(evt);
             }
         });
         jScrollPane1.setViewportView(tabela_linhas);
-        if (tabela_linhas.getColumnModel().getColumnCount() > 0)
-        {
+        if (tabela_linhas.getColumnModel().getColumnCount() > 0) {
             tabela_linhas.getColumnModel().getColumn(0).setPreferredWidth(5);
             tabela_linhas.getColumnModel().getColumn(1).setPreferredWidth(5);
             tabela_linhas.getColumnModel().getColumn(2).setPreferredWidth(55);
@@ -373,23 +337,18 @@ public class EmissaoRecibos extends javax.swing.JFrame
 
         jListClientesDevedores.setBorder(javax.swing.BorderFactory.createTitledBorder("Clientes Devedores"));
         jListClientesDevedores.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jListClientesDevedores.setModel(new javax.swing.AbstractListModel<String>()
-        {
+        jListClientesDevedores.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
-        jListClientesDevedores.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mouseClicked(java.awt.event.MouseEvent evt)
-            {
+        jListClientesDevedores.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jListClientesDevedoresMouseClicked(evt);
             }
         });
-        jListClientesDevedores.addKeyListener(new java.awt.event.KeyAdapter()
-        {
-            public void keyPressed(java.awt.event.KeyEvent evt)
-            {
+        jListClientesDevedores.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
                 jListClientesDevedoresKeyPressed(evt);
             }
         });
@@ -408,10 +367,8 @@ public class EmissaoRecibos extends javax.swing.JFrame
         totalAPagarJTextField.setFont(new java.awt.Font("Tahoma", 1, 23)); // NOI18N
         totalAPagarJTextField.setForeground(new java.awt.Color(255, 255, 255));
         totalAPagarJTextField.setCaretColor(new java.awt.Color(255, 255, 255));
-        totalAPagarJTextField.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        totalAPagarJTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 totalAPagarJTextFieldActionPerformed(evt);
             }
         });
@@ -419,20 +376,16 @@ public class EmissaoRecibos extends javax.swing.JFrame
 
         btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LOGOUT - VERMELHO/Logout 32x32.png"))); // NOI18N
         btnCancelar.setAlignmentX(0.5F);
-        btnCancelar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelarActionPerformed(evt);
             }
         });
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/1323444801_currency_dollar red.png"))); // NOI18N
         jButton1.setText("Forma Pagamento");
-        jButton1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
@@ -460,10 +413,8 @@ public class EmissaoRecibos extends javax.swing.JFrame
 
         cmbAnoEconomico.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cmbAnoEconomico.setEnabled(false);
-        cmbAnoEconomico.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbAnoEconomico.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbAnoEconomicoActionPerformed(evt);
             }
         });
@@ -473,10 +424,8 @@ public class EmissaoRecibos extends javax.swing.JFrame
 
         cmbTipoDocumento.setBackground(new java.awt.Color(0, 51, 102));
         cmbTipoDocumento.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
-        cmbTipoDocumento.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbTipoDocumento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbTipoDocumentoActionPerformed(evt);
             }
         });
@@ -492,10 +441,8 @@ public class EmissaoRecibos extends javax.swing.JFrame
 
         cmbArmazem.setBackground(new java.awt.Color(0, 51, 102));
         cmbArmazem.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 1, 12)); // NOI18N
-        cmbArmazem.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbArmazem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbArmazemActionPerformed(evt);
             }
         });
@@ -517,10 +464,8 @@ public class EmissaoRecibos extends javax.swing.JFrame
         TxtTotalDesconto.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
         TxtTotalDesconto.setForeground(new java.awt.Color(255, 255, 255));
         TxtTotalDesconto.setCaretColor(new java.awt.Color(255, 255, 255));
-        TxtTotalDesconto.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        TxtTotalDesconto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 TxtTotalDescontoActionPerformed(evt);
             }
         });
@@ -550,26 +495,6 @@ public class EmissaoRecibos extends javax.swing.JFrame
         lb_hospede_cliente.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         lb_hospede_cliente.setText("Xxxxxx Yxxxx Vvvv");
 
-        cmbTipoDocumento1.setBackground(new java.awt.Color(0, 255, 255));
-        cmbTipoDocumento1.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
-        cmbTipoDocumento1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                cmbTipoDocumento1ActionPerformed(evt);
-            }
-        });
-
-        cmbSeries.setBackground(new java.awt.Color(0, 255, 255));
-        cmbSeries.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
-        cmbSeries.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                cmbSeriesActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -593,11 +518,7 @@ public class EmissaoRecibos extends javax.swing.JFrame
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lb_hospede_cliente, javax.swing.GroupLayout.PREFERRED_SIZE, 406, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lb_telefone, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(cmbTipoDocumento1, 0, 198, Short.MAX_VALUE)
-                            .addComponent(cmbSeries, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(63, 63, 63))))
+                        .addGap(6, 6, Short.MAX_VALUE))))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -605,21 +526,16 @@ public class EmissaoRecibos extends javax.swing.JFrame
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lb_email)
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel3Layout.createSequentialGroup()
-                            .addComponent(cmbTipoDocumento1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(cmbSeries, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(jPanel3Layout.createSequentialGroup()
-                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel2)
-                                .addComponent(lb_hospede_cliente))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel3)
-                                .addComponent(lb_telefone))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jLabel4))))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(lb_hospede_cliente))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(lb_telefone))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel4)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lb_NIF)
@@ -627,22 +543,40 @@ public class EmissaoRecibos extends javax.swing.JFrame
                 .addContainerGap(17, Short.MAX_VALUE))
         );
 
+        cmbSeries.setBackground(new java.awt.Color(0, 51, 102));
+        cmbSeries.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
+        cmbSeries.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbSeriesActionPerformed(evt);
+            }
+        });
+
+        lbPreco4.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        lbPreco4.setText("Série");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(lbPreco3)
-                                .addGap(9, 9, 9)
-                                .addComponent(cmbTipoDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(60, 60, 60))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                .addGap(12, 12, 12)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(lbPreco3)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(cmbTipoDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(lbPreco4)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(cmbSeries, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -665,7 +599,11 @@ public class EmissaoRecibos extends javax.swing.JFrame
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(cmb_area_venda_restaurante, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(24, 24, 24))))
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap(16, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -675,11 +613,6 @@ public class EmissaoRecibos extends javax.swing.JFrame
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(37, 37, 37)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lbPreco3)
-                            .addComponent(cmbTipoDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(lb_proximo_documento, javax.swing.GroupLayout.Alignment.TRAILING))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(6, 6, 6)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -688,8 +621,20 @@ public class EmissaoRecibos extends javax.swing.JFrame
                             .addComponent(dc_data_documento, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(cmb_area_venda_restaurante, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addGap(26, 26, 26)
+                                .addComponent(cmb_area_venda_restaurante, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(lbPreco3)
+                                .addGap(3, 3, 3))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(lb_proximo_documento)
+                                .addComponent(cmbTipoDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(cmbSeries, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lbPreco4))))
+                .addGap(12, 12, 12)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -744,17 +689,14 @@ public class EmissaoRecibos extends javax.swing.JFrame
 //        if ( tabela_linhas.getSelectedColumn() == 5 )
 //        {
 //            System.out.println( "Qtd......" );
-////            actualizarValorPagarTable();
+        ////            actualizarValorPagarTable();
 //            
 //        }
 
-        try
-        {
+        try {
 //            actualizar_valor_tabela( evt );
-            atualizarResumo( evt );
-        }
-        catch ( Exception e )
-        {
+            atualizarResumo(evt);
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -773,8 +715,7 @@ public class EmissaoRecibos extends javax.swing.JFrame
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
     {//GEN-HEADEREND:event_jButton1ActionPerformed
-        if ( MetodosUtil.licencaValidada( conexao ) )
-        {
+        if (MetodosUtil.licencaValidada(conexao)) {
             finalizar_recibo();
         }
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -789,8 +730,11 @@ public class EmissaoRecibos extends javax.swing.JFrame
     private void cmbTipoDocumentoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbTipoDocumentoActionPerformed
     {//GEN-HEADEREND:event_cmbTipoDocumentoActionPerformed
         // TODO add your handling code here:
+
+        visualizarSeries();
         mostrar_proximo_codigo_documento();
         actualizar_abreviacao();
+
         //        desabilitar_campos();
         //        selecionar_documento();
         //        atualizarCliente();
@@ -812,28 +756,17 @@ public class EmissaoRecibos extends javax.swing.JFrame
 //        adicionar_preco_quantidade();
     }//GEN-LAST:event_cmbArmazemActionPerformed
 
-    private void cmbTipoDocumento1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbTipoDocumento1ActionPerformed
-    {//GEN-HEADEREND:event_cmbTipoDocumento1ActionPerformed
-
-//        visualizarSeries();
-        mostrar_proximo_codigo_documento();
-        actualizar_abreviacao();
-//        desabilitar_campos();
-    }//GEN-LAST:event_cmbTipoDocumento1ActionPerformed
-
     private void cmbSeriesActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbSeriesActionPerformed
     {//GEN-HEADEREND:event_cmbSeriesActionPerformed
         // TODO add your handling code here:
         mostrar_proximo_codigo_documento();
     }//GEN-LAST:event_cmbSeriesActionPerformed
 
-    private void actualizarValorPagarTable()
-    {
+    private void actualizarValorPagarTable() {
 
         linha_actual = tabela_linhas.getSelectedRow();
 
-        if ( linha_actual > -1 )
-        {
+        if (linha_actual > -1) {
 
 //            int codProduto = Integer.parseInt( table.getValueAt( linha_actual, 0 ).toString() );
 //            double valor_atribuido = Double.parseDouble( tabela_linhas.getValueAt( linha_actual, 6 ).toString() );
@@ -841,25 +774,21 @@ public class EmissaoRecibos extends javax.swing.JFrame
 //            TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutoController.findById( produtoLocal.getCodTipoProduto().getCodigo() );
             double valor_pagar;
 
-            try
-            {
-                valor_pagar = Double.parseDouble( tabela_linhas.getValueAt( linha_actual, 7 ).toString() );
-            }
-            catch ( NumberFormatException e )
-            {
-                resetValue( "Erro de formatação do valor.\nAtenção: Tem que ser número.", 7 );
+            try {
+                valor_pagar = Double.parseDouble(tabela_linhas.getValueAt(linha_actual, 7).toString());
+            } catch (NumberFormatException e) {
+                resetValue("Erro de formatação do valor.\nAtenção: Tem que ser número.", 7);
                 return;
             }
 
-            if ( valor_pagar <= 0 )
-            {
+            if (valor_pagar <= 0) {
                 valor_pagar = 1;
-                resetValue( "valor não pode ser zero(0) ou número négativo", 7 );
+                resetValue("valor não pode ser zero(0) ou número négativo", 7);
             }
 
 //            if ( possivel_quantidade( codProduto, qtd ) || tipoProduto.getFkFamilia().getPkFamilia() == DVML.COD_SERVICO )
 //            {
-            actuazlizar_valor_pagar_tabela_formulario( String.valueOf( valor_pagar ) );
+            actuazlizar_valor_pagar_tabela_formulario(String.valueOf(valor_pagar));
 //                setTotalRetencao();
 //                setTotalPagar();
 //                calculaTotalIVA();
@@ -872,19 +801,18 @@ public class EmissaoRecibos extends javax.swing.JFrame
         }
     }
 
-    private static void actuazlizar_valor_pagar_tabela_formulario( String valor_pagar_par )
-    {
-        DefaultTableModel modelo = ( DefaultTableModel ) tabela_linhas.getModel();
-        double valor_pagar = Double.parseDouble( valor_pagar_par );
-        double valor_doc = Double.parseDouble( modelo.getValueAt( linha_actual, 6 ).toString() );
-        double valor_atribuido = Double.parseDouble( String.valueOf( modelo.getValueAt( linha_actual, 8 ) ) );
+    private static void actuazlizar_valor_pagar_tabela_formulario(String valor_pagar_par) {
+        DefaultTableModel modelo = (DefaultTableModel) tabela_linhas.getModel();
+        double valor_pagar = Double.parseDouble(valor_pagar_par);
+        double valor_doc = Double.parseDouble(modelo.getValueAt(linha_actual, 6).toString());
+        double valor_atribuido = Double.parseDouble(String.valueOf(modelo.getValueAt(linha_actual, 8)));
 
 //        double total_iliquido_linha = (( preco_venda * qtd ) - desconto);
-        String total_iliquido_linha = String.valueOf( getValorIliquido(
+        String total_iliquido_linha = String.valueOf(getValorIliquido(
                 valor_pagar,
                 valor_doc,
                 valor_atribuido
-        ) );
+        ));
 
 //        String total_liquido_linha = CfMethods.formatarComoMoeda( getValorComImpostoIva(
 //                qtd,
@@ -892,46 +820,41 @@ public class EmissaoRecibos extends javax.swing.JFrame
 //                preco_venda,
 //                desconto
 //        ) );
-        modelo.setValueAt( valor_pagar, linha_actual, 7 );
+        modelo.setValueAt(valor_pagar, linha_actual, 7);
 //        modelo.setValueAt( desconto, linha_actual, 5 );
 //
-        modelo.setValueAt( total_iliquido_linha, linha_actual, 11 );
+        modelo.setValueAt(total_iliquido_linha, linha_actual, 11);
 //        modelo.setValueAt( total_liquido_linha, linha_actual, 10 );
         //a linha_actual recebe o default
         linha_actual = -1;
 
     }
 
-    private static double getValorIliquido( double valor_pagar, double valor_doc, double valor_atribuido )
-    {
+    private static double getValorIliquido(double valor_pagar, double valor_doc, double valor_atribuido) {
         double subtotal_linha = (valor_doc - valor_pagar);
         double valor_pendente = (subtotal_linha - valor_pagar);
-        return ( ( subtotal_linha - valor_pendente ) );
+        return ((subtotal_linha - valor_pendente));
 
     }
 
-    public static void actualizar_lista_clientes()
-    {
+    public static void actualizar_lista_clientes() {
 //        lista_cliente = clienteController.listarTodos( DVML.CLIENTE_SINGULAR );
         lista_cliente = clienteController.listarTodos();
         filtrar_lista_cliente();
 
     }
 
-    public static void actualizar_lista_clientes1()
-    {
+    public static void actualizar_lista_clientes1() {
 //        lista_clientes = clienteController.listarTodos( DVML.CLIENTE_SINGULAR );
 //        lista_clientes = vendaController.
 //        filtrar_lista_cliente1();
 
     }
 
-    private static void filtrar_lista_cliente()
-    {
+    private static void filtrar_lista_cliente() {
 
-        for ( int i = 0; i < lista_cliente.size(); i++ )
-        {
-            TbCliente get = lista_cliente.get( i );
+        for (int i = 0; i < lista_cliente.size(); i++) {
+            TbCliente get = lista_cliente.get(i);
 //            if ( existe_cliente_lista( get.getNome() ) )
 //            {
 //                lista_cliente.remove( get );
@@ -940,12 +863,10 @@ public class EmissaoRecibos extends javax.swing.JFrame
         }
     }
 
-    private static void filtrar_lista_cliente1()
-    {
+    private static void filtrar_lista_cliente1() {
 
-        for ( int i = 0; i < lista_clientes.size(); i++ )
-        {
-            TbVenda get = lista_clientes.get( i );
+        for (int i = 0; i < lista_clientes.size(); i++) {
+            TbVenda get = lista_clientes.get(i);
 //            if ( existe_cliente_lista( get.getNome() ) )
 //            {
 //                lista_cliente.remove( get );
@@ -954,84 +875,68 @@ public class EmissaoRecibos extends javax.swing.JFrame
         }
     }
 
-    public static void actulizar_lista_modelo_clientes()
-    {
+    public static void actulizar_lista_modelo_clientes() {
         actualizar_lista_clientes();
-        if ( !Objects.isNull( lista_cliente ) )
-        {
+        if (!Objects.isNull(lista_cliente)) {
             listModelClientes.clear();
-            for ( TbCliente cliente_object : lista_cliente )
-            {
-                listModelClientes.addElement( cliente_object.getNome() );
+            for (TbCliente cliente_object : lista_cliente) {
+                listModelClientes.addElement(cliente_object.getNome());
             }
         }
 
     }
 
-    public static void actulizar_lista_modelo_clientes1()
-    {
+    public static void actulizar_lista_modelo_clientes1() {
         actualizar_lista_clientes1();
-        if ( !Objects.isNull( lista_clientes ) )
-        {
+        if (!Objects.isNull(lista_clientes)) {
             listModelClientes.clear();
-            for ( TbVenda cliente_object : lista_clientes )
-            {
-                listModelClientes.addElement( cliente_object.getCodigoCliente().getNome() );
+            for (TbVenda cliente_object : lista_clientes) {
+                listModelClientes.addElement(cliente_object.getCodigoCliente().getNome());
             }
         }
 
     }
 
-    public static void listar_all_clientes_ft()
-    {
+    public static void listar_all_clientes_ft() {
 
-        try
-        {
+        try {
 
 //            List<TbVenda> item = vendaController.getAllVendasClientes( DVML.DOC_FACTURA_FT );
-            List<TbVenda> item = vendaDao.getAllVendasClientes( DVML.DOC_FACTURA_FT );
+            List<TbVenda> item = vendaDao.getAllVendasClientes(DVML.DOC_FACTURA_FT);
 
 //            lista_clientes.clear();
             listModelClientes.clear();
-            for ( int i = 0; i < item.size(); i++ )
-            {
-                listModelClientes.addElement( item.get( i ).getCodigoCliente().getNome() );
+            for (int i = 0; i < item.size(); i++) {
+                listModelClientes.addElement(item.get(i).getCodigoCliente().getNome());
 
             }
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
         }
 
     }
 
-    public static void adicionar_tabela()
-    {
+    public static void adicionar_tabela() {
 
-        DefaultTableModel modelo = ( DefaultTableModel ) tabela_linhas.getModel();
-        tabela_linhas.setRowHeight( 30 );
-        try
-        {
+        DefaultTableModel modelo = (DefaultTableModel) tabela_linhas.getModel();
+        tabela_linhas.setRowHeight(30);
+        try {
 
-            List<TbVenda> list = vendasController.findVendasByClientesDoc( getIdCliente() );
+            List<TbVenda> list = vendasController.findVendasByClientesDoc(getIdCliente());
 //            List<TbVenda> list = vendaController.findVendasByClientes2( getIdCliente(), venda.getCodigo() );
 
-            modelo.setRowCount( 0 );
-            for ( int i = 0; i < list.size(); i++ )
-            {
-                TbVenda get = list.get( i );
-                double valor_pendente = amortizacaoDividaController.getValorPendente( get.getCodigo() );
-                double valor_atribuido = amortizacaoDividaController.getValorAtribuido( get.getCodigo() );
+            modelo.setRowCount(0);
+            for (int i = 0; i < list.size(); i++) {
+                TbVenda get = list.get(i);
+                double valor_pendente = amortizacaoDividaController.getValorPendente(get.getCodigo());
+                double valor_atribuido = amortizacaoDividaController.getValorAtribuido(get.getCodigo());
 
                 int codigo_cliente = get.getCodigoCliente().getCodigo();
-                TbCliente cliente = ( TbCliente ) clienteController.findById( codigo_cliente );
+                TbCliente cliente = (TbCliente) clienteController.findById(codigo_cliente);
 //                AmortizacaoDivida amortizacaoD-ivida_local = amortizacaoDividaDao.getAllAmortizacaoByIdCliente( getIdCliente() );
 
-                if ( valor_atribuido < get.getTotalVenda().doubleValue() )
-                {
-                    modelo.addRow( new Object[]
-                    {
+                if (valor_atribuido < get.getTotalVenda().doubleValue()) {
+                    modelo.addRow(new Object[]{
                         false,
                         "FT",
                         get.getCodFact(),
@@ -1043,70 +948,56 @@ public class EmissaoRecibos extends javax.swing.JFrame
                         valor_atribuido,
                         get.getDescontoTotal(),
                         0.0,
-                        valor_pendente,
-                    } );
+                        valor_pendente,});
 
                 }
 
             }
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-    private void setDadosClientes()
-    {
+    private void setDadosClientes() {
         TbCliente clienteSeleccionado = getHospedeSeleccionado();
-        System.out.println( "Cheguei na lista de clientes..." );
-        if ( !Objects.isNull( clienteSeleccionado ) )
-        {
-            lb_hospede_cliente.setText( clienteSeleccionado.getNome() );
-            System.out.println( "Nome Cliente..." + clienteSeleccionado.getNome() );
-            lb_telefone.setText( clienteSeleccionado.getTelefone() );
-            lb_email.setText( clienteSeleccionado.getEmail() );
-            lb_NIF.setText( clienteSeleccionado.getNif() );
-        }
-        else
-        {
+        System.out.println("Cheguei na lista de clientes...");
+        if (!Objects.isNull(clienteSeleccionado)) {
+            lb_hospede_cliente.setText(clienteSeleccionado.getNome());
+            System.out.println("Nome Cliente..." + clienteSeleccionado.getNome());
+            lb_telefone.setText(clienteSeleccionado.getTelefone());
+            lb_email.setText(clienteSeleccionado.getEmail());
+            lb_NIF.setText(clienteSeleccionado.getNif());
+        } else {
             limpar_dados_clientes_hospede();
         }
 
     }
 
-    private void limpar_dados_clientes_hospede()
-    {
+    private void limpar_dados_clientes_hospede() {
 
-        lb_hospede_cliente.setText( "" );
-        lb_telefone.setText( "" );
-        lb_email.setText( "" );
-        lb_NIF.setText( "" );
+        lb_hospede_cliente.setText("");
+        lb_telefone.setText("");
+        lb_email.setText("");
+        lb_NIF.setText("");
     }
 
-    private static TbCliente getHospedeSeleccionado()
-    {
+    private static TbCliente getHospedeSeleccionado() {
         String selectedHospespe = jListClientesDevedores.getSelectedValue();
-        return clienteController.findByNome( selectedHospespe );
+        return clienteController.findByNome(selectedHospespe);
     }
 
-    private static int getIdCliente()
-    {
-        try
-        {
-            return clienteController.findByNome( jListClientesDevedores.getSelectedValue().toString() ).getCodigo();
-        }
-        catch ( Exception e )
-        {
+    private static int getIdCliente() {
+        try {
+            return clienteController.findByNome(jListClientesDevedores.getSelectedValue().toString()).getCodigo();
+        } catch (Exception e) {
             return 0;
         }
 
     }
 
-    private static String getNomeCliente()
-    {
+    private static String getNomeCliente() {
 
         return jListClientesDevedores.getSelectedValue();
 
@@ -1115,66 +1006,50 @@ public class EmissaoRecibos extends javax.swing.JFrame
     /**
      * @param args the command line arguments
      */
-    public static void main( String args[] )
-    {
+    public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        try
-        {
-            for ( javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels() )
-            {
-                if ( "Windows".equals( info.getName() ) )
-                {
-                    javax.swing.UIManager.setLookAndFeel( info.getClassName() );
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Windows".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
-        }
-        catch ( ClassNotFoundException ex )
-        {
-            java.util.logging.Logger.getLogger( EmissaoRecibos.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }
-        catch ( InstantiationException ex )
-        {
-            java.util.logging.Logger.getLogger( EmissaoRecibos.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }
-        catch ( IllegalAccessException ex )
-        {
-            java.util.logging.Logger.getLogger( EmissaoRecibos.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }
-        catch ( javax.swing.UnsupportedLookAndFeelException ex )
-        {
-            java.util.logging.Logger.getLogger( EmissaoRecibos.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(EmissaoRecibos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(EmissaoRecibos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(EmissaoRecibos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(EmissaoRecibos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater( new Runnable()
-        {
-            public void run()
-            {
-                new EmissaoRecibos( 15, BDConexao.getInstancia() ).setVisible( true );
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new EmissaoRecibos(15, BDConexao.getInstancia()).setVisible(true);
             }
-        } );
+        });
     }
 
-    public static void linha_selecionada()
-    {
-        DefaultTableModel modelo = ( DefaultTableModel ) tabela_linhas.getModel();
+    public static void linha_selecionada() {
+        DefaultTableModel modelo = (DefaultTableModel) tabela_linhas.getModel();
         int selectedRow = tabela_linhas.getSelectedRow();
-        String checkbox = modelo.getValueAt( selectedRow, 0 ).toString();
+        String checkbox = modelo.getValueAt(selectedRow, 0).toString();
 //        JOptionPane.showMessageDialog( null, "Linha selecionada" +selectedRow);
-        JOptionPane.showMessageDialog( null, "Linha selecionada" + checkbox );
+        JOptionPane.showMessageDialog(null, "Linha selecionada" + checkbox);
     }
 
-    private void resetValue( String msg, int columnValue )
-    {
-        System.out.println( "Cheguei aqui..." );
-        tabela_linhas.setValueAt( 1, linha_actual, columnValue );
-        JOptionPane.showMessageDialog( null, msg );
+    private void resetValue(String msg, int columnValue) {
+        System.out.println("Cheguei aqui...");
+        tabela_linhas.setValueAt(1, linha_actual, columnValue);
+        JOptionPane.showMessageDialog(null, msg);
         tabela_linhas.clearSelection();
     }
 
@@ -1185,7 +1060,6 @@ public class EmissaoRecibos extends javax.swing.JFrame
     public static javax.swing.JComboBox cmbArmazem;
     public static javax.swing.JComboBox cmbSeries;
     public static javax.swing.JComboBox cmbTipoDocumento;
-    public static javax.swing.JComboBox cmbTipoDocumento1;
     public static javax.swing.JComboBox<String> cmb_area_venda_restaurante;
     private static com.toedter.calendar.JDateChooser dc_data_documento;
     private javax.swing.JButton jButton1;
@@ -1203,6 +1077,7 @@ public class EmissaoRecibos extends javax.swing.JFrame
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lbPreco3;
+    private javax.swing.JLabel lbPreco4;
     private javax.swing.JLabel lbPreco6;
     private javax.swing.JLabel lbTotalPagar1;
     private javax.swing.JLabel lbTotalPagar2;
@@ -1210,16 +1085,15 @@ public class EmissaoRecibos extends javax.swing.JFrame
     private javax.swing.JLabel lb_NIF;
     private javax.swing.JLabel lb_email;
     private javax.swing.JLabel lb_hospede_cliente;
-    private static javax.swing.JLabel lb_proximo_documento;
+    private static final javax.swing.JLabel lb_proximo_documento = new javax.swing.JLabel();
     private javax.swing.JLabel lb_telefone;
     private static javax.swing.JTable tabela_linhas;
     public static javax.swing.JTextField totalAPagarJTextField;
     // End of variables declaration//GEN-END:variables
 
-    private void actualizar_valor_tabela( PropertyChangeEvent evt )
-    {
+    private void actualizar_valor_tabela(PropertyChangeEvent evt) {
         linha_actual = tabela_linhas.getSelectedRow();
-        DefaultTableModel modelo = ( DefaultTableModel ) tabela_linhas.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) tabela_linhas.getModel();
 
         /**
          * produto.getCodigo(), produto.getDesignacao(), getPrecoCompra(),
@@ -1227,7 +1101,7 @@ public class EmissaoRecibos extends javax.swing.JFrame
          * getQuantidade() * getPrecoCompra(), MetodosUtil.getValorComIVA(
          * getQuantidade(), getTaxaImposto(), getPrecoCompra(), 0 )
          */
-        double valor_doc = Double.parseDouble( String.valueOf( modelo.getValueAt( linha_actual, 6 ) ) );
+        double valor_doc = Double.parseDouble(String.valueOf(modelo.getValueAt(linha_actual, 6)));
 //        double valor_pagar = Double.parseDouble( String.valueOf( modelo.getValueAt( linha_actual, 5 ) ) );
         double valor_pagar = 0.0;
 
@@ -1236,15 +1110,15 @@ public class EmissaoRecibos extends javax.swing.JFrame
 //            double valor_atribuido = Double.parseDouble( String.valueOf( modelo.getValueAt( linha_actual, 6 ) ) );
 //            if ( desconto >= 0 && desconto <= 100 )
 //            {
-        double valor_pendente = Double.parseDouble( String.valueOf( modelo.getValueAt( linha_actual, 11 ) ) );
+        double valor_pendente = Double.parseDouble(String.valueOf(modelo.getValueAt(linha_actual, 11)));
 
         double valor_atribuido = valor_doc - valor_pagar;
 //                double total_item_com_iva = MetodosUtil.getValorComIVA( quantidade, taxa, preco_compra, desconto );
 
-        modelo.setValueAt( valor_doc, linha_actual, 6 );
-        modelo.setValueAt( valor_pagar, linha_actual, 7 );
-        modelo.setValueAt( valor_atribuido, linha_actual, 8 );
-        modelo.setValueAt( valor_pendente, linha_actual, 11 );
+        modelo.setValueAt(valor_doc, linha_actual, 6);
+        modelo.setValueAt(valor_pagar, linha_actual, 7);
+        modelo.setValueAt(valor_atribuido, linha_actual, 8);
+        modelo.setValueAt(valor_pendente, linha_actual, 11);
 //                modelo.setValueAt( total_item, linha_actual, 7 );
 //                modelo.setValueAt( total_item_com_iva, linha_actual, 8 );
 
@@ -1273,89 +1147,81 @@ public class EmissaoRecibos extends javax.swing.JFrame
 //        Double valorEntregue = totalProcessado;
 //        Double totalAPagar = totalProcessado - totalAmortizado;
 //        Double troco = ( valorEntregue - totalAPagar ) > 0 ? valorEntregue - totalAPagar : 0;
-////        trocoJTextField.setText( CfMethods.formatarComoMoeda( troco ) );
+    ////        trocoJTextField.setText( CfMethods.formatarComoMoeda( troco ) );
 //        totalPagoJTextField.setText( CfMethods.formatarComoMoeda( totalAmortizado ) );
 //        valorTotalFaturaJTextField.setText( CfMethods.formatarComoMoeda( totalProcessado ) );
 //        totalAPagarJTextField.setText( CfMethods.formatarComoMoeda( totalAPagar ) );
 ////        valorEntregueJSpinner.setModel( criarSpinnerDoubleModel( 0, totalAPagar, valorEntregue ) );
 //
 //    }
-    private static void atualizarResumo( PropertyChangeEvent evt )
-    {
+    private static void atualizarResumo(PropertyChangeEvent evt) {
 
-        DefaultTableModel modelo = ( DefaultTableModel ) tabela_linhas.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) tabela_linhas.getModel();
         linha_actual = tabela_linhas.getSelectedRow();
-        System.out.println( "Antes Linha Actual: " + linha_actual );
+        System.out.println("Antes Linha Actual: " + linha_actual);
         double valor_pagar = 0;
         double valorPendente;
         double valorAtribuido;
         String codFact;
 
-        if ( tabela_linhas.getSelectedColumn() == 0 )
-        {
-            boolean estado = ( Boolean ) modelo.getValueAt( linha_actual, 0 );
-            System.out.println( "ESTADO: " + estado );
-            modelo.setValueAt( estado, linha_actual, 0 );
-            codFact = tabela_linhas.getValueAt( linha_actual, 2 ).toString();
-            valorPendente = amortizacaoDividaController.getValorPendenteByCodFact( codFact );
-            valorAtribuido = amortizacaoDividaController.getValorAtribuidoByCodFact( codFact );
-            modelo.setValueAt( 0.0, linha_actual, 7 );
-            modelo.setValueAt( valorAtribuido, linha_actual, 8 );
-            modelo.setValueAt( valorPendente, linha_actual, 11 );
+        if (tabela_linhas.getSelectedColumn() == 0) {
+            boolean estado = (Boolean) modelo.getValueAt(linha_actual, 0);
+            System.out.println("ESTADO: " + estado);
+            modelo.setValueAt(estado, linha_actual, 0);
+            codFact = tabela_linhas.getValueAt(linha_actual, 2).toString();
+            valorPendente = amortizacaoDividaController.getValorPendenteByCodFact(codFact);
+            valorAtribuido = amortizacaoDividaController.getValorAtribuidoByCodFact(codFact);
+            modelo.setValueAt(0.0, linha_actual, 7);
+            modelo.setValueAt(valorAtribuido, linha_actual, 8);
+            modelo.setValueAt(valorPendente, linha_actual, 11);
 
-        }
-
-        else if ( linha_actual > -1 )
-        {
-            System.out.println( "Depois Linha Actual: " + linha_actual );
-            codFact = tabela_linhas.getValueAt( linha_actual, 2 ).toString();
-            TbVenda vendaByCodFact = vendasController.getVendaByCodFactFT( codFact );
+        } else if (linha_actual > -1) {
+            System.out.println("Depois Linha Actual: " + linha_actual);
+            codFact = tabela_linhas.getValueAt(linha_actual, 2).toString();
+            TbVenda vendaByCodFact = vendasController.getVendaByCodFactFT(codFact);
 //        boolean cb = tabela_linhas.getValueAt( linha_actual, 0 ).equals( evt );
 
-            Double totalAmortizado = amortizacaoDividaController.getValorAtribuidoByCodFact( codFact );
+            Double totalAmortizado = amortizacaoDividaController.getValorAtribuidoByCodFact(codFact);
             Double valorEntregue = totalProcessado;
             Double troco = 0d;
 
             double totalAPagar;
 //            totalAPagar = Double.parseDouble( String.valueOf( modelo.getValueAt( linha_actual, 5 ) ) );
-            totalAPagar = Double.parseDouble( String.valueOf( modelo.getValueAt( linha_actual, 7 ) ) );
+            totalAPagar = Double.parseDouble(String.valueOf(modelo.getValueAt(linha_actual, 7)));
 
-            valorAtribuido = amortizacaoDividaController.getValorAtribuidoByCodFact( codFact );
+            valorAtribuido = amortizacaoDividaController.getValorAtribuidoByCodFact(codFact);
 //            valorPago = Double.parseDouble( String.valueOf( modelo.getValueAt( linha_actual, 6 ) ) );
 
-            double totalFactura = Double.parseDouble( String.valueOf( modelo.getValueAt( linha_actual, 6 ) ) );
+            double totalFactura = Double.parseDouble(String.valueOf(modelo.getValueAt(linha_actual, 6)));
 
-            valorPendente = amortizacaoDividaController.getValorPendente( vendaByCodFact.getCodigo() );
+            valorPendente = amortizacaoDividaController.getValorPendente(vendaByCodFact.getCodigo());
 //            valorPendente = amortizacaoDividaController.getValorPendenteByCodFact( codFact );
 
 //            if ( totalAPagar != 0.0 )
-            if ( totalAPagar > 0.0 )
-            {
-                System.out.println( "Cheguei depois do IF" );
+            if (totalAPagar > 0.0) {
+                System.out.println("Cheguei depois do IF");
 //            totalAPagar = totalProcessado - totalAmortizado;
                 valorAtribuido = valorAtribuido + totalAPagar;
 
-                System.out.println( "TotalFactura  vazio: " + Objects.nonNull( totalFactura ) );
-                System.out.println( "Valor Atribuido vazio: " + Objects.nonNull( valorAtribuido ) );
+                System.out.println("TotalFactura  vazio: " + Objects.nonNull(totalFactura));
+                System.out.println("Valor Atribuido vazio: " + Objects.nonNull(valorAtribuido));
                 valorPendente = totalFactura - valorAtribuido;
                 totalAPagar = totalFactura - totalAmortizado;
-                System.out.println( "Cheguei depois do Total pagar" );
-                System.out.println( "Total Amortizado: " + totalAmortizado );
-                troco = ( valorEntregue - totalAPagar ) > 0 ? valorEntregue - totalAPagar : 0;
+                System.out.println("Cheguei depois do Total pagar");
+                System.out.println("Total Amortizado: " + totalAmortizado);
+                troco = (valorEntregue - totalAPagar) > 0 ? valorEntregue - totalAPagar : 0;
 
-                modelo.setValueAt( true, linha_actual, 0 );
+                modelo.setValueAt(true, linha_actual, 0);
 
-            }
-            else
-            {
+            } else {
 
-                modelo.setValueAt( false, linha_actual, 0 );
+                modelo.setValueAt(false, linha_actual, 0);
 //            remover_item_carrinho();
                 // acrescentar_um_linha_tabela_blank();
             }
 
-            modelo.setValueAt( valorAtribuido, linha_actual, 8 );
-            modelo.setValueAt( valorPendente, linha_actual, 11 );
+            modelo.setValueAt(valorAtribuido, linha_actual, 8);
+            modelo.setValueAt(valorPendente, linha_actual, 11);
 
 //        setTotalPagar();
         }
@@ -1376,7 +1242,7 @@ public class EmissaoRecibos extends javax.swing.JFrame
 //
 //            System.err.println( "" );
 //            totalProcessado = 0.0;
-////            totalBonusCliente = 0.0;
+    ////            totalBonusCliente = 0.0;
 //            int colIndex = 0;
 //            final int pk_venda = colIndex++;
 //            final int documento_designacao = colIndex++;
@@ -1493,42 +1359,37 @@ public class EmissaoRecibos extends javax.swing.JFrame
 //        totalAPagarJTextField.setText( CfMethods.formatarComoMoeda( total_liquido ) );
 //
 //    }
-    public static void setTotalDesconto()
-    {
+    public static void setTotalDesconto() {
 
-        DefaultTableModel modelo = ( DefaultTableModel ) tabela_linhas.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) tabela_linhas.getModel();
         double total_liquido = 0;
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-            total_liquido += CfMethods.parseMoedaFormatada( String.valueOf( modelo.getValueAt( i, 9 ) ) );
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            total_liquido += CfMethods.parseMoedaFormatada(String.valueOf(modelo.getValueAt(i, 9)));
         }
-        TxtTotalDesconto.setText( CfMethods.formatarComoMoeda( total_liquido ) );
+        TxtTotalDesconto.setText(CfMethods.formatarComoMoeda(total_liquido));
 
     }
 
-    private static void actualizar_total()
-    {
+    private static void actualizar_total() {
 //        txtTotal_AOA_Iliquido.setText( CfMethods.formatarComoMoeda( getTotalIliquido() ) );
 //        txtTotal_AOA_IVA.setText( CfMethods.formatarComoMoeda( getTotalIVASobreDesconto() ) );
 //        txtTotal_AOA_Desconto.setText( CfMethods.formatarComoMoeda( getDescontoComercial() + getDescontoFinanceiro() ) );
-        totalAPagarJTextField.setText( CfMethods.formatarComoMoeda( getTotalAOALiquido() ) );
+        totalAPagarJTextField.setText(CfMethods.formatarComoMoeda(getTotalAOALiquido()));
 
 //        valor_por_extenco();
     }
 
-    private static void actualizar_Desconto_total()
-    {
+    private static void actualizar_Desconto_total() {
 //        txtTotal_AOA_Iliquido.setText( CfMethods.formatarComoMoeda( getTotalIliquido() ) );
 //        txtTotal_AOA_IVA.setText( CfMethods.formatarComoMoeda( getTotalIVASobreDesconto() ) );
 //        txtTotal_AOA_Desconto.setText( CfMethods.formatarComoMoeda( getDescontoComercial() + getDescontoFinanceiro() ) );
-        TxtTotalDesconto.setText( CfMethods.formatarComoMoeda( getTotalDescontoAOALiquido() ) );
+        TxtTotalDesconto.setText(CfMethods.formatarComoMoeda(getTotalDescontoAOALiquido()));
 
 //        valor_por_extenco();
     }
 
-    private static double getTotalAOALiquido()
-    {
+    private static double getTotalAOALiquido() {
         double valores = getTotalliquido();
 //        double valores = ( getTotalIliquido() + getTotalImposto() );
 //        double descontos = ( getDescontoComercial() + getDescontoFinanceiro() );
@@ -1541,8 +1402,7 @@ public class EmissaoRecibos extends javax.swing.JFrame
         return valores;
     }
 
-    private static double getTotalDescontoAOALiquido()
-    {
+    private static double getTotalDescontoAOALiquido() {
 //        double valores = getTotalliquido();
 //        double valores = ( getTotalIliquido() + getTotalImposto() );
         double descontos = (getDescontoTotal());
@@ -1555,17 +1415,15 @@ public class EmissaoRecibos extends javax.swing.JFrame
         return descontos;
     }
 
-    private static double getDescontoTotal()
-    {
-        DefaultTableModel modelo = ( DefaultTableModel ) tabela_linhas.getModel();
+    private static double getDescontoTotal() {
+        DefaultTableModel modelo = (DefaultTableModel) tabela_linhas.getModel();
         double qtd = 0d;
         double desconto_total = 0d, preco_unitario = 0d, desconto_valor_linha = 0d;
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
+        for (int i = 0; i < modelo.getRowCount(); i++) {
 //            preco_unitario = CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 3 ).toString() );
 //            qtd = Double.parseDouble( modelo.getValueAt( i, 4 ).toString() );
-            desconto_valor_linha = Double.parseDouble( modelo.getValueAt( i, 9 ).toString() );
+            desconto_valor_linha = Double.parseDouble(modelo.getValueAt(i, 9).toString());
 //            double valor_unitario = ( preco_unitario * qtd );
             desconto_total += desconto_valor_linha;
 
@@ -1574,15 +1432,13 @@ public class EmissaoRecibos extends javax.swing.JFrame
         return desconto_total;
     }
 
-    private static double getTotalliquido()
-    {
-        DefaultTableModel modelo = ( DefaultTableModel ) tabela_linhas.getModel();
+    private static double getTotalliquido() {
+        DefaultTableModel modelo = (DefaultTableModel) tabela_linhas.getModel();
 
         double total_liquido = 0;
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
-            total_liquido += Double.parseDouble( modelo.getValueAt( i, 7 ).toString() );
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            total_liquido += Double.parseDouble(modelo.getValueAt(i, 7).toString());
 //            total_liquido = CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 5 ).toString() );
 
 //            total_iliquido += ( preco_unitario * qtd );
@@ -1591,23 +1447,18 @@ public class EmissaoRecibos extends javax.swing.JFrame
         return total_liquido;
     }
 
-    public static void salvar( double valor_entregue ) throws SQLException
-    {
-        if ( !MetodosUtil.tabela_vazia( tabela_linhas ) )
-        {
+    public static void salvar(double valor_entregue) throws SQLException {
+        if (!MetodosUtil.tabela_vazia(tabela_linhas)) {
             Date data_documento = dc_data_documento.getDate();
 //            if ( verifica_ano_documento_igual_economico() )
 //            {
 
-            if ( data_documento_superior_ou_igual_ao_ultimo_doc() )
-            {
+            if (data_documento_superior_ou_igual_ao_ultimo_doc()) {
 
-                salvar_venda( valor_entregue );
+                salvar_venda(valor_entregue);
 
-            }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "O documento não pode ser processado porque possui uma data inferior ao úlimo documento efectuado", "AVISO", JOptionPane.WARNING_MESSAGE );
+            } else {
+                JOptionPane.showMessageDialog(null, "O documento não pode ser processado porque possui uma data inferior ao úlimo documento efectuado", "AVISO", JOptionPane.WARNING_MESSAGE);
             }
 
 //            }
@@ -1615,24 +1466,20 @@ public class EmissaoRecibos extends javax.swing.JFrame
 //            {
 //                JOptionPane.showMessageDialog( null, "A data do documento a ser emitido deve estar no intervalo do ano economico", "Aviso", JOptionPane.WARNING_MESSAGE );
 //            }
-        }
-        else
-        {
-            JOptionPane.showMessageDialog( null, "Caro usuário adicione item na tabela", "Aviso", JOptionPane.WARNING_MESSAGE );
+        } else {
+            JOptionPane.showMessageDialog(null, "Caro usuário adicione item na tabela", "Aviso", JOptionPane.WARNING_MESSAGE);
         }
 
     }
 
-    private static boolean verifica_ano_documento_igual_economico()
-    {
-        int ano_economico = Integer.parseInt( anoEconomicoDao.findAnoEconomico( getIdAnoEconomico() ).getDesignacao() );
+    private static boolean verifica_ano_documento_igual_economico() {
+        int ano_economico = Integer.parseInt(anoEconomicoDao.findAnoEconomico(getIdAnoEconomico()).getDesignacao());
         int ano_documento = dc_data_documento.getDate().getYear() + 1900;
         return ano_documento == ano_economico;
 
     }
 
-    private static TbVenda prepararRecibo( double valor_entregue ) throws SQLException
-    {
+    private static TbVenda prepararRecibo(double valor_entregue) throws SQLException {
 
         Date data_documento = dc_data_documento.getDate();
         TbCliente hospedeSeleccionado = getHospedeSeleccionado();
@@ -1653,98 +1500,96 @@ public class EmissaoRecibos extends javax.swing.JFrame
 //        TbVenda factura = VendaDao.findByCodFact( ref_doc );
         TbVenda recibo = new TbVenda();
 
-        recibo.setDataVenda( data_actual );
-        recibo.setHora( data_actual );
+        recibo.setDataVenda(data_actual);
+        recibo.setHora(data_actual);
 
-        recibo.setNomeCliente( getNomeCliente() );
-        recibo.setClienteNif( hospedeSeleccionado.getNif() );
+        recibo.setNomeCliente(getNomeCliente());
+        recibo.setClienteNif(hospedeSeleccionado.getNif());
 
         //Total Ilíquido
-        recibo.setTotalGeral( new BigDecimal( CfMethods.parseMoedaFormatada( totalAPagarJTextField.getText() ) ) );
+        recibo.setTotalGeral(new BigDecimal(CfMethods.parseMoedaFormatada(totalAPagarJTextField.getText())));
         //desconto por linha
-        recibo.setDescontoComercial( new BigDecimal( CfMethods.parseMoedaFormatada( TxtTotalDesconto.getText() ) ) );
+        recibo.setDescontoComercial(new BigDecimal(CfMethods.parseMoedaFormatada(TxtTotalDesconto.getText())));
         //imposto
         //calculaTotalIVA();
-        recibo.setTotalIva( new BigDecimal( 0 ) );
+        recibo.setTotalIva(new BigDecimal(0));
         //desconto global
-        recibo.setDescontoFinanceiro( new BigDecimal( CfMethods.parseMoedaFormatada( TxtTotalDesconto.getText() ) ) );
+        recibo.setDescontoFinanceiro(new BigDecimal(CfMethods.parseMoedaFormatada(TxtTotalDesconto.getText())));
         //Total(AOA) <=> Total Líquido
-        recibo.setTotalVenda( new BigDecimal( CfMethods.parseMoedaFormatada( totalAPagarJTextField.getText() ) ) );
+        recibo.setTotalVenda(new BigDecimal(CfMethods.parseMoedaFormatada(totalAPagarJTextField.getText())));
 
         //#MONTANTE
-        System.err.println( "valorEntregue: " + valorEntregue );
-        System.err.println( "troco: " + troco );
-        recibo.setValorEntregue( new BigDecimal( valorEntregue - troco ) );
-        recibo.setTroco( new BigDecimal( troco ) );
+        System.err.println("valorEntregue: " + valorEntregue);
+        System.err.println("troco: " + troco);
+        recibo.setValorEntregue(new BigDecimal(valorEntregue - troco));
+        recibo.setTroco(new BigDecimal(troco));
 
-        recibo.setTotalIncidencia( new BigDecimal( 0 ) );
-        recibo.setTotalIncidenciaIsento( new BigDecimal( 0 ) );
-        recibo.setRefDataFact( recibo.getDataVenda() );
-        recibo.setDataVencimento( data_documento );
+        recibo.setTotalIncidencia(new BigDecimal(0));
+        recibo.setTotalIncidenciaIsento(new BigDecimal(0));
+        recibo.setRefDataFact(recibo.getDataVenda());
+        recibo.setDataVencimento(data_documento);
 //cmbArmazem
         /*outros campos*/
-        recibo.setDescontoTotal( new BigDecimal( CfMethods.parseMoedaFormatada( TxtTotalDesconto.getText() ) ) );
-        recibo.setIdArmazemFK( new TbArmazem( 2 ) );
-        recibo.setCodigoUsuario( new TbUsuario( idUser ) );
-        recibo.setCodigoCliente( new TbCliente( getIdCliente() ) );
-        recibo.setFkAnoEconomico( anoEconomico );
+        recibo.setDescontoTotal(new BigDecimal(CfMethods.parseMoedaFormatada(TxtTotalDesconto.getText())));
+        recibo.setIdArmazemFK(new TbArmazem(2));
+        recibo.setCodigoUsuario(new TbUsuario(idUser));
+        recibo.setCodigoCliente(new TbCliente(getIdCliente()));
+        recibo.setFkAnoEconomico(anoEconomico);
 
-        recibo.setFkDocumento( getDocumento() );
+        recibo.setFkDocumento(getDocumento());
 
-        prox_doc = vendasController.gerarCodFact( getIdSerie() );
+        prox_doc = vendasController.gerarCodFact(getIdSerie());
 
-        System.out.println( "CODFACT: " + prox_doc );
-        recibo.setCodFact( prox_doc );
-        recibo.setRefCodFact( "" );
+        System.out.println("CODFACT: " + prox_doc);
+        recibo.setCodFact(prox_doc);
+        recibo.setRefCodFact("");
 //#HASH_TESTE        
 
 //        recibo.setHashCod( MetodosUtil.criptografia_hash( recibo, recibo.getTotalGeral().doubleValue(), conexao ) );
-        recibo.setTotalPorExtenso( lbValorPorExtenco.getText() );
+        recibo.setTotalPorExtenso(lbValorPorExtenco.getText());
 
 //        recibo.setAssinatura( MetodosUtil.assinatura_doc( recibo.getHashCod() ) );
 //        recibo.setAreaVenda( String.valueOf( cmb_area_venda_restaurante.getSelectedItem() ) );
 //        recibo.setQuarto( "" );
-        recibo.setFkCambio( new Cambio( 1 ) );
-        recibo.setStatusRecibo( true );
+        recibo.setFkCambio(new Cambio(1));
+        recibo.setStatusRecibo(true);
 
         /*status documento*/
-        recibo.setStatusEliminado( "false" );
-        recibo.setPerformance( "false" );
-        recibo.setCredito( "false" );
-        recibo.setCont( 0 );
-        recibo.setIdBanco( new TbBanco( 1 ) );
-        recibo.setFkAnoEconomico( new AnoEconomico( getIdAnoEconomico() ) );
+        recibo.setStatusEliminado("false");
+        recibo.setPerformance("false");
+        recibo.setCredito("false");
+        recibo.setCont(0);
+        recibo.setIdBanco(new TbBanco(1));
+        recibo.setFkAnoEconomico(new AnoEconomico(getIdAnoEconomico()));
 
         return recibo;
     }
 
-    public static boolean salvar_venda( double valor_entregue ) throws SQLException
-    {
+    public static boolean salvar_venda(double valor_entregue) throws SQLException {
 
         BDConexao conexaoTransation = new BDConexao();
-        vendasController = new VendasController( conexaoTransation );
-        amortizacaoDividaController = new AmortizacaoDividaController( conexaoTransation );
-        formaPagamentoItemController = new FormaPagamentoItemController( conexaoTransation );
-        formaPagamentoController = new FormaPagamentoController( conexaoTransation );
-        contaController = new ContaController( conexaoTransation );
-        usuariosController = new UsuariosController( conexaoTransation );
-        DocumentosController.start( conexaoTransation );
-        try
-        {
-            TbVenda recibo = prepararRecibo( valor_entregue );
-            if ( criarFE( recibo ) )
-            {
-                Integer last_venda = vendasController.salvarRetornaID( recibo );
-                System.out.println( "STATUS:factura criada com sucesso." );
+        vendasController = new VendasController(conexaoTransation);
+        amortizacaoDividaController = new AmortizacaoDividaController(conexaoTransation);
+        formaPagamentoItemController = new FormaPagamentoItemController(conexaoTransation);
+        formaPagamentoController = new FormaPagamentoController(conexaoTransation);
+        contaController = new ContaController(conexaoTransation);
+        usuariosController = new UsuariosController(conexaoTransation);
+        DocumentosController.start(conexaoTransation);
+        try {
+            TbVenda recibo = prepararRecibo(valor_entregue);
+            if (criarFE(recibo)) {
+                Integer last_venda = vendasController.salvarRetornaID(recibo);
+                System.out.println("STATUS:factura criada com sucesso.");
 
-                if ( last_venda != null )
-                {
-//                if ( getIdDocumento() == DVML.DOC_FACTURA_FT )
-//                {
-//                    ExtratoContaClienteController.registro_movimento_conta_cliente( vendasController.getLastVenda(), conexao );
-//                }
-                    salvarAmortizacaoDivida( last_venda, recibo, conexaoTransation );
-                    DocumentosController.commit( conexaoTransation );
+                if (last_venda != null) {
+                    ExtratoContaClienteController
+                            .registro_movimento_conta_cliente(
+                                    recibo, 
+                                    conexao
+                            );
+
+                    salvarAmortizacaoDivida(last_venda, recibo, conexaoTransation);
+                    DocumentosController.commit(conexaoTransation);
                     ListaVenda1 listaVenda = new ListaVenda1(
                             last_venda,
                             DVML.Abreviacao.RC,
@@ -1754,21 +1599,17 @@ public class EmissaoRecibos extends javax.swing.JFrame
                             motivos_isentos
                     );
                 }
-                System.out.println( "STATUS:itens adicionado na facrtura com sucesso." );
-            }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Falha ao processar a factura electronica." );
+                System.out.println("STATUS:itens adicionado na facrtura com sucesso.");
+            } else {
+                JOptionPane.showMessageDialog(null, "Falha ao processar a factura electronica.");
             }
 
-        }
-        catch ( Exception e )
-        {
-            DocumentosController.rollback( conexaoTransation );
+        } catch (Exception e) {
+            DocumentosController.rollback(conexaoTransation);
             conexaoTransation.close();
-            System.err.println( "STATUS: falha ao actualizar a factura" );
+            System.err.println("STATUS: falha ao actualizar a factura");
             e.printStackTrace();
-            JOptionPane.showMessageDialog( null, "Falha ao Processar a Factura", "FALHA", JOptionPane.ERROR_MESSAGE );
+            JOptionPane.showMessageDialog(null, "Falha ao Processar a Factura", "FALHA", JOptionPane.ERROR_MESSAGE);
 
             return false;
         }
@@ -1777,57 +1618,51 @@ public class EmissaoRecibos extends javax.swing.JFrame
 
     }
 
-    public static void salvarAmortizacaoDivida( Integer last_cod_recibo, TbVenda recibo, BDConexao conexaoTrasaction ) throws Exception
-    {
-        DefaultTableModel modelo = ( DefaultTableModel ) tabela_linhas.getModel();
+    public static void salvarAmortizacaoDivida(Integer last_cod_recibo, TbVenda recibo, BDConexao conexaoTrasaction) throws Exception {
+        DefaultTableModel modelo = (DefaultTableModel) tabela_linhas.getModel();
         Date data_actual = new Date();
         boolean efectuada = true;
         Date data_emissao = null;
         double valor_pagar = 0;
         AmortizacaoDivida amortizacaoDivida;
-        for ( int i = 0; i < tabela_linhas.getRowCount(); i++ )
-        {
-            boolean selecionado = ( boolean ) modelo.getValueAt( i, 0 );
-            String codFact = modelo.getValueAt( i, 2 ).toString();
-            String valorPagarLocal = modelo.getValueAt( i, 7 ).toString();
-            TbVenda factura = vendasController.getVendaByCodFact( codFact );
-            BigDecimal tax = new BigDecimal( MetodosUtil.getTaxaIva( getRegime() ) );
-            BigDecimal netNotal = new BigDecimal( 0 );
-            data_emissao = MetodosUtil.stringToDate( modelo.getValueAt( i, 5 ).toString(), "dd-MM-yyyy" );
+        for (int i = 0; i < tabela_linhas.getRowCount(); i++) {
+            boolean selecionado = (boolean) modelo.getValueAt(i, 0);
+            String codFact = modelo.getValueAt(i, 2).toString();
+            String valorPagarLocal = modelo.getValueAt(i, 7).toString();
+            TbVenda factura = vendasController.getVendaByCodFact(codFact);
+            BigDecimal tax = new BigDecimal(MetodosUtil.getTaxaIva(getRegime()));
+            BigDecimal netNotal = new BigDecimal(0);
+            data_emissao = MetodosUtil.stringToDate(modelo.getValueAt(i, 5).toString(), "dd-MM-yyyy");
 
-            if ( selecionado && Double.parseDouble( valorPagarLocal ) > 0.0 )
-            {
+            if (selecionado && Double.parseDouble(valorPagarLocal) > 0.0) {
 
-                double totalVendaFact = Double.parseDouble( String.valueOf( tabela_linhas.getModel().getValueAt( i, 6 ) ) );
-                double valorPago = Double.parseDouble( String.valueOf( tabela_linhas.getModel().getValueAt( i, 7 ) ) );
-                double valorEntregue = Double.parseDouble( String.valueOf( tabela_linhas.getModel().getValueAt( i, 8 ) ) );
-                double desconto = Double.parseDouble( String.valueOf( tabela_linhas.getModel().getValueAt( i, 9 ) ) );
-                double valorPendente = Double.parseDouble( String.valueOf( tabela_linhas.getModel().getValueAt( i, 11 ) ) );
+                double totalVendaFact = Double.parseDouble(String.valueOf(tabela_linhas.getModel().getValueAt(i, 6)));
+                double valorPago = Double.parseDouble(String.valueOf(tabela_linhas.getModel().getValueAt(i, 7)));
+                double valorEntregue = Double.parseDouble(String.valueOf(tabela_linhas.getModel().getValueAt(i, 8)));
+                double desconto = Double.parseDouble(String.valueOf(tabela_linhas.getModel().getValueAt(i, 9)));
+                double valorPendente = Double.parseDouble(String.valueOf(tabela_linhas.getModel().getValueAt(i, 11)));
 
-                double valorPercentual = (( valorPago * tax.doubleValue() ) / 100);
-                netNotal = new BigDecimal( valorPago - valorPercentual );
+                double valorPercentual = ((valorPago * tax.doubleValue()) / 100);
+                netNotal = new BigDecimal(valorPago - valorPercentual);
 
                 amortizacaoDivida = new AmortizacaoDivida();
 
-                amortizacaoDivida.setFkVenda( factura );
-                amortizacaoDivida.setRefCodFact( recibo.getCodFact() );
-                amortizacaoDivida.setData( data_actual );
-                amortizacaoDivida.setTotalVendaFact( totalVendaFact );
-                amortizacaoDivida.setValorEntregue( valorEntregue );
-                amortizacaoDivida.setDesconto( desconto );
-                amortizacaoDivida.setValorPendente( valorPendente );
-                amortizacaoDivida.setValorPago( new BigDecimal( valorPago ) );
-                amortizacaoDivida.setFkUsuario( new TbUsuario( idUser ) );
-                amortizacaoDivida.setNetTotal( netNotal );
-                amortizacaoDivida.setTax( tax );
+                amortizacaoDivida.setFkVenda(factura);
+                amortizacaoDivida.setRefCodFact(recibo.getCodFact());
+                amortizacaoDivida.setData(data_actual);
+                amortizacaoDivida.setTotalVendaFact(totalVendaFact);
+                amortizacaoDivida.setValorEntregue(valorEntregue);
+                amortizacaoDivida.setDesconto(desconto);
+                amortizacaoDivida.setValorPendente(valorPendente);
+                amortizacaoDivida.setValorPago(new BigDecimal(valorPago));
+                amortizacaoDivida.setFkUsuario(new TbUsuario(idUser));
+                amortizacaoDivida.setNetTotal(netNotal);
+                amortizacaoDivida.setTax(tax);
 
-                try
-                {
+                try {
                     //cria amortizacaoDivida
-                    amortizacaoDividaController.salvar( amortizacaoDivida );
-                }
-                catch ( Exception e )
-                {
+                    amortizacaoDividaController.salvar(amortizacaoDivida);
+                } catch (Exception e) {
                     efectuada = false;
                     e.printStackTrace();
                     break;
@@ -1837,88 +1672,74 @@ public class EmissaoRecibos extends javax.swing.JFrame
 
         }
 
-        if ( efectuada )
-        {
+        if (efectuada) {
             List<TbProduto> lista_produto_isentos = new ArrayList<>();
 //            lista_produto_isentos = getProdutosIsentos();
-            motivos_isentos = MetodosUtil.getMotivoIsensaoProdutos( lista_produto_isentos );
-            System.err.println( "MOTIVOS: " + motivos_isentos );
-            registrar_forma_pagamento( last_cod_recibo, conexaoTrasaction );
+            motivos_isentos = MetodosUtil.getMotivoIsensaoProdutos(lista_produto_isentos);
+            System.err.println("MOTIVOS: " + motivos_isentos);
+            registrar_forma_pagamento(last_cod_recibo, conexaoTrasaction);
 //            actualizar_cod_doc();
 
         }
 
-        modelo.setValueAt( valor_pagar, linha_actual, 7 );
+        modelo.setValueAt(valor_pagar, linha_actual, 7);
     }
 
-    private static void actualizar_cod_doc()
-    {
+    private static void actualizar_cod_doc() {
         Documento documento = getDocumento();
-        documento.setCodUltimoDoc( getDocProxCod() );
-        documento.setDescricaoUltimoDoc( getProximoDoc() );
-        documento.setUltimaData( new Date() );
-        try
-        {
-            new DocumentoDao().edit( documento );
-        }
-        catch ( Exception e )
-        {
-            System.err.println( "Falha ao actualizar o documento" );
+        documento.setCodUltimoDoc(getDocProxCod());
+        documento.setDescricaoUltimoDoc(getProximoDoc());
+        documento.setUltimaData(new Date());
+        try {
+            new DocumentoDao().edit(documento);
+        } catch (Exception e) {
+            System.err.println("Falha ao actualizar o documento");
         }
     }
 
-    public static int getIdMoeda()
-    {
-        try
-        {
+    public static int getIdMoeda() {
+        try {
             return 1;
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             return 0;
         }
 
     }
 
-    public static boolean registrar_forma_pagamento( int id_venda, BDConexao conexaoParm )
-    {
-        DefaultTableModel modelo = ( DefaultTableModel ) FormaPagamentoVisao.tabela_forma_pagamento.getModel();
+    public static boolean registrar_forma_pagamento(int id_venda, BDConexao conexaoParm) {
+        DefaultTableModel modelo = (DefaultTableModel) FormaPagamentoVisao.tabela_forma_pagamento.getModel();
         FormaPagamentoItem formaPagamentoItem;
         Contas contas;
-        double troco = CfMethods.parseMoedaFormatada( FormaPagamentoVisao.lb_troco.getText() );
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
+        double troco = CfMethods.parseMoedaFormatada(FormaPagamentoVisao.lb_troco.getText());
+        for (int i = 0; i < modelo.getRowCount(); i++) {
             formaPagamentoItem = new FormaPagamentoItem();
-            Integer id_forma_pagamento = Integer.parseInt( modelo.getValueAt( i, 0 ).toString() );
-            FormaPagamento formaPagamento = formaPagamentoController.findByDescrisao( modelo.getValueAt( i, 1 ).toString() );
-            contas = ( Contas ) contaController.findById( formaPagamento.getFkContaAssociada() );
+            Integer id_forma_pagamento = Integer.parseInt(modelo.getValueAt(i, 0).toString());
+            FormaPagamento formaPagamento = formaPagamentoController.findByDescrisao(modelo.getValueAt(i, 1).toString());
+            contas = (Contas) contaController.findById(formaPagamento.getFkContaAssociada());
 
-            String referencia = ( modelo.getValueAt( i, 2 ) != null ) ? modelo.getValueAt( i, 2 ).toString() : "n/a";
+            String referencia = (modelo.getValueAt(i, 2) != null) ? modelo.getValueAt(i, 2).toString() : "n/a";
 //            String valor = ( modelo.getValueAt( i, 3 ) != null ) ? modelo.getValueAt( i, 3 ).toString() : "0";
-            String valor = ( !modelo.getValueAt( i, 3 ).toString().equals( "" ) ) ? modelo.getValueAt( i, 3 ).toString() : "0";
+            String valor = (!modelo.getValueAt(i, 3).toString().equals("")) ? modelo.getValueAt(i, 3).toString() : "0";
 
-            formaPagamentoItem.setValor( new BigDecimal( valor ) );
-            formaPagamentoItem.setReferencia( referencia );
-            formaPagamentoItem.setTroco( new BigDecimal( troco ) );
+            formaPagamentoItem.setValor(new BigDecimal(valor));
+            formaPagamentoItem.setReferencia(referencia);
+            formaPagamentoItem.setTroco(new BigDecimal(troco));
             formaPagamentoItem.setValor_real(
-                    formaPagamentoItem.getValor().subtract( formaPagamentoItem.getTroco() ) );
-            formaPagamentoItem.setFkVenda( new TbVenda( id_venda ) );
-            formaPagamentoItem.setFkFormaPagamento( new FormaPagamento( id_forma_pagamento ) );
+                    formaPagamentoItem.getValor().subtract(formaPagamentoItem.getTroco()));
+            formaPagamentoItem.setFkVenda(new TbVenda(id_venda));
+            formaPagamentoItem.setFkFormaPagamento(new FormaPagamento(id_forma_pagamento));
 
-            try
-            {
-                if ( !valor.equals( "0" ) )
-                {
-                    formaPagamentoItemController.salvar( formaPagamentoItem );
+            try {
+                if (!valor.equals("0")) {
+                    formaPagamentoItemController.salvar(formaPagamentoItem);
 
-                    if ( Objects.nonNull( contas ) )
-                    {
-                        MetodosUtilTS.entradaTesouraria( contas,
+                    if (Objects.nonNull(contas)) {
+                        MetodosUtilTS.entradaTesouraria(contas,
                                 lb_proximo_documento.getText(),
                                 formaPagamento,
                                 referencia,
-                                new BigDecimal( valor ),
+                                new BigDecimal(valor),
                                 idUser,
                                 usuariosController,
                                 cmc,
@@ -1928,9 +1749,7 @@ public class EmissaoRecibos extends javax.swing.JFrame
                     troco = 0;
 
                 }
-            }
-            catch ( Exception e )
-            {
+            } catch (Exception e) {
                 return false;
             }
         }
@@ -1951,7 +1770,7 @@ public class EmissaoRecibos extends javax.swing.JFrame
 //            formaPagamentoItem = new FormaPagamentoItem();
 //            Integer id_forma_pagamento = Integer.parseInt( modelo.getValueAt( i, 0 ).toString() );
 //            String referencia = ( modelo.getValueAt( i, 2 ) != null ) ? modelo.getValueAt( i, 2 ).toString() : "n/a";
-////            String valor = ( modelo.getValueAt( i, 3 ) != null ) ? modelo.getValueAt( i, 3 ).toString() : "0";
+    ////            String valor = ( modelo.getValueAt( i, 3 ) != null ) ? modelo.getValueAt( i, 3 ).toString() : "0";
 //            String valor = ( !modelo.getValueAt( i, 3 ).toString().equals( "" ) ) ? modelo.getValueAt( i, 3 ).toString() : "0";
 //
 //            formaPagamentoItem.setValor( new BigDecimal( valor ) );
@@ -1976,43 +1795,34 @@ public class EmissaoRecibos extends javax.swing.JFrame
 //
 //        return true;
 //    }
-    private void finalizar_recibo()
-    {
-        if ( JOptionPane.showConfirmDialog( null, "Caro usuario este processo é irreversivel, deseja continuar?" ) == JOptionPane.YES_OPTION )
-        {
-            new FormaPagamentoVisao( this, rootPaneCheckingEnabled, null, DVML.EMISSAO_RECIBOS, BDConexao.getInstancia() ).setVisible( true );
+    private void finalizar_recibo() {
+        if (JOptionPane.showConfirmDialog(null, "Caro usuario este processo é irreversivel, deseja continuar?") == JOptionPane.YES_OPTION) {
+            new FormaPagamentoVisao(this, rootPaneCheckingEnabled, null, DVML.EMISSAO_RECIBOS, BDConexao.getInstancia()).setVisible(true);
 //            new FormaPagamentoVisao( this, rootPaneCheckingEnabled, DVML.EMISSAO_RECIBOS, emf ).setVisible( true );
         }
     }
 
-    private static String getCodDocActualizador()
-    {
-        try
-        {
-            documento = documentoDao.findDocumento( getIdDocumento() );
-            anoEconomico = anoEconomicoDao.findAnoEconomico( getIdAnoEconomico() );
+    private static String getCodDocActualizador() {
+        try {
+            documento = documentoDao.findDocumento(getIdDocumento());
+            anoEconomico = anoEconomicoDao.findAnoEconomico(getIdAnoEconomico());
             // this.doc_prox_cod = documento.getCodUltimoDoc() + 1;
-            doc_prox_cod = vendaDao.getUltimaContagemByIdDocumentoAndAnoEconomico( getIdDocumento(), getIdAnoEconomico(), conexao ) + 1;
+            doc_prox_cod = vendaDao.getUltimaContagemByIdDocumentoAndAnoEconomico(getIdDocumento(), getIdAnoEconomico(), conexao) + 1;
             prox_doc = documento.getAbreviacao();
             //FA Série / codigo
             prox_doc += " " + anoEconomico.getSerie() + "/" + doc_prox_cod;
             return prox_doc;
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             return "";
         }
     }
 
-    private static Documento getDocumento()
-    {
-        return new DocumentoDao().findDocumento( DOC_RECIBO_RC );
+    private static Documento getDocumento() {
+        return new DocumentoDao().findDocumento(DOC_RECIBO_RC);
     }
 
-    private void mostrar_proximo_codigo_documento1()
-    {
-        try
-        {
+    private void mostrar_proximo_codigo_documento1() {
+        try {
             Documento documento = getDocumento();
             int doc_prox_cod = documento.getCodUltimoDoc() + 1;
             //prox_doc = " " + documento.getAbreviacao();
@@ -2021,22 +1831,18 @@ public class EmissaoRecibos extends javax.swing.JFrame
             prox_doc += " " + getAnoEconomicoSerie().getSerie() + "/" + doc_prox_cod;
 
 //            tituloJLabel.setText( prox_doc );
-            lb_proximo_documento.setText( "PRÓXIMO RECIBO. :" + prox_doc );
+            lb_proximo_documento.setText("PRÓXIMO RECIBO. :" + prox_doc);
 //            proximoDocJLabel.setText( "PRÓXIMO RECIBO. :" + prox_doc );
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
 //            proximoDocJLabel.setText( "" );
         }
     }
 
-    private static String iniciais_extenso()
-    {
-        Documento documento_local = documentoDao.findDocumento( getIdDocumento() );
+    private static String iniciais_extenso() {
+        Documento documento_local = documentoDao.findDocumento(getIdDocumento());
         String abreviacao_local = documento_local.getAbreviacao();
 
-        switch (abreviacao_local)
-        {
+        switch (abreviacao_local) {
             case "FT":
                 return "Facturamos o valor de: ";
             case "FR":
@@ -2065,29 +1871,23 @@ public class EmissaoRecibos extends javax.swing.JFrame
 //            lb_proximo_documento.setText( "" );
 //        }
 //    }
-    private static void mostrar_proximo_codigo_documento()
-    {
+    private static void mostrar_proximo_codigo_documento() {
 
-        try
-        {
-            prox_doc = vendasController.gerarCodFact( getIdSerie() );
-            lb_proximo_documento.setText( prox_doc );
-        }
-        catch ( Exception e )
-        {
+        try {
+            prox_doc = vendasController.gerarCodFact(getIdSerie());
+            lb_proximo_documento.setText(prox_doc);
+        } catch (Exception e) {
             e.printStackTrace();
             documento = null;
-            lb_proximo_documento.setText( "" );
+            lb_proximo_documento.setText("");
 
         }
 
     }
 
-    private void actualizar_abreviacao()
-    {
+    private void actualizar_abreviacao() {
 
-        switch (getIdDocumento())
-        {
+        switch (getIdDocumento()) {
             case DVML.DOC_RECIBO_RC:
                 this.abreviacao = DVML.Abreviacao.RC;
                 break;
@@ -2104,25 +1904,21 @@ public class EmissaoRecibos extends javax.swing.JFrame
 //        lb_ano_academico.setText ( "ANO ECONÔMICO: " + this.anoEconomico.getSerie () );
 //
 //    }
-    private static AnoEconomico getAnoEconomicoSerie()
-    {
+    private static AnoEconomico getAnoEconomicoSerie() {
 
         //return new AnoEconomicoDao().getLastObject();
         return getAnoEconomicoActual();
     }
 
-    private static AnoEconomico getAnoEconomicoActual()
-    {
+    private static AnoEconomico getAnoEconomicoActual() {
 
         List<AnoEconomico> list_ano_economico = anoEconomicoDao.buscaTodosObject();
-        return list_ano_economico.get( 0 );
+        return list_ano_economico.get(0);
 
     }
 
-    private static String getProximoDoc()
-    {
-        try
-        {
+    private static String getProximoDoc() {
+        try {
             Documento documento = getDocumento();
             int doc_prox_cod = documento.getCodUltimoDoc() + 1;
             //prox_doc = " " + documento.getAbreviacao();
@@ -2132,23 +1928,18 @@ public class EmissaoRecibos extends javax.swing.JFrame
 
             return prox_doc;
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             return null;
         }
     }
 
-    public static int getCodigoArmazem()
-    {
+    public static int getCodigoArmazem() {
         //return conexao.getCodigoPublico("tb_armazem", String.valueOf(  cmbArmazem.getSelectedItem() ) );   
-        return armazemDao.getArmazemByDescricao( cmbArmazem.getSelectedItem().toString() ).getCodigo();
+        return armazemDao.getArmazemByDescricao(cmbArmazem.getSelectedItem().toString()).getCodigo();
     }
 
-    private static int getDocProxCod()
-    {
-        try
-        {
+    private static int getDocProxCod() {
+        try {
             Documento documento = getDocumento();
             int doc_prox_cod = documento.getCodUltimoDoc() + 1;
             //prox_doc = " " + documento.getAbreviacao();
@@ -2157,39 +1948,28 @@ public class EmissaoRecibos extends javax.swing.JFrame
             prox_doc += " " + getAnoEconomicoSerie().getSerie() + "/" + doc_prox_cod;
             return doc_prox_cod;
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             return 0;
         }
     }
 
-    public static int getIdDocumento()
-    {
-        try
-        {
-            return documentoDao.getIdByDescricao( cmbTipoDocumento.getSelectedItem().toString() );
-        }
-        catch ( Exception e )
-        {
+    public static int getIdDocumento() {
+        try {
+            return documentoDao.getIdByDescricao(cmbTipoDocumento.getSelectedItem().toString());
+        } catch (Exception e) {
             return 0;
         }
     }
 
-    public static int getIdAnoEconomico()
-    {
-        try
-        {
-            return anoEconomicoDao.getIdByDescricao( cmbAnoEconomico.getSelectedItem().toString() );
-        }
-        catch ( Exception e )
-        {
+    public static int getIdAnoEconomico() {
+        try {
+            return anoEconomicoDao.getIdByDescricao(cmbAnoEconomico.getSelectedItem().toString());
+        } catch (Exception e) {
             return 0;
         }
     }
 
-    private static boolean data_documento_superior_ou_igual_ao_ultimo_doc()
-    {
+    private static boolean data_documento_superior_ou_igual_ao_ultimo_doc() {
         //buscando o id do documento.
         int pk_documento = getIdDocumento();
         //buscando o id do ano ecoonomico.
@@ -2197,22 +1977,19 @@ public class EmissaoRecibos extends javax.swing.JFrame
 
         //busca o último documento da série em questão.
         // Integer cod_ultima_venda = vendaDao.getLastVenda( pk_documento );
-        Integer cod_ultima_venda = vendaDao.getLastVenda( pk_documento, pk_ano_economico );
-        if ( cod_ultima_venda != 0 )
-        {
+        Integer cod_ultima_venda = vendaDao.getLastVenda(pk_documento, pk_ano_economico);
+        if (cod_ultima_venda != 0) {
 
             //busca o objecto para retirar apenas a data do seu procesamento
-            TbVenda venda_local = vendaDao.findTbVenda( cod_ultima_venda );
+            TbVenda venda_local = vendaDao.findTbVenda(cod_ultima_venda);
             //retirando a data do documebto
             Date data_ultimo_documento = venda_local.getDataVenda();
             //pegando a data do documento (data actual do sistema)
             Date data_actual = dc_data_documento.getDate();
-            return MetodosUtil.maior_data_1_data_2( data_actual, data_ultimo_documento )
-                    || MetodosUtil.igual_data_1_data_2( data_actual, data_ultimo_documento );
+            return MetodosUtil.maior_data_1_data_2(data_actual, data_ultimo_documento)
+                    || MetodosUtil.igual_data_1_data_2(data_actual, data_ultimo_documento);
 
-        }
-        else
-        {
+        } else {
             return true;
         }
 
@@ -2225,87 +2002,80 @@ public class EmissaoRecibos extends javax.swing.JFrame
      * @descrição: Verifica se a data do documento é superior ao actual, retorna
      * verdadeiro se é inferior caso contrário falso
      */
-    private static void data_documento_superior_data_actual()
-    {
+    private static void data_documento_superior_data_actual() {
 
         //retirando a data do documento
         Date data_documento = dc_data_documento.getDate();
         //pegando a data actual do sistema 
         Date data_sistema = new Date();
         //comparar as datas
-        if ( MetodosUtil.maior_data_1_data_2( data_documento, data_sistema ) )
-        {
-            JOptionPane.showMessageDialog( null, "Após essa emissão, não poderá ser emitido um novo documento\n "
+        if (MetodosUtil.maior_data_1_data_2(data_documento, data_sistema)) {
+            JOptionPane.showMessageDialog(null, "Após essa emissão, não poderá ser emitido um novo documento\n "
                     + "com a data actual ou anterior, dentro da mesma série.",
-                    "AVISO", JOptionPane.WARNING_MESSAGE );
+                    "AVISO", JOptionPane.WARNING_MESSAGE);
 
-            aviso_continuar_documento = JOptionPane.showConfirmDialog( null, "Ainda assim deseja continuar com a operação ?" )
+            aviso_continuar_documento = JOptionPane.showConfirmDialog(null, "Ainda assim deseja continuar com a operação ?")
                     == JOptionPane.YES_OPTION;
 
-        }
-        else
-        {
+        } else {
             aviso_continuar_documento = true;
         }
 
     }
 
-    private static String getValor_por_extenco( Double valor )
-    {
-        System.out.println( "Valor XXXXXXX: " + valor );
+    private static String getValor_por_extenco(Double valor) {
+        System.out.println("Valor XXXXXXX: " + valor);
 //        lbValorPorExtenco.setText ( MetodosUtil.valorPorExtenso ( totalAmortizado, "Kwanza" ) );
 
-        return MetodosUtil.valorPorExtenso( valor, "Kwanza" );
+        return MetodosUtil.valorPorExtenso(valor, "Kwanza");
     }
 
-    private static void valor_por_extenco()
-    {
-        System.out.println( "Valor XXXXXXX: " + CfMethods.parseMoedaFormatada( totalAPagarJTextField.getText() ) );
-        lbValorPorExtenco.setText( MetodosUtil.valorPorExtenso( CfMethods.parseMoedaFormatada( totalAPagarJTextField.getText() ), "Kwanzas" ) );
+    private static void valor_por_extenco() {
+        System.out.println("Valor XXXXXXX: " + CfMethods.parseMoedaFormatada(totalAPagarJTextField.getText()));
+        lbValorPorExtenco.setText(MetodosUtil.valorPorExtenso(CfMethods.parseMoedaFormatada(totalAPagarJTextField.getText()), "Kwanzas"));
     }
 
-    public static void remover_item_carrinho()
-    {
+    public static void remover_item_carrinho() {
 
-        DefaultTableModel modelo = ( DefaultTableModel ) tabela_linhas.getModel();
-        modelo.removeRow( tabela_linhas.getSelectedRow() );
+        DefaultTableModel modelo = (DefaultTableModel) tabela_linhas.getModel();
+        modelo.removeRow(tabela_linhas.getSelectedRow());
 //        actualizar_total();
 
     }
 
-    private static String getRegime()
-    {
-        DadosInstituicaoController d = new DadosInstituicaoController( conexao );
-        return d.findByCodigo( 1 ).getRegime();
+    private static String getRegime() {
+        DadosInstituicaoController d = new DadosInstituicaoController(conexao);
+        return d.findByCodigo(1).getRegime();
     }
 
-    private static boolean criarFE( TbVenda venda ) throws SQLException
-    {
-        String taxRegistrationNumber = dadosInstituicaoController.findByCodigo( 1 ).getNif();
+    private static boolean criarFE(TbVenda venda) throws SQLException {
+        String taxRegistrationNumber = dadosInstituicaoController.findByCodigo(1).getNif();
 
-        Documento documento = ( Documento ) documentosController.findById(
+        String originatingON = "";
+
+        Documento documento = (Documento) documentosController.findById(
                 6
         );
 //        Documento documento = ( Documento ) documentosController.findById(
 //                venda.getFkDocumento().getPkDocumento()
 //        );
 
-        TbCliente cliente = ( TbCliente ) clientesController.findById(
+        TbCliente cliente = (TbCliente) clientesController.findById(
                 getIdCliente()
         );
 
         List<DocumentDTO> documentDTOs = new ArrayList<>();
         DocumentDTO doc = new DocumentDTO();
 
-        doc.setDocumentNo( venda.getCodFact() );
-        doc.setDocumentStatus( "N" );
-        doc.setDocumentDate( DataUtil.converterNormal( venda.getDataVenda() ) );
-        doc.setDocumentType( documento.getAbreviacao() );
-        doc.setEacCode( "12345" );
-        doc.setSystemEntryDate( DataUtil.converter( venda.getDataVenda() ) );
-        doc.setCustomerTaxID( cliente.getNif() );
-        doc.setCustomerCountry( cliente.getPaisISO() );
-        doc.setCompanyName( cliente.getNome() );
+        doc.setDocumentNo(venda.getCodFact());
+        doc.setDocumentStatus("N");
+        doc.setDocumentDate(DataUtil.converterNormal(venda.getDataVenda()));
+        doc.setDocumentType(documento.getAbreviacao());
+        doc.setEacCode("12345");
+        doc.setSystemEntryDate(DataUtil.converter(venda.getDataVenda()));
+        doc.setCustomerTaxID(cliente.getNif());
+        doc.setCustomerCountry(cliente.getPaisISO());
+        doc.setCompanyName(cliente.getNome());
 
         BigDecimal totalBase = BigDecimal.ZERO;
         BigDecimal totalIva = BigDecimal.ZERO;
@@ -2314,53 +2084,49 @@ public class EmissaoRecibos extends javax.swing.JFrame
 
         List<SourceDocumentDTO> listSourceDocumentDTOs = new ArrayList<>();
 
-        DefaultTableModel modelo = ( DefaultTableModel ) tabela_linhas.getModel();
-        for ( int i = 0; i < tabela_linhas.getRowCount(); i++ )
-        {
-            boolean selecionado = ( boolean ) modelo.getValueAt( i, 0 );
-            String vslorPagarLocal = modelo.getValueAt( i, 7 ).toString();
-            try
-            {
-                if ( selecionado && Double.parseDouble( vslorPagarLocal ) > 0.0 )
-                {
-                    String originatingON = modelo.getValueAt( i, 2 ).toString();
-                    String documentDate = modelo.getValueAt( i, 5 ).toString();
+        DefaultTableModel modelo = (DefaultTableModel) tabela_linhas.getModel();
+        for (int i = 0; i < tabela_linhas.getRowCount(); i++) {
+            boolean selecionado = (boolean) modelo.getValueAt(i, 0);
+            String vslorPagarLocal = modelo.getValueAt(i, 7).toString();
+            try {
+                if (selecionado && Double.parseDouble(vslorPagarLocal) > 0.0) {
+                    originatingON = modelo.getValueAt(i, 2).toString();
+                    String documentDate = modelo.getValueAt(i, 5).toString();
                     double creditAmount = Double.parseDouble(
-                            String.valueOf( tabela_linhas.getModel().getValueAt( i, 7 ) ) );
+                            String.valueOf(tabela_linhas.getModel().getValueAt(i, 7)));
 
                     SourceDocumentDTO sourceDocumentDTO = new SourceDocumentDTO();
-                    sourceDocumentDTO.setLineNo( i + 1 );
-                    sourceDocumentDTO.setOriginatingON( originatingON );
-                    sourceDocumentDTO.setDocumentDate( documentDate );
-                    sourceDocumentDTO.setCreditAmount( new BigDecimal( creditAmount ) );
-                    listSourceDocumentDTOs.add( sourceDocumentDTO );
+                    sourceDocumentDTO.setLineNo(i + 1);
+                    sourceDocumentDTO.setOriginatingON(originatingON);
+                    sourceDocumentDTO.setDocumentDate(documentDate);
+                    sourceDocumentDTO.setCreditAmount(new BigDecimal(creditAmount));
+                    listSourceDocumentDTOs.add(sourceDocumentDTO);
 
-                    totalBase = totalBase.add( new BigDecimal( creditAmount ) );
-                    totalFinal = totalBase.add( totalIva );
+                    totalBase = totalBase.add(new BigDecimal(creditAmount));
+                    totalFinal = totalBase.add(totalIva);
                 }
-            }
-            catch ( Exception e )
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
                 break;
             }
         }
 
-        doc.setSourceDocuments( listSourceDocumentDTOs );
+        doc.setSourceDocuments(listSourceDocumentDTOs);
 
         DocumentTotalsDTO documentsTotals = new DocumentTotalsDTO();
-        documentsTotals.setNetTotal( totalBase );
-        documentsTotals.setTaxPayable( totalIva );
-        documentsTotals.setGrossTotal( totalFinal );
+        documentsTotals.setNetTotal(totalBase);
+        documentsTotals.setTaxPayable(totalIva);
+        documentsTotals.setGrossTotal(totalFinal);
 
         /**
          * PREENCHER OS TOTAIS
          */
-        doc.setDocumentTotals( documentsTotals );
+        doc.setDocumentTotals(documentsTotals);
 
-        documentDTOs.add( doc );
-        venda.setTotalIva( totalIva );
-        venda.setTotalGeral( totalBase );
+        documentDTOs.add(doc);
+
+        venda.setTotalIva(totalIva);
+        venda.setTotalGeral(totalBase);
 
 //        Series serie = seriesController.findByDocumentoEAno( getIdDocumento(), getIdAnoEconomico() );
 //        Documento documentoType = documentosController.findDocumentoById( serie.getFkDocumento() );
@@ -2369,42 +2135,61 @@ public class EmissaoRecibos extends javax.swing.JFrame
                 documentDTOs
         );
 
-        String submissionUUID = ( String ) jsonPayload.get( "submissionUUID" );
-        System.out.println( "UUID: " + submissionUUID );
+        String submissionUUID = (String) jsonPayload.get("submissionUUID");
+        System.out.println("UUID: " + submissionUUID);
 
-        venda.setSubmissionUUID( submissionUUID );
+        venda.setSubmissionUUID(submissionUUID);
+        venda.setRefCodFact(originatingON);
 
-        String payload = JsonUtil.toJson( jsonPayload );
+        String payload = JsonUtil.toJson(jsonPayload);
 
-        JsonUtil.print( payload );
+        JsonUtil.print(payload);
 
-        String basicAuth = BasicAuthUtil.gerarAuthorizationHeader( FEConfig.getUsername(), FEConfig.getPassword() );
-        try
-        {
-            String resposta = HttpClientUtil.postJson( FEConfig.getEndpointRegistrarFactura(), payload, basicAuth );
-            JsonUtil.print( resposta );
-            return PayloadFactory.obterEstadoFactura( taxRegistrationNumber, resposta, venda );
-        }
-        catch ( Exception e )
-        {
+        String basicAuth = BasicAuthUtil.gerarAuthorizationHeader(FEConfig.getUsername(), FEConfig.getPassword());
+        try {
+            String resposta = HttpClientUtil.postJson(FEConfig.getEndpointRegistrarFactura(), payload, basicAuth);
+            JsonUtil.print(resposta);
+            return PayloadFactory.obterEstadoFactura(taxRegistrationNumber, resposta, venda);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    private static int getIdSerie()
-    {
-        try
-        {
-//            Series serie = seriesController.findByDesignacao( cmbSeries.getSelectedItem().toString() );
-//            return serie.getId();
+    private static int getIdSerie() {
+        try {
+            Series serie = seriesController.findByDesignacao(cmbSeries.getSelectedItem().toString());
+            return serie.getId();
 
-            return 4;
-        }
-        catch ( Exception e )
-        {
+//            return 4;
+        } catch (Exception e) {
         }
         return 0;
 
     }
+
+    private void visualizarSeries() {
+        int idDocumento = getIdDocumento();
+        int idAnoEconomico = getIdAnoEconomico();
+
+        // Recupera todas as séries do documento e ano económico
+        List<Series> listarPorDocumentoEAno = seriesController.listarPorDocumentoEAno(idDocumento, idAnoEconomico);
+
+        // Limpa o combobox antes de preencher
+        cmbSeries.removeAllItems();
+
+        // Verifica se encontrou alguma série
+        if (listarPorDocumentoEAno.isEmpty()) {
+
+            cmbSeries.addItem("Nenhuma série disponível");
+            return;
+        }
+
+        // Preenche o combobox com as séries
+        for (Series s : listarPorDocumentoEAno) {
+
+            cmbSeries.addItem(s.getDesignacao());
+        }
+    }
+
 }

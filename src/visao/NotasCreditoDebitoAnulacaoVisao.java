@@ -1116,7 +1116,8 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
                         if ( documentosalvoComSucesso )
                         {
 
-                            if ( orginDoc.getFkDocumento().getPkDocumento().equals( DVML.DOC_FACTURA_FT ) || orginDoc.getFkDocumento().getPkDocumento().equals( DVML.DOC_RECIBO_RC ) )
+                            if ( orginDoc.getFkDocumento().getPkDocumento().equals( DVML.DOC_FACTURA_FT ) 
+                                    || orginDoc.getFkDocumento().getPkDocumento().equals( DVML.DOC_RECIBO_RC ) )
                             {
                                 ExtratoContaClienteController.registro_movimento_conta_cliente( localNote, conexao );
                             }

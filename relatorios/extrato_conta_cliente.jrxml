@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lista_venda_order_usuario" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="e2a268c3-f53c-4fca-b778-32eea02972ea">
-	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.zoom" value="1.818181818181819"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="79"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -226,7 +226,7 @@ WHERE
 				<textFieldExpression><![CDATA[$F{SALDO_ANTERIOR}.setScale(2, RoundingMode.CEILING)]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="e14e281d-4b24-4960-b5e4-0e0f05ce833e" mode="Opaque" x="1" y="86" width="55" height="14" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement uuid="e14e281d-4b24-4960-b5e4-0e0f05ce833e" mode="Opaque" x="1" y="86" width="81" height="14" forecolor="#FFFFFF" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
@@ -237,7 +237,7 @@ WHERE
 				<text><![CDATA[Data]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="aabb5ae7-949d-471b-9a22-12e7c8bafbb0" mode="Opaque" x="56" y="86" width="57" height="14" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement uuid="aabb5ae7-949d-471b-9a22-12e7c8bafbb0" mode="Opaque" x="82" y="86" width="31" height="14" forecolor="#FFFFFF" backcolor="#999999"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
@@ -245,7 +245,7 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Documento]]></text>
+				<text><![CDATA[Doc.]]></text>
 			</staticText>
 			<staticText>
 				<reportElement uuid="21e14048-431a-46ce-931e-d80ed4688957" mode="Opaque" x="179" y="86" width="106" height="14" forecolor="#FFFFFF" backcolor="#999999"/>
@@ -387,7 +387,7 @@ WHERE
 	<detail>
 		<band height="20" splitType="Stretch">
 			<textField isStretchWithOverflow="true" pattern="dd-MM-yyyy" isBlankWhenNull="true">
-				<reportElement uuid="afad56c6-fc75-498c-bcd9-8633e36c9926" key="textField" style="style_degradacao" x="0" y="0" width="55" height="20"/>
+				<reportElement uuid="afad56c6-fc75-498c-bcd9-8633e36c9926" key="textField" style="style_degradacao" x="0" y="0" width="82" height="20"/>
 				<box leftPadding="2" rightPadding="2"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="8"/>
@@ -395,7 +395,7 @@ WHERE
 				<textFieldExpression><![CDATA[$F{extrato_conta_cliente_data_hora}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement uuid="9047f180-0b9e-49f2-a00e-758b573562e7" key="textField" style="style_degradacao" x="55" y="0" width="57" height="20"/>
+				<reportElement uuid="9047f180-0b9e-49f2-a00e-758b573562e7" key="textField" style="style_degradacao" x="82" y="0" width="30" height="20"/>
 				<box leftPadding="2" rightPadding="2"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="7"/>
