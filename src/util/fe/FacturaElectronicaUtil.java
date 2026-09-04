@@ -46,7 +46,16 @@ public class FacturaElectronicaUtil {
         BigDecimal descVal = BigDecimal.valueOf(Double.parseDouble(table.getValueAt(index, cols.getCOLUMN_DESCONTO()).toString()));
         BigDecimal taxa = BigDecimal.valueOf(Double.parseDouble(table.getValueAt(index, cols.getCOLUMN_TAXA()).toString()));
 
-        return construirLineDTO(index + 1, idProd, desc, unitPrice, qtd, descVal, taxa, venda);
+        return construirLineDTO(
+                index + 1,
+                idProd,
+                desc,
+                unitPrice,
+                qtd,
+                descVal,
+                taxa,
+                venda
+        );
     }
 
     private static LineDTO mapItemVendaToDTO(int index, TbItemVenda item, PrecosController ctrl, TbVenda venda) {
@@ -63,52 +72,8 @@ public class FacturaElectronicaUtil {
         );
     }
 
-//    private static LineDTO construirLineDTO(int lineNo, String cod, String desc, BigDecimal price, BigDecimal qtd, BigDecimal discount, BigDecimal taxPerc, TbVenda venda) {
-//        BigDecimal unitPriceBase = price.subtract(discount);
-//        BigDecimal base = unitPriceBase.multiply(qtd).setScale(2, RoundingMode.CEILING);
-//        BigDecimal iva = FinanceUtils.getValorIVABigDecimal(qtd, taxPerc, unitPriceBase, discount);
-//
-//        LineDTO line = new LineDTO();
-//        line.setLineNumber(lineNo);
-//        line.setProductCode(cod);
-//        line.setProductDescription(desc);
-//        line.setQuantity(qtd.toString());
-//        line.setUnitOfMeasure("UN");
-//        line.setUnitPrice(price);
-//        line.setUnitPriceBase(unitPriceBase);
-//
-//        // Lógica de Notas de Crédito vs Débito
-//        if (venda.getFkDocumento().getPkDocumento() == DVML.DOC_NOTA_CREDITO_NC) {
-//            ReferenceInfoDTO ref = new ReferenceInfoDTO();
-//            ref.setReferenceItemLineNo(String.valueOf(lineNo));
-//            ref.setReference(venda.getRefCodFact());
-//            ref.setReason(venda.getObs());
-//            line.setReferenceInfoDTOs(Collections.singletonList(ref));
-//            line.setDebitAmount(base);
-//            line.setCreditAmount(BigDecimal.ONE);
-//        } else {
-//            line.setDebitAmount(BigDecimal.ONE);
-//            line.setCreditAmount(base);
-//        }
-//
-//        if (taxPerc.doubleValue() > 0) {
-//            TaxDTO tax = new TaxDTO();
-//            tax.setTaxType("IVA");
-//            tax.setTaxCountryRegion("AO");
-//            tax.setTaxCode("NOR");
-//            tax.setTaxPercentage(taxPerc.toString());
-//            tax.setTaxContribution(iva.doubleValue());
-//            line.setTaxes(Collections.singletonList(tax));
-//        }
-//
-//        // Atributos temporários para cálculo de totais facilitado
-    ////        line.setTotalIvaTemp(iva);
-////        line.setTotalBaseTemp(base);
-//        return line;
-//    }
-    
-    
-      private static LineDTO construirLineDTO(int lineNo,
+    private static LineDTO construirLineDTO(
+            int lineNo,
             String cod,
             String desc,
             BigDecimal unitPriceBase,
@@ -118,7 +83,7 @@ public class FacturaElectronicaUtil {
             TbVenda venda) {
 
         /**
-         * FT / FR
+         * FT / FR 3 6 7
          *
          * unitPriceBase = 1000 unitPrice = 900; discount = 100; quantity = 2;
          * taxPercentage = 7/100
@@ -149,9 +114,9 @@ public class FacturaElectronicaUtil {
 
 //        BigDecimal taxContribuition = FinanceUtils.getValorIVABigDecimal(qtd, taxPerc, unitPriceBase, discount);
         BigDecimal taxContribuition = calcBaseValue.multiply(
-                taxPerc.divide(BigDecimal.valueOf(100)).setScale(2, RoundingMode.UP)
-        );
-// Lógica de Notas de Crédito vs Débito
+                taxPerc.divide(BigDecimal.valueOf(100))
+        ).setScale(2, RoundingMode.UP);
+        // Lógica de Notas de Crédito vs Débito
         if (venda.getFkDocumento().getPkDocumento() == DVML.DOC_NOTA_CREDITO_NC) {
             ReferenceInfoDTO ref = new ReferenceInfoDTO();
 
@@ -199,25 +164,25 @@ public class FacturaElectronicaUtil {
         docDTO.setLines(lines);
 
         // Totais
-        BigDecimal totalBase = BigDecimal.ZERO;
-        BigDecimal totalIva = BigDecimal.ZERO;
+        BigDecimal netNotal = BigDecimal.ZERO;
+        BigDecimal taxPayable = BigDecimal.ZERO;
         for (LineDTO l : lines) {
             // Nota: Você pode precisar adicionar esses getters no seu DTO ou calcular aqui
             // Usando a lógica que já estava no loop original:
-            totalBase = totalBase.add(l.getCreditAmount().equals(BigDecimal.ONE) ? l.getDebitAmount() : l.getCreditAmount());
+            netNotal = netNotal.add(l.getCreditAmount().equals(BigDecimal.ONE) ? l.getDebitAmount() : l.getCreditAmount());
             if (l.getTaxes() != null && !l.getTaxes().isEmpty()) {
-                totalIva = totalIva.add(BigDecimal.valueOf(l.getTaxes().get(0).getTaxContribution()));
+                taxPayable = taxPayable.add(BigDecimal.valueOf(l.getTaxes().get(0).getTaxContribution()));
             }
         }
 
         DocumentTotalsDTO totals = new DocumentTotalsDTO();
-        totals.setNetTotal(totalBase);
-        totals.setTaxPayable(totalIva);
-        totals.setGrossTotal(totalBase.add(totalIva));
+        totals.setNetTotal(netNotal);
+        totals.setTaxPayable(taxPayable);
+        totals.setGrossTotal(netNotal.add(taxPayable));
         docDTO.setDocumentTotals(totals);
 
-        venda.setTotalIva(totalIva);
-        venda.setTotalGeral(totalBase);
+        venda.setTotalIva(taxPayable);
+        venda.setTotalGeral(netNotal);
 
         // Retenção (Simulando a lógica original baseada no objeto venda se necessário)
         // Se a retenção vier dos itens, ela deve ser somada durante o loop de construção das linhas.
@@ -231,6 +196,7 @@ public class FacturaElectronicaUtil {
             venda.setSubmissionUUID(uuid);
 
             String json = JsonUtil.toJson(payloadMap);
+            System.out.println(json);
             String auth = BasicAuthUtil.gerarAuthorizationHeader(FEConfig.getUsername(), FEConfig.getPassword());
 
             String response = HttpClientUtil.postJson(FEConfig.getEndpointRegistrarFactura(), json, auth);
