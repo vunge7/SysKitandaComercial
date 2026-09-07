@@ -744,7 +744,7 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame {
                                 line_number = 1;
                                 //INICIO LINHA
                                 for (TbItemVenda item_venda : list_item_venda) {
-                                    System.out.println("================================");
+
                                     System.out.println("Venda: " + venda.getCodigo());
                                     System.out.println("Produto: " + item_venda.getCodigoProduto());
                                     System.out.println("Preço: " + item_venda.getFkPreco());
@@ -1494,40 +1494,25 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame {
     }
 
     private static String getStringValida(String valor) {
+        Pattern pattern;
+        try {
+            String valor_valido = valor;
+            valor_valido = valor_valido
+                    .replaceAll("&", " e ")
+                    .replaceAll("/", " ")
+                    .replaceAll("-", " ")
+                    .replaceAll("-", " ")
+                    .replaceAll("ª", " ")
+                    .replaceAll("º", " ");
+            String nfdNormalizedString = Normalizer.normalize(valor_valido, Normalizer.Form.NFD);
+            pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
 
-        if (valor == null) {
+            return pattern.matcher(nfdNormalizedString).replaceAll("");
+        } catch (Exception e) {
             return "";
         }
-
-        String valor_valido = valor
-                .replace("&", " e ")
-                .replace("/", " ")
-                .replace("-", " ")
-                .replace("ª", " ")
-                .replace("º", " ");
-
-        String nfdNormalizedString = Normalizer.normalize(valor_valido, Normalizer.Form.NFD);
-        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
-
-        return pattern.matcher(nfdNormalizedString).replaceAll("");
     }
 
-//    private static String getStringValida( String valor )
-//    {
-//        String valor_valido = valor;
-//        valor_valido = valor_valido
-//                .replaceAll( "&", " e " )
-//                .replaceAll( "/", " " )
-//                .replaceAll( "-", " " )
-//                .replaceAll( "-", " " )
-//                .replaceAll( "ª", " " )
-//                .replaceAll( "º", " " );
-//        String nfdNormalizedString = Normalizer.normalize( valor_valido, Normalizer.Form.NFD );
-//        Pattern pattern = Pattern.compile( "\\p{InCombiningDiacriticalMarks}+" );
-//
-//        return pattern.matcher( nfdNormalizedString ).replaceAll( "" );
-//
-//    }
     private static String getStringValidaNomeUSuario(String valor) {
         String valor_valido = valor;
         valor_valido = valor_valido
