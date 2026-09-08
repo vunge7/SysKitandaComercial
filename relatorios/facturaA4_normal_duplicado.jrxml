@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="factura" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="782" leftMargin="30" rightMargin="30" topMargin="5" bottomMargin="35" isSummaryWithPageHeaderAndFooter="true" uuid="0de43986-9be5-410e-aaa3-7f1419d0abca">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.zoom" value="1.3995221406291998"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -813,8 +813,8 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_item_venda_total}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement uuid="ea5218f4-f3b3-4199-9a0d-3df5df401fde" key="textField-15" x="-1" y="0" width="197" height="12"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement uuid="ea5218f4-f3b3-4199-9a0d-3df5df401fde" key="textField-15" stretchType="RelativeToTallestObject" x="-1" y="0" width="197" height="12"/>
 				<box>
 					<pen lineWidth="0.1" lineStyle="Dotted"/>
 					<topPen lineWidth="0.1" lineStyle="Dotted"/>
@@ -953,8 +953,8 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_preco_preco_venda}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement uuid="0900d2b7-1092-4929-a0b3-38c75c42adde" key="textField-15" x="393" y="0" width="197" height="12"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement uuid="0900d2b7-1092-4929-a0b3-38c75c42adde" key="textField-15" stretchType="RelativeToTallestObject" x="393" y="0" width="197" height="12"/>
 				<box>
 					<pen lineWidth="0.1" lineStyle="Dotted"/>
 					<topPen lineWidth="0.1" lineStyle="Dotted"/>
