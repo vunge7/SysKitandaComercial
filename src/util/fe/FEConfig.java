@@ -4,7 +4,7 @@
  */
 package util.fe;
 
-/**
+/**D
  *
  * @author Engº Domingos Dala Vunge
  * @created 13/jan/2026
