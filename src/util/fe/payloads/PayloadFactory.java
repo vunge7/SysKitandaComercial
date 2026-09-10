@@ -413,13 +413,13 @@ public class PayloadFactory {
                         if ("E92".equalsIgnoreCase(idErro)) {
                             JOptionPane.showMessageDialog(null, "Documeto processado no estado PENDENTE.\nAguardando a resposta da AGT.");
                             System.out.println("E92 - Solicitação em processamento. Considerando TRUE.");
-                            return true;
+//                            return true;
                         }
                         // ✅ REGRA DE NEGÓCIO
                         if ("E94".equalsIgnoreCase(idErro)) {
                             JOptionPane.showMessageDialog(null, "Documeto processado no estado PENDENTE.\nAguardando a resposta da AGT.");
                             System.out.println("E94 - Solicitação não encontrada. Considerando TRUE.");
-                            return true;
+//                            return true;
                         }
 
                         // Outros erros reais
@@ -427,9 +427,9 @@ public class PayloadFactory {
                                 null,
                                 "Erro da FE: " + erro.get("descriptionError").asText(),
                                 "Erro na Consulta",
-                                JOptionPane.ERROR_MESSAGE
+                                JOptionPane.WARNING_MESSAGE
                         );
-                        return false;
+                        return true;
                     }
 
                 }

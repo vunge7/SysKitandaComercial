@@ -150,6 +150,46 @@ public class FacturaElectronicaUtil {
     }
 
     // --- PROCESSAMENTO CENTRALIZADO ---
+//    private static boolean processarEnvioFE(TbVenda venda, TbDadosInstituicao inst, Documento documento, TbCliente cliente, List<LineDTO> lines) {
+//        DocumentDTO docDTO = new DocumentDTO();
+//        docDTO.setDocumentNo(venda.getCodFact());
+//        docDTO.setDocumentStatus("N");
+//        docDTO.setDocumentDate(DataUtil.converterNormal(venda.getDataVenda()));
+//        docDTO.setDocumentType(documento.getAbreviacao());
+//        docDTO.setEacCode("12345");
+//        docDTO.setSystemEntryDate(DataUtil.converter(venda.getDataVenda()));
+//        docDTO.setCustomerTaxID(cliente.getNif());
+//        docDTO.setCustomerCountry(cliente.getPaisISO());
+//        docDTO.setCompanyName(cliente.getNome());
+//        docDTO.setLines(lines);
+//
+//        // Totais
+//        BigDecimal netNotal = BigDecimal.ZERO;
+//        BigDecimal taxPayable = BigDecimal.ZERO;
+//        for (LineDTO l : lines) {
+//            // Nota: Você pode precisar adicionar esses getters no seu DTO ou calcular aqui
+//            // Usando a lógica que já estava no loop original:
+//            netNotal = netNotal.add(l.getCreditAmount().equals(BigDecimal.ONE) ? l.getDebitAmount() : l.getCreditAmount());
+//            
+//            
+//            if (l.getTaxes() != null && !l.getTaxes().isEmpty()) {
+//                taxPayable = taxPayable.add(BigDecimal.valueOf(l.getTaxes().get(0).getTaxContribution()));
+//            }
+//        }
+//
+//        DocumentTotalsDTO totals = new DocumentTotalsDTO();
+//        totals.setNetTotal(netNotal);
+//        totals.setTaxPayable(taxPayable);
+//        totals.setGrossTotal(netNotal.add(taxPayable));
+//        docDTO.setDocumentTotals(totals);
+//
+//        venda.setTotalIva(taxPayable);
+//        venda.setTotalGeral(netNotal);
+//
+//        // Retenção (Simulando a lógica original baseada no objeto venda se necessário)
+//        // Se a retenção vier dos itens, ela deve ser somada durante o loop de construção das linhas.
+//        return enviarParaAPI(inst.getNif(), docDTO, venda);
+//    }
     private static boolean processarEnvioFE(TbVenda venda, TbDadosInstituicao inst, Documento documento, TbCliente cliente, List<LineDTO> lines) {
         DocumentDTO docDTO = new DocumentDTO();
         docDTO.setDocumentNo(venda.getCodFact());
@@ -164,25 +204,36 @@ public class FacturaElectronicaUtil {
         docDTO.setLines(lines);
 
         // Totais
-        BigDecimal netNotal = BigDecimal.ZERO;
+        BigDecimal netTotal = BigDecimal.ZERO;
         BigDecimal taxPayable = BigDecimal.ZERO;
+
         for (LineDTO l : lines) {
-            // Nota: Você pode precisar adicionar esses getters no seu DTO ou calcular aqui
-            // Usando a lógica que já estava no loop original:
-            netNotal = netNotal.add(l.getCreditAmount().equals(BigDecimal.ONE) ? l.getDebitAmount() : l.getCreditAmount());
-            if (l.getTaxes() != null && !l.getTaxes().isEmpty()) {
-                taxPayable = taxPayable.add(BigDecimal.valueOf(l.getTaxes().get(0).getTaxContribution()));
+            BigDecimal credit = l.getCreditAmount() != null ? l.getCreditAmount() : BigDecimal.ZERO;
+            BigDecimal debit = l.getDebitAmount() != null ? l.getDebitAmount() : BigDecimal.ZERO;
+
+            // Nota: creditAmount == 1 está sendo usado como flag de "linha de débito".
+            // Ideal seria um campo explícito (ex.: isDebit) em LineDTO. Mantido por
+            // compatibilidade com a lógica original, mas usando compareTo (seguro a scale).
+            BigDecimal valorLinha = credit.compareTo(BigDecimal.ZERO) == 0 ? debit : credit;
+            netTotal = netTotal.add(valorLinha);
+
+            if (l.getTaxes() != null) {
+                for (TaxDTO t : l.getTaxes()) {
+                    if (t != null) {
+                        taxPayable = taxPayable.add(BigDecimal.valueOf(t.getTaxContribution()));
+                    }
+                }
             }
         }
 
         DocumentTotalsDTO totals = new DocumentTotalsDTO();
-        totals.setNetTotal(netNotal);
+        totals.setNetTotal(netTotal);
         totals.setTaxPayable(taxPayable);
-        totals.setGrossTotal(netNotal.add(taxPayable));
+        totals.setGrossTotal(netTotal.add(taxPayable));
         docDTO.setDocumentTotals(totals);
 
         venda.setTotalIva(taxPayable);
-        venda.setTotalGeral(netNotal);
+        venda.setTotalGeral(netTotal);
 
         // Retenção (Simulando a lógica original baseada no objeto venda se necessário)
         // Se a retenção vier dos itens, ela deve ser somada durante o loop de construção das linhas.
