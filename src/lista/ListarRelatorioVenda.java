@@ -1862,7 +1862,6 @@ public class ListarRelatorioVenda extends javax.swing.JFrame
 
         if ( venda != null )
         {
-
             Abreviacao abreviacao = DVML.getAbreviacao( venda.getFkDocumento().getPkDocumento() );
             abreviacao = DVML.Abreviacao.FA;
             List<TbProduto> lista_produto_isentos = new ArrayList<>();

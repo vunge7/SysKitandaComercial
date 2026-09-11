@@ -2,12 +2,12 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="factura" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" uuid="0de43986-9be5-410e-aaa3-7f1419d0abca">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="288"/>
+	<property name="ireport.zoom" value="3.536921536500007"/>
+	<property name="ireport.x" value="1089"/>
+	<property name="ireport.y" value="729"/>
+	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<import value="net.sf.jasperreports.engine.*"/>
 	<style name="cliente_style" mode="Transparent" forecolor="#000000">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$P{NIF_CLIENTE_CONSOMIDOR_FINAL}.equals("Consumidor Final")]]></conditionExpression>
@@ -581,14 +581,14 @@ WHERE
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="12" splitType="Stretch">
+		<band height="14" splitType="Stretch">
 			<textField pattern="#,##0" isBlankWhenNull="false">
 				<reportElement uuid="f2844319-23a9-4265-8d34-4028c5dc9c5c" key="textField-16" x="449" y="0" width="25" height="12"/>
 				<box>
-					<pen lineWidth="0.1" lineStyle="Dotted"/>
-					<topPen lineWidth="0.1" lineStyle="Dotted"/>
+					<pen lineWidth="0.0" lineStyle="Dotted"/>
+					<topPen lineWidth="0.0" lineStyle="Dotted"/>
 					<leftPen lineWidth="0.0" lineStyle="Dotted"/>
-					<bottomPen lineWidth="0.1" lineStyle="Dotted"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dotted"/>
 					<rightPen lineWidth="0.0" lineStyle="Dotted"/>
 				</box>
 				<textElement textAlignment="Center">
@@ -599,22 +599,22 @@ WHERE
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement uuid="778affa8-cc10-4ad0-9b9a-6d41041fd2fc" key="textField-16" x="365" y="0" width="50" height="12"/>
 				<box rightPadding="3">
-					<topPen lineWidth="0.25" lineStyle="Dotted"/>
+					<topPen lineWidth="0.0" lineStyle="Dotted"/>
 					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dotted"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font fontName="Times New Roman" size="8"/>
+					<font fontName="Times New Roman" size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_preco_preco_venda}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement uuid="6bad282c-c538-4537-a1e5-535ffd1ad9c3" key="textField-15" x="49" y="0" width="264" height="12"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement uuid="6bad282c-c538-4537-a1e5-535ffd1ad9c3" key="textField-15" stretchType="RelativeToTallestObject" x="49" y="0" width="264" height="12"/>
 				<box>
-					<pen lineWidth="0.1" lineStyle="Dotted"/>
-					<topPen lineWidth="0.1" lineStyle="Dotted"/>
+					<pen lineWidth="0.0" lineStyle="Dotted"/>
+					<topPen lineWidth="0.0" lineStyle="Dotted"/>
 					<leftPen lineWidth="0.0" lineStyle="Dotted"/>
-					<bottomPen lineWidth="0.1" lineStyle="Dotted"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dotted"/>
 					<rightPen lineWidth="0.0" lineStyle="Dotted"/>
 				</box>
 				<textElement textAlignment="Left">
@@ -625,10 +625,10 @@ WHERE
 			<textField pattern="#,##0" isBlankWhenNull="false">
 				<reportElement uuid="b8d7c67a-c42a-43cd-9f40-19b6d13f6d55" key="textField-16" x="414" y="0" width="34" height="12"/>
 				<box>
-					<pen lineWidth="0.1" lineStyle="Dotted"/>
-					<topPen lineWidth="0.1" lineStyle="Dotted"/>
+					<pen lineWidth="0.0" lineStyle="Dotted"/>
+					<topPen lineWidth="0.0" lineStyle="Dotted"/>
 					<leftPen lineWidth="0.0" lineStyle="Dotted"/>
-					<bottomPen lineWidth="0.1" lineStyle="Dotted"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dotted"/>
 					<rightPen lineWidth="0.0" lineStyle="Dotted"/>
 				</box>
 				<textElement textAlignment="Center">
@@ -639,14 +639,14 @@ WHERE
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement uuid="2f77638b-379f-4088-ad6c-3f1ff01be479" key="textField-18" x="473" y="0" width="62" height="12"/>
 				<box>
-					<pen lineWidth="0.1" lineStyle="Dotted"/>
-					<topPen lineWidth="0.1" lineStyle="Dotted"/>
+					<pen lineWidth="0.0" lineStyle="Dotted"/>
+					<topPen lineWidth="0.0" lineStyle="Dotted"/>
 					<leftPen lineWidth="0.0" lineStyle="Dotted"/>
-					<bottomPen lineWidth="0.1" lineStyle="Dotted"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dotted"/>
 					<rightPen lineWidth="0.0" lineStyle="Dotted"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font fontName="Times New Roman" size="8"/>
+					<font fontName="Times New Roman" size="8" isBold="true"/>
 					<paragraph rightIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_item_venda_total}]]></textFieldExpression>
@@ -654,10 +654,10 @@ WHERE
 			<textField isBlankWhenNull="false">
 				<reportElement uuid="73dad0c3-412a-474f-a80b-d98b70ca5fa3" key="textField-12" x="0" y="0" width="18" height="12"/>
 				<box>
-					<pen lineWidth="0.1" lineStyle="Dotted"/>
-					<topPen lineWidth="0.1" lineStyle="Dotted"/>
+					<pen lineWidth="0.0" lineStyle="Dotted"/>
+					<topPen lineWidth="0.0" lineStyle="Dotted"/>
 					<leftPen lineWidth="0.0" lineStyle="Dotted"/>
-					<bottomPen lineWidth="0.1" lineStyle="Dotted"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dotted"/>
 					<rightPen lineWidth="0.0" lineStyle="Dotted"/>
 				</box>
 				<textElement textAlignment="Center">
@@ -668,10 +668,10 @@ WHERE
 			<textField>
 				<reportElement uuid="3c6dfaae-64e3-4ac2-9597-213924ffaf2d" x="348" y="0" width="18" height="12"/>
 				<box>
-					<pen lineWidth="0.1" lineStyle="Dotted"/>
-					<topPen lineWidth="0.1" lineStyle="Dotted"/>
+					<pen lineWidth="0.0" lineStyle="Dotted"/>
+					<topPen lineWidth="0.0" lineStyle="Dotted"/>
 					<leftPen lineWidth="0.0" lineStyle="Dotted"/>
-					<bottomPen lineWidth="0.1" lineStyle="Dotted"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dotted"/>
 					<rightPen lineWidth="0.0" lineStyle="Dotted"/>
 				</box>
 				<textElement textAlignment="Center" markup="none">
@@ -682,10 +682,10 @@ WHERE
 			<textField isBlankWhenNull="false">
 				<reportElement uuid="05844a2e-0497-4f4e-9426-6a07a5cc60b5" key="textField-14" x="18" y="0" width="31" height="12"/>
 				<box>
-					<pen lineWidth="0.1" lineStyle="Dotted"/>
-					<topPen lineWidth="0.1" lineStyle="Dotted"/>
+					<pen lineWidth="0.0" lineStyle="Dotted"/>
+					<topPen lineWidth="0.0" lineStyle="Dotted"/>
 					<leftPen lineWidth="0.0" lineStyle="Dotted"/>
-					<bottomPen lineWidth="0.1" lineStyle="Dotted"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dotted"/>
 					<rightPen lineWidth="0.0" lineStyle="Dotted"/>
 				</box>
 				<textElement textAlignment="Justified">
@@ -697,13 +697,13 @@ WHERE
 				<reportElement uuid="26b5c989-2e15-4baa-a221-1cba350cb0de" x="313" y="0" width="35" height="12"/>
 				<box>
 					<pen lineWidth="0.1" lineStyle="Dotted"/>
-					<topPen lineWidth="0.1" lineStyle="Dotted"/>
+					<topPen lineWidth="0.0" lineStyle="Dotted"/>
 					<leftPen lineWidth="0.0" lineStyle="Dotted"/>
-					<bottomPen lineWidth="0.1" lineStyle="Dotted"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dotted"/>
 					<rightPen lineWidth="0.0" lineStyle="Dotted"/>
 				</box>
 				<textElement textAlignment="Center">
-					<font fontName="Times New Roman" size="8"/>
+					<font fontName="Times New Roman" size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_item_venda_quantidade}]]></textFieldExpression>
 			</textField>

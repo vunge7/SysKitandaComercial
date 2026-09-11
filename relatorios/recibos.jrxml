@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a324e3e4-0754-4ede-83c0-92dc73708a0e">
-	<property name="ireport.zoom" value="1.1289478601075549"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.zoom" value="1.818181818181819"/>
+	<property name="ireport.x" value="118"/>
+	<property name="ireport.y" value="193"/>
 	<style name="cliente_style" mode="Transparent" forecolor="#000000">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$P{NIF_CLIENTE_CONSOMIDOR_FINAL}.equals("Consumidor Final")]]></conditionExpression>
@@ -749,7 +749,7 @@ WHERE
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Software de Certififcação Factura Electrónica\nFE/196/AGT/2025"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Software de Certififcação Factura Electrónica\nFE/110/AGT/2025"]]></textFieldExpression>
 			</textField>
 		</band>
 	</lastPageFooter>

@@ -5,9 +5,9 @@
 	<property name="ireport.zoom" value="1.0514816984441773"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
+	<import value="net.sf.jasperreports.engine.*"/>
 	<style name="cliente_style" mode="Transparent" forecolor="#000000">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$P{NIF_CLIENTE_CONSOMIDOR_FINAL}.equals("Consumidor Final")]]></conditionExpression>
