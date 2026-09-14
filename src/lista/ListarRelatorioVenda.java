@@ -2069,7 +2069,7 @@ System.out.println("TOTAL: " + getTotal(tabela_factura_geral));
     
     private BigDecimal getValorAssinado(TbVenda v) {
         BigDecimal total = v.getTotalGeral() != null
-                ? v.getTotalGeral()
+                ? v.getTotalVenda()
                 : BigDecimal.ZERO;
         
         if (isNotaCredito(v)) {
