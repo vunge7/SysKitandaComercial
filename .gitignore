@@ -1,4 +1,4 @@
-/nbproject/private/
+nbproject/private/
 dist/
 build/
 Chaves/
@@ -6,3 +6,4 @@ credencial/
 before/
 *.zip
 *.rar
+src/util/BDConexao.java
