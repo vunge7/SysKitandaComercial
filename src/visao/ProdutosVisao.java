@@ -43,14 +43,13 @@ import static util.MetodosUtil.rodarComandoWindows;
 import util.PictureChooser;
 import util.TextFieldUtils;
 
-public class ProdutosVisao extends javax.swing.JFrame
-{
+public class ProdutosVisao extends javax.swing.JFrame {
 
     /**
      * CONTROLLER COMERCIAL
      */
     private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
-    private ItemPermissaoDao itemPermissaoDao = new ItemPermissaoDao( emf );
+    private ItemPermissaoDao itemPermissaoDao = new ItemPermissaoDao(emf);
     private static ProdutosController produtosController;
     private static ModelosController modelosController;
     private static MarcasController marcasController;
@@ -96,82 +95,78 @@ public class ProdutosVisao extends javax.swing.JFrame
     private boolean stocavel = true;
     private double preco_venda_anterior = 0;
 
-    public ProdutosVisao( java.awt.Frame parent, boolean modal, int idUSer, BDConexao conexao )
-    {
+    public ProdutosVisao(java.awt.Frame parent, boolean modal, int idUSer, BDConexao conexao) {
 
         this.parent = parent;
         initComponents();
-        rbJanelaServico.setVisible( false );
+        rbJanelaServico.setVisible(false);
 
         /**
          * INSTANCIAS DOS CONTROLLER
          */
-        produtosController = new ProdutosController( conexao );
-        modelosController = new ModelosController( conexao );
-        marcasController = new MarcasController( conexao );
-        gruposController = new GruposController( conexao );
-        familiasController = new FamiliasController( conexao );
-        tipoProdutosController = new TipoProdutosController( conexao );
-        localController = new LocalController( conexao );
-        unidadesController = new UnidadesController( conexao );
-        precosController = new PrecosController( conexao );
-        armazensController = new ArmazensController( conexao );
-        produtosIsentoController = new ProdutosIsentoController( conexao );
-        produtosMotivosIsensaoController = new ProdutosMotivosIsensaoController( conexao );
-        produtosImpostoController = new ProdutosImpostoController( conexao );
-        servicosRetencaoController = new ServicosRetencaoController( conexao );
-        impostosController = new ImpostosController( conexao );
-        retencaoController = new RetencaoController( conexao );
-        usuariosController = new UsuariosController( conexao );
-        stoksController = new StoksController( conexao );
-        dadosInstituicaoController = new DadosInstituicaoController( conexao );
-        referenciasController = new ReferenciasController( conexao );
+        produtosController = new ProdutosController(conexao);
+        modelosController = new ModelosController(conexao);
+        marcasController = new MarcasController(conexao);
+        gruposController = new GruposController(conexao);
+        familiasController = new FamiliasController(conexao);
+        tipoProdutosController = new TipoProdutosController(conexao);
+        localController = new LocalController(conexao);
+        unidadesController = new UnidadesController(conexao);
+        precosController = new PrecosController(conexao);
+        armazensController = new ArmazensController(conexao);
+        produtosIsentoController = new ProdutosIsentoController(conexao);
+        produtosMotivosIsensaoController = new ProdutosMotivosIsensaoController(conexao);
+        produtosImpostoController = new ProdutosImpostoController(conexao);
+        servicosRetencaoController = new ServicosRetencaoController(conexao);
+        impostosController = new ImpostosController(conexao);
+        retencaoController = new RetencaoController(conexao);
+        usuariosController = new UsuariosController(conexao);
+        stoksController = new StoksController(conexao);
+        dadosInstituicaoController = new DadosInstituicaoController(conexao);
+        referenciasController = new ReferenciasController(conexao);
 
-        dadosInstituicao = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
+        dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
 
         confiLabel();
         setWindowsListener();
 
-        setLocationRelativeTo( null );
+        setLocationRelativeTo(null);
         ProdutosVisao.idUser = idUSer;
 
         set_combos();
 
-        setRegime( dadosInstituicao.getRegime() );
-        txtPrecoDeVendaComIva.setVisible( false );
-        TotalIvaLabel.setVisible( false );
-        cmbImposto.setVisible( false );
+        setRegime(dadosInstituicao.getRegime());
+        txtPrecoDeVendaComIva.setVisible(false);
+        TotalIvaLabel.setVisible(false);
+        cmbImposto.setVisible(false);
         this.conexao = conexao;
-        jPanel_retencao.setVisible( true );
-        ck_produto.setSelected( true );
+        jPanel_retencao.setVisible(true);
+        ck_produto.setSelected(true);
 //        servico_produto();
         actualizarRetencaoForm();
-        proximo_codigo( produtosController );
-        proximo_codigo_manual( produtosController );
+        proximo_codigo(produtosController);
+        proximo_codigo_manual(produtosController);
         busca_permissao();
-        txtCodigoProduto.setDocument( new PermitirNumeros() );
-        jcDataFabrico.setDate( new Date() );
-        jcDataExpiracao.setDate( new Date() );
+        txtCodigoProduto.setDocument(new PermitirNumeros());
+        jcDataFabrico.setDate(new Date());
+        jcDataExpiracao.setDate(new Date());
 //        txtPrecoCompra.addKeyListener( new PrecoCompraPercentagem() );
 //        txtPrecoVendaRetalho.addKeyListener( new PrecoVendaPercentagem() );
-        setFocus( dadosInstituicao.getFoco() );
+        setFocus(dadosInstituicao.getFoco());
 
-        txtPrecoCompra.setHorizontalAlignment( JTextField.RIGHT );
-        txtPrecoVendaRetalho.setHorizontalAlignment( JTextField.RIGHT );
-        txtPercentagemGanhoRetalho.setHorizontalAlignment( JTextField.RIGHT );
-        txtPrecoVendaGrosso.setHorizontalAlignment( JTextField.RIGHT );
+        txtPrecoCompra.setHorizontalAlignment(JTextField.RIGHT);
+        txtPrecoVendaRetalho.setHorizontalAlignment(JTextField.RIGHT);
+        txtPercentagemGanhoRetalho.setHorizontalAlignment(JTextField.RIGHT);
+        txtPrecoVendaGrosso.setHorizontalAlignment(JTextField.RIGHT);
 
         popularComponentes();
         configurar_dois_precos();
-        setArmazem( dadosInstituicaoController.findByCodigo( 1 ).getConfigArmazens() );
+        setArmazem(dadosInstituicaoController.findByCodigo(1).getConfigArmazens());
         KeyboardFocusManager.getCurrentKeyboardFocusManager()
-                .addKeyEventDispatcher( new KeyEventDispatcher()
-                {
+                .addKeyEventDispatcher(new KeyEventDispatcher() {
                     @Override
-                    public boolean dispatchKeyEvent( KeyEvent e )
-                    {
-                        if ( e.getID() == e.KEY_RELEASED && e.getKeyCode() == KeyEvent.VK_TAB )
-                        {
+                    public boolean dispatchKeyEvent(KeyEvent e) {
+                        if (e.getID() == e.KEY_RELEASED && e.getKeyCode() == KeyEvent.VK_TAB) {
 
                             txtPrecoVendaRetalho.requestFocus();
                             return true;
@@ -179,25 +174,22 @@ public class ProdutosVisao extends javax.swing.JFrame
                         }
                         return false;
                     }
-                } );
+                });
 
-        try
-        {
+        try {
 
-            setActivarNegocio( dadosInstituicao.getNegocio() );
-            setActivarJanelaServico( dadosInstituicao.getJanelaServico() );
+            setActivarNegocio(dadosInstituicao.getNegocio());
+            setActivarJanelaServico(dadosInstituicao.getJanelaServico());
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         activarCampoPreco();
 
-        TextFieldUtils.configurarCampoDecimal( txtPrecoCompra, 7 );
-        TextFieldUtils.configurarCampoDecimal( txtPrecoVendaRetalho, 7 );
-        TextFieldUtils.configurarCampoDecimal( txtPercentagemGanhoRetalho, 7 );
+        TextFieldUtils.configurarCampoDecimal(txtPrecoCompra, 7);
+        TextFieldUtils.configurarCampoDecimal(txtPrecoVendaRetalho, 7);
+        TextFieldUtils.configurarCampoDecimal(txtPercentagemGanhoRetalho, 7);
 
 //        // Aqui passo os campos para a classe helper
 //        CalculadoraPrecoHelper helper = new CalculadoraPrecoHelper( txtPrecoCompra, 
@@ -212,61 +204,49 @@ public class ProdutosVisao extends javax.swing.JFrame
      * regenerated by the Form Editor.
      *
      */
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings("unchecked")
 
-    public void busca_permissao()
-    {
+    public void busca_permissao() {
 
-        try
-        {
+        try {
             // TODO add your handling code here
-            setStatusUsuario( ( Vector ) itemPermissaoDao.getAllPermissoesByIdUsuarioAndModulo( idUser, DVML.MODULO_GESTAO_COMERCIAL ) );
-        }
-        catch ( Exception ex )
-        {
+            setStatusUsuario((Vector) itemPermissaoDao.getAllPermissoesByIdUsuarioAndModulo(idUser, DVML.MODULO_GESTAO_COMERCIAL));
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    private void setArmazem( String armazem )
-    {
-        if ( !armazem.equalsIgnoreCase( "Multi_armazem" ) )
-        {
-            btLupaEconomato.setVisible( false );
+    private void setArmazem(String armazem) {
+        if (!armazem.equalsIgnoreCase("Multi_armazem")) {
+            btLupaEconomato.setVisible(false);
 //            jmFrontOffice.setVisible( false );
 
-        }
-        else
-        {
-            btLupaEconomato.setVisible( true );
+        } else {
+            btLupaEconomato.setVisible(true);
 //            jmFrontOffice.setVisible( true );
 
         }
     }
 
-    public void setStatusUsuario( Vector<TbItemPermissao> vector )
-    {
+    public void setStatusUsuario(Vector<TbItemPermissao> vector) {
 
         String permissao = "";
         //limpa
-        setPermissoes( false );
+        setPermissoes(false);
 
-        for ( int i = 0; i < vector.size(); i++ )
-        {
+        for (int i = 0; i < vector.size(); i++) {
 
-            permissao = vector.get( i ).getIdPermissao().getDescricao();
-            if ( permissao.equals( jButtonCompras.getText() ) )
-            {
-                jButtonCompras.setVisible( true );
+            permissao = vector.get(i).getIdPermissao().getDescricao();
+            if (permissao.equals(jButtonCompras.getText())) {
+                jButtonCompras.setVisible(true);
             }
 
         }
 
     }
 
-    public void setPermissoes( boolean status )
-    {
-        jButtonCompras.setVisible( status );
+    public void setPermissoes(boolean status) {
+        jButtonCompras.setVisible(status);
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -1238,14 +1218,11 @@ public class ProdutosVisao extends javax.swing.JFrame
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void cmbTipoProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbTipoProdutoActionPerformed
-        try
-        {
+        try {
             // TODO add your handling code here:
-            System.out.println( "CODIGO: " + getCodigoTipoProduto() );
-        }
-        catch ( SQLException ex )
-        {
-            Logger.getLogger( ProdutosVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            System.out.println("CODIGO: " + getCodigoTipoProduto());
+        } catch (SQLException ex) {
+            Logger.getLogger(ProdutosVisao.class.getName()).log(Level.SEVERE, null, ex);
         }
 
 
@@ -1253,64 +1230,57 @@ public class ProdutosVisao extends javax.swing.JFrame
 
     private void txtCodigoProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigoProdutoActionPerformed
         // TODO add your handling code here:
-        try
-        {
-            btnSalvar.setEnabled( false );
-            btnAlterar2.setEnabled( true );
+        try {
+            btnSalvar.setEnabled(false);
+            btnAlterar2.setEnabled(true);
             String codInternoString = txtCodigoProduto.getText();
-            Integer codigoInternoInt = (codInternoString.isEmpty() ? 0 : Integer.parseInt( codInternoString ));
-            produto = ( TbProduto ) produtosController.findById( codigoInternoInt );
+            Integer codigoInternoInt = (codInternoString.isEmpty() ? 0 : Integer.parseInt(codInternoString));
+            produto = (TbProduto) produtosController.findById(codigoInternoInt);
 
-            ver_dados_produtos( codigoInternoInt );
-            if ( ivaAplicarJRadioButton.isSelected() )
-            {
+            ver_dados_produtos(codigoInternoInt);
+            if (ivaAplicarJRadioButton.isSelected()) {
 //                calcularTotalComIva();
                 calcularIva();
 
-            }
-            else
-            {
-                txtPrecoDeVendaComIva.setVisible( false );
-                ivaTaxaJLabel.setVisible( false );
-                TotalIvaLabel.setVisible( false );
+            } else {
+                txtPrecoDeVendaComIva.setVisible(false);
+                ivaTaxaJLabel.setVisible(false);
+                TotalIvaLabel.setVisible(false);
             }
 
-            mostrar_qtd_stock_armazem( txtArmazen1, 1 );
-            mostrar_qtd_stock_armazem( txtArmazen2, 2 );
-            mostrar_qtd_stock_armazem( txtArmazen3, 3 );
-            mostrar_qtd_stock_armazem( txtArmazen4, 4 );
+            mostrar_qtd_stock_armazem(txtArmazen1, 1);
+            mostrar_qtd_stock_armazem(txtArmazen2, 2);
+            mostrar_qtd_stock_armazem(txtArmazen3, 3);
+            mostrar_qtd_stock_armazem(txtArmazen4, 4);
 
             setButtonAssociar();
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
 
     }//GEN-LAST:event_txtCodigoProdutoActionPerformed
 
-    private void calcularTotalComIva()
-    {
+    private void calcularTotalComIva() {
 
         double totalPrecoVenda, resultado, taxa_iva = 0;
-        taxa_iva = Double.parseDouble( cmbImposto.getSelectedItem().toString() );
+        taxa_iva = Double.parseDouble(cmbImposto.getSelectedItem().toString());
 
-        totalPrecoVenda = MetodosUtil.convertToDouble( txtPrecoVendaRetalho.getText() );
-        double valor_iva = 1 + ( taxa_iva ) / 100;
+        totalPrecoVenda = MetodosUtil.convertToDouble(txtPrecoVendaRetalho.getText());
+        double valor_iva = 1 + (taxa_iva) / 100;
 
         resultado = totalPrecoVenda * valor_iva;
 
         txtPrecoDeVendaComIva.setText(
-                String.valueOf( CfMethods.formatarComoPorcoes( resultado ) ) );
+                String.valueOf(CfMethods.formatarComoPorcoes(resultado)));
 
     }
 
     private void txtCodigoBarraProcuraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigoBarraProcuraActionPerformed
         // TODO add your handling code here:
-        btnSalvar.setEnabled( false );
-        btnAlterar2.setEnabled( true );
+        btnSalvar.setEnabled(false);
+        btnAlterar2.setEnabled(true);
 
         buscar_by_cod_barra();
 //        txtCodigoBarraProcura.setText( "" );
@@ -1326,12 +1296,9 @@ public class ProdutosVisao extends javax.swing.JFrame
     private void txtPrecoCompraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPrecoCompraActionPerformed
         // TODO add your handling code here:
 
-        if ( !ck_produto.isSelected() )
-        {
+        if (!ck_produto.isSelected()) {
             procedimento_salvar_produto();
-        }
-        else
-        {
+        } else {
             txtPrecoVendaRetalho.requestFocus();
         }
 
@@ -1362,8 +1329,10 @@ public class ProdutosVisao extends javax.swing.JFrame
 
     private void ivaAplicarJRadioButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ivaAplicarJRadioButtonActionPerformed
     {//GEN-HEADEREND:event_ivaAplicarJRadioButtonActionPerformed
-        txtPrecoDeVendaComIva.setVisible( true );
-        TotalIvaLabel.setVisible( true );
+
+        atualizarIvaForm();
+        txtPrecoDeVendaComIva.setVisible(true);
+        TotalIvaLabel.setVisible(true);
         calcularSemIva();
     }//GEN-LAST:event_ivaAplicarJRadioButtonActionPerformed
 
@@ -1371,8 +1340,8 @@ public class ProdutosVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_ivaNaoAplicarJRadioButtonActionPerformed
 
         atualizarIvaForm();
-        txtPrecoDeVendaComIva.setVisible( false );
-        TotalIvaLabel.setVisible( false );
+        txtPrecoDeVendaComIva.setVisible(false);
+        TotalIvaLabel.setVisible(false);
         calcularSemIva();
     }//GEN-LAST:event_ivaNaoAplicarJRadioButtonActionPerformed
 
@@ -1382,8 +1351,8 @@ public class ProdutosVisao extends javax.swing.JFrame
     }//GEN-LAST:event_ivaMotivoJComboBoxActionPerformed
 
     private void txtCodigoManualProcuraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigoManualProcuraActionPerformed
-        btnSalvar.setEnabled( false );
-        btnAlterar2.setEnabled( true );
+        btnSalvar.setEnabled(false);
+        btnAlterar2.setEnabled(true);
         buscar_by_cod_manual1();
 //        buscar_by_cod_manual();
 //        txtCodigoManualProcura.setText( "" );
@@ -1394,7 +1363,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         // TODO add your handling code here:
 //        cmbFamilia.setModel( new DefaultComboBoxModel( (Vector) familiaDao.buscaTodasFamiliaServico() ) );
 //        cmbFamilia.setSelectedIndex(1);
-        rbJanelaServico.setSelected( false );
+        rbJanelaServico.setSelected(false);
         procedimento_limpar();
         ver_retencao();
         actualizarRetencaoForm();
@@ -1404,13 +1373,11 @@ public class ProdutosVisao extends javax.swing.JFrame
         mostrarPreco();
     }//GEN-LAST:event_ck_servicoActionPerformed
 
-    private void mostrarPreco()
-    {
+    private void mostrarPreco() {
 
-        if ( ck_servico.isSelected() )
-        {
+        if (ck_servico.isSelected()) {
 
-            lbCusto.setText( "Preço:" );
+            lbCusto.setText("Preço:");
         }
 
     }
@@ -1426,25 +1393,19 @@ public class ProdutosVisao extends javax.swing.JFrame
 
     private void cmbFamiliaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbFamiliaActionPerformed
 
-        try
-        {
+        try {
             servico_produto();
-            cmbTipoProduto.setModel( new DefaultComboBoxModel( tipoProdutosController.getVectorByIdFamilia( getIdFamilia() ) ) );
+            cmbTipoProduto.setModel(new DefaultComboBoxModel(tipoProdutosController.getVectorByIdFamilia(getIdFamilia())));
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
         }
     }//GEN-LAST:event_cmbFamiliaActionPerformed
 
     private void cmbMarcaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbMarcaActionPerformed
-        try
-        {
-            cmbModelo.setModel( new DefaultComboBoxModel( modelosController.getVectorByIdMarca( getIdMarca() ) ) );
+        try {
+            cmbModelo.setModel(new DefaultComboBoxModel(modelosController.getVectorByIdMarca(getIdMarca())));
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
         }
     }//GEN-LAST:event_cmbMarcaActionPerformed
 
@@ -1455,7 +1416,7 @@ public class ProdutosVisao extends javax.swing.JFrame
     private void btnCarregarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnCarregarActionPerformed
     {//GEN-HEADEREND:event_btnCarregarActionPerformed
         // TODO add your handling code here:
-        image_View.chooseImg( lbPhoto );
+        image_View.chooseImg(lbPhoto);
     }//GEN-LAST:event_btnCarregarActionPerformed
 
     private void retencaoAplicarJRadioButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_retencaoAplicarJRadioButtonActionPerformed
@@ -1488,31 +1449,25 @@ public class ProdutosVisao extends javax.swing.JFrame
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton4ActionPerformed
     {//GEN-HEADEREND:event_jButton4ActionPerformed
 
-        btnSalvar.setEnabled( false );
-        btnAlterar2.setEnabled( true );
-        try
-        {
+        btnSalvar.setEnabled(false);
+        btnAlterar2.setEnabled(true);
+        try {
 
-            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem( cmbarmazem2.getSelectedItem().toString() ), DVML.JANELA_PRODUTO, BDConexao.getInstancia() ).setVisible( true );
-            mostrar_qtd_stock_armazem( txtArmazen1, 1 );
-            mostrar_qtd_stock_armazem( txtArmazen2, 2 );
-            mostrar_qtd_stock_armazem( txtArmazen3, 3 );
-            mostrar_qtd_stock_armazem( txtArmazen4, 4 );
+            new BuscaProdutoVisao(this, rootPaneCheckingEnabled, getCodigoArmazem(cmbarmazem2.getSelectedItem().toString()), DVML.JANELA_PRODUTO, BDConexao.getInstancia()).setVisible(true);
+            mostrar_qtd_stock_armazem(txtArmazen1, 1);
+            mostrar_qtd_stock_armazem(txtArmazen2, 2);
+            mostrar_qtd_stock_armazem(txtArmazen3, 3);
+            mostrar_qtd_stock_armazem(txtArmazen4, 4);
 
-            if ( ivaAplicarJRadioButton.isSelected() )
-            {
+            if (ivaAplicarJRadioButton.isSelected()) {
 //                calcularTotalComIva();
                 calcularIva();
-            }
-            else
-            {
-                txtPrecoDeVendaComIva.setVisible( false );
-                ivaTaxaJLabel.setVisible( false );
+            } else {
+                txtPrecoDeVendaComIva.setVisible(false);
+                ivaTaxaJLabel.setVisible(false);
             }
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }//GEN-LAST:event_jButton4ActionPerformed
@@ -1522,7 +1477,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         procedimento_limpar_campos();
 
 //        txtCodigoBarra.setText( String.valueOf( produtosController.getLastProduto().getCodigo() + 1 ) );
-        btnAlterar2.setEnabled( false );
+        btnAlterar2.setEnabled(false);
     }//GEN-LAST:event_btnLimparActionPerformed
 
     private void cmbUnidadeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbUnidadeActionPerformed
@@ -1530,18 +1485,15 @@ public class ProdutosVisao extends javax.swing.JFrame
     }//GEN-LAST:event_cmbUnidadeActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        new CategoriasLugarVisao().setVisible( true );
+        new CategoriasLugarVisao().setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButtonComprasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonComprasActionPerformed
-        try
-        {
+        try {
 
-            new CompraInformalVisao( idUser, BDConexao.getInstancia() ).setVisible( true );
+            new CompraInformalVisao(idUser, BDConexao.getInstancia()).setVisible(true);
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }//GEN-LAST:event_jButtonComprasActionPerformed
@@ -1574,9 +1526,9 @@ public class ProdutosVisao extends javax.swing.JFrame
     private void btnAssociarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnAssociarActionPerformed
     {//GEN-HEADEREND:event_btnAssociarActionPerformed
         // TODO add your handling code here:
-        new AssociacaoServicoVisao( idUser,
+        new AssociacaoServicoVisao(idUser,
                 getCodigoProduto(),
-                getCodigoArmazem( cmbarmazem1.getSelectedItem().toString() ), BDConexao.getInstancia() ).setVisible( true );
+                getCodigoArmazem(cmbarmazem1.getSelectedItem().toString()), BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btnAssociarActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton2ActionPerformed
@@ -1587,30 +1539,24 @@ public class ProdutosVisao extends javax.swing.JFrame
 
     private void btLupaEconomatoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btLupaEconomatoActionPerformed
     {//GEN-HEADEREND:event_btLupaEconomatoActionPerformed
-        btnSalvar.setEnabled( false );
-        btnAlterar2.setEnabled( true );
-        try
-        {
-            
-            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem( cmbarmazem1.getSelectedItem().toString() ), DVML.JANELA_PRODUTO, BDConexao.getInstancia() ).setVisible( true );
-            mostrar_qtd_stock_armazem( txtArmazen1, 1 );
-            mostrar_qtd_stock_armazem( txtArmazen2, 2 );
-            mostrar_qtd_stock_armazem( txtArmazen3, 3 );
-            mostrar_qtd_stock_armazem( txtArmazen4, 4 );
+        btnSalvar.setEnabled(false);
+        btnAlterar2.setEnabled(true);
+        try {
 
-            if ( ivaAplicarJRadioButton.isSelected() )
-            {
+            new BuscaProdutoVisao(this, rootPaneCheckingEnabled, getCodigoArmazem(cmbarmazem1.getSelectedItem().toString()), DVML.JANELA_PRODUTO, BDConexao.getInstancia()).setVisible(true);
+            mostrar_qtd_stock_armazem(txtArmazen1, 1);
+            mostrar_qtd_stock_armazem(txtArmazen2, 2);
+            mostrar_qtd_stock_armazem(txtArmazen3, 3);
+            mostrar_qtd_stock_armazem(txtArmazen4, 4);
+
+            if (ivaAplicarJRadioButton.isSelected()) {
                 calcularTotalComIva();
-            }
-            else
-            {
-                txtPrecoDeVendaComIva.setVisible( false );
-                ivaTaxaJLabel.setVisible( false );
+            } else {
+                txtPrecoDeVendaComIva.setVisible(false);
+                ivaTaxaJLabel.setVisible(false);
             }
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }//GEN-LAST:event_btLupaEconomatoActionPerformed
@@ -1628,12 +1574,11 @@ public class ProdutosVisao extends javax.swing.JFrame
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton5ActionPerformed
     {//GEN-HEADEREND:event_jButton5ActionPerformed
 
-        if ( getCodigoProduto() > 0 )
-        {
-            new ReferenciasVisao( idUser,
+        if (getCodigoProduto() > 0) {
+            new ReferenciasVisao(idUser,
                     getCodigoProduto(),
-                    getCodigoArmazem( cmbarmazem1.getSelectedItem().toString() ),
-                    BDConexao.getInstancia() ).setVisible( true );
+                    getCodigoArmazem(cmbarmazem1.getSelectedItem().toString()),
+                    BDConexao.getInstancia()).setVisible(true);
 
         }
 
@@ -1646,39 +1591,27 @@ public class ProdutosVisao extends javax.swing.JFrame
     /**
      * @param args the command line arguments
      */
-    public static void main( String args[] )
-    {
+    public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        try
-        {
-            for ( javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels() )
-            {
-                if ( "Windows".equals( info.getName() ) )
-                {
-                    javax.swing.UIManager.setLookAndFeel( info.getClassName() );
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Windows".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
-        }
-        catch ( ClassNotFoundException ex )
-        {
-            java.util.logging.Logger.getLogger( ProdutosVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }
-        catch ( InstantiationException ex )
-        {
-            java.util.logging.Logger.getLogger( ProdutosVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }
-        catch ( IllegalAccessException ex )
-        {
-            java.util.logging.Logger.getLogger( ProdutosVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }
-        catch ( javax.swing.UnsupportedLookAndFeelException ex )
-        {
-            java.util.logging.Logger.getLogger( ProdutosVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(ProdutosVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(ProdutosVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(ProdutosVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(ProdutosVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
         //</editor-fold>
@@ -1746,29 +1679,22 @@ public class ProdutosVisao extends javax.swing.JFrame
         //</editor-fold>
 
         /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater( new Runnable()
-        {
-            public void run()
-            {
-                try
-                {
-                    ProdutosVisao dialog = new ProdutosVisao( new javax.swing.JFrame(), true, 15, BDConexao.getInstancia() );
-                    dialog.addWindowListener( new java.awt.event.WindowAdapter()
-                    {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    ProdutosVisao dialog = new ProdutosVisao(new javax.swing.JFrame(), true, 15, BDConexao.getInstancia());
+                    dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                         @Override
-                        public void windowClosing( java.awt.event.WindowEvent e )
-                        {
-                            System.exit( 0 );
+                        public void windowClosing(java.awt.event.WindowEvent e) {
+                            System.exit(0);
                         }
-                    } );
-                    dialog.setVisible( true );
-                }
-                catch ( Exception ex )
-                {
-                    Logger.getLogger( ProdutosVisao.class.getName() ).log( Level.SEVERE, null, ex );
+                    });
+                    dialog.setVisible(true);
+                } catch (Exception ex) {
+                    Logger.getLogger(ProdutosVisao.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-        } );
+        });
     }
 
 
@@ -1879,286 +1805,232 @@ public class ProdutosVisao extends javax.swing.JFrame
     private static javax.swing.JTextField txtUnidadeCompra;
     // End of variables declaration//GEN-END:variables
 
-    public void confiLabel()
-    {
+    public void confiLabel() {
 
-        lbTipoProduto.setHorizontalAlignment( JLabel.RIGHT );
-        lbCusto.setHorizontalAlignment( JLabel.RIGHT );
-        lbProduto.setHorizontalAlignment( JLabel.RIGHT );
-        lbUnidade.setHorizontalAlignment( JLabel.RIGHT );
+        lbTipoProduto.setHorizontalAlignment(JLabel.RIGHT);
+        lbCusto.setHorizontalAlignment(JLabel.RIGHT);
+        lbProduto.setHorizontalAlignment(JLabel.RIGHT);
+        lbUnidade.setHorizontalAlignment(JLabel.RIGHT);
 
     }
 
     /* CRIACAO DOS GETS  */
-    public String getProduto()
-    {
+    public String getProduto() {
         return txtDesignacao.getText();
     }
 
-    public int getCodigoTipoProduto() throws SQLException
-    {
-        return conexao.getCodigoPublico( "tb_tipo_produto", String.valueOf( cmbTipoProduto.getSelectedItem() ) );
+    public int getCodigoTipoProduto() throws SQLException {
+        return conexao.getCodigoPublico("tb_tipo_produto", String.valueOf(cmbTipoProduto.getSelectedItem()));
     }
 
-    public static int getCodigoProduto()
-    {
+    public static int getCodigoProduto() {
 
-        try
-        {
-            return Integer.parseInt( txtCodigoProduto.getText() );
-        }
-        catch ( Exception e )
-        {
+        try {
+            return Integer.parseInt(txtCodigoProduto.getText());
+        } catch (Exception e) {
             return 0;
         }
 
     }
 
-    public int getCodigoBarras()
-    {
+    public int getCodigoBarras() {
 
-        try
-        {
-            return Integer.parseInt( txtCodigoBarraProcura.getText() );
-        }
-        catch ( Exception e )
-        {
+        try {
+            return Integer.parseInt(txtCodigoBarraProcura.getText());
+        } catch (Exception e) {
             return 0;
         }
 
     }
 
-    public Integer lastProduto()
-    {
+    public Integer lastProduto() {
 
         String sql = ("select MAX(codigo) from tb_produto");
 
-        ResultSet rs = conexao.executeQuery( sql );
+        ResultSet rs = conexao.executeQuery(sql);
 
-        try
-        {
-            if ( rs.next() )
-            {
-                return rs.getInt( "MAX(codigo)" );
+        try {
+            if (rs.next()) {
+                return rs.getInt("MAX(codigo)");
             }
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
             return 0;
         }
 
         return 0;
     }
 
-    private void buscar_by_cod_manual()
-    {
+    private void buscar_by_cod_manual() {
 
-        TbProduto produto_local = produtosController.findByCodManual( txtCodigoManualProcura.getText() );
+        TbProduto produto_local = produtosController.findByCodManual(txtCodigoManualProcura.getText());
 
-        if ( !Objects.isNull( produto_local ) )
-        {
-            ver_dados( stock.getCodProdutoCodigo().getCodigo() );
+        if (!Objects.isNull(produto_local)) {
+            ver_dados(stock.getCodProdutoCodigo().getCodigo());
             txtCodigoManualProcura.requestFocus();
-        }
-        else
-        {
+        } else {
             procedimento_limpar();
         }
 
     }
 
-    public float getPreco()
-    {
+    public float getPreco() {
 
-        try
-        {
-            return Float.parseFloat( txtPrecoCompra.getText() );
-        }
-        catch ( Exception e )
-        {
+        try {
+            return Float.parseFloat(txtPrecoCompra.getText());
+        } catch (Exception e) {
             return 0;
         }
 
     }
 
-    public String getDataFabrico()
-    {
+    public String getDataFabrico() {
 
         GregorianCalendar gc = new GregorianCalendar();
-        gc.setTime( new Date() );
+        gc.setTime(new Date());
 
-        String dataSelecionada = gc.get( GregorianCalendar.YEAR ) + "-"
-                + ( gc.get( GregorianCalendar.MONTH ) + 1 ) + "-"
-                + gc.get( GregorianCalendar.DATE );
+        String dataSelecionada = gc.get(GregorianCalendar.YEAR) + "-"
+                + (gc.get(GregorianCalendar.MONTH) + 1) + "-"
+                + gc.get(GregorianCalendar.DATE);
         return dataSelecionada;
     }
 
-    public String getDataExpiraco()
-    {
+    public String getDataExpiraco() {
         GregorianCalendar gc = new GregorianCalendar();
-        gc.setTime( new Date() );
+        gc.setTime(new Date());
 
-        String dataSelecionada = gc.get( GregorianCalendar.YEAR ) + "-"
-                + ( gc.get( GregorianCalendar.MONTH ) + 1 ) + "-"
-                + gc.get( GregorianCalendar.DATE );
+        String dataSelecionada = gc.get(GregorianCalendar.YEAR) + "-"
+                + (gc.get(GregorianCalendar.MONTH) + 1) + "-"
+                + gc.get(GregorianCalendar.DATE);
         return dataSelecionada;
     }
 
-    public String getDataEntrada()
-    {
+    public String getDataEntrada() {
         GregorianCalendar gc = new GregorianCalendar();
 
-        String dataSelecionada = gc.get( GregorianCalendar.YEAR ) + "-"
-                + ( gc.get( GregorianCalendar.MONTH ) + 1 ) + "-"
-                + gc.get( GregorianCalendar.DATE );
+        String dataSelecionada = gc.get(GregorianCalendar.YEAR) + "-"
+                + (gc.get(GregorianCalendar.MONTH) + 1) + "-"
+                + gc.get(GregorianCalendar.DATE);
         return dataSelecionada;
     }
 
-    public boolean campos_invalidos()
-    {
+    public boolean campos_invalidos() {
         Color backGround = Color.WHITE;
         Color foreGround = Color.BLACK;
         Color caretColor = Color.BLACK;
 
-        if ( getProduto().equals( "" ) )
-        {
-            txtDesignacao.setBackground( backGround );
-            txtDesignacao.setForeground( foreGround );
-            txtDesignacao.setCaretColor( caretColor );
-            JOptionPane.showMessageDialog( null, "Pf. Preêncha o campo Produto: " );
+        if (getProduto().equals("")) {
+            txtDesignacao.setBackground(backGround);
+            txtDesignacao.setForeground(foreGround);
+            txtDesignacao.setCaretColor(caretColor);
+            JOptionPane.showMessageDialog(null, "Pf. Preêncha o campo Produto: ");
             return true;
         }
 
         return false;
     }
 
-    public boolean exist_produto() throws SQLException
-    {
-        return new ProdutoController( conexao ).exist( txtDesignacao.getText() );
+    public boolean exist_produto() throws SQLException {
+        return new ProdutoController(conexao).exist(txtDesignacao.getText());
     }
 
-    public static void ver_dados_produtos( int codigo )
-    {
-        try
-        {
-            TbProduto produto_local = ( TbProduto ) produtosController.findByIdStatus( codigo );
-            if ( !Objects.isNull( produto_local ) )
-            {
-                ver_dados( produto_local.getCodigo() );
-            }
-            else
-            {
+    public static void ver_dados_produtos(int codigo) {
+        try {
+            TbProduto produto_local = (TbProduto) produtosController.findByIdStatus(codigo);
+            if (!Objects.isNull(produto_local)) {
+                ver_dados(produto_local.getCodigo());
+            } else {
                 procedimento_limpar();
-                JOptionPane.showMessageDialog( null, "Não existe produto com este código", "Alerta", JOptionPane.WARNING_MESSAGE );
+                JOptionPane.showMessageDialog(null, "Não existe produto com este código", "Alerta", JOptionPane.WARNING_MESSAGE);
             }
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             procedimento_limpar();
-            JOptionPane.showMessageDialog( null, e.getMessage(), "Falha na busca do produto\n"
-                    + "ou produto desactivado.", JOptionPane.WARNING_MESSAGE );
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Falha na busca do produto\n"
+                    + "ou produto desactivado.", JOptionPane.WARNING_MESSAGE);
         }
 
     }
 
-    private static void servico_produto()
-    {
+    private static void servico_produto() {
 
-        if ( ck_produto.isSelected() )
-        {
-            painel_stock.setVisible( true );
-            cmbFamilia.setSelectedItem( "Produtos" );
-            cmbFamilia.setEnabled( false );
+        if (ck_produto.isSelected()) {
+            painel_stock.setVisible(true);
+            cmbFamilia.setSelectedItem("Produtos");
+            cmbFamilia.setEnabled(false);
 
-        }
-        else
-        {
-            painel_stock.setVisible( false );
-            jButtonCompras.setVisible( false );
-            cmbFamilia.setSelectedItem( "Serviços" );
-            cmbFamilia.setEnabled( false );
+        } else {
+            painel_stock.setVisible(false);
+            jButtonCompras.setVisible(false);
+            cmbFamilia.setSelectedItem("Serviços");
+            cmbFamilia.setEnabled(false);
 
         }
 
     }
 
-    private static void servico_produto1()
-    {
+    private static void servico_produto1() {
 
-        if ( cmbFamilia.getSelectedItem().equals( "Serviços" ) )
-        {
-            painel_stock.setVisible( false );
-            cmbFamilia.setEnabled( false );
-            ck_servico.setSelected( true );
-        }
-        else
-        {
-            painel_stock.setVisible( true );
-            cmbFamilia.setEnabled( true );
+        if (cmbFamilia.getSelectedItem().equals("Serviços")) {
+            painel_stock.setVisible(false);
+            cmbFamilia.setEnabled(false);
+            ck_servico.setSelected(true);
+        } else {
+            painel_stock.setVisible(true);
+            cmbFamilia.setEnabled(true);
         }
 
     }
 
-    private static void mostrar_painel( TbProduto produto )
-    {
+    private static void mostrar_painel(TbProduto produto) {
 
-        if ( produto.getStocavel().equalsIgnoreCase( "true" ) )
-        {
-            ck_produto.setSelected( true );
-        }
-        else
-        {
-            ck_servico.setSelected( true );
+        if (produto.getStocavel().equalsIgnoreCase("true")) {
+            ck_produto.setSelected(true);
+        } else {
+            ck_servico.setSelected(true);
         }
 
     }
 
-    private void preparar_produto()
-    {
+    private void preparar_produto() {
         boolean isStocavel = ck_produto.isSelected();
 
         double factor_conversao = Double.parseDouble(txtFactorConversao.getText());
-        String designacao_produto = normalizarDesignacao( txtDesignacao.getText() );
-        produto.setDesignacao( designacao_produto );
-        
-        produto.setPreco( new BigDecimal( MetodosUtil.convertToDouble( txtPrecoCompra.getText() ) ) );
-        produto.setDataFabrico( isStocavel ? jcDataFabrico.getDate() : new Date() );
-        produto.setDataExpiracao( isStocavel ? jcDataExpiracao.getDate() : new Date() );
+        String designacao_produto = normalizarDesignacao(txtDesignacao.getText());
+        produto.setDesignacao(designacao_produto);
 
-        String codBarra = normalizarCodigoBarra( txtCodigoBarra.getText() );
-        produto.setCodBarra( isStocavel ? codBarra : "2147483647" );
-        produto.setStatus( "Activo" );
-        produto.setDataEntrada( new Date() );
-        produto.setStocavel( isStocavel ? "true" : "false" );
-        produto.setPrecoVenda( MetodosUtil.convertToDouble( txtPrecoCompra.getText() ) );
-        produto.setQuantidadeDesconto( 0 );
+        produto.setPreco(new BigDecimal(MetodosUtil.convertToDouble(txtPrecoCompra.getText())));
+        produto.setDataFabrico(isStocavel ? jcDataFabrico.getDate() : new Date());
+        produto.setDataExpiracao(isStocavel ? jcDataExpiracao.getDate() : new Date());
 
-        String codigoManual = normalizarCodigoManual( txtCodigoManual.getText() );
-        produto.setCodigoManual( isStocavel ? codigoManual : "" );
-        produto.setCodUnidade( new Unidade( getIdUnidade() ) );
-        produto.setCodLocal( new TbLocal( getIdLocal() ) );
-        produto.setCodFornecedores( new TbFornecedor( 1 ) );
-        produto.setCodTipoProduto( new TbTipoProduto( getIdTipoPrdouto() ) );
-        produto.setFkModelo( new Modelo( getIdModelo() ) );
-        produto.setFkGrupo( new Grupo( getIdGrupo() ) );
-        produto.setStatusIva( ivaAplicarJRadioButton.isSelected() ? "true" : "false" );
-        produto.setCozinha( getCozinha() );
-        
+        String codBarra = normalizarCodigoBarra(txtCodigoBarra.getText());
+        produto.setCodBarra(isStocavel ? codBarra : "2147483647");
+        produto.setStatus("Activo");
+        produto.setDataEntrada(new Date());
+        produto.setStocavel(isStocavel ? "true" : "false");
+        produto.setPrecoVenda(MetodosUtil.convertToDouble(txtPrecoCompra.getText()));
+        produto.setQuantidadeDesconto(0);
+
+        String codigoManual = normalizarCodigoManual(txtCodigoManual.getText());
+        produto.setCodigoManual(isStocavel ? codigoManual : "");
+        produto.setCodUnidade(new Unidade(getIdUnidade()));
+        produto.setCodLocal(new TbLocal(getIdLocal()));
+        produto.setCodFornecedores(new TbFornecedor(1));
+        produto.setCodTipoProduto(new TbTipoProduto(getIdTipoPrdouto()));
+        produto.setFkModelo(new Modelo(getIdModelo()));
+        produto.setFkGrupo(new Grupo(getIdGrupo()));
+        produto.setStatusIva(ivaAplicarJRadioButton.isSelected() ? "true" : "false");
+        produto.setCozinha(getCozinha());
+
         // 🔹 Sempre grava 1 na unidade de compra
-        produto.setUnidadeCompra( 1.0 );
-        produto.setFactorConversao(factor_conversao );
+        produto.setUnidadeCompra(1.0);
+        produto.setFactorConversao(factor_conversao);
 
-        try
-        {
-            if ( Objects.nonNull( image_View.getBystebyteImg() ) )
-            {
-                produto.setPhoto( image_View.getBystebyteImg() );
+        try {
+            if (Objects.nonNull(image_View.getBystebyteImg())) {
+                produto.setPhoto(image_View.getBystebyteImg());
             }
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
         }
     }
 
@@ -2186,7 +2058,7 @@ public class ProdutosVisao extends javax.swing.JFrame
 //        produto.setFkModelo( new Modelo( getIdModelo() ) );
 //        produto.setFkGrupo( new Grupo( getIdGrupo() ) );
 //        produto.setStatusIva( ivaAplicarJRadioButton.isSelected() ? "true" : "false" );
-////        produto.setPercentagemDesconto( 0d );
+    ////        produto.setPercentagemDesconto( 0d );
 //        produto.setCozinha( getCozinha() );
 //        produto.setUnidadeCompra( Double.valueOf( txtUnidadeCompra.getText() ) );
 //
@@ -2202,49 +2074,36 @@ public class ProdutosVisao extends javax.swing.JFrame
 //        }
 //
 //    }
-    private void set_dados_produto()
-    {
-        try
-        {
+    private void set_dados_produto() {
+        try {
             preparar_produto();
-            if ( Objects.nonNull( image_View.getBystebyteImg() ) )
-            {
-                produto.setPhoto( image_View.getBystebyteImg() );
+            if (Objects.nonNull(image_View.getBystebyteImg())) {
+                produto.setPhoto(image_View.getBystebyteImg());
+            } else {
+                produto.setPhoto(null);
             }
-            else
-            {
-                produto.setPhoto( null );
-            }
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
         }
 
     }
 
-    private boolean campos_validos_alterar()
-    {
+    private boolean campos_validos_alterar() {
 
         String codigoBarraText = txtCodigoBarra.getText();
         boolean isProduto = ck_produto.isSelected();
 
-        if ( produtosController.existProdutoByCodigoBarraExcepto( produto.getCodigo(), codigoBarraText ) && isProduto )
-        {
-            JOptionPane.showMessageDialog( null, "Já existe um produto com este codigo de barra." );
+        if (produtosController.existProdutoByCodigoBarraExcepto(produto.getCodigo(), codigoBarraText) && isProduto) {
+            JOptionPane.showMessageDialog(null, "Já existe um produto com este codigo de barra.");
             txtCodigoBarra.requestFocus();
             return false;
-        }
-        else if ( produtosController.existProdutoByDesignacaoExcepto( produto.getCodigo(), getDesignacaoText() ) )
-        {
-            JOptionPane.showMessageDialog( null, "Já existe um produto na base de dados com esta designacao!" );
+        } else if (produtosController.existProdutoByDesignacaoExcepto(produto.getCodigo(), getDesignacaoText())) {
+            JOptionPane.showMessageDialog(null, "Já existe um produto na base de dados com esta designacao!");
             txtDesignacao.requestFocus();
             return false;
         }
 
-        if ( dadosInstituicao.getUsarDoisPrecos().equals( "sim" ) )
-        {
-            if ( !camposValidosQtdGrossoPrecoGrosso() )
-            {
+        if (dadosInstituicao.getUsarDoisPrecos().equals("sim")) {
+            if (!camposValidosQtdGrossoPrecoGrosso()) {
                 return false;
             }
 
@@ -2254,135 +2113,120 @@ public class ProdutosVisao extends javax.swing.JFrame
 
     }
 
-    private void set_dados_produto_alterar()
-    {
+    private void set_dados_produto_alterar() {
 
     }
 
-    private void set_dados_eliminar()
-    {
+    private void set_dados_eliminar() {
 
         String codigoBarraText = txtCodigoBarra.getText();
 
-        try
-        {
-            produto.setStatus( "Desactivo" );
-            produtosController.desactivar( conexao, produto );
-            JOptionPane.showMessageDialog( null, "Produto desactivado com sucesso!", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
+        try {
+            produto.setStatus("Desactivo");
+            produtosController.desactivar(conexao, produto);
+            JOptionPane.showMessageDialog(null, "Produto desactivado com sucesso!", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE);
             procedimento_limpar_campos();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-    private void retencaoAtualizar( int fkProduto )
-    {
+    private void retencaoAtualizar(int fkProduto) {
 
-        servicosRetencaoController.eliminarByIdProduto( fkProduto );
-        if ( retencaoAplicarJRadioButton.isSelected() && ck_servico.isSelected() )
-        {
+        servicosRetencaoController.eliminarByIdProduto(fkProduto);
+        if (retencaoAplicarJRadioButton.isSelected() && ck_servico.isSelected()) {
             ServicoRetencao servicoRetencao = new ServicoRetencao();
-            servicoRetencao.setFkProduto( new TbProduto( fkProduto ) );
-            servicoRetencao.setFkRetencao( new Retencao( retencao.getPkRetencao() ) );
+            servicoRetencao.setFkProduto(new TbProduto(fkProduto));
+            servicoRetencao.setFkRetencao(new Retencao(retencao.getPkRetencao()));
 
-            servicosRetencaoController.salvar( servicoRetencao );
+            servicosRetencaoController.salvar(servicoRetencao);
             retencaoTaxaJTextField.getText();
         }
 
     }
 
-    private void procedimento_salvar_produto()
-    {
-        if ( campos_validos() )
-        {
+    private void procedimento_salvar_produto() {
+        if (campos_validos()) {
             conexaoTransaction = BDConexao.getInstancia();
-            DocumentoDao.startTransaction( conexaoTransaction );
+            DocumentoDao.startTransaction(conexaoTransaction);
             String designacao_produto = getDesignacaoText();
-            ProdutosController produtosControllerLocal = new ProdutosController( conexaoTransaction );
-            ProdutosMotivosIsensaoController produtosMotivosIsensaoControllerLocal = new ProdutosMotivosIsensaoController( conexaoTransaction );
-            ProdutosIsentoController produtosIsentoControllerLocal = new ProdutosIsentoController( conexaoTransaction );
-            ProdutosImpostoController produtosImpostoControllerLocal = new ProdutosImpostoController( conexaoTransaction );
-            ServicosRetencaoController servicosRetencaoControllerLocal = new ServicosRetencaoController( conexaoTransaction );
-            PrecosController precosControllerLocal = new PrecosController( conexaoTransaction );
+            ProdutosController produtosControllerLocal = new ProdutosController(conexaoTransaction);
+            ProdutosMotivosIsensaoController produtosMotivosIsensaoControllerLocal = new ProdutosMotivosIsensaoController(conexaoTransaction);
+            ProdutosIsentoController produtosIsentoControllerLocal = new ProdutosIsentoController(conexaoTransaction);
+            ProdutosImpostoController produtosImpostoControllerLocal = new ProdutosImpostoController(conexaoTransaction);
+            ServicosRetencaoController servicosRetencaoControllerLocal = new ServicosRetencaoController(conexaoTransaction);
+            PrecosController precosControllerLocal = new PrecosController(conexaoTransaction);
 
-            System.out.println( "CHEGUEI AQUI!....... INICIAL" );
+            System.out.println("CHEGUEI AQUI!....... INICIAL");
             //ALTERAR PRODUTO
-            if ( produtosControllerLocal.exist_designacao_produto( conexao, designacao_produto ) )
-            {
+            if (produtosControllerLocal.exist_designacao_produto(conexao, designacao_produto)) {
 
-                try
-                {
-                    produto = produtosControllerLocal.findByDesignacao( designacao_produto );
+                try {
+                    produto = produtosControllerLocal.findByDesignacao(designacao_produto);
                     set_dados_produto();
-                    produtosControllerLocal.actualizar( produto );
-                    DocumentoDao.commitTransaction( conexaoTransaction );
-                    proximo_codigo( produtosControllerLocal );
-                    proximo_codigo_manual( produtosControllerLocal );
+                    produtosControllerLocal.actualizar(produto);
+                    DocumentoDao.commitTransaction(conexaoTransaction);
+                    proximo_codigo(produtosControllerLocal);
+                    proximo_codigo_manual(produtosControllerLocal);
                     conexaoTransaction.close();
-                    JOptionPane.showMessageDialog( null, "Produto actualizado com sucesso!" );
+                    JOptionPane.showMessageDialog(null, "Produto actualizado com sucesso!");
 //                    procedimento_limpar();
-                }
-                catch ( Exception e )
-                {
-                    DocumentoDao.rollBackTransaction( conexaoTransaction );
+                } catch (Exception e) {
+                    DocumentoDao.rollBackTransaction(conexaoTransaction);
                     conexaoTransaction.close();
-                    JOptionPane.showMessageDialog( null, "Falha ao actualizar o produto", "Falha", JOptionPane.WARNING_MESSAGE );
+                    JOptionPane.showMessageDialog(null, "Falha ao actualizar o produto", "Falha", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
 
             } //CRIAR NOVO PRODUTO
-            else
-            {
+            else {
 
                 produto = new TbProduto();
                 set_dados_produto();
-                if ( produtosControllerLocal.salvar( produto ) )
-                {
+                if (produtosControllerLocal.salvar(produto)) {
 
-                    System.err.println( "Produto Salvo" );
-                    DocumentoDao.commitTransaction( conexaoTransaction ); // aceita a transacao
+                    System.err.println("Produto Salvo");
+//                    DocumentoDao.commitTransaction(conexaoTransaction); // aceita a transacao
                     produto = produtosControllerLocal.getLastProduto();
-                    DocumentoDao.startTransaction( conexaoTransaction ); // inicia uma nova transacao
-                    if ( !ivaAplicarJRadioButton.isSelected() )//APLICAR ISENÇÃO
+                    DocumentoDao.startTransaction(conexaoTransaction); // inicia uma nova transacao
+                    if (!ivaAplicarJRadioButton.isSelected())//APLICAR ISENÇÃO
                     {
-                        String regimeIsencao = ( String ) ivaMotivoJComboBox.getSelectedItem();
-                        ProdutosMotivosIsensao motivosIsensao = produtosMotivosIsensaoControllerLocal.getRegime( regimeIsencao );
+                        String regimeIsencao = (String) ivaMotivoJComboBox.getSelectedItem();
+                        ProdutosMotivosIsensao motivosIsensao = produtosMotivosIsensaoControllerLocal.getRegime(regimeIsencao);
 
-                        if ( Objects.nonNull( motivosIsensao ) )
-                        {
+                        if (Objects.nonNull(motivosIsensao)) {
                             ProdutoIsento produtoIsento = new ProdutoIsento();
-                            produtoIsento.setFkProdutosMotivosIsensao( motivosIsensao );
-                            produtoIsento.setFkProduto( new TbProduto( produto.getCodigo() ) );
-                            if ( !produtosIsentoControllerLocal.salvar( produtoIsento ) )
-                            {
-                                DocumentoDao.rollBackTransaction( conexaoTransaction );
+                            produtoIsento.setFkProdutosMotivosIsensao(motivosIsensao);
+                            produtoIsento.setFkProduto(new TbProduto(produto.getCodigo()));
+                            if (!produtosIsentoControllerLocal.salvar(produtoIsento)) {
+                                DocumentoDao.rollBackTransaction(conexaoTransaction);
                                 conexaoTransaction.close();
-                                JOptionPane.showMessageDialog( null, "Falha ao registrar o produto", "Falha", JOptionPane.WARNING_MESSAGE );
+                                JOptionPane.showMessageDialog(null, "Falha ao registrar o produto", "Falha", JOptionPane.WARNING_MESSAGE);
                                 return;
 
                             }
-                            System.err.println( "Produto Isento Salvo" );
+                            System.err.println("Produto Isento Salvo");
 
                         }
 
-                    }
-                    else //APLICAR IVA
+                    } else //APLICAR IVA
                     {
 
+                        System.err.println("$$$$$$$$$$$$$$$$Consegui entrar no Aplicar IVA");
+
+//                        ivaAtualizar(produto.getCodigo(), produtosImpostoControllerLocal, produtosIsentoControllerLocal);
+//                        retencaoAtualizar(produto.getCodigo());
                         ProdutoImposto produtoImposto = new ProdutoImposto();
-                        produtoImposto.setFkProduto( new TbProduto( produto.getCodigo() ) );
-                        produtoImposto.setFkImposto( new Imposto( getIdImposto() ) );
-                        if ( !produtosImpostoControllerLocal.salvar( produtoImposto ) )
-                        {
-                            DocumentoDao.rollBackTransaction( conexaoTransaction );
+                        produtoImposto.setFkProduto(new TbProduto(produto.getCodigo()));
+                        produtoImposto.setFkImposto(new Imposto(getIdImposto()));
+                        if (!produtosImpostoControllerLocal.salvar(produtoImposto)) {
+                            DocumentoDao.rollBackTransaction(conexaoTransaction);
                             conexaoTransaction.close();
-                            JOptionPane.showMessageDialog( null, "Falha ao registrar o produto", "Falha", JOptionPane.WARNING_MESSAGE );
+                            JOptionPane.showMessageDialog(null, "Falha ao registrar o produto", "Falha", JOptionPane.WARNING_MESSAGE);
                             return;
                         }
-
+                        DocumentoDao.commitTransaction(conexaoTransaction); // aceita a transacao
                     }
 
 //                    if ( !retencaoAplicarJRadioButton.isSelected() && ck_servico.isSelected() )
@@ -2402,17 +2246,15 @@ public class ProdutosVisao extends javax.swing.JFrame
 //                    }
 //                    else 
                     //APLICAR RETENCAO
-                    if ( retencaoAplicarJRadioButton.isSelected() )
-                    {
+                    if (retencaoAplicarJRadioButton.isSelected()) {
                         ServicoRetencao produtoRetencao = new ServicoRetencao();
-                        produtoRetencao.setFkProduto( new TbProduto( produto.getCodigo() ) );
-                        produtoRetencao.setFkRetencao( new Retencao( 1 ) );
+                        produtoRetencao.setFkProduto(new TbProduto(produto.getCodigo()));
+                        produtoRetencao.setFkRetencao(new Retencao(1));
 
-                        if ( !servicosRetencaoControllerLocal.salvar( produtoRetencao ) )
-                        {
-                            DocumentoDao.rollBackTransaction( conexaoTransaction );
+                        if (!servicosRetencaoControllerLocal.salvar(produtoRetencao)) {
+                            DocumentoDao.rollBackTransaction(conexaoTransaction);
                             conexaoTransaction.close();
-                            JOptionPane.showMessageDialog( null, "Falha ao registrar o produto", "Falha", JOptionPane.WARNING_MESSAGE );
+                            JOptionPane.showMessageDialog(null, "Falha ao registrar o produto", "Falha", JOptionPane.WARNING_MESSAGE);
                             return;
 
                         }
@@ -2420,37 +2262,31 @@ public class ProdutosVisao extends javax.swing.JFrame
                     }
 
                     //Adicionar no stock caso o artigo for stocável
-                    if ( produto.getStocavel().equals( "true" ) )
-                    {
+                    if (produto.getStocavel().equals("true")) {
 
                         Vector<String> armazens = armazensController.getVector();
-                        for ( String designacaoArmazem : armazens )
-                        {
-                            TbArmazem armazem = ( TbArmazem ) armazensController.findByName( designacaoArmazem );
-                            procedimento_registrar_stock( produto.getCodigo(), armazem.getCodigo() );
+                        for (String designacaoArmazem : armazens) {
+                            TbArmazem armazem = (TbArmazem) armazensController.findByName(designacaoArmazem);
+                            procedimento_registrar_stock(produto.getCodigo(), armazem.getCodigo());
                         }
                     }
 
-                    if ( registrar_preco( precosControllerLocal ) )
-                    {
+                    if (registrar_preco(precosControllerLocal)) {
 
-                        DocumentoDao.commitTransaction( conexaoTransaction );
-                        proximo_codigo( produtosControllerLocal );
-                        proximo_codigo_manual( produtosControllerLocal );
+                        DocumentoDao.commitTransaction(conexaoTransaction);
+                        proximo_codigo(produtosControllerLocal);
+                        proximo_codigo_manual(produtosControllerLocal);
 
                         conexaoTransaction.close();
-                        JOptionPane.showMessageDialog( null, "Dados salvos com sucesso!", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
-                        setActivarNegocio( dadosInstituicao.getNegocio() );
-                        if ( rbJanelaServico.isSelected() )
-                        {
-                            painel_stock.setVisible( false );
-                        }
-                        else
-                        {
-                            painel_stock.setVisible( true );
+                        JOptionPane.showMessageDialog(null, "Dados salvos com sucesso!", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE);
+                        setActivarNegocio(dadosInstituicao.getNegocio());
+                        if (rbJanelaServico.isSelected()) {
+                            painel_stock.setVisible(false);
+                        } else {
+                            painel_stock.setVisible(true);
                             procedimento_limpar();
                             txtDesignacao.requestFocus();
-                            txtCodigoBarra.setText( String.valueOf( produtosController.getLastProduto().getCodigo() + 1 ) );
+                            txtCodigoBarra.setText(String.valueOf(produtosController.getLastProduto().getCodigo() + 1));
 
                         }
 
@@ -2458,11 +2294,9 @@ public class ProdutosVisao extends javax.swing.JFrame
                     }
                     detalhe_produto();
 
-                }
-                else
-                {
-                    DocumentoDao.rollBackTransaction( conexaoTransaction );
-                    JOptionPane.showMessageDialog( null, "Falha ao registrar o produto", "Falha", JOptionPane.WARNING_MESSAGE );
+                } else {
+                    DocumentoDao.rollBackTransaction(conexaoTransaction);
+                    JOptionPane.showMessageDialog(null, "Falha ao registrar o produto", "Falha", JOptionPane.WARNING_MESSAGE);
                     return;
 
                 }
@@ -2473,53 +2307,44 @@ public class ProdutosVisao extends javax.swing.JFrame
 
     }
 
-    private void procedimento_alterar_servico_produto()
-    {
+    private void procedimento_alterar_servico_produto() {
 
-        if ( !Objects.isNull( produto ) )
-        {
+        if (!Objects.isNull(produto)) {
 
-            if ( campos_validos_alterar() )
-            {
+            if (campos_validos_alterar()) {
 
-                try
-                {
+                try {
 
                     conexaoTransaction = BDConexao.getInstancia();
-                    ProdutosController produtosControllerLocal = new ProdutosController( conexaoTransaction );
-                    PrecosController precosControllerLocal = new PrecosController( conexaoTransaction );
-                    ProdutosImpostoController produtosImpostoControllerLocal = new ProdutosImpostoController( conexaoTransaction );
-                    ProdutosIsentoController produtosIsentoControllerLocal = new ProdutosIsentoController( conexaoTransaction );
-                    DocumentoDao.startTransaction( conexaoTransaction );
+                    ProdutosController produtosControllerLocal = new ProdutosController(conexaoTransaction);
+                    PrecosController precosControllerLocal = new PrecosController(conexaoTransaction);
+                    ProdutosImpostoController produtosImpostoControllerLocal = new ProdutosImpostoController(conexaoTransaction);
+                    ProdutosIsentoController produtosIsentoControllerLocal = new ProdutosIsentoController(conexaoTransaction);
+                    DocumentoDao.startTransaction(conexaoTransaction);
                     preparar_produto();
-                    produtosControllerLocal.actualizar( produto );
+                    produtosControllerLocal.actualizar(produto);
 
-                    ivaAtualizar( produto.getCodigo(), produtosImpostoControllerLocal, produtosIsentoControllerLocal );
-                    retencaoAtualizar( produto.getCodigo() );
-                    if ( registrar_preco( precosControllerLocal ) )
-                    {
-                        DocumentoDao.commitTransaction( conexaoTransaction );
-                        JOptionPane.showMessageDialog( null, "Dados alterados com sucesso!", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
-                        proximo_codigo( produtosControllerLocal );
-                        proximo_codigo_manual( produtosControllerLocal );
+                    ivaAtualizar(produto.getCodigo(), produtosImpostoControllerLocal, produtosIsentoControllerLocal);
+                    retencaoAtualizar(produto.getCodigo());
+                    if (registrar_preco(precosControllerLocal)) {
+                        DocumentoDao.commitTransaction(conexaoTransaction);
+                        JOptionPane.showMessageDialog(null, "Dados alterados com sucesso!", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE);
+                        proximo_codigo(produtosControllerLocal);
+                        proximo_codigo_manual(produtosControllerLocal);
                         conexaoTransaction.close();
-                    }
-                    else
-                    {
-                        DocumentoDao.rollBackTransaction( conexaoTransaction );
+                    } else {
+                        DocumentoDao.rollBackTransaction(conexaoTransaction);
                         conexaoTransaction.close();
-                        JOptionPane.showMessageDialog( null, "Falha ao actualizar o produto", "Falha", JOptionPane.WARNING_MESSAGE );
+                        JOptionPane.showMessageDialog(null, "Falha ao actualizar o produto", "Falha", JOptionPane.WARNING_MESSAGE);
                         return;
 
                     }
 
-                }
-                catch ( Exception e )
-                {
+                } catch (Exception e) {
                     e.printStackTrace();
 
-                    DocumentoDao.rollBackTransaction( conexaoTransaction );
-                    JOptionPane.showMessageDialog( null, "Falha ao actualizar o produto", "Falha", JOptionPane.WARNING_MESSAGE );
+                    DocumentoDao.rollBackTransaction(conexaoTransaction);
+                    JOptionPane.showMessageDialog(null, "Falha ao actualizar o produto", "Falha", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
 
@@ -2529,77 +2354,58 @@ public class ProdutosVisao extends javax.swing.JFrame
 
     }
 
-    private void procedimento_alterar_servico_produto_eliminar()
-    {
+    private void procedimento_alterar_servico_produto_eliminar() {
 
-        try
-        {
+        try {
             set_dados_eliminar();
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog( null, e.getMessage(), "Falha ao desactivar produto", JOptionPane.ERROR_MESSAGE );
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Falha ao desactivar produto", JOptionPane.ERROR_MESSAGE);
         }
 
     }
 
-    private void set_combos()
-    {
-        cmbMarca.setModel( new DefaultComboBoxModel( marcasController.getVector() ) );
-        cmbGrupo.setModel( new DefaultComboBoxModel( gruposController.getVector() ) );
-        try
-        {
-            cmbModelo.setModel( new DefaultComboBoxModel( modelosController.getVectorByIdMarca( getIdMarca() ) ) );
-        }
-        catch ( Exception e )
-        {
+    private void set_combos() {
+        cmbMarca.setModel(new DefaultComboBoxModel(marcasController.getVector()));
+        cmbGrupo.setModel(new DefaultComboBoxModel(gruposController.getVector()));
+        try {
+            cmbModelo.setModel(new DefaultComboBoxModel(modelosController.getVectorByIdMarca(getIdMarca())));
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        try
-        {
-            cmbFamilia.setModel( new DefaultComboBoxModel( familiasController.getVector() ) );
-            cmbTipoProduto.setModel( new DefaultComboBoxModel( tipoProdutosController.getVectorByIdFamilia( getIdFamilia() ) ) );
+        try {
+            cmbFamilia.setModel(new DefaultComboBoxModel(familiasController.getVector()));
+            cmbTipoProduto.setModel(new DefaultComboBoxModel(tipoProdutosController.getVectorByIdFamilia(getIdFamilia())));
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        cmbLocal.setModel( new DefaultComboBoxModel( localController.getVector() ) );
-        cmbUnidade.setModel( new DefaultComboBoxModel( unidadesController.getVector() ) );
+        cmbLocal.setModel(new DefaultComboBoxModel(localController.getVector()));
+        cmbUnidade.setModel(new DefaultComboBoxModel(unidadesController.getVector()));
 
-        try
-        {
-            cmbarmazem1.setModel( new DefaultComboBoxModel( armazensController.getVector( 1 ) ) );
-            cmbarmazem2.setModel( new DefaultComboBoxModel( armazensController.getVector( 2 ) ) );
-            cmbarmazem3.setModel( new DefaultComboBoxModel( armazensController.getVector( 3 ) ) );
-            cmbarmazem4.setModel( new DefaultComboBoxModel( armazensController.getVector( 4 ) ) );
+        try {
+            cmbarmazem1.setModel(new DefaultComboBoxModel(armazensController.getVector(1)));
+            cmbarmazem2.setModel(new DefaultComboBoxModel(armazensController.getVector(2)));
+            cmbarmazem3.setModel(new DefaultComboBoxModel(armazensController.getVector(3)));
+            cmbarmazem4.setModel(new DefaultComboBoxModel(armazensController.getVector(4)));
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
         }
 
     }
 
-    private void mostrar_qtd_stock_armazem( JTextField text, int idArmazem )
-    {
-        if ( Objects.nonNull( produto ) && idArmazem > 0 )
-        {
-            TbStock stockLocal1 = stoksController.getStockByIdProdutoAndIdArmazem( getCodigoProduto(), idArmazem );
+    private void mostrar_qtd_stock_armazem(JTextField text, int idArmazem) {
+        if (Objects.nonNull(produto) && idArmazem > 0) {
+            TbStock stockLocal1 = stoksController.getStockByIdProdutoAndIdArmazem(getCodigoProduto(), idArmazem);
 //            TbStock stockLocal = stoksController.getStockByIdProdutoAndIdArmazem( produto.getCodigo(), idArmazem );
 
-            if ( !Objects.isNull( stockLocal1 ) )
-            {
+            if (!Objects.isNull(stockLocal1)) {
 //                txtQuantidadeStock.setText( String.valueOf( stockLocal.getQuantidadeExistente() ) );
-                text.setText( String.valueOf( stockLocal1.getQuantidadeExistente() ) );
-            }
-            else
-            {
-                text.setText( "0.0" );
+                text.setText(String.valueOf(stockLocal1.getQuantidadeExistente()));
+            } else {
+                text.setText("0.0");
             }
 
         }
@@ -2607,158 +2413,123 @@ public class ProdutosVisao extends javax.swing.JFrame
     }
 
     //actualizar
-    private int getIdLocal()
-    {
-        try
-        {
+    private int getIdLocal() {
+        try {
             return localController
-                    .getTbLocalByDesignacao( cmbLocal.getSelectedItem().toString() )
+                    .getTbLocalByDesignacao(cmbLocal.getSelectedItem().toString())
                     .getCodigo();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
         }
         return 0;
     }
 
-    private int getIdUnidade()
-    {
-        try
-        {
+    private int getIdUnidade() {
+        try {
             return unidadesController
-                    .getUnidadeByDesignacao( cmbUnidade.getSelectedItem().toString() )
+                    .getUnidadeByDesignacao(cmbUnidade.getSelectedItem().toString())
                     .getPkUnidade();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return 0;
 
     }
 
-    private int getIdImposto()
-    {
+    private int getIdImposto() {
 
-        try
-        {
+        try {
             return impostosController
-                    .getImpostoByDesignacao( cmbImposto.getSelectedItem().toString() )
+                    .getImpostoByDesignacao(cmbImposto.getSelectedItem().toString())
                     .getPkImposto();
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
         }
         return 0;
 
     }
 
-    private int getIdGrupo()
-    {
-        try
-        {
-            System.out.println( "ESTADO GRUPO: " + Objects.nonNull( gruposController ) );
+    private int getIdGrupo() {
+        try {
+            System.out.println("ESTADO GRUPO: " + Objects.nonNull(gruposController));
             return gruposController
-                    .getGrupoByDesignacao( cmbGrupo.getSelectedItem().toString() )
+                    .getGrupoByDesignacao(cmbGrupo.getSelectedItem().toString())
                     .getPkGrupo();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return 0;
     }
 
-    private int getIdTipoPrdouto()
-    {
-        try
-        {
+    private int getIdTipoPrdouto() {
+        try {
             return tipoProdutosController
-                    .getTipoFamiliaByDesignacao( cmbTipoProduto.getSelectedItem().toString() )
+                    .getTipoFamiliaByDesignacao(cmbTipoProduto.getSelectedItem().toString())
                     .getCodigo();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
         }
         return 0;
     }
 
-    private static int getIdFamilia()
-    {
-        try
-        {
+    private static int getIdFamilia() {
+        try {
             return familiasController
-                    .getFamiliaByDesignacao( cmbFamilia.getSelectedItem().toString() )
+                    .getFamiliaByDesignacao(cmbFamilia.getSelectedItem().toString())
                     .getPkFamilia();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
         }
 
         return 0;
     }
 
-    private static int getIdMarca()
-    {
-        try
-        {
+    private static int getIdMarca() {
+        try {
             return marcasController
-                    .getMarcaByDesignacao( cmbMarca.getSelectedItem().toString() )
+                    .getMarcaByDesignacao(cmbMarca.getSelectedItem().toString())
                     .getPkMarca();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return 0;
 
     }
 
-    private static int getIdModelo()
-    {
-        try
-        {
+    private static int getIdModelo() {
+        try {
             return modelosController
-                    .getModeloByDesignacao( cmbMarca.getSelectedItem().toString() )
+                    .getModeloByDesignacao(cmbMarca.getSelectedItem().toString())
                     .getPkModelo();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
         }
         return 0;
     }
 
-    public static void ver_dados( int codigo )
-    {
+    public static void ver_dados(int codigo) {
 
-        TbProduto produto_local = ( TbProduto ) produtosController.findById( codigo );
+        TbProduto produto_local = (TbProduto) produtosController.findById(codigo);
         produto = produto_local;
-        if ( !Objects.isNull( produto_local ) )
-        {
-            mostrar_painel( produto_local );
+        if (!Objects.isNull(produto_local)) {
+            mostrar_painel(produto_local);
 
-            preco = ( TbPreco ) precosController.getLastIdPrecoByIdProduto( codigo, 1 );
+            preco = (TbPreco) precosController.getLastIdPrecoByIdProduto(codigo, 1);
 
-            if ( Objects.isNull( preco ) )
-            {
+            if (Objects.isNull(preco)) {
                 return;
             }
 
             Integer pkModelo = produto_local.getFkModelo().getPkModelo();
-            Modelo modeloLocal = ( Modelo ) modelosController.findById( pkModelo );
+            Modelo modeloLocal = (Modelo) modelosController.findById(pkModelo);
 
             Integer pkGrupo = produto_local.getFkGrupo().getPkGrupo();
-            Grupo grupoLocal = ( Grupo ) gruposController.findById( pkGrupo );
+            Grupo grupoLocal = (Grupo) gruposController.findById(pkGrupo);
 
             Integer pkMarca = modeloLocal.getFkMarca().getPkMarca();
-            Marca marcaLocal = ( Marca ) marcasController.findById( pkMarca );
+            Marca marcaLocal = (Marca) marcasController.findById(pkMarca);
 
             Integer idTipoProduto = produto_local.getCodTipoProduto().getCodigo();
-            TbTipoProduto tipoProdutoLocal = ( TbTipoProduto ) tipoProdutosController.findById( idTipoProduto );
+            TbTipoProduto tipoProdutoLocal = (TbTipoProduto) tipoProdutosController.findById(idTipoProduto);
 
             Integer pkFamilia = tipoProdutoLocal.getFkFamilia().getPkFamilia();
-            Familia familiaLocal = ( Familia ) familiasController.findById( pkFamilia );
+            Familia familiaLocal = (Familia) familiasController.findById(pkFamilia);
 
             String marca = marcaLocal.getDesignacao();
             String modelo = modeloLocal.getDesignacao();
@@ -2767,237 +2538,203 @@ public class ProdutosVisao extends javax.swing.JFrame
             String familia = familiaLocal.getDesignacao();
             String tipoProduto = tipoProdutoLocal.getDesignacao();
 
-            cmbMarca.setSelectedItem( marca );
-            cmbModelo.setSelectedItem( modelo );
-            cmbGrupo.setSelectedItem( grupo );
+            cmbMarca.setSelectedItem(marca);
+            cmbModelo.setSelectedItem(modelo);
+            cmbGrupo.setSelectedItem(grupo);
 
-            cmbFamilia.setSelectedItem( familia );
-            cmbTipoProduto.setSelectedItem( tipoProduto );
+            cmbFamilia.setSelectedItem(familia);
+            cmbTipoProduto.setSelectedItem(tipoProduto);
 
-            try
-            {
-                if ( !Objects.isNull( produto_local.getPhoto() ) )
-                {
-                    imageIcon = new ImageIcon( produto_local.getPhoto() );
-                    imageIcon.setImage( imageIcon.getImage().getScaledInstance( 112, 109, 100 ) );
-                    lbPhoto.setIcon( imageIcon );
+            try {
+                if (!Objects.isNull(produto_local.getPhoto())) {
+                    imageIcon = new ImageIcon(produto_local.getPhoto());
+                    imageIcon.setImage(imageIcon.getImage().getScaledInstance(112, 109, 100));
+                    lbPhoto.setIcon(imageIcon);
+                } else {
+                    lbPhoto.setIcon(null);
                 }
-                else
-                {
-                    lbPhoto.setIcon( null );
-                }
-            }
-            catch ( Exception e )
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
-                lbPhoto.setIcon( null );
+                lbPhoto.setIcon(null);
             }
 
-            Unidade unidadeLocal = ( Unidade ) unidadesController.findById( produto_local.getCodUnidade().getPkUnidade() );
-            cmbUnidade.setSelectedItem( unidadeLocal.getDescricao() );
-            txtDesignacao.setText( produto_local.getDesignacao() );
+            Unidade unidadeLocal = (Unidade) unidadesController.findById(produto_local.getCodUnidade().getPkUnidade());
+            cmbUnidade.setSelectedItem(unidadeLocal.getDescricao());
+            txtDesignacao.setText(produto_local.getDesignacao());
 
-            Double preco_compra = ( !Objects.isNull( preco ) ) ? preco.getPrecoCompra().doubleValue() : 0;
+            Double preco_compra = (!Objects.isNull(preco)) ? preco.getPrecoCompra().doubleValue() : 0;
 
 //            txtPrecoCompra.setText( CfMethods.formatarComoPorcoes( preco_compra ) );
-            txtPrecoCompra.setText( Double.toString( preco_compra ) );
+            txtPrecoCompra.setText(Double.toString(preco_compra));
 
-            txtCodigoBarra.setText( String.valueOf( produto_local.getCodBarra() ) );
-            txtCodigoManual.setText( String.valueOf( produto_local.getCodigoManual() ) );
-            txtCodigoBarraProcura.setText( String.valueOf( produto_local.getCodBarra() ) );
-            txtCodigoManualProcura.setText( String.valueOf( produto_local.getCodigoManual() ) );
-            jcDataExpiracao.setDate( produto_local.getDataExpiracao() );
-            jcDataFabrico.setDate( produto_local.getDataFabrico() );
-            txtUnidadeCompra.setText( String.valueOf( produto_local.getUnidadeCompra() ) );
-            txtFactorConversao.setText( String.valueOf( produto_local.getFactorConversao() ) );
+            txtCodigoBarra.setText(String.valueOf(produto_local.getCodBarra()));
+            txtCodigoManual.setText(String.valueOf(produto_local.getCodigoManual()));
+            txtCodigoBarraProcura.setText(String.valueOf(produto_local.getCodBarra()));
+            txtCodigoManualProcura.setText(String.valueOf(produto_local.getCodigoManual()));
+            jcDataExpiracao.setDate(produto_local.getDataExpiracao());
+            jcDataFabrico.setDate(produto_local.getDataFabrico());
+            txtUnidadeCompra.setText(String.valueOf(produto_local.getUnidadeCompra()));
+            txtFactorConversao.setText(String.valueOf(produto_local.getFactorConversao()));
 
             Integer pkProduto = produto_local.getCodigo();
-            boolean temIva = produtosImpostoController.existeProdutoImposto( pkProduto );
+            boolean temIva = produtosImpostoController.existeProdutoImposto(pkProduto);
 
-            if ( !temIva )
-            {
-                String regime = produtosIsentoController.getRegimeIsensaoByIdProduto( pkProduto );
-                ivaMotivoJComboBox.setSelectedItem( regime );
-
-            }
-
-            ivaAplicarJRadioButton.setSelected( temIva );
-            ivaNaoAplicarJRadioButton.setSelected( !temIva );
-
-            boolean temRetencao = servicosRetencaoController.existeRetencao( pkProduto );
-
-            if ( !temRetencao )
-            {
-
-                String retencao = servicosRetencaoController.getRetensaoByIdProduto( pkProduto );
-                ivaMotivoJComboBox.setSelectedItem( retencao );
+            if (!temIva) {
+                String regime = produtosIsentoController.getRegimeIsensaoByIdProduto(pkProduto);
+                ivaMotivoJComboBox.setSelectedItem(regime);
 
             }
 
-            retencaoAplicarJRadioButton.setSelected( temRetencao );
-            retencaoNaoAplicarJRadioButton.setSelected( !temRetencao );
+            ivaAplicarJRadioButton.setSelected(temIva);
+            ivaNaoAplicarJRadioButton.setSelected(!temIva);
+
+            boolean temRetencao = servicosRetencaoController.existeRetencao(pkProduto);
+
+            if (!temRetencao) {
+
+                String retencao = servicosRetencaoController.getRetensaoByIdProduto(pkProduto);
+                ivaMotivoJComboBox.setSelectedItem(retencao);
+
+            }
+
+            retencaoAplicarJRadioButton.setSelected(temRetencao);
+            retencaoNaoAplicarJRadioButton.setSelected(!temRetencao);
 
 //            atualizarIvaForm();
-            Double taxa = produtosImpostoController.getTaxaByIdProduto( pkProduto );
-            cmbImposto.setSelectedItem( String.valueOf( taxa ) );
-            System.out.println( "TAXA REAL: " + taxa );
+            Double taxa = produtosImpostoController.getTaxaByIdProduto(pkProduto);
+            cmbImposto.setSelectedItem(String.valueOf(taxa));
+            System.out.println("TAXA REAL: " + taxa);
 
             actualizarRetencaoForm();
             /**
              * A IDEIA BUSCAR O ULTIMO PRECO(GROSSO) E DEPOIS BUSCAR O PRECO
              * RETALHO EM FUNCAO DO PRECO GROSSO
              */
-            TbPreco precoGrosso = precosController.getLastPreco( produto.getCodigo() );
-            TbPreco precoRetalhoLocal = precosController.getLastIdPrecoByIdProduto( produto_local.getCodigo(), precoGrosso.getQtdBaixo() - 1 );
+            TbPreco precoGrosso = precosController.getLastPreco(produto.getCodigo());
+            TbPreco precoRetalhoLocal = precosController.getLastIdPrecoByIdProduto(produto_local.getCodigo(), precoGrosso.getQtdBaixo() - 1);
             double preco_venda_retalho = precoRetalhoLocal.getPrecoVenda().doubleValue();
             double preco_venda_grosso = precoGrosso.getPrecoVenda().doubleValue();
             double percentagem_ganho = precoRetalhoLocal.getPercentagemGanho().doubleValue();
 
 //            txtPrecoVendaRetalho.setText( String.valueOf( CfMethods.formatarComoPorcoes( preco_venda_retalho ) ));
-            txtPrecoVendaRetalho.setText( Double.toString( preco_venda_retalho ) );
+            txtPrecoVendaRetalho.setText(Double.toString(preco_venda_retalho));
 //            txtPrecoDeVendaSemIva.setText(String.valueOf( CfMethods.formatarComoPorcoes( preco_venda_retalho ) ) );
 
-            txtQtdGrosso.setText( String.valueOf( precoGrosso.getQtdBaixo() ) );
+            txtQtdGrosso.setText(String.valueOf(precoGrosso.getQtdBaixo()));
 //            txtPrecoVendaGrosso.setText(String.valueOf( CfMethods.formatarComoPorcoes( preco_venda_grosso ) )
-            txtPrecoVendaGrosso.setText( Double.toString( preco_venda_grosso ) );
+            txtPrecoVendaGrosso.setText(Double.toString(preco_venda_grosso));
 
 //            txtPercentagemGanhoRetalho.setText( CfMethods.formatarComoPorcoes( percentagem_ganho ) );
-            txtPercentagemGanhoRetalho.setText( Double.toString( percentagem_ganho ) );
-            txtCodigoProduto.setText( String.valueOf( produto_local.getCodigo() ) );
+            txtPercentagemGanhoRetalho.setText(Double.toString(percentagem_ganho));
+            txtCodigoProduto.setText(String.valueOf(produto_local.getCodigo()));
 
-            if ( produto_local.getStocavel().equals( "true" ) )
-            {
-                ck_produto.setSelected( true );
-            }
-            else
-            {
-                ck_produto.setSelected( false );
+            if (produto_local.getStocavel().equals("true")) {
+                ck_produto.setSelected(true);
+            } else {
+                ck_produto.setSelected(false);
             }
 
-            setCozinha( produto_local.getCozinha() );
-        }
-        else
-        {
+            setCozinha(produto_local.getCozinha());
+        } else {
             limpar_direito();
-            JOptionPane.showMessageDialog( null, "O Produto ainda não existe. ", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
+            JOptionPane.showMessageDialog(null, "O Produto ainda não existe. ", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE);
 
         }
 
     }
 
-    private static void procedimento_limpar()
-    {
+    private static void procedimento_limpar() {
         limpar_esquerdo();
         limpar_direito();
         //actualizar
-        cmbLocal.setModel( new DefaultComboBoxModel( localController.getVector() ) );
-        cmbUnidade.setModel( new DefaultComboBoxModel( unidadesController.getVector() ) );
+        cmbLocal.setModel(new DefaultComboBoxModel(localController.getVector()));
+        cmbUnidade.setModel(new DefaultComboBoxModel(unidadesController.getVector()));
 //        ck_produto.setSelected( true );
 
     }
 
-    private static void alterar_estrutura_janela()
-    {
+    private static void alterar_estrutura_janela() {
 
-        if ( rbJanelaServico.isSelected() )
-        {
-            painel_stock.setVisible( false );
-        }
-        else
-        {
-            painel_stock.setVisible( true );
+        if (rbJanelaServico.isSelected()) {
+            painel_stock.setVisible(false);
+        } else {
+            painel_stock.setVisible(true);
         }
     }
 
-    private static void procedimento_limpar_campos()
-    {
+    private static void procedimento_limpar_campos() {
         limpar_esquerdo();
         limpar_direito_campos();
         //actualizar
-        cmbLocal.setModel( new DefaultComboBoxModel( localController.getVector() ) );
-        cmbUnidade.setModel( new DefaultComboBoxModel( unidadesController.getVector() ) );
+        cmbLocal.setModel(new DefaultComboBoxModel(localController.getVector()));
+        cmbUnidade.setModel(new DefaultComboBoxModel(unidadesController.getVector()));
 //        ck_produto.setSelected( true );
 //        servico_produto();
-        btnSalvar.setEnabled( true );
+        btnSalvar.setEnabled(true);
         txtDesignacao.requestFocus();
     }
 
-    private static void limpar_esquerdo()
-    {
-        lbPhoto.setIcon( null );
-        txtDesignacao.setText( "" );
-        txtPrecoCompra.setText( "" );
+    private static void limpar_esquerdo() {
+        lbPhoto.setIcon(null);
+        txtDesignacao.setText("");
+        txtPrecoCompra.setText("");
 
     }
 
-    private static void limpar_direito()
-    {
+    private static void limpar_direito() {
 
 //        txtCodigoBarra.setText( "0" );
-        txtPrecoVendaRetalho.setText( "" );
-        txtPercentagemGanhoRetalho.setText( "0" );
-        txtCodigoManual.setText( "" );
-        txtPrecoVendaGrosso.setText( "" );
-        txtQtdGrosso.setText( "" );
-        txtUnidadeCompra.setText( "" );
+        txtPrecoVendaRetalho.setText("");
+        txtPercentagemGanhoRetalho.setText("0");
+        txtCodigoManual.setText("");
+        txtPrecoVendaGrosso.setText("");
+        txtQtdGrosso.setText("");
+        txtUnidadeCompra.setText("");
 
     }
 
-    private static void limpar_direito_campos()
-    {
+    private static void limpar_direito_campos() {
 
-        txtPrecoVendaRetalho.setText( "" );
-        txtPrecoVendaRetalho.setText( "" );
-        txtCodigoProduto.setText( "" );
-        txtCodigoBarraProcura.setText( "" );
-        txtPercentagemGanhoRetalho.setText( "0" );
-        txtPrecoDeVendaComIva.setText( "" );
-        txtCodigoManual.setText( "" );
-        txtUnidadeCompra.setText( "" );
+        txtPrecoVendaRetalho.setText("");
+        txtPrecoVendaRetalho.setText("");
+        txtCodigoProduto.setText("");
+        txtCodigoBarraProcura.setText("");
+        txtPercentagemGanhoRetalho.setText("0");
+        txtPrecoDeVendaComIva.setText("");
+        txtCodigoManual.setText("");
+        txtUnidadeCompra.setText("");
 
     }
 
-    public boolean exist_produto_stock( int codigo_produto )
-    {
-        try
-        {
-            return stoksController.existeStock( codigo_produto, DVML.ARMAZEM_DEFAUTL, conexao );
-        }
-        catch ( Exception e )
-        {
+    public boolean exist_produto_stock(int codigo_produto) {
+        try {
+            return stoksController.existeStock(codigo_produto, DVML.ARMAZEM_DEFAUTL, conexao);
+        } catch (Exception e) {
             return false;
         }
     }
 
-    private void buscar_by_cod_barra()
-    {
+    private void buscar_by_cod_barra() {
         TbProduto produto_local
-                = produtosController.findByCodBarra( txtCodigoBarraProcura.getText().trim() );
+                = produtosController.findByCodBarra(txtCodigoBarraProcura.getText().trim());
 
-        if ( Objects.isNull( produto_local ) )
-        {
-            int idProdutoByCodigoBarra = referenciasController.getIdProdutoByCodigoBarra( txtCodigoBarraProcura.getText().trim() );
-            produto_local = produtosController.findByCodInterno( idProdutoByCodigoBarra );
+        if (Objects.isNull(produto_local)) {
+            int idProdutoByCodigoBarra = referenciasController.getIdProdutoByCodigoBarra(txtCodigoBarraProcura.getText().trim());
+            produto_local = produtosController.findByCodInterno(idProdutoByCodigoBarra);
         }
 
-        if ( produto_local != null )
-        {
-            ver_dados( produto_local.getCodigo() );
+        if (produto_local != null) {
+            ver_dados(produto_local.getCodigo());
 
             txtCodigoBarraProcura.requestFocus();
 
-            if ( ivaAplicarJRadioButton.isSelected() )
-            {
+            if (ivaAplicarJRadioButton.isSelected()) {
                 calcularTotalComIva();
+            } else {
+                txtPrecoDeVendaComIva.setVisible(false);
+                ivaTaxaJLabel.setVisible(false);
             }
-            else
-            {
-                txtPrecoDeVendaComIva.setVisible( false );
-                ivaTaxaJLabel.setVisible( false );
-            }
-        }
-        else
-        {
+        } else {
             procedimento_limpar();
             JOptionPane.showMessageDialog(
                     null,
@@ -3043,8 +2780,7 @@ public class ProdutosVisao extends javax.swing.JFrame
 //            procedimento_limpar();
 //        }
 //    }
-    private void buscar_by_cod_manual1()
-    {
+    private void buscar_by_cod_manual1() {
 
         //            if ( !Objects.isNull( produto_local ) )
 //            {
@@ -3055,169 +2791,131 @@ public class ProdutosVisao extends javax.swing.JFrame
 //                procedimento_limpar();
 //                JOptionPane.showMessageDialog( null, "Não existe produto com este código", "Alerta", JOptionPane.WARNING_MESSAGE );
 //            }
-        TbProduto produto_local = produtosController.findByCodManual1( txtCodigoManualProcura.getText().trim() );
-        if ( !Objects.isNull( produto_local ) )
-        {
-            ver_dados( produto_local.getCodigo() );
+        TbProduto produto_local = produtosController.findByCodManual1(txtCodigoManualProcura.getText().trim());
+        if (!Objects.isNull(produto_local)) {
+            ver_dados(produto_local.getCodigo());
             txtCodigoManualProcura.requestFocus();
-            if ( ivaAplicarJRadioButton.isSelected() )
-            {
+            if (ivaAplicarJRadioButton.isSelected()) {
                 calcularTotalComIva();
-            }
-            else
-            {
-                txtPrecoDeVendaComIva.setVisible( false );
-                ivaTaxaJLabel.setVisible( false );
+            } else {
+                txtPrecoDeVendaComIva.setVisible(false);
+                ivaTaxaJLabel.setVisible(false);
 
             }
 
-        }
-        else
-        {
+        } else {
             procedimento_limpar();
-            JOptionPane.showMessageDialog( null, "Não existe produto com este código", "Alerta", JOptionPane.WARNING_MESSAGE );
+            JOptionPane.showMessageDialog(null, "Não existe produto com este código", "Alerta", JOptionPane.WARNING_MESSAGE);
         }
     }
 
-    private void detalhe_produto()
-    {
+    private void detalhe_produto() {
 
-        Unidade unidade = ( Unidade ) unidadesController.findById( produto.getCodUnidade().getPkUnidade() );
+        Unidade unidade = (Unidade) unidadesController.findById(produto.getCodUnidade().getPkUnidade());
 
         String output = "";
-        TbPreco preco_local = precosController.getLastIdPrecoByIdProduto( produto.getCodigo(), 1 );
+        TbPreco preco_local = precosController.getLastIdPrecoByIdProduto(produto.getCodigo(), 1);
         output += "CodInterno           : " + produto.getCodigo() + "\n";
         output += "CodManual           : " + produto.getCodigoManual() + "\n";
         output += "Designação           : " + produto.getDesignacao() + "\n";
         output += "Unidade           : " + unidade.getDescricao() + "\n";
-        if ( produto.getStocavel().equals( "true" ) )
-        {
+        if (produto.getStocavel().equals("true")) {
             output += "Preço da Compra      : " + preco_local.getPrecoCompra() + "\n";
             output += "Percentagem Ganho    : " + preco_local.getPercentagemGanho() + "  % \n";
             output += "Preço de Venda       : " + preco_local.getPrecoVenda() + "\n";
-        }
-        else
-        {
+        } else {
             output += "Preço do Serviço      : " + preco_local.getPrecoCompra() + "\n";
         }
 
-        JOptionPane.showMessageDialog( null, output );
+        JOptionPane.showMessageDialog(null, output);
 
     }
 
-    private void setDadosPreco()
-    {
+    private void setDadosPreco() {
 
         preco = new TbPreco();
 //        preco.setPrecoCompra( new BigDecimal( MetodosUtil.convertToDouble( txtPrecoCompra.getText() ) ) );
-        preco.setPrecoCompra( new BigDecimal( Double.parseDouble( txtPrecoCompra.getText() ) ) );
+        preco.setPrecoCompra(new BigDecimal(Double.parseDouble(txtPrecoCompra.getText())));
 
-        if ( ck_produto.isSelected() )
-        {
-            preco.setPercentagemGanho( new BigDecimal( txtPercentagemGanhoRetalho.getText() ) );
+        if (ck_produto.isSelected()) {
+            preco.setPercentagemGanho(new BigDecimal(txtPercentagemGanhoRetalho.getText()));
 
-        }
-        else
-        {
-            preco.setPercentagemGanho( new BigDecimal( "0" ) );
+        } else {
+            preco.setPercentagemGanho(new BigDecimal("0"));
         }
 
-        preco.setData( new Date() );
-        preco.setHora( new Date() );
-        preco.setFkProduto( new TbProduto( produto.getCodigo() ) );
-        preco.setRetalho( true );
+        preco.setData(new Date());
+        preco.setHora(new Date());
+        preco.setFkProduto(new TbProduto(produto.getCodigo()));
+        preco.setRetalho(true);
 
-        preco.setFkUsuario( new TbUsuario( idUser ) );
+        preco.setFkUsuario(new TbUsuario(idUser));
 
     }
 
-    private boolean campos_validos()
-    {
+    private boolean campos_validos() {
         boolean isProduto = ck_produto.isSelected();
 
-        System.out.println( "Status Produto: " + isProduto );
-        MetodosUtil.getValorTransformadoString( preco_venda_anterior );
+        System.out.println("Status Produto: " + isProduto);
+        MetodosUtil.getValorTransformadoString(preco_venda_anterior);
 
         String designacao_produto = getDesignacaoText();
 
-        TbUsuario usuarioLocal = ( TbUsuario ) usuariosController.findById( idUser );
+        TbUsuario usuarioLocal = (TbUsuario) usuariosController.findById(idUser);
 
-        if ( designacao_produto.equals( "" ) )
-        {
+        if (designacao_produto.equals("")) {
 
-            JOptionPane.showMessageDialog( null, "Caro usuário " + usuarioLocal.getNome() + " " + usuarioLocal.getSobreNome() + " por favor digite a designação do produto" );
+            JOptionPane.showMessageDialog(null, "Caro usuário " + usuarioLocal.getNome() + " " + usuarioLocal.getSobreNome() + " por favor digite a designação do produto");
             txtPrecoCompra.requestFocus();
             return false;
 
-        }
-        else if ( produtosController.exist_designacao_produto( conexao, getDesignacaoText() ) )
-        {
-            JOptionPane.showMessageDialog( null, "Já existe um produto com esta designação!!!", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+        } else if (produtosController.exist_designacao_produto(conexao, getDesignacaoText())) {
+            JOptionPane.showMessageDialog(null, "Já existe um produto com esta designação!!!", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
             txtDesignacao.requestFocus();
             return false;
-        }
-        else if ( produtosController.existProdutoByCodigoBarra( txtCodigoBarra.getText() ) && isProduto )
-        {
-            JOptionPane.showMessageDialog( null, "Este codigo de barra já existe!!!", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+        } else if (produtosController.existProdutoByCodigoBarra(txtCodigoBarra.getText()) && isProduto) {
+            JOptionPane.showMessageDialog(null, "Este codigo de barra já existe!!!", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
             txtCodigoBarra.requestFocus();
 //            txtCodigoBarra.setBackground( Color.YELLOW );
             return false;
-        }
-        else if ( produtosController.existProdutoByCodigoManual( txtCodigoManual.getText() ) && isProduto )
-        {
-            JOptionPane.showMessageDialog( null, "Este codigo manual já existe!!!", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+        } else if (produtosController.existProdutoByCodigoManual(txtCodigoManual.getText()) && isProduto) {
+            JOptionPane.showMessageDialog(null, "Este codigo manual já existe!!!", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
             txtCodigoManual.requestFocus();
 //            txtCodigoManual.setBackground( Color.YELLOW );
             return false;
-        }
-        else if ( txtPrecoCompra.getText().equals( "" ) )
-        {
+        } else if (txtPrecoCompra.getText().equals("")) {
 
-            JOptionPane.showMessageDialog( null, "Caro usuário " + usuarioLocal.getNome() + " " + usuarioLocal.getSobreNome() + " , insira o preço da compra do produto" );
+            JOptionPane.showMessageDialog(null, "Caro usuário " + usuarioLocal.getNome() + " " + usuarioLocal.getSobreNome() + " , insira o preço da compra do produto");
             txtPrecoCompra.requestFocus();
             return false;
 
-        }
-        else if ( txtPrecoCompra.getText().equals( "0" ) )
-        {
-            JOptionPane.showMessageDialog( null, "Caro usuário " + usuarioLocal.getNome() + " " + usuarioLocal.getSobreNome() + ", o preço da compra não pode ser igual a zero(0)." );
+        } else if (txtPrecoCompra.getText().equals("0")) {
+            JOptionPane.showMessageDialog(null, "Caro usuário " + usuarioLocal.getNome() + " " + usuarioLocal.getSobreNome() + ", o preço da compra não pode ser igual a zero(0).");
             txtPrecoCompra.requestFocus();
             return false;
-        }
-        else if ( txtPrecoVendaRetalho.getText().equals( "" ) && isProduto )
-        {
+        } else if (txtPrecoVendaRetalho.getText().equals("") && isProduto) {
 
-            JOptionPane.showMessageDialog( null, "Caro usuário " + usuarioLocal.getNome() + " " + usuarioLocal.getSobreNome() + " , insira o preço da venda do produto" );
+            JOptionPane.showMessageDialog(null, "Caro usuário " + usuarioLocal.getNome() + " " + usuarioLocal.getSobreNome() + " , insira o preço da venda do produto");
             txtPrecoVendaRetalho.requestFocus();
             return false;
 
-        }
-        else if ( txtPrecoVendaRetalho.getText().equals( "0" ) && isProduto )
-        {
-            JOptionPane.showMessageDialog( null, "Caro usuário " + usuarioLocal.getNome() + " " + usuarioLocal.getSobreNome() + ",  o preço da venda não pode ser igual a zero(0)." );
+        } else if (txtPrecoVendaRetalho.getText().equals("0") && isProduto) {
+            JOptionPane.showMessageDialog(null, "Caro usuário " + usuarioLocal.getNome() + " " + usuarioLocal.getSobreNome() + ",  o preço da venda não pode ser igual a zero(0).");
             txtPrecoVendaRetalho.requestFocus();
             return false;
-        }
-        else if ( cmbUnidade.getSelectedItem().equals( "--SELECIONE--" ) )
-        {
-            JOptionPane.showMessageDialog( null, "Pf. Selecione a unidade de medida do produto", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+        } else if (cmbUnidade.getSelectedItem().equals("--SELECIONE--")) {
+            JOptionPane.showMessageDialog(null, "Pf. Selecione a unidade de medida do produto", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
             return false;
-        }
-        else if ( ivaAplicarJRadioButton.isSelected() && cmbImposto.getSelectedItem().equals( "--SELECIONE--" ) )
-        {
-            JOptionPane.showMessageDialog( null, "Pf. Selecione a taxa do IVA", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+        } else if (ivaAplicarJRadioButton.isSelected() && cmbImposto.getSelectedItem().equals("--SELECIONE--")) {
+            JOptionPane.showMessageDialog(null, "Pf. Selecione a taxa do IVA", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
             return false;
-        }
-        else if ( cmbImposto.getSelectedItem().equals( "--SELECIONE--" ) && ivaAplicarJRadioButton.isSelected() )
-        {
-            JOptionPane.showMessageDialog( null, "Pf. Selecione a taxa do IVA do produto recomendado pela AGT", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+        } else if (cmbImposto.getSelectedItem().equals("--SELECIONE--") && ivaAplicarJRadioButton.isSelected()) {
+            JOptionPane.showMessageDialog(null, "Pf. Selecione a taxa do IVA do produto recomendado pela AGT", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
             return false;
         }
 
-        if ( dadosInstituicao.getUsarDoisPrecos().equals( "sim" ) )
-        {
-            if ( !camposValidosQtdGrossoPrecoGrosso() )
-            {
+        if (dadosInstituicao.getUsarDoisPrecos().equals("sim")) {
+            if (!camposValidosQtdGrossoPrecoGrosso()) {
                 return false;
             }
 
@@ -3226,41 +2924,31 @@ public class ProdutosVisao extends javax.swing.JFrame
         return true;
     }
 
-    private boolean camposValidosQtdGrossoPrecoGrosso()
-    {
-        if ( txtQtdGrosso.getText().equals( "" ) )
-        {
+    private boolean camposValidosQtdGrossoPrecoGrosso() {
+        if (txtQtdGrosso.getText().equals("")) {
             txtQtdGrosso.requestFocus();
-            JOptionPane.showMessageDialog( null, "Pf. digite a quantidade grosso.", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+            JOptionPane.showMessageDialog(null, "Pf. digite a quantidade grosso.", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
             return false;
-        }
-        else if ( Double.parseDouble( txtQtdGrosso.getText() ) <= 1 )
-        {
+        } else if (Double.parseDouble(txtQtdGrosso.getText()) <= 1) {
             txtQtdGrosso.requestFocus();
-            JOptionPane.showMessageDialog( null, "A quantidade grosso, nao pode ser menor do que 2.", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+            JOptionPane.showMessageDialog(null, "A quantidade grosso, nao pode ser menor do que 2.", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
             return false;
 
-        }
-        else if ( txtPrecoVendaGrosso.getText().equals( "" ) )
-        {
+        } else if (txtPrecoVendaGrosso.getText().equals("")) {
             txtPrecoVendaGrosso.requestFocus();
-            JOptionPane.showMessageDialog( null, "Pf. Seleccione o preco de venda a grosso.", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+            JOptionPane.showMessageDialog(null, "Pf. Seleccione o preco de venda a grosso.", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
             return false;
-        }
-        else if ( MetodosUtil.convertToDouble( txtPrecoVendaGrosso.getText() ) == 0 )
-        {
+        } else if (MetodosUtil.convertToDouble(txtPrecoVendaGrosso.getText()) == 0) {
             txtPrecoVendaGrosso.requestFocus();
-            JOptionPane.showMessageDialog( null, "O preco grosso nao pode ser zero..", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+            JOptionPane.showMessageDialog(null, "O preco grosso nao pode ser zero..", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
             return false;
         }
 
-        if ( MetodosUtil.convertToDouble( txtPrecoVendaGrosso.getText() ) < MetodosUtil.convertToDouble( txtPrecoCompra.getText() ) )
-        {
+        if (MetodosUtil.convertToDouble(txtPrecoVendaGrosso.getText()) < MetodosUtil.convertToDouble(txtPrecoCompra.getText())) {
             txtPrecoVendaGrosso.requestFocus();
-            int opcao = JOptionPane.showConfirmDialog( null, "O preco grosso e menor que o preco de compra .." );
+            int opcao = JOptionPane.showConfirmDialog(null, "O preco grosso e menor que o preco de compra ..");
 
-            if ( opcao == JOptionPane.YES_OPTION )
-            {
+            if (opcao == JOptionPane.YES_OPTION) {
                 return true;
 
             }
@@ -3270,257 +2958,211 @@ public class ProdutosVisao extends javax.swing.JFrame
         return true;
     }
 
-    private void popularComponentes()
-    {
-        System.err.println( "listarMotivos (): " + listarMotivos() );
-        cmbImposto.setModel( new DefaultComboBoxModel( impostosController.getVector() ) );
-        ivaMotivoJComboBox.setModel( listarMotivos() );
-        ivaMotivoJComboBox.setSelectedIndex( -1 );
+    private void popularComponentes() {
+        System.err.println("listarMotivos (): " + listarMotivos());
+        cmbImposto.setModel(new DefaultComboBoxModel(impostosController.getVector()));
+        ivaMotivoJComboBox.setModel(listarMotivos());
+        ivaMotivoJComboBox.setSelectedIndex(-1);
 
-        if ( !Objects.isNull( dadosInstituicao ) )
-        {
-            ivaMotivoJComboBox.setSelectedItem( dadosInstituicao.getRegime() );
+        if (!Objects.isNull(dadosInstituicao)) {
+            ivaMotivoJComboBox.setSelectedItem(dadosInstituicao.getRegime());
         }
 
         atualizarIvaForm();
 
-        MetodosUtil.FUNCAO_F1( this, rootPaneCheckingEnabled, DVML.ARMAZEM_DEFAUTL, DVML.JANELA_PRODUTO );
+        MetodosUtil.FUNCAO_F1(this, rootPaneCheckingEnabled, DVML.ARMAZEM_DEFAUTL, DVML.JANELA_PRODUTO);
 
     }
 
-    private DefaultComboBoxModel listarMotivos()
-    {
+    private DefaultComboBoxModel listarMotivos() {
         DefaultComboBoxModel boxModel = new DefaultComboBoxModel();
 
         List<ProdutosMotivosIsensao> ProdutosMotivosIsensao = produtosMotivosIsensaoController.listarTodos();
 
-        for ( ProdutosMotivosIsensao isensao : ProdutosMotivosIsensao )
-        {
+        for (ProdutosMotivosIsensao isensao : ProdutosMotivosIsensao) {
             // boxModel.addElement ( isensao.getRegime ().substring(0, 4) );
-            boxModel.addElement( isensao.getRegime() );
+            boxModel.addElement(isensao.getRegime());
         }
 
         return boxModel;
     }
 
-    private static void atualizarIvaForm()
-    {
-        try
-        {
+    private static void atualizarIvaForm() {
+        try {
             ver_retencao();
             actualizar_campos();
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        cmbImposto.setVisible( ivaAplicarJRadioButton.isSelected() );
-        ivaMotivoJComboBox.setVisible( !cmbImposto.isVisible() );
-        ivaMotivoJLabel.setVisible( ivaMotivoJComboBox.isVisible() );
+        cmbImposto.setVisible(ivaAplicarJRadioButton.isSelected());
+        ivaMotivoJComboBox.setVisible(!cmbImposto.isVisible());
+        ivaMotivoJLabel.setVisible(ivaMotivoJComboBox.isVisible());
 
-        if ( !Objects.isNull( dadosInstituicao ) )
-        {
-            ivaMotivoJComboBox.setSelectedItem( dadosInstituicao.getRegime() );
-
-        }
-
-    }
-
-    public static void actualizar_campos()
-    {
-
-        if ( !ivaAplicarJRadioButton.isSelected() )
-        {
-
-            TotalIvaLabel.setVisible( false );
-            txtPrecoDeVendaComIva.setVisible( false );
-        }
-        else
-        {
-            TotalIvaLabel.setVisible( true );
-            txtPrecoDeVendaComIva.setVisible( true );
+        if (!Objects.isNull(dadosInstituicao)) {
+            ivaMotivoJComboBox.setSelectedItem(dadosInstituicao.getRegime());
 
         }
 
     }
 
-    private void ivaAtualizar( int fkProduto, ProdutosImpostoController produtosImpostoControllerLocal, ProdutosIsentoController produtosIsentoControllerLocal )
-    {
+    public static void actualizar_campos() {
 
-        if ( produtosImpostoControllerLocal.existeProdutoImposto( fkProduto ) )
-        {
-            produtosImpostoControllerLocal.eliminar( fkProduto );
+        if (!ivaAplicarJRadioButton.isSelected()) {
+
+            TotalIvaLabel.setVisible(false);
+            txtPrecoDeVendaComIva.setVisible(false);
+        } else {
+            TotalIvaLabel.setVisible(true);
+            txtPrecoDeVendaComIva.setVisible(true);
+
         }
 
-        if ( ivaAplicarJRadioButton.isSelected() )
-        {
+    }
+
+    private void ivaAtualizar(int fkProduto, ProdutosImpostoController produtosImpostoControllerLocal, ProdutosIsentoController produtosIsentoControllerLocal) {
+
+        if (produtosImpostoControllerLocal.existeProdutoImposto(fkProduto)) {
+            produtosImpostoControllerLocal.eliminar(fkProduto);
+        }
+
+        if (ivaAplicarJRadioButton.isSelected()) {
 
             ProdutoImposto produtoImposto = new ProdutoImposto();
-            produtoImposto.setFkProduto( new TbProduto( fkProduto ) );
-            produtoImposto.setFkImposto( new Imposto( getIdImposto() ) );
-            produtosImpostoControllerLocal.salvar( produtoImposto );
+            produtoImposto.setFkProduto(new TbProduto(fkProduto));
+            produtoImposto.setFkImposto(new Imposto(getIdImposto()));
+            produtosImpostoControllerLocal.salvar(produtoImposto);
 
-        }
-        else
-        {
+        } else {
 
-            String regimeIsencao = ( String ) ivaMotivoJComboBox.getSelectedItem();
-            ProdutosMotivosIsensao isensao = produtosMotivosIsensaoController.getRegime( regimeIsencao );
-            if ( !Objects.isNull( isensao ) )
-            {
-                produtosIsentoControllerLocal.eliminarByIdProduto( fkProduto );
+            String regimeIsencao = (String) ivaMotivoJComboBox.getSelectedItem();
+            ProdutosMotivosIsensao isensao = produtosMotivosIsensaoController.getRegime(regimeIsencao);
+            if (!Objects.isNull(isensao)) {
+                produtosIsentoControllerLocal.eliminarByIdProduto(fkProduto);
             }
             ProdutoIsento produtoIsento = new ProdutoIsento();
-            produtoIsento.setFkProduto( new TbProduto( fkProduto ) );
-            produtoIsento.setFkProdutosMotivosIsensao( new ProdutosMotivosIsensao( isensao.getPkProdutosMotivosIsensao() ) );
-            produtosIsentoControllerLocal.salvar( produtoIsento );
+            produtoIsento.setFkProduto(new TbProduto(fkProduto));
+            produtoIsento.setFkProdutosMotivosIsensao(new ProdutosMotivosIsensao(isensao.getPkProdutosMotivosIsensao()));
+            produtosIsentoControllerLocal.salvar(produtoIsento);
 
         }
     }
 
-    private String getDesignacaoText()
-    {
+    private String getDesignacaoText() {
 
         String designacao_produto = txtDesignacao.getText();
 
-        if ( designacao_produto.contains( "-" ) )
-        {
-            return designacao_produto.replaceAll( "-", " " );
+        if (designacao_produto.contains("-")) {
+            return designacao_produto.replaceAll("-", " ");
         }
         return designacao_produto;
     }
 
-    private void proximo_codigo( ProdutosController produtosControllerLocal )
-    {
-        try
-        {
+    private void proximo_codigo(ProdutosController produtosControllerLocal) {
+        try {
             TbProduto lastProduto = produtosControllerLocal.getLastProduto();
             int codProduto = 1;
-            if ( Objects.nonNull( lastProduto ) )
-            {
+            if (Objects.nonNull(lastProduto)) {
                 codProduto = produtosControllerLocal.getLastProduto().getCodigo() + 1;
 //                txtCodigoBarra.setText( String.valueOf( codProduto ) );
             }
 
-            jLabelCodProduto.setText( "Cod. Prod: " + codProduto );
-            txtCodigoBarra.setText( String.valueOf( codProduto ) );
-        }
-        catch ( Exception e )
-        {
-            jLabelCodProduto.setText( "Cod. Prod: " );
-            txtCodigoBarra.setText( "" );
+            jLabelCodProduto.setText("Cod. Prod: " + codProduto);
+            txtCodigoBarra.setText(String.valueOf(codProduto));
+        } catch (Exception e) {
+            jLabelCodProduto.setText("Cod. Prod: ");
+            txtCodigoBarra.setText("");
         }
     }
 
-    private void proximo_codigo_manual( ProdutosController produtosControllerLocal )
-    {
-        try
-        {
+    private void proximo_codigo_manual(ProdutosController produtosControllerLocal) {
+        try {
             TbProduto lastProduto = produtosControllerLocal.getLastProduto();
             int codProduto = 1;
-            if ( Objects.nonNull( lastProduto ) )
-            {
+            if (Objects.nonNull(lastProduto)) {
                 codProduto = produtosControllerLocal.getLastProduto().getCodigo() + 1;
 //                txtCodigoBarra.setText( String.valueOf( codProduto ) );
             }
 
-            jLabelCodProduto.setText( "Cod. Prod: " + codProduto );
-            txtCodigoManual.setText( String.valueOf( codProduto ) );
-        }
-        catch ( Exception e )
-        {
-            jLabelCodProduto.setText( "Cod. Prod: " );
-            txtCodigoManual.setText( "" );
+            jLabelCodProduto.setText("Cod. Prod: " + codProduto);
+            txtCodigoManual.setText(String.valueOf(codProduto));
+        } catch (Exception e) {
+            jLabelCodProduto.setText("Cod. Prod: ");
+            txtCodigoManual.setText("");
         }
     }
 
-    private void setFocus( String focus )
-    {
-        if ( focus.equalsIgnoreCase( "Codigo Interno" ) )
-        {
+    private void setFocus(String focus) {
+        if (focus.equalsIgnoreCase("Codigo Interno")) {
             txtCodigoProduto.requestFocus();
-            txtCodigoBarra.setEnabled( true );
+            txtCodigoBarra.setEnabled(true);
 
-        }
-        else
-        {
+        } else {
             txtCodigoBarraProcura.requestFocus();
 
         }
     }
 
-    private boolean registrar_preco( PrecosController precosControllerLocal )
-    {
+    private boolean registrar_preco(PrecosController precosControllerLocal) {
 
-        if ( dadosInstituicao.getUsarDoisPrecos().equals( "nao" ) )
-        {
-            txtQtdGrosso.setText( String.valueOf( ( int ) DVML.QTD_DEFAULT ) );
-            txtPrecoVendaGrosso.setText( txtPrecoVendaRetalho.getText() );
+        if (dadosInstituicao.getUsarDoisPrecos().equals("nao")) {
+            txtQtdGrosso.setText(String.valueOf((int) DVML.QTD_DEFAULT));
+            txtPrecoVendaGrosso.setText(txtPrecoVendaRetalho.getText());
         }
 
         boolean isStocavel = ck_produto.isSelected();
         /*PRIMEIRO PRECO RETALHO*/
         setDadosPreco();
-        preco.setQtdBaixo( 0 );
-        preco.setQtdAlto( Integer.parseInt( txtQtdGrosso.getText() ) - 1 );
+        preco.setQtdBaixo(0);
+        preco.setQtdAlto(Integer.parseInt(txtQtdGrosso.getText()) - 1);
 //        BigDecimal precoVenda = new BigDecimal( MetodosUtil.convertToDouble( isStocavel ? txtPrecoVendaRetalho.getText() : "0.0" ) );
-        BigDecimal precoVenda = new BigDecimal( Double.parseDouble( isStocavel ? txtPrecoVendaRetalho.getText() : "0.0" ) );
+        BigDecimal precoVenda = new BigDecimal(Double.parseDouble(isStocavel ? txtPrecoVendaRetalho.getText() : "0.0"));
 //        BigDecimal precoVendaGrosso = new BigDecimal( MetodosUtil.convertToDouble( isStocavel ? txtPrecoVendaGrosso.getText() : "0.0" ) );
-        BigDecimal precoVendaGrosso = new BigDecimal( Double.parseDouble( isStocavel ? txtPrecoVendaGrosso.getText() : "0.0" ) );
+        BigDecimal precoVendaGrosso = new BigDecimal(Double.parseDouble(isStocavel ? txtPrecoVendaGrosso.getText() : "0.0"));
 //        BigDecimal precoCompra = new BigDecimal( MetodosUtil.convertToDouble( txtPrecoCompra.getText() ) );
-        BigDecimal precoCompra = new BigDecimal( Double.parseDouble( txtPrecoCompra.getText() ) );
+        BigDecimal precoCompra = new BigDecimal(Double.parseDouble(txtPrecoCompra.getText()));
 
-        try
-        {
-            preco.setPrecoVenda( isStocavel ? precoVenda : precoCompra );
-            precosControllerLocal.salvar( preco );
+        try {
+            preco.setPrecoVenda(isStocavel ? precoVenda : precoCompra);
+            precosControllerLocal.salvar(preco);
             /*SEGUNDO PRECO GROSSO*/
             setDadosPreco();
 //        preco.setQtdBaixo( (int) DVML.QTD_DEFAULT );
-            preco.setQtdBaixo( Integer.parseInt( txtQtdGrosso.getText() ) );
-            preco.setQtdAlto( 214748364 );
+            preco.setQtdBaixo(Integer.parseInt(txtQtdGrosso.getText()));
+            preco.setQtdAlto(214748364);
 
-            preco.setPrecoVenda( isStocavel ? precoVendaGrosso : precoCompra );
-            precosControllerLocal.salvar( preco );
+            preco.setPrecoVenda(isStocavel ? precoVendaGrosso : precoCompra);
+            precosControllerLocal.salvar(preco);
 
             return true;
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
         }
         return false;
 
     }
 
-    private void calcularIva()
-    {
+    private void calcularIva() {
 
-        if ( !txtPrecoCompra.getText().equals( "" ) )
-        {
-            try
-            {
-                if ( ck_servico.isSelected() )
-                {
-                    txtPrecoVendaRetalho.setText( txtPrecoCompra.getText() );
+        if (!txtPrecoCompra.getText().equals("")) {
+            try {
+                if (ck_servico.isSelected()) {
+                    txtPrecoVendaRetalho.setText(txtPrecoCompra.getText());
                 }
 
                 double qtd = 1d;
-                double taxa = Double.parseDouble( cmbImposto.getSelectedItem().toString() );
+                double taxa = Double.parseDouble(cmbImposto.getSelectedItem().toString());
 //                double precoLocal = MetodosUtil.convertToDouble( txtPrecoVendaRetalho.getText() );
 
-                double precoLocal = Double.parseDouble( txtPrecoVendaRetalho.getText() );
+                double precoLocal = Double.parseDouble(txtPrecoVendaRetalho.getText());
                 double desconto = 0d;
-                double valorComIVA = FinanceUtils.getValorComIVA( qtd, taxa, precoLocal, desconto );
+                double valorComIVA = FinanceUtils.getValorComIVA(qtd, taxa, precoLocal, desconto);
 
                 DecimalFormat df = new DecimalFormat("#,##0.00");
                 txtPrecoDeVendaComIva.setText(df.format(valorComIVA));
-                
+
 //                txtPrecoDeVendaComIva.setText( String.valueOf( valorComIVA ) );
-            }
-            catch ( Exception e )
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -3528,20 +3170,15 @@ public class ProdutosVisao extends javax.swing.JFrame
 
     }
 
-    private void calcularSemIva()
-    {
+    private void calcularSemIva() {
 
-        if ( !txtPrecoCompra.getText().equals( "" ) )
-        {
-            try
-            {
+        if (!txtPrecoCompra.getText().equals("")) {
+            try {
 //                double precoLocal = MetodosUtil.convertToDouble( txtPrecoVendaRetalho.getText() );
-                double precoLocal = Double.parseDouble( txtPrecoVendaRetalho.getText() );
-                BigDecimal bd = new BigDecimal( precoLocal ).setScale( 2, RoundingMode.HALF_UP );
+                double precoLocal = Double.parseDouble(txtPrecoVendaRetalho.getText());
+                BigDecimal bd = new BigDecimal(precoLocal).setScale(2, RoundingMode.HALF_UP);
 
-            }
-            catch ( Exception e )
-            {
+            } catch (Exception e) {
             }
 
         }
@@ -3550,128 +3187,102 @@ public class ProdutosVisao extends javax.swing.JFrame
 
     //----------- evento do teclado ---------------------------------------
     // <editor-fold defaultstate="collapsed" desc="Generated Code">       
-    class BuscaProduto implements KeyListener
-    {
+    class BuscaProduto implements KeyListener {
 
         String prefixo = "";
 
-        public void keyPressed( KeyEvent evt )
-        {
-            if ( evt.getKeyCode() != KeyEvent.VK_BACK_SPACE && evt.getKeyCode() != KeyEvent.VK_ENTER )
-            {
+        public void keyPressed(KeyEvent evt) {
+            if (evt.getKeyCode() != KeyEvent.VK_BACK_SPACE && evt.getKeyCode() != KeyEvent.VK_ENTER) {
                 char key = evt.getKeyChar();
                 prefixo = txtCodigoProduto.getText().trim() + key;
-                codigo = Integer.parseInt( prefixo );
+                codigo = Integer.parseInt(prefixo);
 
-                try
-                {
-                    ver_dados( codigo );
-                    ver_dados_produtos( codigo );
-                }
-                catch ( Exception e )
-                {
+                try {
+                    ver_dados(codigo);
+                    ver_dados_produtos(codigo);
+                } catch (Exception e) {
                 }
 
-            }
-            else if ( evt.getKeyCode() == KeyEvent.VK_BACK_SPACE )
-            {
+            } else if (evt.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
 
-                prefixo = prefixo.toString().trim().substring( 0, prefixo.length() );
-                codigo = Integer.parseInt( prefixo );
+                prefixo = prefixo.toString().trim().substring(0, prefixo.length());
+                codigo = Integer.parseInt(prefixo);
 
-                try
-                {
-                    ver_dados( codigo );
-                    ver_dados_produtos( codigo );
-                }
-                catch ( Exception e )
-                {
+                try {
+                    ver_dados(codigo);
+                    ver_dados_produtos(codigo);
+                } catch (Exception e) {
                     procedimento_limpar();
                 }
 
             }
         }
 
-        public void keyReleased( KeyEvent evt )
-        {
+        public void keyReleased(KeyEvent evt) {
         }
 
-        public void keyTyped( KeyEvent evt )
-        {
+        public void keyTyped(KeyEvent evt) {
         }
     }
 
     //----------- evento do teclado ---------------------------------------
-    class PercentagemGanhoRetalho implements KeyListener
-    {
+    class PercentagemGanhoRetalho implements KeyListener {
 
         String prefixo = "";
 
-        public void keyPressed( KeyEvent evt )
-        {
+        public void keyPressed(KeyEvent evt) {
 
             double preco_compra = 0;
             double percentagem = 0;
             double preco_venda = 0;
 
-            if ( evt.getKeyCode() != KeyEvent.VK_BACK_SPACE && evt.getKeyCode() != KeyEvent.VK_ENTER )
-            {
+            if (evt.getKeyCode() != KeyEvent.VK_BACK_SPACE && evt.getKeyCode() != KeyEvent.VK_ENTER) {
                 char key = evt.getKeyChar();
 
                 prefixo = txtPercentagemGanhoRetalho.getText().trim() + key;
-                preco_compra = MetodosUtil.convertToDouble( txtPrecoCompra.getText() );
-                percentagem = Double.parseDouble( prefixo ) / 10;
-                preco_venda = ( ( percentagem * preco_compra ) / 100 ) + preco_compra;
-                txtPrecoVendaRetalho.setText( String.valueOf( MetodosUtil.preco_venda( percentagem, preco_compra ) ) );
+                preco_compra = MetodosUtil.convertToDouble(txtPrecoCompra.getText());
+                percentagem = Double.parseDouble(prefixo) / 10;
+                preco_venda = ((percentagem * preco_compra) / 100) + preco_compra;
+                txtPrecoVendaRetalho.setText(String.valueOf(MetodosUtil.preco_venda(percentagem, preco_compra)));
 
-            }
-            else if ( evt.getKeyCode() == KeyEvent.VK_BACK_SPACE )
-            {
-                try
-                {
+            } else if (evt.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+                try {
 
-                    prefixo = prefixo.toString().trim().substring( 0, prefixo.length() - 1 );
-                    preco_compra = MetodosUtil.convertToDouble( txtPrecoCompra.getText() );
-                    percentagem = Double.parseDouble( prefixo );
-                    preco_venda = ( ( percentagem * preco_compra ) / 100 ) + preco_compra;
-                    txtPrecoVendaRetalho.setText( String.valueOf( MetodosUtil.preco_venda( percentagem, preco_compra ) ) );
+                    prefixo = prefixo.toString().trim().substring(0, prefixo.length() - 1);
+                    preco_compra = MetodosUtil.convertToDouble(txtPrecoCompra.getText());
+                    percentagem = Double.parseDouble(prefixo);
+                    preco_venda = ((percentagem * preco_compra) / 100) + preco_compra;
+                    txtPrecoVendaRetalho.setText(String.valueOf(MetodosUtil.preco_venda(percentagem, preco_compra)));
 
-                }
-                catch ( Exception e )
-                {
-                    txtPrecoVendaRetalho.setText( "" );
+                } catch (Exception e) {
+                    txtPrecoVendaRetalho.setText("");
                 }
 
             }
         }
 
-        public void keyReleased( KeyEvent evt )
-        {
+        public void keyReleased(KeyEvent evt) {
         }
 
-        public void keyTyped( KeyEvent evt )
-        {
+        public void keyTyped(KeyEvent evt) {
         }
     }
 
     //----------- evento do teclado ---------------------------------------
-    class PrecoVendaPercentagem implements KeyListener
-    {
+    class PrecoVendaPercentagem implements KeyListener {
 
         String prefixo = "";
 
-        public void keyPressed( KeyEvent evt )
-        {
+        public void keyPressed(KeyEvent evt) {
 
             double preco_compra = 0;
             double percentagem = 0;
             double preco_venda = 0;
 
-            if ( evt.getKeyCode() != KeyEvent.VK_BACK_SPACE && evt.getKeyCode() != KeyEvent.VK_ENTER )
-            {
+            if (evt.getKeyCode() != KeyEvent.VK_BACK_SPACE && evt.getKeyCode() != KeyEvent.VK_ENTER) {
                 char key = evt.getKeyChar();
 
-                System.err.println( "KEY: " + key );
+                System.err.println("KEY: " + key);
                 prefixo = txtPrecoVendaRetalho.getText().trim() + key;
 //                preco_venda = MetodosUtil.convertToDouble( prefixo );
 //                preco_venda = preco_venda * 10;
@@ -3681,367 +3292,301 @@ public class ProdutosVisao extends javax.swing.JFrame
 //                bigDecimal = bigDecimal.setScale( 2, BigDecimal.ROUND_UP );
 //                txtPercentagemGanhoRetalho.setText( String.valueOf( bigDecimal ) );
 
-                preco_venda = MetodosUtil.convertToDouble( prefixo ) * 10;
-                preco_compra = MetodosUtil.convertToDouble( txtPrecoCompra.getText() );
-                txtPercentagemGanhoRetalho.setText( CfMethods.formatarComoPorcoes( MetodosUtil.percentagemGanho( preco_compra, preco_venda ) ) );
+                preco_venda = MetodosUtil.convertToDouble(prefixo) * 10;
+                preco_compra = MetodosUtil.convertToDouble(txtPrecoCompra.getText());
+                txtPercentagemGanhoRetalho.setText(CfMethods.formatarComoPorcoes(MetodosUtil.percentagemGanho(preco_compra, preco_venda)));
 
-            }
-            else if ( evt.getKeyCode() == KeyEvent.VK_BACK_SPACE )
-            {
-                try
-                {
+            } else if (evt.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+                try {
 
-                    prefixo = prefixo.toString().trim().substring( 0, prefixo.length() - 1 );
+                    prefixo = prefixo.toString().trim().substring(0, prefixo.length() - 1);
 //                    char key = evt.getKeyChar();
 //                    prefixo = txtPrecoVenda.getText().trim() + key;
                     prefixo = txtPrecoVendaRetalho.getText().trim();
-                    System.out.println( "PREFIXO: " + prefixo );
+                    System.out.println("PREFIXO: " + prefixo);
 
-                    preco_venda = MetodosUtil.convertToDouble( prefixo.replace( ",", "." ) );
+                    preco_venda = MetodosUtil.convertToDouble(prefixo.replace(",", "."));
 
 //                    preco_venda = MetodosUtil.convertToDouble( prefixo ) * 10;
-                    preco_compra = MetodosUtil.convertToDouble( txtPrecoCompra.getText() );
-                    txtPercentagemGanhoRetalho.setText( CfMethods.formatarComoPorcoes( MetodosUtil.percentagemGanho( preco_compra, preco_venda ) ) );
+                    preco_compra = MetodosUtil.convertToDouble(txtPrecoCompra.getText());
+                    txtPercentagemGanhoRetalho.setText(CfMethods.formatarComoPorcoes(MetodosUtil.percentagemGanho(preco_compra, preco_venda)));
 
-                    System.out.println( "PRECO VENDA BACK " + preco_venda );
+                    System.out.println("PRECO VENDA BACK " + preco_venda);
 //                    preco_venda = preco_venda * 10;
 //                    percentagem = ( ( preco_venda - preco_compra ) * 100 ) / preco_compra;
 //                    BigDecimal bigDecimal = new BigDecimal( percentagem );
 //                    bigDecimal = bigDecimal.setScale( 2, BigDecimal.ROUND_UP );
 //                    txtPercentagemGanhoRetalho.setText( String.valueOf( bigDecimal ) );
 
-                }
-                catch ( Exception e )
-                {
-                    txtPercentagemGanhoRetalho.setText( "" );
+                } catch (Exception e) {
+                    txtPercentagemGanhoRetalho.setText("");
 
                 }
 
             }
         }
 
-        public void keyReleased( KeyEvent evt )
-        {
+        public void keyReleased(KeyEvent evt) {
         }
 
-        public void keyTyped( KeyEvent evt )
-        {
+        public void keyTyped(KeyEvent evt) {
         }
     }
 
-    class PrecoCompraPercentagem implements KeyListener
-    {
+    class PrecoCompraPercentagem implements KeyListener {
 
         String prefixo = "";
 
-        public void keyPressed( KeyEvent evt )
-        {
+        public void keyPressed(KeyEvent evt) {
 
             double preco_compra = 0;
             double percentagem = 0;
             double preco_venda = 0;
 
-            if ( evt.getKeyCode() != KeyEvent.VK_BACK_SPACE && evt.getKeyCode() != KeyEvent.VK_ENTER )
-            {
+            if (evt.getKeyCode() != KeyEvent.VK_BACK_SPACE && evt.getKeyCode() != KeyEvent.VK_ENTER) {
                 char key = evt.getKeyChar();
 
-                System.err.println( "KEY: " + key );
+                System.err.println("KEY: " + key);
                 prefixo = txtPrecoCompra.getText().trim() + key;
-                preco_compra = MetodosUtil.convertToDouble( prefixo );
+                preco_compra = MetodosUtil.convertToDouble(prefixo);
                 preco_compra = preco_compra * 10;
 
-                preco_venda = MetodosUtil.convertToDouble( ( txtPrecoVendaRetalho.getText().equals( "" ) || txtPrecoVendaRetalho.getText() == null ) ? "0.0" : txtPrecoVendaRetalho.getText() );
+                preco_venda = MetodosUtil.convertToDouble((txtPrecoVendaRetalho.getText().equals("") || txtPrecoVendaRetalho.getText() == null) ? "0.0" : txtPrecoVendaRetalho.getText());
 
-                percentagem = ( ( preco_venda - preco_compra ) * 100 ) / preco_compra;
-                BigDecimal bigDecimal = new BigDecimal( percentagem / 10 );
-                bigDecimal = bigDecimal.setScale( 2, BigDecimal.ROUND_UP );
-                txtPercentagemGanhoRetalho.setText( String.valueOf( bigDecimal ) );
+                percentagem = ((preco_venda - preco_compra) * 100) / preco_compra;
+                BigDecimal bigDecimal = new BigDecimal(percentagem / 10);
+                bigDecimal = bigDecimal.setScale(2, BigDecimal.ROUND_UP);
+                txtPercentagemGanhoRetalho.setText(String.valueOf(bigDecimal));
 
-            }
-            else if ( evt.getKeyCode() == KeyEvent.VK_BACK_SPACE )
-            {
-                try
-                {
+            } else if (evt.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+                try {
 
-                    prefixo = prefixo.toString().trim().substring( 0, prefixo.length() - 1 );
-                    System.out.println( "PREFIXO: " + prefixo );
-                    preco_compra = MetodosUtil.convertToDouble( prefixo );
+                    prefixo = prefixo.toString().trim().substring(0, prefixo.length() - 1);
+                    System.out.println("PREFIXO: " + prefixo);
+                    preco_compra = MetodosUtil.convertToDouble(prefixo);
                     preco_compra = preco_compra * 10;
 
-                    percentagem = ( ( preco_venda - preco_compra ) * 100 ) / preco_compra;
-                    BigDecimal bigDecimal = new BigDecimal( percentagem );
-                    bigDecimal = bigDecimal.setScale( 2, BigDecimal.ROUND_UP );
-                    txtPercentagemGanhoRetalho.setText( String.valueOf( bigDecimal ) );
+                    percentagem = ((preco_venda - preco_compra) * 100) / preco_compra;
+                    BigDecimal bigDecimal = new BigDecimal(percentagem);
+                    bigDecimal = bigDecimal.setScale(2, BigDecimal.ROUND_UP);
+                    txtPercentagemGanhoRetalho.setText(String.valueOf(bigDecimal));
 
-                }
-                catch ( Exception e )
-                {
-                    txtPercentagemGanhoRetalho.setText( "" );
+                } catch (Exception e) {
+                    txtPercentagemGanhoRetalho.setText("");
 
                 }
 
             }
         }
 
-        public void keyReleased( KeyEvent evt )
-        {
+        public void keyReleased(KeyEvent evt) {
         }
 
-        public void keyTyped( KeyEvent evt )
-        {
+        public void keyTyped(KeyEvent evt) {
         }
     }
     // </editor-fold>
 
-    public static int getCodigoArmazem( String designacao )
-    {
-        try
-        {
-            return armazensController.getArmazemByDesignacao( designacao ).getCodigo();
-        }
-        catch ( Exception e )
-        {
+    public static int getCodigoArmazem(String designacao) {
+        try {
+            return armazensController.getArmazemByDesignacao(designacao).getCodigo();
+        } catch (Exception e) {
             return 0;
         }
     }
 
-    private static void actualizarRetencaoForm()
-    {
+    private static void actualizarRetencaoForm() {
 
-        if ( retencaoAplicarJRadioButton.isSelected() )
-        {
-            retencao = ( Retencao ) retencaoController.findById( 1 );
-            retencaoTaxaJTextField.setText( MetodosUtil.formatarComoPercentagem( retencao.getTaxa() ) );
+        if (retencaoAplicarJRadioButton.isSelected()) {
+            retencao = (Retencao) retencaoController.findById(1);
+            retencaoTaxaJTextField.setText(MetodosUtil.formatarComoPercentagem(retencao.getTaxa()));
+        } else {
+            retencao = (Retencao) retencaoController.findById(2);
+            retencaoZeroTaxaJTextField.setText(MetodosUtil.formatarComoPercentagem(0.0));
         }
-        else
-        {
-            retencao = ( Retencao ) retencaoController.findById( 2 );
-            retencaoZeroTaxaJTextField.setText( MetodosUtil.formatarComoPercentagem( 0.0 ) );
-        }
-        retencaoTaxaJTextField.setVisible( retencaoAplicarJRadioButton.isSelected() );
-        retencaoTaxaJLabel.setVisible( retencaoTaxaJTextField.isVisible() );
-        retencaoZeroTaxaJTextField.setVisible( !retencaoTaxaJTextField.isVisible() );
+        retencaoTaxaJTextField.setVisible(retencaoAplicarJRadioButton.isSelected());
+        retencaoTaxaJLabel.setVisible(retencaoTaxaJTextField.isVisible());
+        retencaoZeroTaxaJTextField.setVisible(!retencaoTaxaJTextField.isVisible());
 
     }
 
-    public static void ver_retencao()
-    {
+    public static void ver_retencao() {
 
-        if ( ck_servico.isSelected() )
-        {
-            jPanel_retencao.setVisible( true );
-        }
-        else
-        {
-            jPanel_retencao.setVisible( false );
+        if (ck_servico.isSelected()) {
+            jPanel_retencao.setVisible(true);
+        } else {
+            jPanel_retencao.setVisible(false);
         }
 
     }
 
-    public static void nao_ver_retencao()
-    {
-        if ( !ck_servico.isSelected() )
-        {
-            jPanel_retencao.setVisible( false );
+    public static void nao_ver_retencao() {
+        if (!ck_servico.isSelected()) {
+            jPanel_retencao.setVisible(false);
         }
 
     }
 
-    private void setRegime( String regime )
-    {
-        if ( regime.equalsIgnoreCase( "Regime Geral" ) )
-        {
-            ivaAplicarJRadioButton.setSelected( true );
-            txtPrecoDeVendaComIva.setVisible( true );
-            TotalIvaLabel.setVisible( true );
+    private void setRegime(String regime) {
+        if (regime.equalsIgnoreCase("Regime Geral")) {
+            ivaAplicarJRadioButton.setSelected(true);
+            txtPrecoDeVendaComIva.setVisible(true);
+            TotalIvaLabel.setVisible(true);
 
-        }
-        else
-        {
-            ivaNaoAplicarJRadioButton.setSelected( true );
-            txtPrecoDeVendaComIva.setVisible( false );
-            TotalIvaLabel.setVisible( false );
+        } else {
+            ivaNaoAplicarJRadioButton.setSelected(true);
+            txtPrecoDeVendaComIva.setVisible(false);
+            TotalIvaLabel.setVisible(false);
 
         }
     }
 
-    public static void bloquearCampoCodBarra()
-    {
+    public static void bloquearCampoCodBarra() {
 
-        txtCodigoBarra.setEnabled( true );
+        txtCodigoBarra.setEnabled(true);
 
     }
 
-    private void setFocusCodigo( String focus )
-    {
-        if ( focus.equalsIgnoreCase( "Codigo Interno" ) )
-        {
+    private void setFocusCodigo(String focus) {
+        if (focus.equalsIgnoreCase("Codigo Interno")) {
 
             txtCodigoProduto.requestFocus();
 
-        }
-        else
-        {
+        } else {
 
             txtCodigoBarra.requestFocus();
 
         }
     }
 
-    public static void getDescricao()
-    {
+    public static void getDescricao() {
 
         txtDesignacao.requestFocus();
 
     }
 
-    public static void fazerBackupAgora()
-    {
-        String data = new SimpleDateFormat( YYYYMMDD_HHMMSS ).format( new Date() );
+    public static void fazerBackupAgora() {
+        String data = new SimpleDateFormat(YYYYMMDD_HHMMSS).format(new Date());
 //        String rodar_camando = "cmd /c mysqldump -uroot -pDoV90x?# --dump-date --triggers --tables --routines --skip-quote-names --compact --skip-opt --skip-set-charset --hex-blob kitanda_db > \"..\\BD_BACKUP\\_database_backup_" + data + ".sql\"";
         String rodar_camando = "cmd /c mysqldump --single-transaction -uroot -pDoV90x?# --dump-date --triggers --add-drop-database --routines --skip-quote-names --skip-set-charset --add-locks --disable-keys --databases kitanda_db > \"..\\BD_BACKUP\\_database_backup_" + data + ".sql\"";
 //String rodar_camando = "cmd /c mysqldump --single-transaction=TRUE -uroot -pDoV90x?# --dump-date --triggers --add-drop-database  --routines --skip-quote-names --compact --skip-opt --skip-set-charset --hex-blob --add-locks --disable-keys --lock-tables  --databases kitanda_db > \"..\\BD_BACKUP\\_database_backup_" + data + ".sql\"";
-        Process rodarComandoWindows = rodarComandoWindows( rodar_camando, true );
+        Process rodarComandoWindows = rodarComandoWindows(rodar_camando, true);
 
 //        JOptionPane.showMessageDialog ( null, "Backup realizado com sucesso! ", "Notificação", JOptionPane.INFORMATION_MESSAGE );
-        System.err.println( "Backup realizado com sucesso! " );
+        System.err.println("Backup realizado com sucesso! ");
 
     }
 
-    public void configurar_dois_precos()
-    {
-        try
-        {
-            if ( dadosInstituicao.getUsarDoisPrecos().equals( "nao" ) )
-            {
-                jLabel1.setVisible( false );
-                txtQtdGrosso.setVisible( false );
-                lbPrecoVenda1.setVisible( false );
-                txtPrecoVendaGrosso.setVisible( false );
+    public void configurar_dois_precos() {
+        try {
+            if (dadosInstituicao.getUsarDoisPrecos().equals("nao")) {
+                jLabel1.setVisible(false);
+                txtQtdGrosso.setVisible(false);
+                lbPrecoVenda1.setVisible(false);
+                txtPrecoVendaGrosso.setVisible(false);
+
+            } else {
+                jLabel1.setVisible(true);
+                txtQtdGrosso.setVisible(true);
+                lbPrecoVenda1.setVisible(true);
+                txtPrecoVendaGrosso.setVisible(true);
 
             }
-            else
-            {
-                jLabel1.setVisible( true );
-                txtQtdGrosso.setVisible( true );
-                lbPrecoVenda1.setVisible( true );
-                txtPrecoVendaGrosso.setVisible( true );
-
-            }
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-    private void setActivarNegocio( String negocio )
-    {
-        if ( negocio.equalsIgnoreCase( "Comercial" ) )
-        {
+    private void setActivarNegocio(String negocio) {
+        if (negocio.equalsIgnoreCase("Comercial")) {
 
-            ck_produto.setSelected( true );
-            ck_servico.setSelected( false );
-            lbTicket.setVisible( false );
-            rbNaoEnviarCozinha.setVisible( false );
-            rbEnviarCozinha.setVisible( false );
-            rbEnviarSala.setVisible( false );
-            btnAssociar.setVisible( false );
+            ck_produto.setSelected(true);
+            ck_servico.setSelected(false);
+            lbTicket.setVisible(false);
+            rbNaoEnviarCozinha.setVisible(false);
+            rbEnviarCozinha.setVisible(false);
+            rbEnviarSala.setVisible(false);
+            btnAssociar.setVisible(false);
             servico_produto();
-        }
-        else if ( negocio.equalsIgnoreCase( "Transportes" ) )
-        {
+        } else if (negocio.equalsIgnoreCase("Transportes")) {
 
-            ck_produto.setSelected( true );
-            ck_servico.setSelected( false );
-            lbTicket.setVisible( false );
-            rbNaoEnviarCozinha.setVisible( false );
-            rbEnviarCozinha.setVisible( false );
-            rbEnviarSala.setVisible( false );
-            btnAssociar.setVisible( false );
+            ck_produto.setSelected(true);
+            ck_servico.setSelected(false);
+            lbTicket.setVisible(false);
+            rbNaoEnviarCozinha.setVisible(false);
+            rbEnviarCozinha.setVisible(false);
+            rbEnviarSala.setVisible(false);
+            btnAssociar.setVisible(false);
             servico_produto();
-        }
-        else if ( negocio.equalsIgnoreCase( "Restaurante" ) )
-        {
+        } else if (negocio.equalsIgnoreCase("Restaurante")) {
 
-            ck_produto.setSelected( true );
-            ck_servico.setSelected( false );
+            ck_produto.setSelected(true);
+            ck_servico.setSelected(false);
 //            lbTicket.setVisible( false );
-            btnAssociar.setVisible( false );
+            btnAssociar.setVisible(false);
 //            rbEnviarCozinha.setVisible(false );
             servico_produto();
-        }
-        else if ( negocio.equalsIgnoreCase( "Farmacia" ) )
-        {
+        } else if (negocio.equalsIgnoreCase("Farmacia")) {
 
-            ck_produto.setSelected( true );
-            ck_servico.setSelected( false );
-            lbTicket.setVisible( false );
-            rbNaoEnviarCozinha.setVisible( false );
-            rbEnviarSala.setVisible( false );
-            rbEnviarCozinha.setVisible( false );
-            btnAssociar.setVisible( false );
+            ck_produto.setSelected(true);
+            ck_servico.setSelected(false);
+            lbTicket.setVisible(false);
+            rbNaoEnviarCozinha.setVisible(false);
+            rbEnviarSala.setVisible(false);
+            rbEnviarCozinha.setVisible(false);
+            btnAssociar.setVisible(false);
             servico_produto();
-        }
-        else if ( negocio.equalsIgnoreCase( "Lavandaria" ) )
-        {
+        } else if (negocio.equalsIgnoreCase("Lavandaria")) {
 
-            ck_produto.setSelected( false );
-            ck_produto.setVisible( false );
-            ck_servico.setSelected( true );
+            ck_produto.setSelected(false);
+            ck_produto.setVisible(false);
+            ck_servico.setSelected(true);
 //            lbTipoProduto1.setVisible( false );
 //            rbNaoEnviarCozinha.setVisible( false );
 //            rbEnviarCozinha.setVisible( false );
             servico_produto();
 //            ck_servico.setSelected( true);
-        }
+        } else {
 
-        else
-        {
-
-            ck_servico.setSelected( true );
-            ck_produto.setSelected( false );
-            lbTicket.setVisible( false );
-            rbNaoEnviarCozinha.setVisible( false );
-            rbEnviarCozinha.setVisible( false );
-            rbEnviarSala.setVisible( false );
-            btnAssociar.setVisible( false );
+            ck_servico.setSelected(true);
+            ck_produto.setSelected(false);
+            lbTicket.setVisible(false);
+            rbNaoEnviarCozinha.setVisible(false);
+            rbEnviarCozinha.setVisible(false);
+            rbEnviarSala.setVisible(false);
+            btnAssociar.setVisible(false);
             servico_produto();
 //            ivaNaoAplicarJRadioButton.setSelected( true);
             ver_retencao();
             actualizarRetencaoForm();
 //            servico_produto();
 //            txtDesignacao.requestFocus();
-////        lbCusto.setText("Preço");
+
+        
+    
+
+    ////        lbCusto.setText("Preço");
 //            mostrarPreco();
 
         }
     }
 
-    private void setActivarJanelaServico( String negocio )
-    {
-        try
-        {
-            if ( negocio.equalsIgnoreCase( "Manter fixa" ) )
-            {
-                rbJanelaServico.setSelected( true );
+    private void setActivarJanelaServico(String negocio) {
+        try {
+            if (negocio.equalsIgnoreCase("Manter fixa")) {
+                rbJanelaServico.setSelected(true);
+//            alterar_estrutura_janela();
+            } else {
+                rbJanelaServico.setSelected(false);
 //            alterar_estrutura_janela();
             }
-            else
-            {
-                rbJanelaServico.setSelected( false );
-//            alterar_estrutura_janela();
-            }
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
         }
 
     }
 
-    private String getCozinha()
-    {
+    private String getCozinha() {
 //        return rbComercial.isSelected() ? "Comercial" : "Oficina";
         return rbNaoEnviarCozinha.isSelected() ? "Nao Enviar Ticket"
                 : rbEnviarCozinha.isSelected() ? "Enviar Ticket"
@@ -4049,108 +3594,89 @@ public class ProdutosVisao extends javax.swing.JFrame
 
     }
 
-    private String getCozinha1()
-    {
+    private String getCozinha1() {
         return rbNaoEnviarCozinha.isSelected() ? "Nao Enviar Ticket" : "Enviar Ticket";
     }
 
-    private static void setCozinha( String cozinha )
-    {
-        if ( cozinha.equalsIgnoreCase( "Enviar Ticket" ) )
-        {
-            rbEnviarCozinha.setSelected( true );
-            rbNaoEnviarCozinha.setSelected( false );
-            rbEnviarSala.setSelected( false );
-        }
-        else if ( cozinha.equalsIgnoreCase( "Nao Enviar Ticket" ) )
-        {
-            rbNaoEnviarCozinha.setSelected( true );
-            rbEnviarCozinha.setSelected( false );
-            rbEnviarSala.setSelected( false );
-        }
-        else
-        {
-            rbNaoEnviarCozinha.setSelected( false );
-            rbEnviarCozinha.setSelected( false );
-            rbEnviarSala.setSelected( true );
+    private static void setCozinha(String cozinha) {
+        if (cozinha.equalsIgnoreCase("Enviar Ticket")) {
+            rbEnviarCozinha.setSelected(true);
+            rbNaoEnviarCozinha.setSelected(false);
+            rbEnviarSala.setSelected(false);
+        } else if (cozinha.equalsIgnoreCase("Nao Enviar Ticket")) {
+            rbNaoEnviarCozinha.setSelected(true);
+            rbEnviarCozinha.setSelected(false);
+            rbEnviarSala.setSelected(false);
+        } else {
+            rbNaoEnviarCozinha.setSelected(false);
+            rbEnviarCozinha.setSelected(false);
+            rbEnviarSala.setSelected(true);
         }
     }
 
-    private static void setButtonAssociar()
-    {
-        boolean status = !( txtCodigoProduto.getText().equals( "" ) );
-        btnAssociar.setVisible( status );
+    private static void setButtonAssociar() {
+        boolean status = !(txtCodigoProduto.getText().equals(""));
+        btnAssociar.setVisible(status);
 
     }
 
-    private void novo()
-    {
+    private void novo() {
 
         limpar_esquerdo();
         limpar_direito();
-        btnSalvar.setEnabled( true );
-        btnAlterar2.setEnabled( false );
+        btnSalvar.setEnabled(true);
+        btnAlterar2.setEnabled(false);
         //actualizar
-        cmbLocal.setModel( new DefaultComboBoxModel( localController.getVector() ) );
-        cmbUnidade.setModel( new DefaultComboBoxModel( unidadesController.getVector() ) );
+        cmbLocal.setModel(new DefaultComboBoxModel(localController.getVector()));
+        cmbUnidade.setModel(new DefaultComboBoxModel(unidadesController.getVector()));
 //        ck_servico.setSelected( true );
-        txtCodigoProduto.setText( "" );
-        txtCodigoBarraProcura.setText( "" );
-        txtCodigoManualProcura.setText( "" );
+        txtCodigoProduto.setText("");
+        txtCodigoBarraProcura.setText("");
+        txtCodigoManualProcura.setText("");
 
     }
 
-    private void setWindowsListener()
-    {
+    private void setWindowsListener() {
 
-        this.addWindowListener( new WindowAdapter()
-        {
+        this.addWindowListener(new WindowAdapter() {
             @Override
-            public void windowActivated( WindowEvent e )
-            {
+            public void windowActivated(WindowEvent e) {
 //                proximo_codigo( produtosController );
             }
 
-        } );
+        });
 
     }
 
-    private void activarCampoPreco()
-    {
-        TbUsuario usuario = ( TbUsuario ) usuariosController.findById( idUser );
+    private void activarCampoPreco() {
+        TbUsuario usuario = (TbUsuario) usuariosController.findById(idUser);
 
-        if ( usuario.getIdTipoUsuario().getIdTipoUsuario() == 1 )
-        {
-            txtPrecoVendaRetalho.setEnabled( true );
-            txtPrecoVendaGrosso.setEnabled( true );
-            txtPrecoCompra.setEnabled( true );
-        }
-        else
-        {
-            txtPrecoCompra.setEnabled( false );
-            txtPrecoVendaRetalho.setEnabled( false );
-            txtPrecoVendaGrosso.setEnabled( false );
+        if (usuario.getIdTipoUsuario().getIdTipoUsuario() == 1) {
+            txtPrecoVendaRetalho.setEnabled(true);
+            txtPrecoVendaGrosso.setEnabled(true);
+            txtPrecoCompra.setEnabled(true);
+        } else {
+            txtPrecoCompra.setEnabled(false);
+            txtPrecoVendaRetalho.setEnabled(false);
+            txtPrecoVendaGrosso.setEnabled(false);
         }
     }
 
-    private static void procedimento_registrar_stock( int idProduto, int idArmazem )
-    {
-        if ( !stoksController.existe_stock( idProduto, idArmazem ) )
-        {
-            TbProduto produto_local = produtosController.findByCod( idProduto );
-            boolean registrar_stock = registrar_stock( idArmazem,
+    private static void procedimento_registrar_stock(int idProduto, int idArmazem) {
+        if (!stoksController.existe_stock(idProduto, idArmazem)) {
+            TbProduto produto_local = produtosController.findByCod(idProduto);
+            boolean registrar_stock = registrar_stock(idArmazem,
                     produto_local,
                     0,
                     0,
                     0,
-                    stoksController );
-            if ( registrar_stock )
-            {
+                    stoksController);
+            if (registrar_stock) {
                 MovimentacaoController.registrarMovimento(
                         idProduto,
                         idArmazem,
                         idUser,
-                        new BigDecimal( 0 ),
+                        new BigDecimal(0),
                         "CRIAÇÃO DE ARTIGO",
                         "ENTRADA",
                         conexao
@@ -4160,28 +3686,27 @@ public class ProdutosVisao extends javax.swing.JFrame
         }
     }
 
-    private static boolean registrar_stock( int idArmazem,
+    private static boolean registrar_stock(int idArmazem,
             TbProduto produto_local,
             double qtd,
             double qtdCritica,
             double qtdbaixa,
             StoksController stocksControllerLocal
-    )
-    {
+    ) {
         TbStock stockLocal = new TbStock();
-        stockLocal.setDataEntrada( new Date() );
-        stockLocal.setQuantidadeExistente( qtd );
-        stockLocal.setStatus( "true" );
-        stockLocal.setPrecoVenda( new BigDecimal( MetodosUtil.convertToDouble( "0.0" ) ) );
-        stockLocal.setPrecoVendaGrosso( new BigDecimal( stockLocal.getPrecoVenda().doubleValue() ) );
-        stockLocal.setQtdGrosso( DVML.QTD_DEFAULT );
-        stockLocal.setQuantCritica( ( int ) qtdCritica );
-        stockLocal.setQuantBaixa( ( int ) qtdbaixa );
-        stockLocal.setQuantidadeAntiga( 0d );
-        stockLocal.setCodArmazem( new TbArmazem( idArmazem ) );
-        stockLocal.setCodProdutoCodigo( new TbProduto( produto_local.getCodigo() ) );
-        System.out.println( "Produto Registrado no Stock." );
-        return stocksControllerLocal.salvar( stockLocal );
+        stockLocal.setDataEntrada(new Date());
+        stockLocal.setQuantidadeExistente(qtd);
+        stockLocal.setStatus("true");
+        stockLocal.setPrecoVenda(new BigDecimal(MetodosUtil.convertToDouble("0.0")));
+        stockLocal.setPrecoVendaGrosso(new BigDecimal(stockLocal.getPrecoVenda().doubleValue()));
+        stockLocal.setQtdGrosso(DVML.QTD_DEFAULT);
+        stockLocal.setQuantCritica((int) qtdCritica);
+        stockLocal.setQuantBaixa((int) qtdbaixa);
+        stockLocal.setQuantidadeAntiga(0d);
+        stockLocal.setCodArmazem(new TbArmazem(idArmazem));
+        stockLocal.setCodProdutoCodigo(new TbProduto(produto_local.getCodigo()));
+        System.out.println("Produto Registrado no Stock.");
+        return stocksControllerLocal.salvar(stockLocal);
 
     }
 

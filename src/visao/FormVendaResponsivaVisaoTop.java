@@ -6377,7 +6377,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
         double parseMoedaFormatada = CfMethods.parseMoedaFormatada(precoUnitario);
 
-        parseMoedaFormatada = (parseMoedaFormatada / (1 + (taxa / 100)));
+//        parseMoedaFormatada = (parseMoedaFormatada / (1 + (taxa / 100)));
         BigDecimal precoSemIva = new BigDecimal(parseMoedaFormatada).setScale(
                 DVML.CASAS_DECIMAIS_TAXA,
                 RoundingMode.CEILING);
