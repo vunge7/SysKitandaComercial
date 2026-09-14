@@ -29,10 +29,14 @@ public class JPAEntityMannagerFactoryUtil
     public static void main( String[] args )
     {
 //<<<<<<< HEAD
-//        EntityManagerFactory em = JPAEntityMannagerFactoryUtil.em;kitanda_db_gulele_actual
+////<<<<<<< HEAD
+////        EntityManagerFactory em = JPAEntityMannagerFactoryUtil.em;kitanda_db_gulele_actual
+////=======
+////        EntityManagerFactory em = JPAEntityMannagerFactoryUtil.em;kitanda_db_gulele_neemias_2_actual
+////>>>>>>> 5c8040b57ef6ee87cebd8b69a939b1476e08b465
 //=======
-//        EntityManagerFactory em = JPAEntityMannagerFactoryUtil.em;kitanda_db_gulele_neemias_2_actual
-//>>>>>>> 5c8040b57ef6ee87cebd8b69a939b1476e08b465
+////        EntityManagerFactory em = JPAEntityMannagerFactoryUtil.em;kitanda_db_candundo_neemias_2_actual
+//>>>>>>> 117138b13b6db826d4e35b6310cd0215e16ae8d8
 //        UsuarioDao usuarioDao = new UsuarioDao( em );
 //        System.out.println(usuarioDao.exist_usuario("dvml", "mavala"));
         leituraFicheiro();
@@ -69,10 +73,14 @@ public class JPAEntityMannagerFactoryUtil
                     String porta = informacao.get( 1 );
 
 //<<<<<<< HEAD
+//<<<<<<< HEAD
                     String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_gulele?zeroDateTimeBehavior=convertToNull";
 //=======
 //                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_gulele?zeroDateTimeBehavior=convertToNull";
 //>>>>>>> 5c8040b57ef6ee87cebd8b69a939b1476e08b465
+//=======
+//                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_candundo?zeroDateTimeBehavior=convertToNull";
+//>>>>>>> 117138b13b6db826d4e35b6310cd0215e16ae8d8
 
                     String user = "root";
                     String password = "DoV90x?#";

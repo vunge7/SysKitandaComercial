@@ -2,9 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="factura" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" uuid="0de43986-9be5-410e-aaa3-7f1419d0abca">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.6528925619834725"/>
+	<property name="ireport.zoom" value="2.662000000000004"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="348"/>
+	<property name="ireport.y" value="445"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -416,7 +416,7 @@ WHERE
 				<textFieldExpression><![CDATA[$F{tb_venda_referencia}]]></textFieldExpression>
 			</textField>
 			<image scaleImage="RealHeight">
-				<reportElement uuid="546525db-f6a6-49d3-b09e-c261de3f583c" x="470" y="0" width="64" height="67"/>
+				<reportElement uuid="546525db-f6a6-49d3-b09e-c261de3f583c" x="469" y="0" width="64" height="67"/>
 				<imageExpression><![CDATA[$P{QR_IMAGE}]]></imageExpression>
 			</image>
 		</band>
@@ -543,7 +543,7 @@ WHERE
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="10" splitType="Stretch">
+		<band height="22" splitType="Stretch">
 			<textField isBlankWhenNull="false">
 				<reportElement uuid="4b445bdc-50a0-466f-9747-c6a915ca558f" key="textField-12" x="0" y="0" width="18" height="10"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -566,9 +566,9 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_item_venda_total}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement uuid="ea5218f4-f3b3-4199-9a0d-3df5df401fde" key="textField-15" x="49" y="0" width="200" height="10"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement uuid="ea5218f4-f3b3-4199-9a0d-3df5df401fde" key="textField-15" stretchType="RelativeToTallestObject" x="49" y="0" width="200" height="22"/>
+				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font fontName="Times New Roman" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_produto_designacao}]]></textFieldExpression>
