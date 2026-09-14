@@ -301,7 +301,8 @@ public class AnyReport
             String jasper = getWays();
             JasperPrint print = JasperFillManager.fillReport( jasper, hashMap, connection );
             JasperViewer jasperViewer = new JasperViewer( print, false );
-            jasperViewer.setVisible( false );
+//            AQUI
+            jasperViewer.setVisible( true );
 
             String impressoraSelecionada = impressora;
             System.out.println( "Impressora da Cozinha: " + impressoraSelecionada );

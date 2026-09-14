@@ -4078,7 +4078,7 @@ public static int getIdCliente()
             if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR || getIdDocumento() == DOC_FACTURA_FT )
             {
 
-                procedimentoImprimirTicketCada();
+                procedimentoImprimirTicket();
 
             }
         }
