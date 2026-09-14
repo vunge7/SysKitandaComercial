@@ -30,9 +30,9 @@ public class JPAEntityMannagerFactoryUtil
     {
 //<<<<<<< HEAD
 ////<<<<<<< HEAD
-////        EntityManagerFactory em = JPAEntityMannagerFactoryUtil.em;kitanda_db_gulele_actual
+////        EntityManagerFactory em = JPAEntityMannagerFactoryUtil.em;kitanda_db_actual
 ////=======
-////        EntityManagerFactory em = JPAEntityMannagerFactoryUtil.em;kitanda_db_gulele_neemias_2_actual
+////        EntityManagerFactory em = JPAEntityMannagerFactoryUtil.em;kitanda_db_neemias_2_actual
 ////>>>>>>> 5c8040b57ef6ee87cebd8b69a939b1476e08b465
 //=======
 ////        EntityManagerFactory em = JPAEntityMannagerFactoryUtil.em;kitanda_db_candundo_neemias_2_actual
@@ -74,9 +74,9 @@ public class JPAEntityMannagerFactoryUtil
 
 //<<<<<<< HEAD
 //<<<<<<< HEAD
-                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_gulele?zeroDateTimeBehavior=convertToNull";
+                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db?zeroDateTimeBehavior=convertToNull";
 //=======
-//                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_gulele?zeroDateTimeBehavior=convertToNull";
+//                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db?zeroDateTimeBehavior=convertToNull";
 //>>>>>>> 5c8040b57ef6ee87cebd8b69a939b1476e08b465
 //=======
 //                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_candundo?zeroDateTimeBehavior=convertToNull";
