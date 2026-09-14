@@ -1362,8 +1362,6 @@ public class ProdutosVisao extends javax.swing.JFrame
 
     private void ivaAplicarJRadioButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ivaAplicarJRadioButtonActionPerformed
     {//GEN-HEADEREND:event_ivaAplicarJRadioButtonActionPerformed
-
-        atualizarIvaForm();
         txtPrecoDeVendaComIva.setVisible( true );
         TotalIvaLabel.setVisible( true );
         calcularSemIva();
