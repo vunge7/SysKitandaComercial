@@ -6363,6 +6363,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 //        table.repaint();
     }
 
+    
     private void actualizarPreco() {
         String preco = table.getValueAt(table.getSelectedRow(), 3).toString();
         int idProduto = Integer.parseInt(table.getValueAt(table.getSelectedRow(), 0).toString());
