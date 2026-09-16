@@ -29,7 +29,7 @@ public class JPAEntityMannagerFactoryUtil {
 
     
 
-    ////        EntityManagerFactory em = JPAEntityMannagerFactoryUtil.em;kitanda_db_gulele_actual
+    ////        EntityManagerFactory em = JPAEntityMannagerFactoryUtil.em;kitanda_db_gulele_golf_II_gulele_actual
 
 
 
@@ -57,12 +57,12 @@ public class JPAEntityMannagerFactoryUtil {
                     String ip = informacao.get(0);
                     String porta = informacao.get(1);
 
-                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db?zeroDateTimeBehavior=convertToNull";
+                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_gulele_golf_II?zeroDateTimeBehavior=convertToNull";
                     //=======
-                    //                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db?zeroDateTimeBehavior=convertToNull";
+                    //                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_gulele_golf_II?zeroDateTimeBehavior=convertToNull";
                     //>>>>>>> 5c8040b57ef6ee87cebd8b69a939b1476e08b465
                     //=======
-                    //                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_candundo?zeroDateTimeBehavior=convertToNull";
+                    //                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_gulele_golf_II_candundo?zeroDateTimeBehavior=convertToNull";
                     //>>>>>>> 117138b13b6db826d4e35b6310cd0215e16ae8d8
                     String user = "root";
                     String password = "DoV90x?#";
