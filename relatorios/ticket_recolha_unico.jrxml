@@ -82,7 +82,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement markup="html">
-					<font fontName="Arial" size="7" isBold="true"/>
+					<font fontName="Arial" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{obs} + "<br/>"
 + $F{nome_cliente} + " (" + $F{telefone_cliente} + ")"]]></textFieldExpression>
