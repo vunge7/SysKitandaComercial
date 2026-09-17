@@ -91,7 +91,7 @@ public class BDConexao {
 
 
 //<<<<<<< HEAD
-            String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_bm1"
+            String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_lav"
 
 //=======
 //            String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_candundo"

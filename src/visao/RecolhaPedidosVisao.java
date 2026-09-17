@@ -5,7 +5,6 @@
  */
 package visao;
 
-import java.sql.Connection;
 //import comercial.ProdutoItemVisao;
 import controller.TipoClienteController;
 import comercial.controller.VendasController;
@@ -47,7 +46,6 @@ import comercial.controller.TipoProdutosController;
 import comercial.controller.UnidadesController;
 import comercial.controller.UsuariosController;
 import dao.DocumentoDao;
-import dao.ItemProformaDao;
 import dao.VendaDao;
 import java.awt.Color;
 import java.awt.GridLayout;
@@ -58,7 +56,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -80,7 +77,6 @@ import static kitanda.util.CfConstantes.YYYYMMDD_HHMMSS;
 import kitanda.util.CfMethods;
 import lista.ListaPedidos;
 import lista.ListaVenda1;
-import lista.ListaVenda2;
 import lista.ListaVendaRecolhas;
 import lista.ListaVendaRecolhasReimpressao;
 import lista.ListaVendasMesas;
@@ -98,7 +94,6 @@ import static util.DVML.*;
 import util.FinanceUtils;
 import static util.MetodosUtil.rodarComandoWindows;
 import static visao.PrincipalPedidosVisao.procedimento_mesas_livre;
-import static visao.VendaUsuarioVisao.ck_simplificada;
 
 /**
  *
@@ -418,8 +413,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents()
-    {
+    private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
@@ -437,6 +431,10 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         txtTotalApagar = new javax.swing.JTextField();
         txtTotalQTD = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        txtDesconto = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+        txtTotalGeral = new javax.swing.JTextField();
         jPanel5 = new javax.swing.JPanel();
         BT_Conversao = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
@@ -498,6 +496,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         lbEmailCliente = new javax.swing.JLabel();
         txtTelefoneCliente = new javax.swing.JTextField();
         lbClienteConsumidorFinal2 = new javax.swing.JLabel();
+        lbDesconto = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("RECOLHA DE PEÇAS");
@@ -512,10 +511,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         jPanel4.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 670, 500));
 
         btn_voltar.setText("<<");
-        btn_voltar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_voltar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_voltarActionPerformed(evt);
             }
         });
@@ -546,17 +543,33 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         jLabel1.setText("Valor Pagar");
 
         txtTotalApagar.setEditable(false);
-        txtTotalApagar.setFont(new java.awt.Font("Arial", 1, 30)); // NOI18N
+        txtTotalApagar.setFont(new java.awt.Font("Arial", 1, 25)); // NOI18N
         txtTotalApagar.setForeground(new java.awt.Color(255, 51, 51));
         txtTotalApagar.setText("0");
 
         txtTotalQTD.setEditable(false);
-        txtTotalQTD.setFont(new java.awt.Font("Arial", 1, 30)); // NOI18N
+        txtTotalQTD.setFont(new java.awt.Font("Arial", 1, 20)); // NOI18N
         txtTotalQTD.setForeground(new java.awt.Color(0, 0, 102));
         txtTotalQTD.setText("0");
 
         jLabel9.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        jLabel9.setText("Total de Peças");
+        jLabel9.setText("Peças");
+
+        jLabel10.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        jLabel10.setText("Desconto");
+
+        txtDesconto.setEditable(false);
+        txtDesconto.setFont(new java.awt.Font("Arial", 1, 20)); // NOI18N
+        txtDesconto.setForeground(new java.awt.Color(255, 51, 51));
+        txtDesconto.setText("0");
+
+        jLabel11.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        jLabel11.setText("TotalGeral");
+
+        txtTotalGeral.setEditable(false);
+        txtTotalGeral.setFont(new java.awt.Font("Arial", 1, 20)); // NOI18N
+        txtTotalGeral.setForeground(new java.awt.Color(255, 51, 51));
+        txtTotalGeral.setText("0");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -564,53 +577,70 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtDesconto))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtTotalGeral, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtTotalApagar, javax.swing.GroupLayout.PREFERRED_SIZE, 262, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel9))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(txtTotalApagar, javax.swing.GroupLayout.PREFERRED_SIZE, 262, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 58, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtTotalQTD, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(37, Short.MAX_VALUE))
+                .addComponent(txtTotalQTD, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtTotalGeral, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel11)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(37, 37, 37)
+                        .addComponent(jLabel10))
                     .addComponent(txtTotalQTD, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9)
-                    .addComponent(jLabel1)
-                    .addComponent(txtTotalApagar, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(21, 21, 21))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel9)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtTotalApagar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtDesconto, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         BT_Conversao.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         BT_Conversao.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/1323444801_currency_dollar red.png"))); // NOI18N
         BT_Conversao.setText("Cobrar");
-        BT_Conversao.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        BT_Conversao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BT_ConversaoActionPerformed(evt);
             }
         });
 
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LOGOUT - VERMELHO/Logout 32x32.png"))); // NOI18N
-        jButton2.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
 
         btFT.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         btFT.setText("Processar");
-        btFT.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btFT.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btFTActionPerformed(evt);
             }
         });
@@ -618,10 +648,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         BtnProforma.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         BtnProforma.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/1588_32x32.png"))); // NOI18N
         BtnProforma.setText("Proforma");
-        BtnProforma.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        BtnProforma.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BtnProformaActionPerformed(evt);
             }
         });
@@ -644,7 +672,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                .addContainerGap(17, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addComponent(btFT, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -659,47 +687,36 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
         table.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][]
-            {
+            new Object [][] {
 
             },
-            new String []
-            {
+            new String [] {
                 "ID", "D. Entrega", "Serviço", "QTD", "Total"
             }
-        )
-        {
-            boolean[] canEdit = new boolean []
-            {
+        ) {
+            boolean[] canEdit = new boolean [] {
                 false, false, false, true, false
             };
 
-            public boolean isCellEditable(int rowIndex, int columnIndex)
-            {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        table.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mouseClicked(java.awt.event.MouseEvent evt)
-            {
+        table.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tableMouseClicked(evt);
             }
-            public void mouseEntered(java.awt.event.MouseEvent evt)
-            {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
                 tableMouseEntered(evt);
             }
         });
-        table.addPropertyChangeListener(new java.beans.PropertyChangeListener()
-        {
-            public void propertyChange(java.beans.PropertyChangeEvent evt)
-            {
+        table.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 tablePropertyChange(evt);
             }
         });
         jScrollPane2.setViewportView(table);
-        if (table.getColumnModel().getColumnCount() > 0)
-        {
+        if (table.getColumnModel().getColumnCount() > 0) {
             table.getColumnModel().getColumn(0).setMaxWidth(10);
             table.getColumnModel().getColumn(1).setMaxWidth(100);
             table.getColumnModel().getColumn(3).setMaxWidth(50);
@@ -719,71 +736,57 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         jLabel3.setText("Data Entrega");
 
         dc_data_entrega.setDateFormatString("yyyy-MM-dd");
-        dc_data_entrega.addPropertyChangeListener(new java.beans.PropertyChangeListener()
-        {
-            public void propertyChange(java.beans.PropertyChangeEvent evt)
-            {
+        dc_data_entrega.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 dc_data_entregaPropertyChange(evt);
             }
         });
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/actualizar_1_32x32_1.png"))); // NOI18N
-        jButton1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
         buttonGroup4.add(rbTaxaExpresso100);
-        rbTaxaExpresso100.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        rbTaxaExpresso100.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         rbTaxaExpresso100.setText("Taxa Expresso 100%");
-        rbTaxaExpresso100.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbTaxaExpresso100.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbTaxaExpresso100ActionPerformed(evt);
             }
         });
 
         buttonGroup4.add(rbTaxaUrgente50);
-        rbTaxaUrgente50.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        rbTaxaUrgente50.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         rbTaxaUrgente50.setText("Taxa de Urgência 50%");
-        rbTaxaUrgente50.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbTaxaUrgente50.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbTaxaUrgente50ActionPerformed(evt);
             }
         });
 
         jLabel5.setText("Largura:");
 
-        txtLargura.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtLargura.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtLarguraActionPerformed(evt);
             }
         });
 
         jLabel6.setText("Altura");
 
-        txtAltura.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtAltura.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtAlturaActionPerformed(evt);
             }
         });
 
         jLabel7.setText("x Qtd Item");
 
-        txtQtdItens.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtQtdItens.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtQtdItensActionPerformed(evt);
             }
         });
@@ -867,11 +870,11 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
                     .addComponent(jLabel8)
                     .addComponent(lbSomaLarguraAltura, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jButton1)
@@ -882,11 +885,10 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(rbTaxaExpresso100)
                             .addComponent(jRadioButton1))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(rbTaxaUrgente50)))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         status_mensagem_secundaria.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
@@ -904,20 +906,16 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
         cmbArmazem.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cmbArmazem.setEnabled(false);
-        cmbArmazem.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbArmazem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbArmazemActionPerformed(evt);
             }
         });
 
         cmbAnoEconomico.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cmbAnoEconomico.setEnabled(false);
-        cmbAnoEconomico.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbAnoEconomico.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbAnoEconomicoActionPerformed(evt);
             }
         });
@@ -925,10 +923,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         cmbMoeda.setBackground(new java.awt.Color(0, 51, 102));
         cmbMoeda.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
         cmbMoeda.setEnabled(false);
-        cmbMoeda.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbMoeda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbMoedaActionPerformed(evt);
             }
         });
@@ -940,10 +936,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         cmbTipoDocumento.setBackground(new java.awt.Color(0, 51, 102));
         cmbTipoDocumento.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         cmbTipoDocumento.setForeground(new java.awt.Color(255, 255, 255));
-        cmbTipoDocumento.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbTipoDocumento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbTipoDocumentoActionPerformed(evt);
             }
         });
@@ -953,20 +947,16 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         buttonGroup2.add(rbArmazem);
         rbArmazem.setSelected(true);
         rbArmazem.setEnabled(false);
-        rbArmazem.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbArmazem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbArmazemActionPerformed(evt);
             }
         });
 
         buttonGroup2.add(rbArmazem1);
         rbArmazem1.setEnabled(false);
-        rbArmazem1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbArmazem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbArmazem1ActionPerformed(evt);
             }
         });
@@ -975,20 +965,16 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         lb_proximo_documento.setText("PRÓX. DOC. : XX PP/A1");
 
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/proucura.png"))); // NOI18N
-        jButton4.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
             }
         });
 
         txtQuatidadeExistente.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         txtQuatidadeExistente.setEnabled(false);
-        txtQuatidadeExistente.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtQuatidadeExistente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtQuatidadeExistenteActionPerformed(evt);
             }
         });
@@ -1000,10 +986,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
         jButton3.setFont(new java.awt.Font("Arial", 1, 10)); // NOI18N
         jButton3.setText("Reimprimir Documento");
-        jButton3.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
             }
         });
@@ -1011,10 +995,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         btnLavar.setFont(new java.awt.Font("Mongolian Baiti", 1, 17)); // NOI18N
         btnLavar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagem/maquina-de-lavar.png"))); // NOI18N
         btnLavar.setText("Lavagem");
-        btnLavar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnLavar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnLavarActionPerformed(evt);
             }
         });
@@ -1022,10 +1004,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         btnEngomar.setFont(new java.awt.Font("Mongolian Baiti", 1, 17)); // NOI18N
         btnEngomar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagem/ferro.png"))); // NOI18N
         btnEngomar.setText("Engomagem");
-        btnEngomar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnEngomar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEngomarActionPerformed(evt);
             }
         });
@@ -1035,40 +1015,31 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         dcDataFim.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
 
         jtable_reimpressao.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][]
-            {
+            new Object [][] {
 
             },
-            new String []
-            {
+            new String [] {
                 "Doc"
             }
-        )
-        {
-            boolean[] canEdit = new boolean []
-            {
+        ) {
+            boolean[] canEdit = new boolean [] {
                 false
             };
 
-            public boolean isCellEditable(int rowIndex, int columnIndex)
-            {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        jtable_reimpressao.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mouseClicked(java.awt.event.MouseEvent evt)
-            {
+        jtable_reimpressao.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jtable_reimpressaoMouseClicked(evt);
             }
         });
         jScrollPane4.setViewportView(jtable_reimpressao);
 
         jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/actualizar_1.png"))); // NOI18N
-        jButton6.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton6ActionPerformed(evt);
             }
         });
@@ -1196,36 +1167,28 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         lbClienteConsumidorFinal1.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         lbClienteConsumidorFinal1.setText("Pesquisar Clientes:");
 
-        txtIniciaisCliente.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtIniciaisCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtIniciaisClienteActionPerformed(evt);
             }
         });
-        txtIniciaisCliente.addKeyListener(new java.awt.event.KeyAdapter()
-        {
-            public void keyPressed(java.awt.event.KeyEvent evt)
-            {
+        txtIniciaisCliente.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtIniciaisClienteKeyPressed(evt);
             }
         });
 
         btCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/usuario.png"))); // NOI18N
-        btCliente.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btClienteActionPerformed(evt);
             }
         });
 
         cmbCliente.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         cmbCliente.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cmbCliente.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbClienteActionPerformed(evt);
             }
         });
@@ -1234,23 +1197,22 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
         lbEmailCliente.setText("Email");
 
-        txtTelefoneCliente.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtTelefoneCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtTelefoneClienteActionPerformed(evt);
             }
         });
-        txtTelefoneCliente.addKeyListener(new java.awt.event.KeyAdapter()
-        {
-            public void keyPressed(java.awt.event.KeyEvent evt)
-            {
+        txtTelefoneCliente.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtTelefoneClienteKeyPressed(evt);
             }
         });
 
         lbClienteConsumidorFinal2.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         lbClienteConsumidorFinal2.setText("Telefone:");
+
+        lbDesconto.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lbDesconto.setText("Desconto");
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -1259,12 +1221,6 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addComponent(lbTelefoneCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 552, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addComponent(lbEmailCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 552, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
                         .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(cmbCliente, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1280,7 +1236,13 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
                                     .addComponent(txtTelefoneCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(73, 73, 73))))
+                        .addGap(73, 73, 73))
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(lbDesconto, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lbTelefoneCliente, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 552, Short.MAX_VALUE)
+                            .addComponent(lbEmailCliente, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 462, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1300,9 +1262,11 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
                     .addComponent(btCliente, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbTelefoneCliente)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbEmailCliente)
-                .addGap(17, 17, 17))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbDesconto)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -1316,7 +1280,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 698, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
@@ -1344,7 +1308,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -1477,6 +1441,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
     private void cmbClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbClienteActionPerformed
         mostra_consumidor_final();
+
+        setTotalPagar();
     }//GEN-LAST:event_cmbClienteActionPerformed
 
     private void tableMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableMouseEntered
@@ -2398,6 +2364,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -2423,6 +2391,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     private javax.swing.JTable jtable_reimpressao;
     private javax.swing.JLabel lbClienteConsumidorFinal1;
     private javax.swing.JLabel lbClienteConsumidorFinal2;
+    private static javax.swing.JLabel lbDesconto;
     private static javax.swing.JLabel lbEmailCliente;
     private static javax.swing.JLabel lbQuantidadeExistente;
     private javax.swing.JLabel lbServico;
@@ -2439,6 +2408,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     public static javax.swing.JLabel status_mensagem_secundaria;
     private static javax.swing.JTable table;
     private static javax.swing.JTextField txtAltura;
+    public static javax.swing.JTextField txtDesconto;
     private static javax.swing.JTextField txtIniciaisCliente;
     private static javax.swing.JTextField txtLargura;
     private static javax.swing.JTextArea txtObs;
@@ -2446,6 +2416,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     private static javax.swing.JTextField txtQuatidadeExistente;
     private static javax.swing.JTextField txtTelefoneCliente;
     public static javax.swing.JTextField txtTotalApagar;
+    public static javax.swing.JTextField txtTotalGeral;
     public static javax.swing.JTextField txtTotalQTD;
     // End of variables declaration//GEN-END:variables
 
@@ -2864,7 +2835,6 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
                     taxa = MetodosUtil.getTaxaPercantagem(itemPedidos_list.get(i).getFkProdutos().getCodigo());
                     TbItemPedidos get = itemPedidos_list.get(i);
                     String obs = get.getObs();
-                    double desconto_cliente = getDescontoEntidadePercentagem();
                     String dataEntrega = (!Objects.isNull(get.getDataEntrega())) ? MetodosUtil.getDataBanco(get.getDataEntrega()) : "";
                     System.out.println("DATE ENTREGA: " + MetodosUtil.getDataBanco(get.getDataEntrega()));
                     modelo.addRow(new Object[]{
@@ -2897,19 +2867,16 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
     }
 
-private static double getDescontoClientePercentagem()
-{
-    clientes = clientesController.findByCodigo(getIdCliente());
+    private static double getDescontoClientePercentagem() {
+        TbCliente clientes = clientesController.findByCodigo(getIdCliente());
 
-    if (Objects.nonNull(clientes)
-            && clientes.getPercentagemDesconto() > 0)
-    {
-        return clientes.getPercentagemDesconto();
+        if (Objects.nonNull(clientes)
+                && clientes.getPercentagemDesconto() > 0) {
+            return clientes.getPercentagemDesconto();
+        }
+
+        return 0.0;
     }
-
-    return 0.0;
-}
-
 
     public static void adicionar_tabela_lugar(List<TbItemPedidos> itemPedidos_list) {
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
@@ -3228,12 +3195,8 @@ private static double getDescontoClientePercentagem()
         venda_local.setNomeConsumidorFinal(cmbCliente.getSelectedItem().toString());
 
         venda_local.setClienteNif(getClienteNif());
-//        venda_local.setCodigoCliente( new TbCliente( getIdCliente() ) );
         venda_local.setCodigoCliente(clientesController.findByCodigo(getIdCliente()));
-//        venda_local.setNomeConsumidorFinal( getNomeCliente() );
-//        venda_local.setNomeConsumidorFinal ( txtNomeConsumidorFinal.getText () );
 
-//        TbCliente clienteSelecionado = clientesController.getClienteByNome( ( String ) cmbCliente.getSelectedItem() );
         //Total Ilíquido
         venda_local.setTotalGeral(new BigDecimal(getTotalIliquido()));
         //desconto por linha
@@ -4057,13 +4020,21 @@ private static double getDescontoClientePercentagem()
         return true;
     }
 
+    //#D
     public static void setTotalPagar() {
 
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
-        double total_pagar = 0;
+        double total_pagar = 0, totalGeral = 0;
         for (int i = 0; i < modelo.getRowCount(); i++) {
-            total_pagar += CfMethods.parseMoedaFormatada(modelo.getValueAt(i, 4).toString());
+            totalGeral += CfMethods.parseMoedaFormatada(modelo.getValueAt(i, 4).toString());
         }
+
+        double desconto = getDescontoFinanceiro();
+
+        total_pagar = totalGeral - desconto;
+
+        txtTotalGeral.setText(CfMethods.formatarComoMoeda(totalGeral));
+        txtDesconto.setText(CfMethods.formatarComoMoeda(desconto));
         txtTotalApagar.setText(CfMethods.formatarComoMoeda(total_pagar));
 
     }
@@ -5348,6 +5319,7 @@ private static double getDescontoClientePercentagem()
 
         }
 
+        System.out.println("TOTAL_GERAL (ILÍQUIDO):" + total_iliquido);
         return total_iliquido;
     }
 
@@ -5385,7 +5357,11 @@ private static double getDescontoClientePercentagem()
     }
 
     private static double getDescontoFinanceiro() {
-        return 0d;
+
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        double valorPercentual = (getDescontoClientePercentagem() / 100);
+        double desconto = (getTotalIliquido() * valorPercentual);
+        return desconto;
     }
 
     private static double getDescontoFinanceiro(int lugar) {
@@ -5698,9 +5674,11 @@ private static double getDescontoClientePercentagem()
         if (Objects.nonNull(cliente)) {
             lbTelefoneCliente.setText("Tel.  " + cliente.getTelefone());
             lbEmailCliente.setText("Email.  " + cliente.getEmail());
+            lbDesconto.setText("Desconto.  " + cliente.getPercentagemDesconto() + " %");
         } else {
             lbTelefoneCliente.setText("");
             lbEmailCliente.setText("");
+            lbDesconto.setText("");
 
         }
 
@@ -5870,6 +5848,7 @@ private static double getDescontoClientePercentagem()
     private void setFolhaImpressora(String folha) {
 //        if ( folha.equalsIgnoreCase( "A6" ) )
 //        {
+
     
 
     ////            ck_simplificada.setSelected( true );
