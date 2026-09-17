@@ -116,8 +116,7 @@ public class ClienteVisao extends javax.swing.JDialog
      */
     @SuppressWarnings( "unchecked" )
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents()
-    {
+    private void initComponents() {
 
         jPanel2 = new javax.swing.JPanel();
         btnSalvar = new javax.swing.JButton();
@@ -138,6 +137,8 @@ public class ClienteVisao extends javax.swing.JDialog
         txtNif = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         txtEmail = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        txtDesconto = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
         cmbFamilia = new javax.swing.JComboBox<>();
         cmbSubFamilia = new javax.swing.JComboBox();
@@ -169,10 +170,8 @@ public class ClienteVisao extends javax.swing.JDialog
         btnSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/salvar_16x16.png"))); // NOI18N
         btnSalvar.setText("Salvar");
         btnSalvar.setAlignmentX(0.5F);
-        btnSalvar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSalvarActionPerformed(evt);
             }
         });
@@ -180,10 +179,8 @@ public class ClienteVisao extends javax.swing.JDialog
         btnAlterar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/alterar_16x16.png"))); // NOI18N
         btnAlterar.setText("Alterar");
         btnAlterar.setAlignmentX(0.5F);
-        btnAlterar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnAlterar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAlterarActionPerformed(evt);
             }
         });
@@ -191,10 +188,8 @@ public class ClienteVisao extends javax.swing.JDialog
         btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Logout 32x32.png"))); // NOI18N
         btnCancelar.setText("Sair");
         btnCancelar.setAlignmentX(0.5F);
-        btnCancelar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelarActionPerformed(evt);
             }
         });
@@ -202,10 +197,8 @@ public class ClienteVisao extends javax.swing.JDialog
         btnEliminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/eliminar_16x16.png"))); // NOI18N
         btnEliminar.setText("Eliminar");
         btnEliminar.setAlignmentX(0.5F);
-        btnEliminar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEliminarActionPerformed(evt);
             }
         });
@@ -214,10 +207,8 @@ public class ClienteVisao extends javax.swing.JDialog
         btnNovo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/icons8_add_64px.png"))); // NOI18N
         btnNovo.setText("Novo");
         btnNovo.setAlignmentX(0.5F);
-        btnNovo.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnNovo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnNovoActionPerformed(evt);
             }
         });
@@ -256,17 +247,15 @@ public class ClienteVisao extends javax.swing.JDialog
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 13), new java.awt.Color(51, 153, 0))); // NOI18N
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 12), new java.awt.Color(51, 153, 0))); // NOI18N
         jPanel1.setFont(new java.awt.Font("Showcard Gothic", 0, 24)); // NOI18N
 
         lbTipoProduto.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         lbTipoProduto.setText("Nome do Cliente:");
 
         txtNomeCliente.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtNomeCliente.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtNomeCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtNomeClienteActionPerformed(evt);
             }
         });
@@ -275,10 +264,8 @@ public class ClienteVisao extends javax.swing.JDialog
         jLabel1.setText("Endereço:");
 
         txtEndereco.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtEndereco.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtEndereco.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtEnderecoActionPerformed(evt);
             }
         });
@@ -287,10 +274,8 @@ public class ClienteVisao extends javax.swing.JDialog
         jLabel2.setText("Tel:");
 
         txtContactos.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtContactos.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtContactos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtContactosActionPerformed(evt);
             }
         });
@@ -299,10 +284,8 @@ public class ClienteVisao extends javax.swing.JDialog
         jLabel3.setText("Nif:");
 
         txtNif.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtNif.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtNif.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtNifActionPerformed(evt);
             }
         });
@@ -311,13 +294,14 @@ public class ClienteVisao extends javax.swing.JDialog
         jLabel4.setText("Email:");
 
         txtEmail.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtEmail.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtEmail.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtEmailActionPerformed(evt);
             }
         });
+
+        jLabel5.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
+        jLabel5.setText("Desconto (%):");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -345,7 +329,11 @@ public class ClienteVisao extends javax.swing.JDialog
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtDesconto, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(0, 39, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -357,7 +345,7 @@ public class ClienteVisao extends javax.swing.JDialog
                     .addComponent(lbTipoProduto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
                         .addComponent(jLabel1)
                         .addGap(17, 17, 17))
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -376,7 +364,11 @@ public class ClienteVisao extends javax.swing.JDialog
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(4, 4, 4)))
-                .addGap(47, 47, 47))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtDesconto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18))
         );
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -399,10 +391,8 @@ public class ClienteVisao extends javax.swing.JDialog
         jTabbedPane1.addTab("Ficha do Cliente", jPanel3);
 
         cmbFamilia.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        cmbFamilia.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbFamilia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbFamiliaActionPerformed(evt);
             }
         });
@@ -411,10 +401,8 @@ public class ClienteVisao extends javax.swing.JDialog
         cmbSubFamilia.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         cmbSubFamilia.setForeground(new java.awt.Color(0, 0, 51));
         cmbSubFamilia.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cmbSubFamilia.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbSubFamilia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbSubFamiliaActionPerformed(evt);
             }
         });
@@ -423,10 +411,8 @@ public class ClienteVisao extends javax.swing.JDialog
         cmbProduto.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         cmbProduto.setForeground(new java.awt.Color(0, 0, 51));
         cmbProduto.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cmbProduto.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbProduto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbProdutoActionPerformed(evt);
             }
         });
@@ -451,45 +437,35 @@ public class ClienteVisao extends javax.swing.JDialog
         cmbMesComeco.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         cmbMesComeco.setForeground(new java.awt.Color(0, 0, 51));
         cmbMesComeco.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "--Seleccione--" }));
-        cmbMesComeco.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbMesComeco.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbMesComecoActionPerformed(evt);
             }
         });
 
         tabelaServicoMensalidade.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][]
-            {
+            new Object [][] {
 
             },
-            new String []
-            {
+            new String [] {
                 "Cod", "Servico", "Mes Começo", "Duração"
             }
-        )
-        {
-            boolean[] canEdit = new boolean []
-            {
+        ) {
+            boolean[] canEdit = new boolean [] {
                 false, false, false, false
             };
 
-            public boolean isCellEditable(int rowIndex, int columnIndex)
-            {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        tabelaServicoMensalidade.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mouseClicked(java.awt.event.MouseEvent evt)
-            {
+        tabelaServicoMensalidade.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tabelaServicoMensalidadeMouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(tabelaServicoMensalidade);
-        if (tabelaServicoMensalidade.getColumnModel().getColumnCount() > 0)
-        {
+        if (tabelaServicoMensalidade.getColumnModel().getColumnCount() > 0) {
             tabelaServicoMensalidade.getColumnModel().getColumn(0).setMaxWidth(100);
         }
 
@@ -501,28 +477,22 @@ public class ClienteVisao extends javax.swing.JDialog
         cmbDuracao.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         cmbDuracao.setForeground(new java.awt.Color(0, 0, 51));
         cmbDuracao.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "--seleccione--", "01 Mês", "02 Meses", "03 Meses", "04 Meses", "05 Meses", "06 Meses", "07 Meses", "8 Meses", "9 Meses", "10 Meses", "11 Meses", "12 Meses" }));
-        cmbDuracao.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbDuracao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbDuracaoActionPerformed(evt);
             }
         });
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Button-Add-icon.png"))); // NOI18N
-        jButton1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/adicionar.png"))); // NOI18N
-        jButton2.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
@@ -612,19 +582,15 @@ public class ClienteVisao extends javax.swing.JDialog
         lbTipoProduto2.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         lbTipoProduto2.setText("Cod.:");
 
-        txtProcNIF.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtProcNIF.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtProcNIFActionPerformed(evt);
             }
         });
 
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/proucura.png"))); // NOI18N
-        jButton4.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
             }
         });
@@ -632,10 +598,8 @@ public class ClienteVisao extends javax.swing.JDialog
         lbTipoProduto3.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         lbTipoProduto3.setText("NIF:");
 
-        txtNomeCliente2.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtNomeCliente2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtNomeCliente2ActionPerformed(evt);
             }
         });
@@ -1033,6 +997,7 @@ public class ClienteVisao extends javax.swing.JDialog
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -1050,6 +1015,7 @@ public class ClienteVisao extends javax.swing.JDialog
     private javax.swing.JLabel lbTipoProduto3;
     private static javax.swing.JTable tabelaServicoMensalidade;
     public static javax.swing.JTextField txtContactos;
+    private static javax.swing.JTextField txtDesconto;
     public static javax.swing.JTextField txtEmail;
     public static javax.swing.JTextField txtEndereco;
     public static javax.swing.JTextField txtNif;
@@ -1195,6 +1161,7 @@ public class ClienteVisao extends javax.swing.JDialog
         clienteGlobal.setNif( nif );
         this.clienteGlobal.setTelefone( txtContactos.getText() );
         this.clienteGlobal.setEmail( txtEmail.getText().trim() );
+        clienteGlobal.setPercentagemDesconto( Double.parseDouble(txtDesconto.getText() ));
 
     }
 
@@ -1391,6 +1358,7 @@ public class ClienteVisao extends javax.swing.JDialog
         txtNif.setText( clienteGlobal.getNif() );
         txtContactos.setText( clienteGlobal.getTelefone() );
         txtEmail.setText( clienteGlobal.getEmail() );
+        txtDesconto.setText( String.valueOf(clienteGlobal.getPercentagemDesconto()));
         adicionarServicos();
     }
 

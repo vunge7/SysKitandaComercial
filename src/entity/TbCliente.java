@@ -58,6 +58,8 @@ public class TbCliente implements Serializable
     private String nif;
     @Column(name = "email")
     private String email;
+    @Column(name = "percentagem_desconto")
+    private double percentagemDesconto;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "codigoCliente")
     private List<Notas> notasList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkCliente")
@@ -69,6 +71,14 @@ public class TbCliente implements Serializable
 
     public TbCliente()
     {
+    }
+
+    public double getPercentagemDesconto() {
+        return percentagemDesconto;
+    }
+
+    public void setPercentagemDesconto(double percentagemDesconto) {
+        this.percentagemDesconto = percentagemDesconto;
     }
 
     public TbCliente( Integer codigo )
