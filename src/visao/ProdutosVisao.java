@@ -2214,9 +2214,7 @@ public class ProdutosVisao extends javax.swing.JFrame {
                     {
 
                         System.err.println("$$$$$$$$$$$$$$$$Consegui entrar no Aplicar IVA");
-                        
-                        
-                        
+
 //                        ivaAtualizar(produto.getCodigo(), produtosImpostoControllerLocal, produtosIsentoControllerLocal);
 //                        retencaoAtualizar(produto.getCodigo());
                         ProdutoImposto produtoImposto = new ProdutoImposto();
@@ -3564,6 +3562,7 @@ public class ProdutosVisao extends javax.swing.JFrame {
             actualizarRetencaoForm();
 //            servico_produto();
 //            txtDesignacao.requestFocus();
+
         
     
 

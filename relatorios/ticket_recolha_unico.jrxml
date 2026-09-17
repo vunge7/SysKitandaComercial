@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="200" pageHeight="450" columnWidth="198" leftMargin="0" rightMargin="2" topMargin="0" bottomMargin="0" uuid="9fc5c7e7-6413-41ac-bcbc-bae395cf6f17">
-	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.zoom" value="3.993000000000001"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Kitanda_Connection"/>
@@ -36,7 +36,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<detail>
-		<band height="38">
+		<band height="47">
 			<textField pattern="dd/MM/yyyy">
 				<reportElement uuid="77bd874e-4794-4835-a2bb-35466805e84e" x="24" y="1" width="49" height="10"/>
 				<box leftPadding="0"/>
@@ -74,7 +74,7 @@
 				<textFieldExpression><![CDATA[$F{usuario}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement uuid="eaac940c-ce52-410c-842a-009cbd2a37ca" stretchType="RelativeToTallestObject" x="25" y="29" width="173" height="9"/>
+				<reportElement uuid="eaac940c-ce52-410c-842a-009cbd2a37ca" stretchType="RelativeToTallestObject" x="25" y="29" width="173" height="18"/>
 				<box topPadding="0" leftPadding="2" bottomPadding="1">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -82,11 +82,10 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement markup="html">
-					<font fontName="Arial" size="6" isBold="true"/>
+					<font fontName="Arial" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{obs} + "<br/>"
-+ $F{nome_cliente} + " (" + $F{telefone_cliente} + ")"
-]]></textFieldExpression>
++ $F{nome_cliente} + " (" + $F{telefone_cliente} + ")"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="f4023424-7c12-4cae-b038-8d4f28450949" x="73" y="1" width="123" height="10"/>

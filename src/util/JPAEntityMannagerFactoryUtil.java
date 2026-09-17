@@ -20,12 +20,20 @@ import javax.swing.JOptionPane;
  *
  * @author Domingos Dala Vunge & Martinho Canhongo Luis
  */
-public class JPAEntityMannagerFactoryUtil
-{
+public class JPAEntityMannagerFactoryUtil {
 
 //    public static EntityManagerFactory em  =  Persistence.createEntityManagerFactory("SGCMINIMERCADOPU");
-    public static EntityManagerFactory em = Persistencia.getEntityManagerFactory( "SGCMINIMERCADOPU" );
+    public static EntityManagerFactory em = Persistencia.getEntityManagerFactory("SGCMINIMERCADOPU");
 
+//    public static void main(String[] args) {
+
+    
+
+    ////        EntityManagerFactory em = JPAEntityMannagerFactoryUtil.em;kitanda_db_bm1_gulele_actual
+
+
+
+//<<<<<<< HEAD
     public static void main( String[] args )
     {
 //<<<<<<< HEAD
@@ -40,69 +48,73 @@ public class JPAEntityMannagerFactoryUtil
 //        UsuarioDao usuarioDao = new UsuarioDao( em );
 //        System.out.println(usuarioDao.exist_usuario("dvml", "mavala"));
         leituraFicheiro();
+//=======
+//>>>>>>> f173ba65f33494eabc68752ce5b34c47fdec1563
     }
 
-    public static EntityManager createEntityManager()
-    {
-        try
-        {
+    public static EntityManager createEntityManager() {
+        try {
 
             return em.createEntityManager();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public static class Persistencia
-    {
+    public static class Persistencia {
 
-        public static EntityManagerFactory getEntityManagerFactory( String PU )
-        {
+        public static EntityManagerFactory getEntityManagerFactory(String PU) {
 
             Vector<String> informacao = leituraFicheiro();
 
-            try
-            {
-
-                if ( !informacao.isEmpty() )
-                {
-                    String ip = informacao.get( 0 );
-                    String porta = informacao.get( 1 );
+            try {
 
 //<<<<<<< HEAD
-//<<<<<<< HEAD
-                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_bm1?zeroDateTimeBehavior=convertToNull";
-//=======
+//                if ( !informacao.isEmpty() )
+//                {
+//                    String ip = informacao.get( 0 );
+//                    String porta = informacao.get( 1 );
+//
+////<<<<<<< HEAD
+////<<<<<<< HEAD
 //                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_bm1?zeroDateTimeBehavior=convertToNull";
-//>>>>>>> 5c8040b57ef6ee87cebd8b69a939b1476e08b465
+////=======
+////                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_bm1?zeroDateTimeBehavior=convertToNull";
+////>>>>>>> 5c8040b57ef6ee87cebd8b69a939b1476e08b465
+////=======
+////                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_candundo?zeroDateTimeBehavior=convertToNull";
+////>>>>>>> 117138b13b6db826d4e35b6310cd0215e16ae8d8
 //=======
-//                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_candundo?zeroDateTimeBehavior=convertToNull";
-//>>>>>>> 117138b13b6db826d4e35b6310cd0215e16ae8d8
+                if (!informacao.isEmpty()) {
+                    String ip = informacao.get(0);
+                    String porta = informacao.get(1);
+//>>>>>>> f173ba65f33494eabc68752ce5b34c47fdec1563
 
+                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_bm1?zeroDateTimeBehavior=convertToNull";
+                    //=======
+                    //                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_bm1?zeroDateTimeBehavior=convertToNull";
+                    //>>>>>>> 5c8040b57ef6ee87cebd8b69a939b1476e08b465
+                    //=======
+                    //                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_bm1_candundo?zeroDateTimeBehavior=convertToNull";
+                    //>>>>>>> 117138b13b6db826d4e35b6310cd0215e16ae8d8
                     String user = "root";
                     String password = "DoV90x?#";
 
                     Map map = new HashMap();
-                    map.put( "javax.persistence.jdbc.url", url ); //esta propriedade vai substituir aquela q esta no arquivo
-                    map.put( "javax.persistence.jdbc.user", user ); //esta propriedade vai substituir aquela q esta no arquivo
-                    map.put( "javax.persistence.jdbc.password", password ); //esta propriedade vai substituir aquela q esta no arquivo
-                    map.put( "javax.persistence.jdbc.driver", "com.mysql.jdbc.Driver" ); //esta propriedade vai substituir aquela q esta no arquivo
+                    map.put("javax.persistence.jdbc.url", url); //esta propriedade vai substituir aquela q esta no arquivo
+                    map.put("javax.persistence.jdbc.user", user); //esta propriedade vai substituir aquela q esta no arquivo
+                    map.put("javax.persistence.jdbc.password", password); //esta propriedade vai substituir aquela q esta no arquivo
+                    map.put("javax.persistence.jdbc.driver", "com.mysql.jdbc.Driver"); //esta propriedade vai substituir aquela q esta no arquivo
 //    
-                    return javax.persistence.Persistence.createEntityManagerFactory( PU, map );
-                }
-                else
-                {
-                    JOptionPane.showMessageDialog( null, "Erro n. 192 , contacte o fornecedor do sistema" );
+                    return javax.persistence.Persistence.createEntityManagerFactory(PU, map);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Erro n. 192 , contacte o fornecedor do sistema");
                 }
 
                 return null;
 
-            }
-            catch ( Exception e )
-            {
+            } catch (Exception e) {
                 return null;
             }
 
@@ -110,30 +122,25 @@ public class JPAEntityMannagerFactoryUtil
 
     }
 
-    public static Vector<String> leituraFicheiro()
-    {
+    public static Vector<String> leituraFicheiro() {
 
         Vector<String> informacao = new Vector<>();
-        try
-        {
-            File file = new File( "credencial/file.txt" );
+        try {
+            File file = new File("credencial/file.txt");
 
             String texto = "";
 
-            Scanner scanner = new Scanner( file );
+            Scanner scanner = new Scanner(file);
 
-            while ( scanner.hasNext() )
-            {
-                informacao.add( scanner.nextLine() );
+            while (scanner.hasNext()) {
+                informacao.add(scanner.nextLine());
             }
 
-            System.out.println( texto );
+            System.out.println(texto);
 
-        }
-        catch ( FileNotFoundException ex )
-        {
+        } catch (FileNotFoundException ex) {
             ex.printStackTrace();
-            Logger.getLogger( JPAEntityMannagerFactoryUtil.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(JPAEntityMannagerFactoryUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return informacao;
