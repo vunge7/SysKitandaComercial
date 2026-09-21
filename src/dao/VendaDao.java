@@ -329,7 +329,7 @@ public class VendaDao extends TbVendaJpaController {
         Query query = em.createNativeQuery("SELECT * FROM tb_venda "
                 + "WHERE  DATE(dataVenda) BETWEEN ? AND ? "
                 //                + "AND status_eliminado = 'false' "
-                + "AND credito = 'false' "
+               // + "AND credito = 'false' "
                 + "AND idArmazemFK = ? "
                 + "AND fk_documento = ? ", TbVenda.class);
 
@@ -353,8 +353,8 @@ public class VendaDao extends TbVendaJpaController {
 
         Query query = em.createNativeQuery("SELECT * FROM tb_venda "
                 + "WHERE  DATE(dataVenda) BETWEEN ? AND ? "
-                + "AND status_eliminado = 'false' "
-                + "AND credito = 'false' "
+//                + "AND status_eliminado = 'false' "
+//                + "AND credito = 'false' "
                 + "AND idArmazemFK = ? "
                 + "AND fk_documento = ? ", TbVenda.class);
 
@@ -733,8 +733,8 @@ public class VendaDao extends TbVendaJpaController {
 
         Query query = em.createNativeQuery("SELECT * FROM tb_venda "
                 + "WHERE  DATE(dataVenda) BETWEEN ? AND ? "
-                + "AND status_eliminado = 'false' "
-                + "AND credito = 'false' "
+//                + "AND status_eliminado = 'false' "
+//                + "AND credito = 'false' "
                 + "AND idArmazemFK = ? "
                 + "AND fk_documento = ? ", TbVenda.class);
 
@@ -2054,8 +2054,8 @@ public class VendaDao extends TbVendaJpaController {
 
         Query query = em.createNativeQuery("SELECT * FROM tb_venda "
                 + "WHERE  DATE(dataVenda) BETWEEN ? AND ? "
-                + "AND status_eliminado = 'false' "
-                + "AND credito = 'false' "
+//                + "AND status_eliminado = 'false' "
+//                + "AND credito = 'false' "
                 + "AND idArmazemFK = ? "
                 + "AND fk_documento = ? "
                 + "AND codigo_cliente = ? ",

@@ -30,6 +30,7 @@
      tb_venda.`nome_cliente` AS tb_venda_nome_cliente,
      tb_venda.`desconto_total` AS tb_venda_desconto_total,
      tb_venda.`total_geral` AS tb_venda_total_geral,
+     tb_venda.`codigo_usuario` AS codigo_usuario,
      fn_total_subtotal_iliquido( $P{PARM_DATA_1}, $P{PARM_DATA_2}, $P{PARM_DOCUMENTO}, tb_venda.`codigo` ) AS total_iliquido,
      tb_armazem.`designacao` AS tb_armazem_designacao,
      documento.`pk_documento` AS documento_pk_documento,
@@ -45,7 +46,8 @@ FROM
 WHERE
           DATE(tb_venda.`dataVenda`) BETWEEN $P{PARM_DATA_1} AND $P{PARM_DATA_2}
 	AND tb_armazem.`designacao` = $P{PARM_ARMAZEM}
-	AND documento.`pk_documento` = $P{PARM_DOCUMENTO}]]>
+	AND documento.`pk_documento` = $P{PARM_DOCUMENTO}
+	AND  tb_venda.`codigo_usuario` = $P{PARM_ID_USUARIO}]]>
 	</queryString>
 	<field name="tb_venda_dataVenda" class="java.sql.Timestamp"/>
 	<field name="tb_venda_codigo" class="java.lang.Integer"/>
@@ -56,6 +58,9 @@ WHERE
 	<field name="tb_venda_nome_cliente" class="java.lang.String"/>
 	<field name="tb_venda_desconto_total" class="java.math.BigDecimal"/>
 	<field name="tb_venda_total_geral" class="java.math.BigDecimal"/>
+	<field name="codigo_usuario" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
 	<field name="total_iliquido" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>

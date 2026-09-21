@@ -91,8 +91,7 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents()
-    {
+    private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
@@ -167,10 +166,8 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
         cmbArmazem.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/actualizar_1_32x32.png"))); // NOI18N
-        jButton1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
@@ -178,10 +175,8 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
         buttonGroup4.add(ck_A4);
         ck_A4.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_A4.setText("A4");
-        ck_A4.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        ck_A4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ck_A4ActionPerformed(evt);
             }
         });
@@ -189,10 +184,8 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
         buttonGroup4.add(ck_Duplicada);
         ck_Duplicada.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_Duplicada.setText("A5");
-        ck_Duplicada.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        ck_Duplicada.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ck_DuplicadaActionPerformed(evt);
             }
         });
@@ -200,10 +193,8 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
         buttonGroup4.add(ck_simplificada);
         ck_simplificada.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_simplificada.setText("A6");
-        ck_simplificada.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        ck_simplificada.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ck_simplificadaActionPerformed(evt);
             }
         });
@@ -211,10 +202,8 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
         buttonGroup4.add(ck_simplificada_O);
         ck_simplificada_O.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_simplificada_O.setText("A6_O");
-        ck_simplificada_O.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        ck_simplificada_O.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ck_simplificada_OActionPerformed(evt);
             }
         });
@@ -223,10 +212,8 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
         ck_simplificada_OS_A6.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_simplificada_OS_A6.setSelected(true);
         ck_simplificada_OS_A6.setText("S_A6_O");
-        ck_simplificada_OS_A6.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        ck_simplificada_OS_A6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ck_simplificada_OS_A6ActionPerformed(evt);
             }
         });
@@ -234,10 +221,8 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
         buttonGroup4.add(ck_ComVirgula);
         ck_ComVirgula.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_ComVirgula.setText("A6V");
-        ck_ComVirgula.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        ck_ComVirgula.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ck_ComVirgulaActionPerformed(evt);
             }
         });
@@ -245,10 +230,8 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
         buttonGroup4.add(ck_S_A6);
         ck_S_A6.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_S_A6.setText("S_A6");
-        ck_S_A6.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        ck_S_A6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ck_S_A6ActionPerformed(evt);
             }
         });
@@ -256,10 +239,8 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
         buttonGroup4.add(ck_A7);
         ck_A7.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         ck_A7.setText("A7");
-        ck_A7.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        ck_A7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ck_A7ActionPerformed(evt);
             }
         });
@@ -342,10 +323,8 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
         btnCancelar1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LOGOUT - VERMELHO/Logout 32x32.png"))); // NOI18N
         btnCancelar1.setText("Sair");
         btnCancelar1.setAlignmentX(0.5F);
-        btnCancelar1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnCancelar1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelar1ActionPerformed(evt);
             }
         });
@@ -382,58 +361,45 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
-        jTabbedPane1.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mouseClicked(java.awt.event.MouseEvent evt)
-            {
+        jTabbedPane1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTabbedPane1MouseClicked(evt);
             }
-            public void mouseEntered(java.awt.event.MouseEvent evt)
-            {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
                 jTabbedPane1MouseEntered(evt);
             }
         });
 
         tabela_factura_recibo.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][]
-            {
+            new Object [][] {
 
             },
-            new String []
-            {
+            new String [] {
                 "Doc. Ref Nº", "Cliente ", "Data", "Hora", "Usuário", "Total"
             }
-        )
-        {
-            Class[] types = new Class []
-            {
+        ) {
+            Class[] types = new Class [] {
                 java.lang.Object.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
-            boolean[] canEdit = new boolean []
-            {
+            boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false
             };
 
-            public Class getColumnClass(int columnIndex)
-            {
+            public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
 
-            public boolean isCellEditable(int rowIndex, int columnIndex)
-            {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        tabela_factura_recibo.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mouseClicked(java.awt.event.MouseEvent evt)
-            {
+        tabela_factura_recibo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tabela_factura_reciboMouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(tabela_factura_recibo);
-        if (tabela_factura_recibo.getColumnModel().getColumnCount() > 0)
-        {
+        if (tabela_factura_recibo.getColumnModel().getColumnCount() > 0) {
             tabela_factura_recibo.getColumnModel().getColumn(0).setMinWidth(0);
             tabela_factura_recibo.getColumnModel().getColumn(2).setMaxWidth(100);
             tabela_factura_recibo.getColumnModel().getColumn(3).setMaxWidth(100);
@@ -458,45 +424,35 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
         jTabbedPane1.addTab("Factura/Recibo - FR", jPanel4);
 
         tabela_factura.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][]
-            {
+            new Object [][] {
 
             },
-            new String []
-            {
+            new String [] {
                 "Doc. Ref Nº", "Cliente ", "Data", "Hora", "Usuário", "Total Factura", "Total Pago", "Dívida (Por pagar)", "Data Vencimento", "Prazo"
             }
-        )
-        {
-            Class[] types = new Class []
-            {
+        ) {
+            Class[] types = new Class [] {
                 java.lang.Object.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Object.class, java.lang.Object.class
             };
-            boolean[] canEdit = new boolean []
-            {
+            boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false, false, true, true, true
             };
 
-            public Class getColumnClass(int columnIndex)
-            {
+            public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
 
-            public boolean isCellEditable(int rowIndex, int columnIndex)
-            {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        tabela_factura.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mouseClicked(java.awt.event.MouseEvent evt)
-            {
+        tabela_factura.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tabela_facturaMouseClicked(evt);
             }
         });
         jScrollPane2.setViewportView(tabela_factura);
-        if (tabela_factura.getColumnModel().getColumnCount() > 0)
-        {
+        if (tabela_factura.getColumnModel().getColumnCount() > 0) {
             tabela_factura.getColumnModel().getColumn(0).setMinWidth(0);
             tabela_factura.getColumnModel().getColumn(2).setMaxWidth(100);
             tabela_factura.getColumnModel().getColumn(3).setMaxWidth(100);
@@ -504,30 +460,25 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
 
         cmbCliente.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         cmbCliente.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cmbCliente.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbClienteActionPerformed(evt);
             }
         });
 
         buttonGroup1.add(rb_todos_clientes);
+        rb_todos_clientes.setSelected(true);
         rb_todos_clientes.setText("Todos os Clientes");
-        rb_todos_clientes.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rb_todos_clientes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rb_todos_clientesActionPerformed(evt);
             }
         });
 
         buttonGroup1.add(rb_por_cliente);
         rb_por_cliente.setText("Por Cliente");
-        rb_por_cliente.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rb_por_cliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rb_por_clienteActionPerformed(evt);
             }
         });
@@ -564,39 +515,30 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
         jTabbedPane1.addTab("Factura - FT", jPanel5);
 
         tabela_factura_nc.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][]
-            {
+            new Object [][] {
 
             },
-            new String []
-            {
+            new String [] {
                 "Doc. Nº", "Cliente ", "Data", "Hora", "Usuário", "Total", "Ref. DOC"
             }
-        )
-        {
-            Class[] types = new Class []
-            {
+        ) {
+            Class[] types = new Class [] {
                 java.lang.Object.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
-            boolean[] canEdit = new boolean []
-            {
+            boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false, false
             };
 
-            public Class getColumnClass(int columnIndex)
-            {
+            public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
 
-            public boolean isCellEditable(int rowIndex, int columnIndex)
-            {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        tabela_factura_nc.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mouseClicked(java.awt.event.MouseEvent evt)
-            {
+        tabela_factura_nc.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tabela_factura_ncMouseClicked(evt);
             }
         });
@@ -621,45 +563,35 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
         jTabbedPane1.addTab("Nota/Crédito - NC", jPanel7);
 
         tabela_recibo.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][]
-            {
+            new Object [][] {
 
             },
-            new String []
-            {
+            new String [] {
                 "Doc. Ref Nº", "Cliente ", "Data", "Hora", "Usuário", "Total"
             }
-        )
-        {
-            Class[] types = new Class []
-            {
+        ) {
+            Class[] types = new Class [] {
                 java.lang.Object.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
-            boolean[] canEdit = new boolean []
-            {
+            boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false
             };
 
-            public Class getColumnClass(int columnIndex)
-            {
+            public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
 
-            public boolean isCellEditable(int rowIndex, int columnIndex)
-            {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        tabela_recibo.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mouseClicked(java.awt.event.MouseEvent evt)
-            {
+        tabela_recibo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tabela_reciboMouseClicked(evt);
             }
         });
         jScrollPane5.setViewportView(tabela_recibo);
-        if (tabela_recibo.getColumnModel().getColumnCount() > 0)
-        {
+        if (tabela_recibo.getColumnModel().getColumnCount() > 0) {
             tabela_recibo.getColumnModel().getColumn(0).setMinWidth(0);
             tabela_recibo.getColumnModel().getColumn(2).setMaxWidth(100);
             tabela_recibo.getColumnModel().getColumn(3).setMaxWidth(100);
@@ -684,45 +616,35 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
         jTabbedPane1.addTab("Recibo - RC", jPanel9);
 
         tabela_factura_proforma.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][]
-            {
+            new Object [][] {
 
             },
-            new String []
-            {
+            new String [] {
                 "Doc. Ref Nº", "Cliente ", "Data", "Hora", "Usuário", "Total"
             }
-        )
-        {
-            Class[] types = new Class []
-            {
+        ) {
+            Class[] types = new Class [] {
                 java.lang.Object.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
-            boolean[] canEdit = new boolean []
-            {
+            boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false
             };
 
-            public Class getColumnClass(int columnIndex)
-            {
+            public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
 
-            public boolean isCellEditable(int rowIndex, int columnIndex)
-            {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        tabela_factura_proforma.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mouseClicked(java.awt.event.MouseEvent evt)
-            {
+        tabela_factura_proforma.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tabela_factura_proformaMouseClicked(evt);
             }
         });
         jScrollPane6.setViewportView(tabela_factura_proforma);
-        if (tabela_factura_proforma.getColumnModel().getColumnCount() > 0)
-        {
+        if (tabela_factura_proforma.getColumnModel().getColumnCount() > 0) {
             tabela_factura_proforma.getColumnModel().getColumn(0).setMinWidth(0);
             tabela_factura_proforma.getColumnModel().getColumn(2).setMaxWidth(100);
             tabela_factura_proforma.getColumnModel().getColumn(3).setMaxWidth(100);
@@ -747,39 +669,30 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
         jTabbedPane1.addTab("Factura/Proforma - PP", jPanel10);
 
         tabela_factura_geral.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][]
-            {
+            new Object [][] {
 
             },
-            new String []
-            {
+            new String [] {
                 "Doc. Nº", "Cliente ", "Data", "Hora", "Usuário", "Total", "Ref. DOC"
             }
-        )
-        {
-            Class[] types = new Class []
-            {
+        ) {
+            Class[] types = new Class [] {
                 java.lang.Object.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
-            boolean[] canEdit = new boolean []
-            {
+            boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false, false
             };
 
-            public Class getColumnClass(int columnIndex)
-            {
+            public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
 
-            public boolean isCellEditable(int rowIndex, int columnIndex)
-            {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        tabela_factura_geral.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mouseClicked(java.awt.event.MouseEvent evt)
-            {
+        tabela_factura_geral.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tabela_factura_geralMouseClicked(evt);
             }
         });
@@ -824,10 +737,8 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
 
         buttonGroup2.add(ck_estrato_cliente);
         ck_estrato_cliente.setText("Extrato de Cliente");
-        ck_estrato_cliente.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        ck_estrato_cliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ck_estrato_clienteActionPerformed(evt);
             }
         });
@@ -881,20 +792,16 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
         btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/impressora1.png"))); // NOI18N
         btnCancelar.setText("Imprimir");
         btnCancelar.setAlignmentX(0.5F);
-        btnCancelar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelarActionPerformed(evt);
             }
         });
 
         jButton2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jButton2.setText("TOP");
-        jButton2.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
@@ -1389,6 +1296,7 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
         }
         if (ck_ordemFR.isSelected()) {
             
+         
             ResumoVenda resumoVenda = new ResumoVenda(dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), this.lista, getTipoDocumento(), ck_mapa_iva.isSelected(), ck_ordemFR.isSelected());
         } else if (ck_mapa_iva.isSelected()) {
             ResumoVenda resumoVenda = new ResumoVenda(dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), this.lista, getTipoDocumento(), true);
@@ -1412,7 +1320,8 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
     private void adicionar_relatorio_factura() {
         ck_estrato_cliente.setVisible(true);
 //        rb_todos_clientes.setSelected( true);
-        lista = rb_todos_clientes.isSelected() ? vendaDao.getAllFTVendaByBetweenDataAndArmazemAndDocumento(dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_FACTURA_FT) : vendaDao.getAllVendaByBetweenDataAndArmazemAndDocumentoAndCliente(dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_FACTURA_FT, getCodigoCliente());
+        lista = rb_todos_clientes.isSelected() ? vendaDao.getAllFTVendaByBetweenDataAndArmazemAndDocumento(dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_FACTURA_FT) :
+                vendaDao.getAllVendaByBetweenDataAndArmazemAndDocumentoAndCliente(dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_FACTURA_FT, getCodigoCliente());
 //        lista = vendaDao.getAllVendaByBetweenDataAndArmazemAndDocumento( dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), DVML.DOC_FACTURA_FT );
         DefaultTableModel modelo = (DefaultTableModel) tabela_factura.getModel();
         modelo.setRowCount(0);
@@ -1423,6 +1332,7 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
                 BigDecimal valor_pago = new BigDecimal(amortizacaoDividaController.getValorAtribuidoByCodFact(object.getCodFact()));
 //                System.out.println( "VALOR PAGO = " + valor_pago );
 
+ //total = total.add(new BigDecimal(tabela.getValueAt(i, 5).toString())).setScale(2, RoundingMode.CEILING);
                 modelo.addRow(new Object[]{
                     object.getCodFact(),
                     getNomeCliente(object),
@@ -1430,7 +1340,7 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
                     getHora(object.getHora()),
                     object.getCodigoUsuario().getNome(),
                     //                    new BigDecimal( object.getTotalVenda() ).setScale( 2, RoundingMode.CEILING ),
-                    new BigDecimal(object.getTotalVenda().doubleValue()).setScale(2, RoundingMode.CEILING),
+                    new BigDecimal(object.getTotalVenda().toString()).setScale(2, RoundingMode.CEILING),
                     valor_pago,
                     //                            new BigDecimal( object.getTotalVenda() ).subtract( valor_pago ).setScale( 2, RoundingMode.CEILING )
                     valor_pago.subtract(new BigDecimal(object.getTotalVenda().doubleValue())).setScale(2, RoundingMode.FLOOR),
