@@ -91,17 +91,17 @@ public class BDConexao {
 
 
 //<<<<<<< HEAD
-            String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_lav"
+            String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_gulele_golf"
 
 //=======
-//            String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_candundo"
+//            String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_gulele_golf_candundo"
 //>>>>>>> 117138b13b6db826d4e35b6310cd0215e16ae8d8
 //=======
 //            String ip = info.get(0).trim();
 //            String porta = (info.size() > 1 ? info.get(1).trim() : "3306");
 //>>>>>>> f173ba65f33494eabc68752ce5b34c47fdec1563
 //
-//            String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_gulele_golf_II"
+//            String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_gulele_golf_gulele_golf_II"
                     + "?zeroDateTimeBehavior=convertToNull"
                     + "&useSSL=false"
                     + "&allowPublicKeyRetrieval=true"
