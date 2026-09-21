@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 import util.BDConexao;
+import util.ClientePesquisa;
 import util.DVML;
 import util.MetodosUtil;
 
@@ -76,19 +77,54 @@ public class ClientesController implements EntidadeFactory {
 
     @Override
     public boolean actualizar(Object object) {
-        TbCliente clientes = (TbCliente) object;
+    TbCliente cliente = (TbCliente) object;
 
-        String UPDATE = "UPDATE tb_cliente SET "
-                + "nome = '" + clientes.getNome() + "', "
-                + "morada = '" + clientes.getMorada() + "', "
-                + "telefone = '" + clientes.getTelefone() + "', "
-                + "nif = '" + clientes.getNif() + "', "
-                + "email = '" + clientes.getEmail() + "', "
-                + "percentagem_desconto = " + clientes.getPercentagemDesconto() + " "
-                + "WHERE codigo = " + clientes.getCodigo();
+    String UPDATE = "UPDATE tb_cliente SET "
+            + "nome = ?, "
+            + "morada = ?, "
+            + "telefone = ?, "
+            + "nif = ?, "
+            + "email = ?, "
+            + "percentagem_desconto = ? "
+            + "WHERE codigo = ?";
 
-        return conexao.executeUpdate(UPDATE);
+    try (PreparedStatement stmt = conexao.getConnection().prepareStatement(UPDATE)) {
+
+        int cod = 1;
+
+        stmt.setString(cod++, cliente.getNome());
+        stmt.setString(cod++, cliente.getMorada());
+        stmt.setString(cod++, cliente.getTelefone());
+        stmt.setString(cod++, cliente.getNif());
+        stmt.setString(cod++, cliente.getEmail());
+        stmt.setDouble(cod++, cliente.getPercentagemDesconto());
+        stmt.setInt(cod++, cliente.getCodigo());
+
+        int linhas = stmt.executeUpdate();
+
+        return linhas > 0;
+
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+
+    return false;
+}
+
+//    public boolean actualizar(Object object) {
+//        TbCliente clientes = (TbCliente) object;
+//
+//        String UPDATE = "UPDATE tb_cliente SET "
+//                + "nome = '" + clientes.getNome() + "', "
+//                + "morada = '" + clientes.getMorada() + "', "
+//                + "telefone = '" + clientes.getTelefone() + "', "
+//                + "nif = '" + clientes.getNif() + "', "
+//                + "email = '" + clientes.getEmail() + "', "
+//                + "percentagem_desconto = " + clientes.getPercentagemDesconto() + " "
+//                + "WHERE codigo = " + clientes.getCodigo();
+//
+//        return conexao.executeUpdate(UPDATE);
+//    }
 
     @Override
     public boolean eliminar(int codigo) {
@@ -107,6 +143,7 @@ public class ClientesController implements EntidadeFactory {
 
             while (result.next()) {
                 clientes = new TbCliente();
+                clientes.setCodigo(result.getInt("codigo"));
                 clientes.setNome(result.getString("nome"));
                 clientes.setMorada(result.getString("morada"));
                 clientes.setTelefone(result.getString("telefone"));
@@ -148,6 +185,55 @@ public class ClientesController implements EntidadeFactory {
 
         return listaClientes;
     }
+    
+      public List<ClientePesquisa> getClientesLikeNomePesq1(String nome) {
+
+    List<ClientePesquisa> lista = new ArrayList<>();
+
+    String sql =
+            "SELECT " +
+            "    c.codigo, " +
+            "    c.nome, " +
+            "    c.nif, " +
+            "    c.morada, " +
+            "    c.telefone, " +
+            "    c.email, " +
+            "    c.percentagem_desconto " +
+            "FROM tb_cliente c " +
+            "WHERE c.nome LIKE ? " +
+            "ORDER BY c.nome ASC " +
+            "LIMIT 50";
+
+    try (PreparedStatement ps = conexao.getConnectionAtiva()
+            .prepareStatement(sql)) {
+
+        ps.setString(1, "%" + nome.trim() + "%");
+
+        try (ResultSet result = ps.executeQuery()) {
+
+            while (result.next()) {
+
+                ClientePesquisa cliente = new ClientePesquisa();
+
+                cliente.setCodigo(result.getInt("codigo"));
+                cliente.setNome(result.getString("nome"));
+                cliente.setNif(result.getString("nif"));
+                cliente.setMorada(result.getString("morada"));
+                cliente.setTelefone(result.getString("telefone"));
+                cliente.setEmail(result.getString("email"));
+                cliente.setPercentagem_desconto(result.getString("percentagem_desconto"));
+
+                lista.add(cliente);
+            }
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return lista;
+}
+
 
     public TbCliente findByCodigo(int codigo) {
 
