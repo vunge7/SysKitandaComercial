@@ -6,11 +6,13 @@ package visao;
 
 
 import comercial.controller.CaixasController;
+import comercial.controller.DadosInstituicaoController;
 import comercial.controller.ItemCaixaController;
 import comercial.controller.LugaresController;
 import comercial.controller.MesasController;
 import comercial.controller.UsuariosController;
 import dao.UsuarioDao;
+import entity.TbDadosInstituicao;
 import entity.TbLugares;
 import entity.TbMesas;
 import entity.TbUsuario;
@@ -38,12 +40,13 @@ public class JanelaFrontOfficeLavandariaVisao extends javax.swing.JFrame
 
     private MesasController mesasController;
     private LugaresController lugaresController;
-
+    public static TbDadosInstituicao dadosInstituicao;
     private static EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
 //    private static CaixaDao caixaDao = new CaixaDao(emf );
     private static CaixasController caixa_controller;
     private static ItemCaixaController item_caixa_controller;
     private UsuariosController usuariosController;
+    private static DadosInstituicaoController dadosInstituicaoController;
     private UsuarioDao usuarioDao = new UsuarioDao( emf );
     private int idUser;
     private BDConexao conexao;
@@ -59,6 +62,8 @@ public class JanelaFrontOfficeLavandariaVisao extends javax.swing.JFrame
         caixa_controller = new CaixasController( conexao );
         item_caixa_controller = new ItemCaixaController( conexao );
         usuariosController = new UsuariosController( conexao );
+        dadosInstituicaoController = new DadosInstituicaoController( conexao );
+        dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById( 1 );
 
         setWindowsListener();
     }
@@ -290,8 +295,18 @@ public class JanelaFrontOfficeLavandariaVisao extends javax.swing.JFrame
     private void btn_feicho_dia_lavActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_feicho_dia_lavActionPerformed
     {//GEN-HEADEREND:event_btn_feicho_dia_lavActionPerformed
 
-        new CaixaFechoGoldVisao( idUser, conexao, false ).setVisible( true );
-        fazerBackupAgora();
+        if ( dadosInstituicao.getTipoFechoCaixa().equals( "Normal" ) )
+        {
+            new CaixaFechoVisao( idUser, conexao, false ).setVisible( true );
+        }
+        else if ( dadosInstituicao.getTipoFechoCaixa().equals( "Simplificado" ) )
+        {
+            new CaixaFechoGoldVisao( idUser, conexao, false ).setVisible( true );
+        }
+        else
+        {
+            new CaixaFechoGoldDetalhadoVisao( idUser, conexao, false ).setVisible( true );
+        }
     }//GEN-LAST:event_btn_feicho_dia_lavActionPerformed
 
     private void btn_abertura_dia_lavActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_abertura_dia_lavActionPerformed
