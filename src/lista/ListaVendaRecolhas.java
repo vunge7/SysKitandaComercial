@@ -43,7 +43,6 @@ import static util.DVML.VERSION_SOFTWARE;
  */
 public class ListaVendaRecolhas
 {
-
     private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
     private VendaDao vendaDao = new VendaDao( emf );
     private ItemVendaDao itemVendaDao = new ItemVendaDao( emf );

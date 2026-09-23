@@ -462,6 +462,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
         jmRelatoriosSaidasProdutosPorDatas = new javax.swing.JMenuItem();
         jMenuItemRelatorioDeEntradas = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
+        jMenuItem14 = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jmTurno = new javax.swing.JMenuItem();
         jmCadastroUsuario = new javax.swing.JMenuItem();
@@ -950,6 +951,14 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
             }
         });
         jmenuRelatorios.add(jMenuItem5);
+
+        jMenuItem14.setText("Relatório Resumido de Vendas");
+        jMenuItem14.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem14ActionPerformed(evt);
+            }
+        });
+        jmenuRelatorios.add(jMenuItem14);
 
         jMenuBar1.add(jmenuRelatorios);
 
@@ -2092,6 +2101,15 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
         frm.setVisible(true);
     }//GEN-LAST:event_jMenuItem12ActionPerformed
 
+    private void jMenuItem14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem14ActionPerformed
+                try {
+            // TODO add your handling code here:
+            new ListarRelatorioVendasDiarias(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuPrincipalVisao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jMenuItem14ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -2159,6 +2177,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem11;
     private javax.swing.JMenuItem jMenuItem12;
     private javax.swing.JMenuItem jMenuItem13;
+    private javax.swing.JMenuItem jMenuItem14;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
