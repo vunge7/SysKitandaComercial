@@ -1373,7 +1373,8 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
                     getData(object.getDataVenda()),
                     getHora(object.getHora()),
                     object.getCodigoUsuario().getNome(),
-                    object.getTotalVenda(),});
+                    object.getTotalVenda(),
+                    object.getRefCodFact(),});
                 
             }
             lb_total.setText(formatarComoMoeda(getTotal(tabela_factura_nc)));
