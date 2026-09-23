@@ -451,6 +451,7 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
     {//GEN-HEADEREND:event_anularJButtonActionPerformed
 
         procedimento_anular_nota();
+        
     }//GEN-LAST:event_anularJButtonActionPerformed
 
     private void txtRefDocActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtRefDocActionPerformed
