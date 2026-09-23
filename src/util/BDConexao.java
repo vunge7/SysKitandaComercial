@@ -85,23 +85,15 @@ public class BDConexao {
                 return null;
             }
 
-//<<<<<<< HEAD
             String ip = info.get( 0 ).trim();
             String porta = (info.size() > 1 ? info.get( 1 ).trim() : "3306");
 
 
-//<<<<<<< HEAD
-            String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_gulele_hoje_ya_henda"
+            String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_gulele_golf_II"
 
-//=======
-//            String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_candundo"
-//>>>>>>> 117138b13b6db826d4e35b6310cd0215e16ae8d8
-//=======
-//            String ip = info.get(0).trim();
-//            String porta = (info.size() > 1 ? info.get(1).trim() : "3306");
-//>>>>>>> f173ba65f33494eabc68752ce5b34c47fdec1563
+
 //
-//            String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_gulele_hoje_ya_henda"
+//            String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_gulele_golf_II"
                     + "?zeroDateTimeBehavior=convertToNull"
                     + "&useSSL=false"
                     + "&allowPublicKeyRetrieval=true"
@@ -111,11 +103,9 @@ public class BDConexao {
 
             connection = DriverManager.getConnection(url, "root", "DoV90x?#");
 
-            System.out.println("[BDConexao] ✅ Conectado a: " + ip + ":" + porta);
             return connection;
 
         } catch (SQLException ex) {
-            System.err.println("[BDConexao] ❌ Falha ao conectar: " + ex.getMessage());
             return null;
         }
     }
