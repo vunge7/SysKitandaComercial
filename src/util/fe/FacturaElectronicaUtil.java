@@ -204,7 +204,7 @@ public class FacturaElectronicaUtil {
         for (LineDTO l : lines) {
             // Nota: Você pode precisar adicionar esses getters no seu DTO ou calcular aqui
             // Usando a lógica que já estava no loop original:
-            totalBase = totalBase.add(l.getCreditAmount().equals(BigDecimal.ONE) ? l.getDebitAmount() : l.getCreditAmount());
+            totalBase = totalBase.add(l.getCreditAmount().equals(BigDecimal.ZERO) ? l.getDebitAmount() : l.getCreditAmount());
             if (l.getTaxes() != null && !l.getTaxes().isEmpty()) {
                 totalIva = totalIva.add(BigDecimal.valueOf(l.getTaxes().get(0).getTaxContribution()));
             }
