@@ -2,12 +2,12 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="factura" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" uuid="0de43986-9be5-410e-aaa3-7f1419d0abca">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.948717100000002"/>
+	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="463"/>
-	<import value="net.sf.jasperreports.engine.*"/>
+	<property name="ireport.y" value="288"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
+	<import value="net.sf.jasperreports.engine.*"/>
 	<style name="cliente_style" mode="Transparent" forecolor="#000000">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$P{NIF_CLIENTE_CONSOMIDOR_FINAL}.equals("Consumidor Final")]]></conditionExpression>
@@ -877,7 +877,7 @@ WHERE
 					<font fontName="Arial" size="8" isBold="false"/>
 					<paragraph rightIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_venda_total_venda}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tb_venda_total_venda}.doubleValue() - $F{tb_venda_total_retencao}.doubleValue()]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement uuid="6b1f8e02-ef33-4e22-860e-3f526fa58fb5" key="staticText-9" x="170" y="43" width="180" height="12"/>
@@ -1163,11 +1163,11 @@ WHERE
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_slogan}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="570c6269-362b-4031-b036-e6c48050aa28" x="0" y="135" width="535" height="11"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+				<reportElement uuid="263fd8b2-8b4b-4287-aa9e-90b623f93558" x="1" y="134" width="534" height="11"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Software de Certififcação Factura Electrónica  (Kitanda 1.1) - FE/110/AGT/2025"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tb_venda_assinatura} + "-Processado por programa validado nº " + "258/AGT/2020 " +$P{SOFTWARE_NAME} + "/dvml"]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>
@@ -1351,7 +1351,7 @@ WHERE
 					<font fontName="Arial" size="8" isBold="false"/>
 					<paragraph rightIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_venda_total_venda}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tb_venda_total_venda}.doubleValue() - $F{tb_venda_total_retencao}.doubleValue()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement uuid="ff473572-8145-4986-9ca0-3fac9fc52d81" key="textField-20" x="467" y="40" width="68" height="10"/>
@@ -1608,11 +1608,11 @@ WHERE
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_slogan}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="cc778ea0-bbe6-4d47-9581-b791aa87671e" x="-1" y="119" width="535" height="11"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+				<reportElement uuid="dda51620-55df-4ad9-a56b-b7048fbb6ab1" x="1" y="119" width="534" height="11"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Software de Certififcação Factura Electrónica (Kitanda 1.1) - FE/110/AGT/2025"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tb_venda_assinatura} + "-Processado por programa validado nº " + "258/AGT/2020 " +$P{SOFTWARE_NAME} + "/dvml"]]></textFieldExpression>
 			</textField>
 		</band>
 	</lastPageFooter>

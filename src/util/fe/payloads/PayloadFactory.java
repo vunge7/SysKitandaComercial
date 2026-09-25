@@ -27,7 +27,7 @@ public class PayloadFactory {
     // =====================================================
     private static Map<String, Object> criarBasePayload(String taxRegistrationNumber) {
         Map<String, Object> payload = new LinkedHashMap<>();
-        payload.put("schemaVersion", "1.0");
+        payload.put("schemaVersion", "2.0");
         payload.put("submissionUUID", SubmissionUUID.gerar());
         payload.put("taxRegistrationNumber", taxRegistrationNumber);
         payload.put("submissionTimeStamp", DataUtil.converter(new Date()));

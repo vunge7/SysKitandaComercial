@@ -55,6 +55,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 import kitanda.util.CfMethods;
 import lista.ListaVenda1;
@@ -716,6 +717,12 @@ public class EmissaoRecibos extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
     {//GEN-HEADEREND:event_jButton1ActionPerformed
         if (MetodosUtil.licencaValidada(conexao)) {
+            if (!validarLinhaSelecionada()) {
+                return;
+            }
+            if (!validarValorAmortizar()) {
+                return;
+            }
             finalizar_recibo();
         }
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -2190,6 +2197,207 @@ public class EmissaoRecibos extends javax.swing.JFrame {
 
             cmbSeries.addItem(s.getDesignacao());
         }
+    }
+    
+        private boolean validarValorAmortizar() {
+
+        DefaultTableModel modelo = (DefaultTableModel) tabela_linhas.getModel();
+
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+
+            boolean selecionado = Boolean.TRUE.equals(
+                    modelo.getValueAt(i, 0)
+            );
+
+            if (!selecionado) {
+                continue;
+            }
+
+            Object valorObj = modelo.getValueAt(i, 8);
+
+            double valorAmortizar = 0.0;
+
+            if (valorObj != null && !valorObj.toString().trim().isEmpty()) {
+                try {
+                    valorAmortizar = Double.parseDouble(
+                            valorObj.toString().replace(",", ".")
+                    );
+                } catch (NumberFormatException e) {
+                    valorAmortizar = 0.0;
+                }
+            }
+
+            if (valorAmortizar <= 0.0) {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Atenção, insira o valor a amortizar!",
+                        "Atenção",
+                        JOptionPane.WARNING_MESSAGE
+                );
+
+                // Selecionar a linha com erro
+                tabela_linhas.setRowSelectionInterval(i, i);
+
+                // Dar foco à tabela
+                tabela_linhas.requestFocusInWindow();
+
+                // Focar diretamente na coluna do valor a amortizar
+//            tabela_linhas.changeSelection(i, 8, false, false);
+                tabela_linhas.changeSelection(linha, 7, false, false);
+                tabela_linhas.requestFocusInWindow();
+
+                // Fazer a linha piscar
+                piscarLinhaTabela(i);
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean validarValorAmortizar1() {
+
+        DefaultTableModel modelo = (DefaultTableModel) tabela_linhas.getModel();
+
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+
+            boolean selecionado = Boolean.TRUE.equals(
+                    modelo.getValueAt(i, 0)
+            );
+
+            if (!selecionado) {
+                continue;
+            }
+
+            Object valorObj = modelo.getValueAt(i, 8);
+
+            double valorAmortizar = 0.0;
+
+            if (valorObj != null && !valorObj.toString().trim().isEmpty()) {
+                try {
+                    valorAmortizar = Double.parseDouble(
+                            valorObj.toString().replace(",", ".")
+                    );
+                } catch (NumberFormatException e) {
+                    valorAmortizar = 0.0;
+                }
+            }
+
+            if (valorAmortizar <= 0.0) {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Atenção, insira o valor a amortizar!",
+                        "Atenção",
+                        JOptionPane.WARNING_MESSAGE
+                );
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private void piscarLinhaTabela(final int linha) {
+
+        final int[] contador = {0};
+
+        javax.swing.Timer timer = new javax.swing.Timer(150, null);
+
+        timer.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+
+                if (contador[0] >= 6) {
+
+                    ((javax.swing.Timer) e.getSource()).stop();
+
+                    // Selecionar novamente a linha
+                    tabela_linhas.setRowSelectionInterval(linha, linha);
+
+                    // Apagar o zero padrão da coluna 7
+                    tabela_linhas.setValueAt("", linha, 7);
+
+                    // Colocar o foco na coluna 7
+                    tabela_linhas.changeSelection(linha, 7, false, false);
+                    tabela_linhas.requestFocusInWindow();
+
+                    return;
+                }
+
+                if (contador[0] % 2 == 0) {
+                    tabela_linhas.clearSelection();
+                } else {
+                    tabela_linhas.setRowSelectionInterval(linha, linha);
+                }
+
+                contador[0]++;
+            }
+        });
+
+        timer.start();
+    }
+
+    private void piscarLinhaTabela1(final int linha) {
+
+        final int[] contador = {0};
+
+        Timer timer = new Timer(150, null);
+
+        timer.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+
+                if (contador[0] >= 6) {
+                    ((Timer) e.getSource()).stop();
+
+                    tabela_linhas.setRowSelectionInterval(linha, linha);
+                    tabela_linhas.requestFocusInWindow();
+
+                    return;
+                }
+
+                if (contador[0] % 2 == 0) {
+                    tabela_linhas.clearSelection();
+                } else {
+                    tabela_linhas.setRowSelectionInterval(linha, linha);
+                }
+
+                contador[0]++;
+            }
+        });
+
+        timer.start();
+    }
+
+    private boolean validarLinhaSelecionada() {
+
+        DefaultTableModel modelo = (DefaultTableModel) tabela_linhas.getModel();
+
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+
+            boolean selecionado = Boolean.TRUE.equals(
+                    modelo.getValueAt(i, 0)
+            );
+
+            if (selecionado) {
+                return true;
+            }
+        }
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Atenção, seleccione a linha que pretendes emitir o recibo!",
+                "Atenção",
+                JOptionPane.WARNING_MESSAGE
+        );
+
+        tabela_linhas.requestFocusInWindow();
+
+        return false;
     }
 
 }
