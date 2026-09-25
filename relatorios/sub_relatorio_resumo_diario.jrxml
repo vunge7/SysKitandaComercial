@@ -33,14 +33,12 @@ FROM
      `tb_usuario` tb_usuario INNER JOIN `tb_venda` tb_venda ON tb_usuario.`codigo` = tb_venda.`codigo_usuario`
 WHERE
      DATE(tb_venda.`dataVenda`) BETWEEN $P{PARM_DATA_1} AND $P{PARM_DATA_2}
- AND status_eliminado = 'false'
- AND tb_venda.`credito` = 'false'
  AND tb_venda.`idArmazemFK` = $P{SUB_PARM_CODIGO_ARMAZEM}
  AND tb_venda.`fk_documento` = $P{PARM_DOCUMENTO}
 GROUP BY
      tb_venda.`codigo_usuario`]]>
 	</queryString>
-	<field name="TOTAL_VENDA" class="java.lang.Double">
+	<field name="TOTAL_VENDA" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="tb_usuario_codigo" class="java.lang.Integer"/>

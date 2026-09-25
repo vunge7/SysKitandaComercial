@@ -22,34 +22,11 @@ import javax.swing.JOptionPane;
  */
 public class JPAEntityMannagerFactoryUtil {
 
-//    public static EntityManagerFactory em  =  Persistence.createEntityManagerFactory("SGCMINIMERCADOPU");
     public static EntityManagerFactory em = Persistencia.getEntityManagerFactory("SGCMINIMERCADOPU");
 
-//    public static void main(String[] args) {
-
-    
-
-    ////        EntityManagerFactory em = JPAEntityMannagerFactoryUtil.em;kitanda_db_bm1_gulele_actual
-
-
-
-//<<<<<<< HEAD
     public static void main( String[] args )
     {
-//<<<<<<< HEAD
-////<<<<<<< HEAD
-////        EntityManagerFactory em = JPAEntityMannagerFactoryUtil.em;kitanda_db_bm1_actual
-////=======
-////        EntityManagerFactory em = JPAEntityMannagerFactoryUtil.em;kitanda_db_bm1_neemias_2_actual
-////>>>>>>> 5c8040b57ef6ee87cebd8b69a939b1476e08b465
-//=======
-////        EntityManagerFactory em = JPAEntityMannagerFactoryUtil.em;kitanda_db_candundo_neemias_2_actual
-//>>>>>>> 117138b13b6db826d4e35b6310cd0215e16ae8d8
-//        UsuarioDao usuarioDao = new UsuarioDao( em );
-//        System.out.println(usuarioDao.exist_usuario("dvml", "mavala"));
-        leituraFicheiro();
-//=======
-//>>>>>>> f173ba65f33494eabc68752ce5b34c47fdec1563
+
     }
 
     public static EntityManager createEntityManager() {
@@ -70,34 +47,14 @@ public class JPAEntityMannagerFactoryUtil {
 
             try {
 
-//<<<<<<< HEAD
-//                if ( !informacao.isEmpty() )
-//                {
-//                    String ip = informacao.get( 0 );
-//                    String porta = informacao.get( 1 );
-//
-////<<<<<<< HEAD
-////<<<<<<< HEAD
-//                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_bm1?zeroDateTimeBehavior=convertToNull";
-////=======
-////                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_bm1?zeroDateTimeBehavior=convertToNull";
-////>>>>>>> 5c8040b57ef6ee87cebd8b69a939b1476e08b465
-////=======
-////                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_candundo?zeroDateTimeBehavior=convertToNull";
-////>>>>>>> 117138b13b6db826d4e35b6310cd0215e16ae8d8
-//=======
+
                 if (!informacao.isEmpty()) {
                     String ip = informacao.get(0);
                     String porta = informacao.get(1);
-//>>>>>>> f173ba65f33494eabc68752ce5b34c47fdec1563
 
-                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_bm1?zeroDateTimeBehavior=convertToNull";
-                    //=======
-                    //                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_bm1?zeroDateTimeBehavior=convertToNull";
-                    //>>>>>>> 5c8040b57ef6ee87cebd8b69a939b1476e08b465
-                    //=======
-                    //                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_bm1_candundo?zeroDateTimeBehavior=convertToNull";
-                    //>>>>>>> 117138b13b6db826d4e35b6310cd0215e16ae8d8
+
+                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_gulele_golf_II?zeroDateTimeBehavior=convertToNull";
+                  
                     String user = "root";
                     String password = "DoV90x?#";
 

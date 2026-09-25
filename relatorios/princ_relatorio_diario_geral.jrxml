@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lista_venda_order_usuario" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="e2a268c3-f53c-4fca-b778-32eea02972ea">
-	<property name="ireport.zoom" value="1.652892561983471"/>
+	<property name="ireport.zoom" value="2.2"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="ireport.scriptlethandling" value="0"/>
@@ -533,19 +533,19 @@ WHERE
 	<summary>
 		<band height="71">
 			<textField pattern="#,##0.00">
-				<reportElement uuid="247f17f9-7ed3-4e80-ab2d-18c90d56820d" x="399" y="1" width="134" height="20"/>
+				<reportElement uuid="247f17f9-7ed3-4e80-ab2d-18c90d56820d" x="408" y="7" width="82" height="20"/>
 				<box rightPadding="3"/>
 				<textElement textAlignment="Right">
-					<font fontName="Arial" isBold="true"/>
+					<font fontName="Arial" size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{SOMA_VENDA}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="ccdd9b9b-ef74-491c-9069-c7eabae3d4ef" x="328" y="1" width="132" height="20"/>
+				<reportElement uuid="ccdd9b9b-ef74-491c-9069-c7eabae3d4ef" x="276" y="7" width="132" height="20"/>
 				<textElement textAlignment="Right">
 					<font fontName="Arial" isBold="true"/>
 				</textElement>
-				<text><![CDATA[TOTAL TRIBUTÁVEL]]></text>
+				<text><![CDATA[TOTAL ]]></text>
 			</staticText>
 		</band>
 	</summary>

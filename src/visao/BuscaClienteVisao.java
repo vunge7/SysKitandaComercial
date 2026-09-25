@@ -24,6 +24,8 @@ public class BuscaClienteVisao extends javax.swing.JDialog
 
     private Vector<TbCliente> fonte_dados = null;
     private StoksController stoksController;
+    private boolean clienteInterno = false;
+
 
     public BuscaClienteVisao( java.awt.Frame parent, boolean modal, ClientesController clientesController, BDConexao conexao )
     {
@@ -186,15 +188,40 @@ public class BuscaClienteVisao extends javax.swing.JDialog
 
     }//GEN-LAST:event_tabela_buscaMouseClicked
 
-    private void tratarSelecaoTabela( int linha )
-    {
+//    private void tratarSelecaoTabela( int linha )
+//    {
+//
+//        DefaultTableModel modelo = (DefaultTableModel) tabela_busca.getModel();
+//        Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
+//        ClienteVisao.importarDados( buscarPorCodigo( fonte_dados, codigo ) );
+//        dispose();
+//
+//    }
+    
+    private void tratarSelecaoTabela(int linha) {
 
-        DefaultTableModel modelo = (DefaultTableModel) tabela_busca.getModel();
-        Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-        ClienteVisao.importarDados( buscarPorCodigo( fonte_dados, codigo ) );
-        dispose();
+    DefaultTableModel modelo = (DefaultTableModel) tabela_busca.getModel();
 
+    Integer codigo = Integer.parseInt(
+            modelo.getValueAt(linha, 0).toString()
+    );
+
+    if (clienteInterno) {
+
+        ClienteInternoVisao.importarDados(
+                buscarPorCodigo(fonte_dados, codigo)
+        );
+
+    } else {
+
+        ClienteVisao.importarDados(
+                buscarPorCodigo(fonte_dados, codigo)
+        );
     }
+
+    dispose();
+}
+
 
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
