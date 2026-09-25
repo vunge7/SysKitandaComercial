@@ -4,6 +4,7 @@
  */
 package visao;
 
+import comercial.controller.VendasController;
 import dao.DadosInstituicaoDao;
 import dao.ItemPermissaoDao;
 import dao.ProdutoDao;
@@ -2102,7 +2103,12 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem12ActionPerformed
 
     private void jMenuItem14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem14ActionPerformed
-                try {
+
+        try {
+
+            VendasController vendasController = new VendasController(conexao);
+            vendasController.atualizarTotalVenda();
+
             // TODO add your handling code here:
             new ListarRelatorioVendasDiarias(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
         } catch (SQLException ex) {

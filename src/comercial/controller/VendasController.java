@@ -1786,7 +1786,7 @@ public class VendasController implements EntidadeFactory {
                 + "    GROUP BY codigo_venda"
                 + ") t ON t.codigo_venda = v.codigo "
                 + "SET v.total_venda = COALESCE(t.total_linha, 0) "
-                + "WHERE v.fk_documento IN (1, 2)";
+                + "WHERE v.fk_documento IN (1, 2, 5)";
 
         System.out.println(sql);
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
