@@ -52,7 +52,8 @@ public class JPAEntityMannagerFactoryUtil {
                     String ip = informacao.get(0);
                     String porta = informacao.get(1);
 
-                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_gulele_golf?zeroDateTimeBehavior=convertToNull";
+
+                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_gulele_golf_II?zeroDateTimeBehavior=convertToNull";
                   
                     String user = "root";
                     String password = "DoV90x?#";
