@@ -88,7 +88,9 @@ public class BDConexao {
             String ip = info.get( 0 ).trim();
             String porta = (info.size() > 1 ? info.get( 1 ).trim() : "3306");
 
+
             String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_gulele_golf_ii"
+
 
                     + "?zeroDateTimeBehavior=convertToNull"
                     + "&useSSL=false"
@@ -99,11 +101,9 @@ public class BDConexao {
 
             connection = DriverManager.getConnection(url, "root", "DoV90x?#");
 
-            System.out.println("[BDConexao] ✅ Conectado a: " + ip + ":" + porta);
             return connection;
 
         } catch (SQLException ex) {
-            System.err.println("[BDConexao] ❌ Falha ao conectar: " + ex.getMessage());
             return null;
         }
     }

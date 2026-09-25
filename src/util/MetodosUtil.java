@@ -234,7 +234,7 @@ public class MetodosUtil {
 //                qtd = new BigDecimal( linha.getQuantidade() );
 //                sub_total_iliquido = preco.multiply( qtd );
 //                BigDecimal valorIvaLinha = new BigDecimal( linha.getValorIva().doubleValue() );
-////                taxa = ( linha.getValorIva() / 100 );
+    ////                taxa = ( linha.getValorIva() / 100 );
 //                taxa = valorIvaLinha.divide( new BigDecimal( 100 ) );
 ////                total_iva  =   total_iva +  sub_total_iliquido + ( ( sub_total_iliquido * taxa ) );
 //                BigDecimal valorImposto = sub_total_iliquido.multiply( taxa );
@@ -878,7 +878,7 @@ public class MetodosUtil {
 //        String[] qualificaS = {"", "Mil", "Milhão", "Bilhão", "Trilhão"};
 //        String[] qualificaP = {"", "Mil", "Milhões", "Bilhões", "Trilhões"};
 //
-//// definindo o extenso da parte inteira do valor
+    //// definindo o extenso da parte inteira do valor
 //        int n, unid, dez, cent, tam, i = 0;
 //        boolean umReal = false, tem = false;
 //        while (!vlrS.equals("0")) {
@@ -1617,7 +1617,8 @@ public class MetodosUtil {
 //    {
 //
 //        DadosIrt dados = new DadosIrt();
-////        if ( salario_base <= 70000 )
+
+    ////        if ( salario_base <= 70000 )
 //        if ( salario_base <= 34450 )
 //        {
 //            dados.setParcela_fixa( 0 );
@@ -2566,7 +2567,7 @@ public class MetodosUtil {
 //            // soma += (venda.getTotalGeral() - venda.getTotalIva());
 //            //TOTAL ILÍQUIDO
 //            soma += getNetTotal( venda.getTbItemVendaList() );
-////            if (venda.getFkDocumento().getPkDocumento() == pk_documento) {
+    ////            if (venda.getFkDocumento().getPkDocumento() == pk_documento) {
 ////                soma += (venda.getTotalGeral() - venda.getTotalIva());
 ////            }
 //
@@ -2731,8 +2732,6 @@ public class MetodosUtil {
         total_iva = total_iva.setScale(2, BigDecimal.ROUND_HALF_EVEN);
         return total_iva;
     }
-    
-    
 
 //    public static double getNetTotal( List<TbItemVenda> list )
 //    {
@@ -2837,7 +2836,7 @@ public class MetodosUtil {
 //        for ( TbVenda venda : list )
 //        {
 //            soma += venda.getTotalGeral();
-////            if (venda.getFkDocumento().getPkDocumento() == pk_documento) {
+    ////            if (venda.getFkDocumento().getPkDocumento() == pk_documento) {
 ////                soma += venda.getTotalGeral();
 ////            }
 //
@@ -3039,7 +3038,7 @@ public class MetodosUtil {
 //    public static void fazerBackupAgora()
 //    {
 //        String data = new SimpleDateFormat( YYYYMMDD_HHMMSS ).format( new Date() );
-////        String rodar_camando = "cmd /c mysqldump -uroot -pDoV90x?# --dump-date --triggers --tables --routines --skip-quote-names --compact --skip-opt --skip-set-charset --hex-blob kitanda_db > \"..\\BD_BACKUP\\_database_backup_" + data + ".sql\"";
+    ////        String rodar_camando = "cmd /c mysqldump -uroot -pDoV90x?# --dump-date --triggers --tables --routines --skip-quote-names --compact --skip-opt --skip-set-charset --hex-blob kitanda_db > \"..\\BD_BACKUP\\_database_backup_" + data + ".sql\"";
 //        String rodar_camando = "cmd /c mysqldump --single-transaction -uroot -pDoV90x?# --dump-date --triggers --add-drop-database --routines --skip-quote-names --skip-set-charset --add-locks --disable-keys --databases kitanda_db > \"..\\BD_BACKUP\\_database_backup_" + data + ".sql\"";
 ////String rodar_camando = "cmd /c mysqldump --single-transaction=TRUE -uroot -pDoV90x?# --dump-date --triggers --add-drop-database  --routines --skip-quote-names --compact --skip-opt --skip-set-charset --hex-blob --add-locks --disable-keys --lock-tables  --databases kitanda_db > \"..\\BD_BACKUP\\_database_backup_" + data + ".sql\"";
 //        Process rodarComandoWindows = rodarComandoWindows( rodar_camando, true );
@@ -3902,7 +3901,7 @@ public class MetodosUtil {
             stockMirrow = new TbStockMirrow();
 //            stockMirrow.setCodArmazem( stock.getCodArmazem() );
 //            stockMirrow.setCodProdutoCodigo( stock.getCodProdutoCodigo() );
-////            stockMirrow.setDataEntrada( stock.getDataEntrada() );
+            ////            stockMirrow.setDataEntrada( stock.getDataEntrada() );
 //            stockMirrow.setQuantidadeExistente( stock.getQuantidadeExistente() );
 //            stockMirrow.setStatus( stock.getStatus() );
 ////            stockMirrow.setPrecoVenda( stock.getPrecoVenda().doubleValue() );
@@ -4662,6 +4661,29 @@ public class MetodosUtil {
                 //TOTAL ILÍQUIDO
                 if (venda.getFkDocumento().getPkDocumento() == pk_documento) {
                     soma = soma.add(getNetTotal(venda.getTbItemVendaList()));
+                }
+//            if (venda.getFkDocumento().getPkDocumento() == pk_documento) {
+//                soma += (venda.getTotalGeral() - venda.getTotalIva());
+//            }
+
+            }
+
+        }
+
+        soma = soma.setScale(2, BigDecimal.ROUND_HALF_EVEN);
+        return soma;
+    }
+
+    public static BigDecimal getTotalGrossTotal(List<TbVenda> list, int pk_documento) {
+
+        BigDecimal soma = new BigDecimal(0);
+
+        if (Objects.nonNull(list)) {
+            for (TbVenda venda : list) {
+                // soma += (venda.getTotalGeral() - venda.getTotalIva());
+                //TOTAL ILÍQUIDO
+                if (venda.getFkDocumento().getPkDocumento() == pk_documento) {
+                    soma = soma.add(getGrossTotal(venda.getTbItemVendaList()));
                 }
 //            if (venda.getFkDocumento().getPkDocumento() == pk_documento) {
 //                soma += (venda.getTotalGeral() - venda.getTotalIva());
