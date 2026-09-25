@@ -332,11 +332,6 @@ public class ListarRelatorioVendasDiarias extends javax.swing.JFrame {
             procedimento_imprimir();
 
 
-//        if (ck_fornecedor.isSelected()) {
-//            new ResumoVendasQTD(dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem(), getCodigoFornecedor());
-//        } else {
-//            new ResumoVendasQTD(dcDataInicio.getDate(), dcDataFim.getDate(), getCodigoArmazem());
-//        }
 
     }//GEN-LAST:event_btnImprimirActionPerformed
 
