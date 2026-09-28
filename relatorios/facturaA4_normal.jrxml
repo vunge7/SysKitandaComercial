@@ -4,10 +4,10 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="367"/>
-	<import value="net.sf.jasperreports.engine.*"/>
+	<property name="ireport.y" value="288"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
+	<import value="net.sf.jasperreports.engine.*"/>
 	<style name="cliente_style" mode="Transparent" forecolor="#000000">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$P{NIF_CLIENTE_CONSOMIDOR_FINAL}.equals("Consumidor Final")]]></conditionExpression>
@@ -1163,11 +1163,11 @@ WHERE
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_slogan}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="570c6269-362b-4031-b036-e6c48050aa28" x="0" y="135" width="535" height="11"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+				<reportElement uuid="263fd8b2-8b4b-4287-aa9e-90b623f93558" x="1" y="134" width="534" height="11"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Software de Certififcação Factura Electrónica  (Kitanda 1.1) - FE/110/AGT/2025"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tb_venda_assinatura} + "-Processado por programa validado nº " + "258/AGT/2020 " +$P{SOFTWARE_NAME} + "/dvml"]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>
@@ -1608,11 +1608,11 @@ WHERE
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_slogan}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="cc778ea0-bbe6-4d47-9581-b791aa87671e" x="-1" y="119" width="535" height="11"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+				<reportElement uuid="dda51620-55df-4ad9-a56b-b7048fbb6ab1" x="1" y="119" width="534" height="11"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Software de Certififcação Factura Electrónica (Kitanda 1.1) - FE/110/AGT/2025"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tb_venda_assinatura} + "-Processado por programa validado nº " + "258/AGT/2020 " +$P{SOFTWARE_NAME} + "/dvml"]]></textFieldExpression>
 			</textField>
 		</band>
 	</lastPageFooter>

@@ -72,41 +72,109 @@ public class FacturaElectronicaUtil {
         );
     }
 
-    private static LineDTO construirLineDTO(int lineNo,
+//    private static LineDTO construirLineDTO(int lineNo, String cod, String desc, BigDecimal price, BigDecimal qtd, BigDecimal discount, BigDecimal taxPerc, TbVenda venda) {
+//        BigDecimal unitPriceBase = price.subtract(discount);
+//        BigDecimal base = unitPriceBase.multiply(qtd).setScale(2, RoundingMode.CEILING);
+//        BigDecimal iva = FinanceUtils.getValorIVABigDecimal(qtd, taxPerc, unitPriceBase, discount);
+//
+//        LineDTO line = new LineDTO();
+//        line.setLineNumber(lineNo);
+//        line.setProductCode(cod);
+//        line.setProductDescription(desc);
+//        line.setQuantity(qtd.toString());
+//        line.setUnitOfMeasure("UN");
+//        line.setUnitPrice(price);
+//        line.setUnitPriceBase(unitPriceBase);
+//
+//        // Lógica de Notas de Crédito vs Débito
+//        if (venda.getFkDocumento().getPkDocumento() == DVML.DOC_NOTA_CREDITO_NC) {
+//            ReferenceInfoDTO ref = new ReferenceInfoDTO();
+//            ref.setReferenceItemLineNo(String.valueOf(lineNo));
+//            ref.setReference(venda.getRefCodFact());
+//            ref.setReason(venda.getObs());
+//            line.setReferenceInfoDTOs(Collections.singletonList(ref));
+//            line.setDebitAmount(base);
+//            line.setCreditAmount(BigDecimal.ONE);
+//        } else {
+//            line.setDebitAmount(BigDecimal.ONE);
+//            line.setCreditAmount(base);
+//        }
+//
+//        if (taxPerc.doubleValue() > 0) {
+//            TaxDTO tax = new TaxDTO();
+//            tax.setTaxType("IVA");
+//            tax.setTaxCountryRegion("AO");
+//            tax.setTaxCode("NOR");
+//            tax.setTaxPercentage(taxPerc.toString());
+//            tax.setTaxContribution(iva.doubleValue());
+//            line.setTaxes(Collections.singletonList(tax));
+//        }
+//
+//        // Atributos temporários para cálculo de totais facilitado
+    ////        line.setTotalIvaTemp(iva);
+////        line.setTotalBaseTemp(base);
+//        return line;
+//    }
+    
+    
+      private static LineDTO construirLineDTO(int lineNo,
             String cod,
             String desc,
-            BigDecimal price,
+            BigDecimal unitPriceBase,
             BigDecimal qtd,
             BigDecimal discount,
             BigDecimal taxPerc,
             TbVenda venda) {
-        BigDecimal unitPriceBase = price.subtract(discount);
-        BigDecimal base = unitPriceBase.multiply(qtd).setScale(2, RoundingMode.CEILING);
-        BigDecimal iva = FinanceUtils.getValorIVABigDecimal(qtd, taxPerc, unitPriceBase, discount);
 
-        System.out.println(base);
+        /**
+         * FT / FR
+         *
+         * unitPriceBase = 1000 unitPrice = 900; discount = 100; quantity = 2;
+         * taxPercentage = 7/100
+         *
+         * creditAmount = 900 * 2 = 1.800; //Para calcBaseValue = 1.800; // 10
+         * casas decimais taxContibution = 1.800 * 0.07 = 126; "Valor total de
+         * impostos da factura “taxPayable” (4,939.252), não corresponde à soma
+         * dos impostos de todas as linhas (4,939.27)."
+         */
+        BigDecimal unitPrice = unitPriceBase.subtract(discount);
+//        BigDecimal base = unitPriceBase.multiply(qtd).setScale(2, RoundingMode.CEILING);
+        BigDecimal settlementAmount = unitPriceBase.subtract(unitPrice);
+        //novo teste
+
+//        System.out.println(base);
         LineDTO line = new LineDTO();
         line.setLineNumber(lineNo);
         line.setProductCode(cod);
         line.setProductDescription(desc);
         line.setQuantity(qtd.toString());
         line.setUnitOfMeasure("UN");
-        line.setUnitPrice(price);
-        line.setUnitPriceBase(unitPriceBase);
-        line.setSettlementAmount(discount);
 
-        // Lógica de Notas de Crédito vs Débito
+        line.setUnitPrice(unitPrice);
+        line.setUnitPriceBase(unitPriceBase);
+        line.setSettlementAmount(settlementAmount);
+
+        BigDecimal calcBaseValue = unitPrice.multiply(qtd).setScale(10, RoundingMode.DOWN);
+
+//        BigDecimal taxContribuition = FinanceUtils.getValorIVABigDecimal(qtd, taxPerc, unitPriceBase, discount);
+        BigDecimal taxContribuition = calcBaseValue.multiply(
+                taxPerc.divide(BigDecimal.valueOf(100)).setScale(2, RoundingMode.UP)
+        );
+// Lógica de Notas de Crédito vs Débito
         if (venda.getFkDocumento().getPkDocumento() == DVML.DOC_NOTA_CREDITO_NC) {
             ReferenceInfoDTO ref = new ReferenceInfoDTO();
+
             ref.setReferenceItemLineNo(String.valueOf(lineNo));
             ref.setReference(venda.getRefCodFact());
             ref.setReason(venda.getObs());
             line.setReferenceInfoDTOs(Collections.singletonList(ref));
-            line.setDebitAmount(base);
+            BigDecimal debitAmount = unitPrice.multiply(qtd).setScale(2, RoundingMode.DOWN);
+            line.setDebitAmount(debitAmount);
             line.setCreditAmount(BigDecimal.ZERO);
         } else {
             line.setDebitAmount(BigDecimal.ZERO);
-            line.setCreditAmount(base);
+            BigDecimal creditAmount = unitPrice.multiply(qtd).setScale(2, RoundingMode.DOWN);
+            line.setCreditAmount(creditAmount);
         }
 
         if (taxPerc.doubleValue() > 0) {
@@ -115,7 +183,7 @@ public class FacturaElectronicaUtil {
             tax.setTaxCountryRegion("AO");
             tax.setTaxCode("NOR");
             tax.setTaxPercentage(taxPerc.toString());
-            tax.setTaxContribution(iva.doubleValue());
+            tax.setTaxContribution(taxContribuition.doubleValue());
             line.setTaxes(Collections.singletonList(tax));
         }
 
@@ -139,36 +207,26 @@ public class FacturaElectronicaUtil {
         docDTO.setCompanyName(cliente.getNome());
         docDTO.setLines(lines);
 
-        if (venda.getFkDocumento().getPkDocumento() != DVML.DOC_RECIBO_RC
-                && venda.getFkDocumento().getPkDocumento() != DVML.DOC_RECIBO_RG) {
-            docDTO.setLines(lines);
-
-            // Totais
-            BigDecimal totalBase = BigDecimal.ZERO;
-            BigDecimal totalIva = BigDecimal.ZERO;
-            for (LineDTO l : lines) {
-
-                totalBase = totalBase.add(l.getCreditAmount().equals(BigDecimal.ZERO) ? l.getDebitAmount() : l.getCreditAmount());
-                if (l.getTaxes() != null && !l.getTaxes().isEmpty()) {
-                    totalIva = totalIva.add(BigDecimal.valueOf(l.getTaxes().get(0).getTaxContribution()));
-                }
-                System.out.println("BASE " + totalBase);
+        // Totais
+        BigDecimal totalBase = BigDecimal.ZERO;
+        BigDecimal totalIva = BigDecimal.ZERO;
+        for (LineDTO l : lines) {
+            // Nota: Você pode precisar adicionar esses getters no seu DTO ou calcular aqui
+            // Usando a lógica que já estava no loop original:
+            totalBase = totalBase.add(l.getCreditAmount().equals(BigDecimal.ZERO) ? l.getDebitAmount() : l.getCreditAmount());
+            if (l.getTaxes() != null && !l.getTaxes().isEmpty()) {
+                totalIva = totalIva.add(BigDecimal.valueOf(l.getTaxes().get(0).getTaxContribution()));
             }
-
-            DocumentTotalsDTO totals = new DocumentTotalsDTO();
-            totals.setNetTotal(totalBase);
-            totals.setTaxPayable(totalIva);
-            totals.setGrossTotal(totalBase.add(totalIva));
-            docDTO.setDocumentTotals(totals);
-
-            venda.setTotalIva(totalIva);
-            venda.setTotalGeral(totalBase);
-
-        } else {
-            System.out.println("CHEGUEI AQUI PARA ADICIONAR AS FORMAS DE PAGAMENTOS");
-//            setSourceDocumentDTOs(docDTO, );
-            System.out.println("docDTO => " + docDTO.getSourceDocuments().size());
         }
+
+        DocumentTotalsDTO totals = new DocumentTotalsDTO();
+        totals.setNetTotal(totalBase);
+        totals.setTaxPayable(totalIva);
+        totals.setGrossTotal(totalBase.add(totalIva));
+        docDTO.setDocumentTotals(totals);
+
+        venda.setTotalIva(totalIva);
+        venda.setTotalGeral(totalBase);
 
         // Retenção (Simulando a lógica original baseada no objeto venda se necessário)
         // Se a retenção vier dos itens, ela deve ser somada durante o loop de construção das linhas.
@@ -241,7 +299,6 @@ public class FacturaElectronicaUtil {
             venda.setSubmissionUUID(uuid);
 
             String json = JsonUtil.toJson(payloadMap);
-            System.out.println(json);
             String auth = BasicAuthUtil.gerarAuthorizationHeader(FEConfig.getUsername(), FEConfig.getPassword());
 
             String response = HttpClientUtil.postJson(FEConfig.getEndpointRegistrarFactura(), json, auth);

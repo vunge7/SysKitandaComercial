@@ -5,7 +5,6 @@
 package util;
 
 
-import java.sql.Connection;
 import static util.DefinicoesUtil.gerarScript;
 
 /**
