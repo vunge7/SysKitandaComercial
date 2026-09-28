@@ -19,20 +19,19 @@ import util.MetodosUtil;
  *
  * @author Martinho Luis
  */
-public class DocumentosController implements EntidadeFactory
-{
+public class DocumentosController implements EntidadeFactory {
 
     private BDConexao conexao;
+    private static volatile boolean transacaoAtiva = false;
+    private static volatile Connection transacaoConn = null;
 
-    public DocumentosController( BDConexao conexao )
-    {
+    public DocumentosController(BDConexao conexao) {
         this.conexao = conexao;
     }
 
     @Override
-    public boolean salvar( Object object )
-    {
-        Documento documento = ( Documento ) object;
+    public boolean salvar(Object object) {
+        Documento documento = (Documento) object;
         String INSERT = "INSERT INTO documento( designacao , abreviacao , cod_ultimo_doc , descricao_ultimo_doc , ultima_data "
                 + ")"
                 + " VALUES("
@@ -40,52 +39,45 @@ public class DocumentosController implements EntidadeFactory
                 + "'" + documento.getAbreviacao() + "' , "
                 + "'" + documento.getCodUltimoDoc() + "' , "
                 + "'" + documento.getDescricaoUltimoDoc() + "' , "
-                + "'" + MetodosUtil.getDataBanco( documento.getUltimaData() )
+                + "'" + MetodosUtil.getDataBanco(documento.getUltimaData())
                 + " ) ";
 
-        return conexao.executeUpdate( INSERT );
+        return conexao.executeUpdate(INSERT);
 
     }
 
     @Override
-    public boolean actualizar( Object object )
-    {
+    public boolean actualizar(Object object) {
         return true;
     }
 
     @Override
-    public boolean eliminar( int codigo )
-    {
+    public boolean eliminar(int codigo) {
         String DELETE = "DELETE FROM documento WHERE pk_documento = " + codigo;
-        return conexao.executeUpdate( DELETE );
+        return conexao.executeUpdate(DELETE);
     }
 
     @Override
-    public List<Documento> listarTodos()
-    {
+    public List<Documento> listarTodos() {
 
         String FIND_ALL = "SELECT * FROM documento ORDER BY pk_documento ASC";
-        ResultSet result = conexao.executeQuery( FIND_ALL );
+        ResultSet result = conexao.executeQuery(FIND_ALL);
         List<Documento> lista_documento = new ArrayList<>();
         Documento documento;
-        try
-        {
+        try {
 
-            while ( result.next() )
-            {
+            while (result.next()) {
                 documento = new Documento();
-                documento.setDesignacao( result.getString( "designacao" ) );
-                documento.setAbreviacao( result.getString( "abreviacao" ) );
-                documento.setCodUltimoDoc( result.getInt( "cod_ultimo_doc" ) );
-                documento.setDescricaoUltimoDoc( result.getString( "descricao_ultimo_doc" ) );
-                documento.setUltimaData( result.getDate( "ultima_data" ) );
-                lista_documento.add( documento );
+                documento.setDesignacao(result.getString("designacao"));
+                documento.setAbreviacao(result.getString("abreviacao"));
+                documento.setCodUltimoDoc(result.getInt("cod_ultimo_doc"));
+                documento.setDescricaoUltimoDoc(result.getString("descricao_ultimo_doc"));
+                documento.setUltimaData(result.getDate("ultima_data"));
+                lista_documento.add(documento);
 
             }
 
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
@@ -93,106 +85,81 @@ public class DocumentosController implements EntidadeFactory
     }
 
     @Override
-    public Vector<String> getVector()
-    {
+    public Vector<String> getVector() {
         String FIND_ALL = "SELECT designacao FROM documento WHERE pk_documento IN(1,2,3,7,13)";
-        ResultSet result = conexao.executeQuery( FIND_ALL );
+        ResultSet result = conexao.executeQuery(FIND_ALL);
         Vector<String> lista = new Vector<>();
-        try
-        {
-            while ( result.next() )
-            {
-                lista.add( result.getString( "designacao" ) );
+        try {
+            while (result.next()) {
+                lista.add(result.getString("designacao"));
             }
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-        lista.add( 0, "-- Seleccione --" );
+        lista.add(0, "-- Seleccione --");
         return lista;
     }
 
-    public Vector<String> getVectorById( int id )
-    {
+    public Vector<String> getVectorById(int id) {
         String FIND_ALL = "SELECT designacao FROM documento WHERE pk_documento = " + id;
-        ResultSet result = conexao.executeQuery( FIND_ALL );
+        ResultSet result = conexao.executeQuery(FIND_ALL);
         Vector<String> lista = new Vector<>();
-        try
-        {
-            while ( result.next() )
-            {
-                lista.add( result.getString( "designacao" ) );
+        try {
+            while (result.next()) {
+                lista.add(result.getString("designacao"));
             }
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-        lista.add( 0, "-- Seleccione --" );
+        lista.add(0, "-- Seleccione --");
         return lista;
     }
 
-    public Vector<String> getVectorRecolha()
-    {
+    public Vector<String> getVectorRecolha() {
         String FIND_ALL = "SELECT designacao FROM documento WHERE pk_documento IN(1)";
-        ResultSet result = conexao.executeQuery( FIND_ALL );
+        ResultSet result = conexao.executeQuery(FIND_ALL);
         Vector<String> lista = new Vector<>();
-        try
-        {
-            while ( result.next() )
-            {
-                lista.add( result.getString( "designacao" ) );
+        try {
+            while (result.next()) {
+                lista.add(result.getString("designacao"));
             }
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-        lista.add( 0, "-- Seleccione --" );
+        lista.add(0, "-- Seleccione --");
         return lista;
     }
 
-    public Vector<String> getVectorMesas()
-    {
+    public Vector<String> getVectorMesas() {
         String FIND_ALL = "SELECT designacao FROM documento WHERE pk_documento IN(1,2,13)";
-        ResultSet result = conexao.executeQuery( FIND_ALL );
+        ResultSet result = conexao.executeQuery(FIND_ALL);
         Vector<String> lista = new Vector<>();
-        try
-        {
-            while ( result.next() )
-            {
-                lista.add( result.getString( "designacao" ) );
+        try {
+            while (result.next()) {
+                lista.add(result.getString("designacao"));
             }
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-        lista.add( 0, "-- Seleccione --" );
+        lista.add(0, "-- Seleccione --");
         return lista;
     }
 
-    public Vector<String> getVector2()
-    {
+    public Vector<String> getVector2() {
         {
 //            String FIND_ALL = "SELECT designacao FROM documento ORDER BY pk_documento ASC";
             String FIND_ALL = "SELECT designacao FROM documento WHERE pk_documento = 9";
-            ResultSet result = conexao.executeQuery( FIND_ALL );
+            ResultSet result = conexao.executeQuery(FIND_ALL);
             Vector<String> lista_documento = new Vector<>();
-            try
-            {
+            try {
 
-                while ( result.next() )
-                {
+                while (result.next()) {
 
-                    lista_documento.add( result.getString( "designacao" ) );
+                    lista_documento.add(result.getString("designacao"));
 
                 }
 
-            }
-            catch ( SQLException e )
-            {
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
 
@@ -201,113 +168,93 @@ public class DocumentosController implements EntidadeFactory
     }
 
     @Override
-    public Object findById( int codigo )
-    {
+    public Object findById(int codigo) {
 
         String FIND__BY_CODIGO = "SELECT * FROM documento WHERE pk_documento = " + codigo;
-        ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
+        ResultSet result = conexao.executeQuery(FIND__BY_CODIGO);
         Documento documento = null;
-        try
-        {
+        try {
 
-            if ( result.next() )
-            {
+            if (result.next()) {
                 documento = new Documento();
-                documento.setPkDocumento( result.getInt( "pk_documento" ) );
-                documento.setDesignacao( result.getString( "designacao" ) );
-                documento.setAbreviacao( result.getString( "abreviacao" ) );
-                documento.setCodUltimoDoc( result.getInt( "cod_ultimo_doc" ) );
-                documento.setDescricaoUltimoDoc( result.getString( "descricao_ultimo_doc" ) );
-                documento.setUltimaData( result.getDate( "ultima_data" ) );
+                documento.setPkDocumento(result.getInt("pk_documento"));
+                documento.setDesignacao(result.getString("designacao"));
+                documento.setAbreviacao(result.getString("abreviacao"));
+                documento.setCodUltimoDoc(result.getInt("cod_ultimo_doc"));
+                documento.setDescricaoUltimoDoc(result.getString("descricao_ultimo_doc"));
+                documento.setUltimaData(result.getDate("ultima_data"));
 
             }
 
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return documento;
 
     }
 
-    public Documento getLastLugar()
-    {
+    public Documento getLastLugar() {
 
         String FIND__BY_CODIGO = "SELECT MAX(documento) as maximo_id, d.*  FROM documento d";
-        ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
+        ResultSet result = conexao.executeQuery(FIND__BY_CODIGO);
         Documento documento = null;
-        try
-        {
+        try {
 
-            if ( result.next() )
-            {
+            if (result.next()) {
                 documento = new Documento();
-                documento.setPkDocumento( result.getInt( "maximo_id" ) );
-                documento.setDesignacao( result.getString( "designacao" ) );
-                documento.setAbreviacao( result.getString( "abreviacao" ) );
-                documento.setCodUltimoDoc( result.getInt( "cod_ultimo_doc" ) );
-                documento.setDescricaoUltimoDoc( result.getString( "descricao_ultimo_doc" ) );
-                documento.setUltimaData( result.getDate( "ultima_data" ) );
+                documento.setPkDocumento(result.getInt("maximo_id"));
+                documento.setDesignacao(result.getString("designacao"));
+                documento.setAbreviacao(result.getString("abreviacao"));
+                documento.setCodUltimoDoc(result.getInt("cod_ultimo_doc"));
+                documento.setDescricaoUltimoDoc(result.getString("descricao_ultimo_doc"));
+                documento.setUltimaData(result.getDate("ultima_data"));
 
             }
 
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return documento;
 
     }
 
-    public Documento getDocumentoByDesignacao( String designacao )
-    {
+    public Documento getDocumentoByDesignacao(String designacao) {
 
         String query = "SELECT *  FROM documento a WHERE designacao = '" + designacao.trim() + "'";
-        System.out.println( query );
-        ResultSet result = conexao.executeQuery( query );
+        System.out.println(query);
+        ResultSet result = conexao.executeQuery(query);
         Documento documento = null;
-        try
-        {
+        try {
 
-            if ( result.next() )
-            {
+            if (result.next()) {
                 documento = new Documento();
-                documento.setPkDocumento( result.getInt( "pk_documento" ) );
-                documento.setDesignacao( result.getString( "designacao" ) );
+                documento.setPkDocumento(result.getInt("pk_documento"));
+                documento.setDesignacao(result.getString("designacao"));
 
             }
 
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return documento;
 
     }
 
-    public Vector<String> getVector3()
-    {
+    public Vector<String> getVector3() {
         {
 //            String FIND_ALL = "SELECT designacao FROM documento ORDER BY pk_documento ASC";
             String FIND_ALL = "SELECT designacao FROM documento WHERE pk_documento = 10";
-            ResultSet result = conexao.executeQuery( FIND_ALL );
+            ResultSet result = conexao.executeQuery(FIND_ALL);
             Vector<String> lista_documento = new Vector<>();
-            try
-            {
+            try {
 
-                while ( result.next() )
-                {
+                while (result.next()) {
 
-                    lista_documento.add( result.getString( "designacao" ) );
+                    lista_documento.add(result.getString("designacao"));
 
                 }
 
-            }
-            catch ( SQLException e )
-            {
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
 
@@ -315,132 +262,191 @@ public class DocumentosController implements EntidadeFactory
         }
     }
 
-    public Documento findDocumentoById( int codigo )
-    {
+    public Documento findDocumentoById(int codigo) {
 
         String FIND_BY_CODIGO = "SELECT * FROM documento WHERE pk_documento = " + codigo;
-        ResultSet result = conexao.executeQuery( FIND_BY_CODIGO );
+        ResultSet result = conexao.executeQuery(FIND_BY_CODIGO);
         Documento documento = null;
-        try
-        {
-            if ( result.next() )
-            {
+        try {
+            if (result.next()) {
                 documento = new Documento();
-                documento = getDocumentoResultSet( documento, result );
+                documento = getDocumentoResultSet(documento, result);
             }
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return documento;
 
     }
 
-    private Documento getDocumentoResultSet( Documento documento, ResultSet result )
-    {
-        try
-        {
-            documento.setPkDocumento( result.getInt( "pk_documento" ) );
-            documento.setDesignacao( result.getString( "designacao" ) );
-            documento.setAbreviacao( result.getString( "abreviacao" ) );
-            documento.setCodUltimoDoc( result.getInt( "cod_ultimo_doc" ) );
-            documento.setUltimaData( result.getDate( "ultima_data" ) );
+    private Documento getDocumentoResultSet(Documento documento, ResultSet result) {
+        try {
+            documento.setPkDocumento(result.getInt("pk_documento"));
+            documento.setDesignacao(result.getString("designacao"));
+            documento.setAbreviacao(result.getString("abreviacao"));
+            documento.setCodUltimoDoc(result.getInt("cod_ultimo_doc"));
+            documento.setUltimaData(result.getDate("ultima_data"));
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
         }
 
         return documento;
     }
 
-    public static void start( BDConexao conexao )
-    {
-        try
-        {
+    public static void start(BDConexao conexao) {
+        try {
             Connection conn = conexao.getConnectionAtiva();
-            if ( conn.getAutoCommit() )
-            {
-                conn.setAutoCommit( false );
-                System.out.println( "[TRANSAÇÃO] 🔹 Iniciada" );
+            if (conn.getAutoCommit()) {
+                conn.setAutoCommit(false);
+                System.out.println("[TRANSAÇÃO] 🔹 Iniciada");
             }
-        }
-        catch ( SQLException e )
-        {
-            System.err.println( "[TRANSAÇÃO] ❌ Erro ao iniciar: " + e.getMessage() );
+        } catch (SQLException e) {
+            System.err.println("[TRANSAÇÃO] ❌ Erro ao iniciar: " + e.getMessage());
         }
     }
 
-    public static void commit( BDConexao conexao )
-    {
-        try
-        {
+    public static void commit(BDConexao conexao) {
+        try {
             Connection conn = conexao.getConnectionAtiva();
-            if ( !conn.getAutoCommit() )
-            {
+            if (!conn.getAutoCommit()) {
                 conn.commit();
-                conn.setAutoCommit( true );
-                System.out.println( "[TRANSAÇÃO] ✅ Commit concluído" );
+                conn.setAutoCommit(true);
+                System.out.println("[TRANSAÇÃO] ✅ Commit concluído");
             }
-        }
-        catch ( SQLException e )
-        {
-            System.err.println( "[TRANSAÇÃO] ❌ Erro ao fazer commit: " + e.getMessage() );
+        } catch (SQLException e) {
+            System.err.println("[TRANSAÇÃO] ❌ Erro ao fazer commit: " + e.getMessage());
         }
     }
 
-    public static void rollback( BDConexao conexao )
-    {
-        try
-        {
+    public static void rollback(BDConexao conexao) {
+        try {
             Connection conn = conexao.getConnectionAtiva();
-            if ( !conn.getAutoCommit() )
-            {
+            if (!conn.getAutoCommit()) {
                 conn.rollback();
-                conn.setAutoCommit( true );
-                System.out.println( "[TRANSAÇÃO] 🔄 Rollback efetuado" );
+                conn.setAutoCommit(true);
+                System.out.println("[TRANSAÇÃO] 🔄 Rollback efetuado");
             }
-        }
-        catch ( SQLException e )
-        {
-            System.err.println( "[TRANSAÇÃO] ❌ Erro ao fazer rollback: " + e.getMessage() );
+        } catch (SQLException e) {
+            System.err.println("[TRANSAÇÃO] ❌ Erro ao fazer rollback: " + e.getMessage());
         }
     }
 
-//    public static void startTransactionOperacoes( BDConexaoOperacoes conexao )
-//    {
-//        try
-//        {
-//            conexao.getConnectionAtiva().setAutoCommit( false ); // ← aqui é onde realmente funciona
+    // ==============================
+    // MÉTODOS DE TRANSAÇÃO
+    // ==============================
+    public static synchronized void startTransaction(Connection conn) {
+        try {
+            if (transacaoConn == null || transacaoConn.isClosed()) {
+                transacaoConn = conn;
+            }
+            if (!transacaoConn.getAutoCommit()) {
+                return; // já em transação
+            }
+            transacaoConn.setAutoCommit(false);
+            System.out.println("[Transação] Iniciada");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+//public static synchronized void commitTransaction() {
+//    try {
+//        if (transacaoConn != null && !transacaoConn.getAutoCommit()) {
+//            transacaoConn.commit();
+//            transacaoConn.setAutoCommit(true);
+//            System.out.println("[Transação] Commit efetuado");
 //        }
-//        catch ( SQLException e )
-//        {
-//            e.printStackTrace();
-//        }
+//    } catch (SQLException e) {
+//        e.printStackTrace();
+//        rollBackTransaction();
 //    }
-//
-//    public static void commitTransactionOperacoes( BDConexaoOperacoes conexao )
-//    {
-//        try
-//        {
-//            conexao.getConnection().commit();
-//        }
-//        catch ( SQLException e )
-//        {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    public static void rollBackTransactionOperacoes( BDConexaoOperacoes conexao )
-//    {
-//        try
-//        {
-//            conexao.getConnection().rollback();
-//        }
-//        catch ( SQLException e )
-//        {
-//            e.printStackTrace();
-//        }
-//    }
+//}
+    public static synchronized void commitTransaction() {
+        try {
+            if (transacaoConn == null) {
+                System.err.println("[Transação] ⚠ Nenhuma conexão ativa para commit!");
+                return;
+            }
+
+            if (transacaoConn.isClosed()) {
+                System.err.println("[Transação] ❌ Conexão já fechada antes do commit!");
+                return;
+            }
+
+            if (!transacaoConn.getAutoCommit()) {
+                transacaoConn.commit();
+                transacaoConn.setAutoCommit(true);
+                System.out.println("[Transação] ✅ Commit efetuado com sucesso.");
+            }
+
+        } catch (SQLException e) {
+            System.err.println("[Transação] ❌ Erro no commit: " + e.getMessage());
+            rollBackTransaction();
+        }
+    }
+
+    public static synchronized void rollBackTransaction() {
+        try {
+            if (transacaoConn != null && !transacaoConn.getAutoCommit()) {
+                transacaoConn.rollback();
+                transacaoConn.setAutoCommit(true);
+                System.out.println("[Transação] Rollback efetuado");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+// ==============================
+// TRANSAÇÃO POR CONEXÃO
+// ==============================
+
+    public static void startTransaction1(Connection conn) throws SQLException {
+
+        if (conn == null) {
+            throw new SQLException("Connection é null.");
+        }
+
+        if (conn.getAutoCommit()) {
+            conn.setAutoCommit(false);
+            System.out.println("[Transação] 🔹 Iniciada na conexão " + conn);
+        }
+    }
+    
+     public Documento findByIdDocumento(int codigo) {
+
+        String FIND__BY_CODIGO = "SELECT * FROM documento WHERE pk_documento = " + codigo;
+        ResultSet result = conexao.executeQuery(FIND__BY_CODIGO);
+        Documento documento = null;
+        try {
+
+            if (result.next()) {
+                documento = new Documento();
+                documento.setPkDocumento(result.getInt("pk_documento"));
+                documento.setDesignacao(result.getString("designacao"));
+                documento.setAbreviacao(result.getString("abreviacao"));
+                documento.setCodUltimoDoc(result.getInt("cod_ultimo_doc"));
+                documento.setDescricaoUltimoDoc(result.getString("descricao_ultimo_doc"));
+                documento.setUltimaData(result.getDate("ultima_data"));
+
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return documento;
+
+    }
+
+    public static void commit(Connection conn) throws SQLException {
+
+        if (conn == null) {
+            throw new SQLException("Connection é null.");
+        }
+
+        if (!conn.getAutoCommit()) {
+            conn.commit();
+            conn.setAutoCommit(true);
+            System.out.println("[Transação] ✅ Commit efetuado na conexão " + conn);
+        }
+    }
 }

@@ -97,6 +97,7 @@ public class DVML {
     public final static String DESALOJAR = "Des.";
     public final static String SEXO_MASCULINO = "Masculino";
     public final static String SEXO_FEMENINO = "Feminino";
+    public static String ESTADO_INVALIDO = "I";
     public static final int ID_CONSUMIDOR_FINAL = 1;
     public static String _CLIENTE_CONSUMIDOR_FINAL = "Consumidor Final";
     public static String _FORNECEDOR_DIFERENCIADO = "Diferenciado";

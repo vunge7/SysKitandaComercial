@@ -1490,5 +1490,43 @@ public class StoksController implements EntidadeFactory
             conn.setAutoCommit( autoCommit );
         }
     }
+    
+     public TbStock getStockByIdProdutoAndIdArmazem2( int idProduto, int idArmazem )
+    {
+
+        String FIND__BY_CODIGO = "SELECT * FROM tb_stock s WHERE s.cod_produto_codigo = " + idProduto + " AND s.cod_armazem = " + idArmazem;
+        ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
+        TbStock stock = null;
+        try
+        {
+
+            if ( result.next() )
+            {
+                stock = new TbStock();
+                stock.setCodigo( result.getInt( "codigo" ) );
+                stock.setCodProdutoCodigo( new TbProduto( result.getInt( "cod_produto_codigo" ) ) );
+//                stock.setDataEntrada( result.getDate("data_entrada" ) );
+                stock.setQuantidadeExistente( result.getDouble( "quantidade_existente" ) );
+                stock.setStatus( result.getString( "status" ) );
+                stock.setPrecoVenda( result.getBigDecimal( "preco_venda" ) );
+                stock.setQuantCritica( result.getInt( "quant_critica" ) );
+                stock.setQuantBaixa( result.getInt( "quant_baixa" ) );
+                stock.setQuantidadeAntiga( result.getDouble( "quantidade_antiga" ) );
+                stock.setCodArmazem( new TbArmazem( result.getInt( "cod_armazem" ) ) );
+                stock.setPrecoVendaGrosso( result.getBigDecimal( "preco_venda_grosso" ) );
+                stock.setQtdGrosso( result.getDouble( "qtd_grosso" ) );
+
+                stock.setPrecoVendaFabrica( result.getBigDecimal( "preco_venda_fabrica" ) );
+
+            }
+
+        }
+        catch ( SQLException e )
+        {
+            e.printStackTrace();
+        }
+        return stock;
+
+    }
 
 }
