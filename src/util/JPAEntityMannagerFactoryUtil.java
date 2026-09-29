@@ -25,7 +25,6 @@ public class JPAEntityMannagerFactoryUtil
 
 //    public static EntityManagerFactory em  =  Persistence.createEntityManagerFactory("SGCMINIMERCADOPU");
     public static EntityManagerFactory em = Persistencia.getEntityManagerFactory( "SGCMINIMERCADOPU" );
-
     public static void main( String[] args )
     {
 //        EntityManagerFactory em = JPAEntityMannagerFactoryUtil.em;
