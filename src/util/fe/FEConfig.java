@@ -13,7 +13,7 @@ package util.fe;
 public class FEConfig
 {
 
-    private static final AmbienteFE AMBIENTE_ATUAL = AmbienteFE.HML;
+    private static final AmbienteFE AMBIENTE_ATUAL = AmbienteFE.PROD;
 
     public static String getEndpointSolicitarSerie()
     {

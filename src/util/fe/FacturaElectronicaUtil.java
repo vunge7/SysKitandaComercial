@@ -299,6 +299,7 @@ public class FacturaElectronicaUtil {
             venda.setSubmissionUUID(uuid);
 
             String json = JsonUtil.toJson(payloadMap);
+            System.out.println("JASON: "+json);
             String auth = BasicAuthUtil.gerarAuthorizationHeader(FEConfig.getUsername(), FEConfig.getPassword());
 
             String response = HttpClientUtil.postJson(FEConfig.getEndpointRegistrarFactura(), json, auth);
