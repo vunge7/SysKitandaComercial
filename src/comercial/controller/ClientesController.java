@@ -15,26 +15,25 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 import util.BDConexao;
+import util.ClientePesquisa;
 import util.MetodosUtil;
 
 /**
  *
- * @author Martinho Luis &  
- * Domingos Dala Vunge
+ * @author Martinho Luis & Domingos Dala Vunge
  */
-public class ClientesController implements EntidadeFactory
-{
+public class ClientesController implements EntidadeFactory {
+
     private BDConexao conexao;
-    public ClientesController( BDConexao conexao )
-    {
+
+    public ClientesController(BDConexao conexao) {
         this.conexao = conexao;
     }
 
     @Override
-    public boolean salvar( Object object )
-    {
-        TbCliente clientes = ( TbCliente ) object;
-        String INSERT = "INSERT INTO tb_cliente( nome , morada , telefone , nif , email, pais, pais_ISO"
+    public boolean salvar(Object object) {
+        TbCliente clientes = (TbCliente) object;
+        String INSERT = "INSERT INTO tb_cliente( nome , morada , telefone , nif , email, pais, pais_ISO, percentagem_desconto"
                 + ")"
                 + " VALUES("
                 + "'" + clientes.getNome() + "' , "
@@ -43,38 +42,34 @@ public class ClientesController implements EntidadeFactory
                 + "'" + clientes.getNif() + "' , "
                 + "'" + clientes.getEmail() + "', "
                 + "'" + clientes.getPais() + "', "
-                + "'" + clientes.getPaisISO() + "'"
+                + "'" + clientes.getPaisISO() + "',"
+                + clientes.getPercentagemDesconto()
                 + " ) ";
 
-        return conexao.executeUpdate( INSERT );
+        return conexao.executeUpdate(INSERT);
 
     }
 
-    public Vector<String> listarTodosDaVenda( Date data_1, Date data_2 )
-    {
+    public Vector<String> listarTodosDaVenda(Date data_1, Date data_2) {
         String FIND_ALL = "SELECT "
                 + "	c.nome AS nome FROM tb_venda v, tb_cliente c "
                 + " WHERE "
                 + "	v.codigo_cliente = c.codigo "
-                + " AND DATE(v.dataVenda) BETWEEN '" + MetodosUtil.getDataBanco( data_1 ) + "' AND '" + MetodosUtil.getDataBanco( data_2 ) + "'"
+                + " AND DATE(v.dataVenda) BETWEEN '" + MetodosUtil.getDataBanco(data_1) + "' AND '" + MetodosUtil.getDataBanco(data_2) + "'"
                 + " AND v.status_eliminado = 'false' "
                 + " AND v.fk_documento = 2 "
                 + " GROUP BY c.nome "
                 + " ORDER BY c.nome";
 
-        ResultSet result = conexao.executeQuery( FIND_ALL );
+        ResultSet result = conexao.executeQuery(FIND_ALL);
         Vector<String> lista_cliente = new Vector<>();
         TbCliente cliente;
-        try
-        {
-            while ( result.next() )
-            {
-                System.out.println( "Nome: " + result.getString( "nome" ) );
-                lista_cliente.add( result.getString( "nome" ) );
+        try {
+            while (result.next()) {
+                System.out.println("Nome: " + result.getString("nome"));
+                lista_cliente.add(result.getString("nome"));
             }
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
@@ -82,114 +77,127 @@ public class ClientesController implements EntidadeFactory
     }
 
     @Override
-    public boolean actualizar( Object object )
-    {
-        return true;
+    public boolean actualizar(Object object) {
+        TbCliente cliente = (TbCliente) object;
+
+        String UPDATE = "UPDATE tb_cliente SET "
+                + "nome = ?, "
+                + "morada = ?, "
+                + "telefone = ?, "
+                + "nif = ?, "
+                + "email = ?, "
+                + "pais = ?, "
+                + "pais_iso = ?, "
+                + "percentagem_desconto = ? "
+                + "WHERE codigo = ?";
+
+        try (PreparedStatement stmt = conexao.getConnection().prepareStatement(UPDATE)) {
+
+            int cod = 1;
+
+            stmt.setString(cod++, cliente.getNome());
+            stmt.setString(cod++, cliente.getMorada());
+            stmt.setString(cod++, cliente.getTelefone());
+            stmt.setString(cod++, cliente.getNif());
+            stmt.setString(cod++, cliente.getEmail());
+            stmt.setString(cod++, cliente.getPais());
+            stmt.setString(cod++, cliente.getPaisISO());
+            stmt.setDouble(cod++, cliente.getPercentagemDesconto());
+            stmt.setInt(cod++, cliente.getCodigo());
+
+            int linhas = stmt.executeUpdate();
+
+            return linhas > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     @Override
-    public boolean eliminar( int codigo )
-    {
+    public boolean eliminar(int codigo) {
         String DELETE = "DELETE FROM tb_cliente WHERE codigo = " + codigo;
-        return conexao.executeUpdate( DELETE );
+        return conexao.executeUpdate(DELETE);
     }
 
     @Override
-    public List<TbCliente> listarTodos()
-    {
+    public List<TbCliente> listarTodos() {
 
         String FIND_ALL = "SELECT * FROM tb_cliente ORDER BY codigo ASC";
-        ResultSet result = conexao.executeQuery( FIND_ALL );
+        ResultSet result = conexao.executeQuery(FIND_ALL);
         List<TbCliente> lista_clientes = new ArrayList<>();
         TbCliente clientes;
-        try
-        {
+        try {
 
-            while ( result.next() )
-            {
+            while (result.next()) {
                 clientes = new TbCliente();
-                setClienteFromResultSet( result, clientes );
-                lista_clientes.add( clientes );
+                setClienteFromResultSet(result, clientes);
+                lista_clientes.add(clientes);
 
             }
 
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
         return lista_clientes;
     }
 
-    public Vector<TbCliente> listarTodos2()
-    {
+    public Vector<TbCliente> listarTodos2() {
         String FIND_ALL = "SELECT * FROM tb_cliente ORDER BY nome ASC";
-        ResultSet result = conexao.executeQuery( FIND_ALL );
+        ResultSet result = conexao.executeQuery(FIND_ALL);
         Vector<TbCliente> listaClientes = new Vector<>();
         TbCliente cliente;
 
-        try
-        {
-            while ( result.next() )
-            {
+        try {
+            while (result.next()) {
                 cliente = new TbCliente();
-                setClienteFromResultSet( result, cliente );
-                listaClientes.add( cliente );
+                setClienteFromResultSet(result, cliente);
+                listaClientes.add(cliente);
             }
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
         return listaClientes;
     }
 
-    public TbCliente findByCodigo( int codigo )
-    {
+    public TbCliente findByCodigo(int codigo) {
 
         String FIND_BY_NOME = "SELECT * FROM tb_cliente WHERE codigo = " + codigo;
-        ResultSet result = conexao.executeQuery( FIND_BY_NOME );
+        ResultSet result = conexao.executeQuery(FIND_BY_NOME);
         TbCliente cliente = null;
-        try
-        {
+        try {
 
-            if ( result.next() )
-            {
+            if (result.next()) {
                 cliente = new TbCliente();
-                setClienteFromResultSet( result, cliente );
+                setClienteFromResultSet(result, cliente);
 
             }
 
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return cliente;
 
     }
 
-    public TbCliente findByNome( String nome )
-    {
+    public TbCliente findByNome(String nome) {
 
         String FIND_BY_NOME = "SELECT * FROM tb_cliente WHERE nome = '" + nome + "'";
-        ResultSet result = conexao.executeQuery( FIND_BY_NOME );
+        ResultSet result = conexao.executeQuery(FIND_BY_NOME);
         TbCliente cliente = null;
-        try
-        {
+        try {
 
-            if ( result.next() )
-            {
+            if (result.next()) {
                 cliente = new TbCliente();
-                setClienteFromResultSet( result, cliente );
+                setClienteFromResultSet(result, cliente);
 
             }
 
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return cliente;
@@ -197,375 +205,341 @@ public class ClientesController implements EntidadeFactory
     }
 
     @Override
-    public Vector<String> getVector()
-    {
+    public Vector<String> getVector() {
         String FIND_ALL = "SELECT nome FROM tb_cliente ORDER BY nome";
-        ResultSet result = conexao.executeQuery( FIND_ALL );
+        ResultSet result = conexao.executeQuery(FIND_ALL);
         Vector<String> vector = new Vector();
-        try
-        {
-            while ( result.next() )
-            {
-                vector.add( result.getString( "nome" ) );
+        try {
+            while (result.next()) {
+                vector.add(result.getString("nome"));
             }
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-        vector.add( 0, "--Seleccione o Cliente--" );
+        vector.add(0, "--Seleccione o Cliente--");
 
         return vector;
     }
 
-    public Vector<String> getVectorExcetoConsumidorFinal()
-    {
+    public Vector<String> getVectorExcetoConsumidorFinal() {
         String FIND_ALL = "SELECT nome FROM tb_cliente  WHERE codigo <> 1 ORDER BY codigo ASC";
-        ResultSet result = conexao.executeQuery( FIND_ALL );
+        ResultSet result = conexao.executeQuery(FIND_ALL);
         Vector<String> vector = new Vector();
-        try
-        {
-            while ( result.next() )
-            {
-                vector.add( result.getString( "nome" ) );
+        try {
+            while (result.next()) {
+                vector.add(result.getString("nome"));
             }
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-        vector.add( 0, "--Seleccione o Cliente--" );
+        vector.add(0, "--Seleccione o Cliente--");
 
         return vector;
     }
 
-    public Vector<String> getVectorByIinciais( String prefixo )
-    {
+    public Vector<String> getVectorByIinciais(String prefixo) {
         String FIND_ALL = "SELECT nome FROM tb_cliente  WHERE  nome LIKE '%" + prefixo + "%'  ORDER BY codigo ASC";
-        ResultSet result = conexao.executeQuery( FIND_ALL );
+        ResultSet result = conexao.executeQuery(FIND_ALL);
         Vector<String> vector = new Vector();
-        try
-        {
-            while ( result.next() )
-            {
-                vector.add( result.getString( "nome" ) );
+        try {
+            while (result.next()) {
+                vector.add(result.getString("nome"));
             }
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return vector;
     }
 
     @Override
-    public Object findById( int codigo )
-    {
+    public Object findById(int codigo) {
 
         String FIND__BY_CODIGO = "SELECT * FROM tb_cliente WHERE codigo = " + codigo;
-        ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
+        ResultSet result = conexao.executeQuery(FIND__BY_CODIGO);
         TbCliente cliente = null;
-        try
-        {
+        try {
 
-            if ( result.next() )
-            {
+            if (result.next()) {
                 cliente = new TbCliente();
-                setClienteFromResultSet( result, cliente );
+                setClienteFromResultSet(result, cliente);
 
             }
 
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return cliente;
 
     }
 
-    public TbCliente getClienteByNifOrberByNome( String nif )
-    {
+    public TbCliente getClienteByNifOrberByNome(String nif) {
 
         String FIND__BY_CODIGO = "SELECT * FROM tb_cliente WHERE nif LIKE '%" + nif + "%'";
-        ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
+        ResultSet result = conexao.executeQuery(FIND__BY_CODIGO);
         TbCliente cliente = null;
-        try
-        {
+        try {
 
-            if ( result.next() )
-            {
+            if (result.next()) {
                 cliente = new TbCliente();
-                setClienteFromResultSet( result, cliente );
+                setClienteFromResultSet(result, cliente);
 
             }
 
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return cliente;
 
     }
 
-    public TbCliente getClienteByTelOrberByNome( String telefone )
-    {
+    public TbCliente getClienteByTelOrberByNome(String telefone) {
         String FIND__BY_CODIGO = "SELECT * FROM tb_cliente WHERE telefone LIKE '%" + telefone + "%'";
-        ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
+        ResultSet result = conexao.executeQuery(FIND__BY_CODIGO);
         TbCliente cliente = null;
-        try
-        {
-            if ( result.next() )
-            {
+        try {
+            if (result.next()) {
                 cliente = new TbCliente();
-                setClienteFromResultSet( result, cliente );
+                setClienteFromResultSet(result, cliente);
             }
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return cliente;
 
     }
-    
-    public TbCliente getClienteLikeByNome( String nome )
-    {
+
+    public TbCliente getClienteLikeByNome(String nome) {
         String FIND__BY_CODIGO = "SELECT * FROM tb_cliente WHERE nome LIKE '%" + nome + "%'";
-        ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
+        ResultSet result = conexao.executeQuery(FIND__BY_CODIGO);
         TbCliente cliente = null;
-        try
-        {
-            if ( result.next() )
-            {
+        try {
+            if (result.next()) {
                 cliente = new TbCliente();
-                setClienteFromResultSet( result, cliente );
+                setClienteFromResultSet(result, cliente);
             }
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return cliente;
 
     }
 
-    public TbCliente getClienteByNifOrberByTelefone( String telefone )
-    {
+    public TbCliente getClienteByNifOrberByTelefone(String telefone) {
 
         String FIND__BY_CODIGO = "SELECT * FROM tb_cliente WHERE telefone LIKE '%" + telefone + "%'";
-        ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
+        ResultSet result = conexao.executeQuery(FIND__BY_CODIGO);
         TbCliente cliente = null;
-        try
-        {
-            if ( result.next() )
-            {
+        try {
+            if (result.next()) {
                 cliente = new TbCliente();
-                setClienteFromResultSet( result, cliente );
+                setClienteFromResultSet(result, cliente);
             }
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return cliente;
 
     }
 
-    public TbCliente getLastCliente()
-    {
+    public TbCliente getLastCliente() {
 
         String FIND__BY_CODIGO = "SELECT MAX(codigo) as maximo_id, c.*  FROM tb_cliente c";
-        ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
+        ResultSet result = conexao.executeQuery(FIND__BY_CODIGO);
         TbCliente clientes = null;
-        try
-        {
-            if ( result.next() )
-            {
+        try {
+            if (result.next()) {
                 clientes = new TbCliente();
-                setClienteFromResultSet( result, clientes );
+                setClienteFromResultSet(result, clientes);
             }
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return clientes;
 
     }
 
-    public TbCliente getClienteByNome1( String nome )
-    {
+    public TbCliente getClienteByNome1(String nome) {
         String FIND__BY_CODIGO = "SELECT *  FROM tb_cliente a WHERE nome = '" + nome + "'";
-        ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
+        ResultSet result = conexao.executeQuery(FIND__BY_CODIGO);
         TbCliente cliente = null;
-        try
-        {
-            if ( result.next() )
-            {
+        try {
+            if (result.next()) {
                 cliente = new TbCliente();
-                setClienteFromResultSet( result, cliente );
+                setClienteFromResultSet(result, cliente);
             }
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return cliente;
 
     }
 
-    public TbCliente getClienteByNome( String nome )
-    {
+    public TbCliente getClienteByNome(String nome) {
 
         String FIND__BY_CODIGO = "SELECT *  FROM tb_cliente a WHERE nome = '" + nome + "'";
-        ResultSet result = conexao.executeQuery( FIND__BY_CODIGO );
+        ResultSet result = conexao.executeQuery(FIND__BY_CODIGO);
         TbCliente armazem = null;
-        try
-        {
+        try {
 
-            if ( result.next() )
-            {
+            if (result.next()) {
                 armazem = new TbCliente();
-                setClienteFromResultSet( result, armazem );
+                setClienteFromResultSet(result, armazem);
             }
 
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return armazem;
 
     }
 
-    public boolean existeClienteNome( String nome, Connection conexao )
-    {
+    public boolean existeClienteNome(String nome, Connection conexao) {
         String sql = "SELECT COUNT(*) FROM tb_cliente WHERE nome = ?";
-        try ( PreparedStatement stmt = conexao.prepareStatement( sql ) )
-        {
-            stmt.setString( 1, nome );
+        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+            stmt.setString(1, nome);
 
-            try ( ResultSet rs = stmt.executeQuery() )
-            {
-                if ( rs.next() )
-                {
-                    int count = rs.getInt( 1 );
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    int count = rs.getInt(1);
                     return count > 0; // true se já existe
                 }
             }
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    public boolean existeClienteNIF( String nif, Connection conexao )
-    {
+    public boolean existeClienteNIF(String nif, Connection conexao) {
         String sql = "SELECT COUNT(*) FROM tb_cliente WHERE nif = ?";
-        try ( PreparedStatement stmt = conexao.prepareStatement( sql ) )
-        {
+        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
 
-            stmt.setString( 1, nif );
+            stmt.setString(1, nif);
 
-            try ( ResultSet rs = stmt.executeQuery() )
-            {
-                if ( rs.next() )
-                {
-                    int count = rs.getInt( 1 );
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    int count = rs.getInt(1);
                     return count > 0; // true se já existe
                 }
             }
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    public boolean existeClienteNIFParaOutroCliente( String nif, int codigo, Connection connection )
-    {
+    public boolean existeClienteNIFParaOutroCliente(String nif, int codigo, Connection connection) {
         String sql = "SELECT COUNT(*) FROM tb_cliente WHERE nif = ? AND codigo <> ?";
-        try ( PreparedStatement stmt = connection.prepareStatement( sql ) )
-        {
-            stmt.setString( 1, nif );
-            stmt.setInt( 2, codigo );
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, nif);
+            stmt.setInt(2, codigo);
 
-            try ( ResultSet rs = stmt.executeQuery() )
-            {
-                if ( rs.next() )
-                {
-                    int count = rs.getInt( 1 );
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    int count = rs.getInt(1);
                     return count > 0; // true se já existe em outro cliente
                 }
             }
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    public Vector<String> getVectorExecptoConsumidorFinal()
-    {
+    public Vector<String> getVectorExecptoConsumidorFinal() {
         String FIND_ALL = "SELECT nome FROM tb_cliente  WHERE codigo <> 1 ORDER BY nome ASC";
-        ResultSet result = conexao.executeQuery( FIND_ALL );
+        ResultSet result = conexao.executeQuery(FIND_ALL);
         Vector<String> vector = new Vector();
-        try
-        {
-            while ( result.next() )
-            {
-                vector.add( result.getString( "nome" ) );
+        try {
+            while (result.next()) {
+                vector.add(result.getString("nome"));
             }
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-        vector.add( 0, "--Seleccione o Cliente--" );
+        vector.add(0, "--Seleccione o Cliente--");
 
         return vector;
     }
 
-    public boolean existeClienteNomeParaOutroCliente( String nome, int codigo, Connection connection )
-    {
+    public boolean existeClienteNomeParaOutroCliente(String nome, int codigo, Connection connection) {
         String sql = "SELECT COUNT(*) FROM tb_cliente WHERE nome = ? AND codigo <> ?";
-        try ( PreparedStatement stmt = connection.prepareStatement( sql ) )
-        {
-            stmt.setString( 1, nome );
-            stmt.setInt( 2, codigo );
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, nome);
+            stmt.setInt(2, codigo);
 
-            try ( ResultSet rs = stmt.executeQuery() )
-            {
-                if ( rs.next() )
-                {
-                    int count = rs.getInt( 1 );
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    int count = rs.getInt(1);
                     return count > 0; // true se já existe em outro cliente
                 }
             }
-        }
-        catch ( SQLException e )
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    private void setClienteFromResultSet( ResultSet rs, TbCliente cliente ) throws SQLException
-    {
-        cliente.setCodigo( rs.getInt( "codigo" ) );
-        cliente.setNome( rs.getString( "nome" ) );
-        cliente.setMorada( rs.getString( "morada" ) );
-        cliente.setTelefone( rs.getString( "telefone" ) );
-        cliente.setNif( rs.getString( "nif" ) );
-        cliente.setEmail( rs.getString( "email" ) );
-        cliente.setPais( rs.getString( "pais" ) );
-        cliente.setPaisISO( rs.getString( "pais_ISO" ) );
+    private void setClienteFromResultSet(ResultSet rs, TbCliente cliente) throws SQLException {
+        cliente.setCodigo(rs.getInt("codigo"));
+        cliente.setNome(rs.getString("nome"));
+        cliente.setMorada(rs.getString("morada"));
+        cliente.setTelefone(rs.getString("telefone"));
+        cliente.setNif(rs.getString("nif"));
+        cliente.setEmail(rs.getString("email"));
+        cliente.setPais(rs.getString("pais"));
+        cliente.setPaisISO(rs.getString("pais_ISO"));
+        cliente.setPercentagemDesconto(rs.getDouble("percentagem_desconto"));
+    }
+
+    public List<ClientePesquisa> getClientesLikeNomePesq1(String nome) {
+
+        List<ClientePesquisa> lista = new ArrayList<>();
+
+        String sql
+                = "SELECT "
+                + "    c.codigo, "
+                + "    c.nome, "
+                + "    c.nif, "
+                + "    c.morada, "
+                + "    c.telefone, "
+                + "    c.email, "
+                + "    c.percentagem_desconto "
+                + "FROM tb_cliente c "
+                + "WHERE c.nome LIKE ? "
+                + "ORDER BY c.nome ASC "
+                + "LIMIT 50";
+
+        try (PreparedStatement ps = conexao.getConnectionAtiva()
+                .prepareStatement(sql)) {
+
+            ps.setString(1, "%" + nome.trim() + "%");
+
+            try (ResultSet result = ps.executeQuery()) {
+
+                while (result.next()) {
+
+                    ClientePesquisa cliente = new ClientePesquisa();
+
+                    cliente.setCodigo(result.getInt("codigo"));
+                    cliente.setNome(result.getString("nome"));
+                    cliente.setNif(result.getString("nif"));
+                    cliente.setMorada(result.getString("morada"));
+                    cliente.setTelefone(result.getString("telefone"));
+                    cliente.setEmail(result.getString("email"));
+                    cliente.setPais(result.getString("pais"));
+                    cliente.setPais_iso(result.getString("pais_ISO"));
+                    cliente.setPercentagem_desconto(result.getString("percentagem_desconto"));
+
+                    lista.add(cliente);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return lista;
     }
 
 }

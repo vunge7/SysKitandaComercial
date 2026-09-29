@@ -503,7 +503,7 @@ public class VendaDao extends TbVendaJpaController
         catch ( SQLException ex )
         {
 
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
         }
 
         return null;
@@ -578,7 +578,7 @@ public class VendaDao extends TbVendaJpaController
         catch ( SQLException ex )
         {
 
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
         }
 
         return null;
@@ -665,7 +665,7 @@ public class VendaDao extends TbVendaJpaController
         catch ( SQLException ex )
         {
 
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
         }
 
         return null;
@@ -1361,7 +1361,7 @@ public class VendaDao extends TbVendaJpaController
         }
         catch ( SQLException ex )
         {
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
         }
         return false;
 
@@ -1389,7 +1389,7 @@ public class VendaDao extends TbVendaJpaController
         }
         catch ( SQLException ex )
         {
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
         }
         return "";
 
@@ -1409,7 +1409,7 @@ public class VendaDao extends TbVendaJpaController
         }
         catch ( SQLException ex )
         {
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
         }
         return "";
 
@@ -1530,7 +1530,7 @@ public class VendaDao extends TbVendaJpaController
         catch ( SQLException ex )
         {
             ex.printStackTrace();
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
         }
 
         return 0;
@@ -1785,7 +1785,7 @@ public class VendaDao extends TbVendaJpaController
         catch ( SQLException ex )
         {
 
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
         }
 
         return null;
@@ -1923,7 +1923,7 @@ public class VendaDao extends TbVendaJpaController
         catch ( SQLException ex )
         {
             ex.printStackTrace();
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
         }
 
         return 0d;
@@ -1949,7 +1949,7 @@ public class VendaDao extends TbVendaJpaController
         catch ( SQLException ex )
         {
             ex.printStackTrace();
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
         }
 
         return 0d;
@@ -1975,7 +1975,7 @@ public class VendaDao extends TbVendaJpaController
         catch ( SQLException ex )
         {
             ex.printStackTrace();
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
         }
 
         return 0d;
@@ -2001,7 +2001,7 @@ public class VendaDao extends TbVendaJpaController
         catch ( SQLException ex )
         {
             ex.printStackTrace();
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
         }
 
         return 0;
@@ -2027,7 +2027,7 @@ public class VendaDao extends TbVendaJpaController
         catch ( SQLException ex )
         {
             ex.printStackTrace();
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
         }
 
         return 0;
@@ -2081,7 +2081,7 @@ public class VendaDao extends TbVendaJpaController
         }
         catch ( SQLException ex )
         {
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
         }
         return 0;
 
@@ -2136,7 +2136,7 @@ public class VendaDao extends TbVendaJpaController
         }
         catch ( SQLException ex )
         {
-            Logger.getLogger( VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(VendaDao.class.getName() ).log( Level.SEVERE, null, ex );
         }
         return "";
 

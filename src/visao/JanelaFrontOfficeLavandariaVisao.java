@@ -5,13 +5,11 @@
 package visao;
 
 
-import java.sql.Connection;
 import comercial.controller.CaixasController;
 import comercial.controller.ItemCaixaController;
 import comercial.controller.LugaresController;
 import comercial.controller.MesasController;
 import comercial.controller.UsuariosController;
-import dao.CaixaDao;
 import dao.UsuarioDao;
 import entity.TbLugares;
 import entity.TbMesas;
@@ -24,14 +22,12 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManagerFactory;
-import kitanda.controller.UsuarioController;
 import static kitanda.util.CfConstantes.YYYYMMDD_HHMMSS;
 import util.BDConexao;
 import util.DVML;
 import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
 import static util.MetodosUtil.rodarComandoWindows;
-import util.email.EnvioEmailUtil;
 
 /**
  *

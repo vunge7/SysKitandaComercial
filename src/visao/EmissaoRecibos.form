@@ -138,7 +138,6 @@
                                   <Component id="cmbTipoDocumento" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="cmbSeries" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="lbPreco4" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -637,21 +636,12 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="lb_NIF" min="-2" pref="240" max="-2" attributes="0"/>
-                                  <Component id="lb_email" alignment="0" min="-2" pref="363" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace max="32767" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="lb_hospede_cliente" alignment="0" min="-2" pref="406" max="-2" attributes="0"/>
-                                  <Component id="lb_telefone" alignment="0" min="-2" pref="296" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="63" pref="6" max="32767" attributes="0"/>
-                          </Group>
+                          <Component id="lb_NIF" min="-2" pref="240" max="-2" attributes="0"/>
+                          <Component id="lb_email" alignment="0" min="-2" pref="363" max="-2" attributes="0"/>
+                          <Component id="lb_hospede_cliente" alignment="0" min="-2" pref="406" max="-2" attributes="0"/>
+                          <Component id="lb_telefone" alignment="0" min="-2" pref="296" max="-2" attributes="0"/>
                       </Group>
+                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>

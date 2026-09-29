@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import kitanda.util.CfMethods;
 import util.BDConexao;
+import util.MetodosUtil;
 
 /**
  *
@@ -331,7 +332,17 @@ public class FormaPagamentoGoldVisao extends javax.swing.JDialog
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton3ActionPerformed
     {//GEN-HEADEREND:event_jButton3ActionPerformed
+                if (!MetodosUtil.temInternet()) {
 
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Caro Usuário, verifique a conexão da internet!\nOs documentos a serem emitidos devem comunicar\n automaticamente com o portal da AGT.\nObrigado!",
+                    "Sem conexão com a Internet",
+                    JOptionPane.WARNING_MESSAGE
+            );
+
+            return;
+        }
         procedimento_finalizar();
     }//GEN-LAST:event_jButton3ActionPerformed
 

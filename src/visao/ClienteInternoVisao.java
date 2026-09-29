@@ -45,7 +45,7 @@ import static util.MetodosUtil.normalizarNif;
  *
  * @author DMartinho Luis
  */
-public class ClienteVisao extends javax.swing.JDialog {
+public class ClienteInternoVisao extends javax.swing.JDialog {
 
     /**
      * Creates new form UsuarioVisao
@@ -63,7 +63,7 @@ public class ClienteVisao extends javax.swing.JDialog {
     private Frame parent;
     private int codigo = 0;
 
-    public ClienteVisao(java.awt.Frame parent, boolean modal, BDConexao conexao) {
+    public ClienteInternoVisao(java.awt.Frame parent, boolean modal, BDConexao conexao) {
         //this.parent =  parent1;
 
         super(parent, modal);
@@ -389,6 +389,7 @@ public class ClienteVisao extends javax.swing.JDialog {
         jLabel5.setText("Desc. (%):");
 
         txtDesconto.setText("0");
+        txtDesconto.setEnabled(false);
 
         cmbPais.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--seleccione--", "Afeganistão - AF", "África do Sul - ZA", "Albânia - AL", "Alemanha - DE", "Andorra - AD", "Angola - AO", "Antígua e Barbuda - AG", "Arábia Saudita - SA", "Argélia - DZ", "Argentina - AR", "Arménia - AM", "Austrália - AU", "Áustria - AT", "Azerbaijão - AZ", "Bahamas - BS", "Bangladesh - BD", "Barbados - BB", "Bélgica - BE", "Belize - BZ", "Benim - BJ", "Bielorrússia - BY", "Bolívia - BO", "Bósnia e Herzegovina - BA", "Botswana - BW", "Brasil - BR", "Brunei - BN", "Bulgária - BG", "Burkina Faso - BF", "Burundi - BI", "Butão - BT", "Cabo Verde - CV", "Camarões - CM", "Camboja - KH", "Canadá - CA", "Catar - QA", "Cazaquistão - KZ", "Chade - TD", "Chile - CL", "China - CN", "Chipre - CY", "Colômbia - CO", "Comores - KM", "Congo (Brazzaville) - CG", "Congo (Kinshasa) - CD", "Coreia do Norte - KP", "Coreia do Sul - KR", "Costa do Marfim - CI", "Costa Rica - CR", "Croácia - HR", "Cuba - CU", "Dinamarca - DK", "Djibuti - DJ", "Dominica - DM", "Egito - EG", "El Salvador - SV", "Emirados Árabes Unidos - AE", "Equador - EC", "Eritreia - ER", "Eslováquia - SK", "Eslovénia - SI", "Espanha - ES", "Estados Unidos - US", "Estónia - EE", "Etiópia - ET", "Fiji - FJ", "Filipinas - PH", "Finlândia - FI", "França - FR", "Gabão - GA", "Gâmbia - GM", "Gana - GH", "Geórgia - GE", "Grécia - GR", "Granada - GD", "Guatemala - GT", "Guiné - GN", "Guiné-Bissau - GW", "Guiné Equatorial - GQ", "Guiana - GY", "Haiti - HT", "Honduras - HN", "Hungria - HU", "Iémen - YE", "Ilhas Marshall - MH", "Índia - IN", "Indonésia - ID", "Irão - IR", "Iraque - IQ", "Irlanda - IE", "Islândia - IS", "Israel - IL", "Itália - IT", "Jamaica - JM", "Japão - JP", "Jordânia - JO", "Kuwait - KW", "Laos - LA", "Lesoto - LS", "Letónia - LV", "Líbano - LB", "Libéria - LR", "Líbia - LY", "Liechtenstein - LI", "Lituânia - LT", "Luxemburgo - LU", "Macedónia do Norte - MK", "Madagáscar - MG", "Malásia - MY", "Malawi - MW", "Maldivas - MV", "Mali - ML", "Malta - MT", "Marrocos - MA", "Maurícia - MU", "Mauritânia - MR", "México - MX", "Micronésia - FM", "Moçambique - MZ", "Moldávia - MD", "Mónaco - MC", "Mongólia - MN", "Montenegro - ME", "Myanmar - MM", "Namíbia - NA", "Nauru - NR", "Nepal - NP", "Nicarágua - NI", "Níger - NE", "Nigéria - NG", "Noruega - NO", "Nova Zelândia - NZ", "Omã - OM", "Países Baixos - NL", "Paquistão - PK", "Palau - PW", "Panamá - PA", "Papua-Nova Guiné - PG", "Paraguai - PY", "Peru - PE", "Polónia - PL", "Portugal - PT", "Quénia - KE", "Quirguistão - KG", "Reino Unido - GB", "República Centro-Africana - CF", "República Checa - CZ", "República Dominicana - DO", "Roménia - RO", "Ruanda - RW", "Rússia - RU", "Salvador - SV", "Samoa - WS", "Santa Lúcia - LC", "São Tomé e Príncipe - ST", "Senegal - SN", "Serra Leoa - SL", "Sérvia - RS", "Singapura - SG", "Síria - SY", "Somália - SO", "Sri Lanka - LK", "Suazilândia (Eswatini) - SZ", "Sudão - SD", "Sudão do Sul - SS", "Suécia - SE", "Suíça - CH", "Suriname - SR", "Tailândia - TH", "Taiwan - TW", "Tanzânia - TZ", "Timor-Leste - TL", "Togo - TG", "Tonga - TO", "Trindade e Tobago - TT", "Tunísia - TN", "Turquia - TR", "Ucrânia - UA", "Uganda - UG", "Uruguai - UY", "Uzbequistão - UZ", "Vanuatu - VU", "Vaticano - VA", "Venezuela - VE", "Vietname - VN", "Zâmbia - ZM", "Zimbabué - ZW", " " }));
 
@@ -1024,14 +1025,22 @@ public class ClienteVisao extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ClienteVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ClienteInternoVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ClienteVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ClienteInternoVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ClienteVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ClienteInternoVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ClienteVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ClienteInternoVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -1044,7 +1053,7 @@ public class ClienteVisao extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                ClienteVisao dialog = new ClienteVisao(new javax.swing.JFrame(), true, BDConexao.getInstancia());
+                ClienteInternoVisao dialog = new ClienteInternoVisao(new javax.swing.JFrame(), true, BDConexao.getInstancia());
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -1227,31 +1236,31 @@ public class ClienteVisao extends javax.swing.JDialog {
                             btnSalvar.setEnabled(true);
                             btnAlterar.setEnabled(false);
 
-//                            if (!Objects.isNull(NovaGestaoPedidosVisao.cmbCliente)) {
-//                                NovaGestaoPedidosVisao.cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVector()));
-//                                NovaGestaoPedidosVisao.cmbCliente.setSelectedItem(clienteGlobal.getNome());
-//                                dispose();
-//                            }
-//                            if (!Objects.isNull(FormVendaResponsivaVisaoTop.cmbCliente)) {
-//                                FormVendaResponsivaVisaoTop.cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVector()));
-//                                FormVendaResponsivaVisaoTop.cmbCliente.setSelectedItem(clienteGlobal.getNome());
-//                                dispose();
-//                            }
-//                            if (!Objects.isNull(RecolhaPedidosVisao.cmbCliente)) {
-//                                RecolhaPedidosVisao.cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVector()));
-//                                RecolhaPedidosVisao.cmbCliente.setSelectedItem(clienteGlobal.getNome());
-//                                dispose();
-//                            }
-//                            if (!Objects.isNull(VendaPOSVisao.cmbCliente)) {
-//                                VendaPOSVisao.cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVector()));
-//                                VendaPOSVisao.cmbCliente.setSelectedItem(clienteGlobal.getNome());
-//                                dispose();
-//                            }
-//                            if (!Objects.isNull(VendasPraticasVisao.cmbCliente)) {
-//                                VendasPraticasVisao.cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVector()));
-//                                VendasPraticasVisao.cmbCliente.setSelectedItem(clienteGlobal.getNome());
-//                                dispose();
-//                            }
+                            if (!Objects.isNull(NovaGestaoPedidosVisao.cmbCliente)) {
+                                NovaGestaoPedidosVisao.cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVector()));
+                                NovaGestaoPedidosVisao.cmbCliente.setSelectedItem(clienteGlobal.getNome());
+                                dispose();
+                            }
+                            if (!Objects.isNull(FormVendaResponsivaVisaoTop.cmbCliente)) {
+                                FormVendaResponsivaVisaoTop.cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVector()));
+                                FormVendaResponsivaVisaoTop.cmbCliente.setSelectedItem(clienteGlobal.getNome());
+                                dispose();
+                            }
+                            if (!Objects.isNull(RecolhaPedidosVisao.cmbCliente)) {
+                                RecolhaPedidosVisao.cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVector()));
+                                RecolhaPedidosVisao.cmbCliente.setSelectedItem(clienteGlobal.getNome());
+                                dispose();
+                            }
+                            if (!Objects.isNull(VendaPOSVisao.cmbCliente)) {
+                                VendaPOSVisao.cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVector()));
+                                VendaPOSVisao.cmbCliente.setSelectedItem(clienteGlobal.getNome());
+                                dispose();
+                            }
+                            if (!Objects.isNull(VendasPraticasVisao.cmbCliente)) {
+                                VendasPraticasVisao.cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVector()));
+                                VendasPraticasVisao.cmbCliente.setSelectedItem(clienteGlobal.getNome());
+                                dispose();
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                             JOptionPane.showMessageDialog(null, "Erro ao salvar o cliente", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
@@ -1266,7 +1275,7 @@ public class ClienteVisao extends javax.swing.JDialog {
 
             }
         } catch (SQLException ex) {
-            Logger.getLogger(ClienteVisao.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClienteInternoVisao.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         conexaoTransaction.close();

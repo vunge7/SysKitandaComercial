@@ -2,9 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="factura" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" uuid="0de43986-9be5-410e-aaa3-7f1419d0abca">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="2.415765000000001"/>
-	<property name="ireport.x" value="70"/>
-	<property name="ireport.y" value="720"/>
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="59"/>
+	<property name="ireport.y" value="528"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -1065,7 +1065,7 @@ WHERE
 					<font fontName="Arial" size="8" isBold="false"/>
 					<paragraph rightIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_venda_total_venda}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tb_venda_total_venda}.doubleValue() - $F{tb_venda_total_retencao}.doubleValue()]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement uuid="5571f9dc-5b9f-443a-8f50-3065d393ebc3" key="staticText-11" x="391" y="75" width="75" height="10"/>
@@ -1410,7 +1410,7 @@ WHERE
 					<font fontName="Arial" size="8" isBold="false"/>
 					<paragraph rightIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_venda_total_venda}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tb_venda_total_venda}.doubleValue() - $F{tb_venda_total_retencao}.doubleValue()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement uuid="e2a93b7b-a2cc-4c6b-be7b-ee71b6fb2884" key="textField-20" x="465" y="50" width="68" height="10"/>

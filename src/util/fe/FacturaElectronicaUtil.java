@@ -37,6 +37,15 @@ public class FacturaElectronicaUtil {
         return processarEnvioFE(venda, inst, doc, cli, lines);
     }
 
+    public static boolean criarFEGenerico(TbVenda venda, TbDadosInstituicao inst, Documento doc, TbCliente cli, List<TbItemVenda> itens, BDConexao conexao) {
+        PrecosController precosCtrl = new PrecosController(conexao);
+        List<LineDTO> lines = new ArrayList<>();
+        for (int i = 0; i < itens.size(); i++) {
+            lines.add(mapItemVendaToDTOMesas(i, itens.get(i), precosCtrl, venda));
+        }
+        return processarEnvioFE(venda, inst, doc, cli, lines);
+    }
+
     // --- LÓGICA DE MAPEAMENTO (ISOLAMENTO) ---
     private static LineDTO mapTableLineToDTO(int index, JTable table, TableColumIdUtil cols, TbVenda venda) {
         String idProd = table.getValueAt(index, cols.COLUMN_PRODUTO_ID).toString();
@@ -63,32 +72,109 @@ public class FacturaElectronicaUtil {
         );
     }
 
-    private static LineDTO construirLineDTO(int lineNo, String cod, String desc, BigDecimal price, BigDecimal qtd, BigDecimal discount, BigDecimal taxPerc, TbVenda venda) {
-        BigDecimal unitPriceBase = price.subtract(discount);
-        BigDecimal base = unitPriceBase.multiply(qtd).setScale(2, RoundingMode.CEILING);
-        BigDecimal iva = FinanceUtils.getValorIVABigDecimal(qtd, taxPerc, unitPriceBase, discount);
+//    private static LineDTO construirLineDTO(int lineNo, String cod, String desc, BigDecimal price, BigDecimal qtd, BigDecimal discount, BigDecimal taxPerc, TbVenda venda) {
+//        BigDecimal unitPriceBase = price.subtract(discount);
+//        BigDecimal base = unitPriceBase.multiply(qtd).setScale(2, RoundingMode.CEILING);
+//        BigDecimal iva = FinanceUtils.getValorIVABigDecimal(qtd, taxPerc, unitPriceBase, discount);
+//
+//        LineDTO line = new LineDTO();
+//        line.setLineNumber(lineNo);
+//        line.setProductCode(cod);
+//        line.setProductDescription(desc);
+//        line.setQuantity(qtd.toString());
+//        line.setUnitOfMeasure("UN");
+//        line.setUnitPrice(price);
+//        line.setUnitPriceBase(unitPriceBase);
+//
+//        // Lógica de Notas de Crédito vs Débito
+//        if (venda.getFkDocumento().getPkDocumento() == DVML.DOC_NOTA_CREDITO_NC) {
+//            ReferenceInfoDTO ref = new ReferenceInfoDTO();
+//            ref.setReferenceItemLineNo(String.valueOf(lineNo));
+//            ref.setReference(venda.getRefCodFact());
+//            ref.setReason(venda.getObs());
+//            line.setReferenceInfoDTOs(Collections.singletonList(ref));
+//            line.setDebitAmount(base);
+//            line.setCreditAmount(BigDecimal.ONE);
+//        } else {
+//            line.setDebitAmount(BigDecimal.ONE);
+//            line.setCreditAmount(base);
+//        }
+//
+//        if (taxPerc.doubleValue() > 0) {
+//            TaxDTO tax = new TaxDTO();
+//            tax.setTaxType("IVA");
+//            tax.setTaxCountryRegion("AO");
+//            tax.setTaxCode("NOR");
+//            tax.setTaxPercentage(taxPerc.toString());
+//            tax.setTaxContribution(iva.doubleValue());
+//            line.setTaxes(Collections.singletonList(tax));
+//        }
+//
+//        // Atributos temporários para cálculo de totais facilitado
+    ////        line.setTotalIvaTemp(iva);
+////        line.setTotalBaseTemp(base);
+//        return line;
+//    }
+    
+    
+      private static LineDTO construirLineDTO(int lineNo,
+            String cod,
+            String desc,
+            BigDecimal unitPriceBase,
+            BigDecimal qtd,
+            BigDecimal discount,
+            BigDecimal taxPerc,
+            TbVenda venda) {
 
+        /**
+         * FT / FR
+         *
+         * unitPriceBase = 1000 unitPrice = 900; discount = 100; quantity = 2;
+         * taxPercentage = 7/100
+         *
+         * creditAmount = 900 * 2 = 1.800; //Para calcBaseValue = 1.800; // 10
+         * casas decimais taxContibution = 1.800 * 0.07 = 126; "Valor total de
+         * impostos da factura “taxPayable” (4,939.252), não corresponde à soma
+         * dos impostos de todas as linhas (4,939.27)."
+         */
+        BigDecimal unitPrice = unitPriceBase.subtract(discount);
+//        BigDecimal base = unitPriceBase.multiply(qtd).setScale(2, RoundingMode.CEILING);
+        BigDecimal settlementAmount = unitPriceBase.subtract(unitPrice);
+        //novo teste
+
+//        System.out.println(base);
         LineDTO line = new LineDTO();
         line.setLineNumber(lineNo);
         line.setProductCode(cod);
         line.setProductDescription(desc);
         line.setQuantity(qtd.toString());
         line.setUnitOfMeasure("UN");
-        line.setUnitPrice(price);
-        line.setUnitPriceBase(unitPriceBase);
 
-        // Lógica de Notas de Crédito vs Débito
+        line.setUnitPrice(unitPrice);
+        line.setUnitPriceBase(unitPriceBase);
+        line.setSettlementAmount(settlementAmount);
+
+        BigDecimal calcBaseValue = unitPrice.multiply(qtd).setScale(10, RoundingMode.DOWN);
+
+//        BigDecimal taxContribuition = FinanceUtils.getValorIVABigDecimal(qtd, taxPerc, unitPriceBase, discount);
+        BigDecimal taxContribuition = calcBaseValue.multiply(
+                taxPerc.divide(BigDecimal.valueOf(100)).setScale(2, RoundingMode.UP)
+        );
+// Lógica de Notas de Crédito vs Débito
         if (venda.getFkDocumento().getPkDocumento() == DVML.DOC_NOTA_CREDITO_NC) {
             ReferenceInfoDTO ref = new ReferenceInfoDTO();
+
             ref.setReferenceItemLineNo(String.valueOf(lineNo));
             ref.setReference(venda.getRefCodFact());
             ref.setReason(venda.getObs());
             line.setReferenceInfoDTOs(Collections.singletonList(ref));
-            line.setDebitAmount(base);
-            line.setCreditAmount(BigDecimal.ONE);
+            BigDecimal debitAmount = unitPrice.multiply(qtd).setScale(2, RoundingMode.DOWN);
+            line.setDebitAmount(debitAmount);
+            line.setCreditAmount(BigDecimal.ZERO);
         } else {
-            line.setDebitAmount(BigDecimal.ONE);
-            line.setCreditAmount(base);
+            line.setDebitAmount(BigDecimal.ZERO);
+            BigDecimal creditAmount = unitPrice.multiply(qtd).setScale(2, RoundingMode.DOWN);
+            line.setCreditAmount(creditAmount);
         }
 
         if (taxPerc.doubleValue() > 0) {
@@ -97,7 +183,7 @@ public class FacturaElectronicaUtil {
             tax.setTaxCountryRegion("AO");
             tax.setTaxCode("NOR");
             tax.setTaxPercentage(taxPerc.toString());
-            tax.setTaxContribution(iva.doubleValue());
+            tax.setTaxContribution(taxContribuition.doubleValue());
             line.setTaxes(Collections.singletonList(tax));
         }
 
@@ -127,7 +213,7 @@ public class FacturaElectronicaUtil {
         for (LineDTO l : lines) {
             // Nota: Você pode precisar adicionar esses getters no seu DTO ou calcular aqui
             // Usando a lógica que já estava no loop original:
-            totalBase = totalBase.add(l.getCreditAmount().equals(BigDecimal.ONE) ? l.getDebitAmount() : l.getCreditAmount());
+            totalBase = totalBase.add(l.getCreditAmount().equals(BigDecimal.ZERO) ? l.getDebitAmount() : l.getCreditAmount());
             if (l.getTaxes() != null && !l.getTaxes().isEmpty()) {
                 totalIva = totalIva.add(BigDecimal.valueOf(l.getTaxes().get(0).getTaxContribution()));
             }
@@ -147,6 +233,65 @@ public class FacturaElectronicaUtil {
         return enviarParaAPI(inst.getNif(), docDTO, venda);
     }
 
+    private static LineDTO mapItemVendaToDTOMesas(
+            int index,
+            TbItemVenda item,
+            PrecosController ctrl,
+            TbVenda venda) {
+
+        TbPreco preco = (TbPreco) ctrl.findById(
+                item.getFkPreco().getPkPreco()
+        );
+
+        String codigo = String.valueOf(
+                item.getCodigoProduto().getCodigo()
+        );
+
+        //=========================================
+        // Garantir descrição para a AGT
+        //=========================================
+        String descricao = item.getDesignacaoItem();
+
+        if (descricao == null || descricao.trim().isEmpty()) {
+
+            if (item.getCodigoProduto() != null) {
+
+                descricao = item.getCodigoProduto()
+                        .getDesignacao();
+
+            }
+        }
+
+        if (descricao == null || descricao.trim().isEmpty()) {
+
+            descricao = "Produto sem descrição";
+
+        }
+
+        System.out.println(
+                "Produto AGT: "
+                + codigo
+                + " - "
+                + descricao
+        );
+
+        return construirLineDTO(
+                index + 1,
+                codigo,
+                descricao,
+                preco.getPrecoVenda(),
+                BigDecimal.valueOf(item.getQuantidade()),
+                BigDecimal.valueOf(item.getDesconto()),
+                BigDecimal.valueOf(item.getValorIva()),
+//                item.getValorIva(),
+                venda
+        );
+    }
+    
+    
+    
+    
+
     private static boolean enviarParaAPI(String nif, DocumentDTO doc, TbVenda venda) {
         try {
             Map<String, Object> payloadMap = PayloadFactory.criarPayloadCriarDocumento(nif, Collections.singletonList(doc));
@@ -154,6 +299,7 @@ public class FacturaElectronicaUtil {
             venda.setSubmissionUUID(uuid);
 
             String json = JsonUtil.toJson(payloadMap);
+            System.out.println("JASON: "+json);
             String auth = BasicAuthUtil.gerarAuthorizationHeader(FEConfig.getUsername(), FEConfig.getPassword());
 
             String response = HttpClientUtil.postJson(FEConfig.getEndpointRegistrarFactura(), json, auth);

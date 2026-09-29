@@ -2551,13 +2551,15 @@ public class MenuPrincipalLavandariaVisao extends javax.swing.JFrame
         if ( !armazem.equalsIgnoreCase( "Multi_armazem" ) )
         {
             jmTransferenciaArmazem.setVisible( false );
+            jmVenda.setVisible( true );
             jmFrontOffice.setVisible( false );
 
         }
         else
         {
-            jmTransferenciaArmazem.setVisible( true );
+            jmTransferenciaArmazem.setVisible( false );
             jmFrontOffice.setVisible( true );
+            jmVenda.setVisible( false );
 
         }
     }

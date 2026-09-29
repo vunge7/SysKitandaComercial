@@ -15,6 +15,7 @@ import entity.TbCliente;
 import entity.TbVenda;
 import entity.TbUsuario;
 import java.math.BigDecimal;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -1014,6 +1015,8 @@ public class VendasController implements EntidadeFactory {
 
         return venda;
     }
+    
+    
 
     public TbVenda findByCodFactAndDoc(String cod_fact, int pk_documento) {
 
@@ -1925,6 +1928,8 @@ public class VendasController implements EntidadeFactory {
 
         return tipo + " " + serie + "/" + proximo;
     }
+    
+    
 
     public static void main(String[] args) {
         BDConexao conexao = BDConexao.getInstancia();
@@ -1935,6 +1940,132 @@ public class VendasController implements EntidadeFactory {
         } catch (Exception e) {
         }
 
+    }
+    
+    public Integer salvar1(Object object, Connection conecction) {
+
+        TbVenda venda = (TbVenda) object;
+
+        String sql = "INSERT INTO tb_venda ("
+                + "dataVenda, total_venda, performance, credito, valor_entregue, troco, hora, nome_cliente, status_eliminado, desconto_total, "
+                + "total_iva, total_geral, cod_fact, assinatura, hash_cod, obs, ref_cod_fact, total_por_extenso, desconto_comercial, desconto_financeiro, "
+                + "total_incidencia, local_carga, local_descarga, codigo_usuario, codigo_cliente, idArmazemFK, fk_documento, fk_ano_economico, fk_cambio, dataVencimento, "
+                + "cliente_nif, total_incidencia_isento, ref_data_fact, nome_consumidor_final, referencia, matricula, modelo, num_chassi, num_motor, kilometro, "
+                + "nome_motorista, marca_carro, cor_carro, n_doc_motorista, gorjeta, requestID, estado, submissionUUID"
+                + ") VALUES ("
+                + "?,?,?,?,?,?,?,?,?,?"
+                + ",?,?,?,?,?,?,?,?,?,?"
+                + ",?,?,?,?,?,?,?,?,?,?"
+                + ",?,?,?,?,?,?,?,?,?,?"
+                + ",?,?,?,?,?, ?, ?, ?"
+                + ")";
+
+        try (PreparedStatement ps = conecction.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            int i = 1;
+
+            // Primeiro Bloco
+            ps.setTimestamp(i++, new java.sql.Timestamp(venda.getDataVenda().getTime()));
+            ps.setBigDecimal(i++, venda.getTotalVenda());
+            ps.setString(i++, venda.getPerformance());
+            ps.setString(i++, venda.getCredito());
+            ps.setBigDecimal(i++, venda.getValorEntregue());
+            ps.setBigDecimal(i++, venda.getTroco());
+            ps.setString(i++, MetodosUtil.getHoraBanco(venda.getHora()));
+            ps.setString(i++, venda.getNomeCliente());
+            ps.setString(i++, venda.getStatusEliminado());
+            ps.setBigDecimal(i++, venda.getDescontoTotal());
+
+            // Segundo Bloco
+            ps.setBigDecimal(i++, venda.getTotalIva());
+            ps.setBigDecimal(i++, venda.getTotalGeral());
+            ps.setString(i++, venda.getCodFact());
+            ps.setString(i++, venda.getAssinatura());
+            ps.setString(i++, venda.getHashCod());
+            ps.setString(i++, venda.getObs());
+            ps.setString(i++, venda.getRefCodFact());
+            ps.setString(i++, venda.getTotalPorExtenso());
+            ps.setBigDecimal(i++, venda.getDescontoComercial());
+            ps.setBigDecimal(i++, venda.getDescontoFinanceiro());
+
+            // Terceiro Bloco
+            ps.setBigDecimal(i++, venda.getTotalIncidencia());
+            ps.setString(i++, venda.getLocalCarga());
+            ps.setString(i++, venda.getLocalDescarga());
+            ps.setInt(i++, venda.getCodigoUsuario().getCodigo());
+            ps.setInt(i++, venda.getCodigoCliente().getCodigo());
+            ps.setInt(i++, venda.getIdArmazemFK().getCodigo());
+            ps.setInt(i++, venda.getFkDocumento().getPkDocumento());
+            ps.setInt(i++, venda.getFkAnoEconomico().getPkAnoEconomico());
+            ps.setInt(i++, venda.getFkCambio().getPkCambio());
+            ps.setDate(i++, venda.getDataVencimento() != null ? new java.sql.Date(venda.getDataVencimento().getTime()) : null);
+
+            // Quarto Bloco
+            ps.setString(i++, venda.getClienteNif());
+            ps.setBigDecimal(i++, venda.getTotalIncidenciaIsento());
+            ps.setTimestamp(i++, venda.getRefDataFact() != null ? new java.sql.Timestamp(venda.getRefDataFact().getTime()) : null);
+            ps.setString(i++, venda.getNomeConsumidorFinal());
+            ps.setString(i++, venda.getReferencia());
+            ps.setString(i++, venda.getMatricula());
+            ps.setString(i++, venda.getModelo());
+            ps.setString(i++, venda.getNumChassi());
+            ps.setString(i++, venda.getNumMotor());
+            ps.setString(i++, venda.getKilometro());
+
+            // Quinto Bloco
+            ps.setString(i++, venda.getNomeMotorista());
+            ps.setString(i++, venda.getMarcaCarro());
+            ps.setString(i++, venda.getCorCarro());
+            ps.setString(i++, venda.getNDocMotorista());
+            ps.setBigDecimal(i++, venda.getGorjeta());
+            ps.setString(i++, venda.getRequestID());
+            ps.setString(i++, venda.getEstado());
+            ps.setString(i++, venda.getSubmissionUUID());
+
+            ps.executeUpdate();
+            System.out.println("##Entrou sim em salvar1()");
+//            new Exception("TRACE").printStackTrace();
+
+            System.out.println("HashCode Venda: " + System.identityHashCode(venda));
+            System.out.println("CodFact: " + venda.getCodFact());
+            // Recuperar ID gerado
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    int generatedId = rs.getInt(1);
+                    venda.setCodigo(generatedId); // opcional
+                    return generatedId;
+                } else {
+                    throw new SQLException("Falha ao obter o ID gerado para a venda.");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    public boolean actualizarEstadoFE(TbVenda venda, Connection connection) {
+
+        String sql = "UPDATE tb_venda "
+                + "SET requestID = ?, "
+                + "    estado = ?, "
+                + "    submissionUUID = ? "
+                + "WHERE codigo = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            int i = 1;
+
+            ps.setString(i++, venda.getRequestID());
+            ps.setString(i++, venda.getEstado());
+            ps.setString(i++, venda.getSubmissionUUID());
+            ps.setInt(i++, venda.getCodigo());
+
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public boolean updateFieldsFE(String submissionUUID, String requesID, String estado, int codigo) {
