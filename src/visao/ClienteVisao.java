@@ -6,6 +6,7 @@ package visao;
 
 import comercial.controller.ClientesController;
 import comercial.controller.ConfiguracaoMesComecoController;
+import comercial.controller.DocumentosController;
 import comercial.controller.FamiliasController;
 import comercial.controller.MesRhController;
 import comercial.controller.ProdutosController;
@@ -17,6 +18,8 @@ import entity.TbProduto;
 import entity.TbTipoProduto;
 import java.awt.Color;
 import java.awt.Frame;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -32,6 +35,7 @@ import javax.swing.table.DefaultTableModel;
 import static kitanda.util.CfMethodsSwing.resizeJButtonIcon;
 import modelo.TipoClienteModelo;
 import util.BDConexao;
+import util.ClientePesquisa;
 import util.DVML;
 import util.MetodosUtil;
 import static util.MetodosUtil.normalizarEndereco;
@@ -41,8 +45,7 @@ import static util.MetodosUtil.normalizarNif;
  *
  * @author DMartinho Luis
  */
-public class ClienteVisao extends javax.swing.JDialog
-{
+public class ClienteVisao extends javax.swing.JDialog {
 
     /**
      * Creates new form UsuarioVisao
@@ -60,51 +63,128 @@ public class ClienteVisao extends javax.swing.JDialog
     private Frame parent;
     private int codigo = 0;
 
-    public ClienteVisao( java.awt.Frame parent, boolean modal, BDConexao conexao )
-    {
+    public ClienteVisao(java.awt.Frame parent, boolean modal, BDConexao conexao) {
         //this.parent =  parent1;
 
-        super( parent, modal );
+        super(parent, modal);
 
         this.parent = parent;
         this.conexao = conexao;
-        tipoClienteController = new TipoClienteController( conexao );
-        clientesController = new ClientesController( conexao );
-        produtosController = new ProdutosController( conexao );
-        tipoProdutoController = new TipoProdutosController( conexao );
-        mesRhController = new MesRhController( conexao.getConnectionAtiva() );
-        familiaController = new FamiliasController( conexao );
-        configuracaoMesComecoController = new ConfiguracaoMesComecoController( conexao.getConnectionAtiva() );
+        tipoClienteController = new TipoClienteController(conexao);
+        clientesController = new ClientesController(conexao);
+        produtosController = new ProdutosController(conexao);
+        tipoProdutoController = new TipoProdutosController(conexao);
+        mesRhController = new MesRhController(conexao.getConnectionAtiva());
+        familiaController = new FamiliasController(conexao);
+        configuracaoMesComecoController = new ConfiguracaoMesComecoController(conexao.getConnectionAtiva());
 //        tipoClienteController = new ProdutosController( conexao );
 
         initComponents();
         postInitComponents();
         confLabel();
-        setLocationRelativeTo( null );
+        setLocationRelativeTo(null);
 //        txtInicias.addKeyListener( new TratarEvento() );
 
-        cmbFamilia.setModel( new DefaultComboBoxModel( familiaController.getVector() ) );
-        cmbFamilia.setSelectedIndex( 1 );
-        cmbFamilia.setEnabled( false );
-        cmbSubFamilia.setModel( new DefaultComboBoxModel( tipoProdutoController.getVector() ) );
-        cmbProduto.setModel( new DefaultComboBoxModel( produtosController.getVector() ) );
-        cmbMesComeco.setModel( new DefaultComboBoxModel( ( Vector ) mesRhController.getVector() ) );
+        cmbFamilia.setModel(new DefaultComboBoxModel(familiaController.getVector()));
+        cmbFamilia.setSelectedIndex(1);
+        cmbFamilia.setEnabled(false);
+        cmbSubFamilia.setModel(new DefaultComboBoxModel(tipoProdutoController.getVector()));
+        cmbProduto.setModel(new DefaultComboBoxModel(produtosController.getVector()));
+        cmbMesComeco.setModel(new DefaultComboBoxModel((Vector) mesRhController.getVector()));
 
-        try
-        {
-            cmbSubFamilia.setModel( new DefaultComboBoxModel( tipoProdutoController.getVectorByIdFamilia( getIdFamilia() ) ) );
-            cmbProduto.setModel( new DefaultComboBoxModel( ( produtosController.getVectorByIdTipoProduto( getIdTipoProduto() ) ) ) );
-        }
-        catch ( Exception e )
-        {
+        try {
+            cmbSubFamilia.setModel(new DefaultComboBoxModel(tipoProdutoController.getVectorByIdFamilia(getIdFamilia())));
+            cmbProduto.setModel(new DefaultComboBoxModel((produtosController.getVectorByIdTipoProduto(getIdTipoProduto()))));
+        } catch (Exception e) {
         }
 
         txtNomeCliente.requestFocus();
 
+        btnAlterar.setEnabled(false);
+        actualizar();
+
+        txtInicias.addKeyListener(new TratarEvento());
+
     }
 
-    public void confLabel()
-    {
+    private void actualizar() {
+
+        adicionar_tabela(clientesController.listarTodos());
+    }
+
+    class TratarEvento implements KeyListener {
+
+        String prefixo = "";
+
+        public void keyPressed(KeyEvent evt) {
+
+            if (evt.getKeyCode() != KeyEvent.VK_BACK_SPACE && evt.getKeyCode() != KeyEvent.VK_ENTER) {
+                char key = evt.getKeyChar();
+                prefixo = txtInicias.getText().trim() + key;
+                adicionar(clientesController.getClientesLikeNomePesq1(prefixo));
+
+            } else if (evt.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+                try {
+
+                    prefixo = prefixo.toString().trim().substring(0, prefixo.length() - 1);
+                    adicionar(clientesController.getClientesLikeNomePesq1(prefixo));
+
+                } catch (Exception e) {
+
+                }
+
+            }
+        }
+
+        public void keyReleased(KeyEvent evt) {
+        }
+
+        public void keyTyped(KeyEvent evt) {
+        }
+
+    }
+
+    private void adicionar(List<ClientePesquisa> lista) {
+
+        DefaultTableModel modelo
+                = (DefaultTableModel) jTable1.getModel();
+
+        modelo.setRowCount(0);
+
+        for (ClientePesquisa cliente : lista) {
+
+            modelo.addRow(new Object[]{
+                cliente.getCodigo(),
+                cliente.getNome(),
+                cliente.getMorada(),
+                cliente.getNif(),
+                cliente.getTelefone(),
+                cliente.getEmail(),
+                cliente.getPercentagem_desconto()
+            });
+        }
+    }
+
+    private void adicionar_tabela(List<TbCliente> entidade) {
+
+        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        modelo.setRowCount(0);
+        for (int i = 0; i < entidade.size(); i++) {
+            modelo.addRow(new Object[]{
+                entidade.get(i).getCodigo(),
+                entidade.get(i).getNome(),
+                entidade.get(i).getMorada(),
+                entidade.get(i).getNif(),
+                entidade.get(i).getTelefone(),
+                entidade.get(i).getEmail(),
+                entidade.get(i).getPercentagemDesconto()
+
+            });
+        }
+
+    }
+
+    public void confLabel() {
 
     }
 
@@ -113,10 +193,9 @@ public class ClienteVisao extends javax.swing.JDialog
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
      */
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents()
-    {
+    private void initComponents() {
 
         jPanel2 = new javax.swing.JPanel();
         btnSalvar = new javax.swing.JButton();
@@ -138,7 +217,13 @@ public class ClienteVisao extends javax.swing.JDialog
         jLabel4 = new javax.swing.JLabel();
         txtEmail = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
+        txtDesconto = new javax.swing.JTextField();
         cmbPais = new javax.swing.JComboBox<>();
+        jLabel6 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        txtInicias = new javax.swing.JTextField();
+        lbTipoProduto1 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         cmbFamilia = new javax.swing.JComboBox<>();
         cmbSubFamilia = new javax.swing.JComboBox();
@@ -170,10 +255,8 @@ public class ClienteVisao extends javax.swing.JDialog
         btnSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/salvar_16x16.png"))); // NOI18N
         btnSalvar.setText("Salvar");
         btnSalvar.setAlignmentX(0.5F);
-        btnSalvar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSalvarActionPerformed(evt);
             }
         });
@@ -181,10 +264,8 @@ public class ClienteVisao extends javax.swing.JDialog
         btnAlterar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/alterar_16x16.png"))); // NOI18N
         btnAlterar.setText("Alterar");
         btnAlterar.setAlignmentX(0.5F);
-        btnAlterar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnAlterar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAlterarActionPerformed(evt);
             }
         });
@@ -192,10 +273,8 @@ public class ClienteVisao extends javax.swing.JDialog
         btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Logout 32x32.png"))); // NOI18N
         btnCancelar.setText("Sair");
         btnCancelar.setAlignmentX(0.5F);
-        btnCancelar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelarActionPerformed(evt);
             }
         });
@@ -203,10 +282,8 @@ public class ClienteVisao extends javax.swing.JDialog
         btnEliminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/eliminar_16x16.png"))); // NOI18N
         btnEliminar.setText("Eliminar");
         btnEliminar.setAlignmentX(0.5F);
-        btnEliminar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEliminarActionPerformed(evt);
             }
         });
@@ -215,10 +292,8 @@ public class ClienteVisao extends javax.swing.JDialog
         btnNovo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/icons8_add_64px.png"))); // NOI18N
         btnNovo.setText("Novo");
         btnNovo.setAlignmentX(0.5F);
-        btnNovo.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnNovo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnNovoActionPerformed(evt);
             }
         });
@@ -257,29 +332,25 @@ public class ClienteVisao extends javax.swing.JDialog
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 15), new java.awt.Color(51, 153, 0))); // NOI18N
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 12), new java.awt.Color(51, 153, 0))); // NOI18N
         jPanel1.setFont(new java.awt.Font("Showcard Gothic", 0, 24)); // NOI18N
 
         lbTipoProduto.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         lbTipoProduto.setText("Nome do Cliente:");
 
         txtNomeCliente.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtNomeCliente.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtNomeCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtNomeClienteActionPerformed(evt);
             }
         });
 
         jLabel1.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
-        jLabel1.setText("Endereço:");
+        jLabel1.setText("Pais:");
 
         txtEndereco.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtEndereco.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtEndereco.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtEnderecoActionPerformed(evt);
             }
         });
@@ -288,10 +359,8 @@ public class ClienteVisao extends javax.swing.JDialog
         jLabel2.setText("Tel:");
 
         txtContactos.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtContactos.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtContactos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtContactosActionPerformed(evt);
             }
         });
@@ -300,10 +369,8 @@ public class ClienteVisao extends javax.swing.JDialog
         jLabel3.setText("Nif:");
 
         txtNif.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtNif.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtNif.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtNifActionPerformed(evt);
             }
         });
@@ -312,18 +379,21 @@ public class ClienteVisao extends javax.swing.JDialog
         jLabel4.setText("Email:");
 
         txtEmail.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtEmail.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtEmail.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtEmailActionPerformed(evt);
             }
         });
 
         jLabel5.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
-        jLabel5.setText("Pais:");
+        jLabel5.setText("Desc. (%):");
+
+        txtDesconto.setText("0");
 
         cmbPais.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--seleccione--", "Afeganistão - AF", "África do Sul - ZA", "Albânia - AL", "Alemanha - DE", "Andorra - AD", "Angola - AO", "Antígua e Barbuda - AG", "Arábia Saudita - SA", "Argélia - DZ", "Argentina - AR", "Arménia - AM", "Austrália - AU", "Áustria - AT", "Azerbaijão - AZ", "Bahamas - BS", "Bangladesh - BD", "Barbados - BB", "Bélgica - BE", "Belize - BZ", "Benim - BJ", "Bielorrússia - BY", "Bolívia - BO", "Bósnia e Herzegovina - BA", "Botswana - BW", "Brasil - BR", "Brunei - BN", "Bulgária - BG", "Burkina Faso - BF", "Burundi - BI", "Butão - BT", "Cabo Verde - CV", "Camarões - CM", "Camboja - KH", "Canadá - CA", "Catar - QA", "Cazaquistão - KZ", "Chade - TD", "Chile - CL", "China - CN", "Chipre - CY", "Colômbia - CO", "Comores - KM", "Congo (Brazzaville) - CG", "Congo (Kinshasa) - CD", "Coreia do Norte - KP", "Coreia do Sul - KR", "Costa do Marfim - CI", "Costa Rica - CR", "Croácia - HR", "Cuba - CU", "Dinamarca - DK", "Djibuti - DJ", "Dominica - DM", "Egito - EG", "El Salvador - SV", "Emirados Árabes Unidos - AE", "Equador - EC", "Eritreia - ER", "Eslováquia - SK", "Eslovénia - SI", "Espanha - ES", "Estados Unidos - US", "Estónia - EE", "Etiópia - ET", "Fiji - FJ", "Filipinas - PH", "Finlândia - FI", "França - FR", "Gabão - GA", "Gâmbia - GM", "Gana - GH", "Geórgia - GE", "Grécia - GR", "Granada - GD", "Guatemala - GT", "Guiné - GN", "Guiné-Bissau - GW", "Guiné Equatorial - GQ", "Guiana - GY", "Haiti - HT", "Honduras - HN", "Hungria - HU", "Iémen - YE", "Ilhas Marshall - MH", "Índia - IN", "Indonésia - ID", "Irão - IR", "Iraque - IQ", "Irlanda - IE", "Islândia - IS", "Israel - IL", "Itália - IT", "Jamaica - JM", "Japão - JP", "Jordânia - JO", "Kuwait - KW", "Laos - LA", "Lesoto - LS", "Letónia - LV", "Líbano - LB", "Libéria - LR", "Líbia - LY", "Liechtenstein - LI", "Lituânia - LT", "Luxemburgo - LU", "Macedónia do Norte - MK", "Madagáscar - MG", "Malásia - MY", "Malawi - MW", "Maldivas - MV", "Mali - ML", "Malta - MT", "Marrocos - MA", "Maurícia - MU", "Mauritânia - MR", "México - MX", "Micronésia - FM", "Moçambique - MZ", "Moldávia - MD", "Mónaco - MC", "Mongólia - MN", "Montenegro - ME", "Myanmar - MM", "Namíbia - NA", "Nauru - NR", "Nepal - NP", "Nicarágua - NI", "Níger - NE", "Nigéria - NG", "Noruega - NO", "Nova Zelândia - NZ", "Omã - OM", "Países Baixos - NL", "Paquistão - PK", "Palau - PW", "Panamá - PA", "Papua-Nova Guiné - PG", "Paraguai - PY", "Peru - PE", "Polónia - PL", "Portugal - PT", "Quénia - KE", "Quirguistão - KG", "Reino Unido - GB", "República Centro-Africana - CF", "República Checa - CZ", "República Dominicana - DO", "Roménia - RO", "Ruanda - RW", "Rússia - RU", "Salvador - SV", "Samoa - WS", "Santa Lúcia - LC", "São Tomé e Príncipe - ST", "Senegal - SN", "Serra Leoa - SL", "Sérvia - RS", "Singapura - SG", "Síria - SY", "Somália - SO", "Sri Lanka - LK", "Suazilândia (Eswatini) - SZ", "Sudão - SD", "Sudão do Sul - SS", "Suécia - SE", "Suíça - CH", "Suriname - SR", "Tailândia - TH", "Taiwan - TW", "Tanzânia - TZ", "Timor-Leste - TL", "Togo - TG", "Tonga - TO", "Trindade e Tobago - TT", "Tunísia - TN", "Turquia - TR", "Ucrânia - UA", "Uganda - UG", "Uruguai - UY", "Uzbequistão - UZ", "Vanuatu - VU", "Vaticano - VA", "Venezuela - VE", "Vietname - VN", "Zâmbia - ZM", "Zimbabué - ZW", " " }));
+
+        jLabel6.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
+        jLabel6.setText("Endereço:");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -333,31 +403,35 @@ public class ClienteVisao extends javax.swing.JDialog
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(lbTipoProduto, javax.swing.GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel3))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lbTipoProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                    .addComponent(txtNif, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(41, 41, 41)
+                                    .addComponent(txtContactos, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(txtNomeCliente))
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(txtNif, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(txtContactos, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(txtNomeCliente)
-                            .addComponent(txtEndereco)))
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(cmbPais, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(0, 39, Short.MAX_VALUE))
+                                .addComponent(cmbPais, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtEndereco, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtDesconto, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 19, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -368,9 +442,12 @@ public class ClienteVisao extends javax.swing.JDialog
                     .addComponent(lbTipoProduto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
-                        .addComponent(jLabel1)
-                        .addGap(17, 17, 17))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(cmbPais, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel6))
+                        .addGap(15, 15, 15))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtEndereco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -382,42 +459,86 @@ public class ClienteVisao extends javax.swing.JDialog
                         .addComponent(txtContactos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(4, 4, 4)))
-                .addGap(10, 10, 10)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cmbPais, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(117, 117, 117))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(4, 4, 4)))
+                    .addComponent(txtDesconto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
+
+        jTable1.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "N.º", "Cliente", "Endereço", "NIF", "Telefone", "Email", "Percentagem"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(jTable1);
+
+        lbTipoProduto1.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
+        lbTipoProduto1.setText("Iniciais nome:");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(12, 12, 12)
+                .addComponent(lbTipoProduto1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtInicias, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(542, Short.MAX_VALUE))
+            .addGroup(jPanel3Layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(122, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel3Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jScrollPane2)
+                    .addContainerGap()))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(15, 15, 15)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(44, Short.MAX_VALUE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtInicias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbTipoProduto1))
+                .addContainerGap(188, Short.MAX_VALUE))
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                    .addContainerGap(204, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap()))
         );
 
         jTabbedPane1.addTab("Ficha do Cliente", jPanel3);
 
         cmbFamilia.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        cmbFamilia.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbFamilia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbFamiliaActionPerformed(evt);
             }
         });
@@ -426,10 +547,8 @@ public class ClienteVisao extends javax.swing.JDialog
         cmbSubFamilia.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         cmbSubFamilia.setForeground(new java.awt.Color(0, 0, 51));
         cmbSubFamilia.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cmbSubFamilia.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbSubFamilia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbSubFamiliaActionPerformed(evt);
             }
         });
@@ -438,10 +557,8 @@ public class ClienteVisao extends javax.swing.JDialog
         cmbProduto.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         cmbProduto.setForeground(new java.awt.Color(0, 0, 51));
         cmbProduto.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cmbProduto.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbProduto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbProdutoActionPerformed(evt);
             }
         });
@@ -466,45 +583,35 @@ public class ClienteVisao extends javax.swing.JDialog
         cmbMesComeco.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         cmbMesComeco.setForeground(new java.awt.Color(0, 0, 51));
         cmbMesComeco.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "--Seleccione--" }));
-        cmbMesComeco.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbMesComeco.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbMesComecoActionPerformed(evt);
             }
         });
 
         tabelaServicoMensalidade.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][]
-            {
+            new Object [][] {
 
             },
-            new String []
-            {
+            new String [] {
                 "Cod", "Servico", "Mes Começo", "Duração"
             }
-        )
-        {
-            boolean[] canEdit = new boolean []
-            {
+        ) {
+            boolean[] canEdit = new boolean [] {
                 false, false, false, false
             };
 
-            public boolean isCellEditable(int rowIndex, int columnIndex)
-            {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        tabelaServicoMensalidade.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mouseClicked(java.awt.event.MouseEvent evt)
-            {
+        tabelaServicoMensalidade.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tabelaServicoMensalidadeMouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(tabelaServicoMensalidade);
-        if (tabelaServicoMensalidade.getColumnModel().getColumnCount() > 0)
-        {
+        if (tabelaServicoMensalidade.getColumnModel().getColumnCount() > 0) {
             tabelaServicoMensalidade.getColumnModel().getColumn(0).setMaxWidth(100);
         }
 
@@ -516,28 +623,22 @@ public class ClienteVisao extends javax.swing.JDialog
         cmbDuracao.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         cmbDuracao.setForeground(new java.awt.Color(0, 0, 51));
         cmbDuracao.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "--seleccione--", "01 Mês", "02 Meses", "03 Meses", "04 Meses", "05 Meses", "06 Meses", "07 Meses", "8 Meses", "9 Meses", "10 Meses", "11 Meses", "12 Meses" }));
-        cmbDuracao.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbDuracao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbDuracaoActionPerformed(evt);
             }
         });
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Button-Add-icon.png"))); // NOI18N
-        jButton1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/adicionar.png"))); // NOI18N
-        jButton2.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
@@ -627,19 +728,15 @@ public class ClienteVisao extends javax.swing.JDialog
         lbTipoProduto2.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         lbTipoProduto2.setText("Cod.:");
 
-        txtProcNIF.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtProcNIF.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtProcNIFActionPerformed(evt);
             }
         });
 
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/proucura.png"))); // NOI18N
-        jButton4.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
             }
         });
@@ -647,10 +744,8 @@ public class ClienteVisao extends javax.swing.JDialog
         lbTipoProduto3.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         lbTipoProduto3.setText("NIF:");
 
-        txtNomeCliente2.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtNomeCliente2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtNomeCliente2ActionPerformed(evt);
             }
         });
@@ -756,41 +851,38 @@ public class ClienteVisao extends javax.swing.JDialog
 
     private void txtNifActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtNifActionPerformed
     {//GEN-HEADEREND:event_txtNifActionPerformed
-        txtEmail.requestFocus();
+        txtContactos.requestFocus();
     }//GEN-LAST:event_txtNifActionPerformed
 
     private void txtEmailActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtEmailActionPerformed
     {//GEN-HEADEREND:event_txtEmailActionPerformed
-        txtContactos.requestFocus();
+        procedimento_salvar();
     }//GEN-LAST:event_txtEmailActionPerformed
 
     private void txtContactosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtContactosActionPerformed
     {//GEN-HEADEREND:event_txtContactosActionPerformed
-        procedimento_salvar();
+        txtEmail.requestFocus();
     }//GEN-LAST:event_txtContactosActionPerformed
 
     private void cmbFamiliaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbFamiliaActionPerformed
     {//GEN-HEADEREND:event_cmbFamiliaActionPerformed
 
-        cmbSubFamilia.setModel( new DefaultComboBoxModel( tipoProdutoController.getVectorByIdFamilia( getIdFamilia() ) ) );
-        cmbProduto.setModel( new DefaultComboBoxModel( ( produtosController.getVectorByIdTipoProduto( getIdTipoProduto() ) ) ) );
+        cmbSubFamilia.setModel(new DefaultComboBoxModel(tipoProdutoController.getVectorByIdFamilia(getIdFamilia())));
+        cmbProduto.setModel(new DefaultComboBoxModel((produtosController.getVectorByIdTipoProduto(getIdTipoProduto()))));
     }//GEN-LAST:event_cmbFamiliaActionPerformed
 
     private void cmbSubFamiliaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbSubFamiliaActionPerformed
     {//GEN-HEADEREND:event_cmbSubFamiliaActionPerformed
 
-        cmbProduto.setModel( new DefaultComboBoxModel( ( produtosController.getVectorByIdTipoProduto( getIdTipoProduto() ) ) ) );
+        cmbProduto.setModel(new DefaultComboBoxModel((produtosController.getVectorByIdTipoProduto(getIdTipoProduto()))));
     }//GEN-LAST:event_cmbSubFamiliaActionPerformed
 
     private void cmbProdutoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbProdutoActionPerformed
     {//GEN-HEADEREND:event_cmbProdutoActionPerformed
         // TODO add your handling code here:
-        try
-        {
+        try {
             //  adicionar_preco_quantidade();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
         }
     }//GEN-LAST:event_cmbProdutoActionPerformed
 
@@ -802,14 +894,14 @@ public class ClienteVisao extends javax.swing.JDialog
     private void txtProcNIFActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtProcNIFActionPerformed
     {//GEN-HEADEREND:event_txtProcNIFActionPerformed
         // TODO add your handling code here:
-        try
-        {
-            int cod = Integer.parseInt( txtProcNIF.getText() );
-            clienteGlobal = clientesController.findByCodigo( cod );
-            importarDados( clienteGlobal );
-        }
-        catch ( Exception e )
-        {
+        try {
+
+            int cod = Integer.parseInt(txtProcNIF.getText());
+            clienteGlobal = clientesController.findByCodigo(cod);
+            importarDados(clienteGlobal);
+            btnSalvar.setEnabled(false);
+            btnAlterar.setEnabled(true);
+        } catch (Exception e) {
             limparDadosForm();
         }
 
@@ -818,12 +910,11 @@ public class ClienteVisao extends javax.swing.JDialog
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton4ActionPerformed
     {//GEN-HEADEREND:event_jButton4ActionPerformed
 
-        try
-        {
-            new BuscaClienteVisao( parent, rootPaneCheckingEnabled, clientesController, conexao ).setVisible( true );
-        }
-        catch ( Exception e )
-        {
+        try {
+            new BuscaClienteVisao(parent, rootPaneCheckingEnabled, clientesController, conexao).setVisible(true);
+            btnSalvar.setEnabled(false);
+            btnAlterar.setEnabled(true);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }//GEN-LAST:event_jButton4ActionPerformed
@@ -856,78 +947,125 @@ public class ClienteVisao extends javax.swing.JDialog
         removerServicoMensalidade();
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        // TODO add your handling code here:
+        if (evt.getClickCount() >= 2) {
+
+            btnAlterar.setEnabled(true);
+            btnSalvar.setEnabled(false);
+            setDadosEntidadeSeguradoraModelo();
+
+        }
+    }//GEN-LAST:event_jTable1MouseClicked
+
+    public void setDadosEntidadeSeguradoraModelo() {
+
+        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+
+        int linha = jTable1.getSelectedRow();
+
+        if (linha < 0) {
+            return;
+        }
+
+        txtNomeCliente.setText(String.valueOf(modelo.getValueAt(linha, 1)));
+        txtEndereco.setText(String.valueOf(modelo.getValueAt(linha, 2)));
+        txtNif.setText(String.valueOf(modelo.getValueAt(linha, 3)));
+        txtContactos.setText(String.valueOf(modelo.getValueAt(linha, 4)));
+        txtEmail.setText(String.valueOf(modelo.getValueAt(linha, 5)));
+        txtDesconto.setText(String.valueOf(modelo.getValueAt(linha, 6)));
+
+        Object valorCodigo = modelo.getValueAt(linha, 0);
+
+        if (valorCodigo == null || valorCodigo.toString().trim().isEmpty()
+                || valorCodigo.toString().equalsIgnoreCase("null")) {
+
+            this.codigo = 0;
+
+            JOptionPane.showMessageDialog(
+                    null,
+                    "O código do cliente não está definido.",
+                    "Aviso",
+                    JOptionPane.WARNING_MESSAGE
+            );
+
+            return;
+        }
+
+        this.codigo = Integer.parseInt(valorCodigo.toString().trim());
+    }
+
+//    public void setDadosEntidadeSeguradoraModelo() {
+//
+//        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+//        txtNomeCliente.setText(String.valueOf(modelo.getValueAt(jTable1.getSelectedRow(), 1)));
+//        txtEndereco.setText(String.valueOf(modelo.getValueAt(jTable1.getSelectedRow(), 2)));
+//        txtNif.setText(String.valueOf(modelo.getValueAt(jTable1.getSelectedRow(), 3)));
+//        txtContactos.setText(String.valueOf(modelo.getValueAt(jTable1.getSelectedRow(), 4)));
+//        txtEmail.setText(String.valueOf(modelo.getValueAt(jTable1.getSelectedRow(), 5)));
+//        txtDesconto.setText(String.valueOf(modelo.getValueAt(jTable1.getSelectedRow(), 6)));
+//        this.codigo = Integer.parseInt(String.valueOf(modelo.getValueAt(jTable1.getSelectedRow(), 0)));
+//
+//    }
     /**
      * @param args the command line arguments
      */
-    public static void main( String args[] )
-    {
+    public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        try
-        {
-            for ( javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels() )
-            {
-                if ( "Windows".equals( info.getName() ) )
-                {
-                    javax.swing.UIManager.setLookAndFeel( info.getClassName() );
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Windows".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(ClienteVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(ClienteVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(ClienteVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(ClienteVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        catch ( ClassNotFoundException ex )
-        {
-            java.util.logging.Logger.getLogger( ClienteVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }
-        catch ( InstantiationException ex )
-        {
-            java.util.logging.Logger.getLogger( ClienteVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }
-        catch ( IllegalAccessException ex )
-        {
-            java.util.logging.Logger.getLogger( ClienteVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }
-        catch ( javax.swing.UnsupportedLookAndFeelException ex )
-        {
-            java.util.logging.Logger.getLogger( ClienteVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater( new Runnable()
-        {
-            public void run()
-            {
-                ClienteVisao dialog = new ClienteVisao( new javax.swing.JFrame(), true, BDConexao.getInstancia() );
-                dialog.addWindowListener( new java.awt.event.WindowAdapter()
-                {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                ClienteVisao dialog = new ClienteVisao(new javax.swing.JFrame(), true, BDConexao.getInstancia());
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
-                    public void windowClosing( java.awt.event.WindowEvent e )
-                    {
-                        System.exit( 0 );
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
                     }
-                } );
-                dialog.setVisible( true );
+                });
+                dialog.setVisible(true);
             }
-        } );
+        });
     }
 
     /* CRIACAO DO GETS  */
-    public String getTipoCliente()
-    {
+    public String getTipoCliente() {
         return txtNomeCliente.getText();
     }
 
-    public String getMorada()
-    {
+    public String getMorada() {
         return txtEndereco.getText();
     }
 
-    public String getTelefone()
-    {
+    public String getTelefone() {
         return txtContactos.getText();
     }
 
@@ -944,49 +1082,42 @@ public class ClienteVisao extends javax.swing.JDialog
      
      */
  /*VALIDACOES */
-    public void limpar()
-    {
+    public void limpar() {
 
-        txtNomeCliente.setText( "" );
-        txtEndereco.setText( "" );
-        txtContactos.setText( "" );
-        txtNif.setText( "" );
-        txtEmail.setText( "" );
+        txtNomeCliente.setText("");
+        txtEndereco.setText("");
+        txtContactos.setText("");
+        txtNif.setText("");
+        txtEmail.setText("");
 
 //        txtInicias.setText( "" );
     }
 
-    public boolean campos_invalidos()
-    {
+    public boolean campos_invalidos() {
         Color backGround = Color.WHITE;
         Color foreGround = Color.BLACK;
         Color caretColor = Color.BLACK;
 
-        if ( getTipoCliente().equals( "" ) )
-        {
-            txtNomeCliente.setBackground( backGround );
-            txtNomeCliente.setForeground( foreGround );
-            txtNomeCliente.setCaretColor( caretColor );
-            JOptionPane.showMessageDialog( null, "Pf. Preêncha o campo Nome: " );
+        if (getTipoCliente().equals("")) {
+            txtNomeCliente.setBackground(backGround);
+            txtNomeCliente.setForeground(foreGround);
+            txtNomeCliente.setCaretColor(caretColor);
+            JOptionPane.showMessageDialog(null, "Pf. Preêncha o campo Nome: ");
             return true;
-        }
-        else if ( getMorada().equals( "" ) )
-        {
+        } else if (getMorada().equals("")) {
 
-            txtEndereco.setBackground( backGround );
-            txtEndereco.setForeground( foreGround );
-            txtEndereco.setCaretColor( caretColor );
-            JOptionPane.showMessageDialog( null, "Pf. Preêncha o campo Morada: " );
+            txtEndereco.setBackground(backGround);
+            txtEndereco.setForeground(foreGround);
+            txtEndereco.setCaretColor(caretColor);
+            JOptionPane.showMessageDialog(null, "Pf. Preêncha o campo Morada: ");
             return true;
 
-        }
-        else if ( getTelefone().equals( "" ) )
-        {
+        } else if (getTelefone().equals("")) {
 
-            txtContactos.setBackground( backGround );
-            txtContactos.setForeground( foreGround );
-            txtContactos.setCaretColor( caretColor );
-            JOptionPane.showMessageDialog( null, "Pf. Preêncha o campo Telefone: " );
+            txtContactos.setBackground(backGround);
+            txtContactos.setForeground(foreGround);
+            txtContactos.setCaretColor(caretColor);
+            JOptionPane.showMessageDialog(null, "Pf. Preêncha o campo Telefone: ");
             return true;
 
         }
@@ -995,34 +1126,24 @@ public class ClienteVisao extends javax.swing.JDialog
     }
 
 //    int codigo, String nome, String morada, String telefone
-    public void operacao( int operacao, String nomeCerto, String nomeErro ) throws SQLException
-    {
+    public void operacao(int operacao, String nomeCerto, String nomeErro) throws SQLException {
         //(int codigo, String nome, String telefone, String email, String site, String enderreco)
-        tipoClienteModelo = new TipoClienteModelo( codigo, getTipoCliente(), getMorada(), getTelefone() );
-        if ( operacao != 3 )
-        {
+        tipoClienteModelo = new TipoClienteModelo(codigo, getTipoCliente(), getMorada(), getTelefone());
+        if (operacao != 3) {
 
-            if ( tipoClienteController.operacao( operacao, tipoClienteModelo ) )
-            {
-                JOptionPane.showMessageDialog( null, "DADOS   " + nomeCerto + " COM SUCESSO NA BD!..." );
+            if (tipoClienteController.operacao(operacao, tipoClienteModelo)) {
+                JOptionPane.showMessageDialog(null, "DADOS   " + nomeCerto + " COM SUCESSO NA BD!...");
                 limpar();
-            }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "ERRO AO " + nomeErro + "NA BD!...", "ERRO", JOptionPane.ERROR_MESSAGE );
+            } else {
+                JOptionPane.showMessageDialog(null, "ERRO AO " + nomeErro + "NA BD!...", "ERRO", JOptionPane.ERROR_MESSAGE);
             }
 
-        }
-        else
-        {
-            if ( tipoClienteController.operacao( operacao, tipoClienteModelo ) )
-            {
-                JOptionPane.showMessageDialog( null, "DADOS   " + nomeCerto + " COM SUCESSO NA BD!..." );
+        } else {
+            if (tipoClienteController.operacao(operacao, tipoClienteModelo)) {
+                JOptionPane.showMessageDialog(null, "DADOS   " + nomeCerto + " COM SUCESSO NA BD!...");
                 limpar();
-            }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "ERRO AO " + nomeErro + "NA BD!...", "ERRO", JOptionPane.ERROR_MESSAGE );
+            } else {
+                JOptionPane.showMessageDialog(null, "ERRO AO " + nomeErro + "NA BD!...", "ERRO", JOptionPane.ERROR_MESSAGE);
             }
         }
 
@@ -1050,140 +1171,130 @@ public class ClienteVisao extends javax.swing.JDialog
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTable jTable1;
     private javax.swing.JLabel lbCategoria;
     private javax.swing.JLabel lbCategoria1;
     private javax.swing.JLabel lbProduto;
     private javax.swing.JLabel lbProduto1;
     private javax.swing.JLabel lbProduto2;
     private javax.swing.JLabel lbTipoProduto;
+    private javax.swing.JLabel lbTipoProduto1;
     private javax.swing.JLabel lbTipoProduto2;
     private javax.swing.JLabel lbTipoProduto3;
     private static javax.swing.JTable tabelaServicoMensalidade;
     public static javax.swing.JTextField txtContactos;
+    private static javax.swing.JTextField txtDesconto;
     public static javax.swing.JTextField txtEmail;
     public static javax.swing.JTextField txtEndereco;
+    private javax.swing.JTextField txtInicias;
     public static javax.swing.JTextField txtNif;
     public static javax.swing.JTextField txtNomeCliente;
     private javax.swing.JTextField txtNomeCliente2;
     private javax.swing.JTextField txtProcNIF;
     // End of variables declaration//GEN-END:variables
 
-    private void procedimento_salvar()
-    {
+    private void procedimento_salvar() {
 
-        try
-        {
-            if ( validar() )
-            {
-                if ( !clientesController.existeClienteNome( txtNomeCliente.getText(), BDConexao.getConexao() ) )
-                {
+        BDConexao conexaoTransaction = BDConexao.getInstancia();
+        DocumentosController.start(conexaoTransaction);
+        clientesController = new ClientesController(conexaoTransaction);
+        try {
+            if (validar()) {
 
-                    if ( !clientesController.existeClienteNIF( txtNif.getText(), BDConexao.getConexao() ) )
-                    {
+                if (!clientesController.existeClienteNome(txtNomeCliente.getText(), BDConexao.getConexao())) {
+
+                    if (!clientesController.existeClienteNIF(txtNif.getText(), BDConexao.getConexao())) {
                         this.clienteGlobal = new TbCliente();
                         setDados();
-                        try
-                        {
-                            clientesController.salvar( clienteGlobal );
+                        try {
+                            clientesController.salvar(clienteGlobal);
+                            DocumentosController.commit(conexaoTransaction);
+                            actualizar();
                             limpar();
                             scrolltable();
-                            btnNovo.setEnabled( true );
-                            JOptionPane.showMessageDialog( null, "Cliente salvo com sucesso!...", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
+                            btnNovo.setEnabled(true);
+                            JOptionPane.showMessageDialog(null, "Cliente salvo com sucesso!...", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE);
                             txtNomeCliente.requestFocus();
+                            btnSalvar.setEnabled(true);
+                            btnAlterar.setEnabled(false);
 
-                            if ( !Objects.isNull( NovaGestaoPedidosVisao.cmbCliente ) )
-                            {
-                                NovaGestaoPedidosVisao.cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );
-                                NovaGestaoPedidosVisao.cmbCliente.setSelectedItem( clienteGlobal.getNome() );
-                                dispose();
-                            }
-                            if ( !Objects.isNull( FormVendaResponsivaVisaoTop.cmbCliente ) )
-                            {
-                                FormVendaResponsivaVisaoTop.cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );
-                                FormVendaResponsivaVisaoTop.cmbCliente.setSelectedItem( clienteGlobal.getNome() );
-                                dispose();
-                            }
-                            if ( !Objects.isNull( RecolhaPedidosVisao.cmbCliente ) )
-                            {
-                                RecolhaPedidosVisao.cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );
-                                RecolhaPedidosVisao.cmbCliente.setSelectedItem( clienteGlobal.getNome() );
-                                dispose();
-                            }
-                            if ( !Objects.isNull( VendaPOSVisao.cmbCliente ) )
-                            {
-                                VendaPOSVisao.cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );
-                                VendaPOSVisao.cmbCliente.setSelectedItem( clienteGlobal.getNome() );
-                                dispose();
-                            }
-                            if ( !Objects.isNull( VendasPraticasVisao.cmbCliente ) )
-                            {
-                                VendasPraticasVisao.cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );
-                                VendasPraticasVisao.cmbCliente.setSelectedItem( clienteGlobal.getNome() );
-                                dispose();
-                            }
-
-                        }
-                        catch ( Exception e )
-                        {
+//                            if (!Objects.isNull(NovaGestaoPedidosVisao.cmbCliente)) {
+//                                NovaGestaoPedidosVisao.cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVector()));
+//                                NovaGestaoPedidosVisao.cmbCliente.setSelectedItem(clienteGlobal.getNome());
+//                                dispose();
+//                            }
+//                            if (!Objects.isNull(FormVendaResponsivaVisaoTop.cmbCliente)) {
+//                                FormVendaResponsivaVisaoTop.cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVector()));
+//                                FormVendaResponsivaVisaoTop.cmbCliente.setSelectedItem(clienteGlobal.getNome());
+//                                dispose();
+//                            }
+//                            if (!Objects.isNull(RecolhaPedidosVisao.cmbCliente)) {
+//                                RecolhaPedidosVisao.cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVector()));
+//                                RecolhaPedidosVisao.cmbCliente.setSelectedItem(clienteGlobal.getNome());
+//                                dispose();
+//                            }
+//                            if (!Objects.isNull(VendaPOSVisao.cmbCliente)) {
+//                                VendaPOSVisao.cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVector()));
+//                                VendaPOSVisao.cmbCliente.setSelectedItem(clienteGlobal.getNome());
+//                                dispose();
+//                            }
+//                            if (!Objects.isNull(VendasPraticasVisao.cmbCliente)) {
+//                                VendasPraticasVisao.cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVector()));
+//                                VendasPraticasVisao.cmbCliente.setSelectedItem(clienteGlobal.getNome());
+//                                dispose();
+//                            }
+                        } catch (Exception e) {
                             e.printStackTrace();
-                            JOptionPane.showMessageDialog( null, "Erro ao salvar o cliente", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+                            JOptionPane.showMessageDialog(null, "Erro ao salvar o cliente", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
                         }
 
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Este NIF já existe.", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
                     }
-                    else
-                    {
-                        JOptionPane.showMessageDialog( null, "Este NIF já existe.", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
-                    }
-                }
-                else
-                {
-                    JOptionPane.showMessageDialog( null, "Este Cliente já existe.", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+                } else {
+                    JOptionPane.showMessageDialog(null, "Este Cliente já existe.", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
                 }
 
             }
+        } catch (SQLException ex) {
+            Logger.getLogger(ClienteVisao.class.getName()).log(Level.SEVERE, null, ex);
         }
-        catch ( SQLException ex )
-        {
-            Logger.getLogger( ClienteVisao.class.getName() ).log( Level.SEVERE, null, ex );
-        }
+
+        conexaoTransaction.close();
 
     }
 
-    public boolean validar()
-    {
+    public boolean validar() {
 
-        if ( txtNomeCliente.getText().equalsIgnoreCase( "" ) )
-        {
-            JOptionPane.showMessageDialog( null, "Introduza o nome do Cliente!..." );
+        if (txtNomeCliente.getText().equalsIgnoreCase("")) {
+            JOptionPane.showMessageDialog(null, "Introduza o nome do Cliente!...");
             return false;
         }
-        if ( txtEndereco.getText().equalsIgnoreCase( "" ) )
-        {
-            JOptionPane.showMessageDialog( null, "Introduza o endereço do Cliente!..." );
+        if (txtEndereco.getText().equalsIgnoreCase("")) {
+            JOptionPane.showMessageDialog(null, "Introduza o endereço do Cliente!...");
             return false;
         }
-        if ( txtNif.getText().equalsIgnoreCase( "" ) )
-        {
-            JOptionPane.showMessageDialog( null, "Introduza o NIF do Cliente!..." );
+        if (txtNif.getText().equalsIgnoreCase("")) {
+            JOptionPane.showMessageDialog(null, "Introduza o NIF do Cliente!...");
             return false;
         }
         return true;
     }
 
-    private boolean valido()
-    {
+    private boolean valido() {
 
-        if ( txtNomeCliente.getText().isEmpty() )
-        {
+        if (txtNomeCliente.getText().isEmpty()) {
             txtNomeCliente.requestFocus();
-            JOptionPane.showMessageDialog( null, "Pf. digite o nome do cliente", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+            JOptionPane.showMessageDialog(null, "Pf. digite o nome do cliente", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
             return false;
         }
 //        else if( !clienteDao.nif_existente(txtNif.getText(), conexao)){
@@ -1194,349 +1305,427 @@ public class ClienteVisao extends javax.swing.JDialog
 
     }
 
-    private void setDados()
-    {
+    private void setDados() {
 
-        String nomeMorada = normalizarEndereco( txtEndereco.getText() );
-        String nif = normalizarNif( txtNif.getText() );
-        String pais = cmbPais.getSelectedItem().toString().replaceAll( " ", "" ).split( "-" )[ 0 ];
-        String iso = cmbPais.getSelectedItem().toString().replaceAll( " ", "" ).split( "-" )[ 1 ];
+        String nome = MetodosUtil.normalizarCampo(txtNomeCliente.getText());
+        String nomeMorada = normalizarEndereco(txtEndereco.getText());
+        String nif = normalizarNif(txtNif.getText());
+        String pais = cmbPais.getSelectedItem().toString().replaceAll(" ", "").split("-")[0];
+        String iso = cmbPais.getSelectedItem().toString().replaceAll(" ", "").split("-")[1];
 
-        clienteGlobal.setNome( txtNomeCliente.getText() );
-        clienteGlobal.setMorada( nomeMorada );
-        clienteGlobal.setNif( nif );
-        clienteGlobal.setPais( pais );
-        clienteGlobal.setPaisISO( iso );
-
-        this.clienteGlobal.setTelefone( txtContactos.getText() );
-        this.clienteGlobal.setEmail( txtEmail.getText().trim() );
-
+        clienteGlobal.setNome(nome);
+        clienteGlobal.setMorada(nomeMorada);
+        clienteGlobal.setNif(nif);
+        clienteGlobal.setPais(pais);
+        clienteGlobal.setPaisISO(iso);
+        clienteGlobal.setTelefone(txtContactos.getText().trim());
+        clienteGlobal.setEmail(txtEmail.getText().trim());
+        clienteGlobal.setPercentagemDesconto(
+                txtDesconto.getText().trim().isEmpty()
+                ? 0d
+                : Double.parseDouble(txtDesconto.getText().trim())
+        );
     }
 
-    private void procedimento_alterar()
-    {
-        if ( valido() )
-        {
+//    private void setDados() {
+//
+//        String nomeMorada = normalizarEndereco(txtEndereco.getText());
+//        String nif = normalizarNif(txtNif.getText());
+//
+//        clienteGlobal.setNome(txtNomeCliente.getText());
+//        clienteGlobal.setMorada(nomeMorada);
+//        clienteGlobal.setNif(nif);
+//        this.clienteGlobal.setTelefone(txtContactos.getText());
+//        this.clienteGlobal.setEmail(txtEmail.getText().trim());
+//        clienteGlobal.setPercentagemDesconto(Double.parseDouble(txtDesconto.getText()));
+//
+//    }
+    private void procedimento_alterar() {
 
-            String nif = MetodosUtil.normalizarCampo( txtNif.getText() );;
-            String nome = MetodosUtil.normalizarCampo( txtNomeCliente.getText() );
+        if (!valido()) {
+            return;
+        }
 
-            if ( !clientesController.existeClienteNomeParaOutroCliente( nome,
-                    clienteGlobal.getCodigo(),
-                    BDConexao.getConnection() ) )
-            {
-                if ( !clientesController.existeClienteNIFParaOutroCliente( nif,
-                        clienteGlobal.getCodigo(),
-                        BDConexao.getConnection() ) )
-                {
-                    setDados();
-                    try
-                    {
-                        clientesController.actualizar( clienteGlobal );
-                        limpar();
-                        JOptionPane.showMessageDialog( null, "Dados alterados com sucesso!...", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
-                    }
-                    catch ( Exception e )
-                    {
-                        JOptionPane.showMessageDialog( null, "Erro ao alteraer os dados", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
-                    }
+        // Primeiro carregar o cliente
+        clienteGlobal = clientesController.findByCodigo(this.codigo);
 
-                }
-                else
-                {
-                    JOptionPane.showMessageDialog( null,
-                            "Já existe um cliente com este NIF na base de dados",
-                            "Aviso",
-                            JOptionPane.INFORMATION_MESSAGE );
-                }
+        if (clienteGlobal == null) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Cliente não encontrado na base de dados.",
+                    DVML.DVML_COMERCIAL,
+                    JOptionPane.ERROR_MESSAGE
+            );
+            return;
+        }
+
+        String nif = MetodosUtil.normalizarCampo(txtNif.getText());
+        String nome = MetodosUtil.normalizarCampo(txtNomeCliente.getText());
+
+        // Verificar se já existe outro cliente com o mesmo nome
+        if (clientesController.existeClienteNomeParaOutroCliente(
+                nome,
+                clienteGlobal.getCodigo(),
+                BDConexao.getConnection())) {
+
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Já existe um cliente com este nome na base de dados",
+                    "Aviso",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+            return;
+        }
+
+        // Verificar se já existe outro cliente com o mesmo NIF
+        if (clientesController.existeClienteNIFParaOutroCliente(
+                nif,
+                clienteGlobal.getCodigo(),
+                BDConexao.getConnection())) {
+
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Já existe um cliente com este NIF na base de dados",
+                    "Aviso",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+            return;
+        }
+
+        try {
+
+            // Passar os dados dos campos para o objeto
+            setDados();
+
+            // Actualizar
+            if (clientesController.actualizar(clienteGlobal)) {
+
+                actualizar();
+                limpar();
+
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Dados alterados com sucesso!...",
+                        DVML.DVML_COMERCIAL,
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+
+            } else {
+
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Não foi possível alterar os dados do cliente.",
+                        DVML.DVML_COMERCIAL,
+                        JOptionPane.ERROR_MESSAGE
+                );
             }
-            else
-            {
-                JOptionPane.showMessageDialog( null,
-                        "Já existe um cliente com este nome na base de dados",
-                        "Aviso",
-                        JOptionPane.INFORMATION_MESSAGE );
-            }
 
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Erro ao alterar os dados: " + e.getMessage(),
+                    DVML.DVML_COMERCIAL,
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 
-    private void procedimento_eliminar()
-    {
-        int opcao = JOptionPane.showConfirmDialog( null,
-                "Tens a plena certeza que pretendes eliminar essa categria?" );
-        if ( opcao == JOptionPane.YES_OPTION )
-        {
-            try
-            {
-                clientesController.eliminar( codigo );
+//    private void procedimento_alterar() {
+//        if (valido()) {
+//
+//            String nif = MetodosUtil.normalizarCampo(txtNif.getText());;
+//            String nome = MetodosUtil.normalizarCampo(txtNomeCliente.getText());
+//
+//            if (!clientesController.existeClienteNomeParaOutroCliente(nome,
+//                    clienteGlobal.getCodigo(),
+//                    BDConexao.getConnection())) {
+//                if (!clientesController.existeClienteNIFParaOutroCliente(nif,
+//                        clienteGlobal.getCodigo(),
+//                        BDConexao.getConnection())) {
+//                    clienteGlobal = clientesController.findByCodigo( this.codigo );
+//                    setDados();
+//                    try {
+    ////                        clientesController.actualizar(clienteGlobal);
+//                        if (clientesController.actualizar(clienteGlobal)) {
+//    actualizar();
+//    limpar();
+//
+//    JOptionPane.showMessageDialog(
+//            null,
+//            "Dados alterados com sucesso!...",
+//            DVML.DVML_COMERCIAL,
+//            JOptionPane.INFORMATION_MESSAGE
+//    );
+//} else {
+//    JOptionPane.showMessageDialog(
+//            null,
+//            "Não foi possível alterar os dados do cliente.",
+//            DVML.DVML_COMERCIAL,
+//            JOptionPane.ERROR_MESSAGE
+//    );
+//}
+//
+////                        actualizar();
+////                        limpar();
+////                        JOptionPane.showMessageDialog(null, "Dados alterados com sucesso!...", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE);
+//                    } catch (Exception e) {
+//                        JOptionPane.showMessageDialog(null, "Erro ao alteraer os dados", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
+//                    }
+//
+//                } else {
+//                    JOptionPane.showMessageDialog(null,
+//                            "Já existe um cliente com este NIF na base de dados",
+//                            "Aviso",
+//                            JOptionPane.INFORMATION_MESSAGE);
+//                }
+//            } else {
+//                JOptionPane.showMessageDialog(null,
+//                        "Já existe um cliente com este nome na base de dados",
+//                        "Aviso",
+//                        JOptionPane.INFORMATION_MESSAGE);
+//            }
+//
+//        }
+//    }
+
+    private void procedimento_eliminar() {
+        int opcao = JOptionPane.showConfirmDialog(null,
+                "Tens a plena certeza que pretendes eliminar essa categria?");
+        if (opcao == JOptionPane.YES_OPTION) {
+            try {
+                clientesController.eliminar(codigo);
                 limpar();
-                JOptionPane.showMessageDialog( null,
+                JOptionPane.showMessageDialog(null,
                         "Cliente eliminado com sucesso!...",
                         DVML.DVML_COMERCIAL,
-                        JOptionPane.INFORMATION_MESSAGE );
-            }
-            catch ( Exception e )
-            {
+                        JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception e) {
 
                 e.printStackTrace();
-                JOptionPane.showMessageDialog( null, "Erro ao eliminar este Cliente.\nPossivelmente já esta realcionado com algumas vendas.", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+                JOptionPane.showMessageDialog(null, "Erro ao eliminar este Cliente.\nPossivelmente já esta realcionado com algumas vendas.", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
-    private void novo_cliente()
-    {
-        habilitar_campos( true );
+    private void novo_cliente() {
+        habilitar_campos(true);
         limpar();
         txtNomeCliente.requestFocus();
-        btnNovo.setEnabled( false );
+        btnNovo.setEnabled(false);
+        txtNomeCliente.requestFocus();
+        btnSalvar.setEnabled(true);
+        btnAlterar.setEnabled(false);
     }
 
-    private void proteger_campos_excepto_nif()
-    {
+    private void proteger_campos_excepto_nif() {
 
-        txtNomeCliente.setEnabled( false );
-        txtEndereco.setEnabled( false );
-        txtNif.setEnabled( true );
-        txtContactos.setEnabled( false );
-        txtEmail.setEnabled( false );
+        txtNomeCliente.setEnabled(false);
+        txtEndereco.setEnabled(false);
+        txtNif.setEnabled(true);
+        txtContactos.setEnabled(false);
+        txtEmail.setEnabled(false);
     }
 
-    private void habilitar_campos( boolean status )
-    {
+    private void habilitar_campos(boolean status) {
 
-        txtNomeCliente.setEnabled( status );
-        txtEndereco.setEnabled( status );
-        txtNif.setEnabled( status );
-        txtContactos.setEnabled( status );
-        txtEmail.setEnabled( status );
+        txtNomeCliente.setEnabled(status);
+        txtEndereco.setEnabled(status);
+        txtNif.setEnabled(status);
+        txtContactos.setEnabled(status);
+        txtEmail.setEnabled(status);
     }
 
-    private void proteger_campos( boolean status )
-    {
+    private void proteger_campos(boolean status) {
 
-        txtNomeCliente.setEnabled( !status );
-        txtEndereco.setEnabled( status );
-        txtNif.setEnabled( status );
-        txtContactos.setEnabled( status );
-        txtEmail.setEnabled( status );
+        txtNomeCliente.setEnabled(!status);
+        txtEndereco.setEnabled(status);
+        txtNif.setEnabled(status);
+        txtContactos.setEnabled(status);
+        txtEmail.setEnabled(status);
 
     }
 
-    private void postInitComponents()
-    {
+    private void postInitComponents() {
 
         int tamanho = 20;
-        resizeJButtonIcon( tamanho, tamanho, getClass().getResource( "/imagens/icons8_add_64px.png" ), btnNovo );
-        DocumentListener listener = new DocumentListener()
-        {
+        resizeJButtonIcon(tamanho, tamanho, getClass().getResource("/imagens/icons8_add_64px.png"), btnNovo);
+        DocumentListener listener = new DocumentListener() {
 
             @Override
-            public void insertUpdate( DocumentEvent e )
-            {
+            public void insertUpdate(DocumentEvent e) {
                 actualizar_formulario();
             }
 
             @Override
-            public void removeUpdate( DocumentEvent e )
-            {
+            public void removeUpdate(DocumentEvent e) {
                 actualizar_formulario();
             }
 
             @Override
-            public void changedUpdate( DocumentEvent e )
-            {
+            public void changedUpdate(DocumentEvent e) {
             }
 
         };
-        btnSalvar.setEnabled( false );
-        txtNomeCliente.getDocument().addDocumentListener( listener );
+        btnSalvar.setEnabled(false);
+        txtNomeCliente.getDocument().addDocumentListener(listener);
     }
 
-    public void actualizar_formulario()
-    {
-        btnSalvar.setEnabled( validar_campos() );
+    public void actualizar_formulario() {
+        btnSalvar.setEnabled(validar_campos());
 
     }
 
-    private boolean validar_campos()
-    {
+    private boolean validar_campos() {
 
         boolean nomeNaoVazio = !txtNomeCliente.getText().isEmpty();
         return nomeNaoVazio;
     }
 
-    public void scrolltable()
-    {
+    public void scrolltable() {
 
 //        tabela_cliente.scrollRectToVisible( tabela_cliente.getCellRect( tabela_cliente.getRowCount() - 1, tabela_cliente.getColumnCount(), true ) );
     }
 
-    private int getIdFamilia()
-    {
-        try
-        {
-            return familiaController.getFamiliaByDesignacao( String.valueOf( cmbFamilia.getSelectedItem() ) ).getPkFamilia();
-        }
-        catch ( Exception e )
-        {
+    private int getIdFamilia() {
+        try {
+            return familiaController.getFamiliaByDesignacao(String.valueOf(cmbFamilia.getSelectedItem())).getPkFamilia();
+        } catch (Exception e) {
             return 0;
         }
     }
 
-    private int getIdTipoProduto()
-    {
-        try
-        {
-            return tipoProdutoController.getTipoFamiliaByDesignacao( String.valueOf( cmbSubFamilia.getSelectedItem() ) ).getCodigo();
-        }
-        catch ( Exception e )
-        {
+    private int getIdTipoProduto() {
+        try {
+            return tipoProdutoController.getTipoFamiliaByDesignacao(String.valueOf(cmbSubFamilia.getSelectedItem())).getCodigo();
+        } catch (Exception e) {
             return 0;
         }
 
     }
 
-    public static void importarDados( TbCliente cliente )
-    {
+    public static void importarDados(TbCliente cliente) {
         clienteGlobal = cliente;
-        txtNomeCliente.setText( clienteGlobal.getNome() );
-        txtEndereco.setText( clienteGlobal.getMorada() );
-        txtNif.setText( clienteGlobal.getNif() );
-        txtContactos.setText( clienteGlobal.getTelefone() );
-        txtEmail.setText( clienteGlobal.getEmail() );
+        txtNomeCliente.setText(clienteGlobal.getNome());
+        txtEndereco.setText(clienteGlobal.getMorada());
+        txtNif.setText(clienteGlobal.getNif());
+        txtContactos.setText(clienteGlobal.getTelefone());
+        txtEmail.setText(clienteGlobal.getEmail());
+        txtDesconto.setText(String.valueOf(clienteGlobal.getPercentagemDesconto()));
         adicionarServicos();
     }
 
-    public static void limparDadosForm()
-    {
-        txtNomeCliente.setText( "" );
-        txtEndereco.setText( "" );
-        txtNif.setText( "" );
-        txtContactos.setText( "" );
-        txtEmail.setText( "" );
+    public static void limparDadosForm() {
+        txtNomeCliente.setText("");
+        txtEndereco.setText("");
+        txtNif.setText("");
+        txtContactos.setText("");
+        txtEmail.setText("");
         clienteGlobal = null;
     }
 
-    private void procedimentoAdicionarServico()
-    {
+    private void procedimentoAdicionarServico() {
         String servicoSelecionado = cmbProduto.getSelectedItem().toString().trim();
 
-        DefaultTableModel model = ( DefaultTableModel ) tabelaServicoMensalidade.getModel();
+        DefaultTableModel model = (DefaultTableModel) tabelaServicoMensalidade.getModel();
 
         // Verifica se o serviço já foi adicionado
-        for ( int i = 0; i < model.getRowCount(); i++ )
-        {
-            String servicoExistente = model.getValueAt( i, 1 ).toString().trim(); // coluna 1 = Serviço
+        for (int i = 0; i < model.getRowCount(); i++) {
+            String servicoExistente = model.getValueAt(i, 1).toString().trim(); // coluna 1 = Serviço
 
-            if ( servicoExistente.equalsIgnoreCase( servicoSelecionado ) )
-            {
-                JOptionPane.showMessageDialog( null,
+            if (servicoExistente.equalsIgnoreCase(servicoSelecionado)) {
+                JOptionPane.showMessageDialog(null,
                         "Este serviço já foi adicionado!",
-                        "Aviso", JOptionPane.WARNING_MESSAGE );
+                        "Aviso", JOptionPane.WARNING_MESSAGE);
                 return; // Cancela o procedimento
             }
         }
 
         // Se não houver duplicação, continua normalmente
         ConfiguracaoMesComeco cmc = new ConfiguracaoMesComeco();
-        cmc.setDataCadastro( new Date() );
-        cmc.setMesId( cmbMesComeco.getSelectedIndex() + 1 );
-        cmc.setProdutoId( getCodigoProduto() );
-        cmc.setUsuarioId( 0 );
-        cmc.setDuracao( cmbDuracao.getSelectedIndex() );
-        cmc.setClienteId( clienteGlobal.getCodigo() );
+        cmc.setDataCadastro(new Date());
+        cmc.setMesId(cmbMesComeco.getSelectedIndex() + 1);
+        cmc.setProdutoId(getCodigoProduto());
+        cmc.setUsuarioId(0);
+        cmc.setDuracao(cmbDuracao.getSelectedIndex());
+        cmc.setClienteId(clienteGlobal.getCodigo());
 
-        if ( configuracaoMesComecoController.salvar( cmc ) )
-        {
+        if (configuracaoMesComecoController.salvar(cmc)) {
             adicionarServicos();
-            JOptionPane.showMessageDialog( null, "Serviço configurado com sucesso!" );
-        }
-        else
-        {
-            JOptionPane.showMessageDialog( null, "Erro ao configurar o serviço",
-                    "Falha", JOptionPane.ERROR_MESSAGE );
+            JOptionPane.showMessageDialog(null, "Serviço configurado com sucesso!");
+        } else {
+            JOptionPane.showMessageDialog(null, "Erro ao configurar o serviço",
+                    "Falha", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private void setDadosForm()
-    {
-        DefaultTableModel modelo = ( DefaultTableModel ) tabelaServicoMensalidade.getModel();
+    private void setDadosForm() {
+        DefaultTableModel modelo = (DefaultTableModel) tabelaServicoMensalidade.getModel();
         int linhaSelecionada = tabelaServicoMensalidade.getSelectedRow();
 
-        String cod = modelo.getValueAt( linhaSelecionada, 0 ).toString();
-        String mes = modelo.getValueAt( linhaSelecionada, 2 ).toString();
-        String duracao = modelo.getValueAt( linhaSelecionada, 3 ).toString();
-        ConfiguracaoMesComeco item = configuracaoMesComecoController.buscarPorId( Integer.parseInt( cod ) );
+        String cod = modelo.getValueAt(linhaSelecionada, 0).toString();
+        String mes = modelo.getValueAt(linhaSelecionada, 2).toString();
+        String duracao = modelo.getValueAt(linhaSelecionada, 3).toString();
+        ConfiguracaoMesComeco item = configuracaoMesComecoController.buscarPorId(Integer.parseInt(cod));
 
-        TbProduto produto = produtosController.findByCod( item.getProdutoId() );
+        TbProduto produto = produtosController.findByCod(item.getProdutoId());
         int idSubFamilia = produto.getCodTipoProduto().getCodigo();
-        TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutoController.findById( idSubFamilia );
-        cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
-        cmbProduto.setSelectedItem( produto.getDesignacao() );
+        TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById(idSubFamilia);
+        cmbSubFamilia.setSelectedItem(tipoProduto.getDesignacao());
+        cmbProduto.setSelectedItem(produto.getDesignacao());
 
-        cmbDuracao.setSelectedItem( duracao );
-        cmbMesComeco.setSelectedItem( mes );
+        cmbDuracao.setSelectedItem(duracao);
+        cmbMesComeco.setSelectedItem(mes);
 
     }
 
-    private static void adicionarServicos()
-    {
+    private static void adicionarServicos() {
 
-        if ( Objects.nonNull( clienteGlobal ) )
-        {
-            DefaultTableModel modelo = ( DefaultTableModel ) tabelaServicoMensalidade.getModel();
-            modelo.setRowCount( 0 );
-            List<ConfiguracaoMesComeco> listarTodos = configuracaoMesComecoController.listarTodos( clienteGlobal.getCodigo() );
+        if (Objects.nonNull(clienteGlobal)) {
+            DefaultTableModel modelo = (DefaultTableModel) tabelaServicoMensalidade.getModel();
+            modelo.setRowCount(0);
+            List<ConfiguracaoMesComeco> listarTodos = configuracaoMesComecoController.listarTodos(clienteGlobal.getCodigo());
 
-            for ( ConfiguracaoMesComeco item : listarTodos )
-            {
+            for (ConfiguracaoMesComeco item : listarTodos) {
 
-                String servico = produtosController.findByCod( item.getProdutoId() ).getDesignacao();
-                String mesComeco = mesRhController.getDescricaoByIdMes( item.getMesId() );
+                String servico = produtosController.findByCod(item.getProdutoId()).getDesignacao();
+                String mesComeco = mesRhController.getDescricaoByIdMes(item.getMesId());
 
-                modelo.addRow( new Object[]
-                {
+                modelo.addRow(new Object[]{
                     item.getId(),
                     servico,
                     mesComeco,
-                    MetodosUtil.getNumeroFormatado( item.getDuracao() )
-                    + " " + getMesDesignacao( item.getDuracao() )
-                } );
+                    MetodosUtil.getNumeroFormatado(item.getDuracao())
+                    + " " + getMesDesignacao(item.getDuracao())
+                });
             }
 
         }
 
     }
 
-    private static String getMesDesignacao( int id )
-    {
-        return ( id > 1 ) ? "Meses" : "Mês";
+    private static String getMesDesignacao(int id) {
+        return (id > 1) ? "Meses" : "Mês";
     }
 
-    public int getCodigoProduto()
-    {
+    public int getCodigoProduto() {
         return produtosController.findByDesignacao(
-                cmbProduto.getSelectedItem().toString() ).getCodigo();
+                cmbProduto.getSelectedItem().toString()).getCodigo();
     }
 
-    private void removerServicoMensalidade()
-    {
-        try
-        {
-            DefaultTableModel modelo = ( DefaultTableModel ) tabelaServicoMensalidade.getModel();
+    private void removerServicoMensalidade() {
+        try {
+            DefaultTableModel modelo = (DefaultTableModel) tabelaServicoMensalidade.getModel();
             int selectedRow = tabelaServicoMensalidade.getSelectedRow();
-            int id = Integer.parseInt( modelo.getValueAt( selectedRow, 0 ).toString() );
-            boolean deletar = configuracaoMesComecoController.deletar( id );
-            if ( deletar )
-            {
-                MetodosUtil.remover_item_tabela( tabelaServicoMensalidade, selectedRow );
+            int id = Integer.parseInt(modelo.getValueAt(selectedRow, 0).toString());
+            boolean deletar = configuracaoMesComecoController.deletar(id);
+            if (deletar) {
+                MetodosUtil.remover_item_tabela(tabelaServicoMensalidade, selectedRow);
             }
-        }
-        catch ( Exception e )
-        {
-            JOptionPane.showMessageDialog( null, "Falha ao remover o serviço!" );
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Falha ao remover o serviço!");
         }
 
     }

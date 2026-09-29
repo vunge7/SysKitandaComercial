@@ -62,6 +62,8 @@ public class TbCliente implements Serializable
     private String pais;
     @Column(name = "pais_ISO")
     private String paisISO;
+    @Column(name = "percentagem_desconto")
+    private double percentagemDesconto;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "codigoCliente")
     private List<Notas> notasList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkCliente")
@@ -78,6 +80,14 @@ public class TbCliente implements Serializable
     public TbCliente( Integer codigo )
     {
         this.codigo = codigo;
+    }
+
+    public Double getPercentagemDesconto() {
+        return percentagemDesconto;
+    }
+
+    public void setPercentagemDesconto(Double percentagemDesconto) {
+        this.percentagemDesconto = percentagemDesconto;
     }
 
     public Integer getCodigo()

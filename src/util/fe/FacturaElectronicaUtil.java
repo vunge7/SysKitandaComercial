@@ -37,6 +37,15 @@ public class FacturaElectronicaUtil {
         return processarEnvioFE(venda, inst, doc, cli, lines);
     }
 
+    public static boolean criarFEGenerico(TbVenda venda, TbDadosInstituicao inst, Documento doc, TbCliente cli, List<TbItemVenda> itens, BDConexao conexao) {
+        PrecosController precosCtrl = new PrecosController(conexao);
+        List<LineDTO> lines = new ArrayList<>();
+        for (int i = 0; i < itens.size(); i++) {
+            lines.add(mapItemVendaToDTOMesas(i, itens.get(i), precosCtrl, venda));
+        }
+        return processarEnvioFE(venda, inst, doc, cli, lines);
+    }
+
     // --- LÓGICA DE MAPEAMENTO (ISOLAMENTO) ---
     private static LineDTO mapTableLineToDTO(int index, JTable table, TableColumIdUtil cols, TbVenda venda) {
         String idProd = table.getValueAt(index, cols.COLUMN_PRODUTO_ID).toString();
@@ -224,6 +233,65 @@ public class FacturaElectronicaUtil {
         return enviarParaAPI(inst.getNif(), docDTO, venda);
     }
 
+    private static LineDTO mapItemVendaToDTOMesas(
+            int index,
+            TbItemVenda item,
+            PrecosController ctrl,
+            TbVenda venda) {
+
+        TbPreco preco = (TbPreco) ctrl.findById(
+                item.getFkPreco().getPkPreco()
+        );
+
+        String codigo = String.valueOf(
+                item.getCodigoProduto().getCodigo()
+        );
+
+        //=========================================
+        // Garantir descrição para a AGT
+        //=========================================
+        String descricao = item.getDesignacaoItem();
+
+        if (descricao == null || descricao.trim().isEmpty()) {
+
+            if (item.getCodigoProduto() != null) {
+
+                descricao = item.getCodigoProduto()
+                        .getDesignacao();
+
+            }
+        }
+
+        if (descricao == null || descricao.trim().isEmpty()) {
+
+            descricao = "Produto sem descrição";
+
+        }
+
+        System.out.println(
+                "Produto AGT: "
+                + codigo
+                + " - "
+                + descricao
+        );
+
+        return construirLineDTO(
+                index + 1,
+                codigo,
+                descricao,
+                preco.getPrecoVenda(),
+                BigDecimal.valueOf(item.getQuantidade()),
+                BigDecimal.valueOf(item.getDesconto()),
+                BigDecimal.valueOf(item.getValorIva()),
+//                item.getValorIva(),
+                venda
+        );
+    }
+    
+    
+    
+    
+
     private static boolean enviarParaAPI(String nif, DocumentDTO doc, TbVenda venda) {
         try {
             Map<String, Object> payloadMap = PayloadFactory.criarPayloadCriarDocumento(nif, Collections.singletonList(doc));
@@ -231,6 +299,7 @@ public class FacturaElectronicaUtil {
             venda.setSubmissionUUID(uuid);
 
             String json = JsonUtil.toJson(payloadMap);
+            System.out.println("JASON: "+json);
             String auth = BasicAuthUtil.gerarAuthorizationHeader(FEConfig.getUsername(), FEConfig.getPassword());
 
             String response = HttpClientUtil.postJson(FEConfig.getEndpointRegistrarFactura(), json, auth);

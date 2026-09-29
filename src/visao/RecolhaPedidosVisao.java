@@ -5,7 +5,6 @@
  */
 package visao;
 
-import java.sql.Connection;
 //import comercial.ProdutoItemVisao;
 import controller.TipoClienteController;
 import comercial.controller.VendasController;
@@ -42,13 +41,14 @@ import comercial.controller.PrecosController;
 import comercial.controller.ProdutosController;
 import comercial.controller.ProdutosImpostoController;
 import comercial.controller.ProdutosIsentoController;
+import comercial.controller.SeriesController;
 import comercial.controller.StoksController;
 import comercial.controller.TipoProdutosController;
 import comercial.controller.UnidadesController;
 import comercial.controller.UsuariosController;
 import dao.DocumentoDao;
-import dao.ItemProformaDao;
 import dao.VendaDao;
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -57,7 +57,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -78,7 +78,7 @@ import javax.swing.table.DefaultTableModel;
 import static kitanda.util.CfConstantes.YYYYMMDD_HHMMSS;
 import kitanda.util.CfMethods;
 import lista.ListaPedidos;
-import lista.ListaVenda2;
+import lista.ListaVenda1;
 import lista.ListaVendaRecolhas;
 import lista.ListaVendaRecolhasReimpressao;
 import lista.ListaVendasMesas;
@@ -95,6 +95,7 @@ import util.MetodosUtil;
 import static util.DVML.*;
 import util.FinanceUtils;
 import static util.MetodosUtil.rodarComandoWindows;
+import util.fe.FacturaElectronicaUtil;
 import static visao.PrincipalPedidosVisao.procedimento_mesas_livre;
 
 /**
@@ -132,6 +133,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     private static ItemVendasController itemVendasController;
     private static StoksController stocksController;
     private static TipoProdutosController tipoProdutosController;
+    private static SeriesController seriesController;
     private static TbStock stock_local;
 
     private TbItemPedidos itemPedidos;
@@ -231,6 +233,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         moedasController = new MoedasController(RecolhaPedidosVisao.conexao);
         formaPagamentoController = new FormaPagamentoController(RecolhaPedidosVisao.conexao);
         contaController = new ContaController(RecolhaPedidosVisao.conexao);
+        seriesController = new SeriesController(RecolhaPedidosVisao.conexao);
         cmc = new ContaMovimentosController(conexao);
         dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
         caixasController = new CaixasController(conexao);
@@ -255,6 +258,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 //        cmbCliente.setSelectedItem( DVML._CLIENTE_CONSUMIDOR_FINAL );
 
         try {
+            mostrar_ano_economico_serie();
             setDocpadrao(dadosInstituicao.getDocpadrao());
             setFolhaImpressora(dadosInstituicao.getImpressora());
             setDesactivarvias(dadosInstituicao.getDesactivarvias());
@@ -415,8 +419,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents()
-    {
+    private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
@@ -434,12 +437,18 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         txtTotalApagar = new javax.swing.JTextField();
         txtTotalQTD = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        txtDesconto = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+        txtTotalGeral = new javax.swing.JTextField();
         jPanel5 = new javax.swing.JPanel();
         BT_Conversao = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        btFT = new javax.swing.JButton();
+        BtnProforma = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        table = new javax.swing.JTable();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtObs = new javax.swing.JTextArea();
@@ -484,6 +493,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         jScrollPane4 = new javax.swing.JScrollPane();
         jtable_reimpressao = new javax.swing.JTable();
         jButton6 = new javax.swing.JButton();
+        lbPreco4 = new javax.swing.JLabel();
+        cmbSeries = new javax.swing.JComboBox();
         jPanel7 = new javax.swing.JPanel();
         lbClienteConsumidorFinal1 = new javax.swing.JLabel();
         txtIniciaisCliente = new javax.swing.JTextField();
@@ -493,6 +504,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         lbEmailCliente = new javax.swing.JLabel();
         txtTelefoneCliente = new javax.swing.JTextField();
         lbClienteConsumidorFinal2 = new javax.swing.JLabel();
+        lbDesconto = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("RECOLHA DE PEÇAS");
@@ -507,10 +519,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         jPanel4.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 670, 500));
 
         btn_voltar.setText("<<");
-        btn_voltar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btn_voltar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_voltarActionPerformed(evt);
             }
         });
@@ -541,17 +551,33 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         jLabel1.setText("Valor Pagar");
 
         txtTotalApagar.setEditable(false);
-        txtTotalApagar.setFont(new java.awt.Font("Arial", 1, 30)); // NOI18N
+        txtTotalApagar.setFont(new java.awt.Font("Arial", 1, 25)); // NOI18N
         txtTotalApagar.setForeground(new java.awt.Color(255, 51, 51));
         txtTotalApagar.setText("0");
 
         txtTotalQTD.setEditable(false);
-        txtTotalQTD.setFont(new java.awt.Font("Arial", 1, 30)); // NOI18N
+        txtTotalQTD.setFont(new java.awt.Font("Arial", 1, 20)); // NOI18N
         txtTotalQTD.setForeground(new java.awt.Color(0, 0, 102));
         txtTotalQTD.setText("0");
 
         jLabel9.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        jLabel9.setText("Total de Peças");
+        jLabel9.setText("Peças");
+
+        jLabel10.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        jLabel10.setText("Desconto");
+
+        txtDesconto.setEditable(false);
+        txtDesconto.setFont(new java.awt.Font("Arial", 1, 20)); // NOI18N
+        txtDesconto.setForeground(new java.awt.Color(255, 51, 51));
+        txtDesconto.setText("0");
+
+        jLabel11.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        jLabel11.setText("TotalGeral");
+
+        txtTotalGeral.setEditable(false);
+        txtTotalGeral.setFont(new java.awt.Font("Arial", 1, 20)); // NOI18N
+        txtTotalGeral.setForeground(new java.awt.Color(255, 51, 51));
+        txtTotalGeral.setText("0");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -559,44 +585,80 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtDesconto))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtTotalGeral, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtTotalApagar, javax.swing.GroupLayout.PREFERRED_SIZE, 262, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel9))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(txtTotalApagar, javax.swing.GroupLayout.PREFERRED_SIZE, 262, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 58, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtTotalQTD, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(37, Short.MAX_VALUE))
+                .addComponent(txtTotalQTD, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtTotalGeral, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel11)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(37, 37, 37)
+                        .addComponent(jLabel10))
                     .addComponent(txtTotalQTD, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9)
-                    .addComponent(jLabel1)
-                    .addComponent(txtTotalApagar, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(21, 21, 21))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel9)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtTotalApagar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtDesconto, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         BT_Conversao.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         BT_Conversao.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/1323444801_currency_dollar red.png"))); // NOI18N
         BT_Conversao.setText("Cobrar");
-        BT_Conversao.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        BT_Conversao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BT_ConversaoActionPerformed(evt);
             }
         });
 
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LOGOUT - VERMELHO/Logout 32x32.png"))); // NOI18N
-        jButton2.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
+            }
+        });
+
+        btFT.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
+        btFT.setText("Processar");
+        btFT.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btFTActionPerformed(evt);
+            }
+        });
+
+        BtnProforma.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        BtnProforma.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/1588_32x32.png"))); // NOI18N
+        BtnProforma.setText("Proforma");
+        BtnProforma.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnProformaActionPerformed(evt);
             }
         });
 
@@ -606,8 +668,12 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(BT_Conversao, javax.swing.GroupLayout.PREFERRED_SIZE, 389, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 133, Short.MAX_VALUE)
+                .addComponent(BT_Conversao, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btFT, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(BtnProforma)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 80, Short.MAX_VALUE)
                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(15, 15, 15))
         );
@@ -616,61 +682,53 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(btFT, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(BtnProforma))
                     .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 49, Short.MAX_VALUE)
                     .addComponent(BT_Conversao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
-        jPanel5Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {BT_Conversao, jButton2});
+        jPanel5Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {BT_Conversao, BtnProforma, btFT, jButton2});
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][]
-            {
+        table.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
 
             },
-            new String []
-            {
+            new String [] {
                 "ID", "D. Entrega", "Serviço", "QTD", "Total"
             }
-        )
-        {
-            boolean[] canEdit = new boolean []
-            {
+        ) {
+            boolean[] canEdit = new boolean [] {
                 false, false, false, true, false
             };
 
-            public boolean isCellEditable(int rowIndex, int columnIndex)
-            {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        jTable1.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mouseClicked(java.awt.event.MouseEvent evt)
-            {
-                jTable1MouseClicked(evt);
+        table.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tableMouseClicked(evt);
             }
-            public void mouseEntered(java.awt.event.MouseEvent evt)
-            {
-                jTable1MouseEntered(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                tableMouseEntered(evt);
             }
         });
-        jTable1.addPropertyChangeListener(new java.beans.PropertyChangeListener()
-        {
-            public void propertyChange(java.beans.PropertyChangeEvent evt)
-            {
-                jTable1PropertyChange(evt);
+        table.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                tablePropertyChange(evt);
             }
         });
-        jScrollPane2.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0)
-        {
-            jTable1.getColumnModel().getColumn(0).setMaxWidth(10);
-            jTable1.getColumnModel().getColumn(1).setMaxWidth(100);
-            jTable1.getColumnModel().getColumn(3).setMaxWidth(50);
-            jTable1.getColumnModel().getColumn(4).setMaxWidth(100);
+        jScrollPane2.setViewportView(table);
+        if (table.getColumnModel().getColumnCount() > 0) {
+            table.getColumnModel().getColumn(0).setMaxWidth(10);
+            table.getColumnModel().getColumn(1).setMaxWidth(100);
+            table.getColumnModel().getColumn(3).setMaxWidth(50);
+            table.getColumnModel().getColumn(4).setMaxWidth(100);
         }
 
         jLabel2.setText("Obs:");
@@ -686,71 +744,57 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         jLabel3.setText("Data Entrega");
 
         dc_data_entrega.setDateFormatString("yyyy-MM-dd");
-        dc_data_entrega.addPropertyChangeListener(new java.beans.PropertyChangeListener()
-        {
-            public void propertyChange(java.beans.PropertyChangeEvent evt)
-            {
+        dc_data_entrega.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 dc_data_entregaPropertyChange(evt);
             }
         });
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/actualizar_1_32x32_1.png"))); // NOI18N
-        jButton1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
         buttonGroup4.add(rbTaxaExpresso100);
-        rbTaxaExpresso100.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        rbTaxaExpresso100.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         rbTaxaExpresso100.setText("Taxa Expresso 100%");
-        rbTaxaExpresso100.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbTaxaExpresso100.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbTaxaExpresso100ActionPerformed(evt);
             }
         });
 
         buttonGroup4.add(rbTaxaUrgente50);
-        rbTaxaUrgente50.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        rbTaxaUrgente50.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         rbTaxaUrgente50.setText("Taxa de Urgência 50%");
-        rbTaxaUrgente50.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbTaxaUrgente50.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbTaxaUrgente50ActionPerformed(evt);
             }
         });
 
         jLabel5.setText("Largura:");
 
-        txtLargura.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtLargura.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtLarguraActionPerformed(evt);
             }
         });
 
         jLabel6.setText("Altura");
 
-        txtAltura.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtAltura.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtAlturaActionPerformed(evt);
             }
         });
 
         jLabel7.setText("x Qtd Item");
 
-        txtQtdItens.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtQtdItens.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtQtdItensActionPerformed(evt);
             }
         });
@@ -814,7 +858,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(lbTotalQtd, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jScrollPane2))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 17, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -834,11 +878,11 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
                     .addComponent(jLabel8)
                     .addComponent(lbSomaLarguraAltura, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jButton1)
@@ -849,11 +893,10 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(rbTaxaExpresso100)
                             .addComponent(jRadioButton1))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(rbTaxaUrgente50)))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         status_mensagem_secundaria.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
@@ -871,20 +914,16 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
         cmbArmazem.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cmbArmazem.setEnabled(false);
-        cmbArmazem.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbArmazem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbArmazemActionPerformed(evt);
             }
         });
 
         cmbAnoEconomico.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cmbAnoEconomico.setEnabled(false);
-        cmbAnoEconomico.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbAnoEconomico.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbAnoEconomicoActionPerformed(evt);
             }
         });
@@ -892,10 +931,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         cmbMoeda.setBackground(new java.awt.Color(0, 51, 102));
         cmbMoeda.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
         cmbMoeda.setEnabled(false);
-        cmbMoeda.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbMoeda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbMoedaActionPerformed(evt);
             }
         });
@@ -907,11 +944,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         cmbTipoDocumento.setBackground(new java.awt.Color(0, 51, 102));
         cmbTipoDocumento.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         cmbTipoDocumento.setForeground(new java.awt.Color(255, 255, 255));
-        cmbTipoDocumento.setOpaque(true);
-        cmbTipoDocumento.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbTipoDocumento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbTipoDocumentoActionPerformed(evt);
             }
         });
@@ -921,20 +955,16 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         buttonGroup2.add(rbArmazem);
         rbArmazem.setSelected(true);
         rbArmazem.setEnabled(false);
-        rbArmazem.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbArmazem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbArmazemActionPerformed(evt);
             }
         });
 
         buttonGroup2.add(rbArmazem1);
         rbArmazem1.setEnabled(false);
-        rbArmazem1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        rbArmazem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbArmazem1ActionPerformed(evt);
             }
         });
@@ -943,20 +973,16 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         lb_proximo_documento.setText("PRÓX. DOC. : XX PP/A1");
 
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/proucura.png"))); // NOI18N
-        jButton4.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
             }
         });
 
         txtQuatidadeExistente.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         txtQuatidadeExistente.setEnabled(false);
-        txtQuatidadeExistente.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtQuatidadeExistente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtQuatidadeExistenteActionPerformed(evt);
             }
         });
@@ -968,10 +994,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
         jButton3.setFont(new java.awt.Font("Arial", 1, 10)); // NOI18N
         jButton3.setText("Reimprimir Documento");
-        jButton3.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
             }
         });
@@ -979,10 +1003,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         btnLavar.setFont(new java.awt.Font("Mongolian Baiti", 1, 17)); // NOI18N
         btnLavar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagem/maquina-de-lavar.png"))); // NOI18N
         btnLavar.setText("Lavagem");
-        btnLavar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnLavar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnLavarActionPerformed(evt);
             }
         });
@@ -990,10 +1012,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         btnEngomar.setFont(new java.awt.Font("Mongolian Baiti", 1, 17)); // NOI18N
         btnEngomar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagem/ferro.png"))); // NOI18N
         btnEngomar.setText("Engomagem");
-        btnEngomar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnEngomar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEngomarActionPerformed(evt);
             }
         });
@@ -1003,41 +1023,44 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         dcDataFim.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
 
         jtable_reimpressao.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][]
-            {
+            new Object [][] {
 
             },
-            new String []
-            {
+            new String [] {
                 "Doc"
             }
-        )
-        {
-            boolean[] canEdit = new boolean []
-            {
+        ) {
+            boolean[] canEdit = new boolean [] {
                 false
             };
 
-            public boolean isCellEditable(int rowIndex, int columnIndex)
-            {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        jtable_reimpressao.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mouseClicked(java.awt.event.MouseEvent evt)
-            {
+        jtable_reimpressao.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jtable_reimpressaoMouseClicked(evt);
             }
         });
         jScrollPane4.setViewportView(jtable_reimpressao);
 
         jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/actualizar_1.png"))); // NOI18N
-        jButton6.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton6ActionPerformed(evt);
+            }
+        });
+
+        lbPreco4.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        lbPreco4.setText("Séries");
+
+        cmbSeries.setBackground(new java.awt.Color(0, 51, 102));
+        cmbSeries.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 14)); // NOI18N
+        cmbSeries.setForeground(new java.awt.Color(255, 255, 255));
+        cmbSeries.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbSeriesActionPerformed(evt);
             }
         });
 
@@ -1068,21 +1091,25 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
                                         .addComponent(lbQuantidadeExistente, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(txtQuatidadeExistente, javax.swing.GroupLayout.PREFERRED_SIZE, 9, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel6Layout.createSequentialGroup()
+                                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(lb_proximo_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(cmbArmazem, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cmbAnoEconomico, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addComponent(lb_proximo_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cmbAnoEconomico, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(lbPreco4, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cmbSeries, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnLavar, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
                         .addComponent(btnEngomar, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(rbArmazem)
@@ -1107,12 +1134,6 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
                                     .addComponent(cmb_area_venda_restaurante, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(cmbMoeda))
                                 .addGap(5, 5, 5))
-                            .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(dcDataInicio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(dcDataFim, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel6Layout.createSequentialGroup()
                                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -1123,17 +1144,26 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
                                             .addGap(6, 6, 6)
                                             .addComponent(rbArmazem1, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addComponent(rbArmazem, javax.swing.GroupLayout.Alignment.TRAILING)))
-                                .addGap(0, 0, Short.MAX_VALUE)))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(jPanel6Layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lb_proximo_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(dcDataInicio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(dcDataFim, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(lbQuantidadeExistente, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(22, 22, 22))
                             .addGroup(jPanel6Layout.createSequentialGroup()
                                 .addGap(0, 0, Short.MAX_VALUE)
-                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lb_proximo_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(cmbSeries, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(lbPreco4))
+                                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(txtQuatidadeExistente, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1164,36 +1194,28 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         lbClienteConsumidorFinal1.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         lbClienteConsumidorFinal1.setText("Pesquisar Clientes:");
 
-        txtIniciaisCliente.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtIniciaisCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtIniciaisClienteActionPerformed(evt);
             }
         });
-        txtIniciaisCliente.addKeyListener(new java.awt.event.KeyAdapter()
-        {
-            public void keyPressed(java.awt.event.KeyEvent evt)
-            {
+        txtIniciaisCliente.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtIniciaisClienteKeyPressed(evt);
             }
         });
 
         btCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/usuario.png"))); // NOI18N
-        btCliente.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btClienteActionPerformed(evt);
             }
         });
 
         cmbCliente.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         cmbCliente.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cmbCliente.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cmbCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbClienteActionPerformed(evt);
             }
         });
@@ -1202,23 +1224,22 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
         lbEmailCliente.setText("Email");
 
-        txtTelefoneCliente.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtTelefoneCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtTelefoneClienteActionPerformed(evt);
             }
         });
-        txtTelefoneCliente.addKeyListener(new java.awt.event.KeyAdapter()
-        {
-            public void keyPressed(java.awt.event.KeyEvent evt)
-            {
+        txtTelefoneCliente.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtTelefoneClienteKeyPressed(evt);
             }
         });
 
         lbClienteConsumidorFinal2.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         lbClienteConsumidorFinal2.setText("Telefone:");
+
+        lbDesconto.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lbDesconto.setText("Desconto");
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -1227,12 +1248,6 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addComponent(lbTelefoneCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 552, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addComponent(lbEmailCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 552, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
                         .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(cmbCliente, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1248,7 +1263,13 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
                                     .addComponent(txtTelefoneCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(73, 73, 73))))
+                        .addGap(73, 73, 73))
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(lbDesconto, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lbTelefoneCliente, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 552, Short.MAX_VALUE)
+                            .addComponent(lbEmailCliente, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 462, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1268,9 +1289,11 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
                     .addComponent(btCliente, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbTelefoneCliente)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbEmailCliente)
-                .addGap(17, 17, 17))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbDesconto)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -1284,11 +1307,11 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 698, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 707, Short.MAX_VALUE)
+                                .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jPanel7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addContainerGap())
@@ -1312,7 +1335,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -1340,6 +1363,19 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     private void BT_ConversaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BT_ConversaoActionPerformed
 
         if (true) {
+
+            if (!MetodosUtil.temInternet()) {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Caro Usuário, verifique a conexão da internet!\nOs documentos a serem emitidos devem comunicar\n automaticamente com o portal da AGT.\nObrigado!",
+                        "Sem conexão com a Internet",
+                        JOptionPane.WARNING_MESSAGE
+                );
+
+                return;
+            }
+
             if (MetodosUtil.licencaValidada(conexao)) {
 
                 if (cmbTipoDocumento.getSelectedIndex() == 0) {
@@ -1389,33 +1425,788 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
     }
 
+//    public static void procedimento_converter_factura() {
+//
+//        if (true) {
+//            conexaoTransaction = BDConexao.getInstancia();
+//            DocumentosController.start(conexaoTransaction);
+//            TbVenda salvar_venda = salvar_venda();
+//
+//            if (salvar_venda != null) {
+//                System.err.println("VENDA AQUI " + salvar_venda.getCodigo());
+//
+//                salvarItemvenda(salvar_venda);
+//                remover_dados_tabela();
+//
+//            } else {
+//                System.err.println("  erro ao salvar venda!!!");
+//            }
+//        }
+//
+//    }
     public static void procedimento_converter_factura() {
+
+        BDConexao conexaoLocal = BDConexao.getInstancia();
+
+        clientesController = new ClientesController(conexaoLocal);
+        vendasController = new VendasController(conexaoLocal);
+        itemVendasController = new ItemVendasController(conexaoLocal);
+        formaPagamentoItemController = new FormaPagamentoItemController(conexaoLocal);
+        stocksController = new StoksController(conexaoLocal);
+        precosController = new PrecosController(conexaoLocal);
+
+        try {
+
+            Connection conn = conexaoLocal.getConnectionAtiva();
+
+            DocumentosController.startTransaction(conn);
+
+            //==================================================
+            // 1 - Criar e salvar venda FE
+            //==================================================
+            TbVenda venda_local = salvar_venda_fe(conexaoLocal);
+
+            if (venda_local == null || venda_local.getCodigo() == null) {
+                throw new Exception("Venda não foi criada.");
+            }
+
+            TbDadosInstituicao dadosInstituicao
+                    = dadosInstituicaoController.findByCodigo(1);
+
+            Documento documento = documentosController.findByIdDocumento(getIdDocumento());
+//            Documento documento_ = documentosController.getDocumentoByDesignacao("Factura/Recibo");
+
+            TbCliente cliente
+                    = clientesController.findByCodigo(getIdCliente());
+
+            System.out.println("VENDA CRIADA ID: "
+                    + venda_local.getCodigo());
+
+            //==================================================
+            // 2 - Salvar itens da venda
+            //==================================================
+            boolean itensOk
+                    = salvarItemvenda(venda_local, conexaoLocal);
+
+            if (!itensOk) {
+                throw new Exception("Erro ao salvar itens da venda.");
+            }
+
+            //==================================================
+            // 3 - Buscar itens salvos
+            //==================================================
+            List<TbItemVenda> itensVenda
+                    = itemVendasController.findByVenda(
+                            venda_local.getCodigo()
+                    );
+
+            if (itensVenda == null || itensVenda.isEmpty()) {
+
+                throw new Exception(
+                        "Nenhum item encontrado para enviar a FE."
+                );
+            }
+
+//==================================================
+// 4 - Comunicação AGT
+//==================================================
+            boolean respostaAGT
+                    = FacturaElectronicaUtil.criarFEGenerico(
+                            venda_local,
+                            dadosInstituicao,
+                            documento,
+                            cliente,
+                            itensVenda,
+                            conexaoLocal
+                    );
+
+//if (!respostaAGT) {
+//
+//    throw new Exception(
+//            "Falha na comunicação com a AGT."
+//    );
+//}
+            System.out.println(
+                    "AGT ESTADO: "
+                    + venda_local.getEstado()
+            );
+
+            System.out.println(
+                    "AGT REQUEST ID: "
+                    + venda_local.getRequestID()
+            );
+
+            System.out.println(
+                    "AGT SUBMISSION UUID: "
+                    + venda_local.getSubmissionUUID()
+            );
+
+//==================================================
+// 5 - Atualizar resposta AGT na venda
+//==================================================
+//            boolean vendaAtualizada
+//                    = vendasController.actualizarEstadoFE(
+//                            venda_local,
+//                            conn
+//                    );
+//
+//            if (!vendaAtualizada) {
+//
+//                throw new Exception(
+//                        "Falha ao actualizar dados da AGT na venda."
+//                );
+//            }
+//==================================================
+// 5 - Atualizar resposta AGT na venda
+//==================================================
+            boolean vendaAtualizada
+                    = vendasController.actualizarEstadoFE(
+                            venda_local,
+                            conn
+                    );
+
+            if (!vendaAtualizada) {
+
+                throw new Exception(
+                        "Falha ao actualizar dados da AGT na venda."
+                );
+            }
+
+//==================================================
+// 5.1 - Actualizar stock somente se a venda for VÁLIDA
+//==================================================
+//==================================================
+// 5.1 - Actualizar stock somente se a venda for VÁLIDA
+//==================================================
+            System.out.println("====================================");
+            System.out.println("ESTADO DA VENDA: [" + venda_local.getEstado() + "]");
+            System.out.println("TOTAL DE ITENS: " + itensVenda.size());
+
+            if ("V".equalsIgnoreCase(venda_local.getEstado())) {
+
+                for (TbItemVenda item : itensVenda) {
+
+                    TbProduto produto = item.getCodigoProduto();
+
+                    if (produto == null) {
+                        System.out.println("!!! PRODUTO É NULL !!!");
+                        continue;
+                    }
+
+                    int codigoProduto = produto.getCodigo();
+
+                    // Buscar produto completo novamente
+                    produto = produtosController.findByCod(codigoProduto);
+
+                    System.out.println("====================================");
+                    System.out.println("CODIGO PRODUTO: " + codigoProduto);
+                    System.out.println("STOCAVEL: [" + produto.getStocavel() + "]");
+                    System.out.println("QUANTIDADE: " + item.getQuantidade());
+
+                    if ("true".equalsIgnoreCase(produto.getStocavel())) {
+
+                        System.out.println(">>> PRODUTO É ESTOCÁVEL <<<");
+
+                        stock_local = stocksController.getStockByIdProdutoAndIdArmazem2(
+                                codigoProduto,
+                                getCodigoArmazem()
+                        );
+
+                        if (stock_local != null
+                                && (getIdDocumento() == DVML.DOC_FACTURA_RECIBO_FR
+                                || getIdDocumento() == DVML.DOC_FACTURA_FT)) {
+
+                            System.out.println(">>> VOU DESCONTAR STOCK <<<");
+
+                            actualizar_quantidade(
+                                    codigoProduto,
+                                    item.getQuantidade(),
+                                    conexaoLocal
+                            );
+
+                            System.out.println(">>> STOCK DESCONTADO <<<");
+                        }
+                    }
+                }
+            }
+            System.out.println("====================================");
+
+//==================================================
+// 6 - Atualizar hash e assinatura
+//==================================================
+            vendasController.actualizar_hash_and_assinatura(
+                    venda_local.getCodigo(),
+                    getGrossTotal()
+            );
+
+//==================================================
+// 7 - Forma pagamento
+//==================================================
+            if (getIdDocumento()
+                    == DVML.DOC_FACTURA_RECIBO_FR) {
+
+                registrar_forma_pagamento(venda_local.getCodigo());
+
+//                boolean pagamentoOk
+//                        = registrar_forma_pagamento(
+//                                venda_local.getCodigo()
+//                                ,
+//                                conexaoLocal
+//                        );
+//
+//                if (!pagamentoOk) {
+//
+//                    throw new Exception(
+//                            "Erro ao registrar forma de pagamento."
+//                    );
+//                }
+            }
+
+//==================================================
+// 8 - Limpar tabela temporária
+//==================================================
+            remover_dados_tabela();
+
+//==================================================
+// 9 - Libertar mesa
+//==================================================
+//            int last_venda = 0;
+//            last_venda = vendasController.getLastVenda().getCodigo();
+//            TbVenda venda_interna = (TbVenda) vendasController.findById(last_venda);
+//            System.out.println("###LAST VENDA: " + last_venda);
+//            System.out.println("###VENDA_INTERNA: " + venda_interna);
+//            fechar_todas_janelas();
+//            new PrincipalPedidosVisao( idUser, "", getCodigoArmazem(), conexao ).setVisible( true );
+            System.out.println("#### CHEGUEI NO REMOVER");
+            System.out.println("#### VENDA LOCAL: " + venda_local);
+//            if (venda_local.getEstado() == null ? DVML.ESTADO_INVALIDO != null : !venda_local.getEstado().equals(DVML.ESTADO_INVALIDO)) {
+//                TbPedido pedido_local
+//                        = pedidosController.findByCod100(
+//                                pedidosController
+//                                        .getLastPedidoByDefignacaoMesaFALSE100(
+//                                                mesa,
+//                                                DVML.getAreaByIdArea(GRUPO_AREA)
+//                                        )
+//                        );
+//
+//                if (pedido_local != null) {
+//
+//                    PedidosController.eliminarPedido(
+//                            pedido_local,
+//                            conexaoLocal
+//                    );
+//                }
+//            }
+//==================================================
+// 10 - Commit
+//==================================================
+            DocumentosController.commitTransaction();
+
+//==================================================
+// 11 - Mensagem conforme estado AGT
+//==================================================
+            String estadoAGT = venda_local.getEstado();
+
+            if ("V".equalsIgnoreCase(estadoAGT)) {
+
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Factura validada com sucesso pela AGT.",
+                        "Factura Válida",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+
+            } else if ("P".equalsIgnoreCase(estadoAGT)) {
+
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Factura submetida com sucesso à AGT.\n\n"
+                        + "O documento encontra-se PENDENTE e "
+                        + "aguarda processamento pela AGT.",
+                        "Factura Pendente",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+
+            } else if ("I".equalsIgnoreCase(estadoAGT)) {
+
+                JOptionPane.showMessageDialog(
+                        null,
+                        "A factura foi rejeitada pela AGT.",
+                        "Factura Inválida",
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
+
+//==================================================
+// 12 - Visualizar documento
+//==================================================
+            visualizarDocumento(
+                    venda_local.getCodigo()
+            );
+//            if (venda_local.getEstado() == null ? DVML.ESTADO_INVALIDO != null : !venda_local.getEstado().equals(DVML.ESTADO_INVALIDO)) {
+//                PrincipalPedidosVisao.procedimento_mesas_livre();
+//            }
+        } catch (Exception e) {
+
+            DocumentosController.rollBackTransaction();
+
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Erro: " + e.getMessage(),
+                    "Falha",
+                    JOptionPane.ERROR_MESSAGE
+            );
+
+            e.printStackTrace();
+
+        } finally {
+
+            conexaoLocal.close();
+        }
+
+    }
+
+    private static void visualizarDocumento(int codigo) {
+
+        TbVenda venda = (TbVenda) vendasController.findById(codigo);
+
+        ListaVendaRecolhas listaVendaCliente = new ListaVendaRecolhas(
+                venda.getCodigo(),
+                abreviacao,
+                false,
+                true,
+                "Original"
+        );
+        procedimentoImprimirTicketCada();
+        remover_dados_tabela();
+    }
+
+    public static void actualizar_quantidade(int cod, double quantidade, BDConexao conexaoParm) {
+
+        System.err.println("Entrei no actualizar quantidade");
+
+        String sql = "UPDATE tb_stock SET quantidade_existente =  " + (getQuantidadeProduto(cod, conexaoParm) - quantidade) + " WHERE cod_produto_codigo = " + cod + " AND  cod_armazem = " + id_armzem;
+
+        System.out.println("Quantidade   : " + quantidade);
+
+        conexaoParm.executeUpdate(sql);
+
+    }
+
+    public static int getQuantidadeProduto(int cod_produto, BDConexao conexaoParm) {
+
+        String sql = "SELECT quantidade_existente FROM  tb_stock WHERE  cod_produto_codigo = " + cod_produto + " AND cod_armazem = " + id_armzem;
+
+        ResultSet rs = conexaoParm.executeQuery(sql);
+
+        try {
+
+            if (rs.next()) {
+
+                return rs.getInt("quantidade_existente");
+
+            }
+
+        } catch (SQLException ex) {
+
+            ex.printStackTrace();
+
+            return 0;
+
+        }
+
+        return 0;
+
+    }
+
+//     public static boolean registrar_forma_pagamento(int id_venda, BDConexao conexaoParm) throws Exception {
+//
+//        DefaultTableModel modelo = (DefaultTableModel) FormaPagamentoGoldVisao.tabela_forma_pagamento.getModel();
+//
+//        double troco = CfMethods.parseMoedaFormatada(FormaPagamentoTecladoVisao.lb_troco.getText());
+//
+//        for (int i = 0; i < modelo.getRowCount(); i++) {
+//
+//            try {
+//
+//                Integer id_forma_pagamento = Integer.parseInt(modelo.getValueAt(i, 0).toString());
+//
+//                FormaPagamento formaPagamento = formaPagamentoController.findByDescrisao(modelo.getValueAt(i, 1).toString());
+//
+//                Contas contas = (Contas) contaController.findById(formaPagamento.getFkContaAssociada());
+//
+//                String referencia = (modelo.getValueAt(i, 2) != null) ? modelo.getValueAt(i, 2).toString() : "n/a";
+//
+//                String valor = (!modelo.getValueAt(i, 3).toString().equals("")) ? modelo.getValueAt(i, 3).toString() : "0";
+//
+//                if (!valor.equals("0")) {
+//
+//                    FormaPagamentoItem formaPagamentoItem = new FormaPagamentoItem();
+//
+//                    formaPagamentoItem.setValor(new BigDecimal(valor));
+//
+//                    formaPagamentoItem.setReferencia(referencia);
+//
+//                    formaPagamentoItem.setTroco(new BigDecimal(troco));
+//
+//                    formaPagamentoItem.setValorReal(formaPagamentoItem.getValor().subtract(formaPagamentoItem.getTroco()));
+//
+//                    formaPagamentoItem.setFkVenda(new TbVenda(id_venda));
+//
+//                    formaPagamentoItem.setFkFormaPagamento(new FormaPagamento(id_forma_pagamento));
+//
+//                    formaPagamentoItemController.salvar(formaPagamentoItem);
+//
+//                    if (Objects.nonNull(contas)) {
+//
+//                        MetodosUtilTS.entradaTesouraria(
+//                                contas,
+//                                lb_proximo_documento.getText(),
+//                                formaPagamento,
+//                                referencia,
+//                                new BigDecimal(valor),
+//                                idUser,
+//                                usuariosController,
+//                                cmc,
+//                                conexaoParm
+//                        );
+//
+//                    }
+//
+//                    troco = 0;
+//
+//                }
+//
+//            } catch (Exception e) {
+//
+//                throw new Exception("Erro ao registrar forma de pagamento: " + e.getMessage(), e);
+//
+//            }
+//
+//        }
+//
+//        return true;
+//
+//    }
+    public static boolean salvarItemvenda(TbVenda venda, BDConexao conexaoParm) throws Exception {
+
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        boolean efectuada = true;
+        int idProduto = 0;
+        double qtd = 0d;
+        String lugar = "1";
+        TbItemVenda itemVenda = null;
+        TbProduto produto;
+//        TbStock stock_local;
+        double sub_total_iliquido = 0, preco_unitario = 0d, taxa = 0d, desconto = 0d, valor_iva = 0d;
+
+        for (int i = 0; i < table.getRowCount(); i++) {
+            try {
+
+                String data_entrega = modelo.getValueAt(i, 1).toString();
+                int ano = Integer.parseInt(data_entrega.split("-")[0]);
+                int mes = Integer.parseInt(data_entrega.split("-")[1]);
+                int dia = Integer.parseInt(data_entrega.split("-")[2]);
+                System.out.println("ANO: " + ano);
+                Date dataEntrega = new Date();
+                dataEntrega.setYear(ano - 1900);
+                dataEntrega.setMonth(mes - 1);
+                dataEntrega.setDate(dia);
+
+                itemVenda = new TbItemVenda();
+                String servico = modelo.getValueAt(i, 2).toString().split("-")[0];
+
+                String obs;
+
+                try {
+                    obs = modelo.getValueAt(i, 2).toString().split("-")[1];
+                } catch (Exception e) {
+                    obs = "";
+                }
+
+                TbProduto produto_local = (TbProduto) produtosController.findByDesignacao(servico);
+//                lugar = modelo.getValueAt( i, 1 ).toString();
+
+                idProduto = produto_local.getCodigo();
+//                idProduto = produtoDao.getProdutoByDescricao( modelo.getValueAt( i, 2 ).toString() ).getCodigo();
+                qtd = Double.parseDouble(modelo.getValueAt(i, 3).toString());
+                preco_unitario = precosController.getLastIdPrecoByIdProduto(idProduto, qtd).getPrecoVenda().doubleValue();
+//                preco_unitario = precoDao.findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( idProduto, qtd ) ).getPrecoVenda().doubleValue();
+                sub_total_iliquido = FinanceUtils.getValorComIVA(qtd, taxa, preco_unitario, desconto);
+                taxa = MetodosUtil.getTaxaPercantagem(idProduto);
+
+                itemVenda.setCodigoProduto(produtosController.findByCod(idProduto));
+                itemVenda.setCodigoVenda(venda);
+                itemVenda.setQuantidade(qtd);
+                itemVenda.setDesconto(desconto);
+                itemVenda.setValorIva(new BigDecimal(taxa).doubleValue());
+                itemVenda.setMotivoIsensao(MetodosUtil.getMotivoIsensao(idProduto));
+                itemVenda.setCodigoIsensao(MetodosUtil.getCodigoRegime(idProduto));
+                itemVenda.setTotal(new BigDecimal(sub_total_iliquido));
+                itemVenda.setPosicao((i + 1));
+                itemVenda.setFkPreco(precosController.getLastIdPrecoByIdProduto(itemVenda.getCodigoProduto().getCodigo(), itemVenda.getQuantidade()));
+                itemVenda.setDataServico(new Date());
+                itemVenda.setObs(obs);
+                itemVenda.setDesignacaoItem(servico);
+                itemVenda.setDataEntrega(dataEntrega);
+
+                itemVenda.setFkLugares((TbLugares) lugaresController.findById(DVML.LUGAR_BALCAO));
+
+                itemVenda.setFkMesas((TbMesas) mesasController.findByDesignacao(mesa));
+
+                if (!itemVendasController.salvarLavandaria(itemVenda)) {
+                    throw new Exception("Falha ao salvar item de venda");
+//                    DocumentosController.rollback( conexaoTransaction );
+//                    conexaoTransaction.close();
+//                    return;
+                }
+
+//                boolean isStocavel = produto_local.getStocavel().equals( "true" );
+//
+//                if ( isStocavel )
+//                {
+//                    stock_local = stocksController.getStockByIdProdutoAndIdArmazem( itemVenda.getCodigoProduto().getCodigo(), getCodigoArmazem() );
+//                }
+//
+//                if ( !Objects.isNull( stock_local ) )
+//                {
+//                    if ( getIdDocumento() == DOC_FACTURA_RECIBO_FR || getIdDocumento() == DOC_FACTURA_FT )
+//                    {
+//                        System.out.println( "passei quando é FR ou FT" );
+//                        //so retirar caso existir mesmo no armazém em questão.
+//                        if ( stock_local.getCodigo() != 0 && itemVenda.getCodigoProduto().getStocavel().equals( "true" ) )
+//                        {
+//                            actualizar_quantidade( itemVenda.getCodigoProduto().getCodigo(), itemVenda.getQuantidade() );
+//                        }
+//                    }
+//
+//                }
+//
+//            }
+//            catch ( Exception e )
+//            {
+//                e.printStackTrace();
+//                efectuada = false;
+//                JOptionPane.showMessageDialog( null, "Falha ao registrar o produto: " + itemVenda.getCodigoProduto().getCodigo() + " na Factura" );
+//                break;
+//            }
+//        }
+//        if ( efectuada )
+//        {
+//            cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVectorExcetoConsumidorFinal() ) );
+             ////            cmbCliente.setSelectedIndex( 0 );
+//
+//            registrar_forma_pagamento( venda.getCodigo() );
+//
+//            JOptionPane.showMessageDialog( null, "Factura efectuada com sucesso!.." );
+//            limpar();
+//            txtObs.setText( "" );
+//            txtTotalApagar.setText( "" );
+//            txtTotalQTD.setText( "" );
+//            TbPedido pedido = pedidoDao.findTbPedido( pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa ) );
+//            PedidoDao.eliminarPedido( pedido, conexaoTransaction ); // Elimina o pedido
+//            setSalvarPedidoPosVenda( conexaoTransaction );
+//
+//            DocumentoDao.commitTransaction( conexaoTransaction );
+//            gorjeta = 0;
+//
+//            ListaVendaRecolhas listaVendaCliente = new ListaVendaRecolhas( venda.getCodigo(),
+//                    abreviacao, false, true, "Original" );
+////
+////            if ( false )
+////            {
+////                procedimentoImprimirTicket();
+////            }
+////            else
+////            {
+////                procedimentoImprimirTicketCada();
+////            }
+//
+//            procedimentoImprimirTicketCada();
+//        }
+
+            } catch (Exception e) {
+
+                throw new Exception("Erro ao salvar item da venda: " + e.getMessage(), e);
+
+            }
+
+        }
+
+        return true;
+
+    }
+
+    public static TbVenda salvar_venda_fe(BDConexao conexaoParm) throws Exception {
+
+        TbVenda venda_local = new TbVenda();
+        Documento documentoVenda
+                = documentosController.findByIdDocumento(getIdDocumento());
+        if (documentoVenda == null) {
+            throw new Exception(
+                    "Documento não encontrado: " + getIdDocumento()
+            );
+        }
+        Date data_documento = dc_data_documento.getDate();
+        venda_local.setDataVenda(data_documento);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(data_documento);
+        calendar.add(Calendar.DATE, 15);
+        venda_local.setDataVencimento(calendar.getTime());
+        venda_local.setHora(data_documento);
+        // Configurar cliente
+        TbCliente clienteSelecionado = clientesController.getClienteByNome((String) cmbCliente.getSelectedItem());
+        if (!Objects.isNull(clienteSelecionado)) {
+            venda_local.setNomeCliente(clienteSelecionado.getNome());
+            venda_local.setClienteNif(clienteSelecionado.getNif());
+            venda_local.setCodigoCliente(clienteSelecionado);
+        } else {
+            venda_local.setNomeCliente(DVML._CLIENTE_CONSUMIDOR_FINAL);
+            venda_local.setNomeConsumidorFinal(cmbCliente.getSelectedItem().toString());
+            venda_local.setCodigoCliente(clientesController.findByCodigo(getIdCliente()));
+            venda_local.setClienteNif(DVML.NUMBER_NIF_GENERICO);
+        }
+        // Totais e campos
+        venda_local.setTotalGeral(new BigDecimal(getTotalIliquido()));
+        venda_local.setDescontoComercial(new BigDecimal(getDescontoComercial()));
+        venda_local.setTotalIva(new BigDecimal(getTotalImposto()));
+        venda_local.setDescontoFinanceiro(new BigDecimal(getDescontoFinanceiro()));
+        venda_local.setTotalVenda(new BigDecimal(getTotalAOALiquido()));
+        venda_local.setValorEntregue(new BigDecimal(getTotalAOALiquido()));
+        venda_local.setTroco(new BigDecimal(getTroco()));
+        venda_local.setTotalIncidencia(new BigDecimal(getTotalIncidencia()));
+        venda_local.setTotalIncidenciaIsento(new BigDecimal(getTotalIncidenciaIsento()));
+        venda_local.setDescontoTotal(new BigDecimal(getDescontoComercial() + getDescontoFinanceiro()));
+        venda_local.setIdArmazemFK(new TbArmazem(getCodigoArmazem()));
+        venda_local.setCodigoUsuario(new TbUsuario(idUser));
+        venda_local.setFkAnoEconomico(anoEconomico);
+        venda_local.setFkDocumento(documentoVenda);
+        mostrar_proximo_codigo_documento();
+        venda_local.setCodFact(prox_doc);
+        System.out.println("COD FACT GERADO: " + venda_local.getCodFact());
+        venda_local.setRefDataFact(data_documento);
+        venda_local.setTotalPorExtenso(iniciais_extenso() + lbValorPorExtenco.getText());
+//        venda_local.setAreaVenda(setar_grupo());
+//        venda_local.setQuarto("");
+        venda_local.setFkCambio(cambiosController.findByCodigo(DVML.ID_CAMBIO_NACIONAL));
+        venda_local.setStatusEliminado("false");
+        venda_local.setPerformance("false");
+        venda_local.setCredito("false");
+        venda_local.setGorjeta(new BigDecimal(gorjeta));
+
+        try {
+
+            System.out.println("=========== VALIDAR VENDA ANTES SALVAR ===========");
+
+            if (venda_local.getCodigoCliente() == null) {
+                throw new Exception("ERRO: Cliente está null");
+            }
+
+            if (venda_local.getCodigoUsuario() == null) {
+                throw new Exception("ERRO: Usuário está null");
+            }
+
+            if (venda_local.getIdArmazemFK() == null) {
+                throw new Exception("ERRO: Armazém está null");
+            }
+
+            if (venda_local.getFkDocumento() == null) {
+                throw new Exception("ERRO: Documento está null");
+            }
+
+            if (venda_local.getFkAnoEconomico() == null) {
+                throw new Exception("ERRO: Ano económico está null");
+            }
+
+            if (venda_local.getFkCambio() == null) {
+                throw new Exception("ERRO: Câmbio está null");
+            }
+            System.out.println("Cliente OK");
+            System.out.println("Documento OK");
+            System.out.println("Ano OK");
+            System.out.println("Cambio OK");
+            System.out.println("=================================================");
+            System.out.println("===== DEBUG VENDA =====");
+            System.out.println("Codigo Usuario: " + venda_local.getCodigoUsuario());
+            System.out.println("Codigo Cliente: " + venda_local.getCodigoCliente());
+            System.out.println("Armazem: " + venda_local.getIdArmazemFK());
+            System.out.println("Documento: " + venda_local.getFkDocumento());
+            System.out.println("Ano Economico: " + venda_local.getFkAnoEconomico());
+            System.out.println("Cambio: " + venda_local.getFkCambio());
+            System.out.println("=======================");
+            Integer idVenda = vendasController.salvar1(
+                    venda_local,
+                    conexaoParm.getConnectionAtiva()
+            );
+
+            if (idVenda == null || idVenda == 0) {
+                throw new Exception("Venda não criada");
+            }
+            venda_local.setCodigo(idVenda);
+            return venda_local;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception(
+                    "Erro ao salvar venda: "
+                    + e.getClass().getName()
+                    + " - "
+                    + e.getMessage(),
+                    e
+            );
+        }
+    }
+
+    
+        private static void mostrar_proximo_codigo_documento() {
+        try {
+            prox_doc = vendasController.gerarCodFact(getIdSerie());
+            lb_proximo_documento.setText(prox_doc);
+            System.out.println(prox_doc);
+        } catch (Exception e) {
+            e.printStackTrace();
+            documento = null;
+            lb_proximo_documento.setText("");
+        }
+    }
+    
+//       private void mostra_consumidor_final() {
+//
+//        TbCliente cliente = (TbCliente) clientesController.findById(getIdCliente());
+//
+//        if (Objects.nonNull(cliente)) {
+//            lbTelefoneCliente.setText("Tel.  " + cliente.getTelefone());
+//            lbEmailCliente.setText("Email.  " + cliente.getEmail());
+//            lbDesconto.setText("Desconto.  " + cliente.getPercentagemDesconto() + " %");
+//        } else {
+//            lbTelefoneCliente.setText("");
+//            lbEmailCliente.setText("");
+//            lbDesconto.setText("");
+//
+//        }
+//
+//    }
+
+    private static int getIdSerie() {
+
+        try {
+
+            Series serie = seriesController.findByDesignacao(cmbSeries.getSelectedItem().toString());
+            return serie.getId();
+        } catch (Exception e) {
+        }
+        return 0;
+
+    }
+
+    static void procedimento_processar_factura_proforma() throws SQLException {
 
         if (true) {
             conexaoTransaction = BDConexao.getInstancia();
             DocumentosController.start(conexaoTransaction);
             TbVenda salvar_venda = salvar_venda();
-            boolean respostaAGT = false;
 
             if (salvar_venda != null) {
-                System.err.println("VENDA AQUI " + salvar_venda.getCodigo());
-
-                salvarItemvenda(salvar_venda);
-                remover_dados_tabela();
-
-            } else {
-                System.err.println("  erro ao salvar venda!!!");
-            }
-        }
-
-    }
-
-    public static void procedimento_processar_factura_consulta() {
-
-        if (true) {
-            TbVenda salvar_venda = salvar_venda();
-
-            if (salvar_venda != null) {
+//                vendasController.actualizar_hash_and_assinatura( salvar_venda.getCodigo(), getGrossTotal() );
                 System.err.println("VENDA AQUI " + salvar_venda.getCodigo());
                 salvarItemvenda(salvar_venda);
                 remover_dados_tabela();
@@ -1428,7 +2219,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     }
 
 
-    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+    private void tableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableMouseClicked
         // TODO add your handling code here:
 
         if (evt.getClickCount() == 1) {
@@ -1439,15 +2230,17 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
             procedimento_eliminar_item_pedido();
         }
 
-    }//GEN-LAST:event_jTable1MouseClicked
+    }//GEN-LAST:event_tableMouseClicked
 
     private void cmbClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbClienteActionPerformed
         mostra_consumidor_final();
+
+        setTotalPagar();
     }//GEN-LAST:event_cmbClienteActionPerformed
 
-    private void jTable1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseEntered
+    private void tableMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableMouseEntered
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTable1MouseEntered
+    }//GEN-LAST:event_tableMouseEntered
 
     private void cmbAnoEconomicoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbAnoEconomicoActionPerformed
     {//GEN-HEADEREND:event_cmbAnoEconomicoActionPerformed
@@ -1495,21 +2288,21 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton4ActionPerformed
 
-    private void jTable1PropertyChange(java.beans.PropertyChangeEvent evt)//GEN-FIRST:event_jTable1PropertyChange
-    {//GEN-HEADEREND:event_jTable1PropertyChange
+    private void tablePropertyChange(java.beans.PropertyChangeEvent evt)//GEN-FIRST:event_tablePropertyChange
+    {//GEN-HEADEREND:event_tablePropertyChange
         // TODO add your handling code here:
 
-        if (jTable1.getSelectedColumn() == 2) {
+        if (table.getSelectedColumn() == 2) {
             System.out.println("change");
             setDados();
         }
 
-        if (jTable1.getSelectedColumn() == 3) {
+        if (table.getSelectedColumn() == 3) {
             System.out.println("change");
             actualizarQtdTable();
         }
 
-    }//GEN-LAST:event_jTable1PropertyChange
+    }//GEN-LAST:event_tablePropertyChange
 
     private void cmbMoedaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbMoedaActionPerformed
     {//GEN-HEADEREND:event_cmbMoedaActionPerformed
@@ -1520,14 +2313,16 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     private void cmbTipoDocumentoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbTipoDocumentoActionPerformed
     {//GEN-HEADEREND:event_cmbTipoDocumentoActionPerformed
         // TODO add your handling code here:
+        visualizarSeries();
         mostrar_proximo_codigo_documento();
         actualizar_abreviacao();
         selecionar_documento();
+
     }//GEN-LAST:event_cmbTipoDocumentoActionPerformed
 
     private void btClienteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btClienteActionPerformed
     {//GEN-HEADEREND:event_btClienteActionPerformed
-        new ClienteVisao(this, rootPaneCheckingEnabled, BDConexao.getInstancia()).setVisible(true);
+        new ClienteInternoVisao(this, rootPaneCheckingEnabled, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btClienteActionPerformed
 
     private void txtIniciaisClienteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtIniciaisClienteActionPerformed
@@ -1593,7 +2388,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     {//GEN-HEADEREND:event_txtQtdItensActionPerformed
         // TODO add your handling code here:
 
-        if (jTable1.getSelectedRow() > -1) {
+        if (table.getSelectedRow() > -1) {
             adicionarLaguraAltura();
             try {
                 BigDecimal decimal = new BigDecimal(lbTotalQtd.getText()).setScale(2, BigDecimal.ROUND_UP);
@@ -1664,6 +2459,73 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
         }
     }//GEN-LAST:event_jtable_reimpressaoMouseClicked
+
+    private void btFTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btFTActionPerformed
+    {//GEN-HEADEREND:event_btFTActionPerformed
+
+        if (validar()) {
+            if (MetodosUtil.licencaValidada(conexao)) {
+                procedimento_converter_factura_FT();
+                dispose();
+                //                procedimento_salvar();
+            }
+
+        }
+    }//GEN-LAST:event_btFTActionPerformed
+
+    public boolean validar() {
+        if (cmbCliente.getSelectedItem().equals("--Seleccione o Cliente--")) {
+
+            JOptionPane.showMessageDialog(null, "Por favor, Seleccione ou Digite o nome do Cliente!");
+            txtIniciaisCliente.requestFocus();
+            txtIniciaisCliente.setBackground(Color.YELLOW);
+            return false;
+
+        }
+
+        txtIniciaisCliente.setBackground(Color.WHITE);
+        return true;
+    }
+
+    public static void procedimento_converter_factura_FT() {
+
+        if (true) {
+            conexaoTransaction = BDConexao.getInstancia();
+            DocumentosController.start(conexaoTransaction);
+            TbVenda salvar_venda = salvar_venda();
+
+            if (salvar_venda != null) {
+                System.err.println("VENDA AQUI " + salvar_venda.getCodigo());
+//                registrar_forma_pagamento( salvar_venda.getCodigo() );
+                salvarItemvenda(salvar_venda);
+                remover_dados_tabela();
+
+            } else {
+                System.err.println("  erro ao salvar venda!!!");
+            }
+        }
+
+    }
+
+    private void BtnProformaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BtnProformaActionPerformed
+    {//GEN-HEADEREND:event_BtnProformaActionPerformed
+
+        try {
+
+            if (MetodosUtil.licencaValidada(conexao)) {
+
+                procedimento_processar_factura_proforma();
+                dispose();
+
+            }
+
+        } catch (Exception e) {
+        }
+    }//GEN-LAST:event_BtnProformaActionPerformed
+
+    private void cmbSeriesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbSeriesActionPerformed
+        mostrar_proximo_codigo_documento();
+    }//GEN-LAST:event_cmbSeriesActionPerformed
 
     private void actualizar_moeda() {
         CfMethods.MOEDA = getMoeda().getAbreviacao();
@@ -2261,6 +3123,518 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(()
@@ -2273,7 +3647,9 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private static javax.swing.JButton BT_Conversao;
+    private javax.swing.JButton BtnProforma;
     private javax.swing.JButton btCliente;
+    private javax.swing.JButton btFT;
     private static javax.swing.JButton btnEngomar;
     private static javax.swing.JButton btnLavar;
     private javax.swing.JButton btn_voltar;
@@ -2285,6 +3661,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     private static javax.swing.JComboBox<String> cmbArmazem;
     public static javax.swing.JComboBox<String> cmbCliente;
     public static javax.swing.JComboBox cmbMoeda;
+    public static javax.swing.JComboBox cmbSeries;
     public static javax.swing.JComboBox cmbTipoDocumento;
     public static javax.swing.JComboBox<String> cmb_area_venda_restaurante;
     private com.toedter.calendar.JDateChooser dcDataFim;
@@ -2298,6 +3675,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -2318,13 +3697,14 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private static javax.swing.JTable jTable1;
     private javax.swing.JLabel jlEmpresa;
     private javax.swing.JLabel jlUsuario;
     private javax.swing.JTable jtable_reimpressao;
     private javax.swing.JLabel lbClienteConsumidorFinal1;
     private javax.swing.JLabel lbClienteConsumidorFinal2;
+    private static javax.swing.JLabel lbDesconto;
     private static javax.swing.JLabel lbEmailCliente;
+    private javax.swing.JLabel lbPreco4;
     private static javax.swing.JLabel lbQuantidadeExistente;
     private javax.swing.JLabel lbServico;
     private static javax.swing.JLabel lbSomaLarguraAltura;
@@ -2338,7 +3718,9 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     private javax.swing.JRadioButton rbTaxaUrgente50;
     public static javax.swing.JLabel status_mensagem_primaria;
     public static javax.swing.JLabel status_mensagem_secundaria;
+    private static javax.swing.JTable table;
     private static javax.swing.JTextField txtAltura;
+    public static javax.swing.JTextField txtDesconto;
     private static javax.swing.JTextField txtIniciaisCliente;
     private static javax.swing.JTextField txtLargura;
     private static javax.swing.JTextArea txtObs;
@@ -2346,6 +3728,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     private static javax.swing.JTextField txtQuatidadeExistente;
     private static javax.swing.JTextField txtTelefoneCliente;
     public static javax.swing.JTextField txtTotalApagar;
+    public static javax.swing.JTextField txtTotalGeral;
     public static javax.swing.JTextField txtTotalQTD;
     // End of variables declaration//GEN-END:variables
 
@@ -2361,9 +3744,134 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         }
     }
 
+//    public static void procedimento_salvar_pedidos_iten_pedidos( String designacao_produto )
+//    {
+//        BDConexao conexaoTransactionLocal = BDConexao.getInstancia();
+//        DocumentosController.start( conexaoTransactionLocal );
+//        try
+//        {
+//
+//            int codigoProduto = produtoDao.getIdByDescricao( designacao_produto );
+//            TbProduto produto = produtoDao.findTbProduto( codigoProduto );
+//
+//            // =============================
+//            // STOCK VISUAL (UI)
+//            // =============================
+//            if ( "true".equals( produto.getStocavel() )
+//                    && produto.getCodTipoProduto().getFkFamilia().getPkFamilia() == DVML.COD_PRODUTO )
+//            {
+//                lbQuantidadeExistente.setVisible( true );
+//                txtQuatidadeExistente.setVisible( true );
+//                txtQuatidadeExistente.setText(
+//                        String.valueOf( conexao.getQtdExistenteStock( codigoProduto, getCodigoArmazem() ) )
+//                );
+//            }
+//            else
+//            {
+//                lbQuantidadeExistente.setVisible( false );
+//                txtQuatidadeExistente.setVisible( false );
+//                txtQuatidadeExistente.setText( "" );
+//            }
+//
+//            // =============================
+//            // BUSCAR PEDIDO ATIVO
+//            // =============================
+//            int codPedido = pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa, conexao );
+//
+    ////            if ( codPedido == 0 )
+////            {
+////                throw new IllegalStateException( "Nenhum pedido aberto para esta mesa" );
+////            }
+//
+//            TbPedido pedido = pedidoDao.findTbPedido( codPedido );
+//
+//            // =============================
+//            // CRIAR ITEM
+//            // =============================
+//            TbItemPedidos item = new TbItemPedidos();
+//            item.setFkPedidos( pedido );
+//            item.setFkProdutos( produto );
+//            item.setFkLugares( (TbLugares) lugaresController.findByLugar( lugar ) );
+//            item.setQtd( 1 );
+//            item.setObs( "" );
+//            item.setDataEntrega( new Date() );
+//            item.setStatusConvertido( false );
+//            item.setStatusEnviado( true );
+//            item.setStatusEfectuado( false );
+//
+//            BigDecimal precoVenda = precoDao
+//                    .findTbPreco( precoDao.getUltimoIdPrecoByIdProduto( produto.getCodigo() ) )
+//                    .getPrecoVenda();
+//
+//            item.setPreco( precoVenda.doubleValue() );
+//            item.setTotalItem( precoVenda.multiply( BigDecimal.valueOf( item.getQtd() ) ).doubleValue() );
+//
+//            // =============================
+//            // VALIDAÇÕES DE STOCK
+//            // =============================
+//            if ( !possivel_quantidade( produto.getCodigo() ) )
+//            {
+//                throw new IllegalStateException(
+//                        "Quantidade insuficiente para o produto: " + designacao_produto
+//                );
+//            }
+//
+////            if ( produto.getCodTipoProduto().getFkFamilia().getPkFamilia() == DVML.COD_PRODUTO )
+////            {
+//////                if ( estado_critico( produto.getCodigo() ) )
+//////                {
+//////                    JOptionPane.showMessageDialog(
+//////                            null,
+//////                            "O produto: " + designacao_produto + " está em estado crítico de stock",
+//////                            "AVISO",
+//////                            JOptionPane.WARNING_MESSAGE
+//////                    );
+//////                }
+////            }
+//
+//            // =============================
+//            // GRAVAR ITEM (DAO)
+//            // =============================
+//            Integer idItem = itemPedidosDao.criarComProcedimentoLav( item, conexao );
+//
+//            if ( idItem == null )
+//            {
+//                throw new SQLException( "Falha ao inserir ItemPedido" );
+//            }
+//
+//            // =============================
+//            // COMMIT
+//            // =============================
+//            DocumentosController.commit( conexaoTransactionLocal );
+//
+//            actualizar(); // UI
+//
+//        }
+//        catch ( Exception e )
+//        {
+//            try
+//            {
+//                DocumentosController.rollback( conexaoTransactionLocal );
+//            }
+//            catch ( Exception ex )
+//            {
+//                ex.printStackTrace();
+//            }
+//
+//            JOptionPane.showMessageDialog(
+//                    null,
+//                    e.getMessage(),
+//                    "Erro ao salvar item do pedido",
+//                    JOptionPane.ERROR_MESSAGE
+//            );
+//        }
+//    }
     public static void procedimento_salvar_pedidos_iten_pedidos(String designacao_produto) {
+        BDConexao conexaoTransactionLocal = BDConexao.getInstancia();
+        DocumentosController.start(conexaoTransactionLocal);
 
         try {
+
             /* MOSTRA A QUANTIDADE NO STOCK */
             int codigo_produto = produtoDao.getIdByDescricao(designacao_produto);
 
@@ -2381,23 +3889,27 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
             }
 
             TbItemPedidos itemPedidosLocal = new TbItemPedidos();
-            int cod_pedido = pedidoDao.getLastPedidoByDefignacaoMesaFALSE(mesa, conexao);
+            int cod_pedido = pedidoDao.getLastPedidoByDefignacaoMesaFALSE(mesa, conexaoTransactionLocal
+            );
 
+//            itemPedidosLocal.setFkLugares(
+//                    (TbLugares) lugaresController.findByLugar( lugar )
+//            );
             System.err.println("$$$$CODIGO PEDIDO ACTUAL: " + cod_pedido);
             pedido = pedidoDao.findTbPedido(cod_pedido);
             itemPedidosLocal.setFkLugares((TbLugares) lugaresController.findByLugar(lugar));
-//            itemPedidosLocal.setFkLugares( lugarDao.findTbLugares( lugarDao.getIdByDescricao( getDescricaoLugar() ) ) );
             itemPedidosLocal.setFkProdutos(produtoDao.findTbProduto(produtoDao.getIdByDescricao(designacao_produto)));
             itemPedidosLocal.setQtd(1);
             itemPedidosLocal.setObs("");
             itemPedidosLocal.setDataEntrega(new Date());
             itemPedidosLocal.setStatusConvertido(false);
             /*Envia para a área da cozinha*/
-            //para enviar  da cozinha
             itemPedidosLocal.setStatusEnviado(true);
             //para saber se o prato ja foi feito 
             itemPedidosLocal.setStatusEfectuado(false);
 
+            double preco = precoDao.findTbPreco(precoDao.getUltimoIdPrecoByIdProduto(itemPedidosLocal.getFkProdutos().getCodigo())).getPrecoVenda().doubleValue();
+            itemPedidosLocal.setPreco(preco);
             double total = itemPedidosLocal.getQtd() * precoDao.findTbPreco(precoDao.getUltimoIdPrecoByIdProduto(itemPedidosLocal.getFkProdutos().getCodigo())).getPrecoVenda().doubleValue();
             itemPedidosLocal.setTotalItem(total);
             itemPedidosLocal.setFkPedidos(pedido);
@@ -2414,7 +3926,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
                     }
 
 //#ped2z
-                    Integer idLastItemPedido = itemPedidosDao.criarComProcedimento(itemPedidosLocal, conexao);
+                    Integer idLastItemPedido = itemPedidosDao.criarComProcedimentoLav(itemPedidosLocal, conexaoTransactionLocal);
 
                     if (idLastItemPedido != null) {
                         //##PINTAR
@@ -2513,15 +4025,6 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
                 Integer idLastPedido = pedidoDao.criarComProcedimentos(pedido_2, conexao);
                 System.out.println("$$$$$$ SALVAR NOVO PEDIDO >  " + idLastPedido);
 
-//                if ( idLastPedido != null )
-//                {
-//                    PrincipalPedidosVisao.mesas_livres( getLabelMesaByMesa() );
-//                    PrincipalPedidosVisao.pintar_mesas( getLabelMesaByMesa(), this.mesa );
-//                }
-//                else
-//                {
-//                    System.err.println( "ERRO AO SALVAR O PEDIDO...." );
-//                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -2534,27 +4037,30 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
     public static void setSalvarPedidoPosVenda(BDConexao conexaoParm) {
 
+//        System.out.println( "ID PEDIDO : " + pedidoDao.getLastPedidoByDefignacaoMesaSemStatus( mesa ) );
+//        TbPedido pedido_local;
+//        //busca o último pedido de uma determinada mesa, senão existe instancia um pedido como 
+//        if ( pedidoDao.getLastPedidoByDefignacaoMesaSemStatus( mesa ) == 0 )
+//        {
+//
+//            pedido_local = new TbPedido();
+//            pedido_local.setStatusPedido( true );
+//
+//        }
+//        else
+//        {
+//            pedido_local = pedidoDao.findTbPedido( pedidoDao.getLastPedidoByDefignacaoMesaSemStatus( mesa ) );
+//        }
         if (true) {
             try {
+
                 TbPedido pedido_2 = new TbPedido();
                 pedido_2.setDataPedido(new Date());
                 pedido_2.setHoraPedido(new Date());
                 pedido_2.setStatusPedido(false);
                 pedido_2.setFkMesas(mesasDao.findTbMesas(mesasDao.getIdByDescricao(mesa)));
-//                System.out.println( "PEDIDOS : " + pedido_2.toString() );
-//#ped1                
-                Integer idLastPedido = pedidoDao.criarComProcedimentos(pedido_2, conexaoParm);
-                System.out.println("$$$$$$ SALVAR NOVO PEDIDO >  " + idLastPedido);
 
-//                if ( idLastPedido != null )
-//                {
-//                    PrincipalPedidosVisao.mesas_livres( getLabelMesaByMesa() );
-//                    PrincipalPedidosVisao.pintar_mesas( getLabelMesaByMesa(), this.mesa );
-//                }
-//                else
-//                {
-//                    System.err.println( "ERRO AO SALVAR O PEDIDO...." );
-//                }
+                Integer idLastPedido = pedidoDao.criarComProcedimentos(pedido_2, conexaoParm);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -2614,7 +4120,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     }
 
     public static void adicionar_tabela(List<TbItemPedidos> itemPedidos_list) {
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         Double preco = 0d, desconto = 0d, taxa = 0d;
         double qtd = 0;
 
@@ -2629,7 +4135,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         if (itemPedidos_list != null) {
 
             //define a altura das linhas
-            jTable1.setRowHeight(50);
+            table.setRowHeight(50);
             try {
                 for (int i = 0; i < itemPedidos_list.size(); i++) {
                     qtd = itemPedidos_list.get(i).getQtd();
@@ -2673,8 +4179,19 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
     }
 
+    private static double getDescontoClientePercentagem() {
+        TbCliente clientes = clientesController.findByCodigo(getIdCliente());
+
+        if (Objects.nonNull(clientes)
+                && clientes.getPercentagemDesconto() > 0) {
+            return clientes.getPercentagemDesconto();
+        }
+
+        return 0.0;
+    }
+
     public static void adicionar_tabela_lugar(List<TbItemPedidos> itemPedidos_list) {
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         Double preco = 0d, desconto = 0d, taxa = 0d;
         double qtd = 0;
 
@@ -2689,7 +4206,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         if (itemPedidos_list != null) {
 
             //define a altura das linhas
-            jTable1.setRowHeight(50);
+            table.setRowHeight(50);
             try {
                 for (int i = 0; i < itemPedidos_list.size(); i++) {
 
@@ -2922,8 +4439,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
     private void actualizar_campo(int qtd) {
 
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
-        TbItemPedidos itemPedidos = itemPedidosDao.findTbItemPedidos(Integer.parseInt(jTable1.getValueAt(this.linha_actual, 0).toString()));
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        TbItemPedidos itemPedidos = itemPedidosDao.findTbItemPedidos(Integer.parseInt(table.getValueAt(this.linha_actual, 0).toString()));
         itemPedidos.setQtd(qtd);
 
         try {
@@ -2937,7 +4454,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     public static void gravar_item_eliminado(JTable tabela) {
 //        linha_acutal = jTable1.getSelectedRow();
         DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
-        TbItemPedidos itemPedidos = itemPedidosDao.findTbItemPedidos(Integer.parseInt(jTable1.getValueAt(linha_actual, 0).toString()));
+        TbItemPedidos itemPedidos = itemPedidosDao.findTbItemPedidos(Integer.parseInt(table.getValueAt(linha_actual, 0).toString()));
 //        int id_item_pedido = Integer.parseInt( modelo.getValueAt( tabela.getSelectedRow(), 0 ).toString() );
 
         try {
@@ -2991,10 +4508,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
         venda_local.setClienteNif(getClienteNif());
         venda_local.setCodigoCliente(clientesController.findByCodigo(getIdCliente()));
-//        venda_local.setNomeConsumidorFinal( getNomeCliente() );
-//        venda_local.setNomeConsumidorFinal ( txtNomeConsumidorFinal.getText () );
 
-//        TbCliente clienteSelecionado = clientesController.getClienteByNome( ( String ) cmbCliente.getSelectedItem() );
         //Total Ilíquido
         venda_local.setTotalGeral(new BigDecimal(getTotalIliquido()));
         //desconto por linha
@@ -3011,7 +4525,6 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         venda_local.setTotalIncidencia(new BigDecimal(getTotalIncidencia()));
         venda_local.setTotalIncidenciaIsento(new BigDecimal(getTotalIncidenciaIsento()));
 //        venda_local.setTotalRetencao( getTotalRetencao() );
-
         /*outros campos*/
         venda_local.setDescontoTotal(new BigDecimal(getDescontoComercial() + getDescontoFinanceiro()));
 //        venda_local.setIdBanco( bancoDao.findTbBanco( getIdBanco() ) );
@@ -3037,11 +4550,9 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 //        venda_local.setAreaVenda( String.valueOf( cmb_area_venda_restaurante.getSelectedItem() ) );
 //        venda_local.setQuarto( "" );
 //        venda_local.setRefDataFact( CfMethods.fullDateToText( venda_local.getDataVenda() ) );
-
         //System.out.println( "STATUS:documento assinado com sucesso." );
         venda_local.setFkCambio(cambiosController.findByCodigo(ID_CAMBIO_NACIONAL));
 //        venda_local.setFkCambio( cambioDao.findCambio( ID_CAMBIO_NACIONAL ) );
-
 
         /*status documento*/
         venda_local.setStatusEliminado("false");
@@ -3050,23 +4561,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         venda_local.setGorjeta(new BigDecimal(gorjeta));
 
         Integer last_venda = 0;
-//        try
-//        {
-        ////            vendaDao.criarVendaComProcedu ( venda_local, conexao );
-////            vendaDao.create ( venda_local );
-////            Integer last_venda = VendaDao.criarVendaComProcedu( venda_local, conexao );
-//            last_venda = VendaDao.criarVendaComProcedu( venda_local, conexao );
-//            System.out.println( "STATUS:factura criada com sucesso." );
-//            //salvarItemvenda();
-////            MetodosUtil.adicionar_saldo_banco( venda_local.getTotalVenda(), venda_local.getIdBanco().getIdBanco(), conexao );
-//
-//            System.out.println( "STATUS:itens adicionado na facrtura com sucesso." );
-//        }
-//        catch ( Exception e )
-//        {
-//            System.err.println( "STATUS: falha ao actualizar a factura" );
-//            JOptionPane.showMessageDialog( null, "Falha ao Processar a Factura", "FALHA", JOptionPane.ERROR_MESSAGE );
-//        }
+
         try {
 
             if (vendasController.salvar(venda_local)) {
@@ -3104,12 +4599,27 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
     public static int getIdCliente() {
         try {
-            TbCliente cliente = clientesController.getClienteByNome(cmbCliente.getSelectedItem().toString());
+            if (cmbCliente.getSelectedItem() == null) {
+                return 0;
+            }
+
+            String nomeCliente = cmbCliente.getSelectedItem().toString().trim();
+
+            if (nomeCliente.isEmpty()) {
+                return 0;
+            }
+
+            TbCliente cliente = clientesController.getClienteByNome(nomeCliente);
+
+            if (cliente == null) {
+                return 0;
+            }
+
             return cliente.getCodigo();
         } catch (Exception e) {
+            // logger.error("Erro ao obter ID do cliente", e);
             return 0;
         }
-
     }
 
     private static double getTotalRetencao() {
@@ -3323,16 +4833,59 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         try {
             TbCliente cliente = (TbCliente) clientesController.findById(getIdCliente());
 
-            String nif = cliente.getNif();
-            System.out.println("NIF CLIENTE: " + nif);
-            if (nif.equals("")) {
+            if (cliente == null) {
                 return DVML.NUMBER_NIF_GENERICO;
             }
-            return nif;
+
+            String nif = cliente.getNif();
+
+            if (nif == null || nif.trim().isEmpty()) {
+                return DVML.NUMBER_NIF_GENERICO;
+            }
+
+            return nif.trim();
         } catch (Exception e) {
-            e.printStackTrace();
-            return "";
+            // logger.error("Erro ao obter NIF do cliente", e);
+            return DVML.NUMBER_NIF_GENERICO;
         }
+    }
+
+//    private static String getClienteNif()
+//    {
+//        try
+//        {
+//            TbCliente cliente = (TbCliente) clientesController.findById( getIdCliente() );
+//
+//            String nif = cliente.getNif();
+//            System.out.println( "NIF CLIENTE: " + nif );
+//            if ( nif.equals( "" ) )
+//            {
+//                return DVML.NUMBER_NIF_GENERICO;
+//            }
+//            return nif;
+//        }
+//        catch ( Exception e )
+//        {
+//            e.printStackTrace();
+//            return "";
+//        }
+//    }
+    private static List<TbProduto> getProdutosIsentos() {
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+//        double taxa = 0.0;
+        int codigo_produto = 0;
+        List<TbProduto> lista_produtos_isentos = new ArrayList<>();
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            codigo_produto = Integer.parseInt(modelo.getValueAt(i, 0).toString());
+//            taxa = Double.parseDouble( modelo.getValueAt( i, 6 ).toString() );
+//            if ( taxa == 0.0 )
+//            {
+            lista_produtos_isentos.add((TbProduto) produtosController.findById(codigo_produto));
+//            }
+        }
+
+        return lista_produtos_isentos;
+
     }
 
 //    
@@ -3350,7 +4903,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 //    }
     public static void salvarItemvenda(TbVenda venda) {
 
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         boolean efectuada = true;
         int idProduto = 0;
         double qtd = 0d;
@@ -3360,7 +4913,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 //        TbStock stock_local;
         double sub_total_iliquido = 0, preco_unitario = 0d, taxa = 0d, desconto = 0d, valor_iva = 0d;
 
-        for (int i = 0; i < jTable1.getRowCount(); i++) {
+        for (int i = 0; i < table.getRowCount(); i++) {
             try {
 
                 String data_entrega = modelo.getValueAt(i, 1).toString();
@@ -3454,34 +5007,39 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         if (efectuada) {
             cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVectorExcetoConsumidorFinal()));
 //            cmbCliente.setSelectedIndex( 0 );
+            List<TbProduto> lista_produto_isentos = getProdutosIsentos();
+            String motivos_isentos = MetodosUtil.getMotivoIsensaoProdutos(lista_produto_isentos);
 
-            registrar_forma_pagamento(venda.getCodigo());
-
+            if ((getIdDocumento() == DOC_FACTURA_RECIBO_FR)) {
+                registrar_forma_pagamento(venda.getCodigo());
+            }
             JOptionPane.showMessageDialog(null, "Factura efectuada com sucesso!..");
             limpar();
+//            setSalvarPedidos();
             txtObs.setText("");
             txtTotalApagar.setText("");
             txtTotalQTD.setText("");
             TbPedido pedido = pedidoDao.findTbPedido(pedidoDao.getLastPedidoByDefignacaoMesaFALSE(mesa));
+            System.out.println(" VARIAVEL PEDIDO: " + pedido);
             PedidoDao.eliminarPedido(pedido, conexaoTransaction); // Elimina o pedido
             setSalvarPedidoPosVenda(conexaoTransaction);
 
             DocumentoDao.commitTransaction(conexaoTransaction);
             gorjeta = 0;
 
-            ListaVendaRecolhas listaVendaCliente = new ListaVendaRecolhas(venda.getCodigo(),
-                    abreviacao, false, true, "Original");
-//
-//            if ( false )
-//            {
-//                procedimentoImprimirTicket();
-//            }
-//            else
-//            {
-//                procedimentoImprimirTicketCada();
-//            }
+            if ((getIdDocumento() == DOC_FACTURA_RECIBO_FR)) {
+                ListaVendaRecolhas listaVendaCliente = new ListaVendaRecolhas(venda.getCodigo(), abreviacao, false, true, "Original");
 
-            procedimentoImprimirTicketCada();
+            } else {
+
+                ListaVenda1 listaVenda1 = new ListaVenda1(venda.getCodigo(), abreviacao, false, true, "", motivos_isentos);
+            }
+
+            if (getIdDocumento() == DOC_FACTURA_RECIBO_FR || getIdDocumento() == DOC_FACTURA_FT) {
+
+                procedimentoImprimirTicket();
+
+            }
         }
 
     }
@@ -3549,7 +5107,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     }
 
     public static void setTotalGeral() {
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         double total_geral = 0;
         for (int i = 0; i <= modelo.getRowCount() - 1; i++) {
             total_geral += Double.parseDouble(modelo.getValueAt(i, 4).toString());
@@ -3558,7 +5116,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     }
 
     public static void setTotalPecas() {
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         double total_geral = 0;
         for (int i = 0; i <= modelo.getRowCount() - 1; i++) {
             total_geral += Double.parseDouble(modelo.getValueAt(i, 3).toString());
@@ -3774,20 +5332,28 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         return true;
     }
 
+    //#D
     public static void setTotalPagar() {
 
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
-        double total_pagar = 0;
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        double total_pagar = 0, totalGeral = 0;
         for (int i = 0; i < modelo.getRowCount(); i++) {
-            total_pagar += CfMethods.parseMoedaFormatada(modelo.getValueAt(i, 4).toString());
+            totalGeral += CfMethods.parseMoedaFormatada(modelo.getValueAt(i, 4).toString());
         }
+
+        double desconto = getDescontoFinanceiro();
+
+        total_pagar = totalGeral - desconto;
+
+        txtTotalGeral.setText(CfMethods.formatarComoMoeda(totalGeral));
+        txtDesconto.setText(CfMethods.formatarComoMoeda(desconto));
         txtTotalApagar.setText(CfMethods.formatarComoMoeda(total_pagar));
 
     }
 
     public static void setTotalQTD() {
 
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         int total_qtd = 0;
         for (int i = 0; i < modelo.getRowCount(); i++) {
             total_qtd += Double.parseDouble(modelo.getValueAt(i, 3).toString());
@@ -3799,13 +5365,13 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
     public static void setTotalPagarByLugar(int lugar) {
 
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
         double total_pagar = 0;
 
         for (int i = 0; i < modelo.getRowCount(); i++) {
 
-            if (lugaresController.getIdByDescricao(jTable1.getModel().getValueAt(i, 1).toString()) == lugar) {
+            if (lugaresController.getIdByDescricao(table.getModel().getValueAt(i, 1).toString()) == lugar) {
 //                total_pagar += Double.parseDouble( String.valueOf( modelo.getValueAt( i, 4 ) ) );
                 total_pagar += CfMethods.parseMoedaFormatada(modelo.getValueAt(i, 4).toString());
             }
@@ -3912,7 +5478,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 //        //lbValorPorExtenco.setText(    "São: "   +  MetodosUtil .valorPorExtenso(     Double.parseDouble(   txtTotalApagar.getText() )   ) );
 //    }
     private static void remover_dados_tabela() {
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         modelo.setRowCount(0);
     }
 
@@ -3960,7 +5526,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
     //Lugar
     public static void salvarItemvendaLugar(int lugar) {
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 
         Integer cod_venda = vendasController.getLastVenda().getCodigo();
 //        int cod_venda = vendaDao.getLastVenda();
@@ -3975,7 +5541,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         double total = 0;
         int valor_lugar_tabela = 0;
 
-        for (int i = 0; i < jTable1.getRowCount(); i++) {
+        for (int i = 0; i < table.getRowCount(); i++) {
             try {
                 valor_lugar_tabela = getLugarSelecionado(i);
                 if (valor_lugar_tabela == lugar) {
@@ -4082,9 +5648,9 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
     public static double getTotal_por_lugar(int lugar) {
 
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         double total_local = 0d;
-        for (int i = 0; i < jTable1.getRowCount(); i++) {
+        for (int i = 0; i < table.getRowCount(); i++) {
 
             int lugar_local = Integer.parseInt(modelo.getValueAt(i, 1).toString());
             if (lugar_local == lugar) {
@@ -4099,9 +5665,9 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
     public static double getTotal_QTD_lugar(int lugar) {
 
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         double total_local = 0d;
-        for (int i = 0; i < jTable1.getRowCount(); i++) {
+        for (int i = 0; i < table.getRowCount(); i++) {
 
             int lugar_local = Integer.parseInt(modelo.getValueAt(i, 1).toString());
             if (lugar_local == lugar) {
@@ -4158,8 +5724,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     public static boolean exite_pedido_lugar(int lugar) {
 
         boolean efectuada = false;
-        for (int i = 0; i < jTable1.getRowCount(); i++) {
-            if (lugaresController.getIdByDescricao(jTable1.getModel().getValueAt(i, 1).toString()) == lugar) {
+        for (int i = 0; i < table.getRowCount(); i++) {
+            if (lugaresController.getIdByDescricao(table.getModel().getValueAt(i, 1).toString()) == lugar) {
                 efectuada = true;
                 break;
             }
@@ -4492,8 +6058,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 //
 //    }
     public void procedimento_eliminar_item_pedido() {
-        linha_acutal = jTable1.getSelectedRow();
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        linha_acutal = table.getSelectedRow();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 //        int id_item_consumo_alojamento = Integer.parseInt( modelo.getValueAt( linha_acutal, 0 ).toString() );
 
         try {
@@ -4504,8 +6070,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     }
 
     public void procedimento_salver_item_pedido() {
-        linha_acutal = jTable1.getSelectedRow();
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        linha_acutal = table.getSelectedRow();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 //        int id_item_consumo_alojamento = Integer.parseInt( modelo.getValueAt( linha_acutal, 0 ).toString() );
         try {
 
@@ -4531,8 +6097,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     }
 
     public static void procedimento_eliminar_item_pedido(String chave_mestre) {
-        linha_actual = jTable1.getSelectedRow();
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        linha_actual = table.getSelectedRow();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         String lugar = modelo.getValueAt(linha_actual, 1).toString();
         String consumo = modelo.getValueAt(linha_actual, 2).toString().split("-")[0];
         int idProduto = produtosController.getIdProduto(consumo);
@@ -4552,7 +6118,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
             System.out.println("Chave Real: " + chave_mestre);
             try {
                 if (validar1()) {
-                    eliminar_item(jTable1);
+                    eliminar_item(table);
 //                    PrincipalPedidosVisao.mesas_livres( getLabelMesaByMesa() );
 //                    PrincipalPedidosVisao.pintar_mesas( getLabelMesaByMesa(), mesa );
 
@@ -4772,7 +6338,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 //    }
     public int getQtdPedidosTabela(int cod_produto) {
 
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         int soma = 0;
         int cod_produto_local = 0;
 
@@ -4789,7 +6355,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
     public void remover_item_all_pedidos_tabela(int cod_produto) {
 
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         int soma = 0;
         int cod_produto_local = 0;
 
@@ -4813,7 +6379,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
     public void remover_item_all_pedidos_amais_tabela(int cod_produto, int qtd) {
 
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         int cont = 1;
         int cod_produto_local = 0;
 
@@ -4924,7 +6490,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
     public static boolean validar1() {
 
-        if (jTable1.getModel().getRowCount() < 0) {
+        if (table.getModel().getRowCount() < 0) {
             JOptionPane.showMessageDialog(null, "Atenção\nNão existe itens na tabela!");
             return false;
         }
@@ -4999,22 +6565,21 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 //            lb_proximo_documento.setText( "" );
 //        }
 //    }
-    private void mostrar_proximo_codigo_documento() {
-        try {
-            this.documento = (Documento) documentosController.findById(getIdDocumento());
-            this.anoEconomico = (AnoEconomico) anoEconomicoController.findById(getIdAnoEconomico());
-            this.doc_prox_cod = vendasController.getUltimaContagemByIdDocumentoAndAnoEconomico(
-                    getIdDocumento(), getIdAnoEconomico()) + 1;
-            prox_doc = documento.getAbreviacao();
-            //FA Série / codigo
-            prox_doc += " " + this.anoEconomico.getSerie() + "/" + this.doc_prox_cod;
-            lb_proximo_documento.setText("PRÓX.DOC. :" + prox_doc);
-        } catch (Exception e) {
-            this.documento = null;
-            lb_proximo_documento.setText("");
-        }
-    }
-
+//    private void mostrar_proximo_codigo_documento() {
+//        try {
+//            this.documento = (Documento) documentosController.findById(getIdDocumento());
+//            this.anoEconomico = (AnoEconomico) anoEconomicoController.findById(getIdAnoEconomico());
+//            this.doc_prox_cod = vendasController.getUltimaContagemByIdDocumentoAndAnoEconomico(
+//                    getIdDocumento(), getIdAnoEconomico()) + 1;
+//            prox_doc = documento.getAbreviacao();
+//            //FA Série / codigo
+//            prox_doc += " " + this.anoEconomico.getSerie() + "/" + this.doc_prox_cod;
+//            lb_proximo_documento.setText("PRÓX.DOC. :" + prox_doc);
+//        } catch (Exception e) {
+//            this.documento = null;
+//            lb_proximo_documento.setText("");
+//        }
+//    }
 //    public static int getIdDocumento()
 //    {
 //        try
@@ -5046,7 +6611,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     }
 
     private static double getTotalIliquido() {
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         double qtd = 0;
         int idProduto = 0;
         double total_iliquido = 0, preco_unitario = 0;
@@ -5065,11 +6630,12 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
         }
 
+        System.out.println("TOTAL_GERAL (ILÍQUIDO):" + total_iliquido);
         return total_iliquido;
     }
 
     private static double getTotalIliquido(int lugar) {
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         int qtd = 0, idProduto = 0;
         double total_iliquido = 0, preco_unitario = 0;
 
@@ -5102,7 +6668,11 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     }
 
     private static double getDescontoFinanceiro() {
-        return 0d;
+
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        double valorPercentual = (getDescontoClientePercentagem() / 100);
+        double desconto = (getTotalIliquido() * valorPercentual);
+        return desconto;
     }
 
     private static double getDescontoFinanceiro(int lugar) {
@@ -5110,7 +6680,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     }
 
     private static double getTotalImposto() {
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         double qtd = 0;
         int idProduto = 0;
         double imposto = 0d, preco_unitario = 0d, desconto_valor_linha = 0;
@@ -5136,7 +6706,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     }
 
     private static double getTotalImposto(int lugar) {
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         double qtd = 0;
         int idProduto = 0;
         double imposto = 0d, preco_unitario = 0d, desconto_valor_linha = 0;
@@ -5188,7 +6758,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     }
 
     private static double getTotalIncidencia() {
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         double qtd = 0;
         int idProduto = 0;
         double incidencia = 0d, preco_unitario = 0d, desconto_valor_linha = 0, taxa = 0d;
@@ -5216,7 +6786,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     }
 
     private static double getTotalIncidencia(int lugar) {
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         double qtd = 0;
         int idProduto = 0;
         double incidencia = 0d, preco_unitario = 0d, desconto_valor_linha = 0, taxa = 0d;
@@ -5247,7 +6817,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     }
 
     private static double getTotalIncidenciaIsento() {
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         double qtd = 0;
         int idProduto = 0;
         double incidencia_isento = 0d, preco_unitario = 0d, desconto_valor_linha = 0, taxa = 0;
@@ -5274,7 +6844,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     }
 
     private static double getTotalIncidenciaIsento(int lugar) {
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         double qtd = 0;
         int idProduto = 0;
         double incidencia_isento = 0d, preco_unitario = 0d, desconto_valor_linha = 0, taxa = 0;
@@ -5320,7 +6890,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         double qtd = 0;
         int idProduto = 0;
 
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         for (int i = 0; i < modelo.getRowCount(); i++) {
             String servico = modelo.getValueAt(i, 2).toString().split("-")[0];
             System.out.println("SEVICO: " + servico);
@@ -5340,7 +6910,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         double qtd = 0;
         int idProduto = 0;
 
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         for (int i = 0; i < modelo.getRowCount(); i++) {
             int valor_lugar_tabela = getLugarSelecionado(i);
             if (valor_lugar_tabela == lugar) {
@@ -5372,7 +6942,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 //        }
 //    }
     public static int getLugarSelecionado(int linha) {
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         String lugar_valor_tabela = modelo.getValueAt(linha, 1).toString();
         return lugaresController.getIdByDescricao(lugar_valor_tabela);
 //        return lugarDao.getIdByDescricao( lugar_valor_tabela );
@@ -5415,9 +6985,11 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         if (Objects.nonNull(cliente)) {
             lbTelefoneCliente.setText("Tel.  " + cliente.getTelefone());
             lbEmailCliente.setText("Email.  " + cliente.getEmail());
+            lbDesconto.setText("Desconto.  " + cliente.getPercentagemDesconto() + " %");
         } else {
             lbTelefoneCliente.setText("");
             lbEmailCliente.setText("");
+            lbDesconto.setText("");
 
         }
 
@@ -5587,6 +7159,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     private void setFolhaImpressora(String folha) {
 //        if ( folha.equalsIgnoreCase( "A6" ) )
 //        {
+
     
 
     ////            ck_simplificada.setSelected( true );
@@ -5792,15 +7365,15 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     }
 
     public static void scrolltable() {
-        jTable1.scrollRectToVisible(jTable1.getCellRect(jTable1.getRowCount() - 1, jTable1.getColumnCount(), true));
+        table.scrollRectToVisible(table.getCellRect(table.getRowCount() - 1, table.getColumnCount(), true));
     }
 
     private void actualizarQtdTable() {
 
-        int linhaSelecionada = jTable1.getSelectedRow();
+        int linhaSelecionada = table.getSelectedRow();
 
         if (linhaSelecionada > -1) {
-            int idItemPedidos = Integer.parseInt(jTable1.getValueAt(linhaSelecionada, 0).toString());
+            int idItemPedidos = Integer.parseInt(table.getValueAt(linhaSelecionada, 0).toString());
             TbItemPedidos itemPedidosLocal = itemPedidosDao.findTbItemPedidos(idItemPedidos);
 
             try {
@@ -5813,7 +7386,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
             int qtd;
 
             try {
-                qtd = Integer.parseInt(jTable1.getValueAt(linhaSelecionada, 3).toString());
+                qtd = Integer.parseInt(table.getValueAt(linhaSelecionada, 3).toString());
             } catch (NumberFormatException e) {
                 resetQtd("Erro de formatação da quantidade.\nAtenção: Tem que ser número.");
                 return;
@@ -5846,10 +7419,10 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
     private static void actualizarQtdTable(double qtd) {
 
-        int linhaSelecionada = jTable1.getSelectedRow();
+        int linhaSelecionada = table.getSelectedRow();
 
         if (linhaSelecionada > -1) {
-            int idItemPedidos = Integer.parseInt(jTable1.getValueAt(linhaSelecionada, 0).toString());
+            int idItemPedidos = Integer.parseInt(table.getValueAt(linhaSelecionada, 0).toString());
             TbItemPedidos itemPedidosLocal = itemPedidosDao.findTbItemPedidos(idItemPedidos);
 
             try {
@@ -5885,17 +7458,34 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     }
 
     private void selecionar_documento() {
+//        if ( cmbTipoDocumento.getSelectedItem().equals( "Factura/Recibo" ) )
+//        {
+//            BT_Conversao.setVisible( true );
+//        }
+//        else if ( cmbTipoDocumento.getSelectedItem().equals( "Factura Consulta" ) )
+//        {
+//            BT_Conversao.setVisible( false );
+//        }
+//        
         if (cmbTipoDocumento.getSelectedItem().equals("Factura/Recibo")) {
             BT_Conversao.setVisible(true);
-        } else if (cmbTipoDocumento.getSelectedItem().equals("Factura Consulta")) {
+            BtnProforma.setVisible(false);
+            btFT.setVisible(false);
+        } else if (cmbTipoDocumento.getSelectedItem().equals("Factura")) {
+            btFT.setVisible(true);
+            BtnProforma.setVisible(false);
             BT_Conversao.setVisible(false);
+        } else if (cmbTipoDocumento.getSelectedItem().equals("Factura-Proforma")) {
+            BtnProforma.setVisible(true);
+            BT_Conversao.setVisible(false);
+            btFT.setVisible(false);
         }
     }
 
     private static void resetQtd(String msg) {
-        jTable1.setValueAt(1, jTable1.getSelectedRow(), 3);
+        table.setValueAt(1, table.getSelectedRow(), 3);
         JOptionPane.showMessageDialog(null, msg);
-        jTable1.clearSelection();
+        table.clearSelection();
     }
 
     public static void adicionarImportar(String designacao) {
@@ -5950,8 +7540,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         }
 
         private void actualizarLinhaObs(String prefixo) {
-            DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
-            int linhaSeleccionada = jTable1.getSelectedRow();
+            DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+            int linhaSeleccionada = table.getSelectedRow();
 
             if (linhaSeleccionada == -1) {
                 linhaSeleccionada = modelo.getRowCount() - 1;
@@ -5983,8 +7573,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
     private void setDados() {
         try {
-            DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
-            int linhaSeleccionada = jTable1.getSelectedRow();
+            DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+            int linhaSeleccionada = table.getSelectedRow();
             String data_entrega = modelo.getValueAt(linhaSeleccionada, 1).toString();
             int ano = Integer.parseInt(data_entrega.split("-")[0]);
             int mes = Integer.parseInt(data_entrega.split("-")[1]);
@@ -6018,8 +7608,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     }
 
     private void adicionarDateEntrega() {
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
-        int linhaSeleccionada = jTable1.getSelectedRow();
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        int linhaSeleccionada = table.getSelectedRow();
 
         if (modelo.getRowCount() > 0) {
             if (linhaSeleccionada == -1) {
@@ -6458,6 +8048,37 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         }
 
         return 0;
+    }
+    
+      private void visualizarSeries() {
+        int idDocumento = getIdDocumento();
+        int idAnoEconomico = getIdAnoEconomico();
+
+        System.out.println("IdDocumento: "+idDocumento);
+        System.out.println("idAnoEconomico: "+idAnoEconomico);
+        // Recupera todas as séries do documento e ano económico
+        List<Series> listarPorDocumentoEAno = seriesController.listarPorDocumentoEAno(idDocumento, idAnoEconomico);
+
+        // Limpa o combobox antes de preencher
+        cmbSeries.removeAllItems();
+
+        // Verifica se encontrou alguma série
+        if (listarPorDocumentoEAno.isEmpty()) {
+
+            cmbSeries.addItem("Nenhuma série disponível");
+            return;
+        }
+
+        // Preenche o combobox com as séries
+        for (Series s : listarPorDocumentoEAno) {
+
+            cmbSeries.addItem(s.getDesignacao());
+        }
+    }
+
+    private void mostrar_ano_economico_serie() {
+        anoEconomico = anoEconomicoController.getLastObject();
+
     }
 
 }
