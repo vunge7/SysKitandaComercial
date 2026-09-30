@@ -281,7 +281,7 @@ public class ProdutosVisao extends javax.swing.JFrame {
         btnCancelar = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         ivaJPanel = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
+        pnPainelAplicar = new javax.swing.JPanel();
         cmbImposto = new javax.swing.JComboBox<>();
         ivaTaxaJLabel = new javax.swing.JLabel();
         ivaAplicarJRadioButton = new javax.swing.JRadioButton();
@@ -507,7 +507,7 @@ public class ProdutosVisao extends javax.swing.JFrame {
         ivaJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Aplicar IVA ao Produto", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16))); // NOI18N
         ivaJPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        pnPainelAplicar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
         cmbImposto.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         cmbImposto.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -536,45 +536,45 @@ public class ProdutosVisao extends javax.swing.JFrame {
         TotalIvaLabel.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         TotalIvaLabel.setText("P.Venda Com IVA");
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
+        javax.swing.GroupLayout pnPainelAplicarLayout = new javax.swing.GroupLayout(pnPainelAplicar);
+        pnPainelAplicar.setLayout(pnPainelAplicarLayout);
+        pnPainelAplicarLayout.setHorizontalGroup(
+            pnPainelAplicarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnPainelAplicarLayout.createSequentialGroup()
+                .addGroup(pnPainelAplicarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnPainelAplicarLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(pnPainelAplicarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(cmbImposto, 0, 150, Short.MAX_VALUE)
                             .addComponent(ivaAplicarJRadioButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
+                    .addGroup(pnPainelAplicarLayout.createSequentialGroup()
                         .addGap(16, 16, 16)
                         .addComponent(ivaTaxaJLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(pnPainelAplicarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(TotalIvaLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
                     .addComponent(txtPrecoDeVendaComIva))
                 .addContainerGap(14, Short.MAX_VALUE))
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        pnPainelAplicarLayout.setVerticalGroup(
+            pnPainelAplicarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(pnPainelAplicarLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(pnPainelAplicarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(pnPainelAplicarLayout.createSequentialGroup()
                         .addComponent(ivaAplicarJRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                         .addGap(7, 7, 7)
                         .addComponent(ivaTaxaJLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cmbImposto, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
+                    .addGroup(pnPainelAplicarLayout.createSequentialGroup()
                         .addComponent(TotalIvaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, Short.MAX_VALUE)
                         .addComponent(txtPrecoDeVendaComIva, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
-        ivaJPanel.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 330, 80));
+        ivaJPanel.add(pnPainelAplicar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 330, 80));
 
         jPanel6.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
@@ -868,6 +868,7 @@ public class ProdutosVisao extends javax.swing.JFrame {
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txtCodigoProduto.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        txtCodigoProduto.setForeground(new java.awt.Color(0, 0, 0));
         txtCodigoProduto.setCaretColor(new java.awt.Color(255, 255, 255));
         txtCodigoProduto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1225,6 +1226,7 @@ public class ProdutosVisao extends javax.swing.JFrame {
             Logger.getLogger(ProdutosVisao.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+        //DDRH
 
     }//GEN-LAST:event_cmbTipoProdutoActionPerformed
 
@@ -1239,9 +1241,14 @@ public class ProdutosVisao extends javax.swing.JFrame {
 
             ver_dados_produtos(codigoInternoInt);
             if (ivaAplicarJRadioButton.isSelected()) {
-//                calcularTotalComIva();
-                calcularIva();
 
+//                calcularTotalComIva();
+//                txtPrecoDeVendaComIva.setVisible(false);
+//                TotalIvaLabel.setVisible(false);
+//                calcularSemIva();
+//                atualizarIvaForm();
+
+                calcularIva();
             } else {
                 txtPrecoDeVendaComIva.setVisible(false);
                 ivaTaxaJLabel.setVisible(false);
@@ -1742,7 +1749,6 @@ public class ProdutosVisao extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabelCodProduto;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     public static javax.swing.JPanel jPanel5;
@@ -1776,6 +1782,7 @@ public class ProdutosVisao extends javax.swing.JFrame {
     private javax.swing.JLabel lbUnidade;
     private javax.swing.JLabel llbDataFabrico;
     public static javax.swing.JPanel painel_stock;
+    private javax.swing.JPanel pnPainelAplicar;
     public static javax.swing.JRadioButton rbEnviarCozinha;
     private static javax.swing.JRadioButton rbEnviarSala;
     private static javax.swing.JRadioButton rbJanelaServico;
@@ -2583,6 +2590,8 @@ public class ProdutosVisao extends javax.swing.JFrame {
                 String regime = produtosIsentoController.getRegimeIsensaoByIdProduto(pkProduto);
                 ivaMotivoJComboBox.setSelectedItem(regime);
 
+            } else {
+                
             }
 
             ivaAplicarJRadioButton.setSelected(temIva);
@@ -2593,7 +2602,7 @@ public class ProdutosVisao extends javax.swing.JFrame {
             if (!temRetencao) {
 
                 String retencao = servicosRetencaoController.getRetensaoByIdProduto(pkProduto);
-                ivaMotivoJComboBox.setSelectedItem(retencao);
+//                ivaMotivoJComboBox.setSelectedItem(retencao);
 
             }
 
