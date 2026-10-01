@@ -387,42 +387,26 @@ public class DocumentosController implements EntidadeFactory
             System.err.println( "[TRANSAÇÃO] ❌ Erro ao fazer rollback: " + e.getMessage() );
         }
     }
+    public static void startTransaction( BDConexao conexao )
+    {
+        conexao.executeUpdate( "SET autocommit = 0" );
+        conexao.executeUpdate( "START TRANSACTION" );
 
-//    public static void startTransactionOperacoes( BDConexaoOperacoes conexao )
-//    {
-//        try
-//        {
-//            conexao.getConnectionAtiva().setAutoCommit( false ); // ← aqui é onde realmente funciona
-//        }
-//        catch ( SQLException e )
-//        {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    public static void commitTransactionOperacoes( BDConexaoOperacoes conexao )
-//    {
-//        try
-//        {
-//            conexao.getConnection().commit();
-//        }
-//        catch ( SQLException e )
-//        {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    public static void rollBackTransactionOperacoes( BDConexaoOperacoes conexao )
-//    {
-//        try
-//        {
-//            conexao.getConnection().rollback();
-//        }
-//        catch ( SQLException e )
-//        {
-//            e.printStackTrace();
-//        }
-//    }
+    }
+
+    public static void commitTransaction( BDConexao conexao )
+    {
+
+        conexao.executeUpdate( "COMMIT" );
+
+    }
+
+    public static void rollBackTransaction( BDConexao conexao )
+    {
+
+        conexao.executeUpdate( "ROLLBACK" );
+
+    }
     public static void main( String[] args )
     {
         new DocumentosController( new BDConexao() ) ;
