@@ -141,6 +141,8 @@ public class TbVenda implements Serializable
     private String totalPorExtenso;
     @Column(name = "status_recibo")
     private Boolean statusRecibo;
+    @Column(name = "status_convertido_consulta")
+    private Boolean statusConvertidoConsulta;
     @Column(name = "desconto_comercial")
     private BigDecimal descontoComercial;
     @Column(name = "desconto_financeiro")
@@ -244,6 +246,22 @@ public class TbVenda implements Serializable
         this.nomeCliente = nomeCliente;
         this.statusEliminado = statusEliminado;
         this.totalGeral = totalGeral;
+    }
+
+    public Boolean getStatusConvertidoConsulta() {
+        return statusConvertidoConsulta;
+    }
+
+    public void setStatusConvertidoConsulta(Boolean statusConvertidoConsulta) {
+        this.statusConvertidoConsulta = statusConvertidoConsulta;
+    }
+
+    public String getnDocMotorista() {
+        return nDocMotorista;
+    }
+
+    public void setnDocMotorista(String nDocMotorista) {
+        this.nDocMotorista = nDocMotorista;
     }
 
     public Integer getCodigo()

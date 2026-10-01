@@ -53,7 +53,7 @@ public class VendasController implements EntidadeFactory {
                 + " total_incidencia , local_carga , local_descarga , codigo_usuario , codigo_cliente , idArmazemFK , "
                 + " fk_documento , fk_ano_economico , fk_cambio , dataVencimento  , cliente_nif , total_incidencia_isento , ref_data_fact , "
                 + " nome_consumidor_final , referencia , matricula  , modelo , num_chassi , num_motor , kilometro , nome_motorista ,"
-                + " marca_carro , cor_carro , n_doc_motorista , total_retencao  , gorjeta "
+                + " marca_carro , cor_carro , n_doc_motorista , total_retencao  , gorjeta , status_convertido_consulta"
                 + ")"
                 + " VALUES("
                 + "'" + MetodosUtil.getDataBancoFull(venda.getDataVenda()) + "' , "
@@ -103,7 +103,8 @@ public class VendasController implements EntidadeFactory {
                 + "'" + venda.getCorCarro() + "' , "
                 + "'" + venda.getNDocMotorista() + "' , "
                 + venda.getTotalRetencao() + " , "
-                + venda.getGorjeta()
+                + venda.getGorjeta() + ", "
+                + venda.getStatusConvertidoConsulta()
                 + " ) ";
 
         System.out.println("Modo INSERT" + INSERT);
@@ -194,6 +195,7 @@ public class VendasController implements EntidadeFactory {
                 venda.setNDocMotorista(result.getString("n_doc_motorista"));
                 venda.setTotalRetencao(result.getBigDecimal("total_retencao"));
                 venda.setGorjeta(result.getBigDecimal("gorjeta"));
+                venda.setStatusConvertidoConsulta(result.getBoolean("status_convertido_consulta"));
 
                 lista_venda.add(venda);
 
@@ -271,6 +273,7 @@ public class VendasController implements EntidadeFactory {
                 venda.setNDocMotorista(result.getString("n_doc_motorista"));
                 venda.setTotalRetencao(result.getBigDecimal("total_retencao"));
                 venda.setGorjeta(result.getBigDecimal("gorjeta"));
+                venda.setStatusConvertidoConsulta(result.getBoolean("status_convertido_consulta"));
 
             }
 
@@ -292,14 +295,16 @@ public class VendasController implements EntidadeFactory {
         conexao.executeUpdate(sql);
     }
 
+    
+
     public Integer salvarRetornaID(TbVenda venda) throws SQLException {
         String sql = "INSERT INTO tb_venda ("
                 + "dataVenda, total_venda, performance, credito, valor_entregue, troco, hora, nome_cliente, status_eliminado, desconto_total, "
                 + "total_iva, total_geral, cod_fact, assinatura, hash_cod, obs, ref_cod_fact, total_por_extenso, status_recibo, desconto_comercial, "
                 + "desconto_financeiro, total_incidencia, local_carga, local_descarga, idBanco, codigo_usuario, codigo_cliente, idArmazemFK, fk_documento, fk_ano_economico, "
                 + "fk_cambio, dataVencimento, cliente_nif, total_incidencia_isento, ref_data_fact, cont, nome_consumidor_final, referencia, matricula, modelo, "
-                + "num_chassi, num_motor, kilometro, nome_motorista, marca_carro, cor_carro, n_doc_motorista, total_retencao, gorjeta"
-                + ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                + "num_chassi, num_motor, kilometro, nome_motorista, marca_carro, cor_carro, n_doc_motorista, total_retencao, gorjeta, status_convertido_consulta"
+                + ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, ?)";
 
         try (PreparedStatement stmt = conexao.getConnectionAtiva().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -374,6 +379,8 @@ public class VendasController implements EntidadeFactory {
             stmt.setString(47, venda.getNDocMotorista());
             stmt.setBigDecimal(48, venda.getTotalRetencao());
             stmt.setBigDecimal(49, venda.getGorjeta());
+            stmt.setBoolean(50, venda.getStatusConvertidoConsulta());
+            
 
             int resultado = stmt.executeUpdate();
 
@@ -537,6 +544,7 @@ public class VendasController implements EntidadeFactory {
                 venda.setNDocMotorista(result.getString("n_doc_motorista"));
                 venda.setTotalRetencao(result.getBigDecimal("total_retencao"));
                 venda.setGorjeta(result.getBigDecimal("gorjeta"));
+                venda.setStatusConvertidoConsulta(result.getBoolean("status_convertido_consulta"));
 
                 lista_venda.add(venda);
 
@@ -611,6 +619,7 @@ public class VendasController implements EntidadeFactory {
                 venda.setCorCarro(result.getString("cor_carro"));
                 venda.setNDocMotorista(result.getString("n_doc_motorista"));
                 venda.setGorjeta(result.getBigDecimal("gorjeta"));
+                venda.setStatusConvertidoConsulta(result.getBoolean("status_convertido_consulta"));
 
                 lista_venda.add(venda);
 
@@ -682,6 +691,7 @@ public class VendasController implements EntidadeFactory {
                 venda.setNDocMotorista(result.getString("n_doc_motorista"));
                 venda.setTotalRetencao(result.getBigDecimal("total_retencao"));
                 venda.setGorjeta(result.getBigDecimal("gorjeta"));
+                venda.setStatusConvertidoConsulta(result.getBoolean("status_convertido_consulta"));
 
             }
 
@@ -745,6 +755,7 @@ public class VendasController implements EntidadeFactory {
             venda.setTotalRetencao(result.getBigDecimal("total_retencao"));
             venda.setGorjeta(result.getBigDecimal("gorjeta"));
             venda.setCodigoCliente(new TbCliente(result.getInt("codigo_cliente")));
+            venda.setStatusConvertidoConsulta(result.getBoolean("status_convertido_consulta"));
 
         } catch (Exception e) {
         }
@@ -950,28 +961,6 @@ public class VendasController implements EntidadeFactory {
 
         return venda;
     }
-//            public TbVenda getVendaByCodFact( String cod_fact )
-//    {
-//        String FIND_ALL = "SELECT * FROM tb_venda WHERE cod_fact = '" + cod_fact + "'";
-//        ResultSet result = conexao.executeQuery( FIND_ALL );
-//       
-//        TbVenda venda = null;
-//        try
-//        {
-//            if ( result.next() )
-//            {
-//                System.out.println( result.getString( "cod_fact" ) );
-//                venda = new TbVenda();
-//                getVendaResultSet( venda, result );
-//            }
-//        }
-//        catch ( SQLException e )
-//        {
-//            e.printStackTrace();
-//        }
-//
-//        return venda;
-//    }
 
     public TbVenda findByCodFact(String cod_fact) {
         String FIND_ALL = "SELECT * FROM tb_venda WHERE cod_fact = '" + cod_fact + "' AND fk_documento = " + DVML.DOC_GUIA_TRANSPORTE_GT;
@@ -1088,6 +1077,7 @@ public class VendasController implements EntidadeFactory {
                 venda.setNDocMotorista(result.getString("n_doc_motorista"));
                 venda.setTotalRetencao(result.getBigDecimal("total_retencao"));
                 venda.setGorjeta(result.getBigDecimal("gorjeta"));
+                venda.setStatusConvertidoConsulta(result.getBoolean("status_convertido_consulta"));
             }
 
         } catch (SQLException e) {
@@ -1258,7 +1248,7 @@ public class VendasController implements EntidadeFactory {
                 venda.setNDocMotorista(result.getString("n_doc_motorista"));
                 venda.setTotalRetencao(result.getBigDecimal("total_retencao"));
                 venda.setGorjeta(result.getBigDecimal("gorjeta"));
-//                venda.setAreaVenda( result.getString( "area_venda" ) );
+                venda.setStatusConvertidoConsulta(result.getBoolean("status_convertido_consulta"));
 
             }
 
@@ -1661,6 +1651,7 @@ public class VendasController implements EntidadeFactory {
                     venda.setNDocMotorista(rs.getString("n_doc_motorista"));
                     venda.setGorjeta(rs.getBigDecimal("gorjeta"));
                     venda.setTotalRetencao(rs.getBigDecimal("total_retencao"));
+                    venda.setStatusConvertidoConsulta(rs.getBoolean("status_convertido_consulta"));
                     // Adiciona mais campos conforme tua entidade TbVenda
                 }
             }
@@ -1718,6 +1709,7 @@ public class VendasController implements EntidadeFactory {
                     // Cliente (ID e nome)
                     TbCliente cliente = new TbCliente(rs.getInt("codigo_cliente"));
                     cliente.setNome(rs.getString("nome_cliente"));
+                    venda.setStatusConvertidoConsulta(rs.getBoolean("status_convertido_consulta"));
                     venda.setCodigoCliente(cliente);
 
                     vendas.add(venda);
@@ -1792,6 +1784,12 @@ public class VendasController implements EntidadeFactory {
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             return stmt.executeUpdate();
         }
+    }
+    
+    
+    public void actualiarStatusConsulta(String codFact){
+        String query = "UPDATE tb_venda SET status_convertido_consulta = true WHERE cod_fact = '" +codFact + "'";
+        conexao.executeUpdate(query);
     }
 
 }

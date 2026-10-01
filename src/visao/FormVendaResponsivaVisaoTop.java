@@ -168,11 +168,15 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     private static final int INDEX_TABLE_DESCONTO = 5;
     private static final int INDEX_TABLE_TAXA_IVA = 6;
     private static int linha_existente_produto;
+
     private boolean permitirAlterarPreco = false;
 
     private static List<Vector<TbPreco>> listaPrecoTemp = new ArrayList<>();
 
     private String doc = "";
+    public static boolean statusConversao = false;
+    private static boolean descontoStocavel = true;
+    public static Vector consultas = new Vector();
 
     public FormVendaResponsivaVisaoTop(int cod_usuario, BDConexao conexao) throws SQLException {
         initComponents();
@@ -371,24 +375,19 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         table.setRowHeight(25);
         inserirLinhaEmBranco();
 
-        System.err.println("####STATUS ALterar Preco: "+dadosInstituicao.getAlterarPreco());
+        System.err.println("####STATUS ALterar Preco: " + dadosInstituicao.getAlterarPreco());
         if (permitirAlterarPreco) {
-            System.err.println("####Permitir ALterar Preco: "+permitirAlterarPreco);
+            System.err.println("####Permitir ALterar Preco: " + permitirAlterarPreco);
             configurarPrecoTabela();
-        }
-        else {
-            System.err.println("####Não Permitir ALterar Preco: "+permitirAlterarPreco);
-              configurarPrecosQTDTabela();
+        } else {
+            System.err.println("####Não Permitir ALterar Preco: " + permitirAlterarPreco);
+            configurarPrecosQTDTabela();
         }
 //        configurarQTDTabela();
 
-        
-        
-      
 //        configurarTabela( 3 );
 //        configurarTabela( 4 );
 //        initStockListener();
-
         procedimento_codBarra__jtable();
         txtCodigoBarra.requestFocus();
 
@@ -615,7 +614,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 //            prox_doc = documento.getAbreviacao();
 //            //FA Série / codigo
 //            prox_doc += " " + anoEconomico.getSerie() + "/" + doc_prox_cod;
-////            lb_proximo_documento.setText( "PRÓX.DOC. :" + prox_doc );
+    ////            lb_proximo_documento.setText( "PRÓX.DOC. :" + prox_doc );
 //        }
 //        catch ( Exception e )
 //        {
@@ -665,7 +664,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 //            prox_doc = documento.getAbreviacao();
 //            //FA Série / codigo
 //            prox_doc += " " + anoEconomico.getSerie() + "/" + doc_prox_cod;
-////            lb_proximo_documento.setText( "PRÓX.DOC. :" + prox_doc );
+    ////            lb_proximo_documento.setText( "PRÓX.DOC. :" + prox_doc );
 //
 //        }
 //        catch ( Exception e )
@@ -718,6 +717,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         btn_abertura_dia_venda = new javax.swing.JButton();
         txtBuscaRef = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
+        jButton3 = new javax.swing.JButton();
         painelDir = new javax.swing.JPanel();
         txtPreco = new javax.swing.JTextField();
         jButton4 = new javax.swing.JButton();
@@ -969,6 +969,14 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
         jLabel1.setText("Ref:");
         painelEsq.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 290, 30, 40));
+
+        jButton3.setText("jButton3");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+        painelEsq.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 3, 46, 20));
 
         painelDir.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
@@ -1287,16 +1295,15 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(painelDirLayout.createSequentialGroup()
-                                .addComponent(lbCodigoProduto3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtPreco, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(painelDirLayout.createSequentialGroup()
                                 .addComponent(btnFormaPagamento)
                                 .addGap(29, 29, 29)
-                                .addComponent(btnProcessar, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(btnProcessar, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(painelDirLayout.createSequentialGroup()
+                                .addComponent(lbCodigoProduto3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtPreco, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(painelDirLayout.createSequentialGroup()
                         .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(painelDirLayout.createSequentialGroup()
@@ -2089,6 +2096,13 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtTotalPagarGeralActionPerformed
 
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        statusConversao = true;
+        descontoStocavel = false;
+        new ModalConsultasMesas(conexao).setVisible(true);
+    }//GEN-LAST:event_jButton3ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -2627,6 +2641,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
         // Atualiza a data após a venda
         dc_data_documento.setDate(new Date());
+        descontoStocavel = true;
     }
 
     private static void salvar_venda_comercial(boolean frNormal) {
@@ -2690,6 +2705,10 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             }
             //actualizar precos antigos
 //            actualizarPrecosAntigos();
+
+            if (!consultas.isEmpty()) {
+                procedimentoActualizarStausConsulta();
+            }
 
             // Finaliza transação
             DocumentosController.commit(conexaoTransactionLocal);
@@ -3065,6 +3084,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         venda.setNDocMotorista("");
         // Contador do documento
         venda.setCont(0); // por exemplo
+        venda.setStatusConvertidoConsulta(true);
         return venda;
     }
 
@@ -3116,29 +3136,32 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                 }
 
                 int idArmazem = getCodigoArmazem();
-                // Controle de stock (se for estocável)
-                boolean isStocavel = "true".equalsIgnoreCase(produto.getStocavel());
-                if (isStocavel) {
 
-                    TbStock stock_local_local = stoksControllerLocal.getStockByIdProdutoAndIdArmazem(idProduto, idArmazem);
+                if (descontoStocavel) {
+                    // Controle de stock (se for estocável)
+                    boolean isStocavel = "true".equalsIgnoreCase(produto.getStocavel());
+                    if (isStocavel) {
 
-                    if ((getIdDocumento() == DOC_FACTURA_RECIBO_FR
-                            || getIdDocumento() == DOC_FACTURA_FT
-                            || getIdDocumento() == DOC_FACTURA_CONSULTA_MESA
-                            || getIdDocumento() == DVML.DOC_GUIA_TRANSPORTE_GT) && stock_local_local != null) {
+                        TbStock stock_local_local = stoksControllerLocal.getStockByIdProdutoAndIdArmazem(idProduto, idArmazem);
 
-                        MovimentacaoController.registrarMovimento(
-                                idProduto,
-                                idArmazem,
-                                cod_usuario,
-                                new BigDecimal(item.getQuantidade()),
-                                prox_doc,
-                                "SAIDA",
-                                conexaoLocal
-                        );
+                        if ((getIdDocumento() == DOC_FACTURA_RECIBO_FR
+                                || getIdDocumento() == DOC_FACTURA_FT
+                                || getIdDocumento() == DOC_FACTURA_CONSULTA_MESA
+                                || getIdDocumento() == DVML.DOC_GUIA_TRANSPORTE_GT) && stock_local_local != null) {
 
-                        if (getIdDocumento() == DOC_FACTURA_RECIBO_FR || getIdDocumento() == DOC_FACTURA_FT) {
-                            actualizar_quantidade(idProduto, item.getQuantidade(), conexaoLocal);
+                            MovimentacaoController.registrarMovimento(
+                                    idProduto,
+                                    idArmazem,
+                                    cod_usuario,
+                                    new BigDecimal(item.getQuantidade()),
+                                    prox_doc,
+                                    "SAIDA",
+                                    conexaoLocal
+                            );
+
+                            if (getIdDocumento() == DOC_FACTURA_RECIBO_FR || getIdDocumento() == DOC_FACTURA_FT) {
+                                actualizar_quantidade(idProduto, item.getQuantidade(), conexaoLocal);
+                            }
                         }
                     }
                 }
@@ -3261,6 +3284,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     private static com.toedter.calendar.JDateChooser dc_data_vencimento;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
@@ -3666,10 +3690,12 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             descricao_produto = "Pgt. Ref. de " + descricao_produto + " de #" + mes;
         }
 
-        // Evitar produto duplicado
-        if (exist_produto_tabela_formulario(descricao_produto)) {
-            JOptionPane.showMessageDialog(null, "O produto já consta na tabela.");
-            return;
+        if (!statusConversao) {
+            // Evitar produto duplicado
+            if (exist_produto_tabela_formulario(descricao_produto)) {
+                JOptionPane.showMessageDialog(null, "O produto já consta na tabela.");
+                return;
+            }
         }
 
         // Quantidade inválida
@@ -3814,7 +3840,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 //        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 //        table.setRowHeight( 28 );
 //
-////        // --- 1. CONFIRMAR edição atual para não perder o valor da coluna 0 ---
+    ////        // --- 1. CONFIRMAR edição atual para não perder o valor da coluna 0 ---
 ////        if ( table.isEditing() )
 ////        {
 ////            table.getCellEditor().stopCellEditing();
@@ -4508,7 +4534,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     }
 
 //    public static void setTotalPagar() {
-////        BigDecimal total = getTotalAOALiquido();
+    ////        BigDecimal total = getTotalAOALiquido();
 ////        String valorFormatado = CfMethods.formatarComoMoeda( total );
 ////        txtTotalPagar.setText( valorFormatado );
 //
@@ -4526,7 +4552,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
 //    private static void valor_por_extenco() {
 //        BigDecimal total = BigDecimal.valueOf(CfMethods.parseMoedaFormatada(txtTotalPagar.getText()));
-////        BigDecimal total = CfMethods.parseMoedaFormatadaBigDecimal( txtTotalPagar.getText() );
+    ////        BigDecimal total = CfMethods.parseMoedaFormatadaBigDecimal( txtTotalPagar.getText() );
 //        lbValorPorExtenco.setText(MetodosUtil.valorPorExtensoBigDecima(total, getMoeda().getDesignacao()));
 //    }
     private static void valor_por_extenco() {
@@ -6111,7 +6137,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 //                int col = table.getSelectedColumn();
 //
 //                if (col == 0) {
-////                    accao_codigo_barra_enter_jtable(row);
+    ////                    accao_codigo_barra_enter_jtable(row);
 //                    accao_codigo_produto_enter_jtable(row);
 //                    e.consume();
 //                    return;
@@ -6363,7 +6389,6 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 //        table.repaint();
     }
 
-    
     private void actualizarPreco() {
         String preco = table.getValueAt(table.getSelectedRow(), 3).toString();
         int idProduto = Integer.parseInt(table.getValueAt(table.getSelectedRow(), 0).toString());
@@ -6703,7 +6728,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             }
         });
     }
-    
+
     private void configurarQTDTabela() {
 
         DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -7213,5 +7238,14 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             btn_fecho_dia_venda.setEnabled(true);
         }
     }
-}
 
+    private static void procedimentoActualizarStausConsulta() {
+        for (int i = 0; i < consultas.size(); i++) {
+            String codfact = consultas.get(i).toString();
+            vendasController.actualiarStatusConsulta(codfact);
+        }
+
+        consultas.clear();
+
+    }
+}
