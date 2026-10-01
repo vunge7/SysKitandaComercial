@@ -54,6 +54,7 @@ public class JPAEntityMannagerFactoryUtil {
 
                     String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_isabel?zeroDateTimeBehavior=convertToNull";
 
+
                   
                     String user = "root";
                     String password = "DoV90x?#";
