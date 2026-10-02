@@ -160,6 +160,41 @@ public class ClientesController implements EntidadeFactory {
 
         return lista_clientes;
     }
+    
+    public List<TbCliente> listarTodosClientesByConsultasMesas() {
+
+String query = "select "
+                + "c.* "
+                + "from tb_venda v "
+                + "inner join tb_cliente c on c.codigo  = v.codigo_cliente  "
+                + "where v.fk_documento  = 13 "
+                + "and date(v.dataVenda ) between  '2026-10-01' and '2026-10-31' "
+                + "group  by c.codigo";
+
+        ResultSet result = conexao.executeQuery(query);
+        List<TbCliente> lista_clientes = new ArrayList<>();
+        TbCliente clientes;
+        try {
+
+            while (result.next()) {
+                clientes = new TbCliente();
+                clientes.setCodigo(result.getInt("codigo"));
+                clientes.setNome(result.getString("nome"));
+                clientes.setMorada(result.getString("morada"));
+                clientes.setTelefone(result.getString("telefone"));
+                clientes.setNif(result.getString("nif"));
+                clientes.setEmail(result.getString("email"));
+                clientes.setPercentagemDesconto(result.getDouble("percentagem_desconto"));
+                lista_clientes.add(clientes);
+
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return lista_clientes;
+    }
 
     public Vector<TbCliente> listarTodos2() {
         String FIND_ALL = "SELECT * FROM tb_cliente ORDER BY nome ASC";

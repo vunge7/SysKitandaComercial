@@ -4,19 +4,68 @@
  */
 package visao;
 
+import comercial.controller.ClientesController;
+import comercial.controller.FormaPagamentoController;
+import comercial.controller.ItemVendasController;
+import comercial.controller.PrecosController;
+import comercial.controller.ProdutosController;
+import comercial.controller.UnidadesController;
+import comercial.controller.UsuariosController;
+import comercial.controller.VendasController;
+import entity.TbCliente;
+import entity.TbItemVenda;
+import entity.TbPreco;
+import entity.TbProduto;
+import entity.TbUsuario;
+import entity.TbVenda;
+import entity.Unidade;
+import static java.util.Collections.list;
+import java.util.List;
+import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import kitanda.util.CfMethods;
+import util.BDConexao;
+
 /**
  *
  * @author MARTINHO
  */
 public class ModalConsultasMesas extends javax.swing.JFrame {
-    
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ModalConsultasMesas.class.getName());
+
+    private final static DefaultListModel listaClientes = new DefaultListModel();
+    private static ClientesController clientesController;
+    private static VendasController vendasController;
+    private static ProdutosController produtosController;
+    private static ItemVendasController itemVendasController;
+    private static FormaPagamentoController formaPagamentoController;
+    private static UsuariosController usuariosController;
+    private static PrecosController precosController;
+    private static UnidadesController unidadesController;
+    private static BDConexao conexao;
+    private static int cod_usuario;
+    private static int linha_actual = -1;
 
     /**
      * Creates new form ModalConsultasMesas
      */
-    public ModalConsultasMesas() {
+    public ModalConsultasMesas(BDConexao conexao) {
         initComponents();
+        setLocationRelativeTo(null);
+        this.conexao = conexao;
+        this.cod_usuario = cod_usuario;
+        clientesController = new ClientesController(conexao);
+        vendasController = new VendasController(conexao);
+        itemVendasController = new ItemVendasController(conexao);
+        usuariosController = new UsuariosController(conexao);
+        produtosController = new ProdutosController(conexao);
+        precosController = new PrecosController(conexao);
+        unidadesController = new UnidadesController(conexao);
+
+        jListCliente.setModel(listaClientes);
+
+        carregarClientes();
+
     }
 
     /**
@@ -34,12 +83,13 @@ public class ModalConsultasMesas extends javax.swing.JFrame {
         lbData1 = new javax.swing.JLabel();
         dcDataFim = new com.toedter.calendar.JDateChooser();
         jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
+        jListCliente = new javax.swing.JList<>();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tabela_linhas = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -50,6 +100,10 @@ public class ModalConsultasMesas extends javax.swing.JFrame {
         lbData1.setText("à");
 
         jButton1.setText("ENVIAR");
+        jButton1.addActionListener(this::jButton1ActionPerformed);
+
+        jButton2.setText("Adicionar");
+        jButton2.addActionListener(this::jButton2ActionPerformed);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -64,8 +118,10 @@ public class ModalConsultasMesas extends javax.swing.JFrame {
                 .addComponent(lbData1, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(dcDataFim, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(32, 32, 32)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(52, 52, 52)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(74, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -73,7 +129,9 @@ public class ModalConsultasMesas extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(23, 23, 23)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton1)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton1)
+                        .addComponent(jButton2))
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(dcDataInicio, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(lbData1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -82,12 +140,17 @@ public class ModalConsultasMesas extends javax.swing.JFrame {
                 .addContainerGap(20, Short.MAX_VALUE))
         );
 
-        jList1.setModel(new javax.swing.AbstractListModel<String>() {
+        jListCliente.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
-        jScrollPane2.setViewportView(jList1);
+        jListCliente.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jListClienteMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(jListCliente);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -106,7 +169,7 @@ public class ModalConsultasMesas extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tabela_linhas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null, null},
@@ -116,7 +179,7 @@ public class ModalConsultasMesas extends javax.swing.JFrame {
                 {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Cod.", "Designação", "Qtd", "Preço", "Consulta", "Data", "Usuário", "IVA", "Total"
+                "Cod.", "Designação", "Preço", "IVA", "Qtd", "Consulta", "Data", "Usuário", "Total"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -127,7 +190,7 @@ public class ModalConsultasMesas extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tabela_linhas);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -176,6 +239,21 @@ public class ModalConsultasMesas extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        adicionar_tabela();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jListClienteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jListClienteMouseClicked
+        // TODO add your handling code here:
+        adicionar_tabela();
+    }//GEN-LAST:event_jListClienteMouseClicked
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        procedimentoEnviarTabelaVenda();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -193,26 +271,127 @@ public class ModalConsultasMesas extends javax.swing.JFrame {
                 }
             }
         } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
+
         }
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new ModalConsultasMesas().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new ModalConsultasMesas(new BDConexao()).setVisible(true));
     }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private static com.toedter.calendar.JDateChooser dcDataFim;
     private static com.toedter.calendar.JDateChooser dcDataInicio;
     private javax.swing.JButton jButton1;
-    private javax.swing.JList<String> jList1;
+    private javax.swing.JButton jButton2;
+    private static javax.swing.JList<String> jListCliente;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable1;
     private javax.swing.JLabel lbData;
     private javax.swing.JLabel lbData1;
+    private static javax.swing.JTable tabela_linhas;
     // End of variables declaration//GEN-END:variables
+
+    public static void adicionar_tabela() {
+
+        DefaultTableModel modelo = (DefaultTableModel) tabela_linhas.getModel();
+        tabela_linhas.setRowHeight(30);
+
+        try {
+
+            List<TbItemVenda> list = itemVendasController.listarItemVendasByClientesAndData(getIdCliente(), dcDataInicio.getDate(), dcDataFim.getDate());
+//            List<TbItemVenda> list = itemVendasController.listarItemVendasByClientes( getIdCliente() );
+            modelo.setRowCount(0);
+            for (int i = 0; i < list.size(); i++) {
+                TbItemVenda get = list.get(i);
+                int codigo_produto = get.getCodigoProduto().getCodigo();
+                int codigo_preco = get.getFkPreco().getPkPreco();
+//                int codigo_usuario = get.getFkUsuario().getCodigo();
+                int codigo_venda = get.getCodigoVenda().getCodigo();
+
+                TbProduto produto_local = (TbProduto) produtosController.findById(codigo_produto);
+                TbPreco preco_local = (TbPreco) precosController.findById(codigo_preco);
+//                TbUsuario usuario_local = (TbUsuario) usuariosController.findById(codigo_usuario);
+//                TbCliente cliente_local = (TbCliente) clientesController.findById( String.valueOf( jListPacientesComGastos.getSelectedValue().toString() ));
+                TbVenda venda_local = (TbVenda) vendasController.findById(codigo_venda);
+                
+                FormVendaResponsivaVisaoTop.consultas.add(venda_local.getCodFact());
+                int codigo_unidade = produto_local.getCodUnidade().getPkUnidade();
+                Unidade unidade_local = (Unidade) unidadesController.findById(codigo_unidade);
+
+//                TbUsuario usuario = (TbUsuario) usuariosController.findById(get.getFkUsuario().getCodigo());
+                double getTotal = get.getQuantidade() * preco_local.getPrecoVenda().doubleValue();
+
+                modelo.addRow(new Object[]{
+                    //                    produto_local.getCodigo(),
+                    get.getCodigoProduto().getCodigo(),
+                    produto_local.getDesignacao(),
+                    CfMethods.formatarComoMoeda(preco_local.getPrecoVenda()),
+                    get.getValorIva(),
+                    get.getQuantidade(),
+                    venda_local.getCodFact(),
+                    get.getDataServico(),
+                    venda_local.getCodigoUsuario().getCodigo(),
+                    CfMethods.formatarComoMoeda(getTotal),});
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private static TbCliente getClienteSeleccionado() {
+        String selectedCliente = jListCliente.getSelectedValue();
+        return clientesController.findByNome(selectedCliente);
+    }
+
+    private void carregarClientes() {
+        listaClientes.clear();
+
+        List<TbCliente> clientes = clientesController.listarTodosClientesByConsultasMesas();
+//    List<TbCliente> clientes = clientesController.listarTodos();
+
+        for (TbCliente cliente : clientes) {
+            listaClientes.addElement(cliente.getNome());
+        }
+    }
+
+    private static int getIdCliente() {
+        try {
+            return clientesController.findByNome(jListCliente.getSelectedValue().toString()).getCodigo();
+        } catch (Exception e) {
+            return 0;
+        }
+
+    }
+
+    private void procedimentoEnviarTabelaVenda() {
+
+        DefaultTableModel modelo = (DefaultTableModel) tabela_linhas.getModel();
+
+        if (modelo.getRowCount() > 0) {
+            for (int i = 0; i < modelo.getRowCount(); i++) {
+                String codString = modelo.getValueAt(i, 0).toString();
+                String qtdString = modelo.getValueAt(i, 4).toString();
+                int cod = Integer.parseInt(codString);
+                double qtd = Double.parseDouble(qtdString);
+                FormVendaResponsivaVisaoTop.accao_codigo_interno_enter_busca_exterior(cod, qtd);
+
+            }
+            dispose();
+            FormVendaResponsivaVisaoTop.statusConversao = false;
+            
+
+        } else {
+            JOptionPane.showMessageDialog(null, "Caro usuário, não existe dados na tabela.", "Aviso", JOptionPane.WARNING_MESSAGE);
+        }
+
+    }
+
 }
