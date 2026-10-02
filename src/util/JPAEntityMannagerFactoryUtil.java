@@ -5,7 +5,7 @@
 package util;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileNotFoundException; 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -52,7 +52,7 @@ public class JPAEntityMannagerFactoryUtil {
                     String ip = informacao.get(0);
                     String porta = informacao.get(1);
 
-                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_isabel?zeroDateTimeBehavior=convertToNull";
+                    String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_telma_pontes?zeroDateTimeBehavior=convertToNull";
 
 
                   

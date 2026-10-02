@@ -91,7 +91,7 @@ public class ModalConsultasMesas extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tabela_linhas = new javax.swing.JTable();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         lbData.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         lbData.setText("De");

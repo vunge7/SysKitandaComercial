@@ -1247,7 +1247,6 @@ public class ProdutosVisao extends javax.swing.JFrame {
 //                TotalIvaLabel.setVisible(false);
 //                calcularSemIva();
 //                atualizarIvaForm();
-
                 calcularIva();
             } else {
                 txtPrecoDeVendaComIva.setVisible(false);
@@ -2591,7 +2590,7 @@ public class ProdutosVisao extends javax.swing.JFrame {
                 ivaMotivoJComboBox.setSelectedItem(regime);
 
             } else {
-                
+
             }
 
             ivaAplicarJRadioButton.setSelected(temIva);
