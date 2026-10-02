@@ -176,7 +176,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     private String doc = "";
     public static boolean statusConversao = false;
     private static boolean descontoStocavel = true;
-    public static Vector consultas = new Vector();
+    public static String consultaDoc = "";
 
     public FormVendaResponsivaVisaoTop(int cod_usuario, BDConexao conexao) throws SQLException {
         initComponents();
@@ -2706,7 +2706,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             //actualizar precos antigos
 //            actualizarPrecosAntigos();
 
-            if (!consultas.isEmpty()) {
+            if (!consultaDoc.equalsIgnoreCase("")) {
                 procedimentoActualizarStausConsulta();
             }
 
@@ -7240,12 +7240,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     }
 
     private static void procedimentoActualizarStausConsulta() {
-        for (int i = 0; i < consultas.size(); i++) {
-            String codfact = consultas.get(i).toString();
-            vendasController.actualiarStatusConsulta(codfact);
-        }
-
-        consultas.clear();
-
+        vendasController.actualiarStatusConsulta(consultaDoc);
+        consultaDoc = "";
     }
 }

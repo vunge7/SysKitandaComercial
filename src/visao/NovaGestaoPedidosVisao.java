@@ -1470,7 +1470,10 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
 
             rbEsconder.setSelected(true);
 
-////            telaCliente.dispose();
+        
+    
+
+    ////            telaCliente.dispose();
 //            dispose();
         }
 
@@ -3537,6 +3540,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
         venda_local.setPerformance("false");
         venda_local.setCredito("false");
         venda_local.setGorjeta(new BigDecimal(gorjeta));
+        venda_local.setStatusConvertidoConsulta(Boolean.FALSE);
 
         Integer last_venda = 0;
 
@@ -3745,7 +3749,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
 
 //    private static void valor_por_extenco()
 //    {
-////        System.out.println( "Valor XXXXXXX: " + CfMethods.parseMoedaFormatada( txtTotal_AOA_liquido.getText() ) );
+    ////        System.out.println( "Valor XXXXXXX: " + CfMethods.parseMoedaFormatada( txtTotal_AOA_liquido.getText() ) );
 //        lbValorPorExtenco.setText( MetodosUtil.valorPorExtenso( CfMethods.parseMoedaFormatada( txtTotalApagar.getText() ), getMoeda().getDesignacao() ) );
 //    }
 //    private static void valor_por_extenco()
@@ -4047,7 +4051,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
 //        return FormaPagamentoVisao.get_total_valor().doubleValue();
 //    }
 //
-////    public static double getTroco()
+    ////    public static double getTroco()
 ////    {
 ////        return 0d;
 ////    }
@@ -4236,7 +4240,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
 //            formaPagamentoItem = new FormaPagamentoItem();
 //            Integer id_forma_pagamento = Integer.parseInt( modelo.getValueAt( i, 0 ).toString() );
 //            String referencia = ( modelo.getValueAt( i, 2 ) != null ) ? modelo.getValueAt( i, 2 ).toString() : "n/a";
-////            String valor = ( Objects.nonNull( modelo.getValueAt( i, 3 ) ) ) ? modelo.getValueAt( i, 3 ).toString() : "0";
+    ////            String valor = ( Objects.nonNull( modelo.getValueAt( i, 3 ) ) ) ? modelo.getValueAt( i, 3 ).toString() : "0";
 //            String valor = ( !modelo.getValueAt( i, 3 ).equals( "" ) ) ? modelo.getValueAt( i, 3 ).toString() : "0";
 //
 //            formaPagamentoItem.setValor( new BigDecimal( valor ) );
@@ -4354,7 +4358,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
 //        double total_pagar = 0;
 //        for ( int i = 0; i < modelo.getRowCount(); i++ )
 //        {
-////            total_pagar += Double.parseDouble( String.valueOf( modelo.getValueAt( i, 4 ) ) );
+    ////            total_pagar += Double.parseDouble( String.valueOf( modelo.getValueAt( i, 4 ) ) );
 //            total_pagar += CfMethods.parseMoedaFormatada( modelo.getValueAt( i, 4 ).toString() );
 //        }
 ////        txtTotalApagar.setText( String.valueOf( total_pagar ) );
@@ -4541,7 +4545,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
 //                    {
 //                        MetodosUtil.subtrai_quantidade( idProduto, qtd, id_armzem, conexao );
 //                    }
-                    ///
+                
+             ///
 //                    if ( stock_local.getCodigo() != 0 && itemVenda.getCodigoProduto().getStocavel().equals( "true" ) )
 //                    {
 //                        actualizar_quantidade( itemVenda.getCodigoProduto().getCodigo(), itemVenda.getQuantidade() );
@@ -4669,7 +4674,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
 //        }
 //
 //        txtTotalApagar.setText( String.valueOf( total_pagar ) );
-////        txtValorEntregue.setText( txtTotalApagar.getText() );
+    ////        txtValorEntregue.setText( txtTotalApagar.getText() );
 //        valor_por_extenco();
 //
 //        try
@@ -4741,7 +4746,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
 //        {
 //
 //            TbTipoProduto tipoProduto = tipoProdutosController.getTipoProdutoByCodigo( idTipoPorduto );
-////            TbTipoProduto tipoProduto = tipoProdutoDao.findTbTipoProduto( idTipoPorduto );
+        ////            TbTipoProduto tipoProduto = tipoProdutoDao.findTbTipoProduto( idTipoPorduto );
 //            btn_voltar.setVisible( true );
 //            designacao_categoria.setVisible( true );
 //            designacao_categoria.setText( tipoProduto.getDesignacao() );
@@ -4875,7 +4880,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
 //                    catch ( Exception e )
 //                    {
 //                        adcionar_imagem = false;
-////                        e.printStackTrace();
+                    ////                        e.printStackTrace();
 //                    }
 //
 //                    JButton jButton = new JButton( lista_prdutos.get( i ).getDesignacao()
@@ -5132,7 +5137,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
 //    public int getQuantidadeProduto( int cod_produto )
 //    {
 //
-////        String sql = "SELECT quantidade_existente FROM  tb_stock WHERE  cod_produto_codigo = "  +cod_produto +" AND cod_armazem = " +getCodigoArmazem(); 
+
+    ////        String sql = "SELECT quantidade_existente FROM  tb_stock WHERE  cod_produto_codigo = "  +cod_produto +" AND cod_armazem = " +getCodigoArmazem(); 
 //        String sql = "SELECT quantidade_existente FROM  tb_stock WHERE  cod_produto_codigo = " + cod_produto;
 //
 //        ResultSet rs = conexao.executeQuery( sql );
@@ -6046,7 +6052,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
 //            if (!rbArmazem.isSelected()) {
 //                //                Caso for MultiArmazens
 //                cmbArmazem.setModel(new DefaultComboBoxModel(armazemDao.buscaTodos2()));
-////                cmbArmazem.setModel( new DefaultComboBoxModel( accessoArmazemDao.getAllArmazemByIdUSuario( cod_usuario ) ) );
+    ////                cmbArmazem.setModel( new DefaultComboBoxModel( accessoArmazemDao.getAllArmazemByIdUSuario( cod_usuario ) ) );
 //
 //            } else if (rbArmazem.isSelected()) {
 //                //                Caso for apenas Um Armazem
@@ -6227,13 +6233,11 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
 //                                .setVisible(true);
 //
 //                    } else {
+                    procedimento_salvar_pedidos_iten_pedidos(designacao1);
 
-                        procedimento_salvar_pedidos_iten_pedidos(designacao1);
-
-                        status_button_lugar(true);
+                    status_button_lugar(true);
 
 //                    }
-
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(null, "Fallha ao adicionar o pedido", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
@@ -6298,7 +6302,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
 
 //    private static boolean qtd_possivel( String designacao )
 //    {
-////            TbDadosInstituicao dadosInstituicao = dadosInstituicaoDao.findTbDadosInstituicao( 1 );
+    ////            TbDadosInstituicao dadosInstituicao = dadosInstituicaoDao.findTbDadosInstituicao( 1 );
 //        int idProduto = produtosController.getIdProduto(designacao );
 //        TbProduto produto = produtosController.findByCod(idProduto );
 //
@@ -6480,7 +6484,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
 //        if ( desactivar_lugares.equalsIgnoreCase( "Sim" ) )
 //        {
 //            jCheckBox1.setSelected( true );
-////            rbSim_lugar.setSelected( true );
+    ////            rbSim_lugar.setSelected( true );
 ////            rbNao_lugar.setSelected( false );
 ////            jLabel4.setEnabled( true );
 //        }

@@ -540,7 +540,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         jPanel4.add(jlEmpresa, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 550, 650, 20));
 
         jLabel1.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        jLabel1.setText("Valor Pagar X100");
+        jLabel1.setText("Valor Pagar");
 
         txtTotalApagar.setEditable(false);
         txtTotalApagar.setFont(new java.awt.Font("Arial", 1, 25)); // NOI18N
