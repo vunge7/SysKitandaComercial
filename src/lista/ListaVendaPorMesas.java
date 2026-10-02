@@ -379,18 +379,15 @@ public class ListaVendaPorMesas
         HashMap hashMap = new HashMap();
 
         hashMap.put( "CODIGO_VENDA", this.codigo );
-//        hashMap.put( "CODIGO_MESA", getCodMesa() );
         hashMap.put( "PARM_LUGAR", this.pk_lugares );
         hashMap.put( "CODIGO_MESA", mesa.getPkMesas() );
         hashMap.put( "DESIGNACAO_MESA", mesa.getDesignacao() );
-
         hashMap.put( "DOCUMENTO", documento.getDesignacao() );
         hashMap.put( "SOFTWARE_VERSION", VERSION_SOFTWARE );
         hashMap.put( "SOFTWARE_NAME", NAME_SOFTWARE );
         hashMap.put( "REF_COD_FACT", venda.getRefCodFact() );
         hashMap.put( "STATUS_DOCUMENTO", this.status_documento );
 
-//        hashMap.put( "MOTIVO_ISENCAO", this.motivo_isencao );
         hashMap.put( "NIF_CLIENTE_CONSOMIDOR_FINAL", setConsumidorFinal( venda ) );
         String relatorio = getCaminhoGeral();
 

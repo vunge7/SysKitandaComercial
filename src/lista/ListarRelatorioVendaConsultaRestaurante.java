@@ -728,11 +728,11 @@ public class ListarRelatorioVendaConsultaRestaurante extends javax.swing.JFrame
         {
 
             DVML.Abreviacao abreviacao = DVML.getAbreviacao( venda.getFkDocumento().getPkDocumento() );
-            abreviacao = DVML.Abreviacao.FR_A4;
+            abreviacao = DVML.Abreviacao.FR_S_A6;
             List<TbProduto> lista_produto_isentos = new ArrayList<>();
             lista_produto_isentos = MetodosUtil.getProdutosIsentos( venda.getTbItemVendaList() );
             String motivos_isentos = MetodosUtil.getMotivoIsensaoProdutos( lista_produto_isentos );
-            ListaVenda2 listaVenda2 = new ListaVenda2( venda.getCodigo(), abreviacao, false, false, DVML.SEGUNDA_VIA_CONFORMIDADE_COM_ORIGINAL, motivos_isentos );
+            ListaVendaPorMesas listaVenda = new ListaVendaPorMesas(venda.getCodigo(), abreviacao, false, true, "2ª via em conformidade com a Original");
         }
         else
         {
