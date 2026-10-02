@@ -2,9 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="factura" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" uuid="0de43986-9be5-410e-aaa3-7f1419d0abca">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="2.662000000000004"/>
+	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="445"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -212,7 +212,7 @@ WHERE
 	<background>
 		<band height="802" splitType="Stretch">
 			<image>
-				<reportElement uuid="8f3a5477-78b7-42ca-b5b5-b80c5eafa590" x="2" y="182" width="528" height="529"/>
+				<reportElement uuid="8f3a5477-78b7-42ca-b5b5-b80c5eafa590" x="80" y="174" width="431" height="529"/>
 				<imageExpression><![CDATA["logo/fundo.png"]]></imageExpression>
 			</image>
 		</band>
@@ -300,21 +300,21 @@ WHERE
 				<textFieldExpression><![CDATA["<b>Morada:</b> "  +"<i>" +$F{tb_cliente_morada} +"</i>"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="82853475-19ec-484a-a036-949cdd5bd35b" x="1" y="131" width="274" height="12"/>
+				<reportElement uuid="82853475-19ec-484a-a036-949cdd5bd35b" x="1" y="133" width="274" height="12"/>
 				<textElement markup="html">
 					<font fontName="Times New Roman" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA["<b>Email:</b> " +$F{tb_dados_instituicao_email}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="608569fd-08f1-46ad-bfab-b75a16a853ba" x="1" y="87" width="348" height="12"/>
+				<reportElement uuid="608569fd-08f1-46ad-bfab-b75a16a853ba" x="1" y="89" width="348" height="12"/>
 				<textElement markup="html">
 					<font fontName="Times New Roman" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_nome}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="a9ba3e70-db19-420e-bdf3-27f09d6bcb77" x="1" y="120" width="235" height="12"/>
+				<reportElement uuid="a9ba3e70-db19-420e-bdf3-27f09d6bcb77" x="1" y="122" width="235" height="12"/>
 				<textElement markup="html">
 					<font fontName="Times New Roman" size="9" isBold="false"/>
 				</textElement>
@@ -328,7 +328,7 @@ WHERE
 				<textFieldExpression><![CDATA[$P{STATUS_DOCUMENTO}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="442689d9-4840-4d31-92a9-c7d9dfb46603" x="1" y="98" width="348" height="12"/>
+				<reportElement uuid="442689d9-4840-4d31-92a9-c7d9dfb46603" x="1" y="100" width="348" height="12"/>
 				<textElement markup="html">
 					<font fontName="Times New Roman" size="8" isBold="false"/>
 				</textElement>
@@ -342,11 +342,11 @@ WHERE
 				<textFieldExpression><![CDATA["<b>Telefone:</b> "+ "<i>" +$F{tb_cliente_telefone} +"</i>"]]></textFieldExpression>
 			</textField>
 			<image scaleImage="FillFrame">
-				<reportElement uuid="aa9cd883-fead-4701-92a6-11bfeed32d87" x="0" y="36" width="160" height="52"/>
+				<reportElement uuid="aa9cd883-fead-4701-92a6-11bfeed32d87" x="35" y="0" width="89" height="83"/>
 				<imageExpression><![CDATA["logo/logo_dvml.png"]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement uuid="5be15091-64e8-4c95-a321-fa7fc79d18d4" x="1" y="109" width="235" height="12"/>
+				<reportElement uuid="5be15091-64e8-4c95-a321-fa7fc79d18d4" x="1" y="111" width="235" height="12"/>
 				<textElement markup="html">
 					<font fontName="Times New Roman" size="9" isBold="false"/>
 				</textElement>

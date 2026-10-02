@@ -3,8 +3,8 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="2.1961500000000007"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="146"/>
+	<property name="ireport.x" value="8"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -216,7 +216,7 @@ WHERE
 	<background>
 		<band height="802" splitType="Stretch">
 			<image>
-				<reportElement uuid="03bc880e-c834-49b4-be59-b84dcc935bd4" x="20" y="210" width="528" height="407"/>
+				<reportElement uuid="03bc880e-c834-49b4-be59-b84dcc935bd4" x="119" y="210" width="443" height="407"/>
 				<imageExpression><![CDATA["logo/fundo.png"]]></imageExpression>
 			</image>
 		</band>
@@ -311,7 +311,7 @@ WHERE
 				<textFieldExpression><![CDATA["Valor transportado: "]]></textFieldExpression>
 			</textField>
 			<image scaleImage="FillFrame">
-				<reportElement uuid="20ec1823-c902-430d-a5e6-c9a34547ccd5" x="5" y="30" width="160" height="52"/>
+				<reportElement uuid="20ec1823-c902-430d-a5e6-c9a34547ccd5" x="49" y="0" width="89" height="82"/>
 				<imageExpression><![CDATA["logo/logo_dvml.png"]]></imageExpression>
 			</image>
 			<textField>
@@ -392,35 +392,35 @@ WHERE
 				<textFieldExpression><![CDATA["<b>NIF:</b> "  +"<i>" +$P{NIF_CLIENTE_CONSOMIDOR_FINAL} +"</i>"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="27f96ce0-c65e-432f-a47f-8b4cfed82b11" x="3" y="82" width="348" height="12"/>
+				<reportElement uuid="27f96ce0-c65e-432f-a47f-8b4cfed82b11" x="3" y="84" width="348" height="12"/>
 				<textElement markup="html">
 					<font fontName="Times New Roman" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_nome}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="092a200c-ad6d-4b34-9b39-c51d284a04ce" x="3" y="121" width="272" height="12"/>
+				<reportElement uuid="092a200c-ad6d-4b34-9b39-c51d284a04ce" x="3" y="123" width="272" height="12"/>
 				<textElement markup="html">
 					<font fontName="Times New Roman" size="9" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["<b>Telefone:</b> " +$F{tb_dados_instituicao_telefone}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="888d4d54-49e5-4da3-a3b9-dbcfe092478c" x="3" y="112" width="272" height="12"/>
+				<reportElement uuid="888d4d54-49e5-4da3-a3b9-dbcfe092478c" x="3" y="114" width="272" height="12"/>
 				<textElement markup="html">
 					<font fontName="Times New Roman" size="9" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["<b>NIF:</b> " +$F{tb_dados_instituicao_nif}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="054888b4-8aef-4d8d-912e-0164e31b66f1" x="3" y="131" width="272" height="12"/>
+				<reportElement uuid="054888b4-8aef-4d8d-912e-0164e31b66f1" x="3" y="133" width="272" height="12"/>
 				<textElement markup="html">
 					<font fontName="Times New Roman" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA["<b>Email:</b> " +$F{tb_dados_instituicao_email}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="1e7fa992-5d58-4c12-9c69-703b771c4418" x="3" y="92" width="272" height="24"/>
+				<reportElement uuid="1e7fa992-5d58-4c12-9c69-703b771c4418" x="3" y="94" width="272" height="24"/>
 				<textElement markup="html">
 					<font fontName="Times New Roman" size="8" isBold="false"/>
 				</textElement>
