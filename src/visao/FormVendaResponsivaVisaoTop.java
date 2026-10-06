@@ -970,13 +970,13 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         jLabel1.setText("Ref:");
         painelEsq.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 290, 30, 40));
 
-        jButton3.setText("jButton3");
+        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/actualizar_1.png"))); // NOI18N
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
             }
         });
-        painelEsq.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 3, 46, 20));
+        painelEsq.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(336, 3, 40, 20));
 
         painelDir.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
