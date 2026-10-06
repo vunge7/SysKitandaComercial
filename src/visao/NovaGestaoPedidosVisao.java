@@ -1984,16 +1984,18 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame {
 
     private void setDocpadrao(String documentos) {
         System.out.println("DOCUMENTO PADRAO: " + documentos);
-        if (documentos.equalsIgnoreCase("Factura/Recibo")) {
-            cmbTipoDocumento.setSelectedIndex(1);
-
-        } else if (documentos.equalsIgnoreCase("Factura")) {
-            cmbTipoDocumento.setSelectedIndex(2);
-
-        } else if (documentos.equalsIgnoreCase("Factura-Proforma")) {
-            cmbTipoDocumento.setSelectedIndex(3);
-
-        }
+        
+        cmbTipoDocumento.setSelectedItem(documentos);
+//        if (documentos.equalsIgnoreCase("Factura/Recibo")) {
+//            cmbTipoDocumento.setSelectedIndex(1);
+//
+//        } else if (documentos.equalsIgnoreCase("Factura")) {
+//            cmbTipoDocumento.setSelectedIndex(2);
+//
+//        } else if (documentos.equalsIgnoreCase("Factura-Proforma")) {
+//            cmbTipoDocumento.setSelectedIndex(3);
+//
+//        }
     }
 
     public boolean validar() {

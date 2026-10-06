@@ -158,16 +158,21 @@
                                       <Component id="jLabel17" min="-2" pref="107" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="rbFacturaProforma" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="rbFacturaRecibo" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Group type="102" alignment="0" attributes="0">
-                                              <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
-                                              <Component id="rbGuiaTransporte" min="-2" pref="169" max="-2" attributes="0"/>
+                                          <Group type="102" attributes="0">
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Component id="rbFacturaProforma" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="rbFacturaRecibo" alignment="0" min="-2" max="-2" attributes="0"/>
+                                              </Group>
+                                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Component id="rbFactura" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                  <Group type="102" attributes="0">
+                                                      <EmptySpace min="2" pref="2" max="-2" attributes="0"/>
+                                                      <Component id="rbGuiaTransporte" min="-2" pref="169" max="-2" attributes="0"/>
+                                                  </Group>
+                                              </Group>
                                           </Group>
-                                          <Component id="rbFactura" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="rbConsultaMesa" min="-2" pref="169" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
@@ -287,44 +292,45 @@
                               <Component id="spnCopia" pref="0" max="32767" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="1" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="rbA6" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="rbA4" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="rbA5" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="rbA7" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="rbS_A6" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="rbA6V" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="rbA6_O" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="rbS_A6_O" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
                           <Group type="102" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="rbA6" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="rbA4" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="rbA5" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="rbA7" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="rbS_A6" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="rbA6V" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="rbA6_O" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="rbS_A6_O" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" attributes="0">
-                                      <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="3" attributes="0">
-                                          <Component id="jLabel16" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
-                                          <Component id="rbCI" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="rbCB" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="rbCM" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                              </Group>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jLabel20" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jLabel17" alignment="3" min="-2" pref="17" max="-2" attributes="0"/>
-                                  <Component id="rbFacturaRecibo" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="rbFactura" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel16" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
+                                  <Component id="rbCI" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="rbCB" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="rbCM" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="rbFacturaProforma" alignment="3" min="-2" pref="24" max="-2" attributes="0"/>
-                                  <Component id="rbGuiaTransporte" alignment="3" min="-2" pref="24" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jLabel20" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="jLabel17" alignment="3" min="-2" pref="17" max="-2" attributes="0"/>
+                          <Component id="rbFacturaRecibo" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="rbFactura" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="rbFacturaProforma" alignment="3" min="-2" pref="24" max="-2" attributes="0"/>
+                          <Component id="rbGuiaTransporte" alignment="3" min="-2" pref="24" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="rbConsultaMesa" min="-2" pref="24" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="1" attributes="0">
                               <Component id="jLabel21" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
@@ -334,7 +340,7 @@
                               </Group>
                               <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
                           </Group>
-                          <Group type="103" groupAlignment="3" attributes="0">
+                          <Group type="103" alignment="1" groupAlignment="3" attributes="0">
                               <Component id="rbSim_lugar" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="rbNao_lugar" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="lbClienteConsumidorFinal6" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -485,6 +491,9 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Factura-Proforma"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rbFacturaProformaActionPerformed"/>
+              </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="9"/>
               </AuxValues>
@@ -820,6 +829,23 @@
             </Component>
             <Component class="javax.swing.JTextField" name="txtProveniencia">
             </Component>
+            <Component class="javax.swing.JRadioButton" name="rbConsultaMesa">
+              <Properties>
+                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                  <ComponentRef name="buttonGroup3"/>
+                </Property>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Lucida Sans Typewriter" size="12" style="0"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Consulta de Mesa"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rbConsultaMesaActionPerformed"/>
+              </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="9"/>
+              </AuxValues>
+            </Component>
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="jPanel4">
@@ -955,25 +981,23 @@
                                           <Component id="jLabel24" alignment="0" min="-2" pref="374" max="-2" attributes="0"/>
                                           <Component id="lbHoraComecoVendas" alignment="0" min="-2" max="-2" attributes="0"/>
                                           <Component id="lbClienteConsumidorFinal14" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                                              <Group type="102" alignment="0" attributes="0">
-                                                  <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
-                                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                                  <Component id="cmbHoraTermino" min="-2" pref="83" max="-2" attributes="0"/>
-                                                  <EmptySpace max="32767" attributes="0"/>
-                                                  <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
-                                                  <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
-                                                  <Component id="cmbMinitoTermino" min="-2" pref="87" max="-2" attributes="0"/>
-                                              </Group>
-                                              <Group type="102" alignment="0" attributes="0">
-                                                  <Component id="lbHoraAbertura" min="-2" max="-2" attributes="0"/>
-                                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                                  <Component id="cmbHoraComeco" min="-2" pref="77" max="-2" attributes="0"/>
-                                                  <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
-                                                  <Component id="lbSeparadorAbertura" min="-2" max="-2" attributes="0"/>
-                                                  <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
-                                                  <Component id="cmbMinutoComeco" min="-2" pref="88" max="-2" attributes="0"/>
-                                              </Group>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                              <Component id="cmbHoraTermino" min="-2" pref="83" max="-2" attributes="0"/>
+                                              <EmptySpace max="32767" attributes="0"/>
+                                              <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
+                                              <Component id="cmbMinitoTermino" min="-2" pref="87" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Component id="lbHoraAbertura" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                              <Component id="cmbHoraComeco" min="-2" pref="77" max="-2" attributes="0"/>
+                                              <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
+                                              <Component id="lbSeparadorAbertura" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
+                                              <Component id="cmbMinutoComeco" min="-2" pref="88" max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
                                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
