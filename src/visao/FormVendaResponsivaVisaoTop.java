@@ -176,7 +176,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     private String doc = "";
     public static boolean statusConversao = false;
     private static boolean descontoStocavel = true;
-    public static String consultaDoc = "";
+    public static Vector<String> consultaDoc = new Vector();
     private String folhaEscolhida = null; // null = utilizador não clicou
     private static FormVendaResponsivaVisaoTop instancia;
 
@@ -457,15 +457,12 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         int numero_copia = dadosInstituicao.getNumeroVias();
         spnCopia.setModel(CfMethodsSwing.criarSpinnerDoubleModel(1, 3, numero_copia));
         empresa();
-        
+
         instancia = this;
         aplicarFolha();
-configurarEscolhaFolha();
-        
+        configurarEscolhaFolha();
+
 //        setFolhaImpressora(dadosInstituicao.getImpressora());
-        
-        
-        
         busca_permissao();
         actualizar_abreviacao();
 
@@ -1779,7 +1776,7 @@ configurarEscolhaFolha();
     private void ck_S_A6ActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_ck_S_A6ActionPerformed
     {//GEN-HEADEREND:event_ck_S_A6ActionPerformed
 //        actualizar_abreviacao();
-    
+
     }//GEN-LAST:event_ck_S_A6ActionPerformed
 
     private void ck_ComVirgulaActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_ck_ComVirgulaActionPerformed
@@ -2717,7 +2714,7 @@ configurarEscolhaFolha();
             //actualizar precos antigos
 //            actualizarPrecosAntigos();
 
-            if (!consultaDoc.equalsIgnoreCase("")) {
+            if (!consultaDoc.isEmpty()) {
                 procedimentoActualizarStausConsulta();
             }
 
@@ -5024,7 +5021,7 @@ configurarEscolhaFolha();
 //
 //                if (ck_A4.isSelected()) {
 //                    this.abreviacao = Abreviacao.FA;
-////                    ck_A4.setSelected( true );
+    ////                    ck_A4.setSelected( true );
 //                } else if (ck_simplificada_A7.isSelected() || ck_simplificada.isSelected() || ck_S_A6.isSelected()) {
 ////                    JOptionPane.showMessageDialog( null, "Atenção, selecione outro formato pra venda a crédito!" );
 //                    ck_A4.setSelected(true);
@@ -5054,64 +5051,64 @@ configurarEscolhaFolha();
     
     private void actualizar_abreviacao() {
 
-    switch (getIdDocumento()) {
-        case DVML.DOC_FACTURA_RECIBO_FR:
-            if (ck_A4.isSelected()) {
-                this.abreviacao = Abreviacao.FR_A4;
-            } else if (ck_simplificada.isSelected()) {
-                this.abreviacao = Abreviacao.FR_A6;
-            } else if (ck_simplificada_O_S.isSelected()) {
-                this.abreviacao = Abreviacao.FR_S_A6_O;
-            } else if (ck_simplificada_O.isSelected()) {
-                this.abreviacao = Abreviacao.FR_A6_O;
-            } else if (ck_simplificada_A7.isSelected()) {
-                this.abreviacao = Abreviacao.FR_SA7;
-            } else if (ck_S_A6.isSelected()) {
-                this.abreviacao = Abreviacao.FR_S_A6;
-            } else if (ck_ComVirgula.isSelected()) {
-                this.abreviacao = Abreviacao.FR_A6_Com_Virgula;
-            } else {
-                this.abreviacao = Abreviacao.FR_A4_Duplicado;
-            }
-            break;
+        switch (getIdDocumento()) {
+            case DVML.DOC_FACTURA_RECIBO_FR:
+                if (ck_A4.isSelected()) {
+                    this.abreviacao = Abreviacao.FR_A4;
+                } else if (ck_simplificada.isSelected()) {
+                    this.abreviacao = Abreviacao.FR_A6;
+                } else if (ck_simplificada_O_S.isSelected()) {
+                    this.abreviacao = Abreviacao.FR_S_A6_O;
+                } else if (ck_simplificada_O.isSelected()) {
+                    this.abreviacao = Abreviacao.FR_A6_O;
+                } else if (ck_simplificada_A7.isSelected()) {
+                    this.abreviacao = Abreviacao.FR_SA7;
+                } else if (ck_S_A6.isSelected()) {
+                    this.abreviacao = Abreviacao.FR_S_A6;
+                } else if (ck_ComVirgula.isSelected()) {
+                    this.abreviacao = Abreviacao.FR_A6_Com_Virgula;
+                } else {
+                    this.abreviacao = Abreviacao.FR_A4_Duplicado;
+                }
+                break;
 
-        case DVML.DOC_FACTURA_FT:
-            if (ck_A4.isSelected()) {
-                this.abreviacao = Abreviacao.FA;
-            } else if (ck_simplificada_A7.isSelected() || ck_simplificada.isSelected() || ck_S_A6.isSelected()
-                    || ck_simplificada_O.isSelected() || ck_simplificada_O_S.isSelected() || ck_ComVirgula.isSelected()) {
-                // Formato não permitido para venda a crédito: força A4
-                ck_A4.setSelected(true);
-                ck_simplificada_A7.setSelected(false);
-                ck_simplificada.setSelected(false);
-                ck_S_A6.setSelected(false);
-                ck_simplificada_O.setSelected(false);
-                ck_simplificada_O_S.setSelected(false);
-                ck_ComVirgula.setSelected(false);
-                this.abreviacao = Abreviacao.FA;
-                folhaEscolhida = "A4";
-            } else {
-                // Só chega aqui com A5 (ck_Duplicada) marcado
-                this.abreviacao = Abreviacao.FT_A4_Duplicado;
-            }
-            break;
+            case DVML.DOC_FACTURA_FT:
+                if (ck_A4.isSelected()) {
+                    this.abreviacao = Abreviacao.FA;
+                } else if (ck_simplificada_A7.isSelected() || ck_simplificada.isSelected() || ck_S_A6.isSelected()
+                        || ck_simplificada_O.isSelected() || ck_simplificada_O_S.isSelected() || ck_ComVirgula.isSelected()) {
+                    // Formato não permitido para venda a crédito: força A4
+                    ck_A4.setSelected(true);
+                    ck_simplificada_A7.setSelected(false);
+                    ck_simplificada.setSelected(false);
+                    ck_S_A6.setSelected(false);
+                    ck_simplificada_O.setSelected(false);
+                    ck_simplificada_O_S.setSelected(false);
+                    ck_ComVirgula.setSelected(false);
+                    this.abreviacao = Abreviacao.FA;
+                    folhaEscolhida = "A4";
+                } else {
+                    // Só chega aqui com A5 (ck_Duplicada) marcado
+                    this.abreviacao = Abreviacao.FT_A4_Duplicado;
+                }
+                break;
 
-        case DVML.DOC_FACTURA_PROFORMA_PP:
-            this.abreviacao = Abreviacao.PP;
-            break;
+            case DVML.DOC_FACTURA_PROFORMA_PP:
+                this.abreviacao = Abreviacao.PP;
+                break;
 
-        case DVML.DOC_FACTURA_CONSULTA_MESA:
-            this.abreviacao = Abreviacao.CM;
-            break;
+            case DVML.DOC_FACTURA_CONSULTA_MESA:
+                this.abreviacao = Abreviacao.CM;
+                break;
 
-        case DVML.DOC_GUIA_TRANSPORTE_GT:
-            this.abreviacao = Abreviacao.GT;
-            break;
+            case DVML.DOC_GUIA_TRANSPORTE_GT:
+                this.abreviacao = Abreviacao.GT;
+                break;
 
-        default:
-            break;
+            default:
+                break;
+        }
     }
-}
 
     private void mostra_consumidor_final() {
 
@@ -7314,67 +7311,84 @@ configurarEscolhaFolha();
     }
 
     private static void procedimentoActualizarStausConsulta() {
-        vendasController.actualiarStatusConsulta(consultaDoc);
-        consultaDoc = "";
+        for (String doc : consultaDoc) {
+            vendasController.actualiarStatusConsulta(doc);
+        }
+        consultaDoc.clear();
     }
-    
+
 //    private String folhaEscolhida = null; // null = utilizador não clicou
-
 // static: prioridade ao clique; senão, padrão do banco
-public static String resolverFolha(String escolhida, String padraoBanco) {
-    return (escolhida != null && !escolhida.trim().isEmpty()) ? escolhida : padraoBanco;
-}
-
-private void setFolhaImpressora(String folha) {
-    ck_simplificada.setSelected(false);
-    ck_simplificada_A7.setSelected(false);
-    ck_A4.setSelected(false);
-    ck_Duplicada.setSelected(false);
-    ck_S_A6.setSelected(false);
-    ck_ComVirgula.setSelected(false);
-    ck_simplificada_O.setSelected(false);
-    ck_simplificada_O_S.setSelected(false);
-
-    switch (folha == null ? "A4" : folha.toUpperCase()) {
-        case "A6":     ck_simplificada.setSelected(true);     break;
-        case "A6_O":   ck_simplificada_O.setSelected(true);   break;
-        case "S_A6_O": ck_simplificada_O_S.setSelected(true); break;
-        case "A7":     ck_simplificada_A7.setSelected(true);  break;
-        case "A5":     ck_Duplicada.setSelected(true);        break;
-        case "S_A6":   ck_S_A6.setSelected(true);             break;
-        case "A6V":    ck_ComVirgula.setSelected(true);       break;
-        default:       ck_A4.setSelected(true);               break;
+    public static String resolverFolha(String escolhida, String padraoBanco) {
+        return (escolhida != null && !escolhida.trim().isEmpty()) ? escolhida : padraoBanco;
     }
-    actualizar_abreviacao(); // calcula a abreviação conforme o documento
-}
 
-private void aplicarFolha() {
-    setFolhaImpressora(resolverFolha(folhaEscolhida, dadosInstituicao.getImpressora()));
-}
+    private void setFolhaImpressora(String folha) {
+        ck_simplificada.setSelected(false);
+        ck_simplificada_A7.setSelected(false);
+        ck_A4.setSelected(false);
+        ck_Duplicada.setSelected(false);
+        ck_S_A6.setSelected(false);
+        ck_ComVirgula.setSelected(false);
+        ck_simplificada_O.setSelected(false);
+        ck_simplificada_O_S.setSelected(false);
 
-private void ligar(javax.swing.JCheckBox ck, String folha) {
-    ck.addActionListener(e -> {
-        folhaEscolhida = ck.isSelected() ? folha : null;
-        aplicarFolha();
-    });
-}
+        switch (folha == null ? "A4" : folha.toUpperCase()) {
+            case "A6":
+                ck_simplificada.setSelected(true);
+                break;
+            case "A6_O":
+                ck_simplificada_O.setSelected(true);
+                break;
+            case "S_A6_O":
+                ck_simplificada_O_S.setSelected(true);
+                break;
+            case "A7":
+                ck_simplificada_A7.setSelected(true);
+                break;
+            case "A5":
+                ck_Duplicada.setSelected(true);
+                break;
+            case "S_A6":
+                ck_S_A6.setSelected(true);
+                break;
+            case "A6V":
+                ck_ComVirgula.setSelected(true);
+                break;
+            default:
+                ck_A4.setSelected(true);
+                break;
+        }
+        actualizar_abreviacao(); // calcula a abreviação conforme o documento
+    }
 
-private void configurarEscolhaFolha() {
-    ligar(ck_S_A6, "S_A6");
-    ligar(ck_ComVirgula, "A6V");
-    ligar(ck_simplificada_A7, "A7");
-    ligar(ck_simplificada_O_S, "S_A6_O");
-    ligar(ck_simplificada_O, "A6_O");
-    ligar(ck_simplificada, "A6");
-    ligar(ck_Duplicada, "A5");
-    ligar(ck_A4, "A4");
-}
+    private void aplicarFolha() {
+        setFolhaImpressora(resolverFolha(folhaEscolhida, dadosInstituicao.getImpressora()));
+    }
+
+    private void ligar(javax.swing.JCheckBox ck, String folha) {
+        ck.addActionListener(e -> {
+            folhaEscolhida = ck.isSelected() ? folha : null;
+            aplicarFolha();
+        });
+    }
+
+    private void configurarEscolhaFolha() {
+        ligar(ck_S_A6, "S_A6");
+        ligar(ck_ComVirgula, "A6V");
+        ligar(ck_simplificada_A7, "A7");
+        ligar(ck_simplificada_O_S, "S_A6_O");
+        ligar(ck_simplificada_O, "A6_O");
+        ligar(ck_simplificada, "A6");
+        ligar(ck_Duplicada, "A5");
+        ligar(ck_A4, "A4");
+    }
 
 // método static que o finalizar venda vai chamar
-public static void voltarFolhaPadrao() {
-    if (instancia != null) {
-        instancia.folhaEscolhida = null;
-        instancia.aplicarFolha(); // volta ao padrão do banco
+    public static void voltarFolhaPadrao() {
+        if (instancia != null) {
+            instancia.folhaEscolhida = null;
+            instancia.aplicarFolha(); // volta ao padrão do banco
+        }
     }
-}
 }
