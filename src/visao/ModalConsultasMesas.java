@@ -334,7 +334,7 @@ public class ModalConsultasMesas extends javax.swing.JFrame {
 //                TbCliente cliente_local = (TbCliente) clientesController.findById( String.valueOf( jListPacientesComGastos.getSelectedValue().toString() ));
                 TbVenda venda_local = (TbVenda) vendasController.findById(codigo_venda);
 
-                FormVendaResponsivaVisaoTop.consultaDoc = venda_local.getCodFact();
+                FormVendaResponsivaVisaoTop.consultaDoc.add(venda_local.getCodFact());
                 int codigo_unidade = produto_local.getCodUnidade().getPkUnidade();
                 Unidade unidade_local = (Unidade) unidadesController.findById(codigo_unidade);
 
@@ -389,7 +389,7 @@ public class ModalConsultasMesas extends javax.swing.JFrame {
     private void procedimentoEnviarTabelaVenda() {
 
         String nomeCliente = clientesController.findByCodigo(getIdCliente()).getNome();
-        
+
         FormVendaResponsivaVisaoTop.cmbTipoDocumento.setSelectedItem("Factura");
         FormVendaResponsivaVisaoTop.cmbCliente.setSelectedItem(nomeCliente);
 

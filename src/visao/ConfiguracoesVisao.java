@@ -11,16 +11,12 @@
 package visao;
 
 import comercial.controller.DadosInstituicaoController;
-import java.sql.Connection;
-import dao.DadosInstituicaoDao;
 import entity.TbDadosInstituicao;
 import java.util.Date;
-import javax.persistence.EntityManagerFactory;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import kitanda.util.CfMethodsSwing;
 import util.BDConexao;
-import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
 
 /**
@@ -128,6 +124,7 @@ public class ConfiguracoesVisao extends javax.swing.JDialog {
         rbCM = new javax.swing.JRadioButton();
         jLabel31 = new javax.swing.JLabel();
         txtProveniencia = new javax.swing.JTextField();
+        rbConsultaMesa = new javax.swing.JRadioButton();
         jPanel4 = new javax.swing.JPanel();
         lbClienteConsumidorFinal3 = new javax.swing.JLabel();
         rbMostrar = new javax.swing.JRadioButton();
@@ -240,6 +237,11 @@ public class ConfiguracoesVisao extends javax.swing.JDialog {
         buttonGroup3.add(rbFacturaProforma);
         rbFacturaProforma.setFont(new java.awt.Font("Lucida Sans Typewriter", 0, 12)); // NOI18N
         rbFacturaProforma.setText("Factura-Proforma");
+        rbFacturaProforma.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbFacturaProformaActionPerformed(evt);
+            }
+        });
 
         jLabel17.setFont(new java.awt.Font("Lucida Grande", 1, 16)); // NOI18N
         jLabel17.setText("Doc.Padrão:");
@@ -363,6 +365,15 @@ public class ConfiguracoesVisao extends javax.swing.JDialog {
 
         jLabel31.setText("Proveniência Produto:");
 
+        buttonGroup3.add(rbConsultaMesa);
+        rbConsultaMesa.setFont(new java.awt.Font("Lucida Sans Typewriter", 0, 12)); // NOI18N
+        rbConsultaMesa.setText("Consulta de Mesa");
+        rbConsultaMesa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbConsultaMesaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -390,14 +401,17 @@ public class ConfiguracoesVisao extends javax.swing.JDialog {
                                 .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(rbFacturaProforma)
-                                    .addComponent(rbFacturaRecibo))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel3Layout.createSequentialGroup()
-                                        .addGap(2, 2, 2)
-                                        .addComponent(rbGuiaTransporte, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(rbFactura)))
+                                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(rbFacturaProforma)
+                                            .addComponent(rbFacturaRecibo))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(rbFactura)
+                                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                                .addGap(2, 2, 2)
+                                                .addComponent(rbGuiaTransporte, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                    .addComponent(rbConsultaMesa, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addGap(6, 6, 6)
                                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -484,38 +498,39 @@ public class ConfiguracoesVisao extends javax.swing.JDialog {
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(spnCopia, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(rbA6)
+                        .addComponent(rbA4)
+                        .addComponent(rbA5)
+                        .addComponent(rbA7)
+                        .addComponent(rbS_A6)
+                        .addComponent(rbA6V)
+                        .addComponent(rbA6_O)
+                        .addComponent(rbS_A6_O))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(rbA6)
-                                .addComponent(rbA4)
-                                .addComponent(rbA5)
-                                .addComponent(rbA7)
-                                .addComponent(rbS_A6)
-                                .addComponent(rbA6V)
-                                .addComponent(rbA6_O)
-                                .addComponent(rbS_A6_O))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGap(27, 27, 27)
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(rbCI)
-                                    .addComponent(rbCB)
-                                    .addComponent(rbCM))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel20)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(27, 27, 27)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(rbFacturaRecibo)
-                            .addComponent(rbFactura))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(rbFacturaProforma, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(rbGuiaTransporte, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(rbCI)
+                            .addComponent(rbCB)
+                            .addComponent(rbCM))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel20)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rbFacturaRecibo)
+                    .addComponent(rbFactura))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(rbFacturaProforma, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rbGuiaTransporte, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(rbConsultaMesa, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel21)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -523,7 +538,7 @@ public class ConfiguracoesVisao extends javax.swing.JDialog {
                             .addComponent(rbSim)
                             .addComponent(rbNao))
                         .addGap(28, 28, 28))
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(rbSim_lugar)
                         .addComponent(rbNao_lugar)
                         .addComponent(lbClienteConsumidorFinal6)))
@@ -898,23 +913,22 @@ public class ConfiguracoesVisao extends javax.swing.JDialog {
                                     .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(lbHoraComecoVendas)
                                     .addComponent(lbClienteConsumidorFinal14)
-                                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
-                                            .addComponent(jLabel5)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                            .addComponent(cmbHoraTermino, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(jLabel6)
-                                            .addGap(29, 29, 29)
-                                            .addComponent(cmbMinitoTermino, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
-                                            .addComponent(lbHoraAbertura)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                            .addComponent(cmbHoraComeco, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addGap(32, 32, 32)
-                                            .addComponent(lbSeparadorAbertura)
-                                            .addGap(29, 29, 29)
-                                            .addComponent(cmbMinutoComeco, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                    .addGroup(jPanel4Layout.createSequentialGroup()
+                                        .addComponent(jLabel5)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(cmbHoraTermino, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel6)
+                                        .addGap(29, 29, 29)
+                                        .addComponent(cmbMinitoTermino, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel4Layout.createSequentialGroup()
+                                        .addComponent(lbHoraAbertura)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(cmbHoraComeco, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(32, 32, 32)
+                                        .addComponent(lbSeparadorAbertura)
+                                        .addGap(29, 29, 29)
+                                        .addComponent(cmbMinutoComeco, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGap(0, 0, Short.MAX_VALUE)))))
                 .addGap(0, 11, Short.MAX_VALUE))
         );
@@ -1183,6 +1197,14 @@ public class ConfiguracoesVisao extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_rbFichaNenhumActionPerformed
 
+    private void rbFacturaProformaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbFacturaProformaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rbFacturaProformaActionPerformed
+
+    private void rbConsultaMesaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbConsultaMesaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rbConsultaMesaActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1286,6 +1308,7 @@ public class ConfiguracoesVisao extends javax.swing.JDialog {
     private javax.swing.JRadioButton rbCB;
     private javax.swing.JRadioButton rbCI;
     private javax.swing.JRadioButton rbCM;
+    public static javax.swing.JRadioButton rbConsultaMesa;
     public static javax.swing.JRadioButton rbDesactivar;
     public static javax.swing.JRadioButton rbDesactivo;
     public static javax.swing.JRadioButton rbEsconder;
@@ -1463,6 +1486,7 @@ public class ConfiguracoesVisao extends javax.swing.JDialog {
     private String getDocPadrao() {
         return rbFacturaRecibo.isSelected() ? "Factura/Recibo"
                 : rbFactura.isSelected() ? "Factura"
+                : rbConsultaMesa.isSelected() ? "Consulta Mesa"
                 : rbFacturaProforma.isSelected() ? "Factura-Proforma" : "Guia de Transporte";
     }
 
