@@ -4,11 +4,12 @@
  */
 package lista;
 
-
+import comercial.controller.DadosInstituicaoController;
 import java.sql.Connection;
 import dao.ItemVendaDao;
 import dao.VendaDao;
 import entity.TbVenda;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.*;
@@ -36,17 +37,18 @@ import util.JPAEntityMannagerFactoryUtil;
 import static util.DVML.CAMINHO_REPORT;
 import static util.DVML.NAME_SOFTWARE;
 import static util.DVML.VERSION_SOFTWARE;
+import util.fe.QrCodeUtil;
 
 /**
  *
  * @author Domingos Dala Vunge
  */
-public class ListaVendaRecolhas
-{
+public class ListaVendaRecolhas {
 
     private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
-    private VendaDao vendaDao = new VendaDao( emf );
-    private ItemVendaDao itemVendaDao = new ItemVendaDao( emf );
+    private VendaDao vendaDao = new VendaDao(emf);
+    private ItemVendaDao itemVendaDao = new ItemVendaDao(emf);
+    private DadosInstituicaoController dadosInstituicaoController;
     private BDConexao conexao = BDConexao.getInstancia();
     private int codigo, pk_mesas, pk_lugares;
     private double valor_entregue, troco;
@@ -57,11 +59,9 @@ public class ListaVendaRecolhas
 //    private DVML.Abreviacao doc_breviacao;
     private Abreviacao doc_breviacao;
 
-    public ListaVendaRecolhas( int cod_venda, Abreviacao doc_abrevicao, int cod_mesa, int pk_lugar, boolean performance, boolean a5, String status_documento )
-    {
+    public ListaVendaRecolhas(int cod_venda, Abreviacao doc_abrevicao, int cod_mesa, int pk_lugar, boolean performance, boolean a5, String status_documento) {
 
-        try
-        {
+        try {
             String impressora = "Adobe PDF";
             String impressora3 = "EPSON TM-T88V Receipt";
             String impressora2 = "Microsoft Print to PDF";
@@ -75,9 +75,9 @@ public class ListaVendaRecolhas
             this.a5 = a5;
             HashMap hashMap = new HashMap();
 
-            hashMap.put( "CODIGO_VENDA", cod_venda );
-            hashMap.put( "PARM_MESA", cod_mesa );
-            hashMap.put( "PARM_LUGAR", pk_lugar );
+            hashMap.put("CODIGO_VENDA", cod_venda);
+            hashMap.put("PARM_MESA", cod_mesa);
+            hashMap.put("PARM_LUGAR", pk_lugar);
 
 //             printReportToPrinter("filtrar_sub_factura_A5_1_pedidos.jrxml"Foxit Reader PDF Printer);
             //printReportToPrinterFILTRAR ( "filtrar_sub_factura_A5_1_pedidos.jrxml", impressora3, hashMap );
@@ -85,20 +85,16 @@ public class ListaVendaRecolhas
 //             printReportToPrinter("factura_A5_1_pedidos.jrxml", impressora2);
             mostrarVendaFiltrada();
 
-        }
-        catch ( Exception ex )
-        {
-            Logger.getLogger( ListaVendaRecolhas.class.getName() ).log( Level.SEVERE, null, ex );
+        } catch (Exception ex) {
+            Logger.getLogger(ListaVendaRecolhas.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
 
     //
 //    public ListaVenda( int codigo, boolean performance, boolean a5, String status_documento )
-    public ListaVendaRecolhas( int codigo, Abreviacao doc_abrevicao, boolean performance, boolean a5, String status_documento )
-    {
-        try
-        {
+    public ListaVendaRecolhas(int codigo, Abreviacao doc_abrevicao, boolean performance, boolean a5, String status_documento) {
+        try {
             String impressora = "Adobe PDF";
             String impressora2 = "Microsoft Print to PDF";
             String impressora3 = "EPSON TM-T88V Receipt";
@@ -107,99 +103,89 @@ public class ListaVendaRecolhas
             this.codigo = codigo;
             this.performance = performance;
             this.a5 = a5;
-            try
-            {
+            try {
                 mostrarRecolhaCliente();
                 mostrarRecolhaLavandaria();
+            } catch (Exception e) {
             }
-            catch ( Exception e )
-            {
-            }
-        }
-        catch ( Exception ex )
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
-            Logger.getLogger( ListaVendaRecolhas.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(ListaVendaRecolhas.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
 
-    private void printReportToPrinter( String report, String impressora ) throws JRException
-    {
+    private void printReportToPrinter(String report, String impressora) throws JRException {
         /*obtendo a conexão*/
         java.sql.Connection connection = conexao.getConnectionAtiva();
         /*configurando os parametros para a submisão no ficheiro*/
         Map parameters = new HashMap();
 
-        parameters.put( "CODIGO_VENDA", this.codigo );
-        parameters.put( "CODIGO_MESA", itemVendaDao.getAllItemVendasByIdVenda( codigo ).get( 0 ).getFkMesas().getPkMesas() );
-        parameters.put( "DESIGNACAO_MESA", itemVendaDao.getAllItemVendasByIdVenda( codigo ).get( 0 ).getFkMesas().getDesignacao() );
+        parameters.put("CODIGO_VENDA", this.codigo);
+        parameters.put("CODIGO_MESA", itemVendaDao.getAllItemVendasByIdVenda(codigo).get(0).getFkMesas().getPkMesas());
+        parameters.put("DESIGNACAO_MESA", itemVendaDao.getAllItemVendasByIdVenda(codigo).get(0).getFkMesas().getDesignacao());
 
-        System.err.println( "CODIGO_VENDA: " + this.codigo );
-        System.err.println( "CODIGO_MESA: " + itemVendaDao.getAllItemVendasByIdVenda( codigo ).get( 0 ).getFkMesas().getPkMesas() );
-        System.err.println( "DESIGNACAO_MESA: " + itemVendaDao.getAllItemVendasByIdVenda( codigo ).get( 0 ).getFkMesas().getDesignacao() );
+        System.err.println("CODIGO_VENDA: " + this.codigo);
+        System.err.println("CODIGO_MESA: " + itemVendaDao.getAllItemVendasByIdVenda(codigo).get(0).getFkMesas().getPkMesas());
+        System.err.println("DESIGNACAO_MESA: " + itemVendaDao.getAllItemVendasByIdVenda(codigo).get(0).getFkMesas().getDesignacao());
 
         /*obtendo o caminho do ficheiro (.jrxml)*/
         String caminho = CAMINHO_REPORT + report;
 
-        System.err.println( "impressora: " + impressora );
-        System.err.println( "report: " + CAMINHO_REPORT + report );
+        System.err.println("impressora: " + impressora);
+        System.err.println("report: " + CAMINHO_REPORT + report);
 
         /*lendo o ficheiro*/
-        JasperDesign jsd = JRXmlLoader.load( caminho );
+        JasperDesign jsd = JRXmlLoader.load(caminho);
         /*compliando o ficheiro*/
-        JasperReport jr = JasperCompileManager.compileReport( jsd );
+        JasperReport jr = JasperCompileManager.compileReport(jsd);
         /*preenche o report com os parametros*/
-        JasperPrint jpx = JasperFillManager.fillReport( jr, parameters, connection );
+        JasperPrint jpx = JasperFillManager.fillReport(jr, parameters, connection);
 
         List<JRPrintPage> pages = jpx.getPages();
 
-        if ( pages.size() > 0 )
-        {
+        if (pages.size() > 0) {
             /*configurando os paramentros para a requisição do serviço na empressora*/
             PrintRequestAttributeSet printRequestAttributeSet = new HashPrintRequestAttributeSet();
-            printRequestAttributeSet.add( MediaSizeName.ISO_A6 ); //setting page size
-            printRequestAttributeSet.add( new Copies( 1 ) );
+            printRequestAttributeSet.add(MediaSizeName.ISO_A6); //setting page size
+            printRequestAttributeSet.add(new Copies(1));
 //Aqui        
 //        printRequestAttributeSet.add ( new PageRanges (1, Integer.MAX_VALUE));
 
             /*selecionando a empressora*/
 //        String impressdora = "HP DeskJet 2545 series";
-            PrinterName printerName = new PrinterName( listar_impressora( impressora ), null ); //gets printer 
+            PrinterName printerName = new PrinterName(listar_impressora(impressora), null); //gets printer 
             /*preparando a consiguração dos serviços da empressa*/
             PrintServiceAttributeSet printServiceAttributeSet = new HashPrintServiceAttributeSet();
 
 //adiciona a empressora no serviço
-            printServiceAttributeSet.add( printerName );
+            printServiceAttributeSet.add(printerName);
 //        printServiceAttributeSet.add ( new PageRanges (1, 10000) );
 
             /*preparando o serviço de exportação da empressa*/
             JRPrintServiceExporter exporter = new JRPrintServiceExporter();
 
-            exporter.setParameter( JRExporterParameter.JASPER_PRINT, jpx );
-            exporter.setParameter( JRPrintServiceExporterParameter.PRINT_REQUEST_ATTRIBUTE_SET, printRequestAttributeSet );
-            exporter.setParameter( JRPrintServiceExporterParameter.PRINT_SERVICE_ATTRIBUTE_SET, printServiceAttributeSet );
+            exporter.setParameter(JRExporterParameter.JASPER_PRINT, jpx);
+            exporter.setParameter(JRPrintServiceExporterParameter.PRINT_REQUEST_ATTRIBUTE_SET, printRequestAttributeSet);
+            exporter.setParameter(JRPrintServiceExporterParameter.PRINT_SERVICE_ATTRIBUTE_SET, printServiceAttributeSet);
 
-            exporter.setParameter( JRPrintServiceExporterParameter.START_PAGE_INDEX, 1 );
-            exporter.setParameter( JRPrintServiceExporterParameter.END_PAGE_INDEX, Integer.MAX_VALUE );
+            exporter.setParameter(JRPrintServiceExporterParameter.START_PAGE_INDEX, 1);
+            exporter.setParameter(JRPrintServiceExporterParameter.END_PAGE_INDEX, Integer.MAX_VALUE);
 
-            exporter.setParameter( JRPrintServiceExporterParameter.DISPLAY_PAGE_DIALOG, Boolean.FALSE );
-            exporter.setParameter( JRPrintServiceExporterParameter.DISPLAY_PRINT_DIALOG, Boolean.FALSE );
+            exporter.setParameter(JRPrintServiceExporterParameter.DISPLAY_PAGE_DIALOG, Boolean.FALSE);
+            exporter.setParameter(JRPrintServiceExporterParameter.DISPLAY_PRINT_DIALOG, Boolean.FALSE);
 
             exporter.exportReport();
 
-            System.err.println( "report" + report );
-            System.err.println( "impressora" + impressora );
-        }
-        else
-        {
-            System.err.println( "A Factura não tem paginas..." );
+            System.err.println("report" + report);
+            System.err.println("impressora" + impressora);
+        } else {
+            System.err.println("A Factura não tem paginas...");
         }
 
     }
 
-    private void printReportToPrinterFILTRAR( String report, String impressora, HashMap parameters ) throws JRException
-    {
+    private void printReportToPrinterFILTRAR(String report, String impressora, HashMap parameters) throws JRException {
         /*obtendo a conexão*/
         java.sql.Connection connection = conexao.getConnectionAtiva();
         /*configurando os parametros para a submisão no ficheiro*/
@@ -207,292 +193,275 @@ public class ListaVendaRecolhas
 //        parameters.put ( "CODIGO_VENDA", this.codigo );
 //        parameters.put ( "CODIGO_MESA", itemVendaDao.getAllItemVendasByIdVenda ( codigo ).get ( 0 ).getFkMesas ().getPkMesas () );
 //        parameters.put ( "DESIGNACAO_MESA", itemVendaDao.getAllItemVendasByIdVenda ( codigo ).get ( 0 ).getFkMesas ().getDesignacao () );
-        System.err.println( "CODIGO_VENDA: " + this.codigo );
-        System.err.println( "CODIGO_MESA: " + this.pk_mesas );
-        System.err.println( "DESIGNACAO_MESA: " + itemVendaDao.getAllItemVendasByIdVenda( codigo ).get( 0 ).getFkMesas().getDesignacao() );
+        System.err.println("CODIGO_VENDA: " + this.codigo);
+        System.err.println("CODIGO_MESA: " + this.pk_mesas);
+        System.err.println("DESIGNACAO_MESA: " + itemVendaDao.getAllItemVendasByIdVenda(codigo).get(0).getFkMesas().getDesignacao());
 
         /*obtendo o caminho do ficheiro (.jrxml)*/
         String caminho = CAMINHO_REPORT + report;
 
-        System.err.println( "impressora: " + impressora );
-        System.err.println( "report: " + CAMINHO_REPORT + report );
+        System.err.println("impressora: " + impressora);
+        System.err.println("report: " + CAMINHO_REPORT + report);
 
         /*lendo o ficheiro*/
-        JasperDesign jsd = JRXmlLoader.load( caminho );
+        JasperDesign jsd = JRXmlLoader.load(caminho);
         /*compliando o ficheiro*/
-        JasperReport jr = JasperCompileManager.compileReport( jsd );
+        JasperReport jr = JasperCompileManager.compileReport(jsd);
         /*preenche o report com os parametros*/
-        JasperPrint jpx = JasperFillManager.fillReport( jr, parameters, connection );
+        JasperPrint jpx = JasperFillManager.fillReport(jr, parameters, connection);
         /*configurando os paramentros para a requisição do serviço na empressora*/
         PrintRequestAttributeSet printRequestAttributeSet = new HashPrintRequestAttributeSet();
-        printRequestAttributeSet.add( MediaSizeName.ISO_A6 ); //setting page size
-        printRequestAttributeSet.add( new Copies( 1 ) );
+        printRequestAttributeSet.add(MediaSizeName.ISO_A6); //setting page size
+        printRequestAttributeSet.add(new Copies(1));
 //Aqui        
 //        printRequestAttributeSet.add ( new PageRanges (1, Integer.MAX_VALUE));
 
         /*selecionando a empressora*/
 //        String impressdora = "HP DeskJet 2545 series";
-        PrinterName printerName = new PrinterName( listar_impressora( impressora ), null ); //gets printer 
+        PrinterName printerName = new PrinterName(listar_impressora(impressora), null); //gets printer 
         /*preparando a consiguração dos serviços da empressa*/
         PrintServiceAttributeSet printServiceAttributeSet = new HashPrintServiceAttributeSet();
 
 //adiciona a empressora no serviço
-        printServiceAttributeSet.add( printerName );
+        printServiceAttributeSet.add(printerName);
 //        printServiceAttributeSet.add ( new PageRanges (1, 10000) );
 
         /*preparando o serviço de exportação da empressa*/
         JRPrintServiceExporter exporter = new JRPrintServiceExporter();
 
-        exporter.setParameter( JRExporterParameter.JASPER_PRINT, jpx );
-        exporter.setParameter( JRPrintServiceExporterParameter.PRINT_REQUEST_ATTRIBUTE_SET, printRequestAttributeSet );
-        exporter.setParameter( JRPrintServiceExporterParameter.PRINT_SERVICE_ATTRIBUTE_SET, printServiceAttributeSet );
+        exporter.setParameter(JRExporterParameter.JASPER_PRINT, jpx);
+        exporter.setParameter(JRPrintServiceExporterParameter.PRINT_REQUEST_ATTRIBUTE_SET, printRequestAttributeSet);
+        exporter.setParameter(JRPrintServiceExporterParameter.PRINT_SERVICE_ATTRIBUTE_SET, printServiceAttributeSet);
 
-        exporter.setParameter( JRPrintServiceExporterParameter.START_PAGE_INDEX, 1 );
-        exporter.setParameter( JRPrintServiceExporterParameter.END_PAGE_INDEX, Integer.MAX_VALUE );
+        exporter.setParameter(JRPrintServiceExporterParameter.START_PAGE_INDEX, 1);
+        exporter.setParameter(JRPrintServiceExporterParameter.END_PAGE_INDEX, Integer.MAX_VALUE);
 
-        exporter.setParameter( JRPrintServiceExporterParameter.DISPLAY_PAGE_DIALOG, Boolean.FALSE );
-        exporter.setParameter( JRPrintServiceExporterParameter.DISPLAY_PRINT_DIALOG, Boolean.FALSE );
+        exporter.setParameter(JRPrintServiceExporterParameter.DISPLAY_PAGE_DIALOG, Boolean.FALSE);
+        exporter.setParameter(JRPrintServiceExporterParameter.DISPLAY_PRINT_DIALOG, Boolean.FALSE);
 
         exporter.exportReport();
 
-        System.err.println( "report" + report );
-        System.err.println( "impressora" + impressora );
+        System.err.println("report" + report);
+        System.err.println("impressora" + impressora);
 
     }
 
-    public String getCaminho()
-    {
+    public String getCaminho() {
 //        return CAMINHO_REPORT + "ListarUsuario.jrxml";
         return CAMINHO_REPORT + "filtrar_sub_factura_A5_1_pedidos.jrxml";
 
     }
 
-    public String getCaminho2()
-    {
+    public String getCaminho2() {
 //        return CAMINHO_REPORT + "ListarUsuario.jrxml";
         return CAMINHO_REPORT + "factura_A5_1_pedidos.jrxml";
 
     }
 
-    private String getRefCodFact( String ref_cod )
-    {
+    private String getRefCodFact(String ref_cod) {
 
-        if ( ref_cod == null )
-        {
+        if (ref_cod == null) {
             return null;
         }
         return "Ref. à Doc." + ref_cod;
 
     }
 
-    public void mostrarVendaFiltrada()
-    {
+    public void mostrarVendaFiltrada() {
 
         java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
 
-        hashMap.put( "CODIGO_VENDA", this.codigo );
-        hashMap.put( "PARM_MESA", this.pk_mesas );
-        hashMap.put( "PARM_LUGAR", this.pk_lugares );
+        hashMap.put("CODIGO_VENDA", this.codigo);
+        hashMap.put("PARM_MESA", this.pk_mesas);
+        hashMap.put("PARM_LUGAR", this.pk_lugares);
 //        this.motivo_isencao = "Regime de não Sujeição";
         //this.motivo_isencao = "Regime Transitório";
-        hashMap.put( "DOCUMENTO", vendaDao.findTbVenda( codigo ).getFkDocumento().getDesignacao() );
-        hashMap.put( "SOFTWARE_VERSION", VERSION_SOFTWARE );
-        hashMap.put( "SOFTWARE_NAME", NAME_SOFTWARE );
-        hashMap.put( "REF_COD_FACT", getRefCodFact( vendaDao.findTbVenda( codigo ).getRefCodFact() ) );
-        hashMap.put( "STATUS_DOCUMENTO", this.status_documento );
+        hashMap.put("DOCUMENTO", vendaDao.findTbVenda(codigo).getFkDocumento().getDesignacao());
+        hashMap.put("SOFTWARE_VERSION", VERSION_SOFTWARE);
+        hashMap.put("SOFTWARE_NAME", NAME_SOFTWARE);
+        hashMap.put("REF_COD_FACT", getRefCodFact(vendaDao.findTbVenda(codigo).getRefCodFact()));
+        hashMap.put("STATUS_DOCUMENTO", this.status_documento);
 //        hashMap.put( "MOTIVO_ISENCAO", this.motivo_isencao );
-        hashMap.put( "NIF_CLIENTE_CONSOMIDOR_FINAL", setConsumidorFinal( vendaDao.findTbVenda( codigo ) ) );
+        hashMap.put("NIF_CLIENTE_CONSOMIDOR_FINAL", setConsumidorFinal(vendaDao.findTbVenda(codigo)));
 
         String relatorio = getCaminhoFiltrado();
 
-        File file = new File( relatorio ).getAbsoluteFile();
+        File file = new File(relatorio).getAbsoluteFile();
         String obterCaminho = file.getAbsolutePath();
 
-        try
-        {
-            JasperFillManager.fillReport( obterCaminho, hashMap, connection );
+        try {
+            JasperFillManager.fillReport(obterCaminho, hashMap, connection);
 
-            JasperPrint jasperPrint = JasperFillManager.fillReport( obterCaminho, hashMap, connection );
+            JasperPrint jasperPrint = JasperFillManager.fillReport(obterCaminho, hashMap, connection);
 
-            if ( jasperPrint.getPages().size() >= 1 )
-            {
+            if (jasperPrint.getPages().size() >= 1) {
 
-                JasperViewer jasperViewer = new JasperViewer( jasperPrint, false );
-                jasperViewer.setVisible( true );
+                JasperViewer jasperViewer = new JasperViewer(jasperPrint, false);
+                jasperViewer.setVisible(true);
 
                 // Imprime directamente
-                if ( !performance )
-                {
-                    JasperPrintManager.printReport( jasperPrint, false );
+                if (!performance) {
+                    JasperPrintManager.printReport(jasperPrint, false);
                 }
+            } else {
+                JOptionPane.showMessageDialog(null, "Nao Existem Vendas!...");
             }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Nao Existem Vendas!..." );
-            }
-        }
-        catch ( JRException jex )
-        {
+        } catch (JRException jex) {
             jex.printStackTrace();
             //System.out.println("aqui");
-            JOptionPane.showMessageDialog( null, "FALHA AO TENTAR MOSTRAR A FACTURA!..." );
-        }
-        catch ( Exception ex )
-        {
+            JOptionPane.showMessageDialog(null, "FALHA AO TENTAR MOSTRAR A FACTURA!...");
+        } catch (Exception ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog( null, "ERRO AO EFECTUAR A FACTURA!..." );
+            JOptionPane.showMessageDialog(null, "ERRO AO EFECTUAR A FACTURA!...");
         }
     }
 
-    private long getCodMesa()
-    {
-        return Long.parseLong( String.valueOf( itemVendaDao.getAllItemVendasByIdVenda( codigo ).get( 0 ).getFkMesas().getPkMesas() ) );
+    private long getCodMesa() {
+        return Long.parseLong(String.valueOf(itemVendaDao.getAllItemVendasByIdVenda(codigo).get(0).getFkMesas().getPkMesas()));
     }
 
-    public void mostrarRecolhaCliente()
-    {
+    public void mostrarRecolhaCliente() {
 
-        System.err.println( "COD VENDA: " + this.codigo );
 
-        java.sql.Connection connection = conexao.getConnectionAtiva();
-        HashMap hashMap = new HashMap();
-
-        hashMap.put( "CODIGO_VENDA", this.codigo );
-//        hashMap.put( "CODIGO_MESA", getCodMesa() );
-//        hashMap.put( "PARM_LUGAR", this.pk_lugares );
-//        hashMap.put( "CODIGO_MESA", itemVendaDao.getAllItemVendasByIdVenda( codigo ).get( 0 ).getFkMesas().getPkMesas() );
-        hashMap.put( "DESIGNACAO_MESA", itemVendaDao.getAllItemVendasByIdVenda( codigo ).get( 0 ).getFkMesas().getDesignacao() );
-
-        hashMap.put( "DOCUMENTO", vendaDao.findTbVenda( codigo ).getFkDocumento().getDesignacao() );
-        hashMap.put( "SOFTWARE_VERSION", VERSION_SOFTWARE );
-        hashMap.put( "SOFTWARE_NAME", NAME_SOFTWARE );
-        hashMap.put( "REF_COD_FACT", getRefCodFact( vendaDao.findTbVenda( codigo ).getRefCodFact() ) );
-        hashMap.put( "STATUS_DOCUMENTO", this.status_documento );
-        hashMap.put( "MOTIVO_ISENCAO", this.motivo_isencao );
-
-//        hashMap.put( "MOTIVO_ISENCAO", this.motivo_isencao );
-        hashMap.put( "NIF_CLIENTE_CONSOMIDOR_FINAL", setConsumidorFinal( vendaDao.findTbVenda( codigo ) ) );
         String relatorio = getCaminhoFacturaRecolhaCliente();
 
-        File file = new File( relatorio ).getAbsoluteFile();
+        File file = new File(relatorio).getAbsoluteFile();
         String obterCaminho = file.getAbsolutePath();
 
-        try
-        {
-            JasperFillManager.fillReport( obterCaminho, hashMap, connection );
-            JasperPrint jasperPrint = JasperFillManager.fillReport( obterCaminho, hashMap, connection );
+        try {
+            JasperFillManager.fillReport(obterCaminho, getParamentros1(), getConexao());
+            JasperPrint jasperPrint = JasperFillManager.fillReport(obterCaminho, getParamentros1(), getConexao());
 
-            if ( jasperPrint.getPages().size() >= 1 )
-            {
-                JasperViewer jasperViewer = new JasperViewer( jasperPrint, false );
+            if (jasperPrint.getPages().size() >= 1) {
+                JasperViewer jasperViewer = new JasperViewer(jasperPrint, false);
 
-                jasperViewer.setVisible( true );
+                jasperViewer.setVisible(true);
 //                //Imprime directamente
-                if ( !performance )
-                {
-                    JasperPrintManager.printReport( jasperPrint, false );
+                if (!performance) {
+                    JasperPrintManager.printReport(jasperPrint, false);
                 }
 
+            } else {
+                JOptionPane.showMessageDialog(null, "Nao Existem Vendas!...");
             }
-
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Nao Existem Vendas!..." );
-            }
-        }
-        catch ( JRException jex )
-        {
+        } catch (JRException jex) {
             jex.printStackTrace();
             //System.out.println("aqui");
-            JOptionPane.showMessageDialog( null, "FALHA AO TENTAR MOSTRAR A FACTURA!..." );
-        }
-        catch ( Exception ex )
-        {
+            JOptionPane.showMessageDialog(null, "FALHA AO TENTAR MOSTRAR A FACTURA!...");
+        } catch (Exception ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog( null, "ERRO AO EFECTUAR A FACTURA!..." );
+            JOptionPane.showMessageDialog(null, "ERRO AO EFECTUAR A FACTURA!...");
         }
     }
 
-    public void mostrarRecolhaLavandaria()
-    {
+    private HashMap getParamentros() {
 
-        System.err.println( "COD VENDA: " + this.codigo );
+        System.err.println("COD VENDA: " + this.codigo);
 
         java.sql.Connection connection = conexao.getConnectionAtiva();
         HashMap hashMap = new HashMap();
 
-        hashMap.put( "CODIGO_VENDA", this.codigo );
-//        hashMap.put( "CODIGO_MESA", getCodMesa() );
-//        hashMap.put( "PARM_LUGAR", this.pk_lugares );
-//        hashMap.put( "CODIGO_MESA", itemVendaDao.getAllItemVendasByIdVenda( codigo ).get( 0 ).getFkMesas().getPkMesas() );
-        hashMap.put( "DESIGNACAO_MESA", itemVendaDao.getAllItemVendasByIdVenda( codigo ).get( 0 ).getFkMesas().getDesignacao() );
+        hashMap.put("CODIGO_VENDA", this.codigo);
+        hashMap.put("DESIGNACAO_MESA", itemVendaDao.getAllItemVendasByIdVenda(codigo).get(0).getFkMesas().getDesignacao());
+        hashMap.put("DOCUMENTO", vendaDao.findTbVenda(codigo).getFkDocumento().getDesignacao());
+        hashMap.put("SOFTWARE_VERSION", VERSION_SOFTWARE);
+        hashMap.put("SOFTWARE_NAME", NAME_SOFTWARE);
+        hashMap.put("REF_COD_FACT", getRefCodFact(vendaDao.findTbVenda(codigo).getRefCodFact()));
+        hashMap.put("STATUS_DOCUMENTO", this.status_documento);
+        hashMap.put("NIF_CLIENTE_CONSOMIDOR_FINAL", setConsumidorFinal(vendaDao.findTbVenda(codigo)));
 
-        hashMap.put( "DOCUMENTO", vendaDao.findTbVenda( codigo ).getFkDocumento().getDesignacao() );
-        hashMap.put( "SOFTWARE_VERSION", VERSION_SOFTWARE );
-        hashMap.put( "SOFTWARE_NAME", NAME_SOFTWARE );
-        hashMap.put( "REF_COD_FACT", getRefCodFact( vendaDao.findTbVenda( codigo ).getRefCodFact() ) );
-        hashMap.put( "STATUS_DOCUMENTO", this.status_documento );
+        //  QR com logo
+        try {
 
-//        hashMap.put( "MOTIVO_ISENCAO", this.motivo_isencao );
-        hashMap.put( "NIF_CLIENTE_CONSOMIDOR_FINAL", setConsumidorFinal( vendaDao.findTbVenda( codigo ) ) );
+            dadosInstituicaoController = new DadosInstituicaoController(BDConexao.getInstancia());
+            String nif = dadosInstituicaoController.findByCodigo(1).getNif();
+            BufferedImage qrImage = QrCodeUtil.gerarQrComLogo(nif, vendaDao.findTbVenda(codigo).getCodFact());
+            hashMap.put("QR_IMAGE", qrImage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return hashMap;
+
+    }
+    
+    private HashMap getParamentros1() {
+
+        System.err.println("COD VENDA: " + this.codigo);
+        java.sql.Connection connection = conexao.getConnectionAtiva();
+        HashMap hashMap = new HashMap();
+        hashMap.put("CODIGO_VENDA", this.codigo);
+        hashMap.put("DESIGNACAO_MESA", itemVendaDao.getAllItemVendasByIdVenda(codigo).get(0).getFkMesas().getDesignacao());
+        hashMap.put("DOCUMENTO", vendaDao.findTbVenda(codigo).getFkDocumento().getDesignacao());
+        hashMap.put("SOFTWARE_VERSION", VERSION_SOFTWARE);
+        hashMap.put("SOFTWARE_NAME", NAME_SOFTWARE);
+        hashMap.put("REF_COD_FACT", getRefCodFact(vendaDao.findTbVenda(codigo).getRefCodFact()));
+        hashMap.put("STATUS_DOCUMENTO", this.status_documento);
+        hashMap.put("MOTIVO_ISENCAO", this.motivo_isencao);
+        hashMap.put("NIF_CLIENTE_CONSOMIDOR_FINAL", setConsumidorFinal(vendaDao.findTbVenda(codigo)));
+
+        //  QR com logo
+        try {
+
+            dadosInstituicaoController = new DadosInstituicaoController(BDConexao.getInstancia());
+            String nif = dadosInstituicaoController.findByCodigo(1).getNif();
+            BufferedImage qrImage = QrCodeUtil.gerarQrComLogo(nif, vendaDao.findTbVenda(codigo).getCodFact());
+            hashMap.put("QR_IMAGE", qrImage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return hashMap;
+
+    }
+
+    public void mostrarRecolhaLavandaria() {
+
         String relatorio = getCaminhoFacturaRecolhaLavandaria();
 
-        File file = new File( relatorio ).getAbsoluteFile();
+        File file = new File(relatorio).getAbsoluteFile();
         String obterCaminho = file.getAbsolutePath();
 
-        try
-        {
-            JasperFillManager.fillReport( obterCaminho, hashMap, connection );
-            JasperPrint jasperPrint = JasperFillManager.fillReport( obterCaminho, hashMap, connection );
+        try {
+            JasperFillManager.fillReport(obterCaminho, getParamentros(), getConexao());
+            JasperPrint jasperPrint = JasperFillManager.fillReport(obterCaminho, getParamentros(), getConexao());
 
-            if ( jasperPrint.getPages().size() >= 1 )
-            {
-                JasperViewer jasperViewer = new JasperViewer( jasperPrint, false );
+            if (jasperPrint.getPages().size() >= 1) {
+                JasperViewer jasperViewer = new JasperViewer(jasperPrint, false);
 
-                jasperViewer.setVisible( true );
+                jasperViewer.setVisible(true);
                 //Imprime directamente
-                if ( !performance )
-                {
-                    JasperPrintManager.printReport( jasperPrint, false );
+                if (!performance) {
+                    JasperPrintManager.printReport(jasperPrint, false);
                 }
 
+            } else {
+                JOptionPane.showMessageDialog(null, "Nao Existem Vendas!...");
             }
-
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Nao Existem Vendas!..." );
-            }
-        }
-        catch ( JRException jex )
-        {
+        } catch (JRException jex) {
             jex.printStackTrace();
             //System.out.println("aqui");
-            JOptionPane.showMessageDialog( null, "FALHA AO TENTAR MOSTRAR A FACTURA!..." );
-        }
-        catch ( Exception ex )
-        {
+            JOptionPane.showMessageDialog(null, "FALHA AO TENTAR MOSTRAR A FACTURA!...");
+        } catch (Exception ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog( null, "ERRO AO EFECTUAR A FACTURA!..." );
+            JOptionPane.showMessageDialog(null, "ERRO AO EFECTUAR A FACTURA!...");
         }
     }
 
-    private String listar_impressora( String name )
-    {
+    private String listar_impressora(String name) {
 
-        PrintService[] printServices = PrintServiceLookup.lookupPrintServices( null, null );
+        PrintService[] printServices = PrintServiceLookup.lookupPrintServices(null, null);
 
-        for ( PrintService printService : printServices )
-        {
+        for (PrintService printService : printServices) {
             String name1 = printService.getName();
-            System.out.println( "Nome Impressora: " + printService.getName() );
-            if ( name1.contains( name ) )
-            {
+            System.out.println("Nome Impressora: " + printService.getName());
+            if (name1.contains(name)) {
                 return name1;
             }
 
         }
-        System.out.println( "not found" );
+        System.out.println("not found");
         return null;
 
     }
@@ -500,44 +469,49 @@ public class ListaVendaRecolhas
     //factura - perfoma.jasper
     // caso caixa
     //por lugar
-    public String getCaminhoFiltrado()
-    {
+    public String getCaminhoFiltrado() {
 
         return "relatorios/filtrar_sub_factura_A5_1_pedidos.jasper";
 //        return "relatorios/facturaA6_mesas.jasper";
 
     }
 
-    private String setConsumidorFinal( TbVenda venda )
-    {
-        if ( venda.getCodigoCliente().getCodigo() == 1 )
-        {
+    private String setConsumidorFinal(TbVenda venda) {
+        if (venda.getCodigoCliente().getCodigo() == 1) {
             return "Consumidor Final";
         }
         return venda.getClienteNif();
     }
 
     //Mesa completa
-    public String getCaminhoFacturaRecolhaCliente()
-    {
+    public String getCaminhoFacturaRecolhaCliente() {
 
         return "relatorios/recolha_cliente.jasper";
 
     }
 
-    public String getCaminhoFacturaRecolhaLavandaria()
-    {
+    public String getCaminhoFacturaRecolhaLavandaria() {
 //        return "relatorios/factura_A5_1_pedidos.jasper";
         return "relatorios/recolha_lavandaria.jasper";
 
     }
 
-    public static void main( String[] args ) throws JRException, SQLException
-    {
+    private Connection getConexao() {
+
+        try {
+            return (Connection) BDConexao.getConexao();
+        } catch (SQLException e) {
+        }
+
+        return null;
+
+    }
+
+    public static void main(String[] args) throws JRException, SQLException {
         //new ListaVenda(1, 6, 1, false, true);
         //new ListaVenda(1045, false, true);
         Abreviacao abreviacao = Abreviacao.NL;
-        new ListaVendaRecolhas( 8, abreviacao, false, true, "Original" );
+        new ListaVendaRecolhas(8, abreviacao, false, true, "Original");
 
     }
 

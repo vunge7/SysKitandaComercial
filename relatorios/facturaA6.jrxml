@@ -3,8 +3,8 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="3.7565740045078884"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="691"/>
+	<property name="ireport.x" value="135"/>
+	<property name="ireport.y" value="998"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -488,7 +488,7 @@ WHERE
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Software de Certififcação Factura Electrónica\nFE/196/AGT/2025"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Software de Certificação Factura Electrónica\nFE/110/AGT/2025"]]></textFieldExpression>
 			</textField>
 		</band>
 	</lastPageFooter>

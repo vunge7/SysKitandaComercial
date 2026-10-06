@@ -1709,12 +1709,12 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
             if ("V".equalsIgnoreCase(estadoAGT)) {
 
-                JOptionPane.showMessageDialog(
-                        null,
-                        "Factura validada com sucesso pela AGT.",
-                        "Factura Válida",
-                        JOptionPane.INFORMATION_MESSAGE
-                );
+//                JOptionPane.showMessageDialog(
+//                        null,
+//                        "Factura validada com sucesso pela AGT.",
+//                        "Factura Válida",
+//                        JOptionPane.INFORMATION_MESSAGE
+//                );
 
             } else if ("P".equalsIgnoreCase(estadoAGT)) {
 
