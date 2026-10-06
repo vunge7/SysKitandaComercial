@@ -5,6 +5,7 @@
 package visao;
 
 
+import comercial.controller.VendasController;
 import java.sql.Connection;
 import dao.DadosInstituicaoDao;
 import dao.ItemPermissaoDao;
@@ -635,6 +636,7 @@ public class MenuPrincipalLavandariaVisao extends javax.swing.JFrame
         jMenuRelatorioTransferencia = new javax.swing.JMenuItem();
         jMenuItemRelatorioQuebras = new javax.swing.JMenuItem();
         jMenuItemRelatorioMensal = new javax.swing.JMenuItem();
+        jMenuItem10 = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jmTurno = new javax.swing.JMenuItem();
         jmCadastroUsuario = new javax.swing.JMenuItem();
@@ -1093,6 +1095,14 @@ public class MenuPrincipalLavandariaVisao extends javax.swing.JFrame
             }
         });
         jMenu2.add(jMenuItemRelatorioMensal);
+
+        jMenuItem10.setText("Relatorio Resumido Vendas");
+        jMenuItem10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem10ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem10);
 
         jMenuBar1.add(jMenu2);
 
@@ -2145,6 +2155,19 @@ public class MenuPrincipalLavandariaVisao extends javax.swing.JFrame
         new FrmSaftInventario().setVisible(true);
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
+    private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem10ActionPerformed
+                try {
+
+            VendasController vendasController = new VendasController(conexao);
+            vendasController.atualizarTotalVenda();
+
+            // TODO add your handling code here:
+            new ListarRelatorioVendasDiarias(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuPrincipalVisao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jMenuItem10ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -2239,6 +2262,7 @@ public class MenuPrincipalLavandariaVisao extends javax.swing.JFrame
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuConfiguracoesSistema;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem10;
     private javax.swing.JMenuItem jMenuItem12;
     private javax.swing.JMenuItem jMenuItem13;
     private javax.swing.JMenuItem jMenuItem2;

@@ -5,6 +5,7 @@
 package visao;
 
 
+import comercial.controller.VendasController;
 import dao.DadosInstituicaoDao;
 import dao.ItemPermissaoDao;
 import dao.ProdutoDao;
@@ -656,6 +657,7 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
         jmListaClientes = new javax.swing.JMenuItem();
         jMenuRelatorioTransferencia = new javax.swing.JMenuItem();
         jMenuItemRelatorioQuebras = new javax.swing.JMenuItem();
+        jMenuItem12 = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jmTurno = new javax.swing.JMenuItem();
         jmCadastroUsuario = new javax.swing.JMenuItem();
@@ -1136,6 +1138,14 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
             }
         });
         jMenu2.add(jMenuItemRelatorioQuebras);
+
+        jMenuItem12.setText("Relatorio de Vendas Resumidas");
+        jMenuItem12.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem12ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem12);
 
         jMenuBar1.add(jMenu2);
 
@@ -2319,6 +2329,20 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
         new FrmSaftInventario().setVisible(true);
     }//GEN-LAST:event_jMenuItem11ActionPerformed
 
+    private void jMenuItem12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem12ActionPerformed
+        // TODO add your handling code here:
+                try {
+
+            VendasController vendasController = new VendasController(conexao);
+            vendasController.atualizarTotalVenda();
+
+            // TODO add your handling code here:
+            new ListarRelatorioVendasDiarias(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuPrincipalVisao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jMenuItem12ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -2419,6 +2443,7 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem10;
     private javax.swing.JMenuItem jMenuItem11;
+    private javax.swing.JMenuItem jMenuItem12;
     private javax.swing.JMenuItem jMenuItem13;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
