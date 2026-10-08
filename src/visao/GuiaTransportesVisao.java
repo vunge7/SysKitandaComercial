@@ -156,14 +156,14 @@ public class GuiaTransportesVisao extends javax.swing.JFrame implements Runnable
      */
     @SuppressWarnings( "unchecked" )
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents()
-    {
+    private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         jMenuItem1 = new javax.swing.JMenuItem();
         buttonGroup2 = new javax.swing.ButtonGroup();
         buttonGroup3 = new javax.swing.ButtonGroup();
         jTextField3 = new javax.swing.JTextField();
+        buttonGroup4 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jPanel8 = new javax.swing.JPanel();
         lbTotalPagar = new javax.swing.JLabel();
@@ -199,6 +199,11 @@ public class GuiaTransportesVisao extends javax.swing.JFrame implements Runnable
         lb_proximo_documento = new javax.swing.JLabel();
         lb_proximo_documento1 = new javax.swing.JLabel();
         cmbAnoEconomico = new javax.swing.JComboBox<>();
+        jRadioButton1 = new javax.swing.JRadioButton();
+        jRadioButton2 = new javax.swing.JRadioButton();
+        jRadioButton3 = new javax.swing.JRadioButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        txtAreaOBS = new javax.swing.JTextArea();
 
         jMenuItem1.setText("jMenuItem1");
 
@@ -214,44 +219,38 @@ public class GuiaTransportesVisao extends javax.swing.JFrame implements Runnable
         lbTotalPagar.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         lbTotalPagar.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lbTotalPagar.setText("Total Qtd :");
-        jPanel8.add(lbTotalPagar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 120, 34));
+        jPanel8.add(lbTotalPagar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 120, 34));
 
         txtTotalQTD.setEditable(false);
         txtTotalQTD.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         txtTotalQTD.setForeground(new java.awt.Color(255, 0, 0));
         txtTotalQTD.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtTotalQTD.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtTotalQTD.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtTotalQTDActionPerformed(evt);
             }
         });
-        jPanel8.add(txtTotalQTD, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 20, 270, 40));
+        jPanel8.add(txtTotalQTD, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 0, 270, 40));
 
         btnProcessar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         btnProcessar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/impressora1.png"))); // NOI18N
         btnProcessar.setText("Processar");
         btnProcessar.setToolTipText("Efectuar Venda");
-        btnProcessar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnProcessar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnProcessarActionPerformed(evt);
             }
         });
-        jPanel8.add(btnProcessar, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 20, -1, 45));
+        jPanel8.add(btnProcessar, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 0, -1, 45));
 
         btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LOGOUT - VERMELHO/Logout 32x32.png"))); // NOI18N
         btnCancelar.setAlignmentX(0.5F);
-        btnCancelar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelarActionPerformed(evt);
             }
         });
-        jPanel8.add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(910, 20, 60, 45));
+        jPanel8.add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(910, 0, 60, 45));
 
         lb_usuario.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         lb_usuario.setText("Conta:");
@@ -271,9 +270,10 @@ public class GuiaTransportesVisao extends javax.swing.JFrame implements Runnable
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lb_usuario, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lb_usuario, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel2.setBackground(new java.awt.Color(204, 204, 204));
@@ -281,32 +281,25 @@ public class GuiaTransportesVisao extends javax.swing.JFrame implements Runnable
 
         table_guia_transporte.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
         table_guia_transporte.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][]
-            {
+            new Object [][] {
 
             },
-            new String []
-            {
+            new String [] {
                 "Cod.Art", "Descrição", "Qtd."
             }
-        )
-        {
-            Class[] types = new Class []
-            {
+        ) {
+            Class[] types = new Class [] {
                 java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class
             };
-            boolean[] canEdit = new boolean []
-            {
+            boolean[] canEdit = new boolean [] {
                 false, false, false
             };
 
-            public Class getColumnClass(int columnIndex)
-            {
+            public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
 
-            public boolean isCellEditable(int rowIndex, int columnIndex)
-            {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
@@ -314,8 +307,7 @@ public class GuiaTransportesVisao extends javax.swing.JFrame implements Runnable
         table_guia_transporte.setGridColor(new java.awt.Color(51, 153, 0));
         jScrollPane1.setViewportView(table_guia_transporte);
         table_guia_transporte.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-        if (table_guia_transporte.getColumnModel().getColumnCount() > 0)
-        {
+        if (table_guia_transporte.getColumnModel().getColumnCount() > 0) {
             table_guia_transporte.getColumnModel().getColumn(0).setMaxWidth(100);
             table_guia_transporte.getColumnModel().getColumn(1).setPreferredWidth(250);
             table_guia_transporte.getColumnModel().getColumn(2).setMaxWidth(100);
@@ -329,9 +321,7 @@ public class GuiaTransportesVisao extends javax.swing.JFrame implements Runnable
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
         );
 
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Dados do Cliente"));
@@ -353,10 +343,8 @@ public class GuiaTransportesVisao extends javax.swing.JFrame implements Runnable
         lbCliente9.setText("Destino :");
 
         txtLocalDestino.setEnabled(false);
-        txtLocalDestino.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtLocalDestino.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtLocalDestinoActionPerformed(evt);
             }
         });
@@ -368,16 +356,19 @@ public class GuiaTransportesVisao extends javax.swing.JFrame implements Runnable
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(lbEndereco, javax.swing.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE)
-                        .addComponent(lbCliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(lbNIF, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(65, Short.MAX_VALUE))
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addComponent(lbCliente9, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtLocalDestino))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(lbCliente9)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtLocalDestino))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(lbEndereco, javax.swing.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE)
+                                .addComponent(lbCliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(lbNIF, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lbTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 59, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -390,11 +381,11 @@ public class GuiaTransportesVisao extends javax.swing.JFrame implements Runnable
                 .addComponent(lbNIF)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbTelefone)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbCliente9)
                     .addComponent(txtLocalDestino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("Dados do Motorista"));
@@ -420,37 +411,29 @@ public class GuiaTransportesVisao extends javax.swing.JFrame implements Runnable
         lbCliente8.setText("Nome :");
 
         txtNomeMotorista.setEnabled(false);
-        txtNomeMotorista.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtNomeMotorista.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtNomeMotoristaActionPerformed(evt);
             }
         });
 
         txtDocBICE.setEnabled(false);
-        txtDocBICE.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtDocBICE.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtDocBICEActionPerformed(evt);
             }
         });
 
         txtMarcaCarro.setEnabled(false);
-        txtMarcaCarro.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtMarcaCarro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtMarcaCarroActionPerformed(evt);
             }
         });
 
         txtMatricula.setEnabled(false);
-        txtMatricula.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtMatricula.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtMatriculaActionPerformed(evt);
             }
         });
@@ -509,7 +492,7 @@ public class GuiaTransportesVisao extends javax.swing.JFrame implements Runnable
         lb_ano_academico1.setFont(new java.awt.Font("Lucida Grande", 1, 24)); // NOI18N
         lb_ano_academico1.setForeground(new java.awt.Color(255, 255, 255));
         lb_ano_academico1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        lb_ano_academico1.setText("GUIA DE TRANSPORTE");
+        lb_ano_academico1.setText("GUIA / NOTAS");
         lb_ano_academico1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         lb_ano_academico1.setOpaque(true);
 
@@ -520,10 +503,8 @@ public class GuiaTransportesVisao extends javax.swing.JFrame implements Runnable
         txtRefDoc.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         txtRefDoc.setForeground(new java.awt.Color(255, 255, 255));
         txtRefDoc.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtRefDoc.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtRefDoc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtRefDocActionPerformed(evt);
             }
         });
@@ -536,6 +517,19 @@ public class GuiaTransportesVisao extends javax.swing.JFrame implements Runnable
 
         cmbAnoEconomico.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cmbAnoEconomico.setEnabled(false);
+
+        buttonGroup4.add(jRadioButton1);
+        jRadioButton1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jRadioButton1.setSelected(true);
+        jRadioButton1.setText("Entrega");
+
+        buttonGroup4.add(jRadioButton2);
+        jRadioButton2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jRadioButton2.setText("Levantamento");
+
+        buttonGroup4.add(jRadioButton3);
+        jRadioButton3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jRadioButton3.setText("Transporte");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -555,7 +549,13 @@ public class GuiaTransportesVisao extends javax.swing.JFrame implements Runnable
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(lb_usuario1, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtRefDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtRefDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 286, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(32, 32, 32)
+                        .addComponent(jRadioButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jRadioButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jRadioButton3)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -573,9 +573,16 @@ public class GuiaTransportesVisao extends javax.swing.JFrame implements Runnable
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtRefDoc)
-                    .addComponent(lb_usuario1, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE))
+                    .addComponent(lb_usuario1, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+                    .addComponent(jRadioButton1)
+                    .addComponent(jRadioButton2)
+                    .addComponent(jRadioButton3))
                 .addGap(17, 17, 17))
         );
+
+        txtAreaOBS.setColumns(20);
+        txtAreaOBS.setRows(5);
+        jScrollPane2.setViewportView(txtAreaOBS);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -594,7 +601,10 @@ public class GuiaTransportesVisao extends javax.swing.JFrame implements Runnable
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane2)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -603,13 +613,13 @@ public class GuiaTransportesVisao extends javax.swing.JFrame implements Runnable
                 .addContainerGap()
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -672,6 +682,7 @@ public class GuiaTransportesVisao extends javax.swing.JFrame implements Runnable
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.ButtonGroup buttonGroup3;
+    private javax.swing.ButtonGroup buttonGroup4;
     private javax.swing.JComboBox<String> cmbAnoEconomico;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
@@ -680,7 +691,11 @@ public class GuiaTransportesVisao extends javax.swing.JFrame implements Runnable
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel8;
+    private javax.swing.JRadioButton jRadioButton1;
+    private javax.swing.JRadioButton jRadioButton2;
+    private javax.swing.JRadioButton jRadioButton3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JLabel lbCliente;
     private javax.swing.JLabel lbCliente4;
@@ -699,6 +714,7 @@ public class GuiaTransportesVisao extends javax.swing.JFrame implements Runnable
     private javax.swing.JLabel lb_usuario;
     private javax.swing.JLabel lb_usuario1;
     public static javax.swing.JTable table_guia_transporte;
+    private javax.swing.JTextArea txtAreaOBS;
     private javax.swing.JTextField txtCor;
     private javax.swing.JTextField txtDocBICE;
     private javax.swing.JTextField txtLocalDestino;

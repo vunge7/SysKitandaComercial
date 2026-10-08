@@ -5000,6 +5000,52 @@ public class MetodosUtil {
             cmb.setModel(new DefaultComboBoxModel(armazensAccessoController.getAllArmazemExceptoEconomatoByIdUSuario(cod_usuario)));
         }
     }
+    
+public static void setArmazemByCampoByAllArmazem(
+        JComboBox cmb,
+        BDConexao conexao,
+        int cod_usuario) {
+
+    DadosInstituicaoController dadosInstituicaoController =
+            new DadosInstituicaoController(conexao);
+
+    ArmazensController armazensController =
+            new ArmazensController(conexao);
+
+    TbDadosInstituicao dados =
+            dadosInstituicaoController.findByCodigo(1);
+
+    String designacao = dados.getConfigArmazens();
+
+    System.out.println("CONFIG ARMAZEM = [" + designacao + "]");
+    System.out.println("DVML.UNI_ARMAZEM = [" + DVML.UNI_ARMAZEM + "]");
+
+    Vector<String> armazens = armazensController.getVector();
+
+    cmb.setModel(new DefaultComboBoxModel(armazens));
+
+    if (designacao != null
+            && designacao.trim().equalsIgnoreCase(DVML.UNI_ARMAZEM.trim())) {
+
+        // UNI ARMAZEM → último
+        cmb.setSelectedIndex(armazens.size() - 1);
+
+        System.out.println(">>> UNI ARMAZEM - selecionado: "
+                + armazens.lastElement());
+
+    } else {
+
+        // MULTI ARMAZEM → primeiro
+        cmb.setSelectedIndex(0);
+
+        System.out.println(">>> MULTI ARMAZEM - selecionado: "
+                + armazens.firstElement());
+    }
+
+    cmb.setEnabled(false);
+}
+
+
 
     public static void verificarCaixa(CaixasController caixasController, int cod_utilizador, JButton btnAberturaCaixa, JButton btnFechoCaixa, JButton... lista) {
         if (!caixasController.existeCaixas(cod_utilizador)) {

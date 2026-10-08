@@ -37,10 +37,10 @@ public class ConfiguracoesVisao extends javax.swing.JDialog {
         
         dadosInstituicaoController = new DadosInstituicaoController(conexao);
         dadoIntituicao = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
-        lbHoraComecoVendas.setVisible(false);
-        lbHoraAbertura.setVisible(false);
-        cmbHoraComeco.setVisible(false);
-        cmbMinutoComeco.setVisible(false);
+//        lbHoraComecoVendas.setVisible(false);
+//        lbHoraAbertura.setVisible(false);
+//        cmbHoraComeco.setVisible(false);
+//        cmbMinutoComeco.setVisible(false);
         lbSeparadorAbertura.setVisible(false);
 
         try {
@@ -913,22 +913,23 @@ public class ConfiguracoesVisao extends javax.swing.JDialog {
                                     .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(lbHoraComecoVendas)
                                     .addComponent(lbClienteConsumidorFinal14)
-                                    .addGroup(jPanel4Layout.createSequentialGroup()
-                                        .addComponent(jLabel5)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(cmbHoraTermino, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jLabel6)
-                                        .addGap(29, 29, 29)
-                                        .addComponent(cmbMinitoTermino, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(jPanel4Layout.createSequentialGroup()
-                                        .addComponent(lbHoraAbertura)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(cmbHoraComeco, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(32, 32, 32)
-                                        .addComponent(lbSeparadorAbertura)
-                                        .addGap(29, 29, 29)
-                                        .addComponent(cmbMinutoComeco, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
+                                            .addComponent(jLabel5)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                            .addComponent(cmbHoraTermino, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(jLabel6)
+                                            .addGap(29, 29, 29)
+                                            .addComponent(cmbMinitoTermino, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
+                                            .addComponent(lbHoraAbertura)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                            .addComponent(cmbHoraComeco, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(32, 32, 32)
+                                            .addComponent(lbSeparadorAbertura)
+                                            .addGap(29, 29, 29)
+                                            .addComponent(cmbMinutoComeco, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))))
                                 .addGap(0, 0, Short.MAX_VALUE)))))
                 .addGap(0, 11, Short.MAX_VALUE))
         );
@@ -1881,32 +1882,93 @@ public class ConfiguracoesVisao extends javax.swing.JDialog {
         return true;
 
     }
-
+    
     private void setHoras(TbDadosInstituicao dadoIntituicao) {
 
-        try {
-            Date dataComeco = dadoIntituicao.getHoraComecoVenda();
-            Date dataTermino = dadoIntituicao.getHoraTerminoVenda();
+    try {
 
-//        System.out.println( MetodosUtil.getHoraBanco( dataComeco ) );
-//        System.out.println( MetodosUtil.getHoraBanco( dataTermino ) );
-            String horaComeco = MetodosUtil.getNumeroFormatado(dataComeco.getHours());
-            String minutoComeco = MetodosUtil.getNumeroFormatado(dataComeco.getMinutes());
+        Date dataComeco = dadoIntituicao.getHoraComecoVenda();
+        Date dataTermino = dadoIntituicao.getHoraTerminoVenda();
 
-            String horaTermino = MetodosUtil.getNumeroFormatado(dataTermino.getHours());
-            String minutoTermino = MetodosUtil.getNumeroFormatado(dataTermino.getMinutes());
+        System.out.println("Data começo: " + dataComeco);
+        System.out.println("Data término: " + dataTermino);
 
-            System.out.println("Hora Começo: " + horaComeco);
-            System.out.println("Hora Término: " + horaTermino);
+        String horaComeco =
+                MetodosUtil.getNumeroFormatado(dataComeco.getHours());
 
-            cmbHoraComeco.setSelectedItem(horaComeco);
-            cmbMinutoComeco.setSelectedItem(minutoComeco);
+        String minutoComeco =
+                MetodosUtil.getNumeroFormatado(dataComeco.getMinutes());
 
-            cmbHoraTermino.setSelectedItem(horaTermino);
-            cmbMinitoTermino.setSelectedItem(minutoTermino);
-        } catch (Exception e) {
-        }
+        String horaTermino =
+                MetodosUtil.getNumeroFormatado(dataTermino.getHours());
 
+        String minutoTermino =
+                MetodosUtil.getNumeroFormatado(dataTermino.getMinutes());
+
+        System.out.println("Hora Começo: " + horaComeco);
+        System.out.println("Minuto Começo: " + minutoComeco);
+
+        System.out.println("Hora Término: " + horaTermino);
+        System.out.println("Minuto Término: " + minutoTermino);
+
+        System.out.println("Itens hora começo: "
+                + cmbHoraComeco.getItemCount());
+
+        System.out.println("Itens minuto começo: "
+                + cmbMinutoComeco.getItemCount());
+
+        System.out.println("Selecionando...");
+
+        cmbHoraComeco.setSelectedItem(horaComeco);
+        cmbMinutoComeco.setSelectedItem(minutoComeco);
+
+        cmbHoraTermino.setSelectedItem(horaTermino);
+        cmbMinitoTermino.setSelectedItem(minutoTermino);
+
+        System.out.println("Depois:");
+        System.out.println("Começo: "
+                + cmbHoraComeco.getSelectedItem()
+                + ":"
+                + cmbMinutoComeco.getSelectedItem());
+
+        System.out.println("Término: "
+                + cmbHoraTermino.getSelectedItem()
+                + ":"
+                + cmbMinitoTermino.getSelectedItem());
+
+    } catch (Exception e) {
+
+        // NÃO deixar vazio
+        e.printStackTrace();
     }
+}
+
+
+//    private void setHoras(TbDadosInstituicao dadoIntituicao) {
+//
+//        try {
+//            Date dataComeco = dadoIntituicao.getHoraComecoVenda();
+//            Date dataTermino = dadoIntituicao.getHoraTerminoVenda();
+//
+////        System.out.println( MetodosUtil.getHoraBanco( dataComeco ) );
+////        System.out.println( MetodosUtil.getHoraBanco( dataTermino ) );
+//            String horaComeco = MetodosUtil.getNumeroFormatado(dataComeco.getHours());
+//            String minutoComeco = MetodosUtil.getNumeroFormatado(dataComeco.getMinutes());
+//
+//            String horaTermino = MetodosUtil.getNumeroFormatado(dataTermino.getHours());
+//            String minutoTermino = MetodosUtil.getNumeroFormatado(dataTermino.getMinutes());
+//
+//            System.out.println("Hora Começo: " + horaComeco);
+//            System.out.println("Hora Término: " + horaTermino);
+//
+//            cmbHoraComeco.setSelectedItem(horaComeco);
+//            cmbMinutoComeco.setSelectedItem(minutoComeco);
+//
+//            cmbHoraTermino.setSelectedItem(horaTermino);
+//            cmbMinitoTermino.setSelectedItem(minutoTermino);
+//        } catch (Exception e) {
+//        }
+//
+//    }
 
 }

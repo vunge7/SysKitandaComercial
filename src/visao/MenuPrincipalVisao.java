@@ -626,7 +626,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
         jMenu1.add(jmNotas);
 
         jmNotaLevantamento.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
-        jmNotaLevantamento.setText("Nota de Levantamento");
+        jmNotaLevantamento.setText("Notas de Entrega/Levantamento");
         jmNotaLevantamento.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmNotaLevantamentoActionPerformed(evt);
