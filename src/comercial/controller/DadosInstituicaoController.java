@@ -46,7 +46,7 @@ public class DadosInstituicaoController implements EntidadeFactory {
                 + "impressora_sala, prazo_proforma, desactivar_lugares, tipo_fecho_caixa, "
                 + "enviar_email, stock_consulta, tipo_ficha_tecnica, posto, "
                 + "impressora_caixa, segundo_monitor, alterar_preco "
-//                + "hora_comeco_venda, hora_termino_venda"
+                //                + "hora_comeco_venda, hora_termino_venda"
                 + ") VALUES ("
                 + "'" + dados.getNome() + "', "
                 + "'" + dados.getTelefone() + "', "
@@ -103,8 +103,8 @@ public class DadosInstituicaoController implements EntidadeFactory {
                 + "'" + dados.getImpressoraCaixa() + "', "
                 + "'" + dados.getSegundoMonitor() + "', "
                 + "'" + dados.getAlterarPreco() + "'"
-//                + "'" + MetodosUtil.getHoraBanco(dados.getHoraComecoVenda()) + "' , "
-//                + "'" + MetodosUtil.getHoraBanco(dados.getHoraTerminoVenda()) + "'"
+                //                + "'" + MetodosUtil.getHoraBanco(dados.getHoraComecoVenda()) + "' , "
+                //                + "'" + MetodosUtil.getHoraBanco(dados.getHoraTerminoVenda()) + "'"
                 + ")";
 
         return conexao.executeUpdate(INSERT);
@@ -187,12 +187,22 @@ public class DadosInstituicaoController implements EntidadeFactory {
                 + "impressora_caixa = '" + dados.getImpressoraCaixa() + "', "
                 + "segundo_monitor = '" + dados.getSegundoMonitor() + "', "
                 + "alterar_preco = '" + dados.getAlterarPreco() + "',"
-                + "hora_comeco_venda = '" + MetodosUtil.getHoraBanco(dados.getHoraComecoVenda()) + "', "
-                + "hora_termino_venda = '" + MetodosUtil.getHoraBanco(dados.getHoraTerminoVenda()) + "' "
+                + "hora_comeco_venda = " + formatarHoraBanco(dados.getHoraComecoVenda()) + ", "
+                + "hora_termino_venda = " + formatarHoraBanco(dados.getHoraTerminoVenda()) + " "
+                //                + "hora_comeco_venda = '" + MetodosUtil.getHoraBanco(dados.getHoraComecoVenda()) + "', "
+                //                + "hora_termino_venda = '" + MetodosUtil.getHoraBanco(dados.getHoraTerminoVenda()) + "' "
                 + "WHERE idDadosInsitiuicao = " + dados.getIdDadosInsitiuicao();
 
         return conexao.executeUpdate(UPDATE);
 
+    }
+
+    private String formatarHoraBanco(java.util.Date hora) {
+        if (hora == null) {
+            return "NULL";
+        }
+
+        return "'" + MetodosUtil.getHoraBanco(hora) + "'";
     }
 
     @Override

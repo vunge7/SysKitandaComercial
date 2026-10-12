@@ -1437,6 +1437,7 @@ public class ConfiguracoesVisao extends javax.swing.JDialog {
                 return;
             }
         }
+        
         if (dadoIntituicao.getNegocio().equals("Restaurante")) {
             String tipoFichaTecnica = rbFichaA.isSelected() ? "A" : "B";
             dadoIntituicao.setTipoFichaTecnica(tipoFichaTecnica);

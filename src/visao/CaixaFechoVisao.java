@@ -33,6 +33,7 @@ import lista.ReconciliacaoCaixaReport;
 import util.BDConexao;
 import util.DVML;
 import util.JPAEntityMannagerFactoryUtil;
+import util.email.EnvioEmailUtil;
 
 /**
  *
@@ -260,6 +261,7 @@ public class CaixaFechoVisao extends javax.swing.JFrame
         // TODO add your handling code here:
 
         procedimento_fechar_caixa();
+        EnvioEmailUtil.inicio();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton2ActionPerformed

@@ -2170,17 +2170,34 @@ public class MetodosUtil {
     public static String getDataString2(Date date) {
         return (date.getYear() + 1900) + "-" + (date.getMonth() + 1) + "-" + date.getDate();
     }
-
+    
     public static String getHoraBanco(Date hora) {
-        return getNumero(hora.getHours()) + ":" + getNumero(hora.getMinutes()) + ":" + getNumero(hora.getSeconds());
+    if (hora == null) {
+        return null;
     }
 
-    private static String getNumero(int numero) {
-        if (numero < 9) {
-            return "0" + numero;
-        }
-        return String.valueOf(numero);
+    return getNumero(hora.getHours()) + ":"
+         + getNumero(hora.getMinutes()) + ":"
+         + getNumero(hora.getSeconds());
+}
+
+private static String getNumero(int numero) {
+    if (numero < 10) {
+        return "0" + numero;
     }
+    return String.valueOf(numero);
+}
+
+//    public static String getHoraBanco(Date hora) {
+//        return getNumero(hora.getHours()) + ":" + getNumero(hora.getMinutes()) + ":" + getNumero(hora.getSeconds());
+//    }
+//
+//    private static String getNumero(int numero) {
+//        if (numero < 9) {
+//            return "0" + numero;
+//        }
+//        return String.valueOf(numero);
+//    }
 
     public int media_idade(List<Integer> lista_idade) {
 

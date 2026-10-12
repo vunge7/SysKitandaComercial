@@ -216,7 +216,7 @@
                           <Group type="102" attributes="0">
                               <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jPanel5" min="-2" pref="170" max="-2" attributes="0"/>
+                              <Component id="jPanel5" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jPanel9" max="32767" attributes="0"/>
                           </Group>
@@ -254,10 +254,8 @@
                                           <Component id="jcbPermissao" alignment="0" min="-2" pref="226" max="-2" attributes="0"/>
                                           <Component id="jcbAnulamentosSaidasProdutos" alignment="0" min="-2" max="-2" attributes="0"/>
                                           <Component id="jcbPrecosPorPercentagem" alignment="0" min="-2" pref="186" max="-2" attributes="0"/>
-                                          <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                                              <Component id="jcbTransferenciaArmazens" alignment="0" pref="202" max="32767" attributes="0"/>
-                                              <Component id="jcbPercentagemDesconto" alignment="0" max="32767" attributes="0"/>
-                                          </Group>
+                                          <Component id="jcbTransferenciaArmazens" alignment="0" max="32767" attributes="0"/>
+                                          <Component id="jcbPercentagemDesconto" alignment="0" max="32767" attributes="0"/>
                                           <Component id="jcbAlteracaoGuiaTransporte" alignment="0" max="32767" attributes="0"/>
                                       </Group>
                                       <Group type="102" alignment="0" attributes="0">
@@ -988,7 +986,7 @@
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="jcbNotaLevantamento">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Nota de Levantamento"/>
+                    <Property name="text" type="java.lang.String" value="Notas de Entrega/Levantamento"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="jcbReemprimirCompra">
@@ -1115,7 +1113,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="jcbSubFamilia" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace pref="9" max="32767" attributes="0"/>
                           <Component id="jcbMarca" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jcbModelo" min="-2" max="-2" attributes="0"/>
