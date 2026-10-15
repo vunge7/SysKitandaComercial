@@ -2,12 +2,12 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="factura" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" uuid="0de43986-9be5-410e-aaa3-7f1419d0abca">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="288"/>
+	<property name="ireport.zoom" value="4.707642565081503"/>
+	<property name="ireport.x" value="1559"/>
+	<property name="ireport.y" value="1518"/>
+	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<import value="net.sf.jasperreports.engine.*"/>
 	<style name="cliente_style" mode="Transparent" forecolor="#000000">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$P{NIF_CLIENTE_CONSOMIDOR_FINAL}.equals("Consumidor Final")]]></conditionExpression>
@@ -877,7 +877,7 @@ WHERE
 					<font fontName="Arial" size="8" isBold="false"/>
 					<paragraph rightIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_venda_total_venda}.doubleValue() - $F{tb_venda_total_retencao}.doubleValue()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tb_venda_total_venda}.doubleValue() ]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement uuid="6b1f8e02-ef33-4e22-860e-3f526fa58fb5" key="staticText-9" x="170" y="43" width="180" height="12"/>
@@ -966,7 +966,7 @@ WHERE
 				<textElement>
 					<font fontName="Times New Roman" size="8" isBold="true" isItalic="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[Total(AOA):]]></text>
+				<text><![CDATA[Total Líquido:]]></text>
 			</staticText>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement uuid="b26f47a7-1bb6-4b44-ac7a-db183c69b3e1" key="textField-20" x="467" y="43" width="68" height="10"/>
@@ -1089,7 +1089,7 @@ WHERE
 				<textElement>
 					<font fontName="Times New Roman" size="8" isBold="true" isItalic="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[Retencao:]]></text>
+				<text><![CDATA[Retenção:]]></text>
 			</staticText>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement uuid="19b063fe-37bd-42d8-a2db-b15cf68ee759" key="textField-20" x="467" y="73" width="68" height="10"/>
@@ -1113,7 +1113,7 @@ WHERE
 				<textElement>
 					<font fontName="Times New Roman" size="9" isBold="true" isItalic="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[Valor a liquidar:]]></text>
+				<text><![CDATA[Total a Pagar:]]></text>
 			</staticText>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement uuid="f4c96fd3-72f7-447b-9d87-15961368de3c" key="textField-20" x="467" y="103" width="68" height="11"/>
@@ -1223,7 +1223,7 @@ WHERE
 				<textElement>
 					<font fontName="Times New Roman" size="8" isBold="true" isItalic="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[Total(AOA):]]></text>
+				<text><![CDATA[Total Líquido:]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="99c22cbf-d3a1-4f6d-a024-34945c455268" key="staticText-9" x="169" y="69" width="223" height="12"/>
@@ -1351,7 +1351,7 @@ WHERE
 					<font fontName="Arial" size="8" isBold="false"/>
 					<paragraph rightIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_venda_total_venda}.doubleValue() - $F{tb_venda_total_retencao}.doubleValue()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tb_venda_total_venda}.doubleValue() ]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement uuid="ff473572-8145-4986-9ca0-3fac9fc52d81" key="textField-20" x="467" y="40" width="68" height="10"/>
@@ -1545,7 +1545,7 @@ WHERE
 				<textElement>
 					<font fontName="Times New Roman" size="8" isBold="true" isItalic="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[Retencao:]]></text>
+				<text><![CDATA[Retenção:]]></text>
 			</staticText>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement uuid="a216ab5d-4702-47ca-ba9b-e41624d800aa" key="textField-20" x="467" y="90" width="68" height="11"/>
@@ -1570,7 +1570,7 @@ WHERE
 				<textElement>
 					<font fontName="Times New Roman" size="9" isBold="true" isItalic="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[Valor a liquidar:]]></text>
+				<text><![CDATA[Total a Pagar:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement uuid="0ca2e46b-d45c-44e9-b7a1-c3498d7d6cd9" key="staticText-11" mode="Opaque" x="77" y="30" width="88" height="9" backcolor="#CCCCCC"/>
