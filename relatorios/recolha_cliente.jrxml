@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="3.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="528"/>
+	<property name="ireport.y" value="989"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -36,6 +36,7 @@
 	<parameter name="MOTIVO_ISENCAO" class="java.lang.String"/>
 	<parameter name="NIF_CLIENTE_CONSOMIDOR_FINAL" class="java.lang.String"/>
 	<parameter name="CODIGO_MESA" class="java.lang.Integer"/>
+	<parameter name="QR_IMAGE" class="java.lang.Object"/>
 	<queryString>
 		<![CDATA[SELECT
      tb_cliente.`nome` AS tb_cliente_nome,
@@ -304,6 +305,21 @@ GROUP BY tb_item_venda.`fk_lugares`]]>
 	<columnFooter>
 		<band splitType="Stretch"/>
 	</columnFooter>
+	<lastPageFooter>
+		<band height="108">
+			<textField>
+				<reportElement uuid="841e2169-652c-4eb5-835a-4d52dfbc6b45" x="0" y="85" width="187" height="23"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Software de Certificação Factura Electrónica\nFE/110/AGT/2025"]]></textFieldExpression>
+			</textField>
+			<image scaleImage="RealHeight">
+				<reportElement uuid="bc640bab-95ec-4c69-b1e5-e7798a287b5e" x="58" y="0" width="78" height="85"/>
+				<imageExpression><![CDATA[$P{QR_IMAGE}]]></imageExpression>
+			</image>
+		</band>
+	</lastPageFooter>
 	<summary>
 		<band height="226">
 			<staticText>
@@ -644,13 +660,6 @@ GROUP BY tb_item_venda.`fk_lugares`]]>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_factura_forma_pagamento_A6.jasper"]]></subreportExpression>
 			</subreport>
-			<textField>
-				<reportElement uuid="c07228e5-69f6-4e7f-a909-3d0bfd57b8d6" x="0" y="200" width="189" height="26"/>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font fontName="Times New Roman" size="7"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_venda_assinatura} + "-Processado por programa validado nº " + "258/AGT/2020 "+$P{SOFTWARE_NAME} + "/dvml"]]></textFieldExpression>
-			</textField>
 			<staticText>
 				<reportElement uuid="5bc7f40b-5c9f-40b9-9468-2e013e90c3d1" x="3" y="133" width="101" height="11"/>
 				<textElement>

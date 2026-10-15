@@ -3,8 +3,8 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.6528925619834725"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="348"/>
+	<property name="ireport.x" value="105"/>
+	<property name="ireport.y" value="687"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -645,7 +645,7 @@ WHERE
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Software de Certififcação Factura Electrónica (Kitanda 1.1) - FE/110/AGT/2025"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Processado por programa validado nº " + "FE/110/AGT/2025 " +$P{SOFTWARE_NAME} + "/dvml"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="3e229280-ebb9-40e5-82a8-5d73910fcda9" key="staticText-9" x="153" y="112" width="226" height="11"/>
@@ -1367,7 +1367,7 @@ WHERE
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Software de Certififcação Factura Electrónica (Kitanda 1.1) - FE/110/AGT/2025"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Processado por programa validado nº " + "FE/110/AGT/2025 " +$P{SOFTWARE_NAME} + "/dvml"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="8cabee7f-9d1e-47d6-8e29-46f05fcf3bf0" key="staticText-9" x="155" y="43" width="225" height="11"/>
