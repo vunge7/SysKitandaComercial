@@ -2170,17 +2170,34 @@ public class MetodosUtil {
     public static String getDataString2(Date date) {
         return (date.getYear() + 1900) + "-" + (date.getMonth() + 1) + "-" + date.getDate();
     }
-
+    
     public static String getHoraBanco(Date hora) {
-        return getNumero(hora.getHours()) + ":" + getNumero(hora.getMinutes()) + ":" + getNumero(hora.getSeconds());
+    if (hora == null) {
+        return null;
     }
 
-    private static String getNumero(int numero) {
-        if (numero < 9) {
-            return "0" + numero;
-        }
-        return String.valueOf(numero);
+    return getNumero(hora.getHours()) + ":"
+         + getNumero(hora.getMinutes()) + ":"
+         + getNumero(hora.getSeconds());
+}
+
+private static String getNumero(int numero) {
+    if (numero < 10) {
+        return "0" + numero;
     }
+    return String.valueOf(numero);
+}
+
+//    public static String getHoraBanco(Date hora) {
+//        return getNumero(hora.getHours()) + ":" + getNumero(hora.getMinutes()) + ":" + getNumero(hora.getSeconds());
+//    }
+//
+//    private static String getNumero(int numero) {
+//        if (numero < 9) {
+//            return "0" + numero;
+//        }
+//        return String.valueOf(numero);
+//    }
 
     public int media_idade(List<Integer> lista_idade) {
 
@@ -5000,6 +5017,52 @@ public class MetodosUtil {
             cmb.setModel(new DefaultComboBoxModel(armazensAccessoController.getAllArmazemExceptoEconomatoByIdUSuario(cod_usuario)));
         }
     }
+    
+public static void setArmazemByCampoByAllArmazem(
+        JComboBox cmb,
+        BDConexao conexao,
+        int cod_usuario) {
+
+    DadosInstituicaoController dadosInstituicaoController =
+            new DadosInstituicaoController(conexao);
+
+    ArmazensController armazensController =
+            new ArmazensController(conexao);
+
+    TbDadosInstituicao dados =
+            dadosInstituicaoController.findByCodigo(1);
+
+    String designacao = dados.getConfigArmazens();
+
+    System.out.println("CONFIG ARMAZEM = [" + designacao + "]");
+    System.out.println("DVML.UNI_ARMAZEM = [" + DVML.UNI_ARMAZEM + "]");
+
+    Vector<String> armazens = armazensController.getVector();
+
+    cmb.setModel(new DefaultComboBoxModel(armazens));
+
+    if (designacao != null
+            && designacao.trim().equalsIgnoreCase(DVML.UNI_ARMAZEM.trim())) {
+
+        // UNI ARMAZEM → último
+        cmb.setSelectedIndex(armazens.size() - 1);
+
+        System.out.println(">>> UNI ARMAZEM - selecionado: "
+                + armazens.lastElement());
+
+    } else {
+
+        // MULTI ARMAZEM → primeiro
+        cmb.setSelectedIndex(0);
+
+        System.out.println(">>> MULTI ARMAZEM - selecionado: "
+                + armazens.firstElement());
+    }
+
+    cmb.setEnabled(false);
+}
+
+
 
     public static void verificarCaixa(CaixasController caixasController, int cod_utilizador, JButton btnAberturaCaixa, JButton btnFechoCaixa, JButton... lista) {
         if (!caixasController.existeCaixas(cod_utilizador)) {

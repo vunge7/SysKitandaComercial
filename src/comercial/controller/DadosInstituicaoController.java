@@ -46,7 +46,7 @@ public class DadosInstituicaoController implements EntidadeFactory {
                 + "impressora_sala, prazo_proforma, desactivar_lugares, tipo_fecho_caixa, "
                 + "enviar_email, stock_consulta, tipo_ficha_tecnica, posto, "
                 + "impressora_caixa, segundo_monitor, alterar_preco "
-//                + "hora_comeco_venda, hora_termino_venda"
+                //                + "hora_comeco_venda, hora_termino_venda"
                 + ") VALUES ("
                 + "'" + dados.getNome() + "', "
                 + "'" + dados.getTelefone() + "', "
@@ -103,8 +103,8 @@ public class DadosInstituicaoController implements EntidadeFactory {
                 + "'" + dados.getImpressoraCaixa() + "', "
                 + "'" + dados.getSegundoMonitor() + "', "
                 + "'" + dados.getAlterarPreco() + "'"
-//                + "'" + MetodosUtil.getHoraBanco(dados.getHoraComecoVenda()) + "' , "
-//                + "'" + MetodosUtil.getHoraBanco(dados.getHoraTerminoVenda()) + "'"
+                //                + "'" + MetodosUtil.getHoraBanco(dados.getHoraComecoVenda()) + "' , "
+                //                + "'" + MetodosUtil.getHoraBanco(dados.getHoraTerminoVenda()) + "'"
                 + ")";
 
         return conexao.executeUpdate(INSERT);
@@ -186,13 +186,23 @@ public class DadosInstituicaoController implements EntidadeFactory {
                 + "posto = '" + dados.getPosto() + "', "
                 + "impressora_caixa = '" + dados.getImpressoraCaixa() + "', "
                 + "segundo_monitor = '" + dados.getSegundoMonitor() + "', "
-                + "alterar_preco = '" + dados.getAlterarPreco() + "'"
-//                + "hora_comeco_venda = '" + MetodosUtil.getHoraBanco(dados.getHoraComecoVenda()) + "', "
-//                + "hora_termino_venda = '" + MetodosUtil.getHoraBanco(dados.getHoraTerminoVenda()) + "' "
+                + "alterar_preco = '" + dados.getAlterarPreco() + "',"
+                + "hora_comeco_venda = " + formatarHoraBanco(dados.getHoraComecoVenda()) + ", "
+                + "hora_termino_venda = " + formatarHoraBanco(dados.getHoraTerminoVenda()) + " "
+                //                + "hora_comeco_venda = '" + MetodosUtil.getHoraBanco(dados.getHoraComecoVenda()) + "', "
+                //                + "hora_termino_venda = '" + MetodosUtil.getHoraBanco(dados.getHoraTerminoVenda()) + "' "
                 + "WHERE idDadosInsitiuicao = " + dados.getIdDadosInsitiuicao();
 
         return conexao.executeUpdate(UPDATE);
 
+    }
+
+    private String formatarHoraBanco(java.util.Date hora) {
+        if (hora == null) {
+            return "NULL";
+        }
+
+        return "'" + MetodosUtil.getHoraBanco(hora) + "'";
     }
 
     @Override
@@ -441,8 +451,8 @@ public class DadosInstituicaoController implements EntidadeFactory {
                 dadosIntituicao.setImpressoraCaixa(result.getString("impressora_caixa"));
                 dadosIntituicao.setSegundoMonitor(result.getString("segundo_monitor"));
                 dadosIntituicao.setAlterarPreco(result.getString("alterar_preco"));
-//                dadosIntituicao.setHoraComecoVenda(result.getTime("hora_comeco_venda"));
-//                dadosIntituicao.setHoraTerminoVenda(result.getTime("hora_termino_venda"));
+                dadosIntituicao.setHoraComecoVenda(result.getTime("hora_comeco_venda"));
+                dadosIntituicao.setHoraTerminoVenda(result.getTime("hora_termino_venda"));
             } else {
                 System.err.println("[DadosInstituicaoController] ⚠ Nenhum registo encontrado para o ID: " + codigo);
             }

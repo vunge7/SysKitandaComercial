@@ -61,8 +61,14 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 import kitanda.util.CfMethods;
 import lista.ListaVenda1;
+import lista.ListaVendaEntrega;
+import lista.ListaVendaTransporte;
 import modelo.ClienteModelo;
 import modelo.ItemVendaModelo;
 import modelo.ProdutoModelo;
@@ -128,6 +134,9 @@ public class NotaLevantamentoVisao extends javax.swing.JFrame implements Runnabl
     private ProdutoModelo produtoModelo;
     private static ProdutoIsentoDao produtoIsentoDao;
     private static int linha_actual = -1;
+            private static final String TEXTO_PADRAO
+            = "Em resposta a solicitação feita pela %s vimos por meio desta "
+            + "proceder a entrega de bens, conforme a solicitação.";
 
     private Abreviacao abreviacao;
 
@@ -142,6 +151,26 @@ public class NotaLevantamentoVisao extends javax.swing.JFrame implements Runnabl
         confiLabel();
         setLocationRelativeTo( null );
         setResizable( false );
+        jPanel6.setVisible(false);
+        ((AbstractDocument) txtRefDoc.getDocument()).setDocumentFilter(new DocumentFilter() {
+    @Override
+    public void insertString(FilterBypass fb, int offset, String text, AttributeSet attr)
+            throws BadLocationException {
+        if (text != null) {
+            super.insertString(fb, offset, text.toUpperCase(), attr);
+        }
+    }
+
+    @Override
+    public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
+            throws BadLocationException {
+        if (text != null) {
+            text = text.toUpperCase();
+        }
+        super.replace(fb, offset, length, text, attrs);
+    }
+});
+        
         this.cod_usuario = cod_usuario;
         this.conexao = conexao;
         setWindowsListener();
@@ -156,14 +185,14 @@ public class NotaLevantamentoVisao extends javax.swing.JFrame implements Runnabl
      */
     @SuppressWarnings( "unchecked" )
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents()
-    {
+    private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         jMenuItem1 = new javax.swing.JMenuItem();
         buttonGroup2 = new javax.swing.ButtonGroup();
         buttonGroup3 = new javax.swing.ButtonGroup();
         jTextField3 = new javax.swing.JTextField();
+        buttonGroup4 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jPanel8 = new javax.swing.JPanel();
         lbTotalPagar = new javax.swing.JLabel();
@@ -174,13 +203,13 @@ public class NotaLevantamentoVisao extends javax.swing.JFrame implements Runnabl
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         table_levantamento = new javax.swing.JTable();
-        jPanel5 = new javax.swing.JPanel();
-        lbCliente = new javax.swing.JLabel();
-        lbEndereco = new javax.swing.JLabel();
-        lbNIF = new javax.swing.JLabel();
-        lbTelefone = new javax.swing.JLabel();
-        lbCliente9 = new javax.swing.JLabel();
-        txtLocalDestino = new javax.swing.JTextField();
+        jPanel3 = new javax.swing.JPanel();
+        lb_ano_academico1 = new javax.swing.JLabel();
+        lb_usuario1 = new javax.swing.JLabel();
+        txtRefDoc = new javax.swing.JTextField();
+        lb_proximo_documento = new javax.swing.JLabel();
+        lb_proximo_documento1 = new javax.swing.JLabel();
+        cmbAnoEconomico = new javax.swing.JComboBox<>();
         jPanel6 = new javax.swing.JPanel();
         lbCliente4 = new javax.swing.JLabel();
         lbCliente5 = new javax.swing.JLabel();
@@ -192,18 +221,23 @@ public class NotaLevantamentoVisao extends javax.swing.JFrame implements Runnabl
         txtMarcaCarro = new javax.swing.JTextField();
         txtMatricula = new javax.swing.JTextField();
         txtCor = new javax.swing.JTextField();
-        jPanel3 = new javax.swing.JPanel();
-        lb_ano_academico1 = new javax.swing.JLabel();
-        lb_usuario1 = new javax.swing.JLabel();
-        txtRefDoc = new javax.swing.JTextField();
-        lb_proximo_documento = new javax.swing.JLabel();
-        lb_proximo_documento1 = new javax.swing.JLabel();
-        cmbAnoEconomico = new javax.swing.JComboBox<>();
+        jPanel5 = new javax.swing.JPanel();
+        lbCliente = new javax.swing.JLabel();
+        lbEndereco = new javax.swing.JLabel();
+        lbNIF = new javax.swing.JLabel();
+        lbTelefone = new javax.swing.JLabel();
+        lbCliente9 = new javax.swing.JLabel();
+        txtLocalDestino = new javax.swing.JTextField();
+        jRadioButtonEntrega = new javax.swing.JRadioButton();
+        jRadioButtonLevantamento = new javax.swing.JRadioButton();
+        jRadioButtonTransporte = new javax.swing.JRadioButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        txtAreaOBS = new javax.swing.JTextArea();
 
         jMenuItem1.setText("jMenuItem1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("...:::::  KITANDA - NOTA DE LEVANTAMENTO  ::::...");
+        setTitle("...:::::  KITANDA - NOTAS E GUIAS  ::::...");
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         jPanel1.setFont(new java.awt.Font("Showcard Gothic", 0, 24)); // NOI18N
@@ -214,44 +248,38 @@ public class NotaLevantamentoVisao extends javax.swing.JFrame implements Runnabl
         lbTotalPagar.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         lbTotalPagar.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lbTotalPagar.setText("Total Qtd :");
-        jPanel8.add(lbTotalPagar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 120, 34));
+        jPanel8.add(lbTotalPagar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 120, 40));
 
         txtTotalQTD.setEditable(false);
         txtTotalQTD.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         txtTotalQTD.setForeground(new java.awt.Color(255, 0, 0));
         txtTotalQTD.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtTotalQTD.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtTotalQTD.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtTotalQTDActionPerformed(evt);
             }
         });
-        jPanel8.add(txtTotalQTD, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 20, 270, 40));
+        jPanel8.add(txtTotalQTD, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 10, 270, 40));
 
         btnProcessar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         btnProcessar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/impressora1.png"))); // NOI18N
         btnProcessar.setText("Processar");
         btnProcessar.setToolTipText("Efectuar Venda");
-        btnProcessar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnProcessar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnProcessarActionPerformed(evt);
             }
         });
-        jPanel8.add(btnProcessar, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 20, -1, 45));
+        jPanel8.add(btnProcessar, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 10, -1, 40));
 
         btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LOGOUT - VERMELHO/Logout 32x32.png"))); // NOI18N
         btnCancelar.setAlignmentX(0.5F);
-        btnCancelar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelarActionPerformed(evt);
             }
         });
-        jPanel8.add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(910, 20, 60, 45));
+        jPanel8.add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(910, 10, 60, 40));
 
         lb_usuario.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         lb_usuario.setText("Conta:");
@@ -265,13 +293,13 @@ public class NotaLevantamentoVisao extends javax.swing.JFrame implements Runnabl
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, 988, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lb_usuario, javax.swing.GroupLayout.PREFERRED_SIZE, 691, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(33, 33, 33)
+                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lb_usuario, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -281,32 +309,25 @@ public class NotaLevantamentoVisao extends javax.swing.JFrame implements Runnabl
 
         table_levantamento.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
         table_levantamento.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][]
-            {
+            new Object [][] {
 
             },
-            new String []
-            {
+            new String [] {
                 "Cod.Art", "Descrição", "Qtd."
             }
-        )
-        {
-            Class[] types = new Class []
-            {
+        ) {
+            Class[] types = new Class [] {
                 java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class
             };
-            boolean[] canEdit = new boolean []
-            {
+            boolean[] canEdit = new boolean [] {
                 false, false, false
             };
 
-            public Class getColumnClass(int columnIndex)
-            {
+            public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
 
-            public boolean isCellEditable(int rowIndex, int columnIndex)
-            {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
@@ -314,8 +335,7 @@ public class NotaLevantamentoVisao extends javax.swing.JFrame implements Runnabl
         table_levantamento.setGridColor(new java.awt.Color(51, 153, 0));
         jScrollPane1.setViewportView(table_levantamento);
         table_levantamento.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-        if (table_levantamento.getColumnModel().getColumnCount() > 0)
-        {
+        if (table_levantamento.getColumnModel().getColumnCount() > 0) {
             table_levantamento.getColumnModel().getColumn(0).setMaxWidth(100);
             table_levantamento.getColumnModel().getColumn(1).setPreferredWidth(250);
             table_levantamento.getColumnModel().getColumn(2).setMaxWidth(100);
@@ -329,73 +349,41 @@ public class NotaLevantamentoVisao extends javax.swing.JFrame implements Runnabl
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(65, 65, 65))
         );
 
-        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Dados do Cliente"));
+        lb_ano_academico1.setBackground(new java.awt.Color(4, 154, 3));
+        lb_ano_academico1.setFont(new java.awt.Font("Lucida Grande", 1, 24)); // NOI18N
+        lb_ano_academico1.setForeground(new java.awt.Color(255, 255, 255));
+        lb_ano_academico1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lb_ano_academico1.setText("NOTAS/GUIAS");
+        lb_ano_academico1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        lb_ano_academico1.setOpaque(true);
 
-        lbCliente.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        lbCliente.setText("Cliente:");
+        lb_usuario1.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        lb_usuario1.setText("Ref. Doc:");
 
-        lbEndereco.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        lbEndereco.setText("Endereço");
-
-        lbNIF.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        lbNIF.setText("NIF");
-
-        lbTelefone.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        lbTelefone.setText("Telefone");
-
-        lbCliente9.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        lbCliente9.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lbCliente9.setText("Destino :");
-
-        txtLocalDestino.setEnabled(false);
-        txtLocalDestino.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                txtLocalDestinoActionPerformed(evt);
+        txtRefDoc.setBackground(new java.awt.Color(4, 154, 3));
+        txtRefDoc.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        txtRefDoc.setForeground(new java.awt.Color(255, 255, 255));
+        txtRefDoc.setCaretColor(new java.awt.Color(255, 255, 255));
+        txtRefDoc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtRefDocActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(lbEndereco, javax.swing.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE)
-                        .addComponent(lbCliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(lbNIF, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(65, Short.MAX_VALUE))
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addComponent(lbCliente9, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtLocalDestino))
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lbCliente)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbEndereco)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbNIF)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbTelefone)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbCliente9)
-                    .addComponent(txtLocalDestino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
+        lb_proximo_documento.setFont(new java.awt.Font("Lucida Grande", 1, 16)); // NOI18N
+        lb_proximo_documento.setText("PRÓXIMO DOC. : XX NL/A1");
+
+        lb_proximo_documento1.setFont(new java.awt.Font("Lucida Grande", 1, 16)); // NOI18N
+        lb_proximo_documento1.setText("Ano Econômico:");
+
+        cmbAnoEconomico.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbAnoEconomico.setEnabled(false);
 
         jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("Dados do Motorista"));
 
@@ -420,37 +408,29 @@ public class NotaLevantamentoVisao extends javax.swing.JFrame implements Runnabl
         lbCliente8.setText("Nome :");
 
         txtNomeMotorista.setEnabled(false);
-        txtNomeMotorista.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtNomeMotorista.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtNomeMotoristaActionPerformed(evt);
             }
         });
 
         txtDocBICE.setEnabled(false);
-        txtDocBICE.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtDocBICE.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtDocBICEActionPerformed(evt);
             }
         });
 
         txtMarcaCarro.setEnabled(false);
-        txtMarcaCarro.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtMarcaCarro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtMarcaCarroActionPerformed(evt);
             }
         });
 
         txtMatricula.setEnabled(false);
-        txtMatricula.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        txtMatricula.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtMatriculaActionPerformed(evt);
             }
         });
@@ -505,37 +485,97 @@ public class NotaLevantamentoVisao extends javax.swing.JFrame implements Runnabl
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        lb_ano_academico1.setBackground(new java.awt.Color(4, 154, 3));
-        lb_ano_academico1.setFont(new java.awt.Font("Lucida Grande", 1, 24)); // NOI18N
-        lb_ano_academico1.setForeground(new java.awt.Color(255, 255, 255));
-        lb_ano_academico1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        lb_ano_academico1.setText("NOTA DE LEVANTAMENTO");
-        lb_ano_academico1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        lb_ano_academico1.setOpaque(true);
+        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Dados do Cliente"));
 
-        lb_usuario1.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        lb_usuario1.setText("Ref. Doc:");
+        lbCliente.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        lbCliente.setText("Cliente:");
 
-        txtRefDoc.setBackground(new java.awt.Color(4, 154, 3));
-        txtRefDoc.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        txtRefDoc.setForeground(new java.awt.Color(255, 255, 255));
-        txtRefDoc.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtRefDoc.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                txtRefDocActionPerformed(evt);
+        lbEndereco.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        lbEndereco.setText("Endereço");
+
+        lbNIF.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        lbNIF.setText("NIF");
+
+        lbTelefone.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        lbTelefone.setText("Telefone");
+
+        lbCliente9.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        lbCliente9.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lbCliente9.setText("Destino :");
+
+        txtLocalDestino.setEnabled(false);
+        txtLocalDestino.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtLocalDestinoActionPerformed(evt);
             }
         });
 
-        lb_proximo_documento.setFont(new java.awt.Font("Lucida Grande", 1, 16)); // NOI18N
-        lb_proximo_documento.setText("PRÓXIMO DOC. : XX NL/A1");
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(lbEndereco, javax.swing.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE)
+                                .addComponent(lbCliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(lbNIF, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lbTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 59, Short.MAX_VALUE))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(lbCliente9)
+                        .addGap(25, 25, 25)
+                        .addComponent(txtLocalDestino)))
+                .addContainerGap())
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lbCliente)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbEndereco)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbNIF)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbTelefone)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbCliente9)
+                    .addComponent(txtLocalDestino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
-        lb_proximo_documento1.setFont(new java.awt.Font("Lucida Grande", 1, 16)); // NOI18N
-        lb_proximo_documento1.setText("Ano Econômico:");
+        buttonGroup4.add(jRadioButtonEntrega);
+        jRadioButtonEntrega.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jRadioButtonEntrega.setSelected(true);
+        jRadioButtonEntrega.setText("Nota Entrega");
+        jRadioButtonEntrega.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonEntregaActionPerformed(evt);
+            }
+        });
 
-        cmbAnoEconomico.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cmbAnoEconomico.setEnabled(false);
+        buttonGroup4.add(jRadioButtonLevantamento);
+        jRadioButtonLevantamento.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jRadioButtonLevantamento.setText("Nota Levantamento");
+        jRadioButtonLevantamento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonLevantamentoActionPerformed(evt);
+            }
+        });
+
+        buttonGroup4.add(jRadioButtonTransporte);
+        jRadioButtonTransporte.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jRadioButtonTransporte.setText("Guia Transporte");
+        jRadioButtonTransporte.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonTransporteActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -544,20 +584,30 @@ public class NotaLevantamentoVisao extends javax.swing.JFrame implements Runnabl
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lb_ano_academico1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(lb_ano_academico1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lb_usuario1, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtRefDoc)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(lb_proximo_documento, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(lb_proximo_documento1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cmbAnoEconomico, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(lb_usuario1, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jRadioButtonEntrega)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtRefDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(jRadioButtonLevantamento)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jRadioButtonTransporte)))
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -571,45 +621,59 @@ public class NotaLevantamentoVisao extends javax.swing.JFrame implements Runnabl
                         .addComponent(cmbAnoEconomico, javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(lb_proximo_documento1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtRefDoc)
-                    .addComponent(lb_usuario1, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE))
-                .addGap(17, 17, 17))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(txtRefDoc)
+                        .addComponent(lb_usuario1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jRadioButtonEntrega)
+                            .addComponent(jRadioButtonLevantamento)
+                            .addComponent(jRadioButtonTransporte))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(1, 1, 1)
+                        .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        txtAreaOBS.setColumns(20);
+        txtAreaOBS.setRows(5);
+        txtAreaOBS.setText("Em resposta a solicitação feita pela ");
+        jScrollPane2.setViewportView(txtAreaOBS);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(22, 22, 22))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(16, 16, 16)
                         .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -665,6 +729,18 @@ public class NotaLevantamentoVisao extends javax.swing.JFrame implements Runnabl
         // TODO add your handling code here:
     }//GEN-LAST:event_txtLocalDestinoActionPerformed
 
+    private void jRadioButtonEntregaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonEntregaActionPerformed
+        jPanel6.setVisible(false);
+    }//GEN-LAST:event_jRadioButtonEntregaActionPerformed
+
+    private void jRadioButtonLevantamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonLevantamentoActionPerformed
+        jPanel6.setVisible(true);
+    }//GEN-LAST:event_jRadioButtonLevantamentoActionPerformed
+
+    private void jRadioButtonTransporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonTransporteActionPerformed
+        jPanel6.setVisible(true);
+    }//GEN-LAST:event_jRadioButtonTransporteActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
@@ -672,6 +748,7 @@ public class NotaLevantamentoVisao extends javax.swing.JFrame implements Runnabl
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.ButtonGroup buttonGroup3;
+    private javax.swing.ButtonGroup buttonGroup4;
     private javax.swing.JComboBox<String> cmbAnoEconomico;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
@@ -680,7 +757,11 @@ public class NotaLevantamentoVisao extends javax.swing.JFrame implements Runnabl
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel8;
+    private javax.swing.JRadioButton jRadioButtonEntrega;
+    private javax.swing.JRadioButton jRadioButtonLevantamento;
+    private javax.swing.JRadioButton jRadioButtonTransporte;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JLabel lbCliente;
     private javax.swing.JLabel lbCliente4;
@@ -699,6 +780,7 @@ public class NotaLevantamentoVisao extends javax.swing.JFrame implements Runnabl
     private javax.swing.JLabel lb_usuario;
     private javax.swing.JLabel lb_usuario1;
     public static javax.swing.JTable table_levantamento;
+    private javax.swing.JTextArea txtAreaOBS;
     private javax.swing.JTextField txtCor;
     private javax.swing.JTextField txtDocBICE;
     private javax.swing.JTextField txtLocalDestino;
@@ -947,19 +1029,6 @@ public class NotaLevantamentoVisao extends javax.swing.JFrame implements Runnabl
 
     private void procedimento_busca()
     {
-        /**
-         * @1. inserir a referência;
-         * @1.1 Se o campo estiver vazio emitir a mensagem: "por favor insira a
-         * refrência da pró-forma"
-         * @2. buscar a venda relacionada com esta referência desde que o
-         * documento seja do tipo pro-forma;
-         * @2.1 Senão existe emitir uma mensagem: "Não existe pró-forma com esta
-         * referência"
-         * @3. percorrer e preencher os campos do formulário;
-         * @4. setar o total
-         * @5. setar cliente
-         */
-
         //@1. Inserir a referência
         String ref_doc = txtRefDoc.getText();
         if ( !ref_doc.equals( "" ) )
@@ -968,12 +1037,6 @@ public class NotaLevantamentoVisao extends javax.swing.JFrame implements Runnabl
             venda = vendaDao.findByCodFact( ref_doc );
             if ( venda != null )
             {
-
-                /*@3. percorrer e preencher os campos do formulário;*/
-                //3.1 preeenche o tipo documento
-                //3.2 preenche o armazém
-                //3.3 preenche a moeda
-                //3.4 preencher a tabela com os itens
                 List<TbItemVenda> linhas = venda.getTbItemVendaList();
                 DefaultTableModel modelo = ( DefaultTableModel ) table_levantamento.getModel();
                 //3.4.1 limpa a tabela
@@ -1380,6 +1443,7 @@ public class NotaLevantamentoVisao extends javax.swing.JFrame implements Runnabl
         nota_levantamento.setMatricula( txtMatricula.getText() );
         nota_levantamento.setCodigoUsuario( usuarioDao.findTbUsuario( cod_usuario ) );
         nota_levantamento.setLocalDescarga( txtLocalDestino.getText() );
+        nota_levantamento.setObs(txtAreaOBS.getText() );
 //        nota_levantamento.setHashCod( MetodosUtil.criptografia_hash( venda_local, getGrossTotal(), conexao ) );
 
         nota_levantamento.setHashCod( MetodosUtil.criptografia_hash( nota_levantamento, nota_levantamento.getTotalGeral().doubleValue(), conexao ) ); // não coloquei o totalGross porque não há necessidade.
@@ -1403,7 +1467,15 @@ public class NotaLevantamentoVisao extends javax.swing.JFrame implements Runnabl
             // txtClienteNome.requestFocus();
             actualizar_abreviacao();
             JOptionPane.showMessageDialog( null, "Documento criado com sucesso!" );
-            ListaVenda1 listaVenda1 = new ListaVenda1( last_venda, this.abreviacao, false, false, "Original", "" );
+            
+            if(jRadioButtonEntrega.isSelected()){
+                ListaVendaEntrega listaVendaEntrega = new ListaVendaEntrega( last_venda, this.abreviacao, false, false, "Original", "" );
+                
+            }else if(jRadioButtonTransporte.isSelected()){
+                ListaVendaTransporte listaVendaTransporte = new ListaVendaTransporte( last_venda, this.abreviacao, false, false, "Original", "" );
+            } else {
+                ListaVenda1 listaVenda1 = new ListaVenda1( last_venda, this.abreviacao, false, false, "Original", "" );
+            }
 
             System.out.println( "STATUS:itens adicionado na factura com sucesso." );
         }
@@ -1857,7 +1929,7 @@ public class NotaLevantamentoVisao extends javax.swing.JFrame implements Runnabl
         return anoEconomicoDao.getIdByDescricao( cmbAnoEconomico.getSelectedItem().toString() );
     }
 
-    private void mostrar_dados_cliente()
+    private void mostrar_dados_cliente1()
     {
         if ( !Objects.isNull( venda ) )
         {
@@ -1867,6 +1939,22 @@ public class NotaLevantamentoVisao extends javax.swing.JFrame implements Runnabl
             lbTelefone.setText( "Telefone: " + venda.getCodigoCliente().getTelefone() );
         }
     }
+    
+
+
+
+private void mostrar_dados_cliente() {
+    System.out.println("Venda: " + venda);
+System.out.println("Cliente: " + venda.getCodigoCliente());
+    if (!Objects.isNull(venda)) {
+        lbCliente.setText(venda.getCodigoCliente().getNome());
+        lbEndereco.setText("Endereço:" + venda.getCodigoCliente().getMorada());
+        lbNIF.setText("NIF: " + venda.getCodigoCliente().getNif());
+        lbTelefone.setText("Telefone: " + venda.getCodigoCliente().getTelefone());
+        txtAreaOBS.setText(String.format(TEXTO_PADRAO, venda.getCodigoCliente().getNome()+","));
+    }
+}
+
 
     private void mostrarQtdTotal()
     {

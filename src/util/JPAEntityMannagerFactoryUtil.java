@@ -5,7 +5,7 @@
 package util;
 
 import java.io.File;
-import java.io.FileNotFoundException; 
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -24,8 +24,7 @@ public class JPAEntityMannagerFactoryUtil {
 
     public static EntityManagerFactory em = Persistencia.getEntityManagerFactory("SGCMINIMERCADOPU");
 
-    public static void main( String[] args )
-    {
+    public static void main(String[] args) {
 
     }
 
@@ -47,13 +46,12 @@ public class JPAEntityMannagerFactoryUtil {
 
             try {
 
-
                 if (!informacao.isEmpty()) {
                     String ip = informacao.get(0);
                     String porta = informacao.get(1);
 
                     String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db?zeroDateTimeBehavior=convertToNull";
-                  
+
                     String user = "root";
                     String password = "DoV90x?#";
 

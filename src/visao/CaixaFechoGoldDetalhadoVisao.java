@@ -241,6 +241,7 @@ public class CaixaFechoGoldDetalhadoVisao extends javax.swing.JFrame
         // TODO add your handling code here:
 
         procedimento_fechar_caixa();
+        EnvioEmailUtil.inicio();
         
     }//GEN-LAST:event_jButton1ActionPerformed
 

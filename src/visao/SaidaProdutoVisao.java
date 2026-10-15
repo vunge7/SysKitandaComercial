@@ -141,8 +141,9 @@ public class SaidaProdutoVisao extends javax.swing.JFrame {
         usuariosController = new UsuariosController(conexao);
         armazensController = new ArmazensController(conexao);
 
-        cmbArmazem.setModel(new DefaultComboBoxModel(armazensController.getVectorArmazemLocal()));
-        DVML.activar_cmb_armazem(cmbArmazem);
+        MetodosUtil.setArmazemByCampoByAllArmazem(cmbArmazem, conexao, cod_usuario);
+//        cmbArmazem.setModel(new DefaultComboBoxModel(armazensController.getVectorArmazemLocal()));
+//        DVML.activar_cmb_armazem(cmbArmazem);
 
         cmbArmazemDestino.setModel(
                 new DefaultComboBoxModel(saidasProdutosController.getArmazemDestino())
@@ -986,7 +987,7 @@ public class SaidaProdutoVisao extends javax.swing.JFrame {
 
             System.out.println("Codigo do Armazem em questão: " + getCodigoArmazem());
 //            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_SAIDA, BDConexao.getInstancia() ).setVisible( true );
-            new BuscaProdutoVisao(this, rootPaneCheckingEnabled, 1, DVML.JANELA_SAIDA, BDConexao.getInstancia()).setVisible(true);
+            new BuscaProdutoVisao(this, rootPaneCheckingEnabled, getCodigoArmazem(), DVML.JANELA_SAIDA, BDConexao.getInstancia()).setVisible(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
