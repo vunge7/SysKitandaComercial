@@ -53,7 +53,6 @@ import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
 import static util.MetodosUtil.getMotivoIsensao;
 import static util.MetodosUtil.rodarComandoWindows;
-import util.PermitirNumeros;
 
 /**
  *

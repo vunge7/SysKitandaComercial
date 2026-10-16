@@ -52,6 +52,9 @@ public class Lote implements Serializable
     @Column(name = "fk_produto")
     private Integer fkProduto;
     @Basic(optional = false)
+    @Column(name = "fk_armazem")
+    private Integer fkArmazem;
+    @Basic(optional = false)
     @Column(name = "numero_lote")
     private String numeroLote;
     @Basic(optional = false)
@@ -67,7 +70,7 @@ public class Lote implements Serializable
     private Date dataValidade;
     @Basic(optional = false)
     @Column(name = "qtd")
-    private int qtd;
+    private double qtd;
     @Basic(optional = false)
     @Enumerated(EnumType.STRING)
     @Column(name = "estado")
@@ -142,16 +145,25 @@ public class Lote implements Serializable
         this.dataValidade = dataValidade;
     }
 
-    public int getQtd()
+    public double getQtd()
     {
         return qtd;
     }
 
-    public void setQtd( int qtd )
+    public void setQtd( double qtd )
     {
         this.qtd = qtd;
     }
 
+    public Integer getFkArmazem() {
+        return fkArmazem;
+    }
+
+    public void setFkArmazem(Integer fkArmazem) {
+        this.fkArmazem = fkArmazem;
+    }
+
+    
     public EstadoLote getEstado()
     {
         return estado;

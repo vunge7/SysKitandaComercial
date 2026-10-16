@@ -59,7 +59,7 @@ public class LoteMovimento implements Serializable
     private String tipo; // VENDA | DEVOLUCAO
     @Basic(optional = false)
     @Column(name = "qtd")
-    private int qtd;
+    private double qtd;
     @Column(name = "qtd_devolvida")
     private int qtdDevolvida;
     @Column(name = "data_mov")
@@ -75,7 +75,7 @@ public class LoteMovimento implements Serializable
         this.id = id;
     }
 
-    public LoteMovimento( Integer fkLote, Integer fkVenda, String tipo, int qtd )
+    public LoteMovimento( Integer fkLote, Integer fkVenda, String tipo, double qtd )
     {
         this.fkLote = fkLote;
         this.fkVenda = fkVenda;
@@ -123,7 +123,7 @@ public class LoteMovimento implements Serializable
         this.tipo = tipo;
     }
 
-    public int getQtd()
+    public double getQtd()
     {
         return qtd;
     }

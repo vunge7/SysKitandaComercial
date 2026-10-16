@@ -3175,7 +3175,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
                                 //#LOTE
                                 if (loteController.existeLotesDisponiveis(idProduto)) {
-                                    loteController.baixarStock(idProduto, (int) item.getQuantidade(), cod_venda);
+                                    loteController.baixarStock(idProduto, idArmazem, item.getQuantidade(), cod_venda);
                                     actualizar_quantidade(idProduto, item.getQuantidade(), conexaoLocal);
                                 }
 

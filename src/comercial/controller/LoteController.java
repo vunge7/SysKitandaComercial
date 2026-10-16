@@ -27,6 +27,11 @@ import util.BDConexao;
  */
 public class LoteController implements EntidadeFactory {
 
+    /**
+     * Tolerância para comparar quantidades decimais (3 casas decimais).
+     */
+    private static final double EPS = 0.0005;
+
     private BDConexao conexao;
 
     public LoteController(BDConexao conexao) {
@@ -39,21 +44,22 @@ public class LoteController implements EntidadeFactory {
     @Override
     public boolean salvar(Object object) {
         Lote lote = (Lote) object;
-        String sql = "INSERT INTO lote( fk_produto, numero_lote, data_entrada, data_fabrica, data_validade, qtd, estado ) "
-                + "VALUES( ?, ?, ?, ?, ?, ?, ? )";
+        String sql = "INSERT INTO lote( fk_produto, fk_armazem, numero_lote, data_entrada, data_fabrica, data_validade, qtd, estado ) "
+                + "VALUES( ?, ?, ?, ?, ?, ?, ?, ? )";
 
         try (PreparedStatement ps = conexao.getConnection().prepareStatement(sql)) {
             ps.setInt(1, lote.getFkProduto());
-            ps.setString(2, lote.getNumeroLote());
-            ps.setDate(3, toSqlDate(lote.getDataEntrada()));
+            ps.setInt(2, lote.getFkArmazem());
+            ps.setString(3, lote.getNumeroLote());
+            ps.setDate(4, toSqlDate(lote.getDataEntrada()));
             if (lote.getDataFabrica() != null) {
-                ps.setDate(4, toSqlDate(lote.getDataFabrica()));
+                ps.setDate(5, toSqlDate(lote.getDataFabrica()));
             } else {
-                ps.setNull(4, Types.DATE);
+                ps.setNull(5, Types.DATE);
             }
-            ps.setDate(5, toSqlDate(lote.getDataValidade()));
-            ps.setInt(6, lote.getQtd());
-            ps.setString(7, lote.getEstado().name());
+            ps.setDate(6, toSqlDate(lote.getDataValidade()));
+            ps.setDouble(7, lote.getQtd());
+            ps.setString(8, lote.getEstado().name());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             Logger.getLogger(LoteController.class.getName()).log(Level.SEVERE, null, e);
@@ -61,6 +67,10 @@ public class LoteController implements EntidadeFactory {
         }
     }
 
+    /**
+     * Não altera fk_produto nem fk_armazem: mudar de armazém deve passar por
+     * transferência.
+     */
     @Override
     public boolean actualizar(Object object) {
         Lote lote = (Lote) object;
@@ -76,7 +86,7 @@ public class LoteController implements EntidadeFactory {
                 ps.setNull(3, Types.DATE);
             }
             ps.setDate(4, toSqlDate(lote.getDataValidade()));
-            ps.setInt(5, lote.getQtd());
+            ps.setDouble(5, lote.getQtd());
             ps.setString(6, lote.getEstado().name());
             ps.setInt(7, lote.getId());
             return ps.executeUpdate() > 0;
@@ -131,17 +141,45 @@ public class LoteController implements EntidadeFactory {
     // ------------------------------------------------------------------
     // Consultas
     // ------------------------------------------------------------------
+    /**
+     * Todos os lotes do produto (todos os armazéns).
+     */
     public List<Lote> listarPorProduto(int fkProduto) {
         return executarLista("SELECT * FROM lote WHERE fk_produto = ? ORDER BY data_validade ASC, id ASC", fkProduto);
     }
 
     /**
-     * Lotes activos com stock que vencem nos próximos 'dias' dias.
+     * Lotes do produto num armazém.
+     */
+    public List<Lote> listarPorProduto(int fkProduto, int fkArmazem) {
+        return executarLista("SELECT * FROM lote WHERE fk_produto = ? AND fk_armazem = ? "
+                + "ORDER BY data_validade ASC, id ASC", fkProduto, fkArmazem);
+    }
+
+    /**
+     * Todos os lotes de um armazém.
+     */
+    public List<Lote> listarPorArmazem(int fkArmazem) {
+        return executarLista("SELECT * FROM lote WHERE fk_armazem = ? ORDER BY data_validade ASC, id ASC", fkArmazem);
+    }
+
+    /**
+     * Lotes activos com stock que vencem nos próximos 'dias' dias (todos os
+     * armazéns).
      */
     public List<Lote> listarAVencer(int dias) {
         return executarLista("SELECT * FROM lote WHERE estado = 'ACTIVO' AND qtd > 0 "
                 + "AND data_validade BETWEEN CURDATE() AND DATE_ADD( CURDATE(), INTERVAL ? DAY ) "
                 + "ORDER BY data_validade ASC", dias);
+    }
+
+    /**
+     * Lotes activos com stock que vencem nos próximos 'dias' dias, num armazém.
+     */
+    public List<Lote> listarAVencer(int dias, int fkArmazem) {
+        return executarLista("SELECT * FROM lote WHERE estado = 'ACTIVO' AND qtd > 0 AND fk_armazem = ? "
+                + "AND data_validade BETWEEN CURDATE() AND DATE_ADD( CURDATE(), INTERVAL ? DAY ) "
+                + "ORDER BY data_validade ASC", fkArmazem, dias);
     }
 
     /**
@@ -152,16 +190,38 @@ public class LoteController implements EntidadeFactory {
     }
 
     /**
-     * Stock vendável do produto (lotes activos e dentro da validade).
+     * Stock vendável do produto em todos os armazéns (lotes activos e dentro
+     * da validade).
      */
-    public int getStock(int fkProduto) {
+    public double getStock(int fkProduto) {
         String sql = "SELECT COALESCE( SUM( qtd ), 0 ) AS stock FROM lote "
                 + "WHERE fk_produto = ? AND estado = 'ACTIVO' AND data_validade >= CURDATE()";
         try (PreparedStatement ps = conexao.getConnection().prepareStatement(sql)) {
             ps.setInt(1, fkProduto);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getInt("stock");
+                    return rs.getDouble("stock");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    /**
+     * Stock vendável do produto num armazém (lotes activos e dentro da
+     * validade).
+     */
+    public double getStock(int fkProduto, int fkArmazem) {
+        String sql = "SELECT COALESCE( SUM( qtd ), 0 ) AS stock FROM lote "
+                + "WHERE fk_produto = ? AND fk_armazem = ? AND estado = 'ACTIVO' AND data_validade >= CURDATE()";
+        try (PreparedStatement ps = conexao.getConnection().prepareStatement(sql)) {
+            ps.setInt(1, fkProduto);
+            ps.setInt(2, fkArmazem);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getDouble("stock");
                 }
             }
         } catch (SQLException e) {
@@ -188,22 +248,24 @@ public class LoteController implements EntidadeFactory {
     // Baixa FEFO (venda)
     // ------------------------------------------------------------------
     /**
-     * Retira a quantidade dos lotes que vencem primeiro (FEFO). Se um lote não
-     * chega, continua no seguinte.
+     * Retira a quantidade dos lotes do armazém que vencem primeiro (FEFO). Se
+     * um lote não chega, continua no seguinte.
      *
      * Equivalente ao @Transactional: NÃO faz commit nem rollback. Usa a
      * Connection (e a transacção) de quem chama.
      *
+     * @param fkArmazem armazém de onde sai o stock
      * @throws IllegalStateException se o stock for insuficiente
      */
-    public List<LoteMovimento> baixarStock(Connection conn, int fkProduto, int qtdPedida, int fkVenda) throws SQLException {
-        String sql = "SELECT * FROM lote WHERE fk_produto = ? AND estado = 'ACTIVO' "
+    public List<LoteMovimento> baixarStock(Connection conn, int fkProduto, int fkArmazem, double qtdPedida, int fkVenda) throws SQLException {
+        String sql = "SELECT * FROM lote WHERE fk_produto = ? AND fk_armazem = ? AND estado = 'ACTIVO' "
                 + "AND qtd > 0 AND data_validade >= CURDATE() "
                 + "ORDER BY data_validade ASC, id ASC FOR UPDATE"; // FEFO, com lock
 
         List<Lote> lotes = new ArrayList<>();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, fkProduto);
+            ps.setInt(2, fkArmazem);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Lote lote = new Lote();
@@ -213,26 +275,26 @@ public class LoteController implements EntidadeFactory {
             }
         }
 
-        int disponivel = lotes.stream().mapToInt(Lote::getQtd).sum();
-        if (disponivel < qtdPedida) {
+        double disponivel = arredondar(lotes.stream().mapToDouble(Lote::getQtd).sum());
+        if (disponivel + EPS < qtdPedida) {
             throw new IllegalStateException("Stock insuficiente: " + disponivel);
         }
 
-        int restante = qtdPedida;
+        double restante = arredondar(qtdPedida);
         List<LoteMovimento> movimentos = new ArrayList<>();
 
         for (Lote lote : lotes) {
-            if (restante == 0) {
+            if (restante <= EPS) {
                 break;
             }
 
-            int retirar = Math.min(lote.getQtd(), restante);
-            int novaQtd = lote.getQtd() - retirar;
+            double retirar = Math.min(lote.getQtd(), restante);
+            double novaQtd = arredondar(lote.getQtd() - retirar);
 
-            actualizarQtdLote(conn, lote.getId(), novaQtd, novaQtd == 0 ? "ESGOTADO" : "ACTIVO");
+            actualizarQtdLote(conn, lote.getId(), novaQtd, novaQtd <= EPS ? "ESGOTADO" : "ACTIVO");
             movimentos.add(inserirMovimento(conn, lote.getId(), fkVenda, "VENDA", retirar));
 
-            restante -= retirar;
+            restante = arredondar(restante - retirar);
         }
         return movimentos;
     }
@@ -243,11 +305,11 @@ public class LoteController implements EntidadeFactory {
      *
      * @throws IllegalStateException se o stock for insuficiente
      */
-    public List<LoteMovimento> baixarStock(int fkProduto, int qtdPedida, int fkVenda) throws SQLException {
+    public List<LoteMovimento> baixarStock(int fkProduto, int fkArmazem, double qtdPedida, int fkVenda) throws SQLException {
         Connection conn = conexao.getConnection();
         try {
             conn.setAutoCommit(false);
-            List<LoteMovimento> movimentos = baixarStock(conn, fkProduto, qtdPedida, fkVenda);
+            List<LoteMovimento> movimentos = baixarStock(conn, fkProduto, fkArmazem, qtdPedida, fkVenda);
             conn.commit();
             return movimentos;
         } catch (SQLException | RuntimeException e) {
@@ -263,7 +325,8 @@ public class LoteController implements EntidadeFactory {
     // ------------------------------------------------------------------
     /**
      * Repõe nos lotes de onde a venda original retirou, do último lote retirado
-     * para o primeiro.
+     * para o primeiro. Como repõe no próprio lote, o armazém é o mesmo da
+     * venda original.
      *
      * NÃO faz commit nem rollback. Usa a Connection (e a transacção) de quem
      * chama.
@@ -271,52 +334,51 @@ public class LoteController implements EntidadeFactory {
      * @param fkVendaOrigem venda (FR/FT) a que a NC se refere
      * @throws IllegalStateException se a qtd exceder o vendido
      */
-    public List<LoteMovimento> devolverStock(Connection conn, int fkVendaOrigem, int fkProduto, int qtdDevolver) throws SQLException {
+    public List<LoteMovimento> devolverStock(Connection conn, int fkVendaOrigem, int fkProduto, double qtdDevolver) throws SQLException {
         String sql = "SELECT m.id, m.fk_lote, m.qtd, m.qtd_devolvida "
                 + "FROM lote_movimento m INNER JOIN lote l ON l.id = m.fk_lote "
                 + "WHERE m.fk_venda = ? AND m.tipo = 'VENDA' AND l.fk_produto = ? "
                 + "ORDER BY m.id DESC FOR UPDATE";
 
         // 1) lê os movimentos da venda original (e bloqueia as linhas)
-        List<int[]> origem = new ArrayList<>(); // {idMov, fkLote, podeDevolver}
+        List<MovOrigem> origem = new ArrayList<>();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, fkVendaOrigem);
             ps.setInt(2, fkProduto);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    int podeDevolver = rs.getInt("qtd") - rs.getInt("qtd_devolvida");
-                    if (podeDevolver > 0) {
-                        origem.add(new int[]{
-                            rs.getInt("id"), rs.getInt("fk_lote"), podeDevolver
-                        });
+                    double podeDevolver = arredondar(rs.getDouble("qtd") - rs.getDouble("qtd_devolvida"));
+                    if (podeDevolver > EPS) {
+                        origem.add(new MovOrigem(rs.getInt("id"), rs.getInt("fk_lote"), podeDevolver));
                     }
                 }
             }
         }
 
-        int totalDevolvivel = 0;
-        for (int[] o : origem) {
-            totalDevolvivel += o[2];
+        double totalDevolvivel = 0;
+        for (MovOrigem o : origem) {
+            totalDevolvivel += o.podeDevolver;
         }
-        if (totalDevolvivel < qtdDevolver) {
+        totalDevolvivel = arredondar(totalDevolvivel);
+        if (totalDevolvivel + EPS < qtdDevolver) {
             throw new IllegalStateException("NC excede o vendido. Máximo a devolver: " + totalDevolvivel);
         }
 
         // 2) repõe do último lote retirado para o primeiro
-        int restante = qtdDevolver;
+        double restante = arredondar(qtdDevolver);
         List<LoteMovimento> movimentos = new ArrayList<>();
 
-        for (int[] o : origem) {
-            if (restante == 0) {
+        for (MovOrigem o : origem) {
+            if (restante <= EPS) {
                 break;
             }
 
-            int repor = Math.min(o[2], restante);
-            reporQtdLote(conn, o[1], repor);
-            marcarDevolvido(conn, o[0], repor);
-            movimentos.add(inserirMovimento(conn, o[1], fkVendaOrigem, "DEVOLUCAO", repor));
+            double repor = Math.min(o.podeDevolver, restante);
+            reporQtdLote(conn, o.fkLote, repor);
+            marcarDevolvido(conn, o.idMov, repor);
+            movimentos.add(inserirMovimento(conn, o.fkLote, fkVendaOrigem, "DEVOLUCAO", repor));
 
-            restante -= repor;
+            restante = arredondar(restante - repor);
         }
         return movimentos;
     }
@@ -327,7 +389,7 @@ public class LoteController implements EntidadeFactory {
      *
      * @throws IllegalStateException se a qtd exceder o vendido
      */
-    public List<LoteMovimento> devolverStock(int fkVendaOrigem, int fkProduto, int qtdDevolver) throws SQLException {
+    public List<LoteMovimento> devolverStock(int fkVendaOrigem, int fkProduto, double qtdDevolver) throws SQLException {
         Connection conn = conexao.getConnection();
         try {
             //conn.setAutoCommit(false);
@@ -345,39 +407,63 @@ public class LoteController implements EntidadeFactory {
     // ------------------------------------------------------------------
     // Auxiliares
     // ------------------------------------------------------------------
-    private void actualizarQtdLote(Connection conn, int idLote, int novaQtd, String estado) throws SQLException {
+    /**
+     * Movimento de venda de onde se vai repor (uso interno).
+     */
+    private static class MovOrigem {
+
+        final int idMov;
+        final int fkLote;
+        final double podeDevolver;
+
+        MovOrigem(int idMov, int fkLote, double podeDevolver) {
+            this.idMov = idMov;
+            this.fkLote = fkLote;
+            this.podeDevolver = podeDevolver;
+        }
+    }
+
+    /**
+     * Arredonda a 3 casas decimais para evitar erros de vírgula flutuante
+     * (ex.: 0.1 + 0.2).
+     */
+    private static double arredondar(double valor) {
+        return Math.round(valor * 1000.0) / 1000.0;
+    }
+
+    private void actualizarQtdLote(Connection conn, int idLote, double novaQtd, String estado) throws SQLException {
         String sql = "UPDATE lote SET qtd = ?, estado = ? WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, novaQtd);
+            ps.setDouble(1, novaQtd);
             ps.setString(2, estado);
             ps.setInt(3, idLote);
             ps.executeUpdate();
         }
     }
 
-    private void reporQtdLote(Connection conn, int idLote, int repor) throws SQLException {
+    private void reporQtdLote(Connection conn, int idLote, double repor) throws SQLException {
         // Mantém DESACTIVO; senão recalcula EXPIRADO/ACTIVO pela validade
         String sql = "UPDATE lote SET qtd = qtd + ?, estado = CASE "
                 + "WHEN estado = 'DESACTIVO' THEN 'DESACTIVO' "
                 + "WHEN data_validade < CURDATE() THEN 'EXPIRADO' "
                 + "ELSE 'ACTIVO' END WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, repor);
+            ps.setDouble(1, repor);
             ps.setInt(2, idLote);
             ps.executeUpdate();
         }
     }
 
-    private void marcarDevolvido(Connection conn, int idMovimento, int qtd) throws SQLException {
+    private void marcarDevolvido(Connection conn, int idMovimento, double qtd) throws SQLException {
         String sql = "UPDATE lote_movimento SET qtd_devolvida = qtd_devolvida + ? WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, qtd);
+            ps.setDouble(1, qtd);
             ps.setInt(2, idMovimento);
             ps.executeUpdate();
         }
     }
 
-    private LoteMovimento inserirMovimento(Connection conn, int fkLote, int fkVenda, String tipo, int qtd) throws SQLException {
+    private LoteMovimento inserirMovimento(Connection conn, int fkLote, int fkVenda, String tipo, double qtd) throws SQLException {
         String sql = "INSERT INTO lote_movimento( fk_lote, fk_venda, tipo, qtd, data_mov ) "
                 + "VALUES( ?, ?, ?, ?, NOW() )";
 
@@ -388,7 +474,7 @@ public class LoteController implements EntidadeFactory {
             ps.setInt(1, fkLote);
             ps.setInt(2, fkVenda);
             ps.setString(3, tipo);
-            ps.setInt(4, qtd);
+            ps.setDouble(4, qtd);
             ps.executeUpdate();
 
             try (ResultSet keys = ps.getGeneratedKeys()) {
@@ -422,11 +508,12 @@ public class LoteController implements EntidadeFactory {
     private void setResultSetLote(ResultSet rs, Lote lote) throws SQLException {
         lote.setId(rs.getInt("id"));
         lote.setFkProduto(rs.getInt("fk_produto"));
+        lote.setFkArmazem(rs.getInt("fk_armazem"));
         lote.setNumeroLote(rs.getString("numero_lote"));
         lote.setDataEntrada(rs.getDate("data_entrada"));
         lote.setDataFabrica(rs.getDate("data_fabrica"));
         lote.setDataValidade(rs.getDate("data_validade"));
-        lote.setQtd(rs.getInt("qtd"));
+        lote.setQtd(rs.getDouble("qtd"));
         lote.setEstado(EstadoLote.valueOf(rs.getString("estado")));
     }
 
@@ -463,14 +550,20 @@ public class LoteController implements EntidadeFactory {
 
     /**
      * Indica se o produto tem lotes vendáveis: activos, com stock e dentro da
-     * validade (mesmo critério usado em getStock e baixarStock).
+     * validade (mesmo critério usado em getStock e baixarStock). Se
+     * fkArmazem for null, considera todos os armazéns.
      */
-    public boolean existeLotesDisponiveis(int fkProduto) {
+    public boolean existeLotesDisponiveis(int fkProduto, Integer fkArmazem) {
         String sql = "SELECT EXISTS( SELECT 1 FROM lote "
                 + "WHERE fk_produto = ? AND estado = 'ACTIVO' "
-                + "AND qtd > 0 AND data_validade >= CURDATE() ) AS existe";
+                + "AND qtd > 0 AND data_validade >= CURDATE() "
+                + ( fkArmazem != null ? "AND fk_armazem = ? " : "" )
+                + ") AS existe";
         try (PreparedStatement ps = conexao.getConnection().prepareStatement(sql)) {
             ps.setInt(1, fkProduto);
+            if (fkArmazem != null) {
+                ps.setInt(2, fkArmazem);
+            }
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getBoolean("existe");
@@ -480,6 +573,10 @@ public class LoteController implements EntidadeFactory {
             Logger.getLogger(LoteController.class.getName()).log(Level.SEVERE, null, e);
         }
         return false;
+    }
+
+    public boolean existeLotesDisponiveis(int fkProduto) {
+        return existeLotesDisponiveis(fkProduto, null);
     }
 
     private void autoCommitSilencioso(Connection conn) {
