@@ -140,6 +140,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     private static ReferenciasController referenciasController;
     private static PedidosController pedidosController;
     private static ItemPedidosController itemPedidosController;
+    private static LoteController loteController;
 
     /**
      * OUTROS
@@ -239,6 +240,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         pedidosController = new PedidosController(conexao.getConnectionAtiva());
         referenciasController = new ReferenciasController(conexao);
         mesRhController = new MesRhController(conexao.getConnectionAtiva());
+        loteController = new LoteController(conexao);
         cmc = new ContaMovimentosController(conexao);
         txtQuatindade.setText("1");
 //        txtQuatindade.setDocument( new PermitirNumeros() );
@@ -3170,7 +3172,13 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                             );
 
                             if (getIdDocumento() == DOC_FACTURA_RECIBO_FR || getIdDocumento() == DOC_FACTURA_FT) {
-                                actualizar_quantidade(idProduto, item.getQuantidade(), conexaoLocal);
+
+                                //#LOTE
+                                if (loteController.existeLotesDisponiveis(idProduto)) {
+                                    loteController.baixarStock(idProduto, (int) item.getQuantidade(), cod_venda);
+                                    actualizar_quantidade(idProduto, item.getQuantidade(), conexaoLocal);
+                                }
+
                             }
                         }
                     }

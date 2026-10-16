@@ -7,9 +7,9 @@
 package visao;
 
 import java.sql.Connection;
-import comercial.controller.ExtratoContaClienteController;
 import comercial.controller.MovimentacaoController;
 import comercial.controller.ItemVendasController;
+import comercial.controller.LoteController;
 import comercial.controller.PagamentoMensalidadeController;
 import comercial.controller.ProdutosController;
 import comercial.controller.TipoProdutosController;
@@ -20,8 +20,6 @@ import controller.VendaController;
 import dao.*;
 import entity.*;
 //import hotel.controller.ExtratoContaClienteController;
-import comercial.controller.VendasController;
-import controller.TipoProdutoController;
 import java.awt.Component;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -64,6 +62,7 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
     private static ProdutosController produtosController;
     private static TipoProdutosController tipoProdutosController;
     private static ItemVendasController itemVendasController;
+    private static LoteController loteController;
     private ItemVendaDao itemVendaDao;
     private VasilhameDao vasilhameDao;
     private static DescontoDao descontoDao;
@@ -119,6 +118,7 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
         this.conexao = conexao;
         produtosController = new ProdutosController(NotasCreditoDebitoAnulacaoVisao.conexao);
         tipoProdutosController = new TipoProdutosController(NotasCreditoDebitoAnulacaoVisao.conexao);
+        loteController = new LoteController(conexao);
         setWindowsListener();
         init();
     }
@@ -1123,7 +1123,6 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
             }
 
 //            actualizar_cod_doc();
-
             HashMap hashMap = new HashMap();
             String telefone = venda_local.getCodigoCliente().getTelefone();
             String morada = venda_local.getCodigoCliente().getMorada();
@@ -1301,6 +1300,17 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
                     || documentoParm.getFkDocumento().getPkDocumento() == DOC_FACTURA_FT) {
                 // só adiciona caso existir o produto no armazém em questão.
                 if (Objects.nonNull(stock_local)) {
+
+                    //#LOTE
+                    if (loteController.existeLotes(itemDocumentos.getCodigoProduto().getCodigo())) {
+                        loteController.devolverStock(
+                                documentoParm.getCodigo(), 
+                                itemDocumentos.getCodigoProduto().getCodigo(), 
+                                (int) itemDocumentos.getQuantidade()
+                        );
+                    }
+
+                    
                     MovimentacaoController.registrarMovimento(
                             itemVendaLocal.getCodigoProduto().getCodigo(),
                             documentoParm.getIdArmazemFK().getCodigo(),
