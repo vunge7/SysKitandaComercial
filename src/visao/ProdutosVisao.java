@@ -148,8 +148,8 @@ public class ProdutosVisao extends javax.swing.JFrame {
         proximo_codigo_manual(produtosController);
         busca_permissao();
         txtCodigoProduto.setDocument(new PermitirNumeros());
-        jcDataFabrico.setDate(new Date());
-        jcDataExpiracao.setDate(new Date());
+//        jcDataFabrico.setDate(new Date());
+//        jcDataExpiracao.setDate(new Date());
 //        txtPrecoCompra.addKeyListener( new PrecoCompraPercentagem() );
 //        txtPrecoVendaRetalho.addKeyListener( new PrecoVendaPercentagem() );
         setFocus(dadosInstituicao.getFoco());
@@ -257,6 +257,7 @@ public class ProdutosVisao extends javax.swing.JFrame {
         buttonGroup3 = new javax.swing.ButtonGroup();
         buttonGroup4 = new javax.swing.ButtonGroup();
         buttonGroup5 = new javax.swing.ButtonGroup();
+        buttonGroup6 = new javax.swing.ButtonGroup();
         jPanel5 = new javax.swing.JPanel();
         lbTipoProduto = new javax.swing.JLabel();
         cmbTipoProduto = new javax.swing.JComboBox();
@@ -329,10 +330,6 @@ public class ProdutosVisao extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         btLupaEconomato = new javax.swing.JButton();
         painel_stock = new javax.swing.JPanel();
-        llbDataFabrico = new javax.swing.JLabel();
-        jcDataFabrico = new com.toedter.calendar.JDateChooser();
-        lbDataExpiracao = new javax.swing.JLabel();
-        jcDataExpiracao = new com.toedter.calendar.JDateChooser();
         lbPreco = new javax.swing.JLabel();
         txtPercentagemGanhoRetalho = new javax.swing.JTextField();
         lbStatus1 = new javax.swing.JLabel();
@@ -347,6 +344,9 @@ public class ProdutosVisao extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         txtQtdGrosso = new javax.swing.JTextField();
         jButton5 = new javax.swing.JButton();
+        jRadioButtonSim = new javax.swing.JRadioButton();
+        jRadioButtonNao = new javax.swing.JRadioButton();
+        jLabel3 = new javax.swing.JLabel();
         txtArmazen1 = new javax.swing.JTextField();
         txtArmazen2 = new javax.swing.JTextField();
         txtArmazen3 = new javax.swing.JTextField();
@@ -868,7 +868,6 @@ public class ProdutosVisao extends javax.swing.JFrame {
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txtCodigoProduto.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        txtCodigoProduto.setForeground(new java.awt.Color(0, 0, 0));
         txtCodigoProduto.setCaretColor(new java.awt.Color(255, 255, 255));
         txtCodigoProduto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -941,16 +940,6 @@ public class ProdutosVisao extends javax.swing.JFrame {
 
         painel_stock.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
-        llbDataFabrico.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
-        llbDataFabrico.setText("Data Fabrico:");
-
-        jcDataFabrico.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-
-        lbDataExpiracao.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
-        lbDataExpiracao.setText("Data Expiracao:");
-
-        jcDataExpiracao.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-
         lbPreco.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         lbPreco.setText("Percent. Ganho:");
 
@@ -1021,6 +1010,16 @@ public class ProdutosVisao extends javax.swing.JFrame {
             }
         });
 
+        buttonGroup6.add(jRadioButtonSim);
+        jRadioButtonSim.setText("SIM");
+
+        buttonGroup6.add(jRadioButtonNao);
+        jRadioButtonNao.setSelected(true);
+        jRadioButtonNao.setText("NÃO");
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel3.setText("Controla Lote?");
+
         javax.swing.GroupLayout painel_stockLayout = new javax.swing.GroupLayout(painel_stock);
         painel_stock.setLayout(painel_stockLayout);
         painel_stockLayout.setHorizontalGroup(
@@ -1034,6 +1033,7 @@ public class ProdutosVisao extends javax.swing.JFrame {
                         .addComponent(txtPercentagemGanhoRetalho, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lbStatus1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(painel_stockLayout.createSequentialGroup()
                         .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(painel_stockLayout.createSequentialGroup()
@@ -1054,18 +1054,16 @@ public class ProdutosVisao extends javax.swing.JFrame {
                                 .addComponent(lbCategoria3, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(cmbLocal, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(painel_stockLayout.createSequentialGroup()
-                                .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(llbDataFabrico, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lbDataExpiracao, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jcDataFabrico, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jcDataExpiracao, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addComponent(txtPrecoVendaRetalho)
                             .addComponent(lbPrecoVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 11, Short.MAX_VALUE))
-                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(painel_stockLayout.createSequentialGroup()
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jRadioButtonSim, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jRadioButtonNao)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         painel_stockLayout.setVerticalGroup(
@@ -1073,7 +1071,12 @@ public class ProdutosVisao extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painel_stockLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(34, 34, 34)
+                .addGap(49, 49, 49)
+                .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jRadioButtonSim)
+                    .addComponent(jRadioButtonNao)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbCategoria3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cmbLocal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1081,20 +1084,12 @@ public class ProdutosVisao extends javax.swing.JFrame {
                 .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbBarra1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(41, 41, 41)
-                .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(llbDataFabrico, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jcDataFabrico, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(6, 6, 6)
-                .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbDataExpiracao)
-                    .addComponent(jcDataExpiracao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbPreco)
                     .addComponent(txtPercentagemGanhoRetalho, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbStatus1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(32, 32, 32)
                 .addComponent(lbPrecoVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtPrecoVendaRetalho, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1178,7 +1173,7 @@ public class ProdutosVisao extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(painel_stock, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButtonCompras, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(jButtonCompras, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -1718,6 +1713,7 @@ public class ProdutosVisao extends javax.swing.JFrame {
     private javax.swing.ButtonGroup buttonGroup3;
     private javax.swing.ButtonGroup buttonGroup4;
     private javax.swing.ButtonGroup buttonGroup5;
+    private javax.swing.ButtonGroup buttonGroup6;
     public static javax.swing.JCheckBox ck_produto;
     public static javax.swing.JCheckBox ck_servico;
     public static javax.swing.JComboBox<String> cmbFamilia;
@@ -1746,6 +1742,7 @@ public class ProdutosVisao extends javax.swing.JFrame {
     private static javax.swing.JButton jButtonCompras;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabelCodProduto;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
@@ -1753,16 +1750,15 @@ public class ProdutosVisao extends javax.swing.JFrame {
     public static javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private static javax.swing.JPanel jPanel_retencao;
+    private javax.swing.JRadioButton jRadioButtonNao;
+    private javax.swing.JRadioButton jRadioButtonSim;
     private javax.swing.JScrollPane jScrollPane1;
-    public static com.toedter.calendar.JDateChooser jcDataExpiracao;
-    public static com.toedter.calendar.JDateChooser jcDataFabrico;
     private javax.swing.JLabel label_factor_conversao;
     private javax.swing.JLabel label_qtd_bruta;
     private javax.swing.JLabel lbBarra;
     private javax.swing.JLabel lbBarra1;
     private javax.swing.JLabel lbCategoria3;
     private javax.swing.JLabel lbCusto;
-    private javax.swing.JLabel lbDataExpiracao;
     private static javax.swing.JLabel lbPhoto;
     private javax.swing.JLabel lbPreco;
     private javax.swing.JLabel lbPrecoVenda;
@@ -1779,7 +1775,6 @@ public class ProdutosVisao extends javax.swing.JFrame {
     private javax.swing.JLabel lbTipoProduto4;
     private javax.swing.JLabel lbTipoProduto5;
     private javax.swing.JLabel lbUnidade;
-    private javax.swing.JLabel llbDataFabrico;
     public static javax.swing.JPanel painel_stock;
     private javax.swing.JPanel pnPainelAplicar;
     public static javax.swing.JRadioButton rbEnviarCozinha;
@@ -2006,8 +2001,8 @@ public class ProdutosVisao extends javax.swing.JFrame {
         produto.setDesignacao(designacao_produto);
 
         produto.setPreco(new BigDecimal(MetodosUtil.convertToDouble(txtPrecoCompra.getText())));
-        produto.setDataFabrico(isStocavel ? jcDataFabrico.getDate() : new Date());
-        produto.setDataExpiracao(isStocavel ? jcDataExpiracao.getDate() : new Date());
+        produto.setDataFabrico(new Date());
+        produto.setDataExpiracao(new Date());
 
         String codBarra = normalizarCodigoBarra(txtCodigoBarra.getText());
         produto.setCodBarra(isStocavel ? codBarra : "2147483647");
@@ -2031,6 +2026,7 @@ public class ProdutosVisao extends javax.swing.JFrame {
         // 🔹 Sempre grava 1 na unidade de compra
         produto.setUnidadeCompra(1.0);
         produto.setFactorConversao(factor_conversao);
+        produto.setControlaLote(jRadioButtonSim.isSelected());
 
         try {
             if (Objects.nonNull(image_View.getBystebyteImg())) {
@@ -2577,8 +2573,6 @@ public class ProdutosVisao extends javax.swing.JFrame {
             txtCodigoManual.setText(String.valueOf(produto_local.getCodigoManual()));
             txtCodigoBarraProcura.setText(String.valueOf(produto_local.getCodBarra()));
             txtCodigoManualProcura.setText(String.valueOf(produto_local.getCodigoManual()));
-            jcDataExpiracao.setDate(produto_local.getDataExpiracao());
-            jcDataFabrico.setDate(produto_local.getDataFabrico());
             txtUnidadeCompra.setText(String.valueOf(produto_local.getUnidadeCompra()));
             txtFactorConversao.setText(String.valueOf(produto_local.getFactorConversao()));
 

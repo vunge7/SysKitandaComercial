@@ -113,6 +113,8 @@ public class TbProduto implements Serializable
     private Double unidadeCompra;
     @Column(name = "factor_conversao")
     private Double factorConversao;
+    @Column(name = "controla_lote")
+    private Boolean controlaLote;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkProduto")
     private List<ProdutoIsento> produtoIsentoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "codProdutoCodigo")
@@ -207,6 +209,14 @@ public class TbProduto implements Serializable
         this.status = status;
         this.dataEntrada = dataEntrada;
         this.stocavel = stocavel;
+    }
+
+    public Boolean getControlaLote() {
+        return controlaLote;
+    }
+
+    public void setControlaLote(Boolean controlaLote) {
+        this.controlaLote = controlaLote;
     }
 
     public Integer getCodigo()

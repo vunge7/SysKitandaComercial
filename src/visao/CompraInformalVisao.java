@@ -10,6 +10,7 @@ import comercial.controller.ArmazensController;
 import comercial.controller.ComprasController;
 import comercial.controller.DadosInstituicaoController;
 import comercial.controller.DocumentosController;
+import comercial.controller.EntradaLoteCompra;
 import comercial.controller.FornecedoresController;
 import comercial.controller.ItemComprasController;
 import comercial.controller.LugaresController;
@@ -105,7 +106,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
     public CompraInformalVisao(int cod_usuario, BDConexao conexao) {
 
         initComponents();
-
+        initLote();
         cmbTipoDocumento.setVisible(false);
         precosController = new PrecosController(conexao);
         lugaresController = new LugaresController(conexao);
@@ -269,6 +270,12 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         cmbTipoDocumento = new javax.swing.JComboBox<>();
         lb_data_apuramento3 = new javax.swing.JLabel();
         txtFactorConversao = new javax.swing.JTextField();
+        llbDataFabrico = new javax.swing.JLabel();
+        jcDataFabrico = new com.toedter.calendar.JDateChooser();
+        lbDataExpiracao = new javax.swing.JLabel();
+        jcDataValidade = new com.toedter.calendar.JDateChooser();
+        txtNumeroLote = new javax.swing.JTextField();
+        llbDataFabrico1 = new javax.swing.JLabel();
         jPanel8 = new javax.swing.JPanel();
         lbTotalPagar = new javax.swing.JLabel();
         txtTotal_AOA_Iliquido = new javax.swing.JTextField();
@@ -516,7 +523,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         lb_data_apuramento1.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lb_data_apuramento1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lb_data_apuramento1.setText("Qtd. Existente:");
-        jPanel3.add(lb_data_apuramento1, new org.netbeans.lib.awtextra.AbsoluteConstraints(930, 190, 90, 20));
+        jPanel3.add(lb_data_apuramento1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1020, 140, 90, 20));
 
         txtCodBarra.setFont(new java.awt.Font("SansSerif", 0, 16)); // NOI18N
         txtCodBarra.addActionListener(new java.awt.event.ActionListener() {
@@ -542,7 +549,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
                 jButton_eliminarActionPerformed(evt);
             }
         });
-        jPanel3.add(jButton_eliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 180, 50, -1));
+        jPanel3.add(jButton_eliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 180, 50, -1));
 
         jButton_inserir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Button-Add-icon.png"))); // NOI18N
         jButton_inserir.addActionListener(new java.awt.event.ActionListener() {
@@ -550,7 +557,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
                 jButton_inserirActionPerformed(evt);
             }
         });
-        jPanel3.add(jButton_inserir, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 180, 50, -1));
+        jPanel3.add(jButton_inserir, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 180, 50, -1));
 
         cmbFornecedor.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cmbFornecedor.addActionListener(new java.awt.event.ActionListener() {
@@ -610,7 +617,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         txtQtdExistente.setEditable(false);
         txtQtdExistente.setFont(new java.awt.Font("Lucida Grande", 1, 24)); // NOI18N
         txtQtdExistente.setForeground(new java.awt.Color(0, 102, 102));
-        jPanel3.add(txtQtdExistente, new org.netbeans.lib.awtextra.AbsoluteConstraints(1030, 180, 80, 40));
+        jPanel3.add(txtQtdExistente, new org.netbeans.lib.awtextra.AbsoluteConstraints(1030, 160, 80, 40));
 
         txtQtdEntrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -659,6 +666,25 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
             }
         });
         jPanel3.add(txtFactorConversao, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 140, 50, 30));
+
+        llbDataFabrico.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
+        llbDataFabrico.setText("Número Lote:");
+        jPanel3.add(llbDataFabrico, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 210, -1, 20));
+
+        jcDataFabrico.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jPanel3.add(jcDataFabrico, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 180, -1, -1));
+
+        lbDataExpiracao.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
+        lbDataExpiracao.setText("Data Expiracao:");
+        jPanel3.add(lbDataExpiracao, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 180, 100, 20));
+
+        jcDataValidade.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jPanel3.add(jcDataValidade, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 180, -1, -1));
+        jPanel3.add(txtNumeroLote, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 210, 90, -1));
+
+        llbDataFabrico1.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
+        llbDataFabrico1.setText("Data Fabrico:");
+        jPanel3.add(llbDataFabrico1, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 180, -1, 20));
 
         jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
         jPanel8.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -820,9 +846,9 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -920,7 +946,8 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
     {//GEN-HEADEREND:event_txtCodBarraActionPerformed
         // TODO add your handling code here:
 //        accao_codigo_barra_enter();
-        txtQtdEntrar.requestFocus();
+//        txtQtdEntrar.requestFocus();
+        focarCampoEntrada();
         busca_produto_by_cod_barra();
     }//GEN-LAST:event_txtCodBarraActionPerformed
 
@@ -942,7 +969,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
     private void txtCodigoInternoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtCodigoInternoActionPerformed
     {//GEN-HEADEREND:event_txtCodigoInternoActionPerformed
         // TODO add your handling code here:
-
+        focarCampoEntrada();
         busca_produto_by_cod_interno();
         txtQtdEntrar.requestFocus();
         txtQtdCritica.setText("10");
@@ -981,11 +1008,12 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
 //        {
 //            e.printStackTrace();
 //        }
+        
         try {
             new BuscaProdutoComprasVisao(this, rootPaneCheckingEnabled, getIdArmazens(), DVML.JANELA_COMPRA, BDConexao.getInstancia()).setVisible(true);
-
+            focarCampoEntrada();
 //            new BuscaProdutoVisao(this, rootPaneCheckingEnabled, getIdArmazens(), DVML.JANELA_COMPRA, BDConexao.getInstancia()).setVisible(true);
-            txtQtdEntrar.requestFocus();
+//            txtQtdEntrar.requestFocus();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1031,6 +1059,9 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
+    public static com.toedter.calendar.JDateChooser jcDataFabrico;
+    public static com.toedter.calendar.JDateChooser jcDataValidade;
+    private javax.swing.JLabel lbDataExpiracao;
     public static javax.swing.JLabel lbLegenda;
     private javax.swing.JLabel lbPreco1;
     private javax.swing.JLabel lbProdutos2;
@@ -1058,6 +1089,8 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
     public static javax.swing.JLabel lb_produto;
     private static javax.swing.JLabel lb_proximo_documento;
     private javax.swing.JLabel lb_usuario;
+    private javax.swing.JLabel llbDataFabrico;
+    private javax.swing.JLabel llbDataFabrico1;
     private javax.swing.JDialog produtoPesquisaJDialog;
     public static javax.swing.JSpinner spPrecoCompra;
     private javax.swing.JTable tabela_busca;
@@ -1066,6 +1099,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
     private static javax.swing.JTextField txtCodigoInterno;
     private javax.swing.JTextField txtDesignacao;
     public static javax.swing.JTextField txtFactorConversao;
+    private static javax.swing.JTextField txtNumeroLote;
     private static javax.swing.JTextField txtPrecoVenda;
     public static javax.swing.JTextField txtQtdBaixa;
     public static javax.swing.JTextField txtQtdCritica;
@@ -1077,6 +1111,349 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
     public static javax.swing.JTextField txtTotal_AOA_liquido;
     // End of variables declaration//GEN-END:variables
 
+    
+    // =====================================================================
+// BLOCO DE LOTES v2 PARA CompraInformalVisao   (substitui a v1)
+//
+// Usa os teus calendarios jcDataFabrico / jcDataValidade e um novo campo
+// txtNumeroLote (JTextField) que crias no designer.
+//
+// ANTES DE COLAR, no designer do NetBeans:
+//   1) Acrescenta um JTextField com o nome  txtNumeroLote  (e um rotulo
+//      "Nº Lote:") ao lado de "Data Fabrico".
+//   2) Para txtNumeroLote, jcDataFabrico e jcDataValidade:
+//      botao direito > Customize Code > Variable Modifiers >
+//      marcar "static"  (como os outros campos do formulario; sem isto o
+//      codigo estatico abaixo nao compila).
+//
+// Colar DENTRO da classe, antes do  main.  Apagar o adicionar_produto(TbProduto)
+// antigo (este e o novo).   Requer:  import comercial.controller.EntradaLoteCompra;
+// =====================================================================
+
+    // ---------------------------------------------------------------
+    // Gestao de lotes - constantes
+    // ---------------------------------------------------------------
+    private static final int COL_LOTE = 11;      // colunas novas no fim da tabela
+    private static final int COL_FABRICO = 12;   // (os indices 0..10 nao mudam)
+    private static final int COL_VALIDADE = 13;
+
+    /**
+     * Avisa (e pede confirmacao) se o lote caduca em menos de X dias. 0 = nao avisar.
+     */
+    public static int DIAS_MINIMOS_VALIDADE = 180;
+
+    /**
+     * Chamar no construtor, logo a seguir a initComponents().
+     */
+    private void initLote() {
+
+        // Tabela com 14 colunas (Lote, Fabrico e Validade no fim)
+        tableCompra.setModel(new DefaultTableModel(
+                new Object[][]{},
+                new String[]{
+                    "Cod.Art", "Descrição", "Preço", "Qtd.", "Unidade", "Desconto(%)", "Taxa ", "Valor",
+                    "Valor C/ Imposto", "Critica", "Baixa", "Lote", "Fabrico", "Validade"
+                }
+        ) {
+            Class[] types = new Class[]{
+                java.lang.Integer.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class,
+                java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class,
+                java.lang.Double.class, java.lang.Object.class, java.lang.Object.class,
+                java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean[]{
+                false, false, true, true, false, true, true, false, false, true, true, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types[columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit[columnIndex];
+            }
+        });
+        tableCompra.getColumnModel().getColumn(0).setPreferredWidth(10);
+        tableCompra.getColumnModel().getColumn(1).setPreferredWidth(240);
+        tableCompra.getColumnModel().getColumn(2).setPreferredWidth(20);
+        tableCompra.getColumnModel().getColumn(3).setPreferredWidth(5);
+        tableCompra.getColumnModel().getColumn(6).setPreferredWidth(5);
+        tableCompra.getColumnModel().getColumn(9).setPreferredWidth(5);
+        tableCompra.getColumnModel().getColumn(10).setPreferredWidth(5);
+        tableCompra.getColumnModel().getColumn(COL_LOTE).setPreferredWidth(60);
+        tableCompra.getColumnModel().getColumn(COL_FABRICO).setPreferredWidth(60);
+        tableCompra.getColumnModel().getColumn(COL_VALIDADE).setPreferredWidth(60);
+
+        // Enter no Nº Lote salta para a validade
+        txtNumeroLote.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jcDataValidade.requestFocus();
+            }
+        });
+
+        // Campos de lote so ficam activos para produtos que controlam lote
+        txtNumeroLote.setEnabled(false);
+        jcDataFabrico.setEnabled(false);
+        jcDataValidade.setEnabled(false);
+    }
+
+    // ---------------------------------------------------------------
+    // Gestao de lotes - auxiliares
+    // ---------------------------------------------------------------
+    /**
+     * O produto controla lote? (tb_produto.controla_lote). Se a coluna nao
+     * existir ou a consulta falhar, trata como "controla" para a falha ser
+     * visivel (e nao perder lotes em silencio).
+     */
+    private static boolean controlaLote(int codProduto) {
+        String sql = "SELECT controla_lote FROM tb_produto WHERE codigo = " + codProduto;
+        try {
+            ResultSet rs = conexao.executeQuery(sql);
+            if (rs == null) {
+                return true;
+            }
+            if (rs.next()) {
+                return rs.getInt("controla_lote") == 1;
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Activa os campos de lote se o produto os exige; senao desactiva e
+     * limpa. Passar null para repor o estado inicial.
+     */
+    private static void prepararCamposLote(TbProduto p) {
+        boolean controla = (p != null) && p.getCodigo() != 0 && controlaLote(p.getCodigo());
+        txtNumeroLote.setEnabled(controla);
+        jcDataFabrico.setEnabled(controla);
+        jcDataValidade.setEnabled(controla);
+        if (!controla) {
+            limparCamposLote();
+        }
+    }
+
+    private static void limparCamposLote() {
+        txtNumeroLote.setText("");
+        jcDataFabrico.setDate(null);
+        jcDataValidade.setDate(null);
+    }
+
+    /**
+     * Foco apos escolher o produto: lote (se aplicavel) ou quantidade.
+     */
+    private static void focarCampoEntrada() {
+        if (txtNumeroLote.isEnabled()) {
+            txtNumeroLote.requestFocus();
+        } else {
+            txtQtdEntrar.requestFocus();
+        }
+    }
+
+    private static String textoCelula(DefaultTableModel modelo, int linha, int coluna) {
+        Object v = modelo.getValueAt(linha, coluna);
+        return v == null ? "" : String.valueOf(v);
+    }
+
+    /**
+     * Linha da tabela com o mesmo produto E o mesmo lote (-1 se nao houver).
+     * Produtos sem lote usam lote "" e juntam-se como antes.
+     */
+    private static int localizarLinha(DefaultTableModel modelo, int codigo, String numeroLote) {
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            int cod = Integer.parseInt(String.valueOf(modelo.getValueAt(i, 0)));
+            if (cod == codigo && textoCelula(modelo, i, COL_LOTE).equals(numeroLote)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Soma qtdNova a uma linha existente e recalcula os valores da linha.
+     */
+    private static void somarQuantidadeLinha(DefaultTableModel modelo, int linha, double qtdNova) {
+        double preco = Double.parseDouble(String.valueOf(modelo.getValueAt(linha, 2)));
+        double qtd = Double.parseDouble(String.valueOf(modelo.getValueAt(linha, 3))) + qtdNova;
+        double desconto = Double.parseDouble(String.valueOf(modelo.getValueAt(linha, 5)));
+        double taxa = Double.parseDouble(String.valueOf(modelo.getValueAt(linha, 6)));
+
+        modelo.setValueAt(qtd, linha, 3);
+        modelo.setValueAt(preco * qtd, linha, 7);
+        modelo.setValueAt(FinanceUtils.getValorComIVA(qtd, taxa, preco, desconto), linha, 8);
+    }
+
+    /**
+     * Ligacao da transaccao da compra. TEM de ser a mesma que o
+     * DocumentosController.start/commit/rollback usam (a que passas ao
+     * baixarStock na venda). Ajusta aqui se o teu BDConexao for diferente.
+     */
+    private static Connection getConnectionTransaccao() {
+        return conexaoTransaction.getConnection();
+    }
+
+    // ---------------------------------------------------------------
+    // SUBSTITUI o adicionar_produto(TbProduto) antigo
+    // ---------------------------------------------------------------
+    public static void adicionar_produto(TbProduto produto) {
+
+        System.err.println("Adicionar: " + produto.getCodigo());
+        System.err.println("produto: " + produto.getDesignacao());
+        DefaultTableModel modelo = (DefaultTableModel) tableCompra.getModel();
+        double qtdCritica = Double.parseDouble(txtQtdCritica.getText());
+        double qtdBaixa = Double.parseDouble(txtQtdBaixa.getText());
+
+        // ---- LOTE: obrigatorio nos produtos que controlam lote ----
+        String numeroLote = "";
+        String fabrico = "";
+        String validade = "";
+        
+        if (controlaLote(produto.getCodigo())) {
+
+            // 1) datas primeiro (a validade tambem serve para gerar o lote automatico)
+            Date dataFabrico = jcDataFabrico.getDate();
+            Date dataValidade = jcDataValidade.getDate();
+            try {
+                EntradaLoteCompra.validarDatas(dataFabrico, dataValidade);
+            } catch (IllegalArgumentException ex) {
+                prepararCamposLote(produto);
+                jcDataValidade.requestFocus();
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "AVISO", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // 2) numero do lote: o da embalagem; se nao houver, so com confirmacao do utilizador
+            numeroLote = txtNumeroLote.getText().trim().toUpperCase();
+            if (numeroLote.isEmpty()) {
+                prepararCamposLote(produto);
+                String automatico = "SL-" + new java.text.SimpleDateFormat("yyyyMMdd").format(dataValidade);
+                int resp = JOptionPane.showConfirmDialog(null,
+                        "Não indicou o número do lote.\nGerar automaticamente (" + automatico + ")?\n\n"
+                        + "Use apenas se a embalagem não trouxer número de lote.",
+                        "Sem número de lote", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (resp != JOptionPane.YES_OPTION) {
+                    txtNumeroLote.requestFocus();
+                    return;
+                }
+                numeroLote = automatico;
+            }
+
+            // 3) validade curta
+            long dias = EntradaLoteCompra.diasAteValidade(dataValidade);
+            if (DIAS_MINIMOS_VALIDADE > 0 && dias < DIAS_MINIMOS_VALIDADE) {
+                int resposta = JOptionPane.showConfirmDialog(null,
+                        "O lote " + numeroLote + " caduca em " + dias + " dias (menos de " + DIAS_MINIMOS_VALIDADE
+                        + ").\nContinuar mesmo assim?",
+                        "Validade curta", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                if (resposta != JOptionPane.YES_OPTION) {
+                    jcDataValidade.requestFocus();
+                    return;
+                }
+            }
+            fabrico = EntradaLoteCompra.formatar(dataFabrico);
+            validade = EntradaLoteCompra.formatar(dataValidade);
+        }
+
+//        if (controlaLote(produto.getCodigo())) {
+//            numeroLote = txtNumeroLote.getText().trim().toUpperCase();
+//            if (numeroLote.isEmpty()) {
+//                prepararCamposLote(produto); // garante que os campos ficam activos
+//                focarCampoEntrada();
+//                JOptionPane.showMessageDialog(null, "Indique o número do lote.", "AVISO", JOptionPane.WARNING_MESSAGE);
+//                return;
+//            }
+//
+//            Date dataFabrico = jcDataFabrico.getDate();
+//            Date dataValidade = jcDataValidade.getDate();
+//            try {
+//                EntradaLoteCompra.validarDatas(dataFabrico, dataValidade);
+//            } catch (IllegalArgumentException ex) {
+//                prepararCamposLote(produto);
+//                jcDataValidade.requestFocus();
+//                JOptionPane.showMessageDialog(null, ex.getMessage(), "AVISO", JOptionPane.WARNING_MESSAGE);
+//                return;
+//            }
+//
+//            long dias = EntradaLoteCompra.diasAteValidade(dataValidade);
+//            if (DIAS_MINIMOS_VALIDADE > 0 && dias < DIAS_MINIMOS_VALIDADE) {
+//                int resposta = JOptionPane.showConfirmDialog(null,
+//                        "O lote " + numeroLote + " caduca em " + dias + " dias (menos de " + DIAS_MINIMOS_VALIDADE
+//                        + ").\nContinuar mesmo assim?",
+//                        "Validade curta", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+//                if (resposta != JOptionPane.YES_OPTION) {
+//                    jcDataValidade.requestFocus();
+//                    return;
+//                }
+//            }
+//            fabrico = EntradaLoteCompra.formatar(dataFabrico);
+//            validade = EntradaLoteCompra.formatar(dataValidade);
+//        }
+
+        // ---- a chave da linha e PRODUTO + LOTE ----
+        int linhaExistente = localizarLinha(modelo, produto.getCodigo(), numeroLote);
+
+        if (linhaExistente < 0) {
+            if (validar_zero_qtd_preco()) {
+                modelo.addRow(new Object[]{
+                    produto.getCodigo(),
+                    produto.getDesignacao(),
+                    getPrecoCompra(),
+                    getQuantidade(),
+                    produto.getCodUnidade().getAbreviacao(),
+                    0,
+                    getTaxaImposto(),
+                    getQuantidade() * getPrecoCompra(),
+                    FinanceUtils.getValorComIVA(getQuantidade(), getTaxaImposto(), getPrecoCompra(), 0),
+                    qtdCritica,
+                    qtdBaixa,
+                    numeroLote,
+                    fabrico,
+                    validade
+                });
+            }
+        } else if (!validade.equals(textoCelula(modelo, linhaExistente, COL_VALIDADE))) {
+            JOptionPane.showMessageDialog(null,
+                    "O lote " + numeroLote + " já está na tabela com a validade "
+                    + textoCelula(modelo, linhaExistente, COL_VALIDADE) + ".\nConfirme a validade.",
+                    "AVISO", JOptionPane.WARNING_MESSAGE);
+            return;
+        } else if (validar_zero_qtd_preco()) {
+            somarQuantidadeLinha(modelo, linhaExistente, getQuantidade());
+        }
+
+        actualizar_total();
+        txtCodigoInterno.setText("");
+        txtCodBarra.setText("");
+        txtQtdEntrar.setText("");
+        spPrecoCompra.setValue("0");
+        txtPrecoVenda.setText("0");
+        prepararCamposLote(null);
+        txtCodBarra.requestFocus();
+
+    }
+
+// =====================================================================
+// NA GRAVACAO  (em salvar_item_compra_comercial, depois do bloco if/else
+// do stock e antes de "// Atualiza preços"):
+//
+//                // ---- LOTE ----
+//                if (controlaLote(idProduto)) {
+//                    DefaultTableModel modeloLote = (DefaultTableModel) tableCompra.getModel();
+//                    EntradaLoteCompra.registar(getConnectionTransaccao(), idProduto, getIdArmazens(),
+//                            textoCelula(modeloLote, i, COL_LOTE),
+//                            EntradaLoteCompra.parseData(textoCelula(modeloLote, i, COL_FABRICO)),
+//                            EntradaLoteCompra.parseData(textoCelula(modeloLote, i, COL_VALIDADE)),
+//                            quantidade, cod_compras);
+//                }
+// =====================================================================
+
+    
+    
+    
+    
     public static void main(String[] args) {
         new CompraInformalVisao(15, BDConexao.getInstancia()).setVisible(true);
     }
@@ -1309,7 +1686,184 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
 //        }
 //        return false;
 //    }
+    
+        // =================================================================
+    // salvar_item_compra_comercial  -  versao com LOTES
+    //
+    // Substitui o teu metodo. Todas as linhas novas/alteradas estao
+    // marcadas com  // LOTE
+    //
+    // Requer o "bloco_lotes_CompraInformalVisao_v2" colado na classe
+    // (controlaLote, textoCelula, COL_LOTE/COL_FABRICO/COL_VALIDADE,
+    // getConnectionTransaccao) e  import comercial.controller.EntradaLoteCompra;
+    // =================================================================
     private static boolean salvar_item_compra_comercial(Integer cod_compras) {
+        System.out.println("Cod Compra no Item: " + cod_compras);
+        
+        if (MetodosUtil.tabela_vazia(tableCompra)) {
+            JOptionPane.showMessageDialog(null, "Adicione itens na tabela, caro usuário", "AVISO", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+
+        boolean sucesso = true;
+
+        StoksController stocksControllerLocal = new StoksController(conexaoTransaction);
+        PrecosController precosControllerLocal = new PrecosController(conexaoTransaction);
+        ItemComprasController itemComprasControllerLocal = new ItemComprasController(conexaoTransaction);
+
+        List<ItemCompras> itensParaSalvar = new ArrayList<>();
+
+        try {
+            // Pré-carrega produtos e preços antigos (cache local)
+            Map<Integer, TbProduto> produtosCache = new HashMap<>();
+            Map<Integer, TbPreco> precoRetalhoCache = new HashMap<>();
+            Map<Integer, TbPreco> precoGrossoCache = new HashMap<>();
+
+            // Itera sobre a tabela e prepara os objetos
+            for (int i = 0; i < tableCompra.getRowCount(); i++) {
+                int idProduto = Integer.parseInt(String.valueOf(tableCompra.getModel().getValueAt(i, 0)));
+                double precoCompra = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 2)));
+                double quantidade = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 3)));
+                double desconto = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 5)));
+                double valorIva = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 6)));
+                double total = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 8)));
+                double qtdCritica = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 9)));
+                double qtdBaixa = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 10)));
+
+                // Cache do produto
+                TbProduto produto = produtosCache.computeIfAbsent(idProduto, id
+                        -> (TbProduto) produtosController.findById(id)
+                );
+
+                // Cria item de compra
+                ItemCompras item = new ItemCompras();
+                item.setFkProduto(produto);
+                item.setFkCompra(new Compras(cod_compras));
+                item.setPrecoCompra(precoCompra);
+                item.setQuantidade(quantidade);
+                item.setDesconto(desconto);
+                item.setValorIva(valorIva);
+                item.setTotal(total);
+                item.setMotivoIsensao(getMotivoIsensao(idProduto));
+                item.setCodigoIsensao(MetodosUtil.getCodigoRegime(idProduto));
+                itensParaSalvar.add(item);
+
+                // Salva o item imediatamente (evita sobrecarga de memória)
+                if (!itemComprasControllerLocal.salvar(item)) {
+                    throw new RuntimeException("Falha ao salvar item da compra");
+                }
+
+                // Atualiza stock e movimento
+                boolean stockActualizado = false; // LOTE: so se cria lote se o stock mudou mesmo
+                if (!stocksControllerLocal.existe_stock(idProduto, getIdArmazens())) {
+                    if (MovimentacaoController.registrarMovimento(
+                            idProduto, getIdArmazens(), cod_usuario,
+                            BigDecimal.valueOf(quantidade), prox_doc, "ENTRADA", conexao)) {
+                        Connection conn = BDConexao.getConnection();
+                        conn.setAutoCommit(false);
+
+                        try {
+
+                            // outras operações...
+                            // LOTE: o resultado de registrar_stock passa a ser verificado
+                            if (!registrar_stock(produto, quantidade, qtdCritica, qtdBaixa, stocksController, conn)) {
+                                throw new RuntimeException("registrar_stock devolveu false");
+                            }
+
+                            // outras operações...
+                            conn.commit();
+                            stockActualizado = true; // LOTE
+
+                        } catch (Exception e) {
+                            conn.rollback();
+                            e.printStackTrace();
+                            // LOTE: antes o erro era engolido e a compra seguia sem stock
+                            throw new RuntimeException("Falha ao registar o stock do produto " + idProduto, e);
+                        } finally {
+                            conn.close();
+                        }
+//                    if (!registrar_stock(produto, quantidade, qtdCritica, qtdBaixa, stocksControllerLocal)) {
+//                        throw new RuntimeException("Falha ao registrar novo stock");
+//                    }
+                    }
+                } else {
+                    if (MovimentacaoController.registrarMovimento(
+                            idProduto, getIdArmazens(), cod_usuario,
+                            BigDecimal.valueOf(quantidade), prox_doc, "ENTRADA", conexao)) {
+                        Date dataEntrada_local = new Date();
+                        // LOTE: actualizar_dados_stock tem de relancar os erros (ver nota no fim)
+                        actualizar_dados_stock(idProduto, quantidade, qtdCritica, qtdBaixa, dataEntrada_local, stocksControllerLocal);
+                        stockActualizado = true; // LOTE
+                    }
+                }
+
+                // ---- LOTE: entrada do lote, na MESMA transacção da compra ----
+                if (!stockActualizado) {
+                    // registrarMovimento devolveu false: o stock nao foi tocado (comportamento anterior); sem stock, sem lote
+                    System.err.println("AVISO: stock nao actualizado para o produto " + idProduto + "; lote nao registado.");
+                } else if (controlaLote(idProduto)) {
+                    DefaultTableModel modeloLote = (DefaultTableModel) tableCompra.getModel();
+                    EntradaLoteCompra.registar(getConnectionTransaccao(), idProduto, getIdArmazens(),
+                            textoCelula(modeloLote, i, COL_LOTE),
+                            EntradaLoteCompra.parseData(textoCelula(modeloLote, i, COL_FABRICO)),
+                            EntradaLoteCompra.parseData(textoCelula(modeloLote, i, COL_VALIDADE)),
+                            quantidade, cod_compras);
+                }
+
+                // Atualiza preços (com cache e comparação para evitar operações desnecessárias)
+                TbPreco precoRetalho = precoRetalhoCache.computeIfAbsent(idProduto,
+                        id -> precosControllerLocal.findByIdCompra(
+                                PrecosController.getLastIdPrecoByIdProdutoIntAndQTD(idProduto, 0d, conexao)
+                        )
+                );
+
+                if (precoRetalho != null) {
+                    TbPreco precoGrosso = precoGrossoCache.computeIfAbsent(idProduto,
+                            id -> precosControllerLocal.findByIdCompra(
+                                    PrecosController.getLastIdPrecoByIdProdutoIntAndPrecoAntigoQtdAlto(idProduto, precoRetalho.getQtdAlto() + 1, conexao)
+                            )
+                    );
+
+                    double precoMedio = getPrecoCompraMedio(idProduto, quantidade, precoCompra);
+                    actualizarPrecoOtimizado(idProduto, precoMedio, precoRetalho, precoGrosso, precosControllerLocal);
+                }
+            }
+
+            // Tudo certo → commit
+            DocumentosController.commit(conexaoTransaction);
+            limpar_cabecario();
+            limpar_rodape();
+            esvaziar_tabela();
+            compra = null;
+            fornecedor = null;
+            JOptionPane.showMessageDialog(null, "Compra efectuada com sucesso!");
+            exibirReciboDeCompras();
+            return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            sucesso = false;
+            DocumentosController.rollback(conexaoTransaction);
+            JOptionPane.showMessageDialog(null, "Falha ao registrar a compra: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            return false;
+        } finally {
+            if (conexaoTransaction != null) {
+                conexaoTransaction.close();
+            }
+        }
+    }
+
+    // =================================================================
+    // NOTA - alterar tambem o actualizar_dados_stock: o catch vazio
+    // engole falhas do stock (e o lote ficaria criado sem o stock).
+    // Troca o  catch (Exception e) {}  por:
+    //
+    //        } catch (Exception e) {
+    //            throw new RuntimeException("Falha ao actualizar o stock do produto " + idProduto, e);
+    //        }
+    // =================================================================
+
+    private static boolean salvar_item_compra_comercial_antigo(Integer cod_compras) {
         System.out.println("Cod Compra no Item: " + cod_compras);
         
         if (MetodosUtil.tabela_vazia(tableCompra)) {
@@ -1730,7 +2284,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
 
     }
 
-    public static void adicionar_produto(TbProduto produto) {
+    public static void adicionar_produto_antigo(TbProduto produto) {
 
         System.err.println("Adicionar: " + produto.getCodigo());
         System.err.println("produto: " + produto.getDesignacao());

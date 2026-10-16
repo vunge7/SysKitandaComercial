@@ -56,14 +56,14 @@ public class ProdutosController implements EntidadeFactory
                 + " preco_venda, "
                 + " quantidade_desconto , codigo_manual , cod_unidade , cod_local , "
                 + " cod_fornecedores , cod_Tipo_Produto , fk_modelo , fk_grupo , "
-                + " photo , status_iva , cozinha , unidade_compra , factor_conversao "
+                + " photo , status_iva , cozinha , unidade_compra , factor_conversao , controla_lote "
                 + ")"
                 + " VALUES("
                 + " ? , ?, ? , ?, "
                 + " ? , ?, ? , ?, "
                 + " ? , ?, ? , ?, "
                 + " ? , ?, ? , ?, "
-                + " ? , ?, ?, ?, ?, ? "
+                + " ? , ?, ?, ?, ?, ?, ? "
                 //                + " ?"
                 + " ) ";
 
@@ -101,6 +101,7 @@ public class ProdutosController implements EntidadeFactory
             stmt.setString( cod++, produto.getCozinha() );
             stmt.setDouble( cod++, produto.getUnidadeCompra() );
             stmt.setDouble( cod++, produto.getFactorConversao() );
+            stmt.setBoolean(cod++, produto.getControlaLote() );
             stmt.executeUpdate();
             stmt.close();
             return true;
@@ -171,6 +172,7 @@ public class ProdutosController implements EntidadeFactory
                     p.setStatusIva( rs.getString( "status_iva" ) );
                     p.setUnidadeCompra( rs.getDouble( "unidade_compra" ) );
                     p.setFactorConversao(rs.getDouble( "factor_conversao" ) );
+                    p.setControlaLote(rs.getBoolean("controla_lote" ) );
 
                     // Datas
                     p.setDataEntrada( rs.getDate( "data_entrada" ) );
@@ -291,7 +293,8 @@ public class ProdutosController implements EntidadeFactory
                 + " status_iva = ? , "
                 + " cozinha = ? , "
                 + " unidade_compra = ? , "
-                + " factor_conversao = ? "
+                + " factor_conversao = ? , "
+                + " controla_lote = ? "
                 + " WHERE codigo = ?";
         try
         {
@@ -323,6 +326,7 @@ public class ProdutosController implements EntidadeFactory
             stmt.setString( cod++, produto.getCozinha() );
             stmt.setDouble( cod++, produto.getUnidadeCompra() );
             stmt.setDouble( cod++, produto.getFactorConversao() );
+            stmt.setBoolean(cod++, produto.getControlaLote() );
             stmt.setInt( cod++, produto.getCodigo() );
             stmt.executeUpdate();
             stmt.close();
@@ -383,6 +387,7 @@ public class ProdutosController implements EntidadeFactory
                 produto.setCozinha( result.getString( "cozinha" ) );
                 produto.setUnidadeCompra( result.getDouble( "unidade_compra" ) );
                 produto.setFactorConversao(result.getDouble( "factor_conversao" ) );
+                produto.setControlaLote(result.getBoolean("controla_lote" ) );
 
                 lista_produto.add( produto );
 
@@ -970,6 +975,7 @@ public class ProdutosController implements EntidadeFactory
             produto.setCozinha( result.getString( "cozinha" ) );
             produto.setUnidadeCompra( result.getDouble( "unidade_compra" ) );
             produto.setFactorConversao(result.getDouble( "factor_conversao" ) );
+            produto.setControlaLote(result.getBoolean("controla_lote" ) );
 
         }
         catch ( SQLException e )
@@ -1159,6 +1165,7 @@ public class ProdutosController implements EntidadeFactory
                 produto.setCozinha( result.getString( "cozinha" ) );
                 produto.setUnidadeCompra( result.getDouble( "unidade_compra" ) );
                 produto.setFactorConversao(result.getDouble( "factor_conversao" ) );
+                produto.setControlaLote(result.getBoolean("controla_lote" ) );
 
             }
 
@@ -1207,6 +1214,7 @@ public class ProdutosController implements EntidadeFactory
                 produto.setCodPai( result.getInt( "cod_pai" ) );
                 produto.setUnidadeCompra( result.getDouble( "unidade_compra" ) );
                 produto.setFactorConversao(result.getDouble( "factor_conversao" ) );
+                produto.setControlaLote(result.getBoolean("controla_lote" ) );
                 lista_produto.add( produto );
             }
 
@@ -1740,12 +1748,6 @@ public class ProdutosController implements EntidadeFactory
         return lista;
     }
 
-//    public TbProduto findByCodigoBarra(String codigoBarra) {
-//    return (TbProduto) entityManager
-//        .createQuery("SELECT p FROM TbProduto p WHERE p.codBarra = :cb")
-//        .setParameter("cb", codigoBarra)
-//        .getSingleResult();
-//}
     public static void main( String[] args )
     {
         BDConexao conexao = BDConexao.getInstancia();
