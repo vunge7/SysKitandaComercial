@@ -330,15 +330,15 @@ public class LoteController implements EntidadeFactory {
     public List<LoteMovimento> devolverStock(int fkVendaOrigem, int fkProduto, int qtdDevolver) throws SQLException {
         Connection conn = conexao.getConnection();
         try {
-            conn.setAutoCommit(false);
+            //conn.setAutoCommit(false);
             List<LoteMovimento> movimentos = devolverStock(conn, fkVendaOrigem, fkProduto, qtdDevolver);
-            conn.commit();
+            //conn.commit();
             return movimentos;
         } catch (SQLException | RuntimeException e) {
             rollbackSilencioso(conn);
             throw e;
         } finally {
-            autoCommitSilencioso(conn);
+           // autoCommitSilencioso(conn);
         }
     }
 
