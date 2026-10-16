@@ -257,7 +257,7 @@ public class LoteController implements EntidadeFactory {
      * @param fkArmazem armazém de onde sai o stock
      * @throws IllegalStateException se o stock for insuficiente
      */
-    public List<LoteMovimento> baixarStock(Connection conn, int fkProduto, int fkArmazem, double qtdPedida, int fkVenda) throws SQLException {
+    public List<LoteMovimento> baixarStock(Connection conn, int fkProduto, int fkArmazem, double qtdPedida, int fkOperacao) throws SQLException {
         String sql = "SELECT * FROM lote WHERE fk_produto = ? AND fk_armazem = ? AND estado = 'ACTIVO' "
                 + "AND qtd > 0 AND data_validade >= CURDATE() "
                 + "ORDER BY data_validade ASC, id ASC FOR UPDATE"; // FEFO, com lock
@@ -292,7 +292,7 @@ public class LoteController implements EntidadeFactory {
             double novaQtd = arredondar(lote.getQtd() - retirar);
 
             actualizarQtdLote(conn, lote.getId(), novaQtd, novaQtd <= EPS ? "ESGOTADO" : "ACTIVO");
-            movimentos.add(inserirMovimento(conn, lote.getId(), fkVenda, "VENDA", retirar));
+            movimentos.add(inserirMovimento(conn, lote.getId(), fkOperacao, "VENDA", retirar));
 
             restante = arredondar(restante - retirar);
         }
@@ -305,11 +305,11 @@ public class LoteController implements EntidadeFactory {
      *
      * @throws IllegalStateException se o stock for insuficiente
      */
-    public List<LoteMovimento> baixarStock(int fkProduto, int fkArmazem, double qtdPedida, int fkVenda) throws SQLException {
+    public List<LoteMovimento> baixarStock(int fkProduto, int fkArmazem, double qtdPedida, int fkOperacao) throws SQLException {
         Connection conn = conexao.getConnection();
         try {
             conn.setAutoCommit(false);
-            List<LoteMovimento> movimentos = baixarStock(conn, fkProduto, fkArmazem, qtdPedida, fkVenda);
+            List<LoteMovimento> movimentos = baixarStock(conn, fkProduto, fkArmazem, qtdPedida, fkOperacao);
             conn.commit();
             return movimentos;
         } catch (SQLException | RuntimeException e) {
@@ -331,19 +331,19 @@ public class LoteController implements EntidadeFactory {
      * NÃO faz commit nem rollback. Usa a Connection (e a transacção) de quem
      * chama.
      *
-     * @param fkVendaOrigem venda (FR/FT) a que a NC se refere
+     * @param fkOperacaoOrigem venda (FR/FT) a que a NC se refere
      * @throws IllegalStateException se a qtd exceder o vendido
      */
-    public List<LoteMovimento> devolverStock(Connection conn, int fkVendaOrigem, int fkProduto, double qtdDevolver) throws SQLException {
+    public List<LoteMovimento> devolverStock(Connection conn, int fkOperacaoOrigem, int fkProduto, double qtdDevolver) throws SQLException {
         String sql = "SELECT m.id, m.fk_lote, m.qtd, m.qtd_devolvida "
                 + "FROM lote_movimento m INNER JOIN lote l ON l.id = m.fk_lote "
-                + "WHERE m.fk_venda = ? AND m.tipo = 'VENDA' AND l.fk_produto = ? "
+                + "WHERE m.fk_operacao = ? AND m.tipo = 'VENDA' AND l.fk_produto = ? "
                 + "ORDER BY m.id DESC FOR UPDATE";
 
         // 1) lê os movimentos da venda original (e bloqueia as linhas)
         List<MovOrigem> origem = new ArrayList<>();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, fkVendaOrigem);
+            ps.setInt(1, fkOperacaoOrigem);
             ps.setInt(2, fkProduto);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -376,7 +376,7 @@ public class LoteController implements EntidadeFactory {
             double repor = Math.min(o.podeDevolver, restante);
             reporQtdLote(conn, o.fkLote, repor);
             marcarDevolvido(conn, o.idMov, repor);
-            movimentos.add(inserirMovimento(conn, o.fkLote, fkVendaOrigem, "DEVOLUCAO", repor));
+            movimentos.add(inserirMovimento(conn, o.fkLote, fkOperacaoOrigem, "DEVOLUCAO", repor));
 
             restante = arredondar(restante - repor);
         }
@@ -389,11 +389,11 @@ public class LoteController implements EntidadeFactory {
      *
      * @throws IllegalStateException se a qtd exceder o vendido
      */
-    public List<LoteMovimento> devolverStock(int fkVendaOrigem, int fkProduto, double qtdDevolver) throws SQLException {
+    public List<LoteMovimento> devolverStock(int fkOperacaoOrigem, int fkProduto, double qtdDevolver) throws SQLException {
         Connection conn = conexao.getConnection();
         try {
             //conn.setAutoCommit(false);
-            List<LoteMovimento> movimentos = devolverStock(conn, fkVendaOrigem, fkProduto, qtdDevolver);
+            List<LoteMovimento> movimentos = devolverStock(conn, fkOperacaoOrigem, fkProduto, qtdDevolver);
             //conn.commit();
             return movimentos;
         } catch (SQLException | RuntimeException e) {
@@ -463,16 +463,16 @@ public class LoteController implements EntidadeFactory {
         }
     }
 
-    private LoteMovimento inserirMovimento(Connection conn, int fkLote, int fkVenda, String tipo, double qtd) throws SQLException {
-        String sql = "INSERT INTO lote_movimento( fk_lote, fk_venda, tipo, qtd, data_mov ) "
+    private LoteMovimento inserirMovimento(Connection conn, int fkLote, int fkOperacao, String tipo, double qtd) throws SQLException {
+        String sql = "INSERT INTO lote_movimento( fk_lote, fk_operacao, tipo, qtd, data_mov ) "
                 + "VALUES( ?, ?, ?, ?, NOW() )";
 
-        LoteMovimento mov = new LoteMovimento(fkLote, fkVenda, tipo, qtd);
+        LoteMovimento mov = new LoteMovimento(fkLote, fkOperacao, tipo, qtd);
         mov.setDataMov(new Date());
 
         try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, fkLote);
-            ps.setInt(2, fkVenda);
+            ps.setInt(2, fkOperacao);
             ps.setString(3, tipo);
             ps.setDouble(4, qtd);
             ps.executeUpdate();

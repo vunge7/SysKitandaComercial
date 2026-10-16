@@ -4,11 +4,6 @@
  */
 package entity;
 
-/**
- *
- * @author DELL
- */
-
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -36,7 +31,8 @@ import javax.xml.bind.annotation.XmlRootElement;
             @NamedQuery(name = "LoteMovimento.findAll", query = "SELECT m FROM LoteMovimento m"),
             @NamedQuery(name = "LoteMovimento.findById", query = "SELECT m FROM LoteMovimento m WHERE m.id = :id"),
             @NamedQuery(name = "LoteMovimento.findByFkLote", query = "SELECT m FROM LoteMovimento m WHERE m.fkLote = :fkLote"),
-            @NamedQuery(name = "LoteMovimento.findByFkVenda", query = "SELECT m FROM LoteMovimento m WHERE m.fkVenda = :fkVenda"),
+            @NamedQuery(name = "LoteMovimento.findByFkOperacao", query = "SELECT m FROM LoteMovimento m WHERE m.fkOperacao = :fkOperacao"),
+            @NamedQuery(name = "LoteMovimento.findByFkOperacaoTipo", query = "SELECT m FROM LoteMovimento m WHERE m.fkOperacao = :fkOperacao AND m.tipo = :tipo"),
             @NamedQuery(name = "LoteMovimento.findByTipo", query = "SELECT m FROM LoteMovimento m WHERE m.tipo = :tipo")
         })
 public class LoteMovimento implements Serializable
@@ -51,17 +47,20 @@ public class LoteMovimento implements Serializable
     @Basic(optional = false)
     @Column(name = "fk_lote")
     private Integer fkLote;
+    // id da operação de origem: venda (VENDA/DEVOLUCAO) ou compra (COMPRA)
     @Basic(optional = false)
-    @Column(name = "fk_venda")
-    private Integer fkVenda;
+    @Column(name = "fk_operacao")
+    private Integer fkOperacao;
     @Basic(optional = false)
     @Column(name = "tipo")
-    private String tipo; // VENDA | DEVOLUCAO
+    private String tipo; // VENDA | DEVOLUCAO | COMPRA
     @Basic(optional = false)
     @Column(name = "qtd")
     private double qtd;
+    @Basic(optional = false)
     @Column(name = "qtd_devolvida")
-    private int qtdDevolvida;
+    private double qtdDevolvida;
+    @Basic(optional = false)
     @Column(name = "data_mov")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataMov;
@@ -75,10 +74,10 @@ public class LoteMovimento implements Serializable
         this.id = id;
     }
 
-    public LoteMovimento( Integer fkLote, Integer fkVenda, String tipo, double qtd )
+    public LoteMovimento( Integer fkLote, Integer fkOperacao, String tipo, double qtd )
     {
         this.fkLote = fkLote;
-        this.fkVenda = fkVenda;
+        this.fkOperacao = fkOperacao;
         this.tipo = tipo;
         this.qtd = qtd;
     }
@@ -103,14 +102,14 @@ public class LoteMovimento implements Serializable
         this.fkLote = fkLote;
     }
 
-    public Integer getFkVenda()
+    public Integer getFkOperacao()
     {
-        return fkVenda;
+        return fkOperacao;
     }
 
-    public void setFkVenda( Integer fkVenda )
+    public void setFkOperacao( Integer fkOperacao )
     {
-        this.fkVenda = fkVenda;
+        this.fkOperacao = fkOperacao;
     }
 
     public String getTipo()
@@ -128,17 +127,17 @@ public class LoteMovimento implements Serializable
         return qtd;
     }
 
-    public void setQtd( int qtd )
+    public void setQtd( double qtd )
     {
         this.qtd = qtd;
     }
 
-    public int getQtdDevolvida()
+    public double getQtdDevolvida()
     {
         return qtdDevolvida;
     }
 
-    public void setQtdDevolvida( int qtdDevolvida )
+    public void setQtdDevolvida( double qtdDevolvida )
     {
         this.qtdDevolvida = qtdDevolvida;
     }
