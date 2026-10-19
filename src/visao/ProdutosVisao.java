@@ -333,7 +333,6 @@ public class ProdutosVisao extends javax.swing.JFrame {
         painel_stock = new javax.swing.JPanel();
         lbPreco = new javax.swing.JLabel();
         txtPercentagemGanhoRetalho = new javax.swing.JTextField();
-        lbStatus1 = new javax.swing.JLabel();
         lbPrecoVenda = new javax.swing.JLabel();
         txtPrecoVendaRetalho = new javax.swing.JTextField();
         lbCategoria3 = new javax.swing.JLabel();
@@ -942,19 +941,17 @@ public class ProdutosVisao extends javax.swing.JFrame {
         painel_stock.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
         lbPreco.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
-        lbPreco.setText("Percent. Ganho:");
+        lbPreco.setText(".");
 
         txtPercentagemGanhoRetalho.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
         txtPercentagemGanhoRetalho.setText("0");
         txtPercentagemGanhoRetalho.setCaretColor(new java.awt.Color(255, 255, 255));
+        txtPercentagemGanhoRetalho.setEnabled(false);
         txtPercentagemGanhoRetalho.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtPercentagemGanhoRetalhoActionPerformed(evt);
             }
         });
-
-        lbStatus1.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 1, 16)); // NOI18N
-        lbStatus1.setText("%");
 
         lbPrecoVenda.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         lbPrecoVenda.setText("Preco Venda Sem IVA (Ret):");
@@ -1031,8 +1028,7 @@ public class ProdutosVisao extends javax.swing.JFrame {
                         .addComponent(lbPreco, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(txtPercentagemGanhoRetalho, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lbStatus1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(32, 32, 32))
                     .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(painel_stockLayout.createSequentialGroup()
                         .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -1085,9 +1081,7 @@ public class ProdutosVisao extends javax.swing.JFrame {
                     .addComponent(lbBarra1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(lbPreco)
-                        .addComponent(lbStatus1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lbPreco)
                     .addComponent(txtPercentagemGanhoRetalho, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(lbPrecoVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1310,12 +1304,6 @@ public class ProdutosVisao extends javax.swing.JFrame {
         // TODO add your handling code here:
         txtPrecoCompra.requestFocus();
     }//GEN-LAST:event_txtCodigoBarraActionPerformed
-
-    private void txtPercentagemGanhoRetalhoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPercentagemGanhoRetalhoActionPerformed
-        // TODO add your handling code here:
-        // procedimento_salvar_servico_produto();
-        txtPrecoVendaRetalho.requestFocus();
-    }//GEN-LAST:event_txtPercentagemGanhoRetalhoActionPerformed
 
     private void txtPrecoVendaRetalhoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPrecoVendaRetalhoActionPerformed
         // TODO add your handling code here:
@@ -1589,6 +1577,12 @@ public class ProdutosVisao extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtFactorConversaoActionPerformed
 
+    private void txtPercentagemGanhoRetalhoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPercentagemGanhoRetalhoActionPerformed
+        // TODO add your handling code here:
+        // procedimento_salvar_servico_produto();
+        txtPrecoVendaRetalho.requestFocus();
+    }//GEN-LAST:event_txtPercentagemGanhoRetalhoActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1767,7 +1761,6 @@ public class ProdutosVisao extends javax.swing.JFrame {
     private javax.swing.JLabel lbProdutos2;
     private javax.swing.JLabel lbProdutos3;
     private javax.swing.JLabel lbProdutos4;
-    private javax.swing.JLabel lbStatus1;
     private javax.swing.JLabel lbTicket;
     private javax.swing.JLabel lbTipoProduto;
     private javax.swing.JLabel lbTipoProduto2;
@@ -3711,7 +3704,5 @@ public class ProdutosVisao extends javax.swing.JFrame {
         return stocksControllerLocal.salvar(stockLocal);
 
     }
-
-    
 
 }
