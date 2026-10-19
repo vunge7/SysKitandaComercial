@@ -27,9 +27,12 @@ import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
@@ -165,6 +168,30 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
 
         MetodosUtil.setArmazemByCampoConfigCompraArmazem(cmbArmazem, conexao, cod_usuario);
         selecionar_transferencia_bt();
+
+        // 1. Dispara o cálculo sempre que o valor do JSpinner (Preço de Compra) mudar
+        spPrecoCompra.addChangeListener(e -> calcularPrecoVendaRetalho());
+
+        // 2. Dispara o cálculo sempre que o texto da Percentagem de Ganho for alterado
+        txtPercentagemGanho.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                calcularPrecoVendaRetalho();
+            }
+
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                calcularPrecoVendaRetalho();
+            }
+
+            @Override
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                calcularPrecoVendaRetalho();
+            }
+        });
+
+        // Opcional: Executa uma vez no arranque para garantir que o campo de venda começa preenchido
+        calcularPrecoVendaRetalho();
     }
 
     /**
@@ -275,6 +302,8 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         jcDataValidade = new com.toedter.calendar.JDateChooser();
         txtNumeroLote = new javax.swing.JTextField();
         llbDataFabrico1 = new javax.swing.JLabel();
+        txtPercentagemGanho = new javax.swing.JTextField();
+        lb_data_apuramento10 = new javax.swing.JLabel();
         jPanel8 = new javax.swing.JPanel();
         lbTotalPagar = new javax.swing.JLabel();
         txtTotal_AOA_Iliquido = new javax.swing.JTextField();
@@ -400,14 +429,14 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
 
             },
             new String [] {
-                "Cod.Art", "Descrição", "Preço", "Qtd.", "Unidade", "Desconto(%)", "Taxa ", "Valor", "Valor C/ Imposto", "Critica", "Baixa"
+                "Cod.Art", "Descrição", "Preço", "Qtd.", "Unidade", "Desconto(%)", "Taxa ", "Valor", "Valor C/ Imposto", "Critica", "Baixa", "Preço Venda"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, true, true, false, true, true, false, false, true, true
+                false, false, true, true, false, true, true, false, false, true, true, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -436,9 +465,10 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
             tableCompra.getColumnModel().getColumn(9).setResizable(false);
             tableCompra.getColumnModel().getColumn(9).setPreferredWidth(5);
             tableCompra.getColumnModel().getColumn(10).setPreferredWidth(5);
+            tableCompra.getColumnModel().getColumn(11).setPreferredWidth(5);
         }
 
-        jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1150, 280));
+        jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1140, 230));
 
         jPanel6.setBackground(new java.awt.Color(0, 51, 102));
         jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
@@ -530,7 +560,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
                 txtCodBarraActionPerformed(evt);
             }
         });
-        jPanel3.add(txtCodBarra, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 70, 150, -1));
+        jPanel3.add(txtCodBarra, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 60, 150, -1));
 
         lb_produto.setFont(new java.awt.Font("SansSerif", 3, 16)); // NOI18N
         lb_produto.setForeground(new java.awt.Color(0, 153, 0));
@@ -540,7 +570,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         jPanel3.add(lb_produto, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 10, 480, 30));
 
         spPrecoCompra.setFont(new java.awt.Font("SansSerif", 0, 16)); // NOI18N
-        jPanel3.add(spPrecoCompra, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 110, 160, -1));
+        jPanel3.add(spPrecoCompra, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 100, 160, -1));
 
         jButton_eliminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/adicionar.png"))); // NOI18N
         jButton_eliminar.addActionListener(new java.awt.event.ActionListener() {
@@ -569,7 +599,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         lb_data_apuramento5.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         lb_data_apuramento5.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lb_data_apuramento5.setText("Cod. Barra");
-        jPanel3.add(lb_data_apuramento5, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 50, 110, -1));
+        jPanel3.add(lb_data_apuramento5, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 40, 110, -1));
 
         jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
         jPanel3.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 10, 10, 170));
@@ -583,35 +613,35 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
                 txtCodigoInternoActionPerformed(evt);
             }
         });
-        jPanel3.add(txtCodigoInterno, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 70, 70, 30));
+        jPanel3.add(txtCodigoInterno, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 60, 70, 30));
 
         lbProdutos2.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         lbProdutos2.setText("Cód. Interno");
-        jPanel3.add(lbProdutos2, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 50, 100, 20));
+        jPanel3.add(lbProdutos2, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 40, 100, -1));
 
         lb_data_apuramento6.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lb_data_apuramento6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lb_data_apuramento6.setText("Qtd. Baixa: ");
-        jPanel3.add(lb_data_apuramento6, new org.netbeans.lib.awtextra.AbsoluteConstraints(910, 80, 120, 30));
+        jPanel3.add(lb_data_apuramento6, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 80, 70, 20));
 
         lb_data_apuramento7.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lb_data_apuramento7.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lb_data_apuramento7.setText("Preço Venda");
-        jPanel3.add(lb_data_apuramento7, new org.netbeans.lib.awtextra.AbsoluteConstraints(890, 110, 90, 30));
-        jPanel3.add(txtQtdBaixa, new org.netbeans.lib.awtextra.AbsoluteConstraints(1030, 80, 80, 30));
+        jPanel3.add(lb_data_apuramento7, new org.netbeans.lib.awtextra.AbsoluteConstraints(920, 110, 90, 30));
+        jPanel3.add(txtQtdBaixa, new org.netbeans.lib.awtextra.AbsoluteConstraints(1030, 74, 80, -1));
 
         txtQtdCritica.setText("10");
-        jPanel3.add(txtQtdCritica, new org.netbeans.lib.awtextra.AbsoluteConstraints(1030, 50, 80, 30));
+        jPanel3.add(txtQtdCritica, new org.netbeans.lib.awtextra.AbsoluteConstraints(1030, 40, 80, 30));
 
         lb_data_apuramento8.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lb_data_apuramento8.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lb_data_apuramento8.setText("Qtd. Critica: ");
-        jPanel3.add(lb_data_apuramento8, new org.netbeans.lib.awtextra.AbsoluteConstraints(910, 50, 120, 30));
+        jPanel3.add(lb_data_apuramento8, new org.netbeans.lib.awtextra.AbsoluteConstraints(910, 40, 120, 20));
 
         lb_data_apuramento2.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lb_data_apuramento2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lb_data_apuramento2.setText("Qtd. a Entrar");
-        jPanel3.add(lb_data_apuramento2, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 140, 80, 30));
+        lb_data_apuramento2.setText("Qtd. a Entrar:");
+        jPanel3.add(lb_data_apuramento2, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 160, 80, 30));
 
         txtQtdExistente.setEditable(false);
         txtQtdExistente.setFont(new java.awt.Font("Lucida Grande", 1, 24)); // NOI18N
@@ -623,7 +653,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
                 txtQtdEntrarActionPerformed(evt);
             }
         });
-        jPanel3.add(txtQtdEntrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 140, 80, 30));
+        jPanel3.add(txtQtdEntrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 160, 80, 30));
 
         jButtonLupa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/proucura.png"))); // NOI18N
         jButtonLupa.addActionListener(new java.awt.event.ActionListener() {
@@ -635,11 +665,11 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
 
         lb_data_apuramento9.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lb_data_apuramento9.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lb_data_apuramento9.setText("Preço Compra");
-        jPanel3.add(lb_data_apuramento9, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 110, 90, 30));
+        lb_data_apuramento9.setText("Percetagem de Ganho:");
+        jPanel3.add(lb_data_apuramento9, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 130, 140, 30));
 
         txtPrecoVenda.setEditable(false);
-        jPanel3.add(txtPrecoVenda, new org.netbeans.lib.awtextra.AbsoluteConstraints(990, 110, 120, 30));
+        jPanel3.add(txtPrecoVenda, new org.netbeans.lib.awtextra.AbsoluteConstraints(1020, 110, 100, 30));
 
         cmbAnoEconomico.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cmbAnoEconomico.setEnabled(false);
@@ -656,7 +686,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         lb_data_apuramento3.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lb_data_apuramento3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lb_data_apuramento3.setText("Factor Conversão:");
-        jPanel3.add(lb_data_apuramento3, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 140, 130, 30));
+        jPanel3.add(lb_data_apuramento3, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 160, 130, 30));
 
         txtFactorConversao.setEditable(false);
         txtFactorConversao.addActionListener(new java.awt.event.ActionListener() {
@@ -664,26 +694,32 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
                 txtFactorConversaoActionPerformed(evt);
             }
         });
-        jPanel3.add(txtFactorConversao, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 140, 50, 30));
+        jPanel3.add(txtFactorConversao, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 160, 50, 30));
 
         llbDataFabrico.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         llbDataFabrico.setText("Número Lote:");
-        jPanel3.add(llbDataFabrico, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 210, -1, 20));
+        jPanel3.add(llbDataFabrico, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 230, -1, 20));
 
         jcDataFabrico.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jPanel3.add(jcDataFabrico, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 180, -1, -1));
+        jPanel3.add(jcDataFabrico, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 200, -1, -1));
 
         lbDataExpiracao.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         lbDataExpiracao.setText("Data Expiracao:");
-        jPanel3.add(lbDataExpiracao, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 180, 100, 20));
+        jPanel3.add(lbDataExpiracao, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 200, 100, 20));
 
         jcDataValidade.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jPanel3.add(jcDataValidade, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 180, -1, -1));
-        jPanel3.add(txtNumeroLote, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 210, 90, -1));
+        jPanel3.add(jcDataValidade, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 200, -1, -1));
+        jPanel3.add(txtNumeroLote, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 230, 90, -1));
 
         llbDataFabrico1.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         llbDataFabrico1.setText("Data Fabrico:");
-        jPanel3.add(llbDataFabrico1, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 180, -1, 20));
+        jPanel3.add(llbDataFabrico1, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 200, -1, 20));
+        jPanel3.add(txtPercentagemGanho, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 130, 80, 30));
+
+        lb_data_apuramento10.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        lb_data_apuramento10.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lb_data_apuramento10.setText("Preço Compra/Preço Médio:");
+        jPanel3.add(lb_data_apuramento10, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 100, 180, 30));
 
         jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
         jPanel8.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -845,7 +881,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -867,7 +903,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(btnCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, 53, Short.MAX_VALUE)
                             .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addGap(0, 9, Short.MAX_VALUE)
+                .addGap(0, 0, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -1000,7 +1036,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
 
 //                try
 //        {
-////            new BuscaNovoProdutoVisao(this, rootPaneCheckingEnabled, coordenada )
+        ////            new BuscaNovoProdutoVisao(this, rootPaneCheckingEnabled, coordenada )
 //            new BuscaProdutosVisao( this, rootPaneCheckingEnabled, getIdArmazem(), DVML.JANELA_COMPRA, conexao, GRUPO_AREA, NovaEncomendaVisao.class ).setVisible(true);
 //        }
 //        catch ( Exception e )
@@ -1072,6 +1108,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
     private static javax.swing.JLabel lb_ano_encomico;
     private static javax.swing.JLabel lb_data_apuramento;
     private static javax.swing.JLabel lb_data_apuramento1;
+    private static javax.swing.JLabel lb_data_apuramento10;
     private static javax.swing.JLabel lb_data_apuramento2;
     private static javax.swing.JLabel lb_data_apuramento3;
     private static javax.swing.JLabel lb_data_apuramento5;
@@ -1099,6 +1136,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
     private javax.swing.JTextField txtDesignacao;
     public static javax.swing.JTextField txtFactorConversao;
     private static javax.swing.JTextField txtNumeroLote;
+    private static javax.swing.JTextField txtPercentagemGanho;
     private static javax.swing.JTextField txtPrecoVenda;
     public static javax.swing.JTextField txtQtdBaixa;
     public static javax.swing.JTextField txtQtdCritica;
@@ -1110,7 +1148,6 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
     public static javax.swing.JTextField txtTotal_AOA_liquido;
     // End of variables declaration//GEN-END:variables
 
-    
     // =====================================================================
 // BLOCO DE LOTES v2 PARA CompraInformalVisao   (substitui a v1)
 //
@@ -1128,7 +1165,6 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
 // Colar DENTRO da classe, antes do  main.  Apagar o adicionar_produto(TbProduto)
 // antigo (este e o novo).   Requer:  import comercial.controller.EntradaLoteCompra;
 // =====================================================================
-
     // ---------------------------------------------------------------
     // Gestao de lotes - constantes
     // ---------------------------------------------------------------
@@ -1137,7 +1173,8 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
     private static final int COL_VALIDADE = 13;
 
     /**
-     * Avisa (e pede confirmacao) se o lote caduca em menos de X dias. 0 = nao avisar.
+     * Avisa (e pede confirmacao) se o lote caduca em menos de X dias. 0 = nao
+     * avisar.
      */
     public static int DIAS_MINIMOS_VALIDADE = 180;
 
@@ -1151,17 +1188,18 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
                 new Object[][]{},
                 new String[]{
                     "Cod.Art", "Descrição", "Preço", "Qtd.", "Unidade", "Desconto(%)", "Taxa ", "Valor",
-                    "Valor C/ Imposto", "Critica", "Baixa", "Lote", "Fabrico", "Validade"
+                    "Valor C/ Imposto", "Critica", "Baixa", "Lote", "Fabrico", "Validade", "P.G", "Preco Venda"
                 }
         ) {
             Class[] types = new Class[]{
                 java.lang.Integer.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class,
                 java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class,
                 java.lang.Double.class, java.lang.Object.class, java.lang.Object.class,
-                java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class,
+                java.lang.Double.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean[]{
-                false, false, true, true, false, true, true, false, false, true, true, false, false, false
+                false, false, true, true, false, true, true, false, false, true, true, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -1182,6 +1220,8 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         tableCompra.getColumnModel().getColumn(COL_LOTE).setPreferredWidth(60);
         tableCompra.getColumnModel().getColumn(COL_FABRICO).setPreferredWidth(60);
         tableCompra.getColumnModel().getColumn(COL_VALIDADE).setPreferredWidth(60);
+        tableCompra.getColumnModel().getColumn(14).setPreferredWidth(40);
+        tableCompra.getColumnModel().getColumn(15).setPreferredWidth(40);
 
         // Enter no Nº Lote salta para a validade
         txtNumeroLote.addActionListener(new java.awt.event.ActionListener() {
@@ -1222,8 +1262,8 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
     }
 
     /**
-     * Activa os campos de lote se o produto os exige; senao desactiva e
-     * limpa. Passar null para repor o estado inicial.
+     * Activa os campos de lote se o produto os exige; senao desactiva e limpa.
+     * Passar null para repor o estado inicial.
      */
     private static void prepararCamposLote(TbProduto p) {
         boolean controla = (p != null) && p.getCodigo() != 0 && controlaLote(p.getCodigo());
@@ -1309,7 +1349,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         String numeroLote = "";
         String fabrico = "";
         String validade = "";
-        
+
         if (controlaLote(produto.getCodigo())) {
 
             // 1) datas primeiro (a validade tambem serve para gerar o lote automatico)
@@ -1390,9 +1430,10 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
 //            fabrico = EntradaLoteCompra.formatar(dataFabrico);
 //            validade = EntradaLoteCompra.formatar(dataValidade);
 //        }
-
         // ---- a chave da linha e PRODUTO + LOTE ----
         int linhaExistente = localizarLinha(modelo, produto.getCodigo(), numeroLote);
+        double precoVenda = CfMethods.parseMoedaFormatada(txtPrecoVenda.getText());
+        double percetagemGanho = CfMethods.parseMoedaFormatada(txtPercentagemGanho.getText());
 
         if (linhaExistente < 0) {
             if (validar_zero_qtd_preco()) {
@@ -1410,7 +1451,9 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
                     qtdBaixa,
                     numeroLote,
                     fabrico,
-                    validade
+                    validade,
+                    percetagemGanho,
+                    precoVenda
                 });
             }
         } else if (!validade.equals(textoCelula(modelo, linhaExistente, COL_VALIDADE))) {
@@ -1427,7 +1470,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         txtCodigoInterno.setText("");
         txtCodBarra.setText("");
         txtQtdEntrar.setText("");
-        spPrecoCompra.setValue("0");
+        spPrecoCompra.setValue(0);
         txtPrecoVenda.setText("0");
         prepararCamposLote(null);
         txtCodBarra.requestFocus();
@@ -1448,11 +1491,6 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
 //                            quantidade, cod_compras);
 //                }
 // =====================================================================
-
-    
-    
-    
-    
     public static void main(String[] args) {
         new CompraInformalVisao(15, BDConexao.getInstancia()).setVisible(true);
     }
@@ -1685,8 +1723,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
 //        }
 //        return false;
 //    }
-    
-        // =================================================================
+    // =================================================================
     // salvar_item_compra_comercial  -  versao com LOTES
     //
     // Substitui o teu metodo. Todas as linhas novas/alteradas estao
@@ -1698,7 +1735,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
     // =================================================================
     private static boolean salvar_item_compra_comercial(Integer cod_compras) {
         System.out.println("Cod Compra no Item: " + cod_compras);
-        
+
         if (MetodosUtil.tabela_vazia(tableCompra)) {
             JOptionPane.showMessageDialog(null, "Adicione itens na tabela, caro usuário", "AVISO", JOptionPane.WARNING_MESSAGE);
             return false;
@@ -1728,6 +1765,8 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
                 double total = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 8)));
                 double qtdCritica = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 9)));
                 double qtdBaixa = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 10)));
+                double percetagemganho = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 14)));
+                double precoVenda = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 15)));
 
                 // Cache do produto
                 TbProduto produto = produtosCache.computeIfAbsent(idProduto, id
@@ -1824,7 +1863,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
                     );
 
                     double precoMedio = getPrecoCompraMedio(idProduto, quantidade, precoCompra);
-                    actualizarPrecoOtimizado(idProduto, precoMedio, precoRetalho, precoGrosso, precosControllerLocal);
+                    actualizarPrecoOtimizado(idProduto, precoMedio, precoRetalho, precoGrosso, percetagemganho, precoVenda, precosControllerLocal);
                 }
             }
 
@@ -1861,10 +1900,9 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
     //            throw new RuntimeException("Falha ao actualizar o stock do produto " + idProduto, e);
     //        }
     // =================================================================
-
     private static boolean salvar_item_compra_comercial_antigo(Integer cod_compras) {
         System.out.println("Cod Compra no Item: " + cod_compras);
-        
+
         if (MetodosUtil.tabela_vazia(tableCompra)) {
             JOptionPane.showMessageDialog(null, "Adicione itens na tabela, caro usuário", "AVISO", JOptionPane.WARNING_MESSAGE);
             return false;
@@ -1894,6 +1932,8 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
                 double total = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 8)));
                 double qtdCritica = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 9)));
                 double qtdBaixa = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 10)));
+                double percetagemGanho = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 14)));
+                double precoVenda = Double.parseDouble(String.valueOf(tableCompra.getModel().getValueAt(i, 15)));
 
                 // Cache do produto
                 TbProduto produto = produtosCache.computeIfAbsent(idProduto, id
@@ -1968,7 +2008,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
                     );
 
                     double precoMedio = getPrecoCompraMedio(idProduto, quantidade, precoCompra);
-                    actualizarPrecoOtimizado(idProduto, precoMedio, precoRetalho, precoGrosso, precosControllerLocal);
+                    actualizarPrecoOtimizado(idProduto, precoMedio, precoRetalho, precoGrosso, percetagemGanho, precoVenda, precosControllerLocal);
                 }
             }
 
@@ -2001,33 +2041,39 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
             double precoCompra,
             TbPreco precoAntigoRetalho,
             TbPreco precoAntigoGrosso,
+            double pGanho,
+            double pVenda,
             PrecosController precosControllerLocal) {
 
         BigDecimal novoPreco = BigDecimal.valueOf(precoCompra);
 
+        BigDecimal precoVenda = new BigDecimal(pVenda);
+        BigDecimal percetagemGanho = new BigDecimal(pGanho);
+
         // Atualiza apenas se houve mudança
         if (!novoPreco.equals(precoAntigoRetalho.getPrecoCompra())) {
-            TbPreco novoRetalho = clonarPreco(precoAntigoRetalho, novoPreco);
+            TbPreco novoRetalho = clonarPreco(precoAntigoRetalho, novoPreco, percetagemGanho, precoVenda);
             precosControllerLocal.salvar(novoRetalho);
             System.out.println("Preço retalho atualizado (" + idProduto + ")");
         }
 
         if (precoAntigoGrosso != null && !novoPreco.equals(precoAntigoGrosso.getPrecoCompra())) {
-            TbPreco novoGrosso = clonarPreco(precoAntigoGrosso, novoPreco);
+            TbPreco novoGrosso = clonarPreco(precoAntigoGrosso, novoPreco, percetagemGanho, precoVenda);
             precosControllerLocal.salvar(novoGrosso);
             System.out.println("Preço grosso atualizado (" + idProduto + ")");
         }
     }
 
-    private static TbPreco clonarPreco(TbPreco origem, BigDecimal novoPrecoCompra) {
+    private static TbPreco clonarPreco(TbPreco origem, BigDecimal novoPrecoCompra, BigDecimal percentagemGanho, BigDecimal precoVenda) {
+
         TbPreco clone = new TbPreco();
         clone.setData(origem.getData());
         clone.setHora(origem.getHora());
-        clone.setPercentagemGanho(origem.getPercentagemGanho());
+        clone.setPercentagemGanho(percentagemGanho);
         clone.setFkProduto(origem.getFkProduto());
         clone.setFkUsuario(origem.getFkUsuario());
         clone.setPrecoCompra(novoPrecoCompra);
-        clone.setPrecoVenda(origem.getPrecoVenda());
+        clone.setPrecoVenda(precoVenda);
         clone.setQtdBaixo(origem.getQtdBaixo());
         clone.setQtdAlto(origem.getQtdAlto());
         clone.setPrecoAnterior(origem.getPrecoAnterior());
@@ -2087,7 +2133,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
 //    private void busca_produto_by_cod_barra()
 //    {
 //        String codBarra = txtCodBarra.getText().trim();
-////        Integer codBarra_int = ( codBarra.isEmpty() ? 0 : Integer.parseInt( codBarra ) );
+    ////        Integer codBarra_int = ( codBarra.isEmpty() ? 0 : Integer.parseInt( codBarra ) );
 //        if ( !codBarra.equals( "" ) )
 //        {
 //            System.err.println( "codBarra: " + codBarra );
@@ -2216,7 +2262,9 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
 //        if ( !codBarra.equals( "" ) )
 //        {
 //            System.err.println( "codBarra: " + codBarra );
-////            Long cod_barra = Long.parseLong ( codBarra );
+    
+
+    ////            Long cod_barra = Long.parseLong ( codBarra );
 //            produto = produtoDao.getProdutoByCodigoBarra( codBarra );
 //            if ( produto.getCodigo() != 0 )
 //            {
@@ -3144,7 +3192,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         try {
             stocksControllerLocal.adicionar_quantidades(idProduto,
                     qtd,
-                    qtdCritica, qtdBaixa, dataEntrada,getIdArmazens());
+                    qtdCritica, qtdBaixa, dataEntrada, getIdArmazens());
 
         } catch (Exception e) {
         }
@@ -3294,6 +3342,48 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         }
 
         return 0;
+    }
+
+    public void calcularPrecoVendaRetalho() {
+        try {
+            // 1. Obter e limpar o Preço de Compra (ex: "1.200,00" -> "1200.00")
+            Object valorSpinner = spPrecoCompra.getValue();
+            double precoCompra = 0.0;
+
+            if (valorSpinner != null) {
+                if (valorSpinner instanceof Number) {
+                    precoCompra = ((Number) valorSpinner).doubleValue();
+                } else {
+                    String sPrecoCompra = valorSpinner.toString().trim()
+                            .replace(".", "") // Remove o ponto de milhares
+                            .replace(",", "."); // Troca a vírgula decimal por ponto
+
+                    precoCompra = sPrecoCompra.isEmpty() ? 0.0 : Double.parseDouble(sPrecoCompra);
+                }
+            }
+
+            // 2. Obter e limpar a Percentagem de Ganho (caso também use vírgula)
+            String sPercentagem = txtPercentagemGanho.getText().trim()
+                    .replace(".", "")
+                    .replace(",", ".");
+
+            double percentagemGanho = sPercentagem.isEmpty() ? 0.0 : Double.parseDouble(sPercentagem);
+
+            // 3. Cálculo da margem (Markup)
+            double precoVenda = precoCompra * (1 + (percentagemGanho / 100.0));
+
+            // 4. Formatar para o padrão com ponto nos milhares e vírgula nas decimais (ex: 1.200,00)
+            java.text.DecimalFormatSymbols symbols = new java.text.DecimalFormatSymbols(new java.util.Locale("pt", "AO"));
+            symbols.setDecimalSeparator(',');
+            symbols.setGroupingSeparator('.');
+
+            java.text.DecimalFormat df = new java.text.DecimalFormat("#,##0.00", symbols);
+
+            txtPrecoVenda.setText(df.format(precoVenda));
+
+        } catch (Exception e) {
+            txtPrecoVenda.setText("0,00");
+        }
     }
 
 }

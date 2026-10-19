@@ -68,7 +68,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="painel_stock" min="-2" max="-2" attributes="0"/>
-                          <Component id="jButtonCompras" pref="320" max="32767" attributes="0"/>
+                          <Component id="jButtonCompras" max="32767" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -1477,7 +1477,6 @@
                           <Component id="jRadioButtonSim" min="-2" pref="56" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jRadioButtonNao" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -1506,12 +1505,14 @@
                       <Component id="lbBarra1" alignment="3" min="-2" pref="22" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="lbPreco" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="txtPercentagemGanhoRetalho" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="lbStatus1" alignment="3" min="-2" pref="26" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="lbPreco" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="lbStatus1" alignment="3" min="-2" pref="26" max="-2" attributes="0"/>
+                      </Group>
+                      <Component id="txtPercentagemGanhoRetalho" min="-2" pref="40" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="lbPrecoVenda" min="-2" pref="16" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="txtPrecoVendaRetalho" min="-2" max="-2" attributes="0"/>
@@ -1548,7 +1549,6 @@
             <Property name="caretColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
-            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtPercentagemGanhoRetalhoActionPerformed"/>
