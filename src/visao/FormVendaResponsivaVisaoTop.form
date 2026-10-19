@@ -665,10 +665,10 @@
                                               <Group type="102" attributes="0">
                                                   <Component id="lbQuantidade" min="-2" pref="33" max="-2" attributes="0"/>
                                                   <EmptySpace max="-2" attributes="0"/>
-                                                  <Component id="txtQuatindade" min="-2" pref="41" max="-2" attributes="0"/>
-                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                                  <Component id="lbCodigoProduto" min="-2" max="-2" attributes="0"/>
-                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="txtQuatindade" min="-2" pref="53" max="-2" attributes="0"/>
+                                                  <EmptySpace max="-2" attributes="0"/>
+                                                  <Component id="lbCodigoProduto" min="-2" pref="38" max="-2" attributes="0"/>
+                                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                                   <Component id="txtCodigoProduto" min="-2" pref="52" max="-2" attributes="0"/>
                                                   <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
                                                   <Component id="lbCodigoProduto2" min="-2" max="-2" attributes="0"/>

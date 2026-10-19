@@ -190,8 +190,8 @@ public class LoteController implements EntidadeFactory {
     }
 
     /**
-     * Stock vendável do produto em todos os armazéns (lotes activos e dentro
-     * da validade).
+     * Stock vendável do produto em todos os armazéns (lotes activos e dentro da
+     * validade).
      */
     public double getStock(int fkProduto) {
         String sql = "SELECT COALESCE( SUM( qtd ), 0 ) AS stock FROM lote "
@@ -325,8 +325,8 @@ public class LoteController implements EntidadeFactory {
     // ------------------------------------------------------------------
     /**
      * Repõe nos lotes de onde a venda original retirou, do último lote retirado
-     * para o primeiro. Como repõe no próprio lote, o armazém é o mesmo da
-     * venda original.
+     * para o primeiro. Como repõe no próprio lote, o armazém é o mesmo da venda
+     * original.
      *
      * NÃO faz commit nem rollback. Usa a Connection (e a transacção) de quem
      * chama.
@@ -400,7 +400,7 @@ public class LoteController implements EntidadeFactory {
             rollbackSilencioso(conn);
             throw e;
         } finally {
-           // autoCommitSilencioso(conn);
+            // autoCommitSilencioso(conn);
         }
     }
 
@@ -424,8 +424,8 @@ public class LoteController implements EntidadeFactory {
     }
 
     /**
-     * Arredonda a 3 casas decimais para evitar erros de vírgula flutuante
-     * (ex.: 0.1 + 0.2).
+     * Arredonda a 3 casas decimais para evitar erros de vírgula flutuante (ex.:
+     * 0.1 + 0.2).
      */
     private static double arredondar(double valor) {
         return Math.round(valor * 1000.0) / 1000.0;
@@ -550,14 +550,14 @@ public class LoteController implements EntidadeFactory {
 
     /**
      * Indica se o produto tem lotes vendáveis: activos, com stock e dentro da
-     * validade (mesmo critério usado em getStock e baixarStock). Se
-     * fkArmazem for null, considera todos os armazéns.
+     * validade (mesmo critério usado em getStock e baixarStock). Se fkArmazem
+     * for null, considera todos os armazéns.
      */
     public boolean existeLotesDisponiveis(int fkProduto, Integer fkArmazem) {
         String sql = "SELECT EXISTS( SELECT 1 FROM lote "
                 + "WHERE fk_produto = ? AND estado = 'ACTIVO' "
                 + "AND qtd > 0 AND data_validade >= CURDATE() "
-                + ( fkArmazem != null ? "AND fk_armazem = ? " : "" )
+                + (fkArmazem != null ? "AND fk_armazem = ? " : "")
                 + ") AS existe";
         try (PreparedStatement ps = conexao.getConnection().prepareStatement(sql)) {
             ps.setInt(1, fkProduto);
@@ -579,12 +579,106 @@ public class LoteController implements EntidadeFactory {
         return existeLotesDisponiveis(fkProduto, null);
     }
 
+    /**
+     * Representa a previsão da retirada de stock de um lote FEFO.
+     */
+    public static class LoteFEFO {
+
+        private final Lote lote;
+        private final double quantidadeRetirar;
+
+        public LoteFEFO(Lote lote, double quantidadeRetirar) {
+            this.lote = lote;
+            this.quantidadeRetirar = quantidadeRetirar;
+        }
+
+        public Lote getLote() {
+            return lote;
+        }
+
+        public double getQuantidadeRetirar() {
+            return quantidadeRetirar;
+        }
+    }
+
+    /**
+     * Prevê os lotes que serão utilizados na venda, seguindo FEFO. Não altera o
+     * stock nem regista movimentos.
+     *
+     * @throws SQLException se ocorrer um erro na consulta
+     * @throws IllegalStateException se o stock vendável for insuficiente
+     */
+    public List<LoteFEFO> preverBaixaFEFO(
+            int fkProduto,
+            int fkArmazem,
+            double qtdPedida) throws SQLException {
+
+        if (qtdPedida <= 0) {
+            throw new IllegalArgumentException(
+                    "A quantidade deve ser superior a zero."
+            );
+        }
+
+        String sql
+                = "SELECT * FROM lote "
+                + "WHERE fk_produto = ? "
+                + "AND fk_armazem = ? "
+                + "AND estado = 'ACTIVO' "
+                + "AND qtd > 0 "
+                + "AND data_validade >= CURDATE() "
+                + "ORDER BY data_validade ASC, id ASC";
+
+        List<LoteFEFO> resultado = new ArrayList<>();
+        double restante = arredondar(qtdPedida);
+
+        try (PreparedStatement ps
+                = conexao.getConnection().prepareStatement(sql)) {
+
+            ps.setInt(1, fkProduto);
+            ps.setInt(2, fkArmazem);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next() && restante > EPS) {
+
+                    Lote lote = new Lote();
+                    setResultSetLote(rs, lote);
+
+                    double retirar = Math.min(
+                            lote.getQtd(),
+                            restante
+                    );
+
+                    resultado.add(
+                            new LoteFEFO(lote, retirar)
+                    );
+
+                    restante = arredondar(restante - retirar);
+                }
+            }
+        }
+
+        if (restante > EPS) {
+            throw new IllegalStateException(
+                    "Stock insuficiente nos lotes válidos. "
+                    + "Quantidade em falta: " + restante
+            );
+        }
+
+        return resultado;
+    }
+
     private void autoCommitSilencioso(Connection conn) {
         try {
             conn.setAutoCommit(true);
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
+    }
+
+    public List<Lote> listarDisponiveisFEFO(int fkProduto, int fkArmazem) {
+        return executarLista("SELECT * FROM lote WHERE fk_produto = ? AND fk_armazem = ? AND estado = 'ACTIVO' "
+                + "AND qtd > 0 AND data_validade >= CURDATE() ORDER BY data_validade ASC, id ASC",
+                fkProduto, fkArmazem);
     }
 
 }

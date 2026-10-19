@@ -179,10 +179,31 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     private static boolean descontoStocavel = true;
     public static Vector<String> consultaDoc = new Vector();
     private String folhaEscolhida = null; // null = utilizador não clicou
+    private static PainelLotesVenda painelLotes;
     private static FormVendaResponsivaVisaoTop instancia;
 
     public FormVendaResponsivaVisaoTop(int cod_usuario, BDConexao conexao) throws SQLException {
         initComponents();
+
+        painelLotes = PainelLotesVenda.instalar(
+                PainelLotesVenda.encontrarPainelDoBotao(
+                        getContentPane(), "Fecho"
+                ),
+                560
+        );
+
+        // Atualizar quando o produto selecionado mudar
+        cmbProduto.addActionListener(evt -> {
+            atualizarPainelLotesProdutoPesquisado();
+        });
+
+        // Atualizar quando selecionar uma linha da jtable da venda
+        table.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                atualizarPainelLotesDaLinhaSelecionada();
+            }
+        });
+
         configurarTxtBuscaRefMaiusculo();
 //        procedimento_codBarra__jtable();
 
@@ -1338,10 +1359,10 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                                         .addGroup(painelDirLayout.createSequentialGroup()
                                             .addComponent(lbQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(txtQuatindade, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addGap(18, 18, 18)
-                                            .addComponent(lbCodigoProduto)
-                                            .addGap(18, 18, 18)
+                                            .addComponent(txtQuatindade, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(lbCodigoProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                             .addComponent(txtCodigoProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addGap(35, 35, 35)
                                             .addComponent(lbCodigoProduto2)
@@ -1587,14 +1608,37 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
         try {
             if (validar()) {
-                new BuscaProdutoVisao(this, rootPaneCheckingEnabled,
+
+                BuscaProdutoVisao busca = new BuscaProdutoVisao(
+                        this,
+                        rootPaneCheckingEnabled,
                         getCodigoArmazem(),
                         DVML.JANELA_VENDA,
-                        BDConexao.getInstancia()).setVisible(true);
+                        BDConexao.getInstancia()
+                );
+
+                busca.setVisible(true);
+
+                // Quando a janela de pesquisa fechar, atualizar
+                // os lotes do produto que foi selecionado.
+//            atualizarPainelLotesDepoisDaPesquisa();
+                atualizarPainelLotesProdutoPesquisado();
+
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+//        try {
+//            if (validar()) {
+//                new BuscaProdutoVisao(this, rootPaneCheckingEnabled,
+//                        getCodigoArmazem(),
+//                        DVML.JANELA_VENDA,
+//                        BDConexao.getInstancia()).setVisible(true);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void cmbProdutoActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_cmbProdutoActionPerformed
@@ -1719,12 +1763,47 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
     private void btn_removerActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_btn_removerActionPerformed
     {//GEN-HEADEREND:event_btn_removerActionPerformed
-        try {
+//        try {
+//
+//            DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+//            if (podeRemoverServico(modelo, table.getSelectedRow())) {
+        ////                actualizarPrecosAntigos2();
+//                remover_item_carrinho();
+//                inserirLinhaEmBranco();
+//            }
+//
+//            txtCodigoBarra.setText("");
+//            txtCodigoBarra.requestFocus();
+//
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//
+//        }
 
-            DefaultTableModel modelo = (DefaultTableModel) table.getModel();
-            if (podeRemoverServico(modelo, table.getSelectedRow())) {
-//                actualizarPrecosAntigos2();
+
+    try {
+            DefaultTableModel modelo
+                    = (DefaultTableModel) table.getModel();
+
+            int linhaSelecionada = table.getSelectedRow();
+
+            // Verificar se existe uma linha selecionada
+            if (linhaSelecionada < 0) {
+                txtCodigoBarra.setText("");
+                txtCodigoBarra.requestFocus();
+                return;
+            }
+
+            // Verificar se a linha pode ser removida
+            if (podeRemoverServico(modelo, linhaSelecionada)) {
+
                 remover_item_carrinho();
+
+                // Limpar o painel lateral de lotes
+                if (painelLotes != null) {
+                    painelLotes.limpar();
+                }
+
                 inserirLinhaEmBranco();
             }
 
@@ -1733,10 +1812,20 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
         } catch (Exception ex) {
             ex.printStackTrace();
-            //Logger.getLogger(VendaUsuarioVisao.class.getName()).log(Level.SEVERE, null, ex);
-//            JOptionPane.showMessageDialog( null, "Possivelmente não selecionaste \n nenhuma linha ou não existe dados na tabela", "AVISO", JOptionPane.WARNING_MESSAGE );
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Erro ao remover o produto: " + ex.getMessage(),
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
 
+        if (painelLotes != null) {
+            painelLotes.limpar();
+        }
+
+        atualizarPainelLotesDaLinhaSelecionada();
     }//GEN-LAST:event_btn_removerActionPerformed
 
     private void ck_A4ActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_ck_A4ActionPerformed
@@ -3688,6 +3777,206 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     }
 
     public static void adicionar_produto(String mes, double qtd) throws SQLException {
+
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        table.setRowHeight(28);
+
+        // 1. Fechar edição atual
+        if (table.isEditing()) {
+            TableCellEditor editor = table.getCellEditor();
+            if (editor != null) {
+                editor.stopCellEditing();
+            }
+        }
+
+        int codigoProdutoLocal = getCodigoProduto();
+        String descricao_produto = getDescricao_Produto();
+
+        if (!mes.equals("")) {
+            descricao_produto = "Pgt. Ref. de " + descricao_produto
+                    + " de #" + mes;
+        }
+
+        // Evitar produto duplicado
+        if (!statusConversao
+                && exist_produto_tabela_formulario(descricao_produto)) {
+            JOptionPane.showMessageDialog(
+                    null, "O produto já consta na tabela."
+            );
+            return;
+        }
+
+        // Validar quantidade
+        if (validar_zero() || qtd <= 0) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Atenção!\nA quantidade a sair deve ser superior a zero."
+            );
+            return;
+        }
+
+        // =====================================================
+        // 2. CONSULTAR LOTES FEFO E ATUALIZAR PAINEL LATERAL
+        // =====================================================
+        int armazemAtual = getCodigoArmazem(); // mantem se mais abaixo usares esta variavel
+
+        String erroLotes = actualizarPainelLotes(codigoProdutoLocal, descricao_produto, qtd);
+        if (erroLotes != null) {
+            JOptionPane.showMessageDialog(null, erroLotes, "Lotes / stock", JOptionPane.WARNING_MESSAGE);
+            return;
+
+        }
+
+    // =====================================================
+    // 3. CÁLCULOS ORIGINAIS
+    // =====================================================
+
+    String unidade = getUnidade_Produto();
+
+        BigDecimal quantidade = BigDecimal.valueOf(qtd);
+        BigDecimal preco = BigDecimal.valueOf(
+                getPreco(codigoProdutoLocal, quantidade.doubleValue())
+        );
+        BigDecimal descontoPercent = BigDecimal.valueOf(
+                getDescontoPercentagem()
+        );
+        BigDecimal taxaIva = BigDecimal.valueOf(
+                getTaxaImpostoIva(codigoProdutoLocal)
+        );
+        BigDecimal taxaRet = BigDecimal.valueOf(
+                getTaxaImpostoRet(codigoProdutoLocal)
+        );
+
+        BigDecimal valorIliquidoUnit = FinanceUtils.getValorIliquido(
+                BigDecimal.ONE, preco, descontoPercent
+        );
+
+        double valorLiquidoDoubleUnit = FinanceUtils.getValorComIVA(
+                1d,
+                taxaIva.doubleValue(),
+                valorIliquidoUnit.doubleValue(),
+                descontoPercent.doubleValue()
+        );
+
+        BigDecimal valorIliquido = valorIliquidoUnit.multiply(quantidade);
+
+        BigDecimal totalComIva = BigDecimal.valueOf(
+                valorLiquidoDoubleUnit * quantidade.doubleValue()
+        );
+
+        String totalRetencao = CfMethods.formatarComoMoeda(
+                MetodosUtil.getValorComRetencao(
+                        quantidade.doubleValue(),
+                        taxaRet.doubleValue(),
+                        preco.doubleValue(),
+                        descontoPercent.doubleValue()
+                )
+        );
+
+        // =====================================================
+        // 4. OBTER PRIMEIRA LINHA VAZIA
+        // =====================================================
+        int row = -1;
+
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            if (linhaTabelaEstaVazia(modelo, i)) {
+                row = i;
+                break;
+            }
+        }
+
+        if (row == -1) {
+            modelo.addRow(new Object[]{
+                "", "", "", "", "", "", "", "", "", "", ""
+            });
+            row = modelo.getRowCount() - 1;
+        }
+
+        // =====================================================
+        // 5. PREENCHER A JTable
+        // =====================================================
+        modelo.setValueAt(codigoProdutoLocal, row, 0);
+        modelo.setValueAt(descricao_produto, row, 1);
+        modelo.setValueAt(unidade, row, 2);
+        modelo.setValueAt(CfMethods.formatarComoMoeda(preco), row, 3);
+        modelo.setValueAt(qtd, row, 4);
+        modelo.setValueAt(descontoPercent, row, 5);
+        modelo.setValueAt(taxaIva, row, 6);
+        modelo.setValueAt(taxaRet, row, 7);
+        modelo.setValueAt(totalRetencao, row, 8);
+        modelo.setValueAt(
+                CfMethods.formatarComoMoeda(valorIliquido), row, 9
+        );
+        modelo.setValueAt(
+                CfMethods.formatarComoMoeda(totalComIva), row, 10
+        );
+
+        // 6. Garantir última linha vazia
+        int last = modelo.getRowCount() - 1;
+
+        if (!linhaTabelaEstaVazia(modelo, last)) {
+            modelo.addRow(new Object[]{
+                "", "", "", "", "", "", "", "", "", "", ""
+            });
+        }
+
+        // =====================================================
+        // 7. IMPRESSÃO ORIGINAL
+        // =====================================================
+        TbProduto findByDesignacao = produtosController.findByDesignacao(
+                cmbProduto.getSelectedItem().toString()
+        );
+
+        int idPedido = 0;
+
+        TbMesas mesaEntity = (TbMesas) mesasController.findById(DVML.MESA_BALCAO);
+
+        TbLugares lugarEntity = (TbLugares) lugaresController.findById(DVML.LUGAR_BALCAO);
+
+        TbUsuario usuarioEntity = (TbUsuario) usuariosController.findById(cod_usuario);
+
+        String usuario = usuarioEntity.getNome();
+
+        if (findByDesignacao.getCozinha().equals(DVML.ENVIAR_TICKET)) {
+
+            MetodosUtil.imprimir_cozinha(
+                    findByDesignacao,
+                    idPedido,
+                    mesaEntity.getDesignacao(),
+                    lugarEntity.getDesignacao(),
+                    usuario,
+                    "Activo",
+                    quantidade.intValue(),
+                    dadosInstituicaoController
+            );
+
+        } else if (findByDesignacao.getCozinha().equals(DVML.ENVIAR_SALA)) {
+
+            MetodosUtil.imprimir_sala(
+                    findByDesignacao,
+                    idPedido,
+                    mesaEntity.getDesignacao(),
+                    lugarEntity.getDesignacao(),
+                    usuario,
+                    "Activo",
+                    quantidade.intValue(),
+                    dadosInstituicaoController
+            );
+        }
+
+        // =====================================================
+        // 8. ATUALIZAR TOTAIS
+        // =====================================================
+        setTotalRetencao();
+        setTotalPagar();
+        setTotalPagarGeral();
+        calculaTotalIVA();
+        valor_por_extenco();
+
+        cursorLinha();
+    }
+
+    public static void adicionar_produto_antigo(String mes, double qtd) throws SQLException {
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         table.setRowHeight(28);
 
@@ -5226,41 +5515,125 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
     public void remover_item_carrinho() {
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        DefaultTableModel modelo
+                = (DefaultTableModel) table.getModel();
 
-        String designacao = modelo.getValueAt(table.getSelectedRow(), 1).toString();
-        if (designacao.contentEquals("#")) {
-            JOptionPane.showMessageDialog(null, "Não é permitido remover um  serviço ");
+        int linhaSelecionada = table.getSelectedRow();
+
+        if (linhaSelecionada < 0) {
+            return;
         }
 
-        modelo.removeRow(table.getSelectedRow());
+        String designacao = String.valueOf(
+                modelo.getValueAt(linhaSelecionada, 1)
+        );
+
+        // Não permitir remover serviços
+        if (designacao.contentEquals("#")) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Não é permitido remover um serviço."
+            );
+            return;
+        }
+
+        // Remover a linha selecionada
+        modelo.removeRow(linhaSelecionada);
+
+        // Atualizar os totais
         setTotalPagar();
         setTotalRetencao();
         calculaTotalIVA();
-        //txtDesconto.setText("0");
 
-        TbProduto findByDesignacao = produtosController.findByDesignacao(cmbProduto.getSelectedItem().toString());
+        TbProduto findByDesignacao
+                = produtosController.findByDesignacao(
+                        cmbProduto.getSelectedItem().toString()
+                );
 
         int idPedido = 0;
+
         TbMesas mesaEntity = (TbMesas) mesasController.findById(DVML.MESA_BALCAO);
+
         String mesa = mesaEntity.getDesignacao();
+
         TbLugares lugarEntity = (TbLugares) lugaresController.findById(DVML.LUGAR_BALCAO);
+
         String lugar = lugarEntity.getDesignacao();
+
         TbUsuario usuarioEntity = (TbUsuario) usuariosController.findById(cod_usuario);
+
         String usuario = usuarioEntity.getNome();
 
-        if (findByDesignacao.getCozinha().equals("Enviar Ticket")) {
-            MetodosUtil.imprimir_cozinha(findByDesignacao, idPedido, mesa, lugar, usuario, "Cancelado", (int) getQuantidade(), dadosInstituicaoController);
-        } else if (findByDesignacao.getCozinha().equals("Enviar Sala")) {
-            MetodosUtil.imprimir_sala(findByDesignacao, idPedido, mesa, lugar, usuario, "Cancelado", (int) getQuantidade(), dadosInstituicaoController);
+        if (findByDesignacao != null) {
+
+            if (findByDesignacao.getCozinha().equals("Enviar Ticket")) {
+
+                MetodosUtil.imprimir_cozinha(
+                        findByDesignacao,
+                        idPedido,
+                        mesa,
+                        lugar,
+                        usuario,
+                        "Cancelado",
+                        (int) getQuantidade(),
+                        dadosInstituicaoController
+                );
+
+            } else if (findByDesignacao.getCozinha().equals("Enviar Sala")) {
+
+                MetodosUtil.imprimir_sala(
+                        findByDesignacao,
+                        idPedido,
+                        mesa,
+                        lugar,
+                        usuario,
+                        "Cancelado",
+                        (int) getQuantidade(),
+                        dadosInstituicaoController
+                );
+            }
         }
 
         valor_por_extenco();
         reset_desconto_global();
-        //calcularTroco();
-
     }
 
+//    public void remover_item_carrinho() {
+//
+//        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+//
+//        String designacao = modelo.getValueAt(table.getSelectedRow(), 1).toString();
+//        if (designacao.contentEquals("#")) {
+//            JOptionPane.showMessageDialog(null, "Não é permitido remover um  serviço ");
+//        }
+//
+//        modelo.removeRow(table.getSelectedRow());
+//        setTotalPagar();
+//        setTotalRetencao();
+//        calculaTotalIVA();
+//        //txtDesconto.setText("0");
+//
+//        TbProduto findByDesignacao = produtosController.findByDesignacao(cmbProduto.getSelectedItem().toString());
+//
+//        int idPedido = 0;
+//        TbMesas mesaEntity = (TbMesas) mesasController.findById(DVML.MESA_BALCAO);
+//        String mesa = mesaEntity.getDesignacao();
+//        TbLugares lugarEntity = (TbLugares) lugaresController.findById(DVML.LUGAR_BALCAO);
+//        String lugar = lugarEntity.getDesignacao();
+//        TbUsuario usuarioEntity = (TbUsuario) usuariosController.findById(cod_usuario);
+//        String usuario = usuarioEntity.getNome();
+//
+//        if (findByDesignacao.getCozinha().equals("Enviar Ticket")) {
+//            MetodosUtil.imprimir_cozinha(findByDesignacao, idPedido, mesa, lugar, usuario, "Cancelado", (int) getQuantidade(), dadosInstituicaoController);
+//        } else if (findByDesignacao.getCozinha().equals("Enviar Sala")) {
+//            MetodosUtil.imprimir_sala(findByDesignacao, idPedido, mesa, lugar, usuario, "Cancelado", (int) getQuantidade(), dadosInstituicaoController);
+//        }
+//
+//        valor_por_extenco();
+//        reset_desconto_global();
+//        //calcularTroco();
+//
+//    }
     public static void accao_codigo_interno_enter_busca_exterior(int codigo, double qtd) {
 
         try {
@@ -7370,6 +7743,520 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         actualizar_abreviacao(); // calcula a abreviação conforme o documento
     }
 
+    // ---------------------------------------------------------------------
+// 5) SELECAO NA JTable: o teu atualizarPainelLotesDaLinhaSelecionada()
+//    (nao o vi). Troca o que la esta para encher o painel por este esquema.
+//    Indices das colunas segundo a captura (0 = Codigo, 1 = Descricao,
+//    4 = Quantidade): ajusta se os teus forem outros.
+// ---------------------------------------------------------------------
+    private void atualizarPainelLotesDaLinhaSelecionada() {
+        if (painelLotes == null) {
+            return;
+        }
+        int linha = table.getSelectedRow();
+        if (linha < 0) {
+            painelLotes.limpar();
+            return;
+        }
+        try {
+            int codigo = Integer.parseInt(String.valueOf(table.getValueAt(linha, 0)));
+            String descricao = String.valueOf(table.getValueAt(linha, 1));
+            double qtd = Double.parseDouble(String.valueOf(table.getValueAt(linha, 4)));
+
+            // sem janela: so seleccionar uma linha nao deve interromper o balcao
+            actualizarPainelLotes(codigo, descricao, qtd);
+
+        } catch (SQLException | NumberFormatException e) {
+            painelLotes.limpar();
+            e.printStackTrace();
+        }
+    }
+
+    private void atualizarPainelLotesDaLinhaSelecionada2() {
+
+        int linhaView = table.getSelectedRow();
+
+        // Nenhuma linha selecionada
+        if (linhaView < 0) {
+            if (painelLotes != null) {
+                painelLotes.limpar();
+            }
+            return;
+        }
+
+        try {
+            // Converter o índice visual para o índice do modelo
+            int linha = table.convertRowIndexToModel(linhaView);
+
+            DefaultTableModel modelo
+                    = (DefaultTableModel) table.getModel();
+
+            Object codigoObj = modelo.getValueAt(linha, 0);
+            Object quantidadeObj = modelo.getValueAt(linha, 4);
+
+            // Ignorar linhas vazias
+            if (codigoObj == null
+                    || codigoObj.toString().trim().isEmpty()
+                    || quantidadeObj == null
+                    || quantidadeObj.toString().trim().isEmpty()) {
+
+                if (painelLotes != null) {
+                    painelLotes.limpar();
+                }
+                return;
+            }
+
+            int codigoProduto = Integer.parseInt(
+                    codigoObj.toString().trim()
+            );
+
+            double quantidade = Double.parseDouble(
+                    quantidadeObj.toString().trim().replace(",", ".")
+            );
+
+            // Verificar se o produto tem lotes registados
+            if (!loteController.existeLotes(codigoProduto)) {
+                if (painelLotes != null) {
+                    painelLotes.limpar();
+                }
+                return;
+            }
+
+            int armazemAtual = getCodigoArmazem();
+
+            // Verificar se existem lotes disponíveis neste armazém
+            if (!loteController.existeLotesDisponiveis(
+                    codigoProduto, armazemAtual)) {
+
+                if (painelLotes != null) {
+                    painelLotes.limpar();
+                }
+                return;
+            }
+
+            // Prever os lotes para a quantidade da linha selecionada
+            List<LoteController.LoteFEFO> lotesFEFO
+                    = loteController.preverBaixaFEFO(
+                            codigoProduto,
+                            armazemAtual,
+                            quantidade
+                    );
+
+            if (lotesFEFO == null || lotesFEFO.isEmpty()) {
+                if (painelLotes != null) {
+                    painelLotes.limpar();
+                }
+                return;
+            }
+
+            // Obter a descrição do produto selecionado
+            String descricao = String.valueOf(
+                    modelo.getValueAt(linha, 1)
+            );
+
+            // Converter os lotes para o formato do painel
+            List<PainelLotesVenda.Linha> linhasPainel
+                    = new java.util.ArrayList<>();
+
+            for (LoteController.LoteFEFO item : lotesFEFO) {
+
+                entity.Lote lote = item.getLote();
+
+                linhasPainel.add(
+                        new PainelLotesVenda.Linha(
+                                lote.getNumeroLote(),
+                                lote.getDataValidade(),
+                                lote.getQtd(),
+                                item.getQuantidadeRetirar()
+                        )
+                );
+            }
+
+            // Atualizar o painel lateral
+            if (painelLotes != null) {
+                painelLotes.mostrar(
+                        descricao,
+                        quantidade,
+                        linhasPainel
+                );
+            }
+
+        } catch (IllegalStateException e) {
+
+            if (painelLotes != null) {
+                painelLotes.mostrarAviso(
+                        "Produto selecionado",
+                        e.getMessage()
+                );
+            }
+
+        } catch (SQLException | NumberFormatException e) {
+
+            if (painelLotes != null) {
+                painelLotes.limpar();
+            }
+
+            e.printStackTrace();
+        }
+    }
+
+    // ---------------------------------------------------------------------
+// 3) PESQUISA: substitui TODO o teu atualizarPainelLotesProdutoPesquisado()
+//    por este (mesma estrutura; a logica dos lotes passou para o metodo unico)
+// ---------------------------------------------------------------------
+    private void atualizarPainelLotesProdutoPesquisado3() {
+
+        if (painelLotes == null) {
+            return;
+        }
+
+        if (cmbProduto.getSelectedItem() == null) {
+            painelLotes.limpar();
+            return;
+        }
+
+        try {
+            int codigoProdutoLocal = getCodigoProduto();
+            String descricao_produto = getDescricao_Produto();
+            String textoQtd = txtQuatindade.getText().trim();
+
+            if (codigoProdutoLocal <= 0 || textoQtd.isEmpty()) {
+                painelLotes.limpar();
+                return;
+            }
+
+            double qtd = Double.parseDouble(textoQtd.replace(",", "."));
+            if (qtd <= 0) {
+                painelLotes.limpar();
+                return;
+            }
+
+            // aqui nao ha janela: so mostra no painel
+            actualizarPainelLotes(codigoProdutoLocal, descricao_produto, qtd);
+
+        } catch (SQLException | NumberFormatException e) {
+            painelLotes.limpar();
+            e.printStackTrace();
+        }
+    }
+
+    private void atualizarPainelLotesProdutoPesquisado2() {
+
+        if (painelLotes == null) {
+            return;
+        }
+
+        Object selecionado = cmbProduto.getSelectedItem();
+
+        if (selecionado == null) {
+            painelLotes.limpar();
+            return;
+        }
+
+        try {
+            // Obter os dados do produto selecionado na pesquisa
+            int codigoProdutoLocal = getCodigoProduto();
+            String descricao_produto = getDescricao_Produto();
+
+            String textoQtd = txtQuatindade.getText().trim();
+
+            if (codigoProdutoLocal <= 0 || textoQtd.isEmpty()) {
+                painelLotes.limpar();
+                return;
+            }
+
+            double qtd = Double.parseDouble(
+                    textoQtd.replace(",", ".")
+            );
+
+            if (qtd <= 0) {
+                painelLotes.limpar();
+                return;
+            }
+
+            int armazemAtual = getCodigoArmazem();
+
+            // Verificar se o produto tem lotes registados
+            if (!loteController.existeLotes(codigoProdutoLocal)) {
+                painelLotes.limpar();
+                return;
+            }
+
+            // Verificar se existem lotes disponíveis no armazém
+            if (!loteController.existeLotesDisponiveis(
+                    codigoProdutoLocal, armazemAtual)) {
+
+                painelLotes.mostrarAviso(
+                        descricao_produto,
+                        "Não existem lotes disponíveis neste armazém."
+                );
+                return;
+            }
+
+            // Consultar todos os lotes necessários segundo o FEFO
+            List<LoteController.LoteFEFO> lotesFEFO
+                    = loteController.preverBaixaFEFO(
+                            codigoProdutoLocal,
+                            armazemAtual,
+                            qtd
+                    );
+
+            if (lotesFEFO == null || lotesFEFO.isEmpty()) {
+                painelLotes.limpar();
+                return;
+            }
+
+            // Converter cada lote para uma linha do painel
+            List<PainelLotesVenda.Linha> linhasPainel
+                    = new java.util.ArrayList<>();
+
+            for (LoteController.LoteFEFO item : lotesFEFO) {
+
+                entity.Lote lote = item.getLote();
+
+                linhasPainel.add(
+                        new PainelLotesVenda.Linha(
+                                lote.getNumeroLote(),
+                                lote.getDataValidade(),
+                                lote.getQtd(),
+                                item.getQuantidadeRetirar()
+                        )
+                );
+            }
+
+            // Mostrar todas as linhas devolvidas pelo FEFO
+            painelLotes.mostrar(
+                    descricao_produto,
+                    qtd,
+                    linhasPainel
+            );
+
+        } catch (IllegalStateException e) {
+
+            painelLotes.mostrarAviso(
+                    selecionado.toString(),
+                    e.getMessage()
+            );
+
+        } catch (SQLException | NumberFormatException e) {
+
+            painelLotes.limpar();
+            e.printStackTrace();
+        }
+    }
+
+    private void atualizarPainelLotesProdutoPesquisado1() {
+
+        if (painelLotes == null) {
+            return;
+        }
+
+        Object selecionado = cmbProduto.getSelectedItem();
+
+        if (selecionado == null) {
+            painelLotes.limpar();
+            return;
+        }
+
+        try {
+            int codigoProduto = getCodigoProduto();
+
+            double qtd = Double.parseDouble(
+                    txtQuatindade.getText().trim().replace(",", ".")
+            );
+
+            if (codigoProduto <= 0 || qtd <= 0) {
+                painelLotes.limpar();
+                return;
+            }
+
+            int armazemAtual = getCodigoArmazem();
+
+            // Produto sem lotes registados
+            if (!loteController.existeLotes(codigoProduto)) {
+                painelLotes.limpar();
+                return;
+            }
+
+            // Produto com lotes, mas sem lotes vendáveis
+            if (!loteController.existeLotesDisponiveis(
+                    codigoProduto, armazemAtual)) {
+
+                painelLotes.mostrarAviso(
+                        selecionado.toString(),
+                        "Não existem lotes disponíveis neste armazém."
+                );
+                return;
+            }
+
+            List<LoteController.LoteFEFO> lotesFEFO
+                    = loteController.preverBaixaFEFO(
+                            codigoProduto,
+                            armazemAtual,
+                            qtd
+                    );
+
+            List<PainelLotesVenda.Linha> linhasPainel
+                    = new java.util.ArrayList<>();
+
+            for (LoteController.LoteFEFO item : lotesFEFO) {
+
+                entity.Lote lote = item.getLote();
+
+                linhasPainel.add(
+                        new PainelLotesVenda.Linha(
+                                lote.getNumeroLote(),
+                                lote.getDataValidade(),
+                                lote.getQtd(),
+                                item.getQuantidadeRetirar()
+                        )
+                );
+            }
+
+            painelLotes.mostrar(
+                    selecionado.toString(),
+                    qtd,
+                    linhasPainel
+            );
+
+        } catch (IllegalStateException e) {
+
+            painelLotes.mostrarAviso(
+                    selecionado.toString(),
+                    e.getMessage()
+            );
+
+        } catch (java.sql.SQLException | NumberFormatException e) {
+
+            painelLotes.limpar();
+            e.printStackTrace();
+        }
+    }
+
+    private void mostrarLotesDoProdutoSelecionado(double qtd) {
+
+        if (painelLotes == null) {
+            return;
+        }
+
+        try {
+            int codigoProdutoLocal = getCodigoProduto();
+            String descricao = getDescricao_Produto();
+
+            if (codigoProdutoLocal <= 0) {
+                painelLotes.limpar();
+                return;
+            }
+
+            // Produto sem lotes registados
+            if (!loteController.existeLotes(codigoProdutoLocal)) {
+                painelLotes.limpar();
+                return;
+            }
+
+            int armazemAtual = getCodigoArmazem();
+
+            // Produto com lotes, mas sem lotes disponíveis
+            if (!loteController.existeLotesDisponiveis(
+                    codigoProdutoLocal, armazemAtual)) {
+
+                painelLotes.mostrarAviso(
+                        descricao,
+                        "Não existem lotes disponíveis neste armazém."
+                );
+                return;
+            }
+
+            // Se a quantidade ainda não foi preenchida,
+            // não é possível calcular a previsão de retirada.
+            if (qtd <= 0) {
+                painelLotes.mostrarAviso(
+                        descricao,
+                        "Introduza uma quantidade para prever os lotes."
+                );
+                return;
+            }
+
+            List<LoteController.LoteFEFO> lotesFEFO
+                    = loteController.preverBaixaFEFO(
+                            codigoProdutoLocal,
+                            armazemAtual,
+                            qtd
+                    );
+
+            List<PainelLotesVenda.Linha> linhasPainel
+                    = new java.util.ArrayList<>();
+
+            for (LoteController.LoteFEFO item : lotesFEFO) {
+
+                entity.Lote lote = item.getLote();
+
+                linhasPainel.add(
+                        new PainelLotesVenda.Linha(
+                                lote.getNumeroLote(),
+                                lote.getDataValidade(),
+                                lote.getQtd(),
+                                item.getQuantidadeRetirar()
+                        )
+                );
+            }
+
+            painelLotes.mostrar(
+                    descricao,
+                    qtd,
+                    linhasPainel
+            );
+
+        } catch (IllegalStateException e) {
+
+            painelLotes.mostrarAviso(
+                    getDescricao_Produto(),
+                    e.getMessage()
+            );
+
+        } catch (SQLException e) {
+
+            painelLotes.limpar();
+            e.printStackTrace();
+        }
+    }
+
+    private void atualizarPainelLotesDepoisDaPesquisa() {
+
+        try {
+            int codigoProduto = getCodigoProduto();
+
+            if (codigoProduto <= 0) {
+                if (painelLotes != null) {
+                    painelLotes.limpar();
+                }
+                return;
+            }
+
+            // Utiliza a quantidade atual do formulário.
+            // Substitui txtQuantidade pelo nome real do teu campo.
+            String textoQtd = txtQuatindade.getText().trim();
+
+            if (textoQtd.isEmpty()) {
+                if (painelLotes != null) {
+                    painelLotes.limpar();
+                }
+                return;
+            }
+
+            double qtd = Double.parseDouble(
+                    textoQtd.replace(",", ".")
+            );
+
+            mostrarLotesDoProdutoSelecionado(qtd);
+
+        } catch (NumberFormatException e) {
+            if (painelLotes != null) {
+                painelLotes.limpar();
+            }
+        }
+    }
+
     private void aplicarFolha() {
         setFolhaImpressora(resolverFolha(folhaEscolhida, dadosInstituicao.getImpressora()));
     }
@@ -7399,4 +8286,313 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             instancia.aplicarFolha(); // volta ao padrão do banco
         }
     }
+
+    /**
+     * Actualiza o painel de lotes para (produto, quantidade).
+     *
+     * @return null se ha stock suficiente (ou o produto nao tem lotes); senao o
+     * texto do erro (o painel ja o mostra a vermelho; quem quiser bloquear
+     * mostra tambem uma janela)
+     */
+    private static String actualizarPainelLotes3(
+            int codProduto,
+            String descricao,
+            double qtd) throws SQLException {
+
+        // 1. Verificar se o produto tem lotes registados
+        if (!loteController.existeLotes(codProduto)) {
+            painelLotes.limpar();
+            return null;
+        }
+
+        // 2. Obter o armazém atual
+        int armazem = getCodigoArmazem();
+
+        // 3. Consultar todos os lotes disponíveis por ordem FEFO
+        List<entity.Lote> disponiveis
+                = loteController.listarDisponiveisFEFO(
+                        codProduto,
+                        armazem
+                );
+
+        if (disponiveis.isEmpty()) {
+            String msg = "Este produto tem lotes registados, mas não possui "
+                    + "lotes disponíveis, activos e dentro da validade "
+                    + "no armazém selecionado.";
+
+            painelLotes.mostrarAviso(descricao, msg);
+            return msg;
+        }
+
+        // 4. Calcular a quantidade a retirar de cada lote
+        java.util.Map<Integer, Double> aRetirar
+                = new java.util.HashMap<>();
+
+        String erro = null;
+
+        try {
+            System.out.println("==================================");
+            System.out.println("Produto: " + codProduto);
+            System.out.println("Armazém: " + armazem);
+            System.out.println("Quantidade pedida: " + qtd);
+            System.out.println("==================================");
+            List<LoteController.LoteFEFO> previsao
+                    = loteController.preverBaixaFEFO(
+                            codProduto,
+                            armazem,
+                            qtd
+                    );
+            
+            for (LoteController.LoteFEFO item : previsao) {
+
+    int idLote = item.getLote().getId();
+    double quantidadeRetirar = item.getQuantidadeRetirar();
+
+    System.out.println(
+        "Lote ID: " + idLote
+        + " | Número: " + item.getLote().getNumeroLote()
+        + " | Stock: " + item.getLote().getQtd()
+        + " | A retirar: " + quantidadeRetirar
+    );
+
+    aRetirar.put(idLote, quantidadeRetirar);
+}
+
+//            for (LoteController.LoteFEFO item : previsao) {
+//
+//                int idLote = item.getLote().getId();
+//
+//                double quantidadeRetirar
+//                        = item.getQuantidadeRetirar();
+//
+//                aRetirar.put(idLote, quantidadeRetirar);
+//            }
+
+        } catch (IllegalStateException e) {
+            erro = e.getMessage();
+        }
+
+        // 5. Construir as linhas da tabela de lotes
+        List<PainelLotesVenda.Linha> linhas
+                = new java.util.ArrayList<>();
+
+        for (entity.Lote lote : disponiveis) {
+
+            double quantidadeRetirar
+                    = aRetirar.getOrDefault(lote.getId(), 0.0);
+
+            linhas.add(
+                    new PainelLotesVenda.Linha(
+                            lote.getNumeroLote(),
+                            lote.getDataValidade(),
+                            lote.getQtd(),
+                            quantidadeRetirar
+                    )
+            );
+        }
+
+        // 6. Mostrar o erro, se o stock for insuficiente
+        if (erro != null) {
+            painelLotes.mostrarAviso(
+                    descricao,
+                    erro,
+                    linhas
+            );
+
+            return erro;
+        }
+
+        // 7. Apresentar os lotes e as quantidades calculadas
+        painelLotes.mostrar(
+                descricao,
+                qtd,
+                linhas
+        );
+
+        return null;
+    }
+
+    private static String actualizarPainelLotes1(int codProduto, String descricao, double qtd) throws SQLException {
+
+        // produto sem lotes registados: nada a mostrar
+        if (!loteController.existeLotes(codProduto)) {
+            painelLotes.limpar();
+            return null;
+        }
+        int armazem = getCodigoArmazem();
+
+        // todos os lotes com stock, por ordem FEFO
+        List<entity.Lote> disponiveis = loteController.listarDisponiveisFEFO(codProduto, armazem);
+        if (disponiveis.isEmpty()) {
+            String msg = "Este produto tem lotes registados, mas não possui lotes disponíveis, "
+                    + "activos e dentro da validade no armazém selecionado.";
+            painelLotes.mostrarAviso(descricao, msg);
+            return msg;
+        }
+
+        // quanto sai de cada lote para a quantidade dada (por id do lote)
+        java.util.Map<Integer, Double> aRetirar = new java.util.HashMap<>();
+        String erro = null;
+        try {
+            for (LoteController.LoteFEFO item : loteController.preverBaixaFEFO(codProduto, armazem, qtd)) {
+                aRetirar.put(item.getLote().getId(), (double) item.getQuantidadeRetirar());
+            }
+        } catch (IllegalStateException e) {
+            erro = e.getMessage();
+        }
+
+        List<PainelLotesVenda.Linha> linhas = new java.util.ArrayList<>();
+        for (entity.Lote l : disponiveis) {
+            linhas.add(new PainelLotesVenda.Linha(
+                    l.getNumeroLote(),
+                    l.getDataValidade(),
+                    l.getQtd(),
+                    aRetirar.getOrDefault(l.getId(), 0.0)));
+        }
+
+        if (erro != null) {
+            painelLotes.mostrarAviso(descricao, erro, linhas);
+            return erro;
+        }
+        painelLotes.mostrar(descricao, qtd, linhas);
+        return null;
+    }
+    
+    // ---------------------------------------------------------------------
+// 2) NA CLASSE DO ECRA DE VENDAS: o metodo UNICO que enche o painel.
+//    Usa-o em todos os sitios (pesquisa, adicionar, selecao na JTable).
+//    E static porque o adicionar_produto e static.
+// ---------------------------------------------------------------------
+    /**
+     * Actualiza o painel de lotes para (produto, quantidade).
+     *
+     * @return null se ha stock suficiente (ou o produto nao tem lotes);
+     * senao o texto do erro (o painel ja o mostra a vermelho; quem quiser
+     * bloquear mostra tambem uma janela)
+     */
+    private static String actualizarPainelLotes(int codProduto, String descricao, double qtd) throws SQLException {
+
+        // produto sem lotes registados: nada a mostrar
+        if (!loteController.existeLotes(codProduto)) {
+            painelLotes.limpar();
+            return null;
+        }
+        int armazem = getCodigoArmazem();
+
+        // todos os lotes com stock, por ordem FEFO
+        List<entity.Lote> disponiveis = loteController.listarDisponiveisFEFO(codProduto, armazem);
+        if (disponiveis.isEmpty()) {
+            String msg = "Este produto tem lotes registados, mas não possui lotes disponíveis, "
+                    + "activos e dentro da validade no armazém selecionado.";
+            painelLotes.mostrarAviso(descricao, msg);
+            return msg;
+        }
+
+        // quanto sai de cada lote para a quantidade dada (por id do lote)
+        java.util.Map<Integer, Double> aRetirar = new java.util.HashMap<>();
+        String erro = null;
+        try {
+            for (LoteController.LoteFEFO item : loteController.preverBaixaFEFO(codProduto, armazem, qtd)) {
+                aRetirar.put(item.getLote().getId(), (double) item.getQuantidadeRetirar());
+            }
+        } catch (IllegalStateException e) {
+            erro = e.getMessage();
+        }
+
+        List<PainelLotesVenda.Linha> linhas = new java.util.ArrayList<>();
+        for (entity.Lote l : disponiveis) {
+            linhas.add(new PainelLotesVenda.Linha(
+                    l.getNumeroLote(),
+                    l.getDataValidade(),
+                    l.getQtd(),
+                    aRetirar.getOrDefault(l.getId(), 0.0)));
+        }
+
+        if (erro != null) {
+            painelLotes.mostrarAviso(descricao, erro, linhas);
+            return erro;
+        }
+        painelLotes.mostrar(descricao, qtd, linhas);
+        return null;
+    }
+
+
+// ---------------------------------------------------------------------
+// 3) PESQUISA: substitui TODO o teu atualizarPainelLotesProdutoPesquisado()
+//    por este, e acrescenta o metodo quantidadeDoProdutoNaVenda().
+//
+//    REGRA: a quantidade do plano e
+//      - a que JA ESTA NA VENDA, se o produto ja tem linha na JTable
+//        (e o que vai sair de facto: ex. 17 -> 14 + 3);
+//      - senao, a que o operador esta a escrever no campo Qtd.
+//    Assim o painel nunca volta a "1" so porque o campo Qtd foi reposto a 1
+//    depois de adicionar, seja qual for o evento que dispare a pesquisa.
+// ---------------------------------------------------------------------
+    private void atualizarPainelLotesProdutoPesquisado() {
+
+        if (painelLotes == null) {
+            return;
+        }
+
+        if (cmbProduto.getSelectedItem() == null) {
+            painelLotes.limpar();
+            return;
+        }
+
+        try {
+            int codigoProdutoLocal = getCodigoProduto();
+            String descricao_produto = getDescricao_Produto();
+
+            if (codigoProdutoLocal <= 0) {
+                painelLotes.limpar();
+                return;
+            }
+
+            // 1.o: o produto ja esta na venda? entao o plano e o da venda
+            double qtd = quantidadeDoProdutoNaVenda(codigoProdutoLocal);
+
+            // 2.o: senao, a quantidade que o operador esta a escrever
+            if (qtd <= 0) {
+                String textoQtd = txtQuatindade.getText().trim();
+                if (textoQtd.isEmpty()) {
+                    painelLotes.limpar();
+                    return;
+                }
+                qtd = Double.parseDouble(textoQtd.replace(",", "."));
+                if (qtd <= 0) {
+                    painelLotes.limpar();
+                    return;
+                }
+            }
+
+            // aqui nao ha janela: so mostra no painel
+            actualizarPainelLotes(codigoProdutoLocal, descricao_produto, qtd);
+
+        } catch (SQLException | NumberFormatException e) {
+            painelLotes.limpar();
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Quantidade total deste produto que ja esta na JTable da venda (soma das
+     * linhas; 0 se nao esta). Ignora linhas vazias ou em edicao.
+     * Colunas: 0 = Codigo, 4 = Quantidade.
+     */
+    private double quantidadeDoProdutoNaVenda(int codProduto) {
+        double total = 0;
+        for (int i = 0; i < table.getRowCount(); i++) {
+            try {
+                int codigo = Integer.parseInt(String.valueOf(table.getValueAt(i, 0)).trim());
+                if (codigo == codProduto) {
+                    total += Double.parseDouble(String.valueOf(table.getValueAt(i, 4)).trim().replace(",", "."));
+                }
+            } catch (NumberFormatException e) {
+                // linha vazia ou nao numerica: ignora
+            }
+        }
+        return total;
+    }
+
+
 }

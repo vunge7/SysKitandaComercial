@@ -679,6 +679,12 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
 
         jcDataValidade.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jPanel3.add(jcDataValidade, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 180, -1, -1));
+
+        txtNumeroLote.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtNumeroLoteActionPerformed(evt);
+            }
+        });
         jPanel3.add(txtNumeroLote, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 210, 90, -1));
 
         llbDataFabrico1.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
@@ -1032,6 +1038,10 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
     private void txtFactorConversaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFactorConversaoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtFactorConversaoActionPerformed
+
+    private void txtNumeroLoteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNumeroLoteActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtNumeroLoteActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1517,6 +1527,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         lb_fornecedor_endereco.setText("");
         lb_fornecedor_telefone.setText("");
         lb_fornecedor_email.setText("");
+        txtNumeroLote.setText("");
 
         lb_numero_artigos.setText("");
         lb_data_solicitacao.setText("");
