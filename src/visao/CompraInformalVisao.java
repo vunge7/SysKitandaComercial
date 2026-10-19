@@ -719,7 +719,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         lb_data_apuramento10.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lb_data_apuramento10.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lb_data_apuramento10.setText("Preço Compra/Preço Médio:");
-        jPanel3.add(lb_data_apuramento10, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 100, 180, 30));
+        jPanel3.add(lb_data_apuramento10, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 100, 240, 30));
 
         jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
         jPanel8.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
