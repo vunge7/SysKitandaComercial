@@ -23,6 +23,7 @@ import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
@@ -195,7 +196,7 @@ public class ProdutosVisao extends javax.swing.JFrame {
 //        CalculadoraPrecoHelper helper = new CalculadoraPrecoHelper( txtPrecoCompra, 
 //                txtPrecoVendaRetalho, txtPercentagemGanhoRetalho , 7
 //        );
-//        helper.inicializar();
+//     
     }
 
     /**
@@ -946,7 +947,6 @@ public class ProdutosVisao extends javax.swing.JFrame {
         txtPercentagemGanhoRetalho.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
         txtPercentagemGanhoRetalho.setText("0");
         txtPercentagemGanhoRetalho.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtPercentagemGanhoRetalho.setEnabled(false);
         txtPercentagemGanhoRetalho.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtPercentagemGanhoRetalhoActionPerformed(evt);
@@ -1062,8 +1062,7 @@ public class ProdutosVisao extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jRadioButtonSim, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jRadioButtonNao)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(jRadioButtonNao)))
                 .addContainerGap())
         );
         painel_stockLayout.setVerticalGroup(
@@ -1085,11 +1084,12 @@ public class ProdutosVisao extends javax.swing.JFrame {
                     .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbBarra1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbPreco)
-                    .addComponent(txtPercentagemGanhoRetalho, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbStatus1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(32, 32, 32)
+                .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(lbPreco)
+                        .addComponent(lbStatus1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtPercentagemGanhoRetalho, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addComponent(lbPrecoVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtPrecoVendaRetalho, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1173,7 +1173,7 @@ public class ProdutosVisao extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(painel_stock, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButtonCompras, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE))))
+                            .addComponent(jButtonCompras, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -3711,5 +3711,7 @@ public class ProdutosVisao extends javax.swing.JFrame {
         return stocksControllerLocal.salvar(stockLocal);
 
     }
+
+    
 
 }
