@@ -1008,10 +1008,10 @@ public class ProdutosVisao extends javax.swing.JFrame {
         });
 
         buttonGroup6.add(jRadioButtonSim);
+        jRadioButtonSim.setSelected(true);
         jRadioButtonSim.setText("SIM");
 
         buttonGroup6.add(jRadioButtonNao);
-        jRadioButtonNao.setSelected(true);
         jRadioButtonNao.setText("NÃO");
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -1031,34 +1031,35 @@ public class ProdutosVisao extends javax.swing.JFrame {
                         .addGap(32, 32, 32))
                     .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(painel_stockLayout.createSequentialGroup()
-                        .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(painel_stockLayout.createSequentialGroup()
+                                    .addComponent(lbBarra1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(painel_stockLayout.createSequentialGroup()
+                                    .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(lbPrecoVenda1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE))
+                                    .addGap(30, 30, 30)
+                                    .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(painel_stockLayout.createSequentialGroup()
+                                            .addComponent(txtQtdGrosso, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(0, 0, Short.MAX_VALUE))
+                                        .addComponent(txtPrecoVendaGrosso)))
+                                .addGroup(painel_stockLayout.createSequentialGroup()
+                                    .addComponent(lbCategoria3, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(cmbLocal, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(txtPrecoVendaRetalho)
+                                .addComponent(lbPrecoVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(painel_stockLayout.createSequentialGroup()
-                                .addComponent(lbBarra1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(painel_stockLayout.createSequentialGroup()
-                                .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(lbPrecoVenda1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE))
-                                .addGap(30, 30, 30)
-                                .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(painel_stockLayout.createSequentialGroup()
-                                        .addComponent(txtQtdGrosso, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(0, 0, Short.MAX_VALUE))
-                                    .addComponent(txtPrecoVendaGrosso)))
-                            .addGroup(painel_stockLayout.createSequentialGroup()
-                                .addComponent(lbCategoria3, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(cmbLocal, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(txtPrecoVendaRetalho)
-                            .addComponent(lbPrecoVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 11, Short.MAX_VALUE))
-                    .addGroup(painel_stockLayout.createSequentialGroup()
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jRadioButtonSim, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jRadioButtonNao)))
+                                .addComponent(jRadioButtonSim, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jRadioButtonNao)))
+                        .addGap(0, 11, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         painel_stockLayout.setVerticalGroup(
@@ -1744,8 +1745,8 @@ public class ProdutosVisao extends javax.swing.JFrame {
     public static javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private static javax.swing.JPanel jPanel_retencao;
-    private javax.swing.JRadioButton jRadioButtonNao;
-    private javax.swing.JRadioButton jRadioButtonSim;
+    private static javax.swing.JRadioButton jRadioButtonNao;
+    private static javax.swing.JRadioButton jRadioButtonSim;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel label_factor_conversao;
     private javax.swing.JLabel label_qtd_bruta;
@@ -2627,6 +2628,12 @@ public class ProdutosVisao extends javax.swing.JFrame {
                 ck_produto.setSelected(true);
             } else {
                 ck_produto.setSelected(false);
+            }
+            
+            if (produto_local.getControlaLote().equals(true)) {
+                jRadioButtonSim.setSelected(true);
+            } else {
+                jRadioButtonNao.setSelected(false);
             }
 
             setCozinha(produto_local.getCozinha());
