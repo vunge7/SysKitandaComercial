@@ -117,6 +117,106 @@ public class CfMethods
 //
 //        return d;
 //    }
+    
+    // =====================================================================
+// 1) SUBSTITUI o parseMoedaFormatada na classe kitanda.util.CfMethods
+//    (e já não precisas dos imports NumberFormat / Locale / ParseException
+//    para este método)
+// =====================================================================
+
+    /**
+     * Converte texto de moeda/número para double, aceitando os dois formatos
+     * que o sistema produz:
+     *   - "1.200,50"  (formatado: ponto = milhares, vírgula = decimal)
+     *   - "1200.50"   (BigDecimal.toString() vindo da BD: ponto = decimal)
+     *
+     * Regras (não depende do Locale do computador nem da versão do Java):
+     *   - se houver ponto E vírgula, o que aparece POR ÚLTIMO é o decimal;
+     *   - só vírgula: 1 vírgula = decimal; várias = milhares;
+     *   - só ponto: vários pontos = milhares; um ponto = decimal, excepto
+     *     o padrão "1.200" / "12.500" (1 a 3 dígitos antes e exactamente 3
+     *     depois), que é lido como milhares;
+     *   - ignora "AOA", "Kz", espaços (incluindo o espaço duro) e outros símbolos.
+     */
+    public static double parseMoedaFormatadaNovo( String valor )
+    {
+        if ( valor == null )
+        {
+            return 0.0;
+        }
+
+        // fica só com dígitos, ponto, vírgula e sinal
+        String s = valor.replaceAll( "[^0-9.,\\-]", "" );
+        boolean negativo = s.startsWith( "-" );
+        s = s.replace( "-", "" );
+
+        if ( !s.matches( ".*\\d.*" ) )
+        {
+            return 0.0; // vazio, "--", "AOA", etc.
+        }
+
+        int ultimaVirgula = s.lastIndexOf( ',' );
+        int ultimoPonto = s.lastIndexOf( '.' );
+        String normal;
+
+        if ( ultimaVirgula >= 0 && ultimoPonto >= 0 )
+        {
+            // os dois presentes: o último é o separador decimal
+            normal = ( ultimaVirgula > ultimoPonto )
+                    ? s.replace( ".", "" ).replace( ',', '.' ) // 1.200,50
+                    : s.replace( ",", "" );                    // 1,200.50
+        }
+        else if ( ultimaVirgula >= 0 )
+        {
+            normal = ( contar( s, ',' ) == 1 )
+                    ? s.replace( ',', '.' )  // 1200,50
+                    : s.replace( ",", "" );  // 1,200,000
+        }
+        else if ( ultimoPonto >= 0 )
+        {
+            if ( contar( s, '.' ) > 1 )
+            {
+                normal = s.replace( ".", "" ); // 1.200.000
+            }
+            else
+            {
+                int antes = ultimoPonto;
+                int depois = s.length() - ultimoPonto - 1;
+                normal = ( depois == 3 && antes >= 1 && antes <= 3 )
+                        ? s.replace( ".", "" )  // 1.200  -> 1200
+                        : s;                    // 1200.50 / 20.5 -> decimal
+            }
+        }
+        else
+        {
+            normal = s;
+        }
+
+        try
+        {
+            double v = Double.parseDouble( normal );
+            return negativo ? -v : v;
+        }
+        catch ( NumberFormatException ex )
+        {
+            System.err.println( "parseMoedaFormatada ERRO: valor='" + valor + "'" );
+            return 0.0;
+        }
+    }
+
+    private static int contar( String s, char c )
+    {
+        int n = 0;
+        for ( int i = 0; i < s.length(); i++ )
+        {
+            if ( s.charAt( i ) == c )
+            {
+                n++;
+            }
+        }
+        return n;
+    }
+    
     public static double parseMoedaFormatada( String valor )
     {
 
