@@ -192,6 +192,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 //                560
 //        );
 
+        ligarPainelLotesASelecaoDaTabela();
+
         // Atualizar quando o produto selecionado mudar
         cmbProduto.addActionListener(evt -> {
             atualizarPainelLotesProdutoPesquisado();
@@ -6996,6 +6998,66 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
     }
 
+//    private void actualizarQtdTable() {
+//
+//        linha_actual = table.getSelectedRow();
+//
+//        if (linha_actual > -1) {
+//
+//            int codProduto = Integer.parseInt(table.getValueAt(linha_actual, 0).toString());
+//            double desconto = Double.parseDouble(table.getValueAt(linha_actual, 5).toString());
+//
+//            TbProduto produtoLocal = (TbProduto) produtosController.findById(codProduto);
+//            TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById(produtoLocal.getCodTipoProduto().getCodigo());
+//
+//            double qtd;
+//
+//            try {
+//                qtd = Double.parseDouble(table.getValueAt(linha_actual, 4).toString());
+//            } catch (NumberFormatException e) {
+//                resetValue("Erro de formatação da quantidade.\nAtenção: Tem que ser número.", 4);
+//                return;
+//            }
+//
+//            if (qtd <= 0) {
+//                qtd = 1;
+//                resetValue("Quantidade não pode ser zero(0) ou número negativo", 4);
+//            }
+//
+//            if (desconto < 0) {
+//                desconto = 0;
+//                resetValue("O desconto não deve ser um número negativo.", 4);
+//            } else if (desconto > 100) {
+//                desconto = 0;
+//                resetValue("O desconto não deve ser maior do que 100%", 4);
+//            }
+//
+//            if (possivel_quantidade(codProduto, qtd) || tipoProduto.getFkFamilia().getPkFamilia() == DVML.COD_SERVICO) {
+//                actuazlizar_quantidade_tabela_formulario(String.valueOf(qtd), desconto);
+//                setTotalRetencao();
+//                setTotalPagar();
+//                setTotalPagarGeral();
+//                calculaTotalIVA();
+//                valor_por_extenco();
+//            } else {
+//                resetValue("Não é possivel para esta quantidade.", 4);
+//            }
+//        }
+//    }
+    
+     // =====================================================================
+    // VENDA: painel de lotes ao SELECCIONAR uma linha e ao MUDAR A QUANTIDADE
+    // na JTable da venda.
+    //
+    // 1) SUBSTITUI o teu actualizarQtdTable() por este (marcado com // LOTE).
+    // 2) ACRESCENTA os dois métodos novos abaixo.
+    // 3) No CONSTRUTOR, logo a seguir a initComponents(), acrescenta:
+    //        ligarPainelLotesASelecaoDaTabela();
+    //
+    // O actualizarPainelLotes(...) que já tens é o método único que enche o
+    // painel; aqui só se chama com os dados da linha. Não mexe em mais nada.
+    // =====================================================================
+
     private void actualizarQtdTable() {
 
         linha_actual = table.getSelectedRow();
@@ -7003,6 +7065,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         if (linha_actual > -1) {
 
             int codProduto = Integer.parseInt(table.getValueAt(linha_actual, 0).toString());
+            String descricaoLinha = table.getValueAt(linha_actual, 1).toString(); // LOTE: descrição da linha
             double desconto = Double.parseDouble(table.getValueAt(linha_actual, 5).toString());
 
             TbProduto produtoLocal = (TbProduto) produtosController.findById(codProduto);
@@ -7030,7 +7093,28 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                 resetValue("O desconto não deve ser maior do que 100%", 4);
             }
 
-            if (possivel_quantidade(codProduto, qtd) || tipoProduto.getFkFamilia().getPkFamilia() == DVML.COD_SERVICO) {
+            boolean servico = tipoProduto.getFkFamilia().getPkFamilia() == DVML.COD_SERVICO; // LOTE
+
+            if (possivel_quantidade(codProduto, qtd) || servico) {
+
+                // LOTE: valida a nova quantidade nos lotes (FEFO) e actualiza o painel
+                // "a retirar". Serviços não têm lotes. Produtos sem lotes registados
+                // devolvem null (nada a validar). Faz-se ANTES de gravar a linha:
+                // se não houver lotes suficientes, repõe a quantidade e mostra porquê.
+                if (!servico) {
+                    String erroLotes;
+                    try {
+                        erroLotes = actualizarPainelLotes(codProduto, descricaoLinha, qtd);
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                        erroLotes = "Erro ao consultar os lotes: " + ex.getMessage();
+                    }
+                    if (erroLotes != null) {
+                        resetValue(erroLotes, 4); // repõe a quantidade (e volta a chamar este método)
+                        return;
+                    }
+                }
+
                 actuazlizar_quantidade_tabela_formulario(String.valueOf(qtd), desconto);
                 setTotalRetencao();
                 setTotalPagar();
@@ -7042,6 +7126,52 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             }
         }
     }
+    
+        // ---------------------------------------------------------------------
+    // NOVO: ao seleccionar uma linha da venda, o painel mostra os lotes desse
+    // produto com a quantidade da linha (o que vai sair de cada lote).
+    // ---------------------------------------------------------------------
+    private void ligarPainelLotesASelecaoDaTabela() {
+        table.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                actualizarPainelLotesLinhaSeleccionada();
+            }
+        });
+    }
+
+    private void actualizarPainelLotesLinhaSeleccionada() {
+
+        if (painelLotes == null) {
+            return;
+        }
+
+        int linhaSel = table.getSelectedRow();
+        if (linhaSel < 0 || linhaSel >= table.getRowCount()) {
+            if (table.getRowCount() == 0) {
+                painelLotes.limpar(); // venda vazia: sem lotes a mostrar
+            }
+            return; // sem selecção (mas com linhas): mantém o que está
+        }
+
+        try {
+            int codProduto = Integer.parseInt(table.getValueAt(linhaSel, 0).toString());
+            String descricao = table.getValueAt(linhaSel, 1).toString();
+            double qtd = Double.parseDouble(table.getValueAt(linhaSel, 4).toString().replace(",", "."));
+
+            if (qtd <= 0) {
+                painelLotes.limpar();
+                return;
+            }
+
+            // aqui não há janela: só mostra no painel (o aviso, se houver, fica a vermelho nele)
+            actualizarPainelLotes(codProduto, descricao, qtd);
+
+        } catch (SQLException | NumberFormatException ex) {
+            painelLotes.limpar();
+            ex.printStackTrace();
+        }
+    }
+
 
     private static void actuazlizar_quantidade_tabela_formulario(String quantidade, double desconto) {
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();

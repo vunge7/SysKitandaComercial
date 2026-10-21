@@ -5,13 +5,20 @@
 package visao;
 
 import java.sql.Connection;
-import com.formdev.flatlaf.intellijthemes.FlatCyanLightIJTheme;
-import com.formdev.flatlaf.intellijthemes.FlatDarkFlatIJTheme;
-import com.formdev.flatlaf.intellijthemes.FlatNordIJTheme;
-import com.formdev.flatlaf.intellijthemes.FlatOneDarkIJTheme;
-import com.formdev.flatlaf.intellijthemes.FlatVuesionIJTheme;
-import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialLighterIJTheme;
-import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialOceanicIJTheme;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.swing.JButton;
+
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRTableModelDataSource;
+import net.sf.jasperreports.engine.util.JRLoader;
+import net.sf.jasperreports.view.JasperViewer;
 
 import comercial.controller.DadosInstituicaoController;
 import dao.CaixaDao;
@@ -72,6 +79,7 @@ import javax.swing.table.DefaultTableModel;
 //import javax.swing.UIManager;
 import util.BDConexao;
 import util.BackupUsb;
+import util.DVML;
 import util.JPAEntityMannagerFactoryUtil;
 //import util.LicensaUtil;
 import util.MetodosUtil;
@@ -864,6 +872,19 @@ LoginVisao.setDefaultLookAndFeelDecorated(true);
     // Painel: produtos a expirar (visível antes do login)
     // ------------------------------------------------------------------
     // Posição e tamanho do painel (ajusta aqui se quiseres mexer na estética)
+    // ------------------------------------------------------------------
+// Relatório iReport - Produtos a expirar no Login
+// ------------------------------------------------------------------
+private static final String RELATORIO_LOGIN_JASPER =
+        "produtos_por_expirar_login.jasper";
+
+private static final String RELATORIO_LOGIN_JRXML =
+        "produtos_por_expirar_login.jrxml";
+
+private JasperReport relatorioLoginCarregado;
+
+private final SimpleDateFormat fmtDataHoraRelatorio =
+        new SimpleDateFormat("dd/MM/yyyy HH:mm");
     private static final int EXP_X = 33, EXP_Y = 250, EXP_W = 540, EXP_H = 360;
     private static final int DIAS_INICIAIS = 60;
 
@@ -985,6 +1006,19 @@ LoginVisao.setDefaultLookAndFeelDecorated(true);
         topo.add( lbl2 );
         topo.add( chkExpirados );
 
+        // Garantir 5 colunas no modelo:
+// 0 = Código
+// 1 = Designação Produto
+// 2 = Lote
+// 3 = Data Validade
+// 4 = Dias restantes (coluna auxiliar para o relatório)
+javax.swing.table.DefaultTableModel modeloExpirar =
+        (javax.swing.table.DefaultTableModel) tblExpirar.getModel();
+
+if (modeloExpirar.getColumnCount() == 4) {
+    modeloExpirar.addColumn("Dias restantes");
+}
+        
         // Tabela
         tblExpirar.setRowHeight( 24 );
         tblExpirar.getTableHeader().setReorderingAllowed( false );
@@ -1004,6 +1038,12 @@ LoginVisao.setDefaultLookAndFeelDecorated(true);
             tblExpirar.getColumnModel().getColumn( c ).setCellRenderer( new RendererExpirar( alinhamentos[c] ) );
             tblExpirar.getColumnModel().getColumn( c ).setPreferredWidth( larguras[c] );
         }
+        // Ocultar a coluna auxiliar, mantendo-a no modelo de dados.
+if (tblExpirar.getColumnModel().getColumnCount() > 4) {
+    tblExpirar.removeColumn(
+            tblExpirar.getColumnModel().getColumn(4)
+    );
+}
         JScrollPane scroll = new JScrollPane( tblExpirar );
         scroll.getViewport().setBackground( new Color( 20, 25, 50 ) );
 
@@ -1031,10 +1071,29 @@ LoginVisao.setDefaultLookAndFeelDecorated(true);
                         titulo, javax.swing.border.TitledBorder.LEFT,
                         javax.swing.border.TitledBorder.TOP, new Font( "Tahoma", Font.BOLD, 14 ), Color.WHITE ),
                 BorderFactory.createEmptyBorder( 4, 6, 6, 6 ) ) );
-        painel.add( topo, BorderLayout.NORTH );
-        painel.add( scroll, BorderLayout.CENTER );
-        painel.add( lblTotalExpirar, BorderLayout.SOUTH );
-        painel.setBounds( EXP_X, EXP_Y, EXP_W, EXP_H );
+//        painel.add( topo, BorderLayout.NORTH );
+//        painel.add( scroll, BorderLayout.CENTER );
+//        painel.add( lblTotalExpirar, BorderLayout.SOUTH );
+//        painel.setBounds( EXP_X, EXP_Y, EXP_W, EXP_H );
+// Rodapé com total de lotes e botão de impressão
+JPanel rodapeExpirar = new JPanel(new BorderLayout(5, 0));
+rodapeExpirar.setOpaque(false);
+
+JButton btnImprimirExpirar = new JButton("Imprimir");
+btnImprimirExpirar.setToolTipText(
+        "Imprimir os produtos a expirar apresentados na tabela"
+);
+
+btnImprimirExpirar.addActionListener(e -> imprimirProdutosAExpirar());
+
+rodapeExpirar.add(lblTotalExpirar, BorderLayout.CENTER);
+rodapeExpirar.add(btnImprimirExpirar, BorderLayout.EAST);
+
+painel.add(topo, BorderLayout.NORTH);
+painel.add(scroll, BorderLayout.CENTER);
+painel.add(rodapeExpirar, BorderLayout.SOUTH);
+
+painel.setBounds(EXP_X, EXP_Y, EXP_W, EXP_H);
 
         getLayeredPane().add( painel, JLayeredPane.PALETTE_LAYER );
 
@@ -1151,22 +1210,27 @@ LoginVisao.setDefaultLookAndFeelDecorated(true);
                 ps.setInt( 3, chkExpirados.isSelected() ? 1 : 0 );
                 try ( ResultSet rs = ps.executeQuery() )
                 {
-                    while ( rs.next() )
-                    {
-                        int diasRestantes = rs.getInt( "dias_restantes" );
-                        diasExpirar.add( diasRestantes );
-                        if ( diasRestantes >= 0 && diasRestantes <= 30 )
-                        {
-                            temLinhasUrgentes = true;
-                        }
-                        modExpirar.addRow( new Object[]
-                        {
-                            rs.getInt( "codigo" ),
-                            rs.getString( "designacao" ),
-                            rs.getString( "numero_lote" ),
-                            rs.getDate( "data_validade" ) == null ? "" : fmtDataExpirar.format( rs.getDate( "data_validade" ) )
-                        } );
-                    }
+
+while (rs.next()) {
+    int diasRestantes = rs.getInt("dias_restantes");
+
+    diasExpirar.add(diasRestantes);
+
+    if (diasRestantes >= 0 && diasRestantes <= 30) {
+        temLinhasUrgentes = true;
+    }
+
+    modExpirar.addRow(new Object[]{
+        rs.getInt("codigo"),
+        rs.getString("designacao"),
+        rs.getString("numero_lote"),
+        rs.getDate("data_validade") == null
+            ? ""
+            : fmtDataExpirar.format(rs.getDate("data_validade")),
+        diasRestantes // Quinta coluna: utilizada pelo iReport
+    });
+}
+
                 }
             }
             // Alarme: só quando as linhas a piscar APARECEM (não repete a cada actualização)
@@ -1289,259 +1353,154 @@ LoginVisao.setDefaultLookAndFeelDecorated(true);
             return c;
         }
     }
+    
+    
+/**
+ * Imprime os dados actualmente apresentados no painel de produtos a expirar.
+ */
+private void imprimirProdutosAExpirar() {
+
+    // Garante que a consulta corresponde aos filtros actuais.
+    if (refreshExpirarTimer != null && refreshExpirarTimer.isRunning()) {
+        refreshExpirarTimer.stop();
+        carregarProdutosAExpirar();
+    }
+
+    if (modExpirar.getRowCount() == 0) {
+        JOptionPane.showMessageDialog(
+                this,
+                "Não há produtos a expirar para imprimir com os filtros actuais.",
+                "Imprimir produtos a expirar",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+        return;
+    }
 
 
+    // Copia os dados para o relatório, incluindo a coluna auxiliar
+    // "Dias restantes", necessária para o campo COLUMN_4 do iReport.
+    DefaultTableModel copia = new DefaultTableModel(
+            new String[]{
+                "Código",
+                "Designação Produto",
+                "Lote",
+                "Data Validade",
+                "Dias restantes"
+            }, 0
+    );
 
-//    // ------------------------------------------------------------------
-//    // Painel: produtos a expirar (visível antes do login)
-//    // ------------------------------------------------------------------
-//    // Posição e tamanho do painel (ajusta aqui se quiseres mexer na estética)
-//    private static final int EXP_X = 33, EXP_Y = 250, EXP_W = 540, EXP_H = 360;
-//    private static final int DIAS_INICIAIS = 60;
-//
-//    private static final Color COR_EXPIRADO = new Color( 255, 170, 170 ); // vermelho claro
-//    private static final Color COR_URGENTE = new Color( 255, 204, 153 );  // laranja claro (<= 30 dias)
-//    private static final Color COR_AVISO = new Color( 255, 245, 170 );    // amarelo claro (> 30 dias)
-//
-//    // ASSUMIDO: tb_armazem(codigo, designacao)  -> ajusta se o nome da tabela for diferente
-//    // LEFT JOIN: se um lote tiver um armazém inexistente, continua a aparecer (com "-")
-//    private static final String SQL_A_EXPIRAR
-//            = "SELECT p.codigo, p.designacao, COALESCE( a.designacao, '-' ) AS armazem, "
-//            + "       l.numero_lote, l.data_validade, "
-//            + "       DATEDIFF( l.data_validade, CURDATE() ) AS dias_restantes "
-//            + "FROM lote l "
-//            + "INNER JOIN tb_produto p ON p.codigo = l.fk_produto "
-//            + "LEFT JOIN tb_armazem a ON a.codigo = l.fk_armazem "
-//            + "WHERE l.qtd > 0 AND l.estado IN ('ACTIVO','EXPIRADO') "
-//            + "  AND l.data_validade <= DATE_ADD( CURDATE(), INTERVAL ? DAY ) "
-//            + "  AND ( ? = 1 OR l.data_validade >= CURDATE() ) "
-//            + "ORDER BY p.designacao ASC, l.data_validade ASC, a.designacao ASC, l.id ASC";
-//
-//    private final JSpinner spDiasExpirar = new JSpinner( new SpinnerNumberModel( DIAS_INICIAIS, 1, 3650, 1 ) );
-//    private final JCheckBox chkExpirados = new JCheckBox( "Incluir já expirados com stock", true );
-//    private final DefaultTableModel modExpirar = new DefaultTableModel(
-//            new String[]
-//            {
-//                "Código", "Designação Produto", "Armazém", "Lote", "Data Validade"
-//            }, 0 )
-//    {
-//        @Override
-//        public boolean isCellEditable( int row, int column )
-//        {
-//            return false;
-//        }
-//    };
-//    private final JTable tblExpirar = new JTable( modExpirar );
-//    private final javax.swing.JLabel lblTotalExpirar = new javax.swing.JLabel( " " );
-//    private final List<Integer> diasExpirar = new ArrayList<>(); // dias restantes de cada linha (para a cor)
-//    private final SimpleDateFormat fmtDataExpirar = new SimpleDateFormat( "dd/MM/yyyy" );
-//    private javax.swing.Timer refreshExpirarTimer;
-//
-//    /** Cria o painel e coloca-o por cima do fundo, sem tocar no layout gerado. */
-//    private void criarPainelExpirar()
-//    {
-//        Font negrito = new Font( "Tahoma", Font.BOLD, 12 );
-//
-//        javax.swing.JLabel lbl1 = new javax.swing.JLabel( "A expirar nos próximos" );
-//        javax.swing.JLabel lbl2 = new javax.swing.JLabel( "dias" );
-//        for ( javax.swing.JLabel l : new javax.swing.JLabel[]
-//        {
-//            lbl1, lbl2
-//        } )
-//        {
-//            l.setFont( negrito );
-//            l.setForeground( Color.WHITE );
-//        }
-//        spDiasExpirar.setPreferredSize( new Dimension( 75, 26 ) );
-//        chkExpirados.setOpaque( false );
-//        chkExpirados.setForeground( Color.WHITE );
-//        chkExpirados.setFont( negrito );
-//
-//        JPanel topo = new JPanel( new FlowLayout( FlowLayout.LEFT, 6, 2 ) );
-//        topo.setOpaque( false );
-//        topo.add( lbl1 );
-//        topo.add( spDiasExpirar );
-//        topo.add( lbl2 );
-//        topo.add( chkExpirados );
-//
-//        // Tabela
-//        tblExpirar.setRowHeight( 24 );
-//        tblExpirar.getTableHeader().setReorderingAllowed( false );
-//        tblExpirar.getTableHeader().setFont( negrito );
-//        tblExpirar.setFillsViewportHeight( true );
-//        tblExpirar.setSelectionMode( ListSelectionModel.SINGLE_SELECTION );
-//        int[] alinhamentos =
-//        {
-//            SwingConstants.CENTER, SwingConstants.LEFT, SwingConstants.LEFT, SwingConstants.LEFT, SwingConstants.CENTER
-//        };
-//        int[] larguras =
-//        {
-//            55, 190, 85, 85, 85
-//        };
-//        for ( int c = 0; c < alinhamentos.length; c++ )
-//        {
-//            tblExpirar.getColumnModel().getColumn( c ).setCellRenderer( new RendererExpirar( alinhamentos[c] ) );
-//            tblExpirar.getColumnModel().getColumn( c ).setPreferredWidth( larguras[c] );
-//        }
-//        JScrollPane scroll = new JScrollPane( tblExpirar );
-//        scroll.getViewport().setBackground( new Color( 20, 25, 50 ) );
-//
-//        lblTotalExpirar.setForeground( Color.WHITE );
-//        lblTotalExpirar.setFont( new Font( "Tahoma", Font.ITALIC, 11 ) );
-//
-//        // Painel com fundo escuro semi-transparente (deixa ver a imagem de fundo)
-//        JPanel painel = new JPanel( new BorderLayout( 0, 6 ) )
-//        {
-//            @Override
-//            protected void paintComponent( Graphics g )
-//            {
-//                g.setColor( getBackground() );
-//                g.fillRect( 0, 0, getWidth(), getHeight() );
-//                super.paintComponent( g );
-//            }
-//        };
-//        painel.setOpaque( false );
-//        painel.setBackground( new Color( 10, 15, 40, 190 ) );
-//        painel.setBorder( BorderFactory.createCompoundBorder(
-//                BorderFactory.createTitledBorder( BorderFactory.createLineBorder( Color.WHITE ),
-//                        "Produtos a expirar", javax.swing.border.TitledBorder.LEFT,
-//                        javax.swing.border.TitledBorder.TOP, new Font( "Tahoma", Font.BOLD, 14 ), Color.WHITE ),
-//                BorderFactory.createEmptyBorder( 4, 6, 6, 6 ) ) );
-//        painel.add( topo, BorderLayout.NORTH );
-//        painel.add( scroll, BorderLayout.CENTER );
-//        painel.add( lblTotalExpirar, BorderLayout.SOUTH );
-//        painel.setBounds( EXP_X, EXP_Y, EXP_W, EXP_H );
-//
-//        getLayeredPane().add( painel, JLayeredPane.PALETTE_LAYER );
-//
-//        // Actualização dinâmica: setas do spinner, escrita manual e checkbox
-//        spDiasExpirar.addChangeListener( e -> agendarRefreshExpirar() );
-//        JFormattedTextField tf = ( ( JSpinner.DefaultEditor ) spDiasExpirar.getEditor() ).getTextField();
-//        tf.getDocument().addDocumentListener( new DocumentListener()
-//        {
-//            @Override
-//            public void insertUpdate( DocumentEvent e )
-//            {
-//                agendarRefreshExpirar();
-//            }
-//
-//            @Override
-//            public void removeUpdate( DocumentEvent e )
-//            {
-//                agendarRefreshExpirar();
-//            }
-//
-//            @Override
-//            public void changedUpdate( DocumentEvent e )
-//            {
-//                agendarRefreshExpirar();
-//            }
-//        } );
-//        chkExpirados.addActionListener( e -> carregarProdutosAExpirar() );
-//
-//        carregarProdutosAExpirar();
-//    }
-//
-//    /** Espera 400 ms depois da última tecla antes de consultar a BD. */
-//    private void agendarRefreshExpirar()
-//    {
-//        if ( refreshExpirarTimer == null )
-//        {
-//            refreshExpirarTimer = new javax.swing.Timer( 400, e -> carregarProdutosAExpirar() );
-//            refreshExpirarTimer.setRepeats( false );
-//        }
-//        refreshExpirarTimer.restart();
-//    }
-//
-//    /** Lê o nº de dias directamente do texto do spinner (mesmo antes de carregar Enter). */
-//    private int obterDiasExpirar()
-//    {
-//        String txt = ( ( JSpinner.DefaultEditor ) spDiasExpirar.getEditor() ).getTextField()
-//                .getText().replaceAll( "[^0-9]", "" );
-//        if ( txt.isEmpty() )
-//        {
-//            return -1;
-//        }
-//        try
-//        {
-//            int d = Integer.parseInt( txt );
-//            return ( d >= 1 && d <= 3650 ) ? d : -1;
-//        }
-//        catch ( NumberFormatException ex )
-//        {
-//            return -1;
-//        }
-//    }
-//
-//    private void carregarProdutosAExpirar()
-//    {
-//        int dias = obterDiasExpirar();
-//        if ( dias < 0 )
-//        {
-//            return; // campo vazio ou valor inválido: mantém a lista anterior
-//        }
-//
-//        modExpirar.setRowCount( 0 );
-//        diasExpirar.clear();
-//
-//        try
-//        {
-//            Connection cn = BDConexao.getInstancia().getConnectionAtiva();
-//            try ( PreparedStatement ps = cn.prepareStatement( SQL_A_EXPIRAR ) )
-//            {
-//                ps.setInt( 1, dias );
-//                ps.setInt( 2, chkExpirados.isSelected() ? 1 : 0 );
-//                try ( ResultSet rs = ps.executeQuery() )
-//                {
-//                    while ( rs.next() )
-//                    {
-//                        diasExpirar.add( rs.getInt( "dias_restantes" ) );
-//                        modExpirar.addRow( new Object[]
-//                        {
-//                            rs.getInt( "codigo" ),
-//                            rs.getString( "designacao" ),
-//                            rs.getString( "armazem" ),
-//                            rs.getString( "numero_lote" ),
-//                            rs.getDate( "data_validade" ) == null ? "" : fmtDataExpirar.format( rs.getDate( "data_validade" ) )
-//                        } );
-//                    }
-//                }
-//            }
-//            lblTotalExpirar.setText( " " + modExpirar.getRowCount() + " lote(s)   |   Vermelho: expirado   "
-//                    + "Laranja: até 30 dias   Amarelo: mais de 30 dias" );
-//        }
-//        catch ( Exception ex )
-//        {
-//            // Nunca bloquear o login por causa desta lista
-//            ex.printStackTrace();
-//            lblTotalExpirar.setText( " Não foi possível carregar a lista: " + ex.getMessage() );
-//        }
-//    }
-//
-//    /** Pinta a linha conforme os dias restantes. */
-//    private class RendererExpirar extends DefaultTableCellRenderer
-//    {
-//
-//        RendererExpirar( int alinhamento )
-//        {
-//            setHorizontalAlignment( alinhamento );
-//            setOpaque( true );
-//        }
-//
-//        @Override
-//        public Component getTableCellRendererComponent( JTable table, Object value,
-//                boolean isSelected, boolean hasFocus, int row, int column )
-//        {
-//            Component c = super.getTableCellRendererComponent( table, value, isSelected, hasFocus, row, column );
-//            if ( !isSelected )
-//            {
-//                int dias = row < diasExpirar.size() ? diasExpirar.get( row ) : 0;
-//                c.setBackground( dias < 0 ? COR_EXPIRADO : ( dias <= 30 ? COR_URGENTE : COR_AVISO ) );
-//                c.setForeground( Color.BLACK );
-//            }
-//            return c;
-//        }
-//    }
+    for (int i = 0; i < modExpirar.getRowCount(); i++) {
+        Object[] linha = new Object[5];
+
+        for (int c = 0; c < 5; c++) {
+            linha[c] = modExpirar.getValueAt(i, c);
+        }
+
+        copia.addRow(linha);
+    }
+
+
+    // Parâmetros enviados ao iReport.
+    Map<String, Object> parametros = new HashMap<>();
+
+    parametros.put(
+            "DATA_EMISSAO",
+            fmtDataHoraRelatorio.format(new Date())
+    );
+
+    parametros.put(
+            "DIAS_ALERTA",
+            Integer.valueOf(30)
+    );
+
+    parametros.put(
+            "DIAS_CONSULTA",
+            Integer.valueOf(obterDiasExpirar())
+    );
+
+    parametros.put(
+            "ARMAZEM",
+            nomeArmazemExpirar == null || nomeArmazemExpirar.trim().isEmpty()
+                    ? "Não identificado"
+                    : nomeArmazemExpirar
+    );
+
+    parametros.put(
+            "INCLUIR_EXPIRADOS",
+            chkExpirados.isSelected() ? "Sim" : "Não"
+    );
+
+    try {
+        JasperPrint impressao = JasperFillManager.fillReport(
+                carregarRelatorioLogin(),
+                parametros,
+                new JRTableModelDataSource(copia)
+        );
+
+        JasperViewer visualizador = new JasperViewer(impressao, false);
+
+        visualizador.setTitle("RELATÓRIO DE PRODUTOS A EXPIRAR - LOGIN");
+        visualizador.setLocationRelativeTo(this);
+        visualizador.setVisible(true);
+
+    } catch (Exception ex) {
+        ex.printStackTrace();
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Erro ao gerar o relatório:\n" + ex.getMessage(),
+                "Erro de impressão",
+                JOptionPane.ERROR_MESSAGE
+        );
+    }
+}
+
+/**
+ * Carrega o relatório produtos_por_expirar_login.
+ * Utiliza o .jasper existente ou compila o .jrxml.
+ */
+private JasperReport carregarRelatorioLogin() throws JRException {
+
+    if (relatorioLoginCarregado != null) {
+        return relatorioLoginCarregado;
+    }
+
+    File jasper = new File(
+            DVML.CAMINHO_REPORT + RELATORIO_LOGIN_JASPER
+    ).getAbsoluteFile();
+
+    if (jasper.exists()) {
+        relatorioLoginCarregado =
+                (JasperReport) JRLoader.loadObject(jasper);
+
+        return relatorioLoginCarregado;
+    }
+
+    File jrxml = new File(
+            DVML.CAMINHO_REPORT + RELATORIO_LOGIN_JRXML
+    ).getAbsoluteFile();
+
+    if (jrxml.exists()) {
+        relatorioLoginCarregado =
+                JasperCompileManager.compileReport(
+                        jrxml.getAbsolutePath()
+                );
+
+        return relatorioLoginCarregado;
+    }
+
+    throw new JRException(
+            "Relatório não encontrado.\n"
+            + "Coloque o ficheiro "
+            + RELATORIO_LOGIN_JRXML
+            + " ou "
+            + RELATORIO_LOGIN_JASPER
+            + " na pasta:\n"
+            + jasper.getParent()
+    );
+}
+
+
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1581,17 +1540,6 @@ LoginVisao.setDefaultLookAndFeelDecorated(true);
         new UsuarioAlterarSenhaVissao( usuarioDao.getUsuariowithEncriptedPass( txtUserName.getText(), new String( pswSenha.getPassword() ) ) );
     }
 
-//    public static void fazerBackupAgora() {
-//        String data = new SimpleDateFormat(YYYYMMDD_HHMMSS).format(new Date());
-////        String rodar_camando = "cmd /c mysqldump -uroot -pDoV90x?# --dump-date --triggers --tables --routines --skip-quote-names --compact --skip-opt --skip-set-charset --hex-blob kitanda_db > \"..\\BD_BACKUP\\_database_backup_" + data + ".sql\"";
-//        String rodar_camando = "cmd /c mysqldump --single-transaction -uroot -pDoV90x?# --dump-date --triggers --add-drop-database --routines --skip-quote-names --skip-set-charset --add-locks --disable-keys --databases kitanda_db > \"..\\BD_BACKUP\\_database_backup_" + data + ".sql\"";
-////String rodar_camando = "cmd /c mysqldump --single-transaction=TRUE -uroot -pDoV90x?# --dump-date --triggers --add-drop-database  --routines --skip-quote-names --compact --skip-opt --skip-set-charset --hex-blob --add-locks --disable-keys --lock-tables  --databases kitanda_db > \"..\\BD_BACKUP\\_database_backup_" + data + ".sql\"";
-//        Process rodarComandoWindows = rodarComandoWindows(rodar_camando, true);
-//
-////        JOptionPane.showMessageDialog ( null, "Backup realizado com sucesso! ", "Notificação", JOptionPane.INFORMATION_MESSAGE );
-//        System.err.println("Backup realizado com sucesso! ");
-//
-//    }
     private void verificar_data_sistema()
     {
         Date data_maxima_ultimo_doc = documentoDao.getMAxDataDoc();
@@ -1608,67 +1556,6 @@ LoginVisao.setDefaultLookAndFeelDecorated(true);
 
     }
 
-//    public static void fazerBackupAgora()
-//    {
-//        String data = new SimpleDateFormat( "yyyyMMdd_HHmmss" ).format( new Date() );
-//        String caminhoBackup = System.getProperty( "user.dir" ) + "\\BK\\_database_backup_" + data + ".sql";
-//        String rodar_comando = "cmd /c mysqldump --single-transaction -uroot -pDoV90x?# "
-//                + "--dump-date --triggers --add-drop-database --routines "
-//                + "--skip-quote-names --skip-set-charset --add-locks --disable-keys "
-//                + "--databases kitanda_db > \"" + caminhoBackup + "\"";
-//        Process rodarComandoWindows = rodarComandoWindows( caminhoBackup, true );
-//        System.err.println( "Backup realizado com sucesso! " );
-//    }
-//    private void registerLog( BDConexao conexao )
-//    {
-//        Log log = new Log();
-//        String ipMaquina = MetodosUtil.getIpMaquina();
-//        String nomeMaquina = MetodosUtil.getNomeMaquina();
-//
-//        log.setIpMaquina( ipMaquina );
-//        log.setNomeMaquina( nomeMaquina );
-//        log.setEstado( "ON" );
-//
-//        LogController logController = new LogController( conexao );
-//
-//        Log logByIpMaquina = logController.getLogByNomeMaquina( nomeMaquina );
-//
-//        if ( Objects.nonNull( logByIpMaquina ) )
-//        {
-//            System.out.println( "MAQUINA JA CADASTRADA" );
-//            if ( "ON".equals( logByIpMaquina.getEstado() ) )
-//            {
-//                int opcao = JOptionPane.showConfirmDialog( null, "Provavelmente o sistema foi encerrado de forma inesperada. Clica em Sim para corrigir." );
-//
-//                if ( opcao == JOptionPane.YES_NO_OPTION )
-//                {
-//                    MetodosUtil.actualizarEstadoLog( "OFF" );
-//                    LoginVisao.conexao.close();
-//                    MetodosUtil.rodarComandoWindows( "taskkill /im javaw.exe -f", false );
-//                    System.exit( 0 );
-//                }
-//                else
-//                {
-//                    MetodosUtil.rodarComandoWindows( "taskkill /im javaw.exe -f", false );
-//                }
-//
-//            }
-//            else
-//            {
-//                System.out.println( "ENTREI para actualizar o ON" );
-//                MetodosUtil.actualizarEstadoLog( "ON" );
-//            }
-//        }
-//        else
-//        {
-//            if ( !logController.existe( nomeMaquina ) )
-//            {
-//                logController.salvar( log );
-//            }
-//
-//        }
-//
-//    }
     private void iniciarMonitoramento()
     {
         resetTimer();
@@ -1713,6 +1600,8 @@ LoginVisao.setDefaultLookAndFeelDecorated(true);
             }
         }, TIMEOUT );
     }
+    
+    
 
     public static void logo_out()
     {

@@ -8,14 +8,18 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -37,6 +41,14 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRTableModelDataSource;
+import net.sf.jasperreports.engine.util.JRLoader;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  * Lotes a expirar (mestre) + movimentos do lote seleccionado (detalhe).
@@ -113,6 +125,11 @@ public class FrmLotesAExpirar extends JFrame {
 
     /** true: ao carregar, selecciona a 1.ª linha (mas uma linha seleccionada não pisca). */
     private static final boolean SELECIONAR_PRIMEIRA_LINHA = false;
+
+    // Relatório (iReport): ficheiros dentro de DVML.CAMINHO_REPORT.
+    // Se existir o .jasper usa-o; senão compila o .jrxml na hora.
+    private static final String RELATORIO_JASPER = "produtos_por_expirar.jasper";
+    private static final String RELATORIO_JRXML = "produtos_por_expirar.jrxml";
 
     // Cores das linhas
     private static final Color COR_EXPIRADO = new Color(255, 170, 170);       // vermelho claro
@@ -210,6 +227,10 @@ public class FrmLotesAExpirar extends JFrame {
     private boolean piscarLigado = false;
     private boolean temUrgentes = false;
 
+    // Relatório: guarda os filtros USADOS na última consulta (o que a tabela está a mostrar)
+    private String filtrosAplicados = "";
+    private JasperReport relatorioCarregado;
+
     public FrmLotesAExpirar(BDConexao conexao) {
         super("Lotes a expirar");
         this.conexao = conexao;
@@ -291,9 +312,14 @@ public class FrmLotesAExpirar extends JFrame {
         JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, painelLotes, painelMov);
         split.setResizeWeight(0.6);
 
+        JButton btnImprimir = new JButton("Imprimir");
+        btnImprimir.setToolTipText("Imprime o que está a ser mostrado na tabela de lotes");
+        btnImprimir.addActionListener(e -> imprimir());
+
         JButton btnSair = new JButton("Sair");
         btnSair.addActionListener(e -> dispose());
         JPanel rodape = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        rodape.add(btnImprimir);
         rodape.add(btnSair);
 
         getContentPane().setLayout(new BorderLayout());
@@ -472,6 +498,7 @@ public class FrmLotesAExpirar extends JFrame {
         }
         ArmazemItem armazem = (ArmazemItem) cmbArmazem.getSelectedItem();
         int idArmazem = (armazem == null) ? TODOS : armazem.id;
+        filtrosAplicados = descricaoFiltros(dias, armazem);
 
         modLotes.setRowCount(0);
         modMov.setRowCount(0);
@@ -583,6 +610,81 @@ public class FrmLotesAExpirar extends JFrame {
             e.printStackTrace(); // informação extra: se falhar, o detalhe aparece na mesma
             return null;
         }
+    }
+
+    // ------------------------------------------------------------------
+    // Impressão (relatório iReport/JasperReports)
+    // ------------------------------------------------------------------
+    /** Texto dos filtros que produziram a tabela (vai no cabeçalho do relatório). */
+    private String descricaoFiltros(int dias, ArmazemItem armazem) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Armazém: ").append(armazem == null ? "Todos os armazéns" : armazem.designacao);
+        String pesquisa = txtPesquisa.getText().trim();
+        if (!pesquisa.isEmpty()) {
+            sb.append("   |   Produto: ").append(pesquisa);
+        }
+        sb.append("   |   A vencer nos próximos ").append(dias).append(" dias");
+        sb.append("   |   Já expirados: ").append(chkExpirados.isSelected() ? "incluídos" : "não incluídos");
+        return sb.toString();
+    }
+
+    /** Imprime exactamente as linhas que a primeira tabela está a mostrar (com o filtro aplicado). */
+    private void imprimir() {
+        // se a pesquisa ainda estava à espera (debounce), actualiza primeiro para a tabela e o filtro coincidirem
+        if (recargaTimer != null && recargaTimer.isRunning()) {
+            recargaTimer.stop();
+            carregarLotes();
+        }
+
+        if (modLotes.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(this, "Não há lotes para imprimir com o filtro actual.",
+                    "Imprimir", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        // cópia do que está na tabela neste momento (as colunas chegam ao relatório como COLUMN_0..COLUMN_8)
+        DefaultTableModel copia = new DefaultTableModel(COLS_LOTES, 0);
+        for (int i = 0; i < modLotes.getRowCount(); i++) {
+            Object[] linha = new Object[modLotes.getColumnCount()];
+            for (int c = 0; c < linha.length; c++) {
+                linha[c] = modLotes.getValueAt(i, c);
+            }
+            copia.addRow(linha);
+        }
+
+        Map<String, Object> parametros = new HashMap<>();
+        parametros.put("FILTROS", filtrosAplicados);
+        parametros.put("DATA_EMISSAO", fmtDataHora.format(new Date()));
+        parametros.put("DIAS_ALERTA", Integer.valueOf(DIAS_ALERTA));
+
+        try {
+            JasperPrint impressao = JasperFillManager.fillReport(carregarRelatorio(), parametros,
+                    new JRTableModelDataSource(copia));
+            JasperViewer visualizador = new JasperViewer(impressao, false);
+            visualizador.setTitle("RELATÓRIO DE PRODUTOS POR EXPIRAR");
+            visualizador.setVisible(true);
+        } catch (Exception ex) {
+            erro("Erro ao gerar o relatório", ex);
+        }
+    }
+
+    /** Usa o .jasper (se existir) ou compila o .jrxml; fica em memória para as impressões seguintes. */
+    private JasperReport carregarRelatorio() throws JRException {
+        if (relatorioCarregado != null) {
+            return relatorioCarregado;
+        }
+        File jasper = new File(DVML.CAMINHO_REPORT + RELATORIO_JASPER).getAbsoluteFile();
+        if (jasper.exists()) {
+            relatorioCarregado = (JasperReport) JRLoader.loadObject(jasper);
+            return relatorioCarregado;
+        }
+        File jrxml = new File(DVML.CAMINHO_REPORT + RELATORIO_JRXML).getAbsoluteFile();
+        if (jrxml.exists()) {
+            relatorioCarregado = JasperCompileManager.compileReport(jrxml.getAbsolutePath());
+            return relatorioCarregado;
+        }
+        throw new JRException("Relatório não encontrado.\nColoque o ficheiro " + RELATORIO_JRXML
+                + " (ou " + RELATORIO_JASPER + ") em:\n" + jasper.getParent());
     }
 
     /** Escapa % e _ para a pesquisa LIKE tratar o texto à letra. */
