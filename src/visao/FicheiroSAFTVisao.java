@@ -756,7 +756,7 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame {
 
                                     AGT_SAFT_LINE_NUMBER = "" + line_number;
                                     AGT_SAFT_LINE_PRODUCT_CODE = String.valueOf(item_venda.getCodigoProduto().getCodigo());
-                                    AGT_SAFT_LINE_QUANTITY = String.valueOf(item_venda.getQuantidade());
+                                    AGT_SAFT_LINE_QUANTITY = String.valueOf(getValorCasasDecimais(item_venda.getQuantidade(), CASAS_DECIMAIS));
                                     AGT_SAFT_LINE_UNIT_OF_MEASURE = "Un";
                                     AGT_SAFT_LINE_UNIT_PRICE = String.valueOf(getValorCasasDecimais(item_venda.getFkPreco().getPrecoVenda().doubleValue(), CASAS_DECIMAIS));
                                     AGT_SAFT_LINE_TAX_POINT_DATE = formateDate(YYYY_MM_DD, item_venda.getCodigoProduto().getDataEntrada());
