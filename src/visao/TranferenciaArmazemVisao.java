@@ -11,6 +11,7 @@ import comercial.controller.LinhasTransferenciasController;
 import comercial.controller.MovimentacaoController;
 import comercial.controller.ProdutosController;
 import comercial.controller.StoksController;
+import comercial.controller.TransferenciaLoteArmazem;
 import comercial.controller.TransferenciasArmazemController;
 import comercial.controller.UsuariosController;
 import dao.DocumentoDao;
@@ -1203,7 +1204,7 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
         return id_armazem + "-" + designacao.substring( 0, 3 ) + " # (" + qtd + ")";
     }
 
-    private void registar_linha( TransferenciaArmazem transferencia )
+    private void registar_linha_antigo( TransferenciaArmazem transferencia )
     {
         int lastTransferencia = transferenciasArmazemController.getLastTransferencia();
 
@@ -1378,7 +1379,7 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
 
     }
 
-    private boolean camposValidar()
+    private boolean camposValidarAntigo()
     {
 
         double qtdExistenteOrigem = conexao.getQtdExistenteStock( produto.getCodigo(), getIdArmazem( cmbArmazemOrigem ) );
@@ -1394,4 +1395,208 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
         return true;
 
     }
+    
+// =====================================================================
+// ALTERAÇÕES NA CLASSE TranferenciaArmazemVisao
+//
+// 1) Acrescenta o import:
+//        import comercial.controller.TransferenciaLoteArmazem;
+//
+// 2) SUBSTITUI os dois métodos abaixo (camposValidar e registar_linha)
+//    pelos destas versões. As linhas novas estão marcadas com  // LOTE
+//
+// 3) Corre antes o script lotes_transferencia.sql (novos tipos em lote_movimento)
+// =====================================================================
+
+    private boolean camposValidar()
+    {
+
+        double qtdExistenteOrigem = conexao.getQtdExistenteStock( produto.getCodigo(), getIdArmazem( cmbArmazemOrigem ) );
+        double qtd = Double.parseDouble( txtQtdTransferir.getText() );
+
+        if ( qtd > qtdExistenteOrigem )
+        {
+
+            JOptionPane.showMessageDialog( null, "A qtd a transferir nao poder ser maior do que existente", "Aviso", JOptionPane.WARNING_MESSAGE );
+            return false;
+        }
+
+        // LOTE: se o produto tem lotes na origem, tem de haver lotes válidos suficientes
+        try
+        {
+            Connection cn = conexao.getConnection();
+            int origem = getIdArmazem( cmbArmazemOrigem );
+            if ( TransferenciaLoteArmazem.temLotes( cn, produto.getCodigo(), origem ) )
+            {
+                double disponivel = TransferenciaLoteArmazem.disponivel( cn, produto.getCodigo(), origem );
+                if ( qtd > disponivel )
+                {
+                    JOptionPane.showMessageDialog( null,
+                            "Só existem " + disponivel + " unidade(s) em lotes activos e dentro da validade "
+                            + "no armazém de origem.\nNão é possível transferir " + qtd + ".",
+                            "Lotes / stock", JOptionPane.WARNING_MESSAGE );
+                    return false;
+                }
+            }
+        }
+        catch ( SQLException ex )
+        {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog( null, "Erro ao verificar os lotes: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE );
+            return false;
+        }
+
+        return true;
+
+    }
+
+    private void registar_linha( TransferenciaArmazem transferencia )
+    {
+        int lastTransferencia = transferenciasArmazemController.getLastTransferencia();
+
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        int idProduto = 0;
+        double qtd_before = 0, qtd = 0, qtd_aflter = 0, factor_conversao = 0, qtd_destino_armazem_1 = 0;
+
+        String armazem_origem, armazem_destino = "", valor_origem, valor_destino, produto;
+        int fk_armazem_origem = 0, fk_armazem_destino = 0;
+        boolean efectuada = true;
+        String erroTransferencia = null; // LOTE
+        StringBuilder avisoLotes = new StringBuilder(); // LOTE: o que NÃO foi feito nos lotes
+
+        ArmazensController armazensControllerLocal = new ArmazensController( conexaoTransacao );
+        LinhasTransferenciasController linhasTransferenciasControllerLocal = new LinhasTransferenciasController( conexaoTransacao );
+        StoksController stocksControllerLocal = new StoksController( conexaoTransacao );
+
+        for ( int i = 0; i < modelo.getRowCount(); i++ )
+        {
+
+            idProduto = Integer.parseInt( modelo.getValueAt( i, 0 ).toString() );
+            produto = modelo.getValueAt( i, 1 ).toString();
+
+            qtd = Double.parseDouble( modelo.getValueAt( i, 4 ).toString() );
+
+            factor_conversao = Double.parseDouble( modelo.getValueAt( i, 5 ).toString() );
+
+            valor_origem = modelo.getValueAt( i, 2 ).toString();
+            valor_destino = modelo.getValueAt( i, 3 ).toString();
+
+            fk_armazem_origem = Integer.parseInt( valor_origem.split( "-" )[ 0 ] );
+            fk_armazem_destino = Integer.parseInt( valor_destino.split( "-" )[ 0 ] );
+
+            System.out.println( "id_armazem_origem = " + fk_armazem_origem );
+            System.out.println( "id_armazem_destino = " + fk_armazem_destino );
+
+            armazem_origem = armazensControllerLocal.findByCodigo( fk_armazem_origem ).getDesignacao();
+            armazem_destino = armazensControllerLocal.findByCodigo( fk_armazem_destino ).getDesignacao();
+
+            LinhaTransferencia linhaTransferencia = new LinhaTransferencia();
+            linhaTransferencia.setQtdBefore( qtd_before );
+            linhaTransferencia.setQtd( qtd );
+            linhaTransferencia.setQtdAfter( qtd_aflter );
+
+            linhaTransferencia.setFkArmazemOrigem( fk_armazem_origem );
+            linhaTransferencia.setArmazemOrigem( armazem_origem );
+            linhaTransferencia.setArmazemDestino( armazem_destino );
+            linhaTransferencia.setFkArmazemDestino( fk_armazem_destino );
+            linhaTransferencia.setFkProduto( idProduto );
+            linhaTransferencia.setProduto( produto );
+            linhaTransferencia.setFkTransferenciaArmazem( transferencia );
+
+            try
+            {
+                linhasTransferenciasControllerLocal.salvar( linhaTransferencia );
+
+                qtd_destino_armazem_1 = factor_conversao * qtd;
+                boolean saiu = false;    // LOTE
+                boolean entrou = false;  // LOTE
+
+                if ( MovimentacaoController.registrarMovimento(
+                        idProduto,
+                        fk_armazem_origem,
+                        cod_usuario,
+                        new BigDecimal( qtd ),
+                        "TRANSFERENCIA " + transferencia.getPkTransferenciaArmazem(),
+                        "SAIDA",
+                        conexao ) )
+                {
+                    stocksControllerLocal.subtrair_quantidades( idProduto, qtd, fk_armazem_origem );
+                    saiu = true;
+                }
+
+                if ( MovimentacaoController.registrarMovimento(
+                        idProduto,
+                        fk_armazem_destino,
+                        cod_usuario,
+                        new BigDecimal( qtd ),
+                        "TRANSFERENCIA " + transferencia.getPkTransferenciaArmazem(),
+                        "ENTRADA",
+                        conexao
+                ) )
+                {
+                    stocksControllerLocal.adicionar_quantidades( idProduto, qtd_destino_armazem_1, fk_armazem_destino );
+                    entrou = true;
+                }
+
+                // LOTE: leva os lotes (FEFO) do armazém de origem para o de destino,
+                // na MESMA transacção. Se falhar, vai para o catch e faz rollback de tudo.
+                System.err.println( "[LOTE] produto=" + idProduto + " saiu=" + saiu + " entrou=" + entrou );
+                if ( saiu && entrou )
+                {
+                    boolean moveuLotes = TransferenciaLoteArmazem.transferir( conexaoTransacao.getConnection(),
+                            idProduto, fk_armazem_origem, fk_armazem_destino,
+                            qtd, qtd_destino_armazem_1,
+                            transferencia.getPkTransferenciaArmazem() );
+                    if ( !moveuLotes )
+                    {
+                        avisoLotes.append( "\n - " ).append( produto )
+                                .append( ": sem lotes no armazém de origem (só o stock foi transferido)" );
+                    }
+                }
+                else
+                {
+                    avisoLotes.append( "\n - " ).append( produto )
+                            .append( ": o stock não foi actualizado (movimento recusado), lotes não transferidos" );
+                }
+
+            }
+            catch ( Exception e )
+            {
+                efectuada = false;
+                erroTransferencia = e.getMessage(); // LOTE: deixa de ser engolido em silêncio
+                e.printStackTrace();
+                break;                              // LOTE: não continua com as restantes linhas
+            }
+
+        }
+
+        if ( efectuada )
+        {
+            esvaziar_tabela();
+            JOptionPane.showMessageDialog( null, "Transferencia efectuada com sucesso."
+                    + ( avisoLotes.length() > 0 ? "\n\nATENÇÃO (lotes):" + avisoLotes : "" ) );
+            HashMap hashMap = new HashMap();
+            System.out.println( "ID_TRANSFERENCIA(1): " + lastTransferencia );
+            System.out.println( "ID_TRANSFERENCIA(2): " + transferencia.getPkTransferenciaArmazem() );
+            hashMap.put( "COD_TRANSFERENCIA", lastTransferencia );
+            txtQtdExistente.setText( "0" );
+            txtQtdExistente1.setText( "0" );
+            DocumentoDao.commitTransaction( conexaoTransacao );
+            new AnyReport( hashMap, "recibo_transferencia_armazem.jasper" );
+            conexaoTransacao.close();
+        }
+        else
+        {
+            DocumentoDao.rollBackTransaction( conexaoTransacao );
+            conexaoTransacao.close();
+            // LOTE: o utilizador passa a saber porque falhou
+            JOptionPane.showMessageDialog( null,
+                    "A transferência não foi efectuada.\n" + ( erroTransferencia == null ? "" : erroTransferencia ),
+                    "Falha", JOptionPane.ERROR_MESSAGE );
+        }
+
+    }
+
+    
+    
 }

@@ -399,6 +399,7 @@ public class BuscaProdutoComprasVisao extends javax.swing.JDialog
 
                 try
                 {
+                    
                     CompraInformalVisao.busca_produto_by_cod_interno_compra( codigo );
                 }
                 catch ( Exception e )

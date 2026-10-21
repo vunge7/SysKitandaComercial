@@ -352,9 +352,6 @@
         </Property>
         <Property name="text" type="java.lang.String" value="KITANDA 1.1.   Sistema Certificado pela AGT. N&#xba; 258"/>
       </Properties>
-      <AccessibilityProperties>
-        <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="KITANDA 1.1.   Sistema Certificado pela AGT. N&#xba; 258"/>
-      </AccessibilityProperties>
     </Component>
     <Component class="javax.swing.JLabel" name="Soft1">
       <Properties>
@@ -366,9 +363,6 @@
         </Property>
         <Property name="text" type="java.lang.String" value="KITANDA 1.1"/>
       </Properties>
-      <AccessibilityProperties>
-        <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="KITANDA 1.1"/>
-      </AccessibilityProperties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>

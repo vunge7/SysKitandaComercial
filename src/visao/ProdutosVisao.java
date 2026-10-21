@@ -2632,8 +2632,11 @@ public class ProdutosVisao extends javax.swing.JFrame {
             
             if (produto_local.getControlaLote().equals(true)) {
                 jRadioButtonSim.setSelected(true);
-            } else {
                 jRadioButtonNao.setSelected(false);
+                
+            } else {
+                jRadioButtonNao.setSelected(true);
+                jRadioButtonSim.setSelected(false);
             }
 
             setCozinha(produto_local.getCozinha());

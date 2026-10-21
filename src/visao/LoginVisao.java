@@ -24,7 +24,13 @@ import de.javasoft.plaf.synthetica.SyntheticaBlackStarLookAndFeel;
 import entity.TbDadosInstituicao;
 import entity.TbUsuario;
 import java.awt.AWTEvent;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -32,17 +38,37 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.net.UnknownHostException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
 import javax.persistence.EntityManagerFactory;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
+import javax.swing.JFormattedTextField;
+import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 //import javax.swing.UIManager;
 import util.BDConexao;
 import util.BackupUsb;
@@ -104,7 +130,17 @@ public class LoginVisao extends javax.swing.JFrame
 
         prazo();
 
-        LoginVisao.setDefaultLookAndFeelDecorated( true );
+
+// Mostrar o painel de produtos a expirar apenas para Farmácia
+if (d != null && "Farmacia".equalsIgnoreCase(d.getNegocio())) {
+    criarPainelExpirar();
+}
+
+LoginVisao.setDefaultLookAndFeelDecorated(true);
+        
+//        criarPainelExpirar();   // <-- nova linha
+
+//        LoginVisao.setDefaultLookAndFeelDecorated( true );
         try
         {
             System.out.println( "Data Ultimo: " + documentoDao.getMAxDataDoc().toString() );
@@ -180,9 +216,20 @@ public class LoginVisao extends javax.swing.JFrame
 //        licensaUtil = new LicensaUtil( conexao );
 //        registerLog( conexao );
         mostrar_empresas();
+        
         prazo();
 
-        LoginVisao.setDefaultLookAndFeelDecorated( true );
+// Mostrar o painel de produtos a expirar apenas para Farmácia
+if (d != null && "Farmacia".equalsIgnoreCase(d.getNegocio())) {
+    criarPainelExpirar();
+}
+
+LoginVisao.setDefaultLookAndFeelDecorated(true);
+//        prazo();
+        
+//        criarPainelExpirar();   // <-- nova linha
+
+//        LoginVisao.setDefaultLookAndFeelDecorated( true );
         try
         {
             System.out.println( "Data Ultimo: " + documentoDao.getMAxDataDoc().toString() );
@@ -803,6 +850,699 @@ public class LoginVisao extends javax.swing.JFrame
             }
         } );
     }
+    
+      // =====================================================================
+    // SUBSTITUI, na classe LoginVisao, TODO o bloco do painel "Produtos a expirar"
+    // (desde "private static final int EXP_X..." até ao fim da classe RendererExpirar).
+    // Os imports e as chamadas criarPainelExpirar() nos construtores ficam como estão.
+    //
+    // Mostra apenas os lotes do SEGUNDO armazém (Farmácia). Se a empresa só tiver
+    // um armazém, usa o primeiro. O nome do armazém aparece no título do painel.
+    // =====================================================================
+
+    // ------------------------------------------------------------------
+    // Painel: produtos a expirar (visível antes do login)
+    // ------------------------------------------------------------------
+    // Posição e tamanho do painel (ajusta aqui se quiseres mexer na estética)
+    private static final int EXP_X = 33, EXP_Y = 250, EXP_W = 540, EXP_H = 360;
+    private static final int DIAS_INICIAIS = 60;
+
+    // Índice do armazém mostrado, na lista ordenada por código: 1 = SEGUNDO (Farmácia)
+    private static final int ARMAZEM_EXPIRAR_INDICE = 1;
+
+    private static final Color COR_EXPIRADO = new Color( 255, 170, 170 ); // vermelho claro
+    private static final Color COR_URGENTE = new Color( 255, 204, 153 );  // laranja claro (<= 30 dias)
+    private static final Color COR_URGENTE_FORTE = new Color( 255, 120, 0 ); // laranja forte (fase "acesa" do piscar)
+
+    // Alarme: toca ALARME_TOQUES vezes quando passam a existir linhas a piscar
+    private static final int ALARME_TOQUES = 3;
+    private static final int ALARME_FREQUENCIA_HZ = 880; // nota Lá
+    private static final int ALARME_DURACAO_MS = 250;    // duração de cada toque
+    private static final int ALARME_PAUSA_MS = 150;      // pausa entre toques
+    private static final Color COR_AVISO = new Color( 255, 245, 170 );    // amarelo claro (> 30 dias)
+
+    // ASSUMIDO: tb_armazem(codigo, designacao) e lote.fk_armazem
+    private static final String SQL_ARMAZENS_EXPIRAR
+            = "SELECT codigo, designacao FROM tb_armazem ORDER BY codigo ASC";
+
+    private static final String SQL_A_EXPIRAR
+            = "SELECT p.codigo, p.designacao, l.numero_lote, l.data_validade, "
+            + "       DATEDIFF( l.data_validade, CURDATE() ) AS dias_restantes "
+            + "FROM lote l "
+            + "INNER JOIN tb_produto p ON p.codigo = l.fk_produto "
+            + "WHERE l.qtd > 0 AND l.estado IN ('ACTIVO','EXPIRADO') "
+            + "  AND l.fk_armazem = ? "
+            + "  AND l.data_validade <= DATE_ADD( CURDATE(), INTERVAL ? DAY ) "
+            + "  AND ( ? = 1 OR l.data_validade >= CURDATE() ) "
+            + "ORDER BY l.data_validade ASC, p.designacao ASC, l.id ASC";
+
+    private int idArmazemExpirar = -1;
+    private String nomeArmazemExpirar = "";
+
+    private final JSpinner spDiasExpirar = new JSpinner( new SpinnerNumberModel( DIAS_INICIAIS, 1, 3650, 1 ) );
+    private final JCheckBox chkExpirados = new JCheckBox( "Incluir já expirados com stock", true );
+    private final DefaultTableModel modExpirar = new DefaultTableModel(
+            new String[]
+            {
+                "Código", "Designação Produto", "Lote", "Data Validade"
+            }, 0 )
+    {
+        @Override
+        public boolean isCellEditable( int row, int column )
+        {
+            return false;
+        }
+    };
+    private final JTable tblExpirar = new JTable( modExpirar );
+    private final javax.swing.JLabel lblTotalExpirar = new javax.swing.JLabel( " " );
+    private final List<Integer> diasExpirar = new ArrayList<>(); // dias restantes de cada linha (para a cor)
+    private final SimpleDateFormat fmtDataExpirar = new SimpleDateFormat( "dd/MM/yyyy" );
+    private javax.swing.Timer refreshExpirarTimer;
+
+    // Piscar das linhas laranja (a expirar em 0 a 30 dias)
+    private javax.swing.Timer piscarExpirarTimer;
+    private boolean piscarExpirarLigado = false;
+    private boolean temLinhasUrgentes = false;
+    private volatile boolean alarmeATocar = false;
+
+    /** Descobre o armazém a mostrar: o 2.º da lista (ou o 1.º, se só houver um). */
+    private void resolverArmazemExpirar()
+    {
+        try
+        {
+            Connection cn = BDConexao.getInstancia().getConnectionAtiva();
+            try ( PreparedStatement ps = cn.prepareStatement( SQL_ARMAZENS_EXPIRAR );  ResultSet rs = ps.executeQuery() )
+            {
+                int i = 0;
+                while ( rs.next() )
+                {
+                    if ( i == 0 || i == ARMAZEM_EXPIRAR_INDICE )
+                    {
+                        idArmazemExpirar = rs.getInt( "codigo" );
+                        nomeArmazemExpirar = rs.getString( "designacao" );
+                    }
+                    if ( i == ARMAZEM_EXPIRAR_INDICE )
+                    {
+                        break;
+                    }
+                    i++;
+                }
+            }
+        }
+        catch ( Exception ex )
+        {
+            ex.printStackTrace();
+            idArmazemExpirar = -1;
+        }
+    }
+
+    /** Cria o painel e coloca-o por cima do fundo, sem tocar no layout gerado. */
+    private void criarPainelExpirar()
+    {
+        resolverArmazemExpirar();
+
+        Font negrito = new Font( "Tahoma", Font.BOLD, 12 );
+
+        javax.swing.JLabel lbl1 = new javax.swing.JLabel( "A expirar nos próximos" );
+        javax.swing.JLabel lbl2 = new javax.swing.JLabel( "dias" );
+        for ( javax.swing.JLabel l : new javax.swing.JLabel[]
+        {
+            lbl1, lbl2
+        } )
+        {
+            l.setFont( negrito );
+            l.setForeground( Color.WHITE );
+        }
+        spDiasExpirar.setPreferredSize( new Dimension( 75, 26 ) );
+        chkExpirados.setOpaque( false );
+        chkExpirados.setForeground( Color.WHITE );
+        chkExpirados.setFont( negrito );
+
+        JPanel topo = new JPanel( new FlowLayout( FlowLayout.LEFT, 6, 2 ) );
+        topo.setOpaque( false );
+        topo.add( lbl1 );
+        topo.add( spDiasExpirar );
+        topo.add( lbl2 );
+        topo.add( chkExpirados );
+
+        // Tabela
+        tblExpirar.setRowHeight( 24 );
+        tblExpirar.getTableHeader().setReorderingAllowed( false );
+        tblExpirar.getTableHeader().setFont( negrito );
+        tblExpirar.setFillsViewportHeight( true );
+        tblExpirar.setSelectionMode( ListSelectionModel.SINGLE_SELECTION );
+        int[] alinhamentos =
+        {
+            SwingConstants.CENTER, SwingConstants.LEFT, SwingConstants.LEFT, SwingConstants.CENTER
+        };
+        int[] larguras =
+        {
+            70, 260, 100, 100
+        };
+        for ( int c = 0; c < alinhamentos.length; c++ )
+        {
+            tblExpirar.getColumnModel().getColumn( c ).setCellRenderer( new RendererExpirar( alinhamentos[c] ) );
+            tblExpirar.getColumnModel().getColumn( c ).setPreferredWidth( larguras[c] );
+        }
+        JScrollPane scroll = new JScrollPane( tblExpirar );
+        scroll.getViewport().setBackground( new Color( 20, 25, 50 ) );
+
+        lblTotalExpirar.setForeground( Color.WHITE );
+        lblTotalExpirar.setFont( new Font( "Tahoma", Font.ITALIC, 11 ) );
+
+        // Painel com fundo escuro semi-transparente (deixa ver a imagem de fundo)
+        JPanel painel = new JPanel( new BorderLayout( 0, 6 ) )
+        {
+            @Override
+            protected void paintComponent( Graphics g )
+            {
+                g.setColor( getBackground() );
+                g.fillRect( 0, 0, getWidth(), getHeight() );
+                super.paintComponent( g );
+            }
+        };
+        painel.setOpaque( false );
+        painel.setBackground( new Color( 10, 15, 40, 190 ) );
+        String titulo = nomeArmazemExpirar.isEmpty()
+                ? "Produtos a expirar"
+                : "Produtos a expirar - " + nomeArmazemExpirar;
+        painel.setBorder( BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder( BorderFactory.createLineBorder( Color.WHITE ),
+                        titulo, javax.swing.border.TitledBorder.LEFT,
+                        javax.swing.border.TitledBorder.TOP, new Font( "Tahoma", Font.BOLD, 14 ), Color.WHITE ),
+                BorderFactory.createEmptyBorder( 4, 6, 6, 6 ) ) );
+        painel.add( topo, BorderLayout.NORTH );
+        painel.add( scroll, BorderLayout.CENTER );
+        painel.add( lblTotalExpirar, BorderLayout.SOUTH );
+        painel.setBounds( EXP_X, EXP_Y, EXP_W, EXP_H );
+
+        getLayeredPane().add( painel, JLayeredPane.PALETTE_LAYER );
+
+        // Actualização dinâmica: setas do spinner, escrita manual e checkbox
+        spDiasExpirar.addChangeListener( e -> agendarRefreshExpirar() );
+        JFormattedTextField tf = ( ( JSpinner.DefaultEditor ) spDiasExpirar.getEditor() ).getTextField();
+        tf.getDocument().addDocumentListener( new DocumentListener()
+        {
+            @Override
+            public void insertUpdate( DocumentEvent e )
+            {
+                agendarRefreshExpirar();
+            }
+
+            @Override
+            public void removeUpdate( DocumentEvent e )
+            {
+                agendarRefreshExpirar();
+            }
+
+            @Override
+            public void changedUpdate( DocumentEvent e )
+            {
+                agendarRefreshExpirar();
+            }
+        } );
+        chkExpirados.addActionListener( e -> carregarProdutosAExpirar() );
+
+        carregarProdutosAExpirar();
+        iniciarPiscarExpirar();
+    }
+
+    /** Faz piscar as linhas laranja (500 ms), para chamar a atenção do utilizador. */
+    private void iniciarPiscarExpirar()
+    {
+        piscarExpirarTimer = new javax.swing.Timer( 500, e ->
+        {
+            if ( !isDisplayable() )
+            {
+                ( ( javax.swing.Timer ) e.getSource() ).stop(); // janela fechada: pára o timer
+                return;
+            }
+            piscarExpirarLigado = !piscarExpirarLigado;
+            if ( temLinhasUrgentes )
+            {
+                tblExpirar.repaint();
+            }
+        } );
+        piscarExpirarTimer.start();
+    }
+
+    /** Espera 400 ms depois da última tecla antes de consultar a BD. */
+    private void agendarRefreshExpirar()
+    {
+        if ( refreshExpirarTimer == null )
+        {
+            refreshExpirarTimer = new javax.swing.Timer( 400, e -> carregarProdutosAExpirar() );
+            refreshExpirarTimer.setRepeats( false );
+        }
+        refreshExpirarTimer.restart();
+    }
+
+    /** Lê o nº de dias directamente do texto do spinner (mesmo antes de carregar Enter). */
+    private int obterDiasExpirar()
+    {
+        String txt = ( ( JSpinner.DefaultEditor ) spDiasExpirar.getEditor() ).getTextField()
+                .getText().replaceAll( "[^0-9]", "" );
+        if ( txt.isEmpty() )
+        {
+            return -1;
+        }
+        try
+        {
+            int d = Integer.parseInt( txt );
+            return ( d >= 1 && d <= 3650 ) ? d : -1;
+        }
+        catch ( NumberFormatException ex )
+        {
+            return -1;
+        }
+    }
+
+    private void carregarProdutosAExpirar()
+    {
+        int dias = obterDiasExpirar();
+        if ( dias < 0 )
+        {
+            return; // campo vazio ou valor inválido: mantém a lista anterior
+        }
+
+        if ( idArmazemExpirar < 0 )
+        {
+            resolverArmazemExpirar(); // tenta outra vez (ex.: BD indisponível no arranque)
+        }
+
+        modExpirar.setRowCount( 0 );
+        boolean tinhaUrgentes = temLinhasUrgentes;
+        diasExpirar.clear();
+        temLinhasUrgentes = false;
+
+        if ( idArmazemExpirar < 0 )
+        {
+            lblTotalExpirar.setText( " Não foi possível identificar o armazém." );
+            return;
+        }
+
+        try
+        {
+            Connection cn = BDConexao.getInstancia().getConnectionAtiva();
+            try ( PreparedStatement ps = cn.prepareStatement( SQL_A_EXPIRAR ) )
+            {
+                ps.setInt( 1, idArmazemExpirar );
+                ps.setInt( 2, dias );
+                ps.setInt( 3, chkExpirados.isSelected() ? 1 : 0 );
+                try ( ResultSet rs = ps.executeQuery() )
+                {
+                    while ( rs.next() )
+                    {
+                        int diasRestantes = rs.getInt( "dias_restantes" );
+                        diasExpirar.add( diasRestantes );
+                        if ( diasRestantes >= 0 && diasRestantes <= 30 )
+                        {
+                            temLinhasUrgentes = true;
+                        }
+                        modExpirar.addRow( new Object[]
+                        {
+                            rs.getInt( "codigo" ),
+                            rs.getString( "designacao" ),
+                            rs.getString( "numero_lote" ),
+                            rs.getDate( "data_validade" ) == null ? "" : fmtDataExpirar.format( rs.getDate( "data_validade" ) )
+                        } );
+                    }
+                }
+            }
+            // Alarme: só quando as linhas a piscar APARECEM (não repete a cada actualização)
+            if ( temLinhasUrgentes && !tinhaUrgentes )
+            {
+                tocarAlarmeExpirar();
+            }
+            lblTotalExpirar.setText( " " + modExpirar.getRowCount() + " lote(s)   |   Vermelho: expirado   "
+                    + "Laranja: até 30 dias   Amarelo: mais de 30 dias" );
+        }
+        catch ( Exception ex )
+        {
+            // Nunca bloquear o login por causa desta lista
+            ex.printStackTrace();
+            lblTotalExpirar.setText( " Não foi possível carregar a lista: " + ex.getMessage() );
+        }
+    }
+
+    /** Toca ALARME_TOQUES toques, numa thread própria (não bloqueia o ecrã de login). */
+    private void tocarAlarmeExpirar()
+    {
+        if ( alarmeATocar )
+        {
+            return; // já está a tocar
+        }
+        alarmeATocar = true;
+
+        Thread t = new Thread( () ->
+        {
+            try
+            {
+                for ( int i = 0; i < ALARME_TOQUES; i++ )
+                {
+                    tocarTomExpirar( ALARME_FREQUENCIA_HZ, ALARME_DURACAO_MS );
+                    Thread.sleep( ALARME_PAUSA_MS );
+                }
+            }
+            catch ( Exception ex )
+            {
+                // sem placa de som / linha de áudio indisponível: usa o beep do sistema
+                try
+                {
+                    for ( int i = 0; i < ALARME_TOQUES; i++ )
+                    {
+                        Toolkit.getDefaultToolkit().beep();
+                        Thread.sleep( ALARME_DURACAO_MS + ALARME_PAUSA_MS );
+                    }
+                }
+                catch ( Exception ignorar )
+                {
+                }
+            }
+            finally
+            {
+                alarmeATocar = false;
+            }
+        }, "alarme-expirar" );
+        t.setDaemon( true );
+        t.start();
+    }
+
+    /** Gera e toca um tom (onda sinusoidal) com fade curto para não estalar. */
+    private static void tocarTomExpirar( int frequenciaHz, int duracaoMs ) throws Exception
+    {
+        float taxa = 44100f;
+        javax.sound.sampled.AudioFormat formato = new javax.sound.sampled.AudioFormat( taxa, 16, 1, true, false );
+        try ( javax.sound.sampled.SourceDataLine linha = javax.sound.sampled.AudioSystem.getSourceDataLine( formato ) )
+        {
+            linha.open( formato );
+            linha.start();
+
+            int amostras = (int) ( taxa * duracaoMs / 1000 );
+            byte[] buf = new byte[ amostras * 2 ];
+            for ( int i = 0; i < amostras; i++ )
+            {
+                double fade = Math.min( 1.0, Math.min( i, amostras - i ) / ( taxa * 0.01 ) ); // 10 ms
+                short v = (short) ( Math.sin( 2 * Math.PI * frequenciaHz * i / taxa ) * 0.6 * Short.MAX_VALUE * fade );
+                buf[2 * i] = (byte) ( v & 0xff );
+                buf[2 * i + 1] = (byte) ( ( v >> 8 ) & 0xff );
+            }
+            linha.write( buf, 0, buf.length );
+            linha.drain();
+        }
+    }
+
+    /** Pinta a linha conforme os dias restantes. */
+    private class RendererExpirar extends DefaultTableCellRenderer
+    {
+
+        RendererExpirar( int alinhamento )
+        {
+            setHorizontalAlignment( alinhamento );
+            setOpaque( true );
+        }
+
+        @Override
+        public Component getTableCellRendererComponent( JTable table, Object value,
+                boolean isSelected, boolean hasFocus, int row, int column )
+        {
+            Component c = super.getTableCellRendererComponent( table, value, isSelected, hasFocus, row, column );
+            if ( !isSelected )
+            {
+                int dias = row < diasExpirar.size() ? diasExpirar.get( row ) : 0;
+                Color fundo;
+                if ( dias < 0 )
+                {
+                    fundo = COR_EXPIRADO;
+                }
+                else if ( dias <= 30 )
+                {
+                    fundo = piscarExpirarLigado ? COR_URGENTE_FORTE : COR_URGENTE; // pisca
+                }
+                else
+                {
+                    fundo = COR_AVISO;
+                }
+                c.setBackground( fundo );
+                c.setForeground( Color.BLACK );
+            }
+            return c;
+        }
+    }
+
+
+
+//    // ------------------------------------------------------------------
+//    // Painel: produtos a expirar (visível antes do login)
+//    // ------------------------------------------------------------------
+//    // Posição e tamanho do painel (ajusta aqui se quiseres mexer na estética)
+//    private static final int EXP_X = 33, EXP_Y = 250, EXP_W = 540, EXP_H = 360;
+//    private static final int DIAS_INICIAIS = 60;
+//
+//    private static final Color COR_EXPIRADO = new Color( 255, 170, 170 ); // vermelho claro
+//    private static final Color COR_URGENTE = new Color( 255, 204, 153 );  // laranja claro (<= 30 dias)
+//    private static final Color COR_AVISO = new Color( 255, 245, 170 );    // amarelo claro (> 30 dias)
+//
+//    // ASSUMIDO: tb_armazem(codigo, designacao)  -> ajusta se o nome da tabela for diferente
+//    // LEFT JOIN: se um lote tiver um armazém inexistente, continua a aparecer (com "-")
+//    private static final String SQL_A_EXPIRAR
+//            = "SELECT p.codigo, p.designacao, COALESCE( a.designacao, '-' ) AS armazem, "
+//            + "       l.numero_lote, l.data_validade, "
+//            + "       DATEDIFF( l.data_validade, CURDATE() ) AS dias_restantes "
+//            + "FROM lote l "
+//            + "INNER JOIN tb_produto p ON p.codigo = l.fk_produto "
+//            + "LEFT JOIN tb_armazem a ON a.codigo = l.fk_armazem "
+//            + "WHERE l.qtd > 0 AND l.estado IN ('ACTIVO','EXPIRADO') "
+//            + "  AND l.data_validade <= DATE_ADD( CURDATE(), INTERVAL ? DAY ) "
+//            + "  AND ( ? = 1 OR l.data_validade >= CURDATE() ) "
+//            + "ORDER BY p.designacao ASC, l.data_validade ASC, a.designacao ASC, l.id ASC";
+//
+//    private final JSpinner spDiasExpirar = new JSpinner( new SpinnerNumberModel( DIAS_INICIAIS, 1, 3650, 1 ) );
+//    private final JCheckBox chkExpirados = new JCheckBox( "Incluir já expirados com stock", true );
+//    private final DefaultTableModel modExpirar = new DefaultTableModel(
+//            new String[]
+//            {
+//                "Código", "Designação Produto", "Armazém", "Lote", "Data Validade"
+//            }, 0 )
+//    {
+//        @Override
+//        public boolean isCellEditable( int row, int column )
+//        {
+//            return false;
+//        }
+//    };
+//    private final JTable tblExpirar = new JTable( modExpirar );
+//    private final javax.swing.JLabel lblTotalExpirar = new javax.swing.JLabel( " " );
+//    private final List<Integer> diasExpirar = new ArrayList<>(); // dias restantes de cada linha (para a cor)
+//    private final SimpleDateFormat fmtDataExpirar = new SimpleDateFormat( "dd/MM/yyyy" );
+//    private javax.swing.Timer refreshExpirarTimer;
+//
+//    /** Cria o painel e coloca-o por cima do fundo, sem tocar no layout gerado. */
+//    private void criarPainelExpirar()
+//    {
+//        Font negrito = new Font( "Tahoma", Font.BOLD, 12 );
+//
+//        javax.swing.JLabel lbl1 = new javax.swing.JLabel( "A expirar nos próximos" );
+//        javax.swing.JLabel lbl2 = new javax.swing.JLabel( "dias" );
+//        for ( javax.swing.JLabel l : new javax.swing.JLabel[]
+//        {
+//            lbl1, lbl2
+//        } )
+//        {
+//            l.setFont( negrito );
+//            l.setForeground( Color.WHITE );
+//        }
+//        spDiasExpirar.setPreferredSize( new Dimension( 75, 26 ) );
+//        chkExpirados.setOpaque( false );
+//        chkExpirados.setForeground( Color.WHITE );
+//        chkExpirados.setFont( negrito );
+//
+//        JPanel topo = new JPanel( new FlowLayout( FlowLayout.LEFT, 6, 2 ) );
+//        topo.setOpaque( false );
+//        topo.add( lbl1 );
+//        topo.add( spDiasExpirar );
+//        topo.add( lbl2 );
+//        topo.add( chkExpirados );
+//
+//        // Tabela
+//        tblExpirar.setRowHeight( 24 );
+//        tblExpirar.getTableHeader().setReorderingAllowed( false );
+//        tblExpirar.getTableHeader().setFont( negrito );
+//        tblExpirar.setFillsViewportHeight( true );
+//        tblExpirar.setSelectionMode( ListSelectionModel.SINGLE_SELECTION );
+//        int[] alinhamentos =
+//        {
+//            SwingConstants.CENTER, SwingConstants.LEFT, SwingConstants.LEFT, SwingConstants.LEFT, SwingConstants.CENTER
+//        };
+//        int[] larguras =
+//        {
+//            55, 190, 85, 85, 85
+//        };
+//        for ( int c = 0; c < alinhamentos.length; c++ )
+//        {
+//            tblExpirar.getColumnModel().getColumn( c ).setCellRenderer( new RendererExpirar( alinhamentos[c] ) );
+//            tblExpirar.getColumnModel().getColumn( c ).setPreferredWidth( larguras[c] );
+//        }
+//        JScrollPane scroll = new JScrollPane( tblExpirar );
+//        scroll.getViewport().setBackground( new Color( 20, 25, 50 ) );
+//
+//        lblTotalExpirar.setForeground( Color.WHITE );
+//        lblTotalExpirar.setFont( new Font( "Tahoma", Font.ITALIC, 11 ) );
+//
+//        // Painel com fundo escuro semi-transparente (deixa ver a imagem de fundo)
+//        JPanel painel = new JPanel( new BorderLayout( 0, 6 ) )
+//        {
+//            @Override
+//            protected void paintComponent( Graphics g )
+//            {
+//                g.setColor( getBackground() );
+//                g.fillRect( 0, 0, getWidth(), getHeight() );
+//                super.paintComponent( g );
+//            }
+//        };
+//        painel.setOpaque( false );
+//        painel.setBackground( new Color( 10, 15, 40, 190 ) );
+//        painel.setBorder( BorderFactory.createCompoundBorder(
+//                BorderFactory.createTitledBorder( BorderFactory.createLineBorder( Color.WHITE ),
+//                        "Produtos a expirar", javax.swing.border.TitledBorder.LEFT,
+//                        javax.swing.border.TitledBorder.TOP, new Font( "Tahoma", Font.BOLD, 14 ), Color.WHITE ),
+//                BorderFactory.createEmptyBorder( 4, 6, 6, 6 ) ) );
+//        painel.add( topo, BorderLayout.NORTH );
+//        painel.add( scroll, BorderLayout.CENTER );
+//        painel.add( lblTotalExpirar, BorderLayout.SOUTH );
+//        painel.setBounds( EXP_X, EXP_Y, EXP_W, EXP_H );
+//
+//        getLayeredPane().add( painel, JLayeredPane.PALETTE_LAYER );
+//
+//        // Actualização dinâmica: setas do spinner, escrita manual e checkbox
+//        spDiasExpirar.addChangeListener( e -> agendarRefreshExpirar() );
+//        JFormattedTextField tf = ( ( JSpinner.DefaultEditor ) spDiasExpirar.getEditor() ).getTextField();
+//        tf.getDocument().addDocumentListener( new DocumentListener()
+//        {
+//            @Override
+//            public void insertUpdate( DocumentEvent e )
+//            {
+//                agendarRefreshExpirar();
+//            }
+//
+//            @Override
+//            public void removeUpdate( DocumentEvent e )
+//            {
+//                agendarRefreshExpirar();
+//            }
+//
+//            @Override
+//            public void changedUpdate( DocumentEvent e )
+//            {
+//                agendarRefreshExpirar();
+//            }
+//        } );
+//        chkExpirados.addActionListener( e -> carregarProdutosAExpirar() );
+//
+//        carregarProdutosAExpirar();
+//    }
+//
+//    /** Espera 400 ms depois da última tecla antes de consultar a BD. */
+//    private void agendarRefreshExpirar()
+//    {
+//        if ( refreshExpirarTimer == null )
+//        {
+//            refreshExpirarTimer = new javax.swing.Timer( 400, e -> carregarProdutosAExpirar() );
+//            refreshExpirarTimer.setRepeats( false );
+//        }
+//        refreshExpirarTimer.restart();
+//    }
+//
+//    /** Lê o nº de dias directamente do texto do spinner (mesmo antes de carregar Enter). */
+//    private int obterDiasExpirar()
+//    {
+//        String txt = ( ( JSpinner.DefaultEditor ) spDiasExpirar.getEditor() ).getTextField()
+//                .getText().replaceAll( "[^0-9]", "" );
+//        if ( txt.isEmpty() )
+//        {
+//            return -1;
+//        }
+//        try
+//        {
+//            int d = Integer.parseInt( txt );
+//            return ( d >= 1 && d <= 3650 ) ? d : -1;
+//        }
+//        catch ( NumberFormatException ex )
+//        {
+//            return -1;
+//        }
+//    }
+//
+//    private void carregarProdutosAExpirar()
+//    {
+//        int dias = obterDiasExpirar();
+//        if ( dias < 0 )
+//        {
+//            return; // campo vazio ou valor inválido: mantém a lista anterior
+//        }
+//
+//        modExpirar.setRowCount( 0 );
+//        diasExpirar.clear();
+//
+//        try
+//        {
+//            Connection cn = BDConexao.getInstancia().getConnectionAtiva();
+//            try ( PreparedStatement ps = cn.prepareStatement( SQL_A_EXPIRAR ) )
+//            {
+//                ps.setInt( 1, dias );
+//                ps.setInt( 2, chkExpirados.isSelected() ? 1 : 0 );
+//                try ( ResultSet rs = ps.executeQuery() )
+//                {
+//                    while ( rs.next() )
+//                    {
+//                        diasExpirar.add( rs.getInt( "dias_restantes" ) );
+//                        modExpirar.addRow( new Object[]
+//                        {
+//                            rs.getInt( "codigo" ),
+//                            rs.getString( "designacao" ),
+//                            rs.getString( "armazem" ),
+//                            rs.getString( "numero_lote" ),
+//                            rs.getDate( "data_validade" ) == null ? "" : fmtDataExpirar.format( rs.getDate( "data_validade" ) )
+//                        } );
+//                    }
+//                }
+//            }
+//            lblTotalExpirar.setText( " " + modExpirar.getRowCount() + " lote(s)   |   Vermelho: expirado   "
+//                    + "Laranja: até 30 dias   Amarelo: mais de 30 dias" );
+//        }
+//        catch ( Exception ex )
+//        {
+//            // Nunca bloquear o login por causa desta lista
+//            ex.printStackTrace();
+//            lblTotalExpirar.setText( " Não foi possível carregar a lista: " + ex.getMessage() );
+//        }
+//    }
+//
+//    /** Pinta a linha conforme os dias restantes. */
+//    private class RendererExpirar extends DefaultTableCellRenderer
+//    {
+//
+//        RendererExpirar( int alinhamento )
+//        {
+//            setHorizontalAlignment( alinhamento );
+//            setOpaque( true );
+//        }
+//
+//        @Override
+//        public Component getTableCellRendererComponent( JTable table, Object value,
+//                boolean isSelected, boolean hasFocus, int row, int column )
+//        {
+//            Component c = super.getTableCellRendererComponent( table, value, isSelected, hasFocus, row, column );
+//            if ( !isSelected )
+//            {
+//                int dias = row < diasExpirar.size() ? diasExpirar.get( row ) : 0;
+//                c.setBackground( dias < 0 ? COR_EXPIRADO : ( dias <= 30 ? COR_URGENTE : COR_AVISO ) );
+//                c.setForeground( Color.BLACK );
+//            }
+//            return c;
+//        }
+//    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BTnSair;

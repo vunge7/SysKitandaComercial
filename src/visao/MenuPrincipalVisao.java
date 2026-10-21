@@ -25,6 +25,7 @@ import static kitanda.util.CfConstantes.YYYYMMDD_HHMMSS;
 import lista.*;
 import util.BDConexao;
 import util.DVML;
+import util.FrmLotesAExpirar;
 import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
 import static util.MetodosUtil.rodarComandoWindows;
@@ -518,6 +519,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
         jMenuItemConsultas = new javax.swing.JMenuItem();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem12 = new javax.swing.JMenuItem();
+        jMenuItem16 = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
         jMenuItem9 = new javax.swing.JMenuItem();
 
@@ -1378,6 +1380,14 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
         });
         jMenu7.add(jMenuItem12);
 
+        jMenuItem16.setText("Validade de Produtos");
+        jMenuItem16.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem16ActionPerformed(evt);
+            }
+        });
+        jMenu7.add(jMenuItem16);
+
         jMenuBar1.add(jMenu7);
 
         jMenu4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens32x32/actualizar_32x32.png"))); // NOI18N
@@ -2116,6 +2126,10 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jMenuItem14ActionPerformed
 
+    private void jMenuItem16ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem16ActionPerformed
+        new FrmLotesAExpirar(conexao).setVisible(true);
+    }//GEN-LAST:event_jMenuItem16ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -2184,6 +2198,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem12;
     private javax.swing.JMenuItem jMenuItem13;
     private javax.swing.JMenuItem jMenuItem14;
+    private javax.swing.JMenuItem jMenuItem16;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;

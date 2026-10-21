@@ -185,12 +185,12 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     public FormVendaResponsivaVisaoTop(int cod_usuario, BDConexao conexao) throws SQLException {
         initComponents();
 
-        painelLotes = PainelLotesVenda.instalar(
-                PainelLotesVenda.encontrarPainelDoBotao(
-                        getContentPane(), "Fecho"
-                ),
-                560
-        );
+//        painelLotes = PainelLotesVenda.instalar(
+//                PainelLotesVenda.encontrarPainelDoBotao(
+//                        getContentPane(), "Fecho"
+//                ),
+//                560
+//        );
 
         // Atualizar quando o produto selecionado mudar
         cmbProduto.addActionListener(evt -> {
@@ -417,6 +417,18 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         txtCodigoBarra.requestFocus();
 
         txtBuscaRef.setEnabled(false);
+        
+                    // Mostrar o painel de lotes apenas para Farmácia
+    if (dadosInstituicao != null && "Farmacia".equalsIgnoreCase(dadosInstituicao.getNegocio())) {
+        painelLotes = PainelLotesVenda.instalar(
+                PainelLotesVenda.encontrarPainelDoBotao(
+                        getContentPane(), "Fecho"
+                ),
+                560
+        );
+    }
+    
+    aplicarFolha();
 
     }
 
@@ -482,7 +494,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         empresa();
 
         instancia = this;
-        aplicarFolha();
+//        aplicarFolha();
         configurarEscolhaFolha();
 
 //        setFolhaImpressora(dadosInstituicao.getImpressora());
@@ -748,6 +760,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         txtBuscaRef = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jButton3 = new javax.swing.JButton();
+        lbCodigoProduto4 = new javax.swing.JLabel();
         painelDir = new javax.swing.JPanel();
         txtPreco = new javax.swing.JTextField();
         jButton4 = new javax.swing.JButton();
@@ -972,7 +985,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                 txtCodigoBarraActionPerformed(evt);
             }
         });
-        painelEsq.add(txtCodigoBarra, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 241, 337, -1));
+        painelEsq.add(txtCodigoBarra, new org.netbeans.lib.awtextra.AbsoluteConstraints(97, 241, 270, -1));
 
         jlEmpresa.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         jlEmpresa.setForeground(new java.awt.Color(0, 0, 102));
@@ -1007,6 +1020,10 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             }
         });
         painelEsq.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(336, 3, 40, 20));
+
+        lbCodigoProduto4.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        lbCodigoProduto4.setText("CodBarra:");
+        painelEsq.add(lbCodigoProduto4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 240, 80, 30));
 
         painelDir.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
@@ -1116,7 +1133,6 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
         buttonGroup1.add(ck_simplificada_O);
         ck_simplificada_O.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
-        ck_simplificada_O.setSelected(true);
         ck_simplificada_O.setText("A6_O");
         ck_simplificada_O.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1126,6 +1142,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
         buttonGroup1.add(ck_simplificada);
         ck_simplificada.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
+        ck_simplificada.setSelected(true);
         ck_simplificada.setText("A6");
         ck_simplificada.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1315,25 +1332,26 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                 .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(painelDirLayout.createSequentialGroup()
                         .addGap(9, 9, 9)
-                        .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btn_adicionar, javax.swing.GroupLayout.DEFAULT_SIZE, 46, Short.MAX_VALUE))
+                        .addComponent(btn_adicionar, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btn_remover, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(btn_remover)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(lbCodigoProduto3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(painelDirLayout.createSequentialGroup()
-                                .addComponent(btnFormaPagamento)
-                                .addGap(29, 29, 29)
-                                .addComponent(btnProcessar, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(painelDirLayout.createSequentialGroup()
-                                .addComponent(lbCodigoProduto3)
+                                .addComponent(btnFormaPagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtPreco, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(btnProcessar, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(painelDirLayout.createSequentialGroup()
+                                .addComponent(txtPreco, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton2)
+                                .addGap(128, 128, 128))))
                     .addGroup(painelDirLayout.createSequentialGroup()
                         .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(painelDirLayout.createSequentialGroup()
@@ -1401,7 +1419,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                                         .addComponent(lbCodigoProduto5, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(txtTotalPagarGeral, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                        .addGap(0, 17, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         painelDirLayout.setVerticalGroup(
@@ -1455,21 +1473,19 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                     .addComponent(ck_Duplicada)
                     .addComponent(ck_A4))
                 .addGap(18, 18, 18)
-                .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btn_remover, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btn_adicionar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lbCodigoProduto3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtPreco))
+                .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(btn_remover, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btn_adicionar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lbCodigoProduto3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txtPreco)
+                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jButton2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(painelDirLayout.createSequentialGroup()
-                        .addGap(4, 4, 4)
-                        .addGroup(painelDirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton2)))
+                    .addComponent(btnCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
                     .addComponent(btnFormaPagamento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnProcessar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnProcessar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -1711,6 +1727,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     private void txtCodigoManualActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_txtCodigoManualActionPerformed
     {//GEN-HEADEREND:event_txtCodigoManualActionPerformed
         accao_codigo_manual_enter();
+        atualizarPainelLotesProdutoPesquisado();
     }//GEN-LAST:event_txtCodigoManualActionPerformed
 
     private void cmbAnoEconomicoActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_cmbAnoEconomicoActionPerformed
@@ -1838,6 +1855,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     {//GEN-HEADEREND:event_txtCodigoProdutoActionPerformed
         if (validar()) {
             accao_codigo_interno_enter();
+            atualizarPainelLotesProdutoPesquisado();
             scrolltable();
 
         }
@@ -1854,6 +1872,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 //        accao_codigo_barra_enter();
 //        accao_codigo_barra_enter_cb();
         accao_codigo_barra_enter_cb();
+        atualizarPainelLotesProdutoPesquisado();
         scrolltable();
 
     }//GEN-LAST:event_txtCodigoBarraActionPerformed
@@ -3407,6 +3426,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     private javax.swing.JLabel lbCodigoProduto;
     private javax.swing.JLabel lbCodigoProduto2;
     private javax.swing.JLabel lbCodigoProduto3;
+    private javax.swing.JLabel lbCodigoProduto4;
     private javax.swing.JLabel lbCodigoProduto5;
     private javax.swing.JLabel lbDescontoFinanceiro;
     private javax.swing.JLabel lbQuantidade;
@@ -5286,7 +5306,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     private void empresa() {
         TbDadosInstituicao dados = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
 
-        jlEmpresa.setText("KITANDA 1.2                      " + dados.getNome());
+        jlEmpresa.setText("KITANDA 1.2     " + dados.getNome());
 
     }
 
@@ -5451,6 +5471,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
     private void accao_codigo_manual_enter() {
         try {
+            
             String codigo_manual = txtCodigoManual.getText();
             TbProduto produtoLocal = produtosController.findByCodManual(codigo_manual);
             double qtd = Double.parseDouble(txtQuatindade.getText());
@@ -5458,7 +5479,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         } catch (Exception ex) {
             ex.printStackTrace();
             Logger.getLogger(FormVendaResponsivaVisaoTop.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, "Não existe produto com este código de barra.", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Não existe produto com este código manual.", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
         }
 
     }
@@ -8287,176 +8308,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         }
     }
 
-    /**
-     * Actualiza o painel de lotes para (produto, quantidade).
-     *
-     * @return null se ha stock suficiente (ou o produto nao tem lotes); senao o
-     * texto do erro (o painel ja o mostra a vermelho; quem quiser bloquear
-     * mostra tambem uma janela)
-     */
-    private static String actualizarPainelLotes3(
-            int codProduto,
-            String descricao,
-            double qtd) throws SQLException {
-
-        // 1. Verificar se o produto tem lotes registados
-        if (!loteController.existeLotes(codProduto)) {
-            painelLotes.limpar();
-            return null;
-        }
-
-        // 2. Obter o armazém atual
-        int armazem = getCodigoArmazem();
-
-        // 3. Consultar todos os lotes disponíveis por ordem FEFO
-        List<entity.Lote> disponiveis
-                = loteController.listarDisponiveisFEFO(
-                        codProduto,
-                        armazem
-                );
-
-        if (disponiveis.isEmpty()) {
-            String msg = "Este produto tem lotes registados, mas não possui "
-                    + "lotes disponíveis, activos e dentro da validade "
-                    + "no armazém selecionado.";
-
-            painelLotes.mostrarAviso(descricao, msg);
-            return msg;
-        }
-
-        // 4. Calcular a quantidade a retirar de cada lote
-        java.util.Map<Integer, Double> aRetirar
-                = new java.util.HashMap<>();
-
-        String erro = null;
-
-        try {
-            System.out.println("==================================");
-            System.out.println("Produto: " + codProduto);
-            System.out.println("Armazém: " + armazem);
-            System.out.println("Quantidade pedida: " + qtd);
-            System.out.println("==================================");
-            List<LoteController.LoteFEFO> previsao
-                    = loteController.preverBaixaFEFO(
-                            codProduto,
-                            armazem,
-                            qtd
-                    );
-            
-            for (LoteController.LoteFEFO item : previsao) {
-
-    int idLote = item.getLote().getId();
-    double quantidadeRetirar = item.getQuantidadeRetirar();
-
-    System.out.println(
-        "Lote ID: " + idLote
-        + " | Número: " + item.getLote().getNumeroLote()
-        + " | Stock: " + item.getLote().getQtd()
-        + " | A retirar: " + quantidadeRetirar
-    );
-
-    aRetirar.put(idLote, quantidadeRetirar);
-}
-
-//            for (LoteController.LoteFEFO item : previsao) {
-//
-//                int idLote = item.getLote().getId();
-//
-//                double quantidadeRetirar
-//                        = item.getQuantidadeRetirar();
-//
-//                aRetirar.put(idLote, quantidadeRetirar);
-//            }
-
-        } catch (IllegalStateException e) {
-            erro = e.getMessage();
-        }
-
-        // 5. Construir as linhas da tabela de lotes
-        List<PainelLotesVenda.Linha> linhas
-                = new java.util.ArrayList<>();
-
-        for (entity.Lote lote : disponiveis) {
-
-            double quantidadeRetirar
-                    = aRetirar.getOrDefault(lote.getId(), 0.0);
-
-            linhas.add(
-                    new PainelLotesVenda.Linha(
-                            lote.getNumeroLote(),
-                            lote.getDataValidade(),
-                            lote.getQtd(),
-                            quantidadeRetirar
-                    )
-            );
-        }
-
-        // 6. Mostrar o erro, se o stock for insuficiente
-        if (erro != null) {
-            painelLotes.mostrarAviso(
-                    descricao,
-                    erro,
-                    linhas
-            );
-
-            return erro;
-        }
-
-        // 7. Apresentar os lotes e as quantidades calculadas
-        painelLotes.mostrar(
-                descricao,
-                qtd,
-                linhas
-        );
-
-        return null;
-    }
-
-    private static String actualizarPainelLotes1(int codProduto, String descricao, double qtd) throws SQLException {
-
-        // produto sem lotes registados: nada a mostrar
-        if (!loteController.existeLotes(codProduto)) {
-            painelLotes.limpar();
-            return null;
-        }
-        int armazem = getCodigoArmazem();
-
-        // todos os lotes com stock, por ordem FEFO
-        List<entity.Lote> disponiveis = loteController.listarDisponiveisFEFO(codProduto, armazem);
-        if (disponiveis.isEmpty()) {
-            String msg = "Este produto tem lotes registados, mas não possui lotes disponíveis, "
-                    + "activos e dentro da validade no armazém selecionado.";
-            painelLotes.mostrarAviso(descricao, msg);
-            return msg;
-        }
-
-        // quanto sai de cada lote para a quantidade dada (por id do lote)
-        java.util.Map<Integer, Double> aRetirar = new java.util.HashMap<>();
-        String erro = null;
-        try {
-            for (LoteController.LoteFEFO item : loteController.preverBaixaFEFO(codProduto, armazem, qtd)) {
-                aRetirar.put(item.getLote().getId(), (double) item.getQuantidadeRetirar());
-            }
-        } catch (IllegalStateException e) {
-            erro = e.getMessage();
-        }
-
-        List<PainelLotesVenda.Linha> linhas = new java.util.ArrayList<>();
-        for (entity.Lote l : disponiveis) {
-            linhas.add(new PainelLotesVenda.Linha(
-                    l.getNumeroLote(),
-                    l.getDataValidade(),
-                    l.getQtd(),
-                    aRetirar.getOrDefault(l.getId(), 0.0)));
-        }
-
-        if (erro != null) {
-            painelLotes.mostrarAviso(descricao, erro, linhas);
-            return erro;
-        }
-        painelLotes.mostrar(descricao, qtd, linhas);
-        return null;
-    }
+    
     
     // ---------------------------------------------------------------------
 // 2) NA CLASSE DO ECRA DE VENDAS: o metodo UNICO que enche o painel.

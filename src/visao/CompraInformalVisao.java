@@ -104,6 +104,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
     private Thread t;
     private static String prox_doc;
     private static Date dataEntrada;
+    private boolean atualizando = false;
 
     public CompraInformalVisao(int cod_usuario, BDConexao conexao) {
 
@@ -169,10 +170,10 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         MetodosUtil.setArmazemByCampoConfigCompraArmazem(cmbArmazem, conexao, cod_usuario);
         selecionar_transferencia_bt();
 
-        // 1. Dispara o cálculo sempre que o valor do JSpinner (Preço de Compra) mudar
+        // 1. Preço de compra mudou -> recalcula o preço de venda (mantém a percentagem)
         spPrecoCompra.addChangeListener(e -> calcularPrecoVendaRetalho());
 
-        // 2. Dispara o cálculo sempre que o texto da Percentagem de Ganho for alterado
+// 2. Percentagem mudou -> calcula o preço de venda
         txtPercentagemGanho.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             @Override
             public void insertUpdate(javax.swing.event.DocumentEvent e) {
@@ -190,7 +191,25 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
             }
         });
 
-        // Opcional: Executa uma vez no arranque para garantir que o campo de venda começa preenchido
+// 3. NOVO: Preço de venda mudou -> calcula a percentagem
+        txtPrecoVenda.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                calcularPercentagemGanho();
+            }
+
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                calcularPercentagemGanho();
+            }
+
+            @Override
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                calcularPercentagemGanho();
+            }
+        });
+
+// Arranque
         calcularPrecoVendaRetalho();
     }
 
@@ -667,8 +686,6 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         lb_data_apuramento9.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lb_data_apuramento9.setText("Percetagem de Ganho:");
         jPanel3.add(lb_data_apuramento9, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 130, 140, 30));
-
-        txtPrecoVenda.setEditable(false);
         jPanel3.add(txtPrecoVenda, new org.netbeans.lib.awtextra.AbsoluteConstraints(1020, 110, 100, 30));
 
         cmbAnoEconomico.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -701,14 +718,14 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         jPanel3.add(llbDataFabrico, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 230, -1, 20));
 
         jcDataFabrico.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jPanel3.add(jcDataFabrico, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 200, -1, -1));
+        jPanel3.add(jcDataFabrico, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 200, 120, -1));
 
         lbDataExpiracao.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
-        lbDataExpiracao.setText("Data Expiracao:");
-        jPanel3.add(lbDataExpiracao, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 200, 100, 20));
+        lbDataExpiracao.setText("Data Validade:");
+        jPanel3.add(lbDataExpiracao, new org.netbeans.lib.awtextra.AbsoluteConstraints(870, 200, 100, 20));
 
         jcDataValidade.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jPanel3.add(jcDataValidade, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 200, -1, -1));
+        jPanel3.add(jcDataValidade, new org.netbeans.lib.awtextra.AbsoluteConstraints(980, 200, 130, -1));
         jPanel3.add(txtNumeroLote, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 230, 90, -1));
 
         llbDataFabrico1.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
@@ -1034,18 +1051,10 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
     private void jButtonLupaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonLupaActionPerformed
     {//GEN-HEADEREND:event_jButtonLupaActionPerformed
 
-//                try
-//        {
-        ////            new BuscaNovoProdutoVisao(this, rootPaneCheckingEnabled, coordenada )
-//            new BuscaProdutosVisao( this, rootPaneCheckingEnabled, getIdArmazem(), DVML.JANELA_COMPRA, conexao, GRUPO_AREA, NovaEncomendaVisao.class ).setVisible(true);
-//        }
-//        catch ( Exception e )
-//        {
-//            e.printStackTrace();
-//        }
-        
         try {
+
             new BuscaProdutoComprasVisao(this, rootPaneCheckingEnabled, getIdArmazens(), DVML.JANELA_COMPRA, BDConexao.getInstancia()).setVisible(true);
+
             focarCampoEntrada();
 //            new BuscaProdutoVisao(this, rootPaneCheckingEnabled, getIdArmazens(), DVML.JANELA_COMPRA, BDConexao.getInstancia()).setVisible(true);
 //            txtQtdEntrar.requestFocus();
@@ -1396,44 +1405,10 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
             validade = EntradaLoteCompra.formatar(dataValidade);
         }
 
-//        if (controlaLote(produto.getCodigo())) {
-//            numeroLote = txtNumeroLote.getText().trim().toUpperCase();
-//            if (numeroLote.isEmpty()) {
-//                prepararCamposLote(produto); // garante que os campos ficam activos
-//                focarCampoEntrada();
-//                JOptionPane.showMessageDialog(null, "Indique o número do lote.", "AVISO", JOptionPane.WARNING_MESSAGE);
-//                return;
-//            }
-//
-//            Date dataFabrico = jcDataFabrico.getDate();
-//            Date dataValidade = jcDataValidade.getDate();
-//            try {
-//                EntradaLoteCompra.validarDatas(dataFabrico, dataValidade);
-//            } catch (IllegalArgumentException ex) {
-//                prepararCamposLote(produto);
-//                jcDataValidade.requestFocus();
-//                JOptionPane.showMessageDialog(null, ex.getMessage(), "AVISO", JOptionPane.WARNING_MESSAGE);
-//                return;
-//            }
-//
-//            long dias = EntradaLoteCompra.diasAteValidade(dataValidade);
-//            if (DIAS_MINIMOS_VALIDADE > 0 && dias < DIAS_MINIMOS_VALIDADE) {
-//                int resposta = JOptionPane.showConfirmDialog(null,
-//                        "O lote " + numeroLote + " caduca em " + dias + " dias (menos de " + DIAS_MINIMOS_VALIDADE
-//                        + ").\nContinuar mesmo assim?",
-//                        "Validade curta", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-//                if (resposta != JOptionPane.YES_OPTION) {
-//                    jcDataValidade.requestFocus();
-//                    return;
-//                }
-//            }
-//            fabrico = EntradaLoteCompra.formatar(dataFabrico);
-//            validade = EntradaLoteCompra.formatar(dataValidade);
-//        }
         // ---- a chave da linha e PRODUTO + LOTE ----
         int linhaExistente = localizarLinha(modelo, produto.getCodigo(), numeroLote);
-        double precoVenda = CfMethods.parseMoedaFormatada(txtPrecoVenda.getText());
-        double percetagemGanho = CfMethods.parseMoedaFormatada(txtPercentagemGanho.getText());
+        double precoVenda = CfMethods.parseMoedaFormatadaNovo(txtPrecoVenda.getText());
+        double percetagemGanho = CfMethods.parseMoedaFormatadaNovo(txtPercentagemGanho.getText());
 
         if (linhaExistente < 0) {
             if (validar_zero_qtd_preco()) {
@@ -2245,7 +2220,8 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
             lb_produto.setText(produto.getDesignacao());
             txtCodigoInterno.setText(String.valueOf(produto.getCodigo()));
             spPrecoCompra.setValue(preco.getPrecoCompra());
-            txtPrecoVenda.setText(String.valueOf(preco.getPrecoVenda()));
+//            txtPrecoVenda.setText(String.valueOf(preco.getPrecoVenda()));
+            convert(preco.getPrecoVenda().doubleValue(), txtPrecoVenda);
             txtFactorConversao.setText(String.valueOf(produto.getFactorConversao()));
         } else {
             lb_produto.setText("");
@@ -2302,7 +2278,8 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
             lb_produto.setText(produto.getDesignacao());
             txtCodBarra.setText(String.valueOf(produto.getCodBarra()));
             spPrecoCompra.setValue(preco.getPrecoCompra());
-            txtPrecoVenda.setText(String.valueOf(preco.getPrecoVenda()));
+//            txtPrecoVenda.setText(String.valueOf(preco.getPrecoVenda()));
+            convert(preco.getPrecoVenda().doubleValue(), txtPrecoVenda);
             txtFactorConversao.setText(String.valueOf(produto.getFactorConversao()));
         } else {
             lb_produto.setText("");
@@ -2837,7 +2814,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
     private static void valor_por_extenco() {
         lbLegenda.setText(MetodosUtil.iniciais_extenso_comercial(documento.getPkDocumento(), documentosController));
         System.out.println("Total_Liquido" + txtTotal_AOA_liquido.getText());
-        lbValorPorExtenco.setText(MetodosUtil.valorPorExtenso(CfMethods.parseMoedaFormatada(txtTotal_AOA_liquido.getText()), "Kwanza"));
+        lbValorPorExtenco.setText(MetodosUtil.valorPorExtenso(CfMethods.parseMoedaFormatadaNovo(txtTotal_AOA_liquido.getText()), "Kwanza"));
     }
 
     private static void exibirReciboDeCompras() {
@@ -3010,12 +2987,14 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
     public static void busca_produto_by_cod_interno_compra(int codProduto) {
         produto = (TbProduto) produtosController.findById(codProduto);
         preco = (TbPreco) precosController.getLastIdPrecoByIdProdutos(codProduto);
+
         if (produto.getCodigo() != 0) {
             spPrecoCompra.setValue(preco.getPrecoCompra());
             lb_produto.setText(produto.getDesignacao());
             txtCodBarra.setText(produto.getCodBarra());
             txtCodigoInterno.setText(String.valueOf(produto.getCodigo()));
-            txtPrecoVenda.setText(String.valueOf(preco.getPrecoVenda()));
+            convert(preco.getPrecoVenda().doubleValue(), txtPrecoVenda);
+
             txtFactorConversao.setText(String.valueOf(produto.getFactorConversao()));
         } else {
 
@@ -3025,6 +3004,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
             txtFactorConversao.setText("");
             txtCodBarra.requestFocus();
         }
+
         mostrar_dados_stock(produto);
 
     }
@@ -3344,7 +3324,67 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         return 0;
     }
 
+    // =====================================================================
+// 2) NA CompraInformalVisao: SUBSTITUI o calcularPrecoVendaRetalho.
+//    O antigo fazia replace(".", "") na percentagem, por isso "20.5"
+//    virava 205 (mesma causa).
+// =====================================================================
     public void calcularPrecoVendaRetalho() {
+        if (atualizando) {
+            return;
+        }
+        atualizando = true;
+        try {
+            Object valorSpinner = spPrecoCompra.getValue();
+            double precoCompra = (valorSpinner instanceof Number)
+                    ? ((Number) valorSpinner).doubleValue()
+                    : CfMethods.parseMoedaFormatadaNovo(String.valueOf(valorSpinner));
+
+            double percentagemGanho = CfMethods.parseMoedaFormatadaNovo(txtPercentagemGanho.getText());
+            double precoVenda = precoCompra * (1 + (percentagemGanho / 100.0));
+
+            txtPrecoVenda.setText(formatarMoeda(precoVenda));
+        } catch (Exception e) {
+            txtPrecoVenda.setText("0,00");
+        } finally {
+            atualizando = false;
+        }
+    }
+
+    public void calcularPercentagemGanho() {
+        if (atualizando) {
+            return;
+        }
+        atualizando = true;
+        try {
+            Object valorSpinner = spPrecoCompra.getValue();
+            double precoCompra = (valorSpinner instanceof Number)
+                    ? ((Number) valorSpinner).doubleValue()
+                    : CfMethods.parseMoedaFormatadaNovo(String.valueOf(valorSpinner));
+
+            double precoVenda = CfMethods.parseMoedaFormatadaNovo(txtPrecoVenda.getText());
+
+            if (precoCompra <= 0) {
+                txtPercentagemGanho.setText("0,00");
+            } else {
+                double percentagemGanho = ((precoVenda - precoCompra) / precoCompra) * 100.0;
+                txtPercentagemGanho.setText(formatarMoeda(percentagemGanho));
+            }
+        } catch (Exception e) {
+            txtPercentagemGanho.setText("0,00");
+        } finally {
+            atualizando = false;
+        }
+    }
+
+    private static String formatarMoeda(double valor) {
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(new Locale("pt", "AO"));
+        symbols.setDecimalSeparator(',');
+        symbols.setGroupingSeparator('.');
+        return new DecimalFormat("#,##0.00", symbols).format(valor);
+    }
+
+    public void calcularPrecoVendaRetalhoAntigo() {
         try {
             // 1. Obter e limpar o Preço de Compra (ex: "1.200,00" -> "1200.00")
             Object valorSpinner = spPrecoCompra.getValue();
@@ -3384,6 +3424,18 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         } catch (Exception e) {
             txtPrecoVenda.setText("0,00");
         }
+    }
+
+    private static void convert(double preco, JTextField field) {
+
+        // 4. Formatar para o padrão com ponto nos milhares e vírgula nas decimais (ex: 1.200,00)
+        java.text.DecimalFormatSymbols symbols = new java.text.DecimalFormatSymbols(new java.util.Locale("pt", "AO"));
+        symbols.setDecimalSeparator(',');
+        symbols.setGroupingSeparator('.');
+
+        java.text.DecimalFormat df = new java.text.DecimalFormat("#,##0.00", symbols);
+
+        field.setText(df.format(preco));
     }
 
 }
