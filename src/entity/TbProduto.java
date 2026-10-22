@@ -109,6 +109,14 @@ public class TbProduto implements Serializable
     private String cozinha;
     @Column(name = "status_iva")
     private String statusIva;
+    @Column(name = "cod_user_create")
+    private int codUserCreate;
+    @Column(name = "user_create")
+    private String userCreate;
+    @Column(name = "cod_user_update")
+    private int codUserUpdate;
+    @Column(name = "user_update")
+    private String userUpdate;
     @Column(name = "unidade_compra")
     private Double unidadeCompra;
     @Column(name = "factor_conversao")
@@ -648,6 +656,8 @@ public class TbProduto implements Serializable
     {
         this.notasItemComprasList = notasItemComprasList;
     }
+    
+    
 
     @Override
     public int hashCode()
@@ -709,5 +719,40 @@ public class TbProduto implements Serializable
     {
         this.tbItemEntradasList = tbItemEntradasList;
     }
+
+    public int getCodUserCreate() {
+        return codUserCreate;
+    }
+
+    public void setCodUserCreate(int codUserCreate) {
+        this.codUserCreate = codUserCreate;
+    }
+
+    public String getUserCreate() {
+        return userCreate;
+    }
+
+    public void setUserCreate(String userCreate) {
+        this.userCreate = userCreate;
+    }
+
+    public int getCodUserUpdate() {
+        return codUserUpdate;
+    }
+
+    public void setCodUserUpdate(int codUserUpdate) {
+        this.codUserUpdate = codUserUpdate;
+    }
+
+    public String getUserUpdate() {
+        return userUpdate;
+    }
+
+    public void setUserUpdate(String userUpdate) {
+        this.userUpdate = userUpdate;
+    }
+    
+    
+    
 
 }
