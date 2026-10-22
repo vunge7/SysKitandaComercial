@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="relatorio_controlo_movimentacao_stock" language="java" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenNoDataType="AllSectionsNoDetail">
+
+	<parameter name="DATA_INICIO" class="java.util.Date"/>
+	<parameter name="DATA_FIM" class="java.util.Date"/>
+	<!-- 0 = todos os armazéns -->
+	<parameter name="ARMAZEM_ID" class="java.lang.Integer"/>
+	<parameter name="ARMAZEM_NOME" class="java.lang.String"/>
+	<!-- 0 = todos os produtos -->
+	<parameter name="PRODUTO_ID" class="java.lang.Integer"/>
+	<parameter name="PRODUTO_NOME" class="java.lang.String"/>
+
+	<queryString>
+		<![CDATA[
+SELECT x.* FROM (
+
+    /* A) PRODUTOS COM LOTES: movimento por lote */
+    SELECT
+        m.id,
+        m.data_mov,
+        m.tipo AS tipo_cod,
+        CASE
+            WHEN m.tipo = 'COMPRA' THEN COALESCE(c.cod_fact, CAST(m.fk_operacao AS CHAR))
+            WHEN m.tipo IN ('VENDA','DEVOLUCAO') THEN COALESCE(v.cod_fact, CAST(m.fk_operacao AS CHAR))
+            ELSE CAST(m.fk_operacao AS CHAR)
+        END AS doc_ref,
+        a.designacao AS armazem,
+        l.numero_lote AS numero_lote,
+        DATE_FORMAT(l.data_validade, '%d/%m/%Y') AS validade_txt,
+        p.codigo AS produto_id,
+        p.designacao AS produto,
+        CASE WHEN m.tipo IN ('COMPRA','TRANSF_ENTRADA','DEVOLUCAO') THEN m.qtd ELSE 0 END AS entrada,
+        CASE WHEN m.tipo IN ('VENDA','TRANSF_SAIDA')               THEN m.qtd ELSE 0 END AS saida,
+        COALESCE(t.nome_usuario, u.nome) AS utilizador
+    FROM lote_movimento m
+    INNER JOIN lote l        ON l.id = m.fk_lote
+    INNER JOIN tb_produto p  ON p.codigo = l.fk_produto
+    INNER JOIN tb_armazem a  ON a.codigo = l.fk_armazem
+    LEFT JOIN tb_venda v     ON m.tipo IN ('VENDA','DEVOLUCAO') AND v.codigo = m.fk_operacao
+    LEFT JOIN compras c      ON m.tipo = 'COMPRA' AND c.pk_compra = m.fk_operacao
+    LEFT JOIN transferencia_armazem t
+                             ON m.tipo IN ('TRANSF_SAIDA','TRANSF_ENTRADA') AND t.pk_transferencia_armazem = m.fk_operacao
+    LEFT JOIN tb_usuario u   ON u.codigo = COALESCE(v.codigo_usuario, c.codigo_usuario, t.fk_usuario)
+    WHERE m.data_mov >= $P{DATA_INICIO}
+      AND m.data_mov <  DATE_ADD($P{DATA_FIM}, INTERVAL 1 DAY)
+      AND ($P{ARMAZEM_ID} = 0 OR l.fk_armazem = $P{ARMAZEM_ID})
+      AND ($P{PRODUTO_ID} = 0 OR p.codigo = $P{PRODUTO_ID})
+
+    UNION ALL
+
+    /* B) MOVIMENTOS SEM LOTE (produtos sem lotes, movimentos antigos ou sem registo de lote): lote e validade = '-' */
+    SELECT
+        mv.id,
+        mv.data_mov,
+        mv.tipo AS tipo_cod,
+        mv.documento AS doc_ref,
+        a2.designacao AS armazem,
+        '-' AS numero_lote,
+        '-' AS validade_txt,
+        p2.codigo AS produto_id,
+        p2.designacao AS produto,
+        CASE mv.tipo
+            WHEN 'ENTRADA' THEN mv.quantidade
+            WHEN 'SAIDA'   THEN 0
+            ELSE GREATEST(mv.quantidade_actual - mv.quantidade_anterior, 0)
+        END AS entrada,
+        CASE mv.tipo
+            WHEN 'ENTRADA' THEN 0
+            WHEN 'SAIDA'   THEN mv.quantidade
+            ELSE GREATEST(mv.quantidade_anterior - mv.quantidade_actual, 0)
+        END AS saida,
+        u2.nome AS utilizador
+    FROM movimentacao mv
+    INNER JOIN tb_produto p2 ON p2.codigo = mv.produto_id
+    INNER JOIN tb_armazem a2 ON a2.codigo = mv.armazem_id
+    LEFT JOIN tb_usuario u2  ON u2.codigo = mv.usuario_id
+    WHERE mv.data_mov >= $P{DATA_INICIO}
+      AND mv.data_mov <  DATE_ADD($P{DATA_FIM}, INTERVAL 1 DAY)
+      AND ($P{ARMAZEM_ID} = 0 OR mv.armazem_id = $P{ARMAZEM_ID})
+      AND ($P{PRODUTO_ID} = 0 OR p2.codigo = $P{PRODUTO_ID})
+      /* so entra se NAO foi ja detalhado por lote (mesmo produto + armazem + mesma hora, margem de 2 min) */
+      AND NOT EXISTS (
+            SELECT 1
+            FROM lote_movimento lm
+            INNER JOIN lote lx ON lx.id = lm.fk_lote
+            WHERE lx.fk_produto = mv.produto_id
+              AND lx.fk_armazem = mv.armazem_id
+              AND lm.data_mov BETWEEN DATE_SUB(mv.data_mov, INTERVAL 2 MINUTE)
+                                  AND DATE_ADD(mv.data_mov, INTERVAL 2 MINUTE)
+      )
+
+) x
+ORDER BY x.produto, x.produto_id, x.data_mov, x.id
+		]]>
+	</queryString>
+
+	<field name="id" class="java.lang.Integer"/>
+	<field name="data_mov" class="java.sql.Timestamp"/>
+	<field name="tipo_cod" class="java.lang.String"/>
+	<field name="doc_ref" class="java.lang.String"/>
+	<field name="armazem" class="java.lang.String"/>
+	<field name="numero_lote" class="java.lang.String"/>
+	<field name="validade_txt" class="java.lang.String"/>
+	<field name="produto_id" class="java.lang.Integer"/>
+	<field name="produto" class="java.lang.String"/>
+	<field name="entrada" class="java.lang.Double"/>
+	<field name="saida" class="java.lang.Double"/>
+	<field name="utilizador" class="java.lang.String"/>
+
+	<variable name="ENT_PROD" class="java.lang.Double" resetType="Group" resetGroup="produto" calculation="Sum">
+		<variableExpression><![CDATA[$F{entrada}]]></variableExpression>
+		<initialValueExpression><![CDATA[new Double(0)]]></initialValueExpression>
+	</variable>
+	<variable name="SAI_PROD" class="java.lang.Double" resetType="Group" resetGroup="produto" calculation="Sum">
+		<variableExpression><![CDATA[$F{saida}]]></variableExpression>
+		<initialValueExpression><![CDATA[new Double(0)]]></initialValueExpression>
+	</variable>
+	<variable name="ENT_TOTAL" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{entrada}]]></variableExpression>
+		<initialValueExpression><![CDATA[new Double(0)]]></initialValueExpression>
+	</variable>
+	<variable name="SAI_TOTAL" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{saida}]]></variableExpression>
+		<initialValueExpression><![CDATA[new Double(0)]]></initialValueExpression>
+	</variable>
+
+	<group name="produto">
+		<groupExpression><![CDATA[$F{produto_id}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<rectangle>
+					<reportElement x="0" y="2" width="802" height="17" backcolor="#E6E6E6"/>
+					<graphicElement><pen lineWidth="0.0"/></graphicElement>
+				</rectangle>
+				<textField>
+					<reportElement x="4" y="2" width="794" height="17"/>
+					<textElement verticalAlignment="Middle"><font fontName="SansSerif" size="10" isBold="true"/></textElement>
+					<textFieldExpression><![CDATA["PRODUTO: " + $F{produto_id} + " - " + $F{produto}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="24">
+				<line>
+					<reportElement x="0" y="0" width="802" height="1"/>
+				</line>
+				<staticText>
+					<reportElement x="0" y="3" width="465" height="16"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement>
+					<text><![CDATA[Total do produto no período:]]></text>
+				</staticText>
+				<textField pattern="#,##0.##">
+					<reportElement x="525" y="3" width="55" height="16" forecolor="#006400"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement>
+					<textFieldExpression><![CDATA[$V{ENT_PROD}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.##">
+					<reportElement x="580" y="3" width="55" height="16" forecolor="#D00000"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement>
+					<textFieldExpression><![CDATA[$V{SAI_PROD}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.##;-#,##0.##">
+					<reportElement x="640" y="3" width="162" height="16"/>
+					<textElement verticalAlignment="Middle"><font size="8" isBold="true"/></textElement>
+					<textFieldExpression><![CDATA["Saldo do período: " + new java.text.DecimalFormat("#,##0.##").format($V{ENT_PROD} - $V{SAI_PROD})]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+
+	<title>
+		<band height="72">
+			<staticText>
+				<reportElement x="0" y="4" width="802" height="26"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="SansSerif" size="16" isBold="true"/></textElement>
+				<text><![CDATA[RELATÓRIO DE CONTROLO DE MOVIMENTAÇÃO DO STOCK]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="34" width="802" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"><font size="10"/></textElement>
+				<textFieldExpression><![CDATA["Período: " + new java.text.SimpleDateFormat("dd/MM/yyyy").format($P{DATA_INICIO}) + "  a  " + new java.text.SimpleDateFormat("dd/MM/yyyy").format($P{DATA_FIM})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="50" width="802" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"><font size="10"/></textElement>
+				<textFieldExpression><![CDATA["Armaz\u00e9m: " + $P{ARMAZEM_NOME} + "      Produto: " + $P{PRODUTO_NOME}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+
+	<columnHeader>
+		<band height="20">
+			<rectangle>
+				<reportElement x="0" y="0" width="802" height="20" backcolor="#404040"/>
+				<graphicElement><pen lineWidth="0.0"/></graphicElement>
+			</rectangle>
+			<staticText><reportElement x="0" y="0" width="85" height="20" forecolor="#FFFFFF"/><textElement verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Data/Hora]]></text></staticText>
+			<staticText><reportElement x="85" y="0" width="70" height="20" forecolor="#FFFFFF"/><textElement verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Movimento]]></text></staticText>
+			<staticText><reportElement x="155" y="0" width="120" height="20" forecolor="#FFFFFF"/><textElement verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Documento]]></text></staticText>
+			<staticText><reportElement x="275" y="0" width="100" height="20" forecolor="#FFFFFF"/><textElement verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Armazém]]></text></staticText>
+			<staticText><reportElement x="375" y="0" width="90" height="20" forecolor="#FFFFFF"/><textElement verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Lote]]></text></staticText>
+			<staticText><reportElement x="465" y="0" width="60" height="20" forecolor="#FFFFFF"/><textElement verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Validade]]></text></staticText>
+			<staticText><reportElement x="525" y="0" width="55" height="20" forecolor="#FFFFFF"/><textElement textAlignment="Right" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Entrada]]></text></staticText>
+			<staticText><reportElement x="580" y="0" width="55" height="20" forecolor="#FFFFFF"/><textElement textAlignment="Right" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Saída]]></text></staticText>
+			<staticText><reportElement x="640" y="0" width="162" height="20" forecolor="#FFFFFF"/><textElement verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Utilizador]]></text></staticText>
+		</band>
+	</columnHeader>
+
+	<detail>
+		<band height="15">
+			<textField pattern="dd/MM/yyyy HH:mm" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="85" height="15"/>
+				<textElement verticalAlignment="Middle"><font size="8"/></textElement>
+				<textFieldExpression><![CDATA[$F{data_mov}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="85" y="0" width="70" height="15"/>
+				<textElement verticalAlignment="Middle"><font size="8"/></textElement>
+				<textFieldExpression><![CDATA[$F{tipo_cod} == null ? "" :
+ $F{tipo_cod}.equals("COMPRA") ? "Compra" :
+ $F{tipo_cod}.equals("VENDA") ? "Venda" :
+ $F{tipo_cod}.equals("DEVOLUCAO") ? "Devolu\u00e7\u00e3o" :
+ $F{tipo_cod}.equals("TRANSF_SAIDA") ? "Transf. Sa\u00edda" :
+ $F{tipo_cod}.equals("TRANSF_ENTRADA") ? "Transf. Entrada" :
+ $F{tipo_cod}.equals("ENTRADA") ? "Entrada" :
+ $F{tipo_cod}.equals("SAIDA") ? "Sa\u00edda" : $F{tipo_cod}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="155" y="0" width="120" height="15"/>
+				<textElement verticalAlignment="Middle"><font size="8"/></textElement>
+				<textFieldExpression><![CDATA[$F{doc_ref} == null ? "" :
+ $F{tipo_cod}.equals("COMPRA") ? "Compra " + $F{doc_ref} :
+ $F{tipo_cod}.equals("VENDA") ? "Venda " + $F{doc_ref} :
+ $F{tipo_cod}.equals("DEVOLUCAO") ? "Devol. " + $F{doc_ref} :
+ ($F{tipo_cod}.equals("TRANSF_SAIDA") || $F{tipo_cod}.equals("TRANSF_ENTRADA")) ? "Transfer\u00eancia N\u00ba " + $F{doc_ref} :
+ $F{doc_ref}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="275" y="0" width="100" height="15"/>
+				<textElement verticalAlignment="Middle"><font size="8"/></textElement>
+				<textFieldExpression><![CDATA[$F{armazem}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="375" y="0" width="90" height="15"/>
+				<textElement verticalAlignment="Middle"><font size="8"/></textElement>
+				<textFieldExpression><![CDATA[($F{numero_lote} == null || $F{numero_lote}.trim().isEmpty()) ? "-" : $F{numero_lote}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="465" y="0" width="60" height="15"/>
+				<textElement verticalAlignment="Middle"><font size="8"/></textElement>
+				<textFieldExpression><![CDATA[$F{validade_txt} == null ? "-" : $F{validade_txt}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.##;-#,##0.##" isBlankWhenNull="true">
+				<reportElement x="525" y="0" width="55" height="15" forecolor="#006400"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"><font size="8"/></textElement>
+				<textFieldExpression><![CDATA[$F{entrada} == 0 ? null : $F{entrada}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.##;-#,##0.##" isBlankWhenNull="true">
+				<reportElement x="580" y="0" width="55" height="15" forecolor="#D00000"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"><font size="8"/></textElement>
+				<textFieldExpression><![CDATA[$F{saida} == 0 ? null : $F{saida}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="640" y="0" width="162" height="15"/>
+				<textElement verticalAlignment="Middle"><font size="8"/></textElement>
+				<textFieldExpression><![CDATA[$F{utilizador}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="14" width="802" height="1" forecolor="#D0D0D0"/>
+			</line>
+		</band>
+	</detail>
+
+	<pageFooter>
+		<band height="18">
+			<textField pattern="dd/MM/yyyy HH:mm">
+				<reportElement x="0" y="2" width="200" height="14"/>
+				<textElement verticalAlignment="Middle"><font size="7"/></textElement>
+				<textFieldExpression><![CDATA["Emitido em: " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="602" y="2" width="150" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"><font size="7"/></textElement>
+				<textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER} + " de "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="752" y="2" width="50" height="14"/>
+				<textElement verticalAlignment="Middle"><font size="7"/></textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+
+	<summary>
+		<band height="30">
+			<line>
+				<reportElement x="0" y="2" width="802" height="2"/>
+			</line>
+			<staticText>
+				<reportElement x="0" y="8" width="465" height="16"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"><font size="9" isBold="true"/></textElement>
+				<text><![CDATA[TOTAL GERAL DO PERÍODO:]]></text>
+			</staticText>
+			<textField pattern="#,##0.##">
+				<reportElement x="525" y="8" width="55" height="16" forecolor="#006400"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"><font size="9" isBold="true"/></textElement>
+				<textFieldExpression><![CDATA[$V{ENT_TOTAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.##">
+				<reportElement x="580" y="8" width="55" height="16" forecolor="#D00000"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"><font size="9" isBold="true"/></textElement>
+				<textFieldExpression><![CDATA[$V{SAI_TOTAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

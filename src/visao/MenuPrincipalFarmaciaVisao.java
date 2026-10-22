@@ -432,6 +432,9 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame {
         jSeparator9 = new javax.swing.JPopupMenu.Separator();
         jMenuItem3 = new javax.swing.JMenuItem();
         jmenuRelatorios = new javax.swing.JMenu();
+        jMenu2 = new javax.swing.JMenu();
+        jMenuItem15 = new javax.swing.JMenuItem();
+        jMenuItem17 = new javax.swing.JMenuItem();
         jmListarProdutosStock = new javax.swing.JMenuItem();
         jmTodasVendas = new javax.swing.JMenuItem();
         jmVendaDetalhadasUsuarios = new javax.swing.JMenuItem();
@@ -691,6 +694,26 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame {
         jmenuRelatorios.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jmenuRelatorios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/1323287592_stock_task.png"))); // NOI18N
         jmenuRelatorios.setText("Relatorio/Mapa");
+
+        jMenu2.setText("Controlo Stock");
+
+        jMenuItem15.setText("Controlo Movimentos");
+        jMenuItem15.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem15ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem15);
+
+        jMenuItem17.setText("Inventário");
+        jMenuItem17.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem17ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem17);
+
+        jmenuRelatorios.add(jMenu2);
 
         jmListarProdutosStock.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jmListarProdutosStock.setText("Inventario");
@@ -2130,6 +2153,16 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame {
         new FrmLotesAExpirar(conexao).setVisible(true);
     }//GEN-LAST:event_jMenuItem16ActionPerformed
 
+    private void jMenuItem15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem15ActionPerformed
+      
+        new RelatorioMovimentoStockVisao().setVisible(true);
+        
+    }//GEN-LAST:event_jMenuItem15ActionPerformed
+
+    private void jMenuItem17ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem17ActionPerformed
+        new InventariosVisao().setVisible(true);
+    }//GEN-LAST:event_jMenuItem17ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -2201,6 +2234,7 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu4;
     private javax.swing.JMenu jMenu5;
@@ -2214,7 +2248,9 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem12;
     private javax.swing.JMenuItem jMenuItem13;
     private javax.swing.JMenuItem jMenuItem14;
+    private javax.swing.JMenuItem jMenuItem15;
     private javax.swing.JMenuItem jMenuItem16;
+    private javax.swing.JMenuItem jMenuItem17;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
