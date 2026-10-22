@@ -33,6 +33,7 @@ import javax.swing.*;
 import static kitanda.util.CfConstantes.YYYYMMDD_HHMMSS;
 import kitanda.util.CfMethods;
 import util.BDConexao;
+import util.CalculoPrecoVenda;
 import util.DVML;
 import util.FinanceUtils;
 import util.JPAEntityMannagerFactoryUtil;
@@ -43,6 +44,7 @@ import static util.MetodosUtil.normalizarDesignacao;
 import static util.MetodosUtil.rodarComandoWindows;
 import util.PictureChooser;
 import util.TextFieldUtils;
+import static visao.CompraInformalVisao.spPrecoCompra;
 
 public class ProdutosVisao extends javax.swing.JFrame {
 
@@ -190,7 +192,13 @@ public class ProdutosVisao extends javax.swing.JFrame {
 
         TextFieldUtils.configurarCampoDecimal(txtPrecoCompra, 7);
         TextFieldUtils.configurarCampoDecimal(txtPrecoVendaRetalho, 7);
-        TextFieldUtils.configurarCampoDecimal(txtPercentagemGanhoRetalho, 7);
+//        TextFieldUtils.configurarCampoDecimal(txtPercentagemGanhoRetalho, 7);
+
+        new CalculoPrecoVenda(txtPrecoCompra, txtPercentagemGanhoRetalho, txtPrecoVendaRetalho)
+                .pontoDecimal()
+                .somenteComFoco()
+                //        .debug()
+                .ligar();
 
 //        // Aqui passo os campos para a classe helper
 //        CalculadoraPrecoHelper helper = new CalculadoraPrecoHelper( txtPrecoCompra, 
@@ -941,12 +949,11 @@ public class ProdutosVisao extends javax.swing.JFrame {
         painel_stock.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
         lbPreco.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
-        lbPreco.setText(".");
+        lbPreco.setText("Percentagem Ganho (%)");
 
         txtPercentagemGanhoRetalho.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
         txtPercentagemGanhoRetalho.setText("0");
         txtPercentagemGanhoRetalho.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtPercentagemGanhoRetalho.setEnabled(false);
         txtPercentagemGanhoRetalho.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtPercentagemGanhoRetalhoActionPerformed(evt);
@@ -1024,19 +1031,10 @@ public class ProdutosVisao extends javax.swing.JFrame {
             .addGroup(painel_stockLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(painel_stockLayout.createSequentialGroup()
-                        .addComponent(lbPreco, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(txtPercentagemGanhoRetalho, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(32, 32, 32))
                     .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(painel_stockLayout.createSequentialGroup()
                         .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(painel_stockLayout.createSequentialGroup()
-                                    .addComponent(lbBarra1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGroup(painel_stockLayout.createSequentialGroup()
                                     .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                         .addComponent(lbPrecoVenda1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1052,7 +1050,15 @@ public class ProdutosVisao extends javax.swing.JFrame {
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                     .addComponent(cmbLocal, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addComponent(txtPrecoVendaRetalho)
-                                .addComponent(lbPrecoVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(lbPrecoVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(painel_stockLayout.createSequentialGroup()
+                                    .addComponent(lbPreco, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(txtPercentagemGanhoRetalho, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(painel_stockLayout.createSequentialGroup()
+                                    .addComponent(lbBarra1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(painel_stockLayout.createSequentialGroup()
                                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1081,9 +1087,9 @@ public class ProdutosVisao extends javax.swing.JFrame {
                     .addComponent(txtCodigoManual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbBarra1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbPreco)
-                    .addComponent(txtPercentagemGanhoRetalho, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtPercentagemGanhoRetalho, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
+                    .addComponent(lbPreco, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(lbPrecoVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -2030,6 +2036,11 @@ public class ProdutosVisao extends javax.swing.JFrame {
         }
     }
 
+    private String getNomeUsuario() {
+        TbUsuario usuario = (TbUsuario) usuariosController.findById(idUser);
+        return usuario.getNome();
+    }
+
 //    private void preparar_produto()
 //    {
 //
@@ -2161,6 +2172,8 @@ public class ProdutosVisao extends javax.swing.JFrame {
                 try {
                     produto = produtosControllerLocal.findByDesignacao(designacao_produto);
                     set_dados_produto();
+                    produto.setCodUserUpdate(ProdutosVisao.idUser);
+                    produto.setUserUpdate(getNomeUsuario());
                     produtosControllerLocal.actualizar(produto);
                     DocumentoDao.commitTransaction(conexaoTransaction);
                     proximo_codigo(produtosControllerLocal);
@@ -2180,6 +2193,8 @@ public class ProdutosVisao extends javax.swing.JFrame {
 
                 produto = new TbProduto();
                 set_dados_produto();
+                produto.setCodUserCreate(ProdutosVisao.idUser);
+                produto.setUserCreate(getNomeUsuario());
                 if (produtosControllerLocal.salvar(produto)) {
 
                     System.err.println("Produto Salvo");
@@ -2316,8 +2331,11 @@ public class ProdutosVisao extends javax.swing.JFrame {
                     PrecosController precosControllerLocal = new PrecosController(conexaoTransaction);
                     ProdutosImpostoController produtosImpostoControllerLocal = new ProdutosImpostoController(conexaoTransaction);
                     ProdutosIsentoController produtosIsentoControllerLocal = new ProdutosIsentoController(conexaoTransaction);
+                    UsuariosController usuariosController = new UsuariosController(conexaoTransaction);
                     DocumentoDao.startTransaction(conexaoTransaction);
                     preparar_produto();
+                    produto.setCodUserCreate(idUser);
+                    produto.setUserCreate(getNomeUsuario());
                     produtosControllerLocal.actualizar(produto);
 
                     ivaAtualizar(produto.getCodigo(), produtosImpostoControllerLocal, produtosIsentoControllerLocal);
@@ -2629,11 +2647,11 @@ public class ProdutosVisao extends javax.swing.JFrame {
             } else {
                 ck_produto.setSelected(false);
             }
-            
+
             if (produto_local.getControlaLote().equals(true)) {
                 jRadioButtonSim.setSelected(true);
                 jRadioButtonNao.setSelected(false);
-                
+
             } else {
                 jRadioButtonNao.setSelected(true);
                 jRadioButtonSim.setSelected(false);

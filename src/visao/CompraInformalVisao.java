@@ -49,6 +49,7 @@ import kitanda.util.CfMethodsSwing;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.view.JasperViewer;
 import util.BDConexao;
+import util.CalculoPrecoVenda;
 import util.DVML;
 import static util.DVML.CAMINHO_REPORT;
 import util.FinanceUtils;
@@ -170,47 +171,52 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         MetodosUtil.setArmazemByCampoConfigCompraArmazem(cmbArmazem, conexao, cod_usuario);
         selecionar_transferencia_bt();
 
-        // 1. Preço de compra mudou -> recalcula o preço de venda (mantém a percentagem)
-        spPrecoCompra.addChangeListener(e -> calcularPrecoVendaRetalho());
+//        // 1. Preço de compra mudou -> recalcula o preço de venda (mantém a percentagem)
+//        spPrecoCompra.addChangeListener(e -> calcularPrecoVendaRetalho());
+//
+        //// 2. Percentagem mudou -> calcula o preço de venda
+//        txtPercentagemGanho.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+//            @Override
+//            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+//                calcularPrecoVendaRetalho();
+//            }
+//
+//            @Override
+//            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+//                calcularPrecoVendaRetalho();
+//            }
+//
+//            @Override
+//            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+//                calcularPrecoVendaRetalho();
+//            }
+//        });
+//
+//// 3. NOVO: Preço de venda mudou -> calcula a percentagem
+//        txtPrecoVenda.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+//            @Override
+//            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+//                calcularPercentagemGanho();
+//            }
+//
+//            @Override
+//            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+//                calcularPercentagemGanho();
+//            }
+//
+//            @Override
+//            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+//                calcularPercentagemGanho();
+//            }
+//        });
 
-// 2. Percentagem mudou -> calcula o preço de venda
-        txtPercentagemGanho.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-            @Override
-            public void insertUpdate(javax.swing.event.DocumentEvent e) {
-                calcularPrecoVendaRetalho();
-            }
+// Retalho (preço de compra em JSpinner)
+        new CalculoPrecoVenda(spPrecoCompra, txtPercentagemGanho, txtPrecoVenda).ligar();
 
-            @Override
-            public void removeUpdate(javax.swing.event.DocumentEvent e) {
-                calcularPrecoVendaRetalho();
-            }
-
-            @Override
-            public void changedUpdate(javax.swing.event.DocumentEvent e) {
-                calcularPrecoVendaRetalho();
-            }
-        });
-
-// 3. NOVO: Preço de venda mudou -> calcula a percentagem
-        txtPrecoVenda.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-            @Override
-            public void insertUpdate(javax.swing.event.DocumentEvent e) {
-                calcularPercentagemGanho();
-            }
-
-            @Override
-            public void removeUpdate(javax.swing.event.DocumentEvent e) {
-                calcularPercentagemGanho();
-            }
-
-            @Override
-            public void changedUpdate(javax.swing.event.DocumentEvent e) {
-                calcularPercentagemGanho();
-            }
-        });
-
+// Grosso (outros campos, mesmo spinner)
+//new CalculoPrecoVenda(spPrecoCompra, txtPercentagemGrosso, txtPrecoVendaGrosso).ligar();
 // Arranque
-        calcularPrecoVendaRetalho();
+//        calcularPrecoVendaRetalho();
     }
 
     /**
@@ -3329,61 +3335,59 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
 //    O antigo fazia replace(".", "") na percentagem, por isso "20.5"
 //    virava 205 (mesma causa).
 // =====================================================================
-    public void calcularPrecoVendaRetalho() {
-        if (atualizando) {
-            return;
-        }
-        atualizando = true;
-        try {
-            Object valorSpinner = spPrecoCompra.getValue();
-            double precoCompra = (valorSpinner instanceof Number)
-                    ? ((Number) valorSpinner).doubleValue()
-                    : CfMethods.parseMoedaFormatadaNovo(String.valueOf(valorSpinner));
-
-            double percentagemGanho = CfMethods.parseMoedaFormatadaNovo(txtPercentagemGanho.getText());
-            double precoVenda = precoCompra * (1 + (percentagemGanho / 100.0));
-
-            txtPrecoVenda.setText(formatarMoeda(precoVenda));
-        } catch (Exception e) {
-            txtPrecoVenda.setText("0,00");
-        } finally {
-            atualizando = false;
-        }
-    }
-
-    public void calcularPercentagemGanho() {
-        if (atualizando) {
-            return;
-        }
-        atualizando = true;
-        try {
-            Object valorSpinner = spPrecoCompra.getValue();
-            double precoCompra = (valorSpinner instanceof Number)
-                    ? ((Number) valorSpinner).doubleValue()
-                    : CfMethods.parseMoedaFormatadaNovo(String.valueOf(valorSpinner));
-
-            double precoVenda = CfMethods.parseMoedaFormatadaNovo(txtPrecoVenda.getText());
-
-            if (precoCompra <= 0) {
-                txtPercentagemGanho.setText("0,00");
-            } else {
-                double percentagemGanho = ((precoVenda - precoCompra) / precoCompra) * 100.0;
-                txtPercentagemGanho.setText(formatarMoeda(percentagemGanho));
-            }
-        } catch (Exception e) {
-            txtPercentagemGanho.setText("0,00");
-        } finally {
-            atualizando = false;
-        }
-    }
-
-    private static String formatarMoeda(double valor) {
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols(new Locale("pt", "AO"));
-        symbols.setDecimalSeparator(',');
-        symbols.setGroupingSeparator('.');
-        return new DecimalFormat("#,##0.00", symbols).format(valor);
-    }
-
+//    public void calcularPrecoVendaRetalho() {
+//        if (atualizando) {
+//            return;
+//        }
+//        atualizando = true;
+//        try {
+//            Object valorSpinner = spPrecoCompra.getValue();
+//            double precoCompra = (valorSpinner instanceof Number)
+//                    ? ((Number) valorSpinner).doubleValue()
+//                    : CfMethods.parseMoedaFormatadaNovo(String.valueOf(valorSpinner));
+//
+//            double percentagemGanho = CfMethods.parseMoedaFormatadaNovo(txtPercentagemGanho.getText());
+//            double precoVenda = precoCompra * (1 + (percentagemGanho / 100.0));
+//
+//            txtPrecoVenda.setText(formatarMoeda(precoVenda));
+//        } catch (Exception e) {
+//            txtPrecoVenda.setText("0,00");
+//        } finally {
+//            atualizando = false;
+//        }
+//    }
+//
+//    public void calcularPercentagemGanho() {
+//        if (atualizando) {
+//            return;
+//        }
+//        atualizando = true;
+//        try {
+//            Object valorSpinner = spPrecoCompra.getValue();
+//            double precoCompra = (valorSpinner instanceof Number)
+//                    ? ((Number) valorSpinner).doubleValue()
+//                    : CfMethods.parseMoedaFormatadaNovo(String.valueOf(valorSpinner));
+//
+//            double precoVenda = CfMethods.parseMoedaFormatadaNovo(txtPrecoVenda.getText());
+//
+//            if (precoCompra <= 0) {
+//                txtPercentagemGanho.setText("0,00");
+//            } else {
+//                double percentagemGanho = ((precoVenda - precoCompra) / precoCompra) * 100.0;
+//                txtPercentagemGanho.setText(formatarMoeda(percentagemGanho));
+//            }
+//        } catch (Exception e) {
+//            txtPercentagemGanho.setText("0,00");
+//        } finally {
+//            atualizando = false;
+//        }
+//    }
+//    private static String formatarMoeda(double valor) {
+//        DecimalFormatSymbols symbols = new DecimalFormatSymbols(new Locale("pt", "AO"));
+//        symbols.setDecimalSeparator(',');
+//        symbols.setGroupingSeparator('.');
+//        return new DecimalFormat("#,##0.00", symbols).format(valor);
+//    }
     public void calcularPrecoVendaRetalhoAntigo() {
         try {
             // 1. Obter e limpar o Preço de Compra (ex: "1.200,00" -> "1200.00")
