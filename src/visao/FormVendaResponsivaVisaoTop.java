@@ -92,6 +92,7 @@ import static util.DVML.DOC_FACTURA_RECIBO_FR;
 import static util.DVML.DOC_FACTURA_FT;
 import util.FinanceUtils;
 import util.MetodosUtil;
+import util.TemaNegocioUtil;
 
 /**
  *
@@ -181,16 +182,27 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     private String folhaEscolhida = null; // null = utilizador não clicou
     private static PainelLotesVenda painelLotes;
     private static FormVendaResponsivaVisaoTop instancia;
+    // campo da classe:
+    private final javax.swing.Timer timerQtdLotes
+            = new javax.swing.Timer(200, e -> atualizarPainelLotesProdutoPesquisado());
 
     public FormVendaResponsivaVisaoTop(int cod_usuario, BDConexao conexao) throws SQLException {
         initComponents();
 
-//        painelLotes = PainelLotesVenda.instalar(
-//                PainelLotesVenda.encontrarPainelDoBotao(
-//                        getContentPane(), "Fecho"
-//                ),
-//                560
-//        );
+        timerQtdLotes.setRepeats(false);
+        txtQuatindade.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                timerQtdLotes.restart();
+            }
+
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                timerQtdLotes.restart();
+            }
+
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                timerQtdLotes.restart();
+            }
+        });
 
         ligarPainelLotesASelecaoDaTabela();
 
@@ -344,19 +356,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                 }
             }
         });
-//        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-//                .put(KeyStroke.getKeyStroke("F5"), "abrirFormaPagamento");
-//
-//        getRootPane().getActionMap().put("abrirFormaPagamento", new AbstractAction() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                try {
-//                    procedimentoChamarFormaPagemnto();
-//                } catch (Exception ex) {
-//                    ex.printStackTrace();
-//                }
-//            }
-//        });
+
         // No construtor ou método de inicialização do formulário
         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
                 .put(KeyStroke.getKeyStroke("F7"), "abrirDocumentosPendentes");
@@ -372,33 +372,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             }
 
         });
-//        // No construtor ou método de inicialização do formulário
-//        getRootPane().getInputMap( JComponent.WHEN_IN_FOCUSED_WINDOW )
-//                .put( KeyStroke.getKeyStroke( "F10" ), "pendurarFactura" );
-//
-//        getRootPane().getActionMap().put( "pendurarFactura", new AbstractAction()
-//        {
-//            @Override
-//            public void actionPerformed( ActionEvent e )
-//            {
-//                try
-//                {
-//                    procedimentoPenderFactura();
-//                }
-//                catch ( Exception ex )
-//                {
-//                    ex.printStackTrace();
-//                }
-//            }
-//
-//        } );
 
-//        habilitarColunas();
         MetodosUtil.setArmazemByCampoConfigArmazem(cmbArmazem, conexao, cod_usuario);
-//        alterar_status_botao();
-//        setAlterarPreco(dadosInstituicao.getAlterarPreco());
-
-//        btnSemFormaPagamento.setVisible( false );
         table.setRowHeight(25);
         inserirLinhaEmBranco();
 
@@ -410,27 +385,40 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             System.err.println("####Não Permitir ALterar Preco: " + permitirAlterarPreco);
             configurarPrecosQTDTabela();
         }
-//        configurarQTDTabela();
 
-//        configurarTabela( 3 );
-//        configurarTabela( 4 );
-//        initStockListener();
         procedimento_codBarra__jtable();
         txtCodigoBarra.requestFocus();
 
-        txtBuscaRef.setEnabled(false);
-        
-                    // Mostrar o painel de lotes apenas para Farmácia
-    if (dadosInstituicao != null && "Farmacia".equalsIgnoreCase(dadosInstituicao.getNegocio())) {
-        painelLotes = PainelLotesVenda.instalar(
-                PainelLotesVenda.encontrarPainelDoBotao(
-                        getContentPane(), "Fecho"
-                ),
-                560
-        );
-    }
-    
-    aplicarFolha();
+//        txtBuscaRef.setEnabled(false);
+        // Mostrar o painel de lotes apenas para Farmácia
+//        if (dadosInstituicao != null && "Farmacia".equalsIgnoreCase(dadosInstituicao.getNegocio())) {
+//            painelLotes = PainelLotesVenda.instalar(
+//                    PainelLotesVenda.encontrarPainelDoBotao(
+//                            getContentPane(), "Fecho"
+//                    ),
+//                    560
+//            );
+//        }
+boolean ehFarmacia = dadosInstituicao != null
+        && TemaNegocioUtil.ehFarmacia(dadosInstituicao.getNegocio());
+
+if (ehFarmacia) {
+    painelLotes = PainelLotesVenda.instalar(
+            PainelLotesVenda.encontrarPainelDoBotao(getContentPane(), "Fecho"),
+            560
+    );
+}
+
+TemaNegocioUtil.aplicarCorCampos(ehFarmacia,
+        txtCodigoBarra, txtIniciaisCliente, txtNomeConsumidorFinal, txtNifClientePesquisa,
+        txtCodClientePesquisa, txtTotalPagar, txtTotalPagarGeral, txtQuantidadeStock,
+        cmbCliente, cmbTipoDocumento, cmbMoeda, txtBuscaRef,
+        cmbArmazem, cmbSubFamilia, cmbProduto, txtQuatindade,
+        txtCodigoProduto, txtCodigoManual, txtPreco);
+
+//aplicarCorCamposVenda(ehFarmacia);
+
+        aplicarFolha();
 
     }
 
@@ -591,6 +579,145 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         public void keyTyped(KeyEvent evt) {
         }
 
+    }
+
+    /**
+     * Actualiza o painel de lotes para (produto, quantidade).
+     *
+     * @return null se ha stock suficiente (ou o produto nao tem lotes); senao o
+     * texto do erro (o painel, se existir, ja o mostra a vermelho; quem quiser
+     * bloquear mostra tambem uma janela)
+     */
+    private static String actualizarPainelLotes(int codProduto, String descricao, double qtd) throws SQLException {
+
+        // produto sem lotes registados (ex.: negocio que nao usa lotes):
+        // nada a mostrar nem a validar
+        if (!loteController.existeLotes(codProduto)) {
+            if (painelLotes != null) {
+                painelLotes.limpar();
+            }
+            return null;
+        }
+        int armazem = getCodigoArmazem();
+
+        // todos os lotes com stock, por ordem FEFO
+        List<entity.Lote> disponiveis = loteController.listarDisponiveisFEFO(codProduto, armazem);
+        if (disponiveis.isEmpty()) {
+            String msg = "Este produto tem lotes registados, mas não possui lotes disponíveis, "
+                    + "activos e dentro da validade no armazém selecionado.";
+            if (painelLotes != null) {
+                painelLotes.mostrarAviso(descricao, msg);
+            }
+            return msg;
+        }
+
+        // quanto sai de cada lote para a quantidade dada (por id do lote)
+        java.util.Map<Integer, Double> aRetirar = new java.util.HashMap<>();
+        String erro = null;
+        try {
+            for (LoteController.LoteFEFO item : loteController.preverBaixaFEFO(codProduto, armazem, qtd)) {
+                aRetirar.put(item.getLote().getId(), (double) item.getQuantidadeRetirar());
+            }
+        } catch (IllegalStateException e) {
+            erro = e.getMessage();
+        }
+
+        List<PainelLotesVenda.Linha> linhas = new java.util.ArrayList<>();
+        for (entity.Lote l : disponiveis) {
+            linhas.add(new PainelLotesVenda.Linha(
+                    l.getNumeroLote(),
+                    l.getDataValidade(),
+                    l.getQtd(),
+                    aRetirar.getOrDefault(l.getId(), 0.0)));
+        }
+
+        if (erro != null) {
+            if (painelLotes != null) {
+                painelLotes.mostrarAviso(descricao, erro, linhas);
+            }
+            return erro;
+        }
+        if (painelLotes != null) {
+            painelLotes.mostrar(descricao, qtd, linhas);
+        }
+        return null;
+    }
+
+// ---------------------------------------------------------------------
+// 3) PESQUISA: substitui TODO o teu atualizarPainelLotesProdutoPesquisado()
+//    por este, e acrescenta o metodo quantidadeDoProdutoNaVenda().
+//
+//    REGRA: a quantidade do plano e
+//      - a que JA ESTA NA VENDA, se o produto ja tem linha na JTable
+//        (e o que vai sair de facto: ex. 17 -> 14 + 3);
+//      - senao, a que o operador esta a escrever no campo Qtd.
+//    Assim o painel nunca volta a "1" so porque o campo Qtd foi reposto a 1
+//    depois de adicionar, seja qual for o evento que dispare a pesquisa.
+// ---------------------------------------------------------------------
+    private void atualizarPainelLotesProdutoPesquisado() {
+
+        if (painelLotes == null) {
+            return;
+        }
+
+        if (cmbProduto.getSelectedItem() == null) {
+            painelLotes.limpar();
+            return;
+        }
+
+        try {
+            int codigoProdutoLocal = getCodigoProduto();
+            String descricao_produto = getDescricao_Produto();
+
+            if (codigoProdutoLocal <= 0) {
+                painelLotes.limpar();
+                return;
+            }
+
+            // 1.o: o produto ja esta na venda? entao o plano e o da venda
+            double qtd = quantidadeDoProdutoNaVenda(codigoProdutoLocal);
+
+            // 2.o: senao, a quantidade que o operador esta a escrever
+            if (qtd <= 0) {
+                String textoQtd = txtQuatindade.getText().trim();
+                if (textoQtd.isEmpty()) {
+                    painelLotes.limpar();
+                    return;
+                }
+                qtd = Double.parseDouble(textoQtd.replace(",", "."));
+                if (qtd <= 0) {
+                    painelLotes.limpar();
+                    return;
+                }
+            }
+
+            // aqui nao ha janela: so mostra no painel
+            actualizarPainelLotes(codigoProdutoLocal, descricao_produto, qtd);
+
+        } catch (SQLException | NumberFormatException e) {
+            painelLotes.limpar();
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Quantidade total deste produto que ja esta na JTable da venda (soma das
+     * linhas; 0 se nao esta). Ignora linhas vazias ou em edicao. Colunas: 0 =
+     * Codigo, 4 = Quantidade.
+     */
+    private double quantidadeDoProdutoNaVenda(int codProduto) {
+        double total = 0;
+        for (int i = 0; i < table.getRowCount(); i++) {
+            try {
+                int codigo = Integer.parseInt(String.valueOf(table.getValueAt(i, 0)).trim());
+                if (codigo == codProduto) {
+                    total += Double.parseDouble(String.valueOf(table.getValueAt(i, 4)).trim().replace(",", "."));
+                }
+            } catch (NumberFormatException e) {
+                // linha vazia ou nao numerica: ignora
+            }
+        }
+        return total;
     }
 
     private void setWindowsListener() {
@@ -2554,12 +2681,48 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         return moedasController.getMoedaByDesignacao(moedaSelecionada);
     }
 
-    public static void actualizar_quantidade(int cod, double quantidade, BDConexao conexaoLocal) {
+    public static void actualizar_quantidade_antigo(int cod, double quantidade, BDConexao conexaoLocal) {
 
         String sql = "UPDATE tb_stock SET quantidade_existente =  " + (getQuantidadeProduto(cod, conexaoLocal) - quantidade) + " WHERE cod_produto_codigo = " + cod + " AND  cod_armazem = " + getCodigoArmazem();
         System.out.println("Quantidade   : " + quantidade);
         conexaoLocal.executeUpdate(sql);
 
+    }
+
+    public static void actualizar_quantidade(
+            int cod,
+            double quantidade,
+            BDConexao conexaoLocal) {
+
+        String sql = "UPDATE tb_stock "
+                + "SET quantidade_existente = quantidade_existente - ? "
+                + "WHERE cod_produto_codigo = ? "
+                + "AND cod_armazem = ? "
+                + "AND quantidade_existente >= ?";
+
+        try (java.sql.PreparedStatement ps
+                = conexaoLocal.getConnection().prepareStatement(sql)) {
+
+            ps.setDouble(1, quantidade);
+            ps.setInt(2, cod);
+            ps.setInt(3, getCodigoArmazem());
+            ps.setDouble(4, quantidade);
+
+            int linhasActualizadas = ps.executeUpdate();
+
+            if (linhasActualizadas == 0) {
+                throw new SQLException(
+                        "Stock insuficiente ou inexistente para o produto "
+                        + cod + " no armazém " + getCodigoArmazem()
+                );
+            }
+
+        } catch (SQLException ex) {
+            throw new RuntimeException(
+                    "Erro ao actualizar o stock do produto " + cod,
+                    ex
+            );
+        }
     }
 
     public static double getQuantidadeProduto(int cod_produto, BDConexao conexaoLocal) {
@@ -2784,6 +2947,10 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
         StoksController stocksControllerLocal = new StoksController(conexaoTransactionLocal);
         DocumentosController.start(conexaoTransactionLocal); // Inicia a transação
+
+        boolean vendaConcluida = false;
+        Integer idVendaGerada = 0;
+
         try {
             System.out.println("AutoCommit após iniciar transação? "
                     + conexaoTransactionLocal.getConnection().getAutoCommit());
@@ -2792,7 +2959,6 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             e.printStackTrace();
         }
 
-        Integer idVendaGerada = 0;
         try {
             // Construção do objeto venda
             TbVenda venda = construirVenda();
@@ -2831,12 +2997,19 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             }
 
             // Finaliza transação
+//            DocumentosController.commit(conexaoTransactionLocal);
+            // Finaliza transação
             DocumentosController.commit(conexaoTransactionLocal);
 
+            DocumentosController.commit(conexaoTransactionLocal);
+            vendaConcluida = true;
+
             txtCodigoBarra.requestFocus();
-            JOptionPane.showMessageDialog(null, "Factura efectuada com sucesso!");
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Factura efectuada com sucesso!"
+            );
             txtNomeConsumidorFinal.setVisible(true);
-//            imprimir_factura( idVendaGerada ); // Imprime a factura
 
         } catch (Exception e) {
 
@@ -2848,14 +3021,36 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         }
 
         // fora do try-catch da transação
-        try {
-            imprimir_factura(idVendaGerada);
-            voltarFolhaPadrao();
+        // Imprimir apenas se a venda foi concluída com sucesso.
+// Imprimir apenas quando a transação foi concluída com sucesso.
+        if (vendaConcluida && idVendaGerada != null && idVendaGerada > 0) {
+            try {
+                System.out.println("Antes de imprimir: " + idVendaGerada);
 
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Erro ao imprimir factura: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                imprimir_factura(idVendaGerada);
+                System.out.println("Depois de imprimir: " + idVendaGerada);
+                voltarFolhaPadrao();
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+
+                JOptionPane.showMessageDialog(
+                        null,
+                        "A venda foi gravada, mas ocorreu um erro ao imprimir a factura: "
+                        + ex.getMessage(),
+                        "Erro de impressão",
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
         }
+//        try {
+//            imprimir_factura(idVendaGerada);
+//            voltarFolhaPadrao();
+//
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//            JOptionPane.showMessageDialog(null, "Erro ao imprimir factura: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+//        }
     }
 
     private static FormaPagamentoItem criarItemFormaPagamento(int idVenda, int idForma, BigDecimal valor, BigDecimal troco, String referencia) {
@@ -3281,15 +3476,37 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                                     conexaoLocal
                             );
 
-                            if (getIdDocumento() == DOC_FACTURA_RECIBO_FR || getIdDocumento() == DOC_FACTURA_FT) {
+                            boolean farmacia = dadosInstituicao != null
+                                    && "Farmacia".equalsIgnoreCase(
+                                            dadosInstituicao.getNegocio()
+                                    );
 
-                                //#LOTE
-                                if (loteController.existeLotesDisponiveis(idProduto)) {
-                                    loteController.baixarStock(idProduto, idArmazem, item.getQuantidade(), cod_venda);
-                                    actualizar_quantidade(idProduto, item.getQuantidade(), conexaoLocal);
+                            if (farmacia
+                                    && (getIdDocumento() == DOC_FACTURA_RECIBO_FR
+                                    || getIdDocumento() == DOC_FACTURA_FT)) {
+
+                                if (loteController.existeLotesDisponiveis(
+                                        idProduto, idArmazem)) {
+
+                                    loteController.baixarStock(
+                                            idProduto,
+                                            idArmazem,
+                                            item.getQuantidade(),
+                                            cod_venda
+                                    );
                                 }
-
                             }
+
+                            if (getIdDocumento() == DOC_FACTURA_RECIBO_FR
+                                    || getIdDocumento() == DOC_FACTURA_FT) {
+
+                                actualizar_quantidade(
+                                        idProduto,
+                                        item.getQuantidade(),
+                                        conexaoLocal
+                                );
+                            }
+
                         }
                     }
                 }
@@ -3724,11 +3941,11 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                     if (isStocavel(produto.getStocavel()) && (documentoIsFR || documentoIsFA)) {
                         if (possivel_quantidade()) {
                             if (estado_critico()) {
-                                JOptionPane.showMessageDialog(null, "O produto: " + produto.getDesignacao() + " precisa de ser actualizado no stock", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
+                                JOptionPane.showMessageDialog(null, "O produto: " + produto.getDesignacao() + " precisa de ser actualizado no stock\nEmitindo compra ou transferência!", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
                             }
                             adicionar_produto(mes, qtd);
                         } else {
-                            JOptionPane.showMessageDialog(null, "O produto: " + produto.getDesignacao() + " não pode ser vendido pra esta quantidade", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "O produto: " + produto.getDesignacao() + " não pode ser vendido pra esta quantidade\nDeve-se emitir compra ou tranferência pra preencher o stock!", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
                         }
                     } else {
                         adicionar_produto(mes, qtd);
@@ -3781,7 +3998,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                         }
                         adicionar_produto(mes, qtd);
                     } else {
-                        JOptionPane.showMessageDialog(null, "O produto: " + produto.getDesignacao() + " nao pode ser vendido pra esta quantidade", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "O produto: " + produto.getDesignacao() + " não pode ser vendido pra esta quantidade\nDeve-se emitir compra ou tranferência pra preencher o stock!", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
                     }
 
                 } else {
@@ -3849,11 +4066,10 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
         }
 
-    // =====================================================
-    // 3. CÁLCULOS ORIGINAIS
-    // =====================================================
-
-    String unidade = getUnidade_Produto();
+        // =====================================================
+        // 3. CÁLCULOS ORIGINAIS
+        // =====================================================
+        String unidade = getUnidade_Produto();
 
         BigDecimal quantidade = BigDecimal.valueOf(qtd);
         BigDecimal preco = BigDecimal.valueOf(
@@ -4624,12 +4840,12 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                     if (isStocavel(produtoLocal.getStocavel())) {
                         if (possivel_quantidade()) {
                             if (estado_critico()) {
-                                JOptionPane.showMessageDialog(null, "O produto: " + produtoLocal.getDesignacao() + " precisa de ser actualizado no stock", "DVML", JOptionPane.WARNING_MESSAGE);
+                                JOptionPane.showMessageDialog(null, "O produto: " + produtoLocal.getDesignacao() + " precisa de ser actualizado no stock\nEmitindo compra ou transfrência!", "DVML", JOptionPane.WARNING_MESSAGE);
                             }
                             adicionar_produto("", qtd);
 
                         } else {
-                            JOptionPane.showMessageDialog(null, "O produto: " + produtoLocal.getDesignacao() + " nao pode ser vendido pra esta quantidade", "DVML", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "O produto: " + produtoLocal.getDesignacao() + " não pode ser vendido pra esta quantidade\nDeve-se emitir compra ou tranferência pra preencher o stock!", "DVML", JOptionPane.ERROR_MESSAGE);
                         }
 
                     } else {
@@ -4644,9 +4860,14 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             }
 
         } catch (SQLException ex) {
-
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Erro ao adicionar o produto: " + ex.getMessage(),
+                    "Erro", JOptionPane.ERROR_MESSAGE);
         }
 
+//        } catch (SQLException ex) {
+//
+//        }
     }
 
     public static boolean validar_zero() {
@@ -5011,7 +5232,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             int opcao = JOptionPane.showConfirmDialog(
                     null,
                     "Atenção\nO(s) produto(s):\n" + produtosComErro
-                    + ". Possuem preços Zero.\n\nDeves removê-lo(s) da lista!!!",
+                    + ". Possuem preços Zero.\n\nDeve-se removê-lo(s) da lista!!!",
                     "Erro de Validação de Preços",
                     JOptionPane.OK_CANCEL_OPTION,
                     JOptionPane.ERROR_MESSAGE
@@ -5473,7 +5694,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
     private void accao_codigo_manual_enter() {
         try {
-            
+
             String codigo_manual = txtCodigoManual.getText();
             TbProduto produtoLocal = produtosController.findByCodManual(codigo_manual);
             double qtd = Double.parseDouble(txtQuatindade.getText());
@@ -6111,7 +6332,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                     modelo.setValueAt(CfMethods.formatarComoMoeda(totalComIva), linha_existente_produto, 10);
 
                 } else {
-                    JOptionPane.showMessageDialog(null, "O Produto nao pode ser vendido para esta quantidade");
+                    JOptionPane.showMessageDialog(null, "O Produto não pode ser vendido para esta quantidade\nDeve-se emitir compra ou tranferência pra preencher o stock!");
                 }
 
                 actualizaTotaisVerificacaoExistencia();
@@ -6268,7 +6489,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                     table.requestFocus();
 
                 } else {
-                    JOptionPane.showMessageDialog(null, "O produto: " + produto.getDesignacao() + " não pode ser vendido pra esta quantidade", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "O produto: " + produto.getDesignacao() + " não pode ser vendido pra esta quantidade\nDeve-se emitir compra ou tranferência pra preencher o stock!", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
                 }
 
                 actualizaTotaisVerificacaoExistencia();
@@ -7044,8 +7265,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 //            }
 //        }
 //    }
-    
-     // =====================================================================
+    // =====================================================================
     // VENDA: painel de lotes ao SELECCIONAR uma linha e ao MUDAR A QUANTIDADE
     // na JTable da venda.
     //
@@ -7057,7 +7277,6 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     // O actualizarPainelLotes(...) que já tens é o método único que enche o
     // painel; aqui só se chama com os dados da linha. Não mexe em mais nada.
     // =====================================================================
-
     private void actualizarQtdTable() {
 
         linha_actual = table.getSelectedRow();
@@ -7126,8 +7345,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             }
         }
     }
-    
-        // ---------------------------------------------------------------------
+
+    // ---------------------------------------------------------------------
     // NOVO: ao seleccionar uma linha da venda, o painel mostra os lotes desse
     // produto com a quantidade da linha (o que vai sair de cada lote).
     // ---------------------------------------------------------------------
@@ -7171,7 +7390,6 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             ex.printStackTrace();
         }
     }
-
 
     private static void actuazlizar_quantidade_tabela_formulario(String quantidade, double desconto) {
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
@@ -8438,8 +8656,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         }
     }
 
-    
-    
+
     // ---------------------------------------------------------------------
 // 2) NA CLASSE DO ECRA DE VENDAS: o metodo UNICO que enche o painel.
 //    Usa-o em todos os sitios (pesquisa, adicionar, selecao na JTable).
@@ -8448,57 +8665,55 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     /**
      * Actualiza o painel de lotes para (produto, quantidade).
      *
-     * @return null se ha stock suficiente (ou o produto nao tem lotes);
-     * senao o texto do erro (o painel ja o mostra a vermelho; quem quiser
-     * bloquear mostra tambem uma janela)
+     * @return null se ha stock suficiente (ou o produto nao tem lotes); senao o
+     * texto do erro (o painel ja o mostra a vermelho; quem quiser bloquear
+     * mostra tambem uma janela)
      */
-    private static String actualizarPainelLotes(int codProduto, String descricao, double qtd) throws SQLException {
-
-        // produto sem lotes registados: nada a mostrar
-        if (!loteController.existeLotes(codProduto)) {
-            painelLotes.limpar();
-            return null;
-        }
-        int armazem = getCodigoArmazem();
-
-        // todos os lotes com stock, por ordem FEFO
-        List<entity.Lote> disponiveis = loteController.listarDisponiveisFEFO(codProduto, armazem);
-        if (disponiveis.isEmpty()) {
-            String msg = "Este produto tem lotes registados, mas não possui lotes disponíveis, "
-                    + "activos e dentro da validade no armazém selecionado.";
-            painelLotes.mostrarAviso(descricao, msg);
-            return msg;
-        }
-
-        // quanto sai de cada lote para a quantidade dada (por id do lote)
-        java.util.Map<Integer, Double> aRetirar = new java.util.HashMap<>();
-        String erro = null;
-        try {
-            for (LoteController.LoteFEFO item : loteController.preverBaixaFEFO(codProduto, armazem, qtd)) {
-                aRetirar.put(item.getLote().getId(), (double) item.getQuantidadeRetirar());
-            }
-        } catch (IllegalStateException e) {
-            erro = e.getMessage();
-        }
-
-        List<PainelLotesVenda.Linha> linhas = new java.util.ArrayList<>();
-        for (entity.Lote l : disponiveis) {
-            linhas.add(new PainelLotesVenda.Linha(
-                    l.getNumeroLote(),
-                    l.getDataValidade(),
-                    l.getQtd(),
-                    aRetirar.getOrDefault(l.getId(), 0.0)));
-        }
-
-        if (erro != null) {
-            painelLotes.mostrarAviso(descricao, erro, linhas);
-            return erro;
-        }
-        painelLotes.mostrar(descricao, qtd, linhas);
-        return null;
-    }
-
-
+//    private static String actualizarPainelLotes(int codProduto, String descricao, double qtd) throws SQLException {
+//
+//        // produto sem lotes registados: nada a mostrar
+//        if (!loteController.existeLotes(codProduto)) {
+//            painelLotes.limpar();
+//            return null;
+//        }
+//        int armazem = getCodigoArmazem();
+//
+//        // todos os lotes com stock, por ordem FEFO
+//        List<entity.Lote> disponiveis = loteController.listarDisponiveisFEFO(codProduto, armazem);
+//        if (disponiveis.isEmpty()) {
+//            String msg = "Este produto tem lotes registados, mas não possui lotes disponíveis, "
+//                    + "activos e dentro da validade no armazém selecionado.";
+//            painelLotes.mostrarAviso(descricao, msg);
+//            return msg;
+//        }
+//
+//        // quanto sai de cada lote para a quantidade dada (por id do lote)
+//        java.util.Map<Integer, Double> aRetirar = new java.util.HashMap<>();
+//        String erro = null;
+//        try {
+//            for (LoteController.LoteFEFO item : loteController.preverBaixaFEFO(codProduto, armazem, qtd)) {
+//                aRetirar.put(item.getLote().getId(), (double) item.getQuantidadeRetirar());
+//            }
+//        } catch (IllegalStateException e) {
+//            erro = e.getMessage();
+//        }
+//
+//        List<PainelLotesVenda.Linha> linhas = new java.util.ArrayList<>();
+//        for (entity.Lote l : disponiveis) {
+//            linhas.add(new PainelLotesVenda.Linha(
+//                    l.getNumeroLote(),
+//                    l.getDataValidade(),
+//                    l.getQtd(),
+//                    aRetirar.getOrDefault(l.getId(), 0.0)));
+//        }
+//
+//        if (erro != null) {
+//            painelLotes.mostrarAviso(descricao, erro, linhas);
+//            return erro;
+//        }
+//        painelLotes.mostrar(descricao, qtd, linhas);
+//        return null;
+//    }
 // ---------------------------------------------------------------------
 // 3) PESQUISA: substitui TODO o teu atualizarPainelLotesProdutoPesquisado()
 //    por este, e acrescenta o metodo quantidadeDoProdutoNaVenda().
@@ -8510,71 +8725,69 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 //    Assim o painel nunca volta a "1" so porque o campo Qtd foi reposto a 1
 //    depois de adicionar, seja qual for o evento que dispare a pesquisa.
 // ---------------------------------------------------------------------
-    private void atualizarPainelLotesProdutoPesquisado() {
-
-        if (painelLotes == null) {
-            return;
-        }
-
-        if (cmbProduto.getSelectedItem() == null) {
-            painelLotes.limpar();
-            return;
-        }
-
-        try {
-            int codigoProdutoLocal = getCodigoProduto();
-            String descricao_produto = getDescricao_Produto();
-
-            if (codigoProdutoLocal <= 0) {
-                painelLotes.limpar();
-                return;
-            }
-
-            // 1.o: o produto ja esta na venda? entao o plano e o da venda
-            double qtd = quantidadeDoProdutoNaVenda(codigoProdutoLocal);
-
-            // 2.o: senao, a quantidade que o operador esta a escrever
-            if (qtd <= 0) {
-                String textoQtd = txtQuatindade.getText().trim();
-                if (textoQtd.isEmpty()) {
-                    painelLotes.limpar();
-                    return;
-                }
-                qtd = Double.parseDouble(textoQtd.replace(",", "."));
-                if (qtd <= 0) {
-                    painelLotes.limpar();
-                    return;
-                }
-            }
-
-            // aqui nao ha janela: so mostra no painel
-            actualizarPainelLotes(codigoProdutoLocal, descricao_produto, qtd);
-
-        } catch (SQLException | NumberFormatException e) {
-            painelLotes.limpar();
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Quantidade total deste produto que ja esta na JTable da venda (soma das
-     * linhas; 0 se nao esta). Ignora linhas vazias ou em edicao.
-     * Colunas: 0 = Codigo, 4 = Quantidade.
-     */
-    private double quantidadeDoProdutoNaVenda(int codProduto) {
-        double total = 0;
-        for (int i = 0; i < table.getRowCount(); i++) {
-            try {
-                int codigo = Integer.parseInt(String.valueOf(table.getValueAt(i, 0)).trim());
-                if (codigo == codProduto) {
-                    total += Double.parseDouble(String.valueOf(table.getValueAt(i, 4)).trim().replace(",", "."));
-                }
-            } catch (NumberFormatException e) {
-                // linha vazia ou nao numerica: ignora
-            }
-        }
-        return total;
-    }
-
-
+//    private void atualizarPainelLotesProdutoPesquisado() {
+//
+//        if (painelLotes == null) {
+//            return;
+//        }
+//
+//        if (cmbProduto.getSelectedItem() == null) {
+//            painelLotes.limpar();
+//            return;
+//        }
+//
+//        try {
+//            int codigoProdutoLocal = getCodigoProduto();
+//            String descricao_produto = getDescricao_Produto();
+//
+//            if (codigoProdutoLocal <= 0) {
+//                painelLotes.limpar();
+//                return;
+//            }
+//
+//            // 1.o: o produto ja esta na venda? entao o plano e o da venda
+//            double qtd = quantidadeDoProdutoNaVenda(codigoProdutoLocal);
+//
+//            // 2.o: senao, a quantidade que o operador esta a escrever
+//            if (qtd <= 0) {
+//                String textoQtd = txtQuatindade.getText().trim();
+//                if (textoQtd.isEmpty()) {
+//                    painelLotes.limpar();
+//                    return;
+//                }
+//                qtd = Double.parseDouble(textoQtd.replace(",", "."));
+//                if (qtd <= 0) {
+//                    painelLotes.limpar();
+//                    return;
+//                }
+//            }
+//
+//            // aqui nao ha janela: so mostra no painel
+//            actualizarPainelLotes(codigoProdutoLocal, descricao_produto, qtd);
+//
+//        } catch (SQLException | NumberFormatException e) {
+//            painelLotes.limpar();
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    /**
+//     * Quantidade total deste produto que ja esta na JTable da venda (soma das
+//     * linhas; 0 se nao esta). Ignora linhas vazias ou em edicao.
+//     * Colunas: 0 = Codigo, 4 = Quantidade.
+//     */
+//    private double quantidadeDoProdutoNaVenda(int codProduto) {
+//        double total = 0;
+//        for (int i = 0; i < table.getRowCount(); i++) {
+//            try {
+//                int codigo = Integer.parseInt(String.valueOf(table.getValueAt(i, 0)).trim());
+//                if (codigo == codProduto) {
+//                    total += Double.parseDouble(String.valueOf(table.getValueAt(i, 4)).trim().replace(",", "."));
+//                }
+//            } catch (NumberFormatException e) {
+//                // linha vazia ou nao numerica: ignora
+//            }
+//        }
+//        return total;
+//    }
 }

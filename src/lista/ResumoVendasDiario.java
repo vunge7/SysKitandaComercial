@@ -1,99 +1,74 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package lista;
 
-import dao.ArmazemDao;
-import dao.DadosInstituicaoDao;
-import dao.FornecedorDao;
-import dao.ItemVendaDao;
-import dao.UsuarioDao;
-import dao.VendaDao;
 import java.io.File;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
-import javax.persistence.EntityManagerFactory;
 import javax.swing.JOptionPane;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.view.JasperViewer;
 import util.BDConexao;
-import util.JPAEntityMannagerFactoryUtil;
-
 
 /**
  *
  * @author Domingos Dala Vunge
  */
-public  class ResumoVendasDiario {
+public class ResumoVendasDiario {
 
-    private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;      
-    private ItemVendaDao itemVendaDao = new ItemVendaDao(emf);
-    private ArmazemDao armazemDao = new ArmazemDao(emf);
-    private FornecedorDao fornecedorDao = new FornecedorDao(emf);
-    private DadosInstituicaoDao dadosInstituicaoDao = new DadosInstituicaoDao(emf);
-    private Date data_incio, data_fim;
-    private int  pk_armazem, pk_fornecedor;
+    private final Date data_inicio;
+    private final Date data_fim;
 
-    public ResumoVendasDiario(Date data_incio,Date data_fim) 
-    {
-    
-        this.data_incio = data_incio;
+    public ResumoVendasDiario(Date data_inicio, Date data_fim) {
+        this.data_inicio = data_inicio;
         this.data_fim = data_fim;
-        
-        try {
-            mostrar();
-        } catch (Exception e) {
-        }
-        
+        mostrar();
     }
 
-    public void mostrar(){
+    public void mostrar() {
 
-       //PARM_LUCRO
-     
-        HashMap hashMap = new HashMap();
-     
-        hashMap.put("PARM_DATA_1", this.data_incio);      
-        hashMap.put("PARM_DATA_2", this.data_fim);      
-        
-           String relatorio = "relatorios/relatorio_vendas_diarias.jasper";
+        HashMap<String, Object> parametros = new HashMap<String, Object>();
+        parametros.put("PARM_DATA_1", this.data_inicio);
+        parametros.put("PARM_DATA_2", this.data_fim);
 
-        File file = new File( relatorio ).getAbsoluteFile();
-        String obterCaminho = file.getAbsolutePath();
+        String relatorio = "relatorios/relatorio_vendas_diarias.jasper";
+        String caminho = new File(relatorio).getAbsolutePath();
 
+        Connection connection = null;
         try {
-             Connection connection =  BDConexao.getConnection();
-            JasperFillManager.fillReport(obterCaminho, hashMap, connection);
-            JasperPrint jasperPrint = JasperFillManager.fillReport(obterCaminho, hashMap, connection);
+            connection = BDConexao.getConnection();
+
+            // Preenche o relatório uma única vez
+            JasperPrint jasperPrint = JasperFillManager.fillReport(caminho, parametros, connection);
 
             if (jasperPrint.getPages().size() >= 1) {
                 JasperViewer jasperViewer = new JasperViewer(jasperPrint, false);
                 jasperViewer.setVisible(true);
             } else {
-                JOptionPane.showMessageDialog(null, "Não existe registro para esse intervalo de data!...", "ERROR", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null,
+                        "Não existe registo para esse intervalo de datas!...",
+                        "ERROR", JOptionPane.ERROR_MESSAGE);
             }
-            
+
         } catch (JRException jex) {
             jex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Falha ao mostrar o relatorio", "DVML-COMERCIAL, LDA" , JOptionPane.ERROR);
+            JOptionPane.showMessageDialog(null,
+                    "Falha ao mostrar o relatório",
+                    "DVML-COMERCIAL, LDA", JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Erro ao tentar mostrar o relatorio", "DVML-COMERCIAL, LDA" , JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null,
+                    "Erro ao tentar mostrar o relatório",
+                    "DVML-COMERCIAL, LDA", JOptionPane.ERROR_MESSAGE);
+        } finally {
+            try {
+                if (connection != null && !connection.isClosed()) {
+                    connection.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-
-        }
-    
-    
-    public static void main(String[] args){
-        
-        //new ResumoVenda(1);
-        
     }
-
-    
 }

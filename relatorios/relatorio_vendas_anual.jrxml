@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="relatorio_vendas_anual" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="681eb5fa-5601-4d3f-aecc-e35027663f2b">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="PARM_ANO" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[CALL relatorio_vendas_anual($P{PARM_ANO})]]>
+	</queryString>
+	<field name="mes_nome" class="java.lang.String"/>
+	<field name="valor_total_fr" class="java.math.BigDecimal"/>
+	<field name="valor_total_ft" class="java.math.BigDecimal"/>
+	<field name="valor_total_nc" class="java.math.BigDecimal"/>
+	<field name="total_geral" class="java.math.BigDecimal"/>
+	<field name="empresa_nome" class="java.lang.String"/>
+	<variable name="VFR" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_total_fr}]]></variableExpression>
+	</variable>
+	<variable name="VFT" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_total_ft}]]></variableExpression>
+	</variable>
+	<variable name="VNC" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_total_nc}]]></variableExpression>
+	</variable>
+	<variable name="VTG" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{total_geral}]]></variableExpression>
+	</variable>
+	<background>
+		<band height="555" splitType="Stretch">
+			<barChart>
+				<chart evaluationTime="Report">
+					<reportElement uuid="2575fbcd-ba99-495a-ab59-0429733cf64f" x="485" y="0" width="317" height="185"/>
+					<chartTitle>
+						<titleExpression><![CDATA["Vendas por mês: FR, FT e NC (Kz)"]]></titleExpression>
+					</chartTitle>
+					<chartLegend position="Bottom"/>
+				</chart>
+				<categoryDataset>
+					<categorySeries>
+						<seriesExpression><![CDATA["FR"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{mes_nome}.substring(0, 3)]]></categoryExpression>
+						<valueExpression><![CDATA[$F{valor_total_fr}]]></valueExpression>
+					</categorySeries>
+					<categorySeries>
+						<seriesExpression><![CDATA["FT"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{mes_nome}.substring(0, 3)]]></categoryExpression>
+						<valueExpression><![CDATA[$F{valor_total_ft}]]></valueExpression>
+					</categorySeries>
+					<categorySeries>
+						<seriesExpression><![CDATA["NC"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{mes_nome}.substring(0, 3)]]></categoryExpression>
+						<valueExpression><![CDATA[$F{valor_total_nc}]]></valueExpression>
+					</categorySeries>
+				</categoryDataset>
+				<barPlot isShowLabels="false">
+					<plot>
+						<seriesColor seriesOrder="0" color="#2E75B6"/>
+						<seriesColor seriesOrder="1" color="#548235"/>
+						<seriesColor seriesOrder="2" color="#C00000"/>
+					</plot>
+					<itemLabel/>
+					<categoryAxisFormat>
+						<axisFormat/>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat/>
+					</valueAxisFormat>
+				</barPlot>
+			</barChart>
+			<lineChart>
+				<chart evaluationTime="Report">
+					<reportElement uuid="a0349f77-6951-4105-96e0-fab4847fc40d" x="485" y="190" width="317" height="180"/>
+					<chartTitle>
+						<titleExpression><![CDATA["Evolução mensal do Total líquido (Kz)"]]></titleExpression>
+					</chartTitle>
+				</chart>
+				<categoryDataset>
+					<categorySeries>
+						<seriesExpression><![CDATA["Total líquido"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{mes_nome}.substring(0, 3)]]></categoryExpression>
+						<valueExpression><![CDATA[$F{total_geral}]]></valueExpression>
+					</categorySeries>
+				</categoryDataset>
+				<linePlot isShowShapes="true">
+					<plot>
+						<seriesColor seriesOrder="0" color="#7030A0"/>
+					</plot>
+					<categoryAxisFormat>
+						<axisFormat/>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat/>
+					</valueAxisFormat>
+				</linePlot>
+			</lineChart>
+			<pieChart>
+				<chart evaluationTime="Report">
+					<reportElement uuid="a095214f-fb62-4d2f-be42-6674e351d5d0" x="485" y="375" width="317" height="180"/>
+					<chartTitle>
+						<titleExpression><![CDATA["Peso das vendas no ano (FR vs FT)"]]></titleExpression>
+					</chartTitle>
+					<chartLegend position="Right"/>
+				</chart>
+				<pieDataset>
+					<pieSeries>
+						<keyExpression><![CDATA["FR"]]></keyExpression>
+						<valueExpression><![CDATA[$V{VFR}]]></valueExpression>
+					</pieSeries>
+					<pieSeries>
+						<keyExpression><![CDATA["FT"]]></keyExpression>
+						<valueExpression><![CDATA[$V{VFT}]]></valueExpression>
+					</pieSeries>
+				</pieDataset>
+				<piePlot isShowLabels="true" labelFormat="{2}">
+					<plot>
+						<seriesColor seriesOrder="0" color="#2E75B6"/>
+						<seriesColor seriesOrder="1" color="#548235"/>
+					</plot>
+					<itemLabel/>
+				</piePlot>
+			</pieChart>
+		</band>
+	</background>
+	<title>
+		<band height="84" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="1b6af4e9-8a93-4fe6-ac05-6f6f43c6f5ba" x="0" y="0" width="470" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RELATÓRIO ANUAL DE VENDAS]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="0904665a-c541-4e10-b276-8b982b7c0749" x="0" y="23" width="470" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["EXERCÍCIO ECONÓMICO DE " + $P{PARM_ANO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b78e8cde-48f5-4911-8908-94c6044be132" x="0" y="44" width="470" height="14" forecolor="#555555"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Empresa: " + $F{empresa_nome}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="493d36c7-57f4-4249-9fa9-4e44b115d08f" x="0" y="58" width="470" height="14" forecolor="#555555"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[Moeda: AOA (Kz)]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="8eb9144a-87fd-4533-bfcf-60797ea267d9" x="0" y="79" width="470" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="30" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="1c6034bf-614f-4dc3-88bd-568d08c0df9b" x="0" y="0" width="90" height="30"/>
+				<box leftPadding="6"><pen lineWidth="0.0"/><topPen lineWidth="0.0"/><leftPen lineWidth="0.0"/><bottomPen lineWidth="0.75" lineColor="#000000"/><rightPen lineWidth="0.0"/></box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Mês]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1a7dc80a-6a34-4d3f-b769-d9d055e602e6" x="90" y="0" width="90" height="30"/>
+				<box rightPadding="6"><pen lineWidth="0.0"/><topPen lineWidth="0.0"/><leftPen lineWidth="0.0"/><bottomPen lineWidth="0.75" lineColor="#000000"/><rightPen lineWidth="0.0"/></box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FR (Kz)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ad0b4311-0328-499d-b134-168206f77a41" x="180" y="0" width="90" height="30"/>
+				<box rightPadding="6"><pen lineWidth="0.0"/><topPen lineWidth="0.0"/><leftPen lineWidth="0.0"/><bottomPen lineWidth="0.75" lineColor="#000000"/><rightPen lineWidth="0.0"/></box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FT (Kz)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c0416561-7d75-4b10-8a6f-722cb04f4186" x="270" y="0" width="90" height="30"/>
+				<box rightPadding="6"><pen lineWidth="0.0"/><topPen lineWidth="0.0"/><leftPen lineWidth="0.0"/><bottomPen lineWidth="0.75" lineColor="#000000"/><rightPen lineWidth="0.0"/></box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NC (Kz)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7cba5e6e-6c1c-4a54-95ca-33ac28a933e6" x="360" y="0" width="110" height="30"/>
+				<box rightPadding="6"><pen lineWidth="0.0"/><topPen lineWidth="0.0"/><leftPen lineWidth="0.0"/><bottomPen lineWidth="0.75" lineColor="#000000"/><rightPen lineWidth="0.0"/></box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total líquido (Kz)]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<textField>
+				<reportElement uuid="91e02467-6c46-4632-bff5-257a2a5752fb" x="0" y="0" width="90" height="22"/>
+				<box leftPadding="6"><pen lineWidth="0.0"/><topPen lineWidth="0.0"/><leftPen lineWidth="0.0"/><bottomPen lineWidth="0.5" lineColor="#D9D9D9"/><rightPen lineWidth="0.0"/></box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{mes_nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="e462c013-bc6d-47b6-a198-52cbf170047d" x="90" y="0" width="90" height="22"/>
+				<box rightPadding="6"><pen lineWidth="0.0"/><topPen lineWidth="0.0"/><leftPen lineWidth="0.0"/><bottomPen lineWidth="0.5" lineColor="#D9D9D9"/><rightPen lineWidth="0.0"/></box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[String.format(java.util.Locale.FRANCE, "%,.0f", $F{valor_total_fr}).replaceAll("[\u00A0\u202F]", " ")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="e7eaf047-eb5d-405d-91c2-91b48e520d9a" x="180" y="0" width="90" height="22"/>
+				<box rightPadding="6"><pen lineWidth="0.0"/><topPen lineWidth="0.0"/><leftPen lineWidth="0.0"/><bottomPen lineWidth="0.5" lineColor="#D9D9D9"/><rightPen lineWidth="0.0"/></box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[String.format(java.util.Locale.FRANCE, "%,.0f", $F{valor_total_ft}).replaceAll("[\u00A0\u202F]", " ")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="3dad831e-bf65-478b-93e5-d4b24d0774a7" x="270" y="0" width="90" height="22"/>
+				<box rightPadding="6"><pen lineWidth="0.0"/><topPen lineWidth="0.0"/><leftPen lineWidth="0.0"/><bottomPen lineWidth="0.5" lineColor="#D9D9D9"/><rightPen lineWidth="0.0"/></box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[String.format(java.util.Locale.FRANCE, "%,.0f", $F{valor_total_nc}).replaceAll("[\u00A0\u202F]", " ")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="90074aea-cd9b-48a0-8511-77a6c6b7b806" x="360" y="0" width="110" height="22"/>
+				<box rightPadding="6"><pen lineWidth="0.0"/><topPen lineWidth="0.0"/><leftPen lineWidth="0.0"/><bottomPen lineWidth="0.5" lineColor="#D9D9D9"/><rightPen lineWidth="0.0"/></box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[String.format(java.util.Locale.FRANCE, "%,.0f", $F{total_geral}).replaceAll("[\u00A0\u202F]", " ")]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="66" splitType="Stretch">
+			<textField>
+				<reportElement uuid="de0dc45f-8236-46a1-8d67-4623fde3672e" x="0" y="0" width="90" height="24"/>
+				<box leftPadding="6"><pen lineWidth="0.0"/><topPen lineWidth="0.75" lineColor="#000000"/><leftPen lineWidth="0.0"/><bottomPen lineWidth="0.0"/><rightPen lineWidth="0.0"/></box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["TOTAL ANUAL"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="aa66f36f-1916-4d7d-b937-badc2195d638" x="90" y="0" width="90" height="24"/>
+				<box rightPadding="6"><pen lineWidth="0.0"/><topPen lineWidth="0.75" lineColor="#000000"/><leftPen lineWidth="0.0"/><bottomPen lineWidth="0.0"/><rightPen lineWidth="0.0"/></box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[String.format(java.util.Locale.FRANCE, "%,.0f", $V{VFR}).replaceAll("[\u00A0\u202F]", " ")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="10deb705-08dc-4907-81d4-572a13923719" x="180" y="0" width="90" height="24"/>
+				<box rightPadding="6"><pen lineWidth="0.0"/><topPen lineWidth="0.75" lineColor="#000000"/><leftPen lineWidth="0.0"/><bottomPen lineWidth="0.0"/><rightPen lineWidth="0.0"/></box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[String.format(java.util.Locale.FRANCE, "%,.0f", $V{VFT}).replaceAll("[\u00A0\u202F]", " ")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="be788aad-9eef-40f8-bedf-568a3574aae0" x="270" y="0" width="90" height="24"/>
+				<box rightPadding="6"><pen lineWidth="0.0"/><topPen lineWidth="0.75" lineColor="#000000"/><leftPen lineWidth="0.0"/><bottomPen lineWidth="0.0"/><rightPen lineWidth="0.0"/></box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[String.format(java.util.Locale.FRANCE, "%,.0f", $V{VNC}).replaceAll("[\u00A0\u202F]", " ")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="13fc6be4-eb95-4031-8ede-daf643990c78" x="360" y="0" width="110" height="24"/>
+				<box rightPadding="6"><pen lineWidth="0.0"/><topPen lineWidth="0.75" lineColor="#000000"/><leftPen lineWidth="0.0"/><bottomPen lineWidth="0.0"/><rightPen lineWidth="0.0"/></box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[String.format(java.util.Locale.FRANCE, "%,.0f", $V{VTG}).replaceAll("[\u00A0\u202F]", " ")]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="c5b7e594-9e52-4785-b952-de1c0d1383d9" x="0" y="32" width="470" height="30" forecolor="#666666"/>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Nota: o total líquido apresentado é calculado como FR + FT − NC. A fórmula pressupõe que os valores de FR e FT representam vendas distintas, sem duplicação, e que as NC são deduzidas uma única vez.]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

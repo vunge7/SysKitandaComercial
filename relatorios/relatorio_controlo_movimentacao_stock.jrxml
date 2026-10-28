@@ -21,7 +21,12 @@ SELECT x.* FROM (
         m.tipo AS tipo_cod,
         CASE
             WHEN m.tipo = 'COMPRA' THEN COALESCE(c.cod_fact, CAST(m.fk_operacao AS CHAR))
-            WHEN m.tipo IN ('VENDA','DEVOLUCAO') THEN COALESCE(v.cod_fact, CAST(m.fk_operacao AS CHAR))
+            WHEN m.tipo = 'DEVOLUCAO' THEN
+                 CASE WHEN nc.cod_fact IS NOT NULL
+                      THEN CONCAT(nc.cod_fact, CASE WHEN COALESCE(NULLIF(nc.ref_cod_fact,''), CASE WHEN v.fk_documento <> 5 THEN v.cod_fact END) IS NOT NULL
+                                    THEN CONCAT(' (', COALESCE(NULLIF(nc.ref_cod_fact,''), v.cod_fact), ')') ELSE '' END)  /* ex: NC 2026/4 (FR 2026/6) */
+                      ELSE COALESCE(v.cod_fact, CAST(m.fk_operacao AS CHAR)) END
+            WHEN m.tipo = 'VENDA' THEN COALESCE(v.cod_fact, CAST(m.fk_operacao AS CHAR))
             ELSE CAST(m.fk_operacao AS CHAR)
         END AS doc_ref,
         a.designacao AS armazem,
@@ -37,6 +42,18 @@ SELECT x.* FROM (
     INNER JOIN tb_produto p  ON p.codigo = l.fk_produto
     INNER JOIN tb_armazem a  ON a.codigo = l.fk_armazem
     LEFT JOIN tb_venda v     ON m.tipo IN ('VENDA','DEVOLUCAO') AND v.codigo = m.fk_operacao
+    /* nota de credito (documento 5) que anula a fatura da devolucao: liga por ref_cod_fact (exato) */
+    LEFT JOIN tb_venda nc    ON m.tipo = 'DEVOLUCAO' AND nc.codigo = COALESCE(
+                                    (SELECT n.codigo FROM tb_venda n
+                                     WHERE n.fk_documento = 5 AND n.ref_cod_fact = v.cod_fact
+                                     ORDER BY ABS(TIMESTAMPDIFF(SECOND, n.dataVenda, m.data_mov)), n.codigo
+                                     LIMIT 1),
+                                    (SELECT n3.codigo FROM tb_venda n3
+                                     WHERE n3.fk_documento = 5 AND (n3.ref_cod_fact IS NULL OR n3.ref_cod_fact = '')
+                                       AND n3.dataVenda BETWEEN DATE_SUB(m.data_mov, INTERVAL 2 MINUTE)
+                                                            AND DATE_ADD(m.data_mov, INTERVAL 2 MINUTE)
+                                     ORDER BY ABS(TIMESTAMPDIFF(SECOND, n3.dataVenda, m.data_mov)), n3.codigo
+                                     LIMIT 1))
     LEFT JOIN compras c      ON m.tipo = 'COMPRA' AND c.pk_compra = m.fk_operacao
     LEFT JOIN transferencia_armazem t
                              ON m.tipo IN ('TRANSF_SAIDA','TRANSF_ENTRADA') AND t.pk_transferencia_armazem = m.fk_operacao
@@ -52,8 +69,10 @@ SELECT x.* FROM (
     SELECT
         mv.id,
         mv.data_mov,
-        mv.tipo AS tipo_cod,
-        mv.documento AS doc_ref,
+        CASE WHEN nc2.codigo IS NOT NULL THEN 'DEVOLUCAO' ELSE mv.tipo END AS tipo_cod,   /* documento NC => Devolucao */
+        CASE WHEN nc2.codigo IS NOT NULL
+             THEN CONCAT(nc2.cod_fact, CASE WHEN nc2.ref_cod_fact IS NOT NULL AND nc2.ref_cod_fact <> '' THEN CONCAT(' (', nc2.ref_cod_fact, ')') ELSE '' END)  /* ex: NC 2026/3 (FR 2026/10) */
+             ELSE mv.documento END AS doc_ref,
         a2.designacao AS armazem,
         '-' AS numero_lote,
         '-' AS validade_txt,
@@ -73,6 +92,17 @@ SELECT x.* FROM (
     FROM movimentacao mv
     INNER JOIN tb_produto p2 ON p2.codigo = mv.produto_id
     INNER JOIN tb_armazem a2 ON a2.codigo = mv.armazem_id
+    /* NC sem lote: reconhece-se pelo numero do documento (documento tipo 5 = Nota de credito);
+       se for um movimento 'DEVOLUCAO' sem numero de NC, usa a NC emitida no mesmo momento (+-2 min) */
+    LEFT JOIN tb_venda nc2   ON nc2.codigo = COALESCE(
+                                    (SELECT n1.codigo FROM tb_venda n1 WHERE n1.cod_fact = mv.documento AND n1.fk_documento = 5 LIMIT 1),
+                                    CASE WHEN mv.tipo = 'DEVOLUCAO' THEN
+                                    (SELECT n2.codigo FROM tb_venda n2
+                                     WHERE n2.fk_documento = 5
+                                       AND n2.dataVenda BETWEEN DATE_SUB(mv.data_mov, INTERVAL 2 MINUTE)
+                                                            AND DATE_ADD(mv.data_mov, INTERVAL 2 MINUTE)
+                                     ORDER BY ABS(TIMESTAMPDIFF(SECOND, n2.dataVenda, mv.data_mov)), n2.codigo
+                                     LIMIT 1) END)
     LEFT JOIN tb_usuario u2  ON u2.codigo = mv.usuario_id
     WHERE mv.data_mov >= $P{DATA_INICIO}
       AND mv.data_mov <  DATE_ADD($P{DATA_FIM}, INTERVAL 1 DAY)
@@ -160,7 +190,7 @@ ORDER BY x.produto, x.produto_id, x.data_mov, x.id
 					<textFieldExpression><![CDATA[$V{SAI_PROD}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.##;-#,##0.##">
-					<reportElement x="640" y="3" width="162" height="16"/>
+					<reportElement x="650" y="3" width="152" height="16"/>
 					<textElement verticalAlignment="Middle"><font size="8" isBold="true"/></textElement>
 					<textFieldExpression><![CDATA["Saldo do período: " + new java.text.DecimalFormat("#,##0.##").format($V{ENT_PROD} - $V{SAI_PROD})]]></textFieldExpression>
 				</textField>
@@ -202,7 +232,7 @@ ORDER BY x.produto, x.produto_id, x.data_mov, x.id
 			<staticText><reportElement x="465" y="0" width="60" height="20" forecolor="#FFFFFF"/><textElement verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Validade]]></text></staticText>
 			<staticText><reportElement x="525" y="0" width="55" height="20" forecolor="#FFFFFF"/><textElement textAlignment="Right" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Entrada]]></text></staticText>
 			<staticText><reportElement x="580" y="0" width="55" height="20" forecolor="#FFFFFF"/><textElement textAlignment="Right" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Saída]]></text></staticText>
-			<staticText><reportElement x="640" y="0" width="162" height="20" forecolor="#FFFFFF"/><textElement verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Utilizador]]></text></staticText>
+			<staticText><reportElement x="650" y="0" width="152" height="20" forecolor="#FFFFFF"/><textElement verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Utilizador]]></text></staticText>
 		</band>
 	</columnHeader>
 
@@ -231,7 +261,7 @@ ORDER BY x.produto, x.produto_id, x.data_mov, x.id
 				<textFieldExpression><![CDATA[$F{doc_ref} == null ? "" :
  $F{tipo_cod}.equals("COMPRA") ? "Compra " + $F{doc_ref} :
  $F{tipo_cod}.equals("VENDA") ? "Venda " + $F{doc_ref} :
- $F{tipo_cod}.equals("DEVOLUCAO") ? "Devol. " + $F{doc_ref} :
+ $F{tipo_cod}.equals("DEVOLUCAO") ? $F{doc_ref} :
  ($F{tipo_cod}.equals("TRANSF_SAIDA") || $F{tipo_cod}.equals("TRANSF_ENTRADA")) ? "Transfer\u00eancia N\u00ba " + $F{doc_ref} :
  $F{doc_ref}]]></textFieldExpression>
 			</textField>
@@ -261,7 +291,7 @@ ORDER BY x.produto, x.produto_id, x.data_mov, x.id
 				<textFieldExpression><![CDATA[$F{saida} == 0 ? null : $F{saida}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="640" y="0" width="162" height="15"/>
+				<reportElement x="650" y="0" width="152" height="15"/>
 				<textElement verticalAlignment="Middle"><font size="8"/></textElement>
 				<textFieldExpression><![CDATA[$F{utilizador}]]></textFieldExpression>
 			</textField>

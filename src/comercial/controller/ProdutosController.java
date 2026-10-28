@@ -1486,6 +1486,64 @@ public class ProdutosController implements EntidadeFactory {
         return lista;
     }
 
+    public String findDesignacaoByCodigoBarra(Connection conexao, String codigoBarra) {
+        String sql = "SELECT designacao FROM tb_produto WHERE codBarra = ? LIMIT 1";
+        try (PreparedStatement ps = conexao.prepareStatement(sql)) {
+            ps.setString(1, codigoBarra);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("designacao");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public TbProduto findProdutoByCodigoBarra(String codigoBarra) {
+        String sql = "SELECT * FROM tb_produto WHERE codBarra = ? LIMIT 1";
+
+        try (PreparedStatement ps = conexao.prepareStatement(sql)) {
+            ps.setString(1, codigoBarra);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    TbProduto produto = new TbProduto();
+                    produto.setCodigo(rs.getInt("codigo"));
+                    produto.setDesignacao(rs.getString("designacao"));
+                    produto.setCodBarra(rs.getString("codBarra"));
+                    // acrescente outros campos se precisar
+                    return produto;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public TbProduto findProdutoByDesignacao(String designacao) {
+        String sql = "SELECT * FROM tb_produto WHERE designacao = ? LIMIT 1";
+
+        try (PreparedStatement ps = conexao.prepareStatement(sql)) {
+            ps.setString(1, designacao);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    TbProduto produto = new TbProduto();
+                    produto.setCodigo(rs.getInt("codigo"));
+                    produto.setDesignacao(rs.getString("designacao"));
+                    produto.setCodBarra(rs.getString("codBarra"));
+                    return produto;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static void main(String[] args) {
         BDConexao conexao = BDConexao.getInstancia();
         ProdutosController pc = new ProdutosController(conexao);

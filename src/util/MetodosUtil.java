@@ -2490,6 +2490,8 @@ private static String getNumero(int numero) {
         return "";
 
     }
+    
+    
 
     public static String assinatura_doc(String hash) {
         String assinatura = "" + hash.charAt(0) + "" + hash.charAt(10) + "" + hash.charAt(20) + "" + hash.charAt(30);

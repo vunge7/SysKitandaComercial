@@ -4,9 +4,9 @@
  */
 package visao;
 
-
 import java.sql.Connection;
 import comercial.controller.ArmazensController;
+import comercial.controller.DadosInstituicaoController;
 import comercial.controller.LinhasTransferenciasController;
 import comercial.controller.MovimentacaoController;
 import comercial.controller.ProdutosController;
@@ -29,14 +29,14 @@ import util.BDConexao;
 import util.DVML;
 import util.MetodosUtil;
 import util.PermitirNumeros;
+import util.TemaNegocioUtil;
 import static visao.CompraVisao.cmbArmazem;
 
 /**
  *
  * @author Domingos Dala Vunge
  */
-public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runnable
-{
+public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runnable {
 
     private static ProdutosController produtosController;
     private static StoksController stocksController;
@@ -44,6 +44,7 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
     private static LinhasTransferenciasController linhasTransferenciasController;
     private static UsuariosController usuariosController;
     private static TransferenciasArmazemController transferenciasArmazemController;
+    private static DadosInstituicaoController dadosInstituicaoController;
     private static TbStock stock_local;
     private static TbProduto produto;
     private static TbUsuario usuario;
@@ -56,95 +57,90 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
     private Vector<String> lista_armazem = new Vector<>();
     private Vector<String> lista_armazem_origem = new Vector<>();
     private Vector<String> lista_armazem_destino = new Vector<>();
+    public static TbDadosInstituicao dadosInstituicao;
 
-    public TranferenciaArmazemVisao( int cod_usuario, BDConexao conexao )
-    {
+    public TranferenciaArmazemVisao(int cod_usuario, BDConexao conexao) {
 
         initComponents();
 
-        produtosController = new ProdutosController( conexao );
-        stocksController = new StoksController( conexao );
-        armazensController = new ArmazensController( conexao );
-        linhasTransferenciasController = new LinhasTransferenciasController( conexao );
-        usuariosController = new UsuariosController( conexao );
-        transferenciasArmazemController = new TransferenciasArmazemController( conexao );
+        produtosController = new ProdutosController(conexao);
+        stocksController = new StoksController(conexao);
+        armazensController = new ArmazensController(conexao);
+        linhasTransferenciasController = new LinhasTransferenciasController(conexao);
+        usuariosController = new UsuariosController(conexao);
+        transferenciasArmazemController = new TransferenciasArmazemController(conexao);
+                // Carregar os dados da instituição (estava a ficar null)
+        dadosInstituicaoController = new DadosInstituicaoController(conexao);
+        dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
 
-        cmbArmazemDestino.setModel( new DefaultComboBoxModel<>( armazensController.getVector() ) );
-        cmbArmazemOrigem.setModel( new DefaultComboBoxModel<>( armazensController.getVector() ) );
-        setLocationRelativeTo( null );
-        setResizable( false );
+        cmbArmazemDestino.setModel(new DefaultComboBoxModel<>(armazensController.getVector()));
+        cmbArmazemOrigem.setModel(new DefaultComboBoxModel<>(armazensController.getVector()));
+        
+        
+        setLocationRelativeTo(null);
+        setResizable(false);
 
-        txtQtdTransferir.setDocument( new PermitirNumeros() );
+        txtQtdTransferir.setDocument(new PermitirNumeros());
 
         this.cod_usuario = cod_usuario;
-       TranferenciaArmazemVisao.conexao = conexao;
+        TranferenciaArmazemVisao.conexao = conexao;
         init();
         setWindowsListener();
-        try
-        {
+        try {
             getVectorDestino();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
+        
+                        boolean ehFarmacia = dadosInstituicao != null
+                && TemaNegocioUtil.ehFarmacia(dadosInstituicao.getNegocio());
+
+        TemaNegocioUtil.aplicarCorCampos(ehFarmacia,
+                txtDesignacao,
+                txtFactorConversao,
+                txtCodBarra, txtCodigoInterno, cmbArmazemOrigem, cmbArmazemDestino,
+                txtQtdTransferir, txtQtdExistente, txtQtdExistente1);
 
     }
 
-    private static void mostrar_dados_stock_origem( TbProduto produto_parm )
-    {
+    private static void mostrar_dados_stock_origem(TbProduto produto_parm) {
 
 //        TbStock stockByCodBarra = stockDao.getStockByCodBarra( produto_parm.getCodBarra(), getCodigoArmazem() );
-        TbStock stockByCodBarra = stocksController.getStockByCodBarraAndIdArmazem( produto_parm.getCodBarra(), getCodigoArmazemOrigem() );
-        if ( !Objects.isNull( stockByCodBarra ) )
-        {
-            txtQtdExistente.setText( String.valueOf( stockByCodBarra.getQuantidadeExistente() ) );
-        }
-        else
-        {
-            txtQtdExistente.setText( "0" );
+        TbStock stockByCodBarra = stocksController.getStockByCodBarraAndIdArmazem(produto_parm.getCodBarra(), getCodigoArmazemOrigem());
+        if (!Objects.isNull(stockByCodBarra)) {
+            txtQtdExistente.setText(String.valueOf(stockByCodBarra.getQuantidadeExistente()));
+        } else {
+            txtQtdExistente.setText("0");
         }
     }
 
-    private static void mostrar_dados_stock_destino( TbProduto produto_parm )
-    {
+    private static void mostrar_dados_stock_destino(TbProduto produto_parm) {
 //        TbStock stockByCodBarra = stockDao.getStockByCodBarra( produto_parm.getCodBarra(), getIdArmazem() );
-        TbStock stockByCodBarra = stocksController.getStockByCodBarraAndIdArmazem( produto_parm.getCodBarra(), getCodigoArmazemDestino() );
-        if ( !Objects.isNull( stockByCodBarra ) )
-        {
-            txtQtdExistente1.setText( String.valueOf( stockByCodBarra.getQuantidadeExistente() ) );
-        }
-        else
-        {
-            txtQtdExistente1.setText( "0" );
+        TbStock stockByCodBarra = stocksController.getStockByCodBarraAndIdArmazem(produto_parm.getCodBarra(), getCodigoArmazemDestino());
+        if (!Objects.isNull(stockByCodBarra)) {
+            txtQtdExistente1.setText(String.valueOf(stockByCodBarra.getQuantidadeExistente()));
+        } else {
+            txtQtdExistente1.setText("0");
         }
     }
 
-    private static void mostrar_cod_dados_stock_origem( TbProduto produto_parm )
-    {
+    private static void mostrar_cod_dados_stock_origem(TbProduto produto_parm) {
 //        TbStock stockByCodBarra = stockDao.getStockByCodBarra( produto_parm.getCodBarra(), getIdArmazem() );
-        TbStock stockByCodInterno = stocksController.getStockByIdProdutoAndIdArmazem( produto_parm.getCodigo(), getCodigoArmazemOrigem() );
-        if ( !Objects.isNull( stockByCodInterno ) )
-        {
-            txtQtdExistente.setText( String.valueOf( stockByCodInterno.getQuantidadeExistente() ) );
-        }
-        else
-        {
-            txtQtdExistente.setText( "0" );
+        TbStock stockByCodInterno = stocksController.getStockByIdProdutoAndIdArmazem(produto_parm.getCodigo(), getCodigoArmazemOrigem());
+        if (!Objects.isNull(stockByCodInterno)) {
+            txtQtdExistente.setText(String.valueOf(stockByCodInterno.getQuantidadeExistente()));
+        } else {
+            txtQtdExistente.setText("0");
         }
     }
 
-    private static void mostrar_cod_dados_stock_destino( TbProduto produto_parm )
-    {
+    private static void mostrar_cod_dados_stock_destino(TbProduto produto_parm) {
 //        TbStock stockByCodBarra = stockDao.getStockByCodBarra( produto_parm.getCodBarra(), getIdArmazem() );
-        TbStock stockByCodInterno = stocksController.getStockByIdProdutoAndIdArmazem( produto_parm.getCodigo(), getCodigoArmazemDestino() );
-        if ( !Objects.isNull( stockByCodInterno ) )
-        {
-            txtQtdExistente1.setText( String.valueOf( stockByCodInterno.getQuantidadeExistente() ) );
-        }
-        else
-        {
-            txtQtdExistente1.setText( "0" );
+        TbStock stockByCodInterno = stocksController.getStockByIdProdutoAndIdArmazem(produto_parm.getCodigo(), getCodigoArmazemDestino());
+        if (!Objects.isNull(stockByCodInterno)) {
+            txtQtdExistente1.setText(String.valueOf(stockByCodInterno.getQuantidadeExistente()));
+        } else {
+            txtQtdExistente1.setText("0");
         }
     }
 
@@ -153,7 +149,7 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
      */
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -591,17 +587,15 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
 //    {
 //        return produtoDao.getProdutoByDescricao( lb_produto.getText().toString() ).getCodigo();
 //    }
-    public static int getCodigoProduto()
-    {
+    public static int getCodigoProduto() {
         //return conexao.getCodigoPublico("tb_produto", String.valueOf(  cmbProduto.getSelectedItem()));   
-        return produtosController.findByDesignacao( lb_produto.getText() ).getCodigo();
+        return produtosController.findByDesignacao(lb_produto.getText()).getCodigo();
 
     }
 
-    public static int getCodigoProduto1()
-    {
+    public static int getCodigoProduto1() {
         //return conexao.getCodigoPublico("tb_produto", String.valueOf(  cmbProduto.getSelectedItem()));   
-        return produtosController.findByDesignacao( lb_produto.getText() ).getCodigo();
+        return produtosController.findByDesignacao(lb_produto.getText()).getCodigo();
 
     }
 
@@ -668,7 +662,7 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
 
     private void cmbArmazemDestinoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbArmazemDestinoActionPerformed
     {//GEN-HEADEREND:event_cmbArmazemDestinoActionPerformed
-        mostrar_dados_stock_destino( produto );
+        mostrar_dados_stock_destino(produto);
 
     }//GEN-LAST:event_cmbArmazemDestinoActionPerformed
 
@@ -691,14 +685,11 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton5ActionPerformed
     {//GEN-HEADEREND:event_jButton5ActionPerformed
 
-        try
-        {
+        try {
 
-            new BuscaProdutoVisao( this, rootPaneCheckingEnabled, getCodigoArmazemOrigem(), DVML.JANELA_COMPRA, BDConexao.getInstancia()).setVisible(true);
+            new BuscaProdutoVisao(this, rootPaneCheckingEnabled, getCodigoArmazemOrigem(), DVML.JANELA_COMPRA, BDConexao.getInstancia()).setVisible(true);
             txtQtdTransferir.requestFocus();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }//GEN-LAST:event_jButton5ActionPerformed
@@ -746,150 +737,125 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
     public static javax.swing.JTextField txtQtdTransferir;
     // End of variables declaration//GEN-END:variables
 
-    public static void main( String[] args )
-    {
-        new TranferenciaArmazemVisao( 15, BDConexao.getInstancia() ).setVisible(true);
+    public static void main(String[] args) {
+        new TranferenciaArmazemVisao(15, BDConexao.getInstancia()).setVisible(true);
     }
 
     @Override
-    public void run()
-    {
-        throw new UnsupportedOperationException( "Not supported yet." ); //To change body of generated methods, choose Tools | Templates.
+    public void run() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    private void init()
-    {
+    private void init() {
 
 //        lista_armazem = armazemDao.buscaTodos1();
         lista_armazem = armazensController.getVector();
 
-        cmbArmazemOrigem.setModel( new DefaultComboBoxModel( lista_armazem ) );
+        cmbArmazemOrigem.setModel(new DefaultComboBoxModel(lista_armazem));
 //        cmbArmazemDestino.setModel( new DefaultComboBoxModel( lista_armazem ) );
 
         txtCodBarra.requestFocus();
-        usuario = (TbUsuario) usuariosController.findById( this.cod_usuario );
+        usuario = (TbUsuario) usuariosController.findById(this.cod_usuario);
 
     }// </editor-fold>   
 
-    private void setWindowsListener()
-    {
+    private void setWindowsListener() {
 
-        addWindowListener( new WindowAdapter()
-        {
+        addWindowListener(new WindowAdapter() {
             @Override
-            public void windowActivated( WindowEvent e )
-            {
+            public void windowActivated(WindowEvent e) {
             }
 
-        } );
+        });
 
     }
 
-    private static boolean salvar_linhas()
-    {
+    private static boolean salvar_linhas() {
 
-        if ( !MetodosUtil.tabela_vazia( table ) )
-        {
+        if (!MetodosUtil.tabela_vazia(table)) {
 
             return true;
         }
-        JOptionPane.showMessageDialog( null, "Adiciona itens na tabela caro usuário", "AVISO", JOptionPane.WARNING_MESSAGE );
+        JOptionPane.showMessageDialog(null, "Adiciona itens na tabela caro usuário", "AVISO", JOptionPane.WARNING_MESSAGE);
         return false;
 
     }
 
-    private static int getIdArmazem( JComboBox cmBox )
-    {
-        return armazensController.getArmazemByDesignacao( cmBox.getSelectedItem().toString() ).getCodigo();
+    private static int getIdArmazem(JComboBox cmBox) {
+        return armazensController.getArmazemByDesignacao(cmBox.getSelectedItem().toString()).getCodigo();
     }
 
-    private static void esvaziar_tabela()
-    {
+    private static void esvaziar_tabela() {
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
-        modelo.setRowCount( 0 );
+        modelo.setRowCount(0);
     }
 
-    private static void busca_produto_by_cod_barra()
-    {
+    private static void busca_produto_by_cod_barra() {
 
         String codBarra = txtCodBarra.getText().trim();
-        if ( !codBarra.equals( "" ) )
-        {
-            System.err.println( "codBarra: " + codBarra );
+        if (!codBarra.equals("")) {
+            System.err.println("codBarra: " + codBarra);
 //            Long cod_barra = Long.parseLong ( codBarra );
 //            produto = produtoDao.getProdutoByCodigoBarra(codBarra);
-            produto = produtosController.findByCodBarra( codBarra );
-            if ( produto.getCodigo() != 0 )
-            {
+            produto = produtosController.findByCodBarra(codBarra);
+            if (produto.getCodigo() != 0) {
                 procedimento_actualizar_quantidade();
-                lb_produto.setText( produto.getDesignacao() );
-                txtFactorConversao.setText( String.valueOf(produto.getFactorConversao() ));
+                lb_produto.setText(produto.getDesignacao());
+                txtFactorConversao.setText(String.valueOf(produto.getFactorConversao()));
 
-            }
-            else
-            {
-                lb_produto.setText( "" );
+            } else {
+                lb_produto.setText("");
                 txtFactorConversao.setText("");
                 txtCodBarra.requestFocus();
 
             }
-            mostrar_dados_stock_origem( produto );
-            mostrar_dados_stock_destino( produto );
-            txtQtdTransferir.setText( "" );
+            mostrar_dados_stock_origem(produto);
+            mostrar_dados_stock_destino(produto);
+            txtQtdTransferir.setText("");
             txtQtdTransferir.requestFocus();
 
-        }
-        else
-        {
-            lb_produto.setText( "" );
+        } else {
+            lb_produto.setText("");
             txtCodBarra.requestFocus();
         }
 
     }
 
-    private static void busca_produto_by_cod_interno()
-    {
+    private static void busca_produto_by_cod_interno() {
 
         String codInternoString = txtCodigoInterno.getText();
-        Integer codigoInternoInt = ( codInternoString.isEmpty() ? 0 : Integer.parseInt( codInternoString ) );
+        Integer codigoInternoInt = (codInternoString.isEmpty() ? 0 : Integer.parseInt(codInternoString));
 
 //        produto = produtoDao.getProdutoByCodigoProduto(codigoInternoInt);
-        produto = (TbProduto) produtosController.findById( codigoInternoInt );
+        produto = (TbProduto) produtosController.findById(codigoInternoInt);
         procedimento_actualizar_quantidade();
-        if ( produto.getCodigo() != 0 )
-        {
-            lb_produto.setText( produto.getDesignacao() );
-            txtFactorConversao.setText( String.valueOf(produto.getFactorConversao() ));
-            txtQtdTransferir.setText( "" );
+        if (produto.getCodigo() != 0) {
+            lb_produto.setText(produto.getDesignacao());
+            txtFactorConversao.setText(String.valueOf(produto.getFactorConversao()));
+            txtQtdTransferir.setText("");
             txtQtdTransferir.requestFocus();
-        }
-        else
-        {
+        } else {
 
-            lb_produto.setText( "" );
-            txtFactorConversao.setText( "" );
+            lb_produto.setText("");
+            txtFactorConversao.setText("");
             txtCodBarra.requestFocus();
         }
-        mostrar_cod_dados_stock_origem( produto );
-        mostrar_cod_dados_stock_destino( produto );
+        mostrar_cod_dados_stock_origem(produto);
+        mostrar_cod_dados_stock_destino(produto);
 
     }
 
-    public static void accao_codigo_interno_enter_busca_exterior( int codigo )
-    {
+    public static void accao_codigo_interno_enter_busca_exterior(int codigo) {
 
-        try
-        {
+        try {
 
             //int   codigo = Integer.parseInt(txtCodigoProduto.getText() );
 //            TbProduto produto = produtoDao.findTbProduto( codigo );
-            busca_produto_by_cod_interno( codigo );
+            busca_produto_by_cod_interno(codigo);
 
-        }
-        catch ( Exception ex )
-        {
-            Logger.getLogger( VendaUsuarioVisao.class.getName() ).log( Level.SEVERE, null, ex );
-            JOptionPane.showMessageDialog( null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+        } catch (Exception ex) {
+            Logger.getLogger(VendaUsuarioVisao.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Este produto não existe no armazém " + cmbArmazem.getSelectedItem(), DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE);
         }
 
     }
@@ -897,91 +863,77 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
 //    public static int getCodigoArmazem() {
 //        return armazemDao.getArmazemByDescricao(cmbArmazemOrigem.getSelectedItem().toString()).getCodigo();
 //    }
-    public static int getCodigoArmazemOrigem()
-    {
+    public static int getCodigoArmazemOrigem() {
         //return conexao.getCodigoPublico("tb_produto", String.valueOf(  cmbProduto.getSelectedItem()));   
-        return armazensController.findByDesignacao( cmbArmazemOrigem.getSelectedItem().toString() ).getCodigo();
+        return armazensController.findByDesignacao(cmbArmazemOrigem.getSelectedItem().toString()).getCodigo();
 
     }
 
-    public static int getCodigoArmazem1()
-    {
+    public static int getCodigoArmazem1() {
         //return conexao.getCodigoPublico("tb_produto", String.valueOf(  cmbProduto.getSelectedItem()));   
-        return armazensController.findByDesignacao( cmbArmazemOrigem.getSelectedItem().toString() ).getCodigo();
+        return armazensController.findByDesignacao(cmbArmazemOrigem.getSelectedItem().toString()).getCodigo();
 
     }
 
-    public static int getCodigoArmazemDestino()
-    {
+    public static int getCodigoArmazemDestino() {
         //return conexao.getCodigoPublico("tb_produto", String.valueOf(  cmbProduto.getSelectedItem()));   
-        return armazensController.findByDesignacao( cmbArmazemDestino.getSelectedItem().toString() ).getCodigo();
+        return armazensController.findByDesignacao(cmbArmazemDestino.getSelectedItem().toString()).getCodigo();
 
     }
 
 //    public static int getCodigoArmazem1() {
 //        return armazemDao.getArmazemByDescricao(cmbArmazemDestino.getSelectedItem().toString()).getCodigo();
 //    }
-    private static void procedimento_actualizar_quantidade()
-    {
+    private static void procedimento_actualizar_quantidade() {
 
     }
 
-    public static void busca_produto_by_cod_interno( int codProduto )
-    {
+    public static void busca_produto_by_cod_interno(int codProduto) {
 
 //        produto = produtoDao.getProdutoByCodigoProduto(codProduto);
-        produto = (TbProduto) produtosController.findById( codProduto );
+        produto = (TbProduto) produtosController.findById(codProduto);
 
-        if ( produto.getCodigo() != 0 )
-        {
-            lb_produto.setText( produto.getDesignacao() );
-            txtCodBarra.setText( produto.getCodBarra() );
-            txtCodigoInterno.setText( String.valueOf( produto.getCodigo() ) );
-            txtFactorConversao.setText( String.valueOf(produto.getFactorConversao() ));
-        }
-        else
-        {
-            lb_produto.setText( "" );
-            txtCodBarra.setText( "" );
-            txtFactorConversao.setText( "" );
-            txtCodigoInterno.setText( "" );
+        if (produto.getCodigo() != 0) {
+            lb_produto.setText(produto.getDesignacao());
+            txtCodBarra.setText(produto.getCodBarra());
+            txtCodigoInterno.setText(String.valueOf(produto.getCodigo()));
+            txtFactorConversao.setText(String.valueOf(produto.getFactorConversao()));
+        } else {
+            lb_produto.setText("");
+            txtCodBarra.setText("");
+            txtFactorConversao.setText("");
+            txtCodigoInterno.setText("");
             txtCodBarra.requestFocus();
         }
-        mostrar_cod_dados_stock_origem( produto );
-        mostrar_cod_dados_stock_destino( produto );
+        mostrar_cod_dados_stock_origem(produto);
+        mostrar_cod_dados_stock_destino(produto);
 
     }
 
-    public void adicionar_produto_a_busca( TbStock stock )
-    {
+    public void adicionar_produto_a_busca(TbStock stock) {
 
         DefaultTableModel modelo = (DefaultTableModel) tabela_busca.getModel();
 
     }
 
-    public static boolean validar_zero()
-    {
-        if ( Double.parseDouble(txtQtdTransferir.getText() ) == 0 )
-        {
-            JOptionPane.showMessageDialog( null, "Atenção\nA quantidade a sair não pode ser igual a zero!" );
+    public static boolean validar_zero() {
+        if (Double.parseDouble(txtQtdTransferir.getText()) == 0) {
+            JOptionPane.showMessageDialog(null, "Atenção\nA quantidade a sair não pode ser igual a zero!");
 
             return false;
         }
         return true;
     }
 
-    public static boolean validar_zero_preco()
-    {
+    public static boolean validar_zero_preco() {
 
         return true;
 
     }
 
-    public static boolean validar_zero_qtd_preco()
-    {
-        if ( Double.parseDouble(txtQtdTransferir.getText() ) == 0 )
-        {
-            JOptionPane.showMessageDialog( null, "Atenção\nA quantidade a entrar não pode ser igual a zero!" );
+    public static boolean validar_zero_qtd_preco() {
+        if (Double.parseDouble(txtQtdTransferir.getText()) == 0) {
+            JOptionPane.showMessageDialog(null, "Atenção\nA quantidade a entrar não pode ser igual a zero!");
 
             return false;
         }
@@ -990,78 +942,68 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
 
     }
 
-    public static String getUnidade_Produto()
-    {
+    public static String getUnidade_Produto() {
         return produto.getCodUnidade().getAbreviacao();
     }
 
-    public static Integer getQuantidade()
-    {
-        return (int) Double.parseDouble(txtQtdTransferir.getText() );
+    public static Integer getQuantidade() {
+        return (int) Double.parseDouble(txtQtdTransferir.getText());
     }
 
-    private void procedimento_salvar()
-    {
+    private void procedimento_salvar() {
 
         conexaoTransacao = BDConexao.getInstancia();
-        DocumentoDao.startTransaction( conexaoTransacao );
+        DocumentoDao.startTransaction(conexaoTransacao);
 
         TransferenciaArmazem transferenciaArmazem = new TransferenciaArmazem();
 
-        transferenciaArmazem.setDataHora( new Date() );
-        transferenciaArmazem.setFkUsuario( cod_usuario );
-        transferenciaArmazem.setNomeUsuario( usuario.getNome() );
-        try
-        {
-            transferenciasArmazemController.salvar( transferenciaArmazem );
-            registar_linha( transferenciasArmazemController.findLastRow() );
+        transferenciaArmazem.setDataHora(new Date());
+        transferenciaArmazem.setFkUsuario(cod_usuario);
+        transferenciaArmazem.setNomeUsuario(usuario.getNome());
+        try {
+            transferenciasArmazemController.salvar(transferenciaArmazem);
+            registar_linha(transferenciasArmazemController.findLastRow());
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog( null, e.getMessage(), "Falha ao efectuar a tranferencia.", JOptionPane.ERROR_MESSAGE );
-            DocumentoDao.rollBackTransaction( conexaoTransacao );
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Falha ao efectuar a tranferencia.", JOptionPane.ERROR_MESSAGE);
+            DocumentoDao.rollBackTransaction(conexaoTransacao);
             conexaoTransacao.close();
 
         }
 
     }
 
-    public void remover_item_carrinho()
-    {
+    public void remover_item_carrinho() {
 
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
-        modelo.removeRow( table.getSelectedRow() );
+        modelo.removeRow(table.getSelectedRow());
 
     }
 
-    public JFrame getInstance()
-    {
+    public JFrame getInstance() {
         return this;
     }
 
-    private static void procedimento_registrar_stock( TbProduto produto_local, int id_armazem, double qtdCritica, double qtdBaixa )
-    {
+    private static void procedimento_registrar_stock(TbProduto produto_local, int id_armazem, double qtdCritica, double qtdBaixa) {
 
 //        if (!stockDao.exist_produto_stock(produto_local.getCodigo(), id_armazem)) {
-        if ( !stocksController.existe_stock( produto_local.getCodigo(), id_armazem ) )
-        {
+        if (!stocksController.existe_stock(produto_local.getCodigo(), id_armazem)) {
 
             TbStock stock = new TbStock();
-            stock.setDataEntrada( new Date() );
-            stock.setQuantidadeExistente( 0d );
-            stock.setStatus( "true" );
-            stock.setPrecoVenda( new BigDecimal( MetodosUtil.convertToDouble( "0.0" ) ) );
-            stock.setPrecoVendaGrosso( new BigDecimal( stock.getPrecoVenda().doubleValue() ) );
-            stock.setQtdGrosso( DVML.QTD_DEFAULT );
-            stock.setQuantidadeAntiga( 0d );
-            stock.setQuantidadeExistente( 0d );
-            stock.setCodArmazem( new TbArmazem( id_armazem ) );
-            stock.setCodProdutoCodigo( produto_local );
-            stock.setQuantCritica( (int) qtdCritica );
-            stock.setQuantBaixa( (int) qtdBaixa );
-            stocksController.salvar( stock );
+            stock.setDataEntrada(new Date());
+            stock.setQuantidadeExistente(0d);
+            stock.setStatus("true");
+            stock.setPrecoVenda(new BigDecimal(MetodosUtil.convertToDouble("0.0")));
+            stock.setPrecoVendaGrosso(new BigDecimal(stock.getPrecoVenda().doubleValue()));
+            stock.setQtdGrosso(DVML.QTD_DEFAULT);
+            stock.setQuantidadeAntiga(0d);
+            stock.setQuantidadeExistente(0d);
+            stock.setCodArmazem(new TbArmazem(id_armazem));
+            stock.setCodProdutoCodigo(produto_local);
+            stock.setQuantCritica((int) qtdCritica);
+            stock.setQuantBaixa((int) qtdBaixa);
+            stocksController.salvar(stock);
 
         }
 
@@ -1084,65 +1026,55 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
 //        }
 //
 //    }
-    private void getVectorOrigem()
-    {
+    private void getVectorOrigem() {
 
         String armazem_destino = cmbArmazemDestino.getSelectedItem().toString();
 
         Vector<String> valor = new Vector<>();
 
-        for ( int i = 0; i < lista_armazem.size(); i++ )
-        {
-            if ( !lista_armazem.get( i ).equals( armazem_destino ) )
-            {
-                valor.add( lista_armazem.get( i ) );
+        for (int i = 0; i < lista_armazem.size(); i++) {
+            if (!lista_armazem.get(i).equals(armazem_destino)) {
+                valor.add(lista_armazem.get(i));
             }
         }
-        System.out.println( "Origem: " + valor.toString() );
-        cmbArmazemOrigem.setModel( new DefaultComboBoxModel( valor ) );
+        System.out.println("Origem: " + valor.toString());
+        cmbArmazemOrigem.setModel(new DefaultComboBoxModel(valor));
 
     }
 
-    private void getVectorDestino()
-    {
+    private void getVectorDestino() {
 
         String armazem_origem = cmbArmazemOrigem.getSelectedItem().toString();
 
         Vector<String> valor = new Vector<>();
 
-        for ( int i = 0; i < lista_armazem.size(); i++ )
-        {
-            if ( !lista_armazem.get( i ).equals( armazem_origem ) )
-            {
-                valor.add( lista_armazem.get( i ) );
+        for (int i = 0; i < lista_armazem.size(); i++) {
+            if (!lista_armazem.get(i).equals(armazem_origem)) {
+                valor.add(lista_armazem.get(i));
             }
         }
-        System.out.println( valor.toString() );
+        System.out.println(valor.toString());
 
-        cmbArmazemDestino.setModel( new DefaultComboBoxModel( valor ) );
+        cmbArmazemDestino.setModel(new DefaultComboBoxModel(valor));
 
     }
 
-    private static boolean exist_produto_tabela_formulario( JTable tabela_busca, Integer codigo, int id_armazem_origem, int id_armazem_destino )
-    {
+    private static boolean exist_produto_tabela_formulario(JTable tabela_busca, Integer codigo, int id_armazem_origem, int id_armazem_destino) {
         DefaultTableModel modelo = (DefaultTableModel) tabela_busca.getModel();
 
-        if ( modelo.getRowCount() == 0 )
-        {
+        if (modelo.getRowCount() == 0) {
             return false;
         }
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
+        for (int i = 0; i < modelo.getRowCount(); i++) {
 
-            String valor_origem = modelo.getValueAt( i, 2 ).toString();
-            String valor_destino = modelo.getValueAt( i, 3 ).toString();
+            String valor_origem = modelo.getValueAt(i, 2).toString();
+            String valor_destino = modelo.getValueAt(i, 3).toString();
 
-            int fk_armazem_origem = Integer.parseInt( valor_origem.split( "-" )[ 0 ] );
-            int fk_armazem_destino = Integer.parseInt( valor_destino.split( "-" )[ 0 ] );
+            int fk_armazem_origem = Integer.parseInt(valor_origem.split("-")[0]);
+            int fk_armazem_destino = Integer.parseInt(valor_destino.split("-")[0]);
 
-            if ( modelo.getValueAt( i, 0 ) == codigo && fk_armazem_origem == id_armazem_origem && fk_armazem_destino == id_armazem_destino )
-            {
+            if (modelo.getValueAt(i, 0) == codigo && fk_armazem_origem == id_armazem_origem && fk_armazem_destino == id_armazem_destino) {
                 return true;
             }
         }
@@ -1150,150 +1082,137 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
         return false;
     }
 
-    private void adicionar_linha()
-    {
+    private void adicionar_linha() {
 
-        double qtdCriticaOrigem = conexao.getQtdCriticaStock( produto.getCodigo(), getIdArmazem( cmbArmazemOrigem ) );
-        double qtdBaixaOrigem = conexao.getQtdBaixaStock( produto.getCodigo(), getIdArmazem( cmbArmazemOrigem ) );
+        double qtdCriticaOrigem = conexao.getQtdCriticaStock(produto.getCodigo(), getIdArmazem(cmbArmazemOrigem));
+        double qtdBaixaOrigem = conexao.getQtdBaixaStock(produto.getCodigo(), getIdArmazem(cmbArmazemOrigem));
 
-        procedimento_registrar_stock( produto, getIdArmazem( cmbArmazemOrigem ), qtdCriticaOrigem, qtdBaixaOrigem ); //origem
-        procedimento_registrar_stock( produto, getIdArmazem( cmbArmazemDestino ), qtdCriticaOrigem, qtdBaixaOrigem ); //origem
+        procedimento_registrar_stock(produto, getIdArmazem(cmbArmazemOrigem), qtdCriticaOrigem, qtdBaixaOrigem); //origem
+        procedimento_registrar_stock(produto, getIdArmazem(cmbArmazemDestino), qtdCriticaOrigem, qtdBaixaOrigem); //origem
 
-        double factor_conversao = Double.parseDouble(txtFactorConversao.getText() );
-        double qtd_transferir = Double.parseDouble(txtQtdTransferir.getText() );
+        double factor_conversao = Double.parseDouble(txtFactorConversao.getText());
+        double qtd_transferir = Double.parseDouble(txtQtdTransferir.getText());
         double qtd = factor_conversao * qtd_transferir;
 
-        double qtd_origem = conexao.getQtdExistenteStock( produto.getCodigo(), getIdArmazem( cmbArmazemOrigem ) ) - qtd_transferir;
+        double qtd_origem = conexao.getQtdExistenteStock(produto.getCodigo(), getIdArmazem(cmbArmazemOrigem)) - qtd_transferir;
 //        double qtd_origem = conexao.getQtdExistenteStock( produto.getCodigo(), getIdArmazem( cmbArmazemOrigem ) ) - qtd;
-        double qtd_destino = conexao.getQtdExistenteStock( produto.getCodigo(), getIdArmazem( cmbArmazemDestino ) ) + qtd;
+        double qtd_destino = conexao.getQtdExistenteStock(produto.getCodigo(), getIdArmazem(cmbArmazemDestino)) + qtd;
 
-        int idArmazemOrigem = getIdArmazem( cmbArmazemOrigem );
-        int idArmazemDestino = getIdArmazem( cmbArmazemDestino );
+        int idArmazemOrigem = getIdArmazem(cmbArmazemOrigem);
+        int idArmazemDestino = getIdArmazem(cmbArmazemDestino);
 
-        if ( !exist_produto_tabela_formulario( table, produto.getCodigo(), idArmazemOrigem, idArmazemDestino ) )
-        {
+        if (!exist_produto_tabela_formulario(table, produto.getCodigo(), idArmazemOrigem, idArmazemDestino)) {
             DefaultTableModel modelo = (DefaultTableModel) table.getModel();
-            modelo.addRow( new Object[]
-            {
+            modelo.addRow(new Object[]{
                 produto.getCodigo(),
                 produto.getDesignacao(),
-                getArmazemQtd( getIdArmazem( cmbArmazemOrigem ) ),
-                getArmazemQtd( getIdArmazem( cmbArmazemDestino ) ),
+                getArmazemQtd(getIdArmazem(cmbArmazemOrigem)),
+                getArmazemQtd(getIdArmazem(cmbArmazemDestino)),
                 qtd_transferir,
                 factor_conversao,
-//                qtd,
+                //                qtd,
                 qtd_origem,
                 qtd_destino
 
-            } );
+            });
 
         }
 
-        txtQtdTransferir.setText( "" );
-        txtFactorConversao.setText( "" );
-        txtCodBarra.setText( "" );
+        txtQtdTransferir.setText("");
+        txtFactorConversao.setText("");
+        txtCodBarra.setText("");
         txtCodBarra.requestFocus();
 
     }
 
-    private static String getArmazemQtd( int id_armazem )
-    {
+    private static String getArmazemQtd(int id_armazem) {
 //        String designacao = armazemDao.findTbArmazem(id_armazem).getDesignacao();
-        String designacao = armazensController.findByCodigo( id_armazem ).getDesignacao();
-        double qtd = conexao.getQtdExistenteStock( produto.getCodigo(), id_armazem );
-        return id_armazem + "-" + designacao.substring( 0, 3 ) + " # (" + qtd + ")";
+        String designacao = armazensController.findByCodigo(id_armazem).getDesignacao();
+        double qtd = conexao.getQtdExistenteStock(produto.getCodigo(), id_armazem);
+        return id_armazem + "-" + designacao.substring(0, 3) + " # (" + qtd + ")";
     }
 
-    private void registar_linha_antigo( TransferenciaArmazem transferencia )
-    {
+    private void registar_linha_antigo(TransferenciaArmazem transferencia) {
         int lastTransferencia = transferenciasArmazemController.getLastTransferencia();
 
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         int idProduto = 0;
         double qtd_before = 0, qtd = 0, qtd_aflter = 0, factor_conversao = 0, qtd_destino_armazem_1;
-        
-        
-      
+
         String armazem_origem, armazem_destino = "", valor_origem, valor_destino, produto;
         int fk_armazem_origem = 0, fk_armazem_destino = 0;
         boolean efectuada = true;
 
-        ArmazensController armazensControllerLocal = new ArmazensController( conexaoTransacao );
-        LinhasTransferenciasController linhasTransferenciasControllerLocal = new LinhasTransferenciasController( conexaoTransacao );
-        StoksController stocksControllerLocal = new StoksController( conexaoTransacao );
+        ArmazensController armazensControllerLocal = new ArmazensController(conexaoTransacao);
+        LinhasTransferenciasController linhasTransferenciasControllerLocal = new LinhasTransferenciasController(conexaoTransacao);
+        StoksController stocksControllerLocal = new StoksController(conexaoTransacao);
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
+        for (int i = 0; i < modelo.getRowCount(); i++) {
 
-            idProduto = Integer.parseInt( modelo.getValueAt( i, 0 ).toString() );
-            produto = modelo.getValueAt( i, 1 ).toString();
+            idProduto = Integer.parseInt(modelo.getValueAt(i, 0).toString());
+            produto = modelo.getValueAt(i, 1).toString();
 
-            qtd = Double.parseDouble( modelo.getValueAt( i, 4 ).toString() );
-            
-            factor_conversao = Double.parseDouble( modelo.getValueAt( i, 5 ).toString() );
+            qtd = Double.parseDouble(modelo.getValueAt(i, 4).toString());
 
-            valor_origem = modelo.getValueAt( i, 2 ).toString();
-            valor_destino = modelo.getValueAt( i, 3 ).toString();
+            factor_conversao = Double.parseDouble(modelo.getValueAt(i, 5).toString());
 
-            fk_armazem_origem = Integer.parseInt( valor_origem.split( "-" )[ 0 ] );
-            fk_armazem_destino = Integer.parseInt( valor_destino.split( "-" )[ 0 ] );
+            valor_origem = modelo.getValueAt(i, 2).toString();
+            valor_destino = modelo.getValueAt(i, 3).toString();
 
-            System.out.println( "id_armazem_origem = " + fk_armazem_origem );
-            System.out.println( "id_armazem_destino = " + fk_armazem_destino );
+            fk_armazem_origem = Integer.parseInt(valor_origem.split("-")[0]);
+            fk_armazem_destino = Integer.parseInt(valor_destino.split("-")[0]);
+
+            System.out.println("id_armazem_origem = " + fk_armazem_origem);
+            System.out.println("id_armazem_destino = " + fk_armazem_destino);
 
 //            armazem_origem = armazemDao.findTbArmazem(fk_armazem_origem).getDesignacao();
-            armazem_origem = armazensControllerLocal.findByCodigo( fk_armazem_origem ).getDesignacao();
-            armazem_destino = armazensControllerLocal.findByCodigo( fk_armazem_destino ).getDesignacao();
+            armazem_origem = armazensControllerLocal.findByCodigo(fk_armazem_origem).getDesignacao();
+            armazem_destino = armazensControllerLocal.findByCodigo(fk_armazem_destino).getDesignacao();
 
             LinhaTransferencia linhaTransferencia = new LinhaTransferencia();
-            linhaTransferencia.setQtdBefore( qtd_before );
-            linhaTransferencia.setQtd( qtd );
-            linhaTransferencia.setQtdAfter( qtd_aflter );
+            linhaTransferencia.setQtdBefore(qtd_before);
+            linhaTransferencia.setQtd(qtd);
+            linhaTransferencia.setQtdAfter(qtd_aflter);
 
-            linhaTransferencia.setFkArmazemOrigem( fk_armazem_origem );
-            linhaTransferencia.setArmazemOrigem( armazem_origem );
-            linhaTransferencia.setArmazemDestino( armazem_destino );
-            linhaTransferencia.setFkArmazemDestino( fk_armazem_destino );
-            linhaTransferencia.setFkProduto( idProduto );
-            linhaTransferencia.setProduto( produto );
-            linhaTransferencia.setFkTransferenciaArmazem( transferencia );
+            linhaTransferencia.setFkArmazemOrigem(fk_armazem_origem);
+            linhaTransferencia.setArmazemOrigem(armazem_origem);
+            linhaTransferencia.setArmazemDestino(armazem_destino);
+            linhaTransferencia.setFkArmazemDestino(fk_armazem_destino);
+            linhaTransferencia.setFkProduto(idProduto);
+            linhaTransferencia.setProduto(produto);
+            linhaTransferencia.setFkTransferenciaArmazem(transferencia);
 
-            try
-            {
-                linhasTransferenciasControllerLocal.salvar( linhaTransferencia );
+            try {
+                linhasTransferenciasControllerLocal.salvar(linhaTransferencia);
 //                MetodosUtil.subtrai_quantidade( idProduto, qtd, fk_armazem_origem, conexaoTransacao );
 //                MetodosUtil.adiciona_quantidade( idProduto, qtd, fk_armazem_destino, conexaoTransacao );
 
-                if ( MovimentacaoController.registrarMovimento(
+                if (MovimentacaoController.registrarMovimento(
                         idProduto,
                         fk_armazem_origem,
                         cod_usuario,
-                        new BigDecimal( qtd ),
+                        new BigDecimal(qtd),
                         "TRANSFERENCIA " + transferencia.getPkTransferenciaArmazem(),
                         "SAIDA",
-                        conexao ) )
-                {
-                    stocksControllerLocal.subtrair_quantidades( idProduto, qtd, fk_armazem_origem );
+                        conexao)) {
+                    stocksControllerLocal.subtrair_quantidades(idProduto, qtd, fk_armazem_origem);
                 }
 
-                if ( MovimentacaoController.registrarMovimento(
+                if (MovimentacaoController.registrarMovimento(
                         idProduto,
                         fk_armazem_destino,
                         cod_usuario,
-                        new BigDecimal( qtd ),
+                        new BigDecimal(qtd),
                         "TRANSFERENCIA " + transferencia.getPkTransferenciaArmazem(),
                         "ENTRADA",
                         conexao
-                ) )
-                {
+                )) {
                     qtd_destino_armazem_1 = factor_conversao * qtd;
 //                    stocksControllerLocal.adicionar_quantidades( idProduto, qtd, fk_armazem_destino );
-                    stocksControllerLocal.adicionar_quantidades( idProduto, qtd_destino_armazem_1, fk_armazem_destino );
+                    stocksControllerLocal.adicionar_quantidades(idProduto, qtd_destino_armazem_1, fk_armazem_destino);
                 }
 
-            }
-            catch ( Exception e )
-            {
+            } catch (Exception e) {
                 efectuada = false;
             }
 
@@ -1318,32 +1237,28 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
 //            DocumentoDao.rollBackTransaction( conexaoTransacao );
 //            conexaoTransacao.close();
 //        }
-        if ( efectuada )
-        {
+        if (efectuada) {
             esvaziar_tabela();
-            JOptionPane.showMessageDialog( null, "Transferencia efectuada com sucesso." );
+            JOptionPane.showMessageDialog(null, "Transferencia efectuada com sucesso.");
             HashMap hashMap = new HashMap();
-            System.out.println( "ID_TRANSFERENCIA(1): " + lastTransferencia );
-            System.out.println( "ID_TRANSFERENCIA(2): " + transferencia.getPkTransferenciaArmazem() );
-            hashMap.put( "COD_TRANSFERENCIA", lastTransferencia );
-            txtQtdExistente.setText( "0" );
-            txtQtdExistente1.setText( "0" );
-            DocumentoDao.commitTransaction( conexaoTransacao );
-            new AnyReport( hashMap, "recibo_transferencia_armazem.jasper" );
+            System.out.println("ID_TRANSFERENCIA(1): " + lastTransferencia);
+            System.out.println("ID_TRANSFERENCIA(2): " + transferencia.getPkTransferenciaArmazem());
+            hashMap.put("COD_TRANSFERENCIA", lastTransferencia);
+            txtQtdExistente.setText("0");
+            txtQtdExistente1.setText("0");
+            DocumentoDao.commitTransaction(conexaoTransacao);
+            new AnyReport(hashMap, "recibo_transferencia_armazem.jasper");
             conexaoTransacao.close();
-        }
-        else
-        {
-            DocumentoDao.rollBackTransaction( conexaoTransacao );
+        } else {
+            DocumentoDao.rollBackTransaction(conexaoTransacao);
             conexaoTransacao.close();
         }
 
     }
 
-    public static boolean possivel_quantidade() throws SQLException
-    {
+    public static boolean possivel_quantidade() throws SQLException {
 
-        double quant_possivel = conexao.getQuantidade_Existente_Publico( getCodigoProduto1(), getCodigoArmazemOrigem() ) - conexao.getQuantidade_minima_publico( getCodigoProduto1(), getCodigoArmazemOrigem() );
+        double quant_possivel = conexao.getQuantidade_Existente_Publico(getCodigoProduto1(), getCodigoArmazemOrigem()) - conexao.getQuantidade_minima_publico(getCodigoProduto1(), getCodigoArmazemOrigem());
         //int quant_possivel = stock.getQuantidadeExistente() -  stock.getQuantBaixa();
 
         return quant_possivel >= getQuantidade();
@@ -1369,33 +1284,29 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
 //        }
 //
 //    }
-    private void procedimento_adicionar()
-    {
+    private void procedimento_adicionar() {
 
-        if ( camposValidar() )
-        {
+        if (camposValidar()) {
             adicionar_linha();
         }
 
     }
 
-    private boolean camposValidarAntigo()
-    {
+    private boolean camposValidarAntigo() {
 
-        double qtdExistenteOrigem = conexao.getQtdExistenteStock( produto.getCodigo(), getIdArmazem( cmbArmazemOrigem ) );
-        double qtd = Double.parseDouble(txtQtdTransferir.getText() );
+        double qtdExistenteOrigem = conexao.getQtdExistenteStock(produto.getCodigo(), getIdArmazem(cmbArmazemOrigem));
+        double qtd = Double.parseDouble(txtQtdTransferir.getText());
 
-        if ( qtd > qtdExistenteOrigem )
-        {
+        if (qtd > qtdExistenteOrigem) {
 
-            JOptionPane.showMessageDialog( null, "A qtd a transferir nao poder ser maior do que existente", "Aviso", JOptionPane.WARNING_MESSAGE );
+            JOptionPane.showMessageDialog(null, "A qtd a transferir nao poder ser maior do que existente", "Aviso", JOptionPane.WARNING_MESSAGE);
             return false;
         }
 
         return true;
 
     }
-    
+
 // =====================================================================
 // ALTERAÇÕES NA CLASSE TranferenciaArmazemVisao
 //
@@ -1407,42 +1318,34 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
 //
 // 3) Corre antes o script lotes_transferencia.sql (novos tipos em lote_movimento)
 // =====================================================================
+    private boolean camposValidar() {
 
-    private boolean camposValidar()
-    {
+        double qtdExistenteOrigem = conexao.getQtdExistenteStock(produto.getCodigo(), getIdArmazem(cmbArmazemOrigem));
+        double qtd = Double.parseDouble(txtQtdTransferir.getText());
 
-        double qtdExistenteOrigem = conexao.getQtdExistenteStock( produto.getCodigo(), getIdArmazem( cmbArmazemOrigem ) );
-        double qtd = Double.parseDouble( txtQtdTransferir.getText() );
+        if (qtd > qtdExistenteOrigem) {
 
-        if ( qtd > qtdExistenteOrigem )
-        {
-
-            JOptionPane.showMessageDialog( null, "A qtd a transferir nao poder ser maior do que existente", "Aviso", JOptionPane.WARNING_MESSAGE );
+            JOptionPane.showMessageDialog(null, "A qtd a transferir nao poder ser maior do que existente", "Aviso", JOptionPane.WARNING_MESSAGE);
             return false;
         }
 
         // LOTE: se o produto tem lotes na origem, tem de haver lotes válidos suficientes
-        try
-        {
+        try {
             Connection cn = conexao.getConnection();
-            int origem = getIdArmazem( cmbArmazemOrigem );
-            if ( TransferenciaLoteArmazem.temLotes( cn, produto.getCodigo(), origem ) )
-            {
-                double disponivel = TransferenciaLoteArmazem.disponivel( cn, produto.getCodigo(), origem );
-                if ( qtd > disponivel )
-                {
-                    JOptionPane.showMessageDialog( null,
+            int origem = getIdArmazem(cmbArmazemOrigem);
+            if (TransferenciaLoteArmazem.temLotes(cn, produto.getCodigo(), origem)) {
+                double disponivel = TransferenciaLoteArmazem.disponivel(cn, produto.getCodigo(), origem);
+                if (qtd > disponivel) {
+                    JOptionPane.showMessageDialog(null,
                             "Só existem " + disponivel + " unidade(s) em lotes activos e dentro da validade "
                             + "no armazém de origem.\nNão é possível transferir " + qtd + ".",
-                            "Lotes / stock", JOptionPane.WARNING_MESSAGE );
+                            "Lotes / stock", JOptionPane.WARNING_MESSAGE);
                     return false;
                 }
             }
-        }
-        catch ( SQLException ex )
-        {
+        } catch (SQLException ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog( null, "Erro ao verificar os lotes: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE );
+            JOptionPane.showMessageDialog(null, "Erro ao verificar os lotes: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
@@ -1450,8 +1353,7 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
 
     }
 
-    private void registar_linha( TransferenciaArmazem transferencia )
-    {
+    private void registar_linha(TransferenciaArmazem transferencia) {
         int lastTransferencia = transferenciasArmazemController.getLastTransferencia();
 
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
@@ -1464,104 +1366,132 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
         String erroTransferencia = null; // LOTE
         StringBuilder avisoLotes = new StringBuilder(); // LOTE: o que NÃO foi feito nos lotes
 
-        ArmazensController armazensControllerLocal = new ArmazensController( conexaoTransacao );
-        LinhasTransferenciasController linhasTransferenciasControllerLocal = new LinhasTransferenciasController( conexaoTransacao );
-        StoksController stocksControllerLocal = new StoksController( conexaoTransacao );
+        ArmazensController armazensControllerLocal = new ArmazensController(conexaoTransacao);
+        LinhasTransferenciasController linhasTransferenciasControllerLocal = new LinhasTransferenciasController(conexaoTransacao);
+        StoksController stocksControllerLocal = new StoksController(conexaoTransacao);
 
-        for ( int i = 0; i < modelo.getRowCount(); i++ )
-        {
+        for (int i = 0; i < modelo.getRowCount(); i++) {
 
-            idProduto = Integer.parseInt( modelo.getValueAt( i, 0 ).toString() );
-            produto = modelo.getValueAt( i, 1 ).toString();
+            idProduto = Integer.parseInt(modelo.getValueAt(i, 0).toString());
+            produto = modelo.getValueAt(i, 1).toString();
 
-            qtd = Double.parseDouble( modelo.getValueAt( i, 4 ).toString() );
+            qtd = Double.parseDouble(modelo.getValueAt(i, 4).toString());
 
-            factor_conversao = Double.parseDouble( modelo.getValueAt( i, 5 ).toString() );
+            factor_conversao = Double.parseDouble(modelo.getValueAt(i, 5).toString());
 
-            valor_origem = modelo.getValueAt( i, 2 ).toString();
-            valor_destino = modelo.getValueAt( i, 3 ).toString();
+            valor_origem = modelo.getValueAt(i, 2).toString();
+            valor_destino = modelo.getValueAt(i, 3).toString();
 
-            fk_armazem_origem = Integer.parseInt( valor_origem.split( "-" )[ 0 ] );
-            fk_armazem_destino = Integer.parseInt( valor_destino.split( "-" )[ 0 ] );
+            fk_armazem_origem = Integer.parseInt(valor_origem.split("-")[0]);
+            fk_armazem_destino = Integer.parseInt(valor_destino.split("-")[0]);
 
-            System.out.println( "id_armazem_origem = " + fk_armazem_origem );
-            System.out.println( "id_armazem_destino = " + fk_armazem_destino );
+            System.out.println("id_armazem_origem = " + fk_armazem_origem);
+            System.out.println("id_armazem_destino = " + fk_armazem_destino);
 
-            armazem_origem = armazensControllerLocal.findByCodigo( fk_armazem_origem ).getDesignacao();
-            armazem_destino = armazensControllerLocal.findByCodigo( fk_armazem_destino ).getDesignacao();
+            armazem_origem = armazensControllerLocal.findByCodigo(fk_armazem_origem).getDesignacao();
+            armazem_destino = armazensControllerLocal.findByCodigo(fk_armazem_destino).getDesignacao();
 
             LinhaTransferencia linhaTransferencia = new LinhaTransferencia();
-            linhaTransferencia.setQtdBefore( qtd_before );
-            linhaTransferencia.setQtd( qtd );
-            linhaTransferencia.setQtdAfter( qtd_aflter );
+            linhaTransferencia.setQtdBefore(qtd_before);
+            linhaTransferencia.setQtd(qtd);
+            linhaTransferencia.setQtdAfter(qtd_aflter);
 
-            linhaTransferencia.setFkArmazemOrigem( fk_armazem_origem );
-            linhaTransferencia.setArmazemOrigem( armazem_origem );
-            linhaTransferencia.setArmazemDestino( armazem_destino );
-            linhaTransferencia.setFkArmazemDestino( fk_armazem_destino );
-            linhaTransferencia.setFkProduto( idProduto );
-            linhaTransferencia.setProduto( produto );
-            linhaTransferencia.setFkTransferenciaArmazem( transferencia );
+            linhaTransferencia.setFkArmazemOrigem(fk_armazem_origem);
+            linhaTransferencia.setArmazemOrigem(armazem_origem);
+            linhaTransferencia.setArmazemDestino(armazem_destino);
+            linhaTransferencia.setFkArmazemDestino(fk_armazem_destino);
+            linhaTransferencia.setFkProduto(idProduto);
+            linhaTransferencia.setProduto(produto);
+            linhaTransferencia.setFkTransferenciaArmazem(transferencia);
 
-            try
-            {
-                linhasTransferenciasControllerLocal.salvar( linhaTransferencia );
+            try {
+                linhasTransferenciasControllerLocal.salvar(linhaTransferencia);
 
                 qtd_destino_armazem_1 = factor_conversao * qtd;
                 boolean saiu = false;    // LOTE
                 boolean entrou = false;  // LOTE
 
-                if ( MovimentacaoController.registrarMovimento(
+                if (MovimentacaoController.registrarMovimento(
                         idProduto,
                         fk_armazem_origem,
                         cod_usuario,
-                        new BigDecimal( qtd ),
+                        new BigDecimal(qtd),
                         "TRANSFERENCIA " + transferencia.getPkTransferenciaArmazem(),
                         "SAIDA",
-                        conexao ) )
-                {
-                    stocksControllerLocal.subtrair_quantidades( idProduto, qtd, fk_armazem_origem );
+                        conexao)) {
+                    stocksControllerLocal.subtrair_quantidades(idProduto, qtd, fk_armazem_origem);
                     saiu = true;
                 }
 
-                if ( MovimentacaoController.registrarMovimento(
+                if (MovimentacaoController.registrarMovimento(
                         idProduto,
                         fk_armazem_destino,
                         cod_usuario,
-                        new BigDecimal( qtd ),
+                        new BigDecimal(qtd),
                         "TRANSFERENCIA " + transferencia.getPkTransferenciaArmazem(),
                         "ENTRADA",
                         conexao
-                ) )
-                {
-                    stocksControllerLocal.adicionar_quantidades( idProduto, qtd_destino_armazem_1, fk_armazem_destino );
+                )) {
+                    stocksControllerLocal.adicionar_quantidades(idProduto, qtd_destino_armazem_1, fk_armazem_destino);
                     entrou = true;
                 }
 
                 // LOTE: leva os lotes (FEFO) do armazém de origem para o de destino,
                 // na MESMA transacção. Se falhar, vai para o catch e faz rollback de tudo.
-                System.err.println( "[LOTE] produto=" + idProduto + " saiu=" + saiu + " entrou=" + entrou );
-                if ( saiu && entrou )
-                {
-                    boolean moveuLotes = TransferenciaLoteArmazem.transferir( conexaoTransacao.getConnection(),
-                            idProduto, fk_armazem_origem, fk_armazem_destino,
-                            qtd, qtd_destino_armazem_1,
-                            transferencia.getPkTransferenciaArmazem() );
-                    if ( !moveuLotes )
-                    {
-                        avisoLotes.append( "\n - " ).append( produto )
-                                .append( ": sem lotes no armazém de origem (só o stock foi transferido)" );
+                System.err.println("[LOTE] produto=" + idProduto + " saiu=" + saiu + " entrou=" + entrou);
+//                if ( saiu && entrou )
+//                {
+//                    boolean moveuLotes = TransferenciaLoteArmazem.transferir( conexaoTransacao.getConnection(),
+//                            idProduto, fk_armazem_origem, fk_armazem_destino,
+//                            qtd, qtd_destino_armazem_1,
+//                            transferencia.getPkTransferenciaArmazem() );
+//                    if ( !moveuLotes )
+//                    {
+//                        avisoLotes.append( "\n - " ).append( produto )
+//                                .append( ": sem lotes no armazém de origem (só o stock foi transferido)" );
+//                    }
+//                }
+//                else
+//                {
+//                    avisoLotes.append( "\n - " ).append( produto )
+//                            .append( ": o stock não foi actualizado (movimento recusado), lotes não transferidos" );
+//                }
+
+                boolean farmacia = dadosInstituicao != null
+                        && "Farmacia".equalsIgnoreCase(
+                                dadosInstituicao.getNegocio()
+                        );
+
+                if (saiu && entrou) {
+
+                    if (farmacia) {
+                        boolean moveuLotes = TransferenciaLoteArmazem.transferir(
+                                conexaoTransacao.getConnection(),
+                                idProduto,
+                                fk_armazem_origem,
+                                fk_armazem_destino,
+                                qtd,
+                                qtd_destino_armazem_1,
+                                transferencia.getPkTransferenciaArmazem()
+                        );
+
+                        if (!moveuLotes) {
+                            avisoLotes.append("\n - ")
+                                    .append(produto)
+                                    .append(": sem lotes no armazém de origem (só o stock foi transferido)");
+                        }
+                    }
+
+                } else {
+
+                    if (farmacia) {
+                        avisoLotes.append("\n - ")
+                                .append(produto)
+                                .append(": o stock não foi actualizado (movimento recusado), lotes não transferidos");
                     }
                 }
-                else
-                {
-                    avisoLotes.append( "\n - " ).append( produto )
-                            .append( ": o stock não foi actualizado (movimento recusado), lotes não transferidos" );
-                }
 
-            }
-            catch ( Exception e )
-            {
+            } catch (Exception e) {
                 efectuada = false;
                 erroTransferencia = e.getMessage(); // LOTE: deixa de ser engolido em silêncio
                 e.printStackTrace();
@@ -1570,33 +1500,28 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
 
         }
 
-        if ( efectuada )
-        {
+        if (efectuada) {
             esvaziar_tabela();
-            JOptionPane.showMessageDialog( null, "Transferencia efectuada com sucesso."
-                    + ( avisoLotes.length() > 0 ? "\n\nATENÇÃO (lotes):" + avisoLotes : "" ) );
+            JOptionPane.showMessageDialog(null, "Transferencia efectuada com sucesso."
+                    + (avisoLotes.length() > 0 ? "\n\nATENÇÃO (lotes):" + avisoLotes : ""));
             HashMap hashMap = new HashMap();
-            System.out.println( "ID_TRANSFERENCIA(1): " + lastTransferencia );
-            System.out.println( "ID_TRANSFERENCIA(2): " + transferencia.getPkTransferenciaArmazem() );
-            hashMap.put( "COD_TRANSFERENCIA", lastTransferencia );
-            txtQtdExistente.setText( "0" );
-            txtQtdExistente1.setText( "0" );
-            DocumentoDao.commitTransaction( conexaoTransacao );
-            new AnyReport( hashMap, "recibo_transferencia_armazem.jasper" );
+            System.out.println("ID_TRANSFERENCIA(1): " + lastTransferencia);
+            System.out.println("ID_TRANSFERENCIA(2): " + transferencia.getPkTransferenciaArmazem());
+            hashMap.put("COD_TRANSFERENCIA", lastTransferencia);
+            txtQtdExistente.setText("0");
+            txtQtdExistente1.setText("0");
+            DocumentoDao.commitTransaction(conexaoTransacao);
+            new AnyReport(hashMap, "recibo_transferencia_armazem.jasper");
             conexaoTransacao.close();
-        }
-        else
-        {
-            DocumentoDao.rollBackTransaction( conexaoTransacao );
+        } else {
+            DocumentoDao.rollBackTransaction(conexaoTransacao);
             conexaoTransacao.close();
             // LOTE: o utilizador passa a saber porque falhou
-            JOptionPane.showMessageDialog( null,
-                    "A transferência não foi efectuada.\n" + ( erroTransferencia == null ? "" : erroTransferencia ),
-                    "Falha", JOptionPane.ERROR_MESSAGE );
+            JOptionPane.showMessageDialog(null,
+                    "A transferência não foi efectuada.\n" + (erroTransferencia == null ? "" : erroTransferencia),
+                    "Falha", JOptionPane.ERROR_MESSAGE);
         }
 
     }
 
-    
-    
 }

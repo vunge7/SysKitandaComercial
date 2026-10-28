@@ -5,10 +5,11 @@
  */
 package visao;
 
-
+import comercial.controller.DadosInstituicaoController;
 import java.sql.Connection;
 import comercial.controller.StoksController;
 import enties.util.BuscaModeloProduto;
+import entity.TbDadosInstituicao;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -19,45 +20,52 @@ import javax.swing.table.DefaultTableModel;
 import util.BDConexao;
 import util.DVML;
 import util.Definicoes;
+import util.TemaNegocioUtil;
 import util.tabela_manual.render.RenderBusca;
 
 /**
  *
  * @author Domingos Dala Vunge
  */
-public class BuscaProdutoComprasVisao extends javax.swing.JDialog
-{
+public class BuscaProdutoComprasVisao extends javax.swing.JDialog {
 
     private Vector<BuscaModeloProduto> fonte_dados = null;
     private StoksController stoksController;
+    private static DadosInstituicaoController dadosInstituicaoController;
+    public static TbDadosInstituicao dadosInstituicao;
 
     private int cod_armazem = 0, cod_janela = 0;
 
-    public BuscaProdutoComprasVisao( java.awt.Frame parent, boolean modal, int cod_armazem, int cod_janela, BDConexao conexao )
-    {
-        super( parent, modal );
+    public BuscaProdutoComprasVisao(java.awt.Frame parent, boolean modal, int cod_armazem, int cod_janela, BDConexao conexao) {
+        super(parent, modal);
         initComponents();
-        setLocationRelativeTo( null );
+        setLocationRelativeTo(null);
         this.cod_armazem = cod_armazem;
         this.cod_janela = cod_janela;
         txtDesignacao.requestFocus();
-        stoksController = new StoksController( conexao );
-        fonte_dados = stoksController.getFonteComprasSemRefeicao( cod_armazem, cod_janela );
+        stoksController = new StoksController(conexao);
+        // Carregar os dados da instituição (estava a ficar null)
+        dadosInstituicaoController = new DadosInstituicaoController(conexao);
+        dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
+        fonte_dados = stoksController.getFonteComprasSemRefeicao(cod_armazem, cod_janela);
 
-        tabela_busca.setDefaultRenderer( Object.class, new RenderBusca( cod_armazem, conexao ) );
+        tabela_busca.setDefaultRenderer(Object.class, new RenderBusca(cod_armazem, conexao));
         txtDesignacao.requestFocus();
-        try
-        {
+        try {
             adicionar_tabela();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        txtDesignacao.addKeyListener( new TratarEvento() );
+        txtDesignacao.addKeyListener(new TratarEvento());
 
         setBackGroundLegenda();
+
+        boolean ehFarmacia = dadosInstituicao != null
+                && TemaNegocioUtil.ehFarmacia(dadosInstituicao.getNegocio());
+
+        TemaNegocioUtil.aplicarCorCampos(ehFarmacia,
+                txtDesignacao);
 
     }
 
@@ -325,184 +333,145 @@ public class BuscaProdutoComprasVisao extends javax.swing.JDialog
     private void tabela_buscaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabela_buscaMouseClicked
         // TODO add your handling code here:
 
-        if ( evt.getClickCount() == 2 )
-        {
+        if (evt.getClickCount() == 2) {
 
-            if ( DVML.JANELA_ENTRADA == cod_janela )
-            {
+            if (DVML.JANELA_ENTRADA == cod_janela) {
 
-                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
+                DefaultTableModel modelo = (DefaultTableModel) tabela_busca.getModel();
                 int linha = tabela_busca.getSelectedRow();
-                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-                EntradaPratosCompostosVisao.accao_codigo_interno_enter_busca_exterior( codigo );
+                Integer codigo = Integer.parseInt(modelo.getValueAt(linha, 0).toString());
+                EntradaPratosCompostosVisao.accao_codigo_interno_enter_busca_exterior(codigo);
                 dispose();
 
-            }
-            else if ( DVML.JANELA_VENDA == cod_janela )
-            {
+            } else if (DVML.JANELA_VENDA == cod_janela) {
 
-                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
+                DefaultTableModel modelo = (DefaultTableModel) tabela_busca.getModel();
                 int linha = tabela_busca.getSelectedRow();
-                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-                VendaUsuarioVisao.accao_codigo_interno_enter_busca_exterior( codigo );
+                Integer codigo = Integer.parseInt(modelo.getValueAt(linha, 0).toString());
+                VendaUsuarioVisao.accao_codigo_interno_enter_busca_exterior(codigo);
                 dispose();
 
-            }
-            else if ( DVML.JANELA_VENDA_POS == cod_janela )
-            {
+            } else if (DVML.JANELA_VENDA_POS == cod_janela) {
 
-                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
+                DefaultTableModel modelo = (DefaultTableModel) tabela_busca.getModel();
                 int linha = tabela_busca.getSelectedRow();
-                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-                VendaPOSVisao.accao_codigo_interno_enter_busca_exterior( codigo );
+                Integer codigo = Integer.parseInt(modelo.getValueAt(linha, 0).toString());
+                VendaPOSVisao.accao_codigo_interno_enter_busca_exterior(codigo);
                 dispose();
 
-            }
-            
-            else if ( DVML.JANELA_VENDA_OFICINA == cod_janela )
-            {
+            } else if (DVML.JANELA_VENDA_OFICINA == cod_janela) {
 
-                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
+                DefaultTableModel modelo = (DefaultTableModel) tabela_busca.getModel();
                 int linha = tabela_busca.getSelectedRow();
-                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-                VendaOficinaUsuarioVisao.accao_codigo_interno_enter_busca_exterior( codigo );
+                Integer codigo = Integer.parseInt(modelo.getValueAt(linha, 0).toString());
+                VendaOficinaUsuarioVisao.accao_codigo_interno_enter_busca_exterior(codigo);
                 dispose();
 
-            }
-            
-            else if ( DVML.JANELA_FICHA_TECNICA == cod_janela )
-            {
+            } else if (DVML.JANELA_FICHA_TECNICA == cod_janela) {
 
-                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
+                DefaultTableModel modelo = (DefaultTableModel) tabela_busca.getModel();
                 int linha = tabela_busca.getSelectedRow();
-                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-                FichaTecnicaVisao.busca_produto_by_cod_interno( codigo );
+                Integer codigo = Integer.parseInt(modelo.getValueAt(linha, 0).toString());
+                FichaTecnicaVisao.busca_produto_by_cod_interno(codigo);
                 dispose();
 
-            }
-            
-            else if ( DVML.JANELA_COMPRA == cod_janela )
-            {
+            } else if (DVML.JANELA_COMPRA == cod_janela) {
 
-                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
+                DefaultTableModel modelo = (DefaultTableModel) tabela_busca.getModel();
                 int linha = tabela_busca.getSelectedRow();
-                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-                try
-                {
+                Integer codigo = Integer.parseInt(modelo.getValueAt(linha, 0).toString());
+                try {
 
-                    NovaEncomendaVisao.busca_produto_by_cod_interno( codigo );
+                    NovaEncomendaVisao.busca_produto_by_cod_interno(codigo);
 
-                }
-                catch ( Exception e )
-                {
+                } catch (Exception e) {
                 }
 
-                try
-                {
-                    
-                    CompraInformalVisao.busca_produto_by_cod_interno_compra( codigo );
-                }
-                catch ( Exception e )
-                {
+                try {
+
+                    CompraInformalVisao.busca_produto_by_cod_interno_compra(codigo);
+                } catch (Exception e) {
                 }
 
-                try
-                {
-                    TranferenciaArmazemVisao.accao_codigo_interno_enter_busca_exterior( codigo );
-                }
-                catch ( Exception e )
-                {
+                try {
+                    TranferenciaArmazemVisao.accao_codigo_interno_enter_busca_exterior(codigo);
+                } catch (Exception e) {
                 }
 
-                try
-                {
-                    AcertoStockVisao.accao_codigo_interno_enter_busca_exterior(codigo );
-                }
-                catch ( Exception e )
-                {
+                try {
+                    AcertoStockVisao.accao_codigo_interno_enter_busca_exterior(codigo);
+                } catch (Exception e) {
                 }
 
                 dispose();
 
-            }
-//            else if ( DVML.JANELA_TRANSFERENCIA == cod_janela )
-//            {
-//
-//                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
-//                int linha = tabela_busca.getSelectedRow();
-//                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-//                TranferenciaArmazemVisao.accao_codigo_interno_enter_busca_exterior( codigo );
-//                dispose();
-//
-//            }
-//            else if ( DVML.ACERTO_STOCK == cod_janela )
-//            {
-//
-//                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
-//                int linha = tabela_busca.getSelectedRow();
-//                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-//                AcertoStockVisao.accao_codigo_interno_enter_busca_exterior( codigo );
-//                dispose();
-//
-//            }
-            else if ( DVML.JANELA_ESTORNO == cod_janela )
-            {
+            } //            else if ( DVML.JANELA_TRANSFERENCIA == cod_janela )
+            //            {
+            //
+            //                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
+            //                int linha = tabela_busca.getSelectedRow();
+            //                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
+            //                TranferenciaArmazemVisao.accao_codigo_interno_enter_busca_exterior( codigo );
+            //                dispose();
+            //
+            //            }
+            //            else if ( DVML.ACERTO_STOCK == cod_janela )
+            //            {
+            //
+            //                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
+            //                int linha = tabela_busca.getSelectedRow();
+            //                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
+            //                AcertoStockVisao.accao_codigo_interno_enter_busca_exterior( codigo );
+            //                dispose();
+            //
+            //            }
+            else if (DVML.JANELA_ESTORNO == cod_janela) {
 
-                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
+                DefaultTableModel modelo = (DefaultTableModel) tabela_busca.getModel();
                 int linha = tabela_busca.getSelectedRow();
-                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-                EstornoVisao.accao_codigo_interno_enter_busca_exterior( codigo );
+                Integer codigo = Integer.parseInt(modelo.getValueAt(linha, 0).toString());
+                EstornoVisao.accao_codigo_interno_enter_busca_exterior(codigo);
                 dispose();
 
-            }
-            else if ( DVML.JANELA_PRODUTO == cod_janela )
-            {
+            } else if (DVML.JANELA_PRODUTO == cod_janela) {
 
-                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
+                DefaultTableModel modelo = (DefaultTableModel) tabela_busca.getModel();
                 int linha = tabela_busca.getSelectedRow();
-                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-                ProdutosVisao.ver_dados( codigo );
+                Integer codigo = Integer.parseInt(modelo.getValueAt(linha, 0).toString());
+                ProdutosVisao.ver_dados(codigo);
                 dispose();
 
-            }
-            else if ( ( Objects.nonNull( NovaGestaoPedidosVisao.rbNao_lugar ) && NovaGestaoPedidosVisao.rbNao_lugar.isSelected() ) 
-                    && DVML.JANELA_RETAURANTE == cod_janela )
-            {
+            } else if ((Objects.nonNull(NovaGestaoPedidosVisao.rbNao_lugar) && NovaGestaoPedidosVisao.rbNao_lugar.isSelected())
+                    && DVML.JANELA_RETAURANTE == cod_janela) {
 
-                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
+                DefaultTableModel modelo = (DefaultTableModel) tabela_busca.getModel();
                 int linha = tabela_busca.getSelectedRow();
-                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-                NovaGestaoPedidosVisao.accao_codigo_interno_enter_busca_exterior( codigo );
+                Integer codigo = Integer.parseInt(modelo.getValueAt(linha, 0).toString());
+                NovaGestaoPedidosVisao.accao_codigo_interno_enter_busca_exterior(codigo);
                 dispose();
 
-            }
-            else if ( DVML.JANELA_VENDA_EXPRESSO == cod_janela )
-            {
+            } else if (DVML.JANELA_VENDA_EXPRESSO == cod_janela) {
 
-                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
+                DefaultTableModel modelo = (DefaultTableModel) tabela_busca.getModel();
                 int linha = tabela_busca.getSelectedRow();
-                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-                VendasPraticasVisao.accao_codigo_interno_enter_busca_exterior( codigo );
+                Integer codigo = Integer.parseInt(modelo.getValueAt(linha, 0).toString());
+                VendasPraticasVisao.accao_codigo_interno_enter_busca_exterior(codigo);
                 dispose();
 
-            }
-            else if ( DVML.JANELA_RECOLHA == cod_janela )
-            {
+            } else if (DVML.JANELA_RECOLHA == cod_janela) {
 
-                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
+                DefaultTableModel modelo = (DefaultTableModel) tabela_busca.getModel();
                 int linha = tabela_busca.getSelectedRow();
-                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-                RecolhaPedidosVisao.accao_codigo_interno_enter_busca_exterior( codigo );
+                Integer codigo = Integer.parseInt(modelo.getValueAt(linha, 0).toString());
+                RecolhaPedidosVisao.accao_codigo_interno_enter_busca_exterior(codigo);
                 dispose();
 
-            }
-            else if ( DVML.JANELA_ASSOCIACAO == cod_janela )
-            {
+            } else if (DVML.JANELA_ASSOCIACAO == cod_janela) {
 
-                DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
+                DefaultTableModel modelo = (DefaultTableModel) tabela_busca.getModel();
                 int linha = tabela_busca.getSelectedRow();
-                Integer codigo = Integer.parseInt( modelo.getValueAt( linha, 0 ).toString() );
-                AssociacaoServicoVisao.adcionarItem( codigo );
+                Integer codigo = Integer.parseInt(modelo.getValueAt(linha, 0).toString());
+                AssociacaoServicoVisao.adcionarItem(codigo);
                 dispose();
 
             }
@@ -518,39 +487,27 @@ public class BuscaProdutoComprasVisao extends javax.swing.JDialog
     /**
      * @param args the command line arguments
      */
-    public static void main( String args[] )
-    {
+    public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        try
-        {
-            for ( javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels() )
-            {
-                if ( "Nimbus".equals( info.getName() ) )
-                {
-                    javax.swing.UIManager.setLookAndFeel( info.getClassName() );
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
-        }
-        catch ( ClassNotFoundException ex )
-        {
-            java.util.logging.Logger.getLogger(BuscaProdutoComprasVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }
-        catch ( InstantiationException ex )
-        {
-            java.util.logging.Logger.getLogger(BuscaProdutoComprasVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }
-        catch ( IllegalAccessException ex )
-        {
-            java.util.logging.Logger.getLogger(BuscaProdutoComprasVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }
-        catch ( javax.swing.UnsupportedLookAndFeelException ex )
-        {
-            java.util.logging.Logger.getLogger(BuscaProdutoComprasVisao.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(BuscaProdutoComprasVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(BuscaProdutoComprasVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(BuscaProdutoComprasVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(BuscaProdutoComprasVisao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
         //</editor-fold>
@@ -586,22 +543,18 @@ public class BuscaProdutoComprasVisao extends javax.swing.JDialog
         //</editor-fold>
 
         /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable()
-        {
-            public void run()
-            {
-                BuscaProdutoComprasVisao dialog = new BuscaProdutoComprasVisao( new javax.swing.JFrame(), true, 1, 0, BDConexao.getInstancia() );
-                dialog.addWindowListener( new java.awt.event.WindowAdapter()
-                {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                BuscaProdutoComprasVisao dialog = new BuscaProdutoComprasVisao(new javax.swing.JFrame(), true, 1, 0, BDConexao.getInstancia());
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
-                    public void windowClosing( java.awt.event.WindowEvent e )
-                    {
-                        System.exit( 0 );
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
                     }
-                } );
-                dialog.setVisible( true );
+                });
+                dialog.setVisible(true);
             }
-        } );
+        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -628,88 +581,68 @@ public class BuscaProdutoComprasVisao extends javax.swing.JDialog
     private javax.swing.JTextField txtDesignacao;
     // End of variables declaration//GEN-END:variables
 
-    class TratarEvento implements KeyListener
-    {
+    class TratarEvento implements KeyListener {
 
         String prefixo = "";
 
-        public void keyPressed( KeyEvent evt )
-        {
+        public void keyPressed(KeyEvent evt) {
 
-            if ( evt.getKeyCode() != KeyEvent.VK_BACK_SPACE && evt.getKeyCode() != KeyEvent.VK_ENTER )
-            {
+            if (evt.getKeyCode() != KeyEvent.VK_BACK_SPACE && evt.getKeyCode() != KeyEvent.VK_ENTER) {
                 char key = evt.getKeyChar();
                 prefixo = txtDesignacao.getText().trim() + key;
                 //adicionar( stockDao.getStockLIKE_Nome( prefixo ) );
-                adicionar( prefixo );
+                adicionar(prefixo);
 
-            }
-            else if ( evt.getKeyCode() == KeyEvent.VK_BACK_SPACE )
-            {
-                try
-                {
+            } else if (evt.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+                try {
 
-                    prefixo = prefixo.toString().trim().substring( 0, prefixo.length() - 1 );
+                    prefixo = prefixo.toString().trim().substring(0, prefixo.length() - 1);
                     // adicionar( stockDao.getStockLIKE_Nome( prefixo ) );
-                    adicionar( prefixo );
+                    adicionar(prefixo);
 
-                }
-                catch ( Exception e )
-                {
+                } catch (Exception e) {
 
                 }
 
             }
         }
 
-        public void keyReleased( KeyEvent evt )
-        {
+        public void keyReleased(KeyEvent evt) {
         }
 
-        public void keyTyped( KeyEvent evt )
-        {
+        public void keyTyped(KeyEvent evt) {
         }
 
     }
 
-    private void adicionar( String designacao )
-    {
+    private void adicionar(String designacao) {
         int contTotal = 0, contTotalStockVazio = 0, contTotalStockCritco = 0, contTotalStockNormal = 0, contTotalServico = 0;
         Iterator<BuscaModeloProduto> iterator = fonte_dados.iterator();
-        DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
-        modelo.setRowCount( 0 );
+        DefaultTableModel modelo = (DefaultTableModel) tabela_busca.getModel();
+        modelo.setRowCount(0);
 
-        while ( iterator.hasNext() )
-        {
+        while (iterator.hasNext()) {
 
             BuscaModeloProduto next = iterator.next();
-            if ( next.getDesignacao().toLowerCase().contains( designacao.toLowerCase() ) )
-            {
+            if (next.getDesignacao().toLowerCase().contains(designacao.toLowerCase())) {
                 contTotal++;
 
-                if ( next.getQtd().equals( "0" ) )
-                {
+                if (next.getQtd().equals("0")) {
                     contTotalStockVazio++;
                 }
 
-                if ( next.getEstadoCritico().equals( "true" ) )
-                {
+                if (next.getEstadoCritico().equals("true")) {
                     contTotalStockCritco++;
                 }
 
-                if ( next.getQtd().equals( "-" ) )
-                {
+                if (next.getQtd().equals("-")) {
                     contTotalServico++;
-                }
-
-                else if ( Double.parseDouble( next.getQtd() ) != 0 && next.getEstadoCritico().equals( "false" ) )
-                {
+                } else if (Double.parseDouble(next.getQtd()) != 0 && next.getEstadoCritico().equals("false")) {
                     contTotalStockNormal++;
                 }
 
                 modelo.addRow(
-                        new Object[]
-                        {
+                        new Object[]{
                             next.getCodigo(),
                             next.getDesignacao(),
                             next.getCategoria(),
@@ -724,50 +657,42 @@ public class BuscaProdutoComprasVisao extends javax.swing.JDialog
 
         }
 
-        lbTotalStockVazio.setText( String.valueOf( contTotalStockVazio ) );
+        lbTotalStockVazio.setText(String.valueOf(contTotalStockVazio));
 
-        lbTotalServico.setText( String.valueOf( contTotalServico ) );
-        lbTotalStockCritico.setText( String.valueOf( contTotalStockCritco ) );
-        lbTotalStockNormal.setText( String.valueOf( contTotalStockNormal ) );
-        lbTamnho.setText( String.valueOf( contTotal ) );
+        lbTotalServico.setText(String.valueOf(contTotalServico));
+        lbTotalStockCritico.setText(String.valueOf(contTotalStockCritco));
+        lbTotalStockNormal.setText(String.valueOf(contTotalStockNormal));
+        lbTamnho.setText(String.valueOf(contTotal));
     }
 
-    private void adicionar_tabela()
-    {
+    private void adicionar_tabela() {
 
         int contTotal = 0, contTotalStockVazio = 0, contTotalStockCritco = 0, contTotalStockNormal = 0, contTotalServico = 0;
-        DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
-        modelo.setRowCount( 0 );
+        DefaultTableModel modelo = (DefaultTableModel) tabela_busca.getModel();
+        modelo.setRowCount(0);
         Iterator<BuscaModeloProduto> iterator = fonte_dados.iterator();
-        System.err.println( "SIZE-ITERATOR: " + fonte_dados.size() );
-        while ( iterator.hasNext() )
-        {
+        System.err.println("SIZE-ITERATOR: " + fonte_dados.size());
+        while (iterator.hasNext()) {
             contTotal++;
 
             BuscaModeloProduto next = iterator.next();
 
-            if ( next.getQtd().equals( "0" ) )
-            {
+            if (next.getQtd().equals("0")) {
                 contTotalStockVazio++;
             }
 
-            if ( next.getEstadoCritico().equals( "true" ) )
-            {
+            if (next.getEstadoCritico().equals("true")) {
                 contTotalStockCritco++;
             }
 
-            if ( next.getQtd().equals( "-" ) )
-            {
+            if (next.getQtd().equals("-")) {
                 contTotalServico++;
-            }
-            else if ( Double.parseDouble( next.getQtd() ) != 0 && next.getEstadoCritico().equals( "false" ) )
-            {
+            } else if (Double.parseDouble(next.getQtd()) != 0 && next.getEstadoCritico().equals("false")) {
                 contTotalStockNormal++;
             }
 
             modelo.addRow(
-                    new Object[]
-                    {
+                    new Object[]{
                         next.getCodigo(),
                         next.getDesignacao(),
                         next.getCategoria(),
@@ -779,11 +704,11 @@ public class BuscaProdutoComprasVisao extends javax.swing.JDialog
             );
 
         }
-        lbTotalStockVazio.setText( String.valueOf( contTotalStockVazio ) );
-        lbTotalServico.setText( String.valueOf( contTotalServico ) );
-        lbTotalStockCritico.setText( String.valueOf( contTotalStockCritco ) );
-        lbTotalStockNormal.setText( String.valueOf( contTotalStockNormal ) );
-        lbTamnho.setText( String.valueOf( contTotal ) );
+        lbTotalStockVazio.setText(String.valueOf(contTotalStockVazio));
+        lbTotalServico.setText(String.valueOf(contTotalServico));
+        lbTotalStockCritico.setText(String.valueOf(contTotalStockCritco));
+        lbTotalStockNormal.setText(String.valueOf(contTotalStockNormal));
+        lbTamnho.setText(String.valueOf(contTotal));
 
     }
 //    private void adicionar_tabela()
@@ -841,16 +766,15 @@ public class BuscaProdutoComprasVisao extends javax.swing.JDialog
 //
 //    }
 
-    private void setBackGroundLegenda()
-    {
-        jPanelStockCritico.setBackground( new Color( Definicoes.PRODUTO_CRITICO[ 0 ],
-                Definicoes.PRODUTO_CRITICO[ 1 ], Definicoes.PRODUTO_CRITICO[ 2 ] ) );
-        jPanelStockNormal.setBackground( new Color( Definicoes.PRODUTO[ 0 ],
-                Definicoes.PRODUTO[ 1 ], Definicoes.PRODUTO[ 2 ] ) );
-        jPanelStockVazio.setBackground( new Color( Definicoes.STOCK_VAZIO[ 0 ],
-                Definicoes.STOCK_VAZIO[ 1 ], Definicoes.STOCK_VAZIO[ 2 ] ) );
-        jPanelServico.setBackground( new Color( Definicoes.SERVICOS[ 0 ],
-                Definicoes.SERVICOS[ 1 ], Definicoes.SERVICOS[ 2 ] ) );
+    private void setBackGroundLegenda() {
+        jPanelStockCritico.setBackground(new Color(Definicoes.PRODUTO_CRITICO[0],
+                Definicoes.PRODUTO_CRITICO[1], Definicoes.PRODUTO_CRITICO[2]));
+        jPanelStockNormal.setBackground(new Color(Definicoes.PRODUTO[0],
+                Definicoes.PRODUTO[1], Definicoes.PRODUTO[2]));
+        jPanelStockVazio.setBackground(new Color(Definicoes.STOCK_VAZIO[0],
+                Definicoes.STOCK_VAZIO[1], Definicoes.STOCK_VAZIO[2]));
+        jPanelServico.setBackground(new Color(Definicoes.SERVICOS[0],
+                Definicoes.SERVICOS[1], Definicoes.SERVICOS[2]));
     }
 
 }

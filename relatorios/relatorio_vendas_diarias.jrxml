@@ -261,7 +261,7 @@
 		<band height="45" splitType="Stretch"/>
 	</columnFooter>
 	<summary>
-		<band height="42" splitType="Stretch">
+		<band height="440" splitType="Stretch">
 			<textField pattern="#,##0.00">
 				<reportElement uuid="dc3a84ba-0f5c-479d-a7bf-e5b8a281adee" x="325" y="0" width="107" height="20"/>
 				<box rightPadding="2">
@@ -318,6 +318,99 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$V{VFR}]]></textFieldExpression>
 			</textField>
+
+			<barChart>
+				<chart evaluationTime="Report">
+					<reportElement uuid="3c1d6b7e-5a10-4b8e-9f21-0a1b2c3d4e01" x="0" y="30" width="555" height="200"/>
+					<chartTitle>
+						<titleExpression><![CDATA["Vendas por dia: Facturas-Recibo, Facturas e Notas de Crédito"]]></titleExpression>
+					</chartTitle>
+					<chartLegend position="Bottom"/>
+				</chart>
+				<categoryDataset>
+					<categorySeries>
+						<seriesExpression><![CDATA["Factura-Recibo"]]></seriesExpression>
+						<categoryExpression><![CDATA[new java.text.SimpleDateFormat("dd/MM").format($F{data})]]></categoryExpression>
+						<valueExpression><![CDATA[$F{valor_total_fr}]]></valueExpression>
+					</categorySeries>
+					<categorySeries>
+						<seriesExpression><![CDATA["Factura"]]></seriesExpression>
+						<categoryExpression><![CDATA[new java.text.SimpleDateFormat("dd/MM").format($F{data})]]></categoryExpression>
+						<valueExpression><![CDATA[$F{valor_total_ft}]]></valueExpression>
+					</categorySeries>
+					<categorySeries>
+						<seriesExpression><![CDATA["Nota de Crédito"]]></seriesExpression>
+						<categoryExpression><![CDATA[new java.text.SimpleDateFormat("dd/MM").format($F{data})]]></categoryExpression>
+						<valueExpression><![CDATA[$F{valor_total_nc}]]></valueExpression>
+					</categorySeries>
+				</categoryDataset>
+				<barPlot isShowLabels="false">
+					<plot>
+						<seriesColor seriesOrder="0" color="#2E75B6"/>
+						<seriesColor seriesOrder="1" color="#548235"/>
+						<seriesColor seriesOrder="2" color="#C00000"/>
+					</plot>
+					<itemLabel/>
+					<categoryAxisFormat>
+						<axisFormat/>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat/>
+					</valueAxisFormat>
+				</barPlot>
+			</barChart>
+			<lineChart>
+				<chart evaluationTime="Report">
+					<reportElement uuid="3c1d6b7e-5a10-4b8e-9f21-0a1b2c3d4e02" x="0" y="240" width="335" height="190"/>
+					<chartTitle>
+						<titleExpression><![CDATA["Evolução do Total Geral diário"]]></titleExpression>
+					</chartTitle>
+				</chart>
+				<categoryDataset>
+					<categorySeries>
+						<seriesExpression><![CDATA["Total Geral"]]></seriesExpression>
+						<categoryExpression><![CDATA[new java.text.SimpleDateFormat("dd/MM").format($F{data})]]></categoryExpression>
+						<valueExpression><![CDATA[$F{total_geral}]]></valueExpression>
+					</categorySeries>
+				</categoryDataset>
+				<linePlot isShowShapes="true">
+					<plot>
+						<seriesColor seriesOrder="0" color="#7030A0"/>
+					</plot>
+					<categoryAxisFormat>
+						<axisFormat/>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat/>
+					</valueAxisFormat>
+				</linePlot>
+			</lineChart>
+			<pieChart>
+				<chart evaluationTime="Report">
+					<reportElement uuid="3c1d6b7e-5a10-4b8e-9f21-0a1b2c3d4e03" x="345" y="240" width="210" height="190"/>
+					<chartTitle>
+						<titleExpression><![CDATA["Peso das vendas (FR vs FT)"]]></titleExpression>
+					</chartTitle>
+					<chartLegend position="Bottom"/>
+				</chart>
+				<pieDataset>
+					<pieSeries>
+						<keyExpression><![CDATA["Factura-Recibo"]]></keyExpression>
+						<valueExpression><![CDATA[$V{VFR}]]></valueExpression>
+					</pieSeries>
+					<pieSeries>
+						<keyExpression><![CDATA["Factura"]]></keyExpression>
+						<valueExpression><![CDATA[$V{VFT}]]></valueExpression>
+					</pieSeries>
+				</pieDataset>
+				<piePlot isShowLabels="true" labelFormat="{2}">
+					<plot>
+						<seriesColor seriesOrder="0" color="#2E75B6"/>
+						<seriesColor seriesOrder="1" color="#548235"/>
+					</plot>
+					<itemLabel/>
+				</piePlot>
+			</pieChart>
 		</band>
 	</summary>
 </jasperReport>

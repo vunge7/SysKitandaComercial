@@ -4,11 +4,13 @@
  */
 package visao;
 
+import comercial.controller.DadosInstituicaoController;
 import comercial.controller.VendasController;
 import dao.DadosInstituicaoDao;
 import dao.ItemPermissaoDao;
 import dao.ProdutoDao;
 import dao.UsuarioDao;
+import entity.TbDadosInstituicao;
 import entity.TbItemPermissao;
 import entity.TbProduto;
 import entity.TbUsuario;
@@ -30,6 +32,9 @@ import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
 import static util.MetodosUtil.rodarComandoWindows;
 import util.OperacaoSistemaUtil;
+import util.TemaMenuPrincipalUtil;
+import util.TemaNegocioUtil;
+import static util.TemaNegocioUtil.ehFarmacia;
 
 /**
  *
@@ -42,6 +47,7 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame {
     private ItemPermissaoDao itemPermissaoDao = new ItemPermissaoDao(emf);
     private UsuarioDao usuarioDao = new UsuarioDao(emf);
     private DadosInstituicaoDao dadosInstituicaoDao = new DadosInstituicaoDao(emf);
+    public static TbDadosInstituicao dadosInstituicao;
     private int cod_utilizador;
     private int idEmpresa;
     private boolean administrador = false;
@@ -84,11 +90,33 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame {
         jmAutorizacaoCompras.setVisible(false);
         jmEncomendas.setVisible(false);
 
+                DadosInstituicaoController dadosCtrl = new DadosInstituicaoController(conexao);
+        TbDadosInstituicao dadosInstituicao = (TbDadosInstituicao) dadosCtrl.findById(1);
+
+//        boolean ehFarmacia = dadosInstituicao != null
+//                && TemaNegocioUtil.ehFarmacia(dadosInstituicao.getNegocio());
+//
+//        TemaMenuPrincipalUtil.aplicar(jLabel1, ehFarmacia);
+
         boas_vinda();
+
         busca_permissao();
         mostrarNumeroDeprodutosExpirados();
         jMenuItemGestaoCreditos.setVisible(false);
         activar_opcoes();
+//        initComponents();
+
+//        DadosInstituicaoController dadosCtrl = new DadosInstituicaoController(conexao);
+//        TbDadosInstituicao dadosInstituicao = (TbDadosInstituicao) dadosCtrl.findById(1);
+//
+//        boolean ehFarmacia = dadosInstituicao != null
+//                && TemaNegocioUtil.ehFarmacia(dadosInstituicao.getNegocio());
+//
+//        TemaMenuPrincipalUtil.aplicar(jLabel1, ehFarmacia);
+//
+//        new MenuPrincipalFarmaciaVisao(ehFarmacia).setVisible(true);
+            // Tema de farmácia: sempre aplicado neste menu
+         TemaMenuPrincipalUtil.aplicar(jLabel1, true);
     }
 
     public void busca_permissao() {
@@ -140,8 +168,6 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame {
                 jMenuItemRelatorioQuebras.setEnabled(true);
             } else if (permissao.equals(jMenuItemRelatorioQtdDetalhado.getText())) {
                 jMenuItemRelatorioQtdDetalhado.setEnabled(true);
-            } else if (permissao.equals(jmListarProdutosStock.getText())) {
-                jmListarProdutosStock.setEnabled(true);
             } else if (permissao.equals(jmListagemVasilhames.getText())) {
                 jmListagemVasilhames.setEnabled(true);
             } else if (permissao.equals(jMenuItemCancelamentoEntradas.getText())) {
@@ -277,8 +303,6 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame {
                 jMenuConfiguracoesSistema.setEnabled(true);
             } else if (permissao.equals(jMenuItemRelatorioDeEntradas.getText())) {
                 jMenuItemRelatorioDeEntradas.setEnabled(true);
-            } else if (permissao.equals(jcbGuiaTransporte.getText())) {
-                jcbGuiaTransporte.setEnabled(true);
             } else if (permissao.equals(jcbConverterGuiaTransporteDocumento.getText())) {
                 jcbConverterGuiaTransporteDocumento.setEnabled(true);
             } else if (permissao.equals(jcbAnulamentoEntradasProdutos.getText())) {
@@ -313,7 +337,6 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame {
         jMenuItemRelatorioQtdDetalhado.setEnabled(status);
         jmRelatorioPorFonecedor.setEnabled(status);
         jmAcertoStock.setEnabled(status);
-        jmListarProdutosStock.setEnabled(status);
         jmListagemVasilhames.setEnabled(status);
         jmTodasVendas.setEnabled(status);
         jmReactivarProdutos.setEnabled(status);
@@ -388,7 +411,6 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame {
         jMenuItemRelatorioMensal.setEnabled(status);
         jMenuItemRelatorioDeEntradas.setEnabled(status);
         jMenuItemCancelamentoEntradas.setEnabled(status);
-        jcbGuiaTransporte.setEnabled(status);
         jcbAlteracaoGuiaTransporte.setEnabled(status);
         jcbAnulamentoEntradasProdutos.setEnabled(status);
         jcbConverterGuiaTransporteDocumento.setEnabled(status);
@@ -424,7 +446,6 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame {
         jMenuItem7 = new javax.swing.JMenuItem();
         jMenuItemRectificacao = new javax.swing.JMenuItem();
         jmNotaLevantamento = new javax.swing.JMenuItem();
-        jcbGuiaTransporte = new javax.swing.JMenuItem();
         jMenuItemGestaoCreditos = new javax.swing.JMenuItem();
         jmEstornos = new javax.swing.JMenuItem();
         jcbAlteracaoGuiaTransporte = new javax.swing.JMenuItem();
@@ -435,7 +456,7 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame {
         jMenu2 = new javax.swing.JMenu();
         jMenuItem15 = new javax.swing.JMenuItem();
         jMenuItem17 = new javax.swing.JMenuItem();
-        jmListarProdutosStock = new javax.swing.JMenuItem();
+        jMenuItem14 = new javax.swing.JMenuItem();
         jmTodasVendas = new javax.swing.JMenuItem();
         jmVendaDetalhadasUsuarios = new javax.swing.JMenuItem();
         jmRelatorioVendasPorUsuarioData = new javax.swing.JMenuItem();
@@ -466,8 +487,6 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame {
         jcbRelatorioMensalClientesVips = new javax.swing.JMenuItem();
         jmRelatoriosSaidasProdutosPorDatas = new javax.swing.JMenuItem();
         jMenuItemRelatorioDeEntradas = new javax.swing.JMenuItem();
-        jMenuItem5 = new javax.swing.JMenuItem();
-        jMenuItem14 = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jmTurno = new javax.swing.JMenuItem();
         jmCadastroUsuario = new javax.swing.JMenuItem();
@@ -639,15 +658,6 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame {
         });
         jMenu1.add(jmNotaLevantamento);
 
-        jcbGuiaTransporte.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
-        jcbGuiaTransporte.setText("Guia Transporte");
-        jcbGuiaTransporte.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jcbGuiaTransporteActionPerformed(evt);
-            }
-        });
-        jMenu1.add(jcbGuiaTransporte);
-
         jMenuItemGestaoCreditos.setText("Gestao de Creditos");
         jMenuItemGestaoCreditos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -715,14 +725,13 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame {
 
         jmenuRelatorios.add(jMenu2);
 
-        jmListarProdutosStock.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
-        jmListarProdutosStock.setText("Inventario");
-        jmListarProdutosStock.addActionListener(new java.awt.event.ActionListener() {
+        jMenuItem14.setText("Relatório Resumido de Vendas");
+        jMenuItem14.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jmListarProdutosStockActionPerformed(evt);
+                jMenuItem14ActionPerformed(evt);
             }
         });
-        jmenuRelatorios.add(jmListarProdutosStock);
+        jmenuRelatorios.add(jMenuItem14);
 
         jmTodasVendas.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jmTodasVendas.setText("Relatorio de Vendas por Intervalo de Datas");
@@ -969,22 +978,6 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame {
             }
         });
         jmenuRelatorios.add(jMenuItemRelatorioDeEntradas);
-
-        jMenuItem5.setText("Relatório Mensalidades");
-        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem5ActionPerformed(evt);
-            }
-        });
-        jmenuRelatorios.add(jMenuItem5);
-
-        jMenuItem14.setText("Relatório Resumido de Vendas");
-        jMenuItem14.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem14ActionPerformed(evt);
-            }
-        });
-        jmenuRelatorios.add(jMenuItem14);
 
         jMenuBar1.add(jmenuRelatorios);
 
@@ -1776,18 +1769,6 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jmTodasVendasActionPerformed
 
-    private void jmListarProdutosStockActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmListarProdutosStockActionPerformed
-    {//GEN-HEADEREND:event_jmListarProdutosStockActionPerformed
-
-        // TODO add your handling code here:
-        try {
-            new InventarioVisao(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }//GEN-LAST:event_jmListarProdutosStockActionPerformed
-
     private void jmMapaExistenciaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmMapaExistenciaActionPerformed
         // TODO add your handling code here:
         new MapaExistenciaVisao(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
@@ -1986,11 +1967,6 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jmReactivarProdutosActionPerformed
 
-    private void jcbGuiaTransporteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jcbGuiaTransporteActionPerformed
-    {//GEN-HEADEREND:event_jcbGuiaTransporteActionPerformed
-        new GuiaTransportesVisao(cod_utilizador, this.conexao).setVisible(true);
-    }//GEN-LAST:event_jcbGuiaTransporteActionPerformed
-
     private void jcbAlteracaoGuiaTransporteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jcbAlteracaoGuiaTransporteActionPerformed
     {//GEN-HEADEREND:event_jcbAlteracaoGuiaTransporteActionPerformed
         try {
@@ -2097,11 +2073,6 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame {
         frm.setVisible(true);
     }//GEN-LAST:event_operacaoInverterIvaActionPerformed
 
-    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem5ActionPerformed
-    {//GEN-HEADEREND:event_jMenuItem5ActionPerformed
-        new FrmRelatorioVendasMes().setVisible(true);
-    }//GEN-LAST:event_jMenuItem5ActionPerformed
-
     private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem10ActionPerformed
     {//GEN-HEADEREND:event_jMenuItem10ActionPerformed
 
@@ -2143,7 +2114,7 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame {
             vendasController.atualizarTotalVenda();
 
             // TODO add your handling code here:
-            new ListarRelatorioVendasDiarias(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
+            new ListarRelatorioDeVendasDiarias(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
         } catch (SQLException ex) {
             Logger.getLogger(MenuPrincipalFarmaciaVisao.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -2154,9 +2125,9 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem16ActionPerformed
 
     private void jMenuItem15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem15ActionPerformed
-      
+
         new RelatorioMovimentoStockVisao().setVisible(true);
-        
+
     }//GEN-LAST:event_jMenuItem15ActionPerformed
 
     private void jMenuItem17ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem17ActionPerformed
@@ -2254,7 +2225,6 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
-    private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenuItem jMenuItem8;
@@ -2276,7 +2246,6 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame {
     private javax.swing.JMenuItem jcbAnulamentoEntradasProdutos;
     private javax.swing.JMenuItem jcbCardex;
     private javax.swing.JMenuItem jcbConverterGuiaTransporteDocumento;
-    private javax.swing.JMenuItem jcbGuiaTransporte;
     private javax.swing.JMenuItem jcbRelatorioMensalClientesVips;
     private javax.swing.JMenuItem jcbRelatorioTransferencia;
     private javax.swing.JMenuItem jmAcertoStock;
@@ -2300,7 +2269,6 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame {
     private javax.swing.JMenuItem jmListagemVasilhames;
     private javax.swing.JMenuItem jmListagensTodosProdutoComDesconto;
     private javax.swing.JMenuItem jmListagensTodosProdutos;
-    private javax.swing.JMenuItem jmListarProdutosStock;
     private javax.swing.JMenuItem jmListarUsuario;
     private javax.swing.JMenuItem jmMapaExistencia;
     private javax.swing.JMenuItem jmMarca;

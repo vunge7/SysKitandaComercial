@@ -33,6 +33,10 @@ import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 import kitanda.util.CfMethods;
 import lista.ListaNotaDebito;
 import modelo.ClienteModelo;
@@ -50,6 +54,7 @@ import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
 import static util.MetodosUtil.esvaziar_tabela;
 import static util.MetodosUtil.showMessageUtil;
+import static visao.NotaLevantamentoVisao.txtRefDoc;
 import static visao.NotasCreditoDebitoVisao.*;
 
 /**
@@ -112,8 +117,107 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
 
     public NotasCreditoDebitoAnulacaoVisao(int cod_usuario, BDConexao conexao) throws SQLException {
         initComponents();
+
+//        ((AbstractDocument) txtRefDoc.getDocument()).setDocumentFilter(new DocumentFilter() {
+//            @Override
+//            public void insertString(FilterBypass fb, int offset, String text, AttributeSet attr)
+//                    throws BadLocationException {
+//                if (text != null) {
+//                    super.insertString(fb, offset, text.toUpperCase(), attr);
+//                }
+//            }
+//
+//            @Override
+//            public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
+//                    throws BadLocationException {
+//                if (text != null) {
+//                    text = text.toUpperCase();
+//                }
+//                super.replace(fb, offset, length, text, attrs);
+//            }
+//        });
+        ((AbstractDocument) txtRefDoc.getDocument()).setDocumentFilter(new DocumentFilter() {
+
+            private boolean atualizando = false;
+
+            @Override
+            public void insertString(FilterBypass fb, int offset, String text,
+                    AttributeSet attr) throws BadLocationException {
+
+                if (text == null || atualizando) {
+                    return;
+                }
+
+                replace(fb, offset, 0, text, attr);
+            }
+
+            @Override
+            public void replace(FilterBypass fb, int offset, int length, String text,
+                    AttributeSet attrs) throws BadLocationException {
+
+                if (atualizando) {
+                    return;
+                }
+
+                if (text == null) {
+                    text = "";
+                }
+
+                // Converter para maiúsculas
+                text = text.toUpperCase();
+
+                String textoAtual = fb.getDocument().getText(
+                        0, fb.getDocument().getLength()
+                );
+
+                String textoFinal = textoAtual.substring(0, offset)
+                        + text
+                        + textoAtual.substring(offset + length);
+
+                // Inserir o ano económico quando for digitado FR ou FT
+                if (textoFinal.equals("FR") || textoFinal.equals("FT")) {
+
+                    String anoEconomico = lb_ano_academico.getText().trim();
+
+                    if (!anoEconomico.isEmpty()) {
+                        textoFinal += " " + anoEconomico + "/";
+                    }
+                }
+
+                atualizando = true;
+
+                try {
+                    fb.replace(
+                            0,
+                            fb.getDocument().getLength(),
+                            textoFinal,
+                            attrs
+                    );
+
+                    // Colocar o cursor imediatamente depois da barra
+                    // quando o prefixo e o ano forem inseridos
+                    final String textoInserido = textoFinal;
+
+                    javax.swing.SwingUtilities.invokeLater(() -> {
+                        if (textoInserido.endsWith("/")
+                                && (textoInserido.startsWith("FR ")
+                                || textoInserido.startsWith("FT "))) {
+
+                            txtRefDoc.setCaretPosition(
+                                    txtRefDoc.getDocument().getLength()
+                            );
+                        }
+                    });
+
+                } finally {
+                    atualizando = false;
+                }
+            }
+        });
+
         setLocationRelativeTo(null);
         setResizable(false);
+
         this.cod_usuario = cod_usuario;
         this.conexao = conexao;
         produtosController = new ProdutosController(NotasCreditoDebitoAnulacaoVisao.conexao);
@@ -1304,13 +1408,12 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
                     //#LOTE
                     if (loteController.existeLotes(itemDocumentos.getCodigoProduto().getCodigo())) {
                         loteController.devolverStock(
-                                documentoParm.getCodigo(), 
-                                itemDocumentos.getCodigoProduto().getCodigo(), 
+                                documentoParm.getCodigo(),
+                                itemDocumentos.getCodigoProduto().getCodigo(),
                                 (int) itemDocumentos.getQuantidade()
                         );
                     }
 
-                    
                     MovimentacaoController.registrarMovimento(
                             itemVendaLocal.getCodigoProduto().getCodigo(),
                             documentoParm.getIdArmazemFK().getCodigo(),

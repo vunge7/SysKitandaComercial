@@ -13,6 +13,7 @@ import comercial.controller.DocumentosController;
 import comercial.controller.EntradaLoteCompra;
 import comercial.controller.FornecedoresController;
 import comercial.controller.ItemComprasController;
+import comercial.controller.LoteProdutoUtil;
 import comercial.controller.LugaresController;
 import comercial.controller.MovimentacaoController;
 import comercial.controller.PrecosController;
@@ -57,6 +58,7 @@ import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
 import static util.MetodosUtil.getMotivoIsensao;
 import static util.MetodosUtil.rodarComandoWindows;
+import util.TemaNegocioUtil;
 
 /**
  *
@@ -106,6 +108,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
     private static String prox_doc;
     private static Date dataEntrada;
     private boolean atualizando = false;
+    public static TbDadosInstituicao dadosInstituicao;
 
     public CompraInformalVisao(int cod_usuario, BDConexao conexao) {
 
@@ -126,6 +129,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         usuariosController = new UsuariosController(conexao);
         dadosInstituicaoController = new DadosInstituicaoController(conexao);
         armazensAccessoController = new ArmazensAccessoController(conexao);
+        dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
         //confiLabel();
         setLocationRelativeTo(null);
         setResizable(false);
@@ -171,52 +175,19 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         MetodosUtil.setArmazemByCampoConfigCompraArmazem(cmbArmazem, conexao, cod_usuario);
         selecionar_transferencia_bt();
 
-//        // 1. Preço de compra mudou -> recalcula o preço de venda (mantém a percentagem)
-//        spPrecoCompra.addChangeListener(e -> calcularPrecoVendaRetalho());
-//
-        //// 2. Percentagem mudou -> calcula o preço de venda
-//        txtPercentagemGanho.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-//            @Override
-//            public void insertUpdate(javax.swing.event.DocumentEvent e) {
-//                calcularPrecoVendaRetalho();
-//            }
-//
-//            @Override
-//            public void removeUpdate(javax.swing.event.DocumentEvent e) {
-//                calcularPrecoVendaRetalho();
-//            }
-//
-//            @Override
-//            public void changedUpdate(javax.swing.event.DocumentEvent e) {
-//                calcularPrecoVendaRetalho();
-//            }
-//        });
-//
-//// 3. NOVO: Preço de venda mudou -> calcula a percentagem
-//        txtPrecoVenda.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-//            @Override
-//            public void insertUpdate(javax.swing.event.DocumentEvent e) {
-//                calcularPercentagemGanho();
-//            }
-//
-//            @Override
-//            public void removeUpdate(javax.swing.event.DocumentEvent e) {
-//                calcularPercentagemGanho();
-//            }
-//
-//            @Override
-//            public void changedUpdate(javax.swing.event.DocumentEvent e) {
-//                calcularPercentagemGanho();
-//            }
-//        });
-
-// Retalho (preço de compra em JSpinner)
         new CalculoPrecoVenda(spPrecoCompra, txtPercentagemGanho, txtPrecoVenda).ligar();
+        
+        configurarModoLotes();
+        
+                                boolean ehFarmacia = dadosInstituicao != null
+                && TemaNegocioUtil.ehFarmacia(dadosInstituicao.getNegocio());
 
-// Grosso (outros campos, mesmo spinner)
-//new CalculoPrecoVenda(spPrecoCompra, txtPercentagemGrosso, txtPrecoVendaGrosso).ligar();
-// Arranque
-//        calcularPrecoVendaRetalho();
+        TemaNegocioUtil.aplicarCorCampos(ehFarmacia,
+                txtDesignacao,
+                txtFactorConversao,
+                txtCodBarra, txtCodigoInterno,
+                txtQtdExistente, txtQtdCritica, txtQtdBaixa, txtPrecoVenda,
+                txtPercentagemGanho, txtQtdEntrar, txtNumeroLote, txtTotal_AOA_Desconto, txtTotal_AOA_Iliquido, txtTotal_AOA_IVA, txtTotal_AOA_liquido);
     }
 
     /**
@@ -1260,6 +1231,11 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
      * visivel (e nao perder lotes em silencio).
      */
     private static boolean controlaLote(int codProduto) {
+        
+                if (!usaLotes) {
+            return false; // negocio sem lotes: nunca pede nem regista lotes
+        }
+        
         String sql = "SELECT controla_lote FROM tb_produto WHERE codigo = " + codProduto;
         try {
             ResultSet rs = conexao.executeQuery(sql);
@@ -1568,142 +1544,6 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
         return total_iliquido_local;
     }
 
-//    private static boolean salvar_item_compra_comercial( Integer cod_compras )
-//    {
-//
-//        System.out.println( "Cod Compra no Item" + cod_compras );
-//        boolean sucesso = true;
-//        if ( !MetodosUtil.tabela_vazia( tableCompra ) )
-//        {
-//            StoksController stocksControllerLocal = new StoksController( conexaoTransaction );
-//            PrecosController precosControllerLocal = new PrecosController( conexaoTransaction );
-//            ItemComprasController itemComprasControllerLocal = new ItemComprasController( conexaoTransaction );
-//            ItemCompras itemCompraLocal;
-//            for ( int i = 0; i < tableCompra.getRowCount(); i++ )
-//            {
-//                try
-//                {
-//
-//                    double qtd = Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 3 ) ) );
-//                    TbProduto produto_local = (TbProduto) produtosController
-//                            .findById( Integer.parseInt( String.valueOf( tableCompra.getModel().getValueAt( i, 0 ) ) )
-//                            );
-//
-//                    itemCompraLocal = new ItemCompras();
-//                    itemCompraLocal.setFkProduto( produto_local );
-//                    itemCompraLocal.setFkCompra( new Compras( cod_compras ) );
-//                    itemCompraLocal.setPrecoCompra( Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 2 ) ) ) );
-//                    itemCompraLocal.setQuantidade( Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 3 ) ) ) );
-//                    itemCompraLocal.setDesconto( Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 5 ) ) ) );
-//                    itemCompraLocal.setValorIva( Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 6 ) ) ) );
-//                    itemCompraLocal.setTotal( Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 8 ) ) ) );
-//
-//                    itemCompraLocal.setMotivoIsensao( getMotivoIsensao( itemCompraLocal.getFkProduto().getCodigo() ) );
-//                    itemCompraLocal.setCodigoIsensao( MetodosUtil.getCodigoRegime( itemCompraLocal.getFkProduto().getCodigo() ) );
-//
-//                    double qtdCritica = Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 9 ) ) );
-//                    double qtdBaixa = Double.parseDouble( String.valueOf( tableCompra.getModel().getValueAt( i, 10 ) ) );
-//
-//                    //cria o item compra
-//                    if ( !itemComprasControllerLocal.salvar( itemCompraLocal ) )
-//                    {
-//                        DocumentosController.rollback( conexaoTransaction );
-//                        conexaoTransaction.close();
-//                        return false;
-//                    }
-//
-//                    //verifca se existe o produto no stock caso nao registra.
-//                    if ( !stocksControllerLocal.existe_stock( produto_local.getCodigo(), getIdArmazens() ) )
-//                    {
-//
-//                        if ( MovimentacaoController.registrarMovimento(
-//                                produto_local.getCodigo(),
-//                                getIdArmazens(),
-//                                cod_usuario,
-//                                new BigDecimal( itemCompraLocal.getQuantidade() ),
-//                                prox_doc,
-//                                "ENTRADA",
-//                                conexao
-//                        ) )
-//                        {
-//                            boolean registrar_stock = registrar_stock( produto_local, 
-//                                    itemCompraLocal.getQuantidade(),
-//                                    qtdCritica, qtdBaixa,
-//                                    stocksControllerLocal );
-//                            System.err.println( "Registro no Stock pela primeira vez: " + registrar_stock );
-//                            if ( !registrar_stock )
-//                            {
-//                                sucesso = false;
-//                                DocumentosController.rollback( conexaoTransaction );
-//                                conexaoTransaction.close();
-//                                return false;
-//                            }
-//
-//                        }
-//
-//                    }
-//                    else
-//                    {
-//
-//                        if ( MovimentacaoController.registrarMovimento(
-//                                produto_local.getCodigo(),
-//                                getIdArmazens(),
-//                                cod_usuario,
-//                                new BigDecimal( itemCompraLocal.getQuantidade() ),
-//                                prox_doc,
-//                                "ENTRADA",
-//                                conexao
-//                        ) )
-//                        {
-//                            actualizar_dados_stock( produto_local.getCodigo(),
-//                                    qtd,
-//                                    qtdCritica,
-//                                    qtdBaixa, stocksControllerLocal );
-//                        }
-//
-//                    }
-//
-//                    double precoMedio = getPrecoCompraMedio( produto_local.getCodigo(), itemCompraLocal.getQuantidade(), itemCompraLocal.getPrecoCompra() );
-//                    actualizarPreco( itemCompraLocal.getFkProduto().getCodigo(), precoMedio, precosControllerLocal );
-//                    System.out.println( "Preco Medio#" + precoMedio );
-//
-//                }
-//                catch ( Exception e )
-//                {
-//                    sucesso = false;
-//                    e.printStackTrace();
-//                    JOptionPane.showMessageDialog( null, "Falha ao registrar a compra", "Falha", JOptionPane.ERROR_MESSAGE );
-//                    DocumentosController.rollback( conexaoTransaction );
-//                    conexaoTransaction.close();
-//                    return false;
-//
-//                }
-//
-//            }
-//
-//            if ( sucesso )
-//            {
-//
-//                DocumentosController.commitTransaction( conexaoTransaction );
-//                limpar_cabecario();
-//                limpar_rodape();
-//                esvaziar_tabela();
-//                compra = null;
-//                fornecedor = null;
-//                JOptionPane.showMessageDialog( null, "Compra efectuada com sucesso!.." );
-//                exibirReciboDeCompras();
-//                conexaoTransaction.close();
-//                return true;
-//
-//            }
-//
-//        }
-//        else
-//        {
-//            JOptionPane.showMessageDialog( null, "Adiciona itens na tabela caro usuário", "AVISO", JOptionPane.WARNING_MESSAGE );
-//        }
-//        return false;
-//    }
     // =================================================================
     // salvar_item_compra_comercial  -  versao com LOTES
     //
@@ -2542,31 +2382,23 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
 
         /*outros campos*/
         compra_local.setDescontoTotal(getDescontoComercial() + getDescontoFinanceiro());
-//        compra_local.setIdArmazemFK( armazemDao.findTbArmazem( DVML.ARMAZEM_DEFAUTL ) );compra_local.setFkAnoEconomico( anoEconomicoController.findById( anoEconomico )  );
         compra_local.setIdArmazemFK((TbArmazem) armazensController.findById(DVML.ARMAZEM_DEFAUTL));
-//        compra_local.setFkAnoEconomico( (AnoEconomico) anoEconomicoController.fi anoEconomico );
         compra_local.setFkAnoEconomico(anoEconomico);
         compra_local.setFkDocumento(documento);
-//        compra_local.setFkFornecedor( FornecedorDao.findByNome( ( String ) cmbFornecedor.getSelectedItem() ) );
-//        compra_local.setFkFornecedor( ( TbFornecedor ) fornecedoresController.findByName( ( String ) cmbFornecedor.getSelectedItem() ) );
-//        venda_local.setIdBanco( new TbBanco(1));
         compra_local.setFkFornecedor(new TbFornecedor(getIdFornecedor()));
         System.err.println("Codigo do Fornecedor :" + getIdFornecedor());
         compra_local.setCodigoUsuario(usuario);
         compra_local.setCodFact(prox_doc);
         compra_local.setRefCodFact("");
         compra_local.setHashCod(MetodosUtil.criptografia_hash(prox_doc));
-//        compra_local.setHashCod ( MetodosUtil.criptografia_hash ( compra_local, getGrossTotal (), conexao ) );
         compra_local.setTotalPorExtenso(MetodosUtil.iniciais_extenso_comercial(documento.getPkDocumento(), documentosController) + lbValorPorExtenco.getText());
         compra_local.setStatusEliminado("false");
-//        compra_local.setStatusRecibo(false );
         System.out.println("STATUS:hash cod processado.");
         compra_local.setAssinatura(MetodosUtil.assinatura_doc(compra_local.getHashCod()));
 
         try {
 
             if (comprasController.salvar(compra_local)) {
-//                System.err.println( "Entrei no salvar" );
                 Integer last_compra = comprasController.getLastCompras().getPkCompra();
 
                 if (Objects.isNull(last_compra) || last_compra == 0) {
@@ -3441,5 +3273,91 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable 
 
         field.setText(df.format(preco));
     }
+    
+     /**
+     * true = o negocio usa lotes (Farmacia). Por defeito TRUE: se a
+     * configuracao nao puder ser lida, os campos de lote aparecem (falha
+     * visivel) em vez de se perderem lotes em silencio.
+     */
+    private static boolean usaLotes = true;
+
+    /**
+     * Colunas da tabela que so fazem sentido com lotes (nomes dos
+     * cabecalhos). "Preco Venda" fica visivel.
+     */
+    private static final String[] COLUNAS_SO_COM_LOTES = {"Lote", "Fabrico", "Validade", "P.G"};
+
+    /**
+     * Le o tipo de negocio e, se nao for Farmacia, esconde tudo o que e de
+     * lotes. Chamar no fim do construtor.
+     */
+    private void configurarModoLotes() {
+        try {
+            TbDadosInstituicao di = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
+            if (di != null) {
+                usaLotes = LoteProdutoUtil.negocioUsaLotes(di.getNegocio());
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // fica usaLotes = true
+        }
+
+        if (usaLotes) {
+            return;
+        }
+
+        txtNumeroLote.setVisible(false);
+        jcDataFabrico.setVisible(false);
+        jcDataValidade.setVisible(false);
+        esconderRotulos(getContentPane(), "fabrico", "expira", "validade", "numero lote");
+        esconderColunas(tableCompra, COLUNAS_SO_COM_LOTES);
+    }
+
+    /**
+     * Esconde os JLabel cujo texto contenha algum dos fragmentos (ignora
+     * maiusculas e acentos). Procura em todo o ecra, por isso nao precisas do
+     * nome das variaveis dos rotulos.
+     */
+    private static void esconderRotulos(java.awt.Container raiz, String... fragmentos) {
+        for (java.awt.Component c : raiz.getComponents()) {
+            if (c instanceof JLabel) {
+                String texto = semAcentos(((JLabel) c).getText());
+                for (String f : fragmentos) {
+                    if (texto.contains(f)) {
+                        c.setVisible(false);
+                        break;
+                    }
+                }
+            }
+            if (c instanceof java.awt.Container) {
+                esconderRotulos((java.awt.Container) c, fragmentos);
+            }
+        }
+    }
+
+    private static String semAcentos(String s) {
+        if (s == null) {
+            return "";
+        }
+        return java.text.Normalizer.normalize(s, java.text.Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "").toLowerCase().trim();
+    }
+
+    /**
+     * Tira as colunas da VISTA da tabela (os dados continuam no modelo).
+     * Atencao: depois disto, usa SEMPRE tableCompra.getModel().getValueAt(...)
+     * (como ja fazes) e nunca tableCompra.getValueAt(...) para as colunas
+     * depois da 10, porque a JTable usa os indices da vista.
+     */
+    private static void esconderColunas(JTable tabela, String... nomes) {
+        javax.swing.table.TableColumnModel cm = tabela.getColumnModel();
+        for (String nome : nomes) {
+            try {
+                cm.removeColumn(cm.getColumn(cm.getColumnIndex(nome)));
+            } catch (IllegalArgumentException e) {
+                // coluna nao existe (ou ja foi escondida): ignora
+            }
+        }
+    }
+
 
 }

@@ -43,6 +43,7 @@ import static util.MetodosUtil.normalizarCodigoManual;
 import static util.MetodosUtil.normalizarDesignacao;
 import static util.MetodosUtil.rodarComandoWindows;
 import util.PictureChooser;
+import util.TemaNegocioUtil;
 import util.TextFieldUtils;
 import static visao.CompraInformalVisao.spPrecoCompra;
 
@@ -130,6 +131,9 @@ public class ProdutosVisao extends javax.swing.JFrame {
 
         dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
 
+// Configurar o controlo de lotes conforme o negócio da instituição.
+        configurarControloLotes();
+
         confiLabel();
         setWindowsListener();
 
@@ -151,17 +155,11 @@ public class ProdutosVisao extends javax.swing.JFrame {
         proximo_codigo_manual(produtosController);
         busca_permissao();
         txtCodigoProduto.setDocument(new PermitirNumeros());
-//        jcDataFabrico.setDate(new Date());
-//        jcDataExpiracao.setDate(new Date());
-//        txtPrecoCompra.addKeyListener( new PrecoCompraPercentagem() );
-//        txtPrecoVendaRetalho.addKeyListener( new PrecoVendaPercentagem() );
         setFocus(dadosInstituicao.getFoco());
-
         txtPrecoCompra.setHorizontalAlignment(JTextField.RIGHT);
         txtPrecoVendaRetalho.setHorizontalAlignment(JTextField.RIGHT);
         txtPercentagemGanhoRetalho.setHorizontalAlignment(JTextField.RIGHT);
         txtPrecoVendaGrosso.setHorizontalAlignment(JTextField.RIGHT);
-
         popularComponentes();
         configurar_dois_precos();
         setArmazem(dadosInstituicaoController.findByCodigo(1).getConfigArmazens());
@@ -192,19 +190,23 @@ public class ProdutosVisao extends javax.swing.JFrame {
 
         TextFieldUtils.configurarCampoDecimal(txtPrecoCompra, 7);
         TextFieldUtils.configurarCampoDecimal(txtPrecoVendaRetalho, 7);
-//        TextFieldUtils.configurarCampoDecimal(txtPercentagemGanhoRetalho, 7);
-
         new CalculoPrecoVenda(txtPrecoCompra, txtPercentagemGanhoRetalho, txtPrecoVendaRetalho)
                 .pontoDecimal()
                 .somenteComFoco()
-                //        .debug()
                 .ligar();
 
-//        // Aqui passo os campos para a classe helper
-//        CalculadoraPrecoHelper helper = new CalculadoraPrecoHelper( txtPrecoCompra, 
-//                txtPrecoVendaRetalho, txtPercentagemGanhoRetalho , 7
-//        );
-//     
+        boolean ehFarmacia = dadosInstituicao != null
+                && TemaNegocioUtil.ehFarmacia(dadosInstituicao.getNegocio());
+
+        TemaNegocioUtil.aplicarCorCampos(ehFarmacia,
+                txtCodigoBarra, txtDesignacao, cmbMarca, cmbModelo,
+                cmbFamilia, cmbTipoProduto, cmbGrupo,
+                txtUnidadeCompra, txtFactorConversao, cmbUnidade, txtPrecoCompra,
+                cmbImposto, txtPrecoDeVendaComIva, ivaMotivoJComboBox, retencaoTaxaJTextField,
+                txtCodigoProduto, txtCodigoManual, retencaoZeroTaxaJTextField, cmbLocal,
+                txtPercentagemGanhoRetalho, txtPrecoVendaRetalho, txtQtdGrosso, txtPrecoVendaGrosso,
+                txtCodigoBarraProcura, txtCodigoManualProcura, txtArmazen2, txtArmazen1, txtArmazen3, txtArmazen4);
+
     }
 
     /**
@@ -352,8 +354,8 @@ public class ProdutosVisao extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         txtQtdGrosso = new javax.swing.JTextField();
         jButton5 = new javax.swing.JButton();
-        jRadioButtonSim = new javax.swing.JRadioButton();
-        jRadioButtonNao = new javax.swing.JRadioButton();
+        jRadioButtonComLotes = new javax.swing.JRadioButton();
+        jRadioButtonSemLotes = new javax.swing.JRadioButton();
         jLabel3 = new javax.swing.JLabel();
         txtArmazen1 = new javax.swing.JTextField();
         txtArmazen2 = new javax.swing.JTextField();
@@ -1014,12 +1016,12 @@ public class ProdutosVisao extends javax.swing.JFrame {
             }
         });
 
-        buttonGroup6.add(jRadioButtonSim);
-        jRadioButtonSim.setSelected(true);
-        jRadioButtonSim.setText("SIM");
+        buttonGroup6.add(jRadioButtonComLotes);
+        jRadioButtonComLotes.setSelected(true);
+        jRadioButtonComLotes.setText("SIM");
 
-        buttonGroup6.add(jRadioButtonNao);
-        jRadioButtonNao.setText("NÃO");
+        buttonGroup6.add(jRadioButtonSemLotes);
+        jRadioButtonSemLotes.setText("NÃO");
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel3.setText("Controla Lote?");
@@ -1062,9 +1064,9 @@ public class ProdutosVisao extends javax.swing.JFrame {
                             .addGroup(painel_stockLayout.createSequentialGroup()
                                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jRadioButtonSim, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jRadioButtonComLotes, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jRadioButtonNao)))
+                                .addComponent(jRadioButtonSemLotes)))
                         .addGap(0, 11, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -1075,8 +1077,8 @@ public class ProdutosVisao extends javax.swing.JFrame {
                 .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(49, 49, 49)
                 .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButtonSim)
-                    .addComponent(jRadioButtonNao)
+                    .addComponent(jRadioButtonComLotes)
+                    .addComponent(jRadioButtonSemLotes)
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(painel_stockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -1531,6 +1533,8 @@ public class ProdutosVisao extends javax.swing.JFrame {
     {//GEN-HEADEREND:event_jButton2ActionPerformed
         novo();
         txtDesignacao.requestFocus();
+        txtCodigoBarra.setText("0");
+        txtCodigoBarra.setText(String.valueOf(produtosController.getLastProduto().getCodigo() + 1));
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void btLupaEconomatoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btLupaEconomatoActionPerformed
@@ -1751,8 +1755,8 @@ public class ProdutosVisao extends javax.swing.JFrame {
     public static javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private static javax.swing.JPanel jPanel_retencao;
-    private static javax.swing.JRadioButton jRadioButtonNao;
-    private static javax.swing.JRadioButton jRadioButtonSim;
+    private static javax.swing.JRadioButton jRadioButtonComLotes;
+    private static javax.swing.JRadioButton jRadioButtonSemLotes;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel label_factor_conversao;
     private javax.swing.JLabel label_qtd_bruta;
@@ -2026,7 +2030,7 @@ public class ProdutosVisao extends javax.swing.JFrame {
         // 🔹 Sempre grava 1 na unidade de compra
         produto.setUnidadeCompra(1.0);
         produto.setFactorConversao(factor_conversao);
-        produto.setControlaLote(jRadioButtonSim.isSelected());
+        produto.setControlaLote(jRadioButtonComLotes.isSelected());
 
         try {
             if (Objects.nonNull(image_View.getBystebyteImg())) {
@@ -2649,12 +2653,12 @@ public class ProdutosVisao extends javax.swing.JFrame {
             }
 
             if (produto_local.getControlaLote().equals(true)) {
-                jRadioButtonSim.setSelected(true);
-                jRadioButtonNao.setSelected(false);
+                jRadioButtonComLotes.setSelected(true);
+                jRadioButtonSemLotes.setSelected(false);
 
             } else {
-                jRadioButtonNao.setSelected(true);
-                jRadioButtonSim.setSelected(false);
+                jRadioButtonSemLotes.setSelected(true);
+                jRadioButtonComLotes.setSelected(false);
             }
 
             setCozinha(produto_local.getCozinha());
@@ -2893,14 +2897,45 @@ public class ProdutosVisao extends javax.swing.JFrame {
             return false;
 
         } else if (produtosController.exist_designacao_produto(conexao, getDesignacaoText())) {
-            JOptionPane.showMessageDialog(null, "Já existe um produto com esta designação!!!", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
+
+            TbProduto produtoExistente = produtosController.findProdutoByDesignacao(getDesignacaoText());
+
+            String nomeProduto = getDesignacaoText();
+            String codigoInterno = "-";
+
+            if (produtoExistente != null) {
+                nomeProduto = produtoExistente.getDesignacao();
+                codigoInterno = String.valueOf(produtoExistente.getCodigo());
+            }
+
+            JOptionPane.showMessageDialog(null,
+                    "Atenção: O produto '" + nomeProduto + "' já foi cadastrado no sistema"
+                    + "\ncujo código interno é: " + codigoInterno + ".",
+                    DVML.DVML_COMERCIAL,
+                    JOptionPane.WARNING_MESSAGE);
             txtDesignacao.requestFocus();
             return false;
-        } else if (produtosController.existProdutoByCodigoBarra(txtCodigoBarra.getText()) && isProduto) {
-            JOptionPane.showMessageDialog(null, "Este codigo de barra já existe!!!", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
+
+        } else if (isProduto && produtosController.existProdutoByCodigoBarra(txtCodigoBarra.getText())) {
+
+            TbProduto produtoExistente = produtosController.findProdutoByCodigoBarra(txtCodigoBarra.getText());
+            String nomeProduto = (produtoExistente != null) ? produtoExistente.getDesignacao() : "desconhecido";
+
+            String codigoInterno = "-";
+
+            if (produtoExistente != null) {
+                nomeProduto = produtoExistente.getDesignacao();
+                codigoInterno = String.valueOf(produtoExistente.getCodigo());
+            }
+
+            JOptionPane.showMessageDialog(null,
+                    "Atenção: Este código de barras já foi utilizado no produto: " + nomeProduto
+                    + "\ncujo código interno é: " + codigoInterno + ".",
+                    DVML.DVML_COMERCIAL,
+                    JOptionPane.WARNING_MESSAGE);
             txtCodigoBarra.requestFocus();
-//            txtCodigoBarra.setBackground( Color.YELLOW );
             return false;
+
         } else if (produtosController.existProdutoByCodigoManual(txtCodigoManual.getText()) && isProduto) {
             JOptionPane.showMessageDialog(null, "Este codigo manual já existe!!!", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
             txtCodigoManual.requestFocus();
@@ -3652,7 +3687,6 @@ public class ProdutosVisao extends javax.swing.JFrame {
         //actualizar
         cmbLocal.setModel(new DefaultComboBoxModel(localController.getVector()));
         cmbUnidade.setModel(new DefaultComboBoxModel(unidadesController.getVector()));
-//        ck_servico.setSelected( true );
         txtCodigoProduto.setText("");
         txtCodigoBarraProcura.setText("");
         txtCodigoManualProcura.setText("");
@@ -3731,6 +3765,30 @@ public class ProdutosVisao extends javax.swing.JFrame {
         System.out.println("Produto Registrado no Stock.");
         return stocksControllerLocal.salvar(stockLocal);
 
+    }
+
+    private void configurarControloLotes() {
+
+        boolean farmacia = dadosInstituicao != null
+                && "Farmacia".equalsIgnoreCase(
+                        dadosInstituicao.getNegocio()
+                );
+
+        if (farmacia) {
+            // Farmácia: permitir escolher se o produto tem lotes.
+            jRadioButtonSemLotes.setEnabled(true);
+            jRadioButtonComLotes.setEnabled(true);
+            jLabel3.setVisible(true);
+
+        } else {
+            // Outros negócios: desativar completamente o controlo de lotes.
+            jRadioButtonSemLotes.setSelected(true);
+            jRadioButtonComLotes.setSelected(false);
+
+            jRadioButtonSemLotes.setEnabled(false);
+            jRadioButtonComLotes.setEnabled(false);
+            jLabel3.setVisible(false);
+        }
     }
 
 }

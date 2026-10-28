@@ -3,6 +3,24 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<style name="EstiloVendaLinha" forecolor="#006400">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{valor_venda} != null && $F{valor_venda}.signum() < 0]]></conditionExpression>
+			<style forecolor="#D00000"/>
+		</conditionalStyle>
+	</style>
+	<style name="EstiloVendaProd" forecolor="#006400">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{VEND_PROD}.signum() < 0]]></conditionExpression>
+			<style forecolor="#D00000"/>
+		</conditionalStyle>
+	</style>
+	<style name="EstiloVendaTotal" forecolor="#006400">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{VEND_TOTAL}.signum() < 0]]></conditionExpression>
+			<style forecolor="#D00000"/>
+		</conditionalStyle>
+	</style>
 	<parameter name="DATA_INICIO" class="java.util.Date"/>
 	<parameter name="DATA_FIM" class="java.util.Date"/>
 	<parameter name="ARMAZEM_ID" class="java.lang.Integer"/>
@@ -19,7 +37,12 @@
         m.tipo AS tipo_cod,
         CASE
             WHEN m.tipo = 'COMPRA' THEN COALESCE(c.cod_fact, CAST(m.fk_operacao AS CHAR))
-            WHEN m.tipo IN ('VENDA','DEVOLUCAO') THEN COALESCE(v.cod_fact, CAST(m.fk_operacao AS CHAR))
+            WHEN m.tipo = 'DEVOLUCAO' THEN
+                 CASE WHEN nc.cod_fact IS NOT NULL
+                      THEN CONCAT(nc.cod_fact, CASE WHEN COALESCE(NULLIF(nc.ref_cod_fact,''), CASE WHEN v.fk_documento <> 5 THEN v.cod_fact END) IS NOT NULL
+                                    THEN CONCAT(' (', COALESCE(NULLIF(nc.ref_cod_fact,''), v.cod_fact), ')') ELSE '' END)  /* ex: NC 2026/4 (FR 2026/6) */
+                      ELSE COALESCE(v.cod_fact, CAST(m.fk_operacao AS CHAR)) END
+            WHEN m.tipo = 'VENDA' THEN COALESCE(v.cod_fact, CAST(m.fk_operacao AS CHAR))
             ELSE CAST(m.fk_operacao AS CHAR)
         END AS doc_ref,
         a.designacao AS armazem,
@@ -40,13 +63,42 @@
                     SELECT MIN(m3.id) FROM lote_movimento m3
                     INNER JOIN lote l3 ON l3.id = m3.fk_lote
                     WHERE m3.tipo = m.tipo AND m3.fk_operacao = m.fk_operacao AND l3.fk_produto = l.fk_produto)
-                  THEN v.total_venda ELSE 0 END AS DECIMAL(18,2)) AS valor_venda,
+                  THEN v.total_venda
+                  /* nota de credito: valor NEGATIVO em Vendas (so na 1.a linha do produto nessa NC) */
+                  WHEN m.tipo = 'DEVOLUCAO' AND nc.codigo IS NOT NULL AND m.id = (
+                    SELECT MIN(m4.id) FROM lote_movimento m4
+                    INNER JOIN lote l4 ON l4.id = m4.fk_lote
+                    WHERE m4.tipo = m.tipo AND m4.fk_operacao = m.fk_operacao AND l4.fk_produto = l.fk_produto
+                      AND m4.data_mov BETWEEN DATE_SUB(nc.dataVenda, INTERVAL 2 MINUTE) AND DATE_ADD(nc.dataVenda, INTERVAL 2 MINUTE))
+                  THEN -nc.total_venda
+                  ELSE 0 END AS DECIMAL(18,2)) AS valor_venda,
+        /* mesmo valor da NC, POSITIVO, na coluna Anulacao */
+        CAST(CASE WHEN m.tipo = 'DEVOLUCAO' AND nc.codigo IS NOT NULL AND m.id = (
+                    SELECT MIN(m4.id) FROM lote_movimento m4
+                    INNER JOIN lote l4 ON l4.id = m4.fk_lote
+                    WHERE m4.tipo = m.tipo AND m4.fk_operacao = m.fk_operacao AND l4.fk_produto = l.fk_produto
+                      AND m4.data_mov BETWEEN DATE_SUB(nc.dataVenda, INTERVAL 2 MINUTE) AND DATE_ADD(nc.dataVenda, INTERVAL 2 MINUTE))
+                  THEN nc.total_venda ELSE 0 END AS DECIMAL(18,2)) AS valor_anulacao,
         COALESCE(t.nome_usuario, u.nome) AS utilizador
     FROM lote_movimento m
     INNER JOIN lote l        ON l.id = m.fk_lote
     INNER JOIN tb_produto p  ON p.codigo = l.fk_produto
     INNER JOIN tb_armazem a  ON a.codigo = l.fk_armazem
     LEFT JOIN tb_venda v     ON m.tipo IN ('VENDA','DEVOLUCAO') AND v.codigo = m.fk_operacao
+    /* nota de credito (documento 5) que anula a fatura da devolucao: liga por ref_cod_fact (exato).
+       Se houver varias NC da mesma fatura, escolhe a mais proxima do movimento.
+       NC antigas sem ref_cod_fact: usa a NC emitida no mesmo momento (+-2 min) */
+    LEFT JOIN tb_venda nc    ON m.tipo = 'DEVOLUCAO' AND nc.codigo = COALESCE(
+                                    (SELECT n.codigo FROM tb_venda n
+                                     WHERE n.fk_documento = 5 AND n.ref_cod_fact = v.cod_fact
+                                     ORDER BY ABS(TIMESTAMPDIFF(SECOND, n.dataVenda, m.data_mov)), n.codigo
+                                     LIMIT 1),
+                                    (SELECT n3.codigo FROM tb_venda n3
+                                     WHERE n3.fk_documento = 5 AND (n3.ref_cod_fact IS NULL OR n3.ref_cod_fact = '')
+                                       AND n3.dataVenda BETWEEN DATE_SUB(m.data_mov, INTERVAL 2 MINUTE)
+                                                            AND DATE_ADD(m.data_mov, INTERVAL 2 MINUTE)
+                                     ORDER BY ABS(TIMESTAMPDIFF(SECOND, n3.dataVenda, m.data_mov)), n3.codigo
+                                     LIMIT 1))
     LEFT JOIN compras c      ON m.tipo = 'COMPRA' AND c.pk_compra = m.fk_operacao
     LEFT JOIN transferencia_armazem t
                              ON m.tipo IN ('TRANSF_SAIDA','TRANSF_ENTRADA') AND t.pk_transferencia_armazem = m.fk_operacao
@@ -62,8 +114,10 @@
     SELECT
         mv.id,
         mv.data_mov,
-        mv.tipo AS tipo_cod,
-        mv.documento AS doc_ref,
+        CASE WHEN nc2.codigo IS NOT NULL THEN 'DEVOLUCAO' ELSE mv.tipo END AS tipo_cod,   /* documento NC => Devolucao */
+        CASE WHEN nc2.codigo IS NOT NULL
+             THEN CONCAT(nc2.cod_fact, CASE WHEN nc2.ref_cod_fact IS NOT NULL AND nc2.ref_cod_fact <> '' THEN CONCAT(' (', nc2.ref_cod_fact, ')') ELSE '' END)  /* ex: NC 2026/3 (FR 2026/10) */
+             ELSE mv.documento END AS doc_ref,
         a2.designacao AS armazem,
         '-' AS numero_lote,
         '-' AS validade_txt,
@@ -85,11 +139,24 @@
                   ELSE 0 END AS DECIMAL(18,2)) AS valor_compra,
         CAST(CASE WHEN mv.tipo = 'SAIDA'
                   THEN COALESCE((SELECT v2.total_venda FROM tb_venda v2 WHERE v2.cod_fact = mv.documento LIMIT 1), 0)
+                  WHEN nc2.codigo IS NOT NULL THEN -nc2.total_venda
                   ELSE 0 END AS DECIMAL(18,2)) AS valor_venda,
+        CAST(CASE WHEN nc2.codigo IS NOT NULL THEN nc2.total_venda ELSE 0 END AS DECIMAL(18,2)) AS valor_anulacao,
         u2.nome AS utilizador
     FROM movimentacao mv
     INNER JOIN tb_produto p2 ON p2.codigo = mv.produto_id
     INNER JOIN tb_armazem a2 ON a2.codigo = mv.armazem_id
+    /* NC sem lote: reconhece-se pelo numero do documento (documento tipo 5 = Nota de credito);
+       se for um movimento 'DEVOLUCAO' sem numero de NC, usa a NC emitida no mesmo momento (+-2 min) */
+    LEFT JOIN tb_venda nc2   ON nc2.codigo = COALESCE(
+                                    (SELECT n1.codigo FROM tb_venda n1 WHERE n1.cod_fact = mv.documento AND n1.fk_documento = 5 LIMIT 1),
+                                    CASE WHEN mv.tipo = 'DEVOLUCAO' THEN
+                                    (SELECT n2.codigo FROM tb_venda n2
+                                     WHERE n2.fk_documento = 5
+                                       AND n2.dataVenda BETWEEN DATE_SUB(mv.data_mov, INTERVAL 2 MINUTE)
+                                                            AND DATE_ADD(mv.data_mov, INTERVAL 2 MINUTE)
+                                     ORDER BY ABS(TIMESTAMPDIFF(SECOND, n2.dataVenda, mv.data_mov)), n2.codigo
+                                     LIMIT 1) END)
     LEFT JOIN tb_usuario u2  ON u2.codigo = mv.usuario_id
     WHERE mv.data_mov >= $P{DATA_INICIO}
       AND mv.data_mov <  DATE_ADD($P{DATA_FIM}, INTERVAL 1 DAY)
@@ -122,6 +189,7 @@ ORDER BY x.produto, x.produto_id, x.data_mov, x.id]]>
 	<field name="saida" class="java.lang.Double"/>
 	<field name="valor_compra" class="java.math.BigDecimal"/>
 	<field name="valor_venda" class="java.math.BigDecimal"/>
+	<field name="valor_anulacao" class="java.math.BigDecimal"/>
 	<field name="utilizador" class="java.lang.String"/>
 	<variable name="ENT_PROD" class="java.lang.Double" resetType="Group" resetGroup="produto" calculation="Sum">
 		<variableExpression><![CDATA[$F{entrada}]]></variableExpression>
@@ -139,6 +207,10 @@ ORDER BY x.produto, x.produto_id, x.data_mov, x.id]]>
 		<variableExpression><![CDATA[$F{valor_venda}]]></variableExpression>
 		<initialValueExpression><![CDATA[new java.math.BigDecimal(0)]]></initialValueExpression>
 	</variable>
+	<variable name="ANUL_PROD" class="java.math.BigDecimal" resetType="Group" resetGroup="produto" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_anulacao}]]></variableExpression>
+		<initialValueExpression><![CDATA[new java.math.BigDecimal(0)]]></initialValueExpression>
+	</variable>
 	<variable name="ENT_TOTAL" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{entrada}]]></variableExpression>
 		<initialValueExpression><![CDATA[new Double(0)]]></initialValueExpression>
@@ -153,6 +225,10 @@ ORDER BY x.produto, x.produto_id, x.data_mov, x.id]]>
 	</variable>
 	<variable name="VEND_TOTAL" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{valor_venda}]]></variableExpression>
+		<initialValueExpression><![CDATA[new java.math.BigDecimal(0)]]></initialValueExpression>
+	</variable>
+	<variable name="ANUL_TOTAL" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_anulacao}]]></variableExpression>
 		<initialValueExpression><![CDATA[new java.math.BigDecimal(0)]]></initialValueExpression>
 	</variable>
 	<group name="produto">
@@ -180,42 +256,49 @@ ORDER BY x.produto, x.produto_id, x.data_mov, x.id]]>
 					<reportElement uuid="5d0b3d09-258c-4da2-8fdd-6a4591e1dddf" x="0" y="0" width="802" height="1"/>
 				</line>
 				<staticText>
-					<reportElement uuid="9e91ab6f-f2f2-41e9-97f0-5f5aecab9d9c" x="0" y="3" width="465" height="16"/>
+					<reportElement uuid="9e91ab6f-f2f2-41e9-97f0-5f5aecab9d9c" x="0" y="3" width="421" height="16"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Total do produto e total de valores(Kz) no período:]]></text>
 				</staticText>
 				<textField pattern="#,##0.##" isBlankWhenNull="true">
-					<reportElement uuid="0bd8b57f-e4c4-4f83-8848-f1a775f70b55" x="465" y="3" width="45" height="16" forecolor="#006400"/>
+					<reportElement uuid="0bd8b57f-e4c4-4f83-8848-f1a775f70b55" x="421" y="3" width="36" height="16" forecolor="#006400"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{ENT_PROD}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.##" isBlankWhenNull="true">
-					<reportElement uuid="92bb62fd-2a6c-408c-b79b-807cd8e36e4b" x="510" y="3" width="45" height="16" forecolor="#D00000"/>
+					<reportElement uuid="92bb62fd-2a6c-408c-b79b-807cd8e36e4b" x="457" y="3" width="36" height="16" forecolor="#D00000"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{SAI_PROD}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement uuid="65641f31-c021-4b1d-a83b-3f7ba8920224" x="555" y="3" width="75" height="16" forecolor="#D00000"/>
+					<reportElement uuid="65641f31-c021-4b1d-a83b-3f7ba8920224" x="493" y="3" width="64" height="16" forecolor="#D00000"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{COMP_PROD}]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement uuid="0336b9ca-9bf1-4da5-9d12-ad398169bb7d" x="630" y="3" width="75" height="16" forecolor="#006400"/>
+				<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement uuid="e4c7efb8-0671-40e6-932b-a6230f9bc326" x="557" y="3" width="64" height="16" forecolor="#006400"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{ANUL_PROD}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement uuid="0336b9ca-9bf1-4da5-9d12-ad398169bb7d" style="EstiloVendaProd" x="621" y="3" width="64" height="16"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{VEND_PROD}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement uuid="df8f04e9-e887-4b6e-96e7-4f77ed326d54" x="717" y="3" width="85" height="16"/>
+					<reportElement uuid="df8f04e9-e887-4b6e-96e7-4f77ed326d54" x="699" y="3" width="103" height="16"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
@@ -258,77 +341,84 @@ ORDER BY x.produto, x.produto_id, x.data_mov, x.id]]>
 				</graphicElement>
 			</rectangle>
 			<staticText>
-				<reportElement uuid="c69642f5-284d-416b-a6b0-208da6ebb08a" x="0" y="0" width="80" height="20" forecolor="#FFFFFF"/>
+				<reportElement uuid="c69642f5-284d-416b-a6b0-208da6ebb08a" x="0" y="0" width="78" height="20" forecolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Data/Hora]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="d9ed047e-43cc-431b-8e38-9b351f58d026" x="80" y="0" width="65" height="20" forecolor="#FFFFFF"/>
+				<reportElement uuid="d9ed047e-43cc-431b-8e38-9b351f58d026" x="78" y="0" width="55" height="20" forecolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Movimento]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="e83fb36c-d96f-4668-bb22-78597ee8fef4" x="145" y="0" width="110" height="20" forecolor="#FFFFFF"/>
+				<reportElement uuid="e83fb36c-d96f-4668-bb22-78597ee8fef4" x="133" y="0" width="125" height="20" forecolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Documento]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="9126139e-cf1e-425c-bdd1-73ac2cad8094" x="255" y="0" width="80" height="20" forecolor="#FFFFFF"/>
+				<reportElement uuid="9126139e-cf1e-425c-bdd1-73ac2cad8094" x="258" y="0" width="58" height="20" forecolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Armazém]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="e0235d44-3a85-470b-8d0e-fa30d4458125" x="335" y="0" width="75" height="20" forecolor="#FFFFFF"/>
+				<reportElement uuid="e0235d44-3a85-470b-8d0e-fa30d4458125" x="316" y="0" width="55" height="20" forecolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Lote]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="9625e2af-3182-4e40-a5c8-263c72346fe8" x="410" y="0" width="55" height="20" forecolor="#FFFFFF"/>
+				<reportElement uuid="9625e2af-3182-4e40-a5c8-263c72346fe8" x="371" y="0" width="50" height="20" forecolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Validade]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="75f3b9b4-1f46-4c1d-a1ad-4b0640fef7c9" x="465" y="0" width="45" height="20" forecolor="#FFFFFF"/>
+				<reportElement uuid="75f3b9b4-1f46-4c1d-a1ad-4b0640fef7c9" x="421" y="0" width="36" height="20" forecolor="#FFFFFF"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Entrada]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="bdc0338c-fba6-4c68-a354-f750e2f801df" x="510" y="0" width="45" height="20" forecolor="#FFFFFF"/>
+				<reportElement uuid="bdc0338c-fba6-4c68-a354-f750e2f801df" x="457" y="0" width="36" height="20" forecolor="#FFFFFF"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Saída]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="4ad4ead6-5dee-41cd-a174-6af1e01a1825" x="555" y="0" width="75" height="20" forecolor="#FFFFFF"/>
+				<reportElement uuid="4ad4ead6-5dee-41cd-a174-6af1e01a1825" x="493" y="0" width="64" height="20" forecolor="#FFFFFF"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Compras(Kz)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="102e9f61-8ce8-4fdf-8ec1-6656c5c9819c" x="630" y="0" width="75" height="20" forecolor="#FFFFFF"/>
+				<reportElement uuid="b96ef248-a6a0-4061-9212-9ee13b182de9" x="557" y="0" width="64" height="20" forecolor="#FFFFFF"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Anulação(Kz)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="102e9f61-8ce8-4fdf-8ec1-6656c5c9819c" x="621" y="0" width="64" height="20" forecolor="#FFFFFF"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Vendas(Kz)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="9a80b4eb-e09a-4be4-9578-0c0c3c3b881a" x="717" y="0" width="85" height="20" forecolor="#FFFFFF"/>
+				<reportElement uuid="9a80b4eb-e09a-4be4-9578-0c0c3c3b881a" x="699" y="0" width="103" height="20" forecolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
@@ -339,14 +429,14 @@ ORDER BY x.produto, x.produto_id, x.data_mov, x.id]]>
 	<detail>
 		<band height="15">
 			<textField pattern="dd/MM/yyyy HH:mm" isBlankWhenNull="true">
-				<reportElement uuid="2eb69cad-ff1b-4ba7-bc8f-f0907b8d4c30" x="0" y="0" width="80" height="15"/>
+				<reportElement uuid="2eb69cad-ff1b-4ba7-bc8f-f0907b8d4c30" x="0" y="0" width="78" height="15"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{data_mov}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="4202d645-03ef-4a57-95d0-a0bd95d9a359" x="80" y="0" width="65" height="15"/>
+				<reportElement uuid="4202d645-03ef-4a57-95d0-a0bd95d9a359" x="78" y="0" width="55" height="15"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
@@ -360,68 +450,75 @@ ORDER BY x.produto, x.produto_id, x.data_mov, x.id]]>
  $F{tipo_cod}.equals("SAIDA") ? "Sa\u00edda" : $F{tipo_cod}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="f5b6d01b-daa7-4280-a5ca-a9b8d219cf41" x="145" y="0" width="110" height="15"/>
+				<reportElement uuid="f5b6d01b-daa7-4280-a5ca-a9b8d219cf41" x="133" y="0" width="125" height="15"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{doc_ref} == null ? "" :
  $F{tipo_cod}.equals("COMPRA") ? "Compra " + $F{doc_ref} :
  $F{tipo_cod}.equals("VENDA") ? "Venda " + $F{doc_ref} :
- $F{tipo_cod}.equals("DEVOLUCAO") ? "Devol. " + $F{doc_ref} :
+ $F{tipo_cod}.equals("DEVOLUCAO") ? $F{doc_ref} :
  ($F{tipo_cod}.equals("TRANSF_SAIDA") || $F{tipo_cod}.equals("TRANSF_ENTRADA")) ? "Transfer\u00eancia N\u00ba " + $F{doc_ref} :
  $F{doc_ref}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="2c6df58f-a669-4c92-8039-f7a79a96ea1a" x="255" y="0" width="80" height="15"/>
+				<reportElement uuid="2c6df58f-a669-4c92-8039-f7a79a96ea1a" x="258" y="0" width="58" height="15"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{armazem}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="6c0b23eb-7319-4e1b-87cc-b53e63cfafbc" x="335" y="0" width="75" height="15"/>
+				<reportElement uuid="6c0b23eb-7319-4e1b-87cc-b53e63cfafbc" x="316" y="0" width="55" height="15"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{numero_lote} == null || $F{numero_lote}.trim().isEmpty()) ? "-" : $F{numero_lote}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="fabda8ba-89e0-493c-83c2-cd3a0f23f586" x="410" y="0" width="55" height="15"/>
+				<reportElement uuid="fabda8ba-89e0-493c-83c2-cd3a0f23f586" x="371" y="0" width="50" height="15"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{validade_txt} == null ? "-" : $F{validade_txt}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.##;-#,##0.##" isBlankWhenNull="true">
-				<reportElement uuid="30a26fc4-5ba7-4bab-b6d4-74984057c18c" x="465" y="0" width="45" height="15" forecolor="#006400"/>
+				<reportElement uuid="30a26fc4-5ba7-4bab-b6d4-74984057c18c" x="421" y="0" width="36" height="15" forecolor="#006400"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{entrada} == 0 ? null : $F{entrada}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.##;-#,##0.##" isBlankWhenNull="true">
-				<reportElement uuid="38b321f5-55a4-4e93-a35a-0c0054b2e310" x="510" y="0" width="45" height="15" forecolor="#D00000"/>
+				<reportElement uuid="38b321f5-55a4-4e93-a35a-0c0054b2e310" x="457" y="0" width="36" height="15" forecolor="#D00000"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{saida} == 0 ? null : $F{saida}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement uuid="f0b0812d-d3a8-4043-ae56-131015fd95bd" x="555" y="0" width="75" height="15" forecolor="#D00000"/>
+				<reportElement uuid="f0b0812d-d3a8-4043-ae56-131015fd95bd" x="493" y="0" width="64" height="15" forecolor="#D00000"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{valor_compra} == null || $F{valor_compra}.signum() == 0) ? null : $F{valor_compra}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement uuid="052ba5d6-cd45-4f70-b6b2-e052bde7fb7b" x="630" y="0" width="75" height="15" forecolor="#006400"/>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="258b14b5-e3b6-42e0-9c95-3b0dcab8231b" x="557" y="0" width="64" height="15" forecolor="#006400"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{valor_anulacao} == null || $F{valor_anulacao}.signum() == 0) ? null : $F{valor_anulacao}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="052ba5d6-cd45-4f70-b6b2-e052bde7fb7b" style="EstiloVendaLinha" x="621" y="0" width="64" height="15"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{valor_venda} == null || $F{valor_venda}.signum() == 0) ? null : $F{valor_venda}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="a499a40c-c110-4952-9cc8-158aa764f6ed" x="717" y="0" width="85" height="15"/>
+				<reportElement uuid="a499a40c-c110-4952-9cc8-158aa764f6ed" x="699" y="0" width="103" height="15"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
@@ -463,35 +560,42 @@ ORDER BY x.produto, x.produto_id, x.data_mov, x.id]]>
 				<reportElement uuid="7fdc3046-0c02-4159-8783-8f613ae7d88e" x="0" y="2" width="802" height="2"/>
 			</line>
 			<staticText>
-				<reportElement uuid="45a84f24-faed-46ea-aa72-e34a2b6e3d75" x="0" y="8" width="465" height="16"/>
+				<reportElement uuid="45a84f24-faed-46ea-aa72-e34a2b6e3d75" x="0" y="8" width="421" height="16"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[TOTAL GERAL DO PERÍODO:]]></text>
 			</staticText>
 			<textField pattern="#,##0.##" isBlankWhenNull="true">
-				<reportElement uuid="4bdc4e01-100c-4f24-a176-9cafb83a136b" x="465" y="8" width="45" height="16" forecolor="#006400"/>
+				<reportElement uuid="4bdc4e01-100c-4f24-a176-9cafb83a136b" x="421" y="8" width="36" height="16" forecolor="#006400"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{ENT_TOTAL}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.##" isBlankWhenNull="true">
-				<reportElement uuid="3139889f-e9d4-47dd-aaff-4f236e14bbc9" x="510" y="8" width="45" height="16" forecolor="#D00000"/>
+				<reportElement uuid="3139889f-e9d4-47dd-aaff-4f236e14bbc9" x="457" y="8" width="36" height="16" forecolor="#D00000"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{SAI_TOTAL}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement uuid="b65330e5-c574-41c2-893f-9ac45a20643b" x="555" y="8" width="75" height="16" forecolor="#D00000"/>
+				<reportElement uuid="b65330e5-c574-41c2-893f-9ac45a20643b" x="493" y="8" width="64" height="16" forecolor="#D00000"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{COMP_TOTAL}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement uuid="852871c3-cb85-47e5-8b38-5bd95db50e1c" x="630" y="8" width="75" height="16" forecolor="#006400"/>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="f8a66283-d118-470f-b6ca-8ed335bcf6ae" x="557" y="8" width="64" height="16" forecolor="#006400"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{ANUL_TOTAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="852871c3-cb85-47e5-8b38-5bd95db50e1c" style="EstiloVendaTotal" x="621" y="8" width="64" height="16"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>

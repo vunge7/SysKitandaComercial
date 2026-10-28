@@ -86,6 +86,7 @@ import util.MetodosUtil;
 import static util.MetodosUtil.startBackGroundProcesses;
 import util.SingleInstanceLock;
 import util.SingleInstanceManager;
+import util.TemaNegocioUtil;
 import util.cronjob.QuartzApp;
 import util.cronjob.StockAutoCheckService;
 import util.cronjob.ValidadorJob;
@@ -94,17 +95,16 @@ import util.cronjob.ValidadorJob;
  *
  * @author Domingos Dala Vunge
  */
-public class LoginVisao extends javax.swing.JFrame
-{
+public class LoginVisao extends javax.swing.JFrame {
 
     private static EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
     private static DadosInstituicaoController dadosInstituicaoController;
-    private UsuarioDao usuarioDao = new UsuarioDao( emf );
-    private EmpresaDao empresaDao = new EmpresaDao( emf );
-    private static CaixaDao caixaDao = new CaixaDao( emf );
+    private UsuarioDao usuarioDao = new UsuarioDao(emf);
+    private EmpresaDao empresaDao = new EmpresaDao(emf);
+    private static CaixaDao caixaDao = new CaixaDao(emf);
 
-    private DocumentoDao documentoDao = new DocumentoDao( emf );
-    private DadosInstituicaoDao dadosInstituicaoDao = new DadosInstituicaoDao( emf );
+    private DocumentoDao documentoDao = new DocumentoDao(emf);
+    private DadosInstituicaoDao dadosInstituicaoDao = new DadosInstituicaoDao(emf);
     public Date horaTerminoVenda;
 //    private LicensaUtil licensaUtil;
     private static BDConexao conexao;
@@ -116,100 +116,88 @@ public class LoginVisao extends javax.swing.JFrame
     private int id_user, id_empresa;
     private javax.swing.Timer piscarTimer;
 
-    public LoginVisao( BDConexao conexao )
-    {
+    public LoginVisao(BDConexao conexao) {
 
         initComponents();
-        setLocationRelativeTo( null );
-        setResizable( false );
-        setVisible( true );
+        setLocationRelativeTo(null);
+        setResizable(false);
+        setVisible(true);
 
 // Obtém a instância única e garante que a conexão está ativa
         conexao = BDConexao.getInstancia();
         conexao.getConnectionAtiva(); // força a ativação da conexão, se ainda não estiver
 
 // Cria o controller com a instância de BDConexao já inicializada
-        dadosInstituicaoController = new DadosInstituicaoController( conexao );
+        dadosInstituicaoController = new DadosInstituicaoController(conexao);
 
 // Busca os dados da instituição (id = 1)
-        d = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
+        d = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
 
         mostrar_empresas();
 
         prazo();
 
-
 // Mostrar o painel de produtos a expirar apenas para Farmácia
-if (d != null && "Farmacia".equalsIgnoreCase(d.getNegocio())) {
-    criarPainelExpirar();
-}
-
-LoginVisao.setDefaultLookAndFeelDecorated(true);
-        
-//        criarPainelExpirar();   // <-- nova linha
-
-//        LoginVisao.setDefaultLookAndFeelDecorated( true );
-        try
-        {
-            System.out.println( "Data Ultimo: " + documentoDao.getMAxDataDoc().toString() );
+        if (d != null && "Farmacia".equalsIgnoreCase(d.getNegocio())) {
+            criarPainelExpirar();
         }
-        catch ( Exception e )
-        {
+
+//        boolean ehFarmacia = d != null
+//                && TemaNegocioUtil.ehFarmacia(d.getNegocio());
+//
+//        TemaNegocioUtil.aplicarCorCampos(ehFarmacia,
+//                txtUserName, pswSenha);
+
+        LoginVisao.setDefaultLookAndFeelDecorated(true);
+
+        try {
+            System.out.println("Data Ultimo: " + documentoDao.getMAxDataDoc().toString());
+        } catch (Exception e) {
         }
 //        verificar_data_sistema();
         txtUserName.requestFocus();
         //Envio de Email
-        try
-        {
+        try {
             verificarEnvioEmail();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
         }
         iniciarMonitoramento();
         iniciarPiscarLabelJLDataFecho();
+        
+        aplicarTemaLogin();
 
     }
 
-    public void iniciarPiscarLabelJLDataFecho()
-    {
-        piscarTimer = new javax.swing.Timer( 500, new ActionListener()
-        {
+    public void iniciarPiscarLabelJLDataFecho() {
+        piscarTimer = new javax.swing.Timer(500, new ActionListener() {
             private boolean ligado = false;
 
             @Override
-            public void actionPerformed( ActionEvent e )
-            {
-                if ( ligado )
-                {
-                    JLDataFecho.setForeground( Color.BLACK );
-                }
-                else
-                {
-                    JLDataFecho.setForeground( Color.RED );
+            public void actionPerformed(ActionEvent e) {
+                if (ligado) {
+                    JLDataFecho.setForeground(Color.BLACK);
+                } else {
+                    JLDataFecho.setForeground(Color.RED);
                 }
                 ligado = !ligado;
             }
-        } );
+        });
         piscarTimer.start();
     }
 
-    public void pararPiscarLabelJLDataFecho()
-    {
-        if ( piscarTimer != null && piscarTimer.isRunning() )
-        {
+    public void pararPiscarLabelJLDataFecho() {
+        if (piscarTimer != null && piscarTimer.isRunning()) {
             piscarTimer.stop();
-            JLDataFecho.setForeground( Color.BLACK );  // Garante a cor normal
+            JLDataFecho.setForeground(Color.BLACK);  // Garante a cor normal
         }
     }
 
-    public LoginVisao( int idUser )
-    {
+    public LoginVisao(int idUser) {
 
         initComponents();
-        setLocationRelativeTo( null );
-        setResizable( false );
-        setVisible( true );
+        setLocationRelativeTo(null);
+        setResizable(false);
+        setVisible(true);
 
         conexao = BDConexao.getInstancia();
 //        setTitle( "BEM VINDO AO " + DVML.NAME_SOFTWARE + " " + DVML.VERSION_SOFTWARE );
@@ -217,76 +205,63 @@ LoginVisao.setDefaultLookAndFeelDecorated(true);
 //        if (Objects.nonNull(conexao)) {
 //            conexao.close();
 //        }
-        dadosInstituicaoController = new DadosInstituicaoController( conexao );
-        d = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
+        dadosInstituicaoController = new DadosInstituicaoController(conexao);
+        d = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
         horaTerminoVenda = d.getHoraTerminoVenda();
 //        this.idUser = idUser;
 //        licensaUtil = new LicensaUtil( conexao );
 //        registerLog( conexao );
         mostrar_empresas();
-        
+
         prazo();
 
 // Mostrar o painel de produtos a expirar apenas para Farmácia
-if (d != null && "Farmacia".equalsIgnoreCase(d.getNegocio())) {
-    criarPainelExpirar();
-}
-
-LoginVisao.setDefaultLookAndFeelDecorated(true);
-//        prazo();
-        
-//        criarPainelExpirar();   // <-- nova linha
-
-//        LoginVisao.setDefaultLookAndFeelDecorated( true );
-        try
-        {
-            System.out.println( "Data Ultimo: " + documentoDao.getMAxDataDoc().toString() );
+        if (d != null && "Farmacia".equalsIgnoreCase(d.getNegocio())) {
+            criarPainelExpirar();
         }
-        catch ( Exception e )
-        {
+
+        LoginVisao.setDefaultLookAndFeelDecorated(true);
+//        prazo();
+
+//        criarPainelExpirar();   // <-- nova linha
+//        LoginVisao.setDefaultLookAndFeelDecorated( true );
+        try {
+            System.out.println("Data Ultimo: " + documentoDao.getMAxDataDoc().toString());
+        } catch (Exception e) {
         }
 //        verificar_data_sistema();
         txtUserName.requestFocus();
         //Envio de Email
-        try
-        {
+        try {
             verificarEnvioEmail();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
         }
 
         iniciarMonitoramento();
 
     }
 
-    private void verificarEnvioEmail()
-    {
+    private void verificarEnvioEmail() {
 
-        if ( d.getEnviarEmail().equals( "Sim" ) )
-        {
-            BTnSair.setVisible( false );
-            QuartzApp.executarCronjob( ValidadorJob.class, ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 ) );
-        }
-        else
-        {
-            BTnSair.setVisible( true );
+        if (d.getEnviarEmail().equals("Sim")) {
+            BTnSair.setVisible(false);
+            QuartzApp.executarCronjob(ValidadorJob.class, (TbDadosInstituicao) dadosInstituicaoController.findById(1));
+        } else {
+            BTnSair.setVisible(true);
         }
 
     }
 
-    public void mostrar_empresas()
-    {
-        cmbEmpresa.setModel( new DefaultComboBoxModel( ( Vector ) empresaDao.getAllEmpresa() ) );
+    public void mostrar_empresas() {
+        cmbEmpresa.setModel(new DefaultComboBoxModel((Vector) empresaDao.getAllEmpresa()));
     }
 
-    private void prazo()
-    {
+    private void prazo() {
 
-        TbDadosInstituicao dadosInstituicao = dadosInstituicaoDao.findTbDadosInstituicao( 1 );
-        JEmpresa.setText( "Empresa " + dadosInstituicao.getNome() );
-        JLNif.setText( "NIF " + dadosInstituicao.getNif() );
-        JLDataFecho.setText( "Contrato válido até " + ( dadosInstituicao.getDataFecho().getDate() ) + " / " + ( dadosInstituicao.getDataFecho().getMonth() + 1 ) + " / " + ( 1900 + dadosInstituicao.getDataFecho().getYear() ) );
+        TbDadosInstituicao dadosInstituicao = dadosInstituicaoDao.findTbDadosInstituicao(1);
+        JEmpresa.setText("Empresa " + dadosInstituicao.getNome());
+        JLNif.setText("NIF " + dadosInstituicao.getNif());
+        JLDataFecho.setText("Contrato válido até " + (dadosInstituicao.getDataFecho().getDate()) + " / " + (dadosInstituicao.getDataFecho().getMonth() + 1) + " / " + (1900 + dadosInstituicao.getDataFecho().getYear()));
     }
 
     /**
@@ -294,7 +269,7 @@ LoginVisao.setDefaultLookAndFeelDecorated(true);
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
      */
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents()
     {
@@ -555,25 +530,19 @@ LoginVisao.setDefaultLookAndFeelDecorated(true);
 
     private void pswSenhaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pswSenhaActionPerformed
         // TODO add your handling code here:
-        try
-        {
-            if ( MetodosUtil.acesso_sistema() )
-            {
+        try {
+            if (MetodosUtil.acesso_sistema()) {
 //                if ( licensaUtil.licenca_valida( new Date() ) )
 //                {
                 entrar_sistema();
 //                fazerBackupAgora();
 //                }
 
-            }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Impossível aceder ao sistema.\nDeves abrir um novo ano económico.\nContacte o seu fornecedor.", "AVISO", JOptionPane.WARNING_MESSAGE );
+            } else {
+                JOptionPane.showMessageDialog(null, "Impossível aceder ao sistema.\nDeves abrir um novo ano económico.\nContacte o seu fornecedor.", "AVISO", JOptionPane.WARNING_MESSAGE);
             }
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -584,10 +553,8 @@ LoginVisao.setDefaultLookAndFeelDecorated(true);
     }//GEN-LAST:event_cmbEmpresaActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        try
-        {
-            if ( MetodosUtil.acesso_sistema() )
-            {
+        try {
+            if (MetodosUtil.acesso_sistema()) {
 //                if ( licensaUtil.licenca_valida( new Date() ) )
 //                {
 
@@ -595,37 +562,30 @@ LoginVisao.setDefaultLookAndFeelDecorated(true);
 //                fazerBackupAgora();
 //                }
 
-            }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Impossível aceder ao sistema.\nDeves abrir um novo ano económico.\nContacte o seu fornecedor.", "AVISO", JOptionPane.WARNING_MESSAGE );
+            } else {
+                JOptionPane.showMessageDialog(null, "Impossível aceder ao sistema.\nDeves abrir um novo ano económico.\nContacte o seu fornecedor.", "AVISO", JOptionPane.WARNING_MESSAGE);
             }
 
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void BTnSairActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BTnSairActionPerformed
     {//GEN-HEADEREND:event_BTnSairActionPerformed
-        try
-        {
+        try {
             dispose();
             BackupUsb.realizarBackup();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        System.exit( 0 );
+        System.exit(0);
     }//GEN-LAST:event_BTnSairActionPerformed
 
 //    public static void alterar_status_botao() {
 //
 //        if (!caixaDao.existeCaixas()) {
-////            btn_abertura_dia.setEnabled(true);
+    ////            btn_abertura_dia.setEnabled(true);
 //            jButton1.setEnabled(false);
 //        } else if (caixaDao.existe_abertura() && caixaDao.existe_fecho()) {
 ////            btn_abertura_dia.setEnabled(true);
@@ -635,67 +595,53 @@ LoginVisao.setDefaultLookAndFeelDecorated(true);
 //            jButton1.setEnabled(true);
 //        }
 //    }
-    public void entrar_sistema() throws SQLException, UnknownHostException
-    {
+    public void entrar_sistema() throws SQLException, UnknownHostException {
 
-        TbUsuario usuario = usuarioDao.getUsuariowithEncriptedPass( getUserName(), getSenha() );
-        TbDadosInstituicao dadosInstituicao = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
+        TbUsuario usuario = usuarioDao.getUsuariowithEncriptedPass(getUserName(), getSenha());
+        TbDadosInstituicao dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
 
-        if ( usuario == null )
-        {
-            JOptionPane.showMessageDialog( null, "Erro Senha errada ou  User Name" );
-        }
-        else
-        {
-            if ( usuario.getDataUltimoAcesso() == null )
-            {
+        if (usuario == null) {
+            JOptionPane.showMessageDialog(null, "Erro Senha errada ou  User Name");
+        } else {
+            if (usuario.getDataUltimoAcesso() == null) {
                 alterarSenha();
-            }
-            else
-            {
+            } else {
 
                 id_user = usuario.getCodigo();
                 id_empresa = getIdEmpresa();
-                try
-                {
+                try {
 //                    BackupUtil.fazerBackupAgora();
-                }
-                catch ( Exception e )
-                {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
 //                dispose();
-                switch (usuario.getIdTipoUsuario().getIdTipoUsuario())
-                {
+                switch (usuario.getIdTipoUsuario().getIdTipoUsuario()) {
 
                     //1 - Administrador
                     case 1:
 //                        dispose();
 
-                        System.err.println( "getCodico_Utilizador (): " + getCodico_Utilizador() );
-                        System.err.println( "getCodico_Empresa (): " + getIdEmpresa() );
+                        System.err.println("getCodico_Utilizador (): " + getCodico_Utilizador());
+                        System.err.println("getCodico_Empresa (): " + getIdEmpresa());
 //                        MetodosUtil.abrir_caixa_automatica( getCodico_Utilizador(), new UsuariosController( conexao ), new CaixasController( conexao ) );
-                        new RootVisao( getCodico_Utilizador(), getIdEmpresa(), true, BDConexao.getInstancia() ).setVisible( true );
+                        new RootVisao(getCodico_Utilizador(), getIdEmpresa(), true, BDConexao.getInstancia()).setVisible(true);
                         limpar();
                         break;
 //                    Sub Administrador
                     case 2:
 //                        dispose();
 
-                        System.err.println( "getCodico_Utilizador (): " + getCodico_Utilizador() );
-                        System.err.println( "getCodico_Empresa (): " + getIdEmpresa() );
+                        System.err.println("getCodico_Utilizador (): " + getCodico_Utilizador());
+                        System.err.println("getCodico_Empresa (): " + getIdEmpresa());
 //                        MetodosUtil.abrir_caixa_automatica( getCodico_Utilizador(), new UsuariosController( conexao ), new CaixasController( conexao ) );
-                        if ( dadosInstituicao.getNegocio().equals( "Lavandaria" ) )
-                        {
+                        if (dadosInstituicao.getNegocio().equals("Lavandaria")) {
 
-                            new JanelaFrontOfficeLavandariaVisao( getCodico_Utilizador(), BDConexao.getInstancia() ).setVisible( true );
+                            new JanelaFrontOfficeLavandariaVisao(getCodico_Utilizador(), BDConexao.getInstancia()).setVisible(true);
 
-                        }
-                        else
-                        {
+                        } else {
 
-                            new RootVisao( getCodico_Utilizador(), getIdEmpresa(), true, BDConexao.getInstancia() ).setVisible( true );
+                            new RootVisao(getCodico_Utilizador(), getIdEmpresa(), true, BDConexao.getInstancia()).setVisible(true);
                         }
                         limpar();
                         break;
@@ -703,7 +649,7 @@ LoginVisao.setDefaultLookAndFeelDecorated(true);
                     case 3:
 //                        dispose();
 //                        MetodosUtil.abrir_caixa_automatica( getCodico_Utilizador(), new UsuariosController( conexao ), new CaixasController( conexao ) );
-                        new VendaUsuarioVisao( getCodico_Utilizador(), BDConexao.getInstancia() ).setVisible( true );
+                        new VendaUsuarioVisao(getCodico_Utilizador(), BDConexao.getInstancia()).setVisible(true);
                         limpar();
                         break;
                     //3 - VendaPO
@@ -711,61 +657,51 @@ LoginVisao.setDefaultLookAndFeelDecorated(true);
 //                        dispose();
 //                        new VendaPOSVisao( BDConexao.getInstancia(), DVML.ARMAZEM_LOJA, getCodico_Utilizador() ).setVisible( true );
 //                        MetodosUtil.abrir_caixa_automatica( getCodico_Utilizador(), new UsuariosController( conexao ), new CaixasController( conexao ) );
-                        new FrontOfficeVisao( getCodico_Utilizador(), BDConexao.getInstancia() ).setVisible( true );
+                        new FrontOfficeVisao(getCodico_Utilizador(), BDConexao.getInstancia()).setVisible(true);
                         limpar();
                         break;
 
                     default:
-                        JOptionPane.showMessageDialog( null, "Erro Senha errado ou  User Name" );
+                        JOptionPane.showMessageDialog(null, "Erro Senha errado ou  User Name");
                         break;
                 }
             }
         }
     }
 
-    public int getCodico_Utilizador()
-    {
-        return BDConexao.getCodigoUSuario( getUserName(), getSenha() );
+    public int getCodico_Utilizador() {
+        return BDConexao.getCodigoUSuario(getUserName(), getSenha());
     }
 
-    public int getIdEmpresa()
-    {
-        return empresaDao.getIdByDescricao( cmbEmpresa.getSelectedItem().toString() );
+    public int getIdEmpresa() {
+        return empresaDao.getIdByDescricao(cmbEmpresa.getSelectedItem().toString());
     }
 
-    public String getUserName()
-    {
+    public String getUserName() {
         return txtUserName.getText().toLowerCase();
     }
 
-    public String getSenha()
-    {
+    public String getSenha() {
         return pswSenha.getText();
     }
 
     /**
      * @param args the command line arguments
      */
-    public static void main( String args[] )
-    {
+    public static void main(String args[]) {
         /* Set the Nimbus look and feel */
-        try
-        {
+        try {
 
-            Locale.setDefault( new Locale( "pt", "AO" ) );
-            for ( javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels() )
-            {
-                if ( "Windows".equals( info.getName() ) )
-                {
-                    javax.swing.UIManager.setLookAndFeel( info.getClassName() );
+            Locale.setDefault(new Locale("pt", "AO"));
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Windows".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
-        }
-        catch ( Exception ex )
-        {
-            java.util.logging.Logger.getLogger( LoginVisao.class.getName() )
-                    .log( java.util.logging.Level.SEVERE, null, ex );
+        } catch (Exception ex) {
+            java.util.logging.Logger.getLogger(LoginVisao.class.getName())
+                    .log(java.util.logging.Level.SEVERE, null, ex);
         }
 
         // 🔒 Verifica instância única ANTES de abrir interface
@@ -774,60 +710,53 @@ LoginVisao.setDefaultLookAndFeelDecorated(true);
 //            JOptionPane.showMessageDialog( null, "Atenção\nO sistema já está aberto!" );
 //            System.exit( 0 );
 //        }
-        if ( SingleInstanceManager.isInstanceRunning() )
-        {
+        if (SingleInstanceManager.isInstanceRunning()) {
             // A instância antiga será fechada automaticamente.
             // Depois disto a nova abertura funciona normalmente.
-            System.exit( 0 );
+            System.exit(0);
         }
 
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater( new Runnable()
-        {
-            public void run()
-            {
-                try
-                {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
 
-                    UIManager.setLookAndFeel( new SyntheticaBlackStarLookAndFeel() );
+                    UIManager.setLookAndFeel(new SyntheticaBlackStarLookAndFeel());
 //                    UIManager.setLookAndFeel("com.jtattoo.plaf.acryl.AcrylLookAndFeel");
 //                    FlatMTMaterialOceanicIJTheme.setup();
                     // JTextField
-                    UIManager.put( "TextField.background", new Color( 0, 255, 255 ) ); // fundo
-                    UIManager.put( "TextField.foreground", new Color( 0, 51, 102 ) );  // texto
-                    UIManager.put( "TextField.caretForeground", Color.RED );         // cursor
-                    UIManager.put( "TextField.selectionBackground", Color.YELLOW );  // seleção (amarelo só no JTextField)
-                    UIManager.put( "TextField.selectionForeground", Color.BLUE );    // texto selecionado
+                    UIManager.put("TextField.background", new Color(0, 255, 255)); // fundo
+                    UIManager.put("TextField.foreground", new Color(0, 51, 102));  // texto
+                    UIManager.put("TextField.caretForeground", Color.RED);         // cursor
+                    UIManager.put("TextField.selectionBackground", Color.YELLOW);  // seleção (amarelo só no JTextField)
+                    UIManager.put("TextField.selectionForeground", Color.BLUE);    // texto selecionado
 
                     //JComboBox
-                    UIManager.put( "ComboBox.background", new Color( 0, 255, 255 ) );
-                    UIManager.put( "ComboBox.foreground", new Color( 0, 51, 102 ) );
-                    UIManager.put( "ComboBox.selectionBackground", new Color( 173, 216, 230 ) ); // azul claro
-                    UIManager.put( "ComboBox.selectionForeground", Color.BLACK );
+                    UIManager.put("ComboBox.background", new Color(0, 255, 255));
+                    UIManager.put("ComboBox.foreground", new Color(0, 51, 102));
+                    UIManager.put("ComboBox.selectionBackground", new Color(173, 216, 230)); // azul claro
+                    UIManager.put("ComboBox.selectionForeground", Color.BLACK);
 
                     //JTable
-                    UIManager.put( "Table.background", new Color( 0, 255, 255 ) );
-                    UIManager.put( "Table.foreground", new Color( 0, 51, 102 ) );
-                    UIManager.put( "Table.selectionBackground", new Color( 0, 120, 215 ) ); // azul estilo Windows
-                    UIManager.put( "Table.selectionForeground", Color.WHITE );      // texto branco na seleção
-                    UIManager.put( "Table.gridColor", Color.GRAY );
-                    UIManager.put( "TableHeader.background", new Color( 0, 200, 200 ) );
-                    UIManager.put( "TableHeader.foreground", Color.BLACK );
+                    UIManager.put("Table.background", new Color(0, 255, 255));
+                    UIManager.put("Table.foreground", new Color(0, 51, 102));
+                    UIManager.put("Table.selectionBackground", new Color(0, 120, 215)); // azul estilo Windows
+                    UIManager.put("Table.selectionForeground", Color.WHITE);      // texto branco na seleção
+                    UIManager.put("Table.gridColor", Color.GRAY);
+                    UIManager.put("TableHeader.background", new Color(0, 200, 200));
+                    UIManager.put("TableHeader.foreground", Color.BLACK);
 
-                }
-                catch ( Exception e )
-                {
-                    JOptionPane.showMessageDialog( null, "Erro no Look and Feel: " + e.getMessage(),
-                            "Erro", JOptionPane.ERROR_MESSAGE );
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Erro no Look and Feel: " + e.getMessage(),
+                            "Erro", JOptionPane.ERROR_MESSAGE);
                 }
 
                 // INICIAR PROCESSOS EM BACKGROUND
-               // if ( startBackGroundProcesses() )
-                if ( true )
-                {
+                // if ( startBackGroundProcesses() )
+                if (true) {
                     BDConexao conexao = BDConexao.getInstancia();
-                    StockAutoCheckService service = new StockAutoCheckService( conexao.getConnectionAtiva() );
+                    StockAutoCheckService service = new StockAutoCheckService(conexao.getConnectionAtiva());
 
 //                    try
 //                    {
@@ -837,29 +766,23 @@ LoginVisao.setDefaultLookAndFeelDecorated(true);
 //                    {
 //                        e.printStackTrace();
 //                    }
+                    if (true) { // <- aqui você pode colocar sua regra de licença
+                        new LoginVisao(BDConexao.getInstancia()).setVisible(true);
 
-                    if ( true )
-                    { // <- aqui você pode colocar sua regra de licença
-                        new LoginVisao( BDConexao.getInstancia() ).setVisible( true );
-
-                    }
-                    else
-                    {
-                        JOptionPane.showMessageDialog( null,
+                    } else {
+                        JOptionPane.showMessageDialog(null,
                                 "A sua licença expirou.\nPor favor contacte a DVML-COMERCIAL, Lda\nContactos: 923409284 / 940537124",
-                                "AVISO", JOptionPane.WARNING_MESSAGE );
+                                "AVISO", JOptionPane.WARNING_MESSAGE);
                     }
-                }
-                else
-                {
-                    JOptionPane.showMessageDialog( null, "NÃO FOI POSSÍVEL ACEDER A BASE DE DADOS",
-                            "ERRO NA BASE DE DADOS", JOptionPane.ERROR_MESSAGE );
+                } else {
+                    JOptionPane.showMessageDialog(null, "NÃO FOI POSSÍVEL ACEDER A BASE DE DADOS",
+                            "ERRO NA BASE DE DADOS", JOptionPane.ERROR_MESSAGE);
                 }
             }
-        } );
+        });
     }
-    
-      // =====================================================================
+
+    // =====================================================================
     // SUBSTITUI, na classe LoginVisao, TODO o bloco do painel "Produtos a expirar"
     // (desde "private static final int EXP_X..." até ao fim da classe RendererExpirar).
     // Os imports e as chamadas criarPainelExpirar() nos construtores ficam como estão.
@@ -867,7 +790,6 @@ LoginVisao.setDefaultLookAndFeelDecorated(true);
     // Mostra apenas os lotes do SEGUNDO armazém (Farmácia). Se a empresa só tiver
     // um armazém, usa o primeiro. O nome do armazém aparece no título do painel.
     // =====================================================================
-
     // ------------------------------------------------------------------
     // Painel: produtos a expirar (visível antes do login)
     // ------------------------------------------------------------------
@@ -875,32 +797,32 @@ LoginVisao.setDefaultLookAndFeelDecorated(true);
     // ------------------------------------------------------------------
 // Relatório iReport - Produtos a expirar no Login
 // ------------------------------------------------------------------
-private static final String RELATORIO_LOGIN_JASPER =
-        "produtos_por_expirar_login.jasper";
+    private static final String RELATORIO_LOGIN_JASPER
+            = "produtos_por_expirar_login.jasper";
 
-private static final String RELATORIO_LOGIN_JRXML =
-        "produtos_por_expirar_login.jrxml";
+    private static final String RELATORIO_LOGIN_JRXML
+            = "produtos_por_expirar_login.jrxml";
 
-private JasperReport relatorioLoginCarregado;
+    private JasperReport relatorioLoginCarregado;
 
-private final SimpleDateFormat fmtDataHoraRelatorio =
-        new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    private final SimpleDateFormat fmtDataHoraRelatorio
+            = new SimpleDateFormat("dd/MM/yyyy HH:mm");
     private static final int EXP_X = 33, EXP_Y = 250, EXP_W = 540, EXP_H = 360;
     private static final int DIAS_INICIAIS = 60;
 
     // Índice do armazém mostrado, na lista ordenada por código: 1 = SEGUNDO (Farmácia)
     private static final int ARMAZEM_EXPIRAR_INDICE = 1;
 
-    private static final Color COR_EXPIRADO = new Color( 255, 170, 170 ); // vermelho claro
-    private static final Color COR_URGENTE = new Color( 255, 204, 153 );  // laranja claro (<= 30 dias)
-    private static final Color COR_URGENTE_FORTE = new Color( 255, 120, 0 ); // laranja forte (fase "acesa" do piscar)
+    private static final Color COR_EXPIRADO = new Color(255, 170, 170); // vermelho claro
+    private static final Color COR_URGENTE = new Color(255, 204, 153);  // laranja claro (<= 30 dias)
+    private static final Color COR_URGENTE_FORTE = new Color(255, 120, 0); // laranja forte (fase "acesa" do piscar)
 
     // Alarme: toca ALARME_TOQUES vezes quando passam a existir linhas a piscar
     private static final int ALARME_TOQUES = 3;
     private static final int ALARME_FREQUENCIA_HZ = 880; // nota Lá
     private static final int ALARME_DURACAO_MS = 250;    // duração de cada toque
     private static final int ALARME_PAUSA_MS = 150;      // pausa entre toques
-    private static final Color COR_AVISO = new Color( 255, 245, 170 );    // amarelo claro (> 30 dias)
+    private static final Color COR_AVISO = new Color(255, 245, 170);    // amarelo claro (> 30 dias)
 
     // ASSUMIDO: tb_armazem(codigo, designacao) e lote.fk_armazem
     private static final String SQL_ARMAZENS_EXPIRAR
@@ -920,24 +842,21 @@ private final SimpleDateFormat fmtDataHoraRelatorio =
     private int idArmazemExpirar = -1;
     private String nomeArmazemExpirar = "";
 
-    private final JSpinner spDiasExpirar = new JSpinner( new SpinnerNumberModel( DIAS_INICIAIS, 1, 3650, 1 ) );
-    private final JCheckBox chkExpirados = new JCheckBox( "Incluir já expirados com stock", true );
+    private final JSpinner spDiasExpirar = new JSpinner(new SpinnerNumberModel(DIAS_INICIAIS, 1, 3650, 1));
+    private final JCheckBox chkExpirados = new JCheckBox("Incluir já expirados com stock", true);
     private final DefaultTableModel modExpirar = new DefaultTableModel(
-            new String[]
-            {
+            new String[]{
                 "Código", "Designação Produto", "Lote", "Data Validade"
-            }, 0 )
-    {
+            }, 0) {
         @Override
-        public boolean isCellEditable( int row, int column )
-        {
+        public boolean isCellEditable(int row, int column) {
             return false;
         }
     };
-    private final JTable tblExpirar = new JTable( modExpirar );
-    private final javax.swing.JLabel lblTotalExpirar = new javax.swing.JLabel( " " );
+    private final JTable tblExpirar = new JTable(modExpirar);
+    private final javax.swing.JLabel lblTotalExpirar = new javax.swing.JLabel(" ");
     private final List<Integer> diasExpirar = new ArrayList<>(); // dias restantes de cada linha (para a cor)
-    private final SimpleDateFormat fmtDataExpirar = new SimpleDateFormat( "dd/MM/yyyy" );
+    private final SimpleDateFormat fmtDataExpirar = new SimpleDateFormat("dd/MM/yyyy");
     private javax.swing.Timer refreshExpirarTimer;
 
     // Piscar das linhas laranja (a expirar em 0 a 30 dias)
@@ -946,65 +865,58 @@ private final SimpleDateFormat fmtDataHoraRelatorio =
     private boolean temLinhasUrgentes = false;
     private volatile boolean alarmeATocar = false;
 
-    /** Descobre o armazém a mostrar: o 2.º da lista (ou o 1.º, se só houver um). */
-    private void resolverArmazemExpirar()
-    {
-        try
-        {
+    /**
+     * Descobre o armazém a mostrar: o 2.º da lista (ou o 1.º, se só houver um).
+     */
+    private void resolverArmazemExpirar() {
+        try {
             Connection cn = BDConexao.getInstancia().getConnectionAtiva();
-            try ( PreparedStatement ps = cn.prepareStatement( SQL_ARMAZENS_EXPIRAR );  ResultSet rs = ps.executeQuery() )
-            {
+            try (PreparedStatement ps = cn.prepareStatement(SQL_ARMAZENS_EXPIRAR); ResultSet rs = ps.executeQuery()) {
                 int i = 0;
-                while ( rs.next() )
-                {
-                    if ( i == 0 || i == ARMAZEM_EXPIRAR_INDICE )
-                    {
-                        idArmazemExpirar = rs.getInt( "codigo" );
-                        nomeArmazemExpirar = rs.getString( "designacao" );
+                while (rs.next()) {
+                    if (i == 0 || i == ARMAZEM_EXPIRAR_INDICE) {
+                        idArmazemExpirar = rs.getInt("codigo");
+                        nomeArmazemExpirar = rs.getString("designacao");
                     }
-                    if ( i == ARMAZEM_EXPIRAR_INDICE )
-                    {
+                    if (i == ARMAZEM_EXPIRAR_INDICE) {
                         break;
                     }
                     i++;
                 }
             }
-        }
-        catch ( Exception ex )
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
             idArmazemExpirar = -1;
         }
     }
 
-    /** Cria o painel e coloca-o por cima do fundo, sem tocar no layout gerado. */
-    private void criarPainelExpirar()
-    {
+    /**
+     * Cria o painel e coloca-o por cima do fundo, sem tocar no layout gerado.
+     */
+    private void criarPainelExpirar() {
         resolverArmazemExpirar();
 
-        Font negrito = new Font( "Tahoma", Font.BOLD, 12 );
+        Font negrito = new Font("Tahoma", Font.BOLD, 12);
 
-        javax.swing.JLabel lbl1 = new javax.swing.JLabel( "A expirar nos próximos" );
-        javax.swing.JLabel lbl2 = new javax.swing.JLabel( "dias" );
-        for ( javax.swing.JLabel l : new javax.swing.JLabel[]
-        {
+        javax.swing.JLabel lbl1 = new javax.swing.JLabel("A expirar nos próximos");
+        javax.swing.JLabel lbl2 = new javax.swing.JLabel("dias");
+        for (javax.swing.JLabel l : new javax.swing.JLabel[]{
             lbl1, lbl2
-        } )
-        {
-            l.setFont( negrito );
-            l.setForeground( Color.WHITE );
+        }) {
+            l.setFont(negrito);
+            l.setForeground(Color.WHITE);
         }
-        spDiasExpirar.setPreferredSize( new Dimension( 75, 26 ) );
-        chkExpirados.setOpaque( false );
-        chkExpirados.setForeground( Color.WHITE );
-        chkExpirados.setFont( negrito );
+        spDiasExpirar.setPreferredSize(new Dimension(75, 26));
+        chkExpirados.setOpaque(false);
+        chkExpirados.setForeground(Color.WHITE);
+        chkExpirados.setFont(negrito);
 
-        JPanel topo = new JPanel( new FlowLayout( FlowLayout.LEFT, 6, 2 ) );
-        topo.setOpaque( false );
-        topo.add( lbl1 );
-        topo.add( spDiasExpirar );
-        topo.add( lbl2 );
-        topo.add( chkExpirados );
+        JPanel topo = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 2));
+        topo.setOpaque(false);
+        topo.add(lbl1);
+        topo.add(spDiasExpirar);
+        topo.add(lbl2);
+        topo.add(chkExpirados);
 
         // Garantir 5 colunas no modelo:
 // 0 = Código
@@ -1012,495 +924,455 @@ private final SimpleDateFormat fmtDataHoraRelatorio =
 // 2 = Lote
 // 3 = Data Validade
 // 4 = Dias restantes (coluna auxiliar para o relatório)
-javax.swing.table.DefaultTableModel modeloExpirar =
-        (javax.swing.table.DefaultTableModel) tblExpirar.getModel();
+        javax.swing.table.DefaultTableModel modeloExpirar
+                = (javax.swing.table.DefaultTableModel) tblExpirar.getModel();
 
-if (modeloExpirar.getColumnCount() == 4) {
-    modeloExpirar.addColumn("Dias restantes");
-}
-        
+        if (modeloExpirar.getColumnCount() == 4) {
+            modeloExpirar.addColumn("Dias restantes");
+        }
+
         // Tabela
-        tblExpirar.setRowHeight( 24 );
-        tblExpirar.getTableHeader().setReorderingAllowed( false );
-        tblExpirar.getTableHeader().setFont( negrito );
-        tblExpirar.setFillsViewportHeight( true );
-        tblExpirar.setSelectionMode( ListSelectionModel.SINGLE_SELECTION );
-        int[] alinhamentos =
-        {
-            SwingConstants.CENTER, SwingConstants.LEFT, SwingConstants.LEFT, SwingConstants.CENTER
-        };
-        int[] larguras =
-        {
-            70, 260, 100, 100
-        };
-        for ( int c = 0; c < alinhamentos.length; c++ )
-        {
-            tblExpirar.getColumnModel().getColumn( c ).setCellRenderer( new RendererExpirar( alinhamentos[c] ) );
-            tblExpirar.getColumnModel().getColumn( c ).setPreferredWidth( larguras[c] );
+        tblExpirar.setRowHeight(24);
+        tblExpirar.getTableHeader().setReorderingAllowed(false);
+        tblExpirar.getTableHeader().setFont(negrito);
+        tblExpirar.setFillsViewportHeight(true);
+        tblExpirar.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        int[] alinhamentos
+                = {
+                    SwingConstants.CENTER, SwingConstants.LEFT, SwingConstants.LEFT, SwingConstants.CENTER
+                };
+        int[] larguras
+                = {
+                    70, 260, 100, 100
+                };
+        for (int c = 0; c < alinhamentos.length; c++) {
+            tblExpirar.getColumnModel().getColumn(c).setCellRenderer(new RendererExpirar(alinhamentos[c]));
+            tblExpirar.getColumnModel().getColumn(c).setPreferredWidth(larguras[c]);
         }
         // Ocultar a coluna auxiliar, mantendo-a no modelo de dados.
-if (tblExpirar.getColumnModel().getColumnCount() > 4) {
-    tblExpirar.removeColumn(
-            tblExpirar.getColumnModel().getColumn(4)
-    );
-}
-        JScrollPane scroll = new JScrollPane( tblExpirar );
-        scroll.getViewport().setBackground( new Color( 20, 25, 50 ) );
+        if (tblExpirar.getColumnModel().getColumnCount() > 4) {
+            tblExpirar.removeColumn(
+                    tblExpirar.getColumnModel().getColumn(4)
+            );
+        }
+        JScrollPane scroll = new JScrollPane(tblExpirar);
+        scroll.getViewport().setBackground(new Color(20, 25, 50));
 
-        lblTotalExpirar.setForeground( Color.WHITE );
-        lblTotalExpirar.setFont( new Font( "Tahoma", Font.ITALIC, 11 ) );
+        lblTotalExpirar.setForeground(Color.WHITE);
+        lblTotalExpirar.setFont(new Font("Tahoma", Font.ITALIC, 11));
 
         // Painel com fundo escuro semi-transparente (deixa ver a imagem de fundo)
-        JPanel painel = new JPanel( new BorderLayout( 0, 6 ) )
-        {
+        JPanel painel = new JPanel(new BorderLayout(0, 6)) {
             @Override
-            protected void paintComponent( Graphics g )
-            {
-                g.setColor( getBackground() );
-                g.fillRect( 0, 0, getWidth(), getHeight() );
-                super.paintComponent( g );
+            protected void paintComponent(Graphics g) {
+                g.setColor(getBackground());
+                g.fillRect(0, 0, getWidth(), getHeight());
+                super.paintComponent(g);
             }
         };
-        painel.setOpaque( false );
-        painel.setBackground( new Color( 10, 15, 40, 190 ) );
+        painel.setOpaque(false);
+        painel.setBackground(new Color(10, 15, 40, 190));
         String titulo = nomeArmazemExpirar.isEmpty()
                 ? "Produtos a expirar"
                 : "Produtos a expirar - " + nomeArmazemExpirar;
-        painel.setBorder( BorderFactory.createCompoundBorder(
-                BorderFactory.createTitledBorder( BorderFactory.createLineBorder( Color.WHITE ),
+        painel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.WHITE),
                         titulo, javax.swing.border.TitledBorder.LEFT,
-                        javax.swing.border.TitledBorder.TOP, new Font( "Tahoma", Font.BOLD, 14 ), Color.WHITE ),
-                BorderFactory.createEmptyBorder( 4, 6, 6, 6 ) ) );
+                        javax.swing.border.TitledBorder.TOP, new Font("Tahoma", Font.BOLD, 14), Color.WHITE),
+                BorderFactory.createEmptyBorder(4, 6, 6, 6)));
 //        painel.add( topo, BorderLayout.NORTH );
 //        painel.add( scroll, BorderLayout.CENTER );
 //        painel.add( lblTotalExpirar, BorderLayout.SOUTH );
 //        painel.setBounds( EXP_X, EXP_Y, EXP_W, EXP_H );
 // Rodapé com total de lotes e botão de impressão
-JPanel rodapeExpirar = new JPanel(new BorderLayout(5, 0));
-rodapeExpirar.setOpaque(false);
+        JPanel rodapeExpirar = new JPanel(new BorderLayout(5, 0));
+        rodapeExpirar.setOpaque(false);
 
-JButton btnImprimirExpirar = new JButton("Imprimir");
-btnImprimirExpirar.setToolTipText(
-        "Imprimir os produtos a expirar apresentados na tabela"
-);
+        JButton btnImprimirExpirar = new JButton("Imprimir");
+        btnImprimirExpirar.setToolTipText(
+                "Imprimir os produtos a expirar apresentados na tabela"
+        );
 
-btnImprimirExpirar.addActionListener(e -> imprimirProdutosAExpirar());
+        btnImprimirExpirar.addActionListener(e -> imprimirProdutosAExpirar());
 
-rodapeExpirar.add(lblTotalExpirar, BorderLayout.CENTER);
-rodapeExpirar.add(btnImprimirExpirar, BorderLayout.EAST);
+        rodapeExpirar.add(lblTotalExpirar, BorderLayout.CENTER);
+        rodapeExpirar.add(btnImprimirExpirar, BorderLayout.EAST);
 
-painel.add(topo, BorderLayout.NORTH);
-painel.add(scroll, BorderLayout.CENTER);
-painel.add(rodapeExpirar, BorderLayout.SOUTH);
+        painel.add(topo, BorderLayout.NORTH);
+        painel.add(scroll, BorderLayout.CENTER);
+        painel.add(rodapeExpirar, BorderLayout.SOUTH);
 
-painel.setBounds(EXP_X, EXP_Y, EXP_W, EXP_H);
+        painel.setBounds(EXP_X, EXP_Y, EXP_W, EXP_H);
 
-        getLayeredPane().add( painel, JLayeredPane.PALETTE_LAYER );
+        getLayeredPane().add(painel, JLayeredPane.PALETTE_LAYER);
 
         // Actualização dinâmica: setas do spinner, escrita manual e checkbox
-        spDiasExpirar.addChangeListener( e -> agendarRefreshExpirar() );
-        JFormattedTextField tf = ( ( JSpinner.DefaultEditor ) spDiasExpirar.getEditor() ).getTextField();
-        tf.getDocument().addDocumentListener( new DocumentListener()
-        {
+        spDiasExpirar.addChangeListener(e -> agendarRefreshExpirar());
+        JFormattedTextField tf = ((JSpinner.DefaultEditor) spDiasExpirar.getEditor()).getTextField();
+        tf.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void insertUpdate( DocumentEvent e )
-            {
+            public void insertUpdate(DocumentEvent e) {
                 agendarRefreshExpirar();
             }
 
             @Override
-            public void removeUpdate( DocumentEvent e )
-            {
+            public void removeUpdate(DocumentEvent e) {
                 agendarRefreshExpirar();
             }
 
             @Override
-            public void changedUpdate( DocumentEvent e )
-            {
+            public void changedUpdate(DocumentEvent e) {
                 agendarRefreshExpirar();
             }
-        } );
-        chkExpirados.addActionListener( e -> carregarProdutosAExpirar() );
+        });
+        chkExpirados.addActionListener(e -> carregarProdutosAExpirar());
 
         carregarProdutosAExpirar();
         iniciarPiscarExpirar();
     }
 
-    /** Faz piscar as linhas laranja (500 ms), para chamar a atenção do utilizador. */
-    private void iniciarPiscarExpirar()
-    {
-        piscarExpirarTimer = new javax.swing.Timer( 500, e ->
-        {
-            if ( !isDisplayable() )
-            {
-                ( ( javax.swing.Timer ) e.getSource() ).stop(); // janela fechada: pára o timer
+    /**
+     * Faz piscar as linhas laranja (500 ms), para chamar a atenção do
+     * utilizador.
+     */
+    private void iniciarPiscarExpirar() {
+        piscarExpirarTimer = new javax.swing.Timer(500, e
+                -> {
+            if (!isDisplayable()) {
+                ((javax.swing.Timer) e.getSource()).stop(); // janela fechada: pára o timer
                 return;
             }
             piscarExpirarLigado = !piscarExpirarLigado;
-            if ( temLinhasUrgentes )
-            {
+            if (temLinhasUrgentes) {
                 tblExpirar.repaint();
             }
-        } );
+        });
         piscarExpirarTimer.start();
     }
 
-    /** Espera 400 ms depois da última tecla antes de consultar a BD. */
-    private void agendarRefreshExpirar()
-    {
-        if ( refreshExpirarTimer == null )
-        {
-            refreshExpirarTimer = new javax.swing.Timer( 400, e -> carregarProdutosAExpirar() );
-            refreshExpirarTimer.setRepeats( false );
+    /**
+     * Espera 400 ms depois da última tecla antes de consultar a BD.
+     */
+    private void agendarRefreshExpirar() {
+        if (refreshExpirarTimer == null) {
+            refreshExpirarTimer = new javax.swing.Timer(400, e -> carregarProdutosAExpirar());
+            refreshExpirarTimer.setRepeats(false);
         }
         refreshExpirarTimer.restart();
     }
 
-    /** Lê o nº de dias directamente do texto do spinner (mesmo antes de carregar Enter). */
-    private int obterDiasExpirar()
-    {
-        String txt = ( ( JSpinner.DefaultEditor ) spDiasExpirar.getEditor() ).getTextField()
-                .getText().replaceAll( "[^0-9]", "" );
-        if ( txt.isEmpty() )
-        {
+    /**
+     * Lê o nº de dias directamente do texto do spinner (mesmo antes de carregar
+     * Enter).
+     */
+    private int obterDiasExpirar() {
+        String txt = ((JSpinner.DefaultEditor) spDiasExpirar.getEditor()).getTextField()
+                .getText().replaceAll("[^0-9]", "");
+        if (txt.isEmpty()) {
             return -1;
         }
-        try
-        {
-            int d = Integer.parseInt( txt );
-            return ( d >= 1 && d <= 3650 ) ? d : -1;
-        }
-        catch ( NumberFormatException ex )
-        {
+        try {
+            int d = Integer.parseInt(txt);
+            return (d >= 1 && d <= 3650) ? d : -1;
+        } catch (NumberFormatException ex) {
             return -1;
         }
     }
 
-    private void carregarProdutosAExpirar()
-    {
+    private void carregarProdutosAExpirar() {
         int dias = obterDiasExpirar();
-        if ( dias < 0 )
-        {
+        if (dias < 0) {
             return; // campo vazio ou valor inválido: mantém a lista anterior
         }
 
-        if ( idArmazemExpirar < 0 )
-        {
+        if (idArmazemExpirar < 0) {
             resolverArmazemExpirar(); // tenta outra vez (ex.: BD indisponível no arranque)
         }
 
-        modExpirar.setRowCount( 0 );
+        modExpirar.setRowCount(0);
         boolean tinhaUrgentes = temLinhasUrgentes;
         diasExpirar.clear();
         temLinhasUrgentes = false;
 
-        if ( idArmazemExpirar < 0 )
-        {
-            lblTotalExpirar.setText( " Não foi possível identificar o armazém." );
+        if (idArmazemExpirar < 0) {
+            lblTotalExpirar.setText(" Não foi possível identificar o armazém.");
             return;
         }
 
-        try
-        {
+        try {
             Connection cn = BDConexao.getInstancia().getConnectionAtiva();
-            try ( PreparedStatement ps = cn.prepareStatement( SQL_A_EXPIRAR ) )
-            {
-                ps.setInt( 1, idArmazemExpirar );
-                ps.setInt( 2, dias );
-                ps.setInt( 3, chkExpirados.isSelected() ? 1 : 0 );
-                try ( ResultSet rs = ps.executeQuery() )
-                {
+            try (PreparedStatement ps = cn.prepareStatement(SQL_A_EXPIRAR)) {
+                ps.setInt(1, idArmazemExpirar);
+                ps.setInt(2, dias);
+                ps.setInt(3, chkExpirados.isSelected() ? 1 : 0);
+                try (ResultSet rs = ps.executeQuery()) {
 
-while (rs.next()) {
-    int diasRestantes = rs.getInt("dias_restantes");
+                    while (rs.next()) {
+                        int diasRestantes = rs.getInt("dias_restantes");
 
-    diasExpirar.add(diasRestantes);
+                        diasExpirar.add(diasRestantes);
 
-    if (diasRestantes >= 0 && diasRestantes <= 30) {
-        temLinhasUrgentes = true;
-    }
+                        if (diasRestantes >= 0 && diasRestantes <= 30) {
+                            temLinhasUrgentes = true;
+                        }
 
-    modExpirar.addRow(new Object[]{
-        rs.getInt("codigo"),
-        rs.getString("designacao"),
-        rs.getString("numero_lote"),
-        rs.getDate("data_validade") == null
-            ? ""
-            : fmtDataExpirar.format(rs.getDate("data_validade")),
-        diasRestantes // Quinta coluna: utilizada pelo iReport
-    });
-}
+                        modExpirar.addRow(new Object[]{
+                            rs.getInt("codigo"),
+                            rs.getString("designacao"),
+                            rs.getString("numero_lote"),
+                            rs.getDate("data_validade") == null
+                            ? ""
+                            : fmtDataExpirar.format(rs.getDate("data_validade")),
+                            diasRestantes // Quinta coluna: utilizada pelo iReport
+                        });
+                    }
 
                 }
             }
             // Alarme: só quando as linhas a piscar APARECEM (não repete a cada actualização)
-            if ( temLinhasUrgentes && !tinhaUrgentes )
-            {
+            if (temLinhasUrgentes && !tinhaUrgentes) {
                 tocarAlarmeExpirar();
             }
-            lblTotalExpirar.setText( " " + modExpirar.getRowCount() + " lote(s)   |   Vermelho: expirado   "
-                    + "Laranja: até 30 dias   Amarelo: mais de 30 dias" );
-        }
-        catch ( Exception ex )
-        {
+            lblTotalExpirar.setText(" " + modExpirar.getRowCount() + " lote(s)   |   Vermelho: expirado   "
+                    + "Laranja: até 30 dias   Amarelo: mais de 30 dias");
+        } catch (Exception ex) {
             // Nunca bloquear o login por causa desta lista
             ex.printStackTrace();
-            lblTotalExpirar.setText( " Não foi possível carregar a lista: " + ex.getMessage() );
+            lblTotalExpirar.setText(" Não foi possível carregar a lista: " + ex.getMessage());
         }
     }
 
-    /** Toca ALARME_TOQUES toques, numa thread própria (não bloqueia o ecrã de login). */
-    private void tocarAlarmeExpirar()
-    {
-        if ( alarmeATocar )
-        {
+    /**
+     * Toca ALARME_TOQUES toques, numa thread própria (não bloqueia o ecrã de
+     * login).
+     */
+    private void tocarAlarmeExpirar() {
+        if (alarmeATocar) {
             return; // já está a tocar
         }
         alarmeATocar = true;
 
-        Thread t = new Thread( () ->
-        {
-            try
-            {
-                for ( int i = 0; i < ALARME_TOQUES; i++ )
-                {
-                    tocarTomExpirar( ALARME_FREQUENCIA_HZ, ALARME_DURACAO_MS );
-                    Thread.sleep( ALARME_PAUSA_MS );
+        Thread t = new Thread(()
+                -> {
+            try {
+                for (int i = 0; i < ALARME_TOQUES; i++) {
+                    tocarTomExpirar(ALARME_FREQUENCIA_HZ, ALARME_DURACAO_MS);
+                    Thread.sleep(ALARME_PAUSA_MS);
                 }
-            }
-            catch ( Exception ex )
-            {
+            } catch (Exception ex) {
                 // sem placa de som / linha de áudio indisponível: usa o beep do sistema
-                try
-                {
-                    for ( int i = 0; i < ALARME_TOQUES; i++ )
-                    {
+                try {
+                    for (int i = 0; i < ALARME_TOQUES; i++) {
                         Toolkit.getDefaultToolkit().beep();
-                        Thread.sleep( ALARME_DURACAO_MS + ALARME_PAUSA_MS );
+                        Thread.sleep(ALARME_DURACAO_MS + ALARME_PAUSA_MS);
                     }
+                } catch (Exception ignorar) {
                 }
-                catch ( Exception ignorar )
-                {
-                }
-            }
-            finally
-            {
+            } finally {
                 alarmeATocar = false;
             }
-        }, "alarme-expirar" );
-        t.setDaemon( true );
+        }, "alarme-expirar");
+        t.setDaemon(true);
         t.start();
     }
 
-    /** Gera e toca um tom (onda sinusoidal) com fade curto para não estalar. */
-    private static void tocarTomExpirar( int frequenciaHz, int duracaoMs ) throws Exception
-    {
+    /**
+     * Gera e toca um tom (onda sinusoidal) com fade curto para não estalar.
+     */
+    private static void tocarTomExpirar(int frequenciaHz, int duracaoMs) throws Exception {
         float taxa = 44100f;
-        javax.sound.sampled.AudioFormat formato = new javax.sound.sampled.AudioFormat( taxa, 16, 1, true, false );
-        try ( javax.sound.sampled.SourceDataLine linha = javax.sound.sampled.AudioSystem.getSourceDataLine( formato ) )
-        {
-            linha.open( formato );
+        javax.sound.sampled.AudioFormat formato = new javax.sound.sampled.AudioFormat(taxa, 16, 1, true, false);
+        try (javax.sound.sampled.SourceDataLine linha = javax.sound.sampled.AudioSystem.getSourceDataLine(formato)) {
+            linha.open(formato);
             linha.start();
 
-            int amostras = (int) ( taxa * duracaoMs / 1000 );
-            byte[] buf = new byte[ amostras * 2 ];
-            for ( int i = 0; i < amostras; i++ )
-            {
-                double fade = Math.min( 1.0, Math.min( i, amostras - i ) / ( taxa * 0.01 ) ); // 10 ms
-                short v = (short) ( Math.sin( 2 * Math.PI * frequenciaHz * i / taxa ) * 0.6 * Short.MAX_VALUE * fade );
-                buf[2 * i] = (byte) ( v & 0xff );
-                buf[2 * i + 1] = (byte) ( ( v >> 8 ) & 0xff );
+            int amostras = (int) (taxa * duracaoMs / 1000);
+            byte[] buf = new byte[amostras * 2];
+            for (int i = 0; i < amostras; i++) {
+                double fade = Math.min(1.0, Math.min(i, amostras - i) / (taxa * 0.01)); // 10 ms
+                short v = (short) (Math.sin(2 * Math.PI * frequenciaHz * i / taxa) * 0.6 * Short.MAX_VALUE * fade);
+                buf[2 * i] = (byte) (v & 0xff);
+                buf[2 * i + 1] = (byte) ((v >> 8) & 0xff);
             }
-            linha.write( buf, 0, buf.length );
+            linha.write(buf, 0, buf.length);
             linha.drain();
         }
     }
 
-    /** Pinta a linha conforme os dias restantes. */
-    private class RendererExpirar extends DefaultTableCellRenderer
-    {
+    /**
+     * Pinta a linha conforme os dias restantes.
+     */
+    private class RendererExpirar extends DefaultTableCellRenderer {
 
-        RendererExpirar( int alinhamento )
-        {
-            setHorizontalAlignment( alinhamento );
-            setOpaque( true );
+        RendererExpirar(int alinhamento) {
+            setHorizontalAlignment(alinhamento);
+            setOpaque(true);
         }
 
         @Override
-        public Component getTableCellRendererComponent( JTable table, Object value,
-                boolean isSelected, boolean hasFocus, int row, int column )
-        {
-            Component c = super.getTableCellRendererComponent( table, value, isSelected, hasFocus, row, column );
-            if ( !isSelected )
-            {
-                int dias = row < diasExpirar.size() ? diasExpirar.get( row ) : 0;
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                boolean isSelected, boolean hasFocus, int row, int column) {
+            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            if (!isSelected) {
+                int dias = row < diasExpirar.size() ? diasExpirar.get(row) : 0;
                 Color fundo;
-                if ( dias < 0 )
-                {
+                if (dias < 0) {
                     fundo = COR_EXPIRADO;
-                }
-                else if ( dias <= 30 )
-                {
+                } else if (dias <= 30) {
                     fundo = piscarExpirarLigado ? COR_URGENTE_FORTE : COR_URGENTE; // pisca
-                }
-                else
-                {
+                } else {
                     fundo = COR_AVISO;
                 }
-                c.setBackground( fundo );
-                c.setForeground( Color.BLACK );
+                c.setBackground(fundo);
+                c.setForeground(Color.BLACK);
             }
             return c;
         }
     }
-    
-    
-/**
- * Imprime os dados actualmente apresentados no painel de produtos a expirar.
- */
-private void imprimirProdutosAExpirar() {
 
-    // Garante que a consulta corresponde aos filtros actuais.
-    if (refreshExpirarTimer != null && refreshExpirarTimer.isRunning()) {
-        refreshExpirarTimer.stop();
-        carregarProdutosAExpirar();
-    }
+    /**
+     * Imprime os dados actualmente apresentados no painel de produtos a
+     * expirar.
+     */
+    private void imprimirProdutosAExpirar() {
 
-    if (modExpirar.getRowCount() == 0) {
-        JOptionPane.showMessageDialog(
-                this,
-                "Não há produtos a expirar para imprimir com os filtros actuais.",
-                "Imprimir produtos a expirar",
-                JOptionPane.INFORMATION_MESSAGE
-        );
-        return;
-    }
-
-
-    // Copia os dados para o relatório, incluindo a coluna auxiliar
-    // "Dias restantes", necessária para o campo COLUMN_4 do iReport.
-    DefaultTableModel copia = new DefaultTableModel(
-            new String[]{
-                "Código",
-                "Designação Produto",
-                "Lote",
-                "Data Validade",
-                "Dias restantes"
-            }, 0
-    );
-
-    for (int i = 0; i < modExpirar.getRowCount(); i++) {
-        Object[] linha = new Object[5];
-
-        for (int c = 0; c < 5; c++) {
-            linha[c] = modExpirar.getValueAt(i, c);
+        // Garante que a consulta corresponde aos filtros actuais.
+        if (refreshExpirarTimer != null && refreshExpirarTimer.isRunning()) {
+            refreshExpirarTimer.stop();
+            carregarProdutosAExpirar();
         }
 
-        copia.addRow(linha);
-    }
+        if (modExpirar.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Não há produtos a expirar para imprimir com os filtros actuais.",
+                    "Imprimir produtos a expirar",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+            return;
+        }
 
-
-    // Parâmetros enviados ao iReport.
-    Map<String, Object> parametros = new HashMap<>();
-
-    parametros.put(
-            "DATA_EMISSAO",
-            fmtDataHoraRelatorio.format(new Date())
-    );
-
-    parametros.put(
-            "DIAS_ALERTA",
-            Integer.valueOf(30)
-    );
-
-    parametros.put(
-            "DIAS_CONSULTA",
-            Integer.valueOf(obterDiasExpirar())
-    );
-
-    parametros.put(
-            "ARMAZEM",
-            nomeArmazemExpirar == null || nomeArmazemExpirar.trim().isEmpty()
-                    ? "Não identificado"
-                    : nomeArmazemExpirar
-    );
-
-    parametros.put(
-            "INCLUIR_EXPIRADOS",
-            chkExpirados.isSelected() ? "Sim" : "Não"
-    );
-
-    try {
-        JasperPrint impressao = JasperFillManager.fillReport(
-                carregarRelatorioLogin(),
-                parametros,
-                new JRTableModelDataSource(copia)
+        // Copia os dados para o relatório, incluindo a coluna auxiliar
+        // "Dias restantes", necessária para o campo COLUMN_4 do iReport.
+        DefaultTableModel copia = new DefaultTableModel(
+                new String[]{
+                    "Código",
+                    "Designação Produto",
+                    "Lote",
+                    "Data Validade",
+                    "Dias restantes"
+                }, 0
         );
 
-        JasperViewer visualizador = new JasperViewer(impressao, false);
+        for (int i = 0; i < modExpirar.getRowCount(); i++) {
+            Object[] linha = new Object[5];
 
-        visualizador.setTitle("RELATÓRIO DE PRODUTOS A EXPIRAR - LOGIN");
-        visualizador.setLocationRelativeTo(this);
-        visualizador.setVisible(true);
+            for (int c = 0; c < 5; c++) {
+                linha[c] = modExpirar.getValueAt(i, c);
+            }
 
-    } catch (Exception ex) {
-        ex.printStackTrace();
+            copia.addRow(linha);
+        }
 
-        JOptionPane.showMessageDialog(
-                this,
-                "Erro ao gerar o relatório:\n" + ex.getMessage(),
-                "Erro de impressão",
-                JOptionPane.ERROR_MESSAGE
+        // Parâmetros enviados ao iReport.
+        Map<String, Object> parametros = new HashMap<>();
+
+        parametros.put(
+                "DATA_EMISSAO",
+                fmtDataHoraRelatorio.format(new Date())
+        );
+
+        parametros.put(
+                "DIAS_ALERTA",
+                Integer.valueOf(30)
+        );
+
+        parametros.put(
+                "DIAS_CONSULTA",
+                Integer.valueOf(obterDiasExpirar())
+        );
+
+        parametros.put(
+                "ARMAZEM",
+                nomeArmazemExpirar == null || nomeArmazemExpirar.trim().isEmpty()
+                ? "Não identificado"
+                : nomeArmazemExpirar
+        );
+
+        parametros.put(
+                "INCLUIR_EXPIRADOS",
+                chkExpirados.isSelected() ? "Sim" : "Não"
+        );
+
+        try {
+            JasperPrint impressao = JasperFillManager.fillReport(
+                    carregarRelatorioLogin(),
+                    parametros,
+                    new JRTableModelDataSource(copia)
+            );
+
+            JasperViewer visualizador = new JasperViewer(impressao, false);
+
+            visualizador.setTitle("RELATÓRIO DE PRODUTOS A EXPIRAR - LOGIN");
+            visualizador.setLocationRelativeTo(this);
+            visualizador.setVisible(true);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Erro ao gerar o relatório:\n" + ex.getMessage(),
+                    "Erro de impressão",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+    }
+
+    /**
+     * Carrega o relatório produtos_por_expirar_login. Utiliza o .jasper
+     * existente ou compila o .jrxml.
+     */
+    private JasperReport carregarRelatorioLogin() throws JRException {
+
+        if (relatorioLoginCarregado != null) {
+            return relatorioLoginCarregado;
+        }
+
+        File jasper = new File(
+                DVML.CAMINHO_REPORT + RELATORIO_LOGIN_JASPER
+        ).getAbsoluteFile();
+
+        if (jasper.exists()) {
+            relatorioLoginCarregado
+                    = (JasperReport) JRLoader.loadObject(jasper);
+
+            return relatorioLoginCarregado;
+        }
+
+        File jrxml = new File(
+                DVML.CAMINHO_REPORT + RELATORIO_LOGIN_JRXML
+        ).getAbsoluteFile();
+
+        if (jrxml.exists()) {
+            relatorioLoginCarregado
+                    = JasperCompileManager.compileReport(
+                            jrxml.getAbsolutePath()
+                    );
+
+            return relatorioLoginCarregado;
+        }
+
+        throw new JRException(
+                "Relatório não encontrado.\n"
+                + "Coloque o ficheiro "
+                + RELATORIO_LOGIN_JRXML
+                + " ou "
+                + RELATORIO_LOGIN_JASPER
+                + " na pasta:\n"
+                + jasper.getParent()
         );
     }
-}
-
-/**
- * Carrega o relatório produtos_por_expirar_login.
- * Utiliza o .jasper existente ou compila o .jrxml.
- */
-private JasperReport carregarRelatorioLogin() throws JRException {
-
-    if (relatorioLoginCarregado != null) {
-        return relatorioLoginCarregado;
-    }
-
-    File jasper = new File(
-            DVML.CAMINHO_REPORT + RELATORIO_LOGIN_JASPER
-    ).getAbsoluteFile();
-
-    if (jasper.exists()) {
-        relatorioLoginCarregado =
-                (JasperReport) JRLoader.loadObject(jasper);
-
-        return relatorioLoginCarregado;
-    }
-
-    File jrxml = new File(
-            DVML.CAMINHO_REPORT + RELATORIO_LOGIN_JRXML
-    ).getAbsoluteFile();
-
-    if (jrxml.exists()) {
-        relatorioLoginCarregado =
-                JasperCompileManager.compileReport(
-                        jrxml.getAbsolutePath()
-                );
-
-        return relatorioLoginCarregado;
-    }
-
-    throw new JRException(
-            "Relatório não encontrado.\n"
-            + "Coloque o ficheiro "
-            + RELATORIO_LOGIN_JRXML
-            + " ou "
-            + RELATORIO_LOGIN_JASPER
-            + " na pasta:\n"
-            + jasper.getParent()
-    );
-}
-
-
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1524,98 +1396,98 @@ private JasperReport carregarRelatorioLogin() throws JRException {
     private javax.swing.JTextField txtUserName;
     // End of variables declaration//GEN-END:variables
 
-    private void limpar()
-    {
-        txtUserName.setText( "" );
-        pswSenha.setText( "" );
+    private void limpar() {
+        txtUserName.setText("");
+        pswSenha.setText("");
 
-        
-        
     }
 
-    private void alterarSenha()
-    {
-        JOptionPane.showMessageDialog( null, "A senha que está a usar Atualmente não é segura, deve mudar a senha!" );
+    private void alterarSenha() {
+        JOptionPane.showMessageDialog(null, "A senha que está a usar Atualmente não é segura, deve mudar a senha!");
         dispose();
-        new UsuarioAlterarSenhaVissao( usuarioDao.getUsuariowithEncriptedPass( txtUserName.getText(), new String( pswSenha.getPassword() ) ) );
+        new UsuarioAlterarSenhaVissao(usuarioDao.getUsuariowithEncriptedPass(txtUserName.getText(), new String(pswSenha.getPassword())));
     }
 
-    private void verificar_data_sistema()
-    {
+    private void verificar_data_sistema() {
         Date data_maxima_ultimo_doc = documentoDao.getMAxDataDoc();
         Date data_actual = new Date();
 
-        if ( data_maxima_ultimo_doc != null )
-        {
-            if ( MetodosUtil.menor_data_1_data_2( data_actual, data_maxima_ultimo_doc ) )
-            {
-                JOptionPane.showMessageDialog( null, "Caro usário verifique a data do sistema", "AVISO", JOptionPane.WARNING_MESSAGE );
+        if (data_maxima_ultimo_doc != null) {
+            if (MetodosUtil.menor_data_1_data_2(data_actual, data_maxima_ultimo_doc)) {
+                JOptionPane.showMessageDialog(null, "Caro usário verifique a data do sistema", "AVISO", JOptionPane.WARNING_MESSAGE);
             }
 
         }
 
     }
 
-    private void iniciarMonitoramento()
-    {
+    private void iniciarMonitoramento() {
         resetTimer();
 
         // Adiciona um listener global para detectar atividades do usuário
-        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher( ( KeyEvent e ) ->
-        {
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher((KeyEvent e)
+                -> {
             resetTimer();
             return false;
-        } );
+        });
 
-        Toolkit.getDefaultToolkit().addAWTEventListener( ( AWTEvent event ) ->
-        {
-            if ( event.getID() == MouseEvent.MOUSE_MOVED
+        Toolkit.getDefaultToolkit().addAWTEventListener((AWTEvent event)
+                -> {
+            if (event.getID() == MouseEvent.MOUSE_MOVED
                     || event.getID() == MouseEvent.MOUSE_CLICKED
-                    || event.getID() == MouseEvent.MOUSE_PRESSED )
-            {
+                    || event.getID() == MouseEvent.MOUSE_PRESSED) {
                 resetTimer();
             }
-        }, AWTEvent.MOUSE_MOTION_EVENT_MASK | AWTEvent.MOUSE_EVENT_MASK );
+        }, AWTEvent.MOUSE_MOTION_EVENT_MASK | AWTEvent.MOUSE_EVENT_MASK);
     }
 
-    private void resetTimer()
-    {
-        if ( logoutTimer != null )
-        {
+    private void resetTimer() {
+        if (logoutTimer != null) {
             logoutTimer.cancel();
         }
 
         logoutTimer = new Timer();
-        logoutTimer.schedule( new TimerTask()
-        {
+        logoutTimer.schedule(new TimerTask() {
             @Override
-            public void run()
-            {
-                SwingUtilities.invokeLater( () ->
-                {
+            public void run() {
+                SwingUtilities.invokeLater(()
+                        -> {
                     //JOptionPane.showMessageDialog( null, "Sessão expirada! Voltando para o login." );
                     conexao.close();
                     logo_out();
-                } );
+                });
             }
-        }, TIMEOUT );
+        }, TIMEOUT);
     }
-    
-    
 
-    public static void logo_out()
-    {
+    public static void logo_out() {
 //        EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
 //        UsuarioDao usuarioDao = new UsuarioDao( emf );
 //        EmpresaDao empresaDao = new EmpresaDao( emf );
 //        TbUsuario usuario = usuarioDao.findTbUsuario( id_user );
 //        Empresa empresa = empresaDao.findEmpresa( id_empresa );
         MetodosUtil.fechar_todas_janelas();
-        MetodosUtil.actualizarEstadoLog( "OFF" );
+        MetodosUtil.actualizarEstadoLog("OFF");
         conexao.close();
-        new LoginVisao( BDConexao.getInstancia() ).setVisible( true );
+        new LoginVisao(BDConexao.getInstancia()).setVisible(true);
 
 //        new LoginVisao(BDConexao.getInstancia().getConnectionAtiva()).setVisible(true);
     }
+    
+    private void aplicarTemaLogin() {
+    try {
+        BDConexao con = BDConexao.getInstancia();
+        con.getConnectionAtiva();
+        DadosInstituicaoController ctrl = new DadosInstituicaoController(con);
+        TbDadosInstituicao dados = (TbDadosInstituicao) ctrl.findById(1);
+
+        boolean ehFarmacia = dados != null
+                && TemaNegocioUtil.ehFarmacia(dados.getNegocio());
+
+        TemaNegocioUtil.aplicarCorCampos(ehFarmacia, txtUserName, pswSenha);
+    } catch (Exception ex) {
+        ex.printStackTrace();
+    }
+}
 
 }
