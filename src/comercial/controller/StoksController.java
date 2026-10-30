@@ -6,6 +6,7 @@
 package comercial.controller;
 
 import enties.util.BuscaModeloProduto;
+import entity.Familia;
 import entity.Grupo;
 import entity.Modelo;
 import entity.TbArmazem;
@@ -706,87 +707,74 @@ public class StoksController implements EntidadeFactory {
 
         String condicao = (codJanela != DVML.JANELA_COMPRA) ? "IN (1,2)" : "IN (2)";
 
-String sql
-        = "SELECT "
-        + "   p.codigo AS codigo, "
-        + "   p.designacao AS designacao, "
-        + "   tp.designacao AS categoria, "
-        + "   f.pk_familia AS cod_familia, "
-
-        + "   COALESCE(s.quantidade_existente,0) AS qtd, "
-        + "   s.quant_critica, "
-        + "   s.quant_baixa, "
-
-        + "   CASE "
-        + "       WHEN s.quant_baixa < s.quantidade_existente "
-        + "            AND s.quantidade_existente < s.quant_critica "
-        + "       THEN TRUE "
-        + "       ELSE FALSE "
-        + "   END AS estado_critico, "
-
-        + "   pr.preco_venda AS preco_venda, "
-
-        + "   COALESCE(im.taxa,0) AS taxa_imposto, "
-
-        + "   ( "
-        + "       pr.preco_venda "
-        + "       + "
-        + "       (pr.preco_venda * (COALESCE(im.taxa,0)/100)) "
-        + "   ) AS preco_com_iva "
-
-        + "FROM tb_produto p "
-
-        + "INNER JOIN tb_tipo_produto tp "
-        + "   ON tp.codigo = p.cod_Tipo_Produto "
-
-        + "INNER JOIN familia f "
-        + "   ON f.pk_familia = tp.fk_familia "
-
-        /*
+        String sql
+                = "SELECT "
+                + "   p.codigo AS codigo, "
+                + "   p.designacao AS designacao, "
+                + "   tp.designacao AS categoria, "
+                + "   f.pk_familia AS cod_familia, "
+                + "   COALESCE(s.quantidade_existente,0) AS qtd, "
+                + "   s.quant_critica, "
+                + "   s.quant_baixa, "
+                + "   CASE "
+                + "       WHEN s.quant_baixa < s.quantidade_existente "
+                + "            AND s.quantidade_existente < s.quant_critica "
+                + "       THEN TRUE "
+                + "       ELSE FALSE "
+                + "   END AS estado_critico, "
+                + "   pr.preco_venda AS preco_venda, "
+                + "   COALESCE(im.taxa,0) AS taxa_imposto, "
+                + "   ( "
+                + "       pr.preco_venda "
+                + "       + "
+                + "       (pr.preco_venda * (COALESCE(im.taxa,0)/100)) "
+                + "   ) AS preco_com_iva "
+                + "FROM tb_produto p "
+                + "INNER JOIN tb_tipo_produto tp "
+                + "   ON tp.codigo = p.cod_Tipo_Produto "
+                + "INNER JOIN familia f "
+                + "   ON f.pk_familia = tp.fk_familia "
+                /*
          STOCK CONSOLIDADO APENAS DO ARMAZÉM
-         */
-        + "LEFT JOIN ( "
-        + "   SELECT "
-        + "       cod_produto_codigo, "
-        + "       SUM(quantidade_existente) AS quantidade_existente, "
-        + "       MAX(quant_baixa) AS quant_baixa, "
-        + "       MAX(quant_critica) AS quant_critica "
-        + "   FROM tb_stock "
-        + "   WHERE cod_armazem = ? "
-        + "   GROUP BY cod_produto_codigo "
-        + ") s "
-        + "   ON s.cod_produto_codigo = p.codigo "
-
-        /*
+                 */
+                + "LEFT JOIN ( "
+                + "   SELECT "
+                + "       cod_produto_codigo, "
+                + "       SUM(quantidade_existente) AS quantidade_existente, "
+                + "       MAX(quant_baixa) AS quant_baixa, "
+                + "       MAX(quant_critica) AS quant_critica "
+                + "   FROM tb_stock "
+                + "   WHERE cod_armazem = ? "
+                + "   GROUP BY cod_produto_codigo "
+                + ") s "
+                + "   ON s.cod_produto_codigo = p.codigo "
+                /*
          ÚLTIMO PREÇO
-         */
-        + "LEFT JOIN tb_preco pr "
-        + "   ON pr.pk_preco = ( "
-        + "       SELECT MAX(p2.pk_preco) "
-        + "       FROM tb_preco p2 "
-        + "       WHERE p2.fk_produto = p.codigo "
-        + "       AND p2.qtd_baixo = 0 "
-        + "   ) "
-
-        /*
+                 */
+                + "LEFT JOIN tb_preco pr "
+                + "   ON pr.pk_preco = ( "
+                + "       SELECT MAX(p2.pk_preco) "
+                + "       FROM tb_preco p2 "
+                + "       WHERE p2.fk_produto = p.codigo "
+                + "       AND p2.qtd_baixo = 0 "
+                + "   ) "
+                /*
          IMPOSTO
-         */
-        + "LEFT JOIN ( "
-        + "   SELECT "
-        + "       pi1.fk_produto, "
-        + "       MAX(im1.taxa) AS taxa "
-        + "   FROM produto_imposto pi1 "
-        + "   INNER JOIN imposto im1 "
-        + "       ON im1.pk_imposto = pi1.fk_imposto "
-        + "   GROUP BY pi1.fk_produto "
-        + ") im "
-        + "   ON im.fk_produto = p.codigo "
-
-        + "WHERE p.fk_grupo = 1 "
-        + "AND p.status = 'Activo' "
-        + "AND f.pk_familia " + condicao + " "
-
-        + "ORDER BY p.designacao";
+                 */
+                + "LEFT JOIN ( "
+                + "   SELECT "
+                + "       pi1.fk_produto, "
+                + "       MAX(im1.taxa) AS taxa "
+                + "   FROM produto_imposto pi1 "
+                + "   INNER JOIN imposto im1 "
+                + "       ON im1.pk_imposto = pi1.fk_imposto "
+                + "   GROUP BY pi1.fk_produto "
+                + ") im "
+                + "   ON im.fk_produto = p.codigo "
+                + "WHERE p.fk_grupo = 1 "
+                + "AND p.status = 'Activo' "
+                + "AND f.pk_familia " + condicao + " "
+                + "ORDER BY p.designacao";
 
         try (PreparedStatement ps = conexao.getConnectionAtiva().prepareStatement(sql)) {
             ps.setInt(1, idArmazem);
@@ -1099,6 +1087,7 @@ String sql
 
             while (result.next()) {
                 produto = new TbProduto();
+
                 produto.setCodigo(result.getInt("codigo"));
                 produto.setDesignacao(result.getString("designacao"));
                 produto.setPreco(result.getBigDecimal("preco"));

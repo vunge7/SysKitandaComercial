@@ -2170,23 +2170,23 @@ public class MetodosUtil {
     public static String getDataString2(Date date) {
         return (date.getYear() + 1900) + "-" + (date.getMonth() + 1) + "-" + date.getDate();
     }
-    
+
     public static String getHoraBanco(Date hora) {
-    if (hora == null) {
-        return null;
+        if (hora == null) {
+            return null;
+        }
+
+        return getNumero(hora.getHours()) + ":"
+                + getNumero(hora.getMinutes()) + ":"
+                + getNumero(hora.getSeconds());
     }
 
-    return getNumero(hora.getHours()) + ":"
-         + getNumero(hora.getMinutes()) + ":"
-         + getNumero(hora.getSeconds());
-}
-
-private static String getNumero(int numero) {
-    if (numero < 10) {
-        return "0" + numero;
+    private static String getNumero(int numero) {
+        if (numero < 10) {
+            return "0" + numero;
+        }
+        return String.valueOf(numero);
     }
-    return String.valueOf(numero);
-}
 
 //    public static String getHoraBanco(Date hora) {
 //        return getNumero(hora.getHours()) + ":" + getNumero(hora.getMinutes()) + ":" + getNumero(hora.getSeconds());
@@ -2198,7 +2198,6 @@ private static String getNumero(int numero) {
 //        }
 //        return String.valueOf(numero);
 //    }
-
     public int media_idade(List<Integer> lista_idade) {
 
         Integer soma_idade = 0;
@@ -4850,6 +4849,7 @@ private static String getNumero(int numero) {
     public static void imprimir_cozinha(TbProduto produto, int id, String mesa, String lugar, String usuario, String condicao, int qtd, DadosInstituicaoController dadosInstituicaoController) {
         TbDadosInstituicao dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
         HashMap hashMap = new HashMap();
+        hashMap.put("ID", id);
         hashMap.put("designacao", produto.getDesignacao());
         hashMap.put("condicao", condicao);
         hashMap.put("qtd", qtd);
@@ -4861,7 +4861,22 @@ private static String getNumero(int numero) {
 //        AnyReport anyReport = new AnyReport( hashMap, "cozinha_print_temp.jasper" );
     }
 
-    public static void imprimir_sala(TbProduto produto, int id, String mesa, String lugar, String usuario, String condicao, int qtd, DadosInstituicaoController dadosInstituicaoController) {
+    public static void imprimir_cozinha(int id, TbProduto produto, String condicao, double qtd, String obs, DadosInstituicaoController dadosInstituicaoController) {
+        TbDadosInstituicao dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
+        HashMap hashMap = new HashMap();
+        hashMap.put("ID", id);
+        hashMap.put("condicao", condicao);
+        hashMap.put("designacao", produto.getDesignacao());
+        hashMap.put("qtd", qtd);
+        hashMap.put("obs", obs);
+        AnyReport anyReport = new AnyReport(hashMap,
+                "cozinha_print_temp.jasper",
+                true,
+                dadosInstituicao.getImpressoraCozinha());
+//        AnyReport anyReport = new AnyReport( hashMap, "cozinha_print_temp.jasper");
+    }
+
+    public static void imprimir_sala(TbProduto produto, int id, String mesa, String lugar, String usuario, String condicao, double qtd, DadosInstituicaoController dadosInstituicaoController) {
         TbDadosInstituicao dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
         HashMap hashMap = new HashMap();
         hashMap.put("designacao", produto.getDesignacao());
@@ -4870,7 +4885,12 @@ private static String getNumero(int numero) {
         hashMap.put("mesa", mesa);
         hashMap.put("lugar", lugar);
         hashMap.put("usuario", usuario);
-        AnyReport anyReport = new AnyReport(hashMap, "cozinha_print_temp.jasper", true, dadosInstituicao.getImpressoraSala());
+        AnyReport anyReport = new AnyReport(
+                hashMap,
+                "cozinha_print_temp.jasper",
+                true,
+                dadosInstituicao.getImpressoraSala()
+        );
 //        AnyReport anyReport1 = new AnyReport( hashMap, "cozinha_print_temp.jasper", true, dadosInstituicao.getImpressoraSala() );
 //        AnyReport anyReport = new AnyReport( hashMap, "cozinha_print_temp.jasper" );
     }
@@ -5017,52 +5037,50 @@ private static String getNumero(int numero) {
             cmb.setModel(new DefaultComboBoxModel(armazensAccessoController.getAllArmazemExceptoEconomatoByIdUSuario(cod_usuario)));
         }
     }
-    
-public static void setArmazemByCampoByAllArmazem(
-        JComboBox cmb,
-        BDConexao conexao,
-        int cod_usuario) {
 
-    DadosInstituicaoController dadosInstituicaoController =
-            new DadosInstituicaoController(conexao);
+    public static void setArmazemByCampoByAllArmazem(
+            JComboBox cmb,
+            BDConexao conexao,
+            int cod_usuario) {
 
-    ArmazensController armazensController =
-            new ArmazensController(conexao);
+        DadosInstituicaoController dadosInstituicaoController
+                = new DadosInstituicaoController(conexao);
 
-    TbDadosInstituicao dados =
-            dadosInstituicaoController.findByCodigo(1);
+        ArmazensController armazensController
+                = new ArmazensController(conexao);
 
-    String designacao = dados.getConfigArmazens();
+        TbDadosInstituicao dados
+                = dadosInstituicaoController.findByCodigo(1);
 
-    System.out.println("CONFIG ARMAZEM = [" + designacao + "]");
-    System.out.println("DVML.UNI_ARMAZEM = [" + DVML.UNI_ARMAZEM + "]");
+        String designacao = dados.getConfigArmazens();
 
-    Vector<String> armazens = armazensController.getVector();
+        System.out.println("CONFIG ARMAZEM = [" + designacao + "]");
+        System.out.println("DVML.UNI_ARMAZEM = [" + DVML.UNI_ARMAZEM + "]");
 
-    cmb.setModel(new DefaultComboBoxModel(armazens));
+        Vector<String> armazens = armazensController.getVector();
 
-    if (designacao != null
-            && designacao.trim().equalsIgnoreCase(DVML.UNI_ARMAZEM.trim())) {
+        cmb.setModel(new DefaultComboBoxModel(armazens));
 
-        // UNI ARMAZEM → último
-        cmb.setSelectedIndex(armazens.size() - 1);
+        if (designacao != null
+                && designacao.trim().equalsIgnoreCase(DVML.UNI_ARMAZEM.trim())) {
 
-        System.out.println(">>> UNI ARMAZEM - selecionado: "
-                + armazens.lastElement());
+            // UNI ARMAZEM → último
+            cmb.setSelectedIndex(armazens.size() - 1);
 
-    } else {
+            System.out.println(">>> UNI ARMAZEM - selecionado: "
+                    + armazens.lastElement());
 
-        // MULTI ARMAZEM → primeiro
-        cmb.setSelectedIndex(0);
+        } else {
 
-        System.out.println(">>> MULTI ARMAZEM - selecionado: "
-                + armazens.firstElement());
+            // MULTI ARMAZEM → primeiro
+            cmb.setSelectedIndex(0);
+
+            System.out.println(">>> MULTI ARMAZEM - selecionado: "
+                    + armazens.firstElement());
+        }
+
+        cmb.setEnabled(false);
     }
-
-    cmb.setEnabled(false);
-}
-
-
 
     public static void verificarCaixa(CaixasController caixasController, int cod_utilizador, JButton btnAberturaCaixa, JButton btnFechoCaixa, JButton... lista) {
         if (!caixasController.existeCaixas(cod_utilizador)) {

@@ -226,6 +226,7 @@ public class DVML
     public static int SEGUNDA_SEXTA_MINUTO = 56;
     public final static String STATUS_CONVERTIDO = "Convertido";
     public final static String STATUS_CONVERTIDO_PAGO = "Pago";
+    public final static String ENVIAR_COZINHA = "Enviar Ticket";
     private List<TbProduto> listaProdutosAleatoris = new ArrayList<>();
 
     static

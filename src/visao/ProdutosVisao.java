@@ -756,7 +756,7 @@ public class ProdutosVisao extends javax.swing.JFrame {
         txtDesignacao.setRows(5);
         jScrollPane1.setViewportView(txtDesignacao);
 
-        jPanel5.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 150, 530, 80));
+        jPanel5.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 150, 530, 70));
 
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagem/eliminar/destroy_32x32.png"))); // NOI18N
         jButton3.setText("Desactivar");
@@ -805,15 +805,15 @@ public class ProdutosVisao extends javax.swing.JFrame {
         jPanel5.add(btnCarregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 150, 150, 30));
 
         buttonGroup5.add(rbNaoEnviarCozinha);
-        rbNaoEnviarCozinha.setFont(new java.awt.Font("Lucida Sans Typewriter", 0, 12)); // NOI18N
+        rbNaoEnviarCozinha.setFont(new java.awt.Font("Lucida Sans Typewriter", 0, 10)); // NOI18N
         rbNaoEnviarCozinha.setSelected(true);
         rbNaoEnviarCozinha.setText("Nao Enviar Ticket");
         jPanel5.add(rbNaoEnviarCozinha, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 300, 160, -1));
 
         buttonGroup5.add(rbEnviarCozinha);
-        rbEnviarCozinha.setFont(new java.awt.Font("Lucida Sans Typewriter", 0, 12)); // NOI18N
-        rbEnviarCozinha.setText("Enviar Ticket");
-        jPanel5.add(rbEnviarCozinha, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 300, 140, -1));
+        rbEnviarCozinha.setFont(new java.awt.Font("Lucida Sans Typewriter", 0, 10)); // NOI18N
+        rbEnviarCozinha.setText("Enviar Ticket (Cozinha)");
+        jPanel5.add(rbEnviarCozinha, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 300, 180, -1));
 
         lbTicket.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         lbTicket.setText("Impressão de Tickets:");
@@ -829,9 +829,9 @@ public class ProdutosVisao extends javax.swing.JFrame {
         jPanel5.add(btnAssociar, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 0, 280, -1));
 
         buttonGroup5.add(rbEnviarSala);
-        rbEnviarSala.setFont(new java.awt.Font("Lucida Sans Typewriter", 0, 12)); // NOI18N
+        rbEnviarSala.setFont(new java.awt.Font("Lucida Sans Typewriter", 0, 10)); // NOI18N
         rbEnviarSala.setText("Enviar Sala");
-        jPanel5.add(rbEnviarSala, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 300, 130, -1));
+        jPanel5.add(rbEnviarSala, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 300, 110, -1));
 
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/img32x32/_ok.png"))); // NOI18N
         jButton2.setText("Novo");
@@ -857,7 +857,7 @@ public class ProdutosVisao extends javax.swing.JFrame {
 
         label_qtd_bruta.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         label_qtd_bruta.setText("Unid. Compra:");
-        jPanel5.add(label_qtd_bruta, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 240, 90, -1));
+        jPanel5.add(label_qtd_bruta, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 242, 90, -1));
 
         label_factor_conversao.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
         label_factor_conversao.setText("Factor Conversão:");

@@ -5042,7 +5042,7 @@ public class VendasPraticasVisao extends javax.swing.JFrame
                     preco_object = precosController.getLastIdPrecoByIdProdutos( lista_prdutos.get( i ).getCodigo() );
                     double quantidadeProduto = stocksController.getQuantidadeProduto( get.getCodigo(), id_armzem, conexaoLocal );
 
-                    painel_central.add( new ProdutoItemVisao( get.getStocavel(), get.getDesignacao(), get.getPhoto(), quantidadeProduto, preco_object, DVML.FORMULARIO_VENDA_EXPRESSO, usuarioLocal.getIdTipoUsuario().getIdTipoUsuario() ) );
+                    painel_central.add( new ProdutoItemVisao( get, get.getStocavel(), get.getDesignacao(), get.getPhoto(), quantidadeProduto, preco_object, DVML.FORMULARIO_VENDA_EXPRESSO, usuarioLocal.getIdTipoUsuario().getIdTipoUsuario() ) );
 //                    painel_central.add( new ProdutoItemVisao(  get.getCodigo(),  get.getStocavel(), get.getDesignacao(), get.getPhoto(), quantidadeProduto, preco_object, DVML.FORMULARIO_PEDIDO_RESTAURANTE, conexao ) );
 
                 }

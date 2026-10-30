@@ -7,6 +7,7 @@ package visao;
 
 import java.sql.Connection;
 import entity.TbPreco;
+import entity.TbProduto;
 import java.util.Objects;
 import javax.swing.ImageIcon;
 import kitanda.util.CfMethods;
@@ -27,12 +28,14 @@ public class ProdutoItemVisao extends javax.swing.JPanel
     private final String designacao;
     private final String formulario;
     private  int idTipoUsuario;
+    private TbProduto produtoLocal;
 
-    public ProdutoItemVisao( String stocavel, String designacao, byte[] photo, double quantidade, TbPreco preco, String formulario, int idTipoUsuario )
+    public ProdutoItemVisao(  TbProduto produto, String stocavel, String designacao, byte[] photo, double quantidade, TbPreco preco, String formulario, int idTipoUsuario )
     {
         initComponents();
         this.designacao = designacao;
         this.formulario = formulario;
+        this.produtoLocal = produto;
         jTextArea1.setText( designacao );
 
         lbQtd.setVisible( true );
@@ -143,7 +146,9 @@ public class ProdutoItemVisao extends javax.swing.JPanel
     {
         if ( formulario.equals( DVML.FORMULARIO_PEDIDO_RESTAURANTE ) )
         {
-            NovaGestaoPedidosVisao.adicionarImportar( designacao );
+//            NovaGestaoPedidosVisao.adicionarImportar( designacao );
+            
+            NovaGestaoPedidosVisao.adicionarImportar( produtoLocal );
         }
         if ( formulario.equals( DVML.FORMULARIO_VENDA_EXPRESSO ) )
         {

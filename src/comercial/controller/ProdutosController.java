@@ -5,6 +5,7 @@
  */
 package comercial.controller;
 
+import entity.Familia;
 import entity.Grupo;
 import entity.Modelo;
 import entity.TbFornecedor;

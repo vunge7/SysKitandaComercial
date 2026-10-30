@@ -4863,7 +4863,7 @@ public class VendaPraticaVisao extends javax.swing.JFrame
 //                    }
 //                    jButton.addActionListener( new ButtonHandler() );
 //                    painel_central.add( jButton );
-                    painel_central.add( new ProdutoItemVisao( get.getStocavel(), get.getDesignacao(), get.getPhoto(), quantidadeProduto, preco_object, DVML.FORMULARIO_PEDIDO_RESTAURANTE, usuarioLocal.getIdTipoUsuario().getIdTipoUsuario() ) );
+                    painel_central.add( new ProdutoItemVisao( get, get.getStocavel(), get.getDesignacao(), get.getPhoto(), quantidadeProduto, preco_object, DVML.FORMULARIO_PEDIDO_RESTAURANTE, usuarioLocal.getIdTipoUsuario().getIdTipoUsuario() ) );
 //                    painel_central.add( new ProdutoItemVisao(  get.getCodigo(),  get.getStocavel(), get.getDesignacao(), get.getPhoto(), quantidadeProduto, preco_object, DVML.FORMULARIO_PEDIDO_RESTAURANTE, conexao ) );
 
                 }
