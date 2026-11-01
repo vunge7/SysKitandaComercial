@@ -53,7 +53,7 @@ public class LoteMovimento implements Serializable
     private Integer fkOperacao;
     @Basic(optional = false)
     @Column(name = "tipo")
-    private String tipo; // VENDA | DEVOLUCAO | COMPRA
+    private String tipo; // ENUM('VENDA','DEVOLUCAO','COMPRA','TRANSF_SAIDA','TRANSF_ENTRADA')
     @Basic(optional = false)
     @Column(name = "qtd")
     private double qtd;

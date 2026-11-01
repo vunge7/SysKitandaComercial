@@ -3,26 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package visao;
 
-
-import java.sql.Connection;
+import comercial.controller.DadosInstituicaoController;
 import dao.ArmazemDao;
 import dao.DadosInstituicaoDao;
 import entity.TbArmazem;
+import entity.TbDadosInstituicao;
 import java.awt.Color;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.List;
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import util.BDConexao;
 import util.JPAEntityMannagerFactoryUtil;
+import util.TemaNegocioUtil;
 
 /**
  *
@@ -33,26 +29,35 @@ public class ArmazemVisao extends javax.swing.JFrame {
     /**
      * Creates new form ArmazemVisao
      */
-    
     private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
     private ArmazemDao armazemDao = new ArmazemDao(emf);
     private DadosInstituicaoDao dadosInstituicaoDao = new DadosInstituicaoDao(emf);
+    private static DadosInstituicaoController dadosInstituicaoController;
+    public static TbDadosInstituicao dadosInstituicao;
     private TbArmazem armazem;
     private int idArmazem = 0;
     private static int cod_utilizador;
-    private String designacao_antes  = "";
+    private String designacao_antes = "";
     private BDConexao conexao;
-           
-    
+
     public ArmazemVisao(int cod, BDConexao conexao) {
         this.conexao = conexao;
         cod_utilizador = cod;
         initComponents();
         setLocationRelativeTo(null);
-        setArmazem(dadosInstituicaoDao.findTbDadosInstituicao( 1 ).getConfigArmazens() );
-         adicionar_tabela(    armazemDao.findTbArmazemEntities() );
+        // Carregar os dados da instituição (estava a ficar null)
+        dadosInstituicaoController = new DadosInstituicaoController(conexao);
+        dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
+        setArmazem(dadosInstituicaoDao.findTbDadosInstituicao(1).getConfigArmazens());
+        adicionar_tabela(armazemDao.findTbArmazemEntities());
         activar_opcoes();
-         
+
+        boolean ehFarmacia = dadosInstituicao != null
+                && TemaNegocioUtil.ehFarmacia(dadosInstituicao.getNegocio());
+
+        TemaNegocioUtil.aplicarCorCampos(ehFarmacia,
+                txtDescricao);
+
     }
 
     /**
@@ -228,10 +233,10 @@ public class ArmazemVisao extends javax.swing.JFrame {
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
         // TODO add your handling code here:
-          if( evt.getClickCount() >=2 ){
-        
+        if (evt.getClickCount() >= 2) {
+
             setDadosTabela();
-                    
+
         }
     }//GEN-LAST:event_jTable1MouseClicked
 
@@ -270,7 +275,7 @@ public class ArmazemVisao extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ArmazemVisao(cod_utilizador,BDConexao.getInstancia()).setVisible(true);
+                new ArmazemVisao(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
             }
         });
     }
@@ -287,146 +292,118 @@ public class ArmazemVisao extends javax.swing.JFrame {
     private javax.swing.JTextField txtDescricao;
     // End of variables declaration//GEN-END:variables
 
+    private void setDados() {
+        armazem.setDesignacao(txtDescricao.getText());
 
-
-
-    private void setDados()
-    {
-                armazem.setDesignacao(txtDescricao.getText()) ;
-                
-    
     }
 
-    
-    private boolean vazio_campo()
-    {
-        if(txtDescricao.getText().equals(""))
-        {
-             txtDescricao.requestFocus();
-             txtDescricao.setBackground(Color.YELLOW);
-             JOptionPane.showMessageDialog(null, "Pf. insira a descricao da armazem", "AVISO", JOptionPane.WARNING_MESSAGE );
-             return true;
+    private boolean vazio_campo() {
+        if (txtDescricao.getText().equals("")) {
+            txtDescricao.requestFocus();
+            txtDescricao.setBackground(Color.YELLOW);
+            JOptionPane.showMessageDialog(null, "Pf. insira a descricao da armazem", "AVISO", JOptionPane.WARNING_MESSAGE);
+            return true;
         }
         txtDescricao.setBackground(Color.WHITE);
         return false;
-    
-    }
-    
-    
-    private void salvar()
-    {
-    
-               if( !vazio_campo())
-               { 
-                   
-                   if( !armazemDao.exist_descricao(  txtDescricao.getText() ) )
-                   {
-                            try {
-                                   armazem = new TbArmazem();
-                                   setDados();
-                                   armazemDao.create(armazem);
-                                   limpar();
-                                   adicionar_tabela(    armazemDao.findTbArmazemEntities() );
-                                   //UIManager.put("OptionPane.messageFont", new FontUIResource(new Font("ARIAL", Font.PLAIN, 35)));
-                                   UIManager.put("OptionPane.messageForeground", Color.blue);
-                                   JOptionPane.showMessageDialog(null, "Dados salvos com sucesso!...");
 
-                          } catch (Exception e) {
-                                JOptionPane.showMessageDialog(null, "Erro ao salvar a armazem", "ERRO", JOptionPane.ERROR_MESSAGE );
-                          }
-                            
-                   }else JOptionPane.showMessageDialog(null, "Esta armazem já existe na base de dados", "AVISO", JOptionPane.ERROR_MESSAGE );
-                   
-               }
-               
-    
     }
-    
-    
-    
-    private void limpar()
-    {
-              txtDescricao.setText("");
-              designacao_antes = "";
-            
-    }
-    
-    
-    private void alterar()
-    {
-    
-               if( !vazio_campo())
-               { 
-                   if( armazemDao.exist_descricao(  designacao_antes ) )
-                   {
-                       try {
-                               armazem =  armazemDao.findTbArmazem(idArmazem);
-                               setDados();
-                               armazemDao.edit(armazem);
-                               limpar();
-                               adicionar_tabela(    armazemDao.findTbArmazemEntities() );
-                               JOptionPane.showMessageDialog(null, "Dados alterado com sucesso!...");
 
-                      } catch (Exception e) {
-                          e.printStackTrace();
-                            JOptionPane.showMessageDialog(null, "Erro ao alterar a armazem", "ERRO", JOptionPane.ERROR_MESSAGE );
-                      }
-                            
-                   }else JOptionPane.showMessageDialog(null, "Esta armazem já existe na base de dados", "ERRO", JOptionPane.ERROR_MESSAGE );  
-               
-               }
-    
-    }
-    
+    private void salvar() {
 
-  public void adicionar_tabela(List<TbArmazem> armazems) {
+        if (!vazio_campo()) {
+
+            if (!armazemDao.exist_descricao(txtDescricao.getText())) {
+                try {
+                    armazem = new TbArmazem();
+                    setDados();
+                    armazemDao.create(armazem);
+                    limpar();
+                    adicionar_tabela(armazemDao.findTbArmazemEntities());
+                    //UIManager.put("OptionPane.messageFont", new FontUIResource(new Font("ARIAL", Font.PLAIN, 35)));
+                    UIManager.put("OptionPane.messageForeground", Color.blue);
+                    JOptionPane.showMessageDialog(null, "Dados salvos com sucesso!...");
+
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Erro ao salvar a armazem", "ERRO", JOptionPane.ERROR_MESSAGE);
+                }
+
+            } else {
+                JOptionPane.showMessageDialog(null, "Esta armazem já existe na base de dados", "AVISO", JOptionPane.ERROR_MESSAGE);
+            }
+
+        }
+
+    }
+
+    private void limpar() {
+        txtDescricao.setText("");
+        designacao_antes = "";
+
+    }
+
+    private void alterar() {
+
+        if (!vazio_campo()) {
+            if (armazemDao.exist_descricao(designacao_antes)) {
+                try {
+                    armazem = armazemDao.findTbArmazem(idArmazem);
+                    setDados();
+                    armazemDao.edit(armazem);
+                    limpar();
+                    adicionar_tabela(armazemDao.findTbArmazemEntities());
+                    JOptionPane.showMessageDialog(null, "Dados alterado com sucesso!...");
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Erro ao alterar a armazem", "ERRO", JOptionPane.ERROR_MESSAGE);
+                }
+
+            } else {
+                JOptionPane.showMessageDialog(null, "Esta armazem já existe na base de dados", "ERRO", JOptionPane.ERROR_MESSAGE);
+            }
+
+        }
+
+    }
+
+    public void adicionar_tabela(List<TbArmazem> armazems) {
 
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
 
         modelo.setRowCount(0);
-        
+
         for (int i = 0; i < armazems.size(); i++) {
-       
+
             modelo.addRow(new Object[]{
-                
                 armazems.get(i).getCodigo(),
                 armazems.get(i).getDesignacao()
-                
+
             });
         }
 
-        
     }
-  
-  
-  
-  
-  private void setDadosTabela()
-  {
+
+    private void setDadosTabela() {
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
-            
-        this.idArmazem =   Integer.parseInt( String.valueOf( modelo.getValueAt(jTable1.getSelectedRow(), 0) ) ) ;
-        
-        txtDescricao.setText( String.valueOf( modelo.getValueAt(jTable1.getSelectedRow(), 1) )   );        
+
+        this.idArmazem = Integer.parseInt(String.valueOf(modelo.getValueAt(jTable1.getSelectedRow(), 0)));
+
+        txtDescricao.setText(String.valueOf(modelo.getValueAt(jTable1.getSelectedRow(), 1)));
         designacao_antes = txtDescricao.getText();
-      
-  }
 
-  
-    private void setArmazem( String armazem )
-    {
-        if ( !armazem.equalsIgnoreCase( "Multi_armazem" ) )
-        {
-            jButton1.setEnabled( false);
+    }
 
-        }
-        else
-        {
-           jButton1.setEnabled( true);
+    private void setArmazem(String armazem) {
+        if (!armazem.equalsIgnoreCase("Multi_armazem")) {
+            jButton1.setEnabled(false);
+
+        } else {
+            jButton1.setEnabled(true);
 
         }
     }
-    
+
     private void activar_opcoes() {
 
         if (cod_utilizador == 15) {
@@ -437,7 +414,5 @@ public class ArmazemVisao extends javax.swing.JFrame {
         }
 
     }
-    
-  
 
 }

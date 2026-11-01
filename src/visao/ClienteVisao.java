@@ -6,6 +6,7 @@ package visao;
 
 import comercial.controller.ClientesController;
 import comercial.controller.ConfiguracaoMesComecoController;
+import comercial.controller.DadosInstituicaoController;
 import comercial.controller.DocumentosController;
 import comercial.controller.FamiliasController;
 import comercial.controller.MesRhController;
@@ -14,6 +15,7 @@ import comercial.controller.TipoProdutosController;
 import controller.TipoClienteController;
 import entity.ConfiguracaoMesComeco;
 import entity.TbCliente;
+import entity.TbDadosInstituicao;
 import entity.TbProduto;
 import entity.TbTipoProduto;
 import java.awt.Color;
@@ -40,6 +42,8 @@ import util.DVML;
 import util.MetodosUtil;
 import static util.MetodosUtil.normalizarEndereco;
 import static util.MetodosUtil.normalizarNif;
+import util.TemaNegocioUtil;
+import static visao.TranferenciaArmazemVisao.dadosInstituicao;
 
 /**
  *
@@ -60,6 +64,7 @@ public class ClienteVisao extends javax.swing.JDialog {
     private static ProdutosController produtosController;
     private static MesRhController mesRhController;
     private static TbCliente clienteGlobal;
+    private static DadosInstituicaoController dadosInstituicaoController;
     private Frame parent;
     private int codigo = 0;
 
@@ -76,7 +81,11 @@ public class ClienteVisao extends javax.swing.JDialog {
         tipoProdutoController = new TipoProdutosController(conexao);
         mesRhController = new MesRhController(conexao.getConnectionAtiva());
         familiaController = new FamiliasController(conexao);
+                        // Carregar os dados da instituição (estava a ficar null)
+        dadosInstituicaoController = new DadosInstituicaoController(conexao);
+        dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
         configuracaoMesComecoController = new ConfiguracaoMesComecoController(conexao.getConnectionAtiva());
+        
 //        tipoClienteController = new ProdutosController( conexao );
 
         initComponents();
@@ -102,16 +111,24 @@ public class ClienteVisao extends javax.swing.JDialog {
 
         btnAlterar.setEnabled(false);
         actualizar();
-        
+
         txtInicias.addKeyListener(new TratarEvento());
 
+        boolean ehFarmacia = dadosInstituicao != null
+                && TemaNegocioUtil.ehFarmacia(dadosInstituicao.getNegocio());
+
+        TemaNegocioUtil.aplicarCorCampos(ehFarmacia,
+                txtProcNIF,
+                txtNomeCliente,
+                txtNomeCliente2, txtEndereco, txtNif, txtContactos,
+                txtEmail, txtDesconto, txtInicias, cmbFamilia, cmbSubFamilia, cmbProduto, cmbDuracao, cmbMesComeco);
     }
 
     private void actualizar() {
 
         adicionar_tabela(clientesController.listarTodos());
     }
-    
+
     class TratarEvento implements KeyListener {
 
         String prefixo = "";
@@ -143,27 +160,27 @@ public class ClienteVisao extends javax.swing.JDialog {
         }
 
     }
-    
-     private void adicionar(List<ClientePesquisa> lista) {
 
-    DefaultTableModel modelo =
-            (DefaultTableModel) jTable1.getModel();
+    private void adicionar(List<ClientePesquisa> lista) {
 
-    modelo.setRowCount(0);
+        DefaultTableModel modelo
+                = (DefaultTableModel) jTable1.getModel();
 
-    for (ClientePesquisa cliente : lista) {
+        modelo.setRowCount(0);
 
-        modelo.addRow(new Object[]{
-            cliente.getCodigo(),
-            cliente.getNome(),
-            cliente.getMorada(),
-            cliente.getNif(),
-            cliente.getTelefone(),
-            cliente.getEmail(),
-            cliente.getPercentagem_desconto()
-        });
+        for (ClientePesquisa cliente : lista) {
+
+            modelo.addRow(new Object[]{
+                cliente.getCodigo(),
+                cliente.getNome(),
+                cliente.getMorada(),
+                cliente.getNif(),
+                cliente.getTelefone(),
+                cliente.getEmail(),
+                cliente.getPercentagem_desconto()
+            });
+        }
     }
-}
 
     private void adicionar_tabela(List<TbCliente> entidade) {
 

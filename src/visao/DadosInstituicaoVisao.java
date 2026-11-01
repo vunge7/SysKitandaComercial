@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
 import kitanda.util.CfMethodsSwing;
 import util.BDConexao;
 import util.JPAEntityMannagerFactoryUtil;
+import util.TemaNegocioUtil;
 
 /**
  *
@@ -28,8 +29,6 @@ import util.JPAEntityMannagerFactoryUtil;
 public class DadosInstituicaoVisao extends javax.swing.JDialog
 {
 
-//    private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
-//    private DadosInstituicaoDao dadoIntituicaoDao = new DadosInstituicaoDao( emf );
      private static DadosInstituicaoController dadosInstituicaoController;
     private TbDadosInstituicao dadoIntituicao;
     private static BDConexao conexao;
@@ -53,6 +52,17 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
         {
             e.printStackTrace();
         }
+        
+                boolean ehFarmacia = dadoIntituicao != null
+                && TemaNegocioUtil.ehFarmacia(dadoIntituicao.getNegocio());
+
+        TemaNegocioUtil.aplicarCorCampos(ehFarmacia,
+                txtNome,
+                txtNIF,
+                txtPosto, txtEndereco, txtSlogan, txtTelefone,
+                txtEmail, txt_director_geral, txtConta1, txtConta2, 
+                txtConta3, txtConta4, txtIban1, txtIban2, txtIban3, txtIban4);
+        
     }
 
     /**

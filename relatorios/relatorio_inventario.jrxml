@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="relatorio_inventario" language="java" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenNoDataType="AllSectionsNoDetail">
+
+	<!-- 0 = todos os armazéns -->
+	<parameter name="ARMAZEM_ID" class="java.lang.Integer"/>
+	<parameter name="ARMAZEM_NOME" class="java.lang.String"/>
+	<!-- 0 = todos os produtos -->
+	<parameter name="PRODUTO_ID" class="java.lang.Integer"/>
+	<parameter name="PRODUTO_NOME" class="java.lang.String"/>
+	<!-- TODAS | VENCIDO | A_VENCER | OK | SEM_LOTE | DIVERGENTE -->
+	<parameter name="SITUACAO" class="java.lang.String"/>
+	<parameter name="SITUACAO_NOME" class="java.lang.String"/>
+	<!-- dias para considerar um lote "a vencer" -->
+	<parameter name="DIAS_ALERTA" class="java.lang.Integer"/>
+	<!-- 1 = incluir linhas com stock zero -->
+	<parameter name="INCLUIR_ZERO" class="java.lang.Integer"/>
+
+	<queryString>
+		<![CDATA[
+SELECT x.* FROM (
+
+    /* A) STOCK POR LOTE (validade, dias para caducar e situacao) */
+    SELECT
+        a.codigo AS armazem_id,
+        a.designacao AS armazem,
+        p.codigo AS produto_id,
+        p.designacao AS produto,
+        l.numero_lote AS numero_lote,
+        DATE_FORMAT(l.data_validade, '%d/%m/%Y') AS validade_txt,
+        l.data_validade AS validade_ord,
+        DATEDIFF(l.data_validade, CURDATE()) AS dias,
+        CASE WHEN l.data_validade IS NULL THEN 'SEM_VALIDADE' WHEN l.data_validade < CURDATE() THEN 'VENCIDO' WHEN DATEDIFF(l.data_validade, CURDATE()) <= $P{DIAS_ALERTA} THEN 'A_VENCER' ELSE 'OK' END AS situacao,
+        CAST(l.qtd AS DECIMAL(18,3)) AS qtd_sistema
+    FROM lote l
+    INNER JOIN tb_produto p ON p.codigo = l.fk_produto
+    INNER JOIN tb_armazem a ON a.codigo = l.fk_armazem
+    WHERE ($P{ARMAZEM_ID} = 0 OR l.fk_armazem = $P{ARMAZEM_ID})
+      AND ($P{PRODUTO_ID} = 0 OR l.fk_produto = $P{PRODUTO_ID})
+
+    UNION ALL
+
+    /* B) STOCK SEM LOTE: produtos sem lotes, ou parte do stock que os lotes nao cobrem
+          (se os lotes somarem mais do que o stock, fica DIVERGENTE) */
+    SELECT
+        a3.codigo AS armazem_id,
+        a3.designacao AS armazem,
+        p3.codigo AS produto_id,
+        p3.designacao AS produto,
+        '-' AS numero_lote,
+        '-' AS validade_txt,
+        NULL AS validade_ord,
+        NULL AS dias,
+        CASE WHEN (s.quantidade_existente - COALESCE(ls.soma, 0)) < 0 THEN 'DIVERGENTE' ELSE 'SEM_LOTE' END AS situacao,
+        CAST((s.quantidade_existente - COALESCE(ls.soma, 0)) AS DECIMAL(18,3)) AS qtd_sistema
+    FROM tb_stock s
+    INNER JOIN tb_produto p3 ON p3.codigo = s.cod_produto_codigo
+    INNER JOIN tb_armazem a3 ON a3.codigo = s.cod_armazem
+    LEFT JOIN (SELECT fk_produto, fk_armazem, SUM(qtd) AS soma, COUNT(*) AS n
+               FROM lote GROUP BY fk_produto, fk_armazem) ls
+           ON ls.fk_produto = s.cod_produto_codigo AND ls.fk_armazem = s.cod_armazem
+    WHERE ($P{ARMAZEM_ID} = 0 OR s.cod_armazem = $P{ARMAZEM_ID})
+      AND ($P{PRODUTO_ID} = 0 OR s.cod_produto_codigo = $P{PRODUTO_ID})
+      AND (ls.n IS NULL OR ABS((s.quantidade_existente - COALESCE(ls.soma, 0))) > 0.0001)
+
+) x
+WHERE ($P{SITUACAO} = 'TODAS' OR x.situacao = $P{SITUACAO})
+  AND ($P{INCLUIR_ZERO} = 1 OR ABS(x.qtd_sistema) > 0.0001)
+ORDER BY x.armazem, x.armazem_id, x.produto, x.produto_id, (x.validade_ord IS NULL), x.validade_ord, x.numero_lote
+		]]>
+	</queryString>
+
+	<field name="armazem_id" class="java.lang.Integer"/>
+	<field name="armazem" class="java.lang.String"/>
+	<field name="produto_id" class="java.lang.Integer"/>
+	<field name="produto" class="java.lang.String"/>
+	<field name="numero_lote" class="java.lang.String"/>
+	<field name="validade_txt" class="java.lang.String"/>
+	<field name="dias" class="java.lang.Integer"/>
+	<field name="situacao" class="java.lang.String"/>
+	<field name="qtd_sistema" class="java.math.BigDecimal"/>
+
+	<variable name="QTD_ARM" class="java.math.BigDecimal" resetType="Group" resetGroup="armazem" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtd_sistema}]]></variableExpression>
+		<initialValueExpression><![CDATA[new java.math.BigDecimal(0)]]></initialValueExpression>
+	</variable>
+	<variable name="QTD_TOTAL" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtd_sistema}]]></variableExpression>
+		<initialValueExpression><![CDATA[new java.math.BigDecimal(0)]]></initialValueExpression>
+	</variable>
+	<variable name="PROD_ARM" class="java.lang.Integer" resetType="Group" resetGroup="armazem" calculation="DistinctCount">
+		<variableExpression><![CDATA[$F{produto_id}]]></variableExpression>
+		<initialValueExpression><![CDATA[new java.lang.Integer(0)]]></initialValueExpression>
+	</variable>
+	<variable name="PROD_TOTAL" class="java.lang.Integer" calculation="DistinctCount">
+		<variableExpression><![CDATA[$F{produto_id}]]></variableExpression>
+		<initialValueExpression><![CDATA[new java.lang.Integer(0)]]></initialValueExpression>
+	</variable>
+
+	<group name="armazem" isStartNewPage="true" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{armazem_id}]]></groupExpression>
+		<groupHeader>
+			<band height="22">
+				<rectangle>
+					<reportElement x="0" y="2" width="802" height="19" backcolor="#1F3A5F"/>
+					<graphicElement><pen lineWidth="0.0"/></graphicElement>
+				</rectangle>
+				<textField>
+					<reportElement x="6" y="2" width="790" height="19" forecolor="#FFFFFF"/>
+					<textElement verticalAlignment="Middle"><font fontName="SansSerif" size="11" isBold="true"/></textElement>
+					<textFieldExpression><![CDATA["ARMAZ\u00c9M: " + $F{armazem}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="28">
+			<line><reportElement x="0" y="0" width="802" height="1"/></line>
+			<textField isBlankWhenNull="true"><reportElement x="0" y="4" width="491" height="18"></reportElement><textElement textAlignment="Right" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><textFieldExpression><![CDATA["TOTAL DO ARMAZ\u00c9M  (" + $V{PROD_ARM} + " produto(s))"]]></textFieldExpression></textField>
+			<textField pattern="#,##0.###;-#,##0.###" isBlankWhenNull="true"><reportElement x="495" y="4" width="62" height="18"></reportElement><textElement textAlignment="Right" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><textFieldExpression><![CDATA[$V{QTD_ARM}]]></textFieldExpression></textField>
+			</band>
+		</groupFooter>
+	</group>
+
+	<title>
+		<band height="92">
+			<staticText>
+				<reportElement x="0" y="4" width="802" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="SansSerif" size="20" isBold="true"/></textElement>
+				<text><![CDATA[INVENTÁRIO]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="38" width="802" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"><font size="10"/></textElement>
+				<textFieldExpression><![CDATA["Armaz\u00e9m: " + $P{ARMAZEM_NOME} + "      Produto: " + $P{PRODUTO_NOME}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="54" width="802" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"><font size="10"/></textElement>
+				<textFieldExpression><![CDATA["Situa\u00e7\u00e3o: " + $P{SITUACAO_NOME} + "      Alerta de validade: " + $P{DIAS_ALERTA} + " dias      Incluir stock zero: " + ($P{INCLUIR_ZERO}.intValue() == 1 ? "Sim" : "N\u00e3o")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="70" width="802" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"><font size="10"/></textElement>
+				<textFieldExpression><![CDATA["Data do invent\u00e1rio: " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+
+	<columnHeader>
+		<band height="26">
+			<rectangle>
+				<reportElement x="0" y="0" width="802" height="26" backcolor="#404040"/>
+				<graphicElement><pen lineWidth="0.0"/></graphicElement>
+			</rectangle>
+			<staticText><reportElement x="1" y="0" width="38" height="26" forecolor="#FFFFFF"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Código]]></text></staticText>
+			<staticText><reportElement x="41" y="0" width="198" height="26" forecolor="#FFFFFF"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Produto]]></text></staticText>
+			<staticText><reportElement x="241" y="0" width="83" height="26" forecolor="#FFFFFF"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Lote]]></text></staticText>
+			<staticText><reportElement x="326" y="0" width="58" height="26" forecolor="#FFFFFF"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Validade]]></text></staticText>
+			<staticText><reportElement x="386" y="0" width="38" height="26" forecolor="#FFFFFF"/><textElement textAlignment="Right" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Dias]]></text></staticText>
+			<staticText><reportElement x="426" y="0" width="68" height="26" forecolor="#FFFFFF"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Situação]]></text></staticText>
+			<staticText><reportElement x="496" y="0" width="63" height="26" forecolor="#FFFFFF"/><textElement textAlignment="Right" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Qtd. Sistema]]></text></staticText>
+			<staticText><reportElement x="561" y="0" width="73" height="26" forecolor="#FFFFFF"/><textElement textAlignment="Center" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Qtd. Contada]]></text></staticText>
+			<staticText><reportElement x="636" y="0" width="63" height="26" forecolor="#FFFFFF"/><textElement textAlignment="Center" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Diferença]]></text></staticText>
+			<staticText><reportElement x="701" y="0" width="100" height="26" forecolor="#FFFFFF"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Observações]]></text></staticText>
+		</band>
+	</columnHeader>
+
+	<detail>
+		<band height="18">
+			<rectangle><reportElement mode="Opaque" stretchType="RelativeToBandHeight" x="0" y="0" width="802" height="18" backcolor="#F2F2F2"><printWhenExpression><![CDATA[$V{REPORT_COUNT} % 2 == 0]]></printWhenExpression></reportElement><graphicElement><pen lineWidth="0.0"/></graphicElement></rectangle>
+			<textField isBlankWhenNull="true"><reportElement x="1" y="0" width="38" height="18" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" isPrintInFirstWholeBand="true"></reportElement><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><textFieldExpression><![CDATA[$F{produto_id}]]></textFieldExpression></textField>
+			<textField isBlankWhenNull="true" isStretchWithOverflow="true"><reportElement x="41" y="0" width="198" height="18" isPrintRepeatedValues="false" isPrintInFirstWholeBand="true"></reportElement><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><textFieldExpression><![CDATA[$F{produto}]]></textFieldExpression></textField>
+			<textField isBlankWhenNull="true"><reportElement x="241" y="0" width="83" height="18" stretchType="RelativeToTallestObject"></reportElement><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8"/></textElement><textFieldExpression><![CDATA[($F{numero_lote} == null || $F{numero_lote}.trim().isEmpty()) ? "-" : $F{numero_lote}]]></textFieldExpression></textField>
+			<textField isBlankWhenNull="true"><reportElement x="326" y="0" width="58" height="18" stretchType="RelativeToTallestObject"></reportElement><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8"/></textElement><textFieldExpression><![CDATA[$F{validade_txt} == null ? "-" : $F{validade_txt}]]></textFieldExpression></textField>
+			<textField pattern="#,##0;-#,##0" isBlankWhenNull="true"><reportElement x="385" y="0" width="37" height="18" forecolor="#D00000" stretchType="RelativeToTallestObject"><printWhenExpression><![CDATA[$F{dias} != null && $F{dias}.intValue() < 0]]></printWhenExpression></reportElement><textElement textAlignment="Right" verticalAlignment="Middle"><font size="8"/></textElement><textFieldExpression><![CDATA[$F{dias}]]></textFieldExpression></textField>
+			<textField pattern="#,##0;-#,##0" isBlankWhenNull="true"><reportElement x="385" y="0" width="37" height="18" stretchType="RelativeToTallestObject"><printWhenExpression><![CDATA[$F{dias} == null || $F{dias}.intValue() >= 0]]></printWhenExpression></reportElement><textElement textAlignment="Right" verticalAlignment="Middle"><font size="8"/></textElement><textFieldExpression><![CDATA[$F{dias}]]></textFieldExpression></textField>
+			<textField isBlankWhenNull="true"><reportElement x="426" y="0" width="68" height="18" forecolor="#D00000" stretchType="RelativeToTallestObject"><printWhenExpression><![CDATA[$F{situacao}.equals("VENCIDO") || $F{situacao}.equals("DIVERGENTE")]]></printWhenExpression></reportElement><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><textFieldExpression><![CDATA[$F{situacao}.equals("VENCIDO") ? "Vencido" : $F{situacao}.equals("A_VENCER") ? "A vencer" : $F{situacao}.equals("OK") ? "V\u00e1lido" : $F{situacao}.equals("SEM_LOTE") ? "Sem lote" : $F{situacao}.equals("DIVERGENTE") ? "Divergente" : "S/ validade"]]></textFieldExpression></textField>
+			<textField isBlankWhenNull="true"><reportElement x="426" y="0" width="68" height="18" forecolor="#E07B00" stretchType="RelativeToTallestObject"><printWhenExpression><![CDATA[$F{situacao}.equals("A_VENCER")]]></printWhenExpression></reportElement><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><textFieldExpression><![CDATA[$F{situacao}.equals("VENCIDO") ? "Vencido" : $F{situacao}.equals("A_VENCER") ? "A vencer" : $F{situacao}.equals("OK") ? "V\u00e1lido" : $F{situacao}.equals("SEM_LOTE") ? "Sem lote" : $F{situacao}.equals("DIVERGENTE") ? "Divergente" : "S/ validade"]]></textFieldExpression></textField>
+			<textField isBlankWhenNull="true"><reportElement x="426" y="0" width="68" height="18" forecolor="#006400" stretchType="RelativeToTallestObject"><printWhenExpression><![CDATA[$F{situacao}.equals("OK")]]></printWhenExpression></reportElement><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><textFieldExpression><![CDATA[$F{situacao}.equals("VENCIDO") ? "Vencido" : $F{situacao}.equals("A_VENCER") ? "A vencer" : $F{situacao}.equals("OK") ? "V\u00e1lido" : $F{situacao}.equals("SEM_LOTE") ? "Sem lote" : $F{situacao}.equals("DIVERGENTE") ? "Divergente" : "S/ validade"]]></textFieldExpression></textField>
+			<textField isBlankWhenNull="true"><reportElement x="426" y="0" width="68" height="18" forecolor="#555555" stretchType="RelativeToTallestObject"><printWhenExpression><![CDATA[!($F{situacao}.equals("VENCIDO") || $F{situacao}.equals("DIVERGENTE") || $F{situacao}.equals("A_VENCER") || $F{situacao}.equals("OK"))]]></printWhenExpression></reportElement><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><textFieldExpression><![CDATA[$F{situacao}.equals("VENCIDO") ? "Vencido" : $F{situacao}.equals("A_VENCER") ? "A vencer" : $F{situacao}.equals("OK") ? "V\u00e1lido" : $F{situacao}.equals("SEM_LOTE") ? "Sem lote" : $F{situacao}.equals("DIVERGENTE") ? "Divergente" : "S/ validade"]]></textFieldExpression></textField>
+			<textField pattern="#,##0.###;-#,##0.###" isBlankWhenNull="true"><reportElement x="495" y="0" width="62" height="18" stretchType="RelativeToTallestObject"></reportElement><textElement textAlignment="Right" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><textFieldExpression><![CDATA[$F{qtd_sistema}]]></textFieldExpression></textField>
+			<rectangle><reportElement mode="Transparent" stretchType="RelativeToBandHeight" x="560" y="0" width="75" height="18"/><graphicElement><pen lineWidth="0.5" lineColor="#808080"/></graphicElement></rectangle>
+			<rectangle><reportElement mode="Transparent" stretchType="RelativeToBandHeight" x="635" y="0" width="65" height="18"/><graphicElement><pen lineWidth="0.5" lineColor="#808080"/></graphicElement></rectangle>
+			<rectangle><reportElement mode="Transparent" stretchType="RelativeToBandHeight" x="700" y="0" width="102" height="18"/><graphicElement><pen lineWidth="0.5" lineColor="#808080"/></graphicElement></rectangle>
+			<line><reportElement positionType="FixRelativeToBottom" x="0" y="17" width="802" height="1" forecolor="#C8C8C8"/></line>
+		</band>
+	</detail>
+
+	<pageFooter>
+		<band height="18">
+			<textField>
+				<reportElement x="0" y="2" width="300" height="14"/>
+				<textElement verticalAlignment="Middle"><font size="7"/></textElement>
+				<textFieldExpression><![CDATA["Invent\u00e1rio  -  emitido em " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="602" y="2" width="150" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"><font size="7"/></textElement>
+				<textFieldExpression><![CDATA["P\u00e1gina " + $V{PAGE_NUMBER} + " de "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="752" y="2" width="50" height="14"/>
+				<textElement verticalAlignment="Middle"><font size="7"/></textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+
+	<summary>
+		<band height="84">
+			<line><reportElement x="0" y="2" width="802" height="2"/></line>
+			<textField isBlankWhenNull="true"><reportElement x="0" y="8" width="491" height="18"></reportElement><textElement textAlignment="Right" verticalAlignment="Middle"><font size="9" isBold="true"/></textElement><textFieldExpression><![CDATA["TOTAL GERAL  (" + $V{PROD_TOTAL} + " produto(s))"]]></textFieldExpression></textField>
+			<textField pattern="#,##0.###;-#,##0.###" isBlankWhenNull="true"><reportElement x="495" y="8" width="62" height="18"></reportElement><textElement textAlignment="Right" verticalAlignment="Middle"><font size="9" isBold="true"/></textElement><textFieldExpression><![CDATA[$V{QTD_TOTAL}]]></textFieldExpression></textField>
+			<textField isBlankWhenNull="true"><reportElement x="0" y="32" width="802" height="14" forecolor="#555555"></reportElement><textElement textAlignment="Left" verticalAlignment="Middle"><font size="7"/></textElement><textFieldExpression><![CDATA["Legenda: Vencido = validade ultrapassada  |  A vencer = caduca nos pr\u00f3ximos " + $P{DIAS_ALERTA} + " dias  |  Sem lote = stock sem lote registado  |  Divergente = lotes superiores ao stock do sistema"]]></textFieldExpression></textField>
+			<staticText><reportElement x="0" y="60" width="802" height="18"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="9"/></textElement><text><![CDATA[Contado por: ______________________________     Verificado por: ______________________________     Data: ____ / ____ / ________]]></text></staticText>
+		</band>
+	</summary>
+</jasperReport>

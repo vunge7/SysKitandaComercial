@@ -680,5 +680,7 @@ public class LoteController implements EntidadeFactory {
                 + "AND qtd > 0 AND data_validade >= CURDATE() ORDER BY data_validade ASC, id ASC",
                 fkProduto, fkArmazem);
     }
+    
+    
 
 }

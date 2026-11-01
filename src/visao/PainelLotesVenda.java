@@ -157,7 +157,7 @@ public class PainelLotesVenda extends JPanel {
      */
     public void limpar() {
         modelo.setRowCount(0);
-        lbProduto.setText("<html><i>Seleccione um medicamento para ver os lotes disponíveis.</i></html>");
+        lbProduto.setText("<html><i>Seleccione um produto para ver os lotes disponíveis.</i></html>");
         lbEstado.setText(" ");
     }
 

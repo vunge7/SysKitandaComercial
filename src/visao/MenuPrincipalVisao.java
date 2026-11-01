@@ -140,8 +140,6 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
                 jMenuItemRelatorioQuebras.setEnabled(true);
             } else if (permissao.equals(jMenuItemRelatorioQtdDetalhado.getText())) {
                 jMenuItemRelatorioQtdDetalhado.setEnabled(true);
-            } else if (permissao.equals(jmListarProdutosStock.getText())) {
-                jmListarProdutosStock.setEnabled(true);
             } else if (permissao.equals(jmListagemVasilhames.getText())) {
                 jmListagemVasilhames.setEnabled(true);
             } else if (permissao.equals(jMenuItemCancelamentoEntradas.getText())) {
@@ -277,9 +275,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
                 jMenuConfiguracoesSistema.setEnabled(true);
             } else if (permissao.equals(jMenuItemRelatorioDeEntradas.getText())) {
                 jMenuItemRelatorioDeEntradas.setEnabled(true);
-            } else if (permissao.equals(jcbGuiaTransporte.getText())) {
-                jcbGuiaTransporte.setEnabled(true);
-            } else if (permissao.equals(jcbConverterGuiaTransporteDocumento.getText())) {
+            }  else if (permissao.equals(jcbConverterGuiaTransporteDocumento.getText())) {
                 jcbConverterGuiaTransporteDocumento.setEnabled(true);
             } else if (permissao.equals(jcbAnulamentoEntradasProdutos.getText())) {
                 jcbAnulamentoEntradasProdutos.setEnabled(true);
@@ -313,7 +309,6 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
         jMenuItemRelatorioQtdDetalhado.setEnabled(status);
         jmRelatorioPorFonecedor.setEnabled(status);
         jmAcertoStock.setEnabled(status);
-        jmListarProdutosStock.setEnabled(status);
         jmListagemVasilhames.setEnabled(status);
         jmTodasVendas.setEnabled(status);
         jmReactivarProdutos.setEnabled(status);
@@ -388,7 +383,6 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
         jMenuItemRelatorioMensal.setEnabled(status);
         jMenuItemRelatorioDeEntradas.setEnabled(status);
         jMenuItemCancelamentoEntradas.setEnabled(status);
-        jcbGuiaTransporte.setEnabled(status);
         jcbAlteracaoGuiaTransporte.setEnabled(status);
         jcbAnulamentoEntradasProdutos.setEnabled(status);
         jcbConverterGuiaTransporteDocumento.setEnabled(status);
@@ -424,7 +418,6 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
         jMenuItem7 = new javax.swing.JMenuItem();
         jMenuItemRectificacao = new javax.swing.JMenuItem();
         jmNotaLevantamento = new javax.swing.JMenuItem();
-        jcbGuiaTransporte = new javax.swing.JMenuItem();
         jMenuItemGestaoCreditos = new javax.swing.JMenuItem();
         jmEstornos = new javax.swing.JMenuItem();
         jcbAlteracaoGuiaTransporte = new javax.swing.JMenuItem();
@@ -432,7 +425,10 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
         jSeparator9 = new javax.swing.JPopupMenu.Separator();
         jMenuItem3 = new javax.swing.JMenuItem();
         jmenuRelatorios = new javax.swing.JMenu();
-        jmListarProdutosStock = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        jMenuItem15 = new javax.swing.JMenuItem();
+        jMenuItem17 = new javax.swing.JMenuItem();
+        jMenuItem14 = new javax.swing.JMenuItem();
         jmTodasVendas = new javax.swing.JMenuItem();
         jmVendaDetalhadasUsuarios = new javax.swing.JMenuItem();
         jmRelatorioVendasPorUsuarioData = new javax.swing.JMenuItem();
@@ -464,7 +460,6 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
         jmRelatoriosSaidasProdutosPorDatas = new javax.swing.JMenuItem();
         jMenuItemRelatorioDeEntradas = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
-        jMenuItem14 = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jmTurno = new javax.swing.JMenuItem();
         jmCadastroUsuario = new javax.swing.JMenuItem();
@@ -636,15 +631,6 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
         });
         jMenu1.add(jmNotaLevantamento);
 
-        jcbGuiaTransporte.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
-        jcbGuiaTransporte.setText("Guia Transporte");
-        jcbGuiaTransporte.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jcbGuiaTransporteActionPerformed(evt);
-            }
-        });
-        jMenu1.add(jcbGuiaTransporte);
-
         jMenuItemGestaoCreditos.setText("Gestao de Creditos");
         jMenuItemGestaoCreditos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -692,14 +678,33 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
         jmenuRelatorios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/1323287592_stock_task.png"))); // NOI18N
         jmenuRelatorios.setText("Relatorio/Mapa");
 
-        jmListarProdutosStock.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
-        jmListarProdutosStock.setText("Inventario");
-        jmListarProdutosStock.addActionListener(new java.awt.event.ActionListener() {
+        jMenu2.setText("Controlo Stock");
+
+        jMenuItem15.setText("Controlo Movimentos");
+        jMenuItem15.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jmListarProdutosStockActionPerformed(evt);
+                jMenuItem15ActionPerformed(evt);
             }
         });
-        jmenuRelatorios.add(jmListarProdutosStock);
+        jMenu2.add(jMenuItem15);
+
+        jMenuItem17.setText("Inventário");
+        jMenuItem17.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem17ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem17);
+
+        jmenuRelatorios.add(jMenu2);
+
+        jMenuItem14.setText("Relatório Resumido de Vendas");
+        jMenuItem14.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem14ActionPerformed(evt);
+            }
+        });
+        jmenuRelatorios.add(jMenuItem14);
 
         jmTodasVendas.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         jmTodasVendas.setText("Relatorio de Vendas por Intervalo de Datas");
@@ -954,14 +959,6 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
             }
         });
         jmenuRelatorios.add(jMenuItem5);
-
-        jMenuItem14.setText("Relatório Resumido de Vendas");
-        jMenuItem14.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem14ActionPerformed(evt);
-            }
-        });
-        jmenuRelatorios.add(jMenuItem14);
 
         jMenuBar1.add(jmenuRelatorios);
 
@@ -1753,18 +1750,6 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jmTodasVendasActionPerformed
 
-    private void jmListarProdutosStockActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmListarProdutosStockActionPerformed
-    {//GEN-HEADEREND:event_jmListarProdutosStockActionPerformed
-
-        // TODO add your handling code here:
-        try {
-            new InventarioVisao(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }//GEN-LAST:event_jmListarProdutosStockActionPerformed
-
     private void jmMapaExistenciaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmMapaExistenciaActionPerformed
         // TODO add your handling code here:
         new MapaExistenciaVisao(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
@@ -1963,11 +1948,6 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jmReactivarProdutosActionPerformed
 
-    private void jcbGuiaTransporteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jcbGuiaTransporteActionPerformed
-    {//GEN-HEADEREND:event_jcbGuiaTransporteActionPerformed
-        new GuiaTransportesVisao(cod_utilizador, this.conexao).setVisible(true);
-    }//GEN-LAST:event_jcbGuiaTransporteActionPerformed
-
     private void jcbAlteracaoGuiaTransporteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jcbAlteracaoGuiaTransporteActionPerformed
     {//GEN-HEADEREND:event_jcbAlteracaoGuiaTransporteActionPerformed
         try {
@@ -2112,6 +2092,10 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
         frm.setVisible(true);
     }//GEN-LAST:event_jMenuItem12ActionPerformed
 
+    private void jMenuItem16ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem16ActionPerformed
+        new FrmLotesAExpirar(conexao).setVisible(true);
+    }//GEN-LAST:event_jMenuItem16ActionPerformed
+
     private void jMenuItem14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem14ActionPerformed
 
         try {
@@ -2120,15 +2104,21 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
             vendasController.atualizarTotalVenda();
 
             // TODO add your handling code here:
-            new ListarRelatorioVendasDiarias(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
+            new ListarRelatorioDeVendasDiarias(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
         } catch (SQLException ex) {
-            Logger.getLogger(MenuPrincipalVisao.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MenuPrincipalFarmaciaVisao.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jMenuItem14ActionPerformed
 
-    private void jMenuItem16ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem16ActionPerformed
-        new FrmLotesAExpirar(conexao).setVisible(true);
-    }//GEN-LAST:event_jMenuItem16ActionPerformed
+    private void jMenuItem15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem15ActionPerformed
+
+        new RelatorioMovimentoStockVisao().setVisible(true);
+
+    }//GEN-LAST:event_jMenuItem15ActionPerformed
+
+    private void jMenuItem17ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem17ActionPerformed
+        new InventariosVisao().setVisible(true);
+    }//GEN-LAST:event_jMenuItem17ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -2185,6 +2175,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu4;
     private javax.swing.JMenu jMenu5;
@@ -2198,7 +2189,9 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem12;
     private javax.swing.JMenuItem jMenuItem13;
     private javax.swing.JMenuItem jMenuItem14;
+    private javax.swing.JMenuItem jMenuItem15;
     private javax.swing.JMenuItem jMenuItem16;
+    private javax.swing.JMenuItem jMenuItem17;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
@@ -2224,7 +2217,6 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
     private javax.swing.JMenuItem jcbAnulamentoEntradasProdutos;
     private javax.swing.JMenuItem jcbCardex;
     private javax.swing.JMenuItem jcbConverterGuiaTransporteDocumento;
-    private javax.swing.JMenuItem jcbGuiaTransporte;
     private javax.swing.JMenuItem jcbRelatorioMensalClientesVips;
     private javax.swing.JMenuItem jcbRelatorioTransferencia;
     private javax.swing.JMenuItem jmAcertoStock;
@@ -2248,7 +2240,6 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
     private javax.swing.JMenuItem jmListagemVasilhames;
     private javax.swing.JMenuItem jmListagensTodosProdutoComDesconto;
     private javax.swing.JMenuItem jmListagensTodosProdutos;
-    private javax.swing.JMenuItem jmListarProdutosStock;
     private javax.swing.JMenuItem jmListarUsuario;
     private javax.swing.JMenuItem jmMapaExistencia;
     private javax.swing.JMenuItem jmMarca;

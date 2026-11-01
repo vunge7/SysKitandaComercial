@@ -317,7 +317,7 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
 
         lbData2.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 30)); // NOI18N
         lbData2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbData2.setText("RELATÓRIO DE VENDAS POR INTERVALO DE DATAS");
+        lbData2.setText("RELATÓRIO DETALHADO DE VENDAS POR INTERVALO DE DATAS");
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 

@@ -18,6 +18,7 @@ import javax.swing.JOptionPane;
 import kitanda.util.CfMethodsSwing;
 import util.BDConexao;
 import util.MetodosUtil;
+import util.TemaNegocioUtil;
 
 /**
  *
@@ -29,12 +30,12 @@ public class ConfiguracoesVisao extends javax.swing.JDialog {
     private TbDadosInstituicao dadoIntituicao;
     private static BDConexao conexao;
 
-    public ConfiguracoesVisao(java.awt.Frame parent, boolean modal, BDConexao conexao ) {
+    public ConfiguracoesVisao(java.awt.Frame parent, boolean modal, BDConexao conexao) {
         super(parent, modal);
         initComponents();
         this.conexao = conexao;
         setLocationRelativeTo(null);
-        
+
         dadosInstituicaoController = new DadosInstituicaoController(conexao);
         dadoIntituicao = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
 //        lbHoraComecoVendas.setVisible(false);
@@ -48,6 +49,14 @@ public class ConfiguracoesVisao extends javax.swing.JDialog {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        boolean ehFarmacia = dadoIntituicao != null
+                && TemaNegocioUtil.ehFarmacia(dadoIntituicao.getNegocio());
+
+        TemaNegocioUtil.aplicarCorCampos(ehFarmacia,
+                txtPrazoFT,
+                txtPrazoProforma,
+                txtProveniencia, txtChaveMestre, txtImpressoraCozinha, txtImpressoraSala, txtImpressoraCaixa);
     }
 
     /**
@@ -1437,7 +1446,7 @@ public class ConfiguracoesVisao extends javax.swing.JDialog {
                 return;
             }
         }
-        
+
         if (dadoIntituicao.getNegocio().equals("Restaurante")) {
             String tipoFichaTecnica = rbFichaA.isSelected() ? "A" : "B";
             dadoIntituicao.setTipoFichaTecnica(tipoFichaTecnica);
@@ -1825,7 +1834,7 @@ public class ConfiguracoesVisao extends javax.swing.JDialog {
 //        {
 //            rbOficina.setSelected( true );
 //            rbComercial.setSelected( false );
-////            MenuPrincipalVisao.jmGestaoMesas.setEnabled(false);
+    ////            MenuPrincipalVisao.jmGestaoMesas.setEnabled(false);
 //        }
 //    }
     private void setActivarTeclado(String teclado) {
@@ -1883,67 +1892,66 @@ public class ConfiguracoesVisao extends javax.swing.JDialog {
         return true;
 
     }
-    
+
     private void setHoras(TbDadosInstituicao dadoIntituicao) {
 
-    try {
+        try {
 
-        Date dataComeco = dadoIntituicao.getHoraComecoVenda();
-        Date dataTermino = dadoIntituicao.getHoraTerminoVenda();
+            Date dataComeco = dadoIntituicao.getHoraComecoVenda();
+            Date dataTermino = dadoIntituicao.getHoraTerminoVenda();
 
-        System.out.println("Data começo: " + dataComeco);
-        System.out.println("Data término: " + dataTermino);
+            System.out.println("Data começo: " + dataComeco);
+            System.out.println("Data término: " + dataTermino);
 
-        String horaComeco =
-                MetodosUtil.getNumeroFormatado(dataComeco.getHours());
+            String horaComeco
+                    = MetodosUtil.getNumeroFormatado(dataComeco.getHours());
 
-        String minutoComeco =
-                MetodosUtil.getNumeroFormatado(dataComeco.getMinutes());
+            String minutoComeco
+                    = MetodosUtil.getNumeroFormatado(dataComeco.getMinutes());
 
-        String horaTermino =
-                MetodosUtil.getNumeroFormatado(dataTermino.getHours());
+            String horaTermino
+                    = MetodosUtil.getNumeroFormatado(dataTermino.getHours());
 
-        String minutoTermino =
-                MetodosUtil.getNumeroFormatado(dataTermino.getMinutes());
+            String minutoTermino
+                    = MetodosUtil.getNumeroFormatado(dataTermino.getMinutes());
 
-        System.out.println("Hora Começo: " + horaComeco);
-        System.out.println("Minuto Começo: " + minutoComeco);
+            System.out.println("Hora Começo: " + horaComeco);
+            System.out.println("Minuto Começo: " + minutoComeco);
 
-        System.out.println("Hora Término: " + horaTermino);
-        System.out.println("Minuto Término: " + minutoTermino);
+            System.out.println("Hora Término: " + horaTermino);
+            System.out.println("Minuto Término: " + minutoTermino);
 
-        System.out.println("Itens hora começo: "
-                + cmbHoraComeco.getItemCount());
+            System.out.println("Itens hora começo: "
+                    + cmbHoraComeco.getItemCount());
 
-        System.out.println("Itens minuto começo: "
-                + cmbMinutoComeco.getItemCount());
+            System.out.println("Itens minuto começo: "
+                    + cmbMinutoComeco.getItemCount());
 
-        System.out.println("Selecionando...");
+            System.out.println("Selecionando...");
 
-        cmbHoraComeco.setSelectedItem(horaComeco);
-        cmbMinutoComeco.setSelectedItem(minutoComeco);
+            cmbHoraComeco.setSelectedItem(horaComeco);
+            cmbMinutoComeco.setSelectedItem(minutoComeco);
 
-        cmbHoraTermino.setSelectedItem(horaTermino);
-        cmbMinitoTermino.setSelectedItem(minutoTermino);
+            cmbHoraTermino.setSelectedItem(horaTermino);
+            cmbMinitoTermino.setSelectedItem(minutoTermino);
 
-        System.out.println("Depois:");
-        System.out.println("Começo: "
-                + cmbHoraComeco.getSelectedItem()
-                + ":"
-                + cmbMinutoComeco.getSelectedItem());
+            System.out.println("Depois:");
+            System.out.println("Começo: "
+                    + cmbHoraComeco.getSelectedItem()
+                    + ":"
+                    + cmbMinutoComeco.getSelectedItem());
 
-        System.out.println("Término: "
-                + cmbHoraTermino.getSelectedItem()
-                + ":"
-                + cmbMinitoTermino.getSelectedItem());
+            System.out.println("Término: "
+                    + cmbHoraTermino.getSelectedItem()
+                    + ":"
+                    + cmbMinitoTermino.getSelectedItem());
 
-    } catch (Exception e) {
+        } catch (Exception e) {
 
-        // NÃO deixar vazio
-        e.printStackTrace();
+            // NÃO deixar vazio
+            e.printStackTrace();
+        }
     }
-}
-
 
 //    private void setHoras(TbDadosInstituicao dadoIntituicao) {
 //
@@ -1951,6 +1959,7 @@ public class ConfiguracoesVisao extends javax.swing.JDialog {
 //            Date dataComeco = dadoIntituicao.getHoraComecoVenda();
 //            Date dataTermino = dadoIntituicao.getHoraTerminoVenda();
 //
+
 ////        System.out.println( MetodosUtil.getHoraBanco( dataComeco ) );
 ////        System.out.println( MetodosUtil.getHoraBanco( dataTermino ) );
 //            String horaComeco = MetodosUtil.getNumeroFormatado(dataComeco.getHours());

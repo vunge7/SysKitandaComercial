@@ -5,32 +5,17 @@
 package lista;
 
 
-import java.sql.Connection;
 import dao.AccessoArmazemDao;
 import dao.ArmazemDao;
 import dao.FornecedorDao;
 import dao.ItemVendaDao;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManagerFactory;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRExporterParameter;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.export.JRXlsAbstractExporterParameter;
-import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
-import net.sf.jasperreports.view.JasperViewer;
 import util.BDConexao;
 import util.JPAEntityMannagerFactoryUtil;
 
@@ -40,12 +25,8 @@ import util.JPAEntityMannagerFactoryUtil;
  */
 public class ListarRelatorioVendasDiarias extends javax.swing.JFrame {
 
-    private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
-    private ItemVendaDao itemVendaDao = new ItemVendaDao(emf);
-    private ArmazemDao armazemDao = new ArmazemDao(emf);
-    private FornecedorDao fornecedorDao = new FornecedorDao(emf);
     private BDConexao conexao;
-    private AccessoArmazemDao accessoArmazemDao = new AccessoArmazemDao(emf);
+
 
     public ListarRelatorioVendasDiarias(int idUser, BDConexao conexao) throws SQLException {
 
@@ -62,7 +43,6 @@ public class ListarRelatorioVendasDiarias extends javax.swing.JFrame {
 
     }
 
-    //SELECT distinct  SUM(total_venda) as soma FROM tb_venda WHERE codigo_usuario = 4;
     public void confLabel() {
 
         lbData.setHorizontalAlignment(JLabel.RIGHT);
@@ -89,115 +69,13 @@ public class ListarRelatorioVendasDiarias extends javax.swing.JFrame {
         return dataSelecionada;
     }
 
-    public void mostrar() throws SQLException {
-
-        java.sql.Connection connection = conexao.getConnectionAtiva();
-        HashMap hashMap = new HashMap();
-
-        hashMap.put("DATA_INICIO", dcDataInicio.getDate());
-        hashMap.put("DATA_FIM", dcDataFim.getDate());
-
-        String relatorio = "";
-
-        relatorio = "relatorios/RelatorioDiario.jasper";
-
-        File file = new File(relatorio).getAbsoluteFile();
-
-        String obterCaminho = file.getAbsolutePath();
-
-        try {
-
-            JasperFillManager.fillReport(obterCaminho, hashMap, connection);
-
-            JasperPrint jasperPrint = JasperFillManager.fillReport(obterCaminho, hashMap, connection);
-
-            if (jasperPrint.getPages().size() >= 1) {
-
-                //int opcao = JOptionPane.showConfirmDialog(null, "Pretende Ver Os Dados Em Excel?");
-//                if (opcao == JOptionPane.YES_OPTION)
-//                    XLSX(obterCaminho, hashMap, connection);
-//                else
-//                {
-                JasperViewer jasperViewer = new JasperViewer(jasperPrint, false);
-                jasperViewer.setVisible(true);
-
-                //}
-            } else {
-                JOptionPane.showMessageDialog(null, "Nao existe registro para o intervalo de data!...");
-            }
-        } catch (JRException jex) {
-            jex.printStackTrace();
-            //System.out.println("aqui");
-            JOptionPane.showMessageDialog(null, "O Produto pode nao estar no stock \n Pf Verifique!...");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "O Produto pode nao estar no stock \n Pf Verifique!...");
-        }
-
-    }
-
-    public void mostrar2() throws SQLException {
-        java.sql.Connection connection = conexao.getConnectionAtiva();
-        HashMap hashMap = new HashMap();
-        String relatorio = "";
-
-        hashMap.put("DATA_INICIO", getDataInicio());
-        hashMap.put("DATA_FIM", "2014-04-16");
-
-        relatorio = "relatorios/EntradaProdutos.jasper";
-
-        File file = new File(relatorio).getAbsoluteFile();
-        String obterCaminho = file.getAbsolutePath();
-
-        try {
-
-            JasperFillManager.fillReport(obterCaminho, hashMap, connection);
-
-            JasperPrint jasperPrint = JasperFillManager.fillReport(obterCaminho, hashMap, connection);
-
-            if (jasperPrint.getPages().size() >= 1) {
-                JasperViewer jasperViewer = new JasperViewer(jasperPrint, false);
-
-                jasperViewer.setVisible(true);
-            } else {
-                JOptionPane.showMessageDialog(null, "Nao Existem Usuarios Para essa Listagen!...");
-            }
-        } catch (JRException jex) {
-            jex.printStackTrace();
-            //System.out.println("aqui");
-            JOptionPane.showMessageDialog(null, "FALHA AO TENTAR MOSTRAR OS USUARIOS!...");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "ERRO AO TENTAR OS USUARIOS!...");
-        }
-    }
-
-    public static void XLSX(String jasperFilename, Map<String, Object> parameters, java.sql.Connection dataSource) throws JRException, IOException {
-        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperFilename, parameters, dataSource);
-        int indexOfPonto = jasperFilename.indexOf('.');
-        String file = jasperFilename.substring(0, indexOfPonto) + ".xlsx";
-
-        FileOutputStream output = new FileOutputStream(file);
-
-        JRXlsxExporter docxExporter = new JRXlsxExporter();
-
-        docxExporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
-        docxExporter.setParameter(JRXlsAbstractExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.FALSE);
-        docxExporter.setParameter(JRExporterParameter.OUTPUT_STREAM, output);
-        docxExporter.setParameter(JRXlsAbstractExporterParameter.IS_DETECT_CELL_TYPE, Boolean.FALSE);
-        docxExporter.exportReport();
-
-        Runtime rt = Runtime.getRuntime();
-        System.out.println(file);
-
-        rt.exec("RunDLL32.EXE shell32.dll,ShellExec_RunDLL " + file);
-    }
-
+   
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
+        buttonGroup2 = new javax.swing.ButtonGroup();
         btnImprimir = new javax.swing.JButton();
         btnCancelar1 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
@@ -207,6 +85,9 @@ public class ListarRelatorioVendasDiarias extends javax.swing.JFrame {
         dcDataFim = new com.toedter.calendar.JDateChooser();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
+        jCheckBox1 = new javax.swing.JCheckBox();
+        jCheckBox2 = new javax.swing.JCheckBox();
+        jCheckBox3 = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("...:::: DVML - RELATORIO VENDAS::...");
@@ -287,23 +168,43 @@ public class ListarRelatorioVendasDiarias extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        buttonGroup2.add(jCheckBox1);
+        jCheckBox1.setSelected(true);
+        jCheckBox1.setText("Opção na Horizontal");
+
+        buttonGroup2.add(jCheckBox2);
+        jCheckBox2.setText("Opção na Vertical");
+
+        buttonGroup2.add(jCheckBox3);
+        jCheckBox3.setText("Relatório Anual");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(81, 81, 81)
-                        .addComponent(btnImprimir, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnCancelar1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(26, 26, 26)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jCheckBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(btnImprimir, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnCancelar1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(23, 23, 23))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jCheckBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jCheckBox3, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -311,11 +212,17 @@ public class ListarRelatorioVendasDiarias extends javax.swing.JFrame {
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(4, 4, 4)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jCheckBox1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jCheckBox2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jCheckBox3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnImprimir)
                     .addComponent(btnCancelar1))
-                .addGap(39, 39, 39))
+                .addGap(26, 26, 26))
         );
 
         pack();
@@ -378,8 +285,12 @@ public class ListarRelatorioVendasDiarias extends javax.swing.JFrame {
     private javax.swing.JButton btnCancelar1;
     private javax.swing.JButton btnImprimir;
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.ButtonGroup buttonGroup2;
     private com.toedter.calendar.JDateChooser dcDataFim;
     private com.toedter.calendar.JDateChooser dcDataInicio;
+    private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JCheckBox jCheckBox2;
+    private javax.swing.JCheckBox jCheckBox3;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
