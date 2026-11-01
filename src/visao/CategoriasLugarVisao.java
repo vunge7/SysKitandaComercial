@@ -11,6 +11,7 @@
 package visao;
 
 
+import visao.produto.ProdutosModernoVisao;
 import java.sql.Connection;
 import dao.CategoriasDao;
 import dao.FamiliaDao;
@@ -76,12 +77,19 @@ public class CategoriasLugarVisao extends javax.swing.JFrame {
                     setComponentes();
                     limpar();
                     JOptionPane.showMessageDialog(null, "Dados salvo com sucesso!...");
-                    if (!Objects.isNull(ProdutosVisao.cmbTipoProduto)) {
-                        ProdutosVisao.cmbTipoProduto.setModel(new DefaultComboBoxModel(categoriasDao.buscaTodosExtra()));
-                        ProdutosVisao.cmbTipoProduto.setSelectedItem(subFamilia.getDesignacao());
+                    if (ProdutosModernoVisao.estaAberta()) {
+                        ProdutosModernoVisao.cmbTipoProduto.setModel(new DefaultComboBoxModel(categoriasDao.buscaTodosExtra()));
+                        ProdutosModernoVisao.cmbTipoProduto.setSelectedItem(subFamilia.getDesignacao());
                         dispose();
-                        ProdutosVisao.getDescricao();
+                        ProdutosModernoVisao.getDescricao();
                     }
+                    // Janela antiga, substituída por ProdutosModernoVisao:
+                    // } else if (!Objects.isNull(ProdutosVisao.cmbTipoProduto)) {
+                    //     ProdutosVisao.cmbTipoProduto.setModel(new DefaultComboBoxModel(categoriasDao.buscaTodosExtra()));
+                    //     ProdutosVisao.cmbTipoProduto.setSelectedItem(subFamilia.getDesignacao());
+                    //     dispose();
+                    //     ProdutosVisao.getDescricao();
+                    // }
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(null, "Erro ao cadastrar o modelo ", "ERRO", JOptionPane.ERROR_MESSAGE);
                 }

@@ -1638,7 +1638,8 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
         try {
             // TODO add your handling code here:
 
-            new ProdutosVisao(this, rootPaneCheckingEnabled, cod_utilizador, this.conexao).setVisible(true);
+            // new ProdutosVisao(this, rootPaneCheckingEnabled, cod_utilizador, this.conexao).setVisible(true);
+            new visao.produto.ProdutosModernoVisao(this, rootPaneCheckingEnabled, cod_utilizador, this.conexao).setVisible(true);
         } catch (Exception ex) {
             Logger.getLogger(MenuPrincipalVisao.class.getName()).log(Level.SEVERE, null, ex);
         }

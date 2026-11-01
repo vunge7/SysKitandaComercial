@@ -376,7 +376,8 @@ public class InventarioVisao extends javax.swing.JFrame
         // TODO add your handling code here:
         try
         {
-            new ProdutosVisao( this, rootPaneCheckingEnabled, this.id_user, BDConexao.getInstancia()).setVisible(true);
+            // new ProdutosVisao( this, rootPaneCheckingEnabled, this.id_user, BDConexao.getInstancia()).setVisible(true);
+            new visao.produto.ProdutosModernoVisao( this, rootPaneCheckingEnabled, this.id_user, BDConexao.getInstancia()).setVisible(true);
         }
         catch ( Exception e )
         {

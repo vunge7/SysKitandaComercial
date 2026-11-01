@@ -1845,7 +1845,8 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
         {
             // TODO add your handling code here:
 
-            new ProdutosVisao(this, rootPaneCheckingEnabled, cod_utilizador, this.conexao ).setVisible( true );
+            // new ProdutosVisao(this, rootPaneCheckingEnabled, cod_utilizador, this.conexao ).setVisible( true );
+            new visao.produto.ProdutosModernoVisao(this, rootPaneCheckingEnabled, cod_utilizador, this.conexao ).setVisible( true );
         }
         catch ( Exception ex )
         {

@@ -273,7 +273,8 @@ public class JanelaFrontOfficeLavandariaVisao extends javax.swing.JFrame
         {
             // TODO add your handling code here:
 
-            new ProdutosVisao( this, rootPaneCheckingEnabled, idUser, this.conexao ).setVisible( true );
+            // new ProdutosVisao( this, rootPaneCheckingEnabled, idUser, this.conexao ).setVisible( true );
+            new visao.produto.ProdutosModernoVisao( this, rootPaneCheckingEnabled, idUser, this.conexao ).setVisible( true );
         }
         catch ( Exception ex )
         {
