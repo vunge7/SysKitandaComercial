@@ -7,7 +7,7 @@ package lista;
 import java.util.logging.Logger;
 import comercial.controller.DocumentosController;
 import comercial.controller.VendasController;
-import com.mysql.jdbc.Connection;
+import java.sql.Connection;
 import dao.VendaDao;
 import entity.Documento;
 import entity.TbVenda;

@@ -597,15 +597,29 @@ public class MesesPagoClienteVisao extends javax.swing.JDialog
 
             if ( !mes.equals( DVML.DESIGNACAO_SERVICO_MULTA ) )
             {
-                FormVendaResponsivaVisaoTop.accao_codigo_interno_enter_busca_exterior_2(
-                        produtoId, mes );
+                if ( visao.venda.VendaModernaVisao.estaAberta() )
+                {
+                    visao.venda.VendaModernaVisao.accao_codigo_interno_enter_busca_exterior_2( produtoId, mes );
+                }
+                else
+                {
+                    FormVendaResponsivaVisaoTop.accao_codigo_interno_enter_busca_exterior_2(
+                            produtoId, mes );
+                }
             }
             else
             {
 
                 actualizarpreco( valor );
-                FormVendaResponsivaVisaoTop.accao_codigo_interno_enter_busca_exterior_2(
-                        DVML.COD_SERVICO_MULTA, "" );
+                if ( visao.venda.VendaModernaVisao.estaAberta() )
+                {
+                    visao.venda.VendaModernaVisao.accao_codigo_interno_enter_busca_exterior_2( DVML.COD_SERVICO_MULTA, "" );
+                }
+                else
+                {
+                    FormVendaResponsivaVisaoTop.accao_codigo_interno_enter_busca_exterior_2(
+                            DVML.COD_SERVICO_MULTA, "" );
+                }
             }
 
         }

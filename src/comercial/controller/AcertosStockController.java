@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import util.BDConexao;
+import util.LogActividadeUtil;
 import util.MetodosUtil;
 
 /**
@@ -52,7 +53,22 @@ public class AcertosStockController implements EntidadeFactory
                 + "'" +acertoStock.getMotivoAcerto() + "'"
                 + " ) ";
         System.err.println( INSERT );
-        return conexao.executeUpdate( INSERT );
+        boolean gravado = conexao.executeUpdate( INSERT );
+        if ( gravado )
+        {
+            String acerto = LogActividadeUtil.normalizar( acertoStock.getQtdAcerto() );
+            LogActividadeUtil.registar( LogActividadeUtil.MODULO_STOCK, LogActividadeUtil.ALTERAR,
+                    "acerto_stock", acertoStock.getCodProduto(),
+                    "Acerto de stock: " + acertoStock.getDesignacaoProduto()
+                    + " | Armazém: " + acertoStock.getDesigncaoArmazem()
+                    + " | Qtd: " + LogActividadeUtil.normalizar( acertoStock.getQtdAnterior() )
+                    + " -> " + LogActividadeUtil.normalizar( acertoStock.getQtdDepois() )
+                    + " (" + ( acertoStock.getQtdAcerto() > 0 ? "+" : "" ) + acerto + ")"
+                    + " | Motivo: " + acertoStock.getMotivoAcerto(),
+                    "qtd=" + LogActividadeUtil.normalizar( acertoStock.getQtdAnterior() ),
+                    "qtd=" + LogActividadeUtil.normalizar( acertoStock.getQtdDepois() ) );
+        }
+        return gravado;
 
     }
 

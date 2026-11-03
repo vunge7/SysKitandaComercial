@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.Vector;
 import javax.swing.JOptionPane;
 import util.BDConexao;
+import util.LogActividadeUtil;
 import util.MetodosUtil;
 
 /**
@@ -63,7 +64,16 @@ public class CaixasController implements EntidadeFactory
                 + ") ";
 
         System.out.println( "Modo INSERT: " + INSERT );
-        return conexao.executeUpdate( INSERT );
+        boolean gravado = conexao.executeUpdate( INSERT );
+        if ( gravado )
+        {
+            LogActividadeUtil.registar( LogActividadeUtil.MODULO_CAIXA, LogActividadeUtil.ABERTURA_CAIXA,
+                    "caixa", null,
+                    "Abriu a caixa | Utilizador: " + caixa.getUsuarioAbertura()
+                    + " | Valor inicial: " + LogActividadeUtil.normalizar( caixa.getValorInicial() ),
+                    null, "valor_inicial=" + LogActividadeUtil.normalizar( caixa.getValorInicial() ) );
+        }
+        return gravado;
     }
 
     @Override
@@ -105,7 +115,12 @@ public class CaixasController implements EntidadeFactory
             ps.setBigDecimal( 12, caixa.getTotaIIliquido() );
             ps.setInt( 13, caixa.getPkCaixa() );
 
-            return ps.executeUpdate() > 0;
+            boolean actualizado = ps.executeUpdate() > 0;
+            if ( actualizado )
+            {
+                registarActualizacao( caixa );
+            }
+            return actualizado;
         }
         catch ( SQLException e )
         {
@@ -115,11 +130,41 @@ public class CaixasController implements EntidadeFactory
         }
     }
 
+    // fecho de caixa (data_fecho preenchida) ou alteração de uma caixa ainda aberta
+    private void registarActualizacao( Caixa caixa )
+    {
+        String valores = "total_vendas=" + LogActividadeUtil.normalizar( caixa.getTotalVendas() )
+                + "; numero_vendas=" + caixa.getNumeroVendas()
+                + "; valor_inicial=" + LogActividadeUtil.normalizar( caixa.getValorInicial() )
+                + "; total_desconto=" + LogActividadeUtil.normalizar( caixa.getTotalDesconto() )
+                + "; total_iva=" + LogActividadeUtil.normalizar( caixa.getTotalIva() );
+
+        if ( caixa.getDataFecho() != null )
+        {
+            LogActividadeUtil.registar( LogActividadeUtil.MODULO_CAIXA, LogActividadeUtil.FECHO_CAIXA,
+                    "caixa", caixa.getPkCaixa(),
+                    "Fechou a caixa nº " + caixa.getPkCaixa() + " | Utilizador: " + caixa.getUsuarioFecho()
+                    + " | Total vendas: " + LogActividadeUtil.normalizar( caixa.getTotalVendas() ),
+                    null, valores );
+        }
+        else
+        {
+            LogActividadeUtil.registar( LogActividadeUtil.MODULO_CAIXA, LogActividadeUtil.ALTERAR,
+                    "caixa", caixa.getPkCaixa(), "Alterou a caixa nº " + caixa.getPkCaixa(), null, valores );
+        }
+    }
+
     @Override
     public boolean eliminar( int codigo )
     {
         String sql = "DELETE FROM caixa WHERE pk_caixa = " + codigo;
-        return conexao.executeUpdate( sql );
+        boolean eliminado = conexao.executeUpdate( sql );
+        if ( eliminado )
+        {
+            LogActividadeUtil.registar( LogActividadeUtil.MODULO_CAIXA, LogActividadeUtil.ELIMINAR,
+                    "caixa", codigo, "Eliminou a caixa nº " + codigo );
+        }
+        return eliminado;
     }
 
     @Override

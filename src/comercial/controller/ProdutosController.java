@@ -19,14 +19,17 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Vector;
 import util.BDConexao;
 import util.DVML;
+import util.LogActividadeUtil;
 import util.MetodosUtil;
 import static util.MetodosUtil.normalizarDesignacao;
 
@@ -67,7 +70,7 @@ public class ProdutosController implements EntidadeFactory {
 
         try {
 
-            stmt = BDConexao.getConnection().prepareStatement(INSERT);
+            stmt = BDConexao.getConnection().prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
 
             int cod = 1;
             stmt.setString(cod++, produto.getDesignacao());
@@ -102,7 +105,18 @@ public class ProdutosController implements EntidadeFactory {
             stmt.setInt(cod++, produto.getCodUserCreate());
             stmt.setString(cod++, produto.getUserCreate());
             stmt.executeUpdate();
+
+            Integer idGerado = null;
+            try (ResultSet chaves = stmt.getGeneratedKeys()) {
+                if (chaves.next()) {
+                    idGerado = chaves.getInt(1);
+                }
+            }
             stmt.close();
+
+            LogActividadeUtil.registar(LogActividadeUtil.MODULO_PRODUTOS, LogActividadeUtil.CRIAR,
+                    "tb_produto", idGerado, "Criou o produto: " + produto.getDesignacao(),
+                    null, LogActividadeUtil.formatar(retratoProduto(produto)));
             return true;
 
         } catch (SQLException e) {
@@ -226,12 +240,19 @@ public class ProdutosController implements EntidadeFactory {
 
     public boolean desactivar(BDConexao conexao, TbProduto produto) {
         String sql = "UPDATE tb_produto SET status = ? WHERE codigo = ?";
+        TbProduto anterior = findByCod(produto.getCodigo());
 
         try (PreparedStatement stmt = conexao.getConnectionAtiva().prepareStatement(sql)) {
             stmt.setString(1, produto.getStatus());
             stmt.setInt(2, produto.getCodigo());
             int linhas = stmt.executeUpdate();
 
+            if (linhas > 0) {
+                LogActividadeUtil.registar(LogActividadeUtil.MODULO_PRODUTOS, LogActividadeUtil.ALTERAR,
+                        "tb_produto", produto.getCodigo(),
+                        "Alterou o estado do produto: " + (anterior != null ? anterior.getDesignacao() : produto.getCodigo()),
+                        "status=" + (anterior != null ? anterior.getStatus() : ""), "status=" + produto.getStatus());
+            }
             return linhas > 0; // true se pelo menos 1 linha foi atualizada
         } catch (SQLException e) {
             System.err.println("[ERRO] Falha ao desactivar produto: " + e.getMessage());
@@ -274,6 +295,7 @@ public class ProdutosController implements EntidadeFactory {
                 + " cod_user_update = ? , "
                 + " user_update = ? "
                 + " WHERE codigo = ?";
+        TbProduto anterior = findByCod(produto.getCodigo());
         try {
             System.out.println(UPDATE);
 
@@ -310,6 +332,15 @@ public class ProdutosController implements EntidadeFactory {
             stmt.setInt(cod++, produto.getCodigo());
             stmt.executeUpdate();
             stmt.close();
+
+            // só regista se algum dos campos auditados mudou
+            String[] diferencas = LogActividadeUtil.diferencas(
+                    anterior != null ? retratoProduto(anterior) : null, retratoProduto(produto));
+            if (diferencas != null) {
+                LogActividadeUtil.registar(LogActividadeUtil.MODULO_PRODUTOS, LogActividadeUtil.ALTERAR,
+                        "tb_produto", produto.getCodigo(), "Alterou o produto: " + produto.getDesignacao(),
+                        diferencas[0], diferencas[1]);
+            }
             return true;
 
         } catch (SQLException e) {
@@ -322,8 +353,30 @@ public class ProdutosController implements EntidadeFactory {
 
     @Override
     public boolean eliminar(int codigo) {
+        TbProduto anterior = findByCod(codigo);
         String DELETE = "DELETE FROM tb_produto WHERE codigo = " + codigo;
-        return conexao.executeUpdate(DELETE);
+        boolean eliminado = conexao.executeUpdate(DELETE);
+        if (eliminado) {
+            LogActividadeUtil.registar(LogActividadeUtil.MODULO_PRODUTOS, LogActividadeUtil.ELIMINAR,
+                    "tb_produto", codigo,
+                    "Eliminou o produto: " + (anterior != null ? anterior.getDesignacao() : codigo),
+                    anterior != null ? LogActividadeUtil.formatar(retratoProduto(anterior)) : null, null);
+        }
+        return eliminado;
+    }
+
+    // campos do produto que ficam registados na auditoria (log_actividade)
+    private static Map<String, Object> retratoProduto(TbProduto produto) {
+        Map<String, Object> retrato = LogActividadeUtil.novoRetrato();
+        retrato.put("designacao", produto.getDesignacao());
+        retrato.put("preco", produto.getPreco());
+        retrato.put("preco_venda", produto.getPrecoVenda());
+        retrato.put("codBarra", produto.getCodBarra());
+        retrato.put("codigo_manual", produto.getCodigoManual());
+        retrato.put("status", produto.getStatus());
+        retrato.put("status_iva", produto.getStatusIva());
+        retrato.put("stocavel", produto.getStocavel());
+        return retrato;
     }
 
     @Override

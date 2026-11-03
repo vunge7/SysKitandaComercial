@@ -200,6 +200,62 @@ public final class Formularios {
         });
     }
 
+    /** Propriedade que marca um campo com erro de validação. */
+    public static final String ERRO = "kitanda.erro";
+
+    /**
+     * Mostra (ou retira) o estado de erro de um campo: borda e brilho
+     * vermelhos em vez das cores normais. Aceita também um {@link CampoData}.
+     */
+    public static void marcarErro(JComponent campo, boolean erro) {
+        JComponent alvo = campo instanceof CampoData ? ((CampoData) campo).getCampo() : campo;
+        alvo.putClientProperty(ERRO, erro ? Boolean.TRUE : null);
+        alvo.repaint();
+    }
+
+    public static boolean temErro(java.awt.Component c) {
+        return c instanceof JComponent && Boolean.TRUE.equals(((JComponent) c).getClientProperty(ERRO));
+    }
+
+    /**
+     * Os seguidores (ex.: o rótulo ou o grupo rótulo+campo) ficam visíveis
+     * só quando o alvo está visível. Útil quando a lógica da janela esconde
+     * apenas o campo.
+     */
+    public static void seguirVisibilidade(final JComponent alvo, final JComponent... seguidores) {
+        alvo.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentShown(java.awt.event.ComponentEvent e) {
+                aplicar(true);
+            }
+
+            @Override
+            public void componentHidden(java.awt.event.ComponentEvent e) {
+                aplicar(false);
+            }
+
+            private void aplicar(boolean visivel) {
+                for (JComponent s : seguidores) {
+                    s.setVisible(visivel);
+                }
+            }
+        });
+        for (JComponent s : seguidores) {
+            s.setVisible(alvo.isVisible());
+        }
+    }
+
+    /**
+     * Descreve um botão para quem o usa: dica (com o atalho, se houver) e
+     * nome acessível, essencial nos botões só com ícone.
+     */
+    public static void descrever(AbstractButton botao, String nome, String atalho) {
+        String dica = atalho == null ? nome : nome + "  (" + atalho + ")";
+        botao.setToolTipText(dica);
+        botao.getAccessibleContext().setAccessibleName(nome);
+        botao.getAccessibleContext().setAccessibleDescription(dica);
+    }
+
     /**
      * Empilha cartões numa coluna. O último estica para que todas as colunas
      * terminem à mesma altura.

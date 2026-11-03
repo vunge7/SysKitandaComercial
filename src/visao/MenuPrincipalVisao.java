@@ -30,6 +30,7 @@ import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
 import static util.MetodosUtil.rodarComandoWindows;
 import util.OperacaoSistemaUtil;
+import visao.venda.VendaModernaVisao;
 
 /**
  *
@@ -86,6 +87,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
 
         boas_vinda();
         busca_permissao();
+        permitirLogsAoAdministrador();
         mostrarNumeroDeprodutosExpirados();
         jMenuItemGestaoCreditos.setVisible(false);
         activar_opcoes();
@@ -100,6 +102,15 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
             ex.printStackTrace();
         }
 
+    }
+
+    // "Ver Logs": sempre disponível para o Administrador; os restantes precisam da permissão "Ver Logs"
+    private void permitirLogsAoAdministrador() {
+        TbUsuario usuario = usuarioDao.findTbUsuario(this.cod_utilizador);
+        if (usuario != null && usuario.getIdTipoUsuario() != null
+                && DVML.COD_TIPO_USUARIO_ADMINISTRADOR.equals(usuario.getIdTipoUsuario().getIdTipoUsuario())) {
+            jmVerLogs.setEnabled(true);
+        }
     }
 
     private void boas_vinda() {
@@ -126,7 +137,9 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
 
             System.out.println("PERMISSAO PRINCIPAL " + permissao);
 
-            if (permissao.equals("Venda")) {
+            if (permissao.equals(jmVerLogs.getText())) {
+                jmVerLogs.setEnabled(true);
+            } else if (permissao.equals("Venda")) {
                 jmVenda.setEnabled(true);
             } else if (permissao.equals("Relatorio por Fornecedor")) {
                 jmRelatorioPorFonecedor.setEnabled(true);
@@ -275,7 +288,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
                 jMenuConfiguracoesSistema.setEnabled(true);
             } else if (permissao.equals(jMenuItemRelatorioDeEntradas.getText())) {
                 jMenuItemRelatorioDeEntradas.setEnabled(true);
-            }  else if (permissao.equals(jcbConverterGuiaTransporteDocumento.getText())) {
+            } else if (permissao.equals(jcbConverterGuiaTransporteDocumento.getText())) {
                 jcbConverterGuiaTransporteDocumento.setEnabled(true);
             } else if (permissao.equals(jcbAnulamentoEntradasProdutos.getText())) {
                 jcbAnulamentoEntradasProdutos.setEnabled(true);
@@ -301,6 +314,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
 
         //FICHEIROS
         jmVenda.setEnabled(status);
+        jmVerLogs.setEnabled(status);
 //        jmGestaoCredito.setEnabled ( status );
 
         //LISTAGENS
@@ -478,6 +492,8 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
         jMenuItem4 = new javax.swing.JMenuItem();
         jmAnulamentoSaidasProdutos = new javax.swing.JMenuItem();
         jcbAnulamentoEntradasProdutos = new javax.swing.JMenuItem();
+        jSeparatorLogs = new javax.swing.JPopupMenu.Separator();
+        jmVerLogs = new javax.swing.JMenuItem();
         jMenu5 = new javax.swing.JMenu();
         jmSolicitacaoCompras = new javax.swing.JMenuItem();
         jmAutorizacaoCompras = new javax.swing.JMenuItem();
@@ -1099,6 +1115,15 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
             }
         });
         jMenu3.add(jcbAnulamentoEntradasProdutos);
+        jMenu3.add(jSeparatorLogs);
+
+        jmVerLogs.setText("Ver Logs");
+        jmVerLogs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmVerLogsActionPerformed(evt);
+            }
+        });
+        jMenu3.add(jmVerLogs);
 
         jMenuBar1.add(jMenu3);
 
@@ -1427,7 +1452,9 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
         try {
 
             try {
-                new FormVendaResponsivaVisaoTop(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
+
+                new VendaModernaVisao(cod_utilizador, BDConexao.getInstancia()).show(true);
+//                new FormVendaResponsivaVisaoTop(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -2017,6 +2044,21 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
         new AnulamentoEntradaVisao(this, administrador).setVisible(true);
     }//GEN-LAST:event_jcbAnulamentoEntradasProdutosActionPerformed
 
+    private void jmVerLogsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmVerLogsActionPerformed
+    {//GEN-HEADEREND:event_jmVerLogsActionPerformed
+        try {
+            visao.log.LogActividadeVisao janela = new visao.log.LogActividadeVisao(conexao);
+            janela.setVisible(true);
+            janela.toFront();
+        } catch (Throwable e) {
+            // erro visível ao utilizador (antes só aparecia na consola)
+            e.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Não foi possível abrir o Registo de Actividades:\n" + e,
+                    "Ver Logs", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jmVerLogsActionPerformed
+
     private void jMenuItemRelatorioDeEntradasActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemRelatorioDeEntradasActionPerformed
     {//GEN-HEADEREND:event_jMenuItemRelatorioDeEntradasActionPerformed
         new ListarRelatorioEntradaByIntervalo(this.conexao).setVisible(true);
@@ -2212,6 +2254,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemRelatorioQuebras;
     private javax.swing.JMenuItem jPercentagemDesconto;
     private javax.swing.JPopupMenu.Separator jSeparator9;
+    private javax.swing.JPopupMenu.Separator jSeparatorLogs;
     private javax.swing.JMenuItem jcbAcertoStockMassa;
     private javax.swing.JMenuItem jcbActualizacaoPrecos;
     private javax.swing.JMenuItem jcbAlteracaoGuiaTransporte;
@@ -2280,6 +2323,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
     private javax.swing.JMenuItem jmVenda;
     private javax.swing.JMenuItem jmVendaDetalhadasClientes;
     private javax.swing.JMenuItem jmVendaDetalhadasUsuarios;
+    private javax.swing.JMenuItem jmVerLogs;
     private javax.swing.JMenuItem jm_cadastro_vasilhame;
     private javax.swing.JMenuItem jm_entrada_vasilhame;
     private javax.swing.JMenuItem jm_saida_vasilhame;

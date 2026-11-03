@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Vector;
 import modelo.UsuarioModelo;
 import util.BDConexao;
+import util.LogActividadeUtil;
 import static util.JPAEntityMannagerFactoryUtil.em;
 import util.MetodosUtil;
 import static util.MetodosUtil.normalizarNome;
@@ -127,10 +128,29 @@ public class UsuariosController implements EntidadeFactory
         sql.append( ")" );
 
         System.out.println( sql );
-        conexao.executeUpdate( sql.toString() );
+        if ( conexao.executeUpdate( sql.toString() ) )
+        {
+            registarLog( operacao, usuarioModelo );
+        }
 
         return new UsuarioDao( em ).getLastInsertedRow();
 
+    }
+
+    // auditoria: operação 1 = criar, 2 = alterar, 3 = eliminar (a senha nunca é registada)
+    private void registarLog( int operacao, UsuarioModelo usuario )
+    {
+        String accao = operacao == 1 ? LogActividadeUtil.CRIAR
+                : operacao == 3 ? LogActividadeUtil.ELIMINAR : LogActividadeUtil.ALTERAR;
+        String verbo = operacao == 1 ? "Criou" : operacao == 3 ? "Eliminou" : "Alterou";
+        String tipo = BDConexao.getDescrisoTipoUsuarioByCodigo( usuario.getIdTipousuario() );
+        String senha = operacao != 3 && usuario.getSenha() != null && !usuario.getSenha().isEmpty()
+                ? " | Senha definida/alterada" : "";
+        LogActividadeUtil.registar( LogActividadeUtil.MODULO_SISTEMA, accao, "tb_usuario",
+                operacao == 1 ? null : usuario.getCodigo(),
+                verbo + " o utilizador: " + usuario.getUserName() + " (" + usuario.getNome() + ")"
+                + " | Tipo: " + ( tipo != null ? tipo : usuario.getIdTipousuario() )
+                + " | Estado: " + usuario.getStatus() + senha );
     }
 
     public boolean operacao( int operacao, UsuarioModelo usuarioModelo )
@@ -171,7 +191,12 @@ public class UsuariosController implements EntidadeFactory
 
         System.out.println( sql );
 
-        return conexao.executeUpdate( sql.toString() );
+        boolean executado = conexao.executeUpdate( sql.toString() );
+        if ( executado )
+        {
+            registarLog( operacao, usuarioModelo );
+        }
+        return executado;
 
     }
 

@@ -32,7 +32,7 @@ public class FormaPagamentoGoldVisao extends javax.swing.JDialog
         setLocationRelativeTo( null );
         formaPagamentoController = new FormaPagamentoController( conexao );
         caixasController = new CaixasController( conexao );
-        lb_total_geral.setText( RecolhaPedidosVisao.txtTotalApagar.getText() );
+//        lb_total_geral.setText( RecolhaPedidosVisao.txtTotalApagar.getText() );
     }
 
     /**
@@ -578,7 +578,7 @@ public class FormaPagamentoGoldVisao extends javax.swing.JDialog
         {
 
             dispose();
-            RecolhaPedidosVisao.procedimento_converter_factura();
+//            RecolhaPedidosVisao.procedimento_converter_factura();
         }
         else
         {

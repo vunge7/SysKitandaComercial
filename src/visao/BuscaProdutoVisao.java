@@ -538,8 +538,13 @@ public class BuscaProdutoVisao extends javax.swing.JDialog {
 //                e.printStackTrace();
 //            }
             try {
-                double qtd = Double.parseDouble(FormVendaResponsivaVisaoTop.txtQuatindade.getText());
-                FormVendaResponsivaVisaoTop.accao_codigo_interno_enter_busca_exterior(codigo, qtd);
+                if (visao.venda.VendaModernaVisao.estaAberta()) {
+                    double qtd = Double.parseDouble(visao.venda.VendaModernaVisao.txtQuatindade.getText());
+                    visao.venda.VendaModernaVisao.accao_codigo_interno_enter_busca_exterior(codigo, qtd);
+                } else {
+                    double qtd = Double.parseDouble(FormVendaResponsivaVisaoTop.txtQuatindade.getText());
+                    FormVendaResponsivaVisaoTop.accao_codigo_interno_enter_busca_exterior(codigo, qtd);
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -623,7 +628,7 @@ public class BuscaProdutoVisao extends javax.swing.JDialog {
 
         } else if (DVML.JANELA_RECOLHA == cod_janela) {
 
-//                RecolhaPedidosVisao.accao_codigo_interno_enter_busca_exterior( codigo );
+//            RecolhaPedidosVisao.accao_codigo_interno_enter_busca_exterior(codigo);
             dispose();
 
         } else if (DVML.JANELA_ASSOCIACAO == cod_janela) {

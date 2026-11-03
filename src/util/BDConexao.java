@@ -30,6 +30,10 @@ public class BDConexao {
                 -> {
             try {
                 if (instancia != null) {
+                    if (SessaoUtil.getCodUsuario() != null) {
+                        LogActividadeUtil.registar(LogActividadeUtil.MODULO_SISTEMA, LogActividadeUtil.LOGOUT,
+                                "tb_usuario", SessaoUtil.getCodUsuario(), "Saiu do sistema");
+                    }
                     instancia.close();
                     System.out.println("[BDConexao] 📴 Fechando conexão no encerramento da aplicação.");
                 }
@@ -89,7 +93,7 @@ public class BDConexao {
             String porta = (info.size() > 1 ? info.get(1).trim() : "3306");
 
 
-            String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_telma_pontes"
+            String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_neemias"
                     + "?zeroDateTimeBehavior=convertToNull"
                     + "&useSSL=false"
                     + "&allowPublicKeyRetrieval=true"
@@ -97,7 +101,8 @@ public class BDConexao {
                     + "&connectTimeout=5000"
                     + "&socketTimeout=30000";
 
-            connection = DriverManager.getConnection(url, "root", "DoV90x?#");
+            // o proxy regista em log_actividade todos os INSERT/UPDATE/DELETE (ver AuditoriaJdbc)
+            connection = AuditoriaJdbc.envolver(DriverManager.getConnection(url, "root", "DoV90x?#"));
 
             return connection;
 

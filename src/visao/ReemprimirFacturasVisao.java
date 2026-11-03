@@ -340,6 +340,7 @@ public class ReemprimirFacturasVisao extends javax.swing.JFrame
                 
             ListaVendaPorMesas listaVenda1 = new ListaVendaPorMesas( venda.getCodigo(), abreviacao, false, true, SEGUNDA_VIA_CONFORMIDADE_COM_ORIGINAL);
             }
+            util.LogActividadeUtil.registarReimpressao( venda.getCodFact(), venda.getCodigo() );
 //            ListaVendaPorMesas listaVenda1 = new ListaVendaPorMesas( venda.getCodigo(), abreviacao, false, true, "Original" );
 //            ListaNotaDebito listaVenda2 = new ListaNotaDebito( notas.getPkNota(), abreviacao_nota, false, true, hashMap, "" );
 //            ListaNotaDebito listaNotaDebito = new ListaNotaDebito( notasDao.getLastNota(), Abreviacao.NC, false, false, hashMap, motivos_isentos );

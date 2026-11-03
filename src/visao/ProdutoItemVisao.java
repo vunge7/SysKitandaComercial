@@ -156,7 +156,7 @@ public class ProdutoItemVisao extends javax.swing.JPanel
         }
         if ( formulario.equals( DVML.FORMULARIO_RECOLHA_LAVANDARIA ) )
         {
-            RecolhaPedidosVisao.adicionarImportar( designacao );
+           // RecolhaPedidosVisao.adicionarImportar( designacao );
         }
     }
 

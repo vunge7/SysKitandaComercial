@@ -191,7 +191,7 @@ public class SenhaMestreVisao extends javax.swing.JDialog
             }
             if ( formulario.equals( DVML.FORMULARIO_RECOLHA_LAVANDARIA ) )
             {
-                RecolhaPedidosVisao.procedimento_eliminar_item_pedido( chave );
+                //RecolhaPedidosVisao.procedimento_eliminar_item_pedido( chave );
             }
 
         }

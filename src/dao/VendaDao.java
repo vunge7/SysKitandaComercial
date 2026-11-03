@@ -1494,6 +1494,8 @@ public class VendaDao extends TbVendaJpaController {
             if (resultSet.next()) {
 
                 int ID = resultSet.getInt("ID");
+                // VENDA_CRIAR é executada como SELECT: a camada automática não a vê, regista-se aqui
+                comercial.controller.VendasController.registarEmissaoDocumento(venda, ID);
                 //registra o movimento no extrato do cliente
                 if (venda.getFkDocumento().getPkDocumento().equals(DVML.DOC_FACTURA_FT) || venda.getFkDocumento().getPkDocumento().equals(DVML.DOC_RECIBO_RC)) {
                     System.err.println("EXTRATO DE CONTA DO CLIENTE");

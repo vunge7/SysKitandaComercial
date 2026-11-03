@@ -317,6 +317,7 @@ public class ReemprimirNotaVisao extends javax.swing.JFrame
             String motivos_isentos = MetodosUtil.getMotivoIsensaoProdutos( lista_produto_isentos );
 //            ListaVenda2 listaVenda1 = new ListaVenda2( venda.getCodigo(), abreviacao, false, false, SEGUNDA_VIA_CONFORMIDADE_COM_ORIGINAL, motivos_isentos );
             ListaNotaDebito listaVenda2 = new ListaNotaDebito( vendas.getCodigo(), abreviacao, false, true, hashMap, motivos_isentos );
+            util.LogActividadeUtil.registarReimpressao( vendas.getCodFact(), vendas.getCodigo() );
 //            ListaNotaDebito listaNotaDebito = new ListaNotaDebito( notasDao.getLastNota(), Abreviacao.NC, false, false, hashMap, motivos_isentos );
         }
         else

@@ -17,10 +17,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import util.BDConexao;
+import util.LogActividadeUtil;
 import util.MetodosUtil;
 
 /**
@@ -58,8 +60,50 @@ public class PrecosController implements EntidadeFactory
                 + " ) ";
 
         System.out.println( "QUERY " + INSERT );
-        return conexao.executeUpdate( INSERT );
 
+        int idProduto = preco.getFkProduto().getCodigo();
+        TbPreco anterior = getLastIdPrecoByIdProduto( idProduto, preco.getQtdBaixo() );
+
+        boolean gravado = conexao.executeUpdate( INSERT );
+        if ( gravado )
+        {
+            registarLog( preco, anterior, idProduto );
+        }
+        return gravado;
+
+    }
+
+    // regista na auditoria a criação/alteração do preço (ignora quando os valores não mudam)
+    private void registarLog( TbPreco preco, TbPreco anterior, int idProduto )
+    {
+        String designacao = BDConexao.getDescrisoByCodigo( "tb_produto", "designacao", idProduto );
+        String produto = designacao != null ? designacao : String.valueOf( idProduto );
+        String faixa = " (qtd " + preco.getQtdBaixo() + " - " + preco.getQtdAlto() + ")";
+
+        if ( anterior == null )
+        {
+            LogActividadeUtil.registar( LogActividadeUtil.MODULO_PRECOS, LogActividadeUtil.CRIAR,
+                    "tb_preco", idProduto, "Criou o preço do produto: " + produto + faixa,
+                    null, LogActividadeUtil.formatar( retratoPreco( preco ) ) );
+            return;
+        }
+
+        String[] diferencas = LogActividadeUtil.diferencas( retratoPreco( anterior ), retratoPreco( preco ) );
+        if ( diferencas != null )
+        {
+            LogActividadeUtil.registar( LogActividadeUtil.MODULO_PRECOS, LogActividadeUtil.ALTERAR,
+                    "tb_preco", idProduto, "Alterou o preço do produto: " + produto + faixa,
+                    diferencas[ 0 ], diferencas[ 1 ] );
+        }
+    }
+
+    private static Map<String, Object> retratoPreco( TbPreco preco )
+    {
+        Map<String, Object> retrato = LogActividadeUtil.novoRetrato();
+        retrato.put( "preco_compra", preco.getPrecoCompra() );
+        retrato.put( "preco_venda", preco.getPrecoVenda() );
+        retrato.put( "percentagem_ganho", preco.getPercentagemGanho() );
+        return retrato;
     }
 
     @Override

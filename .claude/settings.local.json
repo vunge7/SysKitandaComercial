@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git stash *)",
+      "Bash(git checkout *)",
+      "Bash(git fetch *)",
+      "Bash(git rev-list *)",
+      "Bash(grep -vE \":\\\\s*//\")",
+      "Bash(grep -vE '^\\\\s*\\(\\\\*|/\\\\*|//|import\\)')",
+      "Bash(grep -n \"CREATE TABLE \\\\`log\\\\`\\\\|CREATE TABLE \\\\`tb_operacao_sistema\\\\`\\\\|CREATE TABLE \\\\`tb_usuario\\\\`\" -A 14 bd/kitanda_db.sql)",
+      "Bash(export MYSQL_PWD='DoV90x?#')",
+      "Bash(\"/c/Program Files/MySQL/MySQL Server 8.0/bin/mysql.exe\" -h localhost -P 3306 -u root kitanda_db_telma_pontes -e \"SELECT VERSION\\(\\) AS versao, DATABASE\\(\\) AS bd; SHOW TABLES LIKE 'log_actividade';\")",
+      "Bash(\"/c/Program Files \\(x86\\)/MySQL/MySQL Server 5.1/bin/mysql\" -h localhost -P 3306 -u root kitanda_db_telma_pontes -e \"SELECT VERSION\\(\\) AS versao, DATABASE\\(\\) AS bd; SHOW TABLES LIKE 'log_actividade';\")",
+      "Bash(ls -la \"/c/Program Files \\(x86\\)/MySQL/MySQL Server 5.1/bin/\" | grep -i \"mysql\\\\b\\\\|mysql.exe\\\\|mysql \" ; ls \"/c/Program Files \\(x86\\)/MySQL/MySQL Server 5.1/bin/\" | head -30)",
+      "Bash(\"/c/Program Files \\(x86\\)/MySQL/MySQL Server 5.1/bin/mysql.exe\" -h localhost -P 3306 -u root kitanda_db_telma_pontes -e \"SELECT VERSION\\(\\) AS versao, DATABASE\\(\\) AS bd; SHOW TABLES LIKE 'log_actividade';\")",
+      "PowerShell($env:MYSQL_PWD = 'DoV90x?#'; & \"C:\\\\Program Files \\(x86\\)\\\\MySQL\\\\MySQL Server 5.1\\\\bin\\\\mysql.exe\" -h localhost -P 3306 -u root kitanda_db_telma_pontes -e \"SELECT VERSION\\(\\) AS versao, DATABASE\\(\\) AS bd; SHOW TABLES LIKE 'log_actividade';\")",
+      "Read(//tmp/**)",
+      "Bash(cygpath -w /tmp/tmp.rz229qs4kI)",
+      "Bash(DBPWD='DoV90x?#' java -cp '__TRACKED_VAR__;C:\\\\dvml\\\\projects\\\\desktop\\\\SysKitandaComercial\\\\lib\\\\mysql-connector-java-5.1.23-bin.jar' RunSql)",
+      "Bash(DBPWD='DoV90x?#' java -cp '__CMDSUB_OUTPUT__;C:\\\\dvml\\\\projects\\\\desktop\\\\SysKitandaComercial\\\\lib\\\\mysql-connector-java-5.1.23-bin.jar' RunSql 'C:\\\\dvml\\\\projects\\\\desktop\\\\SysKitandaComercial\\\\bd\\\\log_actividade.sql')",
+      "Bash(grep -vE ':\\\\s*//')",
+      "Bash(awk -F: '{print $1}')",
+      "Bash(grep -v \"//\")",
+      "Bash(sed -i 's|JTable t = findTable\\(f\\\\[0\\\\].getContentPane\\(\\)\\); if \\(t != null \\\\&\\\\& t.getRowCount\\(\\) > 3\\) t.setRowSelectionInterval\\(3, 3\\);|JTable t = findTable\\(f[0].getContentPane\\(\\)\\); if \\(t != null \\\\&\\\\& t.getRowCount\\(\\) > 3\\) t.setRowSelectionInterval\\(3, 3\\); System.out.println\\(\"sel=\" + t.getSelectedRow\\(\\) + \" bg=\" + t.prepareRenderer\\(t.getCellRenderer\\(3, 7\\), 3, 7\\).getBackground\\(\\) + \" selBg=\" + t.getSelectionBackground\\(\\)\\);|' __CMDSUB_OUTPUT__/CapturaEcra.java)",
+      "Bash(grep -c sel= __CMDSUB_OUTPUT__/CapturaEcra.java)",
+      "Bash(grep -oE '\\\\$\\\\{file\\\\.reference\\\\.[^}]+\\\\}|\\\\$\\\\{libs\\\\.[^}]+\\\\}')",
+      "Bash(unzip -l dist/SYS_KITANDA_AGT_V_1_2_4_1.jar)",
+      "Bash(grep -nE \"^\\\\s*\\(public|private|protected|static\\)?\\\\s*\\(static\\\\s+\\)?[A-Za-z<>\\\\[\\\\]., ]+\\\\s+\\\\w+\\\\s*\\\\\\([^;]*\\\\\\)\\\\s*\\(throws [\\\\w, ]+\\)?\\\\s*\\\\{?\\\\s*\\(//GEN-\\\\w+:?\\\\w*\\)?$|GEN-BEGIN|GEN-END|Variables declaration|class CompraInformalVisao\" visao/CompraInformalVisao.java)",
+      "Bash(awk 'NR>1135' visao/CompraInformalVisao.java)",
+      "Bash(awk '{print $6, $7}')",
+      "Bash(awk '{print $6,$7}')",
+      "Bash(git status *)",
+      "Bash(awk -F'\\(' '{print $1}')"
+    ]
+  }
+}

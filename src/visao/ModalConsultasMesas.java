@@ -334,7 +334,11 @@ public class ModalConsultasMesas extends javax.swing.JFrame {
 //                TbCliente cliente_local = (TbCliente) clientesController.findById( String.valueOf( jListPacientesComGastos.getSelectedValue().toString() ));
                 TbVenda venda_local = (TbVenda) vendasController.findById(codigo_venda);
 
-                FormVendaResponsivaVisaoTop.consultaDoc.add(venda_local.getCodFact());
+                if (visao.venda.VendaModernaVisao.estaAberta()) {
+                    visao.venda.VendaModernaVisao.consultaDoc.add(venda_local.getCodFact());
+                } else {
+                    FormVendaResponsivaVisaoTop.consultaDoc.add(venda_local.getCodFact());
+                }
                 int codigo_unidade = produto_local.getCodUnidade().getPkUnidade();
                 Unidade unidade_local = (Unidade) unidadesController.findById(codigo_unidade);
 
@@ -390,8 +394,14 @@ public class ModalConsultasMesas extends javax.swing.JFrame {
 
         String nomeCliente = clientesController.findByCodigo(getIdCliente()).getNome();
 
-        FormVendaResponsivaVisaoTop.cmbTipoDocumento.setSelectedItem("Factura");
-        FormVendaResponsivaVisaoTop.cmbCliente.setSelectedItem(nomeCliente);
+        boolean vendaModerna = visao.venda.VendaModernaVisao.estaAberta();
+        if (vendaModerna) {
+            visao.venda.VendaModernaVisao.cmbTipoDocumento.setSelectedItem("Factura");
+            visao.venda.VendaModernaVisao.cmbCliente.setSelectedItem(nomeCliente);
+        } else {
+            FormVendaResponsivaVisaoTop.cmbTipoDocumento.setSelectedItem("Factura");
+            FormVendaResponsivaVisaoTop.cmbCliente.setSelectedItem(nomeCliente);
+        }
 
         DefaultTableModel modelo = (DefaultTableModel) tabela_linhas.getModel();
 
@@ -401,11 +411,19 @@ public class ModalConsultasMesas extends javax.swing.JFrame {
                 String qtdString = modelo.getValueAt(i, 4).toString();
                 int cod = Integer.parseInt(codString);
                 double qtd = Double.parseDouble(qtdString);
-                FormVendaResponsivaVisaoTop.accao_codigo_interno_enter_busca_exterior(cod, qtd);
+                if (vendaModerna) {
+                    visao.venda.VendaModernaVisao.accao_codigo_interno_enter_busca_exterior(cod, qtd);
+                } else {
+                    FormVendaResponsivaVisaoTop.accao_codigo_interno_enter_busca_exterior(cod, qtd);
+                }
 
             }
             dispose();
-            FormVendaResponsivaVisaoTop.statusConversao = false;
+            if (vendaModerna) {
+                visao.venda.VendaModernaVisao.statusConversao = false;
+            } else {
+                FormVendaResponsivaVisaoTop.statusConversao = false;
+            }
 
         } else {
             JOptionPane.showMessageDialog(null, "Caro usuário, não existe dados na tabela.", "Aviso", JOptionPane.WARNING_MESSAGE);

@@ -80,7 +80,10 @@ import javax.swing.table.DefaultTableModel;
 import util.BDConexao;
 import util.BackupUsb;
 import util.DVML;
+import util.AuditoriaJanelas;
 import util.JPAEntityMannagerFactoryUtil;
+import util.LogActividadeUtil;
+import util.SessaoUtil;
 //import util.LicensaUtil;
 import util.MetodosUtil;
 import static util.MetodosUtil.startBackGroundProcesses;
@@ -601,6 +604,8 @@ public class LoginVisao extends javax.swing.JFrame {
         TbDadosInstituicao dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
 
         if (usuario == null) {
+            LogActividadeUtil.registar(null, getUserName(), LogActividadeUtil.MODULO_SISTEMA, LogActividadeUtil.LOGIN_FALHADO,
+                    "tb_usuario", null, "Tentativa de login falhada com o user name: " + getUserName(), null, null);
             JOptionPane.showMessageDialog(null, "Erro Senha errada ou  User Name");
         } else {
             if (usuario.getDataUltimoAcesso() == null) {
@@ -609,6 +614,15 @@ public class LoginVisao extends javax.swing.JFrame {
 
                 id_user = usuario.getCodigo();
                 id_empresa = getIdEmpresa();
+                if (SessaoUtil.getCodUsuario() != null) {
+                    // troca de utilizador sem fechar a aplicação
+                    LogActividadeUtil.registar(LogActividadeUtil.MODULO_SISTEMA, LogActividadeUtil.LOGOUT,
+                            "tb_usuario", SessaoUtil.getCodUsuario(), "Terminou a sessão (troca de utilizador)");
+                }
+                SessaoUtil.iniciar(usuario);
+                LogActividadeUtil.registar(LogActividadeUtil.MODULO_SISTEMA, LogActividadeUtil.LOGIN,
+                        "tb_usuario", usuario.getCodigo(), "Entrou no sistema");
+                AuditoriaJanelas.instalar();
                 try {
 //                    BackupUtil.fazerBackupAgora();
                 } catch (Exception e) {

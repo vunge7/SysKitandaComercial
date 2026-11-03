@@ -66,7 +66,14 @@ public class BordaCampo extends AbstractBorder {
         Graphics2D g2 = Formularios.suavizar(g);
         RoundRectangle2D caixa = forma(x, y, largura, altura);
         boolean activo = c.isEnabled();
-        if (activo && temFoco(c)) {
+        if (activo && Formularios.temErro(c)) {
+            g2.setColor(Tema.comAlfa(Tema.PERIGO, 60));
+            g2.setStroke(new BasicStroke(4f));
+            g2.draw(caixa);
+            g2.setColor(Tema.PERIGO);
+            g2.setStroke(new BasicStroke(1.5f));
+            g2.draw(caixa);
+        } else if (activo && temFoco(c)) {
             g2.setColor(Tema.brilhoFoco());
             g2.setStroke(new BasicStroke(4f));
             g2.draw(caixa);

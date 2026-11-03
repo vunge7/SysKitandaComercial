@@ -569,7 +569,7 @@ public class FormaPagamentoPorLugaresVisao extends javax.swing.JFrame
                 }
                 else if ( formulario == DVML.VENDA_LAVANDARIA )
                 {
-                    RecolhaPedidosVisao.procedimento_converter_factura();
+//                    RecolhaPedidosVisao.procedimento_converter_factura();
                 }
                 else if ( formulario == DVML.VENDA_PONTUAL )
                 {

@@ -406,11 +406,13 @@ public class FormaPagamentoVisao extends javax.swing.JFrame {
         } else if (formulario == DVML.VENDA_EXPRESSO) {
             lb_total_geral.setText(VendasPraticasVisao.txtTotalApagar.getText());
         } else if (formulario == DVML.VENDA_LAVANDARIA) {
-            lb_total_geral.setText(RecolhaPedidosVisao.txtTotalApagar.getText());
+//            lb_total_geral.setText(RecolhaPedidosVisao.txtTotalApagar.getText());
         } else if (formulario == DVML.VENDA_PONTUAL) {
             lb_total_geral.setText(VendaUsuarioVisao.txtTotalPagar.getText());
         } else if (formulario == DVML.VENDA_PONTUAL_TOP) {
-            lb_total_geral.setText(FormVendaResponsivaVisaoTop.txtTotalPagar.getText());
+            lb_total_geral.setText(visao.venda.VendaModernaVisao.estaAberta()
+                    ? visao.venda.VendaModernaVisao.txtTotalPagar.getText()
+                    : FormVendaResponsivaVisaoTop.txtTotalPagar.getText());
         } else if (formulario == DVML.VENDA_OFICINA) {
             lb_total_geral.setText(VendaOficinaUsuarioVisao.txtTotal_AOA_liquido.getText());
         
@@ -582,11 +584,15 @@ public class FormaPagamentoVisao extends javax.swing.JFrame {
                     }
 
                 } else if (formulario == DVML.VENDA_LAVANDARIA) {
-                    RecolhaPedidosVisao.procedimento_converter_factura();
+//                    RecolhaPedidosVisao.procedimento_converter_factura();
                 } else if (formulario == DVML.VENDA_PONTUAL) {
                     VendaUsuarioVisao.procedimento_salvar_venda_comercial(true);
                 } else if (formulario == DVML.VENDA_PONTUAL_TOP) {
-                    FormVendaResponsivaVisaoTop.procedimento_salvar_venda_comercial(true);
+                    if (visao.venda.VendaModernaVisao.estaAberta()) {
+                        visao.venda.VendaModernaVisao.procedimento_salvar_venda_comercial(true);
+                    } else {
+                        FormVendaResponsivaVisaoTop.procedimento_salvar_venda_comercial(true);
+                    }
                 } else if (formulario == DVML.VENDA_OFICINA) {
                     VendaOficinaUsuarioVisao.procedimento_salvar_venda_comercial();
 //                } else if (formulario == DVML.CONVERSAO_PROFORMA_FACTURA_RECIBO) {

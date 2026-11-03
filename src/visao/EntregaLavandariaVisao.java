@@ -43,7 +43,7 @@ import util.BDConexao;
 import util.DVML;
 import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
-import static visao.RecolhaPedidosVisao.abreviacao;
+//import static visao.RecolhaPedidosVisao.abreviacao;
 
 /**
  *

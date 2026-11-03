@@ -1062,18 +1062,24 @@ public class ClienteInternoVisao extends javax.swing.JDialog
                                 NovaGestaoPedidosVisao.cmbCliente.setSelectedItem( clienteGlobal.getNome() );
                                 dispose();
                             }
-                            if ( !Objects.isNull( FormVendaResponsivaVisaoTop.cmbCliente ) )
+                            if ( visao.venda.VendaModernaVisao.estaAberta() )
+                            {
+                                visao.venda.VendaModernaVisao.cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );
+                                visao.venda.VendaModernaVisao.cmbCliente.setSelectedItem( clienteGlobal.getNome() );
+                                dispose();
+                            }
+                            else if ( !Objects.isNull( FormVendaResponsivaVisaoTop.cmbCliente ) )
                             {
                                 FormVendaResponsivaVisaoTop.cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );
                                 FormVendaResponsivaVisaoTop.cmbCliente.setSelectedItem( clienteGlobal.getNome() );
                                 dispose();
                             }
-                            if ( !Objects.isNull( RecolhaPedidosVisao.cmbCliente ) )
-                            {
-                                RecolhaPedidosVisao.cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );
-                                RecolhaPedidosVisao.cmbCliente.setSelectedItem( clienteGlobal.getNome() );
-                                dispose();
-                            }
+//                            if ( !Objects.isNull( RecolhaPedidosVisao.cmbCliente ) )
+//                            {
+//                                RecolhaPedidosVisao.cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );
+//                                RecolhaPedidosVisao.cmbCliente.setSelectedItem( clienteGlobal.getNome() );
+//                                dispose();
+//                            }
                             if ( !Objects.isNull( VendaPOSVisao.cmbCliente ) )
                             {
                                 VendaPOSVisao.cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );

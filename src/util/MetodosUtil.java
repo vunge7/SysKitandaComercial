@@ -488,7 +488,12 @@ public class MetodosUtil {
 
     public static boolean esvaziaBaseDados(BDConexao conexao) {
         String sql = "call esvazia_banco_dados()";
-        return conexao.executeUpdate(sql);
+        boolean esvaziada = conexao.executeUpdate(sql);
+        // registado depois: se o procedimento limpar também o log, este fica como primeiro registo
+        LogActividadeUtil.registar(LogActividadeUtil.MODULO_SISTEMA, LogActividadeUtil.ELIMINAR, "base_dados", null,
+                esvaziada ? "ESVAZIOU A BASE DE DADOS (procedimento de limpeza total)"
+                        : "Tentativa falhada de esvaziar a base de dados");
+        return esvaziada;
     }
 
     public static String getDataBancoFull(Date date) {

@@ -95,6 +95,8 @@ public class ProdutosModernoVisao extends javax.swing.JFrame {
      * OUTROS
      */
     private static int codigo = 0, idUser = 0;
+    /** O utilizador tem a permissão "Compras"? (ver actualizarBotaoCompras) */
+    private static boolean permissaoCompras = false;
     private boolean stocavel = true;
     private double preco_venda_anterior = 0;
 
@@ -257,15 +259,29 @@ public class ProdutosModernoVisao extends javax.swing.JFrame {
 
             permissao = vector.get(i).getIdPermissao().getDescricao();
             if (permissao.equals(jButtonCompras.getText())) {
-                jButtonCompras.setVisible(true);
+                permissaoCompras = true;
             }
 
         }
+        actualizarBotaoCompras();
 
     }
 
     public void setPermissoes(boolean status) {
-        jButtonCompras.setVisible(status);
+        permissaoCompras = status;
+        actualizarBotaoCompras();
+    }
+
+    /**
+     * Regra única do botão Compras: visível só se o utilizador tem a
+     * permissão "Compras" e o item está marcado como Produto (serviços não
+     * se compram). É chamada sempre que muda Produto/Serviço (ver
+     * ProdutoEventos) e quando as permissões são lidas.
+     */
+    static void actualizarBotaoCompras() {
+        if (jButtonCompras != null && ck_produto != null) {
+            jButtonCompras.setVisible(permissaoCompras && ck_produto.isSelected());
+        }
     }
 
     /**
@@ -1045,11 +1061,11 @@ public class ProdutosModernoVisao extends javax.swing.JFrame {
 
         } else {
             painel_stock.setVisible(false);
-            jButtonCompras.setVisible(false);
             cmbFamilia.setSelectedItem("Serviços");
             cmbFamilia.setEnabled(false);
 
         }
+        actualizarBotaoCompras();
 
     }
 

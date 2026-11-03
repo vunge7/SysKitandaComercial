@@ -258,7 +258,7 @@ public class JanelaFrontOfficeLavandariaVisao extends javax.swing.JFrame
 
     private void btnRecolhaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnRecolhaActionPerformed
     {//GEN-HEADEREND:event_btnRecolhaActionPerformed
-        new RecolhaPedidosVisao( getMesa(), getLugar(), idUser, DVML.ARMAZEM_LOJA, BDConexao.getInstancia()).setVisible(true);
+//        new RecolhaPedidosVisao( getMesa(), getLugar(), idUser, DVML.ARMAZEM_LOJA, BDConexao.getInstancia()).setVisible(true);
     }//GEN-LAST:event_btnRecolhaActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton2ActionPerformed

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import util.BDConexao;
+import util.LogActividadeUtil;
 import util.MetodosUtil;
 
 /**
@@ -83,7 +84,18 @@ public class LinhasTransferenciasController implements EntidadeFactory
                 + linhaTransferencia.getFkTransferenciaArmazem().getPkTransferenciaArmazem() + ""
                 + " ) ";
 
-        return conexao.executeUpdate( INSERT );
+        boolean gravado = conexao.executeUpdate( INSERT );
+        if ( gravado )
+        {
+            LogActividadeUtil.registar( LogActividadeUtil.MODULO_STOCK, LogActividadeUtil.CRIAR,
+                    "transferencia_armazem", linhaTransferencia.getFkTransferenciaArmazem().getPkTransferenciaArmazem(),
+                    "Transferiu " + LogActividadeUtil.normalizar( linhaTransferencia.getQtd() ) + " de "
+                    + linhaTransferencia.getProduto()
+                    + " | " + linhaTransferencia.getArmazemOrigem() + " -> " + linhaTransferencia.getArmazemDestino(),
+                    "qtd_origem=" + LogActividadeUtil.normalizar( linhaTransferencia.getQtdBefore() ),
+                    "qtd_origem=" + LogActividadeUtil.normalizar( linhaTransferencia.getQtdAfter() ) );
+        }
+        return gravado;
 
     }
 

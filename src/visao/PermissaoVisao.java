@@ -1471,6 +1471,50 @@ public class PermissaoVisao extends javax.swing.JFrame
         return usuarioDao.getUsuarioByNome1( cmbUsuario.getSelectedItem().toString() );
     }
 
+    // ------------------------- auditoria (log_actividade) -------------------------
+    private java.util.TreeSet<String> permissoesActuais( int codigoUsuario )
+    {
+        java.util.TreeSet<String> permissoes = new java.util.TreeSet<>();
+        try
+        {
+            for ( TbItemPermissao item : itemPermissaoDao.getAllPermissoesByIdUsuarioAndModulo( codigoUsuario, "1" ) )
+            {
+                permissoes.add( item.getIdPermissao().getDescricao() );
+            }
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
+        return permissoes;
+    }
+
+    // regista só o que mudou: permissões concedidas e retiradas
+    private void registarAlteracaoPermissoes( int codigoUsuario, java.util.TreeSet<String> antes, java.util.TreeSet<String> depois )
+    {
+        java.util.TreeSet<String> concedidas = new java.util.TreeSet<>( depois );
+        concedidas.removeAll( antes );
+        java.util.TreeSet<String> retiradas = new java.util.TreeSet<>( antes );
+        retiradas.removeAll( depois );
+        if ( concedidas.isEmpty() && retiradas.isEmpty() )
+        {
+            return;
+        }
+        StringBuilder descricao = new StringBuilder( "Alterou as permissões do utilizador: " )
+                .append( cmbUsuario.getSelectedItem() );
+        if ( !concedidas.isEmpty() )
+        {
+            descricao.append( " | Concedidas: " ).append( String.join( ", ", concedidas ) );
+        }
+        if ( !retiradas.isEmpty() )
+        {
+            descricao.append( " | Retiradas: " ).append( String.join( ", ", retiradas ) );
+        }
+        util.LogActividadeUtil.registar( util.LogActividadeUtil.MODULO_SISTEMA, util.LogActividadeUtil.ALTERAR,
+                "tb_item_permissao", codigoUsuario, descricao.toString(),
+                "permissoes=" + String.join( ", ", antes ), "permissoes=" + String.join( ", ", depois ) );
+    }
+
     public void procedimento_salvar()
     {
 
@@ -1479,6 +1523,7 @@ public class PermissaoVisao extends javax.swing.JFrame
         int codigo_usuario = getIdUsuario();
         long codigo_permissao = 0;
         boolean salvou = true;
+        java.util.TreeSet<String> permissoesAnteriores = permissoesActuais( codigo_usuario );
 
         if ( itemPermissaoDao.deletar_items( codigo_usuario, "1" ) )
         {
@@ -1510,6 +1555,8 @@ public class PermissaoVisao extends javax.swing.JFrame
                 }
 
             }
+
+            registarAlteracaoPermissoes( codigo_usuario, permissoesAnteriores, new java.util.TreeSet<>( vector ) );
 
             if ( salvou )
             {

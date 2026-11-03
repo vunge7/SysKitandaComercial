@@ -295,7 +295,7 @@ public class BuscaProdutoComprasVisao extends javax.swing.JDialog {
                 DefaultTableModel modelo = (DefaultTableModel) tabela_busca.getModel();
                 int linha = tabela_busca.getSelectedRow();
                 Integer codigo = Integer.parseInt(modelo.getValueAt(linha, 0).toString());
-                RecolhaPedidosVisao.accao_codigo_interno_enter_busca_exterior(codigo);
+               // RecolhaPedidosVisao.accao_codigo_interno_enter_busca_exterior(codigo);
                 dispose();
 
             } else if (DVML.JANELA_ASSOCIACAO == cod_janela) {

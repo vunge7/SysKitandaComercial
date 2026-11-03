@@ -31,7 +31,6 @@
 // import java.sql.ResultSet;
 // import java.sql.SQLException;
 // import java.text.DecimalFormat;
-// import java.text.DecimalFormatSymbols;
 // import java.text.SimpleDateFormat;
 // import java.util.*;
 // import java.util.logging.Level;
@@ -53,7 +52,6 @@
 // import util.PictureChooser;
 // import util.TemaNegocioUtil;
 // import util.TextFieldUtils;
-// import static visao.CompraInformalVisao.spPrecoCompra;
 // 
 // public class ProdutosVisao extends javax.swing.JFrame {
 // 

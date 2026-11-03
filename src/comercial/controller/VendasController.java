@@ -23,11 +23,13 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import util.BDConexao;
 import util.DVML;
+import util.LogActividadeUtil;
 import util.MetodosUtil;
 import visao.FicheiroSAFTVisao;
 import static visao.FicheiroSAFTVisao.jProgressBar1;
@@ -108,13 +110,18 @@ public class VendasController implements EntidadeFactory {
                 + " ) ";
 
         System.out.println("Modo INSERT" + INSERT);
-        return conexao.executeUpdate(INSERT);
+        boolean gravado = conexao.executeUpdate(INSERT);
+        if (gravado) {
+            registarEmissao(venda, venda.getCodFact());
+        }
+        return gravado;
 
     }
 
     @Override
     public boolean actualizar(Object object) {
         TbVenda venda = (TbVenda) object;
+        Map<String, Object> anterior = retratoTotaisByCodFact(venda.getCodFact());
 
         String sql = "UPDATE tb_venda SET "
                 + " total_por_extenso  = '" + venda.getTotalPorExtenso() + "'"
@@ -125,13 +132,120 @@ public class VendasController implements EntidadeFactory {
                 + ", codigo_usuario = " + venda.getCodigoUsuario().getCodigo()
                 + " WHERE cod_fact = '" + venda.getCodFact() + "'";
         System.out.println(sql);
-        return conexao.executeUpdate(sql);
+        boolean actualizado = conexao.executeUpdate(sql);
+        if (actualizado) {
+            Map<String, Object> novo = LogActividadeUtil.novoRetrato();
+            novo.put("total_venda", venda.getTotalVenda());
+            novo.put("total_geral", venda.getTotalGeral());
+            novo.put("desconto_comercial", venda.getDescontoComercial());
+            novo.put("desconto_financeiro", venda.getDescontoFinanceiro());
+            novo.put("codigo_usuario", venda.getCodigoUsuario().getCodigo());
+            String[] diferencas = LogActividadeUtil.diferencas(anterior, novo);
+            if (diferencas != null) {
+                LogActividadeUtil.registar(LogActividadeUtil.MODULO_VENDAS, LogActividadeUtil.ALTERAR,
+                        "tb_venda", venda.getCodFact(), "Alterou o documento: " + venda.getCodFact(),
+                        diferencas[0], diferencas[1]);
+            }
+        }
+        return actualizado;
     }
 
     @Override
     public boolean eliminar(int codigo) {
+        TbVenda anterior = (TbVenda) findById(codigo);
         String DELETE = "DELETE FROM tb_venda WHERE codigo = " + codigo;
-        return conexao.executeUpdate(DELETE);
+        boolean eliminado = conexao.executeUpdate(DELETE);
+        if (eliminado) {
+            LogActividadeUtil.registar(LogActividadeUtil.MODULO_VENDAS, LogActividadeUtil.ELIMINAR,
+                    "tb_venda", anterior != null ? anterior.getCodFact() : codigo,
+                    "Eliminou o documento: " + (anterior != null ? anterior.getCodFact() : codigo),
+                    anterior != null ? LogActividadeUtil.formatar(retratoVenda(anterior)) : null, null);
+        }
+        return eliminado;
+    }
+
+    // ------------------------- auditoria (log_actividade) -------------------------
+    private void registarEmissao(TbVenda venda, Object id) {
+        registarEmissaoDocumento(venda, id);
+    }
+
+    /**
+     * Regista a emissão de um documento de venda (factura, recibo, guia, nota de crédito...).
+     * Usado também por VendaDao.criarVendaComProcedu (função VENDA_CRIAR), que não passa
+     * pela camada automática por ser executado como SELECT.
+     */
+    public static void registarEmissaoDocumento(TbVenda venda, Object id) {
+        try {
+            String cliente = venda.getNomeCliente();
+            if ((cliente == null || cliente.trim().isEmpty() || "null".equals(cliente))
+                    && venda.getCodigoCliente() != null) {
+                cliente = venda.getCodigoCliente().getNome();
+            }
+            Integer documento = venda.getFkDocumento() != null ? venda.getFkDocumento().getPkDocumento() : null;
+            boolean notaCredito = documento != null
+                    && (documento == DVML.DOC_NOTA_CREDITO_NC || documento == DVML.DOC_NOTA_CREDITO_NC_COMPRAS);
+            boolean temReferencia = venda.getRefCodFact() != null && !venda.getRefCodFact().trim().isEmpty()
+                    && !"null".equals(venda.getRefCodFact());
+
+            StringBuilder descricao = new StringBuilder(notaCredito ? "Emitiu a nota de crédito: " : "Emitiu o documento: ");
+            descricao.append(venda.getCodFact());
+            if (temReferencia) {
+                descricao.append(notaCredito ? " | Anula/corrige: " : " | Ref.: ").append(venda.getRefCodFact());
+            }
+            descricao.append(" | Cliente: ").append(cliente != null ? cliente : "");
+            descricao.append(" | Total: ").append(LogActividadeUtil.normalizar(venda.getTotalGeral()));
+            if (notaCredito && venda.getObs() != null && !venda.getObs().trim().isEmpty() && !"null".equals(venda.getObs())) {
+                descricao.append(" | Motivo: ").append(venda.getObs().trim());
+            }
+
+            LogActividadeUtil.registar(LogActividadeUtil.MODULO_VENDAS,
+                    notaCredito ? LogActividadeUtil.ANULAR : LogActividadeUtil.CRIAR,
+                    "tb_venda", id, descricao.toString(),
+                    null, LogActividadeUtil.formatar(retratoVenda(venda)));
+        } catch (Exception e) {
+            System.err.println("[VendasController] Falha ao registar log da venda: " + e.getMessage());
+        }
+    }
+
+    private static Map<String, Object> retratoVenda(TbVenda venda) {
+        Map<String, Object> retrato = LogActividadeUtil.novoRetrato();
+        retrato.put("cod_fact", venda.getCodFact());
+        retrato.put("documento", venda.getFkDocumento() != null ? venda.getFkDocumento().getPkDocumento() : null);
+        retrato.put("nome_cliente", venda.getNomeCliente());
+        retrato.put("codigo_cliente", venda.getCodigoCliente() != null ? venda.getCodigoCliente().getCodigo() : null);
+        retrato.put("armazem", venda.getIdArmazemFK() != null ? venda.getIdArmazemFK().getCodigo() : null);
+        retrato.put("total_venda", venda.getTotalVenda());
+        retrato.put("desconto_total", venda.getDescontoTotal());
+        retrato.put("total_iva", venda.getTotalIva());
+        retrato.put("total_geral", venda.getTotalGeral());
+        retrato.put("credito", venda.getCredito());
+        retrato.put("valor_entregue", venda.getValorEntregue());
+        retrato.put("troco", venda.getTroco());
+        retrato.put("ref_cod_fact", venda.getRefCodFact());
+        retrato.put("obs", venda.getObs());
+        return retrato;
+    }
+
+    private Map<String, Object> retratoTotaisByCodFact(String codFact) {
+        String sql = "SELECT total_venda, total_geral, desconto_comercial, desconto_financeiro, codigo_usuario "
+                + " FROM tb_venda WHERE cod_fact = ?";
+        try (PreparedStatement ps = conexao.getConnectionAtiva().prepareStatement(sql)) {
+            ps.setString(1, codFact);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Map<String, Object> retrato = LogActividadeUtil.novoRetrato();
+                    retrato.put("total_venda", rs.getBigDecimal("total_venda"));
+                    retrato.put("total_geral", rs.getBigDecimal("total_geral"));
+                    retrato.put("desconto_comercial", rs.getBigDecimal("desconto_comercial"));
+                    retrato.put("desconto_financeiro", rs.getBigDecimal("desconto_financeiro"));
+                    retrato.put("codigo_usuario", rs.getInt("codigo_usuario"));
+                    return retrato;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("[VendasController] " + e.getMessage());
+        }
+        return null;
     }
 
     @Override
@@ -387,7 +501,9 @@ public class VendasController implements EntidadeFactory {
             if (resultado > 0) {
                 try (ResultSet rs = stmt.getGeneratedKeys()) {
                     if (rs.next()) {
-                        return rs.getInt(1);
+                        int id = rs.getInt(1);
+                        registarEmissao(venda, id);
+                        return id;
                     }
                 }
             }

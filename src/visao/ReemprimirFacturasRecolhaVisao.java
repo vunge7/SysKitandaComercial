@@ -35,7 +35,7 @@ import util.DVML.Abreviacao;
 import static util.DVML.SEGUNDA_VIA_CONFORMIDADE_COM_ORIGINAL;
 import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
-import static visao.RecolhaPedidosVisao.abreviacao;
+//import static visao.RecolhaPedidosVisao.abreviacao;
 
 /**
  *

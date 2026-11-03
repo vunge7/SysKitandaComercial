@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="relatorio_log_actividade" language="java" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenNoDataType="AllSectionsNoDetail">
+
+	<!-- Registo de actividades do sistema (tabela log_actividade).
+	     Chamado por visao.LogActividadeVisao -> "Imprimir relatório". -->
+
+	<style name="accao" forecolor="#334155" fontSize="7" isBold="true">
+		<conditionalStyle>
+			<conditionExpression><![CDATA["CRIAR".equals($F{accao}) || "INSERT".equals($F{accao}) || "ABERTURA_CAIXA".equals($F{accao})]]></conditionExpression>
+			<style forecolor="#166534"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA["ALTERAR".equals($F{accao}) || "UPDATE".equals($F{accao})]]></conditionExpression>
+			<style forecolor="#B45309"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA["ELIMINAR".equals($F{accao}) || "DELETE".equals($F{accao}) || "ANULAR".equals($F{accao}) || "LOGIN_FALHADO".equals($F{accao}) || "TRUNCATE".equals($F{accao}) || "DROP".equals($F{accao})]]></conditionExpression>
+			<style forecolor="#B91C1C"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA["LOGIN".equals($F{accao}) || "LOGOUT".equals($F{accao}) || "FECHO_CAIXA".equals($F{accao})]]></conditionExpression>
+			<style forecolor="#1E40AF"/>
+		</conditionalStyle>
+	</style>
+
+	<!-- Timestamp e não java.util.Date: o Jasper 5 envia java.util.Date sem a hora -->
+	<parameter name="DATA_INICIO" class="java.sql.Timestamp"/>
+	<parameter name="DATA_FIM" class="java.sql.Timestamp"/>
+	<parameter name="COD_USUARIO" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<!-- "" = todos -->
+	<parameter name="MODULO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ACCAO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TEXTO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<!-- 1 = inclui os registos técnicos (modulo 'Automático') -->
+	<parameter name="INCLUIR_AUTOMATICO" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[new Integer(1)]]></defaultValueExpression>
+	</parameter>
+	<!-- 1 = imprime a linha "Antes / Depois" de cada registo -->
+	<parameter name="MOSTRAR_VALORES" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FILTROS_TXT" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMITIDO_POR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<!-- calculados: não precisam de ser enviados -->
+	<parameter name="MODULO_AUTOMATICO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["Automático"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TEXTO_LIKE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%" + ($P{TEXTO} == null ? "" : $P{TEXTO}) + "%"]]></defaultValueExpression>
+	</parameter>
+
+	<queryString>
+		<![CDATA[
+SELECT data_hora, nome_usuario, modulo, accao, formulario, entidade, id_registo,
+       descricao, valor_anterior, valor_novo, nome_maquina
+FROM log_actividade
+WHERE data_hora >= $P{DATA_INICIO}
+  AND data_hora <= $P{DATA_FIM}
+  AND ($P{COD_USUARIO} = 0 OR cod_usuario = $P{COD_USUARIO})
+  AND ($P{MODULO} = '' OR modulo = $P{MODULO})
+  AND ($P{ACCAO} = '' OR accao = $P{ACCAO}
+       OR ($P{ACCAO} = 'CRIAR' AND accao = 'INSERT')
+       OR ($P{ACCAO} = 'ALTERAR' AND accao IN ('UPDATE', 'REPLACE'))
+       OR ($P{ACCAO} = 'ELIMINAR' AND accao IN ('DELETE', 'TRUNCATE', 'DROP'))
+       OR ($P{ACCAO} = 'ESTRUTURA' AND accao IN ('ALTER', 'CREATE')))
+  AND ($P{INCLUIR_AUTOMATICO} = 1 OR modulo IS NULL OR modulo <> $P{MODULO_AUTOMATICO})
+  AND ($P{TEXTO} = ''
+       OR descricao LIKE $P{TEXTO_LIKE} OR formulario LIKE $P{TEXTO_LIKE} OR entidade LIKE $P{TEXTO_LIKE}
+       OR id_registo LIKE $P{TEXTO_LIKE} OR nome_usuario LIKE $P{TEXTO_LIKE} OR nome_maquina LIKE $P{TEXTO_LIKE})
+ORDER BY data_hora DESC, pk_log_actividade DESC
+		]]>
+	</queryString>
+
+	<field name="data_hora" class="java.sql.Timestamp"/>
+	<field name="nome_usuario" class="java.lang.String"/>
+	<field name="modulo" class="java.lang.String"/>
+	<field name="accao" class="java.lang.String"/>
+	<field name="formulario" class="java.lang.String"/>
+	<field name="entidade" class="java.lang.String"/>
+	<field name="id_registo" class="java.lang.String"/>
+	<field name="descricao" class="java.lang.String"/>
+	<field name="valor_anterior" class="java.lang.String"/>
+	<field name="valor_novo" class="java.lang.String"/>
+	<field name="nome_maquina" class="java.lang.String"/>
+
+	<title>
+		<band height="78">
+			<rectangle>
+				<reportElement x="0" y="0" width="802" height="4" backcolor="#1E3A5F"/>
+				<graphicElement><pen lineWidth="0.0"/></graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="8" width="802" height="28"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="SansSerif" size="18" isBold="true"/></textElement>
+				<text><![CDATA[REGISTO DE ACTIVIDADES DO SISTEMA]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="38" width="802" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"><font size="9"/></textElement>
+				<textFieldExpression><![CDATA[$P{FILTROS_TXT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="0" y="56" width="802" height="16" forecolor="#555555"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"><font size="8"/></textElement>
+				<textFieldExpression><![CDATA["Emitido" + ($P{EMITIDO_POR} == null || $P{EMITIDO_POR}.isEmpty() ? "" : " por " + $P{EMITIDO_POR}) + " em " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+
+	<columnHeader>
+		<band height="24">
+			<rectangle>
+				<reportElement x="0" y="0" width="802" height="24" backcolor="#334155"/>
+				<graphicElement><pen lineWidth="0.0"/></graphicElement>
+			</rectangle>
+			<staticText><reportElement x="4" y="0" width="74" height="24" forecolor="#FFFFFF"/><textElement verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Data / Hora]]></text></staticText>
+			<staticText><reportElement x="80" y="0" width="82" height="24" forecolor="#FFFFFF"/><textElement verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Utilizador]]></text></staticText>
+			<staticText><reportElement x="164" y="0" width="56" height="24" forecolor="#FFFFFF"/><textElement verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Módulo]]></text></staticText>
+			<staticText><reportElement x="222" y="0" width="72" height="24" forecolor="#FFFFFF"/><textElement verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Acção]]></text></staticText>
+			<staticText><reportElement x="296" y="0" width="120" height="24" forecolor="#FFFFFF"/><textElement verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Ecrã]]></text></staticText>
+			<staticText><reportElement x="418" y="0" width="84" height="24" forecolor="#FFFFFF"/><textElement verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Tabela / Nº]]></text></staticText>
+			<staticText><reportElement x="504" y="0" width="296" height="24" forecolor="#FFFFFF"/><textElement verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Descrição]]></text></staticText>
+		</band>
+	</columnHeader>
+
+	<detail>
+		<band height="16">
+			<rectangle>
+				<reportElement mode="Opaque" stretchType="RelativeToBandHeight" x="0" y="0" width="802" height="16" backcolor="#F1F5F9">
+					<printWhenExpression><![CDATA[$V{REPORT_COUNT} % 2 == 0]]></printWhenExpression>
+				</reportElement>
+				<graphicElement><pen lineWidth="0.0"/></graphicElement>
+			</rectangle>
+			<textField pattern="dd/MM/yyyy HH:mm:ss" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="4" y="2" width="74" height="12"/>
+				<textElement verticalAlignment="Top"><font size="7"/></textElement>
+				<textFieldExpression><![CDATA[$F{data_hora}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="80" y="2" width="82" height="12"/>
+				<textElement verticalAlignment="Top"><font size="7" isBold="true"/></textElement>
+				<textFieldExpression><![CDATA[$F{nome_usuario} == null ? "(sem sessão)" : $F{nome_usuario}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="164" y="2" width="56" height="12" forecolor="#555555"/>
+				<textElement verticalAlignment="Top"><font size="7"/></textElement>
+				<textFieldExpression><![CDATA[$F{modulo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="accao" stretchType="RelativeToTallestObject" x="222" y="2" width="72" height="12"/>
+				<textElement verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[$F{accao} == null ? null : util.LogActividadeUtil.accaoVisivel($F{accao}).replace('_', ' ')]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="296" y="2" width="120" height="12" forecolor="#555555"/>
+				<textElement verticalAlignment="Top"><font size="7"/></textElement>
+				<textFieldExpression><![CDATA[$F{formulario}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="418" y="2" width="84" height="12" forecolor="#555555"/>
+				<textElement verticalAlignment="Top"><font size="7"/></textElement>
+				<textFieldExpression><![CDATA[($F{entidade} == null ? "" : $F{entidade}) + ($F{id_registo} == null ? "" : " #" + $F{id_registo})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="504" y="2" width="296" height="12"/>
+				<textElement verticalAlignment="Top"><font size="7"/></textElement>
+				<textFieldExpression><![CDATA[util.LogActividadeUtil.descricaoVisivel($F{descricao})]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="14">
+			<!-- valores com SQL (registos antigos) nunca são impressos: ver LogActividadeUtil.valoresVisiveis -->
+			<printWhenExpression><![CDATA[$P{MOSTRAR_VALORES}.intValue() == 1 && (util.LogActividadeUtil.valoresVisiveis($F{valor_anterior}) != null || util.LogActividadeUtil.valoresVisiveis($F{valor_novo}) != null)]]></printWhenExpression>
+			<!-- com valor anterior: duas colunas "Antes" | "Depois" -->
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="80" y="0" width="358" height="12" forecolor="#B91C1C">
+					<printWhenExpression><![CDATA[util.LogActividadeUtil.valoresVisiveis($F{valor_anterior}) != null]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Top"><font size="6"/></textElement>
+				<textFieldExpression><![CDATA["Antes: " + util.LogActividadeUtil.valoresVisiveis($F{valor_anterior})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="442" y="0" width="358" height="12" forecolor="#166534">
+					<printWhenExpression><![CDATA[util.LogActividadeUtil.valoresVisiveis($F{valor_anterior}) != null]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Top"><font size="6"/></textElement>
+				<textFieldExpression><![CDATA["Depois: " + (util.LogActividadeUtil.valoresVisiveis($F{valor_novo}) == null ? "-" : util.LogActividadeUtil.valoresVisiveis($F{valor_novo}))]]></textFieldExpression>
+			</textField>
+			<!-- só valor novo (criações): ocupa a largura toda -->
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="80" y="0" width="720" height="12" forecolor="#166534">
+					<printWhenExpression><![CDATA[util.LogActividadeUtil.valoresVisiveis($F{valor_anterior}) == null]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Top"><font size="6"/></textElement>
+				<textFieldExpression><![CDATA["Valores: " + util.LogActividadeUtil.valoresVisiveis($F{valor_novo})]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="1">
+			<line>
+				<reportElement x="0" y="0" width="802" height="1" forecolor="#E2E8F0"/>
+			</line>
+		</band>
+	</detail>
+
+	<pageFooter>
+		<band height="18">
+			<textField>
+				<reportElement x="0" y="2" width="400" height="14"/>
+				<textElement verticalAlignment="Middle"><font size="7"/></textElement>
+				<textFieldExpression><![CDATA["Registo de actividades  -  emitido em " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="602" y="2" width="150" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"><font size="7"/></textElement>
+				<textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER} + " de "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="752" y="2" width="50" height="14"/>
+				<textElement verticalAlignment="Middle"><font size="7"/></textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+
+	<summary>
+		<band height="26">
+			<line><reportElement x="0" y="2" width="802" height="1"/></line>
+			<textField>
+				<reportElement x="0" y="6" width="802" height="18"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"><font size="9" isBold="true"/></textElement>
+				<textFieldExpression><![CDATA["Total de registos: " + $V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

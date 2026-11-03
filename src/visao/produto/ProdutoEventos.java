@@ -26,6 +26,10 @@ final class ProdutoEventos {
         // Identificação e classificação
         j.ck_produto.addActionListener(j::ck_produtoActionPerformed);
         j.ck_servico.addActionListener(j::ck_servicoActionPerformed);
+        // ItemListener também dispara quando o código muda a selecção (ex.: ao
+        // carregar um produto pesquisado), não só com o clique do utilizador.
+        j.ck_produto.addItemListener(e -> ProdutosModernoVisao.actualizarBotaoCompras());
+        j.ck_servico.addItemListener(e -> ProdutosModernoVisao.actualizarBotaoCompras());
         j.txtCodigoBarra.addActionListener(j::txtCodigoBarraActionPerformed);
         j.btnCarregar.addActionListener(j::btnCarregarActionPerformed);
         j.cmbMarca.addActionListener(j::cmbMarcaActionPerformed);
