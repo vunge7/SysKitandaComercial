@@ -2002,18 +2002,12 @@ public class FormularioConsultaEstadoFE extends JFrame {
                             publish(msg);
                         } else {
                             contagem[1]++;
-                            // Forçar estado para "P" (Pendente) como faz o FormVendaResponsivaVisaoTop
-                            venda.setEstado("P");
-                            String estado = venda.getEstado();
+                            String estado = venda.getEstado() != null ? venda.getEstado() : "desconhecido";
                             String reqId = venda.getRequestID() != null ? venda.getRequestID() : "sem RequestID";
                             String msg = "✗ " + venda.getCodFact()
                                     + " - Estado: " + estado + ", RequestID: " + reqId;
                             publish(msg);
                         }
-
-                        // Gravar a venda na BD (com RequestID, SubmissionUUID e Estado)
-                        // Segue o padrão de FormVendaResponsivaVisaoTop
-                        vendasCtrl.salvarRetornaID(venda);
                     } catch (Exception e) {
                         contagem[1]++;
                         String msg = "✗ " + venda.getCodFact() + ": " + e.getClass().getSimpleName()
