@@ -12,6 +12,7 @@ import comercial.controller.DadosInstituicaoController; // <-- ajusta o import a
 import comercial.controller.VendasController;           // <-- ajusta o import ao teu pacote real
 import entity.Documento;
 import entity.TbCliente;
+import entity.TbItemVenda;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -81,6 +82,7 @@ public class FormularioConsultaEstadoFE extends JFrame {
     private final VendasController vendasController;
     private final DadosInstituicaoController dadosInstituicaoController;
     private final VendaDao vendaDao = new VendaDao(JPAEntityMannagerFactoryUtil.em);
+    private final comercial.controller.ItemVendasController itensController;
 
     private final List<TbVenda> vendas = new ArrayList<>();
 
@@ -181,6 +183,7 @@ public class FormularioConsultaEstadoFE extends JFrame {
         this.conexao = conexao;
         this.vendasController = vendasController;
         this.dadosInstituicaoController = dadosInstituicaoController;
+        this.itensController = new comercial.controller.ItemVendasController(conexao);
 
         montarInterface();
         carregar();
@@ -1966,14 +1969,16 @@ public class FormularioConsultaEstadoFE extends JFrame {
                     try {
                         Documento documento = venda.getFkDocumento();
                         TbCliente cliente = venda.getFkCliente();
-                        List<TbItemVenda> itens = venda.getTbItemVendaList();
 
-                        log("Processando: " + venda.getCodFact());
+                        // Carregar itens via JPA controller
+                        List<TbItemVenda> itens = itensController.listarTodosByCodigoVenda(venda.getCodigo());
+
+                        log("Processando: " + venda.getCodFact() + " (" + (itens != null ? itens.size() : 0) + " itens)");
 
                         // Verificar se tem itens
                         if (itens == null || itens.isEmpty()) {
                             contagem[1]++;
-                            String msg = "✗ " + venda.getCodFact() + " - Nenhum item para enviar";
+                            String msg = "✗ " + venda.getCodFact() + " - Sem itens na base de dados";
                             publish(msg);
                             feitos++;
                             setProgress(feitos * 100 / pendentes.size());
