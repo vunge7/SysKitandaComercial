@@ -237,7 +237,8 @@ public class FormularioSeries extends JFrame {
         Map<String, Object> jsonPayload = PayloadFactory.criarPayloadCriarSerie(
                 taxRegistrationNumber, 
                 establishmentNumber, 
-                seriesYear, documentType);
+                seriesYear, 
+                documentType);
         String payLoad = JsonUtil.toJson(jsonPayload);
         System.out.println(payLoad);
         String basicAuth = BasicAuthUtil.gerarAuthorizationHeader(FEConfig.getUsername(), FEConfig.getPassword());
