@@ -1968,7 +1968,7 @@ public class FormularioConsultaEstadoFE extends JFrame {
                 for (TbVenda venda : pendentes) {
                     try {
                         Documento documento = venda.getFkDocumento();
-                        TbCliente cliente = venda.getFkCliente();
+                        TbCliente cliente = venda.getCodigoCliente();
 
                         // Carregar itens via JPA controller
                         List<TbItemVenda> itens = itensController.listarTodosByCodigoVenda(venda.getCodigo());
@@ -2000,21 +2000,20 @@ public class FormularioConsultaEstadoFE extends JFrame {
                                     + " (RequestID: " + venda.getRequestID()
                                     + ", Estado: " + venda.getEstado() + ")";
                             publish(msg);
-
-                            // Atualizar a BD com os campos FE
-                            vendasCtrl.updateFieldsFE(
-                                    venda.getSubmissionUUID(),
-                                    venda.getRequestID(),
-                                    venda.getEstado(),
-                                    venda.getCodigo());
                         } else {
                             contagem[1]++;
-                            String estado = venda.getEstado() != null ? venda.getEstado() : "desconhecido";
+                            // Forçar estado para "P" (Pendente) como faz o FormVendaResponsivaVisaoTop
+                            venda.setEstado("P");
+                            String estado = venda.getEstado();
                             String reqId = venda.getRequestID() != null ? venda.getRequestID() : "sem RequestID";
                             String msg = "✗ " + venda.getCodFact()
                                     + " - Estado: " + estado + ", RequestID: " + reqId;
                             publish(msg);
                         }
+
+                        // Gravar a venda na BD (com RequestID, SubmissionUUID e Estado)
+                        // Segue o padrão de FormVendaResponsivaVisaoTop
+                        vendasCtrl.salvarRetornaID(venda);
                     } catch (Exception e) {
                         contagem[1]++;
                         String msg = "✗ " + venda.getCodFact() + ": " + e.getClass().getSimpleName()
