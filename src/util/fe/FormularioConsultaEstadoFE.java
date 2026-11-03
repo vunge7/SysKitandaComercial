@@ -10,6 +10,8 @@ import entity.TbDadosInstituicao;
 import entity.TbVenda;
 import comercial.controller.DadosInstituicaoController; // <-- ajusta o import ao teu pacote real
 import comercial.controller.VendasController;           // <-- ajusta o import ao teu pacote real
+import entity.Documento;
+import entity.TbCliente;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -1949,6 +1951,7 @@ public class FormularioConsultaEstadoFE extends JFrame {
         }
 
         final TbDadosInstituicao dadosInst = dadosInstituicaoController.findByCodigo(1);
+        final VendasController vendasCtrl = vendasController;
         final int[] contagem = new int[2]; // 0 sucesso, 1 erro
         setOcupado(true, null);
         barra.setIndeterminate(false);
@@ -1964,6 +1967,8 @@ public class FormularioConsultaEstadoFE extends JFrame {
                         Documento documento = venda.getFkDocumento();
                         TbCliente cliente = venda.getFkCliente();
 
+                        log("Processando: " + venda.getCodFact());
+
                         // Enviar factura usando FacturaElectronicaUtil.criarFE
                         boolean enviada = FacturaElectronicaUtil.criarFE(
                                 venda,
@@ -1973,20 +1978,37 @@ public class FormularioConsultaEstadoFE extends JFrame {
                                 venda.getTbItemVendaList(),
                                 conexao);
 
-                        if (enviada) {
+                        if (enviada && venda.getRequestID() != null) {
                             contagem[0]++;
-                            publish("✓ " + venda.getCodFact() + ": enviada com sucesso");
+                            String msg = "✓ " + venda.getCodFact()
+                                    + " (RequestID: " + venda.getRequestID()
+                                    + ", Estado: " + venda.getEstado() + ")";
+                            publish(msg);
+
+                            // Atualizar a BD com os campos FE
+                            vendasCtrl.updateFieldsFE(
+                                    venda.getSubmissionUUID(),
+                                    venda.getRequestID(),
+                                    venda.getEstado(),
+                                    venda.getCodigo());
                         } else {
                             contagem[1]++;
-                            publish("✗ " + venda.getCodFact() + ": erro no envio");
+                            String estado = venda.getEstado() != null ? venda.getEstado() : "desconhecido";
+                            String reqId = venda.getRequestID() != null ? venda.getRequestID() : "sem RequestID";
+                            String msg = "✗ " + venda.getCodFact()
+                                    + " - Estado: " + estado + ", RequestID: " + reqId;
+                            publish(msg);
                         }
                     } catch (Exception e) {
                         contagem[1]++;
-                        publish("✗ " + venda.getCodFact() + ": " + e.getMessage());
+                        String msg = "✗ " + venda.getCodFact() + ": " + e.getClass().getSimpleName()
+                                + " - " + (e.getMessage() != null ? e.getMessage() : "erro desconhecido");
+                        publish(msg);
+                        e.printStackTrace();
                     }
                     feitos++;
                     setProgress(feitos * 100 / pendentes.size());
-                    Thread.sleep(500); // pausa entre envios
+                    Thread.sleep(800); // pausa entre envios
                 }
                 return null;
             }
@@ -2009,7 +2031,7 @@ public class FormularioConsultaEstadoFE extends JFrame {
                 }
                 setOcupado(false, "OK: " + contagem[0] + "  Erro: " + contagem[1]);
                 JOptionPane.showMessageDialog(FormularioConsultaEstadoFE.this,
-                        "Envio concluído.\nEnviadas com sucesso: " + contagem[0]
+                        "Envio concluído.\n\nEnviadas com sucesso: " + contagem[0]
                         + "\nCom erro: " + contagem[1]
                         + "\n\nFaça uma nova pesquisa na AGT para confirmar o envio.");
             }
