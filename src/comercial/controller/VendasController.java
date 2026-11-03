@@ -21,8 +21,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -1892,7 +1895,54 @@ public class VendasController implements EntidadeFactory {
 //
 //        return tipo + " " + serie + "/" + proximo;
 //    }
-    public String gerarCodFact(int fkSerie) throws SQLException {
+     public String gerarCodFact(int fkSerie) throws SQLException {
+        String sqlSerie
+                = "SELECT d.abreviacao, s.designacao "
+                + "FROM series s "
+                + "JOIN documento d ON d.pk_documento = s.fk_documento "
+                + "WHERE s.id = ?";
+
+        PreparedStatement psSerie = conexao.prepareStatement(sqlSerie);
+        psSerie.setInt(1, fkSerie);
+        ResultSet rsSerie = psSerie.executeQuery();
+
+        if (!rsSerie.next()) {
+            throw new RuntimeException(
+                    "Série inválida. ID recebido: " + fkSerie
+            );
+        }
+
+//        if (!rsSerie.next()) {
+//            throw new RuntimeException("Série inválida");
+//        }
+        String tipo = rsSerie.getString("abreviacao");   // FR
+        String serie = rsSerie.getString("designacao");  // FR7826S1200N
+
+        // Documentos enviados à AGT (FT, FR, NC, RC...): só contam os
+        // pendentes/válidos, para se poder repetir o número de um inválido.
+        // Factura proforma (PP): não vai à AGT e nunca tem estado; com o
+        // filtro de estado saía sempre o nº 1. Conta todas as da série.
+        boolean semEstadoAGT = "PP".equalsIgnoreCase(tipo == null ? "" : tipo.trim());
+        String sqlUltimo
+                = "SELECT MAX(CAST(SUBSTRING_INDEX(cod_fact, '/', -1) AS UNSIGNED)) AS ultimo "
+                + "FROM tb_venda "
+                + "WHERE " + (semEstadoAGT ? "" : "estado IN('P','V') AND ") + "REPLACE(cod_fact,' ','') LIKE ?";
+
+        PreparedStatement psUltimo = conexao.prepareStatement(sqlUltimo);
+        psUltimo.setString(1, "%" + serie + "/%");
+
+        ResultSet rsUltimo = psUltimo.executeQuery();
+
+        int proximo = 1;
+
+        if (rsUltimo.next() && rsUltimo.getObject("ultimo") != null) {
+            proximo = rsUltimo.getInt("ultimo") + 1;
+        }
+
+        return tipo + " " + serie + "/" + proximo;
+    }
+
+    public String gerarCodFactR(int fkSerie) throws SQLException {
         String sqlSerie
                 = "SELECT d.abreviacao, s.designacao "
                 + "FROM series s "
@@ -1928,6 +1978,42 @@ public class VendasController implements EntidadeFactory {
 
         return tipo + " " + serie + "/" + proximo;
     }
+//    public String gerarCodFact(int fkSerie) throws SQLException {
+//        String sqlSerie
+//                = "SELECT d.abreviacao, s.designacao "
+//                + "FROM series s "
+//                + "JOIN documento d ON d.pk_documento = s.fk_documento "
+//                + "WHERE s.id = ?";
+//
+//        PreparedStatement psSerie = conexao.prepareStatement(sqlSerie);
+//        psSerie.setInt(1, fkSerie);
+//        ResultSet rsSerie = psSerie.executeQuery();
+//
+//        if (!rsSerie.next()) {
+//            throw new RuntimeException("Série inválida");
+//        }
+//
+//        String tipo = rsSerie.getString("abreviacao");   // FR
+//        String serie = rsSerie.getString("designacao");  // FR7826S1200N
+//
+//        String sqlUltimo
+//                = "SELECT MAX(CAST(SUBSTRING_INDEX(cod_fact, '/', -1) AS UNSIGNED)) AS ultimo "
+//                + "FROM tb_venda "
+//                + "WHERE REPLACE(cod_fact,' ','') LIKE ?";
+//
+//        PreparedStatement psUltimo = conexao.prepareStatement(sqlUltimo);
+//        psUltimo.setString(1, "%" + serie + "/%");
+//
+//        ResultSet rsUltimo = psUltimo.executeQuery();
+//
+//        int proximo = 1;
+//
+//        if (rsUltimo.next() && rsUltimo.getObject("ultimo") != null) {
+//            proximo = rsUltimo.getInt("ultimo") + 1;
+//        }
+//
+//        return tipo + " " + serie + "/" + proximo;
+//    }
     
     
 
@@ -2066,6 +2152,230 @@ public class VendasController implements EntidadeFactory {
             e.printStackTrace();
             return false;
         }
+    }
+    
+        // =====================================================================
+// VendasController - SUBSTITUI o findCodigosVendasFE anterior
+// (imports necessários: java.sql.*, java.util.ArrayList, java.util.Date, java.util.List)
+// =====================================================================
+/**
+ * @param estado "P", "V", "I" ou null (todas). "P" inclui também estado NULL.
+ * @param inicio data/hora inicial (inclusiva) ou null para não filtrar
+ * @param fimExclusivo data/hora final (EXCLUSIVA) ou null para não filtrar
+ */
+public List<Integer> findCodigosVendasFE(Connection connection, String estado,
+        Date inicio, Date fimExclusivo) {
+
+    List<Integer> codigos = new ArrayList<>();
+
+    StringBuilder sql = new StringBuilder(
+            "SELECT codigo FROM tb_venda "
+            + "WHERE requestID IS NOT NULL AND requestID <> '' ");
+
+    if ("P".equals(estado)) {
+        sql.append("AND (estado = 'P' OR estado IS NULL) ");
+    } else if (estado != null) {
+        sql.append("AND estado = ? ");
+    }
+    if (inicio != null) {
+        sql.append("AND dataVenda >= ? ");
+    }
+    if (fimExclusivo != null) {
+        sql.append("AND dataVenda < ? ");
+    }
+    sql.append("ORDER BY codigo DESC");
+
+    try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+
+        ps.setMaxRows(500); // limite de segurança
+
+        int i = 1;
+        if (estado != null && !"P".equals(estado)) {
+            ps.setString(i++, estado);
+        }
+        if (inicio != null) {
+            ps.setTimestamp(i++, new java.sql.Timestamp(inicio.getTime()));
+        }
+        if (fimExclusivo != null) {
+            ps.setTimestamp(i++, new java.sql.Timestamp(fimExclusivo.getTime()));
+        }
+
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                codigos.add(rs.getInt("codigo"));
+            }
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return codigos;
+}
+
+/**
+ * Histórico de facturação de um cliente: facturas, facturas recibo, recibos e
+ * notas de crédito no intervalo [inicio, fimExclusivo).
+ *
+ * @param nif NIF exacto, ou null/vazio para não filtrar
+ * @param nome parte do nome do cliente (venda ou ficha), ou null/vazio
+ */
+public List<util.fe.dto.DocumentoHistoricoDTO> findHistoricoCliente(Connection connection, String nif,
+        String nome, Date inicio, Date fimExclusivo) {
+
+    List<util.fe.dto.DocumentoHistoricoDTO> lista = new ArrayList<>();
+    boolean porNif = nif != null && !nif.trim().isEmpty();
+    boolean porNome = nome != null && !nome.trim().isEmpty();
+
+    String sql = "SELECT v.codigo, v.cod_fact, v.fk_documento, v.dataVenda, v.hora, v.total_geral, "
+            + "v.nome_cliente, v.cliente_nif, v.estado, v.requestID, c.morada "
+            + "FROM tb_venda v LEFT JOIN tb_cliente c ON v.codigo_cliente = c.codigo "
+            + "WHERE v.fk_documento IN (1, 2, 5, 6, 15) "
+            + (porNif ? "AND v.cliente_nif = ? " : "")
+            + (porNome ? "AND (v.nome_cliente LIKE ? OR c.nome LIKE ?) " : "")
+            + "AND v.dataVenda >= ? AND v.dataVenda < ? "
+            + "AND (v.estado IS NULL OR v.estado <> 'I') " // os inválidos não fazem parte
+            + "ORDER BY v.dataVenda, v.codigo";
+
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        int i = 1;
+        if (porNif) {
+            ps.setString(i++, nif.trim());
+        }
+        if (porNome) {
+            String like = "%" + nome.trim().replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_") + "%";
+            ps.setString(i++, like);
+            ps.setString(i++, like);
+        }
+        ps.setTimestamp(i++, new java.sql.Timestamp(inicio.getTime()));
+        ps.setTimestamp(i++, new java.sql.Timestamp(fimExclusivo.getTime()));
+
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                String tipo = util.fe.dto.DocumentoHistoricoDTO.tipoPorDocumentoLocal(rs.getInt("fk_documento"));
+                if (tipo == null) {
+                    continue;
+                }
+                // dataVenda pode vir sem hora: completa com a coluna "hora"
+                java.util.Calendar data = java.util.Calendar.getInstance();
+                data.setTime(rs.getTimestamp("dataVenda"));
+                java.sql.Time hora = rs.getTime("hora");
+                if (hora != null && data.get(java.util.Calendar.HOUR_OF_DAY) == 0
+                        && data.get(java.util.Calendar.MINUTE) == 0
+                        && data.get(java.util.Calendar.SECOND) == 0) {
+                    java.util.Calendar h = java.util.Calendar.getInstance();
+                    h.setTime(hora);
+                    data.set(java.util.Calendar.HOUR_OF_DAY, h.get(java.util.Calendar.HOUR_OF_DAY));
+                    data.set(java.util.Calendar.MINUTE, h.get(java.util.Calendar.MINUTE));
+                    data.set(java.util.Calendar.SECOND, h.get(java.util.Calendar.SECOND));
+                }
+
+                util.fe.dto.DocumentoHistoricoDTO d = new util.fe.dto.DocumentoHistoricoDTO(
+                        rs.getInt("codigo"), rs.getString("cod_fact"), tipo, data.getTime(),
+                        rs.getBigDecimal("total_geral"));
+                d.setNomeCliente(rs.getString("nome_cliente"));
+                d.setMoradaCliente(rs.getString("morada"));
+                d.setNifCliente(rs.getString("cliente_nif"));
+                d.setEstado(util.fe.dto.DocumentoHistoricoDTO.textoEstadoLocal(
+                        rs.getString("estado"), rs.getString("requestID")));
+                lista.add(d);
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return lista;
+}
+
+/**
+ * NIF do cliente de cada nº de documento (cod_fact) encontrado na BD local.
+ * Se "codigos" / "estados" não forem null, preenche-os com o código da venda e
+ * com o texto do estado local (null = inválido).
+ */
+public Map<String, String> findClienteNifPorCodFact(Connection connection, Collection<String> codFacts,
+        Map<String, Integer> codigos, Map<String, String> estados) {
+
+    Map<String, String> nifs = new HashMap<>();
+    List<String> lista = new ArrayList<>(codFacts);
+    final int LOTE = 500; // evita IN (...) demasiado grande
+
+    for (int inicio = 0; inicio < lista.size(); inicio += LOTE) {
+        List<String> parte = lista.subList(inicio, Math.min(inicio + LOTE, lista.size()));
+
+        StringBuilder sql = new StringBuilder(
+                "SELECT codigo, cod_fact, cliente_nif, estado, requestID FROM tb_venda WHERE cod_fact IN (");
+        for (int i = 0; i < parte.size(); i++) {
+            sql.append(i == 0 ? "?" : ", ?");
+        }
+        sql.append(")");
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            for (int i = 0; i < parte.size(); i++) {
+                ps.setString(i + 1, parte.get(i));
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    nifs.put(rs.getString("cod_fact"), rs.getString("cliente_nif"));
+                    if (codigos != null) {
+                        codigos.put(rs.getString("cod_fact"), rs.getInt("codigo"));
+                    }
+                    if (estados != null) {
+                        estados.put(rs.getString("cod_fact"), util.fe.dto.DocumentoHistoricoDTO.textoEstadoLocal(
+                                rs.getString("estado"), rs.getString("requestID")));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    return nifs;
+}
+
+ /**
+     * Para cada nº de factura (cod_fact) dado, devolve o código da venda local
+     * que o tem. Os números que não existem na BD não aparecem no mapa.
+     */
+    public Map<String, Integer> findCodigosPorCodFact(Connection connection, Collection<String> codFacts) {
+        return findCodigosPorCodFact(connection, codFacts, null);
+    }
+
+    /**
+     * Igual ao anterior; se "estados" não for null, preenche-o com o estado
+     * (P/V/I, pode ser null) de cada nº de factura encontrado.
+     */
+    public Map<String, Integer> findCodigosPorCodFact(Connection connection, Collection<String> codFacts,
+            Map<String, String> estados) {
+
+        Map<String, Integer> encontrados = new HashMap<>();
+        List<String> lista = new ArrayList<>(codFacts);
+        final int LOTE = 500; // evita IN (...) demasiado grande
+
+        for (int inicio = 0; inicio < lista.size(); inicio += LOTE) {
+            List<String> parte = lista.subList(inicio, Math.min(inicio + LOTE, lista.size()));
+
+            StringBuilder sql = new StringBuilder("SELECT codigo, cod_fact, estado FROM tb_venda WHERE cod_fact IN (");
+            for (int i = 0; i < parte.size(); i++) {
+                sql.append(i == 0 ? "?" : ", ?");
+            }
+            sql.append(")");
+
+            try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+                for (int i = 0; i < parte.size(); i++) {
+                    ps.setString(i + 1, parte.get(i));
+                }
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        encontrados.put(rs.getString("cod_fact"), rs.getInt("codigo"));
+                        if (estados != null) {
+                            estados.put(rs.getString("cod_fact"), rs.getString("estado"));
+                        }
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return encontrados;
     }
 
     public boolean updateFieldsFE(String submissionUUID, String requesID, String estado, int codigo) {

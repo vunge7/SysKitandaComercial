@@ -45,7 +45,7 @@ public class PayloadFactory {
         return softwareInfo;
     }
 
-    // =====================================================
+// =====================================================
     // CRIAR SÉRIE
     // =====================================================
     public static Map<String, Object> criarPayloadCriarSerie(
@@ -77,10 +77,11 @@ public class PayloadFactory {
 //        signatureMap.put( "seriesContingencyIndicator", "N" );
 
 //        payload.put( "jwsSignature", JwsGenerator.gerarJws( SOFTWARE_KEY, signatureMap ) );
-        payload.put("jwsSignature", JwsGenerator.gerarJws(CLIENT_KEY, signatureMap));
+        payload.put("jwsSignature", JwsGenerator.gerarJws(FEConfig.getChaveClientePrivada(), signatureMap));
         payload.put("seriesContingencyIndicator", "N");
         return payload;
     }
+
 
     // =====================================================
     // LISTAR FATURAS
@@ -97,6 +98,38 @@ public class PayloadFactory {
         payload.put("jwsSignature", JwsGenerator.gerarJws(CLIENT_KEY, signatureMap));
         payload.put("queryStartDate", queryStartDate);
         payload.put("queryEndDate", queryEndDate);
+
+        return payload;
+    }
+    
+      // =====================================================
+    // LISTAR FATURAS
+    // =====================================================
+//    public static Map<String, Object> criarPayloadListarFacturas(String taxRegistrationNumber, String queryStartDate, String queryEndDate) {
+//        return criarPayloadListarFacturas(taxRegistrationNumber, queryStartDate, queryEndDate, null);
+//    }
+
+    /**
+     * @param page página pedida (0 = primeira) ou null para não enviar o campo.
+     * A AGT devolve no máximo 10 facturas por resposta.
+     */
+    public static Map<String, Object> criarPayloadListarFacturas(String taxRegistrationNumber, String queryStartDate, String queryEndDate, Integer page) {
+
+        Map<String, Object> payload = criarBasePayload(taxRegistrationNumber);
+        if (page != null) {
+            payload.put("page", page);
+        }
+
+        Map<String, Object> signatureMap = new LinkedHashMap<>();
+        signatureMap.put("taxRegistrationNumber", taxRegistrationNumber);
+        signatureMap.put("queryStartDate", queryStartDate);
+        signatureMap.put("queryEndDate", queryEndDate);
+
+        payload.put("jwsSignature", JwsGenerator.gerarJws(FEConfig.getChaveClientePrivada(), signatureMap));
+        payload.put("queryStartDate", queryStartDate);
+        payload.put("queryEndDate", queryEndDate);
+        // Facturas emitidas pelo NIF (sem este campo a AGT pode listar as RECEBIDAS)
+        payload.put("tipoListagem", "EMITIDAS");
 
         return payload;
     }

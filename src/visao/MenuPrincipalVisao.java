@@ -30,6 +30,7 @@ import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
 import static util.MetodosUtil.rodarComandoWindows;
 import util.OperacaoSistemaUtil;
+import util.fe.FormularioConsultaEstadoFE;
 
 /**
  *
@@ -684,6 +685,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         jmModelo = new javax.swing.JMenuItem();
         jmGrupo = new javax.swing.JMenuItem();
         jMenuItemConsultas = new javax.swing.JMenuItem();
+        jMenuItem10 = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
         jMenuItem9 = new javax.swing.JMenuItem();
 
@@ -1512,6 +1514,14 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         });
         jMenu7.add(jMenuItemConsultas);
 
+        jMenuItem10.setText("Consultar Estado");
+        jMenuItem10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem10ActionPerformed(evt);
+            }
+        });
+        jMenu7.add(jMenuItem10);
+
         jMenuBar1.add(jMenu7);
 
         jMenu4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens32x32/actualizar_32x32.png"))); // NOI18N
@@ -2290,6 +2300,10 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         new FormularioSeries( conexao ).setVisible( true );
     }//GEN-LAST:event_jDadosEmpresa1ActionPerformed
 
+    private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem10ActionPerformed
+        new FormularioConsultaEstadoFE(conexao).setVisible(true);
+    }//GEN-LAST:event_jMenuItem10ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -2368,6 +2382,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuConfiguracoesSistema;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem10;
     private javax.swing.JMenuItem jMenuItem13;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;

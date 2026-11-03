@@ -24,6 +24,7 @@ import de.javasoft.plaf.synthetica.SyntheticaBlackStarLookAndFeel;
 import entity.TbDadosInstituicao;
 import entity.TbUsuario;
 import java.awt.AWTEvent;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
@@ -39,8 +40,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
 import javax.persistence.EntityManagerFactory;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 //import javax.swing.UIManager;
@@ -55,22 +59,22 @@ import util.SingleInstanceManager;
 import util.cronjob.QuartzApp;
 import util.cronjob.StockAutoCheckService;
 import util.cronjob.ValidadorJob;
+import util.fe.FEConfig;
 
 /**
  *
  * @author Domingos Dala Vunge
  */
-public class LoginVisao extends javax.swing.JFrame
-{
-    
+public class LoginVisao extends javax.swing.JFrame {
+
     private static EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
     private static DadosInstituicaoController dadosInstituicaoController;
-    private UsuarioDao usuarioDao = new UsuarioDao( emf );
-    private EmpresaDao empresaDao = new EmpresaDao( emf );
-    private static CaixaDao caixaDao = new CaixaDao( emf );
-    
-    private DocumentoDao documentoDao = new DocumentoDao( emf );
-    private DadosInstituicaoDao dadosInstituicaoDao = new DadosInstituicaoDao( emf );
+    private UsuarioDao usuarioDao = new UsuarioDao(emf);
+    private EmpresaDao empresaDao = new EmpresaDao(emf);
+    private static CaixaDao caixaDao = new CaixaDao(emf);
+
+    private DocumentoDao documentoDao = new DocumentoDao(emf);
+    private DadosInstituicaoDao dadosInstituicaoDao = new DadosInstituicaoDao(emf);
     public Date horaTerminoVenda;
 //    private LicensaUtil licensaUtil;
     private static BDConexao conexao;
@@ -81,157 +85,132 @@ public class LoginVisao extends javax.swing.JFrame
     private final int TIMEOUT = 60 * 60 * 1000; // 60 minutos em milissegundos
     private int id_user, id_empresa;
     private javax.swing.Timer piscarTimer;
-    
-    public LoginVisao( BDConexao conexao )
-    {
-        
+    private boolean loginEmExecucao = false;
+
+    public LoginVisao(BDConexao conexao) {
+
         initComponents();
-        setLocationRelativeTo( null );
-        setResizable( false );
-        setVisible( true );
+        carregarAmbienteFE();        // <-- NOVA: lê o ambiente da BD
+        adicionarFaixaAmbiente();    // <-- a faixa que já tinhas
+        setLocationRelativeTo(null);
+        setResizable(false);
+        setVisible(true);
 
 // Obtém a instância única e garante que a conexão está ativa
         conexao = BDConexao.getInstancia();
         conexao.getConnectionAtiva(); // força a ativação da conexão, se ainda não estiver
 
 // Cria o controller com a instância de BDConexao já inicializada
-        dadosInstituicaoController = new DadosInstituicaoController( conexao );
+        dadosInstituicaoController = new DadosInstituicaoController(conexao);
 
 // Busca os dados da instituição (id = 1)
-        d = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
-        
+        d = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
+
         mostrar_empresas();
-        
+
         prazo();
-        
-        LoginVisao.setDefaultLookAndFeelDecorated( true );
-        try
-        {
-            System.out.println( "Data Ultimo: " + documentoDao.getMAxDataDoc().toString() );
-        }
-        catch ( Exception e )
-        {
+
+        LoginVisao.setDefaultLookAndFeelDecorated(true);
+        try {
+            System.out.println("Data Ultimo: " + documentoDao.getMAxDataDoc().toString());
+        } catch (Exception e) {
         }
 //        verificar_data_sistema();
         txtUserName.requestFocus();
         //Envio de Email
-        try
-        {
+        try {
             verificarEnvioEmail();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
         }
         iniciarMonitoramento();
         iniciarPiscarLabelJLDataFecho();
-        
+
     }
-    
-    public void iniciarPiscarLabelJLDataFecho()
-    {
-        piscarTimer = new javax.swing.Timer( 500, new ActionListener()
-        {
+
+    public void iniciarPiscarLabelJLDataFecho() {
+        piscarTimer = new javax.swing.Timer(500, new ActionListener() {
             private boolean ligado = false;
-            
+
             @Override
-            public void actionPerformed( ActionEvent e )
-            {
-                if ( ligado )
-                {
-                    JLDataFecho.setForeground( Color.BLACK );
-                }
-                else
-                {
-                    JLDataFecho.setForeground( Color.RED );
+            public void actionPerformed(ActionEvent e) {
+                if (ligado) {
+                    JLDataFecho.setForeground(Color.BLACK);
+                } else {
+                    JLDataFecho.setForeground(Color.RED);
                 }
                 ligado = !ligado;
             }
-        } );
+        });
         piscarTimer.start();
     }
-    
-    public void pararPiscarLabelJLDataFecho()
-    {
-        if ( piscarTimer != null && piscarTimer.isRunning() )
-        {
+
+    public void pararPiscarLabelJLDataFecho() {
+        if (piscarTimer != null && piscarTimer.isRunning()) {
             piscarTimer.stop();
-            JLDataFecho.setForeground( Color.BLACK );  // Garante a cor normal
+            JLDataFecho.setForeground(Color.BLACK);  // Garante a cor normal
         }
     }
-    
-    public LoginVisao( int idUser )
-    {
-        
+
+    public LoginVisao(int idUser) {
+
         initComponents();
-        setLocationRelativeTo( null );
-        setResizable( false );
-        setVisible( true );
-        
+        setLocationRelativeTo(null);
+        setResizable(false);
+        setVisible(true);
+
         conexao = BDConexao.getInstancia();
 //        setTitle( "BEM VINDO AO " + DVML.NAME_SOFTWARE + " " + DVML.VERSION_SOFTWARE );
 
 //        if (Objects.nonNull(conexao)) {
 //            conexao.close();
 //        }
-        dadosInstituicaoController = new DadosInstituicaoController( conexao );
-        d = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
+        dadosInstituicaoController = new DadosInstituicaoController(conexao);
+        d = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
         horaTerminoVenda = d.getHoraTerminoVenda();
 //        this.idUser = idUser;
 //        licensaUtil = new LicensaUtil( conexao );
 //        registerLog( conexao );
         mostrar_empresas();
         prazo();
-        
-        LoginVisao.setDefaultLookAndFeelDecorated( true );
-        try
-        {
-            System.out.println( "Data Ultimo: " + documentoDao.getMAxDataDoc().toString() );
-        }
-        catch ( Exception e )
-        {
+
+        LoginVisao.setDefaultLookAndFeelDecorated(true);
+        try {
+            System.out.println("Data Ultimo: " + documentoDao.getMAxDataDoc().toString());
+        } catch (Exception e) {
         }
 //        verificar_data_sistema();
         txtUserName.requestFocus();
         //Envio de Email
-        try
-        {
+        try {
             verificarEnvioEmail();
+        } catch (Exception e) {
         }
-        catch ( Exception e )
-        {
-        }
-        
+
         iniciarMonitoramento();
-        
+
     }
-    
-    private void verificarEnvioEmail()
-    {
-        
-        if ( d.getEnviarEmail().equals( "Sim" ) )
-        {
-            BTnSair.setVisible( false );
-            QuartzApp.executarCronjob( ValidadorJob.class, ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 ) );
+
+    private void verificarEnvioEmail() {
+
+        if (d.getEnviarEmail().equals("Sim")) {
+            BTnSair.setVisible(false);
+            QuartzApp.executarCronjob(ValidadorJob.class, (TbDadosInstituicao) dadosInstituicaoController.findById(1));
+        } else {
+            BTnSair.setVisible(true);
         }
-        else
-        {
-            BTnSair.setVisible( true );
-        }
-        
+
     }
-    
-    public void mostrar_empresas()
-    {
-        cmbEmpresa.setModel( new DefaultComboBoxModel( ( Vector ) empresaDao.getAllEmpresa() ) );
+
+    public void mostrar_empresas() {
+        cmbEmpresa.setModel(new DefaultComboBoxModel((Vector) empresaDao.getAllEmpresa()));
     }
-    
-    private void prazo()
-    {
-        
-        TbDadosInstituicao dadosInstituicao = dadosInstituicaoDao.findTbDadosInstituicao( 1 );
-        JEmpresa.setText( "Empresa " + dadosInstituicao.getNome() );
-        JLNif.setText( "NIF " + dadosInstituicao.getNif() );
-        JLDataFecho.setText( "Contrato válido até " + ( dadosInstituicao.getDataFecho().getDate() ) + " / " + ( dadosInstituicao.getDataFecho().getMonth() + 1 ) + " / " + ( 1900 + dadosInstituicao.getDataFecho().getYear() ) );
+
+    private void prazo() {
+
+        TbDadosInstituicao dadosInstituicao = dadosInstituicaoDao.findTbDadosInstituicao(1);
+        JEmpresa.setText("Empresa " + dadosInstituicao.getNome());
+        JLNif.setText("NIF " + dadosInstituicao.getNif());
+        JLDataFecho.setText("Contrato válido até " + (dadosInstituicao.getDataFecho().getDate()) + " / " + (dadosInstituicao.getDataFecho().getMonth() + 1) + " / " + (1900 + dadosInstituicao.getDataFecho().getYear()));
     }
 
     /**
@@ -239,7 +218,7 @@ public class LoginVisao extends javax.swing.JFrame
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
      */
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents()
     {
@@ -499,25 +478,19 @@ public class LoginVisao extends javax.swing.JFrame
 
     private void pswSenhaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pswSenhaActionPerformed
         // TODO add your handling code here:
-        try
-        {
-            if ( MetodosUtil.acesso_sistema() )
-            {
+        try {
+            if (MetodosUtil.acesso_sistema()) {
 //                if ( licensaUtil.licenca_valida( new Date() ) )
 //                {
                 entrar_sistema();
 //                fazerBackupAgora();
 //                }
 
+            } else {
+                JOptionPane.showMessageDialog(null, "Impossível aceder ao sistema.\nDeves abrir um novo ano económico.\nContacte o seu fornecedor.", "AVISO", JOptionPane.WARNING_MESSAGE);
             }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Impossível aceder ao sistema.\nDeves abrir um novo ano económico.\nContacte o seu fornecedor.", "AVISO", JOptionPane.WARNING_MESSAGE );
-            }
-            
-        }
-        catch ( Exception e )
-        {
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -528,10 +501,8 @@ public class LoginVisao extends javax.swing.JFrame
     }//GEN-LAST:event_cmbEmpresaActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        try
-        {
-            if ( MetodosUtil.acesso_sistema() )
-            {
+        try {
+            if (MetodosUtil.acesso_sistema()) {
 //                if ( licensaUtil.licenca_valida( new Date() ) )
 //                {
 
@@ -539,37 +510,30 @@ public class LoginVisao extends javax.swing.JFrame
 //                fazerBackupAgora();
 //                }
 
+            } else {
+                JOptionPane.showMessageDialog(null, "Impossível aceder ao sistema.\nDeves abrir um novo ano económico.\nContacte o seu fornecedor.", "AVISO", JOptionPane.WARNING_MESSAGE);
             }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Impossível aceder ao sistema.\nDeves abrir um novo ano económico.\nContacte o seu fornecedor.", "AVISO", JOptionPane.WARNING_MESSAGE );
-            }
-            
-        }
-        catch ( Exception e )
-        {
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void BTnSairActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BTnSairActionPerformed
     {//GEN-HEADEREND:event_BTnSairActionPerformed
-        try
-        {
+        try {
             dispose();
             BackupUsb.realizarBackup();
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        System.exit( 0 );
+        System.exit(0);
     }//GEN-LAST:event_BTnSairActionPerformed
 
 //    public static void alterar_status_botao() {
 //
 //        if (!caixaDao.existeCaixas()) {
-////            btn_abertura_dia.setEnabled(true);
+    ////            btn_abertura_dia.setEnabled(true);
 //            jButton1.setEnabled(false);
 //        } else if (caixaDao.existe_abertura() && caixaDao.existe_fecho()) {
 ////            btn_abertura_dia.setEnabled(true);
@@ -579,137 +543,181 @@ public class LoginVisao extends javax.swing.JFrame
 //            jButton1.setEnabled(true);
 //        }
 //    }
-    public void entrar_sistema() throws SQLException, UnknownHostException
-    {
-        
-        TbUsuario usuario = usuarioDao.getUsuariowithEncriptedPass( getUserName(), getSenha() );
-        TbDadosInstituicao dadosInstituicao = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
-        
-        if ( usuario == null )
-        {
-            JOptionPane.showMessageDialog( null, "Erro Senha errada ou  User Name" );
+    
+   
+public void entrar_sistema() throws SQLException, UnknownHostException {
+
+    // Impede múltiplas execuções simultâneas do login
+    if (loginEmExecucao) {
+        return;
+    }
+
+    loginEmExecucao = true;
+
+    try {
+
+        TbUsuario usuario = usuarioDao.getUsuariowithEncriptedPass(
+                getUserName(),
+                getSenha()
+        );
+
+        if (usuario == null) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Erro: senha errada ou User Name inválido."
+            );
+            return;
         }
-        else
-        {
-            if ( usuario.getDataUltimoAcesso() == null )
-            {
-                alterarSenha();
-            }
-            else
-            {
-                
-                id_user = usuario.getCodigo();
-                id_empresa = getIdEmpresa();
-                try
-                {
-//                    BackupUtil.fazerBackupAgora();
-                }
-                catch ( Exception e )
-                {
-                    e.printStackTrace();
-                }
 
-//                dispose();
-                switch (usuario.getIdTipoUsuario().getIdTipoUsuario())
-                {
-
-                    //1 - Administrador
-                    case 1:
-//                        dispose();
-
-                        System.err.println( "getCodico_Utilizador (): " + getCodico_Utilizador() );
-                        System.err.println( "getCodico_Empresa (): " + getIdEmpresa() );
-//                        MetodosUtil.abrir_caixa_automatica( getCodico_Utilizador(), new UsuariosController( conexao ), new CaixasController( conexao ) );
-                        new RootVisao( getCodico_Utilizador(), getIdEmpresa(), true, BDConexao.getInstancia() ).setVisible( true );
-                        limpar();
-                        break;
-//                    Sub Administrador
-                    case 2:
-//                        dispose();
-
-                        System.err.println( "getCodico_Utilizador (): " + getCodico_Utilizador() );
-                        System.err.println( "getCodico_Empresa (): " + getIdEmpresa() );
-//                        MetodosUtil.abrir_caixa_automatica( getCodico_Utilizador(), new UsuariosController( conexao ), new CaixasController( conexao ) );
-                        if ( dadosInstituicao.getNegocio().equals( "Lavandaria" ) )
-                        {
-                            
-                            new JanelaFrontOfficeLavandariaVisao( getCodico_Utilizador(), BDConexao.getInstancia() ).setVisible( true );
-                            
-                        }
-                        else
-                        {
-                            
-                            new RootVisao( getCodico_Utilizador(), getIdEmpresa(), true, BDConexao.getInstancia() ).setVisible( true );
-                        }
-                        limpar();
-                        break;
-                    //2 - Caixa
-                    case 3:
-//                        dispose();
-//                        MetodosUtil.abrir_caixa_automatica( getCodico_Utilizador(), new UsuariosController( conexao ), new CaixasController( conexao ) );
-                        new VendaUsuarioVisao( getCodico_Utilizador(), BDConexao.getInstancia() ).setVisible( true );
-                        limpar();
-                        break;
-                    //3 - VendaPO
-                    case 4:
-//                        dispose();
-//                        new VendaPOSVisao( BDConexao.getInstancia(), DVML.ARMAZEM_LOJA, getCodico_Utilizador() ).setVisible( true );
-//                        MetodosUtil.abrir_caixa_automatica( getCodico_Utilizador(), new UsuariosController( conexao ), new CaixasController( conexao ) );
-                        new FrontOfficeVisao( getCodico_Utilizador(), BDConexao.getInstancia() ).setVisible( true );
-                        limpar();
-                        break;
-                    
-                    default:
-                        JOptionPane.showMessageDialog( null, "Erro Senha errado ou  User Name" );
-                        break;
-                }
-            }
+        // Verifica se é o primeiro acesso do utilizador
+        if (usuario.getDataUltimoAcesso() == null) {
+            alterarSenha();
+            return;
         }
+
+        TbDadosInstituicao dadosInstituicao =
+                (TbDadosInstituicao) dadosInstituicaoController.findById(1);
+
+        id_user = usuario.getCodigo();
+        id_empresa = getIdEmpresa();
+
+        try {
+            // BackupUtil.fazerBackupAgora();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Encaminha o utilizador de acordo com o seu tipo
+        switch (usuario.getIdTipoUsuario().getIdTipoUsuario()) {
+
+            // 1 - Administrador
+            case 1:
+
+                System.err.println(
+                        "getCodico_Utilizador(): " + getCodico_Utilizador()
+                );
+
+                System.err.println(
+                        "getCodico_Empresa(): " + getIdEmpresa()
+                );
+
+                new RootVisao(
+                        getCodico_Utilizador(),
+                        getIdEmpresa(),
+                        true,
+                        BDConexao.getInstancia()
+                ).setVisible(true);
+
+                break;
+
+            // 2 - Subadministrador
+            case 2:
+
+                System.err.println(
+                        "getCodico_Utilizador(): " + getCodico_Utilizador()
+                );
+
+                System.err.println(
+                        "getCodico_Empresa(): " + getIdEmpresa()
+                );
+
+                if (dadosInstituicao != null
+                        && "Lavandaria".equals(dadosInstituicao.getNegocio())) {
+
+                    new JanelaFrontOfficeLavandariaVisao(
+                            getCodico_Utilizador(),
+                            BDConexao.getInstancia()
+                    ).setVisible(true);
+
+                } else {
+
+                    new RootVisao(
+                            getCodico_Utilizador(),
+                            getIdEmpresa(),
+                            true,
+                            BDConexao.getInstancia()
+                    ).setVisible(true);
+                }
+
+                break;
+
+            // 3 - Caixa
+            case 3:
+
+                new VendaUsuarioVisao(
+                        getCodico_Utilizador(),
+                        BDConexao.getInstancia()
+                ).setVisible(true);
+
+                break;
+
+            // 4 - Venda POS
+            case 4:
+
+                new FrontOfficeVisao(
+                        getCodico_Utilizador(),
+                        BDConexao.getInstancia()
+                ).setVisible(true);
+
+                break;
+
+            default:
+
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Tipo de utilizador inválido."
+                );
+
+                return;
+        }
+
+        limpar();
+        dispose();
+
+    } finally {
+
+        // Liberta o login mesmo que ocorra um erro ou um return
+        loginEmExecucao = false;
     }
-    
-    public int getCodico_Utilizador()
-    {
-        return BDConexao.getCodigoUSuario( getUserName(), getSenha() );
+
+    // Executa o backup depois do login
+    BackupUsb.realizarBackup();
+}
+
+
+    public int getCodico_Utilizador() {
+        return BDConexao.getCodigoUSuario(getUserName(), getSenha());
     }
-    
-    public int getIdEmpresa()
-    {
-        return empresaDao.getIdByDescricao( cmbEmpresa.getSelectedItem().toString() );
+
+    public int getIdEmpresa() {
+        return empresaDao.getIdByDescricao(cmbEmpresa.getSelectedItem().toString());
     }
-    
-    public String getUserName()
-    {
+
+    public String getUserName() {
         return txtUserName.getText().toLowerCase();
     }
-    
-    public String getSenha()
-    {
+
+    public String getSenha() {
         return pswSenha.getText();
     }
 
     /**
      * @param args the command line arguments
      */
-    public static void main( String args[] )
-    {
+    public static void main(String args[]) {
         /* Set the Nimbus look and feel */
-        try
-        {
-            
-            Locale.setDefault( new Locale( "pt", "AO" ) );
-            for ( javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels() )
-            {
-                if ( "Windows".equals( info.getName() ) )
-                {
-                    javax.swing.UIManager.setLookAndFeel( info.getClassName() );
+        try {
+
+            Locale.setDefault(new Locale("pt", "AO"));
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Windows".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
-        }
-        catch ( Exception ex )
-        {
-            java.util.logging.Logger.getLogger( LoginVisao.class.getName() )
-                    .log( java.util.logging.Level.SEVERE, null, ex );
+        } catch (Exception ex) {
+            java.util.logging.Logger.getLogger(LoginVisao.class.getName())
+                    .log(java.util.logging.Level.SEVERE, null, ex);
         }
 
         // 🔒 Verifica instância única ANTES de abrir interface
@@ -718,88 +726,73 @@ public class LoginVisao extends javax.swing.JFrame
 //            JOptionPane.showMessageDialog( null, "Atenção\nO sistema já está aberto!" );
 //            System.exit( 0 );
 //        }
-        if ( SingleInstanceManager.isInstanceRunning() )
-        {
+        if (SingleInstanceManager.isInstanceRunning()) {
             // A instância antiga será fechada automaticamente.
             // Depois disto a nova abertura funciona normalmente.
-            System.exit( 0 );
+            System.exit(0);
         }
 
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater( new Runnable()
-        {
-            public void run()
-            {
-                try
-                {
-                    
-                    UIManager.setLookAndFeel( new SyntheticaBlackStarLookAndFeel() );
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+
+                    UIManager.setLookAndFeel(new SyntheticaBlackStarLookAndFeel());
 //                    UIManager.setLookAndFeel("com.jtattoo.plaf.acryl.AcrylLookAndFeel");
 //                    FlatMTMaterialOceanicIJTheme.setup();
                     // JTextField
-                    UIManager.put( "TextField.background", new Color( 0, 255, 255 ) ); // fundo
-                    UIManager.put( "TextField.foreground", new Color( 0, 51, 102 ) );  // texto
-                    UIManager.put( "TextField.caretForeground", Color.RED );         // cursor
-                    UIManager.put( "TextField.selectionBackground", Color.YELLOW );  // seleção (amarelo só no JTextField)
-                    UIManager.put( "TextField.selectionForeground", Color.BLUE );    // texto selecionado
+                    UIManager.put("TextField.background", new Color(0, 255, 255)); // fundo
+                    UIManager.put("TextField.foreground", new Color(0, 51, 102));  // texto
+                    UIManager.put("TextField.caretForeground", Color.RED);         // cursor
+                    UIManager.put("TextField.selectionBackground", Color.YELLOW);  // seleção (amarelo só no JTextField)
+                    UIManager.put("TextField.selectionForeground", Color.BLUE);    // texto selecionado
 
                     //JComboBox
-                    UIManager.put( "ComboBox.background", new Color( 0, 255, 255 ) );
-                    UIManager.put( "ComboBox.foreground", new Color( 0, 51, 102 ) );
-                    UIManager.put( "ComboBox.selectionBackground", new Color( 173, 216, 230 ) ); // azul claro
-                    UIManager.put( "ComboBox.selectionForeground", Color.BLACK );
+                    UIManager.put("ComboBox.background", new Color(0, 255, 255));
+                    UIManager.put("ComboBox.foreground", new Color(0, 51, 102));
+                    UIManager.put("ComboBox.selectionBackground", new Color(173, 216, 230)); // azul claro
+                    UIManager.put("ComboBox.selectionForeground", Color.BLACK);
 
                     //JTable
-                    UIManager.put( "Table.background", new Color( 0, 255, 255 ) );
-                    UIManager.put( "Table.foreground", new Color( 0, 51, 102 ) );
-                    UIManager.put( "Table.selectionBackground", new Color( 0, 120, 215 ) ); // azul estilo Windows
-                    UIManager.put( "Table.selectionForeground", Color.WHITE );      // texto branco na seleção
-                    UIManager.put( "Table.gridColor", Color.GRAY );
-                    UIManager.put( "TableHeader.background", new Color( 0, 200, 200 ) );
-                    UIManager.put( "TableHeader.foreground", Color.BLACK );
-                    
-                }
-                catch ( Exception e )
-                {
-                    JOptionPane.showMessageDialog( null, "Erro no Look and Feel: " + e.getMessage(),
-                            "Erro", JOptionPane.ERROR_MESSAGE );
+                    UIManager.put("Table.background", new Color(0, 255, 255));
+                    UIManager.put("Table.foreground", new Color(0, 51, 102));
+                    UIManager.put("Table.selectionBackground", new Color(0, 120, 215)); // azul estilo Windows
+                    UIManager.put("Table.selectionForeground", Color.WHITE);      // texto branco na seleção
+                    UIManager.put("Table.gridColor", Color.GRAY);
+                    UIManager.put("TableHeader.background", new Color(0, 200, 200));
+                    UIManager.put("TableHeader.foreground", Color.BLACK);
+
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Erro no Look and Feel: " + e.getMessage(),
+                            "Erro", JOptionPane.ERROR_MESSAGE);
                 }
 
                 // INICIAR PROCESSOS EM BACKGROUND
-                if ( startBackGroundProcesses() )
-                {
+                if (startBackGroundProcesses()) {
                     BDConexao conexao = BDConexao.getInstancia();
-                    StockAutoCheckService service = new StockAutoCheckService( conexao.getConnectionAtiva() );
-                    
-                    try
-                    {
+                    StockAutoCheckService service = new StockAutoCheckService(conexao.getConnectionAtiva());
+
+                    try {
                         service.verificarOuSalvarStockDiario();
-                    }
-                    catch ( SQLException e )
-                    {
+                    } catch (SQLException e) {
                         e.printStackTrace();
                     }
-                    
-                    if ( true )
-                    { // <- aqui você pode colocar sua regra de licença
-                        new LoginVisao( BDConexao.getInstancia() ).setVisible( true );
-                        
-                    }
-                    else
-                    {
-                        JOptionPane.showMessageDialog( null,
+
+                    if (true) { // <- aqui você pode colocar sua regra de licença
+                        new LoginVisao(BDConexao.getInstancia()).setVisible(true);
+
+                    } else {
+                        JOptionPane.showMessageDialog(null,
                                 "A sua licença expirou.\nPor favor contacte a DVML-COMERCIAL, Lda\nContactos: 923409284 / 940537124",
-                                "AVISO", JOptionPane.WARNING_MESSAGE );
+                                "AVISO", JOptionPane.WARNING_MESSAGE);
                     }
-                }
-                else
-                {
-                    JOptionPane.showMessageDialog( null, "NÃO FOI POSSÍVEL ACEDER A BASE DE DADOS",
-                            "ERRO NA BASE DE DADOS", JOptionPane.ERROR_MESSAGE );
+                } else {
+                    JOptionPane.showMessageDialog(null, "NÃO FOI POSSÍVEL ACEDER A BASE DE DADOS",
+                            "ERRO NA BASE DE DADOS", JOptionPane.ERROR_MESSAGE);
                 }
             }
-        } );
+        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -823,23 +816,21 @@ public class LoginVisao extends javax.swing.JFrame
     private javax.swing.JTextField txtUserName;
     // End of variables declaration//GEN-END:variables
 
-    private void limpar()
-    {
-        txtUserName.setText( "" );
-        pswSenha.setText( "" );
-        
+    private void limpar() {
+        txtUserName.setText("");
+        pswSenha.setText("");
+
     }
-    
-    private void alterarSenha()
-    {
-        JOptionPane.showMessageDialog( null, "A senha que está a usar Atualmente não é segura, deve mudar a senha!" );
+
+    private void alterarSenha() {
+        JOptionPane.showMessageDialog(null, "A senha que está a usar Atualmente não é segura, deve mudar a senha!");
         dispose();
-        new UsuarioAlterarSenhaVissao( usuarioDao.getUsuariowithEncriptedPass( txtUserName.getText(), new String( pswSenha.getPassword() ) ) );
+        new UsuarioAlterarSenhaVissao(usuarioDao.getUsuariowithEncriptedPass(txtUserName.getText(), new String(pswSenha.getPassword())));
     }
 
 //    public static void fazerBackupAgora() {
 //        String data = new SimpleDateFormat(YYYYMMDD_HHMMSS).format(new Date());
-////        String rodar_camando = "cmd /c mysqldump -uroot -pDoV90x?# --dump-date --triggers --tables --routines --skip-quote-names --compact --skip-opt --skip-set-charset --hex-blob kitanda_db > \"..\\BD_BACKUP\\_database_backup_" + data + ".sql\"";
+    ////        String rodar_camando = "cmd /c mysqldump -uroot -pDoV90x?# --dump-date --triggers --tables --routines --skip-quote-names --compact --skip-opt --skip-set-charset --hex-blob kitanda_db > \"..\\BD_BACKUP\\_database_backup_" + data + ".sql\"";
 //        String rodar_camando = "cmd /c mysqldump --single-transaction -uroot -pDoV90x?# --dump-date --triggers --add-drop-database --routines --skip-quote-names --skip-set-charset --add-locks --disable-keys --databases kitanda_db > \"..\\BD_BACKUP\\_database_backup_" + data + ".sql\"";
 ////String rodar_camando = "cmd /c mysqldump --single-transaction=TRUE -uroot -pDoV90x?# --dump-date --triggers --add-drop-database  --routines --skip-quote-names --compact --skip-opt --skip-set-charset --hex-blob --add-locks --disable-keys --lock-tables  --databases kitanda_db > \"..\\BD_BACKUP\\_database_backup_" + data + ".sql\"";
 //        Process rodarComandoWindows = rodarComandoWindows(rodar_camando, true);
@@ -848,20 +839,17 @@ public class LoginVisao extends javax.swing.JFrame
 //        System.err.println("Backup realizado com sucesso! ");
 //
 //    }
-    private void verificar_data_sistema()
-    {
+    private void verificar_data_sistema() {
         Date data_maxima_ultimo_doc = documentoDao.getMAxDataDoc();
         Date data_actual = new Date();
-        
-        if ( data_maxima_ultimo_doc != null )
-        {
-            if ( MetodosUtil.menor_data_1_data_2( data_actual, data_maxima_ultimo_doc ) )
-            {
-                JOptionPane.showMessageDialog( null, "Caro usário verifique a data do sistema", "AVISO", JOptionPane.WARNING_MESSAGE );
+
+        if (data_maxima_ultimo_doc != null) {
+            if (MetodosUtil.menor_data_1_data_2(data_actual, data_maxima_ultimo_doc)) {
+                JOptionPane.showMessageDialog(null, "Caro usário verifique a data do sistema", "AVISO", JOptionPane.WARNING_MESSAGE);
             }
-            
+
         }
-        
+
     }
 
 //    public static void fazerBackupAgora()
@@ -925,64 +913,96 @@ public class LoginVisao extends javax.swing.JFrame
 //        }
 //
 //    }
-    private void iniciarMonitoramento()
-    {
+    private void iniciarMonitoramento() {
         resetTimer();
 
         // Adiciona um listener global para detectar atividades do usuário
-        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher( ( KeyEvent e ) ->
-        {
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher((KeyEvent e)
+                -> {
             resetTimer();
             return false;
-        } );
-        
-        Toolkit.getDefaultToolkit().addAWTEventListener( ( AWTEvent event ) ->
-        {
-            if ( event.getID() == MouseEvent.MOUSE_MOVED
+        });
+
+        Toolkit.getDefaultToolkit().addAWTEventListener((AWTEvent event)
+                -> {
+            if (event.getID() == MouseEvent.MOUSE_MOVED
                     || event.getID() == MouseEvent.MOUSE_CLICKED
-                    || event.getID() == MouseEvent.MOUSE_PRESSED )
-            {
+                    || event.getID() == MouseEvent.MOUSE_PRESSED) {
                 resetTimer();
             }
-        }, AWTEvent.MOUSE_MOTION_EVENT_MASK | AWTEvent.MOUSE_EVENT_MASK );
+        }, AWTEvent.MOUSE_MOTION_EVENT_MASK | AWTEvent.MOUSE_EVENT_MASK);
     }
-    
-    private void resetTimer()
-    {
-        if ( logoutTimer != null )
-        {
+
+    private void resetTimer() {
+        if (logoutTimer != null) {
             logoutTimer.cancel();
         }
-        
+
         logoutTimer = new Timer();
-        logoutTimer.schedule( new TimerTask()
-        {
+        logoutTimer.schedule(new TimerTask() {
             @Override
-            public void run()
-            {
-                SwingUtilities.invokeLater( () ->
-                {
+            public void run() {
+                SwingUtilities.invokeLater(()
+                        -> {
                     //JOptionPane.showMessageDialog( null, "Sessão expirada! Voltando para o login." );
                     conexao.close();
                     logo_out();
-                } );
+                });
             }
-        }, TIMEOUT );
+        }, TIMEOUT);
     }
-    
-    public static void logo_out()
-    {
+
+    private void carregarAmbienteFE() {
+        String ambiente = null;
+        try {
+            TbDadosInstituicao dados = dadosInstituicaoDao.findTbDadosInstituicao(1);
+            if (dados != null) {
+                ambiente = dados.getAmbiente();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        FEConfig.carregarAmbiente(ambiente);
+    }
+
+    /**
+     * Mostra no topo do login em que ambiente da AGT o sistema arrancou
+     * (Homologação ou Produção), antes de o utilizador entrar.
+     */
+    private void adicionarFaixaAmbiente() {
+        boolean hml = FEConfig.isHomologacao();
+
+        JLabel lblAmbiente = new JLabel(
+                hml
+                        ? "AMBIENTE: HOMOLOGAÇÃO (testes)"
+                        : "AMBIENTE: PRODUÇÃO",
+                JLabel.CENTER);
+        lblAmbiente.setOpaque(true);
+        lblAmbiente.setForeground(Color.WHITE);
+        lblAmbiente.setBackground(hml ? new Color(190, 0, 0) : new Color(0, 130, 0));
+        lblAmbiente.setFont(lblAmbiente.getFont().deriveFont(java.awt.Font.BOLD, 14f));
+        lblAmbiente.setBorder(BorderFactory.createEmptyBorder(6, 4, 6, 4));
+
+        // Guarda o conteúdo desenhado no Design e coloca-o por baixo da faixa
+        java.awt.Container conteudoOriginal = getContentPane();
+        JPanel novoConteudo = new JPanel(new BorderLayout());
+        novoConteudo.add(lblAmbiente, BorderLayout.NORTH);
+        novoConteudo.add(conteudoOriginal, BorderLayout.CENTER);
+        setContentPane(novoConteudo);
+    }
+
+    public static void logo_out() {
 //        EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
 //        UsuarioDao usuarioDao = new UsuarioDao( emf );
 //        EmpresaDao empresaDao = new EmpresaDao( emf );
 //        TbUsuario usuario = usuarioDao.findTbUsuario( id_user );
 //        Empresa empresa = empresaDao.findEmpresa( id_empresa );
         MetodosUtil.fechar_todas_janelas();
-        MetodosUtil.actualizarEstadoLog( "OFF" );
+        MetodosUtil.actualizarEstadoLog("OFF");
         conexao.close();
-        new LoginVisao( BDConexao.getInstancia() ).setVisible( true );
+        new LoginVisao(BDConexao.getInstancia()).setVisible(true);
 
 //        new LoginVisao(BDConexao.getInstancia().getConnectionAtiva()).setVisible(true);
     }
-    
+
 }
