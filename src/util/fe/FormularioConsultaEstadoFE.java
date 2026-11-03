@@ -1966,8 +1966,19 @@ public class FormularioConsultaEstadoFE extends JFrame {
                     try {
                         Documento documento = venda.getFkDocumento();
                         TbCliente cliente = venda.getFkCliente();
+                        List<TbItemVenda> itens = venda.getTbItemVendaList();
 
                         log("Processando: " + venda.getCodFact());
+
+                        // Verificar se tem itens
+                        if (itens == null || itens.isEmpty()) {
+                            contagem[1]++;
+                            String msg = "✗ " + venda.getCodFact() + " - Nenhum item para enviar";
+                            publish(msg);
+                            feitos++;
+                            setProgress(feitos * 100 / pendentes.size());
+                            continue;
+                        }
 
                         // Enviar factura usando FacturaElectronicaUtil.criarFE
                         boolean enviada = FacturaElectronicaUtil.criarFE(
@@ -1975,7 +1986,7 @@ public class FormularioConsultaEstadoFE extends JFrame {
                                 dadosInst,
                                 documento,
                                 cliente,
-                                venda.getTbItemVendaList(),
+                                itens,
                                 conexao);
 
                         if (enviada && venda.getRequestID() != null) {
