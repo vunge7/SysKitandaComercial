@@ -108,6 +108,7 @@ public class FormularioConsultaEstadoFE extends JFrame {
 
     // ---- Facturas no portal da AGT (listarFacturas)
     private final JButton btnPesquisarAGT = new JButton("Pesquisar na AGT");
+    private final JButton btnEnviarPendentes = new JButton("Enviar para AGT");
     private final List<FacturaRemotaDTO> facturasAGT = new ArrayList<>();
     private final DefaultTableModel modelAGT = new DefaultTableModel(
             new Object[]{"Nº Documento", "Tipo", "Data", "Data Registo", "Estado Doc.",
@@ -247,21 +248,25 @@ public class FormularioConsultaEstadoFE extends JFrame {
         JPanel accoes = painelTitulado("Acções", new WrapLayout(FlowLayout.LEFT, 10, 4));
         accoes.add(btnPesquisar);
         accoes.add(btnPesquisarAGT);
+        accoes.add(btnEnviarPendentes);
         accoes.add(btnConsultar);
         accoes.add(btnActualizarTodas);
         accoes.add(btnVisualizar);
         accoes.add(btnActualizarEstado);
         btnActualizarEstado.setToolTipText("Consulta na AGT o estado de cada documento pendente e grava-o na base de dados local");
         btnActualizarEstado.setVisible(false); // aparece ao marcar "Mostrar todos no estado Pendente"
+        btnEnviarPendentes.setToolTipText("Enviar para a AGT as facturas do banco local que ainda não constam no portal");
 
         estilizarBotao(btnPesquisar, "/imagens/proucura.png", "Pesquisar na base de dados local (ou consulta individual)");
         estilizarBotao(btnPesquisarAGT, "/imagem/find/seach_32x32.png", "Listar as facturas registadas no portal da AGT");
+        estilizarBotao(btnEnviarPendentes, "/imagens/actualizar_1_32x32.png", "Enviar para a AGT as facturas locais não presentes");
         estilizarBotao(btnConsultar, "/imagens/img32x32/_info.png", "Consultar na AGT o estado da factura seleccionada");
         estilizarBotao(btnActualizarTodas, "/imagens/actualizar_1_32x32.png", "Consultar na AGT todas as facturas pendentes da lista");
         estilizarBotao(btnVisualizar, "/imagens/REPORTE.png", "Relatório \"Histórico de Facturação\" do intervalo de datas");
         estilizarBotao(btnActualizarEstado, "/imagens/actualizar_1_32x32.png", null);
         estilizarBotao(btnSair, "/imagens/LOGOUT - VERMELHO/Logout 32x32.png", "Fechar o formulário");
         btnActualizarEstado.setForeground(new Color(0, 110, 0));
+        btnEnviarPendentes.setForeground(new Color(0, 0, 150));
 
         JPanel topo = new JPanel();
         topo.setLayout(new javax.swing.BoxLayout(topo, javax.swing.BoxLayout.Y_AXIS));
@@ -457,6 +462,7 @@ public class FormularioConsultaEstadoFE extends JFrame {
         chkSoPendentes.addActionListener(e -> filtrarHistorico());
         btnActualizarEstado.addActionListener(e -> actualizarEstadoPendentesIndividual());
         btnPesquisarAGT.addActionListener(e -> pesquisarNaAGT());
+        btnEnviarPendentes.addActionListener(e -> enviarPendentesParaAGT());
         cbFiltro.addActionListener(e -> carregar());
         btnConsultar.addActionListener(e -> consultarSeleccionada());
         btnActualizarTodas.addActionListener(e -> actualizarTodasPendentes());
@@ -873,11 +879,13 @@ public class FormularioConsultaEstadoFE extends JFrame {
     private void actualizarControlos() {
         boolean individual = isModoIndividual();
         boolean abaLocal = abas.getSelectedIndex() <= 0;
+        boolean abaAGT = abas.getSelectedIndex() == 1;
 
         // modo "Consulta Estado das Facturas"
         cbFiltro.setEnabled(!ocupado && !individual);
         chkDatas.setEnabled(!ocupado && !individual);
         btnPesquisarAGT.setEnabled(!ocupado && !individual);
+        btnEnviarPendentes.setEnabled(!ocupado && !individual && abaAGT && !facturasAGT.isEmpty());
         btnConsultar.setEnabled(!ocupado && !individual && abaLocal);
         btnActualizarTodas.setEnabled(!ocupado && !individual && abaLocal);
 
@@ -1883,6 +1891,130 @@ public class FormularioConsultaEstadoFE extends JFrame {
         };
 
         // barra de progresso ligada ao setProgress do worker
+        worker.addPropertyChangeListener(evt -> {
+            if ("progress".equals(evt.getPropertyName())) {
+                barra.setValue((Integer) evt.getNewValue());
+            }
+        });
+        worker.execute();
+    }
+
+    // =====================================================
+    // ENVIAR PENDENTES PARA AGT
+    // =====================================================
+    private void enviarPendentesParaAGT() {
+        if (facturasAGT.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Faça primeiro uma pesquisa na AGT.");
+            return;
+        }
+
+        // Coletar números de facturas que já existem na AGT
+        final java.util.Set<String> jaExistemAGT = new java.util.HashSet<>();
+        for (FacturaRemotaDTO f : facturasAGT) {
+            if (f.getDocumentNo() != null) {
+                jaExistemAGT.add(f.getDocumentNo());
+            }
+        }
+
+        // Carregar todas as vendas com estado "Validado" ou "Pendente"
+        List<Integer> codigos = vendasController.findCodigosVendasFE(
+                conexao.getConnectionAtiva(), null,
+                dcDataInicio.getDate() != null ? inicioDoDia(dcDataInicio.getDate(), 0) : null,
+                dcDataFim.getDate() != null ? inicioDoDia(dcDataFim.getDate(), 1) : null);
+
+        // Identificar as que não constam na AGT
+        final List<TbVenda> pendentes = new ArrayList<>();
+        for (Integer cod : codigos) {
+            TbVenda v = (TbVenda) vendasController.findById(cod);
+            if (v != null && !jaExistemAGT.contains(v.getCodFact())) {
+                pendentes.add(v);
+            }
+        }
+
+        if (pendentes.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "Todas as facturas do período já constam no portal da AGT.\n"
+                    + "Nada para enviar.");
+            return;
+        }
+
+        int ok = JOptionPane.showConfirmDialog(this,
+                "Enviar " + pendentes.size() + " factura(s) para a AGT?\n\n"
+                + "Ambiente: " + (FEConfig.isHomologacao() ? "HOMOLOGAÇÃO" : "PRODUÇÃO") + "\n"
+                + "Período: " + new SimpleDateFormat("dd/MM/yyyy").format(dcDataInicio.getDate())
+                + " a " + new SimpleDateFormat("dd/MM/yyyy").format(dcDataFim.getDate()),
+                "Confirmar Envio", JOptionPane.YES_NO_OPTION);
+        if (ok != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        final TbDadosInstituicao dadosInst = dadosInstituicaoController.findByCodigo(1);
+        final int[] contagem = new int[2]; // 0 sucesso, 1 erro
+        setOcupado(true, null);
+        barra.setIndeterminate(false);
+        barra.setValue(0);
+        log("Enviando " + pendentes.size() + " factura(s) para a AGT...");
+
+        SwingWorker<Void, String> worker = new SwingWorker<Void, String>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                int feitos = 0;
+                for (TbVenda venda : pendentes) {
+                    try {
+                        Documento documento = venda.getFkDocumento();
+                        TbCliente cliente = venda.getFkCliente();
+
+                        // Enviar factura usando FacturaElectronicaUtil.criarFE
+                        boolean enviada = FacturaElectronicaUtil.criarFE(
+                                venda,
+                                dadosInst,
+                                documento,
+                                cliente,
+                                venda.getTbItemVendaList(),
+                                conexao);
+
+                        if (enviada) {
+                            contagem[0]++;
+                            publish("✓ " + venda.getCodFact() + ": enviada com sucesso");
+                        } else {
+                            contagem[1]++;
+                            publish("✗ " + venda.getCodFact() + ": erro no envio");
+                        }
+                    } catch (Exception e) {
+                        contagem[1]++;
+                        publish("✗ " + venda.getCodFact() + ": " + e.getMessage());
+                    }
+                    feitos++;
+                    setProgress(feitos * 100 / pendentes.size());
+                    Thread.sleep(500); // pausa entre envios
+                }
+                return null;
+            }
+
+            @Override
+            protected void process(List<String> chunks) {
+                for (String msg : chunks) {
+                    log(msg);
+                }
+                lblResumo.setText("OK: " + contagem[0] + "  Erro: " + contagem[1]);
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    get();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    log("Erro no envio em lote: " + e.getMessage());
+                }
+                setOcupado(false, "OK: " + contagem[0] + "  Erro: " + contagem[1]);
+                JOptionPane.showMessageDialog(FormularioConsultaEstadoFE.this,
+                        "Envio concluído.\nEnviadas com sucesso: " + contagem[0]
+                        + "\nCom erro: " + contagem[1]
+                        + "\n\nFaça uma nova pesquisa na AGT para confirmar o envio.");
+            }
+        };
+
         worker.addPropertyChangeListener(evt -> {
             if ("progress".equals(evt.getPropertyName())) {
                 barra.setValue((Integer) evt.getNewValue());
