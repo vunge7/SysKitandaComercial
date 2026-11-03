@@ -60,6 +60,7 @@ import util.MetodosUtil;
 import util.fe.dto.ConsultaEstadoDTO;
 import util.fe.dto.DocumentoHistoricoDTO;
 import util.fe.dto.FacturaRemotaDTO;
+import util.fe.payloads.PayloadFactory;
 
 /**
  * Formulário para consultar o estado das facturas na AGT e actualizar o estado
@@ -116,6 +117,13 @@ public class FormularioConsultaEstadoFE extends JFrame {
     private final JButton btnPesquisarAGT = new JButton("Pesquisar na AGT");
     private final JButton btnEnviarPendentes = new JButton("Enviar para AGT");
     private final List<FacturaRemotaDTO> facturasAGT = new ArrayList<>();
+    // Última pesquisa na AGT: período usado e se a lista veio completa (sem erro).
+    // O envio usa SEMPRE este período, para comparar o mesmo intervalo dos dois lados.
+    private Date agtPesquisaInicio;
+    private Date agtPesquisaFim;
+    private boolean agtListaCompleta = false;
+    // Nºs já enviados nesta janela (a lista da AGT só se actualiza com nova pesquisa)
+    private final java.util.Set<String> enviadasNestaSessao = new java.util.HashSet<>();
     private final DefaultTableModel modelAGT = new DefaultTableModel(
             new Object[]{"Nº Documento", "Tipo", "Data", "Data Registo", "Estado Doc.",
                 "Aceitação Cliente", "Total Líquido", "Imposto", "Total", "Ref./Pag.",
@@ -894,7 +902,8 @@ public class FormularioConsultaEstadoFE extends JFrame {
         cbFiltro.setEnabled(!ocupado && !individual);
         chkDatas.setEnabled(!ocupado && !individual);
         btnPesquisarAGT.setEnabled(!ocupado && !individual);
-        btnEnviarPendentes.setEnabled(!ocupado && !individual && abaAGT && !facturasAGT.isEmpty());
+        // basta uma pesquisa completa na AGT (mesmo com 0 facturas no portal)
+        btnEnviarPendentes.setEnabled(!ocupado && !individual && abaAGT && agtListaCompleta);
         btnConsultar.setEnabled(!ocupado && !individual && abaLocal);
         btnActualizarTodas.setEnabled(!ocupado && !individual && abaLocal);
 
@@ -939,6 +948,7 @@ public class FormularioConsultaEstadoFE extends JFrame {
         final String periodo = " de " + f.format(inicio) + " a " + f.format(fim);
 
         abas.setSelectedIndex(1);
+        agtListaCompleta = false; // até a nova lista chegar
         setOcupado(true, "A pesquisar na AGT...");
 
         new SwingWorker<ListarFacturasAGTUtil.Resultado, Void>() {
@@ -971,6 +981,9 @@ public class FormularioConsultaEstadoFE extends JFrame {
                     ListarFacturasAGTUtil.Resultado r = get();
                     facturasAGT.clear();
                     facturasAGT.addAll(r.getFacturas());
+                    agtPesquisaInicio = inicio;
+                    agtPesquisaFim = fim;
+                    agtListaCompleta = r.getMensagemErro() == null;
                     preencherTabelaAGT();
 
                     int naoExistem = 0;
@@ -1911,120 +1924,204 @@ public class FormularioConsultaEstadoFE extends JFrame {
     // =====================================================
     // ENVIAR PENDENTES PARA AGT
     // =====================================================
+    /**
+     * Envia para a AGT as Facturas (FT), Facturas Recibo (FR), Notas de Crédito
+     * (NC) e Recibos (RC) da BD local que NÃO constam da última pesquisa no
+     * portal (mesmo período), por ordem cronológica. Não cria nem altera
+     * vendas: só actualiza requestID / estado / submissionUUID com o que a AGT
+     * devolveu (registarFactura + obterEstado).
+     */
     private void enviarPendentesParaAGT() {
-        if (facturasAGT.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Faça primeiro uma pesquisa na AGT.");
+        if (!agtListaCompleta || agtPesquisaInicio == null || agtPesquisaFim == null) {
+            JOptionPane.showMessageDialog(this,
+                    "Faça primeiro uma pesquisa completa na AGT (botão \"Pesquisar na AGT\").\n"
+                    + "Só se envia depois de saber o que já está no portal, para não repetir facturas.");
             return;
         }
 
-        // Coletar números de facturas que já existem na AGT
-        final java.util.Set<String> jaExistemAGT = new java.util.HashSet<>();
-        for (FacturaRemotaDTO f : facturasAGT) {
-            if (f.getDocumentNo() != null) {
-                jaExistemAGT.add(f.getDocumentNo());
+        // Mesmo período da pesquisa na AGT (não o que estiver agora nas datas)
+        final Date inicio = inicioDoDia(agtPesquisaInicio, 0);
+        final Date fimExclusivo = inicioDoDia(agtPesquisaFim, 1);
+        final SimpleDateFormat f = new SimpleDateFormat("dd/MM/yyyy");
+        final String periodo = f.format(agtPesquisaInicio) + " a " + f.format(agtPesquisaFim);
+
+        // Nºs que já estão no portal + os já enviados nesta janela
+        final java.util.Set<String> jaExistem = new java.util.HashSet<>();
+        for (FacturaRemotaDTO r : facturasAGT) {
+            if (r.getDocumentNo() != null) {
+                jaExistem.add(r.getDocumentNo().trim());
             }
         }
+        jaExistem.addAll(enviadasNestaSessao);
 
-        // Carregar todas as vendas com estado "Validado" ou "Pendente"
-        List<Integer> codigos = vendasController.findCodigosVendasFE(
-                conexao.getConnectionAtiva(), null,
-                dcDataInicio.getDate() != null ? inicioDoDia(dcDataInicio.getDate(), 0) : null,
-                dcDataFim.getDate() != null ? inicioDoDia(dcDataFim.getDate(), 1) : null);
+        setOcupado(true, "A comparar a BD local com a AGT...");
 
-        // Identificar as que não constam na AGT
-        final List<TbVenda> pendentes = new ArrayList<>();
-        for (Integer cod : codigos) {
-            TbVenda v = (TbVenda) vendasController.findById(cod);
-            if (v != null && !jaExistemAGT.contains(v.getCodFact())) {
-                pendentes.add(v);
+        new SwingWorker<List<TbVenda>, Void>() {
+            @Override
+            protected List<TbVenda> doInBackground() {
+                List<Integer> codigos = vendasController.findCodigosVendasParaComunicarAGT(
+                        conexao.getConnectionAtiva(), inicio, fimExclusivo);
+                List<TbVenda> faltam = new ArrayList<>();
+                for (Integer cod : codigos) {
+                    TbVenda v = (TbVenda) vendasController.findById(cod);
+                    if (v != null && v.getCodFact() != null
+                            && !jaExistem.contains(v.getCodFact().trim())) {
+                        faltam.add(v);
+                    }
+                }
+                return faltam;
             }
-        }
 
+            @Override
+            protected void done() {
+                List<TbVenda> faltam;
+                try {
+                    faltam = get();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    log("Erro ao comparar com a AGT: " + e.getMessage());
+                    setOcupado(false, " ");
+                    return;
+                }
+                setOcupado(false, " ");
+                confirmarEEnviarParaAGT(faltam, periodo);
+            }
+        }.execute();
+    }
+
+    private void confirmarEEnviarParaAGT(final List<TbVenda> pendentes, String periodo) {
         if (pendentes.isEmpty()) {
+            log("Envio AGT (" + periodo + "): todas as facturas locais já constam no portal.");
             JOptionPane.showMessageDialog(this,
-                    "Todas as facturas do período já constam no portal da AGT.\n"
+                    "Todos os documentos (FT/FR/NC/RC) de " + periodo + " já constam no portal da AGT.\n"
                     + "Nada para enviar.");
             return;
         }
 
+        StringBuilder lista = new StringBuilder();
+        for (int i = 0; i < pendentes.size() && i < 15; i++) {
+            lista.append("  • ").append(pendentes.get(i).getCodFact()).append("\n");
+        }
+        if (pendentes.size() > 15) {
+            lista.append("  ... e mais ").append(pendentes.size() - 15).append("\n");
+        }
+
         int ok = JOptionPane.showConfirmDialog(this,
-                "Enviar " + pendentes.size() + " factura(s) para a AGT?\n\n"
-                + "Ambiente: " + (FEConfig.isHomologacao() ? "HOMOLOGAÇÃO" : "PRODUÇÃO") + "\n"
-                + "Período: " + new SimpleDateFormat("dd/MM/yyyy").format(dcDataInicio.getDate())
-                + " a " + new SimpleDateFormat("dd/MM/yyyy").format(dcDataFim.getDate()),
-                "Confirmar Envio", JOptionPane.YES_NO_OPTION);
+                pendentes.size() + " documento(s) da BD local NÃO constam no portal da AGT:\n\n"
+                + lista
+                + "\nAmbiente: " + (FEConfig.isHomologacao() ? "HOMOLOGAÇÃO" : "PRODUÇÃO")
+                + "\nPeríodo: " + periodo
+                + "\n\nEnviar agora para a AGT?"
+                + "\n(na BD local só são actualizados o RequestID e o estado devolvidos pela AGT)",
+                "Confirmar Envio", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (ok != JOptionPane.YES_OPTION) {
             return;
         }
 
         final TbDadosInstituicao dadosInst = dadosInstituicaoController.findByCodigo(1);
-        final VendasController vendasCtrl = vendasController;
-        final int[] contagem = new int[2]; // 0 sucesso, 1 erro
+        final int[] contagem = new int[3]; // 0 enviadas, 1 já existiam, 2 erro
+        final List<String> numerosNaAGT = new ArrayList<>(); // enviadas + já existentes
         setOcupado(true, null);
         barra.setIndeterminate(false);
         barra.setValue(0);
-        log("Enviando " + pendentes.size() + " factura(s) para a AGT...");
+        log("A enviar " + pendentes.size() + " factura(s) para a AGT (" + periodo + ")...");
 
         SwingWorker<Void, String> worker = new SwingWorker<Void, String>() {
             @Override
             protected Void doInBackground() throws Exception {
-                int feitos = 0;
-                for (TbVenda venda : pendentes) {
-                    try {
-                        // Recarregar dados via controllers, igual ao AutoGeneratedFE
-                        Documento documento = documentosController.findDocumentoById(
-                                venda.getFkDocumento().getPkDocumento());
-                        TbCliente cliente = clientesController.findByCodigo(
-                                venda.getCodigoCliente().getCodigo());
-                        List<TbItemVenda> itens = itensController.listarTodosByCodigoVenda(venda.getCodigo());
-
-                        log("Processando: " + venda.getCodFact() + " (" + (itens != null ? itens.size() : 0) + " itens)");
-
-                        // Verificar se tem itens
-                        if (itens == null || itens.isEmpty()) {
-                            contagem[1]++;
-                            String msg = "✗ " + venda.getCodFact() + " - Sem itens na base de dados";
-                            publish(msg);
-                            feitos++;
-                            setProgress(feitos * 100 / pendentes.size());
-                            continue;
+                PayloadFactory.setModoSilencioso(true); // sem janelas por cada factura
+                try {
+                    int feitos = 0;
+                    for (TbVenda venda : pendentes) {
+                        enviarUma(venda);
+                        feitos++;
+                        setProgress(feitos * 100 / pendentes.size());
+                        if (feitos < pendentes.size()) {
+                            Thread.sleep(800); // pausa entre envios
                         }
-
-                        // Enviar factura usando FacturaElectronicaUtil.criarFE
-                        boolean enviada = FacturaElectronicaUtil.criarFE(
-                                venda,
-                                dadosInst,
-                                documento,
-                                cliente,
-                                itens,
-                                conexao);
-
-                        if (enviada && venda.getRequestID() != null) {
-                            contagem[0]++;
-                            String msg = "✓ " + venda.getCodFact()
-                                    + " (RequestID: " + venda.getRequestID()
-                                    + ", Estado: " + venda.getEstado() + ")";
-                            publish(msg);
-                        } else {
-                            contagem[1]++;
-                            String estado = venda.getEstado() != null ? venda.getEstado() : "desconhecido";
-                            String reqId = venda.getRequestID() != null ? venda.getRequestID() : "sem RequestID";
-                            String msg = "✗ " + venda.getCodFact()
-                                    + " - Estado: " + estado + ", RequestID: " + reqId;
-                            publish(msg);
-                        }
-                    } catch (Exception e) {
-                        contagem[1]++;
-                        String msg = "✗ " + venda.getCodFact() + ": " + e.getClass().getSimpleName()
-                                + " - " + (e.getMessage() != null ? e.getMessage() : "erro desconhecido");
-                        publish(msg);
-                        e.printStackTrace();
                     }
-                    feitos++;
-                    setProgress(feitos * 100 / pendentes.size());
-                    Thread.sleep(800); // pausa entre envios
+                } finally {
+                    PayloadFactory.setModoSilencioso(false);
                 }
                 return null;
+            }
+
+            private void enviarUma(TbVenda venda) {
+                String num = venda.getCodFact();
+                try {
+                    // Recarregar dados via controllers, igual ao AutoGeneratedFE
+                    Documento documento = documentosController.findDocumentoById(
+                            venda.getFkDocumento().getPkDocumento());
+                    TbCliente cliente = clientesController.findByCodigo(
+                            venda.getCodigoCliente().getCodigo());
+                    boolean recibo = venda.getFkDocumento().getPkDocumento() == DVML.DOC_RECIBO_RC;
+
+                    // RC: documentos pagos (amortizacao_divida); FT/FR/NC: itens
+                    List<util.fe.dto.SourceDocumentDTO> pagos = null;
+                    List<TbItemVenda> itens = null;
+                    int linhas;
+                    if (recibo) {
+                        pagos = vendasController.findDocumentosPagosPorRecibo(
+                                conexao.getConnectionAtiva(), num);
+                        linhas = pagos.size();
+                    } else {
+                        itens = itensController.listarTodosByCodigoVenda(venda.getCodigo());
+                        linhas = itens == null ? 0 : itens.size();
+                    }
+                    if (linhas == 0) {
+                        contagem[2]++;
+                        publish("✗ " + num + (recibo
+                                ? " - recibo sem documentos pagos (amortizações) na base de dados"
+                                : " - sem itens na base de dados"));
+                        return;
+                    }
+
+                    PayloadFactory.limparUltimosErros();
+                    venda.setRequestID(null); // só em memória: saber se a AGT devolveu um novo
+                    boolean enviada = recibo
+                            ? FacturaElectronicaUtil.criarFERecibo(venda, dadosInst, documento, cliente, pagos)
+                            : FacturaElectronicaUtil.criarFE(venda, dadosInst, documento, cliente, itens, conexao);
+
+                    // RequestID veio da AGT (registarFactura) e o estado do obterEstado:
+                    // substitui na BD o que lá estava (ex.: requestID = cod_fact).
+                    // Só UPDATE de requestID/estado/submissionUUID desta venda.
+                    // (não grava se a AGT recusou por nº duplicado: esse RequestID é do
+                    // pedido recusado, não do documento que já está no repositório)
+                    boolean duplicado = PayloadFactory.ultimoErroNumeroDuplicado();
+                    String gravacao = "";
+                    if (!duplicado && venda.getRequestID() != null && !venda.getRequestID().trim().isEmpty()
+                            && !venda.getRequestID().equals(num)) {
+                        if (venda.getEstado() == null || venda.getEstado().trim().isEmpty()) {
+                            venda.setEstado("P");
+                        }
+                        boolean gravado = vendasController.actualizarEstadoFE(venda, conexao.getConnectionAtiva());
+                        gravacao = gravado ? " [gravado na BD]" : " [ATENÇÃO: não foi possível gravar na BD]";
+                    }
+
+                    if (duplicado) {
+                        // a AGT diz que o nº já está no repositório: não é erro, não repete
+                        contagem[1]++;
+                        numerosNaAGT.add(num);
+                        publish("= " + num + " - já constava no repositório da AGT (não repetida)");
+                    } else if (enviada && venda.getRequestID() != null) {
+                        contagem[0]++;
+                        numerosNaAGT.add(num);
+                        publish("✓ " + num + " (" + linhas + (recibo ? " doc. pagos" : " itens") + ") - RequestID: "
+                                + venda.getRequestID() + ", Estado: " + textoEstado(venda.getEstado()) + gravacao);
+                    } else {
+                        contagem[2]++;
+                        List<String> erros = PayloadFactory.getUltimosErros();
+                        publish("✗ " + num + " - " + (erros.isEmpty()
+                                ? "sem resposta válida da AGT" : String.join(" | ", erros))
+                                + (gravacao.isEmpty() ? "" : " (RequestID " + venda.getRequestID()
+                                + ", Estado: " + textoEstado(venda.getEstado()) + ")" + gravacao));
+                    }
+                } catch (Exception e) {
+                    contagem[2]++;
+                    publish("✗ " + num + ": " + e.getClass().getSimpleName()
+                            + " - " + (e.getMessage() != null ? e.getMessage() : "erro desconhecido"));
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -2032,7 +2129,8 @@ public class FormularioConsultaEstadoFE extends JFrame {
                 for (String msg : chunks) {
                     log(msg);
                 }
-                lblResumo.setText("OK: " + contagem[0] + "  Erro: " + contagem[1]);
+                lblResumo.setText("Enviadas: " + contagem[0] + "  Já existiam: " + contagem[1]
+                        + "  Erro: " + contagem[2]);
             }
 
             @Override
@@ -2043,11 +2141,18 @@ public class FormularioConsultaEstadoFE extends JFrame {
                     e.printStackTrace();
                     log("Erro no envio em lote: " + e.getMessage());
                 }
-                setOcupado(false, "OK: " + contagem[0] + "  Erro: " + contagem[1]);
+                enviadasNestaSessao.addAll(numerosNaAGT);
+                String resumo = "Enviadas: " + contagem[0] + "  Já existiam: " + contagem[1]
+                        + "  Erro: " + contagem[2];
+                log("Envio AGT concluído - " + resumo);
+                setOcupado(false, resumo);
                 JOptionPane.showMessageDialog(FormularioConsultaEstadoFE.this,
-                        "Envio concluído.\n\nEnviadas com sucesso: " + contagem[0]
-                        + "\nCom erro: " + contagem[1]
-                        + "\n\nFaça uma nova pesquisa na AGT para confirmar o envio.");
+                        "Envio concluído.\n\nEnviadas para a AGT: " + contagem[0]
+                        + "\nJá existiam no repositório (não repetidas): " + contagem[1]
+                        + "\nCom erro: " + contagem[2]
+                        + (contagem[2] > 0 ? "\n\nVeja os erros no Registo." : "")
+                        + "\n\nA lista do Portal AGT vai ser actualizada.");
+                pesquisarNaAGT(); // confirmar o que ficou no portal
             }
         };
 

@@ -2213,6 +2213,78 @@ public List<Integer> findCodigosVendasFE(Connection connection, String estado,
 }
 
 /**
+ * Facturas (FT), Facturas Recibo (FR), Notas de Crédito (NC) e Recibos (RC)
+ * do período, comunicados ou NÃO à AGT (ao contrário do findCodigosVendasFE,
+ * não exige requestID). Ficam de fora as proformas (têm requestID = cod_fact
+ * mas nunca vão à AGT). As anuladas ENTRAM: foram emitidas e a NC que as
+ * anula referencia-as, por isso têm de existir na AGT.
+ * Ordem cronológica (codigo ASC): o documento de origem vai antes da NC/RC.
+ * Só leitura: não altera nada na BD.
+ *
+ * @param inicio data/hora inicial (inclusiva)
+ * @param fimExclusivo data/hora final (EXCLUSIVA)
+ */
+public List<Integer> findCodigosVendasParaComunicarAGT(Connection connection,
+        Date inicio, Date fimExclusivo) {
+
+    List<Integer> codigos = new ArrayList<>();
+    String sql = "SELECT codigo FROM tb_venda "
+            + "WHERE fk_documento IN (" + DVML.DOC_FACTURA_RECIBO_FR + ", " + DVML.DOC_FACTURA_FT
+            + ", " + DVML.DOC_NOTA_CREDITO_NC + ", " + DVML.DOC_RECIBO_RC + ") "
+            + "AND cod_fact IS NOT NULL AND cod_fact <> '' "
+            + "AND dataVenda >= ? AND dataVenda < ? "
+            + "ORDER BY codigo ASC";
+
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setTimestamp(1, new java.sql.Timestamp(inicio.getTime()));
+        ps.setTimestamp(2, new java.sql.Timestamp(fimExclusivo.getTime()));
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                codigos.add(rs.getInt("codigo"));
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return codigos;
+}
+
+/**
+ * Documentos pagos por um recibo (para o paymentReceipt da AGT), a partir
+ * da amortizacao_divida gravada pelo EmissaoRecibos (ref_cod_fact = nº do
+ * recibo, fk_venda = factura paga, valor_pago = valor liquidado).
+ * Só leitura.
+ */
+public List<util.fe.dto.SourceDocumentDTO> findDocumentosPagosPorRecibo(Connection connection,
+        String codFactRecibo) {
+
+    List<util.fe.dto.SourceDocumentDTO> fontes = new ArrayList<>();
+    String sql = "SELECT v.cod_fact, v.dataVenda, a.valor_pago "
+            + "FROM amortizacao_divida a INNER JOIN tb_venda v ON v.codigo = a.fk_venda "
+            + "WHERE a.ref_cod_fact = ? ORDER BY a.pk_amortizacao_divida";
+
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setString(1, codFactRecibo);
+        try (ResultSet rs = ps.executeQuery()) {
+            int linha = 1;
+            while (rs.next()) {
+                util.fe.dto.SourceDocumentDTO sd = new util.fe.dto.SourceDocumentDTO();
+                sd.setLineNo(linha++);
+                sd.setOriginatingON(rs.getString("cod_fact"));
+                java.sql.Timestamp data = rs.getTimestamp("dataVenda");
+                sd.setDocumentDate(data == null ? null : util.fe.DataUtil.converterNormal(data));
+                java.math.BigDecimal valor = rs.getBigDecimal("valor_pago");
+                sd.setCreditAmount(valor == null ? java.math.BigDecimal.ZERO : valor);
+                fontes.add(sd);
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return fontes;
+}
+
+/**
  * Histórico de facturação de um cliente: facturas, facturas recibo, recibos e
  * notas de crédito no intervalo [inicio, fimExclusivo).
  *
@@ -2380,11 +2452,19 @@ public Map<String, String> findClienteNifPorCodFact(Connection connection, Colle
 
     public boolean updateFieldsFE(String submissionUUID, String requesID, String estado, int codigo) {
 
-        String sql = "UPDATE tb_venda SET submissionUUID = '" + submissionUUID
-                    + "' AND " + " requestID = '" + requesID
-                    + "' AND estado = '" + estado + "'"
-                    + " WHERE codigo = " + codigo;
-        return conexao.executeUpdate(sql);
+        // Antes: "SET a = 'x' AND requestID = 'y' AND estado = 'z'" -> o MySQL gravava
+        // 0/1 em submissionUUID e não mudava requestID nem estado. Separadores = vírgulas.
+        String sql = "UPDATE tb_venda SET submissionUUID = ?, requestID = ?, estado = ? WHERE codigo = ?";
+        try (PreparedStatement ps = conexao.getConnectionAtiva().prepareStatement(sql)) {
+            ps.setString(1, submissionUUID);
+            ps.setString(2, requesID);
+            ps.setString(3, estado);
+            ps.setInt(4, codigo);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }

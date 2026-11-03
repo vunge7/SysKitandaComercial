@@ -46,6 +46,39 @@ public class FacturaElectronicaUtil {
         return processarEnvioFE(venda, inst, doc, cli, lines);
     }
 
+    /**
+     * Comunica à AGT um recibo (RC/RG) já emitido, com os documentos que pagou
+     * (paymentReceipt). Mesmo documento que o EmissaoRecibos.criarFE monta:
+     * sem IVA, total = soma dos valores pagos. Não grava nada na BD: o
+     * RequestID/estado ficam só no objecto "recibo".
+     */
+    public static boolean criarFERecibo(TbVenda recibo, TbDadosInstituicao inst, Documento doc, TbCliente cli,
+            List<SourceDocumentDTO> documentosPagos) {
+        DocumentDTO docDTO = new DocumentDTO();
+        docDTO.setDocumentNo(recibo.getCodFact());
+        docDTO.setDocumentStatus("N");
+        docDTO.setDocumentDate(DataUtil.converterNormal(recibo.getDataVenda()));
+        docDTO.setDocumentType(doc.getAbreviacao());
+        docDTO.setEacCode("12345");
+        docDTO.setSystemEntryDate(DataUtil.converter(recibo.getDataVenda()));
+        docDTO.setCustomerTaxID(cli.getNif());
+        docDTO.setCustomerCountry(cli.getPaisISO());
+        docDTO.setCompanyName(cli.getNome());
+        docDTO.setSourceDocuments(documentosPagos);
+
+        BigDecimal total = BigDecimal.ZERO;
+        for (SourceDocumentDTO sd : documentosPagos) {
+            total = total.add(sd.getCreditAmount());
+        }
+        DocumentTotalsDTO totals = new DocumentTotalsDTO();
+        totals.setNetTotal(total);
+        totals.setTaxPayable(BigDecimal.ZERO);
+        totals.setGrossTotal(total);
+        docDTO.setDocumentTotals(totals);
+
+        return enviarParaAPI(inst.getNif(), docDTO, recibo);
+    }
+
     // --- LÓGICA DE MAPEAMENTO (ISOLAMENTO) ---
     private static LineDTO mapTableLineToDTO(int index, JTable table, TableColumIdUtil cols, TbVenda venda) {
         String idProd = table.getValueAt(index, cols.COLUMN_PRODUTO_ID).toString();
