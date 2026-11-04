@@ -1576,8 +1576,8 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
 
 //                    if ( venda_local.getDataVenda().getYear() == new Date().getYear()
 //                            && venda_local.getDataVenda().getMonth() == new Date().getMonth() )
-                    if ( MetodosUtil.mesmoMesData( venda_local.getDataVenda(), new Date() ) )
-                    {
+//                    if ( MetodosUtil.mesmoMesData( venda_local.getDataVenda(), new Date() ) )
+//                    {
                         if ( venda_local.getStatusEliminado().equals( "false" ) )
                         {
                             //3.1 preencher a tabela com os itens
@@ -1621,11 +1621,11 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
                             MetodosUtil.showMessageUtil( "Atenção: esta factura já foi anulada por ordem.", TIPO_MENSAGEM_AVISO );
                         }
 
-                    }
-                    else
-                    {
-                        JOptionPane.showMessageDialog( null, "Atenção:\nO documento a ser anulado, deve estar no mesmo período do mês em curso.", "Aviso", JOptionPane.WARNING_MESSAGE );
-                    }
+//                    }
+//                    else
+//                    {
+//                        JOptionPane.showMessageDialog( null, "Atenção:\nO documento a ser anulado, deve estar no mesmo período do mês em curso.", "Aviso", JOptionPane.WARNING_MESSAGE );
+//                    }
 
                 }
                 else

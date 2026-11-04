@@ -75,9 +75,11 @@ import util.fe.payloads.PayloadFactory;
  */
 public class FormularioConsultaEstadoFE extends JFrame {
 
-    private static final int COL_ESTADO = 5;
-    private static final int COL_AGT_EXISTE_LOCAL = 10;
-    private static final int COL_AGT_ESTADO = 11;
+    private static final int COL_REQUEST_ID = 5;
+    private static final int COL_ESTADO = 6;
+    private static final int COL_AGT_ACEITACAO = 6;
+    private static final int COL_AGT_EXISTE_LOCAL = 11;
+    private static final int COL_AGT_ESTADO = 12;
 
     private final BDConexao conexao;
     private final VendasController vendasController;
@@ -100,12 +102,16 @@ public class FormularioConsultaEstadoFE extends JFrame {
     private final JButton btnPesquisar = new JButton("Pesquisar");
     private final JButton btnConsultar = new JButton("Consultar seleccionada");
     private final JButton btnActualizarTodas = new JButton("Actualizar todas as pendentes");
+    private final JButton btnImprimir = new JButton("Imprimir");
+    // Período com que a tabela local foi carregada (null = sem filtro de datas)
+    private Date localPesquisaInicio;
+    private Date localPesquisaFim;
     private final JProgressBar barra = new JProgressBar(0, 100);
     private final JTextArea txtLog = new JTextArea(7, 40);
     private final JLabel lblResumo = new JLabel(" ");
 
     private final DefaultTableModel model = new DefaultTableModel(
-            new Object[]{"Código", "Nº Factura", "Data", "Total", "RequestID", "Estado"}, 0) {
+            new Object[]{"Código", "Nº Factura", "NIF Cliente", "Data", "Total", "RequestID", "Estado"}, 0) {
         @Override
         public boolean isCellEditable(int row, int column) {
             return false;
@@ -125,7 +131,7 @@ public class FormularioConsultaEstadoFE extends JFrame {
     // Nºs já enviados nesta janela (a lista da AGT só se actualiza com nova pesquisa)
     private final java.util.Set<String> enviadasNestaSessao = new java.util.HashSet<>();
     private final DefaultTableModel modelAGT = new DefaultTableModel(
-            new Object[]{"Nº Documento", "Tipo", "Data", "Data Registo", "Estado Doc.",
+            new Object[]{"Nº Documento", "NIF Cliente", "Tipo", "Data", "Data Registo", "Estado Doc.",
                 "Aceitação Cliente", "Total Líquido", "Imposto", "Total", "Ref./Pag.",
                 "Existe na BD local?", "Estado"}, 0) {
         @Override
@@ -168,7 +174,7 @@ public class FormularioConsultaEstadoFE extends JFrame {
     private Date historicoInicio;
     private Date historicoFim;
     private final DefaultTableModel modelIndividual = new DefaultTableModel(
-            new Object[]{"Nº Documento", "Tipo Documento", "Data", "Estado", "Total Geral"}, 0) {
+            new Object[]{"Nº Documento", "NIF Cliente", "Tipo Documento", "Data", "Estado", "Total Geral"}, 0) {
         @Override
         public boolean isCellEditable(int row, int column) {
             return false;
@@ -270,6 +276,7 @@ public class FormularioConsultaEstadoFE extends JFrame {
         accoes.add(btnActualizarTodas);
         accoes.add(btnVisualizar);
         accoes.add(btnActualizarEstado);
+        accoes.add(btnImprimir);
         btnActualizarEstado.setToolTipText("Consulta na AGT o estado de cada documento pendente e grava-o na base de dados local");
         btnActualizarEstado.setVisible(false); // aparece ao marcar "Mostrar todos no estado Pendente"
         btnEnviarPendentes.setToolTipText("Enviar para a AGT as facturas do banco local que ainda não constam no portal");
@@ -281,6 +288,7 @@ public class FormularioConsultaEstadoFE extends JFrame {
         estilizarBotao(btnActualizarTodas, "/imagens/actualizar_1_32x32.png", "Consultar na AGT todas as facturas pendentes da lista");
         estilizarBotao(btnVisualizar, "/imagens/REPORTE.png", "Relatório \"Histórico de Facturação\" do intervalo de datas");
         estilizarBotao(btnActualizarEstado, "/imagens/actualizar_1_32x32.png", null);
+        estilizarBotao(btnImprimir, "/imagens/bonus/icons8_print_200px.png", "Ver em relatório os dados da tabela actual, no intervalo de datas pesquisado");
         estilizarBotao(btnSair, "/imagens/LOGOUT - VERMELHO/Logout 32x32.png", "Fechar o formulário");
         btnActualizarEstado.setForeground(new Color(0, 110, 0));
         btnEnviarPendentes.setForeground(new Color(0, 0, 150));
@@ -299,9 +307,10 @@ public class FormularioConsultaEstadoFE extends JFrame {
         estilizarTabela(tabela);
         tabela.getColumnModel().getColumn(0).setPreferredWidth(60);
         tabela.getColumnModel().getColumn(1).setPreferredWidth(200);
-        tabela.getColumnModel().getColumn(2).setPreferredWidth(170);
-        tabela.getColumnModel().getColumn(3).setPreferredWidth(130);
-        tabela.getColumnModel().getColumn(4).setPreferredWidth(180);
+        tabela.getColumnModel().getColumn(2).setPreferredWidth(120);
+        tabela.getColumnModel().getColumn(3).setPreferredWidth(170);
+        tabela.getColumnModel().getColumn(4).setPreferredWidth(130);
+        tabela.getColumnModel().getColumn(5).setPreferredWidth(180);
         tabela.getColumnModel().getColumn(COL_ESTADO).setPreferredWidth(110);
         tabela.getColumnModel().getColumn(COL_ESTADO).setCellRenderer(new EstadoRenderer());
         tabela.setToolTipText("Duplo clique para ver o documento impresso (2ª via)");
@@ -317,12 +326,13 @@ public class FormularioConsultaEstadoFE extends JFrame {
 
         estilizarTabela(tabelaAGT);
         tabelaAGT.getColumnModel().getColumn(0).setPreferredWidth(200);
-        tabelaAGT.getColumnModel().getColumn(1).setPreferredWidth(50);
-        tabelaAGT.getColumnModel().getColumn(2).setPreferredWidth(100);
-        tabelaAGT.getColumnModel().getColumn(3).setPreferredWidth(160);
-        tabelaAGT.getColumnModel().getColumn(4).setPreferredWidth(110);
-        tabelaAGT.getColumnModel().getColumn(5).setPreferredWidth(130);
-        tabelaAGT.getColumnModel().getColumn(9).setPreferredWidth(80);
+        tabelaAGT.getColumnModel().getColumn(1).setPreferredWidth(120);
+        tabelaAGT.getColumnModel().getColumn(2).setPreferredWidth(50);
+        tabelaAGT.getColumnModel().getColumn(3).setPreferredWidth(100);
+        tabelaAGT.getColumnModel().getColumn(4).setPreferredWidth(160);
+        tabelaAGT.getColumnModel().getColumn(5).setPreferredWidth(110);
+        tabelaAGT.getColumnModel().getColumn(6).setPreferredWidth(130);
+        tabelaAGT.getColumnModel().getColumn(10).setPreferredWidth(80);
         tabelaAGT.getColumnModel().getColumn(COL_AGT_EXISTE_LOCAL).setPreferredWidth(150);
         tabelaAGT.getColumnModel().getColumn(COL_AGT_EXISTE_LOCAL).setCellRenderer(new ExisteLocalRenderer());
         tabelaAGT.getColumnModel().getColumn(COL_AGT_ESTADO).setPreferredWidth(110);
@@ -339,14 +349,15 @@ public class FormularioConsultaEstadoFE extends JFrame {
 
         estilizarTabela(tabelaIndividual);
         tabelaIndividual.getColumnModel().getColumn(0).setPreferredWidth(260);
-        tabelaIndividual.getColumnModel().getColumn(1).setPreferredWidth(170);
-        tabelaIndividual.getColumnModel().getColumn(2).setPreferredWidth(180);
+        tabelaIndividual.getColumnModel().getColumn(1).setPreferredWidth(120);
+        tabelaIndividual.getColumnModel().getColumn(2).setPreferredWidth(170);
         tabelaIndividual.getColumnModel().getColumn(3).setPreferredWidth(180);
-        tabelaIndividual.getColumnModel().getColumn(3).setCellRenderer(new EstadoRenderer());
-        tabelaIndividual.getColumnModel().getColumn(4).setPreferredWidth(170);
+        tabelaIndividual.getColumnModel().getColumn(4).setPreferredWidth(180);
+        tabelaIndividual.getColumnModel().getColumn(4).setCellRenderer(new EstadoRenderer());
+        tabelaIndividual.getColumnModel().getColumn(5).setPreferredWidth(170);
         DefaultTableCellRenderer direita = new DefaultTableCellRenderer();
         direita.setHorizontalAlignment(JLabel.RIGHT);
-        tabelaIndividual.getColumnModel().getColumn(4).setCellRenderer(direita);
+        tabelaIndividual.getColumnModel().getColumn(5).setCellRenderer(direita);
         tabelaIndividual.setToolTipText("Clique numa linha para ver o documento impresso (2ª via)");
         tabelaIndividual.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.HAND_CURSOR));
         tabelaIndividual.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -483,6 +494,7 @@ public class FormularioConsultaEstadoFE extends JFrame {
         cbFiltro.addActionListener(e -> carregar());
         btnConsultar.addActionListener(e -> consultarSeleccionada());
         btnActualizarTodas.addActionListener(e -> actualizarTodasPendentes());
+        btnImprimir.addActionListener(e -> imprimirTabelaActual());
 
         aplicarModo();
     }
@@ -774,6 +786,8 @@ public class FormularioConsultaEstadoFE extends JFrame {
                 try {
                     vendas.clear();
                     vendas.addAll(get());
+                    localPesquisaInicio = inicio;
+                    localPesquisaFim = fimExclusivo == null ? null : inicioDoDia(fimExclusivo, -1);
                     preencherTabela();
                     SimpleDateFormat f = new SimpleDateFormat("dd/MM/yyyy");
                     String periodo = chkDatas.isSelected()
@@ -836,6 +850,7 @@ public class FormularioConsultaEstadoFE extends JFrame {
             model.addRow(new Object[]{
                 v.getCodigo(),
                 v.getCodFact(),
+                v.getClienteNif(),
                 dataHora == null ? "" : fmt.format(dataHora),
                 v.getTotalGeral(),
                 v.getRequestID(),
@@ -922,6 +937,7 @@ public class FormularioConsultaEstadoFE extends JFrame {
 
         // comuns
         btnPesquisar.setEnabled(!ocupado);
+        btnImprimir.setEnabled(!ocupado);
         for (JRadioButton rb : new JRadioButton[]{rbEstadoFacturas, rbIndividualLocal, rbIndividualAGT}) {
             rb.setEnabled(!ocupado);
         }
@@ -967,9 +983,15 @@ public class FormularioConsultaEstadoFE extends JFrame {
                     java.util.Map<String, String> estados = new java.util.HashMap<>();
                     java.util.Map<String, Integer> locais = vendasController.findCodigosPorCodFact(
                             conexao.getConnectionAtiva(), numeros, estados);
+                    // NIF do cliente: o da AGT ou, se não vier, o da BD local
+                    java.util.Map<String, String> nifsLocais = vendasController.findClienteNifPorCodFact(
+                            conexao.getConnectionAtiva(), numeros, null, null);
                     for (FacturaRemotaDTO f : r.getFacturas()) {
                         f.setCodigoLocal(locais.get(f.getDocumentNo()));
                         f.setEstadoLocal(estados.get(f.getDocumentNo()));
+                        if (f.getCustomerTaxID() == null) {
+                            f.setCustomerTaxID(nifsLocais.get(f.getDocumentNo()));
+                        }
                     }
                 }
                 return r;
@@ -1055,6 +1077,7 @@ public class FormularioConsultaEstadoFE extends JFrame {
         for (FacturaRemotaDTO r : facturasAGT) {
             modelAGT.addRow(new Object[]{
                 r.getDocumentNo(),
+                r.getCustomerTaxID(),
                 r.getDocumentType(),
                 r.getDocumentDate(),
                 r.getSystemEntryDate() == null ? "" : r.getSystemEntryDate().replace('T', ' '),
@@ -1484,6 +1507,7 @@ public class FormularioConsultaEstadoFE extends JFrame {
         for (DocumentoHistoricoDTO d : historicoVisivel) {
             modelIndividual.addRow(new Object[]{
                 d.getNumero(),
+                d.getNifCliente(),
                 d.getTipo(),
                 d.getData() == null ? "" : fmt.format(d.getData()),
                 d.getEstado(),
@@ -1716,6 +1740,184 @@ public class FormularioConsultaEstadoFE extends JFrame {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Erro ao gerar o Histórico de Facturação: " + e.getMessage());
         }
+    }
+
+    /**
+     * "Imprimir": mostra no JasperViewer as linhas da tabela da aba actual. Só
+     * imprime por intervalo de datas: o período tem de ser o mesmo com que a
+     * tabela foi carregada, para o relatório dizer exactamente o que contém.
+     */
+    private void imprimirTabelaActual() {
+        int aba = abas.getSelectedIndex();
+        DefaultTableModel origem;
+        String relatorio;
+        String titulo;
+        String detalhe;
+        String resumo = null;
+        Date inicio;
+        Date fim;
+
+        if (aba == ABA_INDIVIDUAL) {
+            origem = modelIndividual;
+            relatorio = "consulta_estado_fe_individual_A4.jasper";
+            titulo = "Consulta Individual - " + (historicoDaAGT ? "Portal AGT" : "Base de dados local");
+            detalhe = "Cliente: " + (historicoNome == null ? "" : historicoNome)
+                    + (historicoNif == null ? "" : " - NIF " + historicoNif)
+                    + "     Documentos: " + cbTipoDocumento.getSelectedItem()
+                    + (chkSoPendentes.isSelected() && rbIndividualAGT.isSelected() ? " (só pendentes)" : "");
+            resumo = lblTotalIndividual.getText();
+            inicio = historicoOrigem == null ? null : historicoInicio;
+            fim = historicoOrigem == null ? null : historicoFim;
+        } else if (aba == 1) {
+            origem = modelAGT;
+            relatorio = "consulta_estado_fe_agt_A4.jasper";
+            titulo = "Facturas no Portal da AGT";
+            detalhe = agtListaCompleta ? "" : "ATENÇÃO: lista incompleta - a AGT não devolveu todas as facturas";
+            inicio = agtPesquisaInicio;
+            fim = agtPesquisaFim;
+        } else {
+            origem = model;
+            relatorio = "consulta_estado_fe_local_A4.jasper";
+            titulo = "Estado das Facturas - Base de dados local";
+            detalhe = "Mostrar: " + cbFiltro.getSelectedItem();
+            inicio = localPesquisaInicio;
+            fim = localPesquisaFim;
+        }
+
+        if (inicio == null || fim == null) {
+            JOptionPane.showMessageDialog(this, "O relatório é sempre por intervalo de datas.\n"
+                    + "Marque \"Filtrar por datas\", preencha as datas e faça a pesquisa.");
+            return;
+        }
+        if (dcDataInicio.getDate() == null || dcDataFim.getDate() == null
+                || !inicioDoDia(dcDataInicio.getDate(), 0).equals(inicioDoDia(inicio, 0))
+                || !inicioDoDia(dcDataFim.getDate(), 0).equals(inicioDoDia(fim, 0))) {
+            JOptionPane.showMessageDialog(this, "As datas seleccionadas não são as da pesquisa mostrada na tabela.\n"
+                    + "Pesquise de novo antes de imprimir.");
+            return;
+        }
+        if (origem.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(this, "Não há dados na tabela para imprimir.");
+            return;
+        }
+
+        // Ordem crescente só no relatório (a JTable fica como está): data e, na mesma
+        // data, nº do documento - o mais curto primeiro, para FT 2026/9 vir antes de FT 2026/10
+        final int colNumero = aba == 0 ? 1 : 0;
+        final String[] chaves = new String[origem.getRowCount()];
+        final String[] numeros = new String[origem.getRowCount()];
+        List<Integer> ordem = new ArrayList<>();
+        for (int l = 0; l < origem.getRowCount(); l++) {
+            chaves[l] = chaveDataRelatorio(aba, l);
+            numeros[l] = String.valueOf(origem.getValueAt(l, colNumero));
+            ordem.add(l);
+        }
+        ordem.sort((a, b) -> {
+            int r = chaves[a].compareTo(chaves[b]);
+            if (r == 0) {
+                r = Integer.compare(numeros[a].length(), numeros[b].length());
+            }
+            return r != 0 ? r : numeros[a].compareTo(numeros[b]);
+        });
+
+        // Cópia em texto, tal como aparece no ecrã (todos os campos do relatório são String),
+        // com o nome do cliente antes do NIF: esta coluna só existe no relatório
+        final int colNif = aba == 0 ? 2 : 1;
+        String[] nomes = nomesClientesRelatorio(aba, numeros);
+        // Só na JTable: "Aceitação Cliente" e "Existe na BD local?" (Portal AGT) e "RequestID" (local)
+        final java.util.List<Integer> omitidas = aba == 1
+                ? java.util.Arrays.asList(COL_AGT_ACEITACAO, COL_AGT_EXISTE_LOCAL)
+                : aba == ABA_INDIVIDUAL
+                        ? new ArrayList<Integer>()
+                        : java.util.Arrays.asList(COL_REQUEST_ID);
+        DefaultTableModel dados = new DefaultTableModel(origem.getRowCount(),
+                origem.getColumnCount() + 1 - omitidas.size());
+        for (int i = 0; i < ordem.size(); i++) {
+            int l = ordem.get(i);
+            int destino = 0;
+            for (int c = 0; c < origem.getColumnCount(); c++) {
+                if (c == colNif) {
+                    dados.setValueAt(nomes[l], i, destino++);
+                }
+                if (omitidas.contains(c)) {
+                    continue;
+                }
+                Object valor = origem.getValueAt(l, c);
+                dados.setValueAt(valor instanceof BigDecimal ? formatarValor((BigDecimal) valor)
+                        : valor == null ? null : valor.toString(), i, destino++);
+            }
+        }
+
+        try {
+            TbDadosInstituicao inst = dadosInstituicaoController.findByCodigo(1);
+            SimpleDateFormat f = new SimpleDateFormat("dd/MM/yyyy");
+
+            HashMap<String, Object> p = new HashMap<>();
+            p.put("INST_NOME", inst.getNome());
+            p.put("INST_NIF", inst.getNif());
+            p.put("INST_MORADA", inst.getMoradaComercial());
+            p.put("TITULO", titulo);
+            p.put("PERIODO", f.format(inicio) + " a " + f.format(fim));
+            p.put("DETALHE", detalhe);
+            p.put("AMBIENTE", FEConfig.isHomologacao() ? "HOMOLOGAÇÃO" : "PRODUÇÃO");
+            p.put("RESUMO", resumo);
+
+            String caminho = new File(DVML.CAMINHO_REPORT + relatorio).getAbsolutePath();
+            JasperPrint print = JasperFillManager.fillReport(caminho, p,
+                    new net.sf.jasperreports.engine.data.JRTableModelDataSource(dados));
+            JasperViewer viewer = new JasperViewer(print, false);
+            viewer.setTitle(titulo + " - " + f.format(inicio) + " a " + f.format(fim));
+            viewer.setVisible(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log("Erro ao gerar o relatório: " + e);
+            JOptionPane.showMessageDialog(this, "Erro ao gerar o relatório:\n" + e,
+                    "Imprimir", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Nome do cliente de cada linha da tabela da aba: o que a linha já traz ou,
+     * se faltar, o da BD local pelo nº do documento.
+     */
+    private String[] nomesClientesRelatorio(int aba, String[] numeros) {
+        String[] nomes = new String[numeros.length];
+        java.util.Set<String> faltam = new java.util.HashSet<>();
+        for (int l = 0; l < numeros.length; l++) {
+            nomes[l] = aba == 1 ? facturasAGT.get(l).getCustomerName()
+                    : aba == ABA_INDIVIDUAL ? historicoVisivel.get(l).getNomeCliente()
+                    : vendas.get(l).getNomeCliente();
+            if (nomes[l] == null || nomes[l].trim().isEmpty()) {
+                faltam.add(numeros[l]);
+            }
+        }
+        if (!faltam.isEmpty()) {
+            java.util.Map<String, String> locais = vendasController.findNomesClientePorCodFact(
+                    conexao.getConnectionAtiva(), faltam);
+            for (int l = 0; l < numeros.length; l++) {
+                if (nomes[l] == null || nomes[l].trim().isEmpty()) {
+                    nomes[l] = locais.get(numeros[l]);
+                }
+            }
+        }
+        return nomes;
+    }
+
+    /**
+     * Texto que ordena por data a linha dada da tabela da aba. Sem data: fica
+     * no fim do relatório.
+     */
+    private String chaveDataRelatorio(int aba, int linha) {
+        final String semData = "9999";
+        if (aba == 1) {
+            FacturaRemotaDTO f = facturasAGT.get(linha);
+            return (f.getDocumentDate() == null ? semData : f.getDocumentDate()) + " "
+                    + (f.getSystemEntryDate() == null ? "" : f.getSystemEntryDate());
+        }
+        Date data = aba == ABA_INDIVIDUAL
+                ? historicoVisivel.get(linha).getData()
+                : dataHoraVenda(vendas.get(linha));
+        return data == null ? semData : new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(data);
     }
 
     private void mostrarDetalheAGT(int row) {
@@ -2078,6 +2280,7 @@ public class FormularioConsultaEstadoFE extends JFrame {
 
                     PayloadFactory.limparUltimosErros();
                     venda.setRequestID(null); // só em memória: saber se a AGT devolveu um novo
+                    venda.setEstado(null);    // só em memória: um estado antigo não vale para o novo envio
                     boolean enviada = recibo
                             ? FacturaElectronicaUtil.criarFERecibo(venda, dadosInst, documento, cliente, pagos)
                             : FacturaElectronicaUtil.criarFE(venda, dadosInst, documento, cliente, itens, conexao);

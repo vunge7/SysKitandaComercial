@@ -274,6 +274,9 @@ public class VendasController implements EntidadeFactory {
                 venda.setNDocMotorista(result.getString("n_doc_motorista"));
                 venda.setTotalRetencao(result.getBigDecimal("total_retencao"));
                 venda.setGorjeta(result.getBigDecimal("gorjeta"));
+                venda.setRequestID(result.getString("requestID"));
+                venda.setEstado(result.getString("estado"));
+                venda.setSubmissionUUID(result.getString("submissionUUID"));
 
             }
 
@@ -2448,6 +2451,46 @@ public Map<String, String> findClienteNifPorCodFact(Connection connection, Colle
             }
         }
         return encontrados;
+    }
+
+    /**
+     * Nome do cliente de cada nº de documento (cod_fact) encontrado na BD local:
+     * nome gravado na venda, senão o do consumidor final, senão o da ficha do
+     * cliente. Só leitura.
+     */
+    public Map<String, String> findNomesClientePorCodFact(Connection connection, Collection<String> codFacts) {
+
+        Map<String, String> nomes = new HashMap<>();
+        List<String> lista = new ArrayList<>(codFacts);
+        final int LOTE = 500; // evita IN (...) demasiado grande
+
+        for (int inicio = 0; inicio < lista.size(); inicio += LOTE) {
+            List<String> parte = lista.subList(inicio, Math.min(inicio + LOTE, lista.size()));
+
+            StringBuilder sql = new StringBuilder(
+                    "SELECT v.cod_fact, COALESCE(NULLIF(TRIM(v.nome_cliente), ''), "
+                    + "NULLIF(TRIM(v.nome_consumidor_final), ''), c.nome) AS nome "
+                    + "FROM tb_venda v LEFT JOIN tb_cliente c ON v.codigo_cliente = c.codigo "
+                    + "WHERE v.cod_fact IN (");
+            for (int i = 0; i < parte.size(); i++) {
+                sql.append(i == 0 ? "?" : ", ?");
+            }
+            sql.append(")");
+
+            try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+                for (int i = 0; i < parte.size(); i++) {
+                    ps.setString(i + 1, parte.get(i));
+                }
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        nomes.put(rs.getString("cod_fact"), rs.getString("nome"));
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return nomes;
     }
 
     public boolean updateFieldsFE(String submissionUUID, String requesID, String estado, int codigo) {
