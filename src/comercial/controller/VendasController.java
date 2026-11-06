@@ -21,8 +21,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -271,6 +274,9 @@ public class VendasController implements EntidadeFactory {
                 venda.setNDocMotorista(result.getString("n_doc_motorista"));
                 venda.setTotalRetencao(result.getBigDecimal("total_retencao"));
                 venda.setGorjeta(result.getBigDecimal("gorjeta"));
+                venda.setRequestID(result.getString("requestID"));
+                venda.setEstado(result.getString("estado"));
+                venda.setSubmissionUUID(result.getString("submissionUUID"));
 
             }
 
@@ -1892,7 +1898,54 @@ public class VendasController implements EntidadeFactory {
 //
 //        return tipo + " " + serie + "/" + proximo;
 //    }
-    public String gerarCodFact(int fkSerie) throws SQLException {
+     public String gerarCodFact(int fkSerie) throws SQLException {
+        String sqlSerie
+                = "SELECT d.abreviacao, s.designacao "
+                + "FROM series s "
+                + "JOIN documento d ON d.pk_documento = s.fk_documento "
+                + "WHERE s.id = ?";
+
+        PreparedStatement psSerie = conexao.prepareStatement(sqlSerie);
+        psSerie.setInt(1, fkSerie);
+        ResultSet rsSerie = psSerie.executeQuery();
+
+        if (!rsSerie.next()) {
+            throw new RuntimeException(
+                    "Série inválida. ID recebido: " + fkSerie
+            );
+        }
+
+//        if (!rsSerie.next()) {
+//            throw new RuntimeException("Série inválida");
+//        }
+        String tipo = rsSerie.getString("abreviacao");   // FR
+        String serie = rsSerie.getString("designacao");  // FR7826S1200N
+
+        // Documentos enviados à AGT (FT, FR, NC, RC...): só contam os
+        // pendentes/válidos, para se poder repetir o número de um inválido.
+        // Factura proforma (PP): não vai à AGT e nunca tem estado; com o
+        // filtro de estado saía sempre o nº 1. Conta todas as da série.
+        boolean semEstadoAGT = "PP".equalsIgnoreCase(tipo == null ? "" : tipo.trim());
+        String sqlUltimo
+                = "SELECT MAX(CAST(SUBSTRING_INDEX(cod_fact, '/', -1) AS UNSIGNED)) AS ultimo "
+                + "FROM tb_venda "
+                + "WHERE " + (semEstadoAGT ? "" : "estado IN('P','V') AND ") + "REPLACE(cod_fact,' ','') LIKE ?";
+
+        PreparedStatement psUltimo = conexao.prepareStatement(sqlUltimo);
+        psUltimo.setString(1, "%" + serie + "/%");
+
+        ResultSet rsUltimo = psUltimo.executeQuery();
+
+        int proximo = 1;
+
+        if (rsUltimo.next() && rsUltimo.getObject("ultimo") != null) {
+            proximo = rsUltimo.getInt("ultimo") + 1;
+        }
+
+        return tipo + " " + serie + "/" + proximo;
+    }
+
+    public String gerarCodFactR(int fkSerie) throws SQLException {
         String sqlSerie
                 = "SELECT d.abreviacao, s.designacao "
                 + "FROM series s "
@@ -1928,6 +1981,42 @@ public class VendasController implements EntidadeFactory {
 
         return tipo + " " + serie + "/" + proximo;
     }
+//    public String gerarCodFact(int fkSerie) throws SQLException {
+//        String sqlSerie
+//                = "SELECT d.abreviacao, s.designacao "
+//                + "FROM series s "
+//                + "JOIN documento d ON d.pk_documento = s.fk_documento "
+//                + "WHERE s.id = ?";
+//
+//        PreparedStatement psSerie = conexao.prepareStatement(sqlSerie);
+//        psSerie.setInt(1, fkSerie);
+//        ResultSet rsSerie = psSerie.executeQuery();
+//
+//        if (!rsSerie.next()) {
+//            throw new RuntimeException("Série inválida");
+//        }
+//
+//        String tipo = rsSerie.getString("abreviacao");   // FR
+//        String serie = rsSerie.getString("designacao");  // FR7826S1200N
+//
+//        String sqlUltimo
+//                = "SELECT MAX(CAST(SUBSTRING_INDEX(cod_fact, '/', -1) AS UNSIGNED)) AS ultimo "
+//                + "FROM tb_venda "
+//                + "WHERE REPLACE(cod_fact,' ','') LIKE ?";
+//
+//        PreparedStatement psUltimo = conexao.prepareStatement(sqlUltimo);
+//        psUltimo.setString(1, "%" + serie + "/%");
+//
+//        ResultSet rsUltimo = psUltimo.executeQuery();
+//
+//        int proximo = 1;
+//
+//        if (rsUltimo.next() && rsUltimo.getObject("ultimo") != null) {
+//            proximo = rsUltimo.getInt("ultimo") + 1;
+//        }
+//
+//        return tipo + " " + serie + "/" + proximo;
+//    }
     
     
 
@@ -2067,14 +2156,358 @@ public class VendasController implements EntidadeFactory {
             return false;
         }
     }
+    
+        // =====================================================================
+// VendasController - SUBSTITUI o findCodigosVendasFE anterior
+// (imports necessários: java.sql.*, java.util.ArrayList, java.util.Date, java.util.List)
+// =====================================================================
+/**
+ * @param estado "P", "V", "I" ou null (todas). "P" inclui também estado NULL.
+ * @param inicio data/hora inicial (inclusiva) ou null para não filtrar
+ * @param fimExclusivo data/hora final (EXCLUSIVA) ou null para não filtrar
+ */
+public List<Integer> findCodigosVendasFE(Connection connection, String estado,
+        Date inicio, Date fimExclusivo) {
+
+    List<Integer> codigos = new ArrayList<>();
+
+    StringBuilder sql = new StringBuilder(
+            "SELECT codigo FROM tb_venda "
+            + "WHERE requestID IS NOT NULL AND requestID <> '' ");
+
+    if ("P".equals(estado)) {
+        sql.append("AND (estado = 'P' OR estado IS NULL) ");
+    } else if (estado != null) {
+        sql.append("AND estado = ? ");
+    }
+    if (inicio != null) {
+        sql.append("AND dataVenda >= ? ");
+    }
+    if (fimExclusivo != null) {
+        sql.append("AND dataVenda < ? ");
+    }
+    sql.append("ORDER BY codigo DESC");
+
+    try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+
+        ps.setMaxRows(500); // limite de segurança
+
+        int i = 1;
+        if (estado != null && !"P".equals(estado)) {
+            ps.setString(i++, estado);
+        }
+        if (inicio != null) {
+            ps.setTimestamp(i++, new java.sql.Timestamp(inicio.getTime()));
+        }
+        if (fimExclusivo != null) {
+            ps.setTimestamp(i++, new java.sql.Timestamp(fimExclusivo.getTime()));
+        }
+
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                codigos.add(rs.getInt("codigo"));
+            }
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return codigos;
+}
+
+/**
+ * Facturas (FT), Facturas Recibo (FR), Notas de Crédito (NC) e Recibos (RC)
+ * do período, comunicados ou NÃO à AGT (ao contrário do findCodigosVendasFE,
+ * não exige requestID). Ficam de fora as proformas (têm requestID = cod_fact
+ * mas nunca vão à AGT). As anuladas ENTRAM: foram emitidas e a NC que as
+ * anula referencia-as, por isso têm de existir na AGT.
+ * Ordem cronológica (codigo ASC): o documento de origem vai antes da NC/RC.
+ * Só leitura: não altera nada na BD.
+ *
+ * @param inicio data/hora inicial (inclusiva)
+ * @param fimExclusivo data/hora final (EXCLUSIVA)
+ */
+public List<Integer> findCodigosVendasParaComunicarAGT(Connection connection,
+        Date inicio, Date fimExclusivo) {
+
+    List<Integer> codigos = new ArrayList<>();
+    String sql = "SELECT codigo FROM tb_venda "
+            + "WHERE fk_documento IN (" + DVML.DOC_FACTURA_RECIBO_FR + ", " + DVML.DOC_FACTURA_FT
+            + ", " + DVML.DOC_NOTA_CREDITO_NC + ", " + DVML.DOC_RECIBO_RC + ") "
+            + "AND cod_fact IS NOT NULL AND cod_fact <> '' "
+            + "AND dataVenda >= ? AND dataVenda < ? "
+            + "ORDER BY codigo ASC";
+
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setTimestamp(1, new java.sql.Timestamp(inicio.getTime()));
+        ps.setTimestamp(2, new java.sql.Timestamp(fimExclusivo.getTime()));
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                codigos.add(rs.getInt("codigo"));
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return codigos;
+}
+
+/**
+ * Documentos pagos por um recibo (para o paymentReceipt da AGT), a partir
+ * da amortizacao_divida gravada pelo EmissaoRecibos (ref_cod_fact = nº do
+ * recibo, fk_venda = factura paga, valor_pago = valor liquidado).
+ * Só leitura.
+ */
+public List<util.fe.dto.SourceDocumentDTO> findDocumentosPagosPorRecibo(Connection connection,
+        String codFactRecibo) {
+
+    List<util.fe.dto.SourceDocumentDTO> fontes = new ArrayList<>();
+    String sql = "SELECT v.cod_fact, v.dataVenda, a.valor_pago "
+            + "FROM amortizacao_divida a INNER JOIN tb_venda v ON v.codigo = a.fk_venda "
+            + "WHERE a.ref_cod_fact = ? ORDER BY a.pk_amortizacao_divida";
+
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setString(1, codFactRecibo);
+        try (ResultSet rs = ps.executeQuery()) {
+            int linha = 1;
+            while (rs.next()) {
+                util.fe.dto.SourceDocumentDTO sd = new util.fe.dto.SourceDocumentDTO();
+                sd.setLineNo(linha++);
+                sd.setOriginatingON(rs.getString("cod_fact"));
+                java.sql.Timestamp data = rs.getTimestamp("dataVenda");
+                sd.setDocumentDate(data == null ? null : util.fe.DataUtil.converterNormal(data));
+                java.math.BigDecimal valor = rs.getBigDecimal("valor_pago");
+                sd.setCreditAmount(valor == null ? java.math.BigDecimal.ZERO : valor);
+                fontes.add(sd);
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return fontes;
+}
+
+/**
+ * Histórico de facturação de um cliente: facturas, facturas recibo, recibos e
+ * notas de crédito no intervalo [inicio, fimExclusivo).
+ *
+ * @param nif NIF exacto, ou null/vazio para não filtrar
+ * @param nome parte do nome do cliente (venda ou ficha), ou null/vazio
+ */
+public List<util.fe.dto.DocumentoHistoricoDTO> findHistoricoCliente(Connection connection, String nif,
+        String nome, Date inicio, Date fimExclusivo) {
+
+    List<util.fe.dto.DocumentoHistoricoDTO> lista = new ArrayList<>();
+    boolean porNif = nif != null && !nif.trim().isEmpty();
+    boolean porNome = nome != null && !nome.trim().isEmpty();
+
+    String sql = "SELECT v.codigo, v.cod_fact, v.fk_documento, v.dataVenda, v.hora, v.total_geral, "
+            + "v.nome_cliente, v.cliente_nif, v.estado, v.requestID, c.morada "
+            + "FROM tb_venda v LEFT JOIN tb_cliente c ON v.codigo_cliente = c.codigo "
+            + "WHERE v.fk_documento IN (1, 2, 5, 6, 15) "
+            + (porNif ? "AND v.cliente_nif = ? " : "")
+            + (porNome ? "AND (v.nome_cliente LIKE ? OR c.nome LIKE ?) " : "")
+            + "AND v.dataVenda >= ? AND v.dataVenda < ? "
+            + "AND (v.estado IS NULL OR v.estado <> 'I') " // os inválidos não fazem parte
+            + "ORDER BY v.dataVenda, v.codigo";
+
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        int i = 1;
+        if (porNif) {
+            ps.setString(i++, nif.trim());
+        }
+        if (porNome) {
+            String like = "%" + nome.trim().replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_") + "%";
+            ps.setString(i++, like);
+            ps.setString(i++, like);
+        }
+        ps.setTimestamp(i++, new java.sql.Timestamp(inicio.getTime()));
+        ps.setTimestamp(i++, new java.sql.Timestamp(fimExclusivo.getTime()));
+
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                String tipo = util.fe.dto.DocumentoHistoricoDTO.tipoPorDocumentoLocal(rs.getInt("fk_documento"));
+                if (tipo == null) {
+                    continue;
+                }
+                // dataVenda pode vir sem hora: completa com a coluna "hora"
+                java.util.Calendar data = java.util.Calendar.getInstance();
+                data.setTime(rs.getTimestamp("dataVenda"));
+                java.sql.Time hora = rs.getTime("hora");
+                if (hora != null && data.get(java.util.Calendar.HOUR_OF_DAY) == 0
+                        && data.get(java.util.Calendar.MINUTE) == 0
+                        && data.get(java.util.Calendar.SECOND) == 0) {
+                    java.util.Calendar h = java.util.Calendar.getInstance();
+                    h.setTime(hora);
+                    data.set(java.util.Calendar.HOUR_OF_DAY, h.get(java.util.Calendar.HOUR_OF_DAY));
+                    data.set(java.util.Calendar.MINUTE, h.get(java.util.Calendar.MINUTE));
+                    data.set(java.util.Calendar.SECOND, h.get(java.util.Calendar.SECOND));
+                }
+
+                util.fe.dto.DocumentoHistoricoDTO d = new util.fe.dto.DocumentoHistoricoDTO(
+                        rs.getInt("codigo"), rs.getString("cod_fact"), tipo, data.getTime(),
+                        rs.getBigDecimal("total_geral"));
+                d.setNomeCliente(rs.getString("nome_cliente"));
+                d.setMoradaCliente(rs.getString("morada"));
+                d.setNifCliente(rs.getString("cliente_nif"));
+                d.setEstado(util.fe.dto.DocumentoHistoricoDTO.textoEstadoLocal(
+                        rs.getString("estado"), rs.getString("requestID")));
+                lista.add(d);
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return lista;
+}
+
+/**
+ * NIF do cliente de cada nº de documento (cod_fact) encontrado na BD local.
+ * Se "codigos" / "estados" não forem null, preenche-os com o código da venda e
+ * com o texto do estado local (null = inválido).
+ */
+public Map<String, String> findClienteNifPorCodFact(Connection connection, Collection<String> codFacts,
+        Map<String, Integer> codigos, Map<String, String> estados) {
+
+    Map<String, String> nifs = new HashMap<>();
+    List<String> lista = new ArrayList<>(codFacts);
+    final int LOTE = 500; // evita IN (...) demasiado grande
+
+    for (int inicio = 0; inicio < lista.size(); inicio += LOTE) {
+        List<String> parte = lista.subList(inicio, Math.min(inicio + LOTE, lista.size()));
+
+        StringBuilder sql = new StringBuilder(
+                "SELECT codigo, cod_fact, cliente_nif, estado, requestID FROM tb_venda WHERE cod_fact IN (");
+        for (int i = 0; i < parte.size(); i++) {
+            sql.append(i == 0 ? "?" : ", ?");
+        }
+        sql.append(")");
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            for (int i = 0; i < parte.size(); i++) {
+                ps.setString(i + 1, parte.get(i));
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    nifs.put(rs.getString("cod_fact"), rs.getString("cliente_nif"));
+                    if (codigos != null) {
+                        codigos.put(rs.getString("cod_fact"), rs.getInt("codigo"));
+                    }
+                    if (estados != null) {
+                        estados.put(rs.getString("cod_fact"), util.fe.dto.DocumentoHistoricoDTO.textoEstadoLocal(
+                                rs.getString("estado"), rs.getString("requestID")));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    return nifs;
+}
+
+ /**
+     * Para cada nº de factura (cod_fact) dado, devolve o código da venda local
+     * que o tem. Os números que não existem na BD não aparecem no mapa.
+     */
+    public Map<String, Integer> findCodigosPorCodFact(Connection connection, Collection<String> codFacts) {
+        return findCodigosPorCodFact(connection, codFacts, null);
+    }
+
+    /**
+     * Igual ao anterior; se "estados" não for null, preenche-o com o estado
+     * (P/V/I, pode ser null) de cada nº de factura encontrado.
+     */
+    public Map<String, Integer> findCodigosPorCodFact(Connection connection, Collection<String> codFacts,
+            Map<String, String> estados) {
+
+        Map<String, Integer> encontrados = new HashMap<>();
+        List<String> lista = new ArrayList<>(codFacts);
+        final int LOTE = 500; // evita IN (...) demasiado grande
+
+        for (int inicio = 0; inicio < lista.size(); inicio += LOTE) {
+            List<String> parte = lista.subList(inicio, Math.min(inicio + LOTE, lista.size()));
+
+            StringBuilder sql = new StringBuilder("SELECT codigo, cod_fact, estado FROM tb_venda WHERE cod_fact IN (");
+            for (int i = 0; i < parte.size(); i++) {
+                sql.append(i == 0 ? "?" : ", ?");
+            }
+            sql.append(")");
+
+            try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+                for (int i = 0; i < parte.size(); i++) {
+                    ps.setString(i + 1, parte.get(i));
+                }
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        encontrados.put(rs.getString("cod_fact"), rs.getInt("codigo"));
+                        if (estados != null) {
+                            estados.put(rs.getString("cod_fact"), rs.getString("estado"));
+                        }
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return encontrados;
+    }
+
+    /**
+     * Nome do cliente de cada nº de documento (cod_fact) encontrado na BD local:
+     * nome gravado na venda, senão o do consumidor final, senão o da ficha do
+     * cliente. Só leitura.
+     */
+    public Map<String, String> findNomesClientePorCodFact(Connection connection, Collection<String> codFacts) {
+
+        Map<String, String> nomes = new HashMap<>();
+        List<String> lista = new ArrayList<>(codFacts);
+        final int LOTE = 500; // evita IN (...) demasiado grande
+
+        for (int inicio = 0; inicio < lista.size(); inicio += LOTE) {
+            List<String> parte = lista.subList(inicio, Math.min(inicio + LOTE, lista.size()));
+
+            StringBuilder sql = new StringBuilder(
+                    "SELECT v.cod_fact, COALESCE(NULLIF(TRIM(v.nome_cliente), ''), "
+                    + "NULLIF(TRIM(v.nome_consumidor_final), ''), c.nome) AS nome "
+                    + "FROM tb_venda v LEFT JOIN tb_cliente c ON v.codigo_cliente = c.codigo "
+                    + "WHERE v.cod_fact IN (");
+            for (int i = 0; i < parte.size(); i++) {
+                sql.append(i == 0 ? "?" : ", ?");
+            }
+            sql.append(")");
+
+            try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+                for (int i = 0; i < parte.size(); i++) {
+                    ps.setString(i + 1, parte.get(i));
+                }
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        nomes.put(rs.getString("cod_fact"), rs.getString("nome"));
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return nomes;
+    }
 
     public boolean updateFieldsFE(String submissionUUID, String requesID, String estado, int codigo) {
 
-        String sql = "UPDATE tb_venda SET submissionUUID = '" + submissionUUID
-                    + "' AND " + " requestID = '" + requesID
-                    + "' AND estado = '" + estado + "'"
-                    + " WHERE codigo = " + codigo;
-        return conexao.executeUpdate(sql);
+        // Antes: "SET a = 'x' AND requestID = 'y' AND estado = 'z'" -> o MySQL gravava
+        // 0/1 em submissionUUID e não mudava requestID nem estado. Separadores = vírgulas.
+        String sql = "UPDATE tb_venda SET submissionUUID = ?, requestID = ?, estado = ? WHERE codigo = ?";
+        try (PreparedStatement ps = conexao.getConnectionAtiva().prepareStatement(sql)) {
+            ps.setString(1, submissionUUID);
+            ps.setString(2, requesID);
+            ps.setString(3, estado);
+            ps.setInt(4, codigo);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }

@@ -195,6 +195,10 @@ public class TbDadosInstituicao implements Serializable {
     private String tipoFichaTecnica;
     @Column(name = "numero_estabelecimento")
     private String numeroEstabelecimento;
+    @Column(name = "nome_comercial")
+    private String nomeComercial;
+    @Column(name = "morada_comercial")
+    private String moradaComercial;
     @Basic(optional = false)
     @Column(name = "hora_comeco_venda")
     @Temporal(TemporalType.TIME)
@@ -204,12 +208,38 @@ public class TbDadosInstituicao implements Serializable {
     private Date horaTerminoVenda;
 //    @Column(name = "editar_preco")
 //    private boolean editarPreco;
+        @Column(name = "ambiente")
+    private String ambiente;
 
     public TbDadosInstituicao() {
     }
 
     public TbDadosInstituicao(Integer idDadosInsitiuicao) {
         this.idDadosInsitiuicao = idDadosInsitiuicao;
+    }
+
+    public String getAmbiente() {
+        return ambiente;
+    }
+
+    public void setAmbiente(String ambiente) {
+        this.ambiente = ambiente;
+    }
+
+    public String getNomeComercial() {
+        return nomeComercial;
+    }
+
+    public void setNomeComercial(String nomeComercial) {
+        this.nomeComercial = nomeComercial;
+    }
+
+    public String getMoradaComercial() {
+        return moradaComercial;
+    }
+
+    public void setMoradaComercial(String moradaComercial) {
+        this.moradaComercial = moradaComercial;
     }
 
     public TbDadosInstituicao(Integer idDadosInsitiuicao, String nome, String telefone, String enderecos, String email, String nif) {

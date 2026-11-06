@@ -20,7 +20,57 @@ import util.fe.http.HttpClientUtil;
 public class PayloadFactory {
 
     private static final String SOFTWARE_KEY = "Chaves/ChavePrivada_2048_PKCS8.pem";
-    private static final String CLIENT_KEY = "Chaves/chave_cliente/ChavePrivada2048Cliente.pem";
+
+    // =====================================================
+    // ERROS DO ÚLTIMO ENVIO (para quem chama poder reagir)
+    // =====================================================
+    /** Descrições de erro devolvidas pela AGT no último envio/consulta. */
+    private static final List<String> ULTIMOS_ERROS = new ArrayList<>();
+
+    /**
+     * Envio em lote: true = não mostrar JOptionPane por cada documento
+     * (os erros continuam disponíveis em getUltimosErros()).
+     */
+    private static volatile boolean modoSilencioso = false;
+
+    public static void setModoSilencioso(boolean silencioso) {
+        modoSilencioso = silencioso;
+    }
+
+    private static void aviso(Object mensagem, String titulo, int tipo) {
+        if (!modoSilencioso) {
+            JOptionPane.showMessageDialog(null, mensagem, titulo, tipo);
+        }
+    }
+
+    public static synchronized void limparUltimosErros() {
+        ULTIMOS_ERROS.clear();
+    }
+
+    public static synchronized List<String> getUltimosErros() {
+        return new ArrayList<>(ULTIMOS_ERROS);
+    }
+
+    private static synchronized void registarErro(JsonNode descricao) {
+        if (descricao != null && !descricao.isNull()) {
+            ULTIMOS_ERROS.add(descricao.asText());
+        }
+    }
+
+    /**
+     * A AGT recusou o número do documento por já existir no repositório
+     * ("Factura especificada no parâmetro documentoNo (...) está duplicado na
+     * presente lista ou já consta no repositório do sistema").
+     */
+    public static synchronized boolean ultimoErroNumeroDuplicado() {
+        for (String e : ULTIMOS_ERROS) {
+            String s = e.toLowerCase();
+            if (s.contains("documentono") && (s.contains("duplicad") || s.contains("consta no reposit"))) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     // =====================================================
     // BASE PAYLOAD
@@ -77,7 +127,7 @@ public class PayloadFactory {
 //        signatureMap.put( "seriesContingencyIndicator", "N" );
 
 //        payload.put( "jwsSignature", JwsGenerator.gerarJws( SOFTWARE_KEY, signatureMap ) );
-        payload.put("jwsSignature", JwsGenerator.gerarJws(CLIENT_KEY, signatureMap));
+        payload.put("jwsSignature", JwsGenerator.gerarJws(FEConfig.getChaveClientePrivada(), signatureMap));
         payload.put("seriesContingencyIndicator", "N");
         return payload;
     }
@@ -86,17 +136,30 @@ public class PayloadFactory {
     // LISTAR FATURAS
     // =====================================================
     public static Map<String, Object> criarPayloadListarFacturas(String taxRegistrationNumber, String queryStartDate, String queryEndDate) {
+        return criarPayloadListarFacturas(taxRegistrationNumber, queryStartDate, queryEndDate, null);
+    }
+
+    /**
+     * @param page página pedida (0 = primeira) ou null para não enviar o campo.
+     * A AGT devolve no máximo 10 facturas por resposta.
+     */
+    public static Map<String, Object> criarPayloadListarFacturas(String taxRegistrationNumber, String queryStartDate, String queryEndDate, Integer page) {
 
         Map<String, Object> payload = criarBasePayload(taxRegistrationNumber);
+        if (page != null) {
+            payload.put("page", page);
+        }
 
         Map<String, Object> signatureMap = new LinkedHashMap<>();
         signatureMap.put("taxRegistrationNumber", taxRegistrationNumber);
         signatureMap.put("queryStartDate", queryStartDate);
         signatureMap.put("queryEndDate", queryEndDate);
 
-        payload.put("jwsSignature", JwsGenerator.gerarJws(CLIENT_KEY, signatureMap));
+        payload.put("jwsSignature", JwsGenerator.gerarJws(FEConfig.getChaveClientePrivada(), signatureMap));
         payload.put("queryStartDate", queryStartDate);
         payload.put("queryEndDate", queryEndDate);
+        // Facturas emitidas pelo NIF (sem este campo a AGT pode listar as RECEBIDAS)
+        payload.put("tipoListagem", "EMITIDAS");
 
         return payload;
     }
@@ -116,7 +179,7 @@ public class PayloadFactory {
         signatureMap.put("taxRegistrationNumber", taxRegistrationNumber);
         signatureMap.put("numberOfEntries", docs.size());
 
-        payload.put("jwsSignature", JwsGenerator.gerarJws(CLIENT_KEY, signatureMap));
+        payload.put("jwsSignature", JwsGenerator.gerarJws(FEConfig.getChaveClientePrivada(), signatureMap));
 
         return payload;
     }
@@ -136,6 +199,7 @@ public class PayloadFactory {
                     montarFatura(document, dto);
                     break;
                 case "RC":
+                case "RG":
                     montarRecibo(document, dto);
                     break;
                 default:
@@ -151,7 +215,7 @@ public class PayloadFactory {
         Map<String, Object> document = new LinkedHashMap<>();
 
         Map<String, Object> signaturePayload = jwsDocumentSignature(taxRegistrationNumber, dto);
-        document.put("jwsDocumentSignature", JwsGenerator.gerarJws(CLIENT_KEY, signaturePayload));
+        document.put("jwsDocumentSignature", JwsGenerator.gerarJws(FEConfig.getChaveClientePrivada(), signaturePayload));
 
         document.put("documentNo", dto.getDocumentNo());
         document.put("documentStatus", dto.getDocumentStatus());
@@ -336,7 +400,7 @@ public class PayloadFactory {
         Map<String, Object> jsonJWSignature = JwsGenerator.jwsConsutlarFactura(taxRegistrationNumber, requestID);
 
         String jwsSoftwareSignature = JwsGenerator.gerarJws("Chaves/ChavePrivada_2048_PKCS8.pem", softwareInfoDetail);
-        String jwsSignature = JwsGenerator.gerarJws("Chaves/chave_cliente/ChavePrivada2048Cliente.pem", jsonJWSignature);
+        String jwsSignature = JwsGenerator.gerarJws(FEConfig.getChaveClientePrivada(), jsonJWSignature);
 
         // softwareInfo
         Map<String, Object> softwareInfo = new LinkedHashMap<>();
@@ -345,7 +409,8 @@ public class PayloadFactory {
 
         // payload principal
         Map<String, Object> payload = new LinkedHashMap<>();
-        payload.put("schemaVersion", "1.0");
+        payload.put("schemaVersion", "2.0");
+//        payload.put("schemaVersion", "1.0");
         payload.put("submissionUUID", SubmissionUUID.gerar());
         payload.put("taxRegistrationNumber", taxRegistrationNumber);
         payload.put("submissionTimeStamp", DataUtil.converter(new Date()));
@@ -364,11 +429,54 @@ public class PayloadFactory {
         ObjectMapper mapper = new ObjectMapper();
 
         // 1️⃣ Extrair requestID
+//        JsonNode rootNode = mapper.readTree(resposta);
+//        String requestID = rootNode.get("requestID").asText();
         JsonNode rootNode = mapper.readTree(resposta);
-        String requestID = rootNode.get("requestID").asText();
+
+        JsonNode requestNode = rootNode.get("requestID");
+
+//        if (requestNode == null || requestNode.isNull() || requestNode.asText().trim().isEmpty()) {
+//            System.out.println("ERRO: requestID não encontrado na resposta da submissão.");
+//            System.out.println(resposta);
+//            return false;
+//        }
+//
+//        String requestID = requestNode.asText().trim();
+//        JsonNode requestNode = rootNode.get("requestID");
+        if (requestNode == null || requestNode.isNull() || requestNode.asText().trim().isEmpty()) {
+
+            System.out.println("ERRO: requestID não encontrado na resposta da submissão.");
+            System.out.println(resposta);
+
+            JsonNode erros = rootNode.get("errorList");
+
+            if (erros != null && erros.isArray()) {
+                for (JsonNode erro : erros) {
+
+                    JsonNode idError = erro.get("idError");
+                    JsonNode descricao = erro.get("descriptionError");
+                    registarErro(descricao);
+
+                    System.out.println(
+                            "Código erro: "
+                            + (idError != null ? idError.asText() : "")
+                    );
+
+                    System.out.println(
+                            "Descrição: "
+                            + (descricao != null ? descricao.asText() : "")
+                    );
+                }
+            }
+
+            return false;
+        }
+
+        String requestID = requestNode.asText().trim();
+
         venda.setRequestID(requestID);
 
-        System.out.println("Request ID: " + requestID);
+        System.out.println("RequestID recebido: " + requestID);
 
         // 2️⃣ Criar payload de consulta
         Map<String, Object> jsonPayload = PayloadFactory.consultaPayloadFactura(
@@ -406,30 +514,28 @@ public class PayloadFactory {
                 for (JsonNode erro : requestErrorList) {
 
                     if (Objects.nonNull(erro.get("idError"))) {
+                        registarErro(erro.get("descriptionError"));
                         String idErro = erro.get("idError").asText();
+                        String descriptionError = erro.get("descriptionError").asText();
                         venda.setEstado("P");
 
                         // ✅ REGRA DE NEGÓCIO
-                        if ("E92".equalsIgnoreCase(idErro)) {
-                            JOptionPane.showMessageDialog(null, "Documeto processado no estado PENDENTE.\nAguardando a resposta da AGT.");
-                            System.out.println("E92 - Solicitação em processamento. Considerando TRUE.");
-                            return true;
-                        }
-                        // ✅ REGRA DE NEGÓCIO
                         if ("E94".equalsIgnoreCase(idErro)) {
-                            JOptionPane.showMessageDialog(null, "Documeto processado no estado PENDENTE.\nAguardando a resposta da AGT.");
+                            aviso("Documeto processado no estado PENDENTE.\nAguardando a resposta da AGT.",
+                                    "Mensagem", JOptionPane.INFORMATION_MESSAGE);
+                            System.err.println("Documeto processado no estado PENDENTE.\nAguardando a resposta da AGT.");
                             System.out.println("E94 - Solicitação não encontrada. Considerando TRUE.");
-                            return true;
+                            //return true;
                         }
 
+                        System.err.println("Erro da FE: " + erro.get("descriptionError").asText());
                         // Outros erros reais
-                        JOptionPane.showMessageDialog(
-                                null,
+                        aviso(
                                 "Erro da FE: " + erro.get("descriptionError").asText(),
                                 "Erro na Consulta",
-                                JOptionPane.ERROR_MESSAGE
+                                JOptionPane.WARNING_MESSAGE
                         );
-                        return false;
+                        return true;
                     }
 
                 }
@@ -444,8 +550,9 @@ public class PayloadFactory {
 
                 // ✅ FACTURA VÁLIDA
                 if ("V".equalsIgnoreCase(documentStatus)) {
-                    JOptionPane.showMessageDialog(
-                            null,
+
+                    System.out.println("Documento validado com sucesso ✅");
+                    aviso(
                             "Documento validado com sucesso ✅",
                             "Factura Válida",
                             JOptionPane.INFORMATION_MESSAGE
@@ -461,14 +568,15 @@ public class PayloadFactory {
 
                     if (errorList != null && errorList.isArray()) {
                         for (JsonNode erro : errorList) {
+                            registarErro(erro.get("descriptionError"));
                             mensagens.append("• ")
                                     .append(erro.get("descriptionError").asText())
                                     .append("\n");
                         }
                     }
 
-                    JOptionPane.showMessageDialog(
-                            null,
+                    System.err.println("Erro de Validação");
+                    aviso(
                             mensagens.toString(),
                             "Erro de Validação",
                             JOptionPane.ERROR_MESSAGE

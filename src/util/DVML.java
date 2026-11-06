@@ -363,6 +363,7 @@ public class DVML {
         ND,
         NC,
         RC,
+        RG,
         GT,
         SO,
         NE,
