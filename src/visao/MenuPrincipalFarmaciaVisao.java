@@ -1446,7 +1446,7 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame {
         try {
 
             try {
-                new FormVendaResponsivaVisaoTop(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
+                util.TelaVendaUtil.abrir(cod_utilizador);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

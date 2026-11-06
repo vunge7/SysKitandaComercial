@@ -201,6 +201,8 @@ public class TbDadosInstituicao implements Serializable {
     private String segundoMonitor;
     @Column(name = "alterar_preco")
     private String alterarPreco;
+    @Column(name = "tela_venda")
+    private String telaVenda;
 
     @Basic(optional = false)
     @Column(name = "hora_comeco_venda")
@@ -233,6 +235,14 @@ public class TbDadosInstituicao implements Serializable {
     
     
     
+    public String getTelaVenda() {
+        return telaVenda;
+    }
+
+    public void setTelaVenda(String telaVenda) {
+        this.telaVenda = telaVenda;
+    }
+
     public String getAlterarPreco() {
         return alterarPreco;
     }

@@ -281,11 +281,11 @@ public class VendaUsuarioVisao extends javax.swing.JFrame {
         setWindowsListener();
         btnSemFormaPagamento.setVisible(false);
 
-        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
-        TelaCliente telaCliente = new TelaCliente(modelo);
-
-        //Abre no segundo monitor, se existir
-        MetodosUtil.abrirNoSegundoMonitor(telaCliente);
+//        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+//        TelaCliente telaCliente = new TelaCliente(modelo);
+//
+//        //Abre no segundo monitor, se existir
+//        MetodosUtil.abrirNoSegundoMonitor(telaCliente);
     }
 
     public VendaUsuarioVisao(int cod_usuario, BDConexao conexao, String docPadraoPersonalizado) throws SQLException {
@@ -3547,7 +3547,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame {
 //
 //        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 //
-////        double total_deconto = Double.parseDouble( String.valueOf( getPreco() ) ) * Double.parseDouble( String.valueOf( getQuantidade() ) );
+    ////        double total_deconto = Double.parseDouble( String.valueOf( getPreco() ) ) * Double.parseDouble( String.valueOf( getQuantidade() ) );
 //
 //        int codigo_produto = getCodigoProduto();
 //
@@ -3827,9 +3827,13 @@ public class VendaUsuarioVisao extends javax.swing.JFrame {
     }
 
     private static void valor_por_extenco() {
-//        BigDecimal total = BigDecimal.valueOf( CfMethods.parseMoedaFormatada( txtTotalPagar.getText() ) );
-        BigDecimal total = CfMethods.parseMoedaFormatadaBigDecimal(txtTotalPagar.getText());
-        lbValorPorExtenco.setText(MetodosUtil.valorPorExtensoBigDecima(total, getMoeda().getDesignacao()));
+        try {
+            //        BigDecimal total = BigDecimal.valueOf( CfMethods.parseMoedaFormatada( txtTotalPagar.getText() ) );
+            BigDecimal total = CfMethods.parseMoedaFormatadaBigDecimal(txtTotalPagar.getText());
+            lbValorPorExtenco.setText(MetodosUtil.valorPorExtensoBigDecima(total, getMoeda().getDesignacao()));
+        } catch (Exception e) {
+        }
+
     }
 
     private static void valor_por_extenco(Moeda moeda) {
@@ -3912,7 +3916,7 @@ public class VendaUsuarioVisao extends javax.swing.JFrame {
 //            formaPagamentoItem = new FormaPagamentoItem();
 //            Integer id_forma_pagamento = Integer.parseInt( modelo.getValueAt( i, 0 ).toString() );
 //            String referencia = ( modelo.getValueAt( i, 2 ) != null ) ? modelo.getValueAt( i, 2 ).toString() : "n/a";
-////            String valor = ( modelo.getValueAt( i, 3 ) != null ) ? modelo.getValueAt( i, 3 ).toString() : "0";
+    ////            String valor = ( modelo.getValueAt( i, 3 ) != null ) ? modelo.getValueAt( i, 3 ).toString() : "0";
 //            String valor = ( !modelo.getValueAt( i, 3 ).toString().equals( "" ) ) ? modelo.getValueAt( i, 3 ).toString() : "0";
 //
 //            formaPagamentoItem.setValor( new BigDecimal( valor ) );

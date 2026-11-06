@@ -33,6 +33,7 @@ public class ConfiguracoesVisao extends javax.swing.JDialog {
     public ConfiguracoesVisao(java.awt.Frame parent, boolean modal, BDConexao conexao) {
         super(parent, modal);
         initComponents();
+        montarSeletorTelaVenda();
         this.conexao = conexao;
         setLocationRelativeTo(null);
 
@@ -1361,7 +1362,32 @@ public class ConfiguracoesVisao extends javax.swing.JDialog {
     private javax.swing.JTextField txtProveniencia;
     // End of variables declaration//GEN-END:variables
 
+    private final javax.swing.JComboBox<String> cmbTelaVenda = new javax.swing.JComboBox<>(
+            new String[]{util.TelaVenda.NORMAL.name(), util.TelaVenda.LATEST.name()});
+
+    /**
+     * Acrescenta, fora do código gerado, o campo "Tela de Venda" no rodapé.
+     */
+    private void montarSeletorTelaVenda() {
+        java.awt.Container content = getContentPane();
+        content.removeAll();
+        content.setLayout(new java.awt.BorderLayout());
+
+        javax.swing.JPanel rodape = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 12, 8));
+        javax.swing.JLabel lb = new javax.swing.JLabel("Tela de Venda:");
+        lb.setFont(new java.awt.Font("Lucida Grande", 1, 14));
+        cmbTelaVenda.setToolTipText("NORMAL = tela de vendas clássica; LATEST = tela de vendas moderna");
+        rodape.add(lb);
+        rodape.add(cmbTelaVenda);
+
+        content.add(jPanel7, java.awt.BorderLayout.NORTH);
+        content.add(jPanel1, java.awt.BorderLayout.CENTER);
+        content.add(rodape, java.awt.BorderLayout.SOUTH);
+        pack();
+    }
+
     private void mostrar_dados() {
+        cmbTelaVenda.setSelectedItem(util.TelaVenda.fromString(dadoIntituicao.getTelaVenda()).name());
 //        dadoIntituicao = dadosInstituicaoController.findByCodigo(1);
         txtPrazoFT.setText(dadoIntituicao.getPrazoFt());
         txtPrazoProforma.setText(String.valueOf(dadoIntituicao.getPrazoProforma()));
@@ -1437,6 +1463,7 @@ public class ConfiguracoesVisao extends javax.swing.JDialog {
         dadoIntituicao.setLocalCarregamento(txtProveniencia.getText());
         dadoIntituicao.setSegundoMonitor(getSegundoMonitor());
         dadoIntituicao.setAlterarPreco(getAlterarPreco());
+        dadoIntituicao.setTelaVenda(String.valueOf(cmbTelaVenda.getSelectedItem()));
 
         if (dadoIntituicao.getNegocio().equals("Lavandaria")) {
             if (validarHora(cmbHoraComeco, cmbHoraTermino)) {

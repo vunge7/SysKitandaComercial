@@ -1431,37 +1431,37 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jmVendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmVendaActionPerformed
-//        try
-//        {
-//
-//            try
-//            {
-//                new VendaUsuarioVisao( cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
-//            }
-//            catch ( Exception ex )
-//            {
-//                ex.printStackTrace();
-//            }
-//
-//        }
-//        catch ( Exception ex )
-//        {
-//            Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( Level.SEVERE, null, ex );
-//        }
+        try
+        {
 
-        try {
-
-            try {
-
-                new VendaModernaVisao(cod_utilizador, BDConexao.getInstancia()).show(true);
-//                new FormVendaResponsivaVisaoTop(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
-            } catch (Exception ex) {
+            try
+            {
+                util.TelaVendaUtil.abrir( cod_utilizador );
+            }
+            catch ( Exception ex )
+            {
                 ex.printStackTrace();
             }
 
-        } catch (Exception ex) {
-            Logger.getLogger(MenuPrincipalVisao.class.getName()).log(Level.SEVERE, null, ex);
         }
+        catch ( Exception ex )
+        {
+            Logger.getLogger( MenuPrincipalVisao.class.getName() ).log( Level.SEVERE, null, ex );
+        }
+
+//        try {
+//
+//            try {
+//
+//                new VendaModernaVisao(cod_utilizador, BDConexao.getInstancia()).show(true);
+////                new FormVendaResponsivaVisaoTop(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
+//            } catch (Exception ex) {
+//                ex.printStackTrace();
+//            }
+//
+//        } catch (Exception ex) {
+//            Logger.getLogger(MenuPrincipalVisao.class.getName()).log(Level.SEVERE, null, ex);
+//        }
 
     }//GEN-LAST:event_jmVendaActionPerformed
 

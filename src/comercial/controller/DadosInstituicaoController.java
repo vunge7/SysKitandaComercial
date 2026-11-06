@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Vector;
 import util.BDConexao;
 import util.MetodosUtil;
+import util.TelaVenda;
 
 /**
  *
@@ -45,7 +46,7 @@ public class DadosInstituicaoController implements EntidadeFactory {
                 + "chave_mestre, data_fecho, tesouraria, rh, comercial, janela_servico, "
                 + "impressora_sala, prazo_proforma, desactivar_lugares, tipo_fecho_caixa, "
                 + "enviar_email, stock_consulta, tipo_ficha_tecnica, posto, "
-                + "impressora_caixa, segundo_monitor, alterar_preco "
+                + "impressora_caixa, segundo_monitor, alterar_preco, tela_venda "
                 //                + "hora_comeco_venda, hora_termino_venda"
                 + ") VALUES ("
                 + "'" + dados.getNome() + "', "
@@ -102,7 +103,8 @@ public class DadosInstituicaoController implements EntidadeFactory {
                 + "'" + dados.getPosto() + "', "
                 + "'" + dados.getImpressoraCaixa() + "', "
                 + "'" + dados.getSegundoMonitor() + "', "
-                + "'" + dados.getAlterarPreco() + "'"
+                + "'" + dados.getAlterarPreco() + "', "
+                + "'" + TelaVenda.fromString(dados.getTelaVenda()).name() + "'"
                 //                + "'" + MetodosUtil.getHoraBanco(dados.getHoraComecoVenda()) + "' , "
                 //                + "'" + MetodosUtil.getHoraBanco(dados.getHoraTerminoVenda()) + "'"
                 + ")";
@@ -187,6 +189,7 @@ public class DadosInstituicaoController implements EntidadeFactory {
                 + "impressora_caixa = '" + dados.getImpressoraCaixa() + "', "
                 + "segundo_monitor = '" + dados.getSegundoMonitor() + "', "
                 + "alterar_preco = '" + dados.getAlterarPreco() + "',"
+                + "tela_venda = '" + TelaVenda.fromString(dados.getTelaVenda()).name() + "',"
                 + "hora_comeco_venda = " + formatarHoraBanco(dados.getHoraComecoVenda()) + ", "
                 + "hora_termino_venda = " + formatarHoraBanco(dados.getHoraTerminoVenda()) + " "
                 //                + "hora_comeco_venda = '" + MetodosUtil.getHoraBanco(dados.getHoraComecoVenda()) + "', "
@@ -310,6 +313,7 @@ public class DadosInstituicaoController implements EntidadeFactory {
                 dadosIntituicao.setImpressoraCaixa(result.getString("impressora_caixa"));
                 dadosIntituicao.setSegundoMonitor(result.getString("segundo_monitor"));
                 dadosIntituicao.setAlterarPreco(result.getString("alterar_preco"));
+                dadosIntituicao.setTelaVenda(result.getString("tela_venda"));
                 dadosIntituicao.setHoraComecoVenda(result.getTime("hora_comeco_venda"));
                 dadosIntituicao.setHoraTerminoVenda(result.getTime("hora_termino_venda"));
                 list.add(dadosIntituicao);
@@ -451,6 +455,7 @@ public class DadosInstituicaoController implements EntidadeFactory {
                 dadosIntituicao.setImpressoraCaixa(result.getString("impressora_caixa"));
                 dadosIntituicao.setSegundoMonitor(result.getString("segundo_monitor"));
                 dadosIntituicao.setAlterarPreco(result.getString("alterar_preco"));
+                dadosIntituicao.setTelaVenda(result.getString("tela_venda"));
                 dadosIntituicao.setHoraComecoVenda(result.getTime("hora_comeco_venda"));
                 dadosIntituicao.setHoraTerminoVenda(result.getTime("hora_termino_venda"));
             } else {
@@ -548,6 +553,7 @@ public class DadosInstituicaoController implements EntidadeFactory {
                 dadosIntituicao.setImpressoraCaixa(result.getString("impressora_caixa"));
                 dadosIntituicao.setSegundoMonitor(result.getString("segundo_monitor"));
                 dadosIntituicao.setAlterarPreco(result.getString("alterar_preco"));
+                dadosIntituicao.setTelaVenda(result.getString("tela_venda"));
                 dadosIntituicao.setHoraComecoVenda(result.getTime("hora_comeco_venda"));
                 dadosIntituicao.setHoraTerminoVenda(result.getTime("hora_termino_venda"));
 
@@ -628,6 +634,7 @@ public class DadosInstituicaoController implements EntidadeFactory {
                 dadosIntituicao.setImpressoraCaixa(result.getString("impressora_caixa"));
                 dadosIntituicao.setSegundoMonitor(result.getString("segundo_monitor"));
                 dadosIntituicao.setAlterarPreco(result.getString("alterar_preco"));
+                dadosIntituicao.setTelaVenda(result.getString("tela_venda"));
                 dadosIntituicao.setHoraComecoVenda(result.getTime("hora_comeco_venda"));
                 dadosIntituicao.setHoraTerminoVenda(result.getTime("hora_termino_venda"));
 

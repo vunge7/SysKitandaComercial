@@ -1461,7 +1461,7 @@ public class MenuPrincipalLogoVisao extends javax.swing.JFrame
         {
             // TODO add your handling code here
 
-            new FormVendaResponsivaVisaoTop(cod_utilizador, BDConexao.getInstancia()).setVisible(true);
+            util.TelaVendaUtil.abrir(cod_utilizador);
             //VendaUsuarioVisao.getObj(cod_utilizador).setVisible(true);
             // MetodosUtil.getObj(cod_utilizador, (VendaUsuarioVisao)).setVisible(true);
 

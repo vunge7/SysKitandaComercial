@@ -1577,7 +1577,7 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
 
             try
             {
-                new FormVendaResponsivaVisaoTop( cod_utilizador, BDConexao.getInstancia() ).setVisible( true );
+                util.TelaVendaUtil.abrir( cod_utilizador );
             }
             catch ( Exception ex )
             {

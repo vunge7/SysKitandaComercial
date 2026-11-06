@@ -20419,6 +20419,7 @@ CREATE TABLE `tb_dados_instituicao` (
   `enviar_email` enum('Nao','Sim') DEFAULT 'Sim',
   `stock_consulta` enum('Activo','Desactivo') DEFAULT 'Desactivo',
   `tipo_ficha_tecnica` enum('A','B','Nenhum') DEFAULT NULL,
+  `tela_venda` enum('NORMAL','LATEST') NOT NULL DEFAULT 'NORMAL',
   PRIMARY KEY (`idDadosInsitiuicao`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
