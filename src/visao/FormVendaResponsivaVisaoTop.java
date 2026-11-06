@@ -90,6 +90,7 @@ import static util.DVML.DOC_FACTURA_FT;
 import util.FinanceUtils;
 import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
+import util.fe.FEConfig;
 import util.fe.FacturaElectronicaUtil;
 import util.fe.JwsGenerator;
 import util.fe.TableColumIdUtil;
@@ -169,7 +170,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     private static final int INDEX_TABLE_QTD = 4;
     private static final int INDEX_TABLE_DESCONTO = 5;
     private static final int INDEX_TABLE_TAXA_IVA = 6;
-    private static final String CLIENT_KEY = "Chaves/chave_cliente/ChavePrivada2048Cliente.pem";
+    
 
     private static List<Vector<TbPreco>> listaPrecoTemp = new ArrayList<>();
 
@@ -2430,7 +2431,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                 venda.setRequestID(venda.getCodFact());
                 Map<String, Object> payload = new LinkedHashMap<>();
                 payload.put("codFact", venda.getCodFact());
-                venda.setSubmissionUUID(JwsGenerator.gerarJws(CLIENT_KEY, payload));
+//                venda.setSubmissionUUID(JwsGenerator.gerarJws(CLIENT_KEY, payload));
+                venda.setSubmissionUUID(JwsGenerator.gerarJws(FEConfig.getChaveClientePrivada(), payload));
                 // Salvar a venda e obter o ID
                 idVendaGerada = vendasController.salvarRetornaID(venda);
 //            venda.setHashCod( MetodosUtil.criptografia_hash( vendasController.findById( idVendaGerada), getGrossTotal().doubleValue(), conexaoTransaction ) );
