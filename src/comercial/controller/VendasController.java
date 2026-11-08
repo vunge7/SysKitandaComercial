@@ -2252,6 +2252,59 @@ public List<Integer> findCodigosVendasParaComunicarAGT(Connection connection,
     return codigos;
 }
 
+// =====================================================================
+// MODO CONTINGÊNCIA: facturas emitidas sem ligação à AGT
+// estado = 'P' e sem requestID (a AGT nunca as recebeu).
+// requestID = cod_fact é o marcador usado nas proformas / gravações locais.
+// =====================================================================
+private static final String FILTRO_DOCS_FE = "fk_documento IN (" + DVML.DOC_FACTURA_RECIBO_FR + ", "
+        + DVML.DOC_FACTURA_FT + ", " + DVML.DOC_NOTA_CREDITO_NC + ", " + DVML.DOC_RECIBO_RC + ") "
+        + "AND cod_fact IS NOT NULL AND cod_fact <> '' ";
+
+private static final String FILTRO_POR_COMUNICAR = FILTRO_DOCS_FE
+        + "AND (estado = 'P' OR estado IS NULL) "
+        + "AND (requestID IS NULL OR requestID = '' OR requestID = cod_fact) ";
+
+private static final String FILTRO_AGUARDA_AGT = FILTRO_DOCS_FE
+        + "AND (estado = 'P' OR estado IS NULL) "
+        + "AND requestID IS NOT NULL AND requestID <> '' AND requestID <> cod_fact ";
+
+/** Códigos das vendas por comunicar à AGT, por ordem cronológica. */
+public List<Integer> findCodigosVendasPorComunicarAGT(Connection connection) {
+    return listarCodigos(connection, "SELECT codigo FROM tb_venda WHERE " + FILTRO_POR_COMUNICAR
+            + "ORDER BY codigo ASC");
+}
+
+/** Códigos das vendas já submetidas que aguardam validação (P com requestID). */
+public List<Integer> findCodigosVendasAguardandoAGT(Connection connection) {
+    return listarCodigos(connection, "SELECT codigo FROM tb_venda WHERE " + FILTRO_AGUARDA_AGT
+            + "ORDER BY codigo ASC");
+}
+
+public int contarPorComunicarAGT(Connection connection) {
+    String sql = "SELECT COUNT(*) FROM tb_venda WHERE " + FILTRO_POR_COMUNICAR;
+    try (PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
+        return rs.next() ? rs.getInt(1) : 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return 0;
+    }
+}
+
+private List<Integer> listarCodigos(Connection connection, String sql) {
+    List<Integer> codigos = new ArrayList<>();
+    try (PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
+        while (rs.next()) {
+            codigos.add(rs.getInt(1));
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return codigos;
+}
+
 /**
  * Documentos pagos por um recibo (para o paymentReceipt da AGT), a partir
  * da amortizacao_divida gravada pelo EmissaoRecibos (ref_cod_fact = nº do

@@ -587,6 +587,14 @@ public void entrar_sistema() throws SQLException, UnknownHostException {
             e.printStackTrace();
         }
 
+        // FE modo contingência: comunica à AGT, em segundo plano, as facturas
+        // emitidas sem ligação (estado 'P' sem requestID) - de 5 em 5 minutos
+        try {
+            util.fe.ComunicacaoPendentesFE.iniciarAgendamento(LoginVisao::notificarComunicacaoFE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         // Encaminha o utilizador de acordo com o seu tipo
         switch (usuario.getIdTipoUsuario().getIdTipoUsuario()) {
 
@@ -1003,6 +1011,45 @@ public void entrar_sistema() throws SQLException, UnknownHostException {
         new LoginVisao(BDConexao.getInstancia()).setVisible(true);
 
 //        new LoginVisao(BDConexao.getInstancia().getConnectionAtiva()).setVisible(true);
+    }
+
+    /**
+     * Aviso discreto (não modal, fecha sozinho) quando o envio automático
+     * comunicou facturas emitidas offline. Não interrompe a caixa.
+     */
+    private static void notificarComunicacaoFE(util.fe.ComunicacaoPendentesFE.Resumo r) {
+        StringBuilder sb = new StringBuilder("<html><b>Facturação Electrónica (AGT)</b><br>");
+        if (r.enviadas > 0) {
+            sb.append(r.enviadas).append(" factura(s) emitida(s) offline comunicada(s).<br>");
+        }
+        if (r.validadas > 0) {
+            sb.append(r.validadas).append(" validada(s).<br>");
+        }
+        if (r.invalidadas > 0) {
+            sb.append("<font color='#b00000'>").append(r.invalidadas)
+                    .append(" rejeitada(s) - ver Consulta de Estado FE.</font><br>");
+        }
+        sb.append("</html>");
+
+        final javax.swing.JWindow janela = new javax.swing.JWindow();
+        JLabel lbl = new JLabel(sb.toString());
+        lbl.setOpaque(true);
+        lbl.setBackground(new java.awt.Color(255, 250, 225));
+        lbl.setBorder(javax.swing.BorderFactory.createCompoundBorder(
+                javax.swing.BorderFactory.createLineBorder(new java.awt.Color(200, 160, 60)),
+                javax.swing.BorderFactory.createEmptyBorder(10, 14, 10, 14)));
+        lbl.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 13));
+        janela.getContentPane().add(lbl);
+        janela.pack();
+        java.awt.Rectangle ecra = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+        janela.setLocation(ecra.x + ecra.width - janela.getWidth() - 16,
+                ecra.y + ecra.height - janela.getHeight() - 16);
+        janela.setFocusableWindowState(false); // não rouba o foco à caixa
+        janela.setAlwaysOnTop(true);
+        janela.setVisible(true);
+        javax.swing.Timer t = new javax.swing.Timer(8000, e -> janela.dispose());
+        t.setRepeats(false);
+        t.start();
     }
 
 }

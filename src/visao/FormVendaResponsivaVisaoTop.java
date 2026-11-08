@@ -2414,6 +2414,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         }
 
         Integer idVendaGerada = 0;
+        boolean emitidaOffline = false;
 
         try
         {
@@ -2460,6 +2461,12 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                 } else {
                     venda.setEstado("P");// força o estado para o 'P'
                 }
+                // Modo contingência: sem ligação à AGT a venda segue em 'P' sem
+                // requestID e é comunicada depois (ComunicacaoPendentesFE)
+                emitidaOffline = util.fe.FacturaElectronicaUtil.isUltimoEnvioOffline();
+                if (emitidaOffline) {
+                    venda.setRequestID(null);
+                }
 
                 idVendaGerada = vendasController.salvarRetornaID(venda);
                 System.out.println("ID VENDA GERADA: "+idVendaGerada);
@@ -2503,7 +2510,16 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             // Finaliza transação
             DocumentosController.commit(conexaoTransactionLocal);
 
-            JOptionPane.showMessageDialog(null, "Factura efectuada com sucesso!");
+            if (emitidaOffline) {
+                JOptionPane.showMessageDialog(null,
+                        "Factura efectuada com sucesso em MODO OFFLINE.\n\n"
+                        + "Não foi possível comunicar com a AGT (sem internet ou serviço indisponível).\n"
+                        + "A factura fica no estado PENDENTE e será comunicada automaticamente\n"
+                        + "quando a ligação voltar.",
+                        "Factura emitida offline", JOptionPane.WARNING_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(null, "Factura efectuada com sucesso!");
+            }
             txtNomeConsumidorFinal.setVisible(true);
             imprimir_factura(idVendaGerada); // Imprime a factura
 

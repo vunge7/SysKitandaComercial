@@ -1096,13 +1096,40 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
                 constructCreditNote( localNote, orginDoc );
                 Log.info( "##builder credit note sucessful" );
 
-                if ( FacturaElectronicaUtil.criarFE(
+                boolean respostaAGT = FacturaElectronicaUtil.criarFE(
                         localNote,
                         dadosInstituicao,
                         documento,
                         cliente,
                         table,
-                        getObjectsColumnsIds() ) )
+                        getObjectsColumnsIds() );
+
+                // Modo contingência: sem ligação à AGT a NC é gravada em 'P' sem
+                // requestID e comunicada depois (por ordem, após a factura de origem).
+                // Também grava se a AGT aceitou a submissão mas ainda não validou.
+                // Só não grava se a AGT rejeitou ('I') ou recusou os dados.
+                boolean emitidaOffline = FacturaElectronicaUtil.isUltimoEnvioOffline();
+                boolean submetida = localNote.getRequestID() != null
+                        && !localNote.getRequestID().trim().isEmpty()
+                        && !DVML.ESTADO_INVALIDO.equalsIgnoreCase( localNote.getEstado() );
+                boolean podeGravar = respostaAGT || emitidaOffline || submetida;
+                if ( podeGravar && !respostaAGT )
+                {
+                    localNote.setEstado( DVML.ESTADO_PENDENTE );
+                    if ( emitidaOffline )
+                    {
+                        localNote.setRequestID( null );
+                    }
+                }
+
+                if ( !podeGravar )
+                {
+                    JOptionPane.showMessageDialog( null,
+                            "A Nota de Crédito não foi aceite pela AGT e não foi gravada.\n"
+                            + "Verifique os dados do documento.",
+                            "FALHA", JOptionPane.ERROR_MESSAGE );
+                }
+                else
                 {
 
                     try
@@ -1182,6 +1209,15 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
                         }
 
                         System.out.println( "STATUS:itens adicionado na facrtura com sucesso." );
+                        if ( emitidaOffline )
+                        {
+                            JOptionPane.showMessageDialog( null,
+                                    "Nota de Crédito emitida em MODO OFFLINE.\n\n"
+                                    + "Não foi possível comunicar com a AGT (sem internet ou serviço indisponível).\n"
+                                    + "O documento fica PENDENTE e será comunicado automaticamente\n"
+                                    + "quando a ligação voltar.",
+                                    "Documento emitido offline", JOptionPane.WARNING_MESSAGE );
+                        }
                     }
                     catch ( Exception e )
                     {

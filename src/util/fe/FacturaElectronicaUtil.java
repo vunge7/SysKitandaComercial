@@ -325,21 +325,83 @@ public class FacturaElectronicaUtil {
     
     
 
-    private static boolean enviarParaAPI(String nif, DocumentDTO doc, TbVenda venda) {
-        try {
-            Map<String, Object> payloadMap = PayloadFactory.criarPayloadCriarDocumento(nif, Collections.singletonList(doc));
-            String uuid = (String) payloadMap.get("submissionUUID");
-            venda.setSubmissionUUID(uuid);
+    // --- MODO CONTINGÊNCIA (sem internet / AGT indisponível) ---
+    /** Timeouts usados na emissão de uma venda (caixa não pode ficar parada). */
+    public static final int TIMEOUT_EMISSAO_CONNECT_MS = 5000;
+    public static final int TIMEOUT_EMISSAO_READ_MS = 10000;
 
+    /**
+     * true se o último envio desta thread não chegou à AGT (sem internet,
+     * timeout, AGT em baixo). A venda fica em estado 'P' sem requestID e é
+     * comunicada mais tarde (ComunicacaoPendentesFE).
+     */
+    private static final ThreadLocal<Boolean> ULTIMO_ENVIO_OFFLINE
+            = ThreadLocal.withInitial(() -> Boolean.FALSE);
+
+    public static boolean isUltimoEnvioOffline() {
+        return ULTIMO_ENVIO_OFFLINE.get();
+    }
+
+    private static boolean marcarOffline(TbVenda venda, String motivo) {
+        ULTIMO_ENVIO_OFFLINE.set(Boolean.TRUE);
+        venda.setRequestID(null);
+        venda.setEstado(DVML.ESTADO_PENDENTE);
+        System.err.println("FE em modo OFFLINE (" + venda.getCodFact() + "): " + motivo);
+        return false;
+    }
+
+    private static boolean enviarParaAPI(String nif, DocumentDTO doc, TbVenda venda) {
+        ULTIMO_ENVIO_OFFLINE.set(Boolean.FALSE);
+
+        Map<String, Object> payloadMap;
+        try {
+            payloadMap = PayloadFactory.criarPayloadCriarDocumento(nif, Collections.singletonList(doc));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        String uuid = (String) payloadMap.get("submissionUUID");
+        venda.setSubmissionUUID(uuid);
+
+        // Sem ligação à AGT: não espera, a venda segue em 'P' (por comunicar)
+        if (!AgtConectividade.agtDisponivel()) {
+            return marcarOffline(venda, "AGT inacessível");
+        }
+
+        // Na emissão usam-se timeouts curtos; o envio em lote define os seus
+        boolean definiuTimeouts = false;
+        if (!HttpClientUtil.temTimeoutsThread()) {
+            HttpClientUtil.setTimeoutsThread(TIMEOUT_EMISSAO_CONNECT_MS, TIMEOUT_EMISSAO_READ_MS);
+            definiuTimeouts = true;
+        }
+        try {
             String json = JsonUtil.toJson(payloadMap);
-            System.out.println("JASON: "+json);
+            System.out.println("JASON: " + json);
             String auth = BasicAuthUtil.gerarAuthorizationHeader(FEConfig.getUsername(), FEConfig.getPassword());
 
-            String response = HttpClientUtil.postJson(FEConfig.getEndpointRegistrarFactura(), json, auth);
+            String response;
+            try {
+                response = HttpClientUtil.postJson(FEConfig.getEndpointRegistrarFactura(), json, auth);
+            } catch (Exception e) {
+                if (AgtConectividade.isErroDeRede(e)) {
+                    AgtConectividade.marcarIndisponivel();
+                    return marcarOffline(venda, e.getClass().getSimpleName() + " - " + e.getMessage());
+                }
+                throw e;
+            }
+            AgtConectividade.marcarDisponivel();
+            if (response == null || response.trim().isEmpty()) {
+                // AGT respondeu sem conteúdo (ex.: 5xx): tratar como indisponível
+                return marcarOffline(venda, "resposta vazia da AGT");
+            }
             return PayloadFactory.obterEstadoFactura(nif, response, venda);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        } finally {
+            if (definiuTimeouts) {
+                HttpClientUtil.limparTimeoutsThread();
+            }
         }
     }
 }

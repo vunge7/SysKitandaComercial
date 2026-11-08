@@ -1526,6 +1526,15 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 //            "Falha na comunicação com a AGT."
 //    );
 //}
+            // Modo contingência: sem ligação, fica 'P' sem requestID (por comunicar)
+            final boolean emitidaOffline = FacturaElectronicaUtil.isUltimoEnvioOffline();
+            if (!respostaAGT && (venda_local.getEstado() == null
+                    || venda_local.getEstado().trim().isEmpty())) {
+                venda_local.setEstado(DVML.ESTADO_PENDENTE);
+            }
+            if (emitidaOffline) {
+                venda_local.setRequestID(null);
+            }
             System.out.println(
                     "AGT ESTADO: "
                     + venda_local.getEstado()
@@ -1582,7 +1591,9 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
             System.out.println("ESTADO DA VENDA: [" + venda_local.getEstado() + "]");
             System.out.println("TOTAL DE ITENS: " + itensVenda.size());
 
-            if ("V".equalsIgnoreCase(venda_local.getEstado())) {
+            // Modo contingência: a venda aconteceu mesmo sem resposta da AGT ('P'),
+            // por isso o stock só não é abatido quando a AGT rejeita ('I').
+            if (!DVML.ESTADO_INVALIDO.equalsIgnoreCase(venda_local.getEstado())) {
 
                 for (TbItemVenda item : itensVenda) {
 
@@ -1715,6 +1726,18 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 //                        "Factura Válida",
 //                        JOptionPane.INFORMATION_MESSAGE
 //                );
+
+            } else if ("P".equalsIgnoreCase(estadoAGT) && emitidaOffline) {
+
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Factura efectuada em MODO OFFLINE.\n\n"
+                        + "Não foi possível comunicar com a AGT (sem internet ou serviço indisponível).\n"
+                        + "A factura fica PENDENTE e será comunicada automaticamente\n"
+                        + "quando a ligação voltar.",
+                        "Factura emitida offline",
+                        JOptionPane.WARNING_MESSAGE
+                );
 
             } else if ("P".equalsIgnoreCase(estadoAGT)) {
 

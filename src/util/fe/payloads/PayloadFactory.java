@@ -24,36 +24,42 @@ public class PayloadFactory {
     // =====================================================
     // ERROS DO ÚLTIMO ENVIO (para quem chama poder reagir)
     // =====================================================
-    /** Descrições de erro devolvidas pela AGT no último envio/consulta. */
-    private static final List<String> ULTIMOS_ERROS = new ArrayList<>();
+    /**
+     * Descrições de erro devolvidas pela AGT no último envio/consulta.
+     * Por thread: o envio automático em segundo plano não se mistura com a
+     * venda que está a ser feita na caixa.
+     */
+    private static final ThreadLocal<List<String>> ULTIMOS_ERROS_TL
+            = ThreadLocal.withInitial(ArrayList::new);
 
     /**
      * Envio em lote: true = não mostrar JOptionPane por cada documento
-     * (os erros continuam disponíveis em getUltimosErros()).
+     * (os erros continuam disponíveis em getUltimosErros()). Por thread.
      */
-    private static volatile boolean modoSilencioso = false;
+    private static final ThreadLocal<Boolean> MODO_SILENCIOSO
+            = ThreadLocal.withInitial(() -> Boolean.FALSE);
 
     public static void setModoSilencioso(boolean silencioso) {
-        modoSilencioso = silencioso;
+        MODO_SILENCIOSO.set(silencioso);
     }
 
     private static void aviso(Object mensagem, String titulo, int tipo) {
-        if (!modoSilencioso) {
+        if (!MODO_SILENCIOSO.get()) {
             JOptionPane.showMessageDialog(null, mensagem, titulo, tipo);
         }
     }
 
-    public static synchronized void limparUltimosErros() {
-        ULTIMOS_ERROS.clear();
+    public static void limparUltimosErros() {
+        ULTIMOS_ERROS_TL.get().clear();
     }
 
-    public static synchronized List<String> getUltimosErros() {
-        return new ArrayList<>(ULTIMOS_ERROS);
+    public static List<String> getUltimosErros() {
+        return new ArrayList<>(ULTIMOS_ERROS_TL.get());
     }
 
-    private static synchronized void registarErro(JsonNode descricao) {
+    private static void registarErro(JsonNode descricao) {
         if (descricao != null && !descricao.isNull()) {
-            ULTIMOS_ERROS.add(descricao.asText());
+            ULTIMOS_ERROS_TL.get().add(descricao.asText());
         }
     }
 
@@ -62,10 +68,14 @@ public class PayloadFactory {
      * ("Factura especificada no parâmetro documentoNo (...) está duplicado na
      * presente lista ou já consta no repositório do sistema").
      */
-    public static synchronized boolean ultimoErroNumeroDuplicado() {
-        for (String e : ULTIMOS_ERROS) {
+    public static boolean ultimoErroNumeroDuplicado() {
+        for (String e : ULTIMOS_ERROS_TL.get()) {
             String s = e.toLowerCase();
             if (s.contains("documentono") && (s.contains("duplicad") || s.contains("consta no reposit"))) {
+                return true;
+            }
+            // E04: "O documento ... já foi submetido. Caso pretenda efetuar uma correção..."
+            if (s.contains("foi submetido") && s.contains("documento")) {
                 return true;
             }
         }

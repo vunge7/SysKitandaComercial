@@ -25,7 +25,44 @@ import util.fe.payloads.PayloadFactory;
 
 public class HttpClientUtil {
 
+    public static final int TIMEOUT_PADRAO_MS = 20000;
+
+    /** HTTP 5xx: a AGT não está a atender (modo contingência). */
+    public static class ServidorIndisponivelException extends java.io.IOException {
+
+        public ServidorIndisponivelException(String msg) {
+            super(msg);
+        }
+    }
+
+    /**
+     * Timeouts por thread: na emissão de uma venda usam-se timeouts curtos
+     * (modo contingência) sem mudar as chamadas internas da PayloadFactory.
+     */
+    private static final ThreadLocal<int[]> TIMEOUTS = new ThreadLocal<>();
+
+    public static void setTimeoutsThread(int connectMs, int readMs) {
+        TIMEOUTS.set(new int[]{connectMs, readMs});
+    }
+
+    public static void limparTimeoutsThread() {
+        TIMEOUTS.remove();
+    }
+
+    public static boolean temTimeoutsThread() {
+        return TIMEOUTS.get() != null;
+    }
+
     public static String postJson(String endpoint, String json, String basicAuthBase64) throws Exception {
+        int[] t = TIMEOUTS.get();
+        if (t != null) {
+            return postJson(endpoint, json, basicAuthBase64, t[0], t[1]);
+        }
+        return postJson(endpoint, json, basicAuthBase64, TIMEOUT_PADRAO_MS, TIMEOUT_PADRAO_MS);
+    }
+
+    public static String postJson(String endpoint, String json, String basicAuthBase64,
+            int connectTimeoutMs, int readTimeoutMs) throws Exception {
 
         URL url = new URL(endpoint);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -40,8 +77,8 @@ public class HttpClientUtil {
         conn.setRequestProperty("Accept", "application/json");
 
         // Timeout em milissegundos
-        conn.setConnectTimeout(20000); // timeout de conexão
-        conn.setReadTimeout(20000);    // timeout de leitura/resposta
+        conn.setConnectTimeout(connectTimeoutMs); // timeout de conexão
+        conn.setReadTimeout(readTimeoutMs);       // timeout de leitura/resposta
 
         // BODY
         try (OutputStream os = conn.getOutputStream()) {
@@ -51,11 +88,22 @@ public class HttpClientUtil {
         // STATUS
         int status = conn.getResponseCode();
 
+        // 5xx = servidor da AGT em baixo/sobrecarregado: tratado como sem ligação
+        if (status >= 500) {
+            conn.disconnect();
+            throw new ServidorIndisponivelException("AGT respondeu HTTP " + status);
+        }
+
         BufferedReader br;
         if (status >= 200 && status < 300) {
             br = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
         } else {
-            br = new BufferedReader(new InputStreamReader(conn.getErrorStream(), StandardCharsets.UTF_8));
+            java.io.InputStream err = conn.getErrorStream();
+            if (err == null) {
+                conn.disconnect();
+                return "";
+            }
+            br = new BufferedReader(new InputStreamReader(err, StandardCharsets.UTF_8));
         }
 
         StringBuilder resp = new StringBuilder();
