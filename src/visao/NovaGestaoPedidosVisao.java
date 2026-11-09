@@ -332,7 +332,538 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
         desactivarLugares();
 
+        // aspecto de POS web (como no SysKitandaHotel), sobre o initComponents
+        util.ui.LayoutSeguro.aplicar( this, "Pedidos da mesa", this::montarLayoutWeb );
+
 //        jPanelLugares.setVisible( rbNao_lugar.isSelected() );
+    }
+
+    // =====================================================================
+    // LAYOUT WEB (estilo POS de restauração do SysKitandaHotel, sem o painel
+    // dos quartos). Montado por código sobre o initComponents: os componentes,
+    // eventos e regras são os mesmos; o .form fica com o desenho antigo.
+    // O texto dos botões do catálogo não muda (o código usa-o para saber a
+    // categoria e o produto): só o aspecto e a grelha.
+    // =====================================================================
+    private void montarLayoutWeb()
+    {
+        java.awt.Color claroCabecalho = new java.awt.Color( 196, 218, 245 );
+        util.ui.FormularioWeb.campoTexto( txtIniciaisCliente, txtNomeConsumidorFinal, txtTelClientePesquisa, txtQuatidadeExistente );
+        util.ui.FormularioWeb.combo( cmbCliente, cmbTipoDocumento, cmbAnoEconomico, cmbArmazem, cmb_area_venda_restaurante );
+        for ( javax.swing.JComboBox<?> c : new javax.swing.JComboBox<?>[]
+        {
+            cmbCliente, cmbTipoDocumento, cmbAnoEconomico, cmbArmazem, cmb_area_venda_restaurante
+        } )
+        {
+            c.setForeground( util.ui.ComponentesWeb.TEXTO );
+        }
+        util.ui.FormularioWeb.data( dc_data_documento );
+        util.ui.FormularioWeb.spinner( spnCopia );
+        spnCopia.setPreferredSize( new java.awt.Dimension( 60, 30 ) );
+
+        // ================================================ cabeçalho
+        final String numeroMesa = comercial.controller.MesasController.numeroDe( mesa );
+        javax.swing.JComponent emblema = new javax.swing.JComponent()
+        {
+            @Override
+            protected void paintComponent( java.awt.Graphics g )
+            {
+                java.awt.Graphics2D g2 = util.ui.ComponentesWeb.suave( g );
+                int w = getWidth(), h = getHeight();
+                g2.setColor( new java.awt.Color( 255, 255, 255, 40 ) );
+                g2.fillRoundRect( 0, 2, w, h - 2, 16, 16 );
+                g2.setColor( java.awt.Color.WHITE );
+                g2.fillRoundRect( 0, 0, w - 1, h - 3, 16, 16 );
+                g2.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 9.5f ) );
+                java.awt.FontMetrics f1 = g2.getFontMetrics();
+                g2.setColor( util.ui.ComponentesWeb.TEXTO_SUAVE );
+                g2.drawString( "MESA", ( w - f1.stringWidth( "MESA" ) ) / 2, 15 );
+                float tam = numeroMesa.length() > 3 ? 15f : 24f;
+                g2.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( tam ) );
+                java.awt.FontMetrics f2 = g2.getFontMetrics();
+                g2.setColor( util.ui.ComponentesWeb.AZUL );
+                g2.drawString( numeroMesa, ( w - f2.stringWidth( numeroMesa ) ) / 2, h - 12 );
+                g2.dispose();
+            }
+        };
+        emblema.setPreferredSize( new java.awt.Dimension( 60, 58 ) );
+        JLabel titulo = new JLabel( "Pedido da " + mesa.substring( 0, 1 ) + mesa.substring( 1 ).toLowerCase() );
+        titulo.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 23f ) );
+        titulo.setForeground( java.awt.Color.WHITE );
+        JLabel subtitulo = new JLabel( new java.text.SimpleDateFormat( "dd/MM/yyyy" ).format( new Date() ) );
+        subtitulo.setFont( util.ui.EstiloUI.FONTE.deriveFont( 13f ) );
+        subtitulo.setForeground( claroCabecalho );
+        JPanel titulos = util.ui.ComponentesWeb.transparente( new java.awt.GridLayout( 2, 1 ) );
+        titulos.add( titulo );
+        titulos.add( subtitulo );
+        JPanel marca = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 12, 0 ) );
+        marca.add( emblema, java.awt.BorderLayout.WEST );
+        marca.add( titulos, java.awt.BorderLayout.CENTER );
+        JPanel marcaTopo = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout() );
+        marcaTopo.add( marca, java.awt.BorderLayout.NORTH );
+
+        cmbTipoDocumento.setPreferredSize( new java.awt.Dimension( 190, 30 ) );
+        cmbAnoEconomico.setPreferredSize( new java.awt.Dimension( 90, 30 ) );
+        cmbArmazem.setPreferredSize( new java.awt.Dimension( 170, 30 ) );
+        cmb_area_venda_restaurante.setPreferredSize( new java.awt.Dimension( 150, 30 ) );
+        lb_proximo_documento.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 13f ) );
+        lb_proximo_documento.setForeground( java.awt.Color.WHITE );
+        JPanel campoArmazem = util.ui.FormularioWeb.campoCabecalho( new JLabel( "Armazém" ), cmbArmazem );
+        seguirVisibilidadeWeb( cmbArmazem, campoArmazem );
+        JPanel campoArea = util.ui.FormularioWeb.campoCabecalho( new JLabel( "Área" ), cmb_area_venda_restaurante );
+        seguirVisibilidadeWeb( cmb_area_venda_restaurante, campoArea );
+        JPanel documento = util.ui.ComponentesWeb.transparente( new util.ui.EstiloUI.WrapLayout( java.awt.FlowLayout.RIGHT, 10, 0 ) );
+        documento.add( lb_proximo_documento );
+        documento.add( util.ui.FormularioWeb.campoCabecalho( new JLabel( "Documento" ), cmbTipoDocumento ) );
+        documento.add( util.ui.FormularioWeb.campoCabecalho( new JLabel( "Ano" ), cmbAnoEconomico ) );
+        documento.add( campoArea );
+        documento.add( campoArmazem );
+        JPanel linhaTopo = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 16, 0 ) );
+        linhaTopo.add( marcaTopo, java.awt.BorderLayout.WEST );
+        linhaTopo.add( documento, java.awt.BorderLayout.CENTER );
+
+        // talão (folha de impressão) e vias
+        JLabel lbTalao = new JLabel( "Talão" );
+        lbTalao.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 12.5f ) );
+        lbTalao.setForeground( claroCabecalho );
+        JPanel impressao = util.ui.ComponentesWeb.transparente( new java.awt.FlowLayout( java.awt.FlowLayout.LEFT, 6, 0 ) );
+        impressao.add( lbTalao );
+        ck_simplificada.setToolTipText( "A6 simplificado" );
+        ck_ComVirgula.setToolTipText( "A6 com vírgula" );
+        ck_S_A6.setToolTipText( "A6 sem cabeçalho completo" );
+        ck_A7.setToolTipText( "Talão A7 (rolo estreito)" );
+        for ( javax.swing.JCheckBox ck : new javax.swing.JCheckBox[]
+        {
+            ck_simplificada, ck_ComVirgula, ck_S_A6, ck_A7
+        } )
+        {
+            util.ui.ComponentesWeb.pilula( ck, true );
+            impressao.add( ck );
+        }
+        lbVias.setText( "Vias" );
+        lbVias.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 12.5f ) );
+        lbVias.setForeground( claroCabecalho );
+        impressao.add( javax.swing.Box.createHorizontalStrut( 8 ) );
+        impressao.add( lbVias );
+        impressao.add( spnCopia );
+
+        jButton1.setText( "Transferências" );
+        pilulaCabecalho( jButton1, util.ui.ComponentesWeb.Variante.SECUNDARIO, "Passar os pedidos desta mesa para outra mesa" );
+        jButton3.setText( "Enviar ticket" );
+        pilulaCabecalho( jButton3, util.ui.ComponentesWeb.Variante.SECUNDARIO, "Enviar o ticket para a cozinha / bar" );
+        jButton2.setText( "Sair" );
+        util.ui.FormularioWeb.botaoSair( jButton2, "Fechar o pedido desta mesa (os itens ficam guardados)" );
+        pilulaCabecalho( jButton2, null, null );
+        JPanel botoesTopo = util.ui.ComponentesWeb.transparente( new java.awt.FlowLayout( java.awt.FlowLayout.RIGHT, 8, 0 ) );
+        botoesTopo.add( dataCabecalho( "Data", dc_data_documento, "Data do documento" ) );
+        botoesTopo.add( javax.swing.Box.createHorizontalStrut( 6 ) );
+        botoesTopo.add( jButton1 );
+        botoesTopo.add( jButton3 );
+        botoesTopo.add( jButton2 );
+        JPanel linhaBaixo = util.ui.ComponentesWeb.transparente( new util.ui.EstiloUI.WrapLayout( java.awt.FlowLayout.LEFT, 0, 4 ) );
+        JPanel linhaBaixoTudo = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 12, 0 ) );
+        linhaBaixo.add( impressao );
+        linhaBaixoTudo.add( linhaBaixo, java.awt.BorderLayout.CENTER );
+        linhaBaixoTudo.add( botoesTopo, java.awt.BorderLayout.EAST );
+
+        JPanel cabecalho = new util.ui.ComponentesWeb.PainelGradiente( new java.awt.BorderLayout( 0, 10 ),
+                util.ui.EstiloUI.AZUL_ESCURO, new java.awt.Color( 0, 96, 168 ) );
+        cabecalho.setBorder( javax.swing.BorderFactory.createEmptyBorder( 12, 20, 12, 20 ) );
+        cabecalho.add( linhaTopo, java.awt.BorderLayout.NORTH );
+        cabecalho.add( linhaBaixoTudo, java.awt.BorderLayout.SOUTH );
+
+        // ================================================ conta da mesa
+        // lugares: os 10 numa só linha (o código mostra/esconde o painel dos lugares)
+        JPanel lugares = util.ui.ComponentesWeb.transparente( new java.awt.GridLayout( 1, 10, 4, 0 ) );
+        for ( JButton b : new JButton[]
+        {
+            btn_01, btn_02, btn_03, btn_04, btn_05, btn_06, btn_07, btn_08, btn_09, btn_10
+        } )
+        {
+            util.ui.MesasWeb.botaoLugar( b );
+            b.setPreferredSize( new java.awt.Dimension( 40, 44 ) );
+            b.setMinimumSize( new java.awt.Dimension( 30, 44 ) );
+            lugares.add( b );
+        }
+        JLabel lbLugares = new JLabel( "Escolha o lugar e depois os produtos" );
+        util.ui.ComponentesWeb.rotulo( lbLugares );
+        JPanel blocoLugares = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 0, 2 ) );
+        blocoLugares.add( lbLugares, java.awt.BorderLayout.NORTH );
+        blocoLugares.add( lugares, java.awt.BorderLayout.CENTER );
+        seguirVisibilidadeWeb( jPanelLugares, blocoLugares );
+
+        // usar lugares (Sim/Não), como pílulas
+        jLabel4.setText( "Lugares" );
+        util.ui.ComponentesWeb.rotulo( jLabel4 );
+        for ( javax.swing.JRadioButton rb : new javax.swing.JRadioButton[]
+        {
+            rbSim_lugar, rbNao_lugar
+        } )
+        {
+            util.ui.ComponentesWeb.pilulaCompacta( rb );
+        }
+        JPanel escolhaLugares = util.ui.ComponentesWeb.transparente( new java.awt.FlowLayout( java.awt.FlowLayout.LEFT, 6, 0 ) );
+        escolhaLugares.add( jLabel4 );
+        escolhaLugares.add( rbSim_lugar );
+        escolhaLugares.add( rbNao_lugar );
+
+        JPanel topoConta = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 0, 6 ) );
+        topoConta.add( escolhaLugares, java.awt.BorderLayout.NORTH );
+        topoConta.add( blocoLugares, java.awt.BorderLayout.CENTER );
+
+        util.ui.EstiloUI.estilizarTabela( jTable1, true );
+        util.ui.EstiloUI.ZebraRenderer direita = new util.ui.EstiloUI.ZebraRenderer( javax.swing.SwingConstants.RIGHT );
+        int[] larguras =
+        {
+            42, 70, 250, 60, 110
+        };
+        for ( int i = 0; i < jTable1.getColumnCount() && i < larguras.length; i++ )
+        {
+            jTable1.getColumnModel().getColumn( i ).setPreferredWidth( larguras[ i ] );
+            if ( i >= 3 )
+            {
+                jTable1.getColumnModel().getColumn( i ).setCellRenderer( direita );
+            }
+        }
+        jScrollPane2.setBorder( new javax.swing.border.LineBorder( util.ui.ComponentesWeb.LINHA, 1, true ) );
+        jScrollPane2.getViewport().setBackground( java.awt.Color.WHITE );
+        jScrollPane2.setPreferredSize( new java.awt.Dimension( 380, 170 ) );
+        jScrollPane2.setMinimumSize( new java.awt.Dimension( 240, 110 ) );
+
+        // visor do total (escuro, números grandes, como um POS)
+        jLabel1.setText( "TOTAL A PAGAR" );
+        jLabel1.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 11.5f ) );
+        jLabel1.setForeground( new java.awt.Color( 148, 163, 184 ) );
+        txtTotalApagar.setFont( util.ui.MesasWeb.fonteVisor( 32 ) );
+        txtTotalApagar.setForeground( new java.awt.Color( 134, 239, 172 ) );
+        txtTotalApagar.setOpaque( false );
+        txtTotalApagar.setBorder( null );
+        txtTotalApagar.setHorizontalAlignment( javax.swing.SwingConstants.RIGHT );
+        txtTotalApagar.setFocusable( false );
+        final JLabel lbItens = new JLabel( " " );
+        lbItens.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 11.5f ) );
+        lbItens.setForeground( new java.awt.Color( 148, 163, 184 ) );
+        final util.ui.ComponentesWeb.TextoQuebrado extenso = new util.ui.ComponentesWeb.TextoQuebrado();
+        extenso.setFont( util.ui.EstiloUI.FONTE.deriveFont( java.awt.Font.ITALIC, 11.5f ) );
+        extenso.setForeground( new java.awt.Color( 203, 213, 225 ) );
+        extenso.setText( lbValorPorExtenco.getText() );
+        lbValorPorExtenco.addPropertyChangeListener( "text", e -> extenso.setText( lbValorPorExtenco.getText() ) );
+        JPanel topoVisor = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout() );
+        topoVisor.add( jLabel1, java.awt.BorderLayout.WEST );
+        topoVisor.add( lbItens, java.awt.BorderLayout.EAST );
+        util.ui.ComponentesWeb.CaixaSuave visor = new util.ui.ComponentesWeb.CaixaSuave( new java.awt.BorderLayout( 0, 2 ),
+                new java.awt.Color( 15, 23, 42 ), null );
+        visor.setBorder( javax.swing.BorderFactory.createEmptyBorder( 10, 14, 10, 14 ) );
+        visor.add( topoVisor, java.awt.BorderLayout.NORTH );
+        visor.add( txtTotalApagar, java.awt.BorderLayout.CENTER );
+        visor.add( extenso, java.awt.BorderLayout.SOUTH );
+
+        final util.ui.ComponentesWeb.Etiqueta etiquetaItens = new util.ui.ComponentesWeb.Etiqueta( "0 itens", util.ui.ComponentesWeb.AZUL_VIVO );
+        final Runnable contarItens = () ->
+        {
+            int n = jTable1.getRowCount();
+            String t = n + ( n == 1 ? " item" : " itens" );
+            etiquetaItens.setText( t );
+            lbItens.setText( t.toUpperCase() );
+        };
+        final javax.swing.event.TableModelListener ouvinteItens = e -> contarItens.run();
+        jTable1.getModel().addTableModelListener( ouvinteItens );
+        // o código pode trocar o modelo da tabela: o contador segue o modelo novo
+        jTable1.addPropertyChangeListener( "model", e ->
+        {
+            if ( e.getOldValue() instanceof javax.swing.table.TableModel )
+            {
+                ( ( javax.swing.table.TableModel ) e.getOldValue() ).removeTableModelListener( ouvinteItens );
+            }
+            if ( e.getNewValue() instanceof javax.swing.table.TableModel )
+            {
+                ( ( javax.swing.table.TableModel ) e.getNewValue() ).addTableModelListener( ouvinteItens );
+            }
+            contarItens.run();
+        } );
+        contarItens.run();
+
+        // botões de cobrança, por baixo do visor
+        util.ui.ComponentesWeb.botao( BT_Conversao, util.ui.ComponentesWeb.Variante.SUCESSO, null,
+                "Emitir o documento e receber o pagamento" );
+        util.ui.ComponentesWeb.botao( btFT, util.ui.ComponentesWeb.Variante.SUCESSO, null, "Processar o documento" );
+        util.ui.ComponentesWeb.botao( BtnFCons, util.ui.ComponentesWeb.Variante.PRIMARIO, null, "Emitir a factura consulta" );
+        util.ui.ComponentesWeb.botao( BT_Pedidos, util.ui.ComponentesWeb.Variante.PRIMARIO, null,
+                "Imprimir a conta da mesa para o cliente conferir" );
+        JPanel cobrar = util.ui.ComponentesWeb.transparente( null );
+        cobrar.setLayout( new javax.swing.BoxLayout( cobrar, javax.swing.BoxLayout.X_AXIS ) );
+        for ( JButton b : new JButton[]
+        {
+            BT_Pedidos, BtnFCons, btFT, BT_Conversao
+        } )
+        {
+            b.setIcon( null );
+            b.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( b == BT_Pedidos ? 13.5f : 15f ) );
+            b.setBorder( javax.swing.BorderFactory.createEmptyBorder( 10, 16, 10, 16 ) );
+            b.setMaximumSize( new java.awt.Dimension( Integer.MAX_VALUE, b.getPreferredSize().height ) );
+            b.setHorizontalAlignment( javax.swing.SwingConstants.CENTER );
+            cobrar.add( b );
+            cobrar.add( javax.swing.Box.createHorizontalStrut( 6 ) );
+        }
+        JPanel rodapeConta = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 0, 8 ) );
+        rodapeConta.add( visor, java.awt.BorderLayout.NORTH );
+        rodapeConta.add( cobrar, java.awt.BorderLayout.SOUTH );
+
+        util.ui.ComponentesWeb.Cartao cartaoConta = new util.ui.ComponentesWeb.Cartao( "Conta da mesa",
+                util.ui.ComponentesWeb.AZUL_VIVO, new java.awt.BorderLayout( 0, 8 ) );
+        cartaoConta.adicionarAccao( etiquetaItens );
+        cartaoConta.getCorpo().add( topoConta, java.awt.BorderLayout.NORTH );
+        cartaoConta.getCorpo().add( jScrollPane2, java.awt.BorderLayout.CENTER );
+        cartaoConta.getCorpo().add( rodapeConta, java.awt.BorderLayout.SOUTH );
+
+        // ================================================ catálogo de produtos
+        btn_voltar.setText( "<<" ); // o texto não muda (só o aspecto)
+        util.ui.ComponentesWeb.botao( btn_voltar, util.ui.ComponentesWeb.Variante.SECUNDARIO, null, "Voltar às categorias" );
+        btn_voltar.putClientProperty( "web.pilula", Boolean.TRUE );
+        btn_voltar.setBorder( javax.swing.BorderFactory.createEmptyBorder( 5, 12, 5, 14 ) );
+        designacao_categoria.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 14f ) );
+        designacao_categoria.setForeground( util.ui.ComponentesWeb.TEXTO );
+        designacao_categoria.setMinimumSize( new java.awt.Dimension( 20, 20 ) );
+        designacao_categoria.setPreferredSize( new java.awt.Dimension( 60, 24 ) );
+        JLabel lbCategorias = new JLabel( "Categorias" );
+        lbCategorias.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 14f ) );
+        lbCategorias.setForeground( util.ui.ComponentesWeb.TEXTO );
+        // "Categorias" quando se está nas categorias; o nome da categoria dentro dela
+        lbCategorias.setVisible( !designacao_categoria.isVisible() );
+        designacao_categoria.addComponentListener( new java.awt.event.ComponentAdapter()
+        {
+            @Override
+            public void componentShown( java.awt.event.ComponentEvent e )
+            {
+                lbCategorias.setVisible( false );
+            }
+
+            @Override
+            public void componentHidden( java.awt.event.ComponentEvent e )
+            {
+                lbCategorias.setVisible( true );
+            }
+        } );
+        JPanel caminho = util.ui.ComponentesWeb.transparente( new java.awt.FlowLayout( java.awt.FlowLayout.LEFT, 8, 0 ) );
+        caminho.add( btn_voltar );
+        caminho.add( lbCategorias );
+        caminho.add( designacao_categoria );
+
+        // ticket geral / simples, em pílulas
+        for ( javax.swing.JRadioButton rb : new javax.swing.JRadioButton[]
+        {
+            rbTicketGeral, rbTicketSimples
+        } )
+        {
+            util.ui.ComponentesWeb.pilulaCompacta( rb );
+        }
+        rbTicketGeral.setText( rbTicketGeral.getText().isEmpty() ? "Ticket geral" : rbTicketGeral.getText() );
+        rbTicketSimples.setText( rbTicketSimples.getText().isEmpty() ? "Ticket simples" : rbTicketSimples.getText() );
+        JPanel tickets = util.ui.ComponentesWeb.transparente( new java.awt.FlowLayout( java.awt.FlowLayout.RIGHT, 6, 0 ) );
+        tickets.add( rbTicketSimples );
+        tickets.add( rbTicketGeral );
+
+        // stock do produto (o código mostra/esconde)
+        lbQuantidadeExistente.setText( "Stock" );
+        JPanel campoStock = util.ui.ComponentesWeb.campo( lbQuantidadeExistente, txtQuatidadeExistente );
+        txtQuatidadeExistente.setPreferredSize( new java.awt.Dimension( 80, util.ui.FormularioWeb.ALTURA_CAMPO ) );
+        seguirVisibilidadeWeb( txtQuatidadeExistente, campoStock );
+
+        jButton4.setText( "Pesquisar" );
+        util.ui.ComponentesWeb.botao( jButton4, util.ui.ComponentesWeb.Variante.SECUNDARIO, "/imagens/proucura.png",
+                "Pesquisar um produto pelo nome (F4)" );
+        jButton4.putClientProperty( "web.pilula", Boolean.TRUE );
+        jButton4.setBorder( javax.swing.BorderFactory.createEmptyBorder( 5, 12, 5, 14 ) );
+
+        JPanel barraCaminho = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 10, 0 ) );
+        barraCaminho.add( caminho, java.awt.BorderLayout.CENTER );
+        JPanel direitaCaminho = util.ui.ComponentesWeb.transparente( new java.awt.FlowLayout( java.awt.FlowLayout.RIGHT, 8, 0 ) );
+        direitaCaminho.add( tickets );
+        direitaCaminho.add( jButton4 );
+        barraCaminho.add( direitaCaminho, java.awt.BorderLayout.EAST );
+
+        // catálogo em grelha responsiva: a lógica refaz o painel (GridLayout) a cada
+        // categoria; aqui troca-se a grelha e o aspecto dos botões das categorias
+        painel_central.setOpaque( false );
+        painel_central.addContainerListener( new java.awt.event.ContainerAdapter()
+        {
+            @Override
+            public void componentAdded( java.awt.event.ContainerEvent e )
+            {
+                if ( !( painel_central.getLayout() instanceof util.ui.ComponentesWeb.GrelhaResponsiva ) )
+                {
+                    painel_central.setLayout( new util.ui.ComponentesWeb.GrelhaResponsiva( 150, 10, 8 ) );
+                }
+                if ( e.getChild() instanceof JButton )
+                {
+                    util.ui.MesasWeb.botaoCategoria( ( JButton ) e.getChild() );
+                }
+                embrulharCatalogo();
+            }
+        } );
+        for ( java.awt.Component c : painel_central.getComponents() )
+        {
+            if ( c instanceof JButton )
+            {
+                util.ui.MesasWeb.botaoCategoria( ( JButton ) c );
+            }
+        }
+        if ( painel_central.getComponentCount() > 0 )
+        {
+            painel_central.setLayout( new util.ui.ComponentesWeb.GrelhaResponsiva( 150, 10, 8 ) );
+        }
+        embrulharCatalogo();
+        jScrollPane3.setBorder( null );
+        jScrollPane3.setOpaque( false );
+        jScrollPane3.getViewport().setOpaque( false );
+        jScrollPane3.setHorizontalScrollBarPolicy( javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER );
+        jScrollPane3.getVerticalScrollBar().setUnitIncrement( 24 );
+        jScrollPane3.setPreferredSize( new java.awt.Dimension( 420, 220 ) );
+        jScrollPane3.setMinimumSize( new java.awt.Dimension( 200, 140 ) );
+
+        JPanel topoCatalogo = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 0, 8 ) );
+        topoCatalogo.add( barraCaminho, java.awt.BorderLayout.NORTH );
+        topoCatalogo.add( campoStock, java.awt.BorderLayout.SOUTH );
+        util.ui.ComponentesWeb.Cartao cartaoCatalogo = new util.ui.ComponentesWeb.Cartao( "Produtos",
+                util.ui.ComponentesWeb.LARANJA, new java.awt.BorderLayout( 0, 10 ) );
+        cartaoCatalogo.getCorpo().add( topoCatalogo, java.awt.BorderLayout.NORTH );
+        cartaoCatalogo.getCorpo().add( jScrollPane3, java.awt.BorderLayout.CENTER );
+
+        // ================================================ cliente
+        btCliente.setText( "" );
+        lbClienteConsumidorFinal.setText( "Nome do consumidor" );
+        lbClienteConsumidorFinal1.setText( "Pesquisar cliente (iniciais)" );
+        lbClienteConsumidorFinal2.setText( "Telefone" );
+        final JPanel campoNome = util.ui.ComponentesWeb.campo( lbClienteConsumidorFinal, txtNomeConsumidorFinal );
+        seguirVisibilidadeWeb( txtNomeConsumidorFinal, campoNome );
+        txtIniciaisCliente.setToolTipText( "Escreva as iniciais do nome: a lista de clientes filtra-se sozinha" );
+        txtTelClientePesquisa.setToolTipText( "Escreva o telefone e carregue Enter para procurar o cliente" );
+        JPanel camposCliente = util.ui.FormularioWeb.grelha( 200, 4,
+                util.ui.ComponentesWeb.campo( lbClienteConsumidorFinal1, txtIniciaisCliente ),
+                util.ui.ComponentesWeb.campo( "Cliente", util.ui.FormularioWeb.comBotao( cmbCliente, btCliente, "Cadastrar um cliente novo" ) ),
+                util.ui.ComponentesWeb.campo( lbClienteConsumidorFinal2, txtTelClientePesquisa ),
+                campoNome );
+
+        if ( "sahdbvhsdva".equals( status_mensagem_primaria.getText() ) )
+        {
+            status_mensagem_primaria.setText( " " ); // texto de teste do .form
+        }
+        if ( "...".equals( status_mensagem_secundaria.getText() ) )
+        {
+            status_mensagem_secundaria.setText( " " );
+        }
+        status_mensagem_primaria.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 12.5f ) );
+        status_mensagem_primaria.setForeground( util.ui.ComponentesWeb.VERMELHO );
+        status_mensagem_secundaria.setFont( util.ui.EstiloUI.FONTE.deriveFont( 12.5f ) );
+        status_mensagem_secundaria.setForeground( util.ui.ComponentesWeb.TEXTO_SUAVE );
+        JPanel mensagens = util.ui.ComponentesWeb.transparente( new java.awt.GridLayout( 2, 1 ) );
+        mensagens.add( status_mensagem_primaria );
+        mensagens.add( status_mensagem_secundaria );
+
+        final util.ui.ComponentesWeb.Cartao cartaoCliente = new util.ui.ComponentesWeb.Cartao( "Cliente",
+                util.ui.ComponentesWeb.ROXO, new java.awt.BorderLayout( 0, 8 ) );
+        cartaoCliente.getCorpo().add( camposCliente, java.awt.BorderLayout.NORTH );
+        cartaoCliente.getCorpo().add( mensagens, java.awt.BorderLayout.SOUTH );
+
+        // ================================================ disposição responsiva
+        // produtos (esquerda) | conta da mesa, lado a lado (empilham em janelas
+        // estreitas); o cliente fica à direita em ecrãs largos e por baixo nos outros
+        JPanel colunas = util.ui.ComponentesWeb.transparente( new util.ui.ComponentesWeb.ColunasResponsivas(
+                new double[]
+                {
+                    0.58, 0.42
+                }, new int[]
+                {
+                    420, 360
+                }, 10 ) );
+        colunas.add( cartaoCatalogo );
+        colunas.add( cartaoConta );
+        final JPanel principal = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 10, 10 ) );
+        principal.add( colunas, java.awt.BorderLayout.CENTER );
+        principal.add( cartaoCliente, java.awt.BorderLayout.SOUTH );
+        principal.addComponentListener( new java.awt.event.ComponentAdapter()
+        {
+            @Override
+            public void componentResized( java.awt.event.ComponentEvent e )
+            {
+                boolean largo = principal.getWidth() >= 1240;
+                Object onde = largo ? java.awt.BorderLayout.EAST : java.awt.BorderLayout.SOUTH;
+                java.awt.BorderLayout bl = ( java.awt.BorderLayout ) principal.getLayout();
+                if ( bl.getLayoutComponent( onde ) != cartaoCliente )
+                {
+                    principal.remove( cartaoCliente );
+                    int larguraCliente = principal.getWidth() >= 1700 ? 330 : 270;
+                    cartaoCliente.setPreferredSize( largo ? new java.awt.Dimension( larguraCliente, 10 ) : null );
+                    principal.add( cartaoCliente, onde );
+                    javax.swing.SwingUtilities.invokeLater( () ->
+                    {
+                        principal.revalidate();
+                        principal.repaint();
+                    } );
+                }
+            }
+        } );
+
+        JPanel accoes = util.ui.ComponentesWeb.transparente( null ); // os botões estão nos cartões
+        accoes.setPreferredSize( new java.awt.Dimension( 0, 0 ) );
+        util.ui.FormularioWeb.montar( this, cabecalho, principal, accoes,
+                "Pedidos  ·  " + mesa + "  ·  F4 pesquisar produto" );
+        util.ui.EstiloUI.ajustarAoEcra( this, 1000, 650 );
+    }
+
+    /**
+     * A lógica põe o painel do catálogo directamente no jScrollPane3 a cada
+     * categoria; aqui ele fica dentro de um painel que acompanha a largura da
+     * janela, para a grelha quebrar em linhas em vez de esticar para o lado.
+     */
+    private void embrulharCatalogo()
+    {
+        if ( jScrollPane3.getViewport().getView() == painel_central )
+        {
+            util.ui.MesasWeb.PainelLargura largura = new util.ui.MesasWeb.PainelLargura( new java.awt.BorderLayout() );
+            largura.setOpaque( false );
+            jScrollPane3.setViewportView( largura );
+            largura.add( painel_central, java.awt.BorderLayout.NORTH );
+        }
+    }
+
+    private static JPanel dataCabecalho( String rotulo, com.toedter.calendar.JDateChooser data, String dica )
+    {
+        data.setPreferredSize( new java.awt.Dimension( 130, 30 ) );
+        data.setToolTipText( dica );
+        return util.ui.FormularioWeb.campoCabecalho( new JLabel( rotulo ), data );
+    }
+
+    private static void pilulaCabecalho( JButton b, util.ui.ComponentesWeb.Variante v, String dica )
+    {
+        if ( v != null )
+        {
+            util.ui.ComponentesWeb.botao( b, v, null, dica );
+        }
+        b.setIcon( null );
+        b.putClientProperty( "web.pilula", Boolean.TRUE );
+        b.setBorder( javax.swing.BorderFactory.createEmptyBorder( 6, 14, 6, 16 ) );
+        b.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 12.5f ) );
+    }
+
+    /** O embrulho (rótulo + campo) aparece e desaparece com o componente. */
+    private static void seguirVisibilidadeWeb( java.awt.Component campo, java.awt.Component embrulho )
+    {
+        campo.addComponentListener( new java.awt.event.ComponentAdapter()
+        {
+            @Override
+            public void componentShown( java.awt.event.ComponentEvent e )
+            {
+                embrulho.setVisible( true );
+            }
+
+            @Override
+            public void componentHidden( java.awt.event.ComponentEvent e )
+            {
+                embrulho.setVisible( false );
+            }
+        } );
+        embrulho.setVisible( campo.isVisible() );
     }
 
     private void setArmazem( String armazem )

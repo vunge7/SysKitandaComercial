@@ -62,6 +62,9 @@ public class PermissaoVisao extends javax.swing.JFrame
         jcbActivarDesconto.setVisible( false );
         list_armazem.setModel( list_model );
         adicionar_armazem_list_model();
+        // aspecto dos formulários do SysKitandaHotel, sobre o initComponents
+        carregarPermissoesDinamicas();
+        util.ui.LayoutSeguro.aplicar( this, "Permissões", this::montarLayoutWeb );
     }
 
     /**
@@ -1348,6 +1351,143 @@ public class PermissaoVisao extends javax.swing.JFrame
             }
         } );
     }
+
+    // =====================================================================
+    // LAYOUT WEB (padrão dos formulários do SysKitandaHotel: cabeçalho azul,
+    // cartões coloridos e barra de acções). As caixas de permissão continuam
+    // nos seus painéis e com o mesmo texto (é com ele que as permissões são
+    // gravadas): só o aspecto e a disposição mudam.
+    // =====================================================================
+    private void montarLayoutWeb()
+    {
+        // ---- cabeçalho: utilizador e "seleccionar todos"
+        jLabel1.setText( "Utilizador" );
+        util.ui.FormularioWeb.combo( cmbUsuario );
+        cmbUsuario.setPreferredSize( new java.awt.Dimension( 240, 30 ) );
+        util.ui.ComponentesWeb.pilula( rdSelecionarTodos, true );
+        rdSelecionarTodos.setBorder( javax.swing.BorderFactory.createEmptyBorder( 6, 12, 6, 14 ) );
+        javax.swing.JPanel direita = util.ui.ComponentesWeb.transparente(
+                new util.ui.EstiloUI.WrapLayout( java.awt.FlowLayout.RIGHT, 10, 4 ) );
+        direita.add( util.ui.FormularioWeb.campoCabecalho( jLabel1, cmbUsuario ) );
+        javax.swing.JPanel rodapeSelecionar = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout() );
+        rodapeSelecionar.setBorder( javax.swing.BorderFactory.createEmptyBorder( 17, 0, 0, 0 ) );
+        rodapeSelecionar.add( rdSelecionarTodos, java.awt.BorderLayout.SOUTH );
+        direita.add( rodapeSelecionar );
+
+        // ---- separador 1: um cartão por grupo de permissões
+        Object[][] grupos =
+        {
+            { jPanel1, "Ficheiros", util.ui.ComponentesWeb.AZUL_VIVO },
+            { jPanel2, "Listagens e Relatórios", util.ui.ComponentesWeb.LARANJA },
+            { jPanel4, "Sistema", util.ui.ComponentesWeb.ROXO },
+            { jPanel3, "Logística", util.ui.ComponentesWeb.VERDE },
+            { jPanel5, "Tabelas", util.ui.ComponentesWeb.CIANO },
+            { jPanel9, "Configurações", util.ui.ComponentesWeb.AZUL_MEDIO }
+        };
+        java.util.List<java.awt.Component> cartoes = new java.util.ArrayList<>();
+        for ( Object[] g : grupos )
+        {
+            javax.swing.JPanel painel = ( javax.swing.JPanel ) g[ 0 ];
+            painel.setBorder( null );
+            painel.setOpaque( false );
+            for ( java.awt.Component c : painel.getComponents() )
+            {
+                if ( c instanceof javax.swing.JCheckBox )
+                {
+                    javax.swing.JCheckBox ck = ( javax.swing.JCheckBox ) c;
+                    ck.setOpaque( false );
+                    ck.setFont( util.ui.EstiloUI.FONTE.deriveFont( 13f ) );
+                    ck.setForeground( util.ui.ComponentesWeb.TEXTO );
+                    ck.setFocusPainted( false );
+                }
+            }
+            cartoes.add( util.ui.FormularioWeb.cartao( ( String ) g[ 1 ], ( java.awt.Color ) g[ 2 ], painel ) );
+        }
+        // formulários novos: um cartão por menu, gerado a partir do catálogo
+        for ( java.util.Map.Entry<String, java.util.List<javax.swing.JCheckBox>> g : gruposDinamicos.entrySet() )
+        {
+            javax.swing.JPanel caixas = util.ui.ComponentesWeb.transparente( new java.awt.GridLayout( 0, 1, 0, 2 ) );
+            for ( javax.swing.JCheckBox ck : g.getValue() )
+            {
+                ck.setOpaque( false );
+                ck.setFont( util.ui.EstiloUI.FONTE.deriveFont( 13f ) );
+                ck.setForeground( util.ui.ComponentesWeb.TEXTO );
+                ck.setFocusPainted( false );
+                caixas.add( ck );
+            }
+            util.ui.ComponentesWeb.Cartao c = util.ui.FormularioWeb.cartao( "Novos · " + g.getKey(),
+                    util.ui.ComponentesWeb.LARANJA, caixas );
+            c.adicionarAccao( new util.ui.ComponentesWeb.Etiqueta( "automático", util.ui.ComponentesWeb.LARANJA ) );
+            cartoes.add( c );
+        }
+        if ( gruposDinamicos.isEmpty() )
+        {
+            cartoes.add( util.ui.FormularioWeb.cartao( "Formulários novos", util.ui.ComponentesWeb.CINZA,
+                    util.ui.FormularioWeb.dica( "<html>Os formulários que forem acrescentados ao menu aparecem aqui "
+                            + "sozinhos, prontos a autorizar.</html>" ) ) );
+        }
+        javax.swing.JPanel grelhaPermissoes = util.ui.FormularioWeb.grelha( 360, 3, cartoes.toArray( new java.awt.Component[ 0 ] ) );
+        jPanel7.removeAll();
+        jPanel7.setBorder( javax.swing.BorderFactory.createEmptyBorder( 8, 8, 8, 8 ) );
+        jPanel7.setOpaque( false );
+        jPanel7.setLayout( new java.awt.BorderLayout() );
+        jPanel7.add( grelhaPermissoes, java.awt.BorderLayout.NORTH );
+
+        // ---- separador 2: acesso aos armazéns
+        util.ui.EstiloUI.estilizarTabela( tabela_accesso, true );
+        tabela_accesso.setRowHeight( 28 );
+        for ( javax.swing.JScrollPane sp : new javax.swing.JScrollPane[]
+        {
+            jScrollPane1, jScrollPane2
+        } )
+        {
+            sp.setBorder( new javax.swing.border.LineBorder( util.ui.ComponentesWeb.LINHA, 1, true ) );
+            sp.getViewport().setBackground( java.awt.Color.WHITE );
+            sp.setPreferredSize( new java.awt.Dimension( 300, 280 ) );
+        }
+        list_armazem.setFont( util.ui.EstiloUI.FONTE.deriveFont( 13.5f ) );
+        list_armazem.setFixedCellHeight( 28 );
+        list_armazem.setSelectionBackground( util.ui.EstiloUI.SELECCAO );
+        list_armazem.setSelectionForeground( java.awt.Color.WHITE );
+        jButton3.setText( ">>" ); // o texto não muda
+        util.ui.ComponentesWeb.botao( jButton3, util.ui.ComponentesWeb.Variante.SUCESSO, null,
+                "Dar ao utilizador acesso ao armazém seleccionado" );
+        jButton4.setText( "Remover" );
+        util.ui.ComponentesWeb.botao( jButton4, util.ui.ComponentesWeb.Variante.AVISO, null,
+                "Retirar ao utilizador o acesso seleccionado" );
+        util.ui.ComponentesWeb.Cartao disponiveis = util.ui.FormularioWeb.cartao( "Armazéns", util.ui.ComponentesWeb.VERDE,
+                jScrollPane2 );
+        disponiveis.adicionarAccao( jButton3 );
+        util.ui.ComponentesWeb.Cartao acessos = util.ui.FormularioWeb.cartao( "Acessos do utilizador",
+                util.ui.ComponentesWeb.AZUL_VIVO, jScrollPane1 );
+        acessos.adicionarAccao( jButton4 );
+        jLabel3.setText( "Escolha um armazém e carregue em >> para o dar ao utilizador" );
+        jPanel6.removeAll();
+        jPanel6.setBorder( javax.swing.BorderFactory.createEmptyBorder( 8, 8, 8, 8 ) );
+        jPanel6.setOpaque( false );
+        jPanel6.setLayout( new java.awt.BorderLayout( 0, 8 ) );
+        jPanel6.add( util.ui.FormularioWeb.dica( jLabel3.getText() ), java.awt.BorderLayout.NORTH );
+        jPanel6.add( util.ui.FormularioWeb.grelha( 320, 2, disponiveis, acessos ), java.awt.BorderLayout.CENTER );
+
+        jTabbedPane1.setTitleAt( jTabbedPane1.indexOfComponent( jPanel7 ), "Permissões dos módulos" );
+        jTabbedPane1.setTitleAt( jTabbedPane1.indexOfComponent( jPanel6 ), "Acesso aos armazéns" );
+        jTabbedPane1.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 13f ) );
+        jTabbedPane1.setForeground( util.ui.ComponentesWeb.AZUL );
+
+        // ---- acções
+        util.ui.FormularioWeb.botaoAlterar( jButton1, "Gravar as permissões do utilizador escolhido" );
+        jButton2.setText( "Sair" );
+        util.ui.FormularioWeb.botaoSair( jButton2, "Fechar esta janela" );
+
+        util.ui.FormularioWeb.montar( this,
+                util.ui.FormularioWeb.cabecalho( "Permissões dos Utilizadores",
+                        "Privilégios dos utilizadores de Gestão Comercial", direita ),
+                jTabbedPane1,
+                util.ui.FormularioWeb.barraAccoes( util.ui.FormularioWeb.dica( "Escolha o utilizador, marque as permissões e carregue em Actualizar" ),
+                        jButton1, jButton2 ),
+                "Kitanda  ·  Permissões" );
+        util.ui.FormularioWeb.ajustar( this, 1180, 780, 820, 560 );
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox cmbUsuario;
     private javax.swing.JButton jButton1;
@@ -1456,6 +1596,54 @@ public class PermissaoVisao extends javax.swing.JFrame
     private javax.swing.JRadioButton rdSelecionarTodos;
     private javax.swing.JTable tabela_accesso;
     // End of variables declaration//GEN-END:variables
+
+    // =====================================================================
+    // PERMISSÕES DINÂMICAS (formulários novos, sem desenhar caixas à mão)
+    // =====================================================================
+    private final java.util.List<javax.swing.JCheckBox> caixasDinamicas = new java.util.ArrayList<>();
+    private final java.util.Map<String, java.util.List<javax.swing.JCheckBox>> gruposDinamicos = new java.util.LinkedHashMap<>();
+
+    /**
+     * Lê o catálogo (util.permissoes.RegistoPermissoes) e cria uma caixa por
+     * formulário novo. As que já têm caixa própria neste ecrã ficam de fora.
+     */
+    private void carregarPermissoesDinamicas()
+    {
+        try
+        {
+            java.util.Set<String> existentes = new java.util.HashSet<>();
+            existentes.add( "Venda" );
+            for ( javax.swing.JPanel painel : new javax.swing.JPanel[]
+            {
+                jPanel1, jPanel2, jPanel3, jPanel4, jPanel5, jPanel9
+            } )
+            {
+                for ( java.awt.Component c : painel.getComponents() )
+                {
+                    if ( c instanceof javax.swing.JCheckBox )
+                    {
+                        existentes.add( ( ( javax.swing.JCheckBox ) c ).getText().trim() );
+                    }
+                }
+            }
+            for ( util.permissoes.RegistoPermissoes.Entrada e
+                    : util.permissoes.RegistoPermissoes.listar( DVML.MODULO_GESTAO_COMERCIAL ) )
+            {
+                if ( existentes.contains( e.descricao.trim() ) )
+                {
+                    continue;
+                }
+                javax.swing.JCheckBox ck = new javax.swing.JCheckBox( e.descricao );
+                ck.setToolTipText( "Formulário novo (menu " + e.grupo + "), registado automaticamente" );
+                caixasDinamicas.add( ck );
+                gruposDinamicos.computeIfAbsent( e.grupo, k -> new java.util.ArrayList<>() ).add( ck );
+            }
+        }
+        catch ( RuntimeException e )
+        {
+            e.printStackTrace();
+        }
+    }
 
     public int getIdUsuario()
     {
@@ -1934,11 +2122,24 @@ public class PermissaoVisao extends javax.swing.JFrame
             vector.add( jcbActualizacaoPrecos.getText() );
         }
 
+        // formulários novos (catálogo automático)
+        for ( javax.swing.JCheckBox ck : caixasDinamicas )
+        {
+            if ( ck.isSelected() && !vector.contains( ck.getText() ) )
+            {
+                vector.add( ck.getText() );
+            }
+        }
         return vector;
     }
 
     public void status_item( boolean status )
     {
+        for ( javax.swing.JCheckBox ck : caixasDinamicas )
+        {
+            ck.setSelected( status );
+        }
+
 
         //FICHEIRO
         jcbVenda.setSelected( status );
@@ -2054,6 +2255,23 @@ public class PermissaoVisao extends javax.swing.JFrame
 
         //limpa
         status_item( false );
+
+        // formulários novos (catálogo automático)
+        if ( vector != null )
+        {
+            java.util.Set<String> tem = new java.util.HashSet<>();
+            for ( TbItemPermissao item : vector )
+            {
+                if ( item != null && item.getIdPermissao() != null )
+                {
+                    tem.add( item.getIdPermissao().getDescricao() );
+                }
+            }
+            for ( javax.swing.JCheckBox ck : caixasDinamicas )
+            {
+                ck.setSelected( tem.contains( ck.getText() ) );
+            }
+        }
 
         for ( int i = 0; i < vector.size(); i++ )
         {

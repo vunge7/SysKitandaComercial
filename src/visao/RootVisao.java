@@ -134,9 +134,61 @@ public class RootVisao extends javax.swing.JFrame {
         });
 
         setWindowsListener();
+        // aspecto do menu principal do SysKitandaHotel, sobre o initComponents
+        util.ui.LayoutSeguro.aplicar( this, "ERP Kitanda", this::montarLayoutWeb );
 //        btn_abertura_dia_root.setVisible( false);
 //        btn_feicho_dia_root.setVisible( false);
 
+    }
+
+
+    // =====================================================================
+    // LAYOUT WEB (igual ao menu principal do SysKitandaHotel): barra lateral
+    // azul com as operações por grupos, saudação e cartões dos módulos. Os
+    // botões são os do initComponents, com os seus eventos e permissões
+    // (incluindo os de abertura/fecho de caixa usados por outros ecrãs).
+    // =====================================================================
+    private void montarLayoutWeb() {
+        String nome = "", perfil = null;
+        try {
+            entity.TbUsuario u = usuarioDao.findTbUsuario(idUser);
+            nome = u.getNome();
+            perfil = u.getIdTipoUsuario() == null ? null : u.getIdTipoUsuario().getDescricao();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        util.ui.PaginaMenuWeb pagina = new util.ui.PaginaMenuWeb("ERP Kitanda",
+                "Seleccione um módulo para começar (F4 abre o menu do negócio).", new javax.swing.JLabel(nome), perfil);
+
+        pagina.grupo("Módulos");
+        pagina.item(btComercial, "Gestão Comercial");
+        pagina.item(btTesouraria, "Gestão Tesouraria");
+        pagina.item(btRh, "Gestão Recursos Humanos");
+
+        pagina.grupo("Caixa");
+        pagina.item(btn_abertura_dia_root, "Abertura de Caixa");
+        pagina.item(btn_feicho_dia_root, "Fecho de Caixa");
+
+        pagina.grupo("Sistema");
+        pagina.item(bdBackupJButton, "Backup");
+        pagina.item(jButton1, "Backup / Restauro (BK)");
+        pagina.item(btConfiguracaoSistema, "Configuração de Módulos");
+        pagina.item(btnGerarExtratoAutomatico, "Gerar Extrato Automático");
+        pagina.item(btnGerarScriptActualizacao, "Gerar Script de Actualização");
+        pagina.item(btn_actualiza_hash, "Actualizar Hash");
+        pagina.item(bt_desencriptar, "Desencriptar");
+        pagina.item(btnEsvaziaBD, "Esvaziar BD");
+
+        pagina.cartao(btnComercial, util.ui.MenuWeb.Simbolo.CARTEIRA, "Gestão Comercial",
+                "Vendas, compras, stock e facturação");
+        pagina.cartao(btnTesouraria, util.ui.MenuWeb.Simbolo.GRAFICO, "Tesouraria",
+                "Caixa, pagamentos e recebimentos");
+        pagina.cartao(btnRH, util.ui.MenuWeb.Simbolo.PRANCHETA, "Recursos Humanos",
+                "Funcionários, processamento e salários");
+
+        pagina.sair(jButton4, "Terminar a sessão e voltar ao início de sessão");
+        pagina.montar(this, "SysKitanda Comercial  ·  ERP Kitanda", 3);
+        util.ui.PaginaMenuWeb.dicasCaixa(btn_abertura_dia_root, btn_feicho_dia_root);
     }
 
     public void busca_permissao() {

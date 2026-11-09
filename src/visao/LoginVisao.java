@@ -94,6 +94,8 @@ public class LoginVisao extends javax.swing.JFrame {
         adicionarFaixaAmbiente();    // <-- a faixa que já tinhas
         setLocationRelativeTo(null);
         setResizable(false);
+        // aspecto web (como no SysKitandaHotel), sobre o initComponents
+        util.ui.LayoutSeguro.aplicar( this, "Início de sessão", this::montarLayoutWeb );
         setVisible(true);
 
 // Obtém a instância única e garante que a conexão está ativa
@@ -125,6 +127,245 @@ public class LoginVisao extends javax.swing.JFrame {
         iniciarMonitoramento();
         iniciarPiscarLabelJLDataFecho();
 
+    }
+
+
+    // =====================================================================
+    // LAYOUT WEB (mesmo design do início de sessão do SysKitandaHotel): os
+    // componentes vêm do initComponents, com os seus eventos. Fundo azul com
+    // a imagem, empresa à esquerda e cartão de acesso à direita; em janelas
+    // estreitas fica só o cartão, ao centro. A faixa do ambiente (FE) mantém-se.
+    // =====================================================================
+    private static final int LARGURA_COM_PAINEL = 900;
+
+    /** Cartão de acesso com largura fixa (nunca comprimido). */
+    private static final class CartaoAcessoWeb extends util.ui.ComponentesWeb.Cartao {
+
+        CartaoAcessoWeb() {
+            super(null, null, new BorderLayout());
+        }
+
+        @Override
+        public java.awt.Dimension getPreferredSize() {
+            java.awt.Dimension d = super.getPreferredSize();
+            d.width = 420;
+            return d;
+        }
+
+        @Override
+        public java.awt.Dimension getMinimumSize() {
+            return getPreferredSize();
+        }
+    }
+
+    /** Fundo: a imagem do formulário (img30) coberta por um gradiente azul. */
+    private static final class PainelFundoWeb extends JPanel {
+
+        private final java.awt.Image imagem = new javax.swing.ImageIcon(
+                LoginVisao.class.getResource("/imagens/img30.png")).getImage();
+        private java.awt.image.BufferedImage cache;
+
+        @Override
+        protected void paintComponent(java.awt.Graphics g) {
+            int w = getWidth(), h = getHeight();
+            if (cache == null || cache.getWidth() != w || cache.getHeight() != h) {
+                cache = pintar(w, h);
+            }
+            g.drawImage(cache, 0, 0, null);
+        }
+
+        private java.awt.image.BufferedImage pintar(int w, int h) {
+            java.awt.image.BufferedImage b = new java.awt.image.BufferedImage(Math.max(1, w), Math.max(1, h),
+                    java.awt.image.BufferedImage.TYPE_INT_RGB);
+            java.awt.Graphics2D g2 = b.createGraphics();
+            g2.setRenderingHint(java.awt.RenderingHints.KEY_INTERPOLATION,
+                    java.awt.RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            if (imagem.getWidth(null) > 0 && imagem.getHeight(null) > 0) {
+                double escala = Math.max(w / (double) imagem.getWidth(null), h / (double) imagem.getHeight(null));
+                int iw = (int) (imagem.getWidth(null) * escala), ih = (int) (imagem.getHeight(null) * escala);
+                g2.drawImage(imagem, (w - iw) / 2, (h - ih) / 2, iw, ih, null);
+            }
+            g2.setPaint(new java.awt.GradientPaint(0, 0, new Color(0, 33, 71, 235), w, 0, new Color(0, 51, 102, 150)));
+            g2.fillRect(0, 0, w, h);
+            g2.dispose();
+            return b;
+        }
+    }
+
+    /** A versão continua a ter um só sítio: o texto "KITANDA 1.x" do formulário. */
+    private String versaoSoftwareWeb() {
+        String[] partes = Soft1.getText().trim().split("\\s+");
+        return partes.length > 1 ? partes[partes.length - 1] : "";
+    }
+
+    private void montarLayoutWeb() {
+        JPanel fundo = new PainelFundoWeb();
+        java.awt.GridBagLayout grelha = new java.awt.GridBagLayout();
+        fundo.setLayout(grelha);
+
+        JPanel painelEmpresa = criarPainelEmpresaWeb();
+        java.awt.GridBagConstraints g = new java.awt.GridBagConstraints();
+        g.gridx = 0;
+        g.weightx = 1;
+        g.weighty = 1;
+        g.fill = java.awt.GridBagConstraints.BOTH;
+        fundo.add(painelEmpresa, g);
+
+        final CartaoAcessoWeb cartaoAcesso = criarCartaoAcessoWeb();
+        final java.awt.GridBagConstraints gc = new java.awt.GridBagConstraints();
+        gc.gridx = 1;
+        gc.insets = new java.awt.Insets(20, 20, 20, 72);
+        fundo.add(cartaoAcesso, gc);
+
+        fundo.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                boolean largo = fundo.getWidth() >= LARGURA_COM_PAINEL;
+                if (painelEmpresa.isVisible() != largo) {
+                    painelEmpresa.setVisible(largo);
+                    gc.insets = new java.awt.Insets(20, 20, 20, largo ? 72 : 20);
+                    grelha.setConstraints(cartaoAcesso, gc);
+                    fundo.revalidate();
+                }
+            }
+        });
+
+        // a faixa do ambiente (adicionarFaixaAmbiente) fica no topo: só se troca o centro
+        java.awt.Container raiz = getContentPane();
+        java.awt.Component centro = raiz.getLayout() instanceof BorderLayout
+                ? ((BorderLayout) raiz.getLayout()).getLayoutComponent(BorderLayout.CENTER) : null;
+        if (centro != null) {
+            raiz.remove(centro);
+            raiz.add(fundo, BorderLayout.CENTER);
+        } else {
+            raiz.removeAll();
+            raiz.setLayout(new BorderLayout());
+            raiz.add(fundo, BorderLayout.CENTER);
+        }
+        setIconImages(util.ui.MenuWeb.iconesAplicacao());
+        setMinimumSize(new java.awt.Dimension(560, 640));
+        setResizable(true);
+        setExtendedState(getExtendedState() | MAXIMIZED_BOTH);
+    }
+
+    private JPanel criarPainelEmpresaWeb() {
+        JLabel lbArea = new JLabel("GESTÃO COMERCIAL");
+        lbArea.setFont(util.ui.MenuWeb.rotuloGrupo("x", Color.WHITE).getFont().deriveFont(13f));
+        lbArea.setForeground(util.ui.MenuWeb.DOURADO_CLARO);
+
+        JEmpresa.setFont(new java.awt.Font("Georgia", java.awt.Font.BOLD, 28));
+        JEmpresa.setForeground(Color.WHITE);
+
+        JLNif.setFont(util.ui.EstiloUI.FONTE.deriveFont(15f));
+        JLNif.setForeground(new Color(214, 226, 243));
+
+        // o código faz piscar o texto do contrato (preto/vermelho): fundo claro para se ler
+        JLDataFecho.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(13f));
+        util.ui.ComponentesWeb.CaixaSuave pilulaContrato = new util.ui.ComponentesWeb.CaixaSuave(new BorderLayout(),
+                new Color(248, 250, 252), new Color(226, 232, 240));
+        pilulaContrato.setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
+        pilulaContrato.add(JLDataFecho, BorderLayout.CENTER);
+        JPanel linhaContrato = util.ui.ComponentesWeb.transparente(new BorderLayout());
+        linhaContrato.add(pilulaContrato, BorderLayout.WEST);
+
+        Soft.setFont(util.ui.EstiloUI.FONTE.deriveFont(13f));
+        Soft.setForeground(new Color(214, 226, 243));
+
+        JPanel linhaMarca = util.ui.ComponentesWeb.transparente(new BorderLayout());
+        linhaMarca.add(new util.ui.MenuWeb.MarcaSoftware("KITANDA", versaoSoftwareWeb(), 64f,
+                new Color(250, 232, 190), util.ui.MenuWeb.DOURADO, util.ui.MenuWeb.DOURADO_CLARO, true), BorderLayout.CENTER);
+
+        JPanel bloco = util.ui.FormularioWeb.pilha(10, linhaMarca, lbArea, JEmpresa, JLNif, linhaContrato, Soft);
+
+        // ao centro, na altura, para ficar alinhado com o cartão
+        JPanel centro = util.ui.ComponentesWeb.transparente(new java.awt.GridBagLayout());
+        java.awt.GridBagConstraints g = new java.awt.GridBagConstraints();
+        g.weightx = 1;
+        g.weighty = 1;
+        g.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        g.anchor = java.awt.GridBagConstraints.WEST;
+        centro.add(bloco, g);
+
+        for (JLabel l : new JLabel[]{jLabel4, jLabel5}) {
+            l.setFont(util.ui.EstiloUI.FONTE.deriveFont(12f));
+            l.setForeground(new Color(190, 205, 225));
+        }
+        JPanel rodape = util.ui.ComponentesWeb.transparente(new java.awt.GridLayout(2, 1, 0, 2));
+        rodape.add(jLabel4);
+        rodape.add(jLabel5);
+
+        JPanel painel = util.ui.ComponentesWeb.transparente(new BorderLayout());
+        painel.setBorder(BorderFactory.createEmptyBorder(28, 64, 28, 48));
+        painel.add(centro, BorderLayout.CENTER);
+        painel.add(rodape, BorderLayout.SOUTH);
+        // a largura é a que sobra do cartão: um texto comprido não pode empurrá-lo
+        painel.setPreferredSize(new java.awt.Dimension(10, 10));
+        painel.setMinimumSize(new java.awt.Dimension(0, 0));
+        return painel;
+    }
+
+    private CartaoAcessoWeb criarCartaoAcessoWeb() {
+        JLabel titulo = new JLabel("Iniciar sessão");
+        titulo.setFont(new java.awt.Font("Georgia", java.awt.Font.BOLD, 25));
+        titulo.setForeground(util.ui.MenuWeb.AZUL_NOITE);
+        JLabel subtitulo = new JLabel("Introduza as suas credenciais");
+        subtitulo.setFont(util.ui.EstiloUI.FONTE.deriveFont(13f));
+        subtitulo.setForeground(util.ui.MenuWeb.TEXTO_SUAVE);
+
+        jLabel6.setText("Empresa");
+        jLabel6.setToolTipText(null);
+        jLabel2.setText("Utilizador");
+        jLabel2.setToolTipText(null);
+        jLabel3.setText("Senha");
+        for (JLabel l : new JLabel[]{jLabel6, jLabel2, jLabel3}) {
+            l.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        }
+        util.ui.FormularioWeb.combo(cmbEmpresa);
+        cmbEmpresa.setPreferredSize(new java.awt.Dimension(120, 40));
+        util.ui.FormularioWeb.campoTexto(txtUserName, pswSenha);
+        for (javax.swing.JTextField t : new javax.swing.JTextField[]{txtUserName, pswSenha}) {
+            t.setFont(util.ui.EstiloUI.FONTE.deriveFont(15f));
+            t.setPreferredSize(new java.awt.Dimension(120, 42));
+            t.setMinimumSize(new java.awt.Dimension(60, 42));
+        }
+
+        util.ui.ComponentesWeb.botao(jButton1, util.ui.ComponentesWeb.Variante.PRIMARIO, null, "Entrar no sistema");
+        jButton1.setIcon(null);
+        jButton1.setText("Entrar");
+        jButton1.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(14.5f));
+        jButton1.setPreferredSize(new java.awt.Dimension(120, 44));
+        util.ui.ComponentesWeb.botao(BTnSair, util.ui.ComponentesWeb.Variante.SECUNDARIO, null, "Fechar o sistema");
+        BTnSair.setIcon(new util.ui.ComponentesWeb.IconeSair(16, util.ui.MenuWeb.AZUL_NOITE));
+        BTnSair.setText("Sair do sistema");
+        BTnSair.setPreferredSize(new java.awt.Dimension(120, 40));
+
+        // em janelas estreitas o painel da empresa some: a marca continua aqui
+        JPanel marcaCartao = util.ui.ComponentesWeb.transparente(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 0, 0));
+        marcaCartao.add(new util.ui.MenuWeb.MarcaSoftware("KITANDA", versaoSoftwareWeb(), 20f,
+                util.ui.MenuWeb.AZUL_MARINHO, util.ui.MenuWeb.AZUL_NOITE, util.ui.MenuWeb.DOURADO.darker(), false));
+
+        JPanel cabecalho = util.ui.ComponentesWeb.transparente(new BorderLayout(14, 0));
+        cabecalho.add(new util.ui.MenuWeb.Logotipo(50), BorderLayout.WEST);
+        JPanel textos = util.ui.ComponentesWeb.transparente(new java.awt.GridLayout(2, 1));
+        textos.add(titulo);
+        textos.add(subtitulo);
+        cabecalho.add(textos, BorderLayout.CENTER);
+
+        JPanel conteudo = util.ui.FormularioWeb.pilha(10,
+                cabecalho,
+                javax.swing.Box.createVerticalStrut(6),
+                util.ui.ComponentesWeb.campo(jLabel6, cmbEmpresa),
+                util.ui.ComponentesWeb.campo(jLabel2, txtUserName),
+                util.ui.ComponentesWeb.campo(jLabel3, pswSenha),
+                javax.swing.Box.createVerticalStrut(4),
+                jButton1,
+                BTnSair,
+                marcaCartao);
+        conteudo.setBorder(BorderFactory.createEmptyBorder(16, 20, 12, 20));
+
+        CartaoAcessoWeb cartao = new CartaoAcessoWeb();
+        cartao.getCorpo().add(conteudo, BorderLayout.CENTER);
+        return cartao;
     }
 
     public void iniciarPiscarLabelJLDataFecho() {
@@ -523,6 +764,8 @@ public class LoginVisao extends javax.swing.JFrame {
     {//GEN-HEADEREND:event_BTnSairActionPerformed
         try {
             dispose();
+            // se já houver um backup em segundo plano a correr, espera por ele
+            BackupUsb.aguardarBackupEmCurso(120000L);
             BackupUsb.realizarBackup();
         } catch (Exception e) {
             e.printStackTrace();
@@ -688,8 +931,8 @@ public void entrar_sistema() throws SQLException, UnknownHostException {
         loginEmExecucao = false;
     }
 
-    // Executa o backup depois do login
-    BackupUsb.realizarBackup();
+    // Executa o backup depois do login, em segundo plano (não prende o ecrã)
+    BackupUsb.realizarBackupEmSegundoPlano();
 }
 
 

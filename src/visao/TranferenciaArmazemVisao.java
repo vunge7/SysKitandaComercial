@@ -79,6 +79,8 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
        TranferenciaArmazemVisao.conexao = conexao;
         init();
         setWindowsListener();
+        // aspecto dos formulários do SysKitandaHotel, sobre o initComponents
+        util.ui.LayoutSeguro.aplicar( this, "Transferência de armazém", this::montarLayoutWeb );
         try
         {
             getVectorDestino();
@@ -88,6 +90,130 @@ public class TranferenciaArmazemVisao extends javax.swing.JFrame implements Runn
             e.printStackTrace();
         }
 
+    }
+
+
+    // =====================================================================
+    // LAYOUT WEB (padrão dos formulários do SysKitandaHotel: cabeçalho azul,
+    // cartões, tabela zebrada e barra de acções). Montado sobre o
+    // initComponents: componentes, eventos e regras são os mesmos.
+    // =====================================================================
+    private void montarLayoutWeb()
+    {
+        lbProdutos2.setText( "Código interno" );
+        lb_data_apuramento5.setText( "Código de barras" );
+        lb_produto.setText( "Produto / artigo" );
+        lbPreco1.setText( "Armazém de origem (−)" );
+        lbPreco2.setText( "Armazém de destino (+)" );
+        lb_data_apuramento1.setText( "Qtd. existente na origem" );
+        lb_data_apuramento3.setText( "Qtd. existente no destino" );
+        lb_data_apuramento2.setText( "Qtd. a transferir *" );
+        for ( javax.swing.JLabel l : new javax.swing.JLabel[]
+        {
+            lbProdutos2, lb_data_apuramento5, lb_produto, lbPreco1, lbPreco2,
+            lb_data_apuramento1, lb_data_apuramento3, lb_data_apuramento2
+        } )
+        {
+            l.setHorizontalAlignment( javax.swing.JLabel.LEFT );
+        }
+        util.ui.FormularioWeb.campoTexto( txtCodigoInterno, txtCodBarra, txtDesignacao, txtQtdEntrar, txtQtdExistente, txtQtdExistente1 );
+        util.ui.FormularioWeb.combo( cmbArmazemOrigem, cmbArmazemDestino );
+        for ( javax.swing.JTextField t : new javax.swing.JTextField[]
+        {
+            txtQtdExistente, txtQtdExistente1, txtQtdEntrar
+        } )
+        {
+            t.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 14f ) );
+            t.setHorizontalAlignment( javax.swing.JTextField.RIGHT );
+        }
+        txtQtdExistente.setForeground( util.ui.ComponentesWeb.VERMELHO.darker() );
+        txtQtdExistente1.setForeground( util.ui.ComponentesWeb.VERDE.darker() );
+        txtCodigoInterno.setToolTipText( "Código interno do artigo; Enter procura-o" );
+        txtCodBarra.setToolTipText( "Código de barras; Enter procura o artigo" );
+
+        jButton5.setText( "" );
+        util.ui.ComponentesWeb.Cartao artigo = util.ui.FormularioWeb.cartao( "Artigo", util.ui.ComponentesWeb.AZUL_VIVO,
+                util.ui.FormularioWeb.pilha( 8,
+                        util.ui.FormularioWeb.grelha( 200, 2,
+                                util.ui.ComponentesWeb.campo( lbProdutos2,
+                                        util.ui.FormularioWeb.comBotao( txtCodigoInterno, jButton5, "Pesquisar um artigo pelo nome" ) ),
+                                util.ui.ComponentesWeb.campo( lb_data_apuramento5, txtCodBarra ) ),
+                        util.ui.ComponentesWeb.campo( lb_produto, txtDesignacao ) ) );
+
+        util.ui.ComponentesWeb.Cartao armazens = util.ui.FormularioWeb.cartao( "Armazéns", util.ui.ComponentesWeb.VERDE,
+                util.ui.FormularioWeb.grelha( 200, 2,
+                        util.ui.ComponentesWeb.campo( lbPreco1, cmbArmazemOrigem ),
+                        util.ui.ComponentesWeb.campo( lbPreco2, cmbArmazemDestino ),
+                        util.ui.ComponentesWeb.campo( lb_data_apuramento1, txtQtdExistente ),
+                        util.ui.ComponentesWeb.campo( lb_data_apuramento3, txtQtdExistente1 ) ) );
+
+        jButton3.setText( "Adicionar" );
+        util.ui.ComponentesWeb.botao( jButton3, util.ui.ComponentesWeb.Variante.SUCESSO, null,
+                "Lançar o artigo com a quantidade indicada" );
+        jButton2.setText( "Remover" );
+        util.ui.ComponentesWeb.botao( jButton2, util.ui.ComponentesWeb.Variante.AVISO, null,
+                "Remover a linha seleccionada na tabela" );
+        javax.swing.JPanel botoesLinha = util.ui.ComponentesWeb.transparente( new java.awt.FlowLayout( java.awt.FlowLayout.LEFT, 8, 0 ) );
+        botoesLinha.add( jButton3 );
+        botoesLinha.add( jButton2 );
+        javax.swing.JPanel linhaQtd = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 10, 0 ) );
+        linhaQtd.add( util.ui.ComponentesWeb.campo( lb_data_apuramento2, txtQtdEntrar ), java.awt.BorderLayout.CENTER );
+        javax.swing.JPanel rodapeBotoes = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout() );
+        rodapeBotoes.add( botoesLinha, java.awt.BorderLayout.SOUTH );
+        linhaQtd.add( rodapeBotoes, java.awt.BorderLayout.EAST );
+
+        util.ui.EstiloUI.estilizarTabela( table, true );
+        table.setRowHeight( 30 );
+        jScrollPane1.setBorder( new javax.swing.border.LineBorder( util.ui.ComponentesWeb.LINHA, 1, true ) );
+        jScrollPane1.getViewport().setBackground( java.awt.Color.WHITE );
+        jScrollPane1.setPreferredSize( new java.awt.Dimension( 600, 220 ) );
+        jScrollPane1.setMinimumSize( new java.awt.Dimension( 300, 140 ) );
+        final util.ui.ComponentesWeb.Etiqueta etiquetaLinhas = new util.ui.ComponentesWeb.Etiqueta( "0 linhas",
+                util.ui.ComponentesWeb.AZUL_VIVO );
+        final Runnable contar = () ->
+        {
+            int n = table.getRowCount();
+            etiquetaLinhas.setText( n + ( n == 1 ? " linha" : " linhas" ) );
+        };
+        final javax.swing.event.TableModelListener ouvinte = e -> contar.run();
+        table.getModel().addTableModelListener( ouvinte );
+        table.addPropertyChangeListener( "model", e ->
+        {
+            if ( e.getOldValue() instanceof javax.swing.table.TableModel )
+            {
+                ( ( javax.swing.table.TableModel ) e.getOldValue() ).removeTableModelListener( ouvinte );
+            }
+            if ( e.getNewValue() instanceof javax.swing.table.TableModel )
+            {
+                ( ( javax.swing.table.TableModel ) e.getNewValue() ).addTableModelListener( ouvinte );
+            }
+            contar.run();
+        } );
+        contar.run();
+        util.ui.ComponentesWeb.Cartao itens = util.ui.FormularioWeb.cartao( "Artigos a transferir", util.ui.ComponentesWeb.LARANJA,
+                util.ui.FormularioWeb.pilha( 8, linhaQtd, jScrollPane1 ) );
+        itens.adicionarAccao( etiquetaLinhas );
+
+        javax.swing.JPanel topo = util.ui.FormularioWeb.grelha( 380, 2, artigo, armazens );
+        javax.swing.JPanel conteudo = util.ui.FormularioWeb.pilha( 8, topo, itens );
+
+        jButton4.setText( "Registar transferência" );
+        util.ui.FormularioWeb.botaoSalvar( jButton4, "Gravar a transferência entre os armazéns" );
+        btnCancelar.setText( "Sair" );
+        util.ui.FormularioWeb.botaoSair( btnCancelar, "Fechar esta janela" );
+
+        lb_usuario.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 13f ) );
+        lb_usuario.setForeground( java.awt.Color.WHITE );
+        javax.swing.JPanel direita = util.ui.ComponentesWeb.transparente( new java.awt.FlowLayout( java.awt.FlowLayout.RIGHT, 0, 10 ) );
+        direita.add( lb_usuario );
+
+        util.ui.FormularioWeb.montar( this,
+                util.ui.FormularioWeb.cabecalho( "Transferência de Armazém", "Passar artigos de um armazém para outro", direita ),
+                conteudo,
+                util.ui.FormularioWeb.barraAccoes( util.ui.FormularioWeb.dica( "Os campos com * são obrigatórios" ),
+                        jButton4, btnCancelar ),
+                "Kitanda  ·  Transferência de Armazém" );
+        util.ui.FormularioWeb.ajustar( this, 1080, 720, 760, 520 );
     }
 
     private static void mostrar_dados_stock_origem( TbProduto produto_parm )

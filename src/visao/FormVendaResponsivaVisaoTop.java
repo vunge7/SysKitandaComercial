@@ -315,7 +315,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 //        initStockListener();
         txtBuscaRef.setEnabled(false);
 
-        montarLayoutWeb();
+        util.ui.LayoutSeguro.aplicar( this, "Vendas", this::montarLayoutWeb );
     }
 
     // =====================================================================

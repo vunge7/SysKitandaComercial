@@ -501,7 +501,7 @@ public class CaixaAberturaVisao extends javax.swing.JFrame
                 DocumentosController.commit( conexaoTransaction );
                 conexaoTransaction.close();
 
-                BackupUsb.realizarBackup();
+                BackupUsb.realizarBackupEmSegundoPlano(); // em segundo plano: a janela fecha logo
 
                 dispose();
             }

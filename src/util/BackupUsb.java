@@ -26,6 +26,62 @@ public class BackupUsb {
         realizarBackup();
     }
 
+    // ===============================
+    // Backup em segundo plano (ao entrar no sistema)
+    // ===============================
+    /** Backup a correr neste momento (null se não houver). */
+    private static volatile Thread emCurso;
+    private static volatile boolean ganchoInstalado = false;
+
+    /**
+     * Faz o mesmo backup sem prender o ecrã: corre numa thread própria, de
+     * prioridade baixa, e nunca há dois ao mesmo tempo (um pedido durante um
+     * backup em curso é ignorado). Se a aplicação fechar a meio, o fecho
+     * espera até 2 minutos para o ficheiro não ficar cortado.
+     */
+    public static synchronized void realizarBackupEmSegundoPlano() {
+        if (emCurso != null && emCurso.isAlive()) {
+            System.out.println("Backup já em curso: pedido ignorado.");
+            return;
+        }
+        Thread t = new Thread(() -> {
+            long inicio = System.currentTimeMillis();
+            try {
+                realizarBackup();
+            } finally {
+                System.out.println("Backup em segundo plano terminado em "
+                        + (System.currentTimeMillis() - inicio) / 1000 + " s");
+                emCurso = null;
+            }
+        }, "kitanda-backup");
+        t.setDaemon(false);
+        t.setPriority(Thread.MIN_PRIORITY);
+        instalarGanchoDeFecho();
+        emCurso = t;
+        t.start();
+    }
+
+    /** Espera (no máximo o tempo indicado) que um backup em segundo plano termine. */
+    public static void aguardarBackupEmCurso(long maxMillis) {
+        Thread t = emCurso;
+        if (t != null && t.isAlive() && t != Thread.currentThread()) {
+            try {
+                t.join(maxMillis);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    private static void instalarGanchoDeFecho() {
+        if (ganchoInstalado) {
+            return;
+        }
+        ganchoInstalado = true;
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> aguardarBackupEmCurso(120_000L),
+                "kitanda-backup-fecho"));
+    }
+
     public static void realizarBackup() {
         try {
             // 📌 Data e Hora

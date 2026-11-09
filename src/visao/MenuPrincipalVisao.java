@@ -89,6 +89,19 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
         busca_permissao();
         mostrarNumeroDeprodutosExpirados();
         jMenuItemGestaoCreditos.setVisible( false );
+        // aspecto do menu principal do SysKitandaHotel, sobre o initComponents
+        // formulários novos (itens de menu fora da base): registam-se sozinhos
+        // nas Permissões e só ficam activos para quem tiver a permissão
+        try
+        {
+            util.permissoes.RegistoPermissoes.protegerFormulariosNovos( jMenuBar1,
+                    util.permissoes.RegistoPermissoes.BASE_MENU_COMERCIAL, DVML.MODULO_GESTAO_COMERCIAL, cod_utilizador );
+        }
+        catch ( RuntimeException e )
+        {
+            e.printStackTrace();
+        }
+        util.ui.LayoutSeguro.aplicar( this, "Menu principal", this::montarLayoutWeb );
     }
 
     public void busca_permissao()
@@ -104,6 +117,216 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
             ex.printStackTrace();
         }
 
+    }
+
+    // =====================================================================
+    // LAYOUT WEB (igual ao menu principal do SysKitandaHotel): barra lateral
+    // azul com as operações por grupos, saudação e cartões dos módulos.
+    // Os itens de menu do initComponents continuam a existir com os seus
+    // eventos e permissões: os botões da página só os "carregam" e seguem o
+    // estado deles (activo/visível). Os atalhos de teclado mantêm-se.
+    // =====================================================================
+    private void montarLayoutWeb()
+    {
+        String nome = "", perfil = null;
+        try
+        {
+            TbUsuario u = usuarioDao.findTbUsuario( this.cod_utilizador );
+            nome = u.getNome();
+            perfil = u.getIdTipoUsuario() == null ? null : u.getIdTipoUsuario().getDescricao();
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
+        util.ui.PaginaMenuWeb pagina = new util.ui.PaginaMenuWeb( "Gestão Comercial",
+                "Seleccione um módulo para começar.", new javax.swing.JLabel( nome ), perfil );
+
+        // ---- barra lateral: um grupo por menu, com os itens (e submenus)
+        java.util.Map<javax.swing.JMenu, String> grupos = new java.util.LinkedHashMap<>();
+        grupos.put( jMenu1, "Operações" );
+        grupos.put( jMenu5, "Logística" );
+        grupos.put( jMenu3, "Sistema" );
+        grupos.put( jMenu7, "Tabelas" );
+        grupos.put( jmenuRelatorios, "Relatórios e Mapas" );
+        grupos.put( jMenu6, "Configurações" );
+        grupos.put( jMenu4, "Ajuda" );
+        for ( java.util.Map.Entry<javax.swing.JMenu, String> g : grupos.entrySet() )
+        {
+            pagina.grupo( g.getValue() );
+            adicionarItensLateral( pagina, g.getKey() );
+        }
+
+        // ---- cartões dos módulos principais
+        pagina.cartao( espelho( jmVenda ), util.ui.MenuWeb.Simbolo.CARTEIRA, "Venda",
+                "Facturação e ponto de venda" );
+        pagina.cartao( espelho( jmFrontOffice ), util.ui.MenuWeb.Simbolo.TALHERES, "Front Office",
+                "Mesas, pedidos e vendas ao balcão" );
+        pagina.cartao( espelho( jmCompras ), util.ui.MenuWeb.Simbolo.PRANCHETA, "Compras",
+                "Compras a fornecedores" );
+        pagina.cartao( espelho( jMenuItemEntradasProdutos ), util.ui.MenuWeb.Simbolo.CHAVE, "Entrada de Produtos",
+                "Entradas em stock" );
+        pagina.cartao( espelho( jmSaidasProdutos ), util.ui.MenuWeb.Simbolo.PRANCHETA, "Saídas de Produtos",
+                "Saídas e consumos de stock" );
+        pagina.cartao( espelho( jmProduto ), util.ui.MenuWeb.Simbolo.SINO, "Produtos",
+                "Cadastro de produtos e serviços" );
+        pagina.cartao( espelho( jmCadastroCliente ), util.ui.MenuWeb.Simbolo.CALENDARIO, "Clientes",
+                "Cadastro de clientes" );
+        pagina.cartao( espelho( jmProcessarRecibo ), util.ui.MenuWeb.Simbolo.CARTEIRA, "Recibos",
+                "Processar recibos de factura" );
+        pagina.cartao( espelho( jmListarProdutosStock ), util.ui.MenuWeb.Simbolo.GRAFICO, "Inventário",
+                "Existências por armazém" );
+        pagina.cartao( espelho( jmTodasVendas ), util.ui.MenuWeb.Simbolo.GRAFICO, "Relatório de Vendas",
+                "Vendas por intervalo de datas" );
+
+        // ---- sair: o mesmo item "Sair" do menu Ficheiro
+        javax.swing.JButton sair = new javax.swing.JButton( jMenuItem3.getText() );
+        sair.addActionListener( e -> jMenuItem3.doClick() );
+        pagina.sair( sair, "Terminar a sessão e voltar ao início de sessão" );
+
+        // a barra de menus sai de vista: os atalhos (Ctrl+V, Shift+P, ...) continuam
+        javax.swing.JRootPane rp = getRootPane();
+        for ( javax.swing.JMenuItem item : itensDoMenu() )
+        {
+            final javax.swing.JMenuItem alvo = item;
+            if ( alvo.getAccelerator() != null )
+            {
+                rp.registerKeyboardAction( e ->
+                {
+                    if ( alvo.isEnabled() && alvo.isVisible() )
+                    {
+                        alvo.doClick();
+                    }
+                }, alvo.getAccelerator(), javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW );
+            }
+        }
+        setJMenuBar( null );
+        pagina.montar( this, "SysKitanda Comercial  ·  Gestão Comercial", 5 );
+    }
+
+    /** Todos os itens (também os dos submenus) da barra de menus original. */
+    private java.util.List<javax.swing.JMenuItem> itensDoMenu()
+    {
+        java.util.List<javax.swing.JMenuItem> itens = new java.util.ArrayList<>();
+        for ( int i = 0; i < jMenuBar1.getMenuCount(); i++ )
+        {
+            recolherItens( jMenuBar1.getMenu( i ), itens );
+        }
+        return itens;
+    }
+
+    private static void recolherItens( javax.swing.JMenu menu, java.util.List<javax.swing.JMenuItem> itens )
+    {
+        if ( menu == null )
+        {
+            return;
+        }
+        for ( java.awt.Component c : menu.getMenuComponents() )
+        {
+            if ( c instanceof javax.swing.JMenu )
+            {
+                recolherItens( ( javax.swing.JMenu ) c, itens );
+            }
+            else if ( c instanceof javax.swing.JMenuItem )
+            {
+                itens.add( ( javax.swing.JMenuItem ) c );
+            }
+        }
+    }
+
+    /** Itens de um menu na barra lateral; um submenu leva o nome dele à frente. */
+    private void adicionarItensLateral( util.ui.PaginaMenuWeb pagina, javax.swing.JMenu menu )
+    {
+        for ( java.awt.Component c : menu.getMenuComponents() )
+        {
+            if ( c == jMenuItem3 )
+            {
+                continue; // "Sair" fica no botão de baixo
+            }
+            if ( c instanceof javax.swing.JMenu )
+            {
+                javax.swing.JMenu sub = ( javax.swing.JMenu ) c;
+                for ( java.awt.Component s : sub.getMenuComponents() )
+                {
+                    if ( s instanceof javax.swing.JMenuItem && !( s instanceof javax.swing.JMenu ) )
+                    {
+                        javax.swing.JMenuItem item = ( javax.swing.JMenuItem ) s;
+                        javax.swing.JButton b = espelho( item );
+                        pagina.item( b, sub.getText() + " · " + item.getText() );
+                        seguirMenu( sub, b );
+                    }
+                }
+            }
+            else if ( c instanceof javax.swing.JMenuItem )
+            {
+                javax.swing.JMenuItem item = ( javax.swing.JMenuItem ) c;
+                pagina.item( espelho( item ), item.getText() );
+            }
+        }
+    }
+
+    /**
+     * Botão que carrega no item de menu e segue o estado dele: as permissões
+     * (setEnabled) e as regras de visibilidade (setVisible) continuam a ser
+     * aplicadas aos itens originais.
+     */
+    private static javax.swing.JButton espelho( final javax.swing.JMenuItem item )
+    {
+        final javax.swing.JButton b = new javax.swing.JButton( item.getText() );
+        b.setToolTipText( item.getText() );
+        b.addActionListener( e ->
+        {
+            if ( item.isEnabled() )
+            {
+                item.doClick();
+            }
+        } );
+        b.setEnabled( item.isEnabled() );
+        b.setVisible( item.isVisible() );
+        item.addPropertyChangeListener( "enabled", e -> b.setEnabled( item.isEnabled() ) );
+        item.addComponentListener( new java.awt.event.ComponentAdapter()
+        {
+            @Override
+            public void componentShown( java.awt.event.ComponentEvent e )
+            {
+                b.setVisible( true );
+            }
+
+            @Override
+            public void componentHidden( java.awt.event.ComponentEvent e )
+            {
+                b.setVisible( false );
+            }
+        } );
+        return b;
+    }
+
+    /** Um submenu escondido ou desactivado esconde/desactiva os seus itens na barra lateral. */
+    private static void seguirMenu( final javax.swing.JMenu sub, final javax.swing.JButton b )
+    {
+        if ( !sub.isVisible() )
+        {
+            b.setVisible( false );
+        }
+        if ( !sub.isEnabled() )
+        {
+            b.setEnabled( false );
+        }
+        sub.addComponentListener( new java.awt.event.ComponentAdapter()
+        {
+            @Override
+            public void componentHidden( java.awt.event.ComponentEvent e )
+            {
+                b.setVisible( false );
+            }
+        } );
+        sub.addPropertyChangeListener( "enabled", e ->
+        {
+            if ( !sub.isEnabled() )
+            {
+                b.setEnabled( false );
+            }
+        } );
     }
 
     private void boas_vinda()

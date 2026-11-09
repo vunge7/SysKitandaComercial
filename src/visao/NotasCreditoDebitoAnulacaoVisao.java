@@ -142,7 +142,7 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
         vendasController = new VendasController( conexao );
         setWindowsListener();
         init();
-        montarLayoutResponsivo();
+        util.ui.LayoutSeguro.aplicar( this, "Anulação de documentos", this::montarLayoutResponsivo );
     }
 
     @SuppressWarnings( "unchecked" )

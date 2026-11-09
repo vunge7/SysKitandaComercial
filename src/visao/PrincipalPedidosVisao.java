@@ -89,6 +89,587 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
             e.printStackTrace();
         }
         setArmazem( dadosInstituicaoDao.findTbDadosInstituicao( 1 ).getConfigArmazens() );
+        // aspecto da Gestão de Mesas do SysKitandaHotel, sobre o initComponents
+        util.ui.LayoutSeguro.aplicar( this, "Gestão de mesas", this::montarLayoutWeb );
+    }
+
+
+    // =====================================================================
+    // LAYOUT WEB + MESAS DINÂMICAS (como a Gestão de Mesas do SysKitandaHotel)
+    // As mesas vêm do cadastro (tb_mesas): criam-se e eliminam-se em
+    // "Configurar mesas". O estado de todas lê-se numa só consulta, fora do
+    // ecrã (SwingWorker), para a janela não travar. Abrir uma mesa faz o mesmo
+    // que os botões antigos: NovaGestaoPedidosVisao com o número da mesa.
+    // Os 40 botões/etiquetas do initComponents ficam fora de vista (as outras
+    // janelas ainda os referem).
+    // =====================================================================
+    /** De quanto em quanto tempo o plano se actualiza sozinho (outros postos também lançam pedidos). */
+    private static final int ACTUALIZAR_MS = 20000;
+
+    /** Janela aberta (para as actualizações pedidas pelo ecrã de pedidos). */
+    private static PrincipalPedidosVisao activa;
+
+    private comercial.controller.MesasController mesasControllerWeb;
+    private final java.util.Map<String, util.ui.MesasWeb.CartaoMesa> cartoes = new java.util.LinkedHashMap<>();
+    private final util.ui.MesasWeb.PainelGrelha grelha = new util.ui.MesasWeb.PainelGrelha( 140, 12 );
+    private final javax.swing.JTextField txtNumero = new javax.swing.JTextField();
+    private final javax.swing.JRadioButton rbTodas = new javax.swing.JRadioButton( "Todas", true );
+    private final javax.swing.JRadioButton rbLivres = new javax.swing.JRadioButton( "Livres" );
+    private final javax.swing.JRadioButton rbOcupadas = new javax.swing.JRadioButton( "Ocupadas" );
+    private final util.ui.ComponentesWeb.CartaoKpi kpiLivres = new util.ui.ComponentesWeb.CartaoKpi(
+            util.ui.ComponentesWeb.CartaoKpi.VISTO, "Mesas livres", util.ui.MesasWeb.LIVRE );
+    private final util.ui.ComponentesWeb.CartaoKpi kpiOcupadas = new util.ui.ComponentesWeb.CartaoKpi(
+            util.ui.ComponentesWeb.CartaoKpi.PESSOA, "Mesas ocupadas", util.ui.MesasWeb.OCUPADA );
+    private final util.ui.ComponentesWeb.CartaoKpi kpiValor = new util.ui.ComponentesWeb.CartaoKpi(
+            "Kz", "Valor em aberto", util.ui.ComponentesWeb.AZUL_MEDIO );
+    private final util.ui.ComponentesWeb.CartaoKpi kpiAntiga = new util.ui.ComponentesWeb.CartaoKpi(
+            "!", "Conta aberta há mais tempo", util.ui.MesasWeb.DEMORADA );
+    private final javax.swing.JPanel listaOcupadas = new javax.swing.JPanel();
+    private final javax.swing.JLabel lbSemResultados = new javax.swing.JLabel( "Nenhuma mesa corresponde ao filtro.",
+            javax.swing.SwingConstants.CENTER );
+    private final javax.swing.JLabel lbActualizado = util.ui.FormularioWeb.dica( " " );
+    private util.ui.ComponentesWeb.Cartao cartaoPlano;
+    private javax.swing.Timer temporizador;
+    private long ultimaActualizacao;
+    /** Uma leitura de cada vez; um pedido durante a leitura fica para logo a seguir. */
+    private boolean aLer = false;
+    private boolean lerDeNovo = false;
+    /** Junta vários pedidos seguidos (ex.: 8 chamadas a pintar_mesas) numa só leitura. */
+    private static javax.swing.Timer agrupador;
+
+    private void montarLayoutWeb()
+    {
+        mesasControllerWeb = new comercial.controller.MesasController( conexao );
+
+        // ------------------------------------------------ cabeçalho
+        javax.swing.JButton btConfigurar = new javax.swing.JButton( "Configurar mesas" );
+        util.ui.ComponentesWeb.botao( btConfigurar, util.ui.ComponentesWeb.Variante.SECUNDARIO, "/imagens/Button-Add-icon.png",
+                "Criar ou eliminar mesas da sala" );
+        pilula( btConfigurar );
+        btConfigurar.addActionListener( e -> configurarMesas() );
+        javax.swing.JButton btActualizar = new javax.swing.JButton( "Actualizar" );
+        util.ui.ComponentesWeb.botao( btActualizar, util.ui.ComponentesWeb.Variante.SECUNDARIO, null,
+                "Ler de novo o estado das mesas (F5)" );
+        pilula( btActualizar );
+        btActualizar.addActionListener( e -> actualizarEstados() );
+        jButton17.setText( "Sair" );
+        jButton17.setIcon( null );
+        util.ui.FormularioWeb.botaoSair( jButton17, "Fechar a gestão de mesas (Esc)" );
+        pilula( jButton17 );
+
+        util.ui.FormularioWeb.combo( cmbArmazem );
+        cmbArmazem.setPreferredSize( new java.awt.Dimension( 200, 30 ) );
+        javax.swing.JPanel direita = util.ui.ComponentesWeb.transparente(
+                new util.ui.EstiloUI.WrapLayout( java.awt.FlowLayout.RIGHT, 10, 4 ) );
+        direita.add( util.ui.FormularioWeb.campoCabecalho( new javax.swing.JLabel( "Armazém" ), cmbArmazem ) );
+        direita.add( btConfigurar );
+        direita.add( btActualizar );
+        direita.add( jButton17 );
+        javax.swing.JPanel cabecalho = util.ui.FormularioWeb.cabecalho( "Gestão de Mesas",
+                "Toque numa mesa para abrir ou continuar o pedido", direita );
+
+        // ------------------------------------------------ indicadores
+        javax.swing.JPanel kpis = util.ui.FormularioWeb.grelha( 200, 4, kpiLivres, kpiOcupadas, kpiValor, kpiAntiga );
+
+        // ------------------------------------------------ plano da sala
+        javax.swing.JPanel filtros = util.ui.FormularioWeb.pilulas( rbTodas, rbLivres, rbOcupadas );
+        javax.swing.ButtonGroup g = new javax.swing.ButtonGroup();
+        g.add( rbTodas );
+        g.add( rbLivres );
+        g.add( rbOcupadas );
+        for ( javax.swing.JRadioButton rb : new javax.swing.JRadioButton[]
+        {
+            rbTodas, rbLivres, rbOcupadas
+        } )
+        {
+            rb.addActionListener( e -> aplicarFiltro() );
+        }
+        cartaoPlano = new util.ui.ComponentesWeb.Cartao( "Plano da sala", util.ui.ComponentesWeb.AZUL_VIVO,
+                new java.awt.BorderLayout( 0, 6 ) );
+        cartaoPlano.adicionarAccao( filtros );
+        javax.swing.JScrollPane rolagem = new javax.swing.JScrollPane( grelha, javax.swing.JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER );
+        rolagem.setBorder( null );
+        rolagem.setOpaque( false );
+        rolagem.getViewport().setOpaque( false );
+        rolagem.getVerticalScrollBar().setUnitIncrement( 24 );
+        rolagem.setMinimumSize( new java.awt.Dimension( 200, 180 ) );
+        javax.swing.JPanel legenda = util.ui.ComponentesWeb.transparente( new java.awt.FlowLayout( java.awt.FlowLayout.LEFT, 14, 0 ) );
+        legenda.add( util.ui.MesasWeb.legenda( "Livre", util.ui.MesasWeb.LIVRE ) );
+        legenda.add( util.ui.MesasWeb.legenda( "Ocupada", util.ui.MesasWeb.OCUPADA ) );
+        legenda.add( util.ui.MesasWeb.legenda( "Aberta há mais de " + ( util.ui.MesasWeb.MINUTOS_DEMORA / 60 ) + " h",
+                util.ui.MesasWeb.DEMORADA ) );
+
+        // mensagens de estado do código (o .form traz textos de teste)
+        if ( "sahdbvhsdva".equals( status_mensagem_primaria.getText() ) )
+        {
+            status_mensagem_primaria.setText( " " );
+        }
+        if ( "...".equals( status_mensagem_secundaria.getText() ) )
+        {
+            status_mensagem_secundaria.setText( " " );
+        }
+        status_mensagem_primaria.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 12.5f ) );
+        status_mensagem_primaria.setForeground( util.ui.ComponentesWeb.VERMELHO );
+        status_mensagem_secundaria.setFont( util.ui.EstiloUI.FONTE.deriveFont( 12.5f ) );
+        status_mensagem_secundaria.setForeground( util.ui.ComponentesWeb.TEXTO_SUAVE );
+        javax.swing.JPanel mensagens = util.ui.ComponentesWeb.transparente( new java.awt.GridLayout( 0, 1 ) );
+        mensagens.add( status_mensagem_primaria );
+        mensagens.add( status_mensagem_secundaria );
+        mensagens.add( lbActualizado );
+
+        javax.swing.JPanel rodapePlano = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout() );
+        rodapePlano.add( legenda, java.awt.BorderLayout.WEST );
+        rodapePlano.add( mensagens, java.awt.BorderLayout.EAST );
+        lbSemResultados.setFont( util.ui.EstiloUI.FONTE.deriveFont( 13f ) );
+        lbSemResultados.setForeground( util.ui.ComponentesWeb.TEXTO_SUAVE );
+        lbSemResultados.setVisible( false );
+        javax.swing.JPanel meio = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout() );
+        meio.add( lbSemResultados, java.awt.BorderLayout.NORTH );
+        meio.add( rolagem, java.awt.BorderLayout.CENTER );
+        cartaoPlano.getCorpo().add( meio, java.awt.BorderLayout.CENTER );
+        cartaoPlano.getCorpo().add( rodapePlano, java.awt.BorderLayout.SOUTH );
+
+        // ------------------------------------------------ acesso rápido
+        javax.swing.JPanel lateral = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 0, 10 ) );
+        lateral.add( cartaoTeclado(), java.awt.BorderLayout.NORTH );
+        lateral.add( cartaoOcupadas(), java.awt.BorderLayout.CENTER );
+
+        // à esquerda o acesso rápido (abrir pelo número e contas em aberto), à direita o plano
+        javax.swing.JPanel colunas = util.ui.ComponentesWeb.transparente( new util.ui.ComponentesWeb.ColunasResponsivas(
+                new double[]
+                {
+                    0.0, 1.0
+                }, new int[]
+                {
+                    290, 440
+                }, 10 ) );
+        colunas.add( util.ui.ComponentesWeb.rolagemVertical( lateral ) );
+        colunas.add( cartaoPlano );
+
+        javax.swing.JPanel conteudo = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 0, 8 ) );
+        conteudo.add( kpis, java.awt.BorderLayout.NORTH );
+        conteudo.add( colunas, java.awt.BorderLayout.CENTER );
+
+        javax.swing.JPanel accoes = util.ui.ComponentesWeb.transparente( null ); // tudo está no cabeçalho e no teclado
+        accoes.setPreferredSize( new java.awt.Dimension( 0, 0 ) );
+        util.ui.FormularioWeb.montar( this, cabecalho, conteudo, accoes,
+                "Plano de mesas  ·  actualiza sozinho a cada " + ( ACTUALIZAR_MS / 1000 ) + " s  ·  F5 actualiza já" );
+
+        getRootPane().registerKeyboardAction( e -> actualizarEstados(),
+                javax.swing.KeyStroke.getKeyStroke( java.awt.event.KeyEvent.VK_F5, 0 ), javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW );
+        getRootPane().registerKeyboardAction( e -> jButton17.doClick(),
+                javax.swing.KeyStroke.getKeyStroke( java.awt.event.KeyEvent.VK_ESCAPE, 0 ), javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW );
+
+        // ------------------------------------------------ ciclo de vida
+        activa = this;
+        actualizarEstados();
+        temporizador = new javax.swing.Timer( ACTUALIZAR_MS, e ->
+        {
+            if ( isShowing() )
+            {
+                actualizarEstados();
+            }
+        } );
+        temporizador.start();
+        addWindowListener( new java.awt.event.WindowAdapter()
+        {
+            @Override
+            public void windowActivated( java.awt.event.WindowEvent e )
+            {
+                activa = PrincipalPedidosVisao.this;
+                // ao voltar do ecrã de pedidos (sem repetir se acabou de actualizar)
+                if ( System.currentTimeMillis() - ultimaActualizacao > 3000 )
+                {
+                    actualizarEstados();
+                }
+                txtNumero.requestFocusInWindow();
+            }
+
+            @Override
+            public void windowClosed( java.awt.event.WindowEvent e )
+            {
+                temporizador.stop();
+                if ( activa == PrincipalPedidosVisao.this )
+                {
+                    activa = null;
+                }
+            }
+        } );
+        util.ui.EstiloUI.ajustarAoEcra( this, 980, 640 );
+    }
+
+    private static void pilula( javax.swing.JButton b )
+    {
+        b.putClientProperty( "web.pilula", Boolean.TRUE );
+        b.setBorder( javax.swing.BorderFactory.createEmptyBorder( 6, 14, 6, 16 ) );
+        b.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 12.5f ) );
+    }
+
+    /** Visor + teclado numérico: escreve o número e abre (como num POS táctil). */
+    private javax.swing.JComponent cartaoTeclado()
+    {
+        txtNumero.setFont( util.ui.MesasWeb.fonteVisor( 30 ) );
+        txtNumero.setHorizontalAlignment( javax.swing.SwingConstants.CENTER );
+        txtNumero.setForeground( new java.awt.Color( 134, 239, 172 ) );
+        txtNumero.setBackground( new java.awt.Color( 15, 23, 42 ) );
+        txtNumero.setCaretColor( java.awt.Color.WHITE );
+        txtNumero.setBorder( javax.swing.BorderFactory.createEmptyBorder( 8, 10, 8, 10 ) );
+        txtNumero.setToolTipText( "Escreva o número da mesa e carregue Enter; enquanto escreve, o plano mostra só as mesas que começam por esse número" );
+        txtNumero.getDocument().addDocumentListener( new javax.swing.event.DocumentListener()
+        {
+            @Override
+            public void insertUpdate( javax.swing.event.DocumentEvent e )
+            {
+                aplicarFiltro();
+            }
+
+            @Override
+            public void removeUpdate( javax.swing.event.DocumentEvent e )
+            {
+                aplicarFiltro();
+            }
+
+            @Override
+            public void changedUpdate( javax.swing.event.DocumentEvent e )
+            {
+                aplicarFiltro();
+            }
+        } );
+        txtNumero.addActionListener( e -> abrirPeloVisor() );
+        util.ui.ComponentesWeb.CaixaSuave visor = new util.ui.ComponentesWeb.CaixaSuave( new java.awt.BorderLayout(),
+                new java.awt.Color( 15, 23, 42 ), null );
+        visor.setBorder( javax.swing.BorderFactory.createEmptyBorder( 4, 4, 4, 4 ) );
+        visor.add( txtNumero, java.awt.BorderLayout.CENTER );
+
+        javax.swing.JPanel teclas = util.ui.ComponentesWeb.transparente( new java.awt.GridLayout( 4, 3, 8, 8 ) );
+        for ( String t : new String[]
+        {
+            "1", "2", "3", "4", "5", "6", "7", "8", "9"
+        } )
+        {
+            teclas.add( teclaNumero( t ) );
+        }
+        javax.swing.JButton limpar = util.ui.MesasWeb.tecla( "C", util.ui.ComponentesWeb.Variante.AVISO );
+        limpar.setToolTipText( "Limpar" );
+        limpar.addActionListener( e ->
+        {
+            txtNumero.setText( "" );
+            txtNumero.requestFocusInWindow();
+        } );
+        teclas.add( limpar );
+        teclas.add( teclaNumero( "0" ) );
+        javax.swing.JButton apagar = util.ui.MesasWeb.tecla( "<", util.ui.ComponentesWeb.Variante.SECUNDARIO );
+        apagar.setToolTipText( "Apagar o último algarismo" );
+        apagar.addActionListener( e ->
+        {
+            String t = txtNumero.getText();
+            if ( !t.isEmpty() )
+            {
+                txtNumero.setText( t.substring( 0, t.length() - 1 ) );
+            }
+            txtNumero.requestFocusInWindow();
+        } );
+        teclas.add( apagar );
+
+        javax.swing.JButton abrir = new javax.swing.JButton( "Abrir mesa" );
+        util.ui.ComponentesWeb.botao( abrir, util.ui.ComponentesWeb.Variante.SUCESSO, null, "Abrir a mesa do visor (Enter)" );
+        abrir.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 15f ) );
+        abrir.setBorder( javax.swing.BorderFactory.createEmptyBorder( 11, 16, 11, 16 ) );
+        abrir.setFocusable( false );
+        abrir.addActionListener( e -> abrirPeloVisor() );
+
+        javax.swing.JPanel corpo = util.ui.FormularioWeb.pilha( 10, visor, teclas, abrir );
+        return util.ui.FormularioWeb.cartao( "Abrir mesa pelo número", util.ui.ComponentesWeb.VERDE, corpo );
+    }
+
+    private javax.swing.JButton teclaNumero( String t )
+    {
+        javax.swing.JButton b = util.ui.MesasWeb.tecla( t, util.ui.ComponentesWeb.Variante.SECUNDARIO );
+        b.addActionListener( e ->
+        {
+            if ( txtNumero.getText().length() < 6 )
+            {
+                txtNumero.setText( txtNumero.getText() + t );
+            }
+            txtNumero.requestFocusInWindow();
+        } );
+        return b;
+    }
+
+    /** Mesas ocupadas, da mais antiga para a mais recente (atalho para fechar contas). */
+    private javax.swing.JComponent cartaoOcupadas()
+    {
+        listaOcupadas.setLayout( new javax.swing.BoxLayout( listaOcupadas, javax.swing.BoxLayout.Y_AXIS ) );
+        listaOcupadas.setOpaque( false );
+        javax.swing.JPanel topo = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout() );
+        topo.add( listaOcupadas, java.awt.BorderLayout.NORTH );
+        javax.swing.JScrollPane sp = new javax.swing.JScrollPane( topo, javax.swing.JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER );
+        sp.setBorder( null );
+        sp.setOpaque( false );
+        sp.getViewport().setOpaque( false );
+        sp.getVerticalScrollBar().setUnitIncrement( 16 );
+        sp.setPreferredSize( new java.awt.Dimension( 260, 160 ) );
+        sp.setMinimumSize( new java.awt.Dimension( 200, 80 ) );
+        util.ui.ComponentesWeb.Cartao c = new util.ui.ComponentesWeb.Cartao( "Contas em aberto", util.ui.MesasWeb.OCUPADA,
+                new java.awt.BorderLayout() );
+        c.getCorpo().add( sp, java.awt.BorderLayout.CENTER );
+        return c;
+    }
+
+    // =====================================================================
+    // ESTADO DAS MESAS (uma consulta, fora do ecrã)
+    // =====================================================================
+    private void actualizarEstados()
+    {
+        if ( mesasControllerWeb == null )
+        {
+            return;
+        }
+        if ( aLer )
+        {
+            lerDeNovo = true;
+            return;
+        }
+        aLer = true;
+        ultimaActualizacao = System.currentTimeMillis();
+        new javax.swing.SwingWorker<java.util.List<comercial.controller.MesasController.EstadoMesa>, Void>()
+        {
+            @Override
+            protected java.util.List<comercial.controller.MesasController.EstadoMesa> doInBackground() throws Exception
+            {
+                return mesasControllerWeb.estadoMesas();
+            }
+
+            @Override
+            protected void done()
+            {
+                aLer = false;
+                try
+                {
+                    aplicarEstados( get() );
+                }
+                catch ( Exception e )
+                {
+                    e.printStackTrace();
+                    lbActualizado.setText( "Não foi possível ler o estado das mesas" );
+                    lbActualizado.setForeground( util.ui.ComponentesWeb.VERMELHO );
+                }
+                if ( lerDeNovo )
+                {
+                    lerDeNovo = false;
+                    actualizarEstados();
+                }
+            }
+        }.execute();
+    }
+
+    private void aplicarEstados( java.util.List<comercial.controller.MesasController.EstadoMesa> lista )
+    {
+        boolean mesmas = lista.size() == cartoes.size();
+        if ( mesmas )
+        {
+            int i = 0;
+            for ( String chave : cartoes.keySet() )
+            {
+                if ( !chave.equalsIgnoreCase( lista.get( i++ ).designacao ) )
+                {
+                    mesmas = false;
+                    break;
+                }
+            }
+        }
+        if ( mesmas )
+        {
+            for ( comercial.controller.MesasController.EstadoMesa e : lista )
+            {
+                cartoes.get( e.designacao.toUpperCase() ).setEstado( e );
+            }
+        }
+        else
+        {
+            // mesas criadas ou eliminadas: refaz o plano
+            cartoes.clear();
+            grelha.removeAll();
+            for ( comercial.controller.MesasController.EstadoMesa e : lista )
+            {
+                final util.ui.MesasWeb.CartaoMesa c = new util.ui.MesasWeb.CartaoMesa( e );
+                c.addAccao( () -> abrirMesa( c.getNumero() ) );
+                cartoes.put( e.designacao.toUpperCase(), c );
+                grelha.add( c );
+            }
+        }
+        actualizarResumo( lista );
+        aplicarFiltro();
+        lbActualizado.setForeground( util.ui.ComponentesWeb.TEXTO_SUAVE );
+        lbActualizado.setText( "Actualizado às " + new java.text.SimpleDateFormat( "HH:mm:ss" ).format( new java.util.Date() ) );
+    }
+
+    private void actualizarResumo( java.util.List<comercial.controller.MesasController.EstadoMesa> lista )
+    {
+        int ocupadas = 0;
+        double valor = 0;
+        comercial.controller.MesasController.EstadoMesa antiga = null;
+        java.util.List<comercial.controller.MesasController.EstadoMesa> abertas = new java.util.ArrayList<>();
+        for ( comercial.controller.MesasController.EstadoMesa e : lista )
+        {
+            if ( e.itens > 0 )
+            {
+                ocupadas++;
+                valor += e.total;
+                abertas.add( e );
+                if ( e.desde != null && ( antiga == null || e.desde.before( antiga.desde ) ) )
+                {
+                    antiga = e;
+                }
+            }
+        }
+        int total = lista.size();
+        int livres = total - ocupadas;
+        kpiLivres.setValor( String.valueOf( livres ), "de " + total + " mesas" );
+        kpiOcupadas.setValor( String.valueOf( ocupadas ),
+                total == 0 ? " " : Math.round( ocupadas * 100.0 / total ) + "% da sala" );
+        kpiValor.setValor( kitanda.util.CfMethods.formatarComoMoeda( valor ),
+                ocupadas == 0 ? "nenhuma conta aberta" : "em " + ocupadas + ( ocupadas == 1 ? " mesa" : " mesas" ) );
+        if ( antiga != null )
+        {
+            long min = ( System.currentTimeMillis() - antiga.desde.getTime() ) / 60000L;
+            kpiAntiga.setValor( antiga.designacao, util.ui.MesasWeb.tempo( min, antiga.desde ) );
+        }
+        else
+        {
+            kpiAntiga.setValor( "—", "nenhuma conta aberta" );
+        }
+        cartaoPlano.getTitulo().setText( "Plano da sala · " + total + ( total == 1 ? " mesa" : " mesas" ) );
+
+        // contas em aberto, da mais antiga para a mais recente
+        abertas.sort( ( a, b ) ->
+        {
+            if ( a.desde == null )
+            {
+                return b.desde == null ? 0 : 1;
+            }
+            return b.desde == null ? -1 : a.desde.compareTo( b.desde );
+        } );
+        listaOcupadas.removeAll();
+        if ( abertas.isEmpty() )
+        {
+            javax.swing.JLabel vazio = util.ui.FormularioWeb.dica( total == 0
+                    ? "Ainda não há mesas: crie-as em \"Configurar mesas\"." : "Todas as mesas estão livres." );
+            vazio.setBorder( javax.swing.BorderFactory.createEmptyBorder( 6, 4, 6, 4 ) );
+            listaOcupadas.add( vazio );
+        }
+        for ( comercial.controller.MesasController.EstadoMesa e : abertas )
+        {
+            long min = e.desde == null ? -1 : ( System.currentTimeMillis() - e.desde.getTime() ) / 60000L;
+            javax.swing.JButton b = new javax.swing.JButton( "<html><b>" + e.designacao + "</b> &nbsp; "
+                    + kitanda.util.CfMethods.formatarComoMoeda( e.total )
+                    + "<br><span style='color:#64748b'>" + e.itens + ( e.itens == 1 ? " item" : " itens" )
+                    + ( min >= 0 ? " · " + util.ui.MesasWeb.tempo( min, e.desde ) : "" ) + "</span></html>" );
+            util.ui.ComponentesWeb.botao( b, util.ui.ComponentesWeb.Variante.SECUNDARIO, null, "Abrir a " + e.designacao );
+            b.setIcon( new util.ui.ComponentesWeb.IconeCor( min >= util.ui.MesasWeb.MINUTOS_DEMORA
+                    ? util.ui.MesasWeb.DEMORADA : util.ui.MesasWeb.OCUPADA, 10 ) );
+            b.setHorizontalAlignment( javax.swing.SwingConstants.LEFT );
+            b.setFont( util.ui.EstiloUI.FONTE.deriveFont( 12.5f ) );
+            b.setForeground( util.ui.ComponentesWeb.TEXTO );
+            b.setBorder( javax.swing.BorderFactory.createEmptyBorder( 6, 10, 6, 10 ) );
+            b.setAlignmentX( 0f );
+            b.setMaximumSize( new java.awt.Dimension( Integer.MAX_VALUE, b.getPreferredSize().height ) );
+            String numero = e.getNumero();
+            b.addActionListener( ev -> abrirMesa( numero ) );
+            listaOcupadas.add( b );
+            listaOcupadas.add( javax.swing.Box.createVerticalStrut( 6 ) );
+        }
+        listaOcupadas.revalidate();
+        listaOcupadas.repaint();
+    }
+
+    /** Filtro das pílulas (todas/livres/ocupadas) e do número escrito no visor. */
+    private void aplicarFiltro()
+    {
+        String prefixo = txtNumero.getText().trim().toUpperCase();
+        int visiveis = 0;
+        for ( util.ui.MesasWeb.CartaoMesa c : cartoes.values() )
+        {
+            boolean ok = ( rbTodas.isSelected()
+                    || ( rbLivres.isSelected() && !c.isOcupada() )
+                    || ( rbOcupadas.isSelected() && c.isOcupada() ) )
+                    && ( prefixo.isEmpty() || c.getNumero().toUpperCase().startsWith( prefixo ) );
+            c.setVisible( ok );
+            if ( ok )
+            {
+                visiveis++;
+            }
+        }
+        lbSemResultados.setVisible( visiveis == 0 && !cartoes.isEmpty() );
+        grelha.revalidate();
+        grelha.repaint();
+    }
+
+    // =====================================================================
+    // ACÇÕES
+    // =====================================================================
+    private void abrirPeloVisor()
+    {
+        String numero = txtNumero.getText().trim();
+        if ( numero.isEmpty() )
+        {
+            return;
+        }
+        if ( !cartoes.containsKey( ( "MESA " + numero ).toUpperCase() ) )
+        {
+            javax.swing.JOptionPane.showMessageDialog( this, "A MESA " + numero + " não existe.\n"
+                    + "Pode criá-la em \"Configurar mesas\".", "Gestão de Mesas", javax.swing.JOptionPane.WARNING_MESSAGE );
+            txtNumero.selectAll();
+            return;
+        }
+        txtNumero.setText( "" );
+        abrirMesa( numero );
+    }
+
+    /** O ecrã de pedidos recebe o número (sem "MESA "), como os botões antigos. */
+    private void abrirMesa( String numero )
+    {
+        new NovaGestaoPedidosVisao( numero, lugar, this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+    }
+
+    private void configurarMesas()
+    {
+        new MesasCadastroVisao( this, conexao, null, this::actualizarEstados ).setVisible( true );
+        actualizarEstados();
+    }
+
+    /** Pede uma leitura à janela aberta; vários pedidos seguidos dão uma só consulta. */
+    private static void pedirActualizacao()
+    {
+        if ( activa == null || !activa.isDisplayable() )
+        {
+            return;
+        }
+        Runnable agendar = () ->
+        {
+            if ( agrupador == null )
+            {
+                agrupador = new javax.swing.Timer( 300, e ->
+                {
+                    if ( activa != null && activa.isDisplayable() )
+                    {
+                        activa.actualizarEstados();
+                    }
+                } );
+                agrupador.setRepeats( false );
+            }
+            agrupador.restart();
+        };
+        if ( javax.swing.SwingUtilities.isEventDispatchThread() )
+        {
+            agendar.run();
+        }
+        else
+        {
+            javax.swing.SwingUtilities.invokeLater( agendar );
+        }
     }
 
     private void setArmazem( String armazem )
@@ -1393,210 +1974,24 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
 //        }
 //
 //    }
+    /**
+     * Antes pintava um rótulo por mesa (duas consultas por mesa); agora o
+     * plano lê todas as mesas de uma vez, por isso basta pedir a actualização.
+     */
     public static void pintar_mesas( JLabel label_mesa, String mesa )
     {
-
-        PedidosController pedidosController = new PedidosController( conexao.getConnectionAtiva() );
-        ItemPedidosController itemPedidosController = new ItemPedidosController( conexao.getConnectionAtiva() );
-
-        int lastPedidoByMesa = 0;
-        long qtdItensByIdPedido = 0;
-        try
-        {
-            lastPedidoByMesa = pedidosController.getLastPedidoByMesa( mesa );
-            qtdItensByIdPedido = itemPedidosController.getQtdItensByIdPedido( lastPedidoByMesa );
-        }
-        catch ( Exception e )
-        {
-        }
-
-        //0 - oucupado - amarelo, 1 - livre - verde 
-        try
-        {
-
-            long numero_lugares_oucupado = qtdItensByIdPedido;
-
-            //Mesa Oucupada
-            if ( numero_lugares_oucupado > 0 )
-            {
-                label_mesa.setBackground( new Color( 255, 153, 51 ) );
-                label_mesa.setOpaque( true );
-            }
-        }
-        catch ( Exception e )
-        {
-        }
-
+        pedirActualizacao();
     }
 
     public static void mesas_livres( JLabel label_mesa )
     {
-        label_mesa.setBackground( new Color( 51, 153, 0 ) );
-        label_mesa.setOpaque( true );
+        // mantido para o código antigo: o estado vem de pintar_mesas / procedimento_mesas_livre
     }
 
+    /** Volta a ler o estado de todas as mesas, se o plano estiver aberto. */
     public static void procedimento_mesas_livre()
     {
-
-        lb_mesa_01.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_01.setOpaque( true );
-        pintar_mesas( lb_mesa_01, "MESA 1" );
-
-        lb_mesa_02.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_02.setOpaque( true );
-        pintar_mesas( lb_mesa_02, "MESA 2" );
-
-        lb_mesa_03.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_03.setOpaque( true );
-        pintar_mesas( lb_mesa_03, "MESA 3" );
-
-        lb_mesa_04.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_04.setOpaque( true );
-        pintar_mesas( lb_mesa_04, "MESA 4" );
-
-        lb_mesa_05.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_05.setOpaque( true );
-        pintar_mesas( lb_mesa_05, "MESA 5" );
-
-        lb_mesa_06.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_06.setOpaque( true );
-        pintar_mesas( lb_mesa_06, "MESA 6" );
-
-        lb_mesa_07.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_07.setOpaque( true );
-        pintar_mesas( lb_mesa_07, "MESA 7" );
-
-        lb_mesa_08.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_08.setOpaque( true );
-        pintar_mesas( lb_mesa_08, "MESA 8" );
-
-        lb_mesa_09.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_09.setOpaque( true );
-        pintar_mesas( lb_mesa_09, "MESA 9" );
-
-        lb_mesa_10.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_10.setOpaque( true );
-        pintar_mesas( lb_mesa_10, "MESA 10" );
-
-        lb_mesa_11.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_11.setOpaque( true );
-        pintar_mesas( lb_mesa_11, "MESA 11" );
-
-        lb_mesa_12.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_12.setOpaque( true );
-        pintar_mesas( lb_mesa_12, "MESA 12" );
-
-        lb_mesa_13.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_13.setOpaque( true );
-        pintar_mesas( lb_mesa_13, "MESA 13" );
-
-        lb_mesa_14.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_14.setOpaque( true );
-        pintar_mesas( lb_mesa_14, "MESA 14" );
-
-        lb_mesa_15.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_15.setOpaque( true );
-        pintar_mesas( lb_mesa_15, "MESA 15" );
-
-        lb_mesa_16.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_16.setOpaque( true );
-        pintar_mesas( lb_mesa_16, "MESA 16" );
-
-        lb_mesa_17.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_17.setOpaque( true );
-        pintar_mesas( lb_mesa_17, "MESA 17" );
-
-        lb_mesa_18.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_18.setOpaque( true );
-        pintar_mesas( lb_mesa_18, "MESA 18" );
-
-        lb_mesa_19.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_19.setOpaque( true );
-        pintar_mesas( lb_mesa_19, "MESA 19" );
-
-        lb_mesa_20.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_20.setOpaque( true );
-        pintar_mesas( lb_mesa_20, "MESA 20" );
-
-        lb_mesa_21.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_21.setOpaque( true );
-        pintar_mesas( lb_mesa_21, "MESA 21" );
-
-        lb_mesa_22.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_22.setOpaque( true );
-        pintar_mesas( lb_mesa_22, "MESA 22" );
-
-        lb_mesa_23.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_23.setOpaque( true );
-        pintar_mesas( lb_mesa_23, "MESA 23" );
-
-        lb_mesa_24.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_24.setOpaque( true );
-        pintar_mesas( lb_mesa_24, "MESA 24" );
-
-        lb_mesa_25.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_25.setOpaque( true );
-        pintar_mesas( lb_mesa_25, "MESA 25" );
-
-        lb_mesa_26.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_26.setOpaque( true );
-        pintar_mesas( lb_mesa_26, "MESA 26" );
-
-        lb_mesa_27.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_27.setOpaque( true );
-        pintar_mesas( lb_mesa_27, "MESA 27" );
-
-        lb_mesa_28.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_28.setOpaque( true );
-        pintar_mesas( lb_mesa_28, "MESA 28" );
-
-        lb_mesa_29.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_29.setOpaque( true );
-        pintar_mesas( lb_mesa_29, "MESA 29" );
-
-        lb_mesa_30.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_30.setOpaque( true );
-        pintar_mesas( lb_mesa_30, "MESA 30" );
-
-        lb_mesa_31.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_31.setOpaque( true );
-        pintar_mesas( lb_mesa_31, "MESA 31" );
-
-        lb_mesa_32.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_32.setOpaque( true );
-        pintar_mesas( lb_mesa_32, "MESA 32" );
-
-        lb_mesa_33.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_33.setOpaque( true );
-        pintar_mesas( lb_mesa_33, "MESA 33" );
-
-        lb_mesa_34.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_34.setOpaque( true );
-        pintar_mesas( lb_mesa_34, "MESA 34" );
-
-        lb_mesa_35.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_35.setOpaque( true );
-        pintar_mesas( lb_mesa_35, "MESA 35" );
-
-        lb_mesa_36.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_36.setOpaque( true );
-        pintar_mesas( lb_mesa_36, "MESA 36" );
-
-        lb_mesa_37.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_37.setOpaque( true );
-        pintar_mesas( lb_mesa_37, "MESA 37" );
-
-        lb_mesa_38.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_38.setOpaque( true );
-        pintar_mesas( lb_mesa_38, "MESA 38" );
-
-        lb_mesa_39.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_39.setOpaque( true );
-        pintar_mesas( lb_mesa_39, "MESA 39" );
-
-        lb_mesa_40.setBackground( new Color( 51, 153, 0 ) );
-        lb_mesa_40.setOpaque( true );
-        pintar_mesas( lb_mesa_40, "MESA 40" );
+        pedirActualizacao();
     }
 
     private void abertura_primeiro_turno()

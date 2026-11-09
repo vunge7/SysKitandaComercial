@@ -202,7 +202,7 @@ public class ProdutosVisao extends javax.swing.JFrame
         TextFieldUtils.configurarCampoDecimal( txtPrecoCompra, 7 );
         TextFieldUtils.configurarCampoDecimal( txtPrecoVendaRetalho, 7 );
         TextFieldUtils.configurarCampoDecimal( txtPercentagemGanhoRetalho, 7 );
-        montarLayoutResponsivo();
+        util.ui.LayoutSeguro.aplicar( this, "Produtos", this::montarLayoutResponsivo );
 
 //        // Aqui passo os campos para a classe helper
 //        CalculadoraPrecoHelper helper = new CalculadoraPrecoHelper( txtPrecoCompra, 

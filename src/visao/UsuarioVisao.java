@@ -64,7 +64,7 @@ public class UsuarioVisao extends javax.swing.JFrame
 
         initComponents();
         confLabel();
-        montarLayoutResponsivo();
+        util.ui.LayoutSeguro.aplicar( this, "Utilizadores", this::montarLayoutResponsivo );
         setLocationRelativeTo( null );
 
         usuarioModelo = new UsuarioModelo();

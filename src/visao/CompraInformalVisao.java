@@ -175,7 +175,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
 
         MetodosUtil.setArmazemByCampoConfigCompraArmazem( cmbArmazem, conexao, cod_usuario );
         selecionar_transferencia_bt();
-        montarLayoutWeb();
+        util.ui.LayoutSeguro.aplicar( this, "Compras", this::montarLayoutWeb );
     }
 
     // =====================================================================
