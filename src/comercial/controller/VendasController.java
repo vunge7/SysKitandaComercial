@@ -2162,7 +2162,8 @@ public class VendasController implements EntidadeFactory {
 // (imports necessários: java.sql.*, java.util.ArrayList, java.util.Date, java.util.List)
 // =====================================================================
 /**
- * @param estado "P", "V", "I" ou null (todas). "P" inclui também estado NULL.
+ * @param estado "P", "V", "I" ou null (todas). "P" inclui também estado NULL
+ *        e as facturas por comunicar à AGT (contingência, sem requestID).
  * @param inicio data/hora inicial (inclusiva) ou null para não filtrar
  * @param fimExclusivo data/hora final (EXCLUSIVA) ou null para não filtrar
  */
@@ -2171,9 +2172,15 @@ public List<Integer> findCodigosVendasFE(Connection connection, String estado,
 
     List<Integer> codigos = new ArrayList<>();
 
+    // Entram as já submetidas (requestID real) E as facturas FE emitidas em
+    // contingência (estado P sem requestID, ou requestID = cod_fact), que o
+    // ciclo em segundo plano (ComunicacaoPendentesFE) ainda vai comunicar.
+    // As proformas (requestID = cod_fact, fora de FT/FR/NC/RC) ficam de fora.
     StringBuilder sql = new StringBuilder(
             "SELECT codigo FROM tb_venda "
-            + "WHERE requestID IS NOT NULL AND requestID <> '' ");
+            + "WHERE ((requestID IS NOT NULL AND requestID <> '' "
+            + "AND (cod_fact IS NULL OR requestID <> cod_fact)) "
+            + "OR (" + FILTRO_DOCS_FE + ")) ");
 
     if ("P".equals(estado)) {
         sql.append("AND (estado = 'P' OR estado IS NULL) ");

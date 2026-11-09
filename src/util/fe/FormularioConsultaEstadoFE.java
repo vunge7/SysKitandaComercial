@@ -860,10 +860,23 @@ public class FormularioConsultaEstadoFE extends JFrame {
                 v.getClienteNif(),
                 dataHora == null ? "" : fmt.format(dataHora),
                 v.getTotalGeral(),
-                v.getRequestID(),
+                temRequestIDReal(v) ? v.getRequestID() : SEM_REQUEST_ID,
                 textoEstado(v.getEstado())
             });
         }
+    }
+
+    /** Texto da coluna RequestID para facturas emitidas em contingência. */
+    private static final String SEM_REQUEST_ID = "(por comunicar à AGT)";
+
+    /**
+     * true se a venda já foi submetida à AGT (requestID devolvido pela AGT).
+     * requestID vazio, ou igual ao nº do documento (marcador local), significa
+     * que a factura foi emitida sem ligação e ainda está por comunicar.
+     */
+    private static boolean temRequestIDReal(TbVenda v) {
+        String r = v.getRequestID();
+        return r != null && !r.trim().isEmpty() && !r.trim().equals(v.getCodFact());
     }
 
     /**
@@ -1974,6 +1987,16 @@ public class FormularioConsultaEstadoFE extends JFrame {
         final TbVenda venda = vendas.get(row);
         final String nif = nifInstituicao();
 
+        if (!temRequestIDReal(venda)) {
+            JOptionPane.showMessageDialog(this,
+                    "A factura " + venda.getCodFact() + " foi emitida sem ligação à AGT e ainda não foi"
+                    + " comunicada (não tem RequestID), por isso ainda não há estado para consultar.\n\n"
+                    + "Será enviada automaticamente em segundo plano quando houver ligação,\n"
+                    + "ou pode enviá-la já em \"" + btnComunicarEmFalta.getText() + "\".",
+                    "Factura por comunicar", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
         setOcupado(true, "A consultar " + venda.getCodFact() + "...");
 
         new SwingWorker<ConsultaEstadoDTO, Void>() {
@@ -2045,18 +2068,27 @@ public class FormularioConsultaEstadoFE extends JFrame {
     private void actualizarTodasPendentes() {
 
         final List<Integer> linhas = new ArrayList<>();
+        int porComunicar = 0;
         for (int i = 0; i < vendas.size(); i++) {
             String e = vendas.get(i).getEstado();
             if (e == null || "P".equalsIgnoreCase(e)) {
-                linhas.add(i);
+                if (temRequestIDReal(vendas.get(i))) {
+                    linhas.add(i);
+                } else {
+                    porComunicar++; // sem RequestID: ainda não há estado na AGT
+                }
             }
         }
+        String avisoPorComunicar = porComunicar == 0 ? ""
+                : porComunicar + " factura(s) pendente(s) ainda por comunicar (sem RequestID) não são consultadas:\n"
+                + "são enviadas em segundo plano ou em \"" + btnComunicarEmFalta.getText() + "\".\n\n";
         if (linhas.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Não há facturas pendentes na lista para o período escolhido.");
+            JOptionPane.showMessageDialog(this, avisoPorComunicar
+                    + "Não há facturas pendentes já submetidas à AGT na lista para o período escolhido.");
             return;
         }
-        int ok = JOptionPane.showConfirmDialog(this,
-                "Consultar " + linhas.size() + " facturas pendentes na AGT?\n"
+        int ok = JOptionPane.showConfirmDialog(this, avisoPorComunicar
+                + "Consultar " + linhas.size() + " facturas pendentes na AGT?\n"
                 + "Ambiente: " + (FEConfig.isHomologacao() ? "HOMOLOGAÇÃO" : "PRODUÇÃO"),
                 "Confirmar", JOptionPane.YES_NO_OPTION);
         if (ok != JOptionPane.YES_OPTION) {
