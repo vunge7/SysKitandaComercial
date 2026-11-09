@@ -137,6 +137,42 @@ public class LoginVisao extends javax.swing.JFrame {
     // estreitas fica só o cartão, ao centro. A faixa do ambiente (FE) mantém-se.
     // =====================================================================
     private static final int LARGURA_COM_PAINEL = 900;
+    private char caracterSenhaWeb;
+
+    /** Olho desenhado (a letra do Windows não tem este símbolo); riscado quando a senha está à vista. */
+    private static final class IconeOlhoWeb implements javax.swing.Icon {
+
+        private final boolean riscado;
+
+        IconeOlhoWeb(boolean riscado) {
+            this.riscado = riscado;
+        }
+
+        @Override
+        public void paintIcon(java.awt.Component c, java.awt.Graphics g, int x, int y) {
+            java.awt.Graphics2D g2 = util.ui.ComponentesWeb.suave(g);
+            g2.translate(x, y);
+            g2.setColor(util.ui.MenuWeb.AZUL_NOITE);
+            g2.setStroke(new java.awt.BasicStroke(1.6f));
+            g2.drawArc(1, 4, 18, 16, 25, 130);
+            g2.drawArc(1, 0, 18, 16, 205, 130);
+            g2.fillOval(7, 7, 6, 6);
+            if (riscado) {
+                g2.drawLine(3, 17, 17, 3);
+            }
+            g2.dispose();
+        }
+
+        @Override
+        public int getIconWidth() {
+            return 20;
+        }
+
+        @Override
+        public int getIconHeight() {
+            return 20;
+        }
+    }
 
     /** Cartão de acesso com largura fixa (nunca comprimido). */
     private static final class CartaoAcessoWeb extends util.ui.ComponentesWeb.Cartao {
@@ -329,6 +365,21 @@ public class LoginVisao extends javax.swing.JFrame {
             t.setMinimumSize(new java.awt.Dimension(60, 42));
         }
 
+        // olho: mostrar / esconder a senha (como no SysKitandaHotel)
+        caracterSenhaWeb = pswSenha.getEchoChar();
+        final javax.swing.JButton btVerSenha = new javax.swing.JButton();
+        btVerSenha.addActionListener(e -> {
+            boolean mostrar = pswSenha.getEchoChar() != 0;
+            pswSenha.setEchoChar(mostrar ? (char) 0 : caracterSenhaWeb);
+            btVerSenha.setIcon(new IconeOlhoWeb(mostrar));
+            btVerSenha.setToolTipText(mostrar ? "Esconder a senha" : "Mostrar a senha");
+            pswSenha.requestFocusInWindow();
+        });
+        JPanel campoSenha = util.ui.FormularioWeb.comBotao(pswSenha, btVerSenha, "Mostrar ou esconder a senha");
+        btVerSenha.setPreferredSize(new java.awt.Dimension(42, 42));
+        btVerSenha.setIcon(new IconeOlhoWeb(false));
+        btVerSenha.setFocusable(false);
+
         util.ui.ComponentesWeb.botao(jButton1, util.ui.ComponentesWeb.Variante.PRIMARIO, null, "Entrar no sistema");
         jButton1.setIcon(null);
         jButton1.setText("Entrar");
@@ -356,7 +407,7 @@ public class LoginVisao extends javax.swing.JFrame {
                 javax.swing.Box.createVerticalStrut(6),
                 util.ui.ComponentesWeb.campo(jLabel6, cmbEmpresa),
                 util.ui.ComponentesWeb.campo(jLabel2, txtUserName),
-                util.ui.ComponentesWeb.campo(jLabel3, pswSenha),
+                util.ui.ComponentesWeb.campo(jLabel3, campoSenha),
                 javax.swing.Box.createVerticalStrut(4),
                 jButton1,
                 BTnSair,
@@ -395,8 +446,12 @@ public class LoginVisao extends javax.swing.JFrame {
     public LoginVisao(int idUser) {
 
         initComponents();
+        carregarAmbienteFE();
+        adicionarFaixaAmbiente();
         setLocationRelativeTo(null);
         setResizable(false);
+        // o logout volta a este ecrã: o mesmo aspecto web do início de sessão
+        util.ui.LayoutSeguro.aplicar( this, "Início de sessão", this::montarLayoutWeb );
         setVisible(true);
 
         conexao = BDConexao.getInstancia();
@@ -1021,14 +1076,28 @@ public void entrar_sistema() throws SQLException, UnknownHostException {
 
                 // INICIAR PROCESSOS EM BACKGROUND
                 if (startBackGroundProcesses()) {
-                    BDConexao conexao = BDConexao.getInstancia();
-                    StockAutoCheckService service = new StockAutoCheckService(conexao.getConnectionAtiva());
-
-                    try {
-                        service.verificarOuSalvarStockDiario();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
+                    // a ligação partilhada primeiro: o monitor de ligação fica nela (e não na do stock)
+                    BDConexao.getInstancia();
+                    // stock diário (registo do dia) em segundo plano, com ligação própria:
+                    // o início de sessão aparece logo, sem esperar por ele
+                    Thread stockDiario = new Thread(() -> {
+                        BDConexao conexaoStock = null;
+                        long inicio = System.currentTimeMillis();
+                        try {
+                            conexaoStock = new BDConexao();
+                            new StockAutoCheckService(conexaoStock.getConnectionAtiva()).verificarOuSalvarStockDiario();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            if (conexaoStock != null) {
+                                conexaoStock.close();
+                            }
+                            System.out.println("Stock diário verificado em segundo plano ("
+                                    + (System.currentTimeMillis() - inicio) + " ms)");
+                        }
+                    }, "kitanda-stock-diario");
+                    stockDiario.setPriority(Thread.MIN_PRIORITY);
+                    stockDiario.start();
 
                     if (true) { // <- aqui você pode colocar sua regra de licença
                         new LoginVisao(BDConexao.getInstancia()).setVisible(true);

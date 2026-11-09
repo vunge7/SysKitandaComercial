@@ -34,6 +34,10 @@ public class FormaPagamentoGoldVisao extends javax.swing.JDialog
         formaPagamentoController = new FormaPagamentoController( conexao );
         caixasController = new CaixasController( conexao );
         lb_total_geral.setText( RecolhaPedidosVisao.txtTotalApagar.getText() );
+        // aspecto da Forma de Pagamento do SysKitandaHotel, sobre o initComponents
+        util.ui.LayoutSeguro.aplicar( this, "Forma de pagamento", () -> util.ui.FormaPagamentoWeb.montarComCampos( this,
+                lb_total_geral, lb_troco, jButton3, jButton6,
+                lb_total_geral1, txtDinheiro, lb_total_geral2, txtCartao, lb_total_geral3, txtTransferencia ) );
     }
 
     /**

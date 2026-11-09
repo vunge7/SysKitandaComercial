@@ -565,6 +565,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
             String t = n + ( n == 1 ? " item" : " itens" );
             etiquetaItens.setText( t );
             lbItens.setText( t.toUpperCase() );
+            agendarLugares(); // lugares com consumo ficam marcados como ocupados
         };
         final javax.swing.event.TableModelListener ouvinteItens = e -> contarItens.run();
         jTable1.getModel().addTableModelListener( ouvinteItens );
@@ -605,6 +606,17 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
             cobrar.add( b );
             cobrar.add( javax.swing.Box.createHorizontalStrut( 6 ) );
         }
+        // dividir a conta a qualquer momento (por lugar)
+        final JButton btDividir = new JButton( "Dividir conta" );
+        util.ui.ComponentesWeb.botao( btDividir, util.ui.ComponentesWeb.Variante.AVISO, null,
+                "Cobrar a conta dividida: cada lugar paga a sua parte, com factura própria" );
+        btDividir.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 13.5f ) );
+        btDividir.setBorder( javax.swing.BorderFactory.createEmptyBorder( 10, 16, 10, 16 ) );
+        btDividir.addActionListener( e -> abrirDivisaoConta( false ) );
+        BT_Conversao.addPropertyChangeListener( "enabled", e -> btDividir.setEnabled( BT_Conversao.isEnabled() ) );
+        btDividir.setEnabled( BT_Conversao.isEnabled() );
+        cobrar.add( btDividir, 0 );
+        cobrar.add( javax.swing.Box.createHorizontalStrut( 6 ), 1 );
         JPanel rodapeConta = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 0, 8 ) );
         rodapeConta.add( visor, java.awt.BorderLayout.NORTH );
         rodapeConta.add( cobrar, java.awt.BorderLayout.SOUTH );
@@ -613,7 +625,10 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                 util.ui.ComponentesWeb.AZUL_VIVO, new java.awt.BorderLayout( 0, 8 ) );
         cartaoConta.adicionarAccao( etiquetaItens );
         cartaoConta.getCorpo().add( topoConta, java.awt.BorderLayout.NORTH );
-        cartaoConta.getCorpo().add( jScrollPane2, java.awt.BorderLayout.CENTER );
+        JPanel meioConta = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 0, 6 ) );
+        meioConta.add( criarFaixaLugar(), java.awt.BorderLayout.NORTH );
+        meioConta.add( jScrollPane2, java.awt.BorderLayout.CENTER );
+        cartaoConta.getCorpo().add( meioConta, java.awt.BorderLayout.CENTER );
         cartaoConta.getCorpo().add( rodapeConta, java.awt.BorderLayout.SOUTH );
 
         // ================================================ catálogo de produtos
@@ -809,6 +824,387 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         util.ui.FormularioWeb.montar( this, cabecalho, principal, accoes,
                 "Pedidos  ·  " + mesa + "  ·  F4 pesquisar produto" );
         util.ui.EstiloUI.ajustarAoEcra( this, 1000, 650 );
+    }
+
+    // =====================================================================
+    // DIVIDIR A CONTA POR LUGAR (como no SysKitandaHotel)
+    // Com mais de um lugar ocupado, "Facturar" abre o ecrã "Dividir a conta":
+    // mesa toda numa factura (como antes), só um lugar, ou lugar a lugar (uma
+    // factura para cada, em sequência). A cobrança de cada lugar usa o
+    // pagamento por lugar que já existia (FormaPagamentoPorLugaresVisao).
+    // =====================================================================
+    /** Lugar (pk_lugares) em cobrança; 0 = a mesa toda. */
+    private static int lugarEmFacturacao = 0;
+    /** "Lugar a lugar": ao acabar um lugar passa ao seguinte. */
+    private static boolean lugaresEmSequencia = false;
+    /** Lugares já cobrados nesta divisão (para "lugar 2 de 3"). */
+    private static int lugaresCobrados = 0;
+    private util.ui.ComponentesWeb.CaixaSuave faixaLugar;
+    private JLabel lbFaixaLugar;
+    private boolean lugaresAgendados;
+
+    private static JButton[] botoesLugarWeb()
+    {
+        return new JButton[]
+        {
+            btn_01, btn_02, btn_03, btn_04, btn_05, btn_06, btn_07, btn_08, btn_09, btn_10
+        };
+    }
+
+    private static int pedidoAbertoDaMesa()
+    {
+        try
+        {
+            return pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa );
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    /** Consumo por facturar de cada lugar: pk_lugares -> {designação, itens, total}. */
+    private static java.util.Map<Integer, Object[]> consumoPorLugar( int pedido )
+    {
+        java.util.Map<Integer, Object[]> m = new java.util.LinkedHashMap<>();
+        if ( pedido <= 0 )
+        {
+            return m;
+        }
+        String sql = "SELECT l.pk_lugares, l.designacao, COUNT(*), COALESCE(SUM(i.total_item), 0)"
+                + " FROM tb_item_pedidos i JOIN tb_lugares l ON l.pk_lugares = i.fk_lugares"
+                + " WHERE i.fk_pedidos = ? AND i.status_convertido = 0"
+                + " GROUP BY l.pk_lugares, l.designacao ORDER BY l.pk_lugares";
+        try ( java.sql.PreparedStatement ps = conexao.getPreparedStatement( sql ) )
+        {
+            ps.setInt( 1, pedido );
+            try ( java.sql.ResultSet rs = ps.executeQuery() )
+            {
+                while ( rs.next() )
+                {
+                    m.put( rs.getInt( 1 ), new Object[]
+                    {
+                        rs.getString( 2 ), rs.getInt( 3 ), rs.getDouble( 4 )
+                    } );
+                }
+            }
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
+        return m;
+    }
+
+    /** Número do lugar a partir da designação ("LUGAR 3" -> 3); 0 se não tiver número. */
+    private static int numeroLugar( String designacao )
+    {
+        String n = designacao == null ? "" : designacao.replaceAll( "\\D+", "" );
+        try
+        {
+            return n.isEmpty() ? 0 : Integer.parseInt( n );
+        }
+        catch ( NumberFormatException e )
+        {
+            return 0;
+        }
+    }
+
+    /** Várias mudanças seguidas na tabela dão uma só leitura dos lugares ocupados. */
+    private void agendarLugares()
+    {
+        if ( !lugaresAgendados )
+        {
+            lugaresAgendados = true;
+            javax.swing.SwingUtilities.invokeLater( () ->
+            {
+                lugaresAgendados = false;
+                actualizarLugaresOcupados();
+            } );
+        }
+    }
+
+    /** Marca os botões dos lugares com consumo por facturar (ocupados), como no hotel. */
+    private void actualizarLugaresOcupados()
+    {
+        java.util.Map<Integer, Object[]> consumo = consumoPorLugar( pedidoAbertoDaMesa() );
+        JButton[] botoes = botoesLugarWeb();
+        for ( int k = 0; k < botoes.length; k++ )
+        {
+            Object[] c = null;
+            for ( Object[] v : consumo.values() )
+            {
+                if ( numeroLugar( ( String ) v[ 0 ] ) == k + 1 )
+                {
+                    c = v;
+                }
+            }
+            JButton b = botoes[ k ];
+            int itens = c == null ? 0 : ( Integer ) c[ 1 ];
+            b.putClientProperty( util.ui.MesasWeb.LUGAR_ITENS, itens );
+            String nome = "Lugar " + ( k + 1 );
+            b.setToolTipText( itens == 0
+                    ? "<html><b>" + nome + "</b> · livre<br>Clique para lançar os próximos produtos neste lugar</html>"
+                    : "<html><b>" + nome + "</b> · ocupado<br>" + itens + ( itens == 1 ? " item" : " itens" )
+                    + " por facturar · " + kitanda.util.CfMethods.formatarComoMoeda( ( Double ) c[ 2 ] ) + "</html>" );
+            b.repaint();
+        }
+    }
+
+    /** "Dividir conta" e Facturar com mais de um lugar ocupado: abre o ecrã de divisão. */
+    private void abrirDivisaoConta( boolean semDivisaoSegueMesaToda )
+    {
+        if ( lugarEmFacturacao > 0 )
+        {
+            JOptionPane.showMessageDialog( this, "Já está a cobrar a conta por lugar (veja a faixa por cima da tabela).",
+                    "Dividir a conta", JOptionPane.INFORMATION_MESSAGE );
+            return;
+        }
+        int pedido = pedidoAbertoDaMesa();
+        java.util.Map<Integer, Object[]> consumo = consumoPorLugar( pedido );
+        if ( consumo.isEmpty() )
+        {
+            if ( semDivisaoSegueMesaToda )
+            {
+                cobrarMesaToda();
+            }
+            else
+            {
+                JOptionPane.showMessageDialog( this, "A mesa não tem consumo por cobrar.", "Dividir a conta",
+                        JOptionPane.INFORMATION_MESSAGE );
+            }
+            return;
+        }
+        if ( consumo.size() == 1 && semDivisaoSegueMesaToda )
+        {
+            cobrarMesaToda(); // um só lugar: não há nada a dividir
+            return;
+        }
+        java.util.Map<Integer, String> lugares = new java.util.LinkedHashMap<>();
+        for ( java.util.Map.Entry<Integer, Object[]> e : consumo.entrySet() )
+        {
+            lugares.put( e.getKey(), ( String ) e.getValue()[ 0 ] );
+        }
+        DivisaoContaVisao d = new DivisaoContaVisao( this, conexao, mesa, pedido, lugares );
+        d.setVisible( true );
+        switch ( d.getEscolha() )
+        {
+            case MESA_TODA:
+                cobrarMesaToda();
+                break;
+            case LUGAR_A_LUGAR:
+                lugaresCobrados = 0;
+                cobrarLugar( consumo.keySet().iterator().next(), true );
+                break;
+            case UM_LUGAR:
+                lugaresCobrados = 0;
+                cobrarLugar( d.getLugarEscolhido(), false );
+                break;
+            default:
+                break;
+        }
+    }
+
+    /** A mesa toda numa factura: o caminho de sempre. */
+    private void cobrarMesaToda()
+    {
+        dispose();
+        new FormaPagamentoVisao( this, rootPaneCheckingEnabled, emf, DVML.VENDA_RESTAURANTE, BDConexao.getInstancia() ).setVisible( true );
+    }
+
+    /** Mostra só o lugar e abre o pagamento por lugar; ao fechar, continua a divisão. */
+    private void cobrarLugar( int pkLugar, boolean sequencia )
+    {
+        lugarEmFacturacao = pkLugar;
+        lugaresEmSequencia = sequencia;
+        mostrarSoLugar( pkLugar );
+        actualizarFaixaLugar();
+        if ( !exite_pedido_lugar( pkLugar ) )
+        {
+            JOptionPane.showMessageDialog( this, "Não existe pedido neste lugar.", "Dividir a conta", JOptionPane.WARNING_MESSAGE );
+            sairDoModoLugar();
+            return;
+        }
+        FormaPagamentoPorLugaresVisao pagamento = new FormaPagamentoPorLugaresVisao( this, rootPaneCheckingEnabled, emf,
+                DVML.VENDA_RESTAURANTE, conexao, pkLugar, getTotalAOALiquido( pkLugar ) );
+        pagamento.addWindowListener( new java.awt.event.WindowAdapter()
+        {
+            @Override
+            public void windowClosed( java.awt.event.WindowEvent e )
+            {
+                // a factura mostra mensagens (modais) depois de fechar o pagamento:
+                // só se continua quando já não há nenhuma aberta
+                depoisDosDialogos( () -> continuarPorLugar() );
+            }
+        } );
+        pagamento.setVisible( true );
+    }
+
+    /** Corre a acção quando não houver nenhum diálogo modal à vista (verifica de 300 em 300 ms). */
+    private static void depoisDosDialogos( Runnable accao )
+    {
+        javax.swing.Timer t = new javax.swing.Timer( 300, null );
+        t.addActionListener( e ->
+        {
+            for ( java.awt.Window w : java.awt.Window.getWindows() )
+            {
+                if ( w instanceof java.awt.Dialog && w.isShowing() && ( ( java.awt.Dialog ) w ).isModal() )
+                {
+                    return; // ainda há uma mensagem aberta
+                }
+            }
+            t.stop();
+            accao.run();
+        } );
+        t.setInitialDelay( 150 );
+        t.start();
+    }
+
+    /** A tabela (e por isso os totais da factura) fica só com os itens do lugar. */
+    private static void mostrarSoLugar( int pkLugar )
+    {
+        try
+        {
+            java.util.List<TbItemPedidos> todos = itemPedidosDao.buscaTodosItemPedidos( pedidoAbertoDaMesa() );
+            java.util.List<TbItemPedidos> doLugar = new java.util.ArrayList<>();
+            if ( todos != null )
+            {
+                for ( TbItemPedidos i : todos )
+                {
+                    if ( i.getFkLugares() != null && i.getFkLugares().getPkLugares() != null
+                            && i.getFkLugares().getPkLugares() == pkLugar )
+                    {
+                        doLugar.add( i );
+                    }
+                }
+            }
+            adicionar_tabela( doLugar );
+            valor_por_extenco();
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Depois do pagamento de um lugar: se o lugar ainda tem itens, a cobrança
+     * não se fez (cancelada) e fica-se nele; senão passa-se ao seguinte, ou
+     * fecha-se quando a mesa está paga.
+     */
+    private void continuarPorLugar()
+    {
+        if ( !isDisplayable() )
+        {
+            return;
+        }
+        java.util.Map<Integer, Object[]> consumo = consumoPorLugar( pedidoAbertoDaMesa() );
+        if ( consumo.containsKey( lugarEmFacturacao ) )
+        {
+            mostrarSoLugar( lugarEmFacturacao );
+            actualizarFaixaLugar();
+            return;
+        }
+        lugaresCobrados++;
+        if ( consumo.isEmpty() )
+        {
+            // mesa toda paga: fecha, como depois de uma factura normal
+            lugarEmFacturacao = 0;
+            lugaresEmSequencia = false;
+            lugaresCobrados = 0;
+            PrincipalPedidosVisao.procedimento_mesas_livre();
+            dispose();
+            return;
+        }
+        if ( lugaresEmSequencia )
+        {
+            limparClienteParaOutroLugar();
+            cobrarLugar( consumo.keySet().iterator().next(), true );
+        }
+        else
+        {
+            sairDoModoLugar(); // "só este lugar": volta à mesa com o que falta cobrar
+        }
+    }
+
+    private void sairDoModoLugar()
+    {
+        lugarEmFacturacao = 0;
+        lugaresEmSequencia = false;
+        lugaresCobrados = 0;
+        actualizar();
+        actualizarFaixaLugar();
+    }
+
+    /** O próximo lugar é outra pessoa: o cliente volta a "Consumidor Final". */
+    private void limparClienteParaOutroLugar()
+    {
+        java.util.Date dataDoc = dc_data_documento.getDate();
+        if ( dataDoc == null || new java.text.SimpleDateFormat( "yyyyMMdd" ).format( dataDoc )
+                .equals( new java.text.SimpleDateFormat( "yyyyMMdd" ).format( new Date() ) ) )
+        {
+            dc_data_documento.setDate( new Date() );
+        }
+        try
+        {
+            cmbCliente.setSelectedItem( DVML._CLIENTE_CONSUMIDOR_FINAL );
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
+        txtNomeConsumidorFinal.setText( "" );
+    }
+
+    /** Faixa por cima da tabela e texto do botão Facturar, conforme o modo. */
+    private void actualizarFaixaLugar()
+    {
+        if ( faixaLugar == null )
+        {
+            return;
+        }
+        if ( lugarEmFacturacao <= 0 )
+        {
+            faixaLugar.setVisible( false );
+            BT_Conversao.setText( "Facturar" );
+        }
+        else
+        {
+            java.util.Map<Integer, Object[]> consumo = consumoPorLugar( pedidoAbertoDaMesa() );
+            Object[] v = consumo.get( lugarEmFacturacao );
+            String nome = v == null ? "LUGAR" : ( String ) v[ 0 ];
+            String posicao = lugaresEmSequencia
+                    ? " (" + ( lugaresCobrados + 1 ) + " de " + ( lugaresCobrados + Math.max( 1, consumo.size() ) ) + ")" : "";
+            lbFaixaLugar.setText( "<html><b>Conta por lugar · " + nome + posicao + "</b><br>"
+                    + "A tabela mostra só este lugar. Conclua o pagamento deste lugar"
+                    + ( lugaresEmSequencia ? "; depois passa-se ao lugar seguinte." : "." ) + "</html>" );
+            faixaLugar.setVisible( true );
+        }
+        faixaLugar.revalidate();
+        faixaLugar.repaint();
+    }
+
+    private javax.swing.JComponent criarFaixaLugar()
+    {
+        faixaLugar = new util.ui.ComponentesWeb.CaixaSuave( new java.awt.BorderLayout( 10, 0 ),
+                new java.awt.Color( 254, 243, 199 ), new java.awt.Color( 245, 158, 11 ) );
+        faixaLugar.setBorder( javax.swing.BorderFactory.createEmptyBorder( 8, 12, 8, 10 ) );
+        lbFaixaLugar = new JLabel( " " );
+        lbFaixaLugar.setFont( util.ui.EstiloUI.FONTE.deriveFont( 12.5f ) );
+        lbFaixaLugar.setForeground( new java.awt.Color( 120, 53, 15 ) );
+        JButton mesaToda = new JButton( "Ver a mesa toda" );
+        util.ui.ComponentesWeb.botao( mesaToda, util.ui.ComponentesWeb.Variante.SECUNDARIO, null,
+                "Parar a divisão por lugar e voltar à conta da mesa toda" );
+        mesaToda.putClientProperty( "web.pilula", Boolean.TRUE );
+        mesaToda.setBorder( javax.swing.BorderFactory.createEmptyBorder( 4, 12, 4, 12 ) );
+        mesaToda.addActionListener( e -> sairDoModoLugar() );
+        JPanel direita = util.ui.ComponentesWeb.transparente( new java.awt.GridBagLayout() );
+        direita.add( mesaToda );
+        faixaLugar.add( lbFaixaLugar, java.awt.BorderLayout.CENTER );
+        faixaLugar.add( direita, java.awt.BorderLayout.EAST );
+        faixaLugar.setVisible( false );
+        return faixaLugar;
     }
 
     /**
@@ -2037,49 +2433,9 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
             {
                 if ( true )
                 {
-                    int opcao = JOptionPane.showConfirmDialog( null, "Por Favor\nDeseja pagar a Mesa Completa?" );
-
-                    if ( opcao == JOptionPane.YES_OPTION )
-                    {
-
-                        dispose();
-
-                        new FormaPagamentoVisao( this, rootPaneCheckingEnabled, emf, DVML.VENDA_RESTAURANTE, BDConexao.getInstancia() ).setVisible( true );
-
-                    }
-                    else if ( opcao == JOptionPane.NO_OPTION )
-                    {
-
-                        try
-                        {
-
-                            int lugar = Integer.parseInt( JOptionPane.showInputDialog( null, "Por favor\nQual lugar deseja facturar?" ) );
-
-                            System.out.println( "LUGAR ACTUAL1 :" + lugar );
-
-                            System.out.println( "LUGAR ACTUAL2 :" + lugar );
-                            if ( exite_pedido_lugar( lugar ) )
-                            {
-
-                                new FormaPagamentoPorLugaresVisao( this, rootPaneCheckingEnabled, emf, DVML.VENDA_RESTAURANTE, conexao, lugar, getTotalAOALiquido( lugar ) ).setVisible( true );
-//                                new FormaPagamentoLugarVisao( this, rootPaneCheckingEnabled, emf, DVML.VENDA_RESTAURANTE, conexao, lugar, getTotalAOALiquido( lugar ) ).setVisible( true );
-
-                            }
-                            else
-                            {
-
-                                JOptionPane.showMessageDialog( null, "Nao existe pedido neste lugar" );
-                            }
-
-                        }
-                        catch ( Exception e )
-                        {
-                        }
-                    }
-                    else
-                    {
-                        JOptionPane.showMessageDialog( null, "Operacao cancelada" );
-                    }
+                    // com mais de um lugar ocupado: ecrã "Dividir a conta" (mesa toda,
+                    // só um lugar ou lugar a lugar), como no SysKitandaHotel
+                    abrirDivisaoConta( true );
 
                 }
                 else

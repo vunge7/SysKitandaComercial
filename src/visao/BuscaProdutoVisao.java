@@ -144,6 +144,283 @@ public class BuscaProdutoVisao extends javax.swing.JDialog
                 }
             }
         } );
+
+        // aspecto do SysKitandaHotel (Forma de Pagamento: azul-noite, dourado e marfim)
+        util.ui.LayoutSeguro.aplicar( this, "Busca de produto", () -> montarLayout( conexao ) );
+    }
+
+    private util.ui.EstatisticaExistencia estatistica;
+
+    /**
+     * Aspecto da Forma de Pagamento (azul-noite, dourado e marfim) sobre os
+     * componentes do initComponents, com o mesmo tamanho e sem moldura. Os
+     * valores das colunas 3 (Qtd) e 5 (Crítico) continuam a ser os do modelo:
+     * a escolha (duplo clique) lê a coluna 0. À direita, a estatística da
+     * existência do produto seleccionado.
+     */
+    private void montarLayout( BDConexao conexao )
+    {
+        java.awt.Dimension habitual = getSize();
+
+        // ---- cabeçalho (arrastável: a janela não tem moldura)
+        javax.swing.JPanel cabecalho = new util.ui.ComponentesWeb.PainelGradiente( new java.awt.BorderLayout( 12, 0 ),
+                util.ui.MenuWeb.AZUL_NOITE, util.ui.MenuWeb.AZUL_MARINHO );
+        cabecalho.setBorder( javax.swing.BorderFactory.createCompoundBorder(
+                javax.swing.BorderFactory.createMatteBorder( 0, 0, 2, 0, util.ui.MenuWeb.DOURADO ),
+                javax.swing.BorderFactory.createEmptyBorder( 8, 16, 8, 16 ) ) );
+        jLabel1.setText( "Busca de Produto" );
+        jLabel1.setFont( new java.awt.Font( "Georgia", java.awt.Font.BOLD, 20 ) );
+        jLabel1.setForeground( Color.WHITE );
+        javax.swing.JLabel sub = new javax.swing.JLabel( "Escreva parte do nome  ·  duplo clique ou Enter para escolher  ·  Esc para sair" );
+        sub.setFont( util.ui.EstiloUI.FONTE.deriveFont( 12.5f ) );
+        sub.setForeground( util.ui.MenuWeb.DOURADO_CLARO );
+        javax.swing.JPanel textos = util.ui.ComponentesWeb.transparente( new java.awt.GridLayout( 2, 1 ) );
+        textos.add( jLabel1 );
+        textos.add( sub );
+        jLabel2.setText( "produtos" );
+        jLabel2.setFont( util.ui.EstiloUI.FONTE.deriveFont( 12f ) );
+        jLabel2.setForeground( new Color( 190, 205, 225 ) );
+        jLabel2.setHorizontalAlignment( javax.swing.SwingConstants.RIGHT );
+        lbTamnho.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 22f ) );
+        lbTamnho.setForeground( Color.WHITE );
+        lbTamnho.setHorizontalAlignment( javax.swing.SwingConstants.RIGHT );
+        javax.swing.JPanel total = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 6, 0 ) );
+        total.add( lbTamnho, java.awt.BorderLayout.CENTER );
+        total.add( jLabel2, java.awt.BorderLayout.EAST );
+        cabecalho.add( textos, java.awt.BorderLayout.CENTER );
+        cabecalho.add( total, java.awt.BorderLayout.EAST );
+        java.awt.event.MouseAdapter arrastar = new java.awt.event.MouseAdapter()
+        {
+            private java.awt.Point inicio;
+
+            @Override
+            public void mousePressed( java.awt.event.MouseEvent e )
+            {
+                inicio = e.getPoint();
+            }
+
+            @Override
+            public void mouseDragged( java.awt.event.MouseEvent e )
+            {
+                java.awt.Point p = getLocation();
+                setLocation( p.x + e.getX() - inicio.x, p.y + e.getY() - inicio.y );
+            }
+        };
+        cabecalho.addMouseListener( arrastar );
+        cabecalho.addMouseMotionListener( arrastar );
+
+        // ---- pesquisa e legenda com os totais
+        txtDesignacao.setFont( util.ui.EstiloUI.FONTE.deriveFont( 14f ) );
+        txtDesignacao.setToolTipText( "Escreva parte do nome (sem acentos também serve)" );
+        txtDesignacao.setPreferredSize( new java.awt.Dimension( 260, 34 ) );
+        txtDesignacao.setBorder( javax.swing.BorderFactory.createCompoundBorder(
+                new javax.swing.border.LineBorder( util.ui.MenuWeb.DOURADO, 1, true ),
+                javax.swing.BorderFactory.createEmptyBorder( 3, 8, 3, 8 ) ) );
+        javax.swing.JPanel pesquisa = util.ui.ComponentesWeb.campo( "Pesquisar produto", txtDesignacao );
+
+        javax.swing.JPanel legenda = util.ui.ComponentesWeb.transparente( new java.awt.GridLayout( 1, 4, 6, 0 ) );
+        legenda.add( chipLegenda( jLabel6, "Normal", jPanelStockNormal, lbTotalStockNormal ) );
+        legenda.add( chipLegenda( jLabel5, "Crítico", jPanelStockCritico, lbTotalStockCritico ) );
+        legenda.add( chipLegenda( jLabel4, "Vazio", jPanelStockVazio, lbTotalStockVazio ) );
+        legenda.add( chipLegenda( lbTiTulo, "Serviço", jPanelServico, lbTotalServico ) );
+
+        javax.swing.JPanel linhaTopo = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 12, 0 ) );
+        linhaTopo.add( pesquisa, java.awt.BorderLayout.WEST );
+        javax.swing.JPanel legendaBaixo = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout() );
+        legendaBaixo.add( legenda, java.awt.BorderLayout.SOUTH );
+        linhaTopo.add( legendaBaixo, java.awt.BorderLayout.CENTER );
+
+        // ---- tabela
+        util.ui.EstiloUI.estilizarTabela( tabela_busca, false );
+        tabela_busca.setFont( util.ui.EstiloUI.FONTE.deriveFont( 13f ) );
+        tabela_busca.setRowHeight( 28 );
+        tabela_busca.setShowVerticalLines( false );
+        tabela_busca.setDefaultRenderer( Object.class, new RenderExistencia() );
+        tabela_busca.setDefaultRenderer( String.class, new RenderExistencia() );
+        tabela_busca.setDefaultRenderer( Double.class, new RenderExistencia() );
+        String[] titulos = { "Cód.", "Designação", "Categoria", "Qtd", "Preço", "Crítico" };
+        int[] larguras = { 46, 220, 150, 56, 84, 56 };
+        javax.swing.table.TableColumnModel colunas = tabela_busca.getColumnModel();
+        for ( int i = 0; i < titulos.length; i++ )
+        {
+            colunas.getColumn( i ).setHeaderValue( titulos[ i ] );
+            colunas.getColumn( i ).setMaxWidth( Integer.MAX_VALUE );
+            colunas.getColumn( i ).setPreferredWidth( larguras[ i ] );
+        }
+        colunas.getColumn( 0 ).setMaxWidth( 60 );
+        colunas.getColumn( 5 ).setMaxWidth( 64 );
+        jScrollPane1.setBorder( javax.swing.BorderFactory.createLineBorder( util.ui.MenuWeb.LINHA_QUENTE ) );
+        jScrollPane1.getViewport().setBackground( Color.WHITE );
+
+        // ---- estatística do produto seleccionado
+        estatistica = new util.ui.EstatisticaExistencia( conexao, cod_armazem );
+        estatistica.setPreferredSize( new java.awt.Dimension( 262, 300 ) );
+        javax.swing.Timer atraso = new javax.swing.Timer( 180, e -> actualizarEstatistica() );
+        atraso.setRepeats( false );
+        tabela_busca.getSelectionModel().addListSelectionListener( e ->
+        {
+            if ( !e.getValueIsAdjusting() )
+            {
+                atraso.restart();
+            }
+        } );
+
+        javax.swing.JPanel centro = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 10, 0 ) );
+        centro.add( jScrollPane1, java.awt.BorderLayout.CENTER );
+        centro.add( estatistica, java.awt.BorderLayout.EAST );
+
+        javax.swing.JPanel corpo = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 0, 10 ) );
+        corpo.setBorder( javax.swing.BorderFactory.createEmptyBorder( 10, 14, 10, 14 ) );
+        corpo.add( linhaTopo, java.awt.BorderLayout.NORTH );
+        corpo.add( centro, java.awt.BorderLayout.CENTER );
+
+        // ---- acções (como na Forma de Pagamento)
+        javax.swing.JButton btnEscolher = new javax.swing.JButton( "Escolher" );
+        util.ui.ComponentesWeb.botao( btnEscolher, util.ui.ComponentesWeb.Variante.SUCESSO, "/imagens/confirmacao.png",
+                "Usar o produto seleccionado (o mesmo que o duplo clique)" );
+        btnEscolher.addActionListener( e -> escolherSeleccionado() );
+        jButton1.setText( "Sair" );
+        util.ui.ComponentesWeb.botao( jButton1, util.ui.ComponentesWeb.Variante.PERIGO, null, "Fechar sem escolher" );
+        jButton1.setIcon( new util.ui.ComponentesWeb.IconeSair( 16, Color.WHITE ) );
+        javax.swing.JPanel barra = new javax.swing.JPanel( new java.awt.BorderLayout() );
+        barra.setBackground( Color.WHITE );
+        barra.setBorder( javax.swing.BorderFactory.createCompoundBorder(
+                javax.swing.BorderFactory.createMatteBorder( 1, 0, 0, 0, util.ui.MenuWeb.LINHA_QUENTE ),
+                javax.swing.BorderFactory.createEmptyBorder( 0, 14, 0, 6 ) ) );
+        javax.swing.JLabel dica = new javax.swing.JLabel( "Estatística dos últimos 30 dias neste armazém: vendas FR/FT não anuladas e transferências" );
+        dica.setFont( util.ui.EstiloUI.FONTE.deriveFont( 11.5f ) );
+        dica.setForeground( util.ui.MenuWeb.TEXTO_SUAVE );
+        javax.swing.JPanel botoes = new javax.swing.JPanel( new java.awt.FlowLayout( java.awt.FlowLayout.RIGHT, 8, 8 ) );
+        botoes.setOpaque( false );
+        botoes.add( btnEscolher );
+        botoes.add( jButton1 );
+        barra.add( dica, java.awt.BorderLayout.WEST );
+        barra.add( botoes, java.awt.BorderLayout.EAST );
+
+        javax.swing.JPanel raiz = new javax.swing.JPanel( new java.awt.BorderLayout() );
+        raiz.setBackground( util.ui.MenuWeb.MARFIM );
+        raiz.setBorder( javax.swing.BorderFactory.createLineBorder( util.ui.MenuWeb.AZUL_NOITE, 1 ) );
+        raiz.add( cabecalho, java.awt.BorderLayout.NORTH );
+        raiz.add( corpo, java.awt.BorderLayout.CENTER );
+        raiz.add( barra, java.awt.BorderLayout.SOUTH );
+        setContentPane( raiz );
+        setIconImages( util.ui.MenuWeb.iconesAplicacao() );
+
+        // ---- teclado: Esc sai; ↓ na pesquisa passa à lista; Enter na lista escolhe
+        javax.swing.JRootPane rp = getRootPane();
+        rp.registerKeyboardAction( e -> dispose(), javax.swing.KeyStroke.getKeyStroke( KeyEvent.VK_ESCAPE, 0 ),
+                javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW );
+        // (Enter, F4 e a seta para baixo já são tratados no construtor)
+
+        setSize( habitual );
+        setLocationRelativeTo( null );
+        txtDesignacao.requestFocusInWindow();
+    }
+
+    /** Mosaico da legenda: cor, nome e total (os rótulos são os do initComponents). */
+    private javax.swing.JComponent chipLegenda( javax.swing.JLabel nome, String texto, javax.swing.JPanel cor, javax.swing.JLabel total )
+    {
+        javax.swing.JPanel m = new util.ui.ComponentesWeb.CaixaSuave( new java.awt.BorderLayout( 6, 0 ), Color.WHITE, util.ui.MenuWeb.LINHA_QUENTE );
+        m.setBorder( javax.swing.BorderFactory.createEmptyBorder( 5, 8, 5, 10 ) );
+        cor.setBorder( javax.swing.BorderFactory.createLineBorder( new Color( 180, 180, 180 ) ) );
+        cor.setPreferredSize( new java.awt.Dimension( 14, 14 ) );
+        javax.swing.JPanel caixaCor = util.ui.ComponentesWeb.transparente( new java.awt.GridBagLayout() );
+        caixaCor.add( cor );
+        nome.setText( texto );
+        nome.setHorizontalAlignment( javax.swing.SwingConstants.LEFT );
+        nome.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 11.5f ) );
+        nome.setForeground( util.ui.MenuWeb.TEXTO_SUAVE );
+        total.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 15f ) );
+        total.setForeground( util.ui.MenuWeb.AZUL_NOITE );
+        total.setHorizontalAlignment( javax.swing.SwingConstants.RIGHT );
+        m.add( caixaCor, java.awt.BorderLayout.WEST );
+        m.add( nome, java.awt.BorderLayout.CENTER );
+        m.add( total, java.awt.BorderLayout.EAST );
+        return m;
+    }
+
+    private void actualizarEstatistica()
+    {
+        int linha = tabela_busca.getSelectedRow();
+        if ( linha < 0 )
+        {
+            estatistica.limpar();
+            return;
+        }
+        DefaultTableModel modelo = ( DefaultTableModel ) tabela_busca.getModel();
+        int l = tabela_busca.convertRowIndexToModel( linha );
+        try
+        {
+            estatistica.mostrar( Integer.parseInt( String.valueOf( modelo.getValueAt( l, 0 ) ) ),
+                    String.valueOf( modelo.getValueAt( l, 1 ) ),
+                    String.valueOf( modelo.getValueAt( l, 2 ) ),
+                    String.valueOf( modelo.getValueAt( l, 3 ) ) );
+        }
+        catch ( NumberFormatException e )
+        {
+            estatistica.limpar();
+        }
+    }
+
+    /** O mesmo que o duplo clique na linha seleccionada (ou na primeira). */
+    private void escolherSeleccionado()
+    {
+        if ( tabela_busca.getRowCount() == 0 )
+        {
+            return;
+        }
+        if ( tabela_busca.getSelectedRow() < 0 )
+        {
+            tabela_busca.setRowSelectionInterval( 0, 0 );
+        }
+        tratarSelecaoTabela( tabela_busca.getSelectedRow() );
+    }
+
+    /**
+     * Cores da legenda (Definicoes) por linha, como o RenderBusca, mas com a
+     * linha seleccionada visível e os números alinhados à direita.
+     */
+    private class RenderExistencia extends javax.swing.table.DefaultTableCellRenderer
+    {
+
+        private final java.text.DecimalFormat preco = new java.text.DecimalFormat( "#,##0.00" );
+
+        @Override
+        public java.awt.Component getTableCellRendererComponent( javax.swing.JTable table, Object value,
+                boolean isSelected, boolean hasFocus, int row, int column )
+        {
+            Object mostrar = value;
+            if ( column == 4 && value instanceof Number )
+            {
+                mostrar = preco.format( ( ( Number ) value ).doubleValue() );
+            }
+            else if ( column == 5 )
+            {
+                mostrar = "true".equals( String.valueOf( value ) ) ? "Sim" : ( "false".equals( String.valueOf( value ) ) ? "Não" : "—" );
+            }
+            super.getTableCellRendererComponent( table, mostrar, isSelected, false, row, column );
+            String critico = String.valueOf( table.getValueAt( row, 5 ) );
+            String qtd = String.valueOf( table.getValueAt( row, 3 ) );
+            int[] rgb = "true".equals( critico ) ? Definicoes.PRODUTO_CRITICO
+                    : "0".equals( qtd ) ? Definicoes.STOCK_VAZIO
+                    : "-".equals( qtd ) ? Definicoes.SERVICOS
+                    : Definicoes.PRODUTO;
+            if ( isSelected )
+            {
+                setBackground( util.ui.MenuWeb.AZUL_MARINHO );
+                setForeground( Color.WHITE );
+            }
+            else
+            {
+                setBackground( new Color( rgb[ 0 ], rgb[ 1 ], rgb[ 2 ] ) );
+                setForeground( util.ui.MenuWeb.TEXTO );
+            }
+            setFont( column == 1 ? util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 13f ) : util.ui.EstiloUI.FONTE.deriveFont( 13f ) );
+            setHorizontalAlignment( column >= 3 && column <= 4 ? javax.swing.SwingConstants.RIGHT
+                    : column == 5 || column == 0 ? javax.swing.SwingConstants.CENTER : javax.swing.SwingConstants.LEFT );
+            setBorder( javax.swing.BorderFactory.createEmptyBorder( 0, 6, 0, 6 ) );
+            return this;
+        }
     }
 
 //    public BuscaProdutoVisao( java.awt.Frame parent, boolean modal, int cod_armazem, int cod_janela, BDConexao conexao )
