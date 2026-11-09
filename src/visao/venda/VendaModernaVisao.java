@@ -6249,23 +6249,20 @@ repaint();
         String preco = table.getValueAt(table.getSelectedRow(), 3).toString();
         int idProduto = Integer.parseInt(table.getValueAt(table.getSelectedRow(), 0).toString());
         double taxa = Double.parseDouble(table.getValueAt(table.getSelectedRow(), 6).toString());
-        preco = preco.replaceAll("A", "").
-                replace("O", "").
-                replace(".", "").
-                replace(",", ".");
-
-        String precoUnitario = CfMethods.formatarComoMoeda(Double.parseDouble(preco));
-
-        double parseMoedaFormatada = CfMethods.parseMoedaFormatada(precoUnitario);
+        // Aceita tanto "1.200,50 AOA" (formatado) como "1200.50" (BigDecimal)
+        double parseMoedaFormatada = CfMethods.parseMoedaFormatadaNovo(preco);
 
 //        parseMoedaFormatada = (parseMoedaFormatada / (1 + (taxa / 100)));
-        BigDecimal precoSemIva = new BigDecimal(parseMoedaFormatada).setScale(
+        BigDecimal precoSemIva = BigDecimal.valueOf(parseMoedaFormatada).setScale(
                 DVML.CASAS_DECIMAIS_TAXA,
-                RoundingMode.CEILING);
+                RoundingMode.HALF_UP);
 
         System.out.println("PREÇO SEM IVA:  " + precoSemIva);
 
-        table.setValueAt(precoSemIva, table.getSelectedRow(), 3);
+        // A célula do preço tem de ficar SEMPRE no formato de moeda (vírgula decimal).
+        // O BigDecimal cru ("701.7500000") era lido como 7.017.500.000 pelo
+        // CfMethods.parseMoedaFormatada (pt-PT), inflacionando os totais da venda.
+        table.setValueAt(CfMethods.formatarComoMoeda(precoSemIva), table.getSelectedRow(), 3);
 
         actualizarPrecoVendaManual(idProduto,
                 precoSemIva.doubleValue(),
