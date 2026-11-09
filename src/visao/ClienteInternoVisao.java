@@ -38,6 +38,8 @@ import util.BDConexao;
 import util.ClientePesquisa;
 import util.DVML;
 import util.MetodosUtil;
+import util.ValidadorNifAGT.Resultado;
+import visao.cliente.ConfirmacaoNif;
 import static util.MetodosUtil.normalizarEndereco;
 import static util.MetodosUtil.normalizarNif;
 
@@ -1217,7 +1219,8 @@ public class ClienteInternoVisao extends javax.swing.JDialog {
         DocumentosController.start(conexaoTransaction);
         clientesController = new ClientesController(conexaoTransaction);
         try {
-            if (validar()) {
+            // O NIF é validado (formato AGT + registo na AGT) antes de salvar.
+            if (validar() && nifValidoNaAGT()) {
 
                 if (!clientesController.existeClienteNome(txtNomeCliente.getText(), BDConexao.getConexao())) {
 
@@ -1299,6 +1302,21 @@ public class ClienteInternoVisao extends javax.swing.JDialog {
         return true;
     }
 
+    /**
+     * Valida o NIF conforme a AGT (formato + registo) antes de salvar ou
+     * alterar. Deixa no campo o NIF normalizado.
+     */
+    private boolean nifValidoNaAGT() {
+        Resultado r = ConfirmacaoNif.validarComEspera(this, txtNif.getText(),
+                ConfirmacaoNif.isoDoPais(cmbPais.getSelectedItem()));
+        if (!ConfirmacaoNif.permiteGuardar(this, r)) {
+            txtNif.requestFocus();
+            return false;
+        }
+        txtNif.setText(r.getNif());
+        return true;
+    }
+
     private boolean valido() {
 
         if (txtNomeCliente.getText().isEmpty()) {
@@ -1319,8 +1337,11 @@ public class ClienteInternoVisao extends javax.swing.JDialog {
         String nome = MetodosUtil.normalizarCampo(txtNomeCliente.getText());
         String nomeMorada = normalizarEndereco(txtEndereco.getText());
         String nif = normalizarNif(txtNif.getText());
-        String pais = cmbPais.getSelectedItem().toString().replaceAll(" ", "").split("-")[0];
-        String iso = cmbPais.getSelectedItem().toString().replaceAll(" ", "").split("-")[1];
+        String iso = ConfirmacaoNif.isoDoPais(cmbPais.getSelectedItem());
+        String pais = iso.isEmpty() ? "Angola" : cmbPais.getSelectedItem().toString().replaceAll(" ", "").split("-")[0];
+        if (iso.isEmpty()) {
+            iso = "AO";
+        }
 
         clienteGlobal.setNome(nome);
         clienteGlobal.setMorada(nomeMorada);
@@ -1351,7 +1372,7 @@ public class ClienteInternoVisao extends javax.swing.JDialog {
 //    }
     private void procedimento_alterar() {
 
-        if (!valido()) {
+        if (!valido() || !nifValidoNaAGT()) {
             return;
         }
 

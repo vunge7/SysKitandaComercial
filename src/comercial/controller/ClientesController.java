@@ -33,20 +33,25 @@ public class ClientesController implements EntidadeFactory {
     @Override
     public boolean salvar(Object object) {
         TbCliente clientes = (TbCliente) object;
-        String INSERT = "INSERT INTO tb_cliente( nome , morada , telefone , nif , email, pais, pais_ISO, percentagem_desconto"
-                + ")"
-                + " VALUES("
-                + "'" + clientes.getNome() + "' , "
-                + "'" + clientes.getMorada() + "' , "
-                + "'" + clientes.getTelefone() + "' , "
-                + "'" + clientes.getNif() + "' , "
-                + "'" + clientes.getEmail() + "', "
-                + "'" + clientes.getPais() + "', "
-                + "'" + clientes.getPaisISO() + "',"
-                + clientes.getPercentagemDesconto()
-                + " ) ";
+        // PreparedStatement: os nomes/moradas (p.ex. vindos da AGT) podem ter apóstrofos.
+        String INSERT = "INSERT INTO tb_cliente( nome , morada , telefone , nif , email, pais, pais_ISO, percentagem_desconto )"
+                + " VALUES( ?, ?, ?, ?, ?, ?, ?, ? )";
 
-        return conexao.executeUpdate(INSERT);
+        try (PreparedStatement stmt = conexao.getConnectionAtiva().prepareStatement(INSERT)) {
+            int i = 1;
+            stmt.setString(i++, clientes.getNome());
+            stmt.setString(i++, clientes.getMorada());
+            stmt.setString(i++, clientes.getTelefone());
+            stmt.setString(i++, clientes.getNif());
+            stmt.setString(i++, clientes.getEmail());
+            stmt.setString(i++, clientes.getPais());
+            stmt.setString(i++, clientes.getPaisISO());
+            stmt.setDouble(i++, clientes.getPercentagemDesconto() == null ? 0d : clientes.getPercentagemDesconto());
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
 
     }
 
