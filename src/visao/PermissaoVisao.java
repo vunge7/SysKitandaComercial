@@ -1388,37 +1388,21 @@ public class PermissaoVisao extends javax.swing.JFrame
         for ( Object[] g : grupos )
         {
             javax.swing.JPanel painel = ( javax.swing.JPanel ) g[ 0 ];
-            painel.setBorder( null );
-            painel.setOpaque( false );
-            for ( java.awt.Component c : painel.getComponents() )
+            java.util.List<javax.swing.JCheckBox> caixas = new java.util.ArrayList<>();
+            for ( java.awt.Component comp : painel.getComponents() )
             {
-                if ( c instanceof javax.swing.JCheckBox )
+                if ( comp instanceof javax.swing.JCheckBox )
                 {
-                    javax.swing.JCheckBox ck = ( javax.swing.JCheckBox ) c;
-                    ck.setOpaque( false );
-                    ck.setFont( util.ui.EstiloUI.FONTE.deriveFont( 13f ) );
-                    ck.setForeground( util.ui.ComponentesWeb.TEXTO );
-                    ck.setFocusPainted( false );
+                    caixas.add( ( javax.swing.JCheckBox ) comp );
                 }
             }
-            cartoes.add( util.ui.FormularioWeb.cartao( ( String ) g[ 1 ], ( java.awt.Color ) g[ 2 ], painel ) );
+            caixas.sort( ( x, y ) -> x.getText().compareToIgnoreCase( y.getText() ) );
+            cartoes.add( cartaoPermissoes( ( String ) g[ 1 ], ( java.awt.Color ) g[ 2 ], caixas, null ) );
         }
         // formulários novos: um cartão por menu, gerado a partir do catálogo
         for ( java.util.Map.Entry<String, java.util.List<javax.swing.JCheckBox>> g : gruposDinamicos.entrySet() )
         {
-            javax.swing.JPanel caixas = util.ui.ComponentesWeb.transparente( new java.awt.GridLayout( 0, 1, 0, 2 ) );
-            for ( javax.swing.JCheckBox ck : g.getValue() )
-            {
-                ck.setOpaque( false );
-                ck.setFont( util.ui.EstiloUI.FONTE.deriveFont( 13f ) );
-                ck.setForeground( util.ui.ComponentesWeb.TEXTO );
-                ck.setFocusPainted( false );
-                caixas.add( ck );
-            }
-            util.ui.ComponentesWeb.Cartao c = util.ui.FormularioWeb.cartao( "Novos · " + g.getKey(),
-                    util.ui.ComponentesWeb.LARANJA, caixas );
-            c.adicionarAccao( new util.ui.ComponentesWeb.Etiqueta( "automático", util.ui.ComponentesWeb.LARANJA ) );
-            cartoes.add( c );
+            cartoes.add( cartaoPermissoes( "Novos · " + g.getKey(), util.ui.ComponentesWeb.LARANJA, g.getValue(), "automático" ) );
         }
         if ( gruposDinamicos.isEmpty() )
         {
@@ -1426,7 +1410,38 @@ public class PermissaoVisao extends javax.swing.JFrame
                     util.ui.FormularioWeb.dica( "<html>Os formulários que forem acrescentados ao menu aparecem aqui "
                             + "sozinhos, prontos a autorizar.</html>" ) ) );
         }
-        javax.swing.JPanel grelhaPermissoes = util.ui.FormularioWeb.grelha( 360, 3, cartoes.toArray( new java.awt.Component[ 0 ] ) );
+        // filtro: mostra só as permissões cujo nome contém o texto
+        final javax.swing.JTextField txtFiltro = new javax.swing.JTextField();
+        util.ui.FormularioWeb.campoTexto( txtFiltro );
+        txtFiltro.setToolTipText( "Escreva parte do nome da permissão" );
+        txtFiltro.getDocument().addDocumentListener( new javax.swing.event.DocumentListener()
+        {
+            @Override
+            public void insertUpdate( javax.swing.event.DocumentEvent e )
+            {
+                filtrarPermissoes( txtFiltro.getText() );
+            }
+
+            @Override
+            public void removeUpdate( javax.swing.event.DocumentEvent e )
+            {
+                filtrarPermissoes( txtFiltro.getText() );
+            }
+
+            @Override
+            public void changedUpdate( javax.swing.event.DocumentEvent e )
+            {
+                filtrarPermissoes( txtFiltro.getText() );
+            }
+        } );
+        javax.swing.JPanel linhaFiltro = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 10, 0 ) );
+        linhaFiltro.add( util.ui.ComponentesWeb.campo( "Filtrar permissões", txtFiltro ), java.awt.BorderLayout.CENTER );
+        linhaFiltro.add( util.ui.FormularioWeb.dica( "  Os cartões reorganizam-se com a largura da janela" ), java.awt.BorderLayout.EAST );
+
+        java.util.List<java.awt.Component> pilha = new java.util.ArrayList<>();
+        pilha.add( linhaFiltro );
+        pilha.addAll( cartoes );
+        javax.swing.JPanel grelhaPermissoes = util.ui.FormularioWeb.pilha( 10, pilha.toArray( new java.awt.Component[ 0 ] ) );
         jPanel7.removeAll();
         jPanel7.setBorder( javax.swing.BorderFactory.createEmptyBorder( 8, 8, 8, 8 ) );
         jPanel7.setOpaque( false );
@@ -1596,6 +1611,99 @@ public class PermissaoVisao extends javax.swing.JFrame
     private javax.swing.JRadioButton rdSelecionarTodos;
     private javax.swing.JTable tabela_accesso;
     // End of variables declaration//GEN-END:variables
+
+    /** Cartões de permissões (para o filtro esconder os vazios). */
+    private final java.util.List<Object[]> cartoesPermissoes = new java.util.ArrayList<>();
+
+    /** Cartão de largura total com as caixas numa grelha que se reorganiza (1 a 4 colunas). */
+    private javax.swing.JComponent cartaoPermissoes( String titulo, java.awt.Color cor,
+            java.util.List<javax.swing.JCheckBox> caixas, String etiqueta )
+    {
+        javax.swing.JPanel grelha = util.ui.ComponentesWeb.transparente( new util.ui.ComponentesWeb.GrelhaResponsiva( 250, 4, 4 ) );
+        for ( javax.swing.JCheckBox ck : caixas )
+        {
+            java.awt.Container pai = ck.getParent();
+            if ( pai != null )
+            {
+                pai.remove( ck );
+            }
+            ck.setOpaque( false );
+            ck.setFont( util.ui.EstiloUI.FONTE.deriveFont( 13f ) );
+            ck.setForeground( util.ui.ComponentesWeb.TEXTO );
+            ck.setFocusPainted( false );
+            ck.setToolTipText( ck.getText() );
+            grelha.add( ck );
+        }
+        util.ui.ComponentesWeb.Cartao cartao = util.ui.FormularioWeb.cartao( titulo + "  ·  " + caixas.size(), cor, grelha );
+        if ( etiqueta != null )
+        {
+            cartao.adicionarAccao( new util.ui.ComponentesWeb.Etiqueta( etiqueta, cor ) );
+        }
+        javax.swing.JButton todas = new javax.swing.JButton( "Todas" );
+        javax.swing.JButton nenhuma = new javax.swing.JButton( "Nenhuma" );
+        for ( javax.swing.JButton b : new javax.swing.JButton[]
+        {
+            todas, nenhuma
+        } )
+        {
+            util.ui.ComponentesWeb.botao( b, util.ui.ComponentesWeb.Variante.SECUNDARIO, null, null );
+            b.putClientProperty( "web.pilula", Boolean.TRUE );
+            b.setBorder( javax.swing.BorderFactory.createEmptyBorder( 3, 10, 3, 10 ) );
+            b.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 11.5f ) );
+        }
+        todas.setToolTipText( "Marcar todas as permissões visíveis deste grupo" );
+        nenhuma.setToolTipText( "Desmarcar todas as permissões visíveis deste grupo" );
+        todas.addActionListener( e -> marcarVisiveis( caixas, true ) );
+        nenhuma.addActionListener( e -> marcarVisiveis( caixas, false ) );
+        cartao.adicionarAccao( todas );
+        cartao.adicionarAccao( nenhuma );
+        cartoesPermissoes.add( new Object[]
+        {
+            cartao, caixas
+        } );
+        return cartao;
+    }
+
+    private static void marcarVisiveis( java.util.List<javax.swing.JCheckBox> caixas, boolean marcar )
+    {
+        for ( javax.swing.JCheckBox ck : caixas )
+        {
+            if ( ck.isVisible() && ck.isEnabled() )
+            {
+                ck.setSelected( marcar );
+            }
+        }
+    }
+
+    /** Mostra só as caixas cujo nome contém o texto; os cartões sem nenhuma escondem-se. */
+    @SuppressWarnings( "unchecked" )
+    private void filtrarPermissoes( String texto )
+    {
+        String t = texto == null ? "" : java.text.Normalizer.normalize( texto.trim().toLowerCase(), java.text.Normalizer.Form.NFD )
+                .replaceAll( "\\p{M}", "" );
+        for ( Object[] par : cartoesPermissoes )
+        {
+            int visiveis = 0;
+            for ( javax.swing.JCheckBox ck : ( java.util.List<javax.swing.JCheckBox> ) par[ 1 ] )
+            {
+                if ( ck == jcbActivarDesconto )
+                {
+                    continue; // escondida pelo código
+                }
+                String nome = java.text.Normalizer.normalize( ck.getText().toLowerCase(), java.text.Normalizer.Form.NFD )
+                        .replaceAll( "\\p{M}", "" );
+                boolean ok = t.isEmpty() || nome.contains( t );
+                ck.setVisible( ok );
+                if ( ok )
+                {
+                    visiveis++;
+                }
+            }
+            ( ( java.awt.Component ) par[ 0 ] ).setVisible( visiveis > 0 );
+        }
+        jPanel7.revalidate();
+        jPanel7.repaint();
+    }
 
     // =====================================================================
     // PERMISSÕES DINÂMICAS (formulários novos, sem desenhar caixas à mão)

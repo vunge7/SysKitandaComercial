@@ -325,7 +325,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     // initComponents: componentes, eventos e regras são os mesmos; o .form
     // fica com o desenho antigo.
     // =====================================================================
-    private static final java.awt.Color CLARO_LATERAL = new java.awt.Color(196, 218, 245);
+    private static final java.awt.Color CLARO_LATERAL = util.ui.Tema.claro();
 
     private void montarLayoutWeb() {
         // ---------------------------------------------------------- estilo dos campos

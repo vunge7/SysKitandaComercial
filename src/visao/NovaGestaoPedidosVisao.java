@@ -347,7 +347,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
     // =====================================================================
     private void montarLayoutWeb()
     {
-        java.awt.Color claroCabecalho = new java.awt.Color( 196, 218, 245 );
+        java.awt.Color claroCabecalho = util.ui.Tema.claro();
         util.ui.FormularioWeb.campoTexto( txtIniciaisCliente, txtNomeConsumidorFinal, txtTelClientePesquisa, txtQuatidadeExistente );
         util.ui.FormularioWeb.combo( cmbCliente, cmbTipoDocumento, cmbAnoEconomico, cmbArmazem, cmb_area_venda_restaurante );
         for ( javax.swing.JComboBox<?> c : new javax.swing.JComboBox<?>[]
@@ -467,7 +467,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         linhaBaixoTudo.add( botoesTopo, java.awt.BorderLayout.EAST );
 
         JPanel cabecalho = new util.ui.ComponentesWeb.PainelGradiente( new java.awt.BorderLayout( 0, 10 ),
-                util.ui.EstiloUI.AZUL_ESCURO, new java.awt.Color( 0, 96, 168 ) );
+                util.ui.EstiloUI.AZUL_ESCURO, util.ui.Tema.gradienteFim() );
         cabecalho.setBorder( javax.swing.BorderFactory.createEmptyBorder( 12, 20, 12, 20 ) );
         cabecalho.add( linhaTopo, java.awt.BorderLayout.NORTH );
         cabecalho.add( linhaBaixoTudo, java.awt.BorderLayout.SOUTH );

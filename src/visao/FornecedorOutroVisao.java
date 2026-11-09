@@ -78,7 +78,657 @@ public class FornecedorOutroVisao extends javax.swing.JFrame
         set_combos();
         txtInicias.addKeyListener( new TratarEvento() );
         adicionar();
+        // gestão de fornecedores (design do SysKitandaHotel), sobre o initComponents
+        util.ui.LayoutSeguro.aplicar( this, "Gestão de fornecedores", this::montarLayoutWeb );
 
+    }
+
+
+    // =====================================================================
+    // GESTÃO DE FORNECEDORES (design do SysKitandaHotel, responsivo)
+    // Ficha, compras, dívidas em aberto com antiguidade, maiores credores e
+    // pagamentos. O pagamento usa a Saída de tesouraria que já existia
+    // (SaidaVisao): sai da conta, debita o extrato e actualiza a compra.
+    // As leituras correm em segundo plano para o ecrã não prender.
+    // =====================================================================
+    private comercial.controller.GestaoFornecedoresController gestao;
+    private final util.ui.ComponentesWeb.CartaoKpi kpiFornecedores = new util.ui.ComponentesWeb.CartaoKpi(
+            util.ui.ComponentesWeb.CartaoKpi.PESSOA, "Fornecedores", util.ui.ComponentesWeb.AZUL_MEDIO );
+    private final util.ui.ComponentesWeb.CartaoKpi kpiDivida = new util.ui.ComponentesWeb.CartaoKpi(
+            "Kz", "Total em dívida", util.ui.ComponentesWeb.LARANJA );
+    private final util.ui.ComponentesWeb.CartaoKpi kpiVencido = new util.ui.ComponentesWeb.CartaoKpi(
+            "!", "Vencido", util.ui.ComponentesWeb.VERMELHO );
+    private final util.ui.ComponentesWeb.CartaoKpi kpiPago = new util.ui.ComponentesWeb.CartaoKpi(
+            util.ui.ComponentesWeb.CartaoKpi.VISTO, "Pago (30 dias)", util.ui.ComponentesWeb.VERDE );
+    private final javax.swing.JTable tabelaDividas = new javax.swing.JTable();
+    private final javax.swing.JTable tabelaCredores = new javax.swing.JTable();
+    private final java.util.List<comercial.controller.GestaoFornecedoresController.Divida> dividasMostradas = new java.util.ArrayList<>();
+    private final java.util.List<comercial.controller.GestaoFornecedoresController.DividaFornecedor> credoresMostrados = new java.util.ArrayList<>();
+    private final BarrasAntiguidade antiguidade = new BarrasAntiguidade();
+    private final javax.swing.JLabel lbFornecedorEscolhido = new javax.swing.JLabel( "Escolha um fornecedor na lista" );
+    private final javax.swing.JLabel lbActividade = util.ui.FormularioWeb.dica( " " );
+    private final javax.swing.JLabel lbTotalDividas = util.ui.FormularioWeb.dica( " " );
+    private util.ui.ComponentesWeb.Cartao cartaoDividas;
+    private boolean dividasGlobais = true;
+
+    private void montarLayoutWeb()
+    {
+        gestao = new comercial.controller.GestaoFornecedoresController( conexao );
+
+        // ---------------------------------------------------------- cabeçalho
+        jButton3.setText( "Nova compra" );
+        util.ui.ComponentesWeb.botao( jButton3, util.ui.ComponentesWeb.Variante.SUCESSO, null,
+                "Emitir uma compra (entrada de stock) a um fornecedor" );
+        pilulaWeb( jButton3 );
+        javax.swing.JButton btActualizar = new javax.swing.JButton( "Actualizar" );
+        util.ui.ComponentesWeb.botao( btActualizar, util.ui.ComponentesWeb.Variante.SECUNDARIO, null,
+                "Ler de novo dívidas, compras e pagamentos (F5)" );
+        pilulaWeb( btActualizar );
+        btActualizar.addActionListener( e -> actualizarTudo() );
+        javax.swing.JPanel direita = util.ui.ComponentesWeb.transparente( new util.ui.EstiloUI.WrapLayout( java.awt.FlowLayout.RIGHT, 8, 4 ) );
+        direita.add( jButton3 );
+        direita.add( btActualizar );
+
+        // ---------------------------------------------------------- indicadores
+        javax.swing.JPanel kpis = util.ui.FormularioWeb.grelha( 200, 4, kpiFornecedores, kpiDivida, kpiVencido, kpiPago );
+
+        // ---------------------------------------------------------- fornecedores
+        txtInicias.setToolTipText( "Escreva as iniciais do nome: a lista filtra-se sozinha" );
+        util.ui.FormularioWeb.campoTexto( txtInicias );
+        estiloTabela( tabela_fornecedor );
+        jScrollPane1.setPreferredSize( new java.awt.Dimension( 300, 260 ) );
+        tabela_fornecedor.addMouseListener( new java.awt.event.MouseAdapter()
+        {
+            @Override
+            public void mouseClicked( java.awt.event.MouseEvent e )
+            {
+                // depois do evento antigo (que preenche a ficha e as tabelas)
+                javax.swing.SwingUtilities.invokeLater( () -> fornecedorEscolhido() );
+            }
+        } );
+        util.ui.ComponentesWeb.Cartao cartaoLista = util.ui.FormularioWeb.cartao( "Fornecedores", util.ui.ComponentesWeb.AZUL_VIVO,
+                util.ui.FormularioWeb.pilha( 8, util.ui.ComponentesWeb.campo( "Pesquisar pelas iniciais", txtInicias ), jScrollPane1 ) );
+
+        // maiores credores (todos os fornecedores com dívida)
+        tabelaCredores.setModel( new javax.swing.table.DefaultTableModel(
+                new Object[]{ "Fornecedor", "Docs", "Em dívida", "Vencido" }, 0 )
+        {
+            @Override
+            public boolean isCellEditable( int r, int c )
+            {
+                return false;
+            }
+        } );
+        estiloTabela( tabelaCredores );
+        alinharDireita( tabelaCredores, 1, 2, 3 );
+        tabelaCredores.getColumnModel().getColumn( 0 ).setPreferredWidth( 180 );
+        tabelaCredores.addMouseListener( new java.awt.event.MouseAdapter()
+        {
+            @Override
+            public void mouseClicked( java.awt.event.MouseEvent e )
+            {
+                int r = tabelaCredores.getSelectedRow();
+                if ( r >= 0 && r < credoresMostrados.size() )
+                {
+                    escolherFornecedor( credoresMostrados.get( r ).fornecedorId );
+                }
+            }
+        } );
+        javax.swing.JScrollPane spCredores = rolagemTabela( tabelaCredores, 170 );
+        util.ui.ComponentesWeb.Cartao cartaoCredores = util.ui.FormularioWeb.cartao( "Maiores credores", util.ui.ComponentesWeb.LARANJA, spCredores );
+        cartaoCredores.adicionarAccao( new util.ui.ComponentesWeb.Etiqueta( "clique para abrir", util.ui.ComponentesWeb.LARANJA ) );
+
+        javax.swing.JPanel esquerda = util.ui.FormularioWeb.pilha( 10, cartaoLista, cartaoCredores );
+
+        // ---------------------------------------------------------- ficha
+        lbTipoProduto.setText( "Nome *" );
+        jLabel1.setText( "Endereço" );
+        jLabel2.setText( "Telefone" );
+        jLabel3.setText( "Email" );
+        lbTipoProduto2.setText( "NIF *" );
+        jLabel4.setText( "Regime" );
+        for ( javax.swing.JLabel l : new javax.swing.JLabel[]
+        {
+            lbTipoProduto, jLabel1, jLabel2, jLabel3, lbTipoProduto2, jLabel4
+        } )
+        {
+            l.setHorizontalAlignment( javax.swing.SwingConstants.LEFT );
+        }
+        util.ui.FormularioWeb.campoTexto( txtNome, txtMorada, txtTelefone, txtEmail, txtNif );
+        util.ui.FormularioWeb.combo( cmbRegime );
+        lbFornecedorEscolhido.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 15f ) );
+        lbFornecedorEscolhido.setForeground( util.ui.MenuWeb.AZUL_NOITE );
+        jLabel5.setText( "Saldo no extrato" );
+        lbSaldoFornecedor.setFont( util.ui.MesasWeb.fonteVisor( 20 ) );
+        lbSaldoFornecedor.setForeground( new java.awt.Color( 134, 239, 172 ) );
+        lbSaldoFornecedor.setHorizontalAlignment( javax.swing.SwingConstants.RIGHT );
+        jLabel5.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 11f ) );
+        jLabel5.setForeground( new java.awt.Color( 148, 163, 184 ) );
+        util.ui.ComponentesWeb.CaixaSuave visorSaldo = new util.ui.ComponentesWeb.CaixaSuave( new java.awt.BorderLayout( 10, 0 ),
+                new java.awt.Color( 15, 23, 42 ), null );
+        visorSaldo.setBorder( javax.swing.BorderFactory.createEmptyBorder( 8, 12, 8, 12 ) );
+        visorSaldo.add( jLabel5, java.awt.BorderLayout.WEST );
+        visorSaldo.add( lbSaldoFornecedor, java.awt.BorderLayout.CENTER );
+        visorSaldo.setToolTipText( "Saldo da conta corrente do fornecedor (o que se lhe deve, segundo o extrato)" );
+
+        javax.swing.JButton btNovo = new javax.swing.JButton( "Novo" );
+        util.ui.ComponentesWeb.botao( btNovo, util.ui.ComponentesWeb.Variante.SECUNDARIO, null, "Limpar a ficha para cadastrar um fornecedor novo" );
+        btNovo.addActionListener( e ->
+        {
+            limpar();
+            fornecedor = null;
+            codigo = 0;
+            fornecedorEscolhido();
+            txtNome.requestFocusInWindow();
+        } );
+        util.ui.FormularioWeb.botaoSalvar( btnSalvar, "Cadastrar um fornecedor novo com estes dados" );
+        util.ui.FormularioWeb.botaoAlterar( btnAlterar, "Gravar as alterações do fornecedor escolhido" );
+        util.ui.FormularioWeb.botaoEliminar( btnEliminar, "Eliminar o fornecedor escolhido" );
+        javax.swing.JPanel botoesFicha = util.ui.ComponentesWeb.transparente( new util.ui.EstiloUI.WrapLayout( java.awt.FlowLayout.RIGHT, 6, 0 ) );
+        for ( javax.swing.JButton b : new javax.swing.JButton[]
+        {
+            btNovo, btnSalvar, btnAlterar, btnEliminar
+        } )
+        {
+            botoesFicha.add( b );
+        }
+
+        javax.swing.JPanel topoFicha = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 12, 0 ) );
+        javax.swing.JPanel nomeEActividade = util.ui.ComponentesWeb.transparente( new java.awt.GridLayout( 2, 1 ) );
+        nomeEActividade.add( lbFornecedorEscolhido );
+        nomeEActividade.add( lbActividade );
+        topoFicha.add( nomeEActividade, java.awt.BorderLayout.CENTER );
+        topoFicha.add( visorSaldo, java.awt.BorderLayout.EAST );
+
+        util.ui.ComponentesWeb.Cartao cartaoFicha = util.ui.FormularioWeb.cartao( "Ficha do fornecedor", util.ui.ComponentesWeb.VERDE,
+                util.ui.FormularioWeb.pilha( 10,
+                        topoFicha,
+                        util.ui.FormularioWeb.grelha( 220, 3,
+                                util.ui.ComponentesWeb.campo( lbTipoProduto, txtNome ),
+                                util.ui.ComponentesWeb.campo( lbTipoProduto2, txtNif ),
+                                util.ui.ComponentesWeb.campo( jLabel4, cmbRegime ),
+                                util.ui.ComponentesWeb.campo( jLabel2, txtTelefone ),
+                                util.ui.ComponentesWeb.campo( jLabel3, txtEmail ),
+                                util.ui.ComponentesWeb.campo( jLabel1, txtMorada ) ),
+                        botoesFicha ) );
+
+        // ---------------------------------------------------------- dívidas em aberto
+        tabelaDividas.setModel( new javax.swing.table.DefaultTableModel(
+                new Object[]{ "Fornecedor", "Documento", "Data", "Vencimento", "Situação", "Total", "Pago", "Em falta" }, 0 )
+        {
+            @Override
+            public boolean isCellEditable( int r, int c )
+            {
+                return false;
+            }
+        } );
+        estiloTabela( tabelaDividas );
+        alinharDireita( tabelaDividas, 5, 6, 7 );
+        tabelaDividas.getColumnModel().getColumn( 4 ).setCellRenderer( new RenderSituacao() );
+        int[] largurasDiv = { 160, 150, 80, 85, 120, 100, 100, 110 };
+        for ( int i = 0; i < largurasDiv.length; i++ )
+        {
+            tabelaDividas.getColumnModel().getColumn( i ).setPreferredWidth( largurasDiv[ i ] );
+        }
+        tabelaDividas.addMouseListener( new java.awt.event.MouseAdapter()
+        {
+            @Override
+            public void mouseClicked( java.awt.event.MouseEvent e )
+            {
+                if ( e.getClickCount() >= 2 )
+                {
+                    pagarDividaSeleccionada();
+                }
+            }
+        } );
+        javax.swing.JButton btPagar = new javax.swing.JButton( "Pagar a seleccionada" );
+        util.ui.ComponentesWeb.botao( btPagar, util.ui.ComponentesWeb.Variante.SUCESSO, null,
+                "Registar o pagamento desta compra (saída da tesouraria e débito no extrato)" );
+        btPagar.addActionListener( e -> pagarDividaSeleccionada() );
+        javax.swing.JToggleButton btTodos = new javax.swing.JToggleButton( "Todos os fornecedores", true );
+        util.ui.ComponentesWeb.pilulaCompacta( btTodos );
+        btTodos.setToolTipText( "Ver as dívidas de todos os fornecedores ou só do escolhido" );
+        btTodos.addActionListener( e ->
+        {
+            dividasGlobais = btTodos.isSelected();
+            carregarDividas();
+        } );
+        javax.swing.JPanel barraDividas = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 10, 0 ) );
+        barraDividas.add( lbTotalDividas, java.awt.BorderLayout.CENTER );
+        javax.swing.JPanel botoesDiv = util.ui.ComponentesWeb.transparente( new java.awt.FlowLayout( java.awt.FlowLayout.RIGHT, 6, 0 ) );
+        botoesDiv.add( btTodos );
+        botoesDiv.add( btPagar );
+        barraDividas.add( botoesDiv, java.awt.BorderLayout.EAST );
+        javax.swing.JPanel painelDividas = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 0, 8 ) );
+        painelDividas.setBorder( javax.swing.BorderFactory.createEmptyBorder( 8, 8, 8, 8 ) );
+        painelDividas.add( antiguidade, java.awt.BorderLayout.NORTH );
+        painelDividas.add( rolagemTabela( tabelaDividas, 220 ), java.awt.BorderLayout.CENTER );
+        painelDividas.add( barraDividas, java.awt.BorderLayout.SOUTH );
+
+        // ---------------------------------------------------------- compras / conta corrente / encomendas
+        estiloTabela( tabela_compras );
+        alinharDireita( tabela_compras, 4, 5, 6 );
+        tabela_compras.setToolTipText( "Duplo clique numa compra com valor pendente para a pagar" );
+        jPanel5.removeAll();
+        jPanel5.setOpaque( false );
+        jPanel5.setLayout( new java.awt.BorderLayout( 0, 8 ) );
+        jPanel5.setBorder( javax.swing.BorderFactory.createEmptyBorder( 8, 8, 8, 8 ) );
+        jPanel5.add( jScrollPane4, java.awt.BorderLayout.CENTER );
+        jPanel5.add( util.ui.FormularioWeb.dica( "Duplo clique numa compra com valor pendente para registar o pagamento" ),
+                java.awt.BorderLayout.SOUTH );
+
+        estiloTabela( tabela_conta_corrente );
+        alinharDireita( tabela_conta_corrente, 2, 3, 4 );
+        util.ui.FormularioWeb.data( dcDataInicial );
+        util.ui.FormularioWeb.data( dcDataFinal );
+        jButton1.setText( "Analisar" );
+        util.ui.ComponentesWeb.botao( jButton1, util.ui.ComponentesWeb.Variante.PRIMARIO, null, "Mostrar o extrato entre as datas" );
+        javax.swing.JPanel filtroConta = util.ui.ComponentesWeb.transparente( new util.ui.EstiloUI.WrapLayout( java.awt.FlowLayout.LEFT, 8, 0 ) );
+        dcDataInicial.setPreferredSize( new java.awt.Dimension( 140, util.ui.FormularioWeb.ALTURA_CAMPO ) );
+        dcDataFinal.setPreferredSize( new java.awt.Dimension( 140, util.ui.FormularioWeb.ALTURA_CAMPO ) );
+        filtroConta.add( util.ui.ComponentesWeb.campo( "Data inicial", dcDataInicial ) );
+        filtroConta.add( util.ui.ComponentesWeb.campo( "Data final", dcDataFinal ) );
+        javax.swing.JPanel rodapeBotao = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout() );
+        rodapeBotao.add( jButton1, java.awt.BorderLayout.SOUTH );
+        filtroConta.add( rodapeBotao );
+        jPanel6.removeAll();
+        jPanel6.setOpaque( false );
+        jPanel6.setLayout( new java.awt.BorderLayout( 0, 8 ) );
+        jPanel6.setBorder( javax.swing.BorderFactory.createEmptyBorder( 8, 8, 8, 8 ) );
+        jPanel6.add( filtroConta, java.awt.BorderLayout.NORTH );
+        jPanel6.add( jScrollPane3, java.awt.BorderLayout.CENTER );
+
+        estiloTabela( tabela_encomenda );
+        jButton2.setText( "Nova encomenda" );
+        util.ui.ComponentesWeb.botao( jButton2, util.ui.ComponentesWeb.Variante.SECUNDARIO, null,
+                "Encomendar ao fornecedor escolhido" );
+        javax.swing.JPanel barraEnc = util.ui.ComponentesWeb.transparente( new java.awt.FlowLayout( java.awt.FlowLayout.RIGHT, 0, 0 ) );
+        barraEnc.add( jButton2 );
+        jPanel7.removeAll();
+        jPanel7.setOpaque( false );
+        jPanel7.setLayout( new java.awt.BorderLayout( 0, 8 ) );
+        jPanel7.setBorder( javax.swing.BorderFactory.createEmptyBorder( 8, 8, 8, 8 ) );
+        jPanel7.add( jScrollPane2, java.awt.BorderLayout.CENTER );
+        jPanel7.add( barraEnc, java.awt.BorderLayout.SOUTH );
+
+        jTabbedPane1.insertTab( "Dívidas em aberto", null, painelDividas, "Compras a crédito por pagar", 0 );
+        jTabbedPane1.setSelectedIndex( 0 );
+        jTabbedPane1.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 13f ) );
+        jTabbedPane1.setForeground( util.ui.ComponentesWeb.AZUL );
+        jTabbedPane1.setPreferredSize( new java.awt.Dimension( 600, 380 ) );
+        cartaoDividas = util.ui.FormularioWeb.cartao( "Dívidas, compras e conta corrente", util.ui.ComponentesWeb.ROXO, jTabbedPane1 );
+
+        javax.swing.JPanel direitaCol = util.ui.FormularioWeb.pilha( 10, cartaoFicha, cartaoDividas );
+
+        javax.swing.JPanel colunas = util.ui.ComponentesWeb.transparente( new util.ui.ComponentesWeb.ColunasResponsivas(
+                new double[]{ 0.36, 0.64 }, new int[]{ 320, 480 }, 10 ) );
+        colunas.add( esquerda );
+        colunas.add( direitaCol );
+
+        javax.swing.JPanel conteudo = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 0, 10 ) );
+        conteudo.add( kpis, java.awt.BorderLayout.NORTH );
+        conteudo.add( colunas, java.awt.BorderLayout.CENTER );
+
+        util.ui.FormularioWeb.botaoSair( btnCancelar, "Fechar a gestão de fornecedores" );
+        util.ui.FormularioWeb.montar( this,
+                util.ui.FormularioWeb.cabecalho( "Gestão de Fornecedores", "Compras, dívidas e pagamentos aos fornecedores", direita ),
+                conteudo,
+                util.ui.FormularioWeb.barraAccoes( util.ui.FormularioWeb.dica( "Duplo clique numa dívida para a pagar  ·  F5 actualiza" ),
+                        btnCancelar ),
+                "Kitanda  ·  Gestão de Fornecedores" );
+        getRootPane().registerKeyboardAction( e -> actualizarTudo(),
+                javax.swing.KeyStroke.getKeyStroke( java.awt.event.KeyEvent.VK_F5, 0 ), javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW );
+        // ao voltar de uma compra ou de um pagamento, os números ficam certos
+        addWindowListener( new java.awt.event.WindowAdapter()
+        {
+            @Override
+            public void windowActivated( java.awt.event.WindowEvent e )
+            {
+                actualizarTudo();
+            }
+        } );
+        util.ui.FormularioWeb.ajustar( this, 1280, 820, 860, 580 );
+        fornecedorEscolhido();
+        actualizarTudo();
+    }
+
+    // ---------------------------------------------------------------- leituras (em segundo plano)
+    private boolean aActualizar = false;
+
+    private void actualizarTudo()
+    {
+        if ( aActualizar || gestao == null )
+        {
+            return;
+        }
+        aActualizar = true;
+        new javax.swing.SwingWorker<Object[], Void>()
+        {
+            @Override
+            protected Object[] doInBackground() throws Exception
+            {
+                return new Object[]{ gestao.resumo(), gestao.rankingDividas() };
+            }
+
+            @Override
+            @SuppressWarnings( "unchecked" )
+            protected void done()
+            {
+                aActualizar = false;
+                try
+                {
+                    Object[] r = get();
+                    comercial.controller.GestaoFornecedoresController.Resumo s = ( comercial.controller.GestaoFornecedoresController.Resumo ) r[ 0 ];
+                    kpiFornecedores.setValor( String.valueOf( s.fornecedores ), s.fornecedoresComDivida + " com dívida" );
+                    kpiDivida.setValor( kitanda.util.CfMethods.formatarComoMoeda( s.emDivida ),
+                            s.documentosAbertos + ( s.documentosAbertos == 1 ? " documento" : " documentos" ) + " por pagar" );
+                    kpiVencido.setValor( kitanda.util.CfMethods.formatarComoMoeda( s.vencido ),
+                            s.emDivida <= 0 ? "nada vencido" : Math.round( s.vencido * 100 / s.emDivida ) + "% da dívida" );
+                    kpiPago.setValor( kitanda.util.CfMethods.formatarComoMoeda( s.pago30Dias ), "pagamentos registados" );
+                    credoresMostrados.clear();
+                    credoresMostrados.addAll( ( java.util.List<comercial.controller.GestaoFornecedoresController.DividaFornecedor> ) r[ 1 ] );
+                    javax.swing.table.DefaultTableModel m = ( javax.swing.table.DefaultTableModel ) tabelaCredores.getModel();
+                    m.setRowCount( 0 );
+                    for ( comercial.controller.GestaoFornecedoresController.DividaFornecedor f : credoresMostrados )
+                    {
+                        m.addRow( new Object[]{ f.fornecedor, f.documentos, kitanda.util.CfMethods.formatarComoMoeda( f.emDivida ),
+                            f.vencido > 0 ? kitanda.util.CfMethods.formatarComoMoeda( f.vencido ) : "—" } );
+                    }
+                }
+                catch ( Exception e )
+                {
+                    e.printStackTrace();
+                    kpiDivida.setValor( "—", "não foi possível ler as dívidas" );
+                }
+                carregarDividas();
+            }
+        }.execute();
+    }
+
+    private void carregarDividas()
+    {
+        final int id = dividasGlobais || fornecedor == null ? 0 : fornecedor.getCodigo();
+        new javax.swing.SwingWorker<java.util.List<comercial.controller.GestaoFornecedoresController.Divida>, Void>()
+        {
+            @Override
+            protected java.util.List<comercial.controller.GestaoFornecedoresController.Divida> doInBackground() throws Exception
+            {
+                return gestao.dividas( id );
+            }
+
+            @Override
+            protected void done()
+            {
+                try
+                {
+                    mostrarDividas( get(), id );
+                }
+                catch ( Exception e )
+                {
+                    e.printStackTrace();
+                    lbTotalDividas.setText( "Não foi possível ler as dívidas" );
+                }
+            }
+        }.execute();
+    }
+
+    private void mostrarDividas( java.util.List<comercial.controller.GestaoFornecedoresController.Divida> lista, int id )
+    {
+        dividasMostradas.clear();
+        dividasMostradas.addAll( lista );
+        javax.swing.table.DefaultTableModel m = ( javax.swing.table.DefaultTableModel ) tabelaDividas.getModel();
+        m.setRowCount( 0 );
+        java.text.SimpleDateFormat f = new java.text.SimpleDateFormat( "dd/MM/yyyy" );
+        double total = 0;
+        for ( comercial.controller.GestaoFornecedoresController.Divida d : lista )
+        {
+            total += d.restante;
+            long dias = d.diasAtraso();
+            String situacao = d.vencimento == null ? ( dias <= 0 ? "Sem vencimento" : "Há " + dias + " dias" )
+                    : dias > 0 ? "Vencida há " + dias + ( dias == 1 ? " dia" : " dias" )
+                    : dias == 0 ? "Vence hoje" : "Vence em " + ( -dias ) + ( dias == -1 ? " dia" : " dias" );
+            m.addRow( new Object[]{ d.fornecedor, d.documento.isEmpty() ? d.codFact : d.documento,
+                d.data == null ? "" : f.format( d.data ), d.vencimento == null ? "—" : f.format( d.vencimento ), situacao,
+                kitanda.util.CfMethods.formatarComoMoeda( d.total ), kitanda.util.CfMethods.formatarComoMoeda( d.pago ),
+                kitanda.util.CfMethods.formatarComoMoeda( d.restante ) } );
+        }
+        antiguidade.setValores( comercial.controller.GestaoFornecedoresController.antiguidade( lista ) );
+        String quem = id == 0 ? "todos os fornecedores" : fornecedor == null ? "" : fornecedor.getNome();
+        lbTotalDividas.setText( "<html>" + lista.size() + ( lista.size() == 1 ? " documento" : " documentos" ) + " por pagar · <b>"
+                + kitanda.util.CfMethods.formatarComoMoeda( total ) + "</b> · " + quem + "</html>" );
+    }
+
+    /** Depois do evento antigo da lista: nome, actividade e dívidas do fornecedor escolhido. */
+    private void fornecedorEscolhido()
+    {
+        if ( fornecedor == null )
+        {
+            lbFornecedorEscolhido.setText( "Novo fornecedor" );
+            lbActividade.setText( "Preencha a ficha e carregue em Salvar" );
+            if ( !dividasGlobais )
+            {
+                carregarDividas();
+            }
+            return;
+        }
+        lbFornecedorEscolhido.setText( fornecedor.getNome() );
+        final int id = fornecedor.getCodigo();
+        new javax.swing.SwingWorker<Object[], Void>()
+        {
+            @Override
+            protected Object[] doInBackground() throws Exception
+            {
+                return gestao.actividade( id );
+            }
+
+            @Override
+            protected void done()
+            {
+                try
+                {
+                    Object[] a = get();
+                    int n = ( Integer ) a[ 1 ];
+                    java.util.Date ultima = ( java.util.Date ) a[ 0 ];
+                    lbActividade.setText( n + ( n == 1 ? " compra" : " compras" )
+                            + ( ultima == null ? "" : " · última em " + new java.text.SimpleDateFormat( "dd/MM/yyyy" ).format( ultima ) ) );
+                }
+                catch ( Exception e )
+                {
+                    lbActividade.setText( " " );
+                }
+            }
+        }.execute();
+        if ( !dividasGlobais )
+        {
+            carregarDividas();
+        }
+    }
+
+    /** Escolhe o fornecedor na lista (a partir dos credores) como se fosse clicado. */
+    private void escolherFornecedor( int idFornecedor )
+    {
+        javax.swing.table.DefaultTableModel m = ( javax.swing.table.DefaultTableModel ) tabela_fornecedor.getModel();
+        for ( int vez = 0; vez < 2; vez++ )
+        {
+            for ( int r = 0; r < m.getRowCount(); r++ )
+            {
+                if ( String.valueOf( idFornecedor ).equals( String.valueOf( m.getValueAt( r, 0 ) ) ) )
+                {
+                    int v = tabela_fornecedor.convertRowIndexToView( r );
+                    tabela_fornecedor.setRowSelectionInterval( v, v );
+                    tabela_fornecedor.scrollRectToVisible( tabela_fornecedor.getCellRect( v, 0, true ) );
+                    mostar_dados();
+                    adicionar_encomendas();
+                    mostrarSaldoFornecedor();
+                    mostrarContaCorrenteFornecedor();
+                    adicionar_compras();
+                    fornecedorEscolhido();
+                    return;
+                }
+            }
+            txtInicias.setText( "" );
+            adicionar(); // a pesquisa escondia-o: volta a lista toda
+        }
+    }
+
+    /** Paga a dívida seleccionada pela Saída de tesouraria (o caminho que já existia). */
+    private void pagarDividaSeleccionada()
+    {
+        int r = tabelaDividas.getSelectedRow();
+        if ( r < 0 || r >= dividasMostradas.size() )
+        {
+            JOptionPane.showMessageDialog( this, "Seleccione na tabela a compra que quer pagar.", "Pagamento a fornecedor",
+                    JOptionPane.INFORMATION_MESSAGE );
+            return;
+        }
+        comercial.controller.GestaoFornecedoresController.Divida d = dividasMostradas.get( tabelaDividas.convertRowIndexToModel( r ) );
+        try
+        {
+            gestao.prepararParaPagamento( d.pkCompra );
+            Compras compraLocal = comprasController.findByCodFact( d.codFact );
+            if ( compraLocal == null )
+            {
+                JOptionPane.showMessageDialog( this, "Não foi possível abrir a compra " + d.codFact + ".", "Pagamento a fornecedor",
+                        JOptionPane.WARNING_MESSAGE );
+                return;
+            }
+            SaidaVisao saida = new SaidaVisao( compraLocal, d.fornecedorId, d.documento, d.restante, BDConexao.getInstancia() );
+            saida.addWindowListener( new java.awt.event.WindowAdapter()
+            {
+                @Override
+                public void windowClosed( java.awt.event.WindowEvent e )
+                {
+                    actualizarTudo();
+                }
+            } );
+            saida.setVisible( true );
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog( this, "Não foi possível preparar o pagamento:\n" + e.getMessage(),
+                    "Pagamento a fornecedor", JOptionPane.ERROR_MESSAGE );
+        }
+    }
+
+    // ---------------------------------------------------------------- aspecto
+    private static void pilulaWeb( javax.swing.JButton b )
+    {
+        b.putClientProperty( "web.pilula", Boolean.TRUE );
+        b.setBorder( javax.swing.BorderFactory.createEmptyBorder( 6, 14, 6, 16 ) );
+        b.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 12.5f ) );
+    }
+
+    private static void estiloTabela( javax.swing.JTable t )
+    {
+        util.ui.EstiloUI.estilizarTabela( t, true );
+        t.setRowHeight( 28 );
+    }
+
+    private static void alinharDireita( javax.swing.JTable t, int... colunas )
+    {
+        util.ui.EstiloUI.ZebraRenderer direita = new util.ui.EstiloUI.ZebraRenderer( javax.swing.SwingConstants.RIGHT );
+        for ( int c : colunas )
+        {
+            if ( c < t.getColumnCount() )
+            {
+                t.getColumnModel().getColumn( c ).setCellRenderer( direita );
+            }
+        }
+    }
+
+    private static javax.swing.JScrollPane rolagemTabela( javax.swing.JTable t, int altura )
+    {
+        javax.swing.JScrollPane sp = new javax.swing.JScrollPane( t );
+        sp.setBorder( new javax.swing.border.LineBorder( util.ui.ComponentesWeb.LINHA, 1, true ) );
+        sp.getViewport().setBackground( java.awt.Color.WHITE );
+        sp.setPreferredSize( new java.awt.Dimension( 300, altura ) );
+        return sp;
+    }
+
+    /** "Vencida" a vermelho, "Vence hoje/em" a laranja, o resto neutro. */
+    private static final class RenderSituacao extends util.ui.EstiloUI.ZebraRenderer
+    {
+
+        RenderSituacao()
+        {
+            super( javax.swing.SwingConstants.LEFT );
+        }
+
+        @Override
+        public java.awt.Component getTableCellRendererComponent( javax.swing.JTable table, Object value, boolean isSelected,
+                boolean hasFocus, int row, int column )
+        {
+            java.awt.Component c = super.getTableCellRendererComponent( table, value, isSelected, hasFocus, row, column );
+            String s = String.valueOf( value );
+            if ( !isSelected )
+            {
+                c.setForeground( s.startsWith( "Vencida" ) ? util.ui.ComponentesWeb.VERMELHO
+                        : s.startsWith( "Vence" ) ? util.ui.ComponentesWeb.LARANJA.darker() : util.ui.ComponentesWeb.TEXTO );
+            }
+            c.setFont( s.startsWith( "Vencida" ) ? util.ui.EstiloUI.FONTE_NEGRITO : util.ui.EstiloUI.FONTE );
+            return c;
+        }
+    }
+
+    /** Antiguidade da dívida: barras a vencer / 0-30 / 31-60 / 61-90 / +90 dias. */
+    private static final class BarrasAntiguidade extends javax.swing.JComponent
+    {
+
+        private static final String[] NOMES = { "A vencer", "1-30 dias", "31-60 dias", "61-90 dias", "+90 dias" };
+        private static final java.awt.Color[] CORES = { util.ui.ComponentesWeb.VERDE, util.ui.ComponentesWeb.LARANJA,
+            new java.awt.Color( 234, 88, 12 ), util.ui.ComponentesWeb.VERMELHO, new java.awt.Color( 127, 29, 29 ) };
+        private double[] v = new double[ 5 ];
+
+        BarrasAntiguidade()
+        {
+            setPreferredSize( new java.awt.Dimension( 300, 74 ) );
+            setToolTipText( "Antiguidade da dívida pelos dias desde o vencimento" );
+        }
+
+        void setValores( double[] valores )
+        {
+            v = valores;
+            repaint();
+        }
+
+        @Override
+        protected void paintComponent( java.awt.Graphics g )
+        {
+            java.awt.Graphics2D g2 = util.ui.ComponentesWeb.suave( g );
+            int w = getWidth(), h = getHeight();
+            double total = 0;
+            for ( double x : v )
+            {
+                total += x;
+            }
+            int cols = NOMES.length, gap = 8;
+            int cw = ( w - gap * ( cols - 1 ) ) / cols;
+            for ( int i = 0; i < cols; i++ )
+            {
+                int x = i * ( cw + gap );
+                g2.setColor( new java.awt.Color( 248, 250, 252 ) );
+                g2.fillRoundRect( x, 0, cw, h - 1, 12, 12 );
+                g2.setColor( util.ui.ComponentesWeb.LINHA );
+                g2.drawRoundRect( x, 0, cw, h - 1, 12, 12 );
+                double p = total <= 0 ? 0 : v[ i ] / total;
+                g2.setColor( CORES[ i ] );
+                g2.fillRoundRect( x + 8, h - 14, Math.max( 0, ( int ) ( ( cw - 16 ) * p ) ), 6, 6, 6 );
+                g2.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 11f ) );
+                g2.setColor( util.ui.ComponentesWeb.TEXTO_SUAVE );
+                g2.drawString( NOMES[ i ], x + 8, 16 );
+                g2.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 14f ) );
+                g2.setColor( v[ i ] > 0 ? CORES[ i ] : util.ui.ComponentesWeb.CINZA );
+                String s = kitanda.util.CfMethods.formatarComoMoeda( v[ i ] );
+                java.awt.FontMetrics fm = g2.getFontMetrics();
+                if ( fm.stringWidth( s ) > cw - 12 )
+                {
+                    g2.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 11.5f ) );
+                }
+                g2.drawString( s, x + 8, 40 );
+            }
+            g2.dispose();
+        }
     }
 
     private void set_combos()

@@ -95,7 +95,138 @@ public class EntregaLavandariaVisao extends javax.swing.JFrame
         setWindowsListener();
         
         jPanel4.setVisible( false);
+        // aspecto do SysKitandaHotel, com o circuito da lavandaria
+        util.ui.LayoutSeguro.aplicar( this, "Entrega de peças", this::montarLayoutWeb );
 
+    }
+
+    // =====================================================================
+    // LAYOUT WEB (design do SysKitandaHotel, com o circuito da lavandaria)
+    // Procurar a recolha, cliente, peças e observações; entregar uma peça ou
+    // todas. Componentes e eventos são os mesmos do initComponents.
+    // =====================================================================
+    private void montarLayoutWeb()
+    {
+        // ---------------------------------------------------------- procurar
+        // o modo activo é o botão desactivado (activarButton): pílulas que o mostram
+        final javax.swing.JToggleButton pRecolha = new javax.swing.JToggleButton( "Nº da recolha" );
+        final javax.swing.JToggleButton pTelefone = new javax.swing.JToggleButton( "Nº de telefone" );
+        javax.swing.ButtonGroup modos = new javax.swing.ButtonGroup();
+        Object[][] pares =
+        {
+            { pRecolha, btnRecolha }, { pTelefone, btnTelefone }
+        };
+        for ( Object[] p : pares )
+        {
+            final javax.swing.JToggleButton t = ( javax.swing.JToggleButton ) p[ 0 ];
+            final javax.swing.JButton original = ( javax.swing.JButton ) p[ 1 ];
+            util.ui.ComponentesWeb.pilulaCompacta( t );
+            modos.add( t );
+            t.setSelected( !original.isEnabled() );
+            t.addActionListener( e ->
+            {
+                if ( original.isEnabled() )
+                {
+                    original.doClick();
+                }
+            } );
+            original.addPropertyChangeListener( "enabled", e -> t.setSelected( !original.isEnabled() ) );
+        }
+        pRecolha.setToolTipText( "Procurar pelo número da recolha" );
+        pTelefone.setToolTipText( "Procurar pelo número de telefone do cliente" );
+        javax.swing.JPanel modo = util.ui.FormularioWeb.pilulas( pRecolha, pTelefone );
+
+        util.ui.FormularioWeb.campoTexto( txtCodRef );
+        txtCodRef.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 16f ) );
+        txtCodRef.setToolTipText( "Escreva o número e carregue Enter" );
+        jButton4.setText( "Pesquisar" );
+        util.ui.ComponentesWeb.botao( jButton4, util.ui.ComponentesWeb.Variante.PRIMARIO, "/imagens/proucura.png", "Procurar as peças" );
+        javax.swing.JPanel linhaProcura = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 8, 0 ) );
+        linhaProcura.add( txtCodRef, java.awt.BorderLayout.CENTER );
+        linhaProcura.add( jButton4, java.awt.BorderLayout.EAST );
+        util.ui.ComponentesWeb.Cartao procurar = util.ui.FormularioWeb.cartao( "Procurar a recolha", util.ui.ComponentesWeb.AZUL_VIVO,
+                util.ui.FormularioWeb.pilha( 8, util.ui.ComponentesWeb.campo( "Procurar por", modo ),
+                        util.ui.ComponentesWeb.campo( "Número (Enter procura)", linhaProcura ) ) );
+
+        // ---------------------------------------------------------- cliente
+        for ( javax.swing.JLabel l : new javax.swing.JLabel[]
+        {
+            lbNomeCliente, lbTelefone, lbMorada
+        } )
+        {
+            l.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 13.5f ) );
+            l.setForeground( util.ui.ComponentesWeb.TEXTO );
+            l.setPreferredSize( new java.awt.Dimension( 10, 24 ) );
+        }
+        lbNomeCliente.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 16f ) );
+        lbNomeCliente.setForeground( util.ui.ComponentesWeb.AZUL );
+        util.ui.ComponentesWeb.Cartao cliente = util.ui.FormularioWeb.cartao( "Cliente", util.ui.ComponentesWeb.VERDE,
+                util.ui.FormularioWeb.pilha( 4, lbNomeCliente, lbTelefone, lbMorada ) );
+
+        // ---------------------------------------------------------- peças
+        util.ui.EstiloUI.estilizarTabela( jTable1, true );
+        jTable1.setRowHeight( 32 );
+        jScrollPane1.setBorder( new javax.swing.border.LineBorder( util.ui.ComponentesWeb.LINHA, 1, true ) );
+        jScrollPane1.getViewport().setBackground( java.awt.Color.WHITE );
+        jScrollPane1.setPreferredSize( new java.awt.Dimension( 600, 260 ) );
+        jScrollPane1.setMinimumSize( new java.awt.Dimension( 300, 140 ) );
+        final util.ui.ComponentesWeb.Etiqueta etiqueta = new util.ui.ComponentesWeb.Etiqueta( "0 peças", util.ui.ComponentesWeb.CIANO );
+        final Runnable contar = () ->
+        {
+            int n = jTable1.getRowCount();
+            etiqueta.setText( n + ( n == 1 ? " peça" : " peças" ) );
+        };
+        jTable1.getModel().addTableModelListener( e -> contar.run() );
+        jTable1.addPropertyChangeListener( "model", e ->
+        {
+            jTable1.getModel().addTableModelListener( ev -> contar.run() );
+            contar.run();
+        } );
+        contar.run();
+        jButton2.setText( "Entregar a seleccionada" );
+        util.ui.ComponentesWeb.botao( jButton2, util.ui.ComponentesWeb.Variante.PRIMARIO, null, "Entregar só a peça seleccionada" );
+        jButton1.setText( "Entregar tudo" );
+        util.ui.ComponentesWeb.botao( jButton1, util.ui.ComponentesWeb.Variante.SUCESSO, null, "Entregar todas as peças da recolha" );
+        jButton1.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 14f ) );
+        javax.swing.JPanel botoes = util.ui.ComponentesWeb.transparente( new java.awt.FlowLayout( java.awt.FlowLayout.RIGHT, 8, 0 ) );
+        botoes.add( jButton2 );
+        botoes.add( jButton1 );
+        javax.swing.JPanel corpoPecas = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 0, 8 ) );
+        corpoPecas.add( jScrollPane1, java.awt.BorderLayout.CENTER );
+        corpoPecas.add( botoes, java.awt.BorderLayout.SOUTH );
+        util.ui.ComponentesWeb.Cartao pecas = util.ui.FormularioWeb.cartao( "Peças prontas a entregar", util.ui.ComponentesWeb.CIANO, corpoPecas );
+        pecas.adicionarAccao( etiqueta );
+
+        // ---------------------------------------------------------- observações
+        jLabel2.setText( "Observações da entrega" );
+        txtObsEntrega.setFont( util.ui.EstiloUI.FONTE.deriveFont( 13.5f ) );
+        jScrollPane2.setPreferredSize( new java.awt.Dimension( 260, 110 ) );
+        util.ui.ComponentesWeb.Cartao obs = util.ui.FormularioWeb.cartao( "Observações da entrega", util.ui.ComponentesWeb.ROXO, jScrollPane2 );
+
+        javax.swing.JPanel lateral = util.ui.FormularioWeb.pilha( 10, procurar, cliente, obs );
+        javax.swing.JPanel colunas = util.ui.ComponentesWeb.transparente( new util.ui.ComponentesWeb.ColunasResponsivas(
+                new double[]{ 0.34, 0.66 }, new int[]{ 300, 440 }, 10 ) );
+        colunas.add( lateral );
+        colunas.add( pecas );
+
+        util.ui.ComponentesWeb.Cartao fluxo = util.ui.FormularioWeb.cartao( "O circuito da roupa", util.ui.ComponentesWeb.CIANO,
+                util.ui.FluxoWeb.lavandaria( 4 ) );
+
+        // ---------------------------------------------------------- cabeçalho e acções
+        lbEntregaLavandaria.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 15f ) );
+        lbEntregaLavandaria.setForeground( java.awt.Color.WHITE );
+        lbEntregaLavandaria.setToolTipText( "Número do documento de entrega" );
+        javax.swing.JPanel direita = util.ui.ComponentesWeb.transparente( new java.awt.FlowLayout( java.awt.FlowLayout.RIGHT, 0, 10 ) );
+        direita.add( lbEntregaLavandaria );
+        jButton3.setText( "Sair" );
+        util.ui.FormularioWeb.botaoSair( jButton3, "Fechar a entrega de peças" );
+
+        util.ui.FormularioWeb.montar( this,
+                util.ui.FormularioWeb.cabecalho( "Entrega de Peças", "Entregar ao cliente as peças prontas", direita ),
+                util.ui.FormularioWeb.pilha( 10, fluxo, colunas ),
+                util.ui.FormularioWeb.barraAccoes( util.ui.FormularioWeb.dica( "Procure a recolha, confira as peças e entregue" ), jButton3 ),
+                "Kitanda  ·  Lavandaria  ·  Entrega de Peças" );
+        util.ui.FormularioWeb.ajustar( this, 1160, 780, 820, 560 );
     }
 
     /**

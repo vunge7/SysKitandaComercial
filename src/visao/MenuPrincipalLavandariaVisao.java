@@ -91,6 +91,30 @@ public class MenuPrincipalLavandariaVisao extends javax.swing.JFrame
         jMenuItem12.setVisible( false );
         jMenuItemAlteracaoGuia.setVisible( false );
         jMenuItemConverterGuia.setVisible( false );
+        // aspecto do menu principal do SysKitandaHotel, com os desenhos do negócio
+        util.ui.LayoutSeguro.aplicar( this, "Menu Lavandaria", () -> util.ui.MenuNegocioWeb.montar( this, jMenuBar1,
+                "Lavandaria", util.ui.MenuWeb.Simbolo.LAVANDARIA, cod,
+                util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Log Out" ), null,
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Front Office" ), util.ui.MenuWeb.Simbolo.LAVANDARIA,
+                        "Recolha e Entrega", "Receber a roupa, acompanhar e entregar" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Venda" ), util.ui.MenuWeb.Simbolo.CAMISA,
+                        "Venda", "Facturação dos serviços de lavandaria" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Produto" ), util.ui.MenuWeb.Simbolo.FERRO,
+                        "Serviços e Artigos", "Lavar, passar, limpar a seco..." ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Cadastro de Cliente" ), util.ui.MenuWeb.Simbolo.PESSOAS,
+                        "Clientes", "Cadastro e contactos dos clientes" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Processar Recibos de Factura" ), util.ui.MenuWeb.Simbolo.RECIBO,
+                        "Recibos", "Receber facturas em aberto" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Compras" ), util.ui.MenuWeb.Simbolo.CARRINHO,
+                        "Compras", "Detergentes, consumíveis e stock" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Inventario" ), util.ui.MenuWeb.Simbolo.CAIXA,
+                        "Inventário", "Existências por armazém" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Saidas Produtos" ), util.ui.MenuWeb.Simbolo.CABIDE,
+                        "Saídas de Produtos", "Consumos e saídas de stock" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Gestao de Turno" ), util.ui.MenuWeb.Simbolo.CALENDARIO,
+                        "Turnos", "Abertura e fecho de turno" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Converter Proformas em Facturas" ), util.ui.MenuWeb.Simbolo.PRANCHETA,
+                        "Proformas", "Converter proformas em facturas" ) ) );
     }
 
     public void busca_permissao()

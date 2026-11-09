@@ -36,6 +36,8 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        // aspecto do SysKitandaHotel, sobre o initComponents
+        util.ui.LayoutSeguro.aplicar( this, "Dados da empresa", this::montarLayoutWeb );
     }
 
     /**
@@ -670,6 +672,246 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog {
             rbJanelaServico.setSelected(false);
         }
 
+    }
+
+    // =====================================================================
+    // LAYOUT WEB (design do SysKitandaHotel, responsivo)
+    // Identificação, contactos, tipo de negócio (cartões com o símbolo e as
+    // cores do tema), coordenadas bancárias e observação dos documentos. Os
+    // campos, os rádios do negócio e a gravação são os mesmos; ao gravar, o
+    // tema do negócio passa a valer nas janelas que se abrirem a seguir.
+    // =====================================================================
+    private void montarLayoutWeb()
+    {
+        jLabel1.setText( "Nome da empresa *" );
+        jLabel10.setText( "NIF *" );
+        jLabel5.setText( "Director geral / gerente" );
+        jLabel16.setText( "Nº de estabelecimento" );
+        jLabel35.setText( "Regime (AGT)" );
+        jLabel14.setText( "Slogan" );
+        jLabel4.setText( "Endereço" );
+        jLabel34.setText( "Telefone" );
+        jLabel13.setText( "Email" );
+        for ( javax.swing.JLabel l : new javax.swing.JLabel[]
+        {
+            jLabel1, jLabel10, jLabel5, jLabel16, jLabel35, jLabel14, jLabel4, jLabel34, jLabel13,
+            jLabel6, jLabel7, jLabel11, jLabel29, jLabel8, jLabel12, jLabel15, jLabel32
+        } )
+        {
+            l.setHorizontalAlignment( javax.swing.SwingConstants.LEFT );
+        }
+        util.ui.FormularioWeb.campoTexto( txtNome, txtNIF, txt_director_geral, txtNumeroEstabelecimento, txtSlogan, txtEndereco,
+                txtTelefone, txtEmail, txtConta1, txtConta2, txtConta3, txtConta4, txtIban1, txtIban2, txtIban3, txtIban4 );
+        util.ui.FormularioWeb.combo( cmb_regime );
+
+        util.ui.ComponentesWeb.Cartao identificacao = util.ui.FormularioWeb.cartao( "Identificação", util.ui.ComponentesWeb.VERDE,
+                util.ui.FormularioWeb.pilha( 8,
+                        util.ui.FormularioWeb.grelha( 260, 2,
+                                util.ui.ComponentesWeb.campo( jLabel1, txtNome ),
+                                util.ui.ComponentesWeb.campo( jLabel5, txt_director_geral ) ),
+                        util.ui.FormularioWeb.grelha( 170, 4,
+                                util.ui.ComponentesWeb.campo( jLabel10, txtNIF ),
+                                util.ui.ComponentesWeb.campo( jLabel16, txtNumeroEstabelecimento ),
+                                util.ui.ComponentesWeb.campo( jLabel35, cmb_regime ),
+                                util.ui.ComponentesWeb.campo( jLabel14, txtSlogan ) ) ) );
+        util.ui.ComponentesWeb.Cartao contactos = util.ui.FormularioWeb.cartao( "Contactos", util.ui.ComponentesWeb.AZUL_VIVO,
+                util.ui.FormularioWeb.grelha( 220, 3,
+                        util.ui.ComponentesWeb.campo( jLabel4, txtEndereco ),
+                        util.ui.ComponentesWeb.campo( jLabel34, txtTelefone ),
+                        util.ui.ComponentesWeb.campo( jLabel13, txtEmail ) ) );
+
+        // ---------------------------------------------------------- tipo de negócio
+        javax.swing.JPanel negocios = util.ui.ComponentesWeb.transparente( new util.ui.ComponentesWeb.GrelhaResponsiva( 200, 10, 4 ) );
+        Object[][] opcoes =
+        {
+            { rbComercial, util.ui.MenuWeb.Simbolo.CARTEIRA, "Comercial", "Lojas, boutiques, armazéns, garrafeiras, salões", "Comercial" },
+            { rbRestaurante, util.ui.MenuWeb.Simbolo.TALHERES, "Restaurante", "Restaurantes e bares", "Restaurante" },
+            { rbFarmacia, util.ui.MenuWeb.Simbolo.FARMACIA, "Farmácia", "Medicamentos e produtos de saúde", "Farmacia" },
+            { rbLavandaria, util.ui.MenuWeb.Simbolo.LAVANDARIA, "Lavandaria", "Lavagem, engomagem e entrega", "Lavandaria" },
+            { rbOficina, util.ui.MenuWeb.Simbolo.FERRAMENTA, "Oficina", "Reparações, peças e viaturas", "Oficina" },
+            { rbTransportes, util.ui.MenuWeb.Simbolo.CARRO, "Transportes", "Logística, fábricas, estações de serviço", "Transportes" },
+            { rbPrestacaoServico, util.ui.MenuWeb.Simbolo.PRANCHETA, "Prestação de Serviço", "Serviços em geral", "Prestação de Serviço" },
+            { rbLayout, util.ui.MenuWeb.Simbolo.GRAFICO, "Layout", "Aspecto alternativo", "Layout" }
+        };
+        for ( Object[] o : opcoes )
+        {
+            negocios.add( new CartaoNegocio( ( javax.swing.JRadioButton ) o[ 0 ], ( util.ui.MenuWeb.Simbolo ) o[ 1 ],
+                    ( String ) o[ 2 ], ( String ) o[ 3 ], ( String ) o[ 4 ] ) );
+        }
+        util.ui.ComponentesWeb.Cartao cartaoNegocio = util.ui.FormularioWeb.cartao( "Tipo de negócio", util.ui.ComponentesWeb.ROXO,
+                util.ui.FormularioWeb.pilha( 8, negocios,
+                        util.ui.FormularioWeb.dica( "As cores e os símbolos de todo o sistema seguem o negócio escolhido" ) ) );
+
+        // ---------------------------------------------------------- coordenadas bancárias
+        jLabel6.setText( "Conta 1" );
+        jLabel7.setText( "Conta 2" );
+        jLabel11.setText( "Conta 3" );
+        jLabel29.setText( "Conta 4" );
+        jLabel8.setText( "IBAN 1" );
+        jLabel12.setText( "IBAN 2" );
+        jLabel15.setText( "IBAN 3" );
+        jLabel32.setText( "IBAN 4" );
+        util.ui.ComponentesWeb.Cartao bancos = util.ui.FormularioWeb.cartao( "Coordenadas bancárias", util.ui.ComponentesWeb.LARANJA,
+                util.ui.FormularioWeb.grelha( 260, 2,
+                        util.ui.ComponentesWeb.campo( jLabel6, txtConta1 ), util.ui.ComponentesWeb.campo( jLabel8, txtIban1 ),
+                        util.ui.ComponentesWeb.campo( jLabel7, txtConta2 ), util.ui.ComponentesWeb.campo( jLabel12, txtIban2 ),
+                        util.ui.ComponentesWeb.campo( jLabel11, txtConta3 ), util.ui.ComponentesWeb.campo( jLabel15, txtIban3 ),
+                        util.ui.ComponentesWeb.campo( jLabel29, txtConta4 ), util.ui.ComponentesWeb.campo( jLabel32, txtIban4 ) ) );
+
+        // ---------------------------------------------------------- observação
+        txt_obs.setFont( util.ui.EstiloUI.FONTE.deriveFont( 13.5f ) );
+        txt_obs.setLineWrap( true );
+        txt_obs.setWrapStyleWord( true );
+        jScrollPane2.setPreferredSize( new java.awt.Dimension( 300, 70 ) );
+        util.ui.ComponentesWeb.Cartao obs = util.ui.FormularioWeb.cartao( "Observação nos documentos", util.ui.ComponentesWeb.CINZA,
+                util.ui.FormularioWeb.pilha( 6, jScrollPane2,
+                        util.ui.FormularioWeb.dica( "Ex.: Aceitamos devolução / Não aceitamos devolução / Troca" ) ) );
+
+        javax.swing.JPanel colunas = util.ui.ComponentesWeb.transparente( new util.ui.ComponentesWeb.ColunasResponsivas(
+                new double[]{ 0.5, 0.5 }, new int[]{ 380, 380 }, 10 ) );
+        colunas.add( util.ui.FormularioWeb.pilha( 10, contactos, obs ) );
+        colunas.add( bancos );
+
+        okButton.setText( "Gravar" );
+        util.ui.FormularioWeb.botaoSalvar( okButton, "Gravar os dados da empresa" );
+        // depois de gravar (o evento antigo corre primeiro): o tema do negócio vale já
+        okButton.addActionListener( e -> javax.swing.SwingUtilities.invokeLater( () ->
+        {
+            util.ui.Tema.Negocio antes = util.ui.Tema.actual();
+            util.ui.Tema.aplicar( getNegocio() );
+            if ( util.ui.Tema.actual() != antes )
+            {
+                JOptionPane.showMessageDialog( this, "O sistema passa a usar as cores e os símbolos de \""
+                        + util.ui.Tema.area() + "\" nas janelas que abrir a partir de agora.",
+                        "Tipo de negócio", JOptionPane.INFORMATION_MESSAGE );
+            }
+        } ) );
+        cancelButton.setText( "Sair" );
+        util.ui.FormularioWeb.botaoSair( cancelButton, "Fechar sem gravar" );
+
+        util.ui.FormularioWeb.montar( this,
+                util.ui.FormularioWeb.cabecalho( "Dados da Empresa", "Identificação, contactos, negócio e coordenadas bancárias", null ),
+                util.ui.FormularioWeb.pilha( 10, identificacao, cartaoNegocio, colunas ),
+                util.ui.FormularioWeb.barraAccoes( util.ui.FormularioWeb.dica( "Os campos com * são obrigatórios" ), okButton, cancelButton ),
+                "Kitanda  ·  Dados da Empresa" );
+        util.ui.FormularioWeb.ajustar( this, 1100, 820, 780, 560 );
+    }
+
+    /**
+     * Cartão de um tipo de negócio: símbolo, nome, descrição e as cores do
+     * tema. Carregar no cartão é carregar no rádio (o rádio continua no
+     * ButtonGroup e é ele que a gravação lê).
+     */
+    private static final class CartaoNegocio extends javax.swing.JComponent
+    {
+
+        private final javax.swing.JRadioButton radio;
+        private final util.ui.MenuWeb.Simbolo simbolo;
+        private final String nome;
+        private final String descricao;
+        private final java.awt.Color[] cores;
+        private boolean rato;
+
+        CartaoNegocio( javax.swing.JRadioButton radio, util.ui.MenuWeb.Simbolo simbolo, String nome, String descricao, String negocio )
+        {
+            this.radio = radio;
+            this.simbolo = simbolo;
+            this.nome = nome;
+            this.descricao = descricao;
+            this.cores = util.ui.Tema.amostra( negocio );
+            setPreferredSize( new java.awt.Dimension( 200, 96 ) );
+            setCursor( java.awt.Cursor.getPredefinedCursor( java.awt.Cursor.HAND_CURSOR ) );
+            setToolTipText( nome + " · " + descricao );
+            radio.addItemListener( e -> repaint() );
+            radio.addComponentListener( new java.awt.event.ComponentAdapter()
+            {
+                @Override
+                public void componentHidden( java.awt.event.ComponentEvent e )
+                {
+                    setVisible( false );
+                }
+
+                @Override
+                public void componentShown( java.awt.event.ComponentEvent e )
+                {
+                    setVisible( true );
+                }
+            } );
+            setVisible( radio.isVisible() );
+            addMouseListener( new java.awt.event.MouseAdapter()
+            {
+                @Override
+                public void mouseClicked( java.awt.event.MouseEvent e )
+                {
+                    if ( radio.isEnabled() && !radio.isSelected() )
+                    {
+                        radio.doClick();
+                    }
+                }
+
+                @Override
+                public void mouseEntered( java.awt.event.MouseEvent e )
+                {
+                    rato = true;
+                    repaint();
+                }
+
+                @Override
+                public void mouseExited( java.awt.event.MouseEvent e )
+                {
+                    rato = false;
+                    repaint();
+                }
+            } );
+        }
+
+        @Override
+        protected void paintComponent( java.awt.Graphics g )
+        {
+            java.awt.Graphics2D g2 = util.ui.ComponentesWeb.suave( g );
+            int w = getWidth(), h = getHeight();
+            boolean sel = radio.isSelected();
+            g2.setColor( sel ? util.ui.ComponentesWeb.mistura( java.awt.Color.WHITE, cores[ 1 ], 0.10 ) : java.awt.Color.WHITE );
+            g2.fillRoundRect( 0, 0, w - 1, h - 1, 16, 16 );
+            g2.setStroke( new java.awt.BasicStroke( sel ? 2.4f : 1f ) );
+            g2.setColor( sel ? cores[ 1 ] : rato ? util.ui.ComponentesWeb.CINZA : util.ui.ComponentesWeb.LINHA );
+            g2.drawRoundRect( 1, 1, w - 3, h - 3, 16, 16 );
+            // círculo com o símbolo nas cores do negócio
+            g2.setColor( cores[ 0 ] );
+            g2.fillOval( 12, 14, 40, 40 );
+            util.ui.MenuWeb.desenharSimbolo( g2, simbolo, 20, 22, 24, java.awt.Color.WHITE );
+            g2.setColor( util.ui.ComponentesWeb.TEXTO );
+            g2.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 14f ) );
+            g2.drawString( nome, 62, 30 );
+            g2.setColor( util.ui.ComponentesWeb.TEXTO_SUAVE );
+            g2.setFont( util.ui.EstiloUI.FONTE.deriveFont( 11.5f ) );
+            java.awt.FontMetrics fm = g2.getFontMetrics();
+            String d = descricao;
+            while ( fm.stringWidth( d ) > w - 72 && d.length() > 4 )
+            {
+                d = d.substring( 0, d.length() - 2 );
+            }
+            if ( !d.equals( descricao ) )
+            {
+                d = d.trim() + "…";
+            }
+            g2.drawString( d, 62, 48 );
+            // as cores do tema
+            for ( int i = 0; i < cores.length; i++ )
+            {
+                g2.setColor( cores[ i ] );
+                g2.fillRoundRect( 62 + i * 26, h - 26, 22, 12, 6, 6 );
+            }
+            if ( sel )
+            {
+                g2.setColor( cores[ 1 ] );
+                g2.fillOval( w - 26, 10, 16, 16 );
+                g2.setColor( java.awt.Color.WHITE );
+                g2.setStroke( new java.awt.BasicStroke( 2f ) );
+                g2.drawPolyline( new int[]{ w - 22, w - 19, w - 14 }, new int[]{ 18, 21, 14 }, 3 );
+            }
+            g2.dispose();
+        }
     }
 
     /**

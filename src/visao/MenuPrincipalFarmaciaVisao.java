@@ -90,6 +90,30 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame
         mostrarNumeroDeprodutosExpirados();
         jMenuItemGestaoCreditos.setEnabled( false );
         //jmRelatorioDiario.setEnabled(false);
+        // aspecto do menu principal do SysKitandaHotel, com os desenhos do negócio
+        util.ui.LayoutSeguro.aplicar( this, "Menu Farmácia", () -> util.ui.MenuNegocioWeb.montar( this, jMenuBar1,
+                "Farmácia", util.ui.MenuWeb.Simbolo.FARMACIA, cod,
+                util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Log Out" ), null,
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Venda" ), util.ui.MenuWeb.Simbolo.FARMACIA,
+                        "Venda ao Balcão", "Dispensa de medicamentos e produtos" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Produto" ), util.ui.MenuWeb.Simbolo.COMPRIMIDO,
+                        "Medicamentos", "Cadastro de medicamentos e produtos" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Front Office" ), util.ui.MenuWeb.Simbolo.CARRINHO,
+                        "Front Office", "Atendimento rápido" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Cadastro de Cliente" ), util.ui.MenuWeb.Simbolo.PESSOAS,
+                        "Clientes", "Cadastro e contactos dos clientes" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Processar Recibos de Factura" ), util.ui.MenuWeb.Simbolo.RECIBO,
+                        "Recibos", "Receber facturas em aberto" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Compras" ), util.ui.MenuWeb.Simbolo.CARRINHO,
+                        "Compras", "Encomendas e entradas de stock" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Inventario" ), util.ui.MenuWeb.Simbolo.CAIXA,
+                        "Inventário", "Existências e validades por armazém" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Saidas Produtos" ), util.ui.MenuWeb.Simbolo.PRANCHETA,
+                        "Saídas de Produtos", "Consumos e saídas de stock" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Gestao de Turno" ), util.ui.MenuWeb.Simbolo.CALENDARIO,
+                        "Turnos", "Abertura e fecho de turno" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Converter Proformas em Facturas" ), util.ui.MenuWeb.Simbolo.RECIBO,
+                        "Proformas", "Converter proformas em facturas" ) ) );
     }
 
     public void busca_permissao()

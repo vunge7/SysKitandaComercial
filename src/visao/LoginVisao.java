@@ -221,7 +221,9 @@ public class LoginVisao extends javax.swing.JFrame {
                 int iw = (int) (imagem.getWidth(null) * escala), ih = (int) (imagem.getHeight(null) * escala);
                 g2.drawImage(imagem, (w - iw) / 2, (h - ih) / 2, iw, ih, null);
             }
-            g2.setPaint(new java.awt.GradientPaint(0, 0, new Color(0, 33, 71, 235), w, 0, new Color(0, 51, 102, 150)));
+            // cores do tema do negócio (azul no comercial, verde na farmácia...)
+            g2.setPaint(new java.awt.GradientPaint(0, 0, util.ui.ComponentesWeb.alfa(util.ui.MenuWeb.AZUL_NOITE, 235), w, 0,
+                    util.ui.ComponentesWeb.alfa(util.ui.EstiloUI.AZUL_ESCURO, 150)));
             g2.fillRect(0, 0, w, h);
             g2.dispose();
             return b;
@@ -285,7 +287,7 @@ public class LoginVisao extends javax.swing.JFrame {
     }
 
     private JPanel criarPainelEmpresaWeb() {
-        JLabel lbArea = new JLabel("GESTÃO COMERCIAL");
+        JLabel lbArea = new JLabel(util.ui.Tema.area().toUpperCase(new java.util.Locale("pt", "PT")));
         lbArea.setFont(util.ui.MenuWeb.rotuloGrupo("x", Color.WHITE).getFont().deriveFont(13f));
         lbArea.setForeground(util.ui.MenuWeb.DOURADO_CLARO);
 
@@ -295,14 +297,14 @@ public class LoginVisao extends javax.swing.JFrame {
         JLNif.setFont(util.ui.EstiloUI.FONTE.deriveFont(15f));
         JLNif.setForeground(new Color(214, 226, 243));
 
-        // o código faz piscar o texto do contrato (preto/vermelho): fundo claro para se ler
+        // contrato: verde fixo dentro do prazo; a 30 dias ou menos do fim, vermelho a piscar
         JLDataFecho.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(13f));
-        util.ui.ComponentesWeb.CaixaSuave pilulaContrato = new util.ui.ComponentesWeb.CaixaSuave(new BorderLayout(),
-                new Color(248, 250, 252), new Color(226, 232, 240));
-        pilulaContrato.setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
-        pilulaContrato.add(JLDataFecho, BorderLayout.CENTER);
+        JLDataFecho.setForeground(Color.WHITE);
+        pilulaContratoWeb.add(JLDataFecho, BorderLayout.CENTER);
         JPanel linhaContrato = util.ui.ComponentesWeb.transparente(new BorderLayout());
-        linhaContrato.add(pilulaContrato, BorderLayout.WEST);
+        linhaContrato.add(pilulaContratoWeb, BorderLayout.WEST);
+        // depois do construtor (os dados da instituição já foram lidos): verde ou a piscar
+        javax.swing.SwingUtilities.invokeLater(this::iniciarPiscarLabelJLDataFecho);
 
         Soft.setFont(util.ui.EstiloUI.FONTE.deriveFont(13f));
         Soft.setForeground(new Color(214, 226, 243));
@@ -419,18 +421,54 @@ public class LoginVisao extends javax.swing.JFrame {
         return cartao;
     }
 
+    /** Dias antes do fim do contrato em que o aviso começa a piscar. */
+    private static final int DIAS_ALERTA_CONTRATO = 30;
+    private final PilulaContratoWeb pilulaContratoWeb = new PilulaContratoWeb();
+    private String textoContratoBase;
+
+    /**
+     * Contrato: com mais de 30 dias até ao fim fica verde, sem piscar; a 30 dias
+     * ou menos (ou já terminado) pisca a vermelho. Pode ser chamado mais de uma
+     * vez: não arranca dois temporizadores.
+     */
     public void iniciarPiscarLabelJLDataFecho() {
+        pararPiscarLabelJLDataFecho();
+        java.util.Date fecho = null;
+        try {
+            TbDadosInstituicao dados = d != null ? d : (TbDadosInstituicao) dadosInstituicaoController.findById(1);
+            fecho = dados == null ? null : dados.getDataFecho();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (textoContratoBase == null) {
+            textoContratoBase = JLDataFecho.getText();
+        }
+        JLDataFecho.setForeground(Color.WHITE);
+        if (fecho == null) {
+            pilulaContratoWeb.setEstado(PilulaContratoWeb.NEUTRO);
+            return;
+        }
+        long dias = diasAteWeb(fecho);
+        String situacao = dias < 0 ? "contrato terminado"
+                : dias == 0 ? "termina hoje"
+                : dias == 1 ? "falta 1 dia"
+                : "faltam " + dias + " dias";
+        JLDataFecho.setText(textoContratoBase + "  ·  " + situacao);
+        if (dias > DIAS_ALERTA_CONTRATO) {
+            // dentro do prazo: verde, sem piscar
+            pilulaContratoWeb.setEstado(PilulaContratoWeb.VERDE);
+            JLDataFecho.setToolTipText("Licença dentro do prazo.");
+            return;
+        }
+        JLDataFecho.setToolTipText("Contacte a DVML-COMERCIAL para renovar a licença.");
+        pilulaContratoWeb.setEstado(PilulaContratoWeb.VERMELHO);
         piscarTimer = new javax.swing.Timer(500, new ActionListener() {
-            private boolean ligado = false;
+            private boolean ligado = true;
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (ligado) {
-                    JLDataFecho.setForeground(Color.BLACK);
-                } else {
-                    JLDataFecho.setForeground(Color.RED);
-                }
                 ligado = !ligado;
+                pilulaContratoWeb.setEstado(ligado ? PilulaContratoWeb.VERMELHO : PilulaContratoWeb.NEUTRO);
             }
         });
         piscarTimer.start();
@@ -439,7 +477,44 @@ public class LoginVisao extends javax.swing.JFrame {
     public void pararPiscarLabelJLDataFecho() {
         if (piscarTimer != null && piscarTimer.isRunning()) {
             piscarTimer.stop();
-            JLDataFecho.setForeground(Color.BLACK);  // Garante a cor normal
+        }
+    }
+
+    /** Dias de calendário até à data de fecho: 0 = termina hoje, negativo = já terminou. */
+    private static long diasAteWeb(java.util.Date dataFecho) {
+        java.time.ZoneId zona = java.time.ZoneId.systemDefault();
+        // new Date(...): a BD pode devolver java.sql.Date, que não converte para Instant
+        java.time.LocalDate fecho = new java.util.Date(dataFecho.getTime()).toInstant().atZone(zona).toLocalDate();
+        return java.time.temporal.ChronoUnit.DAYS.between(java.time.LocalDate.now(zona), fecho);
+    }
+
+    /** Pílula do contrato: verde (dentro do prazo), vermelho (alerta) ou neutra. */
+    private static final class PilulaContratoWeb extends JPanel {
+
+        static final int NEUTRO = 0, VERDE = 1, VERMELHO = 2;
+        private int estado = NEUTRO;
+
+        PilulaContratoWeb() {
+            super(new BorderLayout());
+            setOpaque(false);
+            setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
+        }
+
+        void setEstado(int e) {
+            estado = e;
+            repaint();
+        }
+
+        @Override
+        protected void paintComponent(java.awt.Graphics g) {
+            java.awt.Graphics2D g2 = util.ui.ComponentesWeb.suave(g);
+            g2.setColor(estado == VERMELHO ? util.ui.ComponentesWeb.VERMELHO
+                    : estado == VERDE ? new Color(21, 128, 61) : new Color(255, 255, 255, 30));
+            g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 14, 14);
+            g2.setColor(estado == VERMELHO ? new Color(254, 202, 202)
+                    : estado == VERDE ? new Color(187, 247, 208) : new Color(255, 255, 255, 70));
+            g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 14, 14);
+            g2.dispose();
         }
     }
 
@@ -878,6 +953,10 @@ public void entrar_sistema() throws SQLException, UnknownHostException {
 
         id_user = usuario.getCodigo();
         id_empresa = getIdEmpresa();
+        // o negócio pode ter mudado nos dados da instituição: o tema acompanha
+        if (dadosInstituicao != null) {
+            util.ui.Tema.aplicar(dadosInstituicao.getNegocio());
+        }
 
         try {
             // BackupUtil.fazerBackupAgora();
@@ -1078,6 +1157,10 @@ public void entrar_sistema() throws SQLException, UnknownHostException {
                 if (startBackGroundProcesses()) {
                     // a ligação partilhada primeiro: o monitor de ligação fica nela (e não na do stock)
                     BDConexao.getInstancia();
+                    // cores e símbolos do negócio (tb_dados_instituicao.negocio) antes de abrir qualquer janela
+                    util.ui.Tema.aplicarDaInstituicao();
+                    // todos os relatórios (JasperViewer): maximizados e com o zoom ajustado à largura
+                    util.ui.RelatoriosWeb.instalar();
                     // stock diário (registo do dia) em segundo plano, com ligação própria:
                     // o início de sessão aparece logo, sem esperar por ele
                     Thread stockDiario = new Thread(() -> {

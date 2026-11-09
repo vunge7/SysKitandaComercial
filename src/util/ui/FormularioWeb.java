@@ -44,7 +44,8 @@ public final class FormularioWeb {
 
     public static final int ALTURA_CAMPO = 30;
     private static final int ESPACO = 10;
-    private static final Color TEXTO_CABECALHO = new Color(196, 218, 245);
+    /** Texto claro do cabeçalho (o tema do negócio muda-o). */
+    static Color TEXTO_CABECALHO = new Color(196, 218, 245);
 
     private FormularioWeb() {
     }
@@ -109,7 +110,7 @@ public final class FormularioWeb {
     /** direita pode ser null. */
     public static JPanel cabecalho(String titulo, String subtitulo, JComponent direita) {
         JPanel cabecalho = new ComponentesWeb.PainelGradiente(new BorderLayout(16, 0),
-                EstiloUI.AZUL_ESCURO, new Color(0, 96, 168));
+                EstiloUI.AZUL_ESCURO, Tema.gradienteFim());
         cabecalho.setBorder(BorderFactory.createEmptyBorder(12, 20, 12, 20));
 
         JLabel lbTitulo = new JLabel(titulo);
@@ -123,7 +124,7 @@ public final class FormularioWeb {
         titulos.add(lbTitulo);
         titulos.add(lbSubtitulo);
         JPanel marca = ComponentesWeb.transparente(new BorderLayout(12, 0));
-        marca.add(new JLabel(EstiloUI.icone("/imagens/carrinho.png", 44)), BorderLayout.WEST);
+        marca.add(new MenuWeb.Logotipo(44), BorderLayout.WEST);
         marca.add(titulos, BorderLayout.CENTER);
         JPanel marcaTopo = ComponentesWeb.transparente(new BorderLayout());
         marcaTopo.add(marca, BorderLayout.NORTH);

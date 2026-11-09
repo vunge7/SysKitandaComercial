@@ -178,7 +178,273 @@ public class EmissaoRecibos extends javax.swing.JFrame {
             visualizarSeries();
         } catch (Exception e) {
         }
+        // aspecto da Emissão de Recibos do SysKitandaHotel, sobre o initComponents
+        util.ui.LayoutSeguro.aplicar( this, "Emissão de recibos", this::montarLayoutWeb );
 
+    }
+
+    // =====================================================================
+    // LAYOUT WEB / RESPONSIVO (como a Emissão de Recibos do SysKitandaHotel)
+    // Clientes devedores, dados do cliente e facturas por liquidar em cartões
+    // que se reorganizam com a largura. Componentes, eventos e regras são os
+    // mesmos; a pesquisa de devedores só selecciona na lista existente.
+    // =====================================================================
+    private static final int[] LARGURAS_COLUNAS_WEB = { 40, 40, 160, 130, 85, 85, 80, 75, 70, 60, 60, 80 };
+    /** Abaixo disto as colunas ficariam ilegíveis: a tabela passa a ter barra horizontal. */
+    private static final int LARGURA_MINIMA_TABELA_WEB = 860;
+    private final javax.swing.JTextField txtProcurarDevedor = new javax.swing.JTextField();
+
+    private void montarLayoutWeb()
+    {
+        estilizarComponentesWeb();
+
+        // ---------------------------------------------------------- devedores
+        util.ui.FormularioWeb.campoTexto( txtProcurarDevedor );
+        txtProcurarDevedor.setToolTipText( "Escreva parte do nome: a lista selecciona o primeiro; Enter abre as facturas" );
+        txtProcurarDevedor.getDocument().addDocumentListener( new javax.swing.event.DocumentListener()
+        {
+            @Override
+            public void insertUpdate( javax.swing.event.DocumentEvent e )
+            {
+                procurarDevedor();
+            }
+
+            @Override
+            public void removeUpdate( javax.swing.event.DocumentEvent e )
+            {
+                procurarDevedor();
+            }
+
+            @Override
+            public void changedUpdate( javax.swing.event.DocumentEvent e )
+            {
+            }
+        } );
+        txtProcurarDevedor.addActionListener( e ->
+        {
+            if ( jListClientesDevedores.getSelectedIndex() >= 0 )
+            {
+                jListClientesDevedoresMouseClicked( null );
+            }
+        } );
+        jScrollPane2.setPreferredSize( new java.awt.Dimension( 240, 260 ) );
+        jScrollPane2.setMinimumSize( new java.awt.Dimension( 200, 120 ) );
+        util.ui.ComponentesWeb.Cartao cartaoClientes = new util.ui.ComponentesWeb.Cartao( "Clientes Devedores",
+                util.ui.ComponentesWeb.AZUL_VIVO, new java.awt.BorderLayout( 0, 8 ) );
+        cartaoClientes.getCorpo().add( util.ui.ComponentesWeb.campo( "Procurar devedor", txtProcurarDevedor ), java.awt.BorderLayout.NORTH );
+        cartaoClientes.getCorpo().add( jScrollPane2, java.awt.BorderLayout.CENTER );
+
+        // ---------------------------------------------------------- dados do cliente
+        jLabel2.setText( "Cliente" );
+        jLabel3.setText( "Telefone" );
+        jLabel4.setText( "Email" );
+        jLabel5.setText( "NIF" );
+        for ( javax.swing.JLabel l : new javax.swing.JLabel[]
+        {
+            lb_hospede_cliente, lb_telefone, lb_email, lb_NIF
+        } )
+        {
+            if ( l.getText() != null && ( l.getText().startsWith( "Email: xxx" ) || l.getText().startsWith( "999 999" )
+                    || l.getText().startsWith( "Xxxxxx" ) ) )
+            {
+                l.setText( " " ); // textos de exemplo do .form
+            }
+        }
+        javax.swing.JPanel dados = util.ui.ComponentesWeb.transparente( new util.ui.ComponentesWeb.ColunasResponsivas(
+                new double[]{ 0.44, 0.16, 0.24, 0.16 }, new int[]{ 220, 100, 150, 100 }, 10 ) );
+        dados.add( util.ui.ComponentesWeb.campo( jLabel2, lb_hospede_cliente ) );
+        dados.add( util.ui.ComponentesWeb.campo( jLabel3, lb_telefone ) );
+        dados.add( util.ui.ComponentesWeb.campo( jLabel4, lb_email ) );
+        dados.add( util.ui.ComponentesWeb.campo( jLabel5, lb_NIF ) );
+        util.ui.ComponentesWeb.Cartao cartaoDados = new util.ui.ComponentesWeb.Cartao( "Dados do Cliente",
+                util.ui.ComponentesWeb.VERDE, new java.awt.BorderLayout() );
+        cartaoDados.getCorpo().add( dados, java.awt.BorderLayout.CENTER );
+
+        // ---------------------------------------------------------- facturas
+        jScrollPane1.setPreferredSize( new java.awt.Dimension( 700, 280 ) );
+        jScrollPane1.setMinimumSize( new java.awt.Dimension( 300, 150 ) );
+        util.ui.ComponentesWeb.CaixaSuave totais = new util.ui.ComponentesWeb.CaixaSuave( new java.awt.GridBagLayout(),
+                util.ui.EstiloUI.AZUL_CLARO, util.ui.EstiloUI.AZUL_BORDA );
+        totais.setBorder( javax.swing.BorderFactory.createEmptyBorder( 6, 10, 6, 10 ) );
+        adicionarTotalWeb( totais, 0, lbTotalPagar2, TxtTotalDesconto );
+        adicionarTotalWeb( totais, 1, lbTotalPagar1, totalAPagarJTextField );
+        javax.swing.JPanel accoes = util.ui.ComponentesWeb.transparente( new util.ui.EstiloUI.WrapLayout( java.awt.FlowLayout.RIGHT, 8, 0 ) );
+        accoes.add( jButton1 );
+        accoes.add( btnCancelar );
+        javax.swing.JPanel grelha = util.ui.ComponentesWeb.transparente( new util.ui.ComponentesWeb.GrelhaResponsiva( 300, 10, 2 ) );
+        grelha.add( totais );
+        grelha.add( accoes );
+        javax.swing.JPanel rodape = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 0, 6 ) );
+        rodape.add( lbValorPorExtenco, java.awt.BorderLayout.NORTH );
+        rodape.add( grelha, java.awt.BorderLayout.CENTER );
+        util.ui.ComponentesWeb.Cartao cartaoFacturas = new util.ui.ComponentesWeb.Cartao( "Facturas por Liquidar",
+                util.ui.ComponentesWeb.LARANJA, new java.awt.BorderLayout( 0, 8 ) );
+        cartaoFacturas.getCorpo().add( util.ui.FormularioWeb.dica( "Marque em \"Selec.\" as facturas a liquidar; os valores editam-se na própria linha" ),
+                java.awt.BorderLayout.NORTH );
+        cartaoFacturas.getCorpo().add( jScrollPane1, java.awt.BorderLayout.CENTER );
+        cartaoFacturas.getCorpo().add( rodape, java.awt.BorderLayout.SOUTH );
+
+        javax.swing.JPanel direitaCol = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 0, 8 ) );
+        direitaCol.add( cartaoDados, java.awt.BorderLayout.NORTH );
+        direitaCol.add( cartaoFacturas, java.awt.BorderLayout.CENTER );
+        javax.swing.JPanel colunas = util.ui.ComponentesWeb.transparente( new util.ui.ComponentesWeb.ColunasResponsivas(
+                new double[]{ 0.22, 0.78 }, new int[]{ 270, 640 }, 10 ) );
+        colunas.add( cartaoClientes );
+        colunas.add( direitaCol );
+
+        // ---------------------------------------------------------- cabeçalho
+        lb_proximo_documento.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 13f ) );
+        lb_proximo_documento.setForeground( java.awt.Color.WHITE );
+        lbPreco3.setText( "Documento" );
+        lbPreco4.setText( "Série" );
+        lbPreco6.setText( "Data" );
+        cmbTipoDocumento.setPreferredSize( new java.awt.Dimension( 170, 30 ) );
+        cmbSeries.setPreferredSize( new java.awt.Dimension( 230, 30 ) );
+        cmbAnoEconomico.setPreferredSize( new java.awt.Dimension( 110, 30 ) );
+        dc_data_documento.setPreferredSize( new java.awt.Dimension( 130, 30 ) );
+        util.ui.FormularioWeb.combo( cmbTipoDocumento, cmbSeries, cmbAnoEconomico );
+        util.ui.FormularioWeb.data( dc_data_documento );
+        javax.swing.JPanel direita = util.ui.ComponentesWeb.transparente( new util.ui.EstiloUI.WrapLayout( java.awt.FlowLayout.RIGHT, 12, 0 ) );
+        direita.add( lb_proximo_documento );
+        direita.add( util.ui.FormularioWeb.campoCabecalho( lbPreco3, cmbTipoDocumento ) );
+        direita.add( util.ui.FormularioWeb.campoCabecalho( lbPreco4, cmbSeries ) );
+        direita.add( util.ui.FormularioWeb.campoCabecalho( new javax.swing.JLabel( "Ano económico" ), cmbAnoEconomico ) );
+        direita.add( util.ui.FormularioWeb.campoCabecalho( lbPreco6, dc_data_documento ) );
+
+        javax.swing.JPanel semAccoes = util.ui.ComponentesWeb.transparente( null ); // as acções estão no cartão das facturas
+        semAccoes.setPreferredSize( new java.awt.Dimension( 0, 0 ) );
+        util.ui.FormularioWeb.montar( this,
+                util.ui.FormularioWeb.cabecalho( "Emissão de Recibos", "Liquidação de facturas (FT) dos clientes devedores", direita ),
+                colunas, semAccoes, "Kitanda  ·  Emissão de Recibos" );
+        util.ui.EstiloUI.ajustarAoEcra( this, 1000, 640 );
+    }
+
+    /** Selecciona na lista o primeiro devedor cujo nome contém o texto (sem acentos). */
+    private void procurarDevedor()
+    {
+        String t = semAcentosWeb( txtProcurarDevedor.getText() );
+        if ( t.isEmpty() )
+        {
+            return;
+        }
+        javax.swing.ListModel<String> m = jListClientesDevedores.getModel();
+        for ( int i = 0; i < m.getSize(); i++ )
+        {
+            if ( semAcentosWeb( String.valueOf( m.getElementAt( i ) ) ).contains( t ) )
+            {
+                jListClientesDevedores.setSelectedIndex( i );
+                jListClientesDevedores.ensureIndexIsVisible( i );
+                return;
+            }
+        }
+        jListClientesDevedores.clearSelection();
+    }
+
+    private static String semAcentosWeb( String s )
+    {
+        return s == null ? "" : java.text.Normalizer.normalize( s.trim().toLowerCase(), java.text.Normalizer.Form.NFD )
+                .replaceAll( "\\p{M}", "" );
+    }
+
+    private static void adicionarTotalWeb( javax.swing.JPanel caixa, int linha, javax.swing.JLabel rotulo, javax.swing.JTextField valor )
+    {
+        rotulo.setHorizontalAlignment( javax.swing.SwingConstants.LEFT );
+        java.awt.GridBagConstraints g = new java.awt.GridBagConstraints();
+        g.gridy = linha;
+        g.insets = new java.awt.Insets( 1, 0, 1, 8 );
+        g.anchor = java.awt.GridBagConstraints.WEST;
+        caixa.add( rotulo, g );
+        g = new java.awt.GridBagConstraints();
+        g.gridy = linha;
+        g.weightx = 1;
+        g.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        g.insets = new java.awt.Insets( 1, 0, 1, 0 );
+        caixa.add( valor, g );
+    }
+
+    private void estilizarComponentesWeb()
+    {
+        for ( javax.swing.JLabel l : new javax.swing.JLabel[]
+        {
+            lb_telefone, lb_email, lb_NIF
+        } )
+        {
+            l.setFont( util.ui.EstiloUI.FONTE_NEGRITO );
+            l.setForeground( util.ui.ComponentesWeb.TEXTO );
+        }
+        lb_hospede_cliente.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 16f ) );
+        lb_hospede_cliente.setForeground( util.ui.ComponentesWeb.AZUL );
+        for ( javax.swing.JLabel l : new javax.swing.JLabel[]
+        {
+            lb_hospede_cliente, lb_telefone, lb_email, lb_NIF
+        } )
+        {
+            l.setPreferredSize( new java.awt.Dimension( 10, 24 ) );
+            l.setMinimumSize( new java.awt.Dimension( 10, 24 ) );
+        }
+        for ( javax.swing.JLabel l : new javax.swing.JLabel[]
+        {
+            lbTotalPagar1, lbTotalPagar2
+        } )
+        {
+            l.setFont( util.ui.EstiloUI.FONTE );
+            l.setForeground( util.ui.ComponentesWeb.TEXTO_SUAVE );
+        }
+        lbTotalPagar1.setText( "Total a pagar" );
+        lbTotalPagar2.setText( "Desconto" );
+        lbValorPorExtenco.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 14f ) );
+        for ( javax.swing.JTextField t : new javax.swing.JTextField[]
+        {
+            TxtTotalDesconto, totalAPagarJTextField
+        } )
+        {
+            t.setOpaque( false );
+            t.setBorder( javax.swing.BorderFactory.createEmptyBorder() );
+            t.setHorizontalAlignment( javax.swing.SwingConstants.RIGHT );
+            t.setColumns( 12 );
+        }
+        TxtTotalDesconto.setFont( util.ui.EstiloUI.FONTE_NEGRITO );
+        TxtTotalDesconto.setForeground( util.ui.ComponentesWeb.TEXTO );
+        totalAPagarJTextField.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 20f ) );
+        totalAPagarJTextField.setForeground( util.ui.ComponentesWeb.VERDE );
+
+        jButton1.setText( "Forma de pagamento" );
+        util.ui.ComponentesWeb.botao( jButton1, util.ui.ComponentesWeb.Variante.SUCESSO, "/imagens/confirmacao.png",
+                "Escolher a forma de pagamento e emitir o recibo" );
+        btnCancelar.setText( "Sair" );
+        util.ui.ComponentesWeb.botao( btnCancelar, util.ui.ComponentesWeb.Variante.PERIGO, null, "Fechar a emissão de recibos" );
+        btnCancelar.setIcon( new util.ui.ComponentesWeb.IconeSair( 16, java.awt.Color.WHITE ) );
+
+        jListClientesDevedores.setBorder( null );
+        jListClientesDevedores.setFixedCellHeight( 30 );
+        jListClientesDevedores.setCellRenderer( new util.ui.ComponentesWeb.RendererLista( null ) );
+
+        util.ui.EstiloUI.estilizarTabela( tabela_linhas, true );
+        tabela_linhas.setRowHeight( 30 );
+        javax.swing.table.TableColumnModel colunas = tabela_linhas.getColumnModel();
+        util.ui.EstiloUI.ZebraRenderer numero = new util.ui.EstiloUI.ZebraRenderer( javax.swing.SwingConstants.RIGHT );
+        for ( int i = 0; i < LARGURAS_COLUNAS_WEB.length && i < colunas.getColumnCount(); i++ )
+        {
+            colunas.getColumn( i ).setPreferredWidth( LARGURAS_COLUNAS_WEB[ i ] );
+            if ( i >= 6 )
+            {
+                colunas.getColumn( i ).setCellRenderer( numero );
+            }
+        }
+        // cabem todas: ocupam a largura; não cabem: mantêm a largura e surge a barra
+        jScrollPane1.addComponentListener( new java.awt.event.ComponentAdapter()
+        {
+            @Override
+            public void componentResized( java.awt.event.ComponentEvent e )
+            {
+                int modo = jScrollPane1.getWidth() >= LARGURA_MINIMA_TABELA_WEB
+                        ? javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS : javax.swing.JTable.AUTO_RESIZE_OFF;
+                if ( tabela_linhas.getAutoResizeMode() != modo )
+                {
+                    tabela_linhas.setAutoResizeMode( modo );
+                }
+            }
+        } );
     }
 
     private void setWindowsListener() {

@@ -47,10 +47,10 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
  */
 public final class MenuWeb {
 
-    public static final Color AZUL_NOITE = new Color(0, 33, 71);
-    public static final Color AZUL_MARINHO = EstiloUI.AZUL_ESCURO;
-    public static final Color DOURADO = new Color(196, 160, 92);
-    public static final Color DOURADO_CLARO = new Color(228, 204, 152);
+    public static Color AZUL_NOITE = new Color(0, 33, 71);
+    public static Color AZUL_MARINHO = EstiloUI.AZUL_ESCURO;
+    public static Color DOURADO = new Color(196, 160, 92);
+    public static Color DOURADO_CLARO = new Color(228, 204, 152);
     public static final Color MARFIM = new Color(247, 245, 240);
     public static final Color LINHA_QUENTE = new Color(232, 227, 216);
     public static final Color TEXTO = ComponentesWeb.TEXTO;
@@ -63,7 +63,9 @@ public final class MenuWeb {
     private static final String SEM_ACESSO = "Sem permissão ou módulo desactivado";
 
     public enum Simbolo {
-        CAMA, CHAVE, CALENDARIO, SINO, TALHERES, COCKTAIL, LAVANDARIA, CARTEIRA, PRANCHETA, GRAFICO
+        CAMA, CHAVE, CALENDARIO, SINO, TALHERES, COCKTAIL, LAVANDARIA, CARTEIRA, PRANCHETA, GRAFICO,
+        // comercial e negócios (lavandaria, restaurante, farmácia, oficina)
+        CARRINHO, CAIXA, PESSOAS, CABIDE, CAMISA, FERRO, FARMACIA, COMPRIMIDO, FERRAMENTA, CARRO, CHAVENA, RECIBO
     }
 
     private MenuWeb() {
@@ -169,6 +171,172 @@ public final class MenuWeb {
                 linha(g, 13, 17, 13, 6.5);
                 linha(g, 18, 17, 18, 9.5);
                 break;
+            case CARRINHO: {
+                polilinha(g, 2.5, 4, 5.5, 4, 8, 15.5, 18.5, 15.5, 20.5, 7.5, 6.5, 7.5);
+                g.draw(new Ellipse2D.Double(8, 17.5, 3, 3));
+                g.draw(new Ellipse2D.Double(16, 17.5, 3, 3));
+                break;
+            }
+            case CAIXA: {
+                Path2D p = new Path2D.Double();
+                p.moveTo(3, 7.5);
+                p.lineTo(12, 3);
+                p.lineTo(21, 7.5);
+                p.lineTo(21, 17);
+                p.lineTo(12, 21.5);
+                p.lineTo(3, 17);
+                p.closePath();
+                g.draw(p);
+                polilinha(g, 3, 7.5, 12, 12, 21, 7.5);
+                linha(g, 12, 12, 12, 21.5);
+                linha(g, 7.5, 5.2, 16.5, 9.8);
+                break;
+            }
+            case PESSOAS: {
+                g.draw(new Ellipse2D.Double(5, 4, 6, 6));
+                g.draw(new Arc2D.Double(2.5, 12, 11, 12, 0, 180, Arc2D.OPEN));
+                g.draw(new Ellipse2D.Double(14, 6, 5, 5));
+                g.draw(new Arc2D.Double(12.5, 13, 9, 10, 0, 180, Arc2D.OPEN));
+                break;
+            }
+            case CABIDE: {
+                Path2D p = new Path2D.Double();
+                p.moveTo(10, 6);
+                p.quadTo(10, 3.5, 12, 3.5);
+                p.quadTo(14.3, 3.5, 14.3, 6);
+                p.quadTo(14.3, 8, 12, 9);
+                p.lineTo(12, 10.5);
+                p.lineTo(2.5, 17.5);
+                p.quadTo(1.8, 19.5, 4, 19.5);
+                p.lineTo(20, 19.5);
+                p.quadTo(22.2, 19.5, 21.5, 17.5);
+                p.lineTo(12, 10.5);
+                g.draw(p);
+                break;
+            }
+            case CAMISA: {
+                Path2D p = new Path2D.Double();
+                p.moveTo(8.5, 3);
+                p.lineTo(3, 6);
+                p.lineTo(4.8, 10.5);
+                p.lineTo(7, 9.5);
+                p.lineTo(7, 21);
+                p.lineTo(17, 21);
+                p.lineTo(17, 9.5);
+                p.lineTo(19.2, 10.5);
+                p.lineTo(21, 6);
+                p.lineTo(15.5, 3);
+                p.quadTo(12, 6.5, 8.5, 3);
+                g.draw(p);
+                break;
+            }
+            case FERRO: {
+                Path2D p = new Path2D.Double();
+                p.moveTo(2.5, 18.5);
+                p.lineTo(21.5, 18.5);
+                p.lineTo(21.5, 13);
+                p.quadTo(21.5, 8, 15, 8);
+                p.lineTo(8, 8);
+                p.quadTo(3.5, 10, 2.5, 18.5);
+                g.draw(p);
+                polilinha(g, 9, 8, 10, 4.5, 19, 4.5, 20, 8);
+                linha(g, 7, 15, 7.1, 15);
+                linha(g, 11, 15, 11.1, 15);
+                linha(g, 15, 15, 15.1, 15);
+                break;
+            }
+            case FARMACIA: {
+                Path2D p = new Path2D.Double();
+                p.moveTo(9, 3);
+                p.lineTo(15, 3);
+                p.lineTo(15, 9);
+                p.lineTo(21, 9);
+                p.lineTo(21, 15);
+                p.lineTo(15, 15);
+                p.lineTo(15, 21);
+                p.lineTo(9, 21);
+                p.lineTo(9, 15);
+                p.lineTo(3, 15);
+                p.lineTo(3, 9);
+                p.lineTo(9, 9);
+                p.closePath();
+                g.draw(p);
+                break;
+            }
+            case COMPRIMIDO: {
+                Graphics2D r = (Graphics2D) g.create();
+                r.rotate(Math.toRadians(-45), 12, 12);
+                r.draw(new RoundRectangle2D.Double(3, 8, 18, 8, 8, 8));
+                r.draw(new Line2D.Double(12, 8, 12, 16));
+                r.dispose();
+                break;
+            }
+            case FERRAMENTA: {
+                Path2D p = new Path2D.Double();
+                p.moveTo(14.5, 3.2);
+                p.quadTo(11, 4.5, 11.5, 8.5);
+                p.lineTo(3.5, 16.5);
+                p.quadTo(2.5, 19.5, 5, 20.5);
+                p.quadTo(6.5, 21.3, 7.5, 20.5);
+                p.lineTo(15.5, 12.5);
+                p.quadTo(19.5, 13, 20.8, 9.5);
+                p.lineTo(18, 9.8);
+                p.lineTo(16, 8);
+                p.lineTo(16.2, 5.6);
+                p.closePath();
+                g.draw(p);
+                break;
+            }
+            case CARRO: {
+                Path2D p = new Path2D.Double();
+                p.moveTo(2.5, 16.5);
+                p.lineTo(2.5, 12.5);
+                p.lineTo(5, 11.5);
+                p.lineTo(7.5, 6.5);
+                p.lineTo(16.5, 6.5);
+                p.lineTo(19, 11.5);
+                p.lineTo(21.5, 12.5);
+                p.lineTo(21.5, 16.5);
+                p.closePath();
+                g.draw(p);
+                linha(g, 5, 11.5, 19, 11.5);
+                g.draw(new Ellipse2D.Double(5, 15, 4, 4));
+                g.draw(new Ellipse2D.Double(15, 15, 4, 4));
+                break;
+            }
+            case CHAVENA: {
+                Path2D p = new Path2D.Double();
+                p.moveTo(3.5, 9);
+                p.lineTo(16.5, 9);
+                p.lineTo(16.5, 14);
+                p.quadTo(16.5, 19.5, 10, 19.5);
+                p.quadTo(3.5, 19.5, 3.5, 14);
+                p.closePath();
+                g.draw(p);
+                g.draw(new Arc2D.Double(14, 10, 7, 6, -90, 180, Arc2D.OPEN));
+                linha(g, 2.5, 21.5, 17.5, 21.5);
+                g.draw(new Arc2D.Double(6.5, 3, 3, 4, 90, 180, Arc2D.OPEN));
+                g.draw(new Arc2D.Double(10.5, 3, 3, 4, 90, 180, Arc2D.OPEN));
+                break;
+            }
+            case RECIBO: {
+                Path2D p = new Path2D.Double();
+                p.moveTo(5, 2.5);
+                p.lineTo(19, 2.5);
+                p.lineTo(19, 21.5);
+                p.lineTo(16.7, 20);
+                p.lineTo(14.3, 21.5);
+                p.lineTo(12, 20);
+                p.lineTo(9.7, 21.5);
+                p.lineTo(7.3, 20);
+                p.lineTo(5, 21.5);
+                p.closePath();
+                g.draw(p);
+                linha(g, 8.5, 7.5, 15.5, 7.5);
+                linha(g, 8.5, 11.5, 15.5, 11.5);
+                linha(g, 8.5, 15.5, 12.5, 15.5);
+                break;
+            }
             default:
                 break;
         }
@@ -221,13 +389,27 @@ public final class MenuWeb {
     }
 
     private static void pintarLogotipo(Graphics2D g2, int t) {
+        pintarLogotipo(g2, t, Tema.simbolo());
+    }
+
+    private static void pintarLogotipo(Graphics2D g2, int t, Simbolo simbolo) {
         g2.setPaint(new GradientPaint(0, 0, DOURADO_CLARO, t, t, DOURADO));
         g2.fillRoundRect(0, 0, t, t, Math.round(t * 0.28f), Math.round(t * 0.28f));
-        desenharSimbolo(g2, Simbolo.CARTEIRA, t * 0.11, t * 0.1, t * 0.78, AZUL_NOITE);
+        desenharSimbolo(g2, simbolo, t * 0.11, t * 0.1, t * 0.78, AZUL_NOITE);
     }
 
     /** Logótipo da barra lateral: carteira num quadrado dourado. */
     public static class Logotipo extends JComponent {
+
+        private Simbolo simbolo = Tema.simbolo();
+
+        /** Logótipo com o símbolo do negócio (lavandaria, restaurante, farmácia...). */
+        public Logotipo(int tamanho, Simbolo simbolo) {
+            this(tamanho);
+            if (simbolo != null) {
+                this.simbolo = simbolo;
+            }
+        }
 
         public Logotipo(int tamanho) {
             Dimension d = new Dimension(tamanho, tamanho);
@@ -238,7 +420,7 @@ public final class MenuWeb {
         @Override
         protected void paintComponent(Graphics g) {
             Graphics2D g2 = ComponentesWeb.suave(g);
-            pintarLogotipo(g2, Math.min(getWidth(), getHeight()));
+            pintarLogotipo(g2, Math.min(getWidth(), getHeight()), simbolo);
             g2.dispose();
         }
     }

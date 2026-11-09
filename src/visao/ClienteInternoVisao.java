@@ -104,7 +104,165 @@ public class ClienteInternoVisao extends javax.swing.JDialog {
         actualizar();
 
         txtInicias.addKeyListener(new TratarEvento());
+        // aspecto do Cadastro de Clientes do SysKitandaHotel, sobre o initComponents
+        util.ui.LayoutSeguro.aplicar( this, "Clientes", this::montarLayoutWeb );
 
+    }
+
+    // =====================================================================
+    // LAYOUT WEB (como o Cadastro de Clientes do SysKitandaHotel, responsivo)
+    // Ficha e lista lado a lado em ecrãs largos; o separador dos serviços de
+    // mensalidade continua. Componentes, eventos e regras são os mesmos.
+    // =====================================================================
+    private void montarLayoutWeb()
+    {
+        lbTipoProduto.setText( "Nome do cliente *" );
+        jLabel6.setText( "Endereço" );
+        jLabel3.setText( "NIF / BI" );
+        jLabel2.setText( "Telefone" );
+        jLabel4.setText( "Email" );
+        jLabel1.setText( "País" );
+        jLabel5.setText( "Desconto (%)" );
+        lbTipoProduto1.setText( "Pesquisar pelas iniciais do nome" );
+        for ( javax.swing.JLabel l : new javax.swing.JLabel[]
+        {
+            lbTipoProduto, jLabel6, jLabel3, jLabel2, jLabel4, jLabel1, jLabel5, lbTipoProduto1
+        } )
+        {
+            l.setHorizontalAlignment( javax.swing.SwingConstants.LEFT );
+        }
+        util.ui.FormularioWeb.campoTexto( txtNomeCliente, txtEndereco, txtNif, txtContactos, txtEmail, txtDesconto, txtInicias,
+                txtProcNIF, txtNomeCliente2 );
+        util.ui.FormularioWeb.combo( cmbPais, cmbFamilia, cmbSubFamilia, cmbProduto, cmbDuracao, cmbMesComeco );
+        txtDesconto.setHorizontalAlignment( javax.swing.JTextField.RIGHT );
+        txtInicias.setToolTipText( "Escreva as iniciais do nome: a lista filtra-se sozinha" );
+
+        // ---------------------------------------------------------- ficha
+        util.ui.ComponentesWeb.Cartao ficha = util.ui.FormularioWeb.cartao( tituloFichaWeb(), util.ui.ComponentesWeb.VERDE,
+                util.ui.FormularioWeb.pilha( 8,
+                        util.ui.FormularioWeb.grelha( 280, 2,
+                                util.ui.ComponentesWeb.campo( lbTipoProduto, txtNomeCliente ),
+                                util.ui.ComponentesWeb.campo( jLabel6, txtEndereco ) ),
+                        util.ui.FormularioWeb.grelha( 160, 5,
+                                util.ui.ComponentesWeb.campo( jLabel3, txtNif ),
+                                util.ui.ComponentesWeb.campo( jLabel2, txtContactos ),
+                                util.ui.ComponentesWeb.campo( jLabel4, txtEmail ),
+                                util.ui.ComponentesWeb.campo( jLabel1, cmbPais ),
+                                util.ui.ComponentesWeb.campo( jLabel5, txtDesconto ) ) ) );
+
+        // ---------------------------------------------------------- lista
+        util.ui.EstiloUI.estilizarTabela( jTable1, true );
+        jTable1.setRowHeight( 30 );
+        int[] larguras = { 50, 260, 200, 120, 110, 180, 90 };
+        for ( int i = 0; i < larguras.length && i < jTable1.getColumnCount(); i++ )
+        {
+            jTable1.getColumnModel().getColumn( i ).setPreferredWidth( larguras[ i ] );
+        }
+        jTable1.setToolTipText( "Clique num cliente para o abrir na ficha" );
+        jScrollPane2.setBorder( new javax.swing.border.LineBorder( util.ui.ComponentesWeb.LINHA, 1, true ) );
+        jScrollPane2.getViewport().setBackground( java.awt.Color.WHITE );
+        jScrollPane2.setPreferredSize( new java.awt.Dimension( 600, 260 ) );
+        jScrollPane2.setMinimumSize( new java.awt.Dimension( 300, 140 ) );
+        final util.ui.ComponentesWeb.Etiqueta etiqueta = new util.ui.ComponentesWeb.Etiqueta( "0 clientes", util.ui.ComponentesWeb.AZUL_VIVO );
+        final Runnable contar = () ->
+        {
+            int n = jTable1.getRowCount();
+            etiqueta.setText( n + ( n == 1 ? " cliente" : " clientes" ) );
+        };
+        jTable1.getModel().addTableModelListener( e -> contar.run() );
+        jTable1.addPropertyChangeListener( "model", e ->
+        {
+            jTable1.getModel().addTableModelListener( ev -> contar.run() );
+            contar.run();
+        } );
+        contar.run();
+        javax.swing.JPanel pesquisa = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout() );
+        pesquisa.setPreferredSize( new java.awt.Dimension( 340, 52 ) );
+        pesquisa.add( util.ui.ComponentesWeb.campo( lbTipoProduto1, txtInicias ), java.awt.BorderLayout.CENTER );
+        javax.swing.JPanel linhaPesquisa = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout() );
+        linhaPesquisa.add( pesquisa, java.awt.BorderLayout.WEST );
+        javax.swing.JPanel corpoLista = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 0, 8 ) );
+        corpoLista.add( linhaPesquisa, java.awt.BorderLayout.NORTH );
+        corpoLista.add( jScrollPane2, java.awt.BorderLayout.CENTER );
+        util.ui.ComponentesWeb.Cartao lista = util.ui.FormularioWeb.cartao( "Clientes", util.ui.ComponentesWeb.AZUL_VIVO, corpoLista );
+        lista.adicionarAccao( etiqueta );
+
+        javax.swing.JPanel separadorFicha = util.ui.FormularioWeb.pilha( 10, ficha, lista );
+        separadorFicha.setBorder( javax.swing.BorderFactory.createEmptyBorder( 8, 8, 8, 8 ) );
+
+        // ---------------------------------------------------------- serviços de mensalidade
+        lbTipoProduto2.setText( "Código do cliente (Enter procura)" );
+        lbTipoProduto3.setText( "Cliente" );
+        lbCategoria.setText( "Família" );
+        lbCategoria1.setText( "Subfamília" );
+        lbProduto.setText( "Serviço" );
+        lbProduto1.setText( "Mês de começo" );
+        lbProduto2.setText( "Duração" );
+        for ( javax.swing.JLabel l : new javax.swing.JLabel[]
+        {
+            lbTipoProduto2, lbTipoProduto3, lbCategoria, lbCategoria1, lbProduto, lbProduto1, lbProduto2
+        } )
+        {
+            l.setHorizontalAlignment( javax.swing.SwingConstants.LEFT );
+        }
+        jButton4.setText( "" );
+        javax.swing.JPanel clienteServico = util.ui.FormularioWeb.grelha( 220, 2,
+                util.ui.ComponentesWeb.campo( lbTipoProduto2,
+                        util.ui.FormularioWeb.comBotao( txtProcNIF, jButton4, "Procurar o cliente pelo nome" ) ),
+                util.ui.ComponentesWeb.campo( lbTipoProduto3, txtNomeCliente2 ) );
+        jButton1.setText( "Adicionar serviço" );
+        util.ui.ComponentesWeb.botao( jButton1, util.ui.ComponentesWeb.Variante.SUCESSO, null,
+                "Inscrever o cliente neste serviço de mensalidade" );
+        jButton2.setText( "Remover" );
+        util.ui.ComponentesWeb.botao( jButton2, util.ui.ComponentesWeb.Variante.AVISO, null,
+                "Remover da inscrição o serviço seleccionado" );
+        javax.swing.JPanel servico = util.ui.FormularioWeb.grelha( 170, 5,
+                util.ui.ComponentesWeb.campo( lbCategoria, cmbFamilia ),
+                util.ui.ComponentesWeb.campo( lbCategoria1, cmbSubFamilia ),
+                util.ui.ComponentesWeb.campo( lbProduto, cmbProduto ),
+                util.ui.ComponentesWeb.campo( lbProduto1, cmbMesComeco ),
+                util.ui.ComponentesWeb.campo( lbProduto2, cmbDuracao ) );
+        javax.swing.JPanel botoesServico = util.ui.ComponentesWeb.transparente( new java.awt.FlowLayout( java.awt.FlowLayout.RIGHT, 8, 0 ) );
+        botoesServico.add( jButton1 );
+        botoesServico.add( jButton2 );
+        util.ui.EstiloUI.estilizarTabela( tabelaServicoMensalidade, true );
+        tabelaServicoMensalidade.setRowHeight( 30 );
+        jScrollPane1.setBorder( new javax.swing.border.LineBorder( util.ui.ComponentesWeb.LINHA, 1, true ) );
+        jScrollPane1.getViewport().setBackground( java.awt.Color.WHITE );
+        jScrollPane1.setPreferredSize( new java.awt.Dimension( 600, 220 ) );
+        util.ui.ComponentesWeb.Cartao cartaoServicos = util.ui.FormularioWeb.cartao( "Inscrição em serviços de mensalidade",
+                util.ui.ComponentesWeb.ROXO,
+                util.ui.FormularioWeb.pilha( 10, clienteServico, servico, botoesServico, jScrollPane1 ) );
+        javax.swing.JPanel separadorServicos = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout() );
+        separadorServicos.setBorder( javax.swing.BorderFactory.createEmptyBorder( 8, 8, 8, 8 ) );
+        separadorServicos.add( cartaoServicos, java.awt.BorderLayout.NORTH );
+
+        jTabbedPane1.removeAll();
+        jTabbedPane1.addTab( "Ficha e lista de clientes", separadorFicha );
+        jTabbedPane1.addTab( "Serviços de mensalidade", separadorServicos );
+        jTabbedPane1.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 13f ) );
+        jTabbedPane1.setForeground( util.ui.ComponentesWeb.AZUL );
+
+        // ---------------------------------------------------------- acções
+        util.ui.ComponentesWeb.botao( btnNovo, util.ui.ComponentesWeb.Variante.SECUNDARIO, null, "Limpar o formulário para cadastrar outro cliente" );
+        util.ui.FormularioWeb.botaoSalvar( btnSalvar, "Cadastrar um novo cliente com estes dados" );
+        util.ui.FormularioWeb.botaoAlterar( btnAlterar, "Gravar as alterações do cliente seleccionado" );
+        util.ui.FormularioWeb.botaoEliminar( btnEliminar, "Eliminar o cliente seleccionado" );
+        util.ui.FormularioWeb.botaoSair( btnCancelar, "Fechar esta janela" );
+
+        util.ui.FormularioWeb.montar( this,
+                util.ui.FormularioWeb.cabecalho( tituloFichaWeb().replace( "Ficha", "Cadastro" ),
+                        "Dados, contactos, pesquisa e serviços de mensalidade", null ),
+                jTabbedPane1,
+                util.ui.FormularioWeb.barraAccoes( util.ui.FormularioWeb.dica( "Os campos com * são obrigatórios" ),
+                        btnNovo, btnSalvar, btnAlterar, btnEliminar, btnCancelar ),
+                "Kitanda  ·  " + tituloFichaWeb() );
+        util.ui.FormularioWeb.ajustar( this, 1140, 760, 820, 560 );
+    }
+
+    private static String tituloFichaWeb()
+    {
+        return "Ficha do cliente interno";
     }
 
     private void actualizar() {

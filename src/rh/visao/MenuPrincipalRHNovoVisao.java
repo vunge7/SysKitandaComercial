@@ -59,6 +59,8 @@ public class MenuPrincipalRHNovoVisao extends javax.swing.JFrame
         }
 //        lbNome.setText( empresaDao.findEmpresa( idEmpresa ).getNome() );
         busca_permissao();
+        // aspecto dos menus do SysKitandaHotel, sobre o initComponents
+        util.ui.LayoutSeguro.aplicar( this, "Recursos Humanos", this::montarLayoutWeb );
     }
 
     @SuppressWarnings( "unchecked" )
@@ -300,6 +302,48 @@ public class MenuPrincipalRHNovoVisao extends javax.swing.JFrame
             ex.printStackTrace();
         }
 
+    }
+
+    // =====================================================================
+    // LAYOUT WEB (como os menus do SysKitandaHotel): barra lateral, saudação
+    // e cartões dos módulos de Recursos Humanos. Os botões, eventos e
+    // permissões são os do initComponents.
+    // =====================================================================
+    private void montarLayoutWeb()
+    {
+        String perfil = null;
+        try
+        {
+            entity.TbUsuario u = usuarioDao.findTbUsuario( this.idUser );
+            perfil = u.getIdTipoUsuario() == null ? null : u.getIdTipoUsuario().getDescricao();
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
+        util.ui.PaginaMenuWeb pagina = new util.ui.PaginaMenuWeb( "Recursos Humanos",
+                "Funcionários, salários e recibos num só lugar.", lbNome, perfil );
+        pagina.simboloMarca( util.ui.MenuWeb.Simbolo.PESSOAS );
+
+        pagina.grupo( "Gestão" );
+        pagina.item( jButton10, "Dados da Empresa" );
+        pagina.item( jButton9, "Utilizadores" );
+        pagina.grupo( "Sistema" );
+        pagina.item( jButton6, "Definições" );
+        pagina.item( jButton7, "Configurações" );
+
+        pagina.cartao( jButton2, util.ui.MenuWeb.Simbolo.PESSOAS, "Ficha do Funcionário",
+                "Dados pessoais, contrato e categoria" );
+        pagina.cartao( jButton3, util.ui.MenuWeb.Simbolo.RECIBO, "Recibos",
+                "Processamento e recibos de salário" );
+        pagina.cartao( jButton1, util.ui.MenuWeb.Simbolo.GRAFICO, "Mapas e Relatórios",
+                "Mapas de salários e relatórios" );
+        pagina.cartao( jButton4, util.ui.MenuWeb.Simbolo.CARTEIRA, "Outras Operações",
+                "Subsídios, extras e descontos" );
+        pagina.cartao( jButton5, util.ui.MenuWeb.Simbolo.PRANCHETA, "Tabelas Dinâmicas",
+                "Tabelas de IRT, segurança social e outras" );
+        pagina.sair( jButton8, "Terminar a sessão e voltar ao início de sessão" );
+        pagina.montar( this, "Kitanda  ·  Recursos Humanos", 5 );
     }
 
     /**

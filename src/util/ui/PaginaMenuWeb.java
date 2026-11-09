@@ -47,6 +47,7 @@ public final class PaginaMenuWeb {
     private final JPanel menu = ComponentesWeb.transparente(null);
     private final List<JButton> cartoes = new ArrayList<>();
     private JButton botaoSair;
+    private MenuWeb.Simbolo simboloMarca = Tema.simbolo();
     private JComponent conteudo;
 
     /** perfil pode ser null. */
@@ -57,6 +58,13 @@ public final class PaginaMenuWeb {
         this.perfil = perfil;
         menu.setLayout(new BoxLayout(menu, BoxLayout.Y_AXIS));
         menu.setBorder(BorderFactory.createEmptyBorder(0, 12, 8, 8));
+    }
+
+    /** Símbolo do logótipo da barra lateral (o desenho do negócio). */
+    public void simboloMarca(MenuWeb.Simbolo s) {
+        if (s != null) {
+            simboloMarca = s;
+        }
     }
 
     public void grupo(String titulo) {
@@ -143,7 +151,7 @@ public final class PaginaMenuWeb {
 
         JPanel marca = ComponentesWeb.transparente(new BorderLayout(12, 0));
         marca.setBorder(BorderFactory.createEmptyBorder(18, 18, 14, 14));
-        marca.add(new MenuWeb.Logotipo(42), BorderLayout.WEST);
+        marca.add(new MenuWeb.Logotipo(42, simboloMarca), BorderLayout.WEST);
         String hotel = nomeEmpresa();
         JLabel lbHotel = new JLabel(hotel);
         lbHotel.setToolTipText(hotel);

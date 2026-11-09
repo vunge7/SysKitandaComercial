@@ -48,9 +48,9 @@ public final class ComponentesWeb {
     public static final Color TEXTO = new Color(30, 41, 59);
     public static final Color TEXTO_SUAVE = new Color(100, 116, 139);
     public static final Color LINHA = new Color(222, 229, 239);
-    public static final Color AZUL = EstiloUI.AZUL_ESCURO;
-    public static final Color AZUL_MEDIO = new Color(0, 98, 178);
-    public static final Color AZUL_VIVO = new Color(37, 132, 235);
+    public static Color AZUL = EstiloUI.AZUL_ESCURO;
+    public static Color AZUL_MEDIO = new Color(0, 98, 178);
+    public static Color AZUL_VIVO = new Color(37, 132, 235);
     public static final Color VERDE = new Color(22, 163, 74);
     public static final Color VERMELHO = new Color(220, 38, 38);
     public static final Color LARANJA = new Color(245, 158, 11);
