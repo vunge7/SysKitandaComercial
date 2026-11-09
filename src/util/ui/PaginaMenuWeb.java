@@ -58,6 +58,29 @@ public final class PaginaMenuWeb {
         this.perfil = perfil;
         menu.setLayout(new BoxLayout(menu, BoxLayout.Y_AXIS));
         menu.setBorder(BorderFactory.createEmptyBorder(0, 12, 8, 8));
+        resultados.setLayout(new BoxLayout(resultados, BoxLayout.Y_AXIS));
+        resultados.setBorder(BorderFactory.createEmptyBorder(0, 12, 8, 8));
+        resultados.setVisible(false);
+
+        busca.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                filtrar();
+            }
+
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                filtrar();
+            }
+
+            @Override
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                filtrar();
+            }
+        });
+        busca.addActionListener(e -> abrirPrimeiroResultado()); // Enter
+        busca.registerKeyboardAction(e -> busca.setText(""),
+                javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_FOCUSED);
     }
 
     /** Símbolo do logótipo da barra lateral (o desenho do negócio). */
@@ -67,19 +90,264 @@ public final class PaginaMenuWeb {
         }
     }
 
+    /**
+     * Grupo da barra lateral: um cabeçalho que, ao clicar, expande / recolhe
+     * os itens do grupo (começa recolhido). Os itens ficam dentro de um painel
+     * próprio: a visibilidade de cada botão (permissões, submenus) não é tocada.
+     */
     public void grupo(String titulo) {
         if (menu.getComponentCount() > 0) {
-            menu.add(Box.createVerticalStrut(10));
+            menu.add(Box.createVerticalStrut(4));
         }
-        JLabel l = MenuWeb.rotuloGrupo(titulo, MenuWeb.DOURADO);
-        l.setBorder(BorderFactory.createEmptyBorder(0, 12, 4, 0));
-        menu.add(l);
+        final Grupo g = new Grupo(titulo);
+        g.cabecalho.addActionListener(e -> abrirGrupo(g, !g.aberto));
+        menu.add(g.cabecalho);
+        menu.add(g.corpo);
+        grupos.add(g);
+        grupoActual = g;
     }
 
     /** rotulo é o que aparece; o getText() do botão fica como está. */
     public void item(JButton b, String rotulo) {
         MenuWeb.itemLateral(b, rotulo);
-        menu.add(b);
+        if (grupoActual == null) {
+            // item antes de qualquer grupo: fica sempre visível
+            if (semGrupo == null) {
+                semGrupo = new Grupo(null);
+                grupos.add(0, semGrupo);
+            }
+            semGrupo.itens.add(b);
+            semGrupo.rotulos.add(rotulo);
+            menu.add(b);
+        } else {
+            grupoActual.itens.add(b);
+            grupoActual.rotulos.add(rotulo);
+            grupoActual.corpo.add(b);
+        }
+    }
+
+    // =====================================================================
+    // GRUPOS EXPANSÍVEIS E BUSCA
+    // =====================================================================
+    private final List<Grupo> grupos = new ArrayList<>();
+    private Grupo grupoActual;
+    private Grupo semGrupo;
+    private final JPanel resultados = ComponentesWeb.transparente(null);
+    private final CampoBusca busca = new CampoBusca("Pesquisar no menu (ex.: CE)");
+
+    private static final class Grupo {
+
+        final String titulo;
+        final JButton cabecalho = new JButton();
+        final JPanel corpo = ComponentesWeb.transparente(null);
+        final List<JButton> itens = new ArrayList<>();
+        final List<String> rotulos = new ArrayList<>();
+        boolean aberto;
+
+        Grupo(String titulo) {
+            this.titulo = titulo;
+            if (titulo != null) {
+                MenuWeb.cabecalhoGrupo(cabecalho, titulo);
+            }
+            corpo.setLayout(new BoxLayout(corpo, BoxLayout.Y_AXIS));
+            corpo.setAlignmentX(Component.LEFT_ALIGNMENT);
+            corpo.setBorder(BorderFactory.createEmptyBorder(0, 8, 4, 0)); // itens ligeiramente recuados
+            corpo.setVisible(false);
+        }
+    }
+
+    private void abrirGrupo(Grupo g, boolean aberto) {
+        if (g.titulo == null) {
+            return;
+        }
+        g.aberto = aberto;
+        g.corpo.setVisible(aberto);
+        MenuWeb.cabecalhoGrupoAberto(g.cabecalho, aberto);
+        menu.revalidate();
+        menu.repaint();
+        if (aberto) {
+            // mostrar o grupo aberto (cabeçalho + itens) se estiver fora de vista
+            SwingUtilities.invokeLater(() -> {
+                Rectangle r = g.cabecalho.getBounds().union(g.corpo.getBounds());
+                menu.scrollRectToVisible(r);
+            });
+        }
+    }
+
+    /** Mostra os itens que correspondem ao texto da busca (ou os grupos, sem texto). */
+    private void filtrar() {
+        String q = normalizar(busca.getText()).replaceAll("\\s+", " ").trim();
+        resultados.removeAll();
+        if (q.isEmpty()) {
+            resultados.setVisible(false);
+            menu.setVisible(true);
+        } else {
+            boolean algum = false;
+            for (Grupo g : grupos) {
+                boolean cabecalhoPosto = false;
+                for (int i = 0; i < g.itens.size(); i++) {
+                    final JButton original = g.itens.get(i);
+                    String rotulo = g.rotulos.get(i);
+                    if (!original.isVisible() || !corresponde(rotulo, q)) {
+                        continue;
+                    }
+                    if (!cabecalhoPosto && g.titulo != null) {
+                        if (algum) {
+                            resultados.add(Box.createVerticalStrut(8));
+                        }
+                        JLabel l = MenuWeb.rotuloGrupo(g.titulo, MenuWeb.DOURADO);
+                        l.setBorder(BorderFactory.createEmptyBorder(0, 12, 4, 0));
+                        resultados.add(l);
+                        cabecalhoPosto = true;
+                    }
+                    JButton r = new JButton(original.getText());
+                    MenuWeb.itemLateral(r, rotulo);
+                    r.setEnabled(original.isEnabled());
+                    final Grupo dono = g;
+                    r.addActionListener(e -> {
+                        busca.setText(""); // volta aos grupos, com o grupo do item aberto
+                        abrirGrupo(dono, true);
+                        original.doClick();
+                    });
+                    resultados.add(r);
+                    algum = true;
+                }
+            }
+            if (!algum) {
+                JLabel nada = new JLabel("Nenhuma opção encontrada");
+                nada.setFont(EstiloUI.FONTE.deriveFont(12.5f));
+                nada.setForeground(new Color(180, 195, 215));
+                nada.setBorder(BorderFactory.createEmptyBorder(6, 12, 0, 0));
+                resultados.add(nada);
+            }
+            menu.setVisible(false);
+            resultados.setVisible(true);
+        }
+        resultados.revalidate();
+        resultados.repaint();
+    }
+
+    /** Enter na busca: abre a primeira opção activa encontrada. */
+    private void abrirPrimeiroResultado() {
+        for (Component c : resultados.getComponents()) {
+            if (c instanceof JButton && c.isEnabled()) {
+                ((JButton) c).doClick();
+                return;
+            }
+        }
+    }
+
+    private static final java.util.Set<String> PALAVRAS_LIGACAO = new java.util.HashSet<>(
+            java.util.Arrays.asList("de", "da", "do", "das", "dos", "e", "a", "o", "as", "os",
+                    "em", "na", "no", "por", "para", "com", "ao", "aos"));
+
+    /**
+     * A busca encontra a opção pelas iniciais ou pelo início das palavras:
+     * "ce" ou "cef" -> "Consultar Estado das Facturas"; "fact" -> "... Facturas";
+     * "cons est" -> cada parte é o início de uma palavra. Sem acentos nem
+     * maiúsculas. Com 3 letras ou mais também serve qualquer parte do texto.
+     */
+    static boolean corresponde(String rotulo, String q) {
+        String n = normalizar(rotulo);
+        if (n.startsWith(q) || (q.length() >= 3 && n.contains(q))) {
+            return true;
+        }
+        List<String> palavras = new ArrayList<>();
+        for (String p : n.split("[^a-z0-9]+")) {
+            if (!p.isEmpty()) {
+                palavras.add(p);
+            }
+        }
+        if (q.contains(" ")) {
+            for (String parte : q.split(" ")) {
+                boolean achou = false;
+                for (String p : palavras) {
+                    if (p.startsWith(parte)) {
+                        achou = true;
+                        break;
+                    }
+                }
+                if (!achou) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        StringBuilder todas = new StringBuilder();
+        StringBuilder principais = new StringBuilder();
+        for (String p : palavras) {
+            if (p.startsWith(q)) {
+                return true;
+            }
+            todas.append(p.charAt(0));
+            if (!PALAVRAS_LIGACAO.contains(p)) {
+                principais.append(p.charAt(0));
+            }
+        }
+        return principais.toString().startsWith(q) || todas.toString().startsWith(q);
+    }
+
+    private static String normalizar(String s) {
+        if (s == null) {
+            return "";
+        }
+        return java.text.Normalizer.normalize(s, java.text.Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "").toLowerCase();
+    }
+
+    /** Campo de busca para o fundo azul: lupa, texto branco e dica quando vazio. */
+    private static final class CampoBusca extends javax.swing.JTextField {
+
+        private final String dica;
+
+        CampoBusca(String dica) {
+            this.dica = dica;
+            // fundo branco sólido e texto escuro: bem legível com qualquer tema
+            setOpaque(false);
+            setForeground(ComponentesWeb.TEXTO);
+            setCaretColor(ComponentesWeb.TEXTO);
+            setSelectionColor(MenuWeb.DOURADO_CLARO);
+            setSelectedTextColor(MenuWeb.AZUL_NOITE);
+            setFont(EstiloUI.FONTE.deriveFont(13.5f));
+            setBorder(BorderFactory.createEmptyBorder(7, 32, 7, 10));
+            setToolTipText("Escreva as iniciais ou parte do nome da opção (Enter abre a primeira; Esc limpa)");
+            addFocusListener(new java.awt.event.FocusAdapter() {
+                @Override
+                public void focusGained(java.awt.event.FocusEvent e) {
+                    repaint();
+                }
+
+                @Override
+                public void focusLost(java.awt.event.FocusEvent e) {
+                    repaint();
+                }
+            });
+        }
+
+        @Override
+        protected void paintComponent(java.awt.Graphics g) {
+            java.awt.Graphics2D g2 = ComponentesWeb.suave(g);
+            int w = getWidth(), h = getHeight();
+            g2.setColor(Color.WHITE);
+            g2.fillRoundRect(0, 0, w - 1, h - 1, 12, 12);
+            g2.setColor(isFocusOwner() ? MenuWeb.DOURADO : new Color(255, 255, 255, 140));
+            g2.setStroke(new java.awt.BasicStroke(isFocusOwner() ? 2f : 1f));
+            g2.drawRoundRect(0, 0, w - 1, h - 1, 12, 12);
+            // lupa
+            g2.setColor(isFocusOwner() ? MenuWeb.AZUL_NOITE : ComponentesWeb.TEXTO_SUAVE);
+            g2.setStroke(new java.awt.BasicStroke(1.7f, java.awt.BasicStroke.CAP_ROUND, java.awt.BasicStroke.JOIN_ROUND));
+            int cy = h / 2;
+            g2.drawOval(11, cy - 7, 10, 10);
+            g2.drawLine(19, cy + 1, 23, cy + 5);
+            if (getText().isEmpty() && !isFocusOwner()) {
+                g2.setFont(getFont());
+                g2.setColor(ComponentesWeb.TEXTO_SUAVE);
+                java.awt.FontMetrics fm = g2.getFontMetrics();
+                g2.drawString(dica, getInsets().left, (h - fm.getHeight()) / 2 + fm.getAscent());
+            }
+            g2.dispose();
+            super.paintComponent(g);
+        }
     }
 
     /** Item lateral que desliza a área principal até à secção indicada. */
@@ -126,6 +394,17 @@ public final class PaginaMenuWeb {
     public void montar(JFrame janela, String textoEstado, int maxColunas) {
         janela.setIconImages(MenuWeb.iconesAplicacao());
 
+        // com um só grupo não há nada a escolher: fica aberto
+        List<Grupo> comTitulo = new ArrayList<>();
+        for (Grupo g : grupos) {
+            if (g.titulo != null) {
+                comTitulo.add(g);
+            }
+        }
+        if (comTitulo.size() == 1) {
+            abrirGrupo(comTitulo.get(0), true);
+        }
+
         JPanel raiz = new JPanel(new BorderLayout());
         raiz.setBackground(MenuWeb.MARFIM);
         raiz.add(barraLateral(), BorderLayout.WEST);
@@ -164,10 +443,25 @@ public final class PaginaMenuWeb {
         textosMarca.add(lbHotel);
         textosMarca.add(lbArea);
         marca.add(textosMarca, BorderLayout.CENTER);
-        lateral.add(marca, BorderLayout.NORTH);
 
+        // busca por iniciais / nome da opção, por baixo da marca
+        JPanel painelBusca = ComponentesWeb.transparente(new BorderLayout());
+        painelBusca.setBorder(BorderFactory.createEmptyBorder(0, 16, 10, 14));
+        painelBusca.add(busca, BorderLayout.CENTER);
+        JPanel topo = ComponentesWeb.transparente(new BorderLayout());
+        topo.add(marca, BorderLayout.NORTH);
+        topo.add(painelBusca, BorderLayout.CENTER);
+        lateral.add(topo, BorderLayout.NORTH);
+
+        // grupos (sem busca) ou resultados da busca
+        JPanel listas = ComponentesWeb.transparente(null);
+        listas.setLayout(new BoxLayout(listas, BoxLayout.Y_AXIS));
+        menu.setAlignmentX(Component.LEFT_ALIGNMENT);
+        resultados.setAlignmentX(Component.LEFT_ALIGNMENT);
+        listas.add(menu);
+        listas.add(resultados);
         JPanel topoMenu = ComponentesWeb.transparente(new BorderLayout());
-        topoMenu.add(menu, BorderLayout.NORTH);
+        topoMenu.add(listas, BorderLayout.NORTH);
         JScrollPane rolagem = ComponentesWeb.rolagemVertical(topoMenu);
         MenuWeb.barraFina(rolagem.getVerticalScrollBar());
         lateral.add(rolagem, BorderLayout.CENTER);

@@ -848,6 +848,68 @@ public final class MenuWeb {
         }
     }
 
+    // =====================================================================
+    // CABEÇALHO DE GRUPO EXPANSÍVEL (barra lateral)
+    // =====================================================================
+    private static final String ABERTO = "menu.aberto";
+
+    /**
+     * Cabeçalho de grupo da barra lateral que abre/fecha os itens: título em
+     * maiúsculas (como o rotuloGrupo) e uma seta à direita (▸ fechado, ▾ aberto).
+     */
+    public static void cabecalhoGrupo(AbstractButton b, String titulo) {
+        b.putClientProperty(ROTULO, titulo.toUpperCase());
+        b.putClientProperty(ABERTO, Boolean.FALSE);
+        prepararBotao(b, new CabecalhoGrupoUI(), null);
+        b.setToolTipText("Clique para mostrar / esconder as opções de " + titulo);
+        b.setAlignmentX(Component.LEFT_ALIGNMENT);
+        b.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
+        b.setMinimumSize(new Dimension(100, 30));
+        b.setPreferredSize(new Dimension(200, 30));
+    }
+
+    public static void cabecalhoGrupoAberto(AbstractButton b, boolean aberto) {
+        b.putClientProperty(ABERTO, aberto);
+        b.repaint();
+    }
+
+    private static class CabecalhoGrupoUI extends BasicButtonUI {
+
+        @Override
+        public void paint(Graphics g, JComponent c) {
+            AbstractButton b = (AbstractButton) c;
+            ButtonModel m = b.getModel();
+            Graphics2D g2 = ComponentesWeb.suave(g);
+            int w = c.getWidth(), h = c.getHeight();
+            boolean aberto = Boolean.TRUE.equals(b.getClientProperty(ABERTO));
+            boolean sobre = m.isRollover() || b.isFocusOwner();
+            if (sobre || aberto) {
+                g2.setColor(new Color(255, 255, 255, m.isPressed() ? 34 : sobre ? 22 : 12));
+                g2.fillRoundRect(0, 1, w - 1, h - 2, 10, 10);
+            }
+            java.util.Map<TextAttribute, Object> atributos = new java.util.HashMap<>();
+            atributos.put(TextAttribute.TRACKING, 0.09f);
+            g2.setFont(EstiloUI.FONTE_NEGRITO.deriveFont(11.5f).deriveFont(atributos));
+            g2.setColor(sobre || aberto ? DOURADO_CLARO : DOURADO);
+            FontMetrics fm = g2.getFontMetrics();
+            g2.drawString((String) b.getClientProperty(ROTULO), 12, (h - fm.getHeight()) / 2 + fm.getAscent());
+
+            // seta: ▸ fechado, ▾ aberto
+            g2.setStroke(new BasicStroke(1.8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            int cx = w - 18, cy = h / 2;
+            if (aberto) {
+                g2.drawPolyline(new int[]{cx - 4, cx, cx + 4}, new int[]{cy - 2, cy + 2, cy - 2}, 3);
+            } else {
+                g2.drawPolyline(new int[]{cx - 2, cx + 2, cx - 2}, new int[]{cy - 4, cy, cy + 4}, 3);
+            }
+            g2.dispose();
+        }
+
+        @Override
+        protected void paintFocus(Graphics g, AbstractButton b, Rectangle vr, Rectangle tr, Rectangle ir) {
+        }
+    }
+
     /** Título de grupo: pequeno, em maiúsculas e com letras espaçadas. */
     public static JLabel rotuloGrupo(String texto, Color cor) {
         JLabel l = new JLabel(texto.toUpperCase());

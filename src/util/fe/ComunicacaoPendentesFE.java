@@ -168,6 +168,19 @@ public final class ComunicacaoPendentesFE {
             // Não grava se a AGT recusou por nº duplicado: esse RequestID é do
             // pedido recusado, não do documento que já está no repositório
             boolean duplicado = PayloadFactory.ultimoErroNumeroDuplicado();
+            // E46: o nº já foi submetido antes e rejeitado - NÃO está no repositório
+            // e a AGT não aceita de novo o mesmo número. Não grava este RequestID
+            // (é de um pedido recusado); o documento tem de ser corrigido com novo nº.
+            boolean rejeitadoAntes = !duplicado && PayloadFactory.ultimoErroDocumentoRejeitadoAntes();
+            String textoAGT = String.join(" | ", PayloadFactory.getUltimosErros());
+            if (rejeitadoAntes) {
+                venda.setEstado(estadoAnterior);
+                venda.setRequestID(null);
+                return new ResultadoEnvio(venda, Tipo.ERRO, "✗ " + num
+                        + " - a AGT recusou: este nº já foi submetido antes e REJEITADO (E46). Não está no"
+                        + " repositório da AGT e não pode ser reenviado com o mesmo número: a correcção tem de"
+                        + " ser feita num novo documento." + (textoAGT.isEmpty() ? "" : " Resposta AGT: " + textoAGT));
+            }
             String gravacao = "";
             if (!duplicado && venda.getRequestID() != null && !venda.getRequestID().trim().isEmpty()
                     && !venda.getRequestID().equals(num)) {
@@ -182,7 +195,8 @@ public final class ComunicacaoPendentesFE {
 
             if (duplicado) {
                 return new ResultadoEnvio(venda, Tipo.DUPLICADA,
-                        "= " + num + " - já constava no repositório da AGT (não repetida)");
+                        "= " + num + " - já constava no repositório da AGT (não repetida)"
+                        + (textoAGT.isEmpty() ? "" : ". Resposta AGT: " + textoAGT));
             }
             if (enviada && venda.getRequestID() != null) {
                 return new ResultadoEnvio(venda, Tipo.ENVIADA, "✓ " + num + " (" + linhas

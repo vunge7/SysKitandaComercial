@@ -2540,11 +2540,39 @@ public class ProdutosVisao extends javax.swing.JFrame
 
     }
 
+    /** Tamanho máximo da designação (descrição) do produto. */
+    private static final int MAX_DESIGNACAO = 200;
+
+    /**
+     * Rejeita a designação com mais de MAX_DESIGNACAO caracteres (mostra a
+     * mensagem e põe o foco no campo).
+     */
+    private boolean designacaoDentroDoLimite()
+    {
+        int tamanho = getDesignacaoText() == null ? 0 : getDesignacaoText().trim().length();
+        if ( tamanho > MAX_DESIGNACAO )
+        {
+            JOptionPane.showMessageDialog( null,
+                    "A designação do produto tem " + tamanho + " caracteres.\n"
+                    + "O máximo permitido é " + MAX_DESIGNACAO + " caracteres: reduza-a em "
+                    + ( tamanho - MAX_DESIGNACAO ) + " caracteres.",
+                    DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+            txtDesignacao.requestFocus();
+            return false;
+        }
+        return true;
+    }
+
     private boolean campos_validos_alterar()
     {
 
         String codigoBarraText = txtCodigoBarra.getText();
         boolean isProduto = ck_produto.isSelected();
+
+        if ( !designacaoDentroDoLimite() )
+        {
+            return false;
+        }
 
         if ( produtosController.existProdutoByCodigoBarraExcepto( produto.getCodigo(), codigoBarraText ) && isProduto )
         {
@@ -3463,6 +3491,10 @@ public class ProdutosVisao extends javax.swing.JFrame
             txtPrecoCompra.requestFocus();
             return false;
 
+        }
+        else if ( !designacaoDentroDoLimite() )
+        {
+            return false;
         }
         else if ( produtosController.exist_designacao_produto( conexao, getDesignacaoText() ) )
         {

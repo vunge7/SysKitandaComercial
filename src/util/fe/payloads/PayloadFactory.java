@@ -51,31 +51,83 @@ public class PayloadFactory {
 
     public static void limparUltimosErros() {
         ULTIMOS_ERROS_TL.get().clear();
+        ULTIMOS_CODIGOS_TL.get().clear();
     }
 
     public static List<String> getUltimosErros() {
         return new ArrayList<>(ULTIMOS_ERROS_TL.get());
     }
 
-    private static void registarErro(JsonNode descricao) {
-        if (descricao != null && !descricao.isNull()) {
-            ULTIMOS_ERROS_TL.get().add(descricao.asText());
-        }
+    /** Códigos de erro (idError / errorCode) devolvidos pela AGT no último envio/consulta. */
+    private static final ThreadLocal<List<String>> ULTIMOS_CODIGOS_TL
+            = ThreadLocal.withInitial(ArrayList::new);
+
+    public static List<String> getUltimosCodigosErro() {
+        return new ArrayList<>(ULTIMOS_CODIGOS_TL.get());
     }
 
     /**
-     * A AGT recusou o número do documento por já existir no repositório
-     * ("Factura especificada no parâmetro documentoNo (...) está duplicado na
-     * presente lista ou já consta no repositório do sistema").
+     * Regista a descrição (e o código) de um erro da AGT. Aceita os dois
+     * formatos da AGT: idError/descriptionError (registarFactura) e
+     * errorCode/errorDescription (documentStatusList do obterEstado).
+     */
+    private static void registarErro(JsonNode erro) {
+        if (erro == null) {
+            return;
+        }
+        JsonNode codigo = erro.has("idError") ? erro.get("idError") : erro.get("errorCode");
+        JsonNode descricao = erro.has("descriptionError") ? erro.get("descriptionError") : erro.get("errorDescription");
+        String cod = codigo == null || codigo.isNull() ? "" : codigo.asText().trim();
+        if (!cod.isEmpty()) {
+            ULTIMOS_CODIGOS_TL.get().add(cod.toUpperCase());
+        }
+        if (descricao != null && !descricao.isNull()) {
+            ULTIMOS_ERROS_TL.get().add((cod.isEmpty() ? "" : cod + ": ") + descricao.asText());
+        }
+    }
+
+    private static String descricaoErro(JsonNode erro) {
+        JsonNode d = erro.has("descriptionError") ? erro.get("descriptionError") : erro.get("errorDescription");
+        return d == null || d.isNull() ? "" : d.asText();
+    }
+
+    /**
+     * E09 (FE-RNG-012): a AGT recusou o número do documento por já existir no
+     * repositório ("Factura especificada no parâmetro documentNo (...) está
+     * duplicado na presente lista ou já consta no repositório do sistema").
+     * O E46 (enviado antes e rejeitado) NÃO é duplicado: o documento não está
+     * no repositório - ver ultimoErroDocumentoRejeitadoAntes().
      */
     public static boolean ultimoErroNumeroDuplicado() {
+        if (ULTIMOS_CODIGOS_TL.get().contains("E09")) {
+            return true;
+        }
+        if (ultimoErroDocumentoRejeitadoAntes()) {
+            return false;
+        }
         for (String e : ULTIMOS_ERROS_TL.get()) {
             String s = e.toLowerCase();
-            if (s.contains("documentono") && (s.contains("duplicad") || s.contains("consta no reposit"))) {
+            if (s.contains("documentno") && (s.contains("duplicad") || s.contains("consta no reposit"))) {
                 return true;
             }
-            // E04: "O documento ... já foi submetido. Caso pretenda efetuar uma correção..."
-            if (s.contains("foi submetido") && s.contains("documento")) {
+        }
+        return false;
+    }
+
+    /**
+     * E46 (FE-RNG-073): o nº do documento já foi submetido antes e REJEITADO
+     * pela AGT ("... já foi submetido. Caso pretenda efetuar uma correção ...").
+     * Não está no repositório e a AGT não aceita de novo o mesmo número: a
+     * correcção tem de ser feita com um novo número de documento.
+     */
+    public static boolean ultimoErroDocumentoRejeitadoAntes() {
+        if (ULTIMOS_CODIGOS_TL.get().contains("E46")) {
+            return true;
+        }
+        for (String e : ULTIMOS_ERROS_TL.get()) {
+            String s = e.toLowerCase();
+            if ((s.contains("foi submetido") && s.contains("documento"))
+                    || s.contains("novo número de documento") || s.contains("novo numero de documento")) {
                 return true;
             }
         }
@@ -465,7 +517,7 @@ public class PayloadFactory {
 
                     JsonNode idError = erro.get("idError");
                     JsonNode descricao = erro.get("descriptionError");
-                    registarErro(descricao);
+                    registarErro(erro);
 
                     System.out.println(
                             "Código erro: "
@@ -524,7 +576,7 @@ public class PayloadFactory {
                 for (JsonNode erro : requestErrorList) {
 
                     if (Objects.nonNull(erro.get("idError"))) {
-                        registarErro(erro.get("descriptionError"));
+                        registarErro(erro);
                         String idErro = erro.get("idError").asText();
                         String descriptionError = erro.get("descriptionError").asText();
                         venda.setEstado("P");
@@ -578,9 +630,9 @@ public class PayloadFactory {
 
                     if (errorList != null && errorList.isArray()) {
                         for (JsonNode erro : errorList) {
-                            registarErro(erro.get("descriptionError"));
+                            registarErro(erro);
                             mensagens.append("• ")
-                                    .append(erro.get("descriptionError").asText())
+                                    .append(descricaoErro(erro))
                                     .append("\n");
                         }
                     }

@@ -162,6 +162,7 @@ public class FormularioConsultaEstadoFE extends JFrame {
     private final JButton btnVisualizar = new JButton("Visualizar Histórico do Intervalo de Data");
     private final JCheckBox chkSoPendentes = new JCheckBox("Mostrar todos no estado Pendente");
     private final JButton btnActualizarEstado = new JButton("Actualizar Estado");
+    private final JButton btnReenviarAGT = new JButton("Reenviar à AGT");
     private final JLabel lblTotalIndividual = new JLabel(" ");
     private final List<DocumentoHistoricoDTO> historico = new ArrayList<>();         // tudo o que veio da consulta
     private final List<DocumentoHistoricoDTO> historicoVisivel = new ArrayList<>();  // filtrado pelo tipo
@@ -175,13 +176,16 @@ public class FormularioConsultaEstadoFE extends JFrame {
     private Date historicoInicio;
     private Date historicoFim;
     private final DefaultTableModel modelIndividual = new DefaultTableModel(
-            new Object[]{"Nº Documento", "NIF Cliente", "Tipo Documento", "Data", "Estado", "Total Geral"}, 0) {
+            new Object[]{"Nº Documento", "NIF Cliente", "Tipo Documento", "Data", "Estado", "Total Geral", "Acção"}, 0) {
         @Override
         public boolean isCellEditable(int row, int column) {
             return false;
         }
     };
     private final JTable tabelaIndividual = new TabelaFE(modelIndividual);
+    /** Coluna com o botão "Reenviar" (só nas linhas "Não enviado"); não vai para o relatório. */
+    private static final int COL_IND_ACCAO = 6;
+    private static final String TEXTO_REENVIAR = "Reenviar";
 
     /**
      * Construtor simples, no estilo do FormularioSeries: cria os controllers
@@ -278,6 +282,7 @@ public class FormularioConsultaEstadoFE extends JFrame {
         accoes.add(btnActualizarTodas);
         accoes.add(btnVisualizar);
         accoes.add(btnActualizarEstado);
+        accoes.add(btnReenviarAGT);
         accoes.add(btnImprimir);
         btnActualizarEstado.setToolTipText("Consulta na AGT o estado de cada documento pendente e grava-o na base de dados local");
         btnActualizarEstado.setVisible(false); // aparece ao marcar "Mostrar todos no estado Pendente"
@@ -297,6 +302,10 @@ public class FormularioConsultaEstadoFE extends JFrame {
         estilizarBotao(btnImprimir, "/imagens/bonus/icons8_print_200px.png", "Ver em relatório os dados da tabela actual, no intervalo de datas pesquisado");
         estilizarBotao(btnSair, "/imagens/LOGOUT - VERMELHO/Logout 32x32.png", "Fechar o formulário");
         btnActualizarEstado.setForeground(new Color(0, 110, 0));
+        estilizarBotao(btnReenviarAGT, "/imagens/actualizar_1_32x32.png",
+                "Comunicar novamente à AGT, com os mesmos dados, o(s) documento(s) no estado \"Não enviado\" "
+                + "(os seleccionados ou, sem selecção, todos os da lista)");
+        btnReenviarAGT.setForeground(new Color(0, 0, 150));
         btnEnviarPendentes.setForeground(new Color(0, 0, 150));
 
         JPanel topo = new JPanel();
@@ -354,6 +363,8 @@ public class FormularioConsultaEstadoFE extends JFrame {
         });
 
         estilizarTabela(tabelaIndividual);
+        // vários documentos (Ctrl/Shift) para o "Reenviar à AGT"
+        tabelaIndividual.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         tabelaIndividual.getColumnModel().getColumn(0).setPreferredWidth(260);
         tabelaIndividual.getColumnModel().getColumn(1).setPreferredWidth(120);
         tabelaIndividual.getColumnModel().getColumn(2).setPreferredWidth(170);
@@ -364,20 +375,45 @@ public class FormularioConsultaEstadoFE extends JFrame {
         DefaultTableCellRenderer direita = new DefaultTableCellRenderer();
         direita.setHorizontalAlignment(JLabel.RIGHT);
         tabelaIndividual.getColumnModel().getColumn(5).setCellRenderer(direita);
-        tabelaIndividual.setToolTipText("Clique numa linha para ver o documento impresso (2ª via)");
-        tabelaIndividual.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.HAND_CURSOR));
-        tabelaIndividual.addMouseListener(new java.awt.event.MouseAdapter() {
+        tabelaIndividual.getColumnModel().getColumn(COL_IND_ACCAO).setPreferredWidth(120);
+        tabelaIndividual.getColumnModel().getColumn(COL_IND_ACCAO).setCellRenderer(new BotaoReenviarRenderer());
+        tabelaIndividual.setToolTipText("Duplo clique para ver o documento impresso (2ª via); "
+                + "\"" + TEXTO_REENVIAR + "\" comunica de novo à AGT um documento não enviado");
+        java.awt.event.MouseAdapter ratoIndividual = new java.awt.event.MouseAdapter() {
             @Override
             public void mouseReleased(java.awt.event.MouseEvent e) {
-                // um clique reimprime (o 2º clique de um duplo clique é ignorado).
+                // duplo clique reimprime; um clique só selecciona a linha.
+                // Na coluna "Acção" um clique no botão "Reenviar" reenvia esse
+                // documento (e nunca abre a 2ª via).
                 // mouseReleased e não mouseClicked: este não dispara se o rato
                 // se mexer entre carregar e largar.
                 int linha = tabelaIndividual.rowAtPoint(e.getPoint());
-                if (javax.swing.SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1 && linha >= 0) {
-                    reimprimirLinhaIndividual(tabelaIndividual.convertRowIndexToModel(linha));
+                if (!javax.swing.SwingUtilities.isLeftMouseButton(e) || linha < 0) {
+                    return;
+                }
+                int row = tabelaIndividual.convertRowIndexToModel(linha);
+                if (naColunaAccao(e)) {
+                    if (e.getClickCount() == 1 && !ocupado && podeReenviar(historicoVisivel.get(row))) {
+                        reenviarDocumentos(java.util.Collections.singletonList(historicoVisivel.get(row)));
+                    }
+                    return;
+                }
+                if (e.getClickCount() == 2) {
+                    reimprimirLinhaIndividual(row);
                 }
             }
-        });
+
+            @Override
+            public void mouseMoved(java.awt.event.MouseEvent e) {
+                int linha = tabelaIndividual.rowAtPoint(e.getPoint());
+                boolean botao = linha >= 0 && naColunaAccao(e)
+                        && podeReenviar(historicoVisivel.get(tabelaIndividual.convertRowIndexToModel(linha)));
+                tabelaIndividual.setCursor(java.awt.Cursor.getPredefinedCursor(
+                        botao ? java.awt.Cursor.HAND_CURSOR : java.awt.Cursor.DEFAULT_CURSOR));
+            }
+        };
+        tabelaIndividual.addMouseListener(ratoIndividual);
+        tabelaIndividual.addMouseMotionListener(ratoIndividual);
 
         // Faixa do Total Geral da consulta individual
         lblTotalIndividual.setFont(FONTE_NEGRITO.deriveFont(16f));
@@ -439,8 +475,15 @@ public class FormularioConsultaEstadoFE extends JFrame {
         lblAmbiente.setBackground(FEConfig.isHomologacao() ? new Color(190, 0, 0) : new Color(0, 130, 0));
         lblAmbiente.setBorder(BorderFactory.createEmptyBorder(6, 4, 6, 4));
 
+        // Título do formulário (cabeçalho do kit FormularioWeb) + faixa do ambiente
+        JPanel cabecalho = util.ui.FormularioWeb.cabecalho("Monitoramento de Documentos",
+                "Consulta do estado das facturas electrónicas na AGT", null);
+        JPanel titulo = new JPanel(new BorderLayout());
+        titulo.add(cabecalho, BorderLayout.NORTH);
+        titulo.add(lblAmbiente, BorderLayout.SOUTH);
+
         JPanel norte = new JPanel(new BorderLayout());
-        norte.add(lblAmbiente, BorderLayout.NORTH);
+        norte.add(titulo, BorderLayout.NORTH);
         norte.add(topo, BorderLayout.CENTER);
 
         add(norte, BorderLayout.NORTH);
@@ -454,6 +497,11 @@ public class FormularioConsultaEstadoFE extends JFrame {
 
         // Letra maior nos campos e rótulos (os botões/tabelas já foram tratados)
         aplicarFonte(norte);
+        // campos com o mesmo estilo da ProdutosVisao (kit FormularioWeb)
+        util.ui.FormularioWeb.campoTexto(txtNif, txtNome);
+        util.ui.FormularioWeb.combo(cbFiltro, cbTipoDocumento);
+        util.ui.FormularioWeb.data(dcDataInicio);
+        util.ui.FormularioWeb.data(dcDataFim);
         txtNif.setPreferredSize(new Dimension(150, 30));
         txtNome.setPreferredSize(new Dimension(230, 30));
         cbFiltro.setPreferredSize(new Dimension(130, 30));
@@ -495,6 +543,7 @@ public class FormularioConsultaEstadoFE extends JFrame {
         btnVisualizar.addActionListener(e -> visualizarHistorico());
         chkSoPendentes.addActionListener(e -> filtrarHistorico());
         btnActualizarEstado.addActionListener(e -> actualizarEstadoPendentesIndividual());
+        btnReenviarAGT.addActionListener(e -> reenviarNaoEnviadosIndividual());
         btnPesquisarAGT.addActionListener(e -> pesquisarNaAGT());
         btnEnviarPendentes.addActionListener(e -> enviarPendentesParaAGT());
         btnComunicarEmFalta.addActionListener(e -> comunicarFacturasEmFalta());
@@ -955,6 +1004,10 @@ public class FormularioConsultaEstadoFE extends JFrame {
         chkSoPendentes.setEnabled(!ocupado && agtComResultado);
         btnActualizarEstado.setVisible(agtComResultado && chkSoPendentes.isSelected());
         btnActualizarEstado.setEnabled(!ocupado && !historicoVisivel.isEmpty());
+
+        // "Reenviar à AGT": só com documentos "Não enviado" na lista
+        btnReenviarAGT.setVisible(individual);
+        btnReenviarAGT.setEnabled(!ocupado && individual && !naoEnviadosVisiveis().isEmpty());
 
         // comuns
         btnPesquisar.setEnabled(!ocupado);
@@ -1532,7 +1585,8 @@ public class FormularioConsultaEstadoFE extends JFrame {
                 d.getTipo(),
                 d.getData() == null ? "" : fmt.format(d.getData()),
                 d.getEstado(),
-                formatarValor(d.getTotal())
+                formatarValor(d.getTotal()),
+                podeReenviar(d) ? TEXTO_REENVIAR : ""
             });
         }
 
@@ -1716,6 +1770,184 @@ public class FormularioConsultaEstadoFE extends JFrame {
     }
 
     /**
+     * Documentos da lista visível no estado "Não enviado" com venda local.
+     */
+    private List<DocumentoHistoricoDTO> naoEnviadosVisiveis() {
+        List<DocumentoHistoricoDTO> r = new ArrayList<>();
+        for (DocumentoHistoricoDTO d : historicoVisivel) {
+            if (podeReenviar(d)) {
+                r.add(d);
+            }
+        }
+        return r;
+    }
+
+    /** Só os documentos "Não enviado" com venda local podem ser reenviados. */
+    private static boolean podeReenviar(DocumentoHistoricoDTO d) {
+        return d != null && DocumentoHistoricoDTO.ESTADO_NAO_ENVIADO.equals(d.getEstado()) && d.getCodigo() != null;
+    }
+
+    private boolean naColunaAccao(java.awt.event.MouseEvent e) {
+        int col = tabelaIndividual.columnAtPoint(e.getPoint());
+        return col >= 0 && tabelaIndividual.convertColumnIndexToModel(col) == COL_IND_ACCAO;
+    }
+
+    /**
+     * "Reenviar à AGT": comunica novamente à AGT, com os mesmos dados da BD
+     * local, os documentos no estado "Não enviado" - os seleccionados na
+     * tabela ou, se nenhum "Não enviado" estiver seleccionado, todos os da
+     * lista. Mesmo envio do modo contingência (ComunicacaoPendentesFE): na BD
+     * só são gravados o RequestID / estado devolvidos pela AGT.
+     */
+    private void reenviarNaoEnviadosIndividual() {
+        final List<DocumentoHistoricoDTO> alvo = new ArrayList<>();
+        for (int viewRow : tabelaIndividual.getSelectedRows()) {
+            DocumentoHistoricoDTO d = historicoVisivel.get(tabelaIndividual.convertRowIndexToModel(viewRow));
+            if (podeReenviar(d)) {
+                alvo.add(d);
+            }
+        }
+        if (alvo.isEmpty()) {
+            alvo.addAll(naoEnviadosVisiveis());
+        }
+        reenviarDocumentos(alvo);
+    }
+
+    /**
+     * Reenvia à AGT (com os mesmos dados da BD local) os documentos dados -
+     * usado pelo botão "Reenviar à AGT" e pelo botão "Reenviar" de cada linha.
+     */
+    private void reenviarDocumentos(List<DocumentoHistoricoDTO> documentos) {
+        final List<DocumentoHistoricoDTO> alvo = new ArrayList<>(documentos);
+        if (alvo.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "Só é possível reenviar documentos no estado \"" + DocumentoHistoricoDTO.ESTADO_NAO_ENVIADO
+                    + "\".\nNão há nenhum na lista.");
+            return;
+        }
+
+        StringBuilder lista = new StringBuilder();
+        for (int i = 0; i < alvo.size() && i < 15; i++) {
+            lista.append("  • ").append(alvo.get(i).getNumero()).append("\n");
+        }
+        if (alvo.size() > 15) {
+            lista.append("  ... e mais ").append(alvo.size() - 15).append("\n");
+        }
+        int ok = JOptionPane.showConfirmDialog(this,
+                "Comunicar novamente à AGT, com os mesmos dados, " + alvo.size()
+                + " documento(s) não enviado(s)?\n\n"
+                + lista
+                + "\nAmbiente: " + (FEConfig.isHomologacao() ? "HOMOLOGAÇÃO" : "PRODUÇÃO")
+                + "\n(na BD local só são actualizados o RequestID e o estado devolvidos pela AGT)",
+                "Reenviar à AGT", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (ok != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        final TbDadosInstituicao dadosInst = dadosInstituicaoController.findByCodigo(1);
+        final int[] contagem = new int[3]; // 0 enviados, 1 já existiam, 2 erro / sem ligação
+        final List<DocumentoHistoricoDTO> invalidos = new ArrayList<>();
+        setOcupado(true, null);
+        barra.setIndeterminate(false);
+        barra.setValue(0);
+        log("Reenviar à AGT: " + alvo.size() + " documento(s) não enviado(s)...");
+
+        SwingWorker<Void, Object[]> worker = new SwingWorker<Void, Object[]>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                PayloadFactory.setModoSilencioso(true); // sem janelas por cada documento
+                util.fe.http.HttpClientUtil.setTimeoutsThread(10000, 20000);
+                AgtConectividade.invalidarCache();
+                try {
+                    int feitos = 0;
+                    for (DocumentoHistoricoDTO d : alvo) {
+                        TbVenda venda = (TbVenda) vendasController.findById(d.getCodigo());
+                        ComunicacaoPendentesFE.ResultadoEnvio r = venda == null ? null
+                                : ComunicacaoPendentesFE.enviarVenda(venda, dadosInst, conexao, vendasController,
+                                        documentosController, clientesController, itensController);
+                        feitos++;
+                        setProgress(feitos * 100 / alvo.size());
+                        publish(new Object[]{d, r});
+                        if (r != null && r.tipo == ComunicacaoPendentesFE.Tipo.OFFLINE) {
+                            break; // sem ligação: não vale a pena tentar os restantes
+                        }
+                        if (feitos < alvo.size()) {
+                            Thread.sleep(800); // pausa entre envios
+                        }
+                    }
+                } finally {
+                    util.fe.http.HttpClientUtil.limparTimeoutsThread();
+                    PayloadFactory.setModoSilencioso(false);
+                }
+                return null;
+            }
+
+            @Override
+            protected void process(List<Object[]> chunks) {
+                for (Object[] p : chunks) {
+                    DocumentoHistoricoDTO d = (DocumentoHistoricoDTO) p[0];
+                    ComunicacaoPendentesFE.ResultadoEnvio r = (ComunicacaoPendentesFE.ResultadoEnvio) p[1];
+                    if (r == null) {
+                        contagem[2]++;
+                        log("✗ " + d.getNumero() + " - a venda já não existe na base de dados local");
+                        continue;
+                    }
+                    log(r.mensagem);
+                    switch (r.tipo) {
+                        case ENVIADA:
+                            contagem[0]++;
+                            break;
+                        case DUPLICADA:
+                            contagem[1]++;
+                            break;
+                        default:
+                            contagem[2]++;
+                            break;
+                    }
+                    // estado devolvido pela AGT, com o mesmo texto da consulta
+                    String novo = DocumentoHistoricoDTO.textoEstadoLocal(
+                            r.venda.getEstado(), r.venda.getRequestID());
+                    if (novo == null) {
+                        invalidos.add(d); // inválido: não faz parte do histórico
+                    } else {
+                        d.setEstado(novo);
+                    }
+                    lblResumo.setText("Enviados: " + contagem[0] + "  Já existiam: " + contagem[1]
+                            + "  Erro: " + contagem[2]);
+                }
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    get();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    log("Erro ao reenviar: " + e.getMessage());
+                }
+                historico.removeAll(invalidos);
+                historicoPendentesLocais.removeAll(invalidos);
+                String resumo = "Enviados: " + contagem[0] + "  Já existiam: " + contagem[1]
+                        + "  Erro: " + contagem[2];
+                log("Reenvio à AGT concluído - " + resumo);
+                setOcupado(false, resumo);
+                filtrarHistorico();
+                JOptionPane.showMessageDialog(FormularioConsultaEstadoFE.this,
+                        "Reenvio concluído.\n\nEnviados para a AGT: " + contagem[0]
+                        + "\nJá existiam no repositório (não repetidos): " + contagem[1]
+                        + "\nCom erro / sem ligação: " + contagem[2]
+                        + (contagem[2] > 0 ? "\n\nVeja os erros no Registo." : ""));
+            }
+        };
+        worker.addPropertyChangeListener(evt -> {
+            if ("progress".equals(evt.getPropertyName())) {
+                barra.setValue((Integer) evt.getNewValue());
+            }
+        });
+        worker.execute();
+    }
+
+    /**
      * Relatório "Histórico de Facturação" (iReport historico_facturacao_A4)
      * com os documentos que estão na tabela.
      */
@@ -1849,7 +2081,7 @@ public class FormularioConsultaEstadoFE extends JFrame {
         final java.util.List<Integer> omitidas = aba == 1
                 ? java.util.Arrays.asList(COL_AGT_ACEITACAO, COL_AGT_EXISTE_LOCAL)
                 : aba == ABA_INDIVIDUAL
-                        ? new ArrayList<Integer>()
+                        ? java.util.Arrays.asList(COL_IND_ACCAO)
                         : java.util.Arrays.asList(COL_REQUEST_ID);
         DefaultTableModel dados = new DefaultTableModel(origem.getRowCount(),
                 origem.getColumnCount() + 1 - omitidas.size());
@@ -2464,6 +2696,42 @@ public class FormularioConsultaEstadoFE extends JFrame {
             }
             setHorizontalAlignment(CENTER);
             return c;
+        }
+    }
+
+    /**
+     * Coluna "Acção" da Consulta Individual: botão "Reenviar" nas linhas
+     * "Não enviado"; vazio nas restantes.
+     */
+    private static class BotaoReenviarRenderer extends DefaultTableCellRenderer {
+
+        private final JButton botao = new JButton(TEXTO_REENVIAR);
+        private final JPanel painel = new JPanel(new java.awt.GridBagLayout());
+
+        BotaoReenviarRenderer() {
+            botao.setFont(FONTE_NEGRITO.deriveFont(12.5f));
+            botao.setForeground(Color.WHITE);
+            botao.setBackground(new Color(0, 90, 170));
+            botao.setFocusPainted(false);
+            botao.setMargin(new java.awt.Insets(2, 10, 2, 10));
+            javax.swing.ImageIcon ic = icone("/imagens/actualizar_1_32x32.png", 14);
+            if (ic != null) {
+                botao.setIcon(ic);
+            }
+            painel.setOpaque(true);
+            painel.add(botao);
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                boolean isSelected, boolean hasFocus, int row, int column) {
+            Component c = super.getTableCellRendererComponent(table, "", isSelected, hasFocus, row, column);
+            if (!TEXTO_REENVIAR.equals(value)) {
+                return c;
+            }
+            painel.setBackground(c.getBackground()); // mantém a cor alternada / selecção da linha
+            botao.setEnabled(table.isEnabled());
+            return painel;
         }
     }
 

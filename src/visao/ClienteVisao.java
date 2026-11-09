@@ -38,8 +38,8 @@ import util.BDConexao;
 import util.ClientePesquisa;
 import util.DVML;
 import util.MetodosUtil;
-import util.ValidadorNifAGT.Resultado;
 import visao.cliente.ConfirmacaoNif;
+import visao.cliente.ValidacaoNifWeb;
 import static util.MetodosUtil.normalizarEndereco;
 import static util.MetodosUtil.normalizarNif;
 
@@ -64,6 +64,7 @@ public class ClienteVisao extends javax.swing.JDialog {
     private static TbCliente clienteGlobal;
     private Frame parent;
     private int codigo = 0;
+    private ValidacaoNifWeb validacaoNif;
 
     public ClienteVisao(java.awt.Frame parent, boolean modal, BDConexao conexao) {
         //this.parent =  parent1;
@@ -106,6 +107,9 @@ public class ClienteVisao extends javax.swing.JDialog {
         actualizar();
 
         txtInicias.addKeyListener(new TratarEvento());
+        // validação do NIF na AGT (botão, estado e preenchimento automático)
+        cmbPais.setSelectedItem( "Angola - AO" );
+        validacaoNif = new ValidacaoNifWeb( txtNif, cmbPais, txtNomeCliente, txtEndereco, txtContactos, txtEmail );
         // aspecto do Cadastro de Clientes do SysKitandaHotel, sobre o initComponents
         util.ui.LayoutSeguro.aplicar( this, "Clientes", this::montarLayoutWeb );
 
@@ -120,7 +124,7 @@ public class ClienteVisao extends javax.swing.JDialog {
     {
         lbTipoProduto.setText( "Nome do cliente *" );
         jLabel6.setText( "Endereço" );
-        jLabel3.setText( "NIF / BI" );
+        jLabel3.setText( "NIF / BI *" );
         jLabel2.setText( "Telefone" );
         jLabel4.setText( "Email" );
         jLabel1.setText( "País" );
@@ -142,14 +146,17 @@ public class ClienteVisao extends javax.swing.JDialog {
         // ---------------------------------------------------------- ficha
         util.ui.ComponentesWeb.Cartao ficha = util.ui.FormularioWeb.cartao( tituloFichaWeb(), util.ui.ComponentesWeb.VERDE,
                 util.ui.FormularioWeb.pilha( 8,
+                        // o NIF vem primeiro: validado na AGT, preenche os restantes dados
+                        util.ui.FormularioWeb.grelha( 260, 2,
+                                util.ui.ComponentesWeb.campo( jLabel3, validacaoNif.campoNif() ),
+                                util.ui.ComponentesWeb.campo( jLabel1, cmbPais ) ),
+                        validacaoNif.painelEstado(),
                         util.ui.FormularioWeb.grelha( 280, 2,
                                 util.ui.ComponentesWeb.campo( lbTipoProduto, txtNomeCliente ),
                                 util.ui.ComponentesWeb.campo( jLabel6, txtEndereco ) ),
-                        util.ui.FormularioWeb.grelha( 160, 5,
-                                util.ui.ComponentesWeb.campo( jLabel3, txtNif ),
+                        util.ui.FormularioWeb.grelha( 160, 3,
                                 util.ui.ComponentesWeb.campo( jLabel2, txtContactos ),
                                 util.ui.ComponentesWeb.campo( jLabel4, txtEmail ),
-                                util.ui.ComponentesWeb.campo( jLabel1, cmbPais ),
                                 util.ui.ComponentesWeb.campo( jLabel5, txtDesconto ) ) ) );
 
         // ---------------------------------------------------------- lista
@@ -1456,14 +1463,7 @@ public class ClienteVisao extends javax.swing.JDialog {
      * alterar. Deixa no campo o NIF normalizado.
      */
     private boolean nifValidoNaAGT() {
-        Resultado r = ConfirmacaoNif.validarComEspera(this, txtNif.getText(),
-                ConfirmacaoNif.isoDoPais(cmbPais.getSelectedItem()));
-        if (!ConfirmacaoNif.permiteGuardar(this, r)) {
-            txtNif.requestFocus();
-            return false;
-        }
-        txtNif.setText(r.getNif());
-        return true;
+        return validacaoNif.confirmarAntesDeGravar(this);
     }
 
     private boolean valido() {
