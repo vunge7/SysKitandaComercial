@@ -54,6 +54,9 @@ import util.DVML.Abreviacao;
 import static util.DVML.ESTADO_NOTA.ANULADO;
 import util.JPAEntityMannagerFactoryUtil;
 import util.MetodosUtil;
+import util.ui.ComponentesWeb;
+import util.ui.EstiloUI;
+import util.ui.FormularioWeb;
 import static util.MetodosUtil.esvaziar_tabela;
 import static util.MetodosUtil.showMessageUtil;
 import util.fe.FacturaElectronicaUtil;
@@ -139,6 +142,7 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
         vendasController = new VendasController( conexao );
         setWindowsListener();
         init();
+        montarLayoutResponsivo();
     }
 
     @SuppressWarnings( "unchecked" )
@@ -512,6 +516,107 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
         mostrar_proximo_codigo_documento();
     }//GEN-LAST:event_cmbSeriesActionPerformed
 
+
+    // =====================================================================
+    // LAYOUT WEB / RESPONSIVO (mesmo estilo e cores da Emissão de Recibos)
+    // O initComponents e o .form continuam a criar os componentes e os eventos.
+    // =====================================================================
+    private final javax.swing.JLabel lbDicaAnular = FormularioWeb.dica(
+            "O botão de anulação aparece depois de indicar a referência do documento e o motivo");
+
+    private void montarLayoutResponsivo() {
+        estilizarComponentes();
+
+        javax.swing.JPanel resumo = new ComponentesWeb.CaixaSuave(new java.awt.BorderLayout(),
+                EstiloUI.AZUL_CLARO, EstiloUI.AZUL_BORDA);
+        resumo.add(FormularioWeb.pilha(4, lbCliente,
+                FormularioWeb.grelha(190, 3, lbUsuario, lbData, lbTotalPagar, lbDesconto, lbValorEnregue, lbTroco)),
+                java.awt.BorderLayout.CENTER);
+
+        javax.swing.JPanel referencia = ComponentesWeb.campo(lbPreco4, txtRefDoc);
+        ComponentesWeb.Cartao documento = FormularioWeb.cartao("Documento a Anular", ComponentesWeb.VERDE,
+                FormularioWeb.pilha(8, referencia,
+                        FormularioWeb.dica("Escreva FT ou FR, complete o número e prima Enter para pesquisar"),
+                        resumo));
+        ComponentesWeb.Cartao motivo = FormularioWeb.cartao("Motivo da Alteração ou Rectificação",
+                ComponentesWeb.LARANJA, jScrollPane2);
+        ComponentesWeb.Cartao itens = FormularioWeb.cartao("Itens do Documento", ComponentesWeb.AZUL_VIVO, jScrollPane1);
+
+        javax.swing.JPanel conteudo = ComponentesWeb.transparente(new java.awt.BorderLayout(0, 8));
+        conteudo.add(FormularioWeb.grelha(380, 2, documento, motivo), java.awt.BorderLayout.NORTH);
+        conteudo.add(itens, java.awt.BorderLayout.CENTER);
+
+        FormularioWeb.montar(this,
+                FormularioWeb.cabecalho("Anulação de Documentos", "Emissão da nota de crédito de anulação", cabecalhoDocumento()),
+                conteudo,
+                FormularioWeb.barraAccoes(lbDicaAnular, anularJButton, btnCancelar),
+                "Kitanda  ·  Anulação de Documentos");
+        EstiloUI.ajustarAoEcra(this, 1000, 640);
+    }
+
+    private javax.swing.JPanel cabecalhoDocumento() {
+        lb_proximo_documento.setFont(EstiloUI.FONTE_NEGRITO.deriveFont(13f));
+        lb_proximo_documento.setForeground(java.awt.Color.WHITE);
+        lb_ano_academico.setFont(EstiloUI.FONTE_NEGRITO.deriveFont(14f));
+        lb_ano_academico.setForeground(java.awt.Color.WHITE);
+        lb_ano_academico.setPreferredSize(new java.awt.Dimension(90, FormularioWeb.ALTURA_CAMPO));
+        lb_ano_academico1.setText("Ano económico");
+        lb_ano_academico1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+
+        FormularioWeb.combo(cmbTipoDocumento, cmbSeries);
+        cmbTipoDocumento.setPreferredSize(new java.awt.Dimension(150, FormularioWeb.ALTURA_CAMPO));
+        cmbSeries.setPreferredSize(new java.awt.Dimension(180, FormularioWeb.ALTURA_CAMPO));
+
+        javax.swing.JPanel direita = ComponentesWeb.transparente(new EstiloUI.WrapLayout(java.awt.FlowLayout.RIGHT, 12, 0));
+        direita.add(lb_proximo_documento);
+        direita.add(FormularioWeb.campoCabecalho(new javax.swing.JLabel("Documento"), cmbTipoDocumento));
+        direita.add(FormularioWeb.campoCabecalho(new javax.swing.JLabel("Série"), cmbSeries));
+        direita.add(FormularioWeb.campoCabecalho(lb_ano_academico1, lb_ano_academico));
+        return direita;
+    }
+
+    private void estilizarComponentes() {
+        lbPreco4.setText("Referência do documento *");
+        FormularioWeb.campoTexto(txtRefDoc);
+
+        // limpar() deixa estes rótulos vazios: altura fixa para o cartão não saltar
+        for (javax.swing.JLabel l : new javax.swing.JLabel[]{lbUsuario, lbData, lbTotalPagar, lbDesconto, lbValorEnregue, lbTroco}) {
+            l.setFont(EstiloUI.FONTE_NEGRITO);
+            l.setForeground(ComponentesWeb.TEXTO);
+            l.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+            l.setPreferredSize(new java.awt.Dimension(10, 22));
+        }
+        lbCliente.setFont(EstiloUI.FONTE_NEGRITO.deriveFont(15f));
+        lbCliente.setForeground(ComponentesWeb.AZUL);
+        lbCliente.setPreferredSize(new java.awt.Dimension(10, 24));
+        // nome comprido fica cortado em janelas estreitas: completo na dica
+        lbCliente.addPropertyChangeListener("text", e -> lbCliente.setToolTipText(lbCliente.getText()));
+
+        motivoJTextArea.setFont(EstiloUI.FONTE.deriveFont(13.5f));
+        motivoJTextArea.setLineWrap(true);
+        motivoJTextArea.setWrapStyleWord(true);
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(300, 90));
+        jScrollPane2.setMinimumSize(new java.awt.Dimension(200, 80));
+
+        EstiloUI.estilizarTabela(table, true);
+        table.setRowHeight(30);
+        int[] larguras = {70, 320, 100, 60, 90, 60, 100, 100};
+        EstiloUI.ZebraRenderer numero = new EstiloUI.ZebraRenderer(javax.swing.SwingConstants.RIGHT);
+        for (int i = 0; i < larguras.length; i++) {
+            table.getColumnModel().getColumn(i).setPreferredWidth(larguras[i]);
+            if (i >= 2) {
+                table.getColumnModel().getColumn(i).setCellRenderer(numero);
+            }
+        }
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(700, 160));
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(300, 130));
+
+        anularJButton.setText("Efectuar Anulação");
+        ComponentesWeb.botao(anularJButton, ComponentesWeb.Variante.AVISO, null, "Emitir a nota de crédito de anulação");
+        btnCancelar.setText("Sair");
+        FormularioWeb.botaoSair(btnCancelar, "Fechar esta janela");
+
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton anularJButton;

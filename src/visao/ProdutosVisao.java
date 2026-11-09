@@ -42,6 +42,8 @@ import static util.MetodosUtil.normalizarDesignacao;
 import static util.MetodosUtil.rodarComandoWindows;
 import util.PictureChooser;
 import util.TextFieldUtils;
+import util.ui.ComponentesWeb;
+import util.ui.FormularioWeb;
 import static visao.ProdutosPratosVisao.txtCodigoBarra;
 import static visao.ProdutosPratosVisao.txtCodigoManual;
 
@@ -200,12 +202,287 @@ public class ProdutosVisao extends javax.swing.JFrame
         TextFieldUtils.configurarCampoDecimal( txtPrecoCompra, 7 );
         TextFieldUtils.configurarCampoDecimal( txtPrecoVendaRetalho, 7 );
         TextFieldUtils.configurarCampoDecimal( txtPercentagemGanhoRetalho, 7 );
+        montarLayoutResponsivo();
 
 //        // Aqui passo os campos para a classe helper
 //        CalculadoraPrecoHelper helper = new CalculadoraPrecoHelper( txtPrecoCompra, 
 //                txtPrecoVendaRetalho, txtPercentagemGanhoRetalho , 7
 //        );
 //        helper.inicializar();
+    }
+
+    /**
+     * Layout web (mesmo design do SysKitandaHotel) sobre os componentes do
+     * initComponents: o .form não muda. O painel_stock continua a ser o
+     * contentor que servico_produto() mostra e esconde (preços de venda e
+     * datas só para produtos). Os campos que o código mostra/esconde
+     * (taxa de IVA, motivo, preço com IVA, preço grosso, retenção, tickets)
+     * levam o rótulo/cartão consigo.
+     */
+    private void montarLayoutResponsivo()
+    {
+        lbProdutos2.setText( "Código interno" );
+        lbProdutos3.setText( "Código de barras" );
+        lbProdutos4.setText( "Código manual" );
+        lbTipoProduto2.setText( "Marca" );
+        lbTipoProduto3.setText( "Modelo" );
+        lbTipoProduto4.setText( "Família" );
+        lbTipoProduto.setText( "Sub-família" );
+        lbTipoProduto5.setText( "Grupo" );
+        lbBarra.setText( "Código de barras" );
+        lbProduto.setText( "Designação *" );
+        lbUnidade.setText( "Unidade *" );
+        label_qtd_bruta.setText( "Unidade de compra" );
+        lbCusto.setText( "Preço de compra (retalho)" );
+        mostrarPreco();
+        lbTicket.setText( "Impressão de tickets" );
+        lbBarra1.setText( "Código manual" );
+        lbCategoria3.setText( "Local" );
+        llbDataFabrico.setText( "Data de fabrico" );
+        lbDataExpiracao.setText( "Data de expiração" );
+        lbPreco.setText( "Percentagem de ganho (%)" );
+        lbPrecoVenda.setText( "Preço de venda (sem IVA) *" );
+        lbPrecoVenda1.setText( "Preço grosso" );
+        jLabel1.setText( "Quantidade grosso" );
+        TotalIvaLabel.setText( "Preço de venda com IVA" );
+        ivaTaxaJLabel.setText( "Taxa de IVA *" );
+        ivaMotivoJLabel.setText( "Motivo de isenção" );
+        retencaoTaxaJLabel.setText( "Taxa de retenção" );
+        for ( JLabel l : new JLabel[]
+        {
+            lbProdutos2, lbProdutos3, lbProdutos4, lbTipoProduto2, lbTipoProduto3, lbTipoProduto4,
+            lbTipoProduto, lbTipoProduto5, lbBarra, lbProduto, lbUnidade, label_qtd_bruta, lbCusto, lbTicket,
+            lbBarra1, lbCategoria3, llbDataFabrico, lbDataExpiracao, lbPreco, lbPrecoVenda, lbPrecoVenda1,
+            jLabel1, TotalIvaLabel, ivaTaxaJLabel, ivaMotivoJLabel, retencaoTaxaJLabel
+        } )
+        {
+            l.setHorizontalAlignment( JLabel.LEFT );
+        }
+
+        // ---- campos
+        FormularioWeb.campoTexto( txtCodigoProduto, txtCodigoBarraProcura, txtCodigoManualProcura, txtCodigoBarra,
+                txtUnidadeCompra, txtPrecoCompra, txtCodigoManual, txtPercentagemGanhoRetalho, txtPrecoVendaRetalho,
+                txtQtdGrosso, txtPrecoVendaGrosso, txtPrecoDeVendaComIva, retencaoTaxaJTextField,
+                retencaoZeroTaxaJTextField, txtArmazen1, txtArmazen2, txtArmazen3, txtArmazen4 );
+        for ( JTextField t : new JTextField[]
+        {
+            txtPrecoCompra, txtPrecoVendaRetalho, txtPrecoVendaGrosso, txtPrecoDeVendaComIva
+        } )
+        {
+            t.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 14f ) );
+            t.setHorizontalAlignment( JTextField.RIGHT );
+        }
+        for ( JTextField t : new JTextField[]
+        {
+            txtArmazen1, txtArmazen2, txtArmazen3, txtArmazen4
+        } )
+        {
+            t.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 14f ) );
+            t.setForeground( ComponentesWeb.CIANO.darker() );
+            t.setHorizontalAlignment( JTextField.RIGHT );
+            t.setPreferredSize( new java.awt.Dimension( 90, FormularioWeb.ALTURA_CAMPO ) );
+            t.setToolTipText( "Quantidade existente do produto pesquisado neste armazém" );
+        }
+        FormularioWeb.combo( cmbMarca, cmbModelo, cmbFamilia, cmbTipoProduto, cmbGrupo, cmbUnidade,
+                cmbLocal, cmbImposto, ivaMotivoJComboBox, cmbarmazem1, cmbarmazem2, cmbarmazem3, cmbarmazem4 );
+        FormularioWeb.data( jcDataFabrico );
+        FormularioWeb.data( jcDataExpiracao );
+        jcDataFabrico.setDateFormatString( "dd-MM-yyyy" );
+        jcDataExpiracao.setDateFormatString( "dd-MM-yyyy" );
+
+        txtDesignacao.setFont( util.ui.EstiloUI.FONTE.deriveFont( 13.5f ) );
+        txtDesignacao.setForeground( ComponentesWeb.TEXTO );
+        txtDesignacao.setMargin( new java.awt.Insets( 5, 8, 5, 8 ) );
+        txtDesignacao.setRows( 3 );
+        jScrollPane1.setPreferredSize( new java.awt.Dimension( 200, 66 ) );
+        jScrollPane1.setMinimumSize( new java.awt.Dimension( 120, 66 ) );
+
+        txtCodigoProduto.setToolTipText( "Escreva o código interno e prima Enter" );
+        txtCodigoBarraProcura.setToolTipText( "Escreva ou leia o código de barras e prima Enter" );
+        txtCodigoManualProcura.setToolTipText( "Escreva o código manual e prima Enter" );
+
+        // ---- procurar
+        ComponentesWeb.Cartao pesquisa = FormularioWeb.cartao( "Procurar Produto / Serviço", ComponentesWeb.AZUL_VIVO,
+                FormularioWeb.grelha( 200, 3,
+                        ComponentesWeb.campo( lbProdutos2,
+                                FormularioWeb.comBotao( txtCodigoProduto, jButton4, "Procurar na lista de produtos e serviços" ) ),
+                        ComponentesWeb.campo( lbProdutos3, txtCodigoBarraProcura ),
+                        ComponentesWeb.campo( lbProdutos4, txtCodigoManualProcura ) ) );
+        ComponentesWeb.botao( btLupaEconomato, ComponentesWeb.Variante.SECUNDARIO, null,
+                "Lupa de Pesquisas de Produtos no Economato ou Depósito" );
+        pesquisa.adicionarAccao( btLupaEconomato );
+
+        // ---- identificação
+        JPanel campoTickets = ComponentesWeb.campo( lbTicket,
+                FormularioWeb.pilulas( rbNaoEnviarCozinha, rbEnviarCozinha, rbEnviarSala ) );
+        seguirVisibilidade( lbTicket, campoTickets );
+        ComponentesWeb.Cartao identificacao = FormularioWeb.cartao( "Identificação", ComponentesWeb.VERDE,
+                FormularioWeb.pilha( 8,
+                        ComponentesWeb.campo( "Tipo", FormularioWeb.pilulas( ck_produto, ck_servico ) ),
+                        ComponentesWeb.campo( lbProduto, jScrollPane1 ),
+                        FormularioWeb.grelha( 170, 3,
+                                ComponentesWeb.campo( lbTipoProduto2, cmbMarca ),
+                                ComponentesWeb.campo( lbTipoProduto3, cmbModelo ),
+                                ComponentesWeb.campo( lbTipoProduto4, cmbFamilia ),
+                                ComponentesWeb.campo( lbTipoProduto,
+                                        FormularioWeb.comBotao( cmbTipoProduto, jButton1, "Cadastrar uma nova sub-família" ) ),
+                                ComponentesWeb.campo( lbTipoProduto5, cmbGrupo ),
+                                ComponentesWeb.campo( lbBarra, txtCodigoBarra ) ),
+                        FormularioWeb.grelha( 170, 3,
+                                ComponentesWeb.campo( label_qtd_bruta, txtUnidadeCompra ),
+                                ComponentesWeb.campo( lbUnidade, cmbUnidade ),
+                                ComponentesWeb.campo( lbCusto, txtPrecoCompra ) ),
+                        campoTickets ) );
+        ComponentesWeb.botao( btnAssociar, ComponentesWeb.Variante.SECUNDARIO, null, "Associar produtos" );
+        identificacao.adicionarAccao( btnAssociar );
+
+        // ---- fotografia
+        lbPhoto.setHorizontalAlignment( JLabel.CENTER );
+        JPanel moldura = new JPanel( new java.awt.BorderLayout() );
+        moldura.setBackground( ComponentesWeb.FUNDO_PAGINA );
+        moldura.setBorder( new javax.swing.border.LineBorder( ComponentesWeb.LINHA, 1, true ) );
+        moldura.setPreferredSize( new java.awt.Dimension( 160, 118 ) );
+        moldura.add( lbPhoto, java.awt.BorderLayout.CENTER );
+        btnCarregar.setText( "Carregar fotografia" );
+        ComponentesWeb.botao( btnCarregar, ComponentesWeb.Variante.SECUNDARIO, null,
+                "Escolher a imagem do produto no computador" );
+        JPanel fotoCorpo = ComponentesWeb.transparente( new java.awt.BorderLayout( 0, 8 ) );
+        fotoCorpo.add( moldura, java.awt.BorderLayout.CENTER );
+        JPanel fotoBotao = ComponentesWeb.transparente( new java.awt.FlowLayout( java.awt.FlowLayout.CENTER, 0, 0 ) );
+        fotoBotao.add( btnCarregar );
+        fotoCorpo.add( fotoBotao, java.awt.BorderLayout.SOUTH );
+        ComponentesWeb.Cartao fotografia = FormularioWeb.cartao( "Fotografia", ComponentesWeb.CIANO, fotoCorpo );
+
+        // ---- venda e validade (só produtos: dentro do painel_stock)
+        JPanel campoQtdGrosso = ComponentesWeb.campo( jLabel1, txtQtdGrosso );
+        JPanel campoPrecoGrosso = ComponentesWeb.campo( lbPrecoVenda1, txtPrecoVendaGrosso );
+        seguirVisibilidade( txtQtdGrosso, campoQtdGrosso );
+        seguirVisibilidade( txtPrecoVendaGrosso, campoPrecoGrosso );
+        ComponentesWeb.Cartao precos = FormularioWeb.cartao( "Venda e Validade", ComponentesWeb.LARANJA,
+                FormularioWeb.grelha( 170, 2,
+                        ComponentesWeb.campo( lbBarra1, txtCodigoManual ),
+                        ComponentesWeb.campo( lbCategoria3, cmbLocal ),
+                        ComponentesWeb.campo( llbDataFabrico, jcDataFabrico ),
+                        ComponentesWeb.campo( lbDataExpiracao, jcDataExpiracao ),
+                        ComponentesWeb.campo( lbPreco, txtPercentagemGanhoRetalho ),
+                        ComponentesWeb.campo( lbPrecoVenda, txtPrecoVendaRetalho ),
+                        campoQtdGrosso,
+                        campoPrecoGrosso ) );
+        ComponentesWeb.botao( jButtonCompras, ComponentesWeb.Variante.SECUNDARIO, null,
+                "Abrir as compras para dar entrada de stock" );
+        precos.adicionarAccao( jButtonCompras );
+
+        painel_stock.removeAll();
+        painel_stock.setLayout( new java.awt.BorderLayout() );
+        painel_stock.setBorder( null );
+        painel_stock.setOpaque( false );
+        painel_stock.add( precos, java.awt.BorderLayout.CENTER );
+
+        // ---- imposto (IVA)
+        JPanel campoTaxa = ComponentesWeb.campo( ivaTaxaJLabel, cmbImposto );
+        JPanel campoMotivo = ComponentesWeb.campo( ivaMotivoJLabel, ivaMotivoJComboBox );
+        JPanel campoComIva = ComponentesWeb.campo( TotalIvaLabel, txtPrecoDeVendaComIva );
+        seguirVisibilidade( cmbImposto, campoTaxa );
+        seguirVisibilidade( ivaMotivoJComboBox, campoMotivo );
+        seguirVisibilidade( txtPrecoDeVendaComIva, campoComIva );
+        ComponentesWeb.Cartao iva = FormularioWeb.cartao( "Imposto (IVA)", ComponentesWeb.ROXO,
+                FormularioWeb.pilha( 8,
+                        FormularioWeb.pilulas( ivaAplicarJRadioButton, ivaNaoAplicarJRadioButton ),
+                        FormularioWeb.grelha( 200, 3, campoTaxa, campoMotivo, campoComIva ) ) );
+
+        // ---- retenção (só serviços: o cartão segue o jPanel_retencao)
+        JPanel campoRetencao = ComponentesWeb.campo( retencaoTaxaJLabel, retencaoTaxaJTextField );
+        JPanel campoRetencaoZero = ComponentesWeb.campo( "Taxa de retenção", retencaoZeroTaxaJTextField );
+        seguirVisibilidade( retencaoTaxaJTextField, campoRetencao );
+        seguirVisibilidade( retencaoZeroTaxaJTextField, campoRetencaoZero );
+        ComponentesWeb.Cartao retencaoCartao = FormularioWeb.cartao( "Retenção na Fonte", ComponentesWeb.AZUL_MEDIO,
+                FormularioWeb.pilha( 8,
+                        FormularioWeb.pilulas( retencaoAplicarJRadioButton, retencaoNaoAplicarJRadioButton ),
+                        FormularioWeb.grelha( 200, 2, campoRetencao, campoRetencaoZero ) ) );
+        seguirVisibilidade( jPanel_retencao, retencaoCartao );
+
+        // ---- stock por armazém
+        ComponentesWeb.Cartao armazens = FormularioWeb.cartao( "Stock por Armazém", ComponentesWeb.AZUL_MEDIO,
+                FormularioWeb.grelha( 220, 4,
+                        armazem( "Armazém 1", cmbarmazem1, txtArmazen1 ),
+                        armazem( "Armazém 2", cmbarmazem2, txtArmazen2 ),
+                        armazem( "Armazém 3", cmbarmazem3, txtArmazen3 ),
+                        armazem( "Armazém 4", cmbarmazem4, txtArmazen4 ) ) );
+
+        JPanel colunas = ComponentesWeb.transparente( new ComponentesWeb.ColunasResponsivas(
+                new double[]
+                {
+                    0.6, 0.4
+                }, new int[]
+                {
+                    460, 320
+                }, 10 ) );
+        colunas.add( FormularioWeb.pilha( 8, identificacao, iva, retencaoCartao ) );
+        // as colunas lado a lado usam a altura mínima: aqui não pode encolher
+        JPanel direitaColuna = new JPanel( new java.awt.BorderLayout() )
+        {
+            @Override
+            public java.awt.Dimension getMinimumSize()
+            {
+                return getPreferredSize();
+            }
+        };
+        direitaColuna.setOpaque( false );
+        direitaColuna.add( FormularioWeb.pilha( 8, fotografia, painel_stock ), java.awt.BorderLayout.CENTER );
+        colunas.add( direitaColuna );
+
+        JPanel conteudo = FormularioWeb.pilha( 8, pesquisa, colunas, armazens );
+
+        // ---- acções
+        ComponentesWeb.botao( jButton2, ComponentesWeb.Variante.SECUNDARIO, null, "Preparar o formulário para um registo novo" );
+        ComponentesWeb.botao( btnLimpar, ComponentesWeb.Variante.SECUNDARIO, null, "Limpar os campos do formulário" );
+        FormularioWeb.botaoSalvar( btnSalvar, "Cadastrar um novo produto/serviço com estes dados" );
+        FormularioWeb.botaoAlterar( btnAlterar2, "Gravar as alterações do produto/serviço pesquisado" );
+        FormularioWeb.botaoEliminar( jButton3, "Desactivar o produto/serviço pesquisado" );
+        FormularioWeb.botaoSair( btnCancelar, "Fechar esta janela" );
+
+        // ---- cabeçalho: o código do próximo produto (jLabelCodProduto) é actualizado pelo código
+        jLabelCodProduto.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 15f ) );
+        jLabelCodProduto.setForeground( Color.WHITE );
+        JPanel direita = ComponentesWeb.transparente( new java.awt.FlowLayout( java.awt.FlowLayout.RIGHT, 0, 10 ) );
+        direita.add( jLabelCodProduto );
+
+        FormularioWeb.montar( this,
+                FormularioWeb.cabecalho( "Cadastro de Produtos e Serviços", "Identificação, preços, IVA e stock", direita ),
+                conteudo,
+                FormularioWeb.barraAccoes( FormularioWeb.dica( "Os campos com * são obrigatórios" ),
+                        jButton2, btnSalvar, btnAlterar2, btnLimpar, jButton3, btnCancelar ),
+                "Kitanda  ·  Cadastro de Produtos e Serviços" );
+        FormularioWeb.ajustar( this, 1180, 800, 820, 560 );
+    }
+
+    /** Armazém (nome no combo) com a quantidade à direita. */
+    private static JPanel armazem( String titulo, JComboBox<String> combo, JTextField quantidade )
+    {
+        JPanel linha = ComponentesWeb.transparente( new java.awt.BorderLayout( 6, 0 ) );
+        linha.add( combo, java.awt.BorderLayout.CENTER );
+        linha.add( quantidade, java.awt.BorderLayout.EAST );
+        return ComponentesWeb.campo( titulo, linha );
+    }
+
+    /** O embrulho (rótulo + campo) aparece e desaparece com o campo. */
+    private static void seguirVisibilidade( java.awt.Component campo, java.awt.Component embrulho )
+    {
+        campo.addComponentListener( new java.awt.event.ComponentAdapter()
+        {
+            @Override
+            public void componentShown( java.awt.event.ComponentEvent e )
+            {
+                embrulho.setVisible( true );
+            }
+
+            @Override
+            public void componentHidden( java.awt.event.ComponentEvent e )
+            {
+                embrulho.setVisible( false );
+            }
+        } );
+        embrulho.setVisible( campo.isVisible() );
     }
 
     /**

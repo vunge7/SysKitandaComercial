@@ -314,6 +314,393 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 //        configurarTabela( 4 );
 //        initStockListener();
         txtBuscaRef.setEnabled(false);
+
+        montarLayoutWeb();
+    }
+
+    // =====================================================================
+    // LAYOUT WEB (mesmo design do ecrã de Vendas do SysKitandaHotel): painel
+    // lateral como os menus, lançamento em 2 linhas, tabela com toda a altura
+    // e coluna de cobrança à direita. Montado por código sobre o
+    // initComponents: componentes, eventos e regras são os mesmos; o .form
+    // fica com o desenho antigo.
+    // =====================================================================
+    private static final java.awt.Color CLARO_LATERAL = new java.awt.Color(196, 218, 245);
+
+    private void montarLayoutWeb() {
+        // ---------------------------------------------------------- estilo dos campos
+        util.ui.FormularioWeb.campoTexto(txtCodClientePesquisa, txtNifClientePesquisa, txtTelClientePesquisa,
+                txtIniciaisCliente, txtNomeConsumidorFinal, txtBuscaRef, txtPreco, txtQuantidadeStock, txtQuatindade,
+                txtCodigoProduto, txtCodigoBarra, txtCodigoManual);
+        util.ui.FormularioWeb.combo(cmbCliente, cmbTipoDocumento, cmbSeries, cmbAnoEconomico, cmbArmazem,
+                cmbSubFamilia, cmbProduto);
+        for (javax.swing.JComboBox<?> c : new javax.swing.JComboBox<?>[]{cmbCliente, cmbTipoDocumento, cmbSeries,
+            cmbAnoEconomico, cmbArmazem, cmbSubFamilia, cmbProduto}) {
+            c.setForeground(util.ui.ComponentesWeb.TEXTO);
+        }
+        util.ui.FormularioWeb.data(dc_data_documento);
+        util.ui.FormularioWeb.data(dc_data_vencimento);
+        util.ui.FormularioWeb.spinner(spnCopia);
+        spnCopia.setPreferredSize(new java.awt.Dimension(60, 30));
+        util.ui.FormularioWeb.spinner(sp_desconto_financeiro);
+        sp_desconto_financeiro.setPreferredSize(new java.awt.Dimension(80, 28));
+
+        // ---------------------------------------------------------- painel lateral
+        javax.swing.JPanel lateral = new util.ui.ComponentesWeb.PainelGradiente(new java.awt.BorderLayout(),
+                util.ui.MenuWeb.AZUL_NOITE, util.ui.MenuWeb.AZUL_MARINHO);
+        lateral.setPreferredSize(new java.awt.Dimension(290, 100));
+
+        javax.swing.JPanel marca = util.ui.ComponentesWeb.transparente(new java.awt.BorderLayout(12, 0));
+        marca.setBorder(javax.swing.BorderFactory.createEmptyBorder(16, 18, 10, 14));
+        marca.add(new util.ui.MenuWeb.Logotipo(40), java.awt.BorderLayout.WEST);
+        javax.swing.JLabel lbTitulo = new javax.swing.JLabel("Vendas");
+        lbTitulo.setFont(new java.awt.Font("Georgia", java.awt.Font.BOLD, 18));
+        lbTitulo.setForeground(java.awt.Color.WHITE);
+        javax.swing.JLabel lbSubtitulo = new javax.swing.JLabel("Facturação e ponto de venda");
+        lbSubtitulo.setFont(util.ui.EstiloUI.FONTE.deriveFont(12f));
+        lbSubtitulo.setForeground(util.ui.MenuWeb.DOURADO_CLARO);
+        javax.swing.JPanel titulos = util.ui.ComponentesWeb.transparente(new java.awt.GridLayout(2, 1));
+        titulos.add(lbTitulo);
+        titulos.add(lbSubtitulo);
+        marca.add(titulos, java.awt.BorderLayout.CENTER);
+
+        // cliente
+        jButton5.setText("");
+        javax.swing.JPanel campoCliente = campoLateral("Cliente",
+                util.ui.FormularioWeb.comBotao(cmbCliente, jButton5, "Cadastrar um cliente novo"));
+        seguirVisibilidade(cmbCliente, campoCliente);
+        javax.swing.JPanel campoNome = campoLateral("Nome do consumidor final", txtNomeConsumidorFinal);
+        seguirVisibilidade(txtNomeConsumidorFinal, campoNome);
+        txtCodClientePesquisa.setToolTipText("Código do cliente; Enter procura");
+        txtNifClientePesquisa.setToolTipText("NIF do cliente; Enter procura");
+        txtTelClientePesquisa.setToolTipText("Telefone do cliente; Enter procura");
+        txtIniciaisCliente.setToolTipText("Iniciais do nome: a lista de clientes filtra-se sozinha");
+        javax.swing.JPanel codNif = util.ui.ComponentesWeb.transparente(new java.awt.GridLayout(1, 3, 8, 0));
+        codNif.add(campoLateral("Código", txtCodClientePesquisa));
+        codNif.add(campoLateral("NIF", txtNifClientePesquisa));
+        codNif.add(campoLateral("Telefone", txtTelClientePesquisa));
+
+        // documento
+        lb_proximo_documento.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(13f));
+        lb_proximo_documento.setForeground(util.ui.MenuWeb.DOURADO_CLARO);
+        javax.swing.JPanel campoAno = campoLateral("Ano económico", cmbAnoEconomico);
+        seguirVisibilidade(cmbAnoEconomico, campoAno);
+        txtBuscaRef.setToolTipText("Referência da factura proforma a converter");
+
+        // impressão: formatos em pílulas e vias
+        javax.swing.JPanel formatos = util.ui.ComponentesWeb.transparente(
+                new util.ui.EstiloUI.WrapLayout(java.awt.FlowLayout.LEFT, 5, 4));
+        for (javax.swing.JCheckBox ck : new javax.swing.JCheckBox[]{ck_A4, ck_Duplicada, ck_simplificada,
+            ck_ComVirgula, ck_simplificada_O, ck_S_A6, ck_simplificada_O_S, ck_A7}) {
+            util.ui.ComponentesWeb.pilula(ck, true);
+            ck.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 9, 5, 11));
+            formatos.add(ck);
+        }
+        javax.swing.JPanel campoVias = campoLateral("Vias", spnCopia);
+        seguirVisibilidade(spnCopia, campoVias);
+        javax.swing.JPanel linhaVias = util.ui.ComponentesWeb.transparente(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
+        linhaVias.add(campoVias);
+
+        javax.swing.JPanel conteudoLateral = util.ui.FormularioWeb.pilha(8,
+                util.ui.MenuWeb.rotuloGrupo("Cliente", util.ui.MenuWeb.DOURADO),
+                codNif,
+                campoLateral("Pesquisar pelas iniciais", txtIniciaisCliente),
+                campoCliente,
+                campoNome,
+                javax.swing.Box.createVerticalStrut(4),
+                util.ui.MenuWeb.rotuloGrupo("Documento", util.ui.MenuWeb.DOURADO),
+                campoLateral("Documento", cmbTipoDocumento),
+                campoLateral("Série", cmbSeries),
+                lb_proximo_documento,
+                campoAno,
+                campoLateral("Converter factura proforma (referência)", txtBuscaRef),
+                javax.swing.Box.createVerticalStrut(4),
+                util.ui.MenuWeb.rotuloGrupo("Impressão", util.ui.MenuWeb.DOURADO),
+                formatos,
+                linhaVias,
+                javax.swing.Box.createVerticalStrut(4),
+                util.ui.MenuWeb.rotuloGrupo("Armazém", util.ui.MenuWeb.DOURADO),
+                campoLateral("Armazém", cmbArmazem));
+        conteudoLateral.setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 18, 12, 16));
+        javax.swing.JScrollPane rolagemLateral = util.ui.ComponentesWeb.rolagemVertical(conteudoLateral);
+        util.ui.MenuWeb.barraFina(rolagemLateral.getVerticalScrollBar());
+
+        // operador e empresa, em baixo (como o utilizador nos menus)
+        lb_nome_usuario.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(12.5f));
+        lb_nome_usuario.setForeground(java.awt.Color.WHITE);
+        for (javax.swing.JLabel l : new javax.swing.JLabel[]{jlEmpresa, jlEmpresa_sistema}) {
+            l.setFont(util.ui.EstiloUI.FONTE.deriveFont(11.5f));
+            l.setForeground(new java.awt.Color(180, 195, 215));
+            l.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        }
+        lb_nome_usuario.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        javax.swing.JPanel operador = util.ui.ComponentesWeb.transparente(new java.awt.GridLayout(3, 1));
+        operador.add(lb_nome_usuario);
+        operador.add(jlEmpresa);
+        operador.add(jlEmpresa_sistema);
+        operador.setBorder(javax.swing.BorderFactory.createCompoundBorder(
+                javax.swing.BorderFactory.createMatteBorder(1, 0, 0, 0, new java.awt.Color(255, 255, 255, 40)),
+                javax.swing.BorderFactory.createEmptyBorder(10, 18, 12, 16)));
+        lateral.add(marca, java.awt.BorderLayout.NORTH);
+        lateral.add(rolagemLateral, java.awt.BorderLayout.CENTER);
+        lateral.add(operador, java.awt.BorderLayout.SOUTH);
+
+        // ---------------------------------------------------------- lançamento: 2 linhas
+        lbQuantidadeStock.setText("Stock");
+        javax.swing.JPanel campoStock = util.ui.ComponentesWeb.campo(lbQuantidadeStock, txtQuantidadeStock);
+        seguirVisibilidade(txtQuantidadeStock, campoStock);
+        javax.swing.JPanel linha1 = linhaCampos(
+                new java.awt.Component[]{
+                    util.ui.ComponentesWeb.campo("Data", dc_data_documento),
+                    util.ui.ComponentesWeb.campo("Vencimento", dc_data_vencimento),
+                    util.ui.ComponentesWeb.campo("Subfamília", cmbSubFamilia),
+                    util.ui.ComponentesWeb.campo("Artigo", cmbProduto),
+                    util.ui.ComponentesWeb.campo("Preço", txtPreco),
+                    campoStock},
+                new double[]{0, 0, 1, 2, 0, 0},
+                new int[]{118, 118, 120, 180, 92, 72});
+
+        txtQuatindade.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        txtQuatindade.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(14f));
+        txtCodigoProduto.setToolTipText("Código do artigo; Enter lança-o");
+        txtCodigoBarra.setToolTipText("Código de barras; Enter lança o artigo");
+        txtCodigoManual.setToolTipText("Código manual; Enter lança o artigo");
+        jButton4.setText("Pesquisar");
+        util.ui.ComponentesWeb.botao(jButton4, util.ui.ComponentesWeb.Variante.SECUNDARIO, "/imagens/proucura.png",
+                "Pesquisar um artigo pelo nome (F4)");
+        btn_adicionar.setText("Adicionar");
+        util.ui.ComponentesWeb.botao(btn_adicionar, util.ui.ComponentesWeb.Variante.SUCESSO, null,
+                "Lançar o artigo escolhido com a quantidade indicada");
+        btn_remover.setText("Remover");
+        util.ui.ComponentesWeb.botao(btn_remover, util.ui.ComponentesWeb.Variante.AVISO, null,
+                "Remover da venda a linha seleccionada na tabela");
+        for (javax.swing.JButton b : new javax.swing.JButton[]{jButton4, btn_adicionar, btn_remover}) {
+            b.setBorder(javax.swing.BorderFactory.createEmptyBorder(6, 12, 6, 14));
+        }
+        javax.swing.JPanel linha2 = linhaCampos(
+                new java.awt.Component[]{
+                    util.ui.ComponentesWeb.campo("Qtd", txtQuatindade),
+                    util.ui.ComponentesWeb.campo("Código", txtCodigoProduto),
+                    util.ui.ComponentesWeb.campo("Código de barras", txtCodigoBarra),
+                    util.ui.ComponentesWeb.campo("Código manual", txtCodigoManual),
+                    rodapeBotao(jButton4), rodapeBotao(btn_adicionar), rodapeBotao(btn_remover)},
+                new double[]{0, 1, 1.4, 1, 0, 0, 0},
+                new int[]{80, 90, 120, 100, 0, 0, 0});
+        javax.swing.JPanel lancamento = util.ui.ComponentesWeb.transparente(new java.awt.BorderLayout(0, 8));
+        lancamento.add(linha1, java.awt.BorderLayout.NORTH);
+        lancamento.add(linha2, java.awt.BorderLayout.CENTER);
+        util.ui.ComponentesWeb.Cartao cartaoLancar = new util.ui.ComponentesWeb.Cartao(null, null, new java.awt.BorderLayout());
+        cartaoLancar.getCorpo().add(lancamento, java.awt.BorderLayout.CENTER);
+        cartaoLancar.getCorpo().setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 14, 12, 14));
+
+        // ---------------------------------------------------------- tabela: toda a altura
+        util.ui.EstiloUI.estilizarTabela(table, true);
+        table.setRowHeight(30);
+        int[] larguras = {70, 300, 70, 100, 80, 90, 60, 70, 100, 110, 130};
+        for (int i = 0; i < table.getColumnCount() && i < larguras.length; i++) {
+            table.getColumnModel().getColumn(i).setPreferredWidth(larguras[i]);
+        }
+        jScrollPane1.setBorder(new javax.swing.border.LineBorder(util.ui.ComponentesWeb.LINHA, 1, true));
+        jScrollPane1.getViewport().setBackground(java.awt.Color.WHITE);
+        final util.ui.ComponentesWeb.Etiqueta etiquetaLinhas = new util.ui.ComponentesWeb.Etiqueta("0 linhas", util.ui.ComponentesWeb.AZUL_VIVO);
+        final Runnable contar = () -> {
+            int n = table.getRowCount();
+            etiquetaLinhas.setText(n + (n == 1 ? " linha" : " linhas"));
+        };
+        final javax.swing.event.TableModelListener ouvinteLinhas = e -> contar.run();
+        table.getModel().addTableModelListener(ouvinteLinhas);
+        // o código troca o modelo da tabela (configurarTabela): o contador segue o modelo novo
+        table.addPropertyChangeListener("model", e -> {
+            if (e.getOldValue() instanceof javax.swing.table.TableModel) {
+                ((javax.swing.table.TableModel) e.getOldValue()).removeTableModelListener(ouvinteLinhas);
+            }
+            if (e.getNewValue() instanceof javax.swing.table.TableModel) {
+                ((javax.swing.table.TableModel) e.getNewValue()).addTableModelListener(ouvinteLinhas);
+            }
+            contar.run();
+        });
+        contar.run();
+        util.ui.ComponentesWeb.Cartao cartaoTabela = new util.ui.ComponentesWeb.Cartao("Artigos da venda",
+                util.ui.ComponentesWeb.AZUL_VIVO, new java.awt.BorderLayout());
+        cartaoTabela.adicionarAccao(etiquetaLinhas);
+        cartaoTabela.getCorpo().add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
+        javax.swing.JPanel centro = util.ui.ComponentesWeb.transparente(new java.awt.BorderLayout(0, 8));
+        centro.add(cartaoLancar, java.awt.BorderLayout.NORTH);
+        centro.add(cartaoTabela, java.awt.BorderLayout.CENTER);
+
+        // ---------------------------------------------------------- coluna de cobrança
+        lbCodigoProduto5.setText("TOTAL A PAGAR");
+        lbCodigoProduto5.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(11.5f));
+        lbCodigoProduto5.setForeground(new java.awt.Color(148, 163, 184));
+        txtTotalPagarGeral.setFont(util.ui.MesasWeb.fonteVisor(28));
+        txtTotalPagarGeral.setForeground(new java.awt.Color(134, 239, 172));
+        txtTotalPagarGeral.setOpaque(false);
+        txtTotalPagarGeral.setBorder(null);
+        txtTotalPagarGeral.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        txtTotalPagarGeral.setFocusable(false);
+        final util.ui.ComponentesWeb.TextoQuebrado extenso = new util.ui.ComponentesWeb.TextoQuebrado();
+        extenso.setFont(util.ui.EstiloUI.FONTE.deriveFont(java.awt.Font.ITALIC, 11.5f));
+        extenso.setForeground(new java.awt.Color(203, 213, 225));
+        extenso.setText(lbValorPorExtenco.getText());
+        lbValorPorExtenco.addPropertyChangeListener("text", e -> extenso.setText(lbValorPorExtenco.getText()));
+        util.ui.ComponentesWeb.CaixaSuave visor = new util.ui.ComponentesWeb.CaixaSuave(new java.awt.BorderLayout(0, 4),
+                new java.awt.Color(15, 23, 42), null);
+        visor.setBorder(javax.swing.BorderFactory.createEmptyBorder(12, 14, 12, 14));
+        visor.add(lbCodigoProduto5, java.awt.BorderLayout.NORTH);
+        visor.add(txtTotalPagarGeral, java.awt.BorderLayout.CENTER);
+        visor.add(extenso, java.awt.BorderLayout.SOUTH);
+
+        // resumo: total líquido, retenção e desconto financeiro (o código mostra/esconde o desconto)
+        for (javax.swing.JComponent c : new javax.swing.JComponent[]{txtTotalPagar, txtTotalPagarRetencao}) {
+            c.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(13.5f));
+            c.setForeground(util.ui.ComponentesWeb.TEXTO);
+        }
+        txtTotalPagar.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        txtTotalPagar.setBorder(null);
+        txtTotalPagar.setOpaque(false);
+        txtTotalPagar.setFocusable(false);
+        txtTotalPagarRetencao.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        javax.swing.JPanel linhaDesconto = linhaResumo("Desconto financeiro", sp_desconto_financeiro);
+        seguirVisibilidade(sp_desconto_financeiro, linhaDesconto);
+        javax.swing.JPanel resumo = util.ui.FormularioWeb.pilha(6,
+                linhaResumo("Total líquido", txtTotalPagar),
+                linhaResumo("Retenção", txtTotalPagarRetencao),
+                linhaDesconto);
+        util.ui.ComponentesWeb.Cartao cartaoResumo = new util.ui.ComponentesWeb.Cartao(null, null, new java.awt.BorderLayout());
+        cartaoResumo.getCorpo().add(resumo, java.awt.BorderLayout.CENTER);
+        cartaoResumo.getCorpo().setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 12, 10, 12));
+
+        btnFormaPagamento.setText("Facturar");
+        util.ui.ComponentesWeb.botao(btnFormaPagamento, util.ui.ComponentesWeb.Variante.SUCESSO, null,
+                "Escolher a forma de pagamento e emitir o documento (F5)");
+        btnFormaPagamento.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(16f));
+        btnFormaPagamento.setBorder(javax.swing.BorderFactory.createEmptyBorder(14, 16, 14, 16));
+        util.ui.ComponentesWeb.botao(btnProcessar, util.ui.ComponentesWeb.Variante.SUCESSO, null,
+                "Processar o documento");
+        btnProcessar.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(16f));
+        btnProcessar.setBorder(javax.swing.BorderFactory.createEmptyBorder(14, 16, 14, 16));
+        btnCancelar.setText("Sair");
+        util.ui.FormularioWeb.botaoSair(btnCancelar, "Fechar as vendas");
+        for (javax.swing.JButton b : new javax.swing.JButton[]{btnFormaPagamento, btnProcessar, btnCancelar}) {
+            b.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        }
+        javax.swing.JPanel botoes = util.ui.FormularioWeb.pilha(8, btnFormaPagamento, btnProcessar);
+        javax.swing.JPanel cobranca = util.ui.ComponentesWeb.transparente(new java.awt.BorderLayout(0, 10));
+        cobranca.add(util.ui.FormularioWeb.pilha(8, visor, cartaoResumo), java.awt.BorderLayout.NORTH);
+        cobranca.add(botoes, java.awt.BorderLayout.CENTER);
+        cobranca.add(btnCancelar, java.awt.BorderLayout.SOUTH);
+        cobranca.setPreferredSize(new java.awt.Dimension(260, 100));
+
+        // ---------------------------------------------------------- janela
+        javax.swing.JPanel area = new javax.swing.JPanel(new java.awt.BorderLayout(10, 0));
+        area.setBackground(util.ui.ComponentesWeb.FUNDO_PAGINA);
+        area.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 12));
+        area.add(centro, java.awt.BorderLayout.CENTER);
+        area.add(cobranca, java.awt.BorderLayout.EAST);
+
+        java.awt.Container raiz = getContentPane();
+        raiz.removeAll();
+        raiz.setLayout(new java.awt.BorderLayout());
+        raiz.setBackground(util.ui.ComponentesWeb.FUNDO_PAGINA);
+        raiz.add(lateral, java.awt.BorderLayout.WEST);
+        raiz.add(area, java.awt.BorderLayout.CENTER);
+        raiz.add(util.ui.EstiloUI.barraEstadoComRelogio(this,
+                "Vendas · F4 pesquisar artigo · F5 forma de pagamento · Enter nos códigos lança o artigo"), java.awt.BorderLayout.SOUTH);
+        // ecrãs mais estreitos: painel lateral e coluna de cobrança um pouco mais
+        // estreitos, para o lançamento e a tabela terem mais largura
+        raiz.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                boolean estreito = raiz.getWidth() < 1500;
+                int lat = estreito ? 252 : 290, cob = estreito ? 228 : 260;
+                if (lateral.getPreferredSize().width != lat) {
+                    lateral.setPreferredSize(new java.awt.Dimension(lat, 100));
+                    cobranca.setPreferredSize(new java.awt.Dimension(cob, 100));
+                    javax.swing.SwingUtilities.invokeLater(() -> {
+                        raiz.revalidate();
+                        raiz.repaint();
+                    });
+                }
+            }
+        });
+        setIconImages(util.ui.MenuWeb.iconesAplicacao());
+        setMinimumSize(new java.awt.Dimension(1100, 640));
+        setResizable(true);
+        setExtendedState(getExtendedState() | MAXIMIZED_BOTH);
+    }
+
+    /** Campo do painel lateral: rótulo claro por cima. */
+    private static javax.swing.JPanel campoLateral(String titulo, java.awt.Component c) {
+        javax.swing.JLabel l = new javax.swing.JLabel(titulo);
+        l.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(12f));
+        l.setForeground(CLARO_LATERAL);
+        javax.swing.JPanel p = util.ui.ComponentesWeb.transparente(new java.awt.BorderLayout(0, 3));
+        p.add(l, java.awt.BorderLayout.NORTH);
+        p.add(c, java.awt.BorderLayout.CENTER);
+        return p;
+    }
+
+    /** Linha do resumo de cobrança: texto à esquerda, valor à direita. */
+    private static javax.swing.JPanel linhaResumo(String texto, java.awt.Component valor) {
+        javax.swing.JLabel l = new javax.swing.JLabel(texto);
+        l.setFont(util.ui.EstiloUI.FONTE.deriveFont(12.5f));
+        l.setForeground(util.ui.ComponentesWeb.TEXTO_SUAVE);
+        javax.swing.JPanel p = util.ui.ComponentesWeb.transparente(new java.awt.BorderLayout(8, 0));
+        p.add(l, java.awt.BorderLayout.WEST);
+        p.add(valor, java.awt.BorderLayout.EAST);
+        if (valor instanceof javax.swing.JTextField) {
+            ((javax.swing.JTextField) valor).setColumns(10);
+        }
+        return p;
+    }
+
+    /** O "embrulho" (rótulo + campo) aparece e desaparece com o campo (regras antigas de visibilidade). */
+    private static void seguirVisibilidade(java.awt.Component campo, java.awt.Component embrulho) {
+        campo.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentShown(java.awt.event.ComponentEvent e) {
+                embrulho.setVisible(true);
+            }
+
+            @Override
+            public void componentHidden(java.awt.event.ComponentEvent e) {
+                embrulho.setVisible(false);
+            }
+        });
+        embrulho.setVisible(campo.isVisible());
+    }
+
+    /** Uma linha de campos: larguras mínimas e o espaço que sobra repartido pelos pesos. */
+    private static javax.swing.JPanel linhaCampos(java.awt.Component[] comps, double[] pesos, int[] larguras) {
+        javax.swing.JPanel p = util.ui.ComponentesWeb.transparente(new java.awt.GridBagLayout());
+        java.awt.GridBagConstraints g = new java.awt.GridBagConstraints();
+        g.gridy = 0;
+        g.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        g.anchor = java.awt.GridBagConstraints.SOUTHWEST;
+        for (int i = 0; i < comps.length; i++) {
+            g.gridx = i;
+            g.weightx = pesos[i];
+            g.insets = new java.awt.Insets(0, 0, 0, i == comps.length - 1 ? 0 : 8);
+            java.awt.Dimension d = comps[i].getPreferredSize();
+            if (larguras[i] > 0) {
+                comps[i].setPreferredSize(new java.awt.Dimension(larguras[i], d.height));
+                d = comps[i].getPreferredSize();
+            }
+            // os campos fixos (peso 0: datas, preço, quantidade, botões) não encolhem;
+            // só os flexíveis (subfamília, artigo, códigos) cedem espaço, até 70 px
+            comps[i].setMinimumSize(new java.awt.Dimension(pesos[i] == 0 ? d.width : Math.min(d.width, 70), d.height));
+            p.add(comps[i], g);
+        }
+        return p;
+    }
+
+    /** Botão alinhado em baixo com os campos que têm rótulo por cima. */
+    private static javax.swing.JPanel rodapeBotao(javax.swing.JComponent c) {
+        javax.swing.JPanel p = util.ui.ComponentesWeb.transparente(new java.awt.BorderLayout());
+        p.add(c, java.awt.BorderLayout.SOUTH);
+        p.setBorder(javax.swing.BorderFactory.createEmptyBorder(17, 0, 0, 0));
+        return p;
     }
 
     private void init() {

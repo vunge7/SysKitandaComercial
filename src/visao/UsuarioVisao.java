@@ -31,6 +31,8 @@ import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.view.JasperViewer;
 import util.BDConexao;
 import util.MetodosUtil;
+import util.ui.ComponentesWeb;
+import util.ui.FormularioWeb;
 import static util.MetodosUtil.normalizarNome;
 import static util.MetodosUtil.normalizarUserName;
 
@@ -62,6 +64,7 @@ public class UsuarioVisao extends javax.swing.JFrame
 
         initComponents();
         confLabel();
+        montarLayoutResponsivo();
         setLocationRelativeTo( null );
 
         usuarioModelo = new UsuarioModelo();
@@ -77,6 +80,84 @@ public class UsuarioVisao extends javax.swing.JFrame
         btnAlterar.setVisible( false );
         btnEliminar.setVisible( false );
 
+    }
+
+    /**
+     * Layout web (como Clientes, Hóspedes e Notas) sobre os componentes do
+     * initComponents: o .form não muda. Os separadores antigos passam a uma só
+     * página com três cartões. Os textos de cmbStatus ("Activo"/"Desactivo") e
+     * o "Masculino" de cmbSexo são lidos na gravação: não os mudar.
+     */
+    private void montarLayoutResponsivo()
+    {
+        lbInicaisNome1.setText( "Iniciais do nome" );
+        lbNomes.setText( "Utilizador encontrado" );
+        lbNome.setText( "Nome completo *" );
+        lbDataNascimento.setText( "Data de nascimento *" );
+        lbTelefone.setText( "Telefone *" );
+        lbEmail.setText( "Email *" );
+        lbEndereco.setText( "Endereço" );
+        lbSexo.setText( "Sexo" );
+        lbUserName.setText( "Nome de utilizador *" );
+        lbTipoUsuario.setText( "Tipo de utilizador *" );
+        lbStatus.setText( "Estado *" );
+        for ( JLabel l : new JLabel[]
+        {
+            lbInicaisNome1, lbNomes, lbNome, lbDataNascimento, lbTelefone, lbEmail,
+            lbEndereco, lbSexo, lbUserName, lbTipoUsuario, lbStatus
+        } )
+        {
+            l.setHorizontalAlignment( JLabel.LEFT );
+        }
+
+        FormularioWeb.campoTexto( txtInicias, txtNome, txtTelefone, txtEmail, txtEndereco, txtUserName );
+        FormularioWeb.combo( cmbNome, cmbSexo, cmbStatus, cmbTipoUsuario );
+        FormularioWeb.data( chDatanascimneto );
+        chDatanascimneto.setDateFormatString( "dd-MM-yyyy" );
+        txtInicias.setToolTipText( "Escreva as primeiras letras do nome para procurar um utilizador já cadastrado" );
+        txtUserName.setToolTipText( "Sugerido a partir do primeiro e do último nome; pode ser alterado" );
+
+        ComponentesWeb.Cartao pesquisa = FormularioWeb.cartao( "Procurar Utilizador", ComponentesWeb.AZUL_VIVO,
+                FormularioWeb.grelha( 260, 2,
+                        ComponentesWeb.campo( lbInicaisNome1, txtInicias ),
+                        ComponentesWeb.campo( lbNomes, cmbNome ) ) );
+
+        ComponentesWeb.Cartao pessoais = FormularioWeb.cartao( "Dados Pessoais", ComponentesWeb.VERDE,
+                FormularioWeb.pilha( 8,
+                        FormularioWeb.grelha( 280, 2,
+                                ComponentesWeb.campo( lbNome, txtNome ),
+                                ComponentesWeb.campo( lbEndereco, txtEndereco ) ),
+                        FormularioWeb.grelha( 170, 4,
+                                ComponentesWeb.campo( lbDataNascimento, chDatanascimneto ),
+                                ComponentesWeb.campo( lbTelefone, txtTelefone ),
+                                ComponentesWeb.campo( lbEmail, txtEmail ),
+                                ComponentesWeb.campo( lbSexo, cmbSexo ) ) ) );
+
+        JLabel notaSenha = FormularioWeb.dica( "<html>A senha é gerada a partir do nome e da data de nascimento "
+                + "e aparece na folha de credenciais depois de <b>Salvar</b> ou <b>Actualizar</b> "
+                + "(actualizar também redefine a senha).</html>" );
+        ComponentesWeb.Cartao conta = FormularioWeb.cartao( "Conta de Acesso", ComponentesWeb.ROXO,
+                FormularioWeb.pilha( 8,
+                        FormularioWeb.grelha( 200, 3,
+                                ComponentesWeb.campo( lbUserName, txtUserName ),
+                                ComponentesWeb.campo( lbTipoUsuario, cmbTipoUsuario ),
+                                ComponentesWeb.campo( lbStatus, cmbStatus ) ),
+                        notaSenha ) );
+
+        javax.swing.JPanel conteudo = FormularioWeb.pilha( 8, pesquisa, pessoais, conta );
+
+        FormularioWeb.botaoSalvar( btnSalvar, "Cadastrar um novo utilizador com estes dados" );
+        FormularioWeb.botaoAlterar( btnAlterar, "Gravar as alterações do utilizador seleccionado" );
+        FormularioWeb.botaoEliminar( btnEliminar, "Eliminar o utilizador seleccionado" );
+        FormularioWeb.botaoSair( btnCancelar, "Fechar esta janela" );
+
+        FormularioWeb.montar( this,
+                FormularioWeb.cabecalho( "Cadastro de Utilizadores", "Dados pessoais, conta de acesso e permissões", null ),
+                conteudo,
+                FormularioWeb.barraAccoes( FormularioWeb.dica( "Os campos com * são obrigatórios" ),
+                        btnSalvar, btnAlterar, btnEliminar, btnCancelar ),
+                "Kitanda  ·  Cadastro de Utilizadores" );
+        FormularioWeb.ajustar( this, 980, 680, 720, 520 );
     }
 
     public int getIdTipoUsuario() throws SQLException
