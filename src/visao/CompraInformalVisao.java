@@ -182,7 +182,7 @@ public class CompraInformalVisao extends javax.swing.JFrame implements Runnable
     // LAYOUT WEB (como as Vendas Pontuais): o .form não muda, só se arrumam
     // os componentes do initComponents. Nenhuma regra de compra é alterada.
     // =====================================================================
-    private static final java.awt.Color CLARO_LATERAL = new java.awt.Color( 196, 218, 245 );
+    private static final java.awt.Color CLARO_LATERAL = util.ui.Tema.claro();
 
     private void montarLayoutWeb()
     {

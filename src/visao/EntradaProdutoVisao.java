@@ -86,6 +86,115 @@ public class EntradaProdutoVisao extends javax.swing.JFrame
     private static ArmazensController armazensController;
     // private OperacaoSistemaUtil osu =  new OperacaoSistemaUtil();
 
+    // =====================================================================
+    // LAYOUT WEB (padrão dos formulários do SysKitandaHotel, responsivo)
+    // Artigo (códigos, categoria, produto e quantidades), tabela dos artigos
+    // a dar entrada e barra de acções. Componentes e eventos são os mesmos.
+    // =====================================================================
+    private void montarLayoutWeb()
+    {
+        lbCodigoProduto.setText( "Código interno" );
+        lbCategoria2.setText( "Código de barras" );
+        lbCategoria3.setText( "Código manual" );
+        lbCategoria.setText( "Categoria" );
+        lbProduto.setText( "Produto" );
+        lbQuantidadeExistente.setText( "Existente" );
+        lbQuantidadeEntrar.setText( "Qtd a entrar *" );
+        for ( javax.swing.JLabel l : new javax.swing.JLabel[]
+        {
+            lbCodigoProduto, lbCategoria2, lbCategoria3, lbCategoria, lbProduto, lbQuantidadeExistente, lbQuantidadeEntrar
+        } )
+        {
+            l.setHorizontalAlignment( javax.swing.SwingConstants.LEFT );
+        }
+        util.ui.FormularioWeb.campoTexto( txtCodigoProduto, txtCodigoBarra, txtCodigoManual, txtQuatidadeExistente, txtQuatindade );
+        util.ui.FormularioWeb.combo( cmbArmazem, cmbSubFamilia, cmbProduto );
+        for ( javax.swing.JTextField t : new javax.swing.JTextField[]
+        {
+            txtQuatidadeExistente, txtQuatindade
+        } )
+        {
+            t.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 14f ) );
+            t.setHorizontalAlignment( javax.swing.JTextField.CENTER );
+        }
+        txtCodigoProduto.setToolTipText( "Código interno do artigo; Enter procura-o" );
+        txtCodigoBarra.setToolTipText( "Código de barras; Enter procura o artigo" );
+
+        jButton4.setText( "" );
+        btn_adicionar.setText( "Adicionar" );
+        util.ui.ComponentesWeb.botao( btn_adicionar, util.ui.ComponentesWeb.Variante.SUCESSO, null,
+                "Lançar o artigo com a quantidade indicada" );
+        btn_remover.setText( "Remover" );
+        util.ui.ComponentesWeb.botao( btn_remover, util.ui.ComponentesWeb.Variante.AVISO, null,
+                "Remover a linha seleccionada na tabela" );
+        javax.swing.JPanel botoes = util.ui.ComponentesWeb.transparente( new java.awt.FlowLayout( java.awt.FlowLayout.RIGHT, 8, 0 ) );
+        botoes.add( btn_adicionar );
+        botoes.add( btn_remover );
+
+        util.ui.ComponentesWeb.Cartao artigo = util.ui.FormularioWeb.cartao( "Artigo", util.ui.ComponentesWeb.VERDE,
+                util.ui.FormularioWeb.pilha( 8,
+                        util.ui.FormularioWeb.grelha( 180, 3,
+                                util.ui.ComponentesWeb.campo( lbCodigoProduto,
+                                        util.ui.FormularioWeb.comBotao( txtCodigoProduto, jButton4, "Pesquisar o artigo pelo nome (F1)" ) ),
+                                util.ui.ComponentesWeb.campo( lbCategoria2, txtCodigoBarra ),
+                                util.ui.ComponentesWeb.campo( lbCategoria3, txtCodigoManual ) ),
+                        util.ui.FormularioWeb.grelha( 160, 4,
+                                util.ui.ComponentesWeb.campo( lbCategoria, cmbSubFamilia ),
+                                util.ui.ComponentesWeb.campo( lbProduto, cmbProduto ),
+                                util.ui.ComponentesWeb.campo( lbQuantidadeExistente, txtQuatidadeExistente ),
+                                util.ui.ComponentesWeb.campo( lbQuantidadeEntrar, txtQuatindade ) ),
+                        botoes ) );
+
+        util.ui.EstiloUI.estilizarTabela( table, true );
+        table.setRowHeight( 30 );
+        jScrollPane1.setBorder( new javax.swing.border.LineBorder( util.ui.ComponentesWeb.LINHA, 1, true ) );
+        jScrollPane1.getViewport().setBackground( java.awt.Color.WHITE );
+        jScrollPane1.setPreferredSize( new java.awt.Dimension( 600, 240 ) );
+        jScrollPane1.setMinimumSize( new java.awt.Dimension( 300, 140 ) );
+        util.ui.ComponentesWeb.Cartao itens = util.ui.FormularioWeb.cartao( "Artigos a dar entrada", util.ui.ComponentesWeb.AZUL_VIVO, jScrollPane1 );
+        itens.adicionarAccao( etiquetaLinhasWeb( table ) );
+
+        lbFornecedor.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 13f ) );
+        lbFornecedor.setForeground( java.awt.Color.WHITE );
+        lbArmazem.setText( "Armazém" );
+        cmbArmazem.setPreferredSize( new java.awt.Dimension( 200, 30 ) );
+        javax.swing.JPanel direita = util.ui.ComponentesWeb.transparente( new util.ui.EstiloUI.WrapLayout( java.awt.FlowLayout.RIGHT, 12, 0 ) );
+        direita.add( lbFornecedor );
+        direita.add( util.ui.FormularioWeb.campoCabecalho( lbArmazem, cmbArmazem ) );
+
+        btn_salvar.setText( "Efectuar entrada" );
+        util.ui.FormularioWeb.botaoSalvar( btn_salvar, "Gravar a entrada dos artigos no stock" );
+        btnCancelar.setText( "Sair" );
+        util.ui.FormularioWeb.botaoSair( btnCancelar, "Fechar esta janela" );
+
+        util.ui.FormularioWeb.montar( this,
+                util.ui.FormularioWeb.cabecalho( "Entrada de Produtos", "Entrada de artigos no stock do armazém", direita ),
+                util.ui.FormularioWeb.pilha( 10, artigo, itens ),
+                util.ui.FormularioWeb.barraAccoes( util.ui.FormularioWeb.dica( "F1 pesquisa o artigo  ·  Enter nos códigos procura" ),
+                        btn_salvar, btnCancelar ),
+                "Kitanda  ·  Entrada de Produtos" );
+        util.ui.FormularioWeb.ajustar( this, 1100, 740, 800, 540 );
+    }
+
+    /** Etiqueta com o número de linhas da tabela (acompanha a troca de modelo). */
+    private static util.ui.ComponentesWeb.Etiqueta etiquetaLinhasWeb( final javax.swing.JTable t )
+    {
+        final util.ui.ComponentesWeb.Etiqueta e = new util.ui.ComponentesWeb.Etiqueta( "0 linhas", util.ui.ComponentesWeb.AZUL_VIVO );
+        final Runnable contar = () ->
+        {
+            int n = t.getRowCount();
+            e.setText( n + ( n == 1 ? " linha" : " linhas" ) );
+        };
+        t.getModel().addTableModelListener( ev -> contar.run() );
+        t.addPropertyChangeListener( "model", ev ->
+        {
+            t.getModel().addTableModelListener( x -> contar.run() );
+            contar.run();
+        } );
+        contar.run();
+        return e;
+    }
+
     public EntradaProdutoVisao( java.awt.Frame parent, boolean modal, int idUser, String cod_barra, BDConexao conexao ) throws SQLException
     {
 
@@ -114,6 +223,8 @@ public class EntradaProdutoVisao extends javax.swing.JFrame
         txtQuatidadeExistente.setText( String.valueOf( conexao.getQtdExistenteStock( getCodigoProduto(), getIdArmazem() ) ) );
         MetodosUtil.FUNCAO_F1( this, modal, getCodigoArmazem(), DVML.JANELA_ENTRADA );
         MetodosUtil.setArmazemByCampoConfigArmazem( cmbArmazem, conexao, idUser );
+        // aspecto dos formulários do SysKitandaHotel, sobre o initComponents
+        util.ui.LayoutSeguro.aplicar( this, "Entrada de produtos", this::montarLayoutWeb );
     }
 
     public EntradaProdutoVisao( java.awt.Frame parent, boolean modal, int idUser, String codigo, BDConexao conexao, String armazem, int chamada )
@@ -156,6 +267,8 @@ public class EntradaProdutoVisao extends javax.swing.JFrame
         MetodosUtil.FUNCAO_F1( this, modal, getCodigoArmazem(), DVML.JANELA_ENTRADA );
         MetodosUtil.setArmazemByCampoConfigArmazem( cmbArmazem, conexao, idUser );
 
+        // aspecto dos formulários do SysKitandaHotel, sobre o initComponents
+        util.ui.LayoutSeguro.aplicar( this, "Entrada de produtos", this::montarLayoutWeb );
     }
 
     public void confiLabel()

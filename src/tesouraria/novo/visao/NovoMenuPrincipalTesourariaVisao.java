@@ -104,7 +104,198 @@ public class NovoMenuPrincipalTesourariaVisao extends javax.swing.JFrame
             e.printStackTrace();
         }
         adicionarTabelaContasFacturacao();
+        // aspecto dos menus do SysKitandaHotel, sobre o initComponents
+        util.ui.LayoutSeguro.aplicar( this, "Tesouraria", this::montarLayoutWeb );
 
+    }
+
+    // =====================================================================
+    // LAYOUT WEB (como os menus do SysKitandaHotel): barra lateral azul (ou
+    // a cor do negócio) com as operações e o saldo geral, cabeçalho e os
+    // painéis de contas e movimentos com o estilo web. Os painéis (CardLayout),
+    // as linhas das contas e os eventos são os mesmos.
+    // =====================================================================
+    private void montarLayoutWeb()
+    {
+        // ---- barra lateral
+        javax.swing.JPanel lateral = new util.ui.ComponentesWeb.PainelGradiente( new java.awt.BorderLayout(),
+                util.ui.MenuWeb.AZUL_NOITE, util.ui.MenuWeb.AZUL_MARINHO );
+        lateral.setPreferredSize( new java.awt.Dimension( 250, 100 ) );
+        javax.swing.JPanel marca = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 12, 0 ) );
+        marca.setBorder( javax.swing.BorderFactory.createEmptyBorder( 18, 18, 14, 14 ) );
+        marca.add( new util.ui.MenuWeb.Logotipo( 42, util.ui.MenuWeb.Simbolo.CARTEIRA ), java.awt.BorderLayout.WEST );
+        javax.swing.JLabel lbTitulo = new javax.swing.JLabel( "Tesouraria" );
+        lbTitulo.setFont( new java.awt.Font( "Georgia", java.awt.Font.BOLD, 17 ) );
+        lbTitulo.setForeground( java.awt.Color.WHITE );
+        javax.swing.JLabel lbArea = new javax.swing.JLabel( "Contas, entradas e saídas" );
+        lbArea.setFont( util.ui.EstiloUI.FONTE.deriveFont( 12f ) );
+        lbArea.setForeground( util.ui.MenuWeb.DOURADO_CLARO );
+        javax.swing.JPanel textos = util.ui.ComponentesWeb.transparente( new java.awt.GridLayout( 2, 1 ) );
+        textos.add( lbTitulo );
+        textos.add( lbArea );
+        marca.add( textos, java.awt.BorderLayout.CENTER );
+
+        javax.swing.JPanel menu = util.ui.ComponentesWeb.transparente( null );
+        menu.setLayout( new javax.swing.BoxLayout( menu, javax.swing.BoxLayout.Y_AXIS ) );
+        menu.setBorder( javax.swing.BorderFactory.createEmptyBorder( 0, 12, 8, 8 ) );
+        javax.swing.JLabel g1 = util.ui.MenuWeb.rotuloGrupo( "Operações", util.ui.MenuWeb.DOURADO );
+        g1.setBorder( javax.swing.BorderFactory.createEmptyBorder( 0, 12, 4, 0 ) );
+        menu.add( g1 );
+        Object[][] itens =
+        {
+            { btnVisualizarContaGeral, "Visualizar contas" },
+            { btnNovaConta, "Nova conta" },
+            { btnContasFacturacao, "Contas da facturação" },
+            { btnCadastroUsuario, "Utilizadores" },
+            { jButton2, "Menu principal" }
+        };
+        for ( Object[] i : itens )
+        {
+            javax.swing.JButton b = ( javax.swing.JButton ) i[ 0 ];
+            b.setIcon( null );
+            util.ui.MenuWeb.itemLateral( b, ( String ) i[ 1 ] );
+            menu.add( b );
+        }
+        javax.swing.JPanel topoMenu = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout() );
+        topoMenu.add( menu, java.awt.BorderLayout.NORTH );
+
+        // saldo geral num visor
+        lbSaldoGeral.setText( "SALDO GERAL" );
+        lbSaldoGeral.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 11f ) );
+        lbSaldoGeral.setForeground( new java.awt.Color( 148, 163, 184 ) );
+        lbSaldoGeral.setHorizontalAlignment( javax.swing.SwingConstants.LEFT );
+        lbValorSaldoGeral.setFont( util.ui.MesasWeb.fonteVisor( 20 ) );
+        lbValorSaldoGeral.setForeground( new java.awt.Color( 134, 239, 172 ) );
+        lbValorSaldoGeral.setHorizontalAlignment( javax.swing.SwingConstants.RIGHT );
+        util.ui.ComponentesWeb.CaixaSuave visor = new util.ui.ComponentesWeb.CaixaSuave( new java.awt.BorderLayout( 0, 2 ),
+                new java.awt.Color( 15, 23, 42 ), null );
+        visor.setBorder( javax.swing.BorderFactory.createEmptyBorder( 10, 12, 10, 12 ) );
+        visor.add( lbSaldoGeral, java.awt.BorderLayout.NORTH );
+        visor.add( lbValorSaldoGeral, java.awt.BorderLayout.CENTER );
+        jButton12.setIcon( null );
+        util.ui.MenuWeb.botaoContorno( jButton12, "Sair", "Terminar a sessão" );
+        javax.swing.JPanel baixo = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 0, 10 ) );
+        baixo.setBorder( javax.swing.BorderFactory.createCompoundBorder(
+                javax.swing.BorderFactory.createMatteBorder( 1, 0, 0, 0, new java.awt.Color( 255, 255, 255, 40 ) ),
+                javax.swing.BorderFactory.createEmptyBorder( 12, 16, 14, 16 ) ) );
+        baixo.add( visor, java.awt.BorderLayout.NORTH );
+        baixo.add( jButton12, java.awt.BorderLayout.CENTER );
+
+        javax.swing.JScrollPane rolagemMenu = util.ui.ComponentesWeb.rolagemVertical( topoMenu );
+        util.ui.MenuWeb.barraFina( rolagemMenu.getVerticalScrollBar() );
+        lateral.add( marca, java.awt.BorderLayout.NORTH );
+        lateral.add( rolagemMenu, java.awt.BorderLayout.CENTER );
+        lateral.add( baixo, java.awt.BorderLayout.SOUTH );
+
+        // ---- área principal: os painéis de sempre, com o estilo web
+        estiloWeb( painel_card );
+        // linhas das contas: as cores do tema em vez do ciano fixo
+        degradacao.clear();
+        degradacao.add( util.ui.ComponentesWeb.alfa( util.ui.ComponentesWeb.AZUL_VIVO, 60 ) );
+        degradacao.add( util.ui.ComponentesWeb.alfa( util.ui.ComponentesWeb.AZUL_VIVO, 0 ) );
+        listarContas();
+        jScrollPane4.setBorder( null );
+        jScrollPane4.getViewport().setBackground( util.ui.ComponentesWeb.FUNDO_PAGINA );
+        jScrollPane4.getVerticalScrollBar().setUnitIncrement( 24 );
+
+        javax.swing.JPanel area = new javax.swing.JPanel( new java.awt.BorderLayout() );
+        area.setBackground( util.ui.ComponentesWeb.FUNDO_PAGINA );
+        area.add( util.ui.FormularioWeb.cabecalho( "Tesouraria", "Contas, movimentos, entradas, saídas e transferências", null ),
+                java.awt.BorderLayout.NORTH );
+        javax.swing.JPanel centro = new javax.swing.JPanel( new java.awt.BorderLayout() );
+        centro.setBackground( util.ui.ComponentesWeb.FUNDO_PAGINA );
+        centro.setBorder( javax.swing.BorderFactory.createEmptyBorder( 8, 8, 8, 8 ) );
+        centro.add( jScrollPane4, java.awt.BorderLayout.CENTER );
+        area.add( centro, java.awt.BorderLayout.CENTER );
+
+        javax.swing.JPanel raiz = new javax.swing.JPanel( new java.awt.BorderLayout() );
+        raiz.setBackground( util.ui.ComponentesWeb.FUNDO_PAGINA );
+        raiz.add( lateral, java.awt.BorderLayout.WEST );
+        raiz.add( area, java.awt.BorderLayout.CENTER );
+        raiz.add( util.ui.EstiloUI.barraEstadoComRelogio( this, "Kitanda  ·  Tesouraria" ), java.awt.BorderLayout.SOUTH );
+        setContentPane( raiz );
+        setIconImages( util.ui.MenuWeb.iconesAplicacao() );
+        setMinimumSize( new java.awt.Dimension( 1024, 640 ) );
+        setResizable( true );
+        setExtendedState( getExtendedState() | MAXIMIZED_BOTH );
+    }
+
+    /** Botões, campos, listas e tabelas com o aspecto web (percorre a árvore). */
+    private static void estiloWeb( java.awt.Container c )
+    {
+        for ( java.awt.Component f : c.getComponents() )
+        {
+            if ( f instanceof javax.swing.JButton )
+            {
+                javax.swing.JButton b = ( javax.swing.JButton ) f;
+                String t = b.getText() == null ? "" : b.getText().trim().toLowerCase();
+                util.ui.ComponentesWeb.Variante v = t.startsWith( "registr" ) || t.startsWith( "criar" ) || t.startsWith( "adicionar" )
+                        ? util.ui.ComponentesWeb.Variante.SUCESSO
+                        : t.startsWith( "remover" ) ? util.ui.ComponentesWeb.Variante.AVISO
+                        : t.startsWith( "entrada" ) ? util.ui.ComponentesWeb.Variante.SUCESSO
+                        : t.startsWith( "saida" ) || t.startsWith( "saída" ) ? util.ui.ComponentesWeb.Variante.PERIGO
+                        : t.startsWith( "transfer" ) ? util.ui.ComponentesWeb.Variante.PRIMARIO
+                        : util.ui.ComponentesWeb.Variante.SECUNDARIO;
+                javax.swing.Icon icone = b.getIcon();
+                util.ui.ComponentesWeb.botao( b, v, null, b.getToolTipText() );
+                if ( icone != null && t.isEmpty() )
+                {
+                    b.setIcon( icone ); // botões só com ícone mantêm-no
+                }
+            }
+            else if ( f instanceof javax.swing.JTextField && !( f instanceof javax.swing.JFormattedTextField ) )
+            {
+                util.ui.FormularioWeb.campoTexto( ( javax.swing.JTextField ) f );
+            }
+            else if ( f instanceof javax.swing.JComboBox )
+            {
+                util.ui.FormularioWeb.combo( ( javax.swing.JComboBox<?> ) f );
+            }
+            else if ( f instanceof javax.swing.JTable )
+            {
+                util.ui.EstiloUI.estilizarTabela( ( javax.swing.JTable ) f, true );
+            }
+            else if ( f instanceof javax.swing.JTextArea )
+            {
+                f.setFont( util.ui.EstiloUI.FONTE.deriveFont( 13.5f ) );
+            }
+            else if ( f instanceof javax.swing.JLabel )
+            {
+                javax.swing.JLabel l = ( javax.swing.JLabel ) f;
+                java.awt.Font fonte = l.getFont();
+                boolean grande = fonte != null && fonte.getSize() >= 18;
+                l.setFont( grande ? util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 17f ) : util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 12.5f ) );
+                l.setForeground( grande ? util.ui.EstiloUI.AZUL_ESCURO : util.ui.ComponentesWeb.TEXTO );
+            }
+            else if ( f instanceof com.toedter.calendar.JDateChooser )
+            {
+                util.ui.FormularioWeb.data( ( com.toedter.calendar.JDateChooser ) f );
+                continue;
+            }
+            if ( f instanceof javax.swing.JPanel )
+            {
+                javax.swing.JPanel p = ( javax.swing.JPanel ) f;
+                if ( p.isOpaque() )
+                {
+                    p.setBackground( java.awt.Color.WHITE );
+                }
+                if ( p.getBorder() instanceof javax.swing.border.TitledBorder )
+                {
+                    String titulo = ( ( javax.swing.border.TitledBorder ) p.getBorder() ).getTitle();
+                    p.setBorder( javax.swing.BorderFactory.createCompoundBorder(
+                            util.ui.EstiloUI.bordaTitulada( titulo == null ? "" : titulo ),
+                            javax.swing.BorderFactory.createEmptyBorder( 4, 4, 4, 4 ) ) );
+                }
+            }
+            if ( f instanceof javax.swing.JScrollPane )
+            {
+                ( ( javax.swing.JScrollPane ) f ).setBorder( new javax.swing.border.LineBorder( util.ui.ComponentesWeb.LINHA, 1, true ) );
+            }
+            if ( f instanceof java.awt.Container && !( f instanceof javax.swing.JComboBox ) && !( f instanceof javax.swing.JTable ) )
+            {
+                estiloWeb( ( java.awt.Container ) f );
+            }
+        }
     }
 
     /**

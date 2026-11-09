@@ -43,12 +43,12 @@ public final class EstiloUI {
     public static final Font FONTE = new Font(FAMILIA, Font.PLAIN, 13);
     public static final Font FONTE_NEGRITO = FONTE.deriveFont(Font.BOLD);
 
-    public static final Color AZUL_ESCURO = new Color(0, 51, 102);
-    public static final Color AZUL_TEXTO = new Color(21, 67, 120);
-    public static final Color AZUL_CLARO = new Color(226, 235, 247);
-    public static final Color AZUL_BORDA = new Color(170, 190, 220);
-    public static final Color LINHA_IMPAR = new Color(242, 246, 252);
-    public static final Color SELECCAO = new Color(51, 122, 183);
+    public static Color AZUL_ESCURO = new Color(0, 51, 102);
+    public static Color AZUL_TEXTO = new Color(21, 67, 120);
+    public static Color AZUL_CLARO = new Color(226, 235, 247);
+    public static Color AZUL_BORDA = new Color(170, 190, 220);
+    public static Color LINHA_IMPAR = new Color(242, 246, 252);
+    public static Color SELECCAO = new Color(51, 122, 183);
     public static final Color VERDE = new Color(0, 120, 60);
     public static final Color VERMELHO = new Color(190, 0, 0);
 

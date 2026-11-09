@@ -121,6 +121,130 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
     private UsuariosController usuariosController;
 //    private final Connection conn;
 
+    // =====================================================================
+    // LAYOUT WEB (padrão dos formulários do SysKitandaHotel, responsivo)
+    // Artigo, produtos a sair e o documento (motorista e motivo), com a barra
+    // de acções. Componentes e eventos são os mesmos.
+    // =====================================================================
+    private void montarLayoutWeb()
+    {
+        lbCodigoProduto.setText( "Código interno" );
+        lbCodigoProduto1.setText( "Código de barras" );
+        lbCodigoProduto3.setText( "Código manual" );
+        lbCategoria.setText( "Categoria" );
+        lbProduto.setText( "Produto" );
+        lbQuantidadeStock.setText( "Em stock" );
+        lbQuantidade.setText( "Qtd *" );
+        lbCodigoProduto2.setText( "Documento" );
+        jLabel1.setText( "Motorista" );
+        jLabel2.setText( "Motivo da saída" );
+        lbPreco1.setText( "Armazém" );
+        lbPreco2.setText( "Cód. saída" );
+        for ( javax.swing.JLabel l : new javax.swing.JLabel[]
+        {
+            lbCodigoProduto, lbCodigoProduto1, lbCodigoProduto3, lbCategoria, lbProduto, lbQuantidadeStock, lbQuantidade,
+            lbCodigoProduto2, jLabel1, jLabel2
+        } )
+        {
+            l.setHorizontalAlignment( javax.swing.SwingConstants.LEFT );
+        }
+        util.ui.FormularioWeb.campoTexto( txtCodigoProduto, txtCodigoBarra, txtCodigoManual, txtQuantidaStock, txtQuatindade,
+                txtCodigoDoc, txtMotorista, txtCodigoSaida );
+        util.ui.FormularioWeb.combo( cmbArmazem, cmbSubFamilia, cmbProduto );
+        for ( javax.swing.JTextField t : new javax.swing.JTextField[]
+        {
+            txtQuantidaStock, txtQuatindade
+        } )
+        {
+            t.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 14f ) );
+            t.setHorizontalAlignment( javax.swing.JTextField.CENTER );
+        }
+        txtAreaOBS.setFont( util.ui.EstiloUI.FONTE.deriveFont( 13.5f ) );
+        txtAreaOBS.setLineWrap( true );
+        txtAreaOBS.setWrapStyleWord( true );
+        jScrollPane3.setPreferredSize( new java.awt.Dimension( 300, 70 ) );
+
+        jButton4.setText( "" );
+        btn_adicionar.setText( "Adicionar" );
+        util.ui.ComponentesWeb.botao( btn_adicionar, util.ui.ComponentesWeb.Variante.SUCESSO, null,
+                "Lançar o artigo com a quantidade indicada" );
+        btn_remover.setText( "Remover" );
+        util.ui.ComponentesWeb.botao( btn_remover, util.ui.ComponentesWeb.Variante.AVISO, null,
+                "Remover a linha seleccionada na tabela" );
+        javax.swing.JPanel botoes = util.ui.ComponentesWeb.transparente( new java.awt.FlowLayout( java.awt.FlowLayout.RIGHT, 8, 0 ) );
+        botoes.add( btn_adicionar );
+        botoes.add( btn_remover );
+
+        util.ui.ComponentesWeb.Cartao artigo = util.ui.FormularioWeb.cartao( "Artigo", util.ui.ComponentesWeb.LARANJA,
+                util.ui.FormularioWeb.pilha( 8,
+                        util.ui.FormularioWeb.grelha( 180, 3,
+                                util.ui.ComponentesWeb.campo( lbCodigoProduto,
+                                        util.ui.FormularioWeb.comBotao( txtCodigoProduto, jButton4, "Pesquisar o artigo pelo nome" ) ),
+                                util.ui.ComponentesWeb.campo( lbCodigoProduto1, txtCodigoBarra ),
+                                util.ui.ComponentesWeb.campo( lbCodigoProduto3, txtCodigoManual ) ),
+                        util.ui.FormularioWeb.grelha( 160, 4,
+                                util.ui.ComponentesWeb.campo( lbCategoria, cmbSubFamilia ),
+                                util.ui.ComponentesWeb.campo( lbProduto, cmbProduto ),
+                                util.ui.ComponentesWeb.campo( lbQuantidadeStock, txtQuantidaStock ),
+                                util.ui.ComponentesWeb.campo( lbQuantidade, txtQuatindade ) ),
+                        botoes ) );
+
+        util.ui.EstiloUI.estilizarTabela( table, true );
+        table.setRowHeight( 30 );
+        jScrollPane1.setBorder( new javax.swing.border.LineBorder( util.ui.ComponentesWeb.LINHA, 1, true ) );
+        jScrollPane1.getViewport().setBackground( java.awt.Color.WHITE );
+        jScrollPane1.setPreferredSize( new java.awt.Dimension( 600, 240 ) );
+        jScrollPane1.setMinimumSize( new java.awt.Dimension( 300, 140 ) );
+        final util.ui.ComponentesWeb.Etiqueta etiqueta = new util.ui.ComponentesWeb.Etiqueta( "0 linhas", util.ui.ComponentesWeb.AZUL_VIVO );
+        final Runnable contar = () ->
+        {
+            int n = table.getRowCount();
+            etiqueta.setText( n + ( n == 1 ? " linha" : " linhas" ) );
+        };
+        table.getModel().addTableModelListener( ev -> contar.run() );
+        table.addPropertyChangeListener( "model", ev ->
+        {
+            table.getModel().addTableModelListener( x -> contar.run() );
+            contar.run();
+        } );
+        contar.run();
+        util.ui.ComponentesWeb.Cartao itens = util.ui.FormularioWeb.cartao( "Produtos a sair", util.ui.ComponentesWeb.AZUL_VIVO, jScrollPane1 );
+        itens.adicionarAccao( etiqueta );
+
+        util.ui.ComponentesWeb.Cartao documento = util.ui.FormularioWeb.cartao( "Documento da saída", util.ui.ComponentesWeb.ROXO,
+                util.ui.FormularioWeb.pilha( 8,
+                        util.ui.FormularioWeb.grelha( 200, 2,
+                                util.ui.ComponentesWeb.campo( lbCodigoProduto2, txtCodigoDoc ),
+                                util.ui.ComponentesWeb.campo( jLabel1, txtMotorista ) ),
+                        util.ui.ComponentesWeb.campo( jLabel2, jScrollPane3 ) ) );
+
+        cmbArmazem.setPreferredSize( new java.awt.Dimension( 200, 30 ) );
+        txtCodigoSaida.setPreferredSize( new java.awt.Dimension( 110, 30 ) );
+        javax.swing.JPanel direita = util.ui.ComponentesWeb.transparente( new util.ui.EstiloUI.WrapLayout( java.awt.FlowLayout.RIGHT, 12, 0 ) );
+        direita.add( util.ui.FormularioWeb.campoCabecalho( lbPreco2, txtCodigoSaida ) );
+        direita.add( util.ui.FormularioWeb.campoCabecalho( lbPreco1, cmbArmazem ) );
+
+        util.ui.ComponentesWeb.botao( btnNova, util.ui.ComponentesWeb.Variante.SECUNDARIO, null, "Começar uma saída nova" );
+        util.ui.FormularioWeb.botaoAlterar( btnActualizar, "Gravar as alterações da saída" );
+        btnFinalizar.setText( "Finalizar saída" );
+        util.ui.FormularioWeb.botaoSalvar( btnFinalizar, "Gravar a saída dos artigos do stock" );
+        btnCancelar.setText( "Sair" );
+        util.ui.FormularioWeb.botaoSair( btnCancelar, "Fechar esta janela" );
+
+        javax.swing.JPanel colunas = util.ui.ComponentesWeb.transparente( new util.ui.ComponentesWeb.ColunasResponsivas(
+                new double[]{ 0.65, 0.35 }, new int[]{ 460, 300 }, 10 ) );
+        colunas.add( itens );
+        colunas.add( documento );
+
+        util.ui.FormularioWeb.montar( this,
+                util.ui.FormularioWeb.cabecalho( "Saídas de Produtos", "Consumos, quebras e saídas de stock", direita ),
+                util.ui.FormularioWeb.pilha( 10, artigo, colunas ),
+                util.ui.FormularioWeb.barraAccoes( util.ui.FormularioWeb.dica( "Enter nos códigos procura o artigo" ),
+                        btnNova, btnActualizar, btnFinalizar, btnCancelar ),
+                "Kitanda  ·  Saídas de Produtos" );
+        util.ui.FormularioWeb.ajustar( this, 1140, 760, 820, 560 );
+    }
+
     public SaidaProdutoVisao( int cod_usuario, BDConexao conexao ) throws SQLException
     {
         this.conexao = conexao;
@@ -161,6 +285,8 @@ public class SaidaProdutoVisao extends javax.swing.JFrame
         btnNova.setEnabled( false );
         btnFinalizar.setEnabled( true );
         btnActualizar.setEnabled( false );
+        // aspecto dos formulários do SysKitandaHotel, sobre o initComponents
+        util.ui.LayoutSeguro.aplicar( this, "Saídas de produtos", this::montarLayoutWeb );
     }
 
     public void confiLabel()
