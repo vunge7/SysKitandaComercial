@@ -5278,7 +5278,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     private void empresa_sistema() {
         TbDadosInstituicao dados = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
 
-        jlEmpresa_sistema.setText("KITANDA 1.2");
+        jlEmpresa_sistema.setText("KITANDA " + util.DVML.VERSION_SOFTWARE);
 
     }
 
