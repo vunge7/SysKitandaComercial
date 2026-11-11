@@ -315,7 +315,36 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 //        initStockListener();
         txtBuscaRef.setEnabled(false);
 
+        instalarLimpezaConsumidorFinal();
+
         util.ui.LayoutSeguro.aplicar( this, "Vendas", this::montarLayoutWeb );
+    }
+
+    /**
+     * Ao clicar/entrar no campo do nome do consumidor final, o texto
+     * "Consumidor Final" desaparece para se escrever logo o nome novo (o texto
+     * fica todo seleccionado se for outro nome). Se sair do campo sem escrever
+     * nada, volta "Consumidor Final" para a factura nunca sair sem nome.
+     */
+    private static void instalarLimpezaConsumidorFinal() {
+        txtNomeConsumidorFinal.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent e) {
+                if (DVML._CLIENTE_CONSUMIDOR_FINAL.equalsIgnoreCase(txtNomeConsumidorFinal.getText().trim())) {
+                    txtNomeConsumidorFinal.setText("");
+                } else {
+                    javax.swing.SwingUtilities.invokeLater(txtNomeConsumidorFinal::selectAll);
+                }
+            }
+
+            @Override
+            public void focusLost(java.awt.event.FocusEvent e) {
+                if (txtNomeConsumidorFinal.getText().trim().isEmpty()
+                        && DVML._CLIENTE_CONSUMIDOR_FINAL.equals(cmbCliente.getSelectedItem())) {
+                    txtNomeConsumidorFinal.setText(DVML._CLIENTE_CONSUMIDOR_FINAL);
+                }
+            }
+        });
     }
 
     // =====================================================================
@@ -3212,7 +3241,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         // Strings
         if (getIdDocumento() == DOC_FACTURA_RECIBO_FR && getIdCliente() == 1) {
 
-            venda.setNomeCliente(txtNomeConsumidorFinal.getText().trim());
+            String nomeConsumidor = txtNomeConsumidorFinal.getText().trim();
+            venda.setNomeCliente(nomeConsumidor.isEmpty() ? DVML._CLIENTE_CONSUMIDOR_FINAL : nomeConsumidor);
             venda.setClienteNif(txtNifClientePesquisa.getText().trim());
         } else if (getIdDocumento() == DOC_FACTURA_RECIBO_FR && getIdCliente() > 1) {
 

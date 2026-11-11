@@ -2447,9 +2447,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
     private void jcbRelatorioMensalClientesVipsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jcbRelatorioMensalClientesVipsActionPerformed
     {//GEN-HEADEREND:event_jcbRelatorioMensalClientesVipsActionPerformed
-
-        // TODO add your handling code here:
-
+        new lista.RelatorioBonusDeClientesVipsVisao().setVisible( true );
     }//GEN-LAST:event_jcbRelatorioMensalClientesVipsActionPerformed
 
     private void jMenuItemEntradasProdutosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemEntradasProdutosActionPerformed

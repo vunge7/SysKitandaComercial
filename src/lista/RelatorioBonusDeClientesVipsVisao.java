@@ -5,7 +5,6 @@
 package lista;
 
 
-import java.sql.Connection;
 import dao.ArmazemDao;
 import dao.ClienteDao;
 import dao.ItemVendaDao;
@@ -15,7 +14,6 @@ import dao.UsuarioDao;
 import dao.VendaDao;
 import enties.util.RelatorioClienteBonusVipUtil;
 import entity.TbProduto;
-import entity.TbVenda;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,7 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManagerFactory;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JOptionPane;
+    import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import util.BDConexao;
 import util.DVML;
@@ -40,7 +38,6 @@ public class RelatorioBonusDeClientesVipsVisao extends javax.swing.JFrame {
     /**
      * Creates new form ListaUsuarioVisao
      */
-    
     private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
     private VendaDao vendaDao = new VendaDao(emf);
     private UsuarioDao usuarioDao = new UsuarioDao(emf);    
@@ -357,7 +354,7 @@ public class RelatorioBonusDeClientesVipsVisao extends javax.swing.JFrame {
             },
             new String []
             {
-                "Cód.Produto", "Produto ", "Qtd", "Preço Fábrica", "Bônus"
+                "Cód.Produto", "Produto ", "Qtd", "Preço de Venda", "Bônus"
             }
         )
         {
