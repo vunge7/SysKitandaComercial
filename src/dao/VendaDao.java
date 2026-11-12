@@ -1816,6 +1816,27 @@ public class VendaDao extends TbVendaJpaController {
 //        }
 //        return 0;
 
+    /**
+     * Total pago (recibos RC) agrupado pela factura referenciada, numa única
+     * consulta. Evita chamar getTotalPagoByCodFact linha a linha.
+     */
+    public static Map<String, BigDecimal> getMapaTotalPagoPorCodFact(BDConexao conexao) {
+        Map<String, BigDecimal> mapa = new HashMap<>();
+        String sql = "SELECT ref_cod_fact, SUM(valor_entregue) AS TOTAL_PAGO FROM tb_venda "
+                + "WHERE fk_documento = " + DVML.DOC_RECIBO_RC + " AND ref_cod_fact IS NOT NULL "
+                + "GROUP BY ref_cod_fact";
+        ResultSet result = conexao.executeQuery(sql);
+        try {
+            while (result != null && result.next()) {
+                BigDecimal total = result.getBigDecimal("TOTAL_PAGO");
+                mapa.put(result.getString("ref_cod_fact"), total != null ? total : BigDecimal.ZERO);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return mapa;
+    }
+
     public static BigDecimal getTotalPagoByCodFact(String cod_fact, BDConexao conexao) {
 
 //        String sql = "SELECT sum(valor_entregue) as TOTAL_PAGO FROM tb_venda WHERE ref_cod_fact = '" + cod_fact + "' and fk_documento = 6";
@@ -2028,7 +2049,7 @@ public class VendaDao extends TbVendaJpaController {
 
         EntityManager em = getEntityManager();
 
-        String sql = "SELECT * FROM tb_venda where DATE(dataVenda) between '" + MetodosUtil.getDataBanco(data_inicio) + "' AND '" + MetodosUtil.getDataBanco(data_fim) + " AND pkArmazem = " + pk_armazem + "' AND fk_documento IN(1,2,5,6)";
+        String sql = "SELECT * FROM tb_venda where DATE(dataVenda) between '" + MetodosUtil.getDataBanco(data_inicio) + "' AND '" + MetodosUtil.getDataBanco(data_fim) + "' AND idArmazemFK = " + pk_armazem + " AND fk_documento IN(1,2,5,6)";
 
         System.out.println(sql);
         Query query = em.createNativeQuery(sql, TbVenda.class);
@@ -2057,7 +2078,7 @@ public class VendaDao extends TbVendaJpaController {
 //                .setParameter( "DOC_A_EXCLUIR", listaDocAExcluir );
 //        String sql = "SELECT * FROM tb_venda where DATE(dataVenda) between '" + MetodosUtil.getDataBanco(data_inicio) + "' AND '" + MetodosUtil.getDataBanco(data_fim) + "' AND fk_documento IN(1,2,5,6)";
 //                String query = "SELECT MAX(codigo) AS last_id FROM tb_venda WHERE fk_documento = " + pk_documento + " AND fk_ano_economico = " + pk_ano_economico;
-        String sql = "SELECT * FROM tb_venda where DATE(dataVenda) between '" + MetodosUtil.getDataBanco(data_inicio) + "' AND '" + MetodosUtil.getDataBanco(data_fim) + " AND pkArmazem = " + pk_armazem + " AND pkCliente = " + pk_cliente + "' AND fk_documento IN(1,2,5,6)";
+        String sql = "SELECT * FROM tb_venda where DATE(dataVenda) between '" + MetodosUtil.getDataBanco(data_inicio) + "' AND '" + MetodosUtil.getDataBanco(data_fim) + "' AND idArmazemFK = " + pk_armazem + " AND codigo_cliente = " + pk_cliente + " AND fk_documento IN(1,2,5,6)";
 
         System.out.println(sql);
         Query query = em.createNativeQuery(sql, TbVenda.class);

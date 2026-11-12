@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_factura_forma_pagamento_A6_pro" pageWidth="188" pageHeight="802" columnWidth="188" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="5b0d1a3e-2f4c-4a8e-9d6b-1c2e3f4a5b61">
+	<style name="base" isDefault="true" fontName="Arial" fontSize="7"/>
+	<parameter name="CODIGO_VENDA" class="java.lang.Integer"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["../relatorios/"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT DISTINCT
+     forma_pagamento.`designacao` AS forma_pagamento_designacao,
+     forma_pagamento_item.`pk_forma_pagamento_item` AS forma_pagamento_item_pk_forma_pagamento_item,
+     forma_pagamento_item.`valor` AS forma_pagamento_item_valor,
+     forma_pagamento_item.`referencia` AS forma_pagamento_item_referencia
+FROM
+     `forma_pagamento` forma_pagamento INNER JOIN `forma_pagamento_item` forma_pagamento_item ON forma_pagamento.`pk_forma_pagamento` = forma_pagamento_item.`fk_forma_pagamento`
+WHERE forma_pagamento_item.`fk_venda` = $P{CODIGO_VENDA}]]>
+	</queryString>
+	<field name="forma_pagamento_designacao" class="java.lang.String"/>
+	<field name="forma_pagamento_item_pk_forma_pagamento_item" class="java.lang.Integer"/>
+	<field name="forma_pagamento_item_valor" class="java.math.BigDecimal"/>
+	<field name="forma_pagamento_item_referencia" class="java.lang.String"/>
+	<columnHeader>
+		<band height="11" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="5b0d1a3e-2f4c-4a8e-9d6b-1c2e3f4a5b62" x="0" y="0" width="90" height="10"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PAGAMENTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5b0d1a3e-2f4c-4a8e-9d6b-1c2e3f4a5b63" x="90" y="0" width="45" height="10"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REF.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5b0d1a3e-2f4c-4a8e-9d6b-1c2e3f4a5b64" x="135" y="0" width="53" height="10"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VALOR]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="10" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="5b0d1a3e-2f4c-4a8e-9d6b-1c2e3f4a5b65" x="0" y="1" width="90" height="9"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{forma_pagamento_designacao}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="5b0d1a3e-2f4c-4a8e-9d6b-1c2e3f4a5b66" x="90" y="1" width="45" height="9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{forma_pagamento_item_referencia}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="5b0d1a3e-2f4c-4a8e-9d6b-1c2e3f4a5b67" x="135" y="1" width="53" height="9"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{forma_pagamento_item_valor}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

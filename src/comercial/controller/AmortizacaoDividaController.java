@@ -450,6 +450,29 @@ public class AmortizacaoDividaController
 
     }
 
+    /**
+     * Valor pago (amortizações) por venda (fk_venda), numa única consulta.
+     * Evita chamar getValorAtribuidoByCodFact linha a linha.
+     */
+    public java.util.Map<Integer, Double> getMapaValorAtribuidoPorVenda()
+    {
+        java.util.Map<Integer, Double> mapa = new java.util.HashMap<>();
+        String query = "SELECT fk_venda, SUM(valor_pago) AS TOTAL FROM amortizacao_divida GROUP BY fk_venda";
+        ResultSet rs = conexao.executeQuery( query );
+        try
+        {
+            while ( rs != null && rs.next() )
+            {
+                mapa.put( rs.getInt( "fk_venda" ), rs.getDouble( "TOTAL" ) );
+            }
+        }
+        catch ( SQLException ex )
+        {
+            ex.printStackTrace();
+        }
+        return mapa;
+    }
+
     public double getValorAtribuidoByCodFact( String cod_fact )
     {
 

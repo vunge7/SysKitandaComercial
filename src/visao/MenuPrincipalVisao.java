@@ -87,6 +87,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
 
         boas_vinda();
         busca_permissao();
+        visao.espelho.EspelhoBDVisao.adicionarAoMenu(jMenu6, cod, conexao);
         permitirLogsAoAdministrador();
         mostrarNumeroDeprodutosExpirados();
         jMenuItemGestaoCreditos.setVisible(false);

@@ -1378,7 +1378,8 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
             TbItemVenda itemVendaLocal = new TbItemVenda();
             itemVendaLocal.setCodigoProduto(itemDocumentos.getCodigoProduto());
             itemVendaLocal.setCodigoVenda(new TbVenda(last_cod));
-            itemVendaLocal.setQuantidade((int) itemDocumentos.getQuantidade());
+            // sem cast para int: produtos vendidos a peso/fracção (ex.: 0.5) ficavam com 0
+            itemVendaLocal.setQuantidade(itemDocumentos.getQuantidade());
             itemVendaLocal.setDesconto(itemDocumentos.getDesconto());
             itemVendaLocal.setValorIva(itemDocumentos.getValorIva());
             itemVendaLocal.setMotivoIsensao(itemDocumentos.getMotivoIsensao());
@@ -1410,27 +1411,52 @@ public class NotasCreditoDebitoAnulacaoVisao extends javax.swing.JFrame implemen
                         loteController.devolverStock(
                                 documentoParm.getCodigo(),
                                 itemDocumentos.getCodigoProduto().getCodigo(),
-                                (int) itemDocumentos.getQuantidade()
+                                itemDocumentos.getQuantidade()
                         );
                     }
 
-                    MovimentacaoController.registrarMovimento(
+                    boolean movimentoOk = MovimentacaoController.registrarMovimento(
                             itemVendaLocal.getCodigoProduto().getCodigo(),
                             documentoParm.getIdArmazemFK().getCodigo(),
                             cod_usuario,
-                            new BigDecimal(itemVendaLocal.getQuantidade()),
+                            BigDecimal.valueOf(itemVendaLocal.getQuantidade()),
                             prox_doc,
                             "ENTRADA",
                             conexao
                     );
-                    MetodosUtil.adiciona_quantidade(itemVendaLocal.getCodigoProduto().getCodigo(),
-                            itemDocumentos.getQuantidade(), getVenda().getIdArmazemFK().getCodigo(), conexao);
+                    if (!movimentoOk) {
+                        throw new Exception("Falha ao registar a movimentação de entrada do produto " + produtoDescricao + ".");
+                    }
+                    // Antes: MetodosUtil.adiciona_quantidade engolia o erro do UPDATE, pelo que
+                    // a nota e a movimentação ficavam gravadas sem o stock ser reposto.
+                    reporStock(itemVendaLocal.getCodigoProduto().getCodigo(),
+                            documentoParm.getIdArmazemFK().getCodigo(),
+                            itemDocumentos.getQuantidade());
                 }
             }
         }
 
         abreviacao = Abreviacao.ND;
 //        actualizar_cod_doc();
+    }
+
+    /**
+     * Repõe a quantidade no stock dentro da transacção da nota. O incremento é
+     * atómico na BD (evita perder vendas feitas noutro terminal entre a leitura e
+     * a escrita) e qualquer falha lança excepção para que anularFaturaNota faça
+     * rollback de tudo.
+     */
+    private void reporStock(int codProduto, int idArmazem, double quantidade) throws SQLException {
+        String sql = "UPDATE tb_stock SET quantidade_existente = quantidade_existente + ? "
+                + "WHERE cod_produto_codigo = ? AND cod_armazem = ?";
+        try (java.sql.PreparedStatement ps = conexao.getConnectionAtiva().prepareStatement(sql)) {
+            ps.setDouble(1, quantidade);
+            ps.setInt(2, codProduto);
+            ps.setInt(3, idArmazem);
+            if (ps.executeUpdate() == 0) {
+                throw new SQLException("Produto " + codProduto + " não existe no stock do armazém " + idArmazem + ".");
+            }
+        }
     }
 
     public static void exibirMensagemErro(Component rootPane, String tituloJanela, String menssagem) {

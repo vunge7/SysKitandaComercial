@@ -87,6 +87,7 @@ public class MenuPrincipalLavandariaVisao extends javax.swing.JFrame
 
         boas_vinda();
         busca_permissao();
+        visao.espelho.EspelhoBDVisao.adicionarAoMenu(jMenu6, cod, conexao);
         mostrarNumeroDeprodutosExpirados();
         jMenuItemGestaoCreditos.setVisible( false );
         jMenuItem12.setVisible( false );

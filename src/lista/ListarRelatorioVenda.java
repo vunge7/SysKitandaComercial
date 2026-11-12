@@ -1226,6 +1226,20 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
 
     }
 
+    /**
+     * Equivalente ao DATEDIFF(data_fim, data_inicio) do MySQL, calculado em
+     * memória (antes era uma ida à BD por cada linha da tabela).
+     */
+    private int getDiferencaDias(Date data_fim, Date data_inicio) {
+        if (data_fim == null || data_inicio == null) {
+            return 0;
+        }
+        java.time.ZoneId zona = java.time.ZoneId.systemDefault();
+        java.time.LocalDate fim = new Date(data_fim.getTime()).toInstant().atZone(zona).toLocalDate();
+        java.time.LocalDate inicio = new Date(data_inicio.getTime()).toInstant().atZone(zona).toLocalDate();
+        return (int) java.time.temporal.ChronoUnit.DAYS.between(inicio, fim);
+    }
+
     private String getNumeroDoisDigitos(int numero) {
         if (numero < 10) {
             return "0" + numero;
@@ -1332,10 +1346,12 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
         DefaultTableModel modelo = (DefaultTableModel) tabela_factura.getModel();
         modelo.setRowCount(0);
         if (lista != null) {
+            // Uma só consulta para todos os pagamentos (antes: 2 consultas por linha).
+            Map<Integer, Double> pagos = amortizacaoDividaController.getMapaValorAtribuidoPorVenda();
             for (TbVenda object : lista) {
-                int diferencaData = MetodosUtil.getDiferencaDias(object.getDataVencimento(), new Date(), conexao);
-//                BigDecimal valor_pago = ( !Objects.isNull( VendaDao.getTotalPagoByCodFact( object.getCodFact(), conexao ) ) ? VendaDao.getTotalPagoByCodFact( object.getCodFact(), conexao ) : new BigDecimal( 0.0 ) );
-                BigDecimal valor_pago = new BigDecimal(amortizacaoDividaController.getValorAtribuidoByCodFact(object.getCodFact()));
+                int diferencaData = getDiferencaDias(object.getDataVencimento(), new Date());
+                Double pago = pagos.get(object.getCodigo());
+                BigDecimal valor_pago = new BigDecimal(pago != null ? pago : 0d);
 //                System.out.println( "VALOR PAGO = " + valor_pago );
 
                 //total = total.add(new BigDecimal(tabela.getValueAt(i, 5).toString())).setScale(2, RoundingMode.CEILING);
@@ -1516,6 +1532,12 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
         BigDecimal totalLiquido = BigDecimal.ZERO;
 
         modelo.setRowCount(0);
+        if (lista == null) {
+            lista = new ArrayList<>();
+        }
+
+        // Uma só consulta para todos os recibos (antes: getTotalPago() 2x por linha).
+        Map<String, BigDecimal> pagos = VendaDao.getMapaTotalPagoPorCodFact(conexao);
 
         for (TbVenda object : lista) {
 
@@ -1529,10 +1551,7 @@ public class ListarRelatorioVenda extends javax.swing.JFrame {
 
             totalLiquido = totalLiquido.add(valorAssinado);
 
-            BigDecimal valor_pago = (!Objects.isNull(
-                    VendaDao.getTotalPagoByCodFact(object.getCodFact(), conexao)
-            ) ? VendaDao.getTotalPagoByCodFact(object.getCodFact(), conexao)
-                    : BigDecimal.ZERO);
+            BigDecimal valor_pago = pagos.getOrDefault(object.getCodFact(), BigDecimal.ZERO);
 
             modelo.addRow(new Object[]{
                 object.getCodFact(),

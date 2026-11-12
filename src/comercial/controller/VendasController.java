@@ -1887,16 +1887,15 @@ public class VendasController implements EntidadeFactory {
 
     public int atualizarTotalVenda() throws SQLException {
         Connection conn = conexao.getConnection();
+        // Subconsulta correlacionada (usa o índice tb_item_venda.codigo_venda) e só
+        // escreve as vendas cujo total diverge. A versão anterior com JOIN a uma
+        // tabela derivada levava ~30s no MySQL 5.1 (tabela derivada sem índice) e
+        // reescrevia todas as vendas.
         String sql = "UPDATE tb_venda v "
-                + "LEFT JOIN ("
-                + "    SELECT codigo_venda, SUM(total) AS total_linha "
-                + "    FROM tb_item_venda "
-                + "    GROUP BY codigo_venda"
-                + ") t ON t.codigo_venda = v.codigo "
-                + "SET v.total_venda = COALESCE(t.total_linha, 0) "
-                + "WHERE v.fk_documento IN (1, 2, 5)";
+                + "SET v.total_venda = (SELECT COALESCE(SUM(i.total), 0) FROM tb_item_venda i WHERE i.codigo_venda = v.codigo) "
+                + "WHERE v.fk_documento IN (1, 2, 5) "
+                + "AND NOT (v.total_venda <=> (SELECT COALESCE(SUM(i2.total), 0) FROM tb_item_venda i2 WHERE i2.codigo_venda = v.codigo))";
 
-        System.out.println(sql);
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             return stmt.executeUpdate();
         }

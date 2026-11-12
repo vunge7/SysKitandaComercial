@@ -93,7 +93,7 @@ public class BDConexao {
             String porta = (info.size() > 1 ? info.get(1).trim() : "3306");
 
 
-            String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_candundo_rocha"
+            String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_1"
                     + "?zeroDateTimeBehavior=convertToNull"
                     + "&useSSL=false"
                     + "&allowPublicKeyRetrieval=true"
@@ -109,6 +109,25 @@ public class BDConexao {
         } catch (SQLException ex) {
             return null;
         }
+    }
+
+    /**
+     * Ligação nova e directa (sem o proxy de auditoria e sem socketTimeout),
+     * para operações longas de manutenção como o espelho da BD. Quem chama é
+     * responsável por a fechar.
+     */
+    public Connection novaLigacaoManutencao() throws SQLException {
+        Vector<String> info = leituraFicheiroSeguro();
+        if (info == null || info.isEmpty()) {
+            throw new SQLException("Ficheiro de credenciais não encontrado.");
+        }
+        String ip = info.get(0).trim();
+        String porta = (info.size() > 1 ? info.get(1).trim() : "3306");
+        String bd = getConnectionAtiva().getCatalog();
+        String url = "jdbc:mysql://" + ip + ":" + porta + "/" + bd
+                + "?zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true"
+                + "&connectTimeout=5000&characterEncoding=UTF-8";
+        return DriverManager.getConnection(url, "root", "DoV90x?#");
     }
 
     // ===========================================================
