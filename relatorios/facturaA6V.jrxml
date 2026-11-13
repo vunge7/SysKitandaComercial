@@ -32,6 +32,7 @@
 	<parameter name="NIF_CLIENTE_CONSOMIDOR_FINAL" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT
+     tb_venda.`cont` AS tb_venda_cont,
      tb_cliente.`nome` AS tb_cliente_nome,
      tb_produto.`designacao` AS tb_produto_designacao,
      tb_venda.`total_venda` AS tb_venda_total_venda,
@@ -115,6 +116,7 @@ FROM
 WHERE
      tb_venda.`codigo` = $P{CODIGO_VENDA}]]>
 	</queryString>
+	<field name="tb_venda_cont" class="java.lang.Integer"/>
 	<field name="tb_cliente_nome" class="java.lang.String"/>
 	<field name="tb_produto_designacao" class="java.lang.String"/>
 	<field name="tb_venda_total_venda" class="java.math.BigDecimal"/>
@@ -189,7 +191,7 @@ WHERE
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="142">
+		<band height="158">
 			<textField>
 				<reportElement uuid="82853475-19ec-484a-a036-949cdd5bd35b" x="1" y="55" width="187" height="12"/>
 				<textElement textAlignment="Center" markup="html">
@@ -230,27 +232,27 @@ WHERE
 				<imageExpression><![CDATA["logo/logo_dvml.png"]]></imageExpression>
 			</image>
 			<rectangle radius="10">
-				<reportElement uuid="7c54c3aa-0480-4947-97cb-14f56c38f800" x="-2" y="70" width="187" height="61"/>
+				<reportElement uuid="7c54c3aa-0480-4947-97cb-14f56c38f800" x="-2" y="70" width="187" height="77"/>
 				<graphicElement>
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
 			</rectangle>
 			<textField pattern="HH:mm">
-				<reportElement uuid="bcf9bb21-c662-4919-a36b-0154deb00625" key="element-95" x="130" y="90" width="41" height="13" forecolor="#000000"/>
+				<reportElement uuid="bcf9bb21-c662-4919-a36b-0154deb00625" key="element-95" x="130" y="106" width="41" height="13" forecolor="#000000"/>
 				<textElement verticalAlignment="Middle" markup="none">
 					<font fontName="Times New Roman" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_venda_hora}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="bba521bb-382c-4d32-a567-bedc62397a18" key="element-91" x="1" y="76" width="110" height="13" forecolor="#000000"/>
+				<reportElement uuid="bba521bb-382c-4d32-a567-bedc62397a18" key="element-91" x="1" y="92" width="110" height="13" forecolor="#000000"/>
 				<textElement markup="html">
 					<font fontName="Times New Roman" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{documento_designacao} +" <b>" +$F{tb_venda_cod_fact} +"</b>"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="098b2ff2-19f3-4436-9a1c-7bc4690bd0d8" key="element-94" x="-1" y="90" width="82" height="13" forecolor="#000000"/>
+				<reportElement uuid="098b2ff2-19f3-4436-9a1c-7bc4690bd0d8" key="element-94" x="-1" y="106" width="82" height="13" forecolor="#000000"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -263,21 +265,21 @@ WHERE
 				<text><![CDATA[Data de Emissão:]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="ebeede27-892c-4f98-bb4f-1e9f4a070694" key="element-96" x="110" y="76" width="71" height="10" forecolor="#000000"/>
+				<reportElement uuid="ebeede27-892c-4f98-bb4f-1e9f4a070694" key="element-96" x="110" y="92" width="71" height="10" forecolor="#000000"/>
 				<textElement textAlignment="Right" markup="html">
 					<font fontName="Times New Roman" size="8" isBold="true" isItalic="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_venda_nome_consumidor_final}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd-MM-yyyy">
-				<reportElement uuid="3473c797-1a28-4b54-89bb-a32153832384" key="element-95" x="81" y="90" width="48" height="13" forecolor="#000000"/>
+				<reportElement uuid="3473c797-1a28-4b54-89bb-a32153832384" key="element-95" x="81" y="106" width="48" height="13" forecolor="#000000"/>
 				<textElement verticalAlignment="Middle" markup="none">
 					<font fontName="Times New Roman" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_venda_dataVenda}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="f7ca4a37-0291-4ae0-a8fa-a749e44941c9" key="textField-11" x="0" y="100" width="186" height="16"/>
+				<reportElement uuid="f7ca4a37-0291-4ae0-a8fa-a749e44941c9" key="textField-11" x="0" y="116" width="186" height="16"/>
 				<box topPadding="2"/>
 				<textElement verticalAlignment="Middle" markup="html">
 					<font fontName="Times New Roman" isItalic="false" pdfFontName="Helvetica-Oblique"/>
@@ -285,18 +287,45 @@ WHERE
 				<textFieldExpression><![CDATA["<b>Cliente:</b> " + "<i>" +$F{tb_venda_nome_cliente} +"</i>"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="4f9e9141-8f88-441e-9e64-2d1659cb5e06" x="0" y="113" width="186" height="16"/>
+				<reportElement uuid="4f9e9141-8f88-441e-9e64-2d1659cb5e06" x="0" y="129" width="186" height="16"/>
 				<textElement markup="html">
 					<font fontName="Times New Roman" isItalic="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["<b>NIF:</b> "  +"<i>" +$P{NIF_CLIENTE_CONSOMIDOR_FINAL} +"</i>"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="af565914-a0c5-4982-b6e1-8275416993e0" x="32" y="131" width="153" height="10"/>
+				<reportElement uuid="af565914-a0c5-4982-b6e1-8275416993e0" x="32" y="147" width="153" height="10"/>
 				<textElement textAlignment="Right">
 					<font fontName="Times New Roman" size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{STATUS_DOCUMENTO}]]></textFieldExpression>
+			</textField>
+					<!-- ===== Nº diário (tb_venda.cont, trigger trg_venda_numero_diario) ===== -->
+			<rectangle radius="3">
+				<reportElement uuid="4da9df22-5a73-4d5f-801e-1e007b9d9750" x="123" y="77" width="58" height="14">
+					<printWhenExpression><![CDATA[$F{tb_venda_cont} != null && $F{tb_venda_cont}.intValue() > 0]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="1.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="9fa9daeb-99c5-4ddb-9648-4b646d778cd1" x="125" y="77" width="28" height="14">
+					<printWhenExpression><![CDATA[$F{tb_venda_cont} != null && $F{tb_venda_cont}.intValue() > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nº DO DIA]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="4d90eb66-9810-4d0a-8361-b8d75cf74317" x="153" y="77" width="27" height="14">
+					<printWhenExpression><![CDATA[$F{tb_venda_cont} != null && $F{tb_venda_cont}.intValue() > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[String.valueOf($F{tb_venda_cont})]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
