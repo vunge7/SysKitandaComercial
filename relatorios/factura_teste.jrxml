@@ -253,7 +253,7 @@ ORDER BY
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="8" isBold="false" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<text><![CDATA[Processado por programa validado nº 258/AGT/2020 Kitanda/dvml]]></text>
+				<text><![CDATA[Processado por programa validado nº FE/110/AGT/2025 Kitanda/dvml]]></text>
 			</staticText>
 			<staticText>
 				<reportElement uuid="7cb7720b-ec64-41a3-bb66-d7842cca8cdd" key="staticText-9" x="0" y="140" width="180" height="16"/>

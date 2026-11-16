@@ -951,7 +951,7 @@ WHERE
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font fontName="Arial" size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_venda_assinatura} + "-Processado por programa validado nº " + "258/AGT/2020 " +$P{SOFTWARE_NAME} + "/dvml"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tb_venda_assinatura} + "-Processado por programa validado nº " + "FE/110/AGT/2025 " +$P{SOFTWARE_NAME} + "/dvml"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="b76fb423-68d3-4a90-a3ec-bfa308b54aee" x="377" y="0" width="156" height="31"/>
@@ -1407,7 +1407,7 @@ WHERE
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font fontName="Arial" size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_venda_assinatura} + "-Processado por programa validado nº " + "258/AGT/2020 " +$P{SOFTWARE_NAME} + "/dvml"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tb_venda_assinatura} + "-Processado por programa validado nº " + "FE/110/AGT/2025 " +$P{SOFTWARE_NAME} + "/dvml"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="cfb7e512-365f-46e3-a3b3-efc9884fb04d" key="staticText-9" x="179" y="97" width="198" height="12"/>

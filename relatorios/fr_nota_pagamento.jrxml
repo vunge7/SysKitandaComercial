@@ -518,7 +518,7 @@ where c.doc_vosso_numero = $P{DOC_NUMERO} AND f.codigo = $P{COD_FORNECEDOR};]]>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Processado por programa validado n.º " + "258/AGT/2020 " +"Kitanda" + "/dvml"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Processado por programa validado n.º " + "FE/110/AGT/2025 " +"Kitanda" + "/dvml"]]></textFieldExpression>
 			</textField>
 		</band>
 	</lastPageFooter>

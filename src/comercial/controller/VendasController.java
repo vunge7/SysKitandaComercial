@@ -854,19 +854,21 @@ public class VendasController implements EntidadeFactory {
 
     }
 
+    /**
+     * Maior número já usado (parte depois da última "/" do cod_fact) para o
+     * documento e ano. Antes lia o cod_fact do ÚLTIMO registo gravado: se esse
+     * registo tivesse um número mais baixo (ex.: série nova) ou um formato que
+     * não se conseguia ler, a contagem voltava a 1 (sem o UNIQUE em cod_fact
+     * nada o impedia). O MAX nunca desce.
+     */
     public int getUltimaContagemByIdDocumentoAndAnoEconomico(int pk_documento, int pk_ano_economico) {
+        String sql = "SELECT MAX(CAST(SUBSTRING_INDEX(TRIM(cod_fact), '/', -1) AS UNSIGNED)) AS ultimo "
+                + "FROM tb_venda WHERE fk_documento = " + pk_documento
+                + " AND fk_ano_economico = " + pk_ano_economico
+                + " AND (estado IS NULL OR estado <> 'I')"; // nº de factura inválida (I) pode ser reutilizado
         try {
-            Integer codVenda = getLastCodigoVenda(pk_documento, pk_ano_economico);
-            System.out.println("LastCodVenda: " + codVenda);
-            String codFact = MetodosUtil.getCodFact(codVenda, conexao);
-            System.out.println("LastCodFact: " + codFact);
-
-            if (codFact != null) {
-                String cod = codFact.split("/")[1];
-                return Integer.parseInt(cod);
-            } else {
-                return 0;
-            }
+            ResultSet rs = conexao.executeQuery(sql);
+            return (rs != null && rs.next()) ? rs.getInt("ultimo") : 0;
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Codigo Ordem Documento: " + 0);

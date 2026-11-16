@@ -421,7 +421,7 @@
 				<textElement textAlignment="Right">
 					<font fontName="Arial" size="9"/>
 				</textElement>
-				<text><![CDATA[Processado por programa validado nº 258/AGT/2020 Kitanda/dvml]]></text>
+				<text><![CDATA[Processado por programa validado nº FE/110/AGT/2025 Kitanda/dvml]]></text>
 			</staticText>
 			<staticText>
 				<reportElement uuid="f5cb9104-69d4-4052-983e-1e71034af27b" x="1" y="4" width="230" height="14"/>

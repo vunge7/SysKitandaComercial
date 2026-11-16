@@ -351,7 +351,7 @@ GROUP BY
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="7" isBold="false" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<text><![CDATA[Processado por programa validado nº 258/AGT/2020 Kitanda/dvml]]></text>
+				<text><![CDATA[Processado por programa validado nº FE/110/AGT/2025 Kitanda/dvml]]></text>
 			</staticText>
 			<rectangle>
 				<reportElement uuid="fed98eb6-79ed-4c00-8ea7-88ef1281a697" x="0" y="35" width="180" height="29"/>

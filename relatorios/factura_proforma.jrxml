@@ -33,7 +33,7 @@
 	<queryString>
 		<![CDATA[SELECT
      tb_cliente.`nome` AS tb_cliente_nome,
-     tb_produto.`designacao` AS tb_produto_designacao,
+     COALESCE(NULLIF(TRIM(tb_item_venda.`designacao_item`), ''), tb_produto.`designacao`) AS tb_produto_designacao,
      tb_venda.`total_venda` AS tb_venda_total_venda,
      tb_produto.`codigo` AS tb_produto_codigo,
      tb_venda.`codigo` AS tb_venda_codigo,

@@ -456,7 +456,7 @@ GROUP BY
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_venda_assinatura} + "-Processado por programa validado nº " + "258/AGT/2020 "+$P{SOFTWARE_NAME} + "/dvml"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tb_venda_assinatura} + "-Processado por programa validado nº " + "FE/110/AGT/2025 "+$P{SOFTWARE_NAME} + "/dvml"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement uuid="419cdef7-1da4-49f6-bb3f-48561761e953" key="staticText-11" x="36" y="53" width="63" height="9"/>

@@ -1537,25 +1537,21 @@ public class VendaDao extends TbVendaJpaController
 
     }
 
+    /**
+     * Maior número já usado (parte depois da última "/" do cod_fact) para o
+     * documento e ano. Antes lia o cod_fact do ÚLTIMO registo gravado: um
+     * registo com número mais baixo ou ilegível fazia a contagem voltar a 1.
+     */
     public int getUltimaContagemByIdDocumentoAndAnoEconomico( int pk_documento, int pk_ano_economico, BDConexao conexao )
     {
+        String sql = "SELECT MAX(CAST(SUBSTRING_INDEX(TRIM(cod_fact), '/', -1) AS UNSIGNED)) AS ultimo "
+                + "FROM tb_venda WHERE fk_documento = " + pk_documento
+                + " AND fk_ano_economico = " + pk_ano_economico
+                + " AND (estado IS NULL OR estado <> 'I')"; // nº de factura inválida (I) pode ser reutilizado
         try
         {
-            Integer codVenda = getLastCodigoVenda( pk_documento, pk_ano_economico, conexao );
-            System.out.println( "LastCodVenda: " + codVenda );
-            String codFact = MetodosUtil.getCodFact( codVenda, conexao );
-            System.out.println( "LastCodFact: " + codFact );
-
-            if ( codFact != null )
-            {
-                String cod = codFact.split( "/" )[ 1 ];
-                //System.out.println( "Codigo Ordem Documento: " + cod );
-                return Integer.parseInt( cod );
-            }
-            else
-            {
-                return 0;
-            }
+            ResultSet rs = conexao.executeQuery( sql );
+            return ( rs != null && rs.next() ) ? rs.getInt( "ultimo" ) : 0;
         }
         catch ( Exception e )
         {

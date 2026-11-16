@@ -2017,7 +2017,9 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                 }
             }
 
-            table.getCellEditor().cancelCellEditing();
+            if (table.isEditing()) {
+                table.getCellEditor().cancelCellEditing();
+            }
 
         } catch (Exception e) {
         }
@@ -2050,7 +2052,9 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             }
         }
 
-        table.getCellEditor().cancelCellEditing();
+        if (table.isEditing()) {
+            table.getCellEditor().cancelCellEditing();
+        }
     }
 
 
@@ -3281,12 +3285,21 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     }
 
     public static void salvar_item_venda_comercial(Integer cod_venda, BDConexao conexaoLocal, StoksController stoksControllerLocal) throws Exception {
+        // confirma uma descrição que ainda esteja a ser editada na tabela
+        if (table.isEditing() && table.getEditingColumn() == 1) {
+            table.getCellEditor().stopCellEditing();
+        }
         for (int i = 0; i < table.getRowCount(); i++) {
             try {
                 int idProduto = Integer.parseInt(table.getModel().getValueAt(i, 0).toString());
-                String designacaoItem = table.getModel().getValueAt(i, 1).toString();
+                Object designacaoCelula = table.getModel().getValueAt(i, 1);
+                String designacaoItem = designacaoCelula == null ? "" : designacaoCelula.toString().trim();
 
                 TbProduto produto = (TbProduto) produtosController.findById(idProduto);
+                // descrição livre do utilizador; se ficou vazia, usa a do produto
+                if (designacaoItem.isEmpty()) {
+                    designacaoItem = produto.getDesignacao();
+                }
 
                 TbItemVenda item = new TbItemVenda();
                 item.setCodigoVenda(new TbVenda(cod_venda));
@@ -6821,7 +6834,9 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
         try {
 
-            table.getCellEditor().cancelCellEditing();
+            if (table.isEditing()) {
+                table.getCellEditor().cancelCellEditing();
+            }
         } catch (Exception e) {
         }
     }
@@ -6848,9 +6863,55 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             @Override
             public boolean isCellEditable(int row, int column) {
 //                return ( column == 3 ||  column == 4) ; // 3ª coluna editável
+                if (column == 1) {
+                    return descricaoEditavel(this, row);
+                }
                 return (column == 4); // 3ª coluna editável
             }
         });
+        // setModel recria as colunas: o editor da descrição tem de ser instalado depois
+        table.getColumnModel().getColumn(1).setCellEditor(criarEditorDescricao());
+        // ao clicar num botão (ex.: pagamento) a descrição em edição é confirmada, não perdida
+        table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+    }
+
+    private static final int MAX_DESCRICAO_ITEM = 200;
+
+    private static DefaultCellEditor criarEditorDescricao() {
+        final JTextField campo = new JTextField();
+        return new DefaultCellEditor(campo) {
+            @Override
+            public boolean stopCellEditing() {
+                // "#" é reservado às mensalidades (ver getMes)
+                String texto = campo.getText().replace("#", "").trim();
+                if (texto.isEmpty()) {
+                    JOptionPane.showMessageDialog(null,
+                            "A descrição do produto/serviço não pode ficar vazia.",
+                            DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
+                    return false;
+                }
+                if (texto.length() > MAX_DESCRICAO_ITEM) {
+                    texto = texto.substring(0, MAX_DESCRICAO_ITEM);
+                }
+                campo.setText(texto);
+                return super.stopCellEditing();
+            }
+        };
+    }
+
+    /**
+     * A descrição (coluna 1) pode ser alterada livremente pelo utilizador e é
+     * gravada em tb_item_venda.designacao_item, saindo assim na factura.
+     * Excepções: linhas sem produto e linhas de mensalidade (contêm "#"), cuja
+     * descrição é usada para identificar o mês pago.
+     */
+    private static boolean descricaoEditavel(javax.swing.table.TableModel model, int row) {
+        Object codigo = model.getValueAt(row, 0);
+        if (codigo == null || codigo.toString().trim().isEmpty()) {
+            return false;
+        }
+        Object descricao = model.getValueAt(row, 1);
+        return descricao == null || !descricao.toString().contains("#");
     }
 
     private void configurarTabela(int coluna) {

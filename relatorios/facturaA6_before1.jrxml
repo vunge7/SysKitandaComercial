@@ -663,7 +663,7 @@ WHERE
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_venda_assinatura} + "-Processado por programa validado nº " + "258/AGT/2020 "+$P{SOFTWARE_NAME} + "/dvml"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tb_venda_assinatura} + "-Processado por programa validado nº " + "FE/110/AGT/2025 "+$P{SOFTWARE_NAME} + "/dvml"]]></textFieldExpression>
 			</textField>
 			<subreport>
 				<reportElement uuid="3b0ce835-fc28-4c28-ba89-6adc49dd22f5" x="32" y="78" width="150" height="28"/>
