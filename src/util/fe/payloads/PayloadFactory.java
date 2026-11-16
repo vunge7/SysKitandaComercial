@@ -43,6 +43,22 @@ public class PayloadFactory {
         MODO_SILENCIOSO.set(silencioso);
     }
 
+    public static boolean isModoSilencioso() {
+        return MODO_SILENCIOSO.get();
+    }
+
+    /**
+     * Sem a confirmação "Factura Válida" a meio do processo: quem chama mostra a
+     * sua no fim (ex.: Nota de Crédito, depois de gravar). Os erros e avisos
+     * continuam a aparecer. Como no SysKitandaHotel.
+     */
+    private static final ThreadLocal<Boolean> CONFIRMACAO_ADIADA
+            = ThreadLocal.withInitial(() -> Boolean.FALSE);
+
+    public static void setConfirmacaoAdiada(boolean adiada) {
+        CONFIRMACAO_ADIADA.set(adiada);
+    }
+
     private static void aviso(Object mensagem, String titulo, int tipo) {
         if (!MODO_SILENCIOSO.get()) {
             JOptionPane.showMessageDialog(null, mensagem, titulo, tipo);
@@ -614,11 +630,14 @@ public class PayloadFactory {
                 if ("V".equalsIgnoreCase(documentStatus)) {
 
                     System.out.println("Documento validado com sucesso ✅");
-                    aviso(
-                            "Documento validado com sucesso ✅",
-                            "Factura Válida",
-                            JOptionPane.INFORMATION_MESSAGE
-                    );
+                    // polegar verde (ConfirmacaoPositiva), como no SysKitandaHotel
+                    if (!MODO_SILENCIOSO.get() && !CONFIRMACAO_ADIADA.get()) {
+                        util.ui.ConfirmacaoPositiva.mostrar(
+                                "Factura Válida",
+                                "Factura Válida",
+                                "Documento " + venda.getCodFact() + " validado com sucesso pela AGT."
+                        );
+                    }
                     venda.setEstado("V");
                     return true;
                 } // ❌ FACTURA INVÁLIDA

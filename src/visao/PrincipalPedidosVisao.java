@@ -124,6 +124,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
             "Kz", "Valor em aberto", util.ui.ComponentesWeb.AZUL_MEDIO );
     private final util.ui.ComponentesWeb.CartaoKpi kpiAntiga = new util.ui.ComponentesWeb.CartaoKpi(
             "!", "Conta aberta há mais tempo", util.ui.MesasWeb.DEMORADA );
+    private final util.ui.ComponentesWeb.CartaoKpi kpiVendas = new util.ui.ComponentesWeb.CartaoKpi(
+            "#", "Vendas de hoje", util.ui.MesasWeb.VENDIDA );
     private final javax.swing.JPanel listaOcupadas = new javax.swing.JPanel();
     private final javax.swing.JLabel lbSemResultados = new javax.swing.JLabel( "Nenhuma mesa corresponde ao filtro.",
             javax.swing.SwingConstants.CENTER );
@@ -147,6 +149,16 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
                 "Criar ou eliminar mesas da sala" );
         pilula( btConfigurar );
         btConfigurar.addActionListener( e -> configurarMesas() );
+        javax.swing.JButton btHistorico = new javax.swing.JButton( "Histórico do dia" );
+        util.ui.ComponentesWeb.botao( btHistorico, util.ui.ComponentesWeb.Variante.SECUNDARIO, null,
+                "Quantas vezes cada mesa foi vendida hoje" );
+        pilula( btHistorico );
+        btHistorico.addActionListener( e -> abrirHistorico( null ) );
+        javax.swing.JButton btImagens = new javax.swing.JButton( "Imagens dos produtos" );
+        util.ui.ComponentesWeb.botao( btImagens, util.ui.ComponentesWeb.Variante.SECUNDARIO, null,
+                "Pôr fotografias nos produtos, pratos e bebidas" );
+        pilula( btImagens );
+        btImagens.addActionListener( e -> new ProdutoImagemVisao( this, conexao, null, null ).setVisible( true ) );
         javax.swing.JButton btActualizar = new javax.swing.JButton( "Actualizar" );
         util.ui.ComponentesWeb.botao( btActualizar, util.ui.ComponentesWeb.Variante.SECUNDARIO, null,
                 "Ler de novo o estado das mesas (F5)" );
@@ -163,13 +175,25 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
                 new util.ui.EstiloUI.WrapLayout( java.awt.FlowLayout.RIGHT, 10, 4 ) );
         direita.add( util.ui.FormularioWeb.campoCabecalho( new javax.swing.JLabel( "Armazém" ), cmbArmazem ) );
         direita.add( btConfigurar );
+        direita.add( btHistorico );
+        direita.add( btImagens );
         direita.add( btActualizar );
         direita.add( jButton17 );
         javax.swing.JPanel cabecalho = util.ui.FormularioWeb.cabecalho( "Gestão de Mesas",
                 "Toque numa mesa para abrir ou continuar o pedido", direita );
 
         // ------------------------------------------------ indicadores
-        javax.swing.JPanel kpis = util.ui.FormularioWeb.grelha( 200, 4, kpiLivres, kpiOcupadas, kpiValor, kpiAntiga );
+        javax.swing.JPanel kpis = util.ui.FormularioWeb.grelha( 200, 5, kpiLivres, kpiOcupadas, kpiValor, kpiAntiga, kpiVendas );
+        kpiVendas.setCursor( java.awt.Cursor.getPredefinedCursor( java.awt.Cursor.HAND_CURSOR ) );
+        kpiVendas.setToolTipText( "Abrir o histórico do dia" );
+        kpiVendas.addMouseListener( new java.awt.event.MouseAdapter()
+        {
+            @Override
+            public void mouseClicked( java.awt.event.MouseEvent e )
+            {
+                abrirHistorico( null );
+            }
+        } );
 
         // ------------------------------------------------ plano da sala
         javax.swing.JPanel filtros = util.ui.FormularioWeb.pilulas( rbTodas, rbLivres, rbOcupadas );
@@ -197,6 +221,8 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         javax.swing.JPanel legenda = util.ui.ComponentesWeb.transparente( new java.awt.FlowLayout( java.awt.FlowLayout.LEFT, 14, 0 ) );
         legenda.add( util.ui.MesasWeb.legenda( "Livre", util.ui.MesasWeb.LIVRE ) );
         legenda.add( util.ui.MesasWeb.legenda( "Ocupada", util.ui.MesasWeb.OCUPADA ) );
+        legenda.add( util.ui.MesasWeb.legenda( util.ui.MesasWeb.VENDAS_AMARELO == 1 ? "Livre, já com vendas hoje"
+                : "Livre, já vendida " + util.ui.MesasWeb.VENDAS_AMARELO + "+ vezes hoje", util.ui.MesasWeb.VENDIDA ) );
         legenda.add( util.ui.MesasWeb.legenda( "Aberta há mais de " + ( util.ui.MesasWeb.MINUTOS_DEMORA / 60 ) + " h",
                 util.ui.MesasWeb.DEMORADA ) );
 
@@ -496,6 +522,7 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
             {
                 final util.ui.MesasWeb.CartaoMesa c = new util.ui.MesasWeb.CartaoMesa( e );
                 c.addAccao( () -> abrirMesa( c.getNumero() ) );
+                c.setComponentPopupMenu( menuMesa( c ) );
                 cartoes.put( e.designacao.toUpperCase(), c );
                 grelha.add( c );
             }
@@ -527,6 +554,15 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
         }
         int total = lista.size();
         int livres = total - ocupadas;
+        int vendasHoje = 0;
+        double valorHoje = 0;
+        for ( comercial.controller.MesasController.EstadoMesa e : lista )
+        {
+            vendasHoje += e.vendasHoje;
+            valorHoje += e.valorVendasHoje;
+        }
+        kpiVendas.setValor( String.valueOf( vendasHoje ),
+                kitanda.util.CfMethods.formatarComoMoeda( valorHoje ) + " · clique para o histórico" );
         kpiLivres.setValor( String.valueOf( livres ), "de " + total + " mesas" );
         kpiOcupadas.setValor( String.valueOf( ocupadas ),
                 total == 0 ? " " : Math.round( ocupadas * 100.0 / total ) + "% da sala" );
@@ -632,6 +668,55 @@ public class PrincipalPedidosVisao extends javax.swing.JFrame implements Runnabl
     private void abrirMesa( String numero )
     {
         new NovaGestaoPedidosVisao( numero, lugar, this.idUser, id_armazem, BDConexao.getInstancia() ).setVisible( true );
+    }
+
+    /** Botão direito numa mesa: abrir, transferir os pedidos e ver o histórico do dia. */
+    private javax.swing.JPopupMenu menuMesa( util.ui.MesasWeb.CartaoMesa c )
+    {
+        javax.swing.JPopupMenu menu = new javax.swing.JPopupMenu();
+        javax.swing.JMenuItem abrir = new javax.swing.JMenuItem( "Abrir pedido" );
+        abrir.addActionListener( e -> abrirMesa( c.getNumero() ) );
+        javax.swing.JMenuItem transferir = new javax.swing.JMenuItem( "Transferir pedidos para outra mesa…" );
+        transferir.addActionListener( e ->
+        {
+            new TransferenciaMesaVisao( this, conexao, c.getEstado().designacao, null ).setVisible( true );
+            actualizarEstados();
+        } );
+        javax.swing.JMenuItem historico = new javax.swing.JMenuItem( "Histórico de vendas de hoje" );
+        historico.addActionListener( e -> abrirHistorico( c.getEstado().designacao ) );
+        for ( javax.swing.JMenuItem i : new javax.swing.JMenuItem[]
+        {
+            abrir, transferir, historico
+        } )
+        {
+            i.setFont( util.ui.EstiloUI.FONTE.deriveFont( 13f ) );
+            menu.add( i );
+        }
+        // transferir só faz sentido com itens na mesa
+        menu.addPopupMenuListener( new javax.swing.event.PopupMenuListener()
+        {
+            @Override
+            public void popupMenuWillBecomeVisible( javax.swing.event.PopupMenuEvent e )
+            {
+                transferir.setEnabled( c.isOcupada() );
+            }
+
+            @Override
+            public void popupMenuWillBecomeInvisible( javax.swing.event.PopupMenuEvent e )
+            {
+            }
+
+            @Override
+            public void popupMenuCanceled( javax.swing.event.PopupMenuEvent e )
+            {
+            }
+        } );
+        return menu;
+    }
+
+    private void abrirHistorico( String mesa )
+    {
+        new HistoricoMesasVisao( this, conexao, mesa ).setVisible( true );
     }
 
     private void configurarMesas()

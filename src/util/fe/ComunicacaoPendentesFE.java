@@ -189,6 +189,10 @@ public final class ComunicacaoPendentesFE {
                 }
                 boolean gravado = vendasCtrl.actualizarEstadoFE(venda, conexao.getConnectionAtiva());
                 gravacao = gravado ? " [gravado na BD]" : " [ATENÇÃO: não foi possível gravar na BD]";
+                if (gravado) {
+                    // emitida offline/pendente (stock já abatido) e agora inválida: o stock volta
+                    StockFE.devolverSeFicouInvalida(conexao.getConnectionAtiva(), venda.getCodigo(), estadoAnterior, venda.getEstado());
+                }
             } else {
                 venda.setEstado(estadoAnterior);
             }

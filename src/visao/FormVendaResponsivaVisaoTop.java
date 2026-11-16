@@ -2933,7 +2933,10 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             }
 
             // Salvar os itens da venda
-            salvar_item_venda_comercial(idVendaGerada, conexaoTransactionLocal, stocksControllerLocal);
+            // um documento inválido na AGT ('I') não desconta stock; pendente/offline desconta
+            // (se depois a AGT o der como inválido, o stock volta: util.fe.StockFE)
+            salvar_item_venda_comercial(idVendaGerada, conexaoTransactionLocal, stocksControllerLocal,
+                    !DVML.ESTADO_INVALIDO.equalsIgnoreCase(venda.getEstado()));
 
             // Registrar formas de pagamento
             if (getIdDocumento() == DOC_FACTURA_RECIBO_FR) {
@@ -2955,7 +2958,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                         + "quando a ligação voltar.",
                         "Factura emitida offline", JOptionPane.WARNING_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(null, "Factura efectuada com sucesso!");
+                // polegar verde, como no SysKitandaHotel
+                util.ui.ConfirmacaoPositiva.documentoGravado(venda);
             }
             txtNomeConsumidorFinal.setVisible(true);
             imprimir_factura(idVendaGerada); // Imprime a factura
@@ -3331,7 +3335,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
     }
 
-    public static void salvar_item_venda_comercial(Integer cod_venda, BDConexao conexaoLocal, StoksController stoksControllerLocal) throws Exception {
+    public static void salvar_item_venda_comercial(Integer cod_venda, BDConexao conexaoLocal, StoksController stoksControllerLocal,
+            boolean abaterStock) throws Exception {
         // confirma uma descrição que ainda esteja a ser editada na tabela
         if (table.isEditing() && table.getEditingColumn() == 1) {
             table.getCellEditor().stopCellEditing();
@@ -3392,7 +3397,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                     if ((getIdDocumento() == DOC_FACTURA_RECIBO_FR
                             || getIdDocumento() == DOC_FACTURA_FT
                             || getIdDocumento() == DOC_FACTURA_CONSULTA_MESA
-                            || getIdDocumento() == DVML.DOC_GUIA_TRANSPORTE_GT) && stock_local_local != null) {
+                            || getIdDocumento() == DVML.DOC_GUIA_TRANSPORTE_GT) && stock_local_local != null
+                            && abaterStock) {
 
                         MovimentacaoController.registrarMovimento(
                                 idProduto,

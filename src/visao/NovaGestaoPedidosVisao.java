@@ -591,8 +591,12 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         util.ui.ComponentesWeb.botao( BtnFCons, util.ui.ComponentesWeb.Variante.PRIMARIO, null, "Emitir a factura consulta" );
         util.ui.ComponentesWeb.botao( BT_Pedidos, util.ui.ComponentesWeb.Variante.PRIMARIO, null,
                 "Imprimir a conta da mesa para o cliente conferir" );
-        JPanel cobrar = util.ui.ComponentesWeb.transparente( null );
-        cobrar.setLayout( new javax.swing.BoxLayout( cobrar, javax.swing.BoxLayout.X_AXIS ) );
+        // responsivo: duas linhas em grelha que quebram conforme a largura (os
+        // botões escondidos pelo tipo de documento não ocupam lugar)
+        //   1.ª Dividir conta · Ver Conta · Conta por lugar
+        //   2.ª Consulta / FT / Facturar (o que estiver visível)
+        JPanel contas = util.ui.ComponentesWeb.transparente( new util.ui.ComponentesWeb.GrelhaResponsiva( 120, 6, 3 ) );
+        JPanel cobrar = util.ui.ComponentesWeb.transparente( new util.ui.ComponentesWeb.GrelhaResponsiva( 140, 6, 3 ) );
         for ( JButton b : new JButton[]
         {
             BT_Pedidos, BtnFCons, btFT, BT_Conversao
@@ -600,26 +604,41 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         {
             b.setIcon( null );
             b.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( b == BT_Pedidos ? 13.5f : 15f ) );
-            b.setBorder( javax.swing.BorderFactory.createEmptyBorder( 10, 16, 10, 16 ) );
-            b.setMaximumSize( new java.awt.Dimension( Integer.MAX_VALUE, b.getPreferredSize().height ) );
+            b.setBorder( javax.swing.BorderFactory.createEmptyBorder( 10, 12, 10, 12 ) );
             b.setHorizontalAlignment( javax.swing.SwingConstants.CENTER );
-            cobrar.add( b );
-            cobrar.add( javax.swing.Box.createHorizontalStrut( 6 ) );
+            if ( b != BT_Pedidos )
+            {
+                cobrar.add( b );
+            }
         }
         // dividir a conta a qualquer momento (por lugar)
         final JButton btDividir = new JButton( "Dividir conta" );
         util.ui.ComponentesWeb.botao( btDividir, util.ui.ComponentesWeb.Variante.AVISO, null,
                 "Cobrar a conta dividida: cada lugar paga a sua parte, com factura própria" );
         btDividir.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 13.5f ) );
-        btDividir.setBorder( javax.swing.BorderFactory.createEmptyBorder( 10, 16, 10, 16 ) );
+        btDividir.setBorder( javax.swing.BorderFactory.createEmptyBorder( 10, 12, 10, 12 ) );
         btDividir.addActionListener( e -> abrirDivisaoConta( false ) );
         BT_Conversao.addPropertyChangeListener( "enabled", e -> btDividir.setEnabled( BT_Conversao.isEnabled() ) );
         btDividir.setEnabled( BT_Conversao.isEnabled() );
-        cobrar.add( btDividir, 0 );
-        cobrar.add( javax.swing.Box.createHorizontalStrut( 6 ), 1 );
+        // conta de um lugar (ou de cada lugar ocupado), com o mesmo talão do "Ver Conta" (como no SysKitandaHotel)
+        final JButton btContaLugar = new JButton( "Conta por lugar" );
+        util.ui.ComponentesWeb.botao( btContaLugar, util.ui.ComponentesWeb.Variante.SECUNDARIO, null,
+                "Imprimir a conta de um lugar da mesa (ou de cada lugar ocupado)" );
+        btContaLugar.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 13.5f ) );
+        btContaLugar.setBorder( javax.swing.BorderFactory.createEmptyBorder( 10, 12, 10, 12 ) );
+        btContaLugar.addActionListener( e -> mostrarMenuContaPorLugar( btContaLugar ) );
+        BT_Pedidos.addPropertyChangeListener( "enabled", e -> btContaLugar.setEnabled( BT_Pedidos.isEnabled() ) );
+        btContaLugar.setEnabled( BT_Pedidos.isEnabled() );
+        instalarMenuLugares();
+        contas.add( btDividir );
+        contas.add( BT_Pedidos );
+        contas.add( btContaLugar );
+        JPanel botoesConta = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 0, 6 ) );
+        botoesConta.add( contas, java.awt.BorderLayout.NORTH );
+        botoesConta.add( cobrar, java.awt.BorderLayout.SOUTH );
         JPanel rodapeConta = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 0, 8 ) );
         rodapeConta.add( visor, java.awt.BorderLayout.NORTH );
-        rodapeConta.add( cobrar, java.awt.BorderLayout.SOUTH );
+        rodapeConta.add( botoesConta, java.awt.BorderLayout.SOUTH );
 
         util.ui.ComponentesWeb.Cartao cartaoConta = new util.ui.ComponentesWeb.Cartao( "Conta da mesa",
                 util.ui.ComponentesWeb.AZUL_VIVO, new java.awt.BorderLayout( 0, 8 ) );
@@ -690,6 +709,38 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         jButton4.putClientProperty( "web.pilula", Boolean.TRUE );
         jButton4.setBorder( javax.swing.BorderFactory.createEmptyBorder( 5, 12, 5, 14 ) );
 
+        // lupa: procura pelo nome em todas as categorias enquanto se escreve (como no SysKitandaHotel)
+        txtFiltroCatalogo = new javax.swing.JTextField();
+        util.ui.FormularioWeb.campoTexto( txtFiltroCatalogo );
+        txtFiltroCatalogo.setPreferredSize( new java.awt.Dimension( 160, 30 ) );
+        txtFiltroCatalogo.setToolTipText( "Procurar um produto pelo nome em todas as categorias (2 letras ou mais)" );
+        txtFiltroCatalogo.getDocument().addDocumentListener( new javax.swing.event.DocumentListener()
+        {
+            @Override
+            public void insertUpdate( javax.swing.event.DocumentEvent e )
+            {
+                filtrarCatalogo();
+            }
+
+            @Override
+            public void removeUpdate( javax.swing.event.DocumentEvent e )
+            {
+                filtrarCatalogo();
+            }
+
+            @Override
+            public void changedUpdate( javax.swing.event.DocumentEvent e )
+            {
+                filtrarCatalogo();
+            }
+        } );
+        JLabel lbFiltrar = new JLabel( "Procurar", util.ui.EstiloUI.icone( "/imagens/proucura.png", 16 ), javax.swing.SwingConstants.LEFT );
+        util.ui.ComponentesWeb.rotulo( lbFiltrar );
+        lbFiltrar.setToolTipText( txtFiltroCatalogo.getToolTipText() );
+        JPanel filtro = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 6, 0 ) );
+        filtro.add( lbFiltrar, java.awt.BorderLayout.WEST );
+        filtro.add( txtFiltroCatalogo, java.awt.BorderLayout.CENTER );
+
         JPanel barraCaminho = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 10, 0 ) );
         barraCaminho.add( caminho, java.awt.BorderLayout.CENTER );
         JPanel direitaCaminho = util.ui.ComponentesWeb.transparente( new java.awt.FlowLayout( java.awt.FlowLayout.RIGHT, 8, 0 ) );
@@ -738,9 +789,18 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
         JPanel topoCatalogo = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 0, 8 ) );
         topoCatalogo.add( barraCaminho, java.awt.BorderLayout.NORTH );
+        // a lupa numa linha própria, a toda a largura (responsivo: não aperta a barra das categorias)
+        topoCatalogo.add( filtro, java.awt.BorderLayout.CENTER );
         topoCatalogo.add( campoStock, java.awt.BorderLayout.SOUTH );
         util.ui.ComponentesWeb.Cartao cartaoCatalogo = new util.ui.ComponentesWeb.Cartao( "Produtos",
                 util.ui.ComponentesWeb.LARANJA, new java.awt.BorderLayout( 0, 10 ) );
+        final JButton btImagens = new JButton( "Imagens" );
+        util.ui.ComponentesWeb.botao( btImagens, util.ui.ComponentesWeb.Variante.SECUNDARIO, null,
+                "Pôr fotografias nos produtos (também com o botão direito num produto)" );
+        btImagens.putClientProperty( "web.pilula", Boolean.TRUE );
+        btImagens.setBorder( javax.swing.BorderFactory.createEmptyBorder( 4, 12, 4, 12 ) );
+        btImagens.addActionListener( e -> abrirImagens( null ) );
+        cartaoCatalogo.adicionarAccao( btImagens );
         cartaoCatalogo.getCorpo().add( topoCatalogo, java.awt.BorderLayout.NORTH );
         cartaoCatalogo.getCorpo().add( jScrollPane3, java.awt.BorderLayout.CENTER );
 
@@ -947,8 +1007,155 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
             b.setToolTipText( itens == 0
                     ? "<html><b>" + nome + "</b> · livre<br>Clique para lançar os próximos produtos neste lugar</html>"
                     : "<html><b>" + nome + "</b> · ocupado<br>" + itens + ( itens == 1 ? " item" : " itens" )
-                    + " por facturar · " + kitanda.util.CfMethods.formatarComoMoeda( ( Double ) c[ 2 ] ) + "</html>" );
+                    + " por facturar · " + kitanda.util.CfMethods.formatarComoMoeda( ( Double ) c[ 2 ] )
+                    + "<br>Clique para lançar neste lugar · botão direito: imprimir a conta deste lugar</html>" );
             b.repaint();
+        }
+    }
+
+    // =====================================================================
+    // CONTA POR LUGAR (como no SysKitandaHotel): o talão do "Ver Conta" só
+    // com o consumo por facturar de um lugar (relatorios/pedido_A5_lugar)
+    // =====================================================================
+    /** "Conta por lugar": menu com os lugares ocupados (e todos de uma vez). */
+    private void mostrarMenuContaPorLugar( java.awt.Component origem )
+    {
+        javax.swing.JPopupMenu menu = new javax.swing.JPopupMenu();
+        java.util.Map<Integer, Object[]> consumo = consumoPorLugar( pedidoAbertoDaMesa() );
+        if ( consumo.isEmpty() )
+        {
+            javax.swing.JMenuItem vazio = new javax.swing.JMenuItem( "Nenhum lugar com consumo por facturar" );
+            vazio.setEnabled( false );
+            menu.add( vazio );
+        }
+        for ( java.util.Map.Entry<Integer, Object[]> e : consumo.entrySet() )
+        {
+            Object[] v = e.getValue();
+            int itens = ( Integer ) v[ 1 ];
+            javax.swing.JMenuItem item = new javax.swing.JMenuItem( "Conta do " + v[ 0 ] + "   ·   " + itens
+                    + ( itens == 1 ? " item" : " itens" ) + "   ·   " + kitanda.util.CfMethods.formatarComoMoeda( ( Double ) v[ 2 ] ) );
+            int pkLugar = e.getKey();
+            item.addActionListener( ev -> imprimirContaLugar( pkLugar ) );
+            menu.add( item );
+        }
+        if ( consumo.size() > 1 )
+        {
+            menu.addSeparator();
+            javax.swing.JMenuItem todos = new javax.swing.JMenuItem( "Todos os lugares ocupados (uma conta para cada lugar)" );
+            todos.addActionListener( ev ->
+            {
+                if ( validarImpressaoConta() )
+                {
+                    for ( Integer pk : consumoPorLugar( pedidoAbertoDaMesa() ).keySet() )
+                    {
+                        imprimirContaLugarSemValidar( pk );
+                    }
+                }
+            } );
+            menu.add( todos );
+        }
+        for ( java.awt.Component c : menu.getComponents() )
+        {
+            c.setFont( util.ui.EstiloUI.FONTE.deriveFont( 13f ) );
+        }
+        menu.show( origem, 0, -menu.getPreferredSize().height );
+    }
+
+    /** As mesmas verificações do botão "Ver Conta" (ano económico, data e licença). */
+    private boolean validarImpressaoConta()
+    {
+        if ( !verifica_ano_documento_igual_economico() )
+        {
+            JOptionPane.showMessageDialog( null, "A data do documento a ser emitido deve estar no intervalo do ano economico",
+                    "Aviso", JOptionPane.WARNING_MESSAGE );
+            return false;
+        }
+        if ( !data_documento_superior_ou_igual_ao_ultimo_doc() )
+        {
+            JOptionPane.showMessageDialog( null, "Verificar a ultima da do documento." );
+            return false;
+        }
+        return MetodosUtil.licencaValidada( conexao );
+    }
+
+    /** Conta de um lugar: o mesmo talão do "Ver Conta", só com o consumo desse lugar. */
+    private void imprimirContaLugar( int pkLugar )
+    {
+        if ( validarImpressaoConta() )
+        {
+            imprimirContaLugarSemValidar( pkLugar );
+        }
+    }
+
+    private void imprimirContaLugarSemValidar( int pkLugar )
+    {
+        int pedido = pedidoAbertoDaMesa();
+        Object[] v = consumoPorLugar( pedido ).get( pkLugar );
+        if ( v == null )
+        {
+            JOptionPane.showMessageDialog( this, "Este lugar não tem consumo por facturar.", "Conta do lugar",
+                    JOptionPane.INFORMATION_MESSAGE );
+            return;
+        }
+        try
+        {
+            ListaPedidos.mostrarContaLugar( pedido, pkLugar, ( Double ) v[ 2 ], idUser );
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog( this, "Não foi possível mostrar a conta do " + v[ 0 ] + ":\n" + e.getMessage(),
+                    "Conta do lugar", JOptionPane.ERROR_MESSAGE );
+        }
+    }
+
+    /** Botão direito num lugar: imprimir a conta desse lugar. */
+    private void instalarMenuLugares()
+    {
+        JButton[] botoes = botoesLugarWeb();
+        for ( int k = 0; k < botoes.length; k++ )
+        {
+            final int numero = k + 1;
+            final JButton b = botoes[ k ];
+            javax.swing.JPopupMenu menu = new javax.swing.JPopupMenu();
+            javax.swing.JMenuItem imprimir = new javax.swing.JMenuItem( "Imprimir a conta do lugar " + numero );
+            imprimir.setFont( util.ui.EstiloUI.FONTE.deriveFont( 13f ) );
+            imprimir.addActionListener( e ->
+            {
+                for ( java.util.Map.Entry<Integer, Object[]> c : consumoPorLugar( pedidoAbertoDaMesa() ).entrySet() )
+                {
+                    if ( numeroLugar( ( String ) c.getValue()[ 0 ] ) == numero )
+                    {
+                        imprimirContaLugar( c.getKey() );
+                        return;
+                    }
+                }
+                JOptionPane.showMessageDialog( this, "O lugar " + numero + " não tem consumo por facturar.",
+                        "Conta do lugar", JOptionPane.INFORMATION_MESSAGE );
+            } );
+            menu.add( imprimir );
+            menu.addPopupMenuListener( new javax.swing.event.PopupMenuListener()
+            {
+                @Override
+                public void popupMenuWillBecomeVisible( javax.swing.event.PopupMenuEvent e )
+                {
+                    Object n = b.getClientProperty( util.ui.MesasWeb.LUGAR_ITENS );
+                    imprimir.setEnabled( n instanceof Number && ( ( Number ) n ).intValue() > 0 );
+                }
+
+                @Override
+                public void popupMenuWillBecomeInvisible( javax.swing.event.PopupMenuEvent e )
+                {
+                }
+
+                @Override
+                public void popupMenuCanceled( javax.swing.event.PopupMenuEvent e )
+                {
+                }
+            } );
+            // o lugar escolhido fica desactivado (regra antiga) e um botão desactivado
+            // não recebe o rato: a conta desse lugar imprime-se pelo "Conta por lugar"
+            b.setComponentPopupMenu( menu );
         }
     }
 
@@ -2463,8 +2670,14 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                 vendasController.actualizar_hash_and_assinatura( salvar_venda.getCodigo(), getGrossTotal() );
                 System.err.println( "VENDA AQUI " + salvar_venda.getCodigo() );
                 registrar_forma_pagamento( salvar_venda.getCodigo() );
-                salvarItemvenda( salvar_venda );
-                remover_dados_tabela();
+                if ( salvarItemvenda( salvar_venda ) ) // false: nada foi gravado (ex.: a AGT não recebeu) e a mesa fica como estava
+                {
+                    remover_dados_tabela();
+                }
+                else
+                {
+                    actualizar();
+                }
 
             }
             else
@@ -2486,8 +2699,14 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
             {
                 System.err.println( "VENDA AQUI " + salvar_venda.getCodigo() );
 //                registrar_forma_pagamento( salvar_venda.getCodigo() );
-                salvarItemvenda( salvar_venda );
-                remover_dados_tabela();
+                if ( salvarItemvenda( salvar_venda ) ) // false: nada foi gravado (ex.: a AGT não recebeu) e a mesa fica como estava
+                {
+                    remover_dados_tabela();
+                }
+                else
+                {
+                    actualizar();
+                }
 
             }
             else
@@ -2508,8 +2727,14 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
             if ( salvar_venda != null )
             {
                 System.err.println( "VENDA AQUI " + salvar_venda.getCodigo() );
-                salvarItemvenda( salvar_venda );
-                remover_dados_tabela();
+                if ( salvarItemvenda( salvar_venda ) )
+                {
+                    remover_dados_tabela();
+                }
+                else
+                {
+                    actualizar();
+                }
 
             }
             else
@@ -2673,9 +2898,12 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
     {//GEN-HEADEREND:event_jButton1ActionPerformed
 
-        dispose();
-        List<TbItemPedidos> buscaTodosItemPedidos = itemPedidosDao.buscaTodosItemPedidos( pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa ) );
-        new MesasTranferenciasVisao( idUser, "", id_armzem, conexao, buscaTodosItemPedidos ).setVisible( true );
+        // ecrã novo de transferências (como no SysKitandaHotel): mesa inteira, itens
+        // escolhidos, parte de um produto ou mudança de lugar, numa transacção.
+        // O antigo (MesasTranferenciasVisao, mesas fixas) deixou de ser usado aqui.
+        new TransferenciaMesaVisao( this, conexao, mesa, () -> actualizar() ).setVisible( true );
+        actualizar();
+        agendarLugares();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void ck_A7ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ck_A7ActionPerformed
@@ -4987,10 +5215,13 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
         }
     }
 
-    public static void salvarItemvenda( TbVenda venda )
+    /** true = factura gravada (commit feito); false = nada ficou gravado (rollback). */
+    public static boolean salvarItemvenda( TbVenda venda )
     {
 
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        // o stock só se abate depois da resposta da AGT (uma factura 'I' não abate), como no SysKitandaHotel
+        java.util.List<double[]> abater = new java.util.ArrayList<>();
         boolean efectuada = true;
         int idProduto = 0;
         double qtd = 0d;
@@ -5042,7 +5273,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                 {
                     DocumentosController.rollback( conexaoTransaction );
                     conexaoTransaction.close();
-                    return;
+                    return false;
                 }
 
                 boolean isStocavel = produto_local.getStocavel().equals( "true" );
@@ -5061,7 +5292,10 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                         //so retirar caso existir mesmo no armazém em questão.
                         if ( stock_local.getCodigo() != 0 && itemVenda.getCodigoProduto().getStocavel().equals( "true" ) )
                         {
-                            actualizar_quantidade( itemVenda.getCodigoProduto().getCodigo(), itemVenda.getQuantidade() );
+                            abater.add( new double[]
+                            {
+                                itemVenda.getCodigoProduto().getCodigo(), itemVenda.getQuantidade()
+                            } );
                         }
                     }
 
@@ -5079,15 +5313,42 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
         if ( efectuada )
         {
-            JOptionPane.showMessageDialog( null, "Factura efectuada com sucesso!.." );
-            TbPedido pedido = pedidoDao.findTbPedido( pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa ) );
-            PedidoDao.eliminarPedido( pedido, conexaoTransaction ); // Elimina o pedido
+            // envio à AGT dentro da transacção (como no SysKitandaHotel)
+            boolean offline;
+            try
+            {
+                offline = comunicarAGT( venda, getGrossTotal() );
+            }
+            catch ( Exception ex )
+            {
+                ex.printStackTrace();
+                DocumentosController.rollback( conexaoTransaction );
+                JOptionPane.showMessageDialog( null, ex.getMessage(), "Facturação Electrónica", JOptionPane.ERROR_MESSAGE );
+                return false;
+            }
+            boolean invalida = DVML.ESTADO_INVALIDO.equalsIgnoreCase( venda.getEstado() );
+            if ( !invalida )
+            {
+                for ( double[] a : abater )
+                {
+                    actualizar_quantidade( ( int ) a[ 0 ], a[ 1 ] );
+                }
+                TbPedido pedido = pedidoDao.findTbPedido( pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa ) );
+                PedidoDao.eliminarPedido( pedido, conexaoTransaction ); // Elimina o pedido
+            }
 
             System.err.println( "Codigo Venda: " + venda.getCodigo() );
             System.err.println( "Venda: " + venda.getCodFact() );
             gorjeta = 0;
 
             DocumentosController.commit( conexaoTransaction );
+            if ( invalida )
+            {
+                // a AGT já mostrou os erros; a mesa fica com o pedido para se corrigir e facturar de novo
+                return true;
+            }
+            // polegar verde depois do commit (antes era um aviso simples antes de gravar), como no SysKitandaHotel
+            avisoDepoisDeGravar( venda, offline );
 
 //            int numeroVias = 1;
             int numeroVias = (int) Double.parseDouble( spnCopia.getValue().toString() );
@@ -5113,13 +5374,143 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
             PrincipalPedidosVisao.mesas_livres( getLabelMesaByMesa() );
             PrincipalPedidosVisao.pintar_mesas( getLabelMesaByMesa(), mesa );
             procedimento_mesas_livre();
-
+            return true;
         }
         else
         {
             DocumentosController.rollback( conexaoTransaction );
+            return false;
         }
 
+    }
+
+    // =====================================================================
+    // ENVIO À AGT NO MOMENTO DA FACTURA (como no SysKitandaHotel)
+    // Antes, as facturas da gestão de pedidos ficavam por comunicar e só iam
+    // à AGT pela comunicação de pendentes (ComunicacaoPendentesFE).
+    // =====================================================================
+    /**
+     * Envia à AGT (só FR e FT) dentro da transacção da factura, com os itens
+     * já gravados, e grava na venda o estado / requestID / submissionUUID.
+     * Sem ligação à AGT a venda fica pendente ('P', sem requestID) e é
+     * comunicada depois pela comunicação de pendentes.
+     *
+     * @return true = emitida offline (fica por comunicar)
+     * @throws Exception a AGT não recebeu o documento (e não foi por falta de
+     * ligação): quem chama faz rollback e nada fica gravado
+     */
+    private static boolean comunicarAGT( TbVenda venda, double grossTotal ) throws Exception
+    {
+        int idDoc = venda.getFkDocumento() != null ? venda.getFkDocumento().getPkDocumento() : getIdDocumento();
+        if ( idDoc != DOC_FACTURA_RECIBO_FR && idDoc != DOC_FACTURA_FT )
+        {
+            return false; // factura consulta, proforma: não vão à AGT
+        }
+        java.util.List<TbItemVenda> itens = itemVendasController.findByVenda( venda.getCodigo() );
+        if ( itens == null || itens.isEmpty() )
+        {
+            throw new Exception( "Nenhum item encontrado para enviar à AGT.\nNada foi gravado e a mesa ficou como estava." );
+        }
+        TbDadosInstituicao dados = dadosInstituicaoController.findByCodigo( 1 );
+        Documento documento = documentosController.findDocumentoById( idDoc );
+        TbCliente cliente = venda.getCodigoCliente() != null && venda.getCodigoCliente().getCodigo() != null
+                ? clientesController.findByCodigo( venda.getCodigoCliente().getCodigo() )
+                : clientesController.getClienteByNome( _CLIENTE_CONSUMIDOR_FINAL );
+
+        enviarParaAGTComRenumeracao( venda, dados, documento, cliente, itens, grossTotal );
+
+        boolean offline = util.fe.FacturaElectronicaUtil.isUltimoEnvioOffline();
+        if ( offline )
+        {
+            venda.setEstado( DVML.ESTADO_PENDENTE );
+            venda.setRequestID( null );
+        }
+        else if ( venda.getEstado() == null || venda.getRequestID() == null || venda.getRequestID().trim().isEmpty() )
+        {
+            java.util.List<String> erros = util.fe.payloads.PayloadFactory.getUltimosErros();
+            throw new Exception( "A AGT não recebeu o documento " + venda.getCodFact()
+                    + ".\nNada foi gravado e a mesa ficou como estava; pode tentar de novo."
+                    + ( erros.isEmpty() ? "" : "\n\nResposta da AGT:\n• " + String.join( "\n• ", erros ) ) );
+        }
+        if ( !vendasController.actualizarEstadoFE( venda, conexaoTransaction.getConnectionAtiva() ) )
+        {
+            throw new Exception( "Falha ao gravar a resposta da AGT na venda " + venda.getCodFact() + ".\nNada foi gravado." );
+        }
+        return offline;
+    }
+
+    /**
+     * Envia à AGT e, se a AGT disser que o número já consta no repositório
+     * (ex.: o de uma factura recusada antes, que a numeração volta a usar),
+     * passa ao número seguinte da série, recalcula o hash e a assinatura e
+     * reenvia (até 5 vezes). A mesma regra do SysKitandaHotel.
+     */
+    private static void enviarParaAGTComRenumeracao( TbVenda venda, TbDadosInstituicao dados, Documento documento,
+            TbCliente cliente, java.util.List<TbItemVenda> itens, double grossTotal ) throws Exception
+    {
+        String numeroInicial = venda.getCodFact();
+        for ( int tentativa = 1; tentativa <= 5; tentativa++ )
+        {
+            util.fe.payloads.PayloadFactory.limparUltimosErros();
+            util.fe.FacturaElectronicaUtil.criarFEGenerico( venda, dados, documento, cliente, itens, conexaoTransaction );
+            if ( !util.fe.payloads.PayloadFactory.ultimoErroNumeroDuplicado() )
+            {
+                break;
+            }
+            if ( tentativa == 5 )
+            {
+                throw new Exception( "A AGT continua a indicar que o número " + venda.getCodFact()
+                        + " já existe, depois de 5 tentativas.\nNada foi gravado. Contacte o suporte." );
+            }
+            String seguinte = numeroSeguinte( venda.getCodFact() );
+            System.err.println( "[FE] Número " + venda.getCodFact() + " já consta na AGT; a usar " + seguinte );
+            venda.setCodFact( seguinte );
+            venda.setRequestID( null );
+            venda.setEstado( null );
+            venda.setSubmissionUUID( null );
+            try ( java.sql.PreparedStatement ps = conexaoTransaction.getConnectionAtiva().prepareStatement(
+                    "UPDATE tb_venda SET cod_fact = ? WHERE codigo = ?" ) )
+            {
+                ps.setString( 1, seguinte );
+                ps.setInt( 2, venda.getCodigo() );
+                ps.executeUpdate();
+            }
+            // hash e assinatura com o número novo
+            vendasController.actualizar_hash_and_assinatura( venda.getCodigo(), grossTotal );
+        }
+        if ( !numeroInicial.equals( venda.getCodFact() ) )
+        {
+            JOptionPane.showMessageDialog( null,
+                    "O número " + numeroInicial + " já constava no repositório da AGT\n"
+                    + "(de um envio anterior que não ficou gravado neste computador).\n\n"
+                    + "O documento foi emitido com o número " + venda.getCodFact() + ".",
+                    "Facturação Electrónica", JOptionPane.INFORMATION_MESSAGE );
+        }
+    }
+
+    /** "FR FR3726S8725N/9" -> "FR FR3726S8725N/10". */
+    private static String numeroSeguinte( String codFact )
+    {
+        int barra = codFact.lastIndexOf( '/' );
+        int numero = Integer.parseInt( codFact.substring( barra + 1 ).trim() );
+        return codFact.substring( 0, barra + 1 ) + ( numero + 1 );
+    }
+
+    /** Depois do commit: aviso de offline, ou o polegar verde (a AGT "V" já teve o seu). */
+    private static void avisoDepoisDeGravar( TbVenda venda, boolean offline )
+    {
+        if ( offline )
+        {
+            JOptionPane.showMessageDialog( null,
+                    "Factura " + venda.getCodFact() + " efectuada em MODO OFFLINE.\n\n"
+                    + "Não foi possível comunicar com a AGT (sem internet ou serviço indisponível).\n"
+                    + "A factura fica PENDENTE e será comunicada automaticamente quando a ligação voltar.",
+                    "Factura emitida offline", JOptionPane.WARNING_MESSAGE );
+        }
+        else
+        {
+            util.ui.ConfirmacaoPositiva.documentoGravado( venda );
+        }
     }
 
     public static void salvarItemvendaLugar( TbVenda venda, String lugar )
@@ -5136,6 +5527,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //        TbStock stock_local;
         double sub_total_iliquido = 0, preco_unitario = 0d, taxa = 0d, desconto = 0d, valor_iva = 0d;
         int valor_lugar_tabela = 0;
+        // o stock só se abate depois da resposta da AGT (uma factura 'I' não abate), como no SysKitandaHotel
+        java.util.List<double[]> abater = new java.util.ArrayList<>();
 
         for ( int i = 0; i < jTable1.getRowCount(); i++ )
         {
@@ -5203,7 +5596,10 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                             //so retirar caso existir mesmo no armazém em questão.
                             if ( stock_local.getCodigo() != 0 && itemVenda.getCodigoProduto().getStocavel().equals( "true" ) )
                             {
-                                actualizar_quantidade( itemVenda.getCodigoProduto().getCodigo(), itemVenda.getQuantidade() );
+                                abater.add( new double[]
+                                {
+                                    itemVenda.getCodigoProduto().getCodigo(), itemVenda.getQuantidade()
+                                } );
                             }
                         }
 
@@ -5221,10 +5617,38 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
             }
         }
 
+        if ( !efectuada )
+        {
+            DocumentosController.rollback( conexaoTransaction );
+            return;
+        }
+        // envio à AGT dentro da transacção (como no SysKitandaHotel)
+        boolean offline;
+        try
+        {
+            offline = comunicarAGT( venda, getGrossTotal( Integer.parseInt( lugar ) ) );
+        }
+        catch ( Exception ex )
+        {
+            ex.printStackTrace();
+            DocumentosController.rollback( conexaoTransaction );
+            JOptionPane.showMessageDialog( null, ex.getMessage(), "Facturação Electrónica", JOptionPane.ERROR_MESSAGE );
+            return;
+        }
+        if ( DVML.ESTADO_INVALIDO.equalsIgnoreCase( venda.getEstado() ) )
+        {
+            // inválida na AGT: não abate stock e o lugar continua com o pedido (para se corrigir)
+            DocumentosController.commit( conexaoTransaction );
+            return;
+        }
+        for ( double[] a : abater )
+        {
+            actualizar_quantidade( ( int ) a[ 0 ], a[ 1 ] );
+        }
+
         if ( efectuada )
         {
             alterar_status_pedido_lugar( Integer.parseInt( lugar ) );
-            JOptionPane.showMessageDialog( null, "Factura efectuada com sucesso!.." );
             actualizar_lugar( Integer.parseInt( lugar ) );
             procedimento_mesas_livre();
             TbPedido pedido = pedidoDao.findTbPedido( pedidoDao.getLastPedidoByDefignacaoMesaFALSE( mesa ) );
@@ -5235,6 +5659,10 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
             System.err.println( "Codigo Venda: " + venda.getCodigo() );
             System.err.println( "Venda: " + venda.getCodFact() );
             gorjeta = 0;
+
+            // antes esta factura ficava sem commit (só entrava na BD com a transacção seguinte)
+            DocumentosController.commit( conexaoTransaction );
+            avisoDepoisDeGravar( venda, offline );
 
 //            int numeroVias = 1;
             int numeroVias = (int) Double.parseDouble( spnCopia.getValue().toString() );
@@ -5772,6 +6200,7 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //        TbStock stock_local;
         double total = 0;
         int valor_lugar_tabela = 0;
+        java.util.List<double[]> abaterLugar = new java.util.ArrayList<>();
 
         for ( int i = 0; i < jTable1.getRowCount(); i++ )
         {
@@ -5833,8 +6262,11 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
                         System.out.println( "passei quando é FR ou FT" );
                         if ( !Objects.isNull( stock_local ) && isStocavel )
                         {
-                            System.out.println( "chamei o actualizar quantidade" );
-                            actualizar_quantidade( itemVenda.getCodigoProduto().getCodigo(), itemVenda.getQuantidade() );
+                            // abate depois da resposta da AGT (uma factura 'I' não abate)
+                            abaterLugar.add( new double[]
+                            {
+                                itemVenda.getCodigoProduto().getCodigo(), itemVenda.getQuantidade()
+                            } );
                         }
 
                     }
@@ -5863,13 +6295,38 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
             }
         }
 
+        // envio à AGT dentro da transacção (como no SysKitandaHotel)
+        boolean offline;
+        try
+        {
+            offline = comunicarAGT( venda_local, getGrossTotal( lugar ) );
+        }
+        catch ( Exception ex )
+        {
+            ex.printStackTrace();
+            DocumentosController.rollback( conexaoTransaction );
+            JOptionPane.showMessageDialog( null, ex.getMessage(), "Facturação Electrónica", JOptionPane.ERROR_MESSAGE );
+            return;
+        }
+        if ( DVML.ESTADO_INVALIDO.equalsIgnoreCase( venda_local.getEstado() ) )
+        {
+            // inválida na AGT: não abate stock e o lugar continua com o pedido
+            DocumentosController.commit( conexaoTransaction );
+            return;
+        }
+        for ( double[] a : abaterLugar )
+        {
+            actualizar_quantidade( ( int ) a[ 0 ], a[ 1 ] );
+        }
+
         if ( efectuada )
         {
 //            DocumentoDao.commitTransaction( conexao );
             gorjeta = 0;
 //          act actualizar_cod_doc ( venda_local.getDataVenda () );
             alterar_status_pedido_lugar( lugar );
-            JOptionPane.showMessageDialog( null, "Factura Convertida com sucesso!.." );
+            DocumentosController.commit( conexaoTransaction );
+            avisoDepoisDeGravar( venda_local, offline );
             actualizar_lugar( lugar );
             procedimento_mesas_livre();
 
@@ -6027,8 +6484,196 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
     }
 
+    // =====================================================================
+    // CATÁLOGO (como no SysKitandaHotel): cartões com fotografia, preço com
+    // IVA, lupa em todas as categorias e "Pôr imagem" no botão direito
+    // =====================================================================
+    private javax.swing.JTextField txtFiltroCatalogo;
+    /** Categoria cujos produtos estão à vista (0 = vista das categorias). */
+    private int categoriaActual = 0;
+    private boolean emPesquisa;
+    private javax.swing.Timer temporizadorPesquisa;
+
+    /**
+     * Cartão de produto: fotografia (ou iniciais na cor da categoria), preço
+     * com IVA e, para o administrador, o stock (a regra do antigo
+     * ProdutoItemVisao). Clicar lança o produto no pedido.
+     */
+    private JComponent cartaoProduto( TbProduto produto, double quantidade, TbPreco preco, String categoria )
+    {
+        double precoVenda = preco != null && preco.getPrecoVenda() != null ? preco.getPrecoVenda().doubleValue() : 0;
+        double taxa = MetodosUtil.getTaxaPercantagem( produto.getCodigo() );
+        String textoPreco = kitanda.util.CfMethods.formatarComoMoeda( util.FinanceUtils.getValorComIVA( 1, taxa, precoVenda, 0 ) );
+        boolean stocavel = "true".equals( produto.getStocavel() );
+        String stock = null;
+        if ( stocavel && utilizadorAdministrador() )
+        {
+            stock = quantidade == Math.rint( quantidade ) ? String.valueOf( ( long ) quantidade ) : String.valueOf( quantidade );
+        }
+        java.awt.Image foto = null;
+        try
+        {
+            if ( produto.getPhoto() != null && produto.getPhoto().length > 0 )
+            {
+                foto = new javax.swing.ImageIcon( produto.getPhoto() ).getImage();
+                if ( foto.getWidth( null ) <= 0 )
+                {
+                    foto = null;
+                }
+            }
+        }
+        catch ( Exception e )
+        {
+            foto = null;
+        }
+        java.awt.Color cor = util.ui.MesasWeb.corCategoria( categoria );
+        final String designacao = produto.getDesignacao();
+        util.ui.MesasWeb.CartaoProduto c = new util.ui.MesasWeb.CartaoProduto( designacao, textoPreco, stock,
+                stocavel && quantidade <= 0, foto, cor, () -> adicionarImportar( designacao ) );
+        // botão direito: pôr ou trocar a fotografia deste produto
+        javax.swing.JPopupMenu menu = new javax.swing.JPopupMenu();
+        javax.swing.JMenuItem imagem = new javax.swing.JMenuItem( foto == null ? "Pôr imagem…" : "Mudar imagem…" );
+        imagem.addActionListener( e -> abrirImagens( produto.getCodigo() ) );
+        menu.add( imagem );
+        c.setComponentPopupMenu( menu );
+        return c;
+    }
+
+    private Boolean administrador;
+
+    /** Tipo de utilizador 1 (como o ProdutoItemVisao, que só mostrava o stock a este). */
+    private boolean utilizadorAdministrador()
+    {
+        if ( administrador == null )
+        {
+            try
+            {
+                TbUsuario u = ( TbUsuario ) usuariosController.findById( idUser );
+                administrador = u != null && u.getIdTipoUsuario() != null && u.getIdTipoUsuario().getIdTipoUsuario() == 1;
+            }
+            catch ( Exception e )
+            {
+                administrador = false;
+            }
+        }
+        return administrador;
+    }
+
+    /** Ao escrever na lupa: espera um instante e procura (evita uma consulta por tecla). */
+    private void filtrarCatalogo()
+    {
+        if ( temporizadorPesquisa == null )
+        {
+            temporizadorPesquisa = new javax.swing.Timer( 250, e -> pesquisarProdutos() );
+            temporizadorPesquisa.setRepeats( false );
+        }
+        temporizadorPesquisa.restart();
+    }
+
+    /**
+     * Procura pelo nome em todas as categorias. Os produtos com stock são os
+     * do armazém desta janela, como nas categorias; os serviços aparecem sempre.
+     */
+    private void pesquisarProdutos()
+    {
+        String t = txtFiltroCatalogo.getText().trim();
+        if ( t.length() < 2 )
+        {
+            if ( emPesquisa )
+            {
+                emPesquisa = false;
+                if ( categoriaActual > 0 )
+                {
+                    adicionar_centro_botao( categoriaActual );
+                }
+                else
+                {
+                    adicionar_catgorias();
+                }
+            }
+            return;
+        }
+        emPesquisa = true;
+        painel_central.removeAll();
+        botoes_object.clear();
+        int n = 0;
+        String sql = "SELECT p.codigo, t.designacao FROM tb_produto p JOIN tb_tipo_produto t ON t.codigo = p.cod_Tipo_Produto"
+                + " WHERE p.designacao LIKE ?"
+                + " AND (t.fk_familia = ? OR EXISTS (SELECT 1 FROM tb_stock s WHERE s.cod_produto_codigo = p.codigo AND s.cod_armazem = ?))"
+                + " ORDER BY p.designacao LIMIT 60";
+        try ( java.sql.PreparedStatement ps = conexao.getPreparedStatement( sql ) )
+        {
+            ps.setString( 1, "%" + t + "%" );
+            ps.setInt( 2, DVML.COD_SERVICO );
+            ps.setInt( 3, id_armzem );
+            java.util.List<Object[]> achados = new java.util.ArrayList<>();
+            try ( java.sql.ResultSet rs = ps.executeQuery() )
+            {
+                while ( rs.next() )
+                {
+                    achados.add( new Object[]
+                    {
+                        rs.getInt( 1 ), rs.getString( 2 )
+                    } );
+                }
+            }
+            for ( Object[] a : achados )
+            {
+                TbProduto p = ( TbProduto ) produtosController.findById( ( Integer ) a[ 0 ] );
+                if ( p == null )
+                {
+                    continue;
+                }
+                TbPreco preco = precosController.getLastIdPrecoByIdProdutos( p.getCodigo() );
+                double qtd = stocksController.getQuantidadeProduto( p.getCodigo(), id_armzem );
+                painel_central.add( cartaoProduto( p, qtd, preco, ( String ) a[ 1 ] ) );
+                n++;
+            }
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
+        btn_voltar.setVisible( true );
+        designacao_categoria.setVisible( true );
+        designacao_categoria.setText( n == 0 ? "Nenhum produto com «" + t + "»" : "Resultados para «" + t + "» (" + n + ")" );
+        painel_central.revalidate();
+        painel_central.repaint();
+        javax.swing.SwingUtilities.invokeLater( () -> jScrollPane3.getVerticalScrollBar().setValue( 0 ) );
+    }
+
+    /** Abre o formulário de imagens (com o produto já escolhido) e volta a mostrar o catálogo. */
+    private void abrirImagens( Integer codigoProduto )
+    {
+        new ProdutoImagemVisao( this, conexao, codigoProduto, null ).setVisible( true );
+        if ( emPesquisa )
+        {
+            pesquisarProdutos();
+        }
+        else if ( categoriaActual > 0 )
+        {
+            adicionar_centro_botao( categoriaActual );
+        }
+    }
+
+    /** Limpa a lupa sem disparar outra pesquisa (ao mudar de categoria). */
+    private void limparPesquisa()
+    {
+        emPesquisa = false;
+        if ( txtFiltroCatalogo != null && !txtFiltroCatalogo.getText().isEmpty() )
+        {
+            txtFiltroCatalogo.setText( "" );
+            if ( temporizadorPesquisa != null )
+            {
+                temporizadorPesquisa.stop();
+            }
+        }
+    }
+
     private void adicionar_catgorias()
     {
+        categoriaActual = 0;
+        limparPesquisa();
 
         List<TbTipoProduto> lista_categoria = tipoProdutosController.buscaTodasCategoriasByArea();
 //        List<TbTipoProduto> lista_categoria = tipoProdutoDao.getAll_filtro();
@@ -6062,6 +6707,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 
     private void adicionar_centro_botao( int idTipoPorduto )
     {
+        categoriaActual = idTipoPorduto;
+        limparPesquisa();
 //        try
 //        {
 //
@@ -6226,7 +6873,8 @@ public class NovaGestaoPedidosVisao extends javax.swing.JFrame
 //                    }
 //                    jButton.addActionListener( new ButtonHandler() );
 //                    painel_central.add( jButton );
-                    painel_central.add( new ProdutoItemVisao( get.getStocavel(), get.getDesignacao(), get.getPhoto(), quantidadeProduto, preco_object, DVML.FORMULARIO_PEDIDO_RESTAURANTE, usuarioLocal.getIdTipoUsuario().getIdTipoUsuario() ) );
+                    // cartão do SysKitandaHotel (fotografia, preço com IVA, "Pôr imagem" no botão direito)
+                    painel_central.add( cartaoProduto( get, quantidadeProduto, preco_object, tipoProduto.getDesignacao() ) );
 //                    painel_central.add( new ProdutoItemVisao(  get.getCodigo(),  get.getStocavel(), get.getDesignacao(), get.getPhoto(), quantidadeProduto, preco_object, DVML.FORMULARIO_PEDIDO_RESTAURANTE, conexao ) );
 
                 }

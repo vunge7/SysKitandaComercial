@@ -54,6 +54,62 @@ public class ConfiguracoesVisao extends javax.swing.JDialog
         {
             e.printStackTrace();
         }
+        // aspecto web e responsivo, sobre o initComponents (os campos e a lógica não mudam)
+        util.ui.LayoutSeguro.aplicar( this, "Configurações", this::montarLayoutResponsivo );
+    }
+
+    /**
+     * As duas secções ("Configurações" e "Outras Configurações") ficam lado a
+     * lado em ecrãs largos e uma por baixo da outra em ecrãs estreitos; o
+     * conteúdo desliza na vertical e os botões ficam sempre visíveis em baixo.
+     * A janela é redimensionável e ajusta-se à área útil do ecrã.
+     */
+    private void montarLayoutResponsivo()
+    {
+        for ( javax.swing.JPanel p : new javax.swing.JPanel[]
+        {
+            jPanel3, jPanel4
+        } )
+        {
+            // o título passa para o cartão (ao entrar no cartão o painel sai do jPanel1)
+            p.setBorder( javax.swing.BorderFactory.createEmptyBorder() );
+            p.setOpaque( false );
+        }
+        int largura3 = jPanel3.getPreferredSize().width + 32;
+        int largura4 = jPanel4.getPreferredSize().width + 32;
+        util.ui.ComponentesWeb.Cartao gerais = util.ui.FormularioWeb.cartao( "Configurações",
+                util.ui.ComponentesWeb.AZUL_VIVO, jPanel3 );
+        util.ui.ComponentesWeb.Cartao outras = util.ui.FormularioWeb.cartao( "Outras Configurações",
+                util.ui.ComponentesWeb.VERDE, jPanel4 );
+        javax.swing.JPanel colunas = util.ui.ComponentesWeb.transparente( new util.ui.ComponentesWeb.ColunasResponsivas(
+                new double[]
+                {
+                    largura3, largura4
+                }, new int[]
+                {
+                    largura3, largura4
+                }, 10 ) );
+        colunas.add( gerais );
+        colunas.add( outras );
+
+        okButton.setText( "Actualizar" );
+        util.ui.FormularioWeb.botaoSalvar( okButton, "Gravar as configurações" );
+        cancelButton.setText( "Sair" );
+        util.ui.FormularioWeb.botaoSair( cancelButton, "Fechar sem gravar (Esc)" );
+
+        util.ui.FormularioWeb.montar( this,
+                util.ui.FormularioWeb.cabecalho( "Configurações",
+                        "Documentos, regras de venda e permissões da tabela de vendas", null ),
+                colunas,
+                util.ui.FormularioWeb.barraAccoes(
+                        util.ui.FormularioWeb.dica( "As alterações ficam gravadas ao carregar em Actualizar" ),
+                        okButton, cancelButton ),
+                "Configurações" );
+        getRootPane().registerKeyboardAction( e -> cancelButton.doClick(),
+                javax.swing.KeyStroke.getKeyStroke( java.awt.event.KeyEvent.VK_ESCAPE, 0 ),
+                javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW );
+        util.ui.FormularioWeb.ajustar( this, largura3 + largura4 + 60, 780,
+                Math.min( largura3, largura4 ) + 40, 480 );
     }
 
     /**
@@ -1849,9 +1905,7 @@ public class ConfiguracoesVisao extends javax.swing.JDialog
         painel.add( criarLinhaPermissao( "Alterar Desconto:", rbPermitirDesconto, rbBloquearDesconto ) );
 
         ( (javax.swing.GroupLayout) jPanel4.getLayout() ).replace( lbHoraComecoVendas, painel );
-        // as linhas novas aumentam o painel: reajusta a janela
-        pack();
-        setLocationRelativeTo( null );
+        // o tamanho da janela é dado por montarLayoutResponsivo (FormularioWeb.ajustar)
     }
 
     private javax.swing.JPanel criarLinhaPermissao( String titulo,

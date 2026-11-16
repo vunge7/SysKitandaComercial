@@ -38,6 +38,24 @@ public final class ConfirmacaoPositiva {
         dialogo.dispose();
     }
 
+    /**
+     * Confirmação depois de gravar uma venda (commit feito). A proforma não vai
+     * à AGT: o sucesso é ter ficado gravada. Uma factura já validada pela AGT
+     * ("V") teve a confirmação no envio (PayloadFactory); não se repete.
+     */
+    public static void documentoGravado(entity.TbVenda venda) {
+        if (venda == null) {
+            return;
+        }
+        String doc = "Documento " + (venda.getCodFact() == null ? "" : venda.getCodFact()) + " gravado com sucesso.";
+        if (venda.getFkDocumento() != null
+                && venda.getFkDocumento().getPkDocumento() == util.DVML.DOC_FACTURA_PROFORMA_PP) {
+            mostrar("Factura Proforma", "Factura Proforma gravada", doc);
+        } else if (!"V".equalsIgnoreCase(venda.getEstado())) {
+            mostrar("Factura", "Factura efectuada", doc);
+        }
+    }
+
     private static String hex(Color c) {
         return String.format("#%02x%02x%02x", c.getRed(), c.getGreen(), c.getBlue());
     }

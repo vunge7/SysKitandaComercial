@@ -89,9 +89,14 @@ public class ConsultaEstadoFacturaUtil {
 
         // Só grava quando a AGT trouxe um estado final (V ou I) e ele mudou
         if (novoEstado != null && !novoEstado.equals(venda.getEstado())) {
+            String estadoAnterior = venda.getEstado();
             venda.setEstado(novoEstado);
             boolean gravado = vendasController.actualizarEstadoFE(venda, connection);
             dto.setEstadoAlterado(gravado);
+            if (gravado) {
+                // pendente (stock já abatido) e agora inválida na AGT: o stock volta
+                StockFE.devolverSeFicouInvalida(connection, venda.getCodigo(), estadoAnterior, novoEstado);
+            }
             if (!gravado) {
                 dto.getErros().add("O estado foi obtido na AGT mas não foi possível gravar na base de dados.");
             }
