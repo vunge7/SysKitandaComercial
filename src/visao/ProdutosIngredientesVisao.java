@@ -1008,7 +1008,7 @@ public class ProdutosIngredientesVisao extends javax.swing.JFrame
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 51, 102));
-        jLabel2.setText("KITANDA 1.2");
+        jLabel2.setText("KITANDA " + util.DVML.VERSION_SOFTWARE);
         jPanel3.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(890, 20, 239, 39));
 
         painel_stock.setBorder(javax.swing.BorderFactory.createTitledBorder(""));

@@ -268,11 +268,38 @@ WHERE
 				<textFieldExpression><![CDATA[$F{tb_venda_hora}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="bba521bb-382c-4d32-a567-bedc62397a18" key="element-91" x="3" y="71" width="180" height="26" forecolor="#000000"/>
+				<reportElement uuid="bba521bb-382c-4d32-a567-bedc62397a18" key="element-91" x="3" y="71" width="134" height="26" forecolor="#000000"/>
 				<textElement markup="html">
 					<font fontName="Times New Roman" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{documento_designacao} +" <b>" +$F{tb_venda_cod_fact} +"</b>"]]></textFieldExpression>
+			</textField>
+			<!-- ===== Nº diário (tb_venda.cont, preenchido pelo trigger trg_venda_numero_diario) ===== -->
+			<rectangle radius="3">
+				<reportElement uuid="b7d1e0a1-6c2f-4a8e-9f10-000000000001" x="140" y="73" width="44" height="23">
+					<printWhenExpression><![CDATA[$F{tb_venda_cont} != null && $F{tb_venda_cont}.intValue() > 0]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="1.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="b7d1e0a1-6c2f-4a8e-9f10-000000000002" x="140" y="74" width="44" height="6">
+					<printWhenExpression><![CDATA[$F{tb_venda_cont} != null && $F{tb_venda_cont}.intValue() > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nº DO DIA]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="b7d1e0a1-6c2f-4a8e-9f10-000000000003" x="140" y="79" width="44" height="17">
+					<printWhenExpression><![CDATA[$F{tb_venda_cont} != null && $F{tb_venda_cont}.intValue() > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[String.valueOf($F{tb_venda_cont})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement uuid="098b2ff2-19f3-4436-9a1c-7bc4690bd0d8" key="element-94" x="3" y="96" width="82" height="13" forecolor="#000000"/>

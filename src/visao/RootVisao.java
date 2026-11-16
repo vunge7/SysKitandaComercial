@@ -318,7 +318,7 @@ public class RootVisao extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Lucida Grande", 0, 36)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("Seja bem vindo ao Erp Kitanda 1.1");
+        jLabel1.setText("Seja bem vindo ao Erp Kitanda " + util.DVML.VERSION_SOFTWARE);
 
         jPanel1.setBackground(new java.awt.Color(112, 171, 199));
         jPanel1.setForeground(new java.awt.Color(0, 102, 153));

@@ -918,7 +918,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
         jLabel2.setFont(new java.awt.Font("Lucida Grande", 1, 24)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText("KITANDA v1.1");
+        jLabel2.setText("KITANDA v" + util.DVML.VERSION_SOFTWARE);
         getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 620, 180, -1));
 
         btnProdutosEspirados.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
@@ -2447,9 +2447,7 @@ public class MenuPrincipalVisao extends javax.swing.JFrame
 
     private void jcbRelatorioMensalClientesVipsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jcbRelatorioMensalClientesVipsActionPerformed
     {//GEN-HEADEREND:event_jcbRelatorioMensalClientesVipsActionPerformed
-
-        // TODO add your handling code here:
-
+        new lista.RelatorioBonusDeClientesVipsVisao().setVisible( true );
     }//GEN-LAST:event_jcbRelatorioMensalClientesVipsActionPerformed
 
     private void jMenuItemEntradasProdutosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemEntradasProdutosActionPerformed

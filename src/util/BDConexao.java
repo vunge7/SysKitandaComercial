@@ -106,6 +106,7 @@ public class BDConexao
 
 
             String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db_fe_hml"
+
                     + "?zeroDateTimeBehavior=convertToNull"
                     + "&useSSL=false"
                     + "&allowPublicKeyRetrieval=true"

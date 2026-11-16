@@ -416,7 +416,7 @@
                     <Column editable="false" title="C&#xf3;d.Produto" type="java.lang.Object"/>
                     <Column editable="false" title="Produto " type="java.lang.String"/>
                     <Column editable="false" title="Qtd" type="java.lang.Integer"/>
-                    <Column editable="false" title="Pre&#xe7;o F&#xe1;brica" type="java.lang.Double"/>
+                    <Column editable="false" title="Pre&#xe7;o de Venda" type="java.lang.Double"/>
                     <Column editable="false" title="B&#xf4;nus" type="java.lang.Double"/>
                   </Table>
                 </Property>

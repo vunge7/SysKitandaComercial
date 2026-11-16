@@ -230,10 +230,9 @@ public class LoginVisao extends javax.swing.JFrame {
         }
     }
 
-    /** A versão continua a ter um só sítio: o texto "KITANDA 1.x" do formulário. */
+    /** A versão tem um só sítio: util.DVML.VERSION_SOFTWARE. */
     private String versaoSoftwareWeb() {
-        String[] partes = Soft1.getText().trim().split("\\s+");
-        return partes.length > 1 ? partes[partes.length - 1] : "";
+        return util.DVML.VERSION_SOFTWARE;
     }
 
     private void montarLayoutWeb() {
@@ -757,11 +756,11 @@ public class LoginVisao extends javax.swing.JFrame {
 
         Soft.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         Soft.setForeground(new java.awt.Color(255, 255, 255));
-        Soft.setText("KITANDA 1.1.   Sistema Certificado pela AGT. Nº 258 - Facturação Electónica Nº FE/110/AGT/2025");
+        Soft.setText("KITANDA " + util.DVML.VERSION_SOFTWARE + ".   Sistema Certificado pela AGT. Nº 258 - Facturação Electónica Nº FE/110/AGT/2025");
 
         Soft1.setFont(new java.awt.Font("American Typewriter", 1, 48)); // NOI18N
         Soft1.setForeground(new java.awt.Color(255, 255, 255));
-        Soft1.setText("KITANDA 1.1");
+        Soft1.setText("KITANDA " + util.DVML.VERSION_SOFTWARE);
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/img30.png"))); // NOI18N
 

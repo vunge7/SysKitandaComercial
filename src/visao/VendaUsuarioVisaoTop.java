@@ -1258,7 +1258,7 @@ public class VendaUsuarioVisaoTop extends javax.swing.JFrame
 
         jLabel1.setFont(new java.awt.Font("Superclarendon", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 0, 51));
-        jLabel1.setText("KITANDA v1.1");
+        jLabel1.setText("KITANDA v" + util.DVML.VERSION_SOFTWARE);
 
         lbVias.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         lbVias.setText("Via(s):");
