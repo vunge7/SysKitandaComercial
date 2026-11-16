@@ -44,6 +44,7 @@ public class ConfiguracoesVisao extends javax.swing.JDialog
         cmbHoraComeco.setVisible( false );
         cmbMinutoComeco.setVisible( false );
         lbSeparadorAbertura.setVisible( false );
+        montarOpcoesTabelaVendas();
 
         try
         {
@@ -1314,6 +1315,10 @@ public class ConfiguracoesVisao extends javax.swing.JDialog
         setTranstorno( dadoIntituicao.getTranstorno() );
         setActivarDesconto( dadoIntituicao.getDescontoFinanceiro() );
         setAnoEconomico( dadoIntituicao.getAnoEconomico() );
+        setPermissao( dadoIntituicao.getAlterarPreco(), rbPermitirPreco, rbBloquearPreco );
+        setPermissao( dadoIntituicao.getAlterarIva(), rbPermitirIva, rbBloquearIva );
+        setPermissao( dadoIntituicao.getAlterarDescricao(), rbPermitirDescricao, rbBloquearDescricao );
+        setPermissao( dadoIntituicao.getAlterarDesconto(), rbPermitirDesconto, rbBloquearDesconto );
         setVizualisarStock( dadoIntituicao.getVizualisarStock() );
         setTipoFechoCaixa( dadoIntituicao.getTipoFechoCaixa() );
         setEnviarEmail( dadoIntituicao.getEnviarEmail() );
@@ -1387,6 +1392,10 @@ public class ConfiguracoesVisao extends javax.swing.JDialog
         dadoIntituicao.setUsarDoisPrecos( getUsarDoisPrecos() );
         dadoIntituicao.setNumeroVias( (int) Double.parseDouble( spnCopia.getValue().toString() ) );
         dadoIntituicao.setLocalCarregamento( txtProveniencia.getText() );
+        dadoIntituicao.setAlterarPreco( getPermissao( rbBloquearPreco ) );
+        dadoIntituicao.setAlterarIva( getPermissao( rbBloquearIva ) );
+        dadoIntituicao.setAlterarDescricao( getPermissao( rbBloquearDescricao ) );
+        dadoIntituicao.setAlterarDesconto( getPermissao( rbBloquearDesconto ) );
 
         if ( dadoIntituicao.getNegocio().equals( "Lavandaria" ) )
         {
@@ -1808,6 +1817,83 @@ public class ConfiguracoesVisao extends javax.swing.JDialog
         {
             rbSimEnviarEmail.setSelected( true );
             rbNaoEnviarEmail.setSelected( false );
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // Permissões da tabela de vendas (tb_dados_instituicao):
+    // alterar_preco, alterar_iva e alterar_descricao -> 'Permitir' / 'Bloquear'
+    // ------------------------------------------------------------------
+    private final javax.swing.JRadioButton rbPermitirPreco = new javax.swing.JRadioButton( "Permitir" );
+    private final javax.swing.JRadioButton rbBloquearPreco = new javax.swing.JRadioButton( "Bloquear" );
+    private final javax.swing.JRadioButton rbPermitirIva = new javax.swing.JRadioButton( "Permitir" );
+    private final javax.swing.JRadioButton rbBloquearIva = new javax.swing.JRadioButton( "Bloquear" );
+    private final javax.swing.JRadioButton rbPermitirDescricao = new javax.swing.JRadioButton( "Permitir" );
+    private final javax.swing.JRadioButton rbBloquearDescricao = new javax.swing.JRadioButton( "Bloquear" );
+    private final javax.swing.JRadioButton rbPermitirDesconto = new javax.swing.JRadioButton( "Permitir" );
+    private final javax.swing.JRadioButton rbBloquearDesconto = new javax.swing.JRadioButton( "Bloquear" );
+
+    /**
+     * Acrescenta as linhas "Alterar Preço / IVA / Descrição / Desconto:
+     * Permitir / Bloquear" no painel "Outras Configurações", no lugar da
+     * etiqueta lbHoraComecoVendas (sempre escondida). Feito aqui e não no
+     * initComponents para não mexer no código gerado pelo editor visual.
+     */
+    private void montarOpcoesTabelaVendas()
+    {
+        javax.swing.JPanel painel = new javax.swing.JPanel( new java.awt.GridLayout( 0, 1, 0, 2 ) );
+        painel.setOpaque( false );
+        painel.add( criarLinhaPermissao( "Alterar Preço:", rbPermitirPreco, rbBloquearPreco ) );
+        painel.add( criarLinhaPermissao( "Alterar IVA:", rbPermitirIva, rbBloquearIva ) );
+        painel.add( criarLinhaPermissao( "Alterar Descrição:", rbPermitirDescricao, rbBloquearDescricao ) );
+        painel.add( criarLinhaPermissao( "Alterar Desconto:", rbPermitirDesconto, rbBloquearDesconto ) );
+
+        ( (javax.swing.GroupLayout) jPanel4.getLayout() ).replace( lbHoraComecoVendas, painel );
+        // as linhas novas aumentam o painel: reajusta a janela
+        pack();
+        setLocationRelativeTo( null );
+    }
+
+    private javax.swing.JPanel criarLinhaPermissao( String titulo,
+            javax.swing.JRadioButton rbPermitir, javax.swing.JRadioButton rbBloquear )
+    {
+        javax.swing.ButtonGroup grupo = new javax.swing.ButtonGroup();
+        grupo.add( rbPermitir );
+        grupo.add( rbBloquear );
+        java.awt.Font fonteOpcao = rbOcultar.getFont();
+        rbPermitir.setFont( fonteOpcao );
+        rbBloquear.setFont( fonteOpcao );
+        rbPermitir.setSelected( true );
+
+        javax.swing.JLabel etiqueta = new javax.swing.JLabel( titulo );
+        etiqueta.setFont( lbClienteConsumidorFinal3.getFont() );
+        etiqueta.setPreferredSize( new java.awt.Dimension( 158, etiqueta.getPreferredSize().height ) );
+
+        javax.swing.JPanel linha = new javax.swing.JPanel( new java.awt.FlowLayout( java.awt.FlowLayout.LEFT, 0, 0 ) );
+        linha.setOpaque( false );
+        linha.add( etiqueta );
+        linha.add( rbPermitir );
+        linha.add( javax.swing.Box.createHorizontalStrut( 18 ) );
+        linha.add( rbBloquear );
+        return linha;
+    }
+
+    private static String getPermissao( javax.swing.JRadioButton rbBloquear )
+    {
+        return rbBloquear.isSelected() ? "Bloquear" : "Permitir";
+    }
+
+    /** Só "Bloquear" tranca; NULL/vazio (base antiga) fica "Permitir". */
+    private static void setPermissao( String valor,
+            javax.swing.JRadioButton rbPermitir, javax.swing.JRadioButton rbBloquear )
+    {
+        if ( "Bloquear".equalsIgnoreCase( valor == null ? "" : valor.trim() ) )
+        {
+            rbBloquear.setSelected( true );
+        }
+        else
+        {
+            rbPermitir.setSelected( true );
         }
     }
 

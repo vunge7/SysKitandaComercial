@@ -781,8 +781,9 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame
                                     AGT_SAFT_LINE_TAX_PERCENTAGE = String.valueOf( item_venda.getValorIva() );
                                     //AGT_SAFT_LINE_SETTLEMENT_AMOUNT = String.valueOf(getValorCasasDecimais((item_venda.getDesconto() * item_venda.getQuantidade()), CASAS_DECIMAIS));
                                     AGT_SAFT_LINE_SETTLEMENT_AMOUNT = String.valueOf( getValorCasasDecimais( item_venda.getDesconto(), CASAS_DECIMAIS ) );
-                                    AGT_SAFT_LINE_TAX_EXEMPTION_REASON = getStringValida( getMotivoIsensao( item_venda.getCodigoProduto().getCodigo() ) );
-                                    AGT_SAFT_LINE_TAX_TAX_EXEMPTION_CODE = getCodigoRegime( item_venda.getCodigoProduto().getCodigo() );
+                                    // isenção da própria linha (a taxa pode ter sido alterada na venda)
+                                    AGT_SAFT_LINE_TAX_EXEMPTION_REASON = getStringValida( getMotivoIsensaoLinha( item_venda ) );
+                                    AGT_SAFT_LINE_TAX_TAX_EXEMPTION_CODE = getCodigoIsensaoLinha( item_venda );
 
                                     if ( item_venda.getCodigoVenda().getFkDocumento().getPkDocumento() == DVML.DOC_NOTA_CREDITO_NC )
                                     {
@@ -1066,14 +1067,15 @@ public class FicheiroSAFTVisao extends javax.swing.JFrame
                                     AGT_SAFT_LINE_PRODUCT_DESCRIPTION = getStringValida( item_proforma.getCodigoProduto().getDesignacao() );
                                     AGT_SAFT_LINE_DESCRIPTION = "N/A";
                                     AGT_SAFT_LINE_CREDIT_AMOUNT = String.valueOf( getValorCasasDecimais( item_proforma.getFkPreco().getPrecoVenda().doubleValue() * item_proforma.getQuantidade(), CASAS_DECIMAIS ) );
-                                    AGT_SAFT_LINE_TAX_TYPE = String.valueOf( getTaxType( item_proforma.getCodigoProduto().getCodigo() ) );
+                                    // imposto da própria linha (a taxa pode ter sido alterada na venda)
+                                    AGT_SAFT_LINE_TAX_TYPE = getTaxTypeLinha( item_proforma );
                                     AGT_SAFT_LINE_TAX_COUNTRY_REGION = "AO";
-                                    AGT_SAFT_LINE_TAX_CODE = String.valueOf( getTaxCode( item_proforma.getCodigoProduto().getCodigo() ) );
-                                    AGT_SAFT_LINE_TAX_PERCENTAGE = String.valueOf( getTaxaPercantagem( item_proforma.getCodigoProduto().getCodigo() ) );
+                                    AGT_SAFT_LINE_TAX_CODE = getTaxCodeLinha( item_proforma );
+                                    AGT_SAFT_LINE_TAX_PERCENTAGE = String.valueOf( getTaxaIvaLinha( item_proforma ) );
                                     System.err.println( "DESCONTO PROFORMA: " + item_proforma.getDesconto() );
                                     AGT_SAFT_LINE_SETTLEMENT_AMOUNT = String.valueOf( getValorCasasDecimais( ( item_proforma.getDesconto() * item_proforma.getQuantidade() ), CASAS_DECIMAIS ) );
-                                    AGT_SAFT_LINE_TAX_EXEMPTION_REASON = getStringValida( getMotivoIsensao( item_proforma.getCodigoProduto().getCodigo() ) );
-                                    AGT_SAFT_LINE_TAX_TAX_EXEMPTION_CODE = getCodigoRegime( item_proforma.getCodigoProduto().getCodigo() );
+                                    AGT_SAFT_LINE_TAX_EXEMPTION_REASON = getStringValida( getMotivoIsensaoLinha( item_proforma ) );
+                                    AGT_SAFT_LINE_TAX_TAX_EXEMPTION_CODE = getCodigoIsensaoLinha( item_proforma );
 
                                     buffer.append( "<Line>" );
                                     {

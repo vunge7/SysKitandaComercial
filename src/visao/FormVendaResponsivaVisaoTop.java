@@ -161,6 +161,13 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     private static double total_iliquido = 0, total_desconto_linha = 0;
     private static boolean aviso_continuar_documento = false;
     private static String prox_doc;
+    // tb_dados_instituicao.alterar_preco: 'Bloquear' tranca a coluna Preço da tabela
+    private static boolean permitirAlterarPreco = false;
+    // tb_dados_instituicao.alterar_iva / alterar_descricao: 'Bloquear' tranca a coluna
+    private static boolean permitirAlterarIva = false;
+    private static boolean permitirAlterarDescricao = false;
+    // tb_dados_instituicao.alterar_desconto: 'Bloquear' tranca a coluna Desconto (%)
+    private static boolean permitirAlterarDesconto = false;
     public static double gorjeta = 0;
     private static TbDadosInstituicao dadosInstituicao;
     private static BDConexao conexaoTransaction;
@@ -224,6 +231,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         contaController = new ContaController(FormVendaResponsivaVisaoTop.conexao);
         movimentacaoController = new MovimentacaoController(conexao.getConnection());
         dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
+        setPermissoesTabela(dadosInstituicao);
         configuracaoMesComecoController = new ConfiguracaoMesComecoController(conexao.getConnectionAtiva());
         pagamentoMensalidadeController = new PagamentoMensalidadeController(conexao.getConnectionAtiva());
         mesRhController = new MesRhController(conexao.getConnectionAtiva());
@@ -2145,8 +2153,17 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         // TODO add your handling code here:
         if (table.getSelectedColumn() == 3 || table.getSelectedColumn() == 4 || table.getSelectedColumn() == 5) {
             System.out.println("Preparar para actualiza a Qtd......");
-            actualizarPreco();
+            // preço: só quando termina uma edição na coluna Preço (newValue == null)
+            if (table.getSelectedColumn() == 3 && permitirAlterarPreco
+                    && "tableCellEditor".equals(evt.getPropertyName()) && evt.getNewValue() == null) {
+                actualizarPreco();
+            }
 //            JOptionPane.showMessageDialog( null, "Preparar para actualizar qtd" );
+            actualizarQtdTable();
+        } else if (table.getSelectedColumn() == 6 && permitirAlterarIva
+                && "tableCellEditor".equals(evt.getPropertyName()) && evt.getNewValue() == null) {
+            // IVA: ao confirmar a edição (Enter / sair da célula) recalcula a linha
+            // (preço x quantidade da coluna 4, desconto e nova taxa) e os totais
             actualizarQtdTable();
         }
     }//GEN-LAST:event_tablePropertyChange
@@ -3340,8 +3357,14 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                 item.setValorIva(Double.parseDouble(table.getModel().getValueAt(i, 6).toString()));
                 item.setValorRetencao(Double.parseDouble(table.getModel().getValueAt(i, 7).toString()));
                 TbPreco precoProduto = precosController.getLastIdPrecoByIdProduto(idProduto, item.getQuantidade());
-                item.setMotivoIsensao(getMotivoIsensao(idProduto));
-                item.setCodigoIsensao(MetodosUtil.getCodigoRegime(idProduto));
+                // a taxa pode ter sido editada na tabela: linha com IVA > 0 não leva isenção
+                if (item.getValorIva() != null && item.getValorIva() > 0) {
+                    item.setMotivoIsensao("");
+                    item.setCodigoIsensao("");
+                } else {
+                    item.setMotivoIsensao(getMotivoIsensao(idProduto));
+                    item.setCodigoIsensao(MetodosUtil.getCodigoRegime(idProduto));
+                }
                 item.setTotal(new BigDecimal(CfMethods.parseMoedaFormatada(table.getModel().getValueAt(i, 10).toString())));
                 item.setFkPreco(precosController.getLastIdPrecoByIdProduto(idProduto, item.getQuantidade()));
                 item.setDataServico(new Date());
@@ -6188,7 +6211,8 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
         String unidade = getUnidade_Produto();
 
-        BigDecimal qtd = new BigDecimal("1");
+        // Como na referência: usa a quantidade do campo Quantidade (1 se inválida)
+        BigDecimal qtd = quantidadeDoCampo();
         BigDecimal preco = BigDecimal.valueOf(getPreco(codigoProduto, qtd.doubleValue()));
         BigDecimal descontoPercent = BigDecimal.valueOf(getDescontoPercentagem());
         BigDecimal taxaIva = BigDecimal.valueOf(getTaxaImpostoIva(codigoProduto));
@@ -6422,7 +6446,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
                 return;
             }
 
-            if (possivel_quantidade(produto.getCodigo(), 1)) {
+            if (possivel_quantidade(produto.getCodigo(), quantidadeDoCampo().doubleValue())) {
                 adicionar_preco_quantidade_anitgo(produto.getCodigo());
 
                 // -------------------------------
@@ -6576,17 +6600,49 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
     }
 
     private void actualizarPreco() {
-        String preco = table.getValueAt(table.getSelectedRow(), 3).toString();
-        int idProduto = Integer.parseInt(table.getValueAt(table.getSelectedRow(), 0).toString());
-        preco = preco.replaceAll("A", "").
-                replace("O", "").
-                replace(".", "").
-                replace(",", ".");
+        int linha = table.getSelectedRow();
+        if (linha < 0 || !linhaTemProduto(table.getModel(), linha)) {
+            return;
+        }
+        String preco = String.valueOf(table.getValueAt(linha, 3));
+        int idProduto = Integer.parseInt(table.getValueAt(linha, 0).toString());
+        // Aceita tanto "1.200,50 AOA" (formatado) como "1200.50" (BigDecimal)
+        double parseMoedaFormatada = CfMethods.parseMoedaFormatadaNovo(preco);
 
-        String precoUnitario = CfMethods.formatarComoMoeda(Double.parseDouble(preco));
-        table.setValueAt(precoUnitario, table.getSelectedRow(), 3);
+        if (parseMoedaFormatada <= 0) {
+            JOptionPane.showMessageDialog(null, "O preço tem de ser um valor maior do que zero.");
+            Double precoActual = getPrecoLinha(idProduto, linha);
+            table.setValueAt(CfMethods.formatarComoMoeda(precoActual == null ? 0d : precoActual), linha, 3);
+            return;
+        }
 
-        actualizarPrecoVendaManual(idProduto, CfMethods.parseMoedaFormatada(precoUnitario), precosController);
+        BigDecimal precoSemIva = BigDecimal.valueOf(parseMoedaFormatada).setScale(
+                DVML.CASAS_DECIMAIS_TAXA,
+                RoundingMode.HALF_UP);
+
+        // A célula do preço tem de ficar SEMPRE no formato de moeda (vírgula decimal):
+        // o CfMethods.parseMoedaFormatada (ponto = milhares) leria "701.75" como 70.175.
+        table.setValueAt(CfMethods.formatarComoMoeda(precoSemIva), linha, 3);
+
+        // só grava novo preço do produto se mudou (evita registos repetidos em tb_preco)
+        Double precoActual = getPrecoLinha(idProduto, linha);
+        if (precoActual != null && Math.abs(precoActual - precoSemIva.doubleValue()) < 0.005) {
+            return;
+        }
+
+        actualizarPrecoVendaManual(idProduto,
+                precoSemIva.doubleValue(),
+                precosController);
+    }
+
+    /** Preço do produto na BD para a quantidade da linha (null se não houver). */
+    private static Double getPrecoLinha(int idProduto, int linha) {
+        double qtd = 1d;
+        try {
+            qtd = Double.parseDouble(String.valueOf(table.getValueAt(linha, 4)));
+        } catch (Exception e) {
+        }
+        return getPreco(idProduto, qtd);
     }
 
     private static void actualizarPrecoVendaManual(int idProduto, Double precoVenda, PrecosController precosControllerLocal) {
@@ -6748,7 +6804,14 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
         double qtd = Double.parseDouble(quantidade);
         double retencao = 0;
 
-        double preco_venda = CfMethods.parseMoedaFormatada(String.valueOf(modelo.getValueAt(linha_actual, 3)));
+        int idProduto = Integer.parseInt(String.valueOf(modelo.getValueAt(linha_actual, 0)));
+
+        // Como na referência: o preço vem da BD para esta quantidade (retalho/grosso).
+        // Um preço editado na tabela já foi gravado como preço do produto (actualizarPreco).
+        Double precoBD = getPreco(idProduto, qtd);
+        double preco_venda = (precoBD != null && precoBD > 0)
+                ? precoBD
+                : CfMethods.parseMoedaFormatadaNovo(String.valueOf(modelo.getValueAt(linha_actual, 3)));
         double taxa = Double.parseDouble(String.valueOf(modelo.getValueAt(linha_actual, 6)));
 //        double ret = CfMethods.parseMoedaFormatada( String.valueOf( modelo.getValueAt( linha_actual, 7) ) );
         double ret = Double.parseDouble(String.valueOf(modelo.getValueAt(linha_actual, 7)));
@@ -6773,6 +6836,7 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
 
         String totalIlquidoString = CfMethods.formatarComoMoeda(totalIliquidoItem);
 
+        modelo.setValueAt(CfMethods.formatarComoMoeda(preco_venda), linha_actual, 3);
         modelo.setValueAt(qtd, linha_actual, 4);
         modelo.setValueAt(desconto, linha_actual, 5);
         modelo.setValueAt(total_retencao, linha_actual, 8);
@@ -6894,13 +6958,28 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
             public boolean isCellEditable(int row, int column) {
 //                return ( column == 3 ||  column == 4) ; // 3ª coluna editável
                 if (column == 1) {
-                    return descricaoEditavel(this, row);
+                    // descrição: só com "Alterar Descrição = Permitir"
+                    return permitirAlterarDescricao && descricaoEditavel(this, row);
+                }
+                if (column == 3) {
+                    // preço: só com "Alterar Preço = Permitir" e numa linha com produto
+                    return permitirAlterarPreco && linhaTemProduto(this, row);
+                }
+                if (column == 5) {
+                    // desconto comercial (%): só com "Alterar Desconto = Permitir"
+                    return permitirAlterarDesconto && linhaTemProduto(this, row);
+                }
+                if (column == 6) {
+                    // taxa de IVA: só com "Alterar IVA = Permitir" e numa linha com produto
+                    return permitirAlterarIva && linhaTemProduto(this, row);
                 }
                 return (column == 4); // 3ª coluna editável
             }
         });
-        // setModel recria as colunas: o editor da descrição tem de ser instalado depois
+        // setModel recria as colunas: os editores têm de ser instalados depois
         table.getColumnModel().getColumn(1).setCellEditor(criarEditorDescricao());
+        table.getColumnModel().getColumn(5).setCellEditor(criarEditorDesconto());
+        table.getColumnModel().getColumn(6).setCellEditor(criarEditorIva());
         // ao clicar num botão (ex.: pagamento) a descrição em edição é confirmada, não perdida
         table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
     }
@@ -6935,9 +7014,151 @@ public class FormVendaResponsivaVisaoTop extends javax.swing.JFrame {
      * Excepções: linhas sem produto e linhas de mensalidade (contêm "#"), cuja
      * descrição é usada para identificar o mês pago.
      */
-    private static boolean descricaoEditavel(javax.swing.table.TableModel model, int row) {
+    /** Quantidade escrita no campo Quantidade; 1 se vazia, inválida ou <= 0. */
+    private static BigDecimal quantidadeDoCampo() {
+        try {
+            BigDecimal qtd = new BigDecimal(txtQuatindade.getText().trim().replace(",", "."));
+            return qtd.signum() > 0 ? qtd : BigDecimal.ONE;
+        } catch (Exception e) {
+            return BigDecimal.ONE;
+        }
+    }
+
+    private static boolean linhaTemProduto(javax.swing.table.TableModel model, int row) {
         Object codigo = model.getValueAt(row, 0);
-        if (codigo == null || codigo.toString().trim().isEmpty()) {
+        return codigo != null && !codigo.toString().trim().isEmpty();
+    }
+
+    /** Lê alterar_preco / alterar_iva / alterar_descricao de tb_dados_instituicao. */
+    private static void setPermissoesTabela(TbDadosInstituicao dados) {
+        permitirAlterarPreco = permitido(dados == null ? null : dados.getAlterarPreco());
+        permitirAlterarIva = permitido(dados == null ? null : dados.getAlterarIva());
+        permitirAlterarDescricao = permitido(dados == null ? null : dados.getAlterarDescricao());
+        permitirAlterarDesconto = permitido(dados == null ? null : dados.getAlterarDesconto());
+    }
+
+    private static boolean permitido(String valor) {
+        // como na referência: só "Bloquear" tranca; sem valor (NULL) permite
+        return !"Bloquear".equalsIgnoreCase(valor == null ? "" : valor.trim());
+    }
+
+    /**
+     * Editor do desconto comercial em % (coluna 5): número entre 0 e 100.
+     * Ao confirmar (Enter / sair da célula), o tablePropertyChange recalcula
+     * a linha (preço x quantidade, desconto e IVA) e os totais.
+     */
+    private static DefaultCellEditor criarEditorDesconto() {
+        final JTextField campo = new JTextField();
+        campo.setHorizontalAlignment(JTextField.RIGHT);
+        return new DefaultCellEditor(campo) {
+            private Double descontoValidado;
+
+            @Override
+            public Component getTableCellEditorComponent(JTable tabela, Object valor,
+                    boolean isSelected, int row, int column) {
+                descontoValidado = null;
+                Component c = super.getTableCellEditorComponent(tabela, valor, isSelected, row, column);
+                campo.selectAll();
+                return c;
+            }
+
+            @Override
+            public boolean stopCellEditing() {
+                String texto = campo.getText().replace("%", "").replace(",", ".").trim();
+                double desconto;
+                try {
+                    desconto = texto.isEmpty() ? 0 : Double.parseDouble(texto);
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(null, "O desconto tem de ser um número (ex.: 10 para 10%).",
+                            DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
+                    return false;
+                }
+                if (desconto < 0 || desconto > 100) {
+                    JOptionPane.showMessageDialog(null, "O desconto tem de estar entre 0% e 100%.",
+                            DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
+                    return false;
+                }
+                descontoValidado = desconto;
+                return super.stopCellEditing();
+            }
+
+            @Override
+            public Object getCellEditorValue() {
+                return descontoValidado != null ? descontoValidado : super.getCellEditorValue();
+            }
+        };
+    }
+
+    /**
+     * Editor da taxa de IVA (coluna 6). Só aceita taxas registadas na tabela
+     * imposto; 0% exige que o produto tenha motivo de isenção configurado
+     * (obrigatório na factura/SAF-T). Ao confirmar, o tablePropertyChange
+     * recalcula a linha (preço x quantidade) e os totais.
+     */
+    private static DefaultCellEditor criarEditorIva() {
+        final JTextField campo = new JTextField();
+        campo.setHorizontalAlignment(JTextField.RIGHT);
+        return new DefaultCellEditor(campo) {
+            private int linhaEditada = -1;
+            private Double taxaValidada;
+
+            @Override
+            public Component getTableCellEditorComponent(JTable tabela, Object valor,
+                    boolean isSelected, int row, int column) {
+                linhaEditada = row;
+                taxaValidada = null;
+                Component c = super.getTableCellEditorComponent(tabela, valor, isSelected, row, column);
+                campo.selectAll();
+                return c;
+            }
+
+            @Override
+            public boolean stopCellEditing() {
+                double taxa;
+                try {
+                    taxa = Double.parseDouble(campo.getText().replace("%", "").replace(",", ".").trim());
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(null, "A taxa de IVA tem de ser um número (ex.: 14).",
+                            DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
+                    return false;
+                }
+
+                ImpostosController impostos = new ImpostosController(conexao);
+                if (taxa < 0 || taxa > 100 || impostos.getImpostoByTaxa(taxa) == null) {
+                    Vector<String> taxas = impostos.getVector();
+                    taxas.remove(0); // "--SELECIONE--"
+                    JOptionPane.showMessageDialog(null,
+                            "Taxa de IVA inválida: " + campo.getText()
+                            + "\nTaxas registadas: " + String.join("%, ", taxas) + "%",
+                            DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
+                    return false;
+                }
+
+                if (taxa == 0 && linhaEditada >= 0) {
+                    int idProduto = Integer.parseInt(String.valueOf(table.getModel().getValueAt(linhaEditada, 0)));
+                    String motivo = getMotivoIsensao(idProduto);
+                    if (motivo == null || motivo.trim().isEmpty()) {
+                        JOptionPane.showMessageDialog(null,
+                                "Para usar IVA 0% o produto tem de ter um motivo de isenção configurado.",
+                                DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
+                        return false;
+                    }
+                }
+
+                taxaValidada = taxa;
+                return super.stopCellEditing();
+            }
+
+            @Override
+            public Object getCellEditorValue() {
+                // grava como Double, tal como as linhas adicionadas pelo sistema
+                return taxaValidada != null ? taxaValidada : super.getCellEditorValue();
+            }
+        };
+    }
+
+    private static boolean descricaoEditavel(javax.swing.table.TableModel model, int row) {
+        if (!linhaTemProduto(model, row)) {
             return false;
         }
         Object descricao = model.getValueAt(row, 1);

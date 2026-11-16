@@ -2516,6 +2516,49 @@ public class MetodosUtil {
         return produtoIsentoDao.getRegimeIsensaoByIdProduto(idProduto);
     }
 
+    // ------------------------------------------------------------------
+    // SAF-T por linha: a taxa de IVA pode ter sido alterada na tabela de
+    // vendas, por isso usa-se o que ficou gravado em tb_item_venda e só se
+    // recorre ao produto em registos antigos sem esses dados.
+    // ------------------------------------------------------------------
+    /** Taxa de IVA gravada na linha; sem valor (registos antigos) usa a do produto. */
+    public static double getTaxaIvaLinha(TbItemVenda item) {
+        if (item.getValorIva() != null) {
+            return item.getValorIva();
+        }
+        return getTaxaPercantagem(item.getCodigoProduto().getCodigo());
+    }
+
+    /** Linha com IVA > 0 é sempre IVA/NOR; com 0% mantém o tipo configurado no produto. */
+    public static String getTaxTypeLinha(TbItemVenda item) {
+        return getTaxaIvaLinha(item) > 0 ? "IVA" : getTaxType(item.getCodigoProduto().getCodigo());
+    }
+
+    public static String getTaxCodeLinha(TbItemVenda item) {
+        return getTaxaIvaLinha(item) > 0 ? "NOR" : getTaxCode(item.getCodigoProduto().getCodigo());
+    }
+
+    /** Linha com IVA > 0 não leva isenção; com 0% usa o motivo gravado na linha (ou o do produto). */
+    public static String getMotivoIsensaoLinha(TbItemVenda item) {
+        if (getTaxaIvaLinha(item) > 0) {
+            return "";
+        }
+        String motivo = item.getMotivoIsensao();
+        return (motivo != null && !motivo.trim().isEmpty())
+                ? motivo
+                : getMotivoIsensao(item.getCodigoProduto().getCodigo());
+    }
+
+    public static String getCodigoIsensaoLinha(TbItemVenda item) {
+        if (getTaxaIvaLinha(item) > 0) {
+            return "";
+        }
+        String codigo = item.getCodigoIsensao();
+        return (codigo != null && !codigo.trim().isEmpty())
+                ? codigo
+                : getCodigoRegime(item.getCodigoProduto().getCodigo());
+    }
+
     public static String getCodigoRegime(int idProduto) {
         return produtoIsentoDao.getCodigoRegimeByIdProduto(idProduto);
     }

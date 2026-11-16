@@ -210,8 +210,52 @@ public class TbDadosInstituicao implements Serializable {
 //    private boolean editarPreco;
         @Column(name = "ambiente")
     private String ambiente;
+    // ENUM('Permitir','Bloquear'): permite editar o preço na tabela de vendas
+    @Column(name = "alterar_preco")
+    private String alterarPreco;
+    // ENUM('Permitir','Bloquear'): permite editar a taxa de IVA na tabela de vendas
+    @Column(name = "alterar_iva")
+    private String alterarIva;
+    // ENUM('Permitir','Bloquear'): permite editar a descrição na tabela de vendas
+    @Column(name = "alterar_descricao")
+    private String alterarDescricao;
+    // ENUM('Permitir','Bloquear'): permite editar o desconto comercial (%) na tabela de vendas
+    @Column(name = "alterar_desconto")
+    private String alterarDesconto;
 
     public TbDadosInstituicao() {
+    }
+
+    public String getAlterarDesconto() {
+        return alterarDesconto;
+    }
+
+    public void setAlterarDesconto(String alterarDesconto) {
+        this.alterarDesconto = alterarDesconto;
+    }
+
+    public String getAlterarIva() {
+        return alterarIva;
+    }
+
+    public void setAlterarIva(String alterarIva) {
+        this.alterarIva = alterarIva;
+    }
+
+    public String getAlterarDescricao() {
+        return alterarDescricao;
+    }
+
+    public void setAlterarDescricao(String alterarDescricao) {
+        this.alterarDescricao = alterarDescricao;
+    }
+
+    public String getAlterarPreco() {
+        return alterarPreco;
+    }
+
+    public void setAlterarPreco(String alterarPreco) {
+        this.alterarPreco = alterarPreco;
     }
 
     public TbDadosInstituicao(Integer idDadosInsitiuicao) {

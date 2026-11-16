@@ -190,6 +190,27 @@ public class DadosInstituicaoController implements EntidadeFactory {
                 dadosInstituicao.setStockConsulta( result.getString( "stock_consulta" ) );
                 dadosInstituicao.setTipoFichaTecnica( result.getString( "tipo_ficha_tecnica" ) );
                 dadosInstituicao.setNif(result.getString( "nif" ) );
+                try {
+                    dadosInstituicao.setAlterarPreco( result.getString( "alterar_preco" ) );
+                } catch ( SQLException semColuna ) {
+                    // base antiga sem a coluna alterar_preco: mantém o comportamento por omissão
+                    System.err.println( "[DadosInstituicaoController] ⚠ Coluna alterar_preco inexistente: " + semColuna.getMessage() );
+                }
+                try {
+                    dadosInstituicao.setAlterarIva( result.getString( "alterar_iva" ) );
+                } catch ( SQLException semColuna ) {
+                    System.err.println( "[DadosInstituicaoController] ⚠ Coluna alterar_iva inexistente: " + semColuna.getMessage() );
+                }
+                try {
+                    dadosInstituicao.setAlterarDescricao( result.getString( "alterar_descricao" ) );
+                } catch ( SQLException semColuna ) {
+                    System.err.println( "[DadosInstituicaoController] ⚠ Coluna alterar_descricao inexistente: " + semColuna.getMessage() );
+                }
+                try {
+                    dadosInstituicao.setAlterarDesconto( result.getString( "alterar_desconto" ) );
+                } catch ( SQLException semColuna ) {
+                    System.err.println( "[DadosInstituicaoController] ⚠ Coluna alterar_desconto inexistente: " + semColuna.getMessage() );
+                }
             }
             else
             {
