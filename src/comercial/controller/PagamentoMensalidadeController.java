@@ -26,12 +26,13 @@ public class PagamentoMensalidadeController
     public PagamentoMensalidadeController( Connection conexao )
     {
         this.conexao = conexao;
+        comercial.mensalidade.Mensalidades.garantirEstrutura();
     }
 
     // 🔹 Salvar novo pagamento
     public boolean salvar( PagamentoMensalidade pagamento )
     {
-        String sql = "INSERT INTO pagamento_mensalidade (produto_id, cliente_id, mes_id, venda_id, data_cadastro) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO pagamento_mensalidade (produto_id, cliente_id, mes_id, venda_id, data_cadastro, ano) VALUES (?, ?, ?, ?, ?, ?)";
         try ( PreparedStatement ps = conexao.prepareStatement( sql ) )
         {
             ps.setInt( 1, pagamento.getProdutoId() );
@@ -39,6 +40,8 @@ public class PagamentoMensalidadeController
             ps.setInt( 3, pagamento.getMesId() );
             ps.setInt( 4, pagamento.getVendaId() );
             ps.setTimestamp( 5, new Timestamp( pagamento.getDataCadastro().getTime() ) );
+            // quem ainda não indica o ano (ecrãs antigos) paga o mês do ano corrente
+            ps.setInt( 6, pagamento.getAno() > 0 ? pagamento.getAno() : comercial.mensalidade.Periodo.actual().getAno() );
             ps.executeUpdate();
             System.out.println( "Pagamento salvo com sucesso!" );
             return true;
@@ -124,6 +127,7 @@ public class PagamentoMensalidadeController
                 p.setMesId( rs.getShort( "mes_id" ) );
                 p.setVendaId( rs.getInt( "venda_id" ) );
                 p.setDataCadastro( rs.getTimestamp( "data_cadastro" ) );
+                p.setAno( rs.getInt( "ano" ) );
                 return p;
             }
         }
@@ -150,6 +154,7 @@ public class PagamentoMensalidadeController
                 p.setMesId( rs.getShort( "mes_id" ) );
                 p.setVendaId( rs.getInt( "venda_id" ) );
                 p.setDataCadastro( rs.getTimestamp( "data_cadastro" ) );
+                p.setAno( rs.getInt( "ano" ) );
                 lista.add( p );
             }
         }
@@ -178,6 +183,7 @@ public class PagamentoMensalidadeController
                 p.setMesId( rs.getShort( "mes_id" ) );
                 p.setVendaId( rs.getInt( "venda_id" ) );
                 p.setDataCadastro( rs.getTimestamp( "data_cadastro" ) );
+                p.setAno( rs.getInt( "ano" ) );
                 lista.add( p );
             }
         }
@@ -188,56 +194,56 @@ public class PagamentoMensalidadeController
         return lista;
     }
 
+    /**
+     * Anulação da venda: os meses que ela pagou voltam a ficar por pagar.
+     * O período (mês/ano) sai da designação do item ("... #Março/2026"); as
+     * linhas antigas só com o mês apagam o mês dessa venda em qualquer ano.
+     */
     public boolean removerItem( int vendaId, List<TbItemVenda> itens )
     {
         if ( itens == null || itens.isEmpty() )
         {
-            JOptionPane.showMessageDialog( null, "Nenhum item encontrado para remover!" );
             return false;
         }
 
-        String sql = "DELETE FROM pagamento_mensalidade WHERE venda_id = ? AND mes_id = ?";
+        comercial.mensalidade.MultasMensalidade.anular( conexao, vendaId );
+        String comAno = "DELETE FROM pagamento_mensalidade WHERE venda_id = ? AND mes_id = ? AND (ano = ? OR ano = 0)";
+        String semAno = "DELETE FROM pagamento_mensalidade WHERE venda_id = ? AND mes_id = ?";
         boolean sucesso = true;
 
-        try ( PreparedStatement ps = conexao.prepareStatement( sql ) )
+        try ( PreparedStatement psAno = conexao.prepareStatement( comAno );
+              PreparedStatement psMes = conexao.prepareStatement( semAno ) )
         {
             for ( TbItemVenda item : itens )
             {
-                // Extrai produto e mês da designação
-                String[] partes = extrairProdutoEMes( item.getDesignacaoItem() );
-                if ( partes == null || partes.length < 2 )
+                String designacao = item.getDesignacaoItem();
+                comercial.mensalidade.Periodo periodo = comercial.mensalidade.Periodo.daDesignacao( designacao );
+                if ( periodo == null )
                 {
-                    System.err.println( "Designação inválida: " + item.getDesignacaoItem() );
-                    continue;
+                    continue; // não é mensalidade
                 }
-
-                String mesNome = partes[ 1 ].trim();
-
-                // Converte o nome do mês em ID numérico (1 = Janeiro, 2 = Fevereiro, etc.)
-                int mesId = converterMesParaId( mesNome );
-                if ( mesId == -1 )
+                boolean temAno = designacao.substring( designacao.lastIndexOf( '#' ) + 1 ).matches( ".*\\d{4}\\s*$" );
+                if ( temAno )
                 {
-                    System.err.println( "Mês inválido: " + mesNome );
-                    continue;
+                    psAno.setInt( 1, vendaId );
+                    psAno.setInt( 2, periodo.getMes() );
+                    psAno.setInt( 3, periodo.getAno() );
+                    psAno.addBatch();
                 }
-
-                ps.setInt( 1, vendaId );
-                ps.setInt( 2, mesId );
-                ps.addBatch(); // adiciona à execução em lote
+                else
+                {
+                    psMes.setInt( 1, vendaId );
+                    psMes.setInt( 2, periodo.getMes() );
+                    psMes.addBatch();
+                }
             }
-
-            ps.executeBatch(); // executa todos os deletes de uma vez
-
+            psAno.executeBatch();
+            psMes.executeBatch();
         }
         catch ( SQLException e )
         {
             sucesso = false;
-             System.err.println( "Erro ao remover itens: " + e.getMessage() );
-        }
-
-        if ( sucesso )
-        {
-            System.err.println( "Itens removidos com sucesso!" );
+            System.err.println( "Erro ao remover itens: " + e.getMessage() );
         }
 
         return sucesso;

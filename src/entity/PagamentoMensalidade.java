@@ -59,6 +59,9 @@ public class PagamentoMensalidade implements Serializable {
     @Basic( optional = false )
     @Column( name = "venda_id" )
     private int vendaId;
+    /** Ano do mês pago (0 nos registos antigos, até a migração os acertar). */
+    @Column( name = "ano" )
+    private int ano;
     @Basic( optional = false )
     @Column( name = "data_cadastro" )
     @Temporal( TemporalType.TIMESTAMP )
@@ -121,6 +124,16 @@ public class PagamentoMensalidade implements Serializable {
     public void setMesId( int mesId )
     {
         this.mesId = mesId;
+    }
+
+    public int getAno()
+    {
+        return ano;
+    }
+
+    public void setAno( int ano )
+    {
+        this.ano = ano;
     }
 
     public int getVendaId()

@@ -4,12 +4,7 @@
  */
 package comercial.controller;
 
-/**
- *
- * @author Engº Domingos Dala Vunge
- * @created 4/nov/2025
- * @lastModified 4/nov/2025
- */
+import comercial.mensalidade.Mensalidades;
 import entity.ConfiguracaoMesComeco;
 import java.sql.*;
 import java.util.ArrayList;
@@ -17,9 +12,15 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 /**
+ * Contratos de mensalidade (serviço + mês/ano de começo + duração) de cada
+ * cliente. Duração 0 = contínuo, sem data de fim.
+ *
+ * As mensagens de sucesso ficam com quem chama (antes apareciam duas vezes);
+ * aqui só se avisa dos erros.
+ *
  * @author Engº
  * @created 4/nov/2025
- * @lastModified 4/nov/2025
+ * @lastModified 22/nov/2026
  */
 public class ConfiguracaoMesComecoController
 {
@@ -29,12 +30,13 @@ public class ConfiguracaoMesComecoController
     public ConfiguracaoMesComecoController( Connection conexao )
     {
         this.conexao = conexao;
+        Mensalidades.garantirEstrutura();
     }
 
     // 🔹 Inserir nova configuração
     public boolean salvar( ConfiguracaoMesComeco config )
     {
-        String sql = "INSERT INTO configuracao_mes_comeco (data_cadastro, mes_id, produto_id, usuario_id, duracao, cliente_id) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO configuracao_mes_comeco (data_cadastro, mes_id, produto_id, usuario_id, duracao, cliente_id, ano_inicio, dia_pagamento) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try ( PreparedStatement ps = conexao.prepareStatement( sql ) )
         {
             ps.setTimestamp( 1, new Timestamp( config.getDataCadastro().getTime() ) );
@@ -43,8 +45,9 @@ public class ConfiguracaoMesComecoController
             ps.setInt( 4, config.getUsuarioId() );
             ps.setInt( 5, config.getDuracao() );
             ps.setInt( 6, config.getClienteId() );
+            ps.setInt( 7, anoOuCorrente( config ) );
+            ps.setInt( 8, Math.max( 0, Math.min( 31, config.getDiaPagamento() ) ) );
             ps.executeUpdate();
-            JOptionPane.showMessageDialog( null, "Configuração salva com sucesso!" );
             return true;
         }
         catch ( SQLException e )
@@ -54,30 +57,21 @@ public class ConfiguracaoMesComecoController
         }
     }
 
-    // 🔹 Atualizar configuração existente
+    // 🔹 Atualizar configuração existente (a data de cadastro mantém-se)
     public boolean atualizar( ConfiguracaoMesComeco config )
     {
-        String sql = "UPDATE configuracao_mes_comeco SET data_cadastro=?, mes_id=?, produto_id=?, usuario_id=?, duracao=?, cliente_id=? WHERE id=?";
+        String sql = "UPDATE configuracao_mes_comeco SET data_cadastro=data_cadastro, mes_id=?, produto_id=?, usuario_id=?, duracao=?, cliente_id=?, ano_inicio=?, dia_pagamento=? WHERE id=?";
         try ( PreparedStatement ps = conexao.prepareStatement( sql ) )
         {
-            ps.setTimestamp( 1, new Timestamp( config.getDataCadastro().getTime() ) );
-            ps.setInt( 2, config.getMesId() );
-            ps.setInt( 3, config.getProdutoId() );
+            ps.setInt( 1, config.getMesId() );
+            ps.setInt( 2, config.getProdutoId() );
+            ps.setInt( 3, config.getUsuarioId() );
             ps.setInt( 4, config.getDuracao() );
-            ps.setInt( 5, config.getUsuarioId() );
-            ps.setInt( 6, config.getClienteId() );
-            ps.setInt( 7, config.getId() );
-            int linhas = ps.executeUpdate();
-            if ( linhas > 0 )
-            {
-                JOptionPane.showMessageDialog( null, "Configuração atualizada com sucesso!" );
-                return true;
-            }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Nenhum registro encontrado para atualizar." );
-                return false;
-            }
+            ps.setInt( 5, config.getClienteId() );
+            ps.setInt( 6, anoOuCorrente( config ) );
+            ps.setInt( 7, Math.max( 0, Math.min( 31, config.getDiaPagamento() ) ) );
+            ps.setInt( 8, config.getId() );
+            return ps.executeUpdate() > 0;
         }
         catch ( SQLException e )
         {
@@ -93,17 +87,7 @@ public class ConfiguracaoMesComecoController
         try ( PreparedStatement ps = conexao.prepareStatement( sql ) )
         {
             ps.setInt( 1, id );
-            int linhas = ps.executeUpdate();
-            if ( linhas > 0 )
-            {
-                JOptionPane.showMessageDialog( null, "Configuração removida com sucesso!" );
-                return true;
-            }
-            else
-            {
-                JOptionPane.showMessageDialog( null, "Nenhum registro encontrado para excluir." );
-                return false;
-            }
+            return ps.executeUpdate() > 0;
         }
         catch ( SQLException e )
         {
@@ -119,18 +103,35 @@ public class ConfiguracaoMesComecoController
         try ( PreparedStatement ps = conexao.prepareStatement( sql ) )
         {
             ps.setInt( 1, id );
-            ResultSet rs = ps.executeQuery();
-            if ( rs.next() )
+            try ( ResultSet rs = ps.executeQuery() )
             {
-                ConfiguracaoMesComeco config = new ConfiguracaoMesComeco();
-                config.setId( rs.getInt( "id" ) );
-                config.setDataCadastro( rs.getTimestamp( "data_cadastro" ) );
-                config.setMesId( rs.getShort( "mes_id" ) );
-                config.setProdutoId( rs.getInt( "produto_id" ) );
-                config.setUsuarioId( rs.getInt( "usuario_id" ) );
-                config.setDuracao( rs.getInt( "duracao" ) );
-                config.setClienteId( rs.getInt( "cliente_id" ) );
-                return config;
+                if ( rs.next() )
+                {
+                    return ler( rs );
+                }
+            }
+        }
+        catch ( SQLException e )
+        {
+            JOptionPane.showMessageDialog( null, "Erro ao buscar: " + e.getMessage() );
+        }
+        return null;
+    }
+
+    /** O contrato do cliente para o serviço (o mais recente, se houver vários); null se não houver. */
+    public ConfiguracaoMesComeco buscarDoCliente( int clienteId, int produtoId )
+    {
+        String sql = "SELECT * FROM configuracao_mes_comeco WHERE cliente_id = ? AND produto_id = ? ORDER BY id DESC LIMIT 1";
+        try ( PreparedStatement ps = conexao.prepareStatement( sql ) )
+        {
+            ps.setInt( 1, clienteId );
+            ps.setInt( 2, produtoId );
+            try ( ResultSet rs = ps.executeQuery() )
+            {
+                if ( rs.next() )
+                {
+                    return ler( rs );
+                }
             }
         }
         catch ( SQLException e )
@@ -149,15 +150,7 @@ public class ConfiguracaoMesComecoController
         {
             while ( rs.next() )
             {
-                ConfiguracaoMesComeco config = new ConfiguracaoMesComeco();
-                config.setId( rs.getInt( "id" ) );
-                config.setDataCadastro( rs.getTimestamp( "data_cadastro" ) );
-                config.setMesId( rs.getShort( "mes_id" ) );
-                config.setProdutoId( rs.getInt( "produto_id" ) );
-                config.setUsuarioId( rs.getInt( "usuario_id" ) );
-                config.setDuracao( rs.getInt( "duracao" ) );
-                config.setClienteId( rs.getInt( "cliente_id" ) );
-                lista.add( config );
+                lista.add( ler( rs ) );
             }
         }
         catch ( SQLException e )
@@ -167,26 +160,20 @@ public class ConfiguracaoMesComecoController
         return lista;
     }
 
-    // 🔹 Listar todas as configurações
+    // 🔹 Listar as configurações de um cliente
     public List<ConfiguracaoMesComeco> listarTodos( int clienteId )
     {
         List<ConfiguracaoMesComeco> lista = new ArrayList<>();
-        String sql = "SELECT * FROM configuracao_mes_comeco WHERE cliente_id = ?";
-        try ( PreparedStatement ps = conexao.prepareStatement( sql ); )
+        String sql = "SELECT * FROM configuracao_mes_comeco WHERE cliente_id = ? ORDER BY id";
+        try ( PreparedStatement ps = conexao.prepareStatement( sql ) )
         {
             ps.setInt( 1, clienteId );
-            ResultSet rs = ps.executeQuery();
-            while ( rs.next() )
+            try ( ResultSet rs = ps.executeQuery() )
             {
-                ConfiguracaoMesComeco config = new ConfiguracaoMesComeco();
-                config.setId( rs.getInt( "id" ) );
-                config.setDataCadastro( rs.getTimestamp( "data_cadastro" ) );
-                config.setMesId( rs.getShort( "mes_id" ) );
-                config.setProdutoId( rs.getInt( "produto_id" ) );
-                config.setUsuarioId( rs.getInt( "usuario_id" ) );
-                config.setDuracao( rs.getInt( "duracao" ) );
-                config.setClienteId( rs.getInt( "cliente_id" ) );
-                lista.add( config );
+                while ( rs.next() )
+                {
+                    lista.add( ler( rs ) );
+                }
             }
         }
         catch ( SQLException e )
@@ -204,11 +191,12 @@ public class ConfiguracaoMesComecoController
         {
             ps.setInt( 1, clienteId );
             ps.setInt( 2, produtoId );
-            ResultSet rs = ps.executeQuery();
-            if ( rs.next() )
+            try ( ResultSet rs = ps.executeQuery() )
             {
-                int total = rs.getInt( 1 );
-                return total > 0; // Retorna true se já existir
+                if ( rs.next() )
+                {
+                    return rs.getInt( 1 ) > 0;
+                }
             }
         }
         catch ( SQLException e )
@@ -216,6 +204,39 @@ public class ConfiguracaoMesComecoController
             JOptionPane.showMessageDialog( null, "Erro ao verificar configuração: " + e.getMessage() );
         }
         return false;
+    }
+
+    private static ConfiguracaoMesComeco ler( ResultSet rs ) throws SQLException
+    {
+        ConfiguracaoMesComeco config = new ConfiguracaoMesComeco();
+        config.setId( rs.getInt( "id" ) );
+        config.setDataCadastro( rs.getTimestamp( "data_cadastro" ) );
+        config.setMesId( rs.getInt( "mes_id" ) );
+        config.setProdutoId( rs.getInt( "produto_id" ) );
+        config.setUsuarioId( rs.getInt( "usuario_id" ) );
+        config.setDuracao( rs.getInt( "duracao" ) );
+        config.setClienteId( rs.getInt( "cliente_id" ) );
+        int ano = rs.getInt( "ano_inicio" );
+        if ( ano <= 0 && config.getDataCadastro() != null )
+        {
+            ano = comercial.mensalidade.Periodo.de( config.getDataCadastro() ).getAno();
+        }
+        config.setAnoInicio( ano );
+        try
+        {
+            config.setDiaPagamento( rs.getInt( "dia_pagamento" ) );
+        }
+        catch ( SQLException semColuna )
+        {
+            config.setDiaPagamento( 0 );
+        }
+        return config;
+    }
+
+    private static int anoOuCorrente( ConfiguracaoMesComeco config )
+    {
+        return config.getAnoInicio() > 0 ? config.getAnoInicio()
+                : comercial.mensalidade.Periodo.actual().getAno();
     }
 
 }

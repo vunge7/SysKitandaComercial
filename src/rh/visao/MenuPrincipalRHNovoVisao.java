@@ -59,6 +59,34 @@ public class MenuPrincipalRHNovoVisao extends javax.swing.JFrame
         }
 //        lbNome.setText( empresaDao.findEmpresa( idEmpresa ).getNome() );
         busca_permissao();
+        // aspecto Kitanda (barra lateral + página com indicadores e alertas), sobre o initComponents
+        util.ui.LayoutSeguro.aplicar( this, "Recursos Humanos", this::montarLayoutWeb );
+    }
+
+    private void montarLayoutWeb()
+    {
+        String perfil = null;
+        try
+        {
+            entity.TbUsuario u = usuarioDao.findTbUsuario( this.idUser );
+            perfil = u.getIdTipoUsuario() == null ? null : u.getIdTipoUsuario().getDescricao();
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
+        rh.web.MenuRH.Antigos a = new rh.web.MenuRH.Antigos();
+        a.ficha = jButton2;
+        a.recibos = jButton3;
+        a.outras = jButton4;
+        a.tabelas = jButton5;
+        a.definicoes = jButton6;
+        a.mapas = jButton1;
+        a.usuario = jButton9;
+        a.empresa = jButton10;
+        a.configuracoes = jButton7;
+        a.sair = jButton8;
+        rh.web.MenuRH.montar( this, idUser, idEmpresa, new javax.swing.JLabel( lbNome.getText() ), perfil, a );
     }
 
     @SuppressWarnings( "unchecked" )

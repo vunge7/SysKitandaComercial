@@ -94,6 +94,49 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
         mostrarNumeroDeprodutosExpirados();
         jMenuItemGestaoCreditos.setVisible( false );
         //jmRelatorioDiario.setEnabled(false);
+        // aspecto do menu principal do SysKitandaHotel, com os desenhos do negócio
+        // fechos de caixa e envio de relatórios por e-mail / WhatsApp (como na gestão hoteleira)
+        comercial.caixa.MenuFechos.adicionarABarra( jMenuBar1, this, cod );
+        comercial.caixa.MenuFechos.iniciarAgendadores();
+        util.ui.LayoutSeguro.aplicar( this, "Menu Restaurante", () -> util.ui.MenuNegocioWeb.montar( this, jMenuBar1,
+                "Restaurante", util.ui.MenuWeb.Simbolo.TALHERES, cod,
+                util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Log Out" ), null,
+                new util.ui.MenuNegocioWeb.Cartao( itemGestaoMesas(), util.ui.MenuWeb.Simbolo.TALHERES,
+                        "Gestão de Mesas", "Mesas, pedidos e talões da cozinha" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Front Office" ), util.ui.MenuWeb.Simbolo.SINO,
+                        "Front Office", "Armazém, mesas e venda expresso" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Venda" ), util.ui.MenuWeb.Simbolo.CHAVENA,
+                        "Venda ao Balcão", "Venda directa ao balcão" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Produto" ), util.ui.MenuWeb.Simbolo.COCKTAIL,
+                        "Pratos e Bebidas", "Cadastro do menu e preços" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Cadastro de Cliente" ), util.ui.MenuWeb.Simbolo.PESSOAS,
+                        "Clientes", "Cadastro e contactos dos clientes" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Processar Recibos de Factura" ), util.ui.MenuWeb.Simbolo.RECIBO,
+                        "Recibos", "Receber facturas em aberto" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Compras" ), util.ui.MenuWeb.Simbolo.CARRINHO,
+                        "Compras", "Ingredientes, bebidas e stock" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Inventario" ), util.ui.MenuWeb.Simbolo.CAIXA,
+                        "Inventário", "Existências por armazém" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Saidas Produtos" ), util.ui.MenuWeb.Simbolo.PRANCHETA,
+                        "Saídas de Produtos", "Consumos e saídas de stock" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Gestao de Turno" ), util.ui.MenuWeb.Simbolo.CALENDARIO,
+                        "Turnos", "Abertura e fecho de turno" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Converter Proformas em Facturas" ), util.ui.MenuWeb.Simbolo.RECIBO,
+                        "Proformas", "Converter proformas em facturas" ) ) );
+    }
+
+    /**
+     * "Gestão de Mesas" directo do menu (com um só armazém não passa pelo Front
+     * Office). Segue o estado do item Front Office (permissões).
+     */
+    private javax.swing.JMenuItem itemGestaoMesas()
+    {
+        javax.swing.JMenuItem item = new javax.swing.JMenuItem( "Gestão de Mesas" );
+        item.addActionListener( e -> FrontOfficeRestauranteVisao.abrirGestaoMesas( cod_utilizador ) );
+        item.setEnabled( jmFrontOffice.isEnabled() );
+        item.setVisible( jmFrontOffice.isVisible() );
+        jmFrontOffice.addPropertyChangeListener( "enabled", e -> item.setEnabled( jmFrontOffice.isEnabled() ) );
+        return item;
     }
 
     public void busca_permissao()
@@ -719,7 +762,7 @@ public class MenuPrincipalRestauranteVisao extends javax.swing.JFrame
 
         jLabel2.setFont(new java.awt.Font("Lucida Grande", 1, 24)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText("KITANDA v1.1");
+        jLabel2.setText("KITANDA v" + util.DVML.VERSION_SOFTWARE);
         getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 620, 180, -1));
 
         btnProdutosEspirados.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N

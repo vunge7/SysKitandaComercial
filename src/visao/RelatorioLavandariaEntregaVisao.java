@@ -37,7 +37,108 @@ public class RelatorioLavandariaEntregaVisao extends javax.swing.JFrame
         vendasController = new VendasController( conexao );
         clientesController = new ClientesController( conexao );
         mostrarTodosClientes();
+        // aspecto Kitanda e responsivo; se falhar, abre o desenho antigo
+        util.ui.LayoutSeguro.aplicar( this, "Entregas por cliente", this::montarLayoutWeb );
+    }
 
+    // =====================================================================
+    // LAYOUT WEB: clientes (com pesquisa) -> recolhas do cliente -> peças
+    // entregues e por entregar. Em ecrãs estreitos as colunas empilham.
+    // =====================================================================
+    private void montarLayoutWeb()
+    {
+        javax.swing.JTextField pesquisa = new javax.swing.JTextField();
+        util.ui.FormularioWeb.campoTexto( pesquisa );
+        pesquisa.setToolTipText( "Nome ou telefone do cliente" );
+        javax.swing.table.TableRowSorter<javax.swing.table.TableModel> filtro = new javax.swing.table.TableRowSorter<>( jTable1.getModel() );
+        jTable1.setRowSorter( filtro );
+        pesquisa.getDocument().addDocumentListener( new javax.swing.event.DocumentListener()
+        {
+            private void filtrar()
+            {
+                String q = pesquisa.getText().trim();
+                filtro.setRowFilter( q.isEmpty() ? null : javax.swing.RowFilter.regexFilter( "(?i)" + java.util.regex.Pattern.quote( q ) ) );
+            }
+
+            public void insertUpdate( javax.swing.event.DocumentEvent e )
+            {
+                filtrar();
+            }
+
+            public void removeUpdate( javax.swing.event.DocumentEvent e )
+            {
+                filtrar();
+            }
+
+            public void changedUpdate( javax.swing.event.DocumentEvent e )
+            {
+            }
+        } );
+
+        for ( javax.swing.JTable t : new javax.swing.JTable[]
+        {
+            jTable1, jTableRecolha, jTablePecasEntregues, jTablePorEntregar
+        } )
+        {
+            comercial.caixa.UiCaixa.tabela( t, new int[ 0 ], util.ui.ComponentesWeb.AZUL );
+        }
+        // o nº da recolha (FR 2026/15904) tem de caber; as contagens são curtas
+        javax.swing.table.TableColumnModel cm = jTableRecolha.getColumnModel();
+        String[] titulos =
+        {
+            "Recolha", "Data", "Entregues", "Por entregar"
+        };
+        int[] larguras =
+        {
+            120, 85, 70, 85
+        };
+        for ( int i = 0; i < Math.min( cm.getColumnCount(), larguras.length ); i++ )
+        {
+            cm.getColumn( i ).setHeaderValue( titulos[ i ] );
+            cm.getColumn( i ).setPreferredWidth( larguras[ i ] );
+        }
+        for ( javax.swing.JScrollPane sp : new javax.swing.JScrollPane[]
+        {
+            jScrollPane1, jScrollPane2, jScrollPane4, jScrollPane5
+        } )
+        {
+            sp.setBorder( javax.swing.BorderFactory.createLineBorder( util.ui.ComponentesWeb.LINHA ) );
+            sp.getViewport().setBackground( java.awt.Color.WHITE );
+            sp.setPreferredSize( new java.awt.Dimension( 300, 230 ) );
+        }
+        jScrollPane1.setPreferredSize( new java.awt.Dimension( 300, 480 ) );
+        jScrollPane2.setPreferredSize( new java.awt.Dimension( 300, 480 ) );
+
+        javax.swing.JPanel clientes = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 0, 8 ) );
+        clientes.add( util.ui.ComponentesWeb.campo( "Pesquisar", pesquisa ), java.awt.BorderLayout.NORTH );
+        clientes.add( jScrollPane1, java.awt.BorderLayout.CENTER );
+        javax.swing.JPanel cartaoClientes = util.ui.FormularioWeb.cartao( "1 · Clientes", util.ui.ComponentesWeb.AZUL_VIVO, clientes );
+        javax.swing.JPanel cartaoRecolhas = util.ui.FormularioWeb.cartao( "2 · Recolhas do cliente", util.ui.ComponentesWeb.CIANO, jScrollPane2 );
+        javax.swing.JPanel pecas = util.ui.FormularioWeb.pilha( 10,
+                util.ui.FormularioWeb.cartao( "3 · Peças entregues", util.ui.ComponentesWeb.VERDE, jScrollPane4 ),
+                util.ui.FormularioWeb.cartao( "Peças por entregar", util.ui.ComponentesWeb.LARANJA, jScrollPane5 ) );
+
+        javax.swing.JPanel colunas = util.ui.ComponentesWeb.transparente(
+                new util.ui.ComponentesWeb.ColunasResponsivas( new double[]
+                {
+                    0.3, 0.3, 0.4
+                }, new int[]
+                {
+                    260, 280, 320
+                }, 10 ) );
+        colunas.add( cartaoClientes );
+        colunas.add( cartaoRecolhas );
+        colunas.add( pecas );
+
+        jButton2.setText( "Sair" );
+        util.ui.FormularioWeb.botaoSair( jButton2, "Fechar o relatório" );
+        util.ui.FormularioWeb.montar( this,
+                util.ui.FormularioWeb.cabecalho( "Entregas por Cliente", "Escolha o cliente e a recolha para ver o que foi entregue e o que falta", null ),
+                colunas,
+                util.ui.FormularioWeb.barraAccoes( util.ui.FormularioWeb.dica( "Clique num cliente e depois numa recolha" ), jButton2 ),
+                "Lavandaria  ·  Entregas por cliente" );
+        setResizable( true );
+        util.ui.FormularioWeb.ajustar( this, 1280, 800, 720, 520 );
     }
 
     /**
@@ -500,7 +601,8 @@ public class RelatorioLavandariaEntregaVisao extends javax.swing.JFrame
     private int getIdClienteSelecionado()
     {
         DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
-        int linhaSelecionada = jTable1.getSelectedRow();
+        // índice do modelo (a lista pode estar filtrada pela pesquisa)
+        int linhaSelecionada = jTable1.convertRowIndexToModel( jTable1.getSelectedRow() );
         return Integer.parseInt( modelo.getValueAt( linhaSelecionada, 0 ).toString() );
     }
 
@@ -509,7 +611,7 @@ public class RelatorioLavandariaEntregaVisao extends javax.swing.JFrame
         try
         {
             DefaultTableModel modelo = ( DefaultTableModel ) jTableRecolha.getModel();
-            int linhaSelecionada = jTableRecolha.getSelectedRow();
+            int linhaSelecionada = jTableRecolha.convertRowIndexToModel( jTableRecolha.getSelectedRow() );
             return modelo.getValueAt( linhaSelecionada, 0 ).toString();
         }
         catch ( Exception e )

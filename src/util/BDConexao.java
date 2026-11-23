@@ -112,6 +112,25 @@ public class BDConexao {
     }
 
     /**
+     * Ligação nova, só de quem a pede (agendadores, envios em segundo plano):
+     * relatórios e envios demorados não bloqueiam nem se misturam com as
+     * transacções dos formulários. Quem chama é responsável por a fechar.
+     */
+    public static Connection novaLigacao() throws SQLException {
+        Vector<String> info = getInstancia().leituraFicheiroSeguro();
+        if (info == null || info.isEmpty()) {
+            throw new SQLException("ficheiro de credenciais não encontrado");
+        }
+        String ip = info.get(0).trim();
+        String porta = (info.size() > 1 ? info.get(1).trim() : "3306");
+        String url = "jdbc:mysql://" + ip + ":" + porta + "/kitanda_db"
+                + "?zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true"
+                + "&connectTimeout=5000&socketTimeout=120000";
+        // o proxy regista em log_actividade os INSERT/UPDATE/DELETE, como na ligação principal
+        return AuditoriaJdbc.envolver(DriverManager.getConnection(url, "root", "DoV90x?#"));
+    }
+
+    /**
      * Ligação nova e directa (sem o proxy de auditoria e sem socketTimeout),
      * para operações longas de manutenção como o espelho da BD. Quem chama é
      * responsável por a fechar.

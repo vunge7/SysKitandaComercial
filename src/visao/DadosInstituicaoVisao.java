@@ -20,7 +20,10 @@ import javax.swing.JOptionPane;
 import kitanda.util.CfMethodsSwing;
 import util.BDConexao;
 import util.JPAEntityMannagerFactoryUtil;
-import util.TemaNegocioUtil;
+import util.ui.ComponentesWeb;
+import util.ui.FormularioWeb;
+import util.ui.SeletorNegocio;
+import util.ui.Tema;
 
 /**
  *
@@ -44,6 +47,9 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
         dadosInstituicaoController = new DadosInstituicaoController( this.conexao);
         dadoIntituicao = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
         
+        // aspecto web (cartões, grelhas responsivas, escolha visual do negócio), sobre o initComponents
+        util.ui.LayoutSeguro.aplicar( this, "Dados da Empresa", this::montarLayoutWeb );
+
         try
         {
             mostrar_dados();
@@ -52,17 +58,175 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
         {
             e.printStackTrace();
         }
-        
-                boolean ehFarmacia = dadoIntituicao != null
-                && TemaNegocioUtil.ehFarmacia(dadoIntituicao.getNegocio());
+    }
 
-        TemaNegocioUtil.aplicarCorCampos(ehFarmacia,
-                txtNome,
-                txtNIF,
-                txtPosto, txtEndereco, txtSlogan, txtTelefone,
-                txtEmail, txt_director_geral, txtConta1, txtConta2, 
-                txtConta3, txtConta4, txtIban1, txtIban2, txtIban3, txtIban4);
-        
+    // =====================================================================
+    // DESIGN WEB (2026-11-21)
+    // =====================================================================
+    /** Cartões do tipo de negócio, com a pré-visualização das cores e desenhos. */
+    private SeletorNegocio seletorNegocio;
+    /** Etiqueta do cabeçalho com o negócio escolhido. */
+    private ComponentesWeb.Etiqueta etiquetaNegocio;
+    /** Negócio gravado quando a janela abriu (para avisar que o menu muda). */
+    private String negocioInicial;
+
+    private void montarLayoutWeb()
+    {
+        seletorNegocio = new SeletorNegocio( SeletorNegocio.opcoesPadrao() );
+        seletorNegocio.aoMudar( o ->
+        {
+            sincronizarRadios( o.valor );
+            actualizarEtiquetaNegocio();
+        } );
+
+        // ---- cabeçalho: negócio actual à direita
+        etiquetaNegocio = new ComponentesWeb.Etiqueta( " ", java.awt.Color.WHITE );
+        javax.swing.JPanel direita = ComponentesWeb.transparente( new java.awt.FlowLayout( java.awt.FlowLayout.RIGHT, 0, 10 ) );
+        direita.add( etiquetaNegocio );
+        javax.swing.JPanel cabecalho = FormularioWeb.cabecalho( "Dados da Empresa",
+                "Identificação, contactos, coordenadas bancárias e tipo de negócio", direita );
+
+        // ---- campos
+        FormularioWeb.campoTexto( txtNome, txtNIF, txtTelefone, txtEmail, txtEndereco, txtSlogan,
+                txt_director_geral, txtPosto, txtConta1, txtConta2, txtConta3, txtConta4,
+                txtIban1, txtIban2, txtIban3, txtIban4 );
+        FormularioWeb.combo( cmb_regime );
+        txtNome.setFont( txtNome.getFont().deriveFont( java.awt.Font.BOLD, 15f ) );
+        dicas();
+
+        javax.swing.JPanel identificacao = FormularioWeb.pilha( 10,
+                ComponentesWeb.campo( "Nome da empresa *", txtNome ),
+                FormularioWeb.grelha( 220, 3,
+                        ComponentesWeb.campo( "NIF *", txtNIF ),
+                        ComponentesWeb.campo( "Regime fiscal (AGT)", cmb_regime ),
+                        ComponentesWeb.campo( "Posto / Estabelecimento", txtPosto ) ),
+                ComponentesWeb.campo( "Endereço", txtEndereco ),
+                ComponentesWeb.campo( "Slogan", txtSlogan ) );
+
+        javax.swing.JPanel contactos = FormularioWeb.grelha( 220, 3,
+                ComponentesWeb.campo( "Telefone", txtTelefone ),
+                ComponentesWeb.campo( "E-mail", txtEmail ),
+                ComponentesWeb.campo( "Director geral / Gerente", txt_director_geral ) );
+
+        javax.swing.JPanel bancos = FormularioWeb.grelha( 260, 2,
+                ComponentesWeb.campo( "Banco / Conta 1", txtConta1 ), ComponentesWeb.campo( "IBAN 1", txtIban1 ),
+                ComponentesWeb.campo( "Banco / Conta 2", txtConta2 ), ComponentesWeb.campo( "IBAN 2", txtIban2 ),
+                ComponentesWeb.campo( "Banco / Conta 3", txtConta3 ), ComponentesWeb.campo( "IBAN 3", txtIban3 ),
+                ComponentesWeb.campo( "Banco / Conta 4", txtConta4 ), ComponentesWeb.campo( "IBAN 4", txtIban4 ) );
+
+        txt_obs.setFont( util.ui.EstiloUI.FONTE.deriveFont( 13.5f ) );
+        txt_obs.setLineWrap( true );
+        txt_obs.setWrapStyleWord( true );
+        txt_obs.setBorder( javax.swing.BorderFactory.createEmptyBorder( 6, 8, 6, 8 ) );
+        jScrollPane2.setBorder( new javax.swing.border.LineBorder( ComponentesWeb.LINHA, 1, true ) );
+        jScrollPane2.setPreferredSize( new java.awt.Dimension( 300, 86 ) );
+        javax.swing.JPanel observacoes = FormularioWeb.pilha( 6,
+                FormularioWeb.dica( "Texto impresso no rodapé das facturas (ex.: \"Não aceitamos devoluções\" ou \"Trocas até 7 dias\")." ),
+                jScrollPane2 );
+
+        // ---- tipo de negócio
+        ComponentesWeb.TextoQuebrado ajudaNegocio = new ComponentesWeb.TextoQuebrado();
+        ajudaNegocio.setText( "Escolha a actividade da empresa: o menu principal, a venda e os formulários mais usados "
+                + "passam a ter as cores e os desenhos do negócio. A mudança vale por completo na próxima entrada no sistema." );
+        ajudaNegocio.setFont( util.ui.EstiloUI.FONTE.deriveFont( 12f ) );
+        ajudaNegocio.setForeground( ComponentesWeb.TEXTO_SUAVE );
+        javax.swing.JPanel negocio = FormularioWeb.pilha( 10, ajudaNegocio, seletorNegocio );
+
+        // ---- duas colunas em ecrãs largos (dados à esquerda, bancos e observações à direita); uma em ecrãs estreitos
+        javax.swing.JPanel colunaEsquerda = FormularioWeb.pilha( 12,
+                FormularioWeb.cartao( "Identificação", ComponentesWeb.AZUL_VIVO, identificacao ),
+                FormularioWeb.cartao( "Contactos", ComponentesWeb.CIANO, contactos ) );
+        javax.swing.JPanel colunaDireita = FormularioWeb.pilha( 12,
+                FormularioWeb.cartao( "Coordenadas bancárias", ComponentesWeb.VERDE, bancos ),
+                FormularioWeb.cartao( "Observações nas facturas", ComponentesWeb.LARANJA, observacoes ) );
+        javax.swing.JPanel colunas = ComponentesWeb.transparente( new ComponentesWeb.ColunasResponsivas(
+                new double[]{ 0.5, 0.5 }, new int[]{ 460, 460 }, 12 ) );
+        colunas.add( colunaEsquerda );
+        colunas.add( colunaDireita );
+
+        javax.swing.JPanel conteudo = FormularioWeb.pilha( 12,
+                colunas,
+                FormularioWeb.cartao( "Tipo de negócio", ComponentesWeb.ROXO, negocio ) );
+        conteudo.setBorder( javax.swing.BorderFactory.createEmptyBorder( 4, 4, 8, 4 ) );
+
+        // ---- acções
+        okButton.setText( "Gravar alterações" );
+        cancelButton.setText( "Sair" );
+        FormularioWeb.botaoSalvar( okButton, "Gravar os dados da empresa (Ctrl+S)" );
+        FormularioWeb.botaoSair( cancelButton, "Fechar sem gravar (Esc)" );
+        javax.swing.JPanel accoes = FormularioWeb.barraAccoes(
+                FormularioWeb.dica( "* Campos obrigatórios  ·  Ctrl+S grava  ·  Esc fecha" ), cancelButton, okButton );
+
+        FormularioWeb.montar( this, cabecalho, conteudo, accoes, "Dados da Empresa" );
+        FormularioWeb.ajustar( this, 1240, 900, 620, 480 );
+        getRootPane().setDefaultButton( null );
+        atalhos();
+    }
+
+    private void dicas()
+    {
+        txtNome.setToolTipText( "Nome que aparece nas facturas, relatórios e no menu principal" );
+        txtNIF.setToolTipText( "Número de Identificação Fiscal da empresa" );
+        txtPosto.setToolTipText( "Nome do posto ou estabelecimento (lojas com mais de um ponto de venda)" );
+        txtSlogan.setToolTipText( "Frase curta impressa no cabeçalho das facturas" );
+        txtEmail.setToolTipText( "E-mail impresso nas facturas" );
+    }
+
+    /** Ctrl+S grava, Esc fecha. */
+    private void atalhos()
+    {
+        javax.swing.JRootPane raiz = getRootPane();
+        javax.swing.InputMap mapa = raiz.getInputMap( javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW );
+        mapa.put( javax.swing.KeyStroke.getKeyStroke( java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK ), "gravar" );
+        mapa.put( javax.swing.KeyStroke.getKeyStroke( java.awt.event.KeyEvent.VK_ESCAPE, 0 ), "sair" );
+        raiz.getActionMap().put( "gravar", new javax.swing.AbstractAction()
+        {
+            @Override
+            public void actionPerformed( java.awt.event.ActionEvent e )
+            {
+                okButton.doClick();
+            }
+        } );
+        raiz.getActionMap().put( "sair", new javax.swing.AbstractAction()
+        {
+            @Override
+            public void actionPerformed( java.awt.event.ActionEvent e )
+            {
+                dispose();
+            }
+        } );
+    }
+
+    private void actualizarEtiquetaNegocio()
+    {
+        if ( etiquetaNegocio == null || seletorNegocio == null || seletorNegocio.getSeleccionada() == null )
+        {
+            return;
+        }
+        SeletorNegocio.Opcao o = seletorNegocio.getSeleccionada();
+        etiquetaNegocio.setText( "Negócio: " + o.titulo );
+        // a cor clara do negócio, legível sobre o cabeçalho escuro
+        java.awt.Color c = Tema.amostra( o.tema )[ 2 ];
+        etiquetaNegocio.setCor( ComponentesWeb.mistura( c, java.awt.Color.WHITE, 0.55 ) );
+        etiquetaNegocio.setForeground( java.awt.Color.WHITE );
+    }
+
+    /** Mantém os botões de opção antigos de acordo com o cartão escolhido (Prestação de Serviço fixa a janela de serviço). */
+    private void sincronizarRadios( String valor )
+    {
+        javax.swing.JRadioButton[] radios = { rbComercial, rbOficina, rbTransportes, rbRestaurante, rbFarmacia,
+            rbLavandaria, rbLayout, rbPrestacaoServico };
+        String[] valores = { "Comercial", "Oficina", "Transportes", "Restaurante", "Farmacia", "Lavandaria", "Layout",
+            "Prestação de Serviço" };
+        buttonGroup9.clearSelection();
+        for ( int i = 0; i < radios.length; i++ )
+        {
+            if ( valores[ i ].equalsIgnoreCase( valor ) )
+            {
+                radios[ i ].setSelected( true );
+            }
+        }
+        selecionar_radioJanelaServico();
     }
 
     /**
@@ -317,7 +481,7 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
 
         rbJanelaServico.setEnabled(false);
 
-        jPanel3.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Configurar tipos de Negócio"));
         jPanel3.setToolTipText("Selecione o tipo de Negócio");
 
         buttonGroup9.add(rbComercial);
@@ -846,6 +1010,34 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
 
     private void actulizar_dados()
     {
+        if ( txtNome.getText().trim().isEmpty() )
+        {
+            JOptionPane.showMessageDialog( this, "Indique o nome da empresa.", "Dados da Empresa", JOptionPane.WARNING_MESSAGE );
+            txtNome.requestFocusInWindow();
+            return;
+        }
+
+        // o ENUM negocio tem de aceitar o valor (Ginásio e Centro Infantil entraram em 2026-11-21):
+        // sem isto o MySQL gravava '' em silêncio
+        String negocio = getNegocio();
+        java.util.List<String> aceites;
+        try ( Connection cn = BDConexao.novaLigacao() )
+        {
+            aceites = Tema.garantirValoresNegocio( cn );
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+            aceites = new java.util.ArrayList<>();
+        }
+        String valorBD = aceites.isEmpty() ? negocio : Tema.valorAceite( aceites, negocio );
+        if ( valorBD == null )
+        {
+            JOptionPane.showMessageDialog( this, "A base de dados ainda não aceita o negócio \"" + negocio + "\".\n"
+                    + "Peça ao administrador da base de dados para actualizar a coluna tb_dados_instituicao.negocio.",
+                    "Dados da Empresa", JOptionPane.WARNING_MESSAGE );
+            return;
+        }
 
 //        dadoIntituicao = dadosInstituicaoController.findByCodigo(1 );
 
@@ -879,7 +1071,7 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
 //        dadoIntituicao.setAnoEconomico( getAnoEconomico() );
 //        dadoIntituicao.setVizualisarStock( getAVizualisarStock() );
 //        dadoIntituicao.setTranstorno( getTranstornos() );
-        dadoIntituicao.setNegocio( getNegocio() );
+        dadoIntituicao.setNegocio( valorBD );
         dadoIntituicao.setJanelaServico( getJanelaServico() );
         dadoIntituicao.setPosto(txtPosto.getText());
 //        dadoIntituicao.setTeclado( getTeclado() );
@@ -890,8 +1082,18 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
 
         try
         {
-            dadosInstituicaoController.actualizar(dadoIntituicao );
-            JOptionPane.showMessageDialog( null, "Dados actualizados com sucesso!...." );
+            if ( !dadosInstituicaoController.actualizar( dadoIntituicao ) )
+            {
+                throw new IllegalStateException( "actualizar devolveu false" );
+            }
+            boolean mudouNegocio = negocioInicial != null && !negocioInicial.equalsIgnoreCase( valorBD );
+            // cores e desenhos do negócio já nas janelas que se abrirem a seguir
+            Tema.aplicar( valorBD );
+            negocioInicial = valorBD;
+            JOptionPane.showMessageDialog( this, mudouNegocio
+                    ? "Dados actualizados com sucesso.\n\nO negócio passou a \"" + valorBD + "\": as novas cores e ícones "
+                    + "aplicam-se às janelas que abrir a partir de agora;\no menu principal do negócio aparece na próxima entrada no sistema."
+                    : "Dados actualizados com sucesso." , "Dados da Empresa", JOptionPane.INFORMATION_MESSAGE );
         }
         catch ( Exception e )
         {
@@ -949,7 +1151,10 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
 //    }
     private String getNegocio()
     {
-//        return rbComercial.isSelected() ? "Comercial" : "Oficina";
+        if ( seletorNegocio != null && seletorNegocio.getValor() != null )
+        {
+            return seletorNegocio.getValor();
+        }
         return rbComercial.isSelected() ? "Comercial"
                 : rbOficina.isSelected() ? "Oficina"
                 : rbTransportes.isSelected() ? "Transportes"
@@ -1173,6 +1378,18 @@ public class DadosInstituicaoVisao extends javax.swing.JDialog
 
     private void setActivarNegocio( String negocio )
     {
+        negocioInicial = negocio;
+        if ( seletorNegocio != null )
+        {
+            seletorNegocio.setValor( negocio );
+            sincronizarRadios( seletorNegocio.getValor() );
+            actualizarEtiquetaNegocio();
+            return;
+        }
+        if ( negocio == null )
+        {
+            negocio = "Comercial";
+        }
         if ( negocio.equalsIgnoreCase( "Comercial" ) )
         {
             rbComercial.setSelected( true );

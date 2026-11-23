@@ -215,35 +215,35 @@ WHERE
 			<rectangle>
 				<reportElement uuid="3d53d3e5-feba-4308-84e7-8aa8bdb61615" x="-3" y="71" width="192" height="55"/>
 			</rectangle>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="82853475-19ec-484a-a036-949cdd5bd35b" x="1" y="56" width="187" height="12"/>
 				<textElement textAlignment="Center" markup="html">
 					<font fontName="Times New Roman" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA["<b>Email:</b> " +$F{tb_dados_instituicao_email}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="608569fd-08f1-46ad-bfab-b75a16a853ba" x="0" y="24" width="187" height="15"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
 					<font fontName="Times New Roman" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_nome}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="a9ba3e70-db19-420e-bdf3-27f09d6bcb77" x="1" y="49" width="187" height="12"/>
 				<textElement textAlignment="Center" markup="html">
 					<font fontName="Times New Roman" size="9" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["<b>Telefone:</b> " +$F{tb_dados_instituicao_telefone}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="442689d9-4840-4d31-92a9-c7d9dfb46603" x="1" y="34" width="187" height="12"/>
 				<textElement textAlignment="Center" markup="html">
 					<font fontName="Times New Roman" size="9" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["<b>Endereço:</b> " +$F{tb_dados_instituicao_enderecos}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="5be15091-64e8-4c95-a321-fa7fc79d18d4" x="1" y="41" width="187" height="12"/>
 				<textElement textAlignment="Center" markup="html">
 					<font fontName="Times New Roman" size="9" isBold="false"/>
@@ -254,14 +254,14 @@ WHERE
 				<reportElement uuid="aa9cd883-fead-4701-92a6-11bfeed32d87" x="69" y="-6" width="60" height="34"/>
 				<imageExpression><![CDATA["relatorios/logo_dvml.png"]]></imageExpression>
 			</image>
-			<textField pattern="HH:mm">
+			<textField pattern="HH:mm" isBlankWhenNull="true">
 				<reportElement uuid="bcf9bb21-c662-4919-a36b-0154deb00625" key="element-95" x="135" y="90" width="41" height="12" forecolor="#000000"/>
 				<textElement verticalAlignment="Middle" markup="none">
 					<font fontName="Times New Roman" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_venda_hora}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="bba521bb-382c-4d32-a567-bedc62397a18" key="element-91" x="5" y="81" width="182" height="13" forecolor="#000000"/>
 				<textElement markup="html">
 					<font fontName="Times New Roman" size="9" isBold="true"/>
@@ -288,7 +288,7 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_venda_nome_consumidor_final}]]></textFieldExpression>
 			</textField>
-			<textField pattern="dd-MM-yyyy">
+			<textField pattern="dd-MM-yyyy" isBlankWhenNull="true">
 				<reportElement uuid="3473c797-1a28-4b54-89bb-a32153832384" key="element-95" x="86" y="90" width="48" height="12" forecolor="#000000"/>
 				<textElement verticalAlignment="Middle" markup="none">
 					<font fontName="Times New Roman" isBold="false"/>
@@ -303,14 +303,14 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA["<b>Cliente:</b> " + "<i>" +$F{tb_venda_nome_cliente} +"</i>"]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="4f9e9141-8f88-441e-9e64-2d1659cb5e06" x="5" y="114" width="104" height="12"/>
 				<textElement verticalAlignment="Middle" markup="html">
 					<font fontName="Times New Roman" size="8" isItalic="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["<b>NIF:</b> "  +"<i>" +$P{NIF_CLIENTE_CONSOMIDOR_FINAL} +"</i>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["<b>NIF:</b> <i>" + ($P{NIF_CLIENTE_CONSOMIDOR_FINAL} != null && !$P{NIF_CLIENTE_CONSOMIDOR_FINAL}.trim().isEmpty() && !"null".equals($P{NIF_CLIENTE_CONSOMIDOR_FINAL}) ? $P{NIF_CLIENTE_CONSOMIDOR_FINAL} : ($F{tb_cliente_nif} != null && !$F{tb_cliente_nif}.trim().isEmpty() ? $F{tb_cliente_nif} : "Consumidor final")) + "</i>"]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="af565914-a0c5-4982-b6e1-8275416993e0" x="4" y="129" width="118" height="10"/>
 				<box leftPadding="1"/>
 				<textElement>
@@ -318,7 +318,7 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$P{STATUS_DOCUMENTO}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="af19ce94-578c-4ee4-baa4-1e75473bcb69" x="118" y="129" width="71" height="10"/>
 				<box rightPadding="1"/>
 				<textElement textAlignment="Right">
@@ -326,7 +326,7 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_armazem_designacao}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="6e983ef4-7cbd-4292-92b2-d3abf4fc33d1" key="element-91" x="8" y="71" width="180" height="13" forecolor="#000000"/>
 				<textElement textAlignment="Right" markup="html">
 					<font fontName="Times New Roman" size="9" isBold="false"/>
@@ -404,7 +404,7 @@ WHERE
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="9" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tb_item_venda_designacao_item}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tb_item_venda_designacao_item} != null && !$F{tb_item_venda_designacao_item}.trim().isEmpty() ? $F{tb_item_venda_designacao_item} : $F{tb_produto_designacao}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement uuid="9be6ef76-1d45-42ff-9476-84efcf26e05c" key="textField-16" x="92" y="11" width="39" height="11"/>
@@ -428,7 +428,7 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_item_venda_valor_iva}.intValue()]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0">
+			<textField pattern="###0" isBlankWhenNull="true">
 				<reportElement uuid="c5dc2ea5-b3bd-4c95-9a53-6972fb547dc9" x="79" y="11" width="17" height="11"/>
 				<textElement>
 					<font fontName="Times New Roman" size="9"/>
@@ -447,16 +447,20 @@ WHERE
 		<band splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="80">
-			<textField>
+		<band height="165">
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="335d5593-1115-4267-a9d8-267a7357c577" key="element-96" x="0" y="32" width="188" height="12" forecolor="#000000"/>
 				<textElement verticalAlignment="Bottom" markup="html">
 					<font fontName="Times New Roman" size="8" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["<b>Operador(a):</b> " +$F{tb_usuario_nome}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement uuid="466cae21-f94a-45ee-9d35-7a7be61aa49d" x="0" y="39" width="191" height="34"/>
+		<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle" onErrorType="Blank">
+				<reportElement uuid="3dc045c5-7ae4-4e19-9218-dccb9b1e4dc2" positionType="Float" x="58" y="48" width="72" height="72"/>
+				<imageExpression><![CDATA[util.QRFactura.imagem($P{CODIGO_VENDA})]]></imageExpression>
+			</image>
+				<textField isBlankWhenNull="true">
+				<reportElement uuid="466cae21-f94a-45ee-9d35-7a7be61aa49d" x="0" y="124" width="191" height="34"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="8"/>
 				</textElement>
@@ -469,15 +473,15 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_obs_devolucao}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="9b9e27da-4eb5-4afd-80de-7b7e4e8477c1" x="13" y="3" width="175" height="24"/>
 				<textElement textAlignment="Justified">
 					<font fontName="Times New Roman" size="8" isItalic="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["*Os bens ou serviços foram colocados à disposição do cliente no(a) "+$F{tb_armazem_designacao}+", aos "+$F{tb_venda_dataVenda}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["*Os bens ou serviços foram colocados à disposição do cliente no(a) "+$F{tb_armazem_designacao}+", aos "+($F{tb_venda_dataVenda} == null ? "" : new java.text.SimpleDateFormat("dd-MM-yyyy HH:mm").format($F{tb_venda_dataVenda})) + "."]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="ca0b66a3-9a89-4a54-9e25-f30a54bcf3e0" key="staticText-9" x="0" y="64" width="188" height="12"/>
+				<reportElement uuid="ca0b66a3-9a89-4a54-9e25-f30a54bcf3e0" key="staticText-9" x="0" y="149" width="188" height="12"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
 					<font fontName="Times New Roman" size="6" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
@@ -649,7 +653,7 @@ WHERE
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement uuid="ff333d50-8165-40cd-bf82-69656d6660df" key="textField-16" x="40" y="10" width="45" height="10"/>
 				<box leftPadding="2"/>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_venda_total_iva}]]></textFieldExpression>
@@ -664,7 +668,7 @@ WHERE
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement uuid="fef8bedc-a841-42df-b36f-4d4957d513e0" key="textField-16" x="40" y="19" width="45" height="10"/>
 				<box leftPadding="2"/>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[0.0]]></textFieldExpression>
@@ -693,7 +697,7 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_venda_total_incidencia_isento}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="60e46d22-3c94-4c52-a268-94db8e6f0d20" x="0" y="110" width="188" height="10"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font fontName="Times New Roman" size="7" isItalic="true"/>
@@ -711,7 +715,7 @@ WHERE
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_factura_forma_pagamento_A6.jasper"]]></subreportExpression>
 			</subreport>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="4a71a7f1-1173-4b06-82e4-75a59457588c" x="95" y="32" width="34" height="11"/>
 				<box>
 					<pen lineWidth="0.25"/>
@@ -723,7 +727,7 @@ WHERE
 				<textElement/>
 				<textFieldExpression><![CDATA[]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="ffdc5fa9-6946-4ab5-bd3d-ac85c8035566" x="95" y="42" width="34" height="9"/>
 				<box>
 					<pen lineWidth="0.25"/>
@@ -735,7 +739,7 @@ WHERE
 				<textElement/>
 				<textFieldExpression><![CDATA[]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="7cca1ba9-40d5-4df1-8ad1-33ccae683f3d" x="95" y="50" width="34" height="9"/>
 				<box>
 					<pen lineWidth="0.25"/>
@@ -747,7 +751,7 @@ WHERE
 				<textElement/>
 				<textFieldExpression><![CDATA[]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="58dac460-2ea2-4b9f-a117-a52f9b590f25" x="95" y="58" width="34" height="9"/>
 				<box>
 					<pen lineWidth="0.25"/>
@@ -759,7 +763,7 @@ WHERE
 				<textElement/>
 				<textFieldExpression><![CDATA[]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="4c0259ce-ba1f-459c-b951-7672cdf88529" x="95" y="66" width="34" height="10"/>
 				<box>
 					<pen lineWidth="0.25"/>
@@ -771,7 +775,7 @@ WHERE
 				<textElement/>
 				<textFieldExpression><![CDATA[]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="51725493-5e0f-444b-95f0-377f5d51aa25" style="cliente_style_troco" x="95" y="101" width="34" height="9"/>
 				<box>
 					<pen lineWidth="0.25"/>
@@ -812,7 +816,7 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_venda_troco}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="186479ab-bac8-4973-af4a-590edf5777f6" x="84" y="19" width="105" height="10"/>
 				<box leftPadding="4"/>
 				<textElement>
@@ -835,7 +839,7 @@ WHERE
 				</textElement>
 				<text><![CDATA[Gorjeta:]]></text>
 			</staticText>
-			<textField pattern="#,##0.00">
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement uuid="3725ca69-3b5a-4948-a50e-d9af98c7499d" style="cliente_style_gorjeta" x="23" y="118" width="106" height="9"/>
 				<textElement textAlignment="Justified" verticalAlignment="Bottom">
 					<font fontName="Times New Roman" size="7" isBold="true" isItalic="false"/>

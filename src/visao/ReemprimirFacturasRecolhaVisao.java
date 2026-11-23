@@ -53,7 +53,7 @@ public class ReemprimirFacturasRecolhaVisao extends javax.swing.JFrame
     private static ItemVendasController itemVendasController;
 
     private TipoProdutoModelo tipoProdutoModelo;
-    private DadosInstituicaoDao dadosInstituicaoDao;
+    private DadosInstituicaoDao dadosInstituicaoDao = new DadosInstituicaoDao( emf );
     private TipoProdutoController tipoProdutoController;
     private static Abreviacao abreviacao, abreviacao_nota;
     private Frame parent;
@@ -80,7 +80,39 @@ public class ReemprimirFacturasRecolhaVisao extends javax.swing.JFrame
         }
 //        rb_A6.setVisible( false );
         txtFactura.requestFocus();
+        // aspecto Kitanda; se falhar, abre o desenho antigo
+        util.ui.LayoutSeguro.aplicar( this, "Reimprimir recolha", this::montarLayoutWeb );
+    }
 
+    // =====================================================================
+    // LAYOUT WEB: nº do documento, formato do papel e o botão Reimprimir
+    // (antes só com Enter no campo).
+    // =====================================================================
+    private void montarLayoutWeb()
+    {
+        util.ui.FormularioWeb.campoTexto( txtFactura );
+        txtFactura.setToolTipText( "Ex.: FR 2026/15904 — Enter reimprime" );
+        util.ui.ComponentesWeb.pilula( ck_A4, false );
+        util.ui.ComponentesWeb.pilula( ck_simplificada, false );
+        ck_A4.setText( "A4" );
+        ck_simplificada.setText( "Talão (A6)" );
+        javax.swing.JButton reimprimir = new javax.swing.JButton( "Reimprimir" );
+        util.ui.ComponentesWeb.botao( reimprimir, util.ui.ComponentesWeb.Variante.PRIMARIO, null, "Imprimir de novo o documento e o talão" );
+        reimprimir.addActionListener( e -> txtFactura.postActionEvent() );
+        jButton1.setText( "Sair" );
+        util.ui.FormularioWeb.botaoSair( jButton1, "Fechar" );
+        getRootPane().setDefaultButton( reimprimir );
+
+        javax.swing.JPanel conteudo = util.ui.FormularioWeb.cartao( "Documento da recolha", util.ui.ComponentesWeb.AZUL_VIVO,
+                util.ui.FormularioWeb.pilha( 10,
+                        util.ui.ComponentesWeb.campo( "Nº do documento (FR / FT)", txtFactura ),
+                        util.ui.ComponentesWeb.campo( "Formato", util.ui.FormularioWeb.pilulas( ck_A4, ck_simplificada ) ) ) );
+        util.ui.FormularioWeb.montar( this,
+                util.ui.FormularioWeb.cabecalho( "Reimprimir Recolha", "Segunda via da factura e do talão da recolha", null ),
+                conteudo,
+                util.ui.FormularioWeb.barraAccoes( util.ui.FormularioWeb.dica( "Enter no nº também reimprime" ), jButton1, reimprimir ),
+                "Lavandaria  ·  Reimprimir" );
+        util.ui.FormularioWeb.ajustar( this, 560, 420, 440, 380 );
     }
 
     public void confLabel()

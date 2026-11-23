@@ -95,7 +95,96 @@ public class EntregaLavandariaVisao extends javax.swing.JFrame
         setWindowsListener();
         
         jPanel4.setVisible( false);
+        // aspecto Kitanda e responsivo; se falhar, o ecrã abre com o desenho antigo
+        util.ui.LayoutSeguro.aplicar( this, "Entrega de Peças", this::montarLayoutWeb );
+    }
 
+    /** Abre já com a recolha procurada (ex.: duplo clique no painel da lavandaria). */
+    public void procurarRecolha( String codFact )
+    {
+        txtCodRef.setText( codFact );
+        txtCodRef.postActionEvent();
+    }
+
+    // =====================================================================
+    // LAYOUT WEB (Kitanda): os componentes e eventos do initComponents em
+    // cartões responsivos — peças da recolha à esquerda, cliente à direita
+    // (em ecrãs estreitos o cliente passa para baixo).
+    // A busca é pelo nº da recolha (o modo "telefone" nunca chegou a existir).
+    // =====================================================================
+    private void montarLayoutWeb()
+    {
+        util.ui.FormularioWeb.campoTexto( txtCodRef );
+        txtCodRef.setToolTipText( "Nº do documento da recolha (ex.: FR 2026/15859) e Enter" );
+        javax.swing.JButton procurar = new javax.swing.JButton( "Procurar" );
+        util.ui.ComponentesWeb.botao( procurar, util.ui.ComponentesWeb.Variante.PRIMARIO, null, "Mostrar as peças desta recolha" );
+        procurar.addActionListener( e -> txtCodRef.postActionEvent() );
+
+        comercial.caixa.UiCaixa.tabela( jTable1, new int[]
+        {
+            70, 50, 320, 60, 100, 100, 110
+        }, util.ui.ComponentesWeb.AZUL );
+        jTable1.setSelectionMode( javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION );
+        jScrollPane1.setBorder( javax.swing.BorderFactory.createLineBorder( util.ui.ComponentesWeb.LINHA ) );
+        jScrollPane1.getViewport().setBackground( java.awt.Color.WHITE );
+        jScrollPane1.setPreferredSize( new java.awt.Dimension( 420, 300 ) );
+        jScrollPane2.setBorder( javax.swing.BorderFactory.createLineBorder( util.ui.ComponentesWeb.LINHA ) );
+        jScrollPane2.setPreferredSize( new java.awt.Dimension( 420, 90 ) );
+        txtObsEntrega.setFont( util.ui.EstiloUI.FONTE.deriveFont( 13f ) );
+
+        javax.swing.JPanel pecas = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 0, 10 ) );
+        javax.swing.JPanel busca = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 8, 0 ) );
+        busca.add( txtCodRef, java.awt.BorderLayout.CENTER );
+        busca.add( procurar, java.awt.BorderLayout.EAST );
+        pecas.add( util.ui.ComponentesWeb.campo( "Nº da recolha", busca ), java.awt.BorderLayout.NORTH );
+        pecas.add( jScrollPane1, java.awt.BorderLayout.CENTER );
+        pecas.add( util.ui.ComponentesWeb.campo( "Observação da entrega (opcional)", jScrollPane2 ), java.awt.BorderLayout.SOUTH );
+        javax.swing.JPanel cartaoPecas = util.ui.FormularioWeb.cartao( "Peças da recolha", util.ui.ComponentesWeb.VERDE, pecas );
+
+        for ( javax.swing.JLabel l : new javax.swing.JLabel[]
+        {
+            lbNomeCliente, lbTelefone, lbMorada
+        } )
+        {
+            l.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 15f ) );
+            l.setForeground( util.ui.ComponentesWeb.TEXTO );
+        }
+        javax.swing.JPanel cliente = util.ui.FormularioWeb.pilha( 10, lbNomeCliente, lbTelefone, lbMorada,
+                util.ui.FormularioWeb.dica( "Seleccione uma ou mais peças (Ctrl+clique) para entregar só essas." ) );
+        javax.swing.JPanel cartaoCliente = util.ui.FormularioWeb.cartao( "Cliente", util.ui.ComponentesWeb.AZUL_VIVO, cliente );
+
+        javax.swing.JPanel colunas = util.ui.ComponentesWeb.transparente(
+                new util.ui.ComponentesWeb.ColunasResponsivas( new double[]
+                {
+                    0.66, 0.34
+                }, new int[]
+                {
+                    440, 280
+                }, 10 ) );
+        colunas.add( cartaoPecas );
+        colunas.add( cartaoCliente );
+
+        lbEntregaLavandaria.setForeground( java.awt.Color.WHITE );
+        lbEntregaLavandaria.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 15f ) );
+        lbEntregaLavandaria.setToolTipText( "Número da próxima guia de entrega" );
+        lbEntregaLavandaria.setHorizontalAlignment( javax.swing.SwingConstants.RIGHT );
+
+        jButton2.setText( "Entregar seleccionadas" );
+        jButton2.setIcon( null );
+        util.ui.ComponentesWeb.botao( jButton2, util.ui.ComponentesWeb.Variante.PRIMARIO, null, "Entregar só as peças seleccionadas na lista" );
+        jButton1.setText( "Entregar tudo" );
+        util.ui.ComponentesWeb.botao( jButton1, util.ui.ComponentesWeb.Variante.SUCESSO, null, "Entregar todas as peças desta recolha" );
+        util.ui.FormularioWeb.botaoSair( jButton3, "Fechar a entrega" );
+
+        util.ui.FormularioWeb.montar( this,
+                util.ui.FormularioWeb.cabecalho( "Entrega de Peças", "Procure a recolha pelo número do documento e entregue as peças",
+                        lbEntregaLavandaria ),
+                colunas,
+                util.ui.FormularioWeb.barraAccoes( util.ui.FormularioWeb.dica( "Enter no nº da recolha mostra as peças" ),
+                        jButton2, jButton1, jButton3 ),
+                "Lavandaria  ·  Entrega" );
+        util.ui.FormularioWeb.ajustar( this, 1280, 800, 720, 520 );
+        javax.swing.SwingUtilities.invokeLater( txtCodRef::requestFocusInWindow );
     }
 
     /**
@@ -751,8 +840,9 @@ public class EntregaLavandariaVisao extends javax.swing.JFrame
         nota_levantamento.setHora( new Date() );
 
         nota_levantamento.setRefDataFact( venda.getDataVenda() );
-        nota_levantamento.setFkDocumento( documento );
+        // primeiro o número (é o getCodDocActualizador que carrega o documento), depois o documento
         nota_levantamento.setCodFact( getCodDocActualizador() );
+        nota_levantamento.setFkDocumento( documento );
 
         nota_levantamento.setNomeCliente( venda.getNomeCliente() );
         nota_levantamento.setClienteNif( venda.getClienteNif() );

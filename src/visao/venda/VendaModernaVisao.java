@@ -416,8 +416,428 @@ repaint();
 
 //aplicarCorCamposVenda(ehFarmacia);
 
+        // ginásio: botão "Pedidos" ao lado do cliente (consumos durante o treino, pagos no fim)
+        instalarPedidosGinasio();
+
+        // F9: estado das mensalidades de todos os clientes (cartões verde/laranja/vermelho)
+        if (comercial.mensalidade.Mensalidades.activo()) {
+            comercial.mensalidade.BotaoMensalidades.instalarTecla(getRootPane());
+            instalarBotaoMensalidades();
+        }
+
+        // F8: todas as mensalidades do cliente da venda numa só janela (meses vencidos já escolhidos).
+        // Só nos negócios com mensalidades (Ginásio, Centro Infantil, Prestação de Serviço).
+        if (comercial.mensalidade.Mensalidades.activo()) getRootPane().getInputMap(javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(javax.swing.KeyStroke.getKeyStroke("F8"), "mensalidadesCliente");
+        getRootPane().getActionMap().put("mensalidadesCliente", new javax.swing.AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                if (!comercial.mensalidade.Mensalidades.activo()) {
+                    return;
+                }
+                comercial.mensalidade.MensalidadesClienteDialog.abrir(
+                        javax.swing.SwingUtilities.getWindowAncestor(getRootPane()), getIdCliente(), conexao);
+            }
+        });
+
         aplicarFolha();
 
+    }
+
+    // =====================================================================
+    // GINÁSIO: pedidos dos clientes durante o treino (2026-11-21)
+    // =====================================================================
+    /** Pedidos do ginásio que estão na tabela desta venda: id do pedido -> código do produto. */
+    private static final java.util.Map<Integer, Integer> pedidosGinasioNaVenda = new java.util.LinkedHashMap<>();
+    private static comercial.ginasio.BotaoPedidos botaoPedidosGinasio;
+    private javax.swing.JTextField pesquisaClienteGinasio;
+    private javax.swing.Timer temporizadorPedidosGinasio;
+
+    /**
+     * Botão "Mensalidades" no cabeçalho (ao lado do "Pedidos" no ginásio):
+     * abre o estado dos clientes e mostra quantos estão em alerta.
+     */
+    private void instalarBotaoMensalidades() {
+        java.awt.Container direita = lb_nome_usuario.getParent();
+        java.awt.Container cabecalho = direita == null ? null : direita.getParent();
+        if (cabecalho == null || !(cabecalho.getLayout() instanceof java.awt.BorderLayout)) {
+            return; // sem cabeçalho: fica a tecla F9
+        }
+        comercial.mensalidade.BotaoMensalidades botao = new comercial.mensalidade.BotaoMensalidades();
+        java.awt.Dimension d = new java.awt.Dimension(112, 70);
+        botao.setPreferredSize(d);
+        botao.setMinimumSize(d);
+        botao.setMaximumSize(d);
+        // em ecrãs de 1366 px o nome da empresa cede espaço aos botões (completo na dica)
+        jlEmpresa.setToolTipText(jlEmpresa.getText());
+        java.awt.Dimension e = jlEmpresa.getPreferredSize();
+        jlEmpresa.setPreferredSize(new java.awt.Dimension(Math.min(e.width, 180), e.height));
+        jlEmpresa.setMinimumSize(new java.awt.Dimension(60, e.height));
+        botao.setAlignmentY(0f);
+        java.awt.Component centro = ((java.awt.BorderLayout) cabecalho.getLayout()).getLayoutComponent(java.awt.BorderLayout.CENTER);
+        if (centro instanceof JPanel && ((JPanel) centro).getLayout() instanceof BoxLayout) {
+            // já há o bloco do cliente / "Pedidos" (ginásio): o botão fica a seguir
+            ((JPanel) centro).add(Box.createHorizontalStrut(10));
+            ((JPanel) centro).add(botao);
+        } else if (centro == null) {
+            JPanel meio = new JPanel();
+            meio.setOpaque(false);
+            meio.setLayout(new BoxLayout(meio, BoxLayout.X_AXIS));
+            meio.add(Box.createHorizontalGlue());
+            meio.add(botao);
+            ((JComponent) cabecalho).add(meio, java.awt.BorderLayout.CENTER);
+        } else {
+            return;
+        }
+        cabecalho.revalidate();
+        cabecalho.repaint();
+    }
+
+    /** Só no negócio Ginásio: botão "Pedidos" (com contador) ao lado da caixa do cliente e a tecla F6. */
+    private void instalarPedidosGinasio() {
+        // "Pedidos" (consumos abertos, pagos no fim): só Ginásio e Restaurante/Bar
+        util.ui.Tema.Negocio negocioPedidos = dadosInstituicao == null ? null
+                : util.ui.Tema.deTexto(dadosInstituicao.getNegocio());
+        if (negocioPedidos != util.ui.Tema.Negocio.GINASIO
+                && negocioPedidos != util.ui.Tema.Negocio.RESTAURANTE) {
+            return;
+        }
+        try (java.sql.Connection cn = BDConexao.novaLigacao()) {
+            comercial.ginasio.PedidosGinasio.garantirEstrutura(cn);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+        pedidosGinasioNaVenda.clear();
+        botaoPedidosGinasio = new comercial.ginasio.BotaoPedidos();
+        botaoPedidosGinasio.addActionListener(e -> abrirPedidosGinasio());
+        // no cabeçalho, antes do operador: sempre à vista (o cartão do cliente
+        // pode ficar abaixo da dobra em ecrãs baixos)
+        java.awt.Container direita = lb_nome_usuario.getParent();
+        java.awt.Container cabecalho = direita == null ? null : direita.getParent();
+        java.awt.Container pai = cmbCliente.getParent();
+        if (cabecalho != null && cabecalho.getLayout() instanceof java.awt.BorderLayout) {
+            final int linha = 32, espaco = 6, altura = 2 * linha + espaco;
+            java.awt.Dimension b = new java.awt.Dimension(120, altura);
+            botaoPedidosGinasio.setPreferredSize(b);
+            botaoPedidosGinasio.setMinimumSize(b);
+            botaoPedidosGinasio.setMaximumSize(b);
+            botaoPedidosGinasio.setAlignmentY(0f);
+            // à esquerda do botão: pesquisa rápida do cliente (nome, telefone ou NIF)
+            comercial.ginasio.PesquisaClienteCampo pesquisaCliente = new comercial.ginasio.PesquisaClienteCampo(c -> {
+                seleccionarClienteNaVenda(c.nome);
+                txtCodigoBarra.requestFocusInWindow();
+            });
+            pesquisaClienteGinasio = pesquisaCliente;
+            // por baixo: a mesma lista de clientes da venda (partilha o modelo da cmbCliente)
+            visao.design.ComboModerno comboCliente = new visao.design.ComboModerno(cmbCliente.getModel());
+            visao.design.Formularios.estiloCombo(comboCliente);
+            comboCliente.setFont(cmbCliente.getFont());
+            comboCliente.setMaximumRowCount(cmbCliente.getMaximumRowCount());
+            comboCliente.setToolTipText("Cliente da venda");
+            // a venda troca o modelo (filtro pelas iniciais, novos clientes): a combo de cima acompanha
+            cmbCliente.addPropertyChangeListener("model", ev -> comboCliente.setModel(cmbCliente.getModel()));
+            JPanel pilhaCliente = new JPanel(new java.awt.GridLayout(2, 1, 0, espaco));
+            pilhaCliente.setOpaque(false);
+            pilhaCliente.add(pesquisaCliente);
+            pilhaCliente.add(comboCliente);
+            pilhaCliente.setPreferredSize(new java.awt.Dimension(340, altura));
+            pilhaCliente.setMinimumSize(new java.awt.Dimension(170, altura));
+            pilhaCliente.setMaximumSize(new java.awt.Dimension(340, altura));
+            pilhaCliente.setAlignmentY(0f);
+            // no meio do cabeçalho, encostado ao topo: encolhe com a janela em vez de tapar o título
+            JPanel meio = new JPanel();
+            meio.setOpaque(false);
+            meio.setLayout(new BoxLayout(meio, BoxLayout.X_AXIS));
+            meio.add(Box.createHorizontalGlue());
+            meio.add(pilhaCliente);
+            meio.add(Box.createHorizontalStrut(10));
+            meio.add(botaoPedidosGinasio);
+            ((JComponent) cabecalho).add(meio, java.awt.BorderLayout.CENTER);
+            // o nome da empresa é o que cede espaço (completo na dica)
+            jlEmpresa.setToolTipText(jlEmpresa.getText());
+            java.awt.Dimension e = jlEmpresa.getPreferredSize();
+            jlEmpresa.setPreferredSize(new java.awt.Dimension(Math.min(e.width, 300), e.height));
+            direita.revalidate();
+            getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl L"), "pesquisarClienteGinasio");
+            getRootPane().getActionMap().put("pesquisarClienteGinasio", new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    pesquisaCliente.requestFocusInWindow();
+                }
+            });
+            cabecalho.revalidate();
+            cabecalho.repaint();
+        } else if (pai != null) {
+            // sem cabeçalho: a caixa do cliente partilha a linha com o botão (à direita)
+            Object onde = pai.getLayout() instanceof java.awt.BorderLayout
+                    ? ((java.awt.BorderLayout) pai.getLayout()).getConstraints(cmbCliente) : null;
+            pai.remove(cmbCliente);
+            JPanel linhaCliente = new JPanel(new java.awt.BorderLayout(8, 0));
+            linhaCliente.setOpaque(false);
+            linhaCliente.add(cmbCliente, java.awt.BorderLayout.CENTER);
+            botaoPedidosGinasio.setPreferredSize(new java.awt.Dimension(122, Math.max(34, cmbCliente.getPreferredSize().height)));
+            linhaCliente.add(botaoPedidosGinasio, java.awt.BorderLayout.EAST);
+            pai.add(linhaCliente, onde != null ? onde : java.awt.BorderLayout.CENTER);
+            pai.revalidate();
+            pai.repaint();
+        }
+
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("F6"), "pedidosGinasio");
+        getRootPane().getActionMap().put("pedidosGinasio", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                abrirPedidosGinasio();
+            }
+        });
+
+        // outros postos também registam pedidos: o contador actualiza-se sozinho
+        temporizadorPedidosGinasio = new javax.swing.Timer(45000, e -> actualizarContadorPedidosGinasio());
+        temporizadorPedidosGinasio.start();
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosed(java.awt.event.WindowEvent e) {
+                temporizadorPedidosGinasio.stop();
+            }
+        });
+        actualizarContadorPedidosGinasio();
+    }
+
+    /** Número de clientes com pedidos em aberto (sem os que já estão nesta venda), lido em segundo plano. */
+    private static void actualizarContadorPedidosGinasio() {
+        final comercial.ginasio.BotaoPedidos botao = botaoPedidosGinasio;
+        if (botao == null) {
+            return;
+        }
+        final java.util.Set<Integer> excluir = new java.util.HashSet<>(pedidosGinasioNaVenda.keySet());
+        new javax.swing.SwingWorker<Integer, Void>() {
+            @Override
+            protected Integer doInBackground() throws Exception {
+                return comercial.ginasio.PedidosGinasio.contarClientes(excluir);
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    botao.setContagem(get());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.execute();
+    }
+
+    private void abrirPedidosGinasio() {
+        // os pedidos são sempre de um cliente cadastrado: com o Consumidor Final não se abre
+        Object seleccionado = cmbCliente.getSelectedItem();
+        if (comercial.ginasio.PedidosGinasio.ehConsumidorFinal(seleccionado == null ? null : seleccionado.toString())) {
+            java.awt.Toolkit.getDefaultToolkit().beep();
+            JOptionPane.showMessageDialog(this, "Seleccione um cliente personalizado.\n\n"
+                    + "Os pedidos ficam sempre em nome de um cliente cadastrado, nunca do Consumidor Final.",
+                    "Pedidos", JOptionPane.WARNING_MESSAGE);
+            (pesquisaClienteGinasio != null ? pesquisaClienteGinasio : cmbCliente).requestFocusInWindow();
+            return;
+        }
+        int idCliente = getIdCliente();
+        String nomeCliente = seleccionado.toString().trim();
+        String operador = "";
+        try {
+            operador = ((TbUsuario) usuariosController.findById(cod_usuario)).getNome();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        int armazem;
+        try {
+            armazem = getCodigoArmazem();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Seleccione o armazém da venda.", "Pedidos", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        new comercial.ginasio.PedidosGinasioDialog(this, cod_usuario, operador, armazem, idCliente, nomeCliente,
+                new java.util.HashSet<>(pedidosGinasioNaVenda.keySet()), this::receberPedidosGinasio).setVisible(true);
+        actualizarContadorPedidosGinasio();
+        txtCodigoBarra.requestFocusInWindow();
+    }
+
+    /**
+     * "Adicionar à facturação": junta os pedidos (somados por produto) à
+     * tabela da venda, com o cliente deles. Um produto que já esteja na tabela
+     * fica com a quantidade somada. Devolve os ids dos pedidos que entraram.
+     */
+    private java.util.List<Integer> receberPedidosGinasio(int idCliente, String nomeCliente,
+            java.util.List<comercial.ginasio.PedidosGinasio.Pedido> pedidos) {
+        java.util.List<Integer> aceites = new java.util.ArrayList<>();
+        String actual = cmbCliente.getSelectedItem() == null ? "" : cmbCliente.getSelectedItem().toString().trim();
+        if (!pedidosGinasioNaVenda.isEmpty() && !comercial.ginasio.PedidosGinasio.ehConsumidorFinal(actual)
+                && !actual.equalsIgnoreCase(nomeCliente.trim())) {
+            int r = JOptionPane.showConfirmDialog(this, "A venda já tem pedidos de " + actual + ".\n"
+                    + "Juntar também os pedidos de " + nomeCliente + " na mesma factura (em nome de " + actual + ")?",
+                    "Pedidos", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (r != JOptionPane.YES_OPTION) {
+                return aceites;
+            }
+        } else if (!actual.equalsIgnoreCase(nomeCliente.trim())) {
+            seleccionarClienteNaVenda(nomeCliente);
+        }
+
+        // somados por produto, pela ordem do primeiro pedido
+        java.util.Map<Integer, java.util.List<comercial.ginasio.PedidosGinasio.Pedido>> porProduto = new java.util.LinkedHashMap<>();
+        for (comercial.ginasio.PedidosGinasio.Pedido p : pedidos) {
+            porProduto.computeIfAbsent(p.idProduto, k -> new java.util.ArrayList<>()).add(p);
+        }
+        java.util.List<String> falhas = new java.util.ArrayList<>();
+        for (java.util.Map.Entry<Integer, java.util.List<comercial.ginasio.PedidosGinasio.Pedido>> e : porProduto.entrySet()) {
+            int codigo = e.getKey();
+            double q = 0;
+            for (comercial.ginasio.PedidosGinasio.Pedido p : e.getValue()) {
+                q += p.quantidade;
+            }
+            double antes = quantidadeNaTabelaVenda(codigo);
+            boolean entrou;
+            try {
+                if (antes > 0) {
+                    entrou = somarQuantidadeNaTabelaVenda(codigo, antes + q);
+                } else {
+                    txtQuatindade.setText(q == Math.rint(q) ? String.valueOf((long) q) : String.valueOf(q));
+                    accao_codigo_interno_enter_busca_exterior(codigo, q);
+                    entrou = quantidadeNaTabelaVenda(codigo) >= q - 0.0001;
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                entrou = false;
+            }
+            if (entrou) {
+                for (comercial.ginasio.PedidosGinasio.Pedido p : e.getValue()) {
+                    pedidosGinasioNaVenda.put(p.id, codigo);
+                    aceites.add(p.id);
+                }
+            } else {
+                falhas.add("• " + e.getValue().get(0).designacao);
+            }
+        }
+        txtQuatindade.setText("1");
+        if (!falhas.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Estes pedidos não entraram na venda (stock insuficiente ou produto indisponível):\n"
+                    + String.join("\n", falhas) + "\n\nContinuam em aberto nos pedidos do cliente.",
+                    "Pedidos", JOptionPane.WARNING_MESSAGE);
+        }
+        actualizarContadorPedidosGinasio();
+        return aceites;
+    }
+
+    private void seleccionarClienteNaVenda(String nome) {
+        boolean existe = false;
+        for (int i = 0; i < cmbCliente.getItemCount(); i++) {
+            if (String.valueOf(cmbCliente.getItemAt(i)).trim().equalsIgnoreCase(nome.trim())) {
+                existe = true;
+                break;
+            }
+        }
+        if (!existe) {
+            // a lista pode estar filtrada pelas iniciais (ou o cliente ser novo)
+            cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVector()));
+        }
+        cmbCliente.setSelectedItem(nome);
+    }
+
+    /** Soma das quantidades do produto nas linhas da venda (0 se não estiver). */
+    private static double quantidadeNaTabelaVenda(int codigo) {
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        double q = 0;
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            if (String.valueOf(codigo).equals(String.valueOf(modelo.getValueAt(i, 0)).trim())) {
+                try {
+                    q += Double.parseDouble(String.valueOf(modelo.getValueAt(i, 4)).trim());
+                } catch (NumberFormatException e) {
+                    // linha a meio de edição
+                }
+            }
+        }
+        return q;
+    }
+
+    /** Põe a quantidade total na linha do produto (se houver stock), com os totais recalculados. */
+    private static boolean somarQuantidadeNaTabelaVenda(int codigo, double novaQuantidade) {
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        int linha = -1;
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            if (String.valueOf(codigo).equals(String.valueOf(modelo.getValueAt(i, 0)).trim())) {
+                linha = i;
+                break;
+            }
+        }
+        if (linha < 0) {
+            return false;
+        }
+        if (table.isEditing() && table.getCellEditor() != null) {
+            table.getCellEditor().stopCellEditing();
+        }
+        TbProduto produto = (TbProduto) produtosController.findById(codigo);
+        TbTipoProduto tipo = (TbTipoProduto) tipoProdutoController.findById(produto.getCodTipoProduto().getCodigo());
+        boolean servico = tipo.getFkFamilia().getPkFamilia() == DVML.COD_SERVICO;
+        if (!servico && isStocavel(produto.getStocavel()) && !possivel_quantidade(codigo, novaQuantidade)) {
+            return false;
+        }
+        double desconto = 0;
+        try {
+            desconto = Double.parseDouble(String.valueOf(modelo.getValueAt(linha, 5)));
+        } catch (NumberFormatException e) {
+            // sem desconto
+        }
+        linha_actual = linha;
+        modelo.setValueAt(novaQuantidade, linha, 4);
+        actuazlizar_quantidade_tabela_formulario(String.valueOf(novaQuantidade), desconto);
+        setTotalRetencao();
+        setTotalPagar();
+        setTotalPagarGeral();
+        calculaTotalIVA();
+        valor_por_extenco();
+        return true;
+    }
+
+    /**
+     * Pedidos do ginásio na venda: a factura tem de ficar em nome de um cliente
+     * cadastrado, nunca do Consumidor Final. Avisa e devolve false se não estiver.
+     */
+    private static boolean clientePedidosGinasioValido(boolean avisar) {
+        boolean temPedidos = false;
+        for (Integer codigo : pedidosGinasioNaVenda.values()) {
+            if (quantidadeNaTabelaVenda(codigo) > 0) {
+                temPedidos = true;
+                break;
+            }
+        }
+        Object cliente = cmbCliente.getSelectedItem();
+        if (!temPedidos || !comercial.ginasio.PedidosGinasio.ehConsumidorFinal(cliente == null ? null : cliente.toString())) {
+            return true;
+        }
+        if (avisar) {
+            JOptionPane.showMessageDialog(null, "Esta venda tem pedidos do ginásio: a factura tem de ficar em nome\n"
+                    + "de um cliente cadastrado, não do Consumidor Final.\n\nEscolha o cliente dos pedidos.",
+                    "Pedidos do ginásio", JOptionPane.WARNING_MESSAGE);
+        }
+        return false;
+    }
+
+    /**
+     * Na transacção da venda: dá baixa (FACTURADO) dos pedidos do ginásio cujos
+     * produtos continuam na tabela. Se o operador tirou a linha de um produto,
+     * os pedidos dele ficam em aberto. Proformas não dão baixa.
+     */
+    private static void marcarPedidosGinasioFacturados(BDConexao transaccao, int idVenda) throws SQLException {
+        if (pedidosGinasioNaVenda.isEmpty() || getIdDocumento() == DVML.DOC_FACTURA_PROFORMA_PP) {
+            return;
+        }
+        if (!clientePedidosGinasioValido(false)) {
+            throw new SQLException("os pedidos do ginásio não podem ser facturados ao Consumidor Final");
+        }
+        java.util.List<Integer> ids = new java.util.ArrayList<>();
+        for (java.util.Map.Entry<Integer, Integer> e : pedidosGinasioNaVenda.entrySet()) {
+            if (quantidadeNaTabelaVenda(e.getValue()) > 0) {
+                ids.add(e.getKey());
+            }
+        }
+        comercial.ginasio.PedidosGinasio.marcarFacturados(transaccao.getConnectionAtiva(), ids, idVenda);
     }
 
     private void init() {
@@ -1058,10 +1478,10 @@ repaint();
         if (validar()) {
 
             configuracaoMesComecoController = new ConfiguracaoMesComecoController(conexao.getConnectionAtiva());
-            boolean existeConfiguracaoDoCliente = configuracaoMesComecoController.existeConfiguracaoDoCliente(getIdCliente(), getCodigoProduto());
+            boolean existeConfiguracaoDoCliente = comercial.mensalidade.Mensalidades.activo() && configuracaoMesComecoController.existeConfiguracaoDoCliente(getIdCliente(), getCodigoProduto());
 
             if (existeConfiguracaoDoCliente) {
-                new MesesPagoClienteVisao(this, rootPaneCheckingEnabled,
+                new comercial.mensalidade.MesesMensalidadeDialog(this, rootPaneCheckingEnabled,
                         getIdCliente(),
                         getCodigoProduto(), conexao).setVisible(true);
             } else {
@@ -1233,6 +1653,9 @@ repaint();
                 if (!validarPrecos_tabela(table)) {
                     return; // Se houver erro, não abre forma de pagamento
                 }
+                if (!clientePedidosGinasioValido(true)) {
+                    return; // pedidos do ginásio nunca em nome do Consumidor Final
+                }
 
                 new FormaPagamentoVisao(this, rootPaneCheckingEnabled, null, DVML.VENDA_PONTUAL_TOP, BDConexao.getInstancia()).setVisible(true);
             } else {
@@ -1254,6 +1677,9 @@ repaint();
 
                 if (!validarPrecos_tabela(table)) {
                     return; // Se houver erro, não abre forma de pagamento
+                }
+                if (!clientePedidosGinasioValido(true)) {
+                    return; // pedidos do ginásio nunca em nome do Consumidor Final
                 }
 
                 new FormaPagamentoVisao(
@@ -1359,6 +1785,9 @@ repaint();
             if (!MetodosUtil.tabela_vazia(table)) {
                 if (!validarPrecos_tabela(table)) {
                     return; // Se houver erro, não abre forma de pagamento
+                }
+                if (!clientePedidosGinasioValido(true)) {
+                    return; // pedidos do ginásio nunca em nome do Consumidor Final
                 }
                 procedimento_salvar_venda_comercial(false);
             } else {
@@ -1491,13 +1920,9 @@ repaint();
     }
 
     void btn_fecho_dia_vendaActionPerformed(java.awt.event.ActionEvent evt) {
-        if (dadosInstituicao.getTipoFechoCaixa().equals("Normal")) {
-            new CaixaFechoVisao(cod_usuario, conexao, false).setVisible(true);
-        } else if (dadosInstituicao.getTipoFechoCaixa().equals("Simplificado")) {
-            new CaixaFechoGoldVisao(cod_usuario, conexao, false).setVisible(true);
-        } else {
-            new CaixaFechoGoldDetalhadoVisao(cod_usuario, conexao, false).setVisible(true);
-        }
+        // fecho de caixa do SysKitandaHotel: valor contado por forma de pagamento, talão com QR,
+        // PDF enviado por e-mail e WhatsApp em segundo plano (os fechos antigos tiravam o troco duas vezes)
+        comercial.caixa.FechoCaixaWeb.mostrar(this, cod_usuario, "Vendas", false);
     }
 
     void txtBuscaRefActionPerformed(java.awt.event.ActionEvent evt) {
@@ -2014,6 +2439,10 @@ repaint();
         for (int i = modelo.getRowCount() - 1; i >= 0; i--) {
             modelo.removeRow(i);
         }
+        if (!pedidosGinasioNaVenda.isEmpty()) {
+            pedidosGinasioNaVenda.clear();
+            actualizarContadorPedidosGinasio();
+        }
 
     }
 
@@ -2071,6 +2500,11 @@ repaint();
 
         // Valida campos antes de prosseguir
         if (campos_invalido_imprimir()) {
+            return;
+        }
+
+        // multas reduzidas no carrinho: administrador + motivo
+        if (!comercial.mensalidade.MultasMensalidade.validarVenda(table)) {
             return;
         }
 
@@ -2150,6 +2584,9 @@ repaint();
             // Salvar os itens da venda
             salvar_item_venda_comercial(idVendaGerada, conexaoTransactionLocal, stocksControllerLocal);
 
+            // ginásio: os pedidos que entraram nesta factura ficam FACTURADO (na mesma transacção)
+            marcarPedidosGinasioFacturados(conexaoTransactionLocal, idVendaGerada);
+
             // Registrar formas de pagamento
             if (getIdDocumento() == DOC_FACTURA_RECIBO_FR) {
                 registrarFormaPagamento(idVendaGerada, venda.getTotalVenda(), frNormal, conexaoTransactionLocal);
@@ -2168,6 +2605,10 @@ repaint();
 
             DocumentosController.commit(conexaoTransactionLocal);
             vendaConcluida = true;
+            if (!pedidosGinasioNaVenda.isEmpty()) {
+                pedidosGinasioNaVenda.clear();
+                actualizarContadorPedidosGinasio();
+            }
 
             txtCodigoBarra.requestFocus();
             JOptionPane.showMessageDialog(
@@ -2613,7 +3054,12 @@ repaint();
                     String mes = getMes(designacaoItem);
                     if (!mes.equals("N/S")) {
                         procedimentoPagamentoMensalidadeServico(cod_venda, getIdCliente(), idProduto, mes, conexaoLocal);
-                        System.out.println("Pagmento de mensalidade pago com sucesso!..");
+                        // a multa deste mês (cobrada, ajustada ou perdoada) fica registada
+                        comercial.mensalidade.MultasMensalidade.aoGravarMes(conexaoLocal.getConnectionAtiva(), cod_venda,
+                                getIdCliente(), idProduto, mes, cod_usuario);
+                    } else {
+                        comercial.mensalidade.MultasMensalidade.aoGravarLinha(conexaoLocal.getConnectionAtiva(), cod_venda,
+                                designacaoItem, new BigDecimal(CfMethods.parseMoedaFormatada(table.getModel().getValueAt(i, 9).toString())));
                     }
                 }
 
@@ -2684,18 +3130,22 @@ repaint();
 
     private static boolean procedimentoPagamentoMensalidadeServico(int vendaId, int idCliente, int idProduto, String mes, BDConexao conexaoParm) {
 
-        mesRhController = new MesRhController(conexaoParm.getConnectionAtiva());
-        int mesId = mesRhController.getIdByDescricao(mes);
+        // "Março/2026" (ou só "Março" nas linhas antigas = ano corrente)
+        comercial.mensalidade.Periodo periodo = comercial.mensalidade.Periodo.ler(mes,
+                comercial.mensalidade.Periodo.actual().getAno());
+        if (periodo == null) {
+            System.err.println("Mensalidade: mês inválido na designação: " + mes);
+            return false;
+        }
         PagamentoMensalidade pagamentoMensalidade = new PagamentoMensalidade();
         pagamentoMensalidade.setClienteId(idCliente);
         pagamentoMensalidade.setProdutoId(idProduto);
-        pagamentoMensalidade.setMesId(mesId);
+        pagamentoMensalidade.setMesId(periodo.getMes());
+        pagamentoMensalidade.setAno(periodo.getAno());
         pagamentoMensalidade.setVendaId(vendaId);
         pagamentoMensalidade.setDataCadastro(new Date());
 
-        return pagamentoMensalidadeController.salvar(pagamentoMensalidade);
-
-    }
+        return pagamentoMensalidadeController.salvar(pagamentoMensalidade);}
 
     private static boolean data_documento_superior_ou_igual_ao_ultimo_doc() {
         //buscando o id do documento.
@@ -3175,6 +3625,65 @@ repaint();
 
         }
 
+    }
+
+    /**
+     * Linha com designação e preço próprios (multas das mensalidades): o valor
+     * vai directamente para a linha — não passa pela tabela de preços, não mexe
+     * no stock e não imprime talão. Leva o IVA/retenção do produto indicado.
+     */
+    public static void adicionarLinhaComValor(int codigoProduto, String designacao, BigDecimal preco) {
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        if (table.isEditing() && table.getCellEditor() != null) {
+            table.getCellEditor().stopCellEditing();
+        }
+        String unidade = "UN";
+        try {
+            TbProduto produto = (TbProduto) produtosController.findById(codigoProduto);
+            Unidade u = (Unidade) unidadesController.findById(produto.getCodUnidade().getPkUnidade());
+            unidade = u.getAbreviacao();
+        } catch (Exception semUnidade) {
+            // fica "UN"
+        }
+        BigDecimal descontoPercent = BigDecimal.ZERO;
+        BigDecimal taxaIva = BigDecimal.valueOf(getTaxaImpostoIva(codigoProduto));
+        BigDecimal taxaRet = BigDecimal.valueOf(getTaxaImpostoRet(codigoProduto));
+        BigDecimal valorIliquido = FinanceUtils.getValorIliquido(BigDecimal.ONE, preco, descontoPercent);
+        double totalComIva = FinanceUtils.getValorComIVA(1d, taxaIva.doubleValue(), valorIliquido.doubleValue(), 0d);
+        String totalRetencao = CfMethods.formatarComoMoeda(
+                MetodosUtil.getValorComRetencao(1d, taxaRet.doubleValue(), preco.doubleValue(), 0d));
+
+        int row = -1;
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            if (linhaTabelaEstaVazia(modelo, i)) {
+                row = i;
+                break;
+            }
+        }
+        if (row == -1) {
+            modelo.addRow(new Object[]{"", "", "", "", "", "", "", "", "", "", ""});
+            row = modelo.getRowCount() - 1;
+        }
+        modelo.setValueAt(codigoProduto, row, 0);
+        modelo.setValueAt(designacao, row, 1);
+        modelo.setValueAt(unidade, row, 2);
+        modelo.setValueAt(CfMethods.formatarComoMoeda(preco), row, 3);
+        modelo.setValueAt(1.0, row, 4);
+        modelo.setValueAt(descontoPercent, row, 5);
+        modelo.setValueAt(taxaIva, row, 6);
+        modelo.setValueAt(taxaRet, row, 7);
+        modelo.setValueAt(totalRetencao, row, 8);
+        modelo.setValueAt(CfMethods.formatarComoMoeda(valorIliquido), row, 9);
+        modelo.setValueAt(CfMethods.formatarComoMoeda(BigDecimal.valueOf(totalComIva)), row, 10);
+        int last = modelo.getRowCount() - 1;
+        if (!linhaTabelaEstaVazia(modelo, last)) {
+            modelo.addRow(new Object[]{"", "", "", "", "", "", "", "", "", "", ""});
+        }
+        setTotalRetencao();
+        setTotalPagar();
+        setTotalPagarGeral();
+        calculaTotalIVA();
+        valor_por_extenco();
     }
 
     public static void adicionar_produto(String mes, double qtd) throws SQLException {
@@ -4941,8 +5450,22 @@ repaint();
             return;
         }
 
+        // uma multa tirada sozinha é um perdão: administrador + motivo
+        if (!comercial.mensalidade.MultasMensalidade.aoRemoverLinha(table, designacao)) {
+            return;
+        }
+
         // Remover a linha selecionada
         modelo.removeRow(linhaSelecionada);
+        // a multa de um mês sai com o mês
+        String prefixoMulta = comercial.mensalidade.MultasMensalidade.prefixoDaMultaDoMes(designacao);
+        if (prefixoMulta != null) {
+            for (int i = modelo.getRowCount() - 1; i >= 0; i--) {
+                if (String.valueOf(modelo.getValueAt(i, 1)).startsWith(prefixoMulta)) {
+                    modelo.removeRow(i);
+                }
+            }
+        }
 
         // Atualizar os totais
         setTotalPagar();
@@ -5056,12 +5579,12 @@ repaint();
 
             configuracaoMesComecoController = new ConfiguracaoMesComecoController(conexao.getConnectionAtiva());
 
-            boolean existeConfiguracaoDoCliente = configuracaoMesComecoController.existeConfiguracaoDoCliente(
+            boolean existeConfiguracaoDoCliente = comercial.mensalidade.Mensalidades.activo() && configuracaoMesComecoController.existeConfiguracaoDoCliente(
                     getIdCliente(), produtoLocal.getCodigo());
 
             if (existeConfiguracaoDoCliente) {
 
-                new MesesPagoClienteVisao(null,
+                new comercial.mensalidade.MesesMensalidadeDialog(null,
                         true,
                         getIdCliente(),
                         getCodigoProduto(), conexao).setVisible(true);
@@ -5122,6 +5645,10 @@ repaint();
         };
     }
 
+    /**
+     * Mensalidades: os meses do mesmo serviço saem do último para o primeiro,
+     * para não ficar um mês por pagar no meio dos pagos.
+     */
     private boolean podeRemoverServico(DefaultTableModel model, int selectedRow) {
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(null, "Selecione um serviço para remover!");
@@ -5129,135 +5656,39 @@ repaint();
         }
 
         String designacaoSelecionada = String.valueOf(model.getValueAt(selectedRow, 1));
-        if (designacaoSelecionada == null || !designacaoSelecionada.contains("#")) {
+        comercial.mensalidade.Periodo periodo = comercial.mensalidade.Periodo.daDesignacao(designacaoSelecionada);
+        if (periodo == null) {
             return true; // não é mensalidade
         }
+        String servico = comercial.mensalidade.Periodo.servicoDaDesignacao(designacaoSelecionada);
 
-        // mapa de meses em ordem e normalizado
-        String[] meses
-                = {
-                    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-                    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
-                };
-        // criar versão normalizada do array meses para comparação
-        String[] mesesNorm = new String[meses.length];
-        for (int i = 0; i < meses.length; i++) {
-            mesesNorm[i] = normalizar(meses[i]);
+        comercial.mensalidade.Periodo ultimo = null;
+        int linhaUltimo = -1;
+        for (int r = 0; r < model.getRowCount(); r++) {
+            String d = String.valueOf(model.getValueAt(r, 1));
+            comercial.mensalidade.Periodo p = comercial.mensalidade.Periodo.daDesignacao(d);
+            if (p == null || !servico.equals(comercial.mensalidade.Periodo.servicoDaDesignacao(d))) {
+                continue;
+            }
+            if (ultimo == null || p.compareTo(ultimo) >= 0) {
+                ultimo = p;
+                linhaUltimo = r;
+            }
         }
 
-        try {
-            String[] pm = extrairProdutoEMes(designacaoSelecionada);
-            if (pm == null) {
-                return true;
-            }
-            String produtoOriginal = pm[0];
-            String mesAtual = pm[1];
-
-            String produtoNorm = normalizar(produtoOriginal);
-
-            // índice do mês selecionado
-            String mesAtualNorm = normalizar(mesAtual);
-            int indexMesAtual = -1;
-            for (int i = 0; i < mesesNorm.length; i++) {
-                if (mesesNorm[i].equals(mesAtualNorm)) {
-                    indexMesAtual = i;
-                    break;
-                }
-            }
-            if (indexMesAtual == -1) {
-                JOptionPane.showMessageDialog(null, "Mês inválido: " + mesAtual);
-                return false;
-            }
-
-            // percorre todas as linhas e identifica as que pertencem EXATAMENTE ao mesmo produto
-            int totalMesesMesmoProduto = 0;
-            int maxIndexPresente = -1;
-            String mesMaisRecentePresente = null;
-
-            // também vamos registrar as linhas que tem o mês mais recente para garantir remover última ocorrência
-            java.util.List<Integer> linhasDoMesMaisRecente = new java.util.ArrayList<>();
-
-            for (int r = 0; r < model.getRowCount(); r++) {
-                String d = String.valueOf(model.getValueAt(r, 1));
-                if (d == null || !d.contains("#")) {
-                    continue;
-                }
-
-                String[] pmLinha = extrairProdutoEMes(d);
-                if (pmLinha == null) {
-                    continue;
-                }
-
-                String produtoLinhaNorm = normalizar(pmLinha[0]);
-
-                // compara produto por igualdade da string normalizada
-                if (!produtoLinhaNorm.equals(produtoNorm)) {
-                    continue;
-                }
-
-                // extrai mes e normaliza
-                String mesLinhaNorm = normalizar(pmLinha[1]);
-                int idxLinha = -1;
-                for (int m = 0; m < mesesNorm.length; m++) {
-                    if (mesesNorm[m].equals(mesLinhaNorm)) {
-                        idxLinha = m;
-                        break;
-                    }
-                }
-                if (idxLinha == -1) {
-                    continue;
-                }
-
-                totalMesesMesmoProduto++;
-
-                if (idxLinha > maxIndexPresente) {
-                    maxIndexPresente = idxLinha;
-                    mesMaisRecentePresente = meses[idxLinha];
-                    linhasDoMesMaisRecente.clear();
-                    linhasDoMesMaisRecente.add(r);
-                } else if (idxLinha == maxIndexPresente) {
-                    // mesma posição do mês mais recente — acrescenta a linha (duplicatas do mesmo mês)
-                    linhasDoMesMaisRecente.add(r);
-                }
-            }
-
-            // se existe apenas 1 mês daquele produto -> pode remover
-            if (totalMesesMesmoProduto <= 1) {
-                return true;
-            }
-
-            // se o mês do selectedRow não é o mês mais recente -> bloqueia
-            if (indexMesAtual != maxIndexPresente) {
-                JOptionPane.showMessageDialog(null,
-                        "Não pode remover " + meses[indexMesAtual]
-                        + " antes de remover " + mesMaisRecentePresente + " (remova do último para o primeiro).");
-                return false;
-            }
-
-            // se o mês selecionado é o mês mais recente, mas há várias linhas com o mesmo mês,
-            // só permita remover se a linha selecionada for a *última ocorrência* daquele mês (maior índice de linha).
-            if (!linhasDoMesMaisRecente.isEmpty()) {
-                int maiorLinha = -1;
-                for (Integer ln : linhasDoMesMaisRecente) {
-                    if (ln > maiorLinha) {
-                        maiorLinha = ln;
-                    }
-                }
-                if (selectedRow != maiorLinha) {
-                    JOptionPane.showMessageDialog(null,
-                            "Existem várias entradas para " + mesMaisRecentePresente
-                            + ". Remova a linha mais abaixo (última ocorrência) primeiro.");
-                    return false;
-                }
-            }
-
-            // passou todas as regras -> pode remover
-            return true;
-
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Erro ao verificar serviço: " + ex.getMessage());
+        if (ultimo != null && periodo.compareTo(ultimo) < 0) {
+            JOptionPane.showMessageDialog(null,
+                    "Não pode remover " + periodo.texto() + " antes de remover " + ultimo.texto()
+                    + " (remova do último para o primeiro).");
             return false;
         }
+        if (linhaUltimo >= 0 && selectedRow != linhaUltimo && periodo.equals(ultimo)) {
+            JOptionPane.showMessageDialog(null,
+                    "Existem várias entradas para " + ultimo.texto()
+                    + ". Remova a linha mais abaixo (última ocorrência) primeiro.");
+            return false;
+        }
+        return true;
     }
 
     private static boolean primeiraLinhaVazia() {
@@ -5330,7 +5761,7 @@ repaint();
 //                );
 //
 //        if (existeConfiguracaoDoCliente) {
-//            new MesesPagoClienteVisao(
+//            new comercial.mensalidade.MesesMensalidadeDialog(
 //                    this,
 //                    rootPaneCheckingEnabled,
 //                    getIdCliente(),
@@ -5373,13 +5804,13 @@ repaint();
             configuracaoMesComecoController = new ConfiguracaoMesComecoController(conexao.getConnectionAtiva());
 
             System.out.println("***** Chegue 0");
-            boolean existeConfiguracaoDoCliente = configuracaoMesComecoController
+            boolean existeConfiguracaoDoCliente = comercial.mensalidade.Mensalidades.activo() && configuracaoMesComecoController
                     .existeConfiguracaoDoCliente(
                             getIdCliente(),
                             getCodigoProduto());
 
             if (existeConfiguracaoDoCliente) {
-                new MesesPagoClienteVisao(this,
+                new comercial.mensalidade.MesesMensalidadeDialog(this,
                         rootPaneCheckingEnabled,
                         getIdCliente(),
                         getCodigoProduto(), conexao).setVisible(true);
@@ -5416,6 +5847,20 @@ repaint();
             /**
              * Verrifica se nao existe na tabela.
              */
+            // serviço com contrato de mensalidade deste cliente: abre sempre a janela dos meses
+            // (antes, se já houvesse um mês do serviço na venda, somava +1 à quantidade dessa linha)
+            if (produtoLocal != null && comercial.mensalidade.Mensalidades.activo()
+                    && new ConfiguracaoMesComecoController(conexao.getConnectionAtiva())
+                            .existeConfiguracaoDoCliente(getIdCliente(), produtoLocal.getCodigo())) {
+                new comercial.mensalidade.MesesMensalidadeDialog(this, rootPaneCheckingEnabled, getIdCliente(),
+                        produtoLocal.getCodigo(), conexao).setVisible(true);
+                txtCodigoProduto.setText("");
+                txtCodigoBarra.setText("");
+                txtQuatindade.setText("1");
+                txtCodigoBarra.requestFocus();
+                return;
+            }
+
             if (!existProduto(produtoLocal.getCodigo())) {
                 if (codigoBarra.isEmpty()) {
                     JOptionPane.showMessageDialog(null,
@@ -5448,10 +5893,10 @@ repaint();
                 // Verificação da configuração do cliente
                 configuracaoMesComecoController = new ConfiguracaoMesComecoController(conexao.getConnectionAtiva());
                 boolean existeConfiguracaoDoCliente
-                        = configuracaoMesComecoController.existeConfiguracaoDoCliente(getIdCliente(), produtoLocal.getCodigo());
+                        = comercial.mensalidade.Mensalidades.activo() && configuracaoMesComecoController.existeConfiguracaoDoCliente(getIdCliente(), produtoLocal.getCodigo());
 
                 if (existeConfiguracaoDoCliente) {
-                    new MesesPagoClienteVisao(this, rootPaneCheckingEnabled, getIdCliente(),
+                    new comercial.mensalidade.MesesMensalidadeDialog(this, rootPaneCheckingEnabled, getIdCliente(),
                             produtoLocal.getCodigo(), conexao).setVisible(true);
                 } else {
                     // --- ADICIONA PRODUTO NA TABELA ---
@@ -5474,7 +5919,9 @@ repaint();
                 double taxa = Double.parseDouble(modelo.getValueAt(linha_existente_produto, 6).toString());
                 double desconto = Double.parseDouble(modelo.getValueAt(linha_existente_produto, 5).toString());
 
-                if (possivel_quantidade(cod_interno, qtd)) {
+                TbProduto produtoExistente = (TbProduto) produtosController.findById(cod_interno);
+                boolean servico = produtoExistente != null && !isStocavel(produtoExistente.getStocavel());
+                if (servico || possivel_quantidade(cod_interno, qtd)) {
 
                     BigDecimal valorIliquido = FinanceUtils.getValorIliquido(new BigDecimal(qtd), new BigDecimal(preco), new BigDecimal(desconto));
                     modelo.setValueAt(qtd, linha_existente_produto, 4);
@@ -5564,7 +6011,8 @@ repaint();
 
             if (!rbTranstorno.isSelected()) {
 
-                if (possivel_quantidade()) {
+                // serviços (não stocáveis) não têm stock: não se verifica a quantidade
+                if (!isStocavel(produto.getStocavel()) || possivel_quantidade()) {
 
                     DefaultTableModel model = (DefaultTableModel) table.getModel();
 
@@ -6667,6 +7115,9 @@ repaint();
             if (!MetodosUtil.tabela_vazia(table)) {
                 if (!validarPrecos_tabela(table)) {
                     return; // Se houver erro, não abre forma de pagamento
+                }
+                if (!clientePedidosGinasioValido(true)) {
+                    return; // pedidos do ginásio nunca em nome do Consumidor Final
                 }
 
                 new FormaPagamentoVisao(this, rootPaneCheckingEnabled, null, DVML.VENDA_PONTUAL_TOP, BDConexao.getInstancia()).setVisible(true);

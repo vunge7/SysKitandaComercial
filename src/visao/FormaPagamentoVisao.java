@@ -79,6 +79,9 @@ public class FormaPagamentoVisao extends javax.swing.JFrame {
         aplicarRegraValor(tabela_forma_pagamento);
         configurarEnterTabela();
 //        configurarAtalhoFinalizar();
+        // aspecto da Forma de Pagamento do SysKitandaHotel, sobre o initComponents
+        util.ui.LayoutSeguro.aplicar( this, "Forma de pagamento", () -> util.ui.FormaPagamentoWeb.montar( this, null,
+                lb_total_geral, lb_troco, tabela_forma_pagamento, jScrollPane2, bt_finalizar, jButton6 ) );
 //        }
 //        else
 //        {

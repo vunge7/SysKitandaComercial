@@ -61,6 +61,7 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JFormattedTextField;
+import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -100,11 +101,12 @@ import util.cronjob.ValidadorJob;
  */
 public class LoginVisao extends javax.swing.JFrame {
 
-    private static EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
+    // instância (não estático): carregar a classe para correr o main() já não cria o JPA,
+    // por isso o ecrã de arranque aparece logo e o EclipseLink prepara-se em paralelo
+    private EntityManagerFactory emf = JPAEntityMannagerFactoryUtil.em;
     private static DadosInstituicaoController dadosInstituicaoController;
     private UsuarioDao usuarioDao = new UsuarioDao(emf);
     private EmpresaDao empresaDao = new EmpresaDao(emf);
-    private static CaixaDao caixaDao = new CaixaDao(emf);
 
     private DocumentoDao documentoDao = new DocumentoDao(emf);
     private DadosInstituicaoDao dadosInstituicaoDao = new DadosInstituicaoDao(emf);
@@ -124,6 +126,8 @@ public class LoginVisao extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
         setResizable(false);
+        // aspecto web do SysKitandaHotel (marca Kitanda), sobre o initComponents
+        util.ui.LayoutSeguro.aplicar(this, "Início de sessão", this::montarLayoutWeb);
         setVisible(true);
 
 // Obtém a instância única e garante que a conexão está ativa
@@ -140,8 +144,8 @@ public class LoginVisao extends javax.swing.JFrame {
 
         prazo();
 
-// Mostrar o painel de produtos a expirar apenas para Farmácia
-        if (d != null && "Farmacia".equalsIgnoreCase(d.getNegocio())) {
+// Produtos a expirar: só farmácias e minimercados com bens alimentares
+        if (mostrarPainelExpirar(d)) {
             criarPainelExpirar();
         }
 
@@ -152,13 +156,8 @@ public class LoginVisao extends javax.swing.JFrame {
 //                txtUserName, pswSenha);
 
         LoginVisao.setDefaultLookAndFeelDecorated(true);
-
-        try {
-            System.out.println("Data Ultimo: " + documentoDao.getMAxDataDoc().toString());
-        } catch (Exception e) {
-        }
 //        verificar_data_sistema();
-        txtUserName.requestFocus();
+        instalarFocoInicial();
         //Envio de Email
         try {
             verificarEnvioEmail();
@@ -166,23 +165,362 @@ public class LoginVisao extends javax.swing.JFrame {
         }
         iniciarMonitoramento();
         iniciarPiscarLabelJLDataFecho();
-        
-        aplicarTemaLogin();
 
     }
 
+    // =====================================================================
+    // LAYOUT WEB (mesmo design do início de sessão do SysKitandaHotel): os
+    // componentes vêm do initComponents, com os seus eventos. Fundo azul com
+    // a imagem, empresa à esquerda e cartão de acesso à direita; em janelas
+    // estreitas fica só o cartão, ao centro. A faixa do ambiente (FE) mantém-se.
+    // =====================================================================
+    private static final int LARGURA_COM_PAINEL = 900;
+    private char caracterSenhaWeb;
+
+    /** Olho desenhado (a letra do Windows não tem este símbolo); riscado quando a senha está à vista. */
+    private static final class IconeOlhoWeb implements javax.swing.Icon {
+
+        private final boolean riscado;
+
+        IconeOlhoWeb(boolean riscado) {
+            this.riscado = riscado;
+        }
+
+        @Override
+        public void paintIcon(java.awt.Component c, java.awt.Graphics g, int x, int y) {
+            java.awt.Graphics2D g2 = util.ui.ComponentesWeb.suave(g);
+            g2.translate(x, y);
+            g2.setColor(util.ui.MenuWeb.AZUL_NOITE);
+            g2.setStroke(new java.awt.BasicStroke(1.6f));
+            g2.drawArc(1, 4, 18, 16, 25, 130);
+            g2.drawArc(1, 0, 18, 16, 205, 130);
+            g2.fillOval(7, 7, 6, 6);
+            if (riscado) {
+                g2.drawLine(3, 17, 17, 3);
+            }
+            g2.dispose();
+        }
+
+        @Override
+        public int getIconWidth() {
+            return 20;
+        }
+
+        @Override
+        public int getIconHeight() {
+            return 20;
+        }
+    }
+
+    /** Cartão de acesso com largura fixa (nunca comprimido). */
+    private static final class CartaoAcessoWeb extends util.ui.ComponentesWeb.Cartao {
+
+        CartaoAcessoWeb() {
+            super(null, null, new BorderLayout());
+        }
+
+        @Override
+        public java.awt.Dimension getPreferredSize() {
+            java.awt.Dimension d = super.getPreferredSize();
+            d.width = 420;
+            return d;
+        }
+
+        @Override
+        public java.awt.Dimension getMinimumSize() {
+            return getPreferredSize();
+        }
+    }
+
+    /** Fundo: a imagem do formulário (img30) coberta por um gradiente azul. */
+    private static final class PainelFundoWeb extends JPanel {
+
+        private final java.awt.Image imagem = new javax.swing.ImageIcon(
+                LoginVisao.class.getResource("/imagens/img30.png")).getImage();
+        private java.awt.image.BufferedImage cache;
+
+        @Override
+        protected void paintComponent(java.awt.Graphics g) {
+            int w = getWidth(), h = getHeight();
+            if (cache == null || cache.getWidth() != w || cache.getHeight() != h) {
+                cache = pintar(w, h);
+            }
+            g.drawImage(cache, 0, 0, null);
+        }
+
+        private java.awt.image.BufferedImage pintar(int w, int h) {
+            java.awt.image.BufferedImage b = new java.awt.image.BufferedImage(Math.max(1, w), Math.max(1, h),
+                    java.awt.image.BufferedImage.TYPE_INT_RGB);
+            java.awt.Graphics2D g2 = b.createGraphics();
+            g2.setRenderingHint(java.awt.RenderingHints.KEY_INTERPOLATION,
+                    java.awt.RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            if (imagem.getWidth(null) > 0 && imagem.getHeight(null) > 0) {
+                double escala = Math.max(w / (double) imagem.getWidth(null), h / (double) imagem.getHeight(null));
+                int iw = (int) (imagem.getWidth(null) * escala), ih = (int) (imagem.getHeight(null) * escala);
+                g2.drawImage(imagem, (w - iw) / 2, (h - ih) / 2, iw, ih, null);
+            }
+            // cores do tema do negócio (azul no comercial, verde na farmácia...)
+            g2.setPaint(new java.awt.GradientPaint(0, 0, util.ui.ComponentesWeb.alfa(util.ui.MenuWeb.AZUL_NOITE, 235), w, 0,
+                    util.ui.ComponentesWeb.alfa(util.ui.EstiloUI.AZUL_ESCURO, 150)));
+            g2.fillRect(0, 0, w, h);
+            g2.dispose();
+            return b;
+        }
+    }
+
+    /** A versão tem um só sítio: util.DVML.VERSION_SOFTWARE. */
+    private String versaoSoftwareWeb() {
+        return util.DVML.VERSION_SOFTWARE;
+    }
+
+    private void montarLayoutWeb() {
+        JPanel fundo = new PainelFundoWeb();
+        java.awt.GridBagLayout grelha = new java.awt.GridBagLayout();
+        fundo.setLayout(grelha);
+
+        JPanel painelEmpresa = criarPainelEmpresaWeb();
+        java.awt.GridBagConstraints g = new java.awt.GridBagConstraints();
+        g.gridx = 0;
+        g.weightx = 1;
+        g.weighty = 1;
+        g.fill = java.awt.GridBagConstraints.BOTH;
+        fundo.add(painelEmpresa, g);
+
+        final CartaoAcessoWeb cartaoAcesso = criarCartaoAcessoWeb();
+        final java.awt.GridBagConstraints gc = new java.awt.GridBagConstraints();
+        gc.gridx = 1;
+        gc.insets = new java.awt.Insets(20, 20, 20, 72);
+        fundo.add(cartaoAcesso, gc);
+
+        fundo.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                boolean largo = fundo.getWidth() >= LARGURA_COM_PAINEL;
+                if (painelEmpresa.isVisible() != largo) {
+                    painelEmpresa.setVisible(largo);
+                    gc.insets = new java.awt.Insets(20, 20, 20, largo ? 72 : 20);
+                    grelha.setConstraints(cartaoAcesso, gc);
+                    fundo.revalidate();
+                }
+            }
+        });
+
+        // a faixa do ambiente (adicionarFaixaAmbiente) fica no topo: só se troca o centro
+        java.awt.Container raiz = getContentPane();
+        java.awt.Component centro = raiz.getLayout() instanceof BorderLayout
+                ? ((BorderLayout) raiz.getLayout()).getLayoutComponent(BorderLayout.CENTER) : null;
+        if (centro != null) {
+            raiz.remove(centro);
+            raiz.add(fundo, BorderLayout.CENTER);
+        } else {
+            raiz.removeAll();
+            raiz.setLayout(new BorderLayout());
+            raiz.add(fundo, BorderLayout.CENTER);
+        }
+        setIconImages(util.ui.MenuWeb.iconesAplicacao());
+        setMinimumSize(new java.awt.Dimension(560, 640));
+        setResizable(true);
+        setExtendedState(getExtendedState() | MAXIMIZED_BOTH);
+        configurarAvisos();
+        // fechar a janela segue o mesmo caminho do botão Sair (espera pela cópia de segurança)
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                sairDoSistema();
+            }
+        });
+    }
+
+    private JPanel criarPainelEmpresaWeb() {
+        JLabel lbArea = new JLabel(util.ui.Tema.area().toUpperCase(new java.util.Locale("pt", "PT")));
+        lbArea.setFont(util.ui.MenuWeb.rotuloGrupo("x", Color.WHITE).getFont().deriveFont(13f));
+        lbArea.setForeground(util.ui.MenuWeb.DOURADO_CLARO);
+
+        JEmpresa.setFont(new java.awt.Font("Georgia", java.awt.Font.BOLD, 28));
+        JEmpresa.setForeground(Color.WHITE);
+
+        JLNif.setFont(util.ui.EstiloUI.FONTE.deriveFont(15f));
+        JLNif.setForeground(new Color(214, 226, 243));
+
+        // contrato: verde fixo dentro do prazo; a 30 dias ou menos do fim, vermelho a piscar
+        JLDataFecho.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(13f));
+        JLDataFecho.setForeground(Color.WHITE);
+        pilulaContratoWeb.add(JLDataFecho, BorderLayout.CENTER);
+        JPanel linhaContrato = util.ui.ComponentesWeb.transparente(new BorderLayout());
+        linhaContrato.add(pilulaContratoWeb, BorderLayout.WEST);
+        // depois do construtor (os dados da instituição já foram lidos): verde ou a piscar
+        javax.swing.SwingUtilities.invokeLater(this::iniciarPiscarLabelJLDataFecho);
+
+        Soft.setFont(util.ui.EstiloUI.FONTE.deriveFont(13f));
+        Soft.setForeground(new Color(214, 226, 243));
+
+        JPanel linhaMarca = util.ui.ComponentesWeb.transparente(new BorderLayout());
+        linhaMarca.add(new util.ui.MenuWeb.MarcaSoftware("KITANDA", versaoSoftwareWeb(), 64f,
+                new Color(250, 232, 190), util.ui.MenuWeb.DOURADO, util.ui.MenuWeb.DOURADO_CLARO, true), BorderLayout.CENTER);
+
+        JPanel bloco = util.ui.FormularioWeb.pilha(10, linhaMarca, lbArea, JEmpresa, JLNif, linhaContrato, Soft);
+
+        // ao centro, na altura, para ficar alinhado com o cartão
+        JPanel centro = util.ui.ComponentesWeb.transparente(new java.awt.GridBagLayout());
+        java.awt.GridBagConstraints g = new java.awt.GridBagConstraints();
+        g.weightx = 1;
+        g.weighty = 1;
+        g.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        g.anchor = java.awt.GridBagConstraints.WEST;
+        centro.add(bloco, g);
+
+        for (JLabel l : new JLabel[]{jLabel4, jLabel5}) {
+            l.setFont(util.ui.EstiloUI.FONTE.deriveFont(12f));
+            l.setForeground(new Color(190, 205, 225));
+        }
+        JPanel rodape = util.ui.ComponentesWeb.transparente(new java.awt.GridLayout(2, 1, 0, 2));
+        rodape.add(jLabel4);
+        rodape.add(jLabel5);
+
+        JPanel painel = util.ui.ComponentesWeb.transparente(new BorderLayout());
+        painel.setBorder(BorderFactory.createEmptyBorder(28, 64, 28, 48));
+        // produtos a expirar (farmácias e minimercados com bens alimentares): por baixo da empresa
+        JPanel meio = util.ui.ComponentesWeb.transparente(new BorderLayout(0, 16));
+        meio.add(centro, BorderLayout.CENTER);
+        meio.add(zonaExpirar, BorderLayout.SOUTH);
+        painel.add(meio, BorderLayout.CENTER);
+        painel.add(rodape, BorderLayout.SOUTH);
+        // a largura é a que sobra do cartão: um texto comprido não pode empurrá-lo
+        painel.setPreferredSize(new java.awt.Dimension(10, 10));
+        painel.setMinimumSize(new java.awt.Dimension(0, 0));
+        return painel;
+    }
+
+    private CartaoAcessoWeb criarCartaoAcessoWeb() {
+        JLabel titulo = new JLabel("Iniciar sessão");
+        titulo.setFont(new java.awt.Font("Georgia", java.awt.Font.BOLD, 25));
+        titulo.setForeground(util.ui.MenuWeb.AZUL_NOITE);
+        JLabel subtitulo = new JLabel("Introduza as suas credenciais");
+        subtitulo.setFont(util.ui.EstiloUI.FONTE.deriveFont(13f));
+        subtitulo.setForeground(util.ui.MenuWeb.TEXTO_SUAVE);
+
+        jLabel6.setText("Empresa");
+        jLabel6.setToolTipText(null);
+        jLabel2.setText("Utilizador");
+        jLabel2.setToolTipText(null);
+        jLabel3.setText("Senha");
+        for (JLabel l : new JLabel[]{jLabel6, jLabel2, jLabel3}) {
+            l.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        }
+        util.ui.FormularioWeb.combo(cmbEmpresa);
+        cmbEmpresa.setPreferredSize(new java.awt.Dimension(120, 40));
+        util.ui.FormularioWeb.campoTexto(txtUserName, pswSenha);
+        for (javax.swing.JTextField t : new javax.swing.JTextField[]{txtUserName, pswSenha}) {
+            t.setFont(util.ui.EstiloUI.FONTE.deriveFont(15f));
+            t.setPreferredSize(new java.awt.Dimension(120, 42));
+            t.setMinimumSize(new java.awt.Dimension(60, 42));
+            // branco como no SysKitandaHotel (o ciano do tema geral fica nos outros formulários)
+            t.setBackground(Color.WHITE);
+        }
+
+        // olho: mostrar / esconder a senha (como no SysKitandaHotel)
+        caracterSenhaWeb = pswSenha.getEchoChar();
+        final javax.swing.JButton btVerSenha = new javax.swing.JButton();
+        btVerSenha.addActionListener(e -> {
+            boolean mostrar = pswSenha.getEchoChar() != 0;
+            pswSenha.setEchoChar(mostrar ? (char) 0 : caracterSenhaWeb);
+            btVerSenha.setIcon(new IconeOlhoWeb(mostrar));
+            btVerSenha.setToolTipText(mostrar ? "Esconder a senha" : "Mostrar a senha");
+            pswSenha.requestFocusInWindow();
+        });
+        JPanel campoSenha = util.ui.FormularioWeb.comBotao(pswSenha, btVerSenha, "Mostrar ou esconder a senha");
+        btVerSenha.setPreferredSize(new java.awt.Dimension(42, 42));
+        btVerSenha.setIcon(new IconeOlhoWeb(false));
+        btVerSenha.setFocusable(false);
+
+        util.ui.ComponentesWeb.botao(jButton1, util.ui.ComponentesWeb.Variante.PRIMARIO, null, "Entrar no sistema");
+        jButton1.setIcon(null);
+        jButton1.setText("Entrar");
+        jButton1.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(14.5f));
+        jButton1.setPreferredSize(new java.awt.Dimension(120, 44));
+        util.ui.ComponentesWeb.botao(BTnSair, util.ui.ComponentesWeb.Variante.SECUNDARIO, null, "Fechar o sistema");
+        BTnSair.setIcon(new util.ui.ComponentesWeb.IconeSair(16, util.ui.MenuWeb.AZUL_NOITE));
+        BTnSair.setText("Sair do sistema");
+        BTnSair.setPreferredSize(new java.awt.Dimension(120, 40));
+
+        // em janelas estreitas o painel da empresa some: a marca continua aqui
+        JPanel marcaCartao = util.ui.ComponentesWeb.transparente(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 0, 0));
+        marcaCartao.add(new util.ui.MenuWeb.MarcaSoftware("KITANDA", versaoSoftwareWeb(), 20f,
+                util.ui.MenuWeb.AZUL_MARINHO, util.ui.MenuWeb.AZUL_NOITE, util.ui.MenuWeb.DOURADO.darker(), false));
+
+        JPanel cabecalho = util.ui.ComponentesWeb.transparente(new BorderLayout(14, 0));
+        cabecalho.add(new util.ui.MenuWeb.Logotipo(50), BorderLayout.WEST);
+        JPanel textos = util.ui.ComponentesWeb.transparente(new java.awt.GridLayout(2, 1));
+        textos.add(titulo);
+        textos.add(subtitulo);
+        cabecalho.add(textos, BorderLayout.CENTER);
+
+        JPanel conteudo = util.ui.FormularioWeb.pilha(10,
+                cabecalho,
+                javax.swing.Box.createVerticalStrut(6),
+                util.ui.ComponentesWeb.campo(jLabel6, cmbEmpresa),
+                util.ui.ComponentesWeb.campo(jLabel2, txtUserName),
+                util.ui.ComponentesWeb.campo(jLabel3, campoSenha),
+                lbMensagem,
+                jButton1,
+                BTnSair,
+                marcaCartao);
+        conteudo.setBorder(BorderFactory.createEmptyBorder(16, 20, 12, 20));
+
+        CartaoAcessoWeb cartao = new CartaoAcessoWeb();
+        cartao.getCorpo().add(conteudo, BorderLayout.CENTER);
+        return cartao;
+    }
+
+    /** Dias antes do fim do contrato em que o aviso começa a piscar. */
+    private static final int DIAS_ALERTA_CONTRATO = 30;
+    private final PilulaContratoWeb pilulaContratoWeb = new PilulaContratoWeb();
+    private String textoContratoBase;
+
+    /**
+     * Contrato: com mais de 30 dias até ao fim fica verde, sem piscar; a 30 dias
+     * ou menos (ou já terminado) pisca a vermelho. Pode ser chamado mais de uma
+     * vez: não arranca dois temporizadores.
+     */
     public void iniciarPiscarLabelJLDataFecho() {
+        pararPiscarLabelJLDataFecho();
+        java.util.Date fecho = null;
+        try {
+            TbDadosInstituicao dados = d != null ? d : (TbDadosInstituicao) dadosInstituicaoController.findById(1);
+            fecho = dados == null ? null : dados.getDataFecho();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (textoContratoBase == null) {
+            textoContratoBase = JLDataFecho.getText();
+        }
+        JLDataFecho.setForeground(Color.WHITE);
+        if (fecho == null) {
+            pilulaContratoWeb.setEstado(PilulaContratoWeb.NEUTRO);
+            return;
+        }
+        long dias = diasAteWeb(fecho);
+        String situacao = dias < 0 ? "contrato terminado"
+                : dias == 0 ? "termina hoje"
+                : dias == 1 ? "falta 1 dia"
+                : "faltam " + dias + " dias";
+        JLDataFecho.setText(textoContratoBase + "  ·  " + situacao);
+        if (dias > DIAS_ALERTA_CONTRATO) {
+            // dentro do prazo: verde, sem piscar
+            pilulaContratoWeb.setEstado(PilulaContratoWeb.VERDE);
+            JLDataFecho.setToolTipText("Licença dentro do prazo.");
+            return;
+        }
+        JLDataFecho.setToolTipText("Contacte a DVML-COMERCIAL para renovar a licença.");
+        pilulaContratoWeb.setEstado(PilulaContratoWeb.VERMELHO);
         piscarTimer = new javax.swing.Timer(500, new ActionListener() {
-            private boolean ligado = false;
+            private boolean ligado = true;
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (ligado) {
-                    JLDataFecho.setForeground(Color.BLACK);
-                } else {
-                    JLDataFecho.setForeground(Color.RED);
-                }
                 ligado = !ligado;
+                pilulaContratoWeb.setEstado(ligado ? PilulaContratoWeb.VERMELHO : PilulaContratoWeb.NEUTRO);
             }
         });
         piscarTimer.start();
@@ -191,7 +529,247 @@ public class LoginVisao extends javax.swing.JFrame {
     public void pararPiscarLabelJLDataFecho() {
         if (piscarTimer != null && piscarTimer.isRunning()) {
             piscarTimer.stop();
-            JLDataFecho.setForeground(Color.BLACK);  // Garante a cor normal
+        }
+    }
+
+    /** Dias de calendário até à data de fecho: 0 = termina hoje, negativo = já terminou. */
+    private static long diasAteWeb(java.util.Date dataFecho) {
+        java.time.ZoneId zona = java.time.ZoneId.systemDefault();
+        // new Date(...): a BD pode devolver java.sql.Date, que não converte para Instant
+        java.time.LocalDate fecho = new java.util.Date(dataFecho.getTime()).toInstant().atZone(zona).toLocalDate();
+        return java.time.temporal.ChronoUnit.DAYS.between(java.time.LocalDate.now(zona), fecho);
+    }
+
+    /** Pílula do contrato: verde (dentro do prazo), vermelho (alerta) ou neutra. */
+    private static final class PilulaContratoWeb extends JPanel {
+
+        static final int NEUTRO = 0, VERDE = 1, VERMELHO = 2;
+        private int estado = NEUTRO;
+
+        PilulaContratoWeb() {
+            super(new BorderLayout());
+            setOpaque(false);
+            setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
+        }
+
+        void setEstado(int e) {
+            estado = e;
+            repaint();
+        }
+
+        @Override
+        protected void paintComponent(java.awt.Graphics g) {
+            java.awt.Graphics2D g2 = util.ui.ComponentesWeb.suave(g);
+            g2.setColor(estado == VERMELHO ? util.ui.ComponentesWeb.VERMELHO
+                    : estado == VERDE ? new Color(21, 128, 61) : new Color(255, 255, 255, 30));
+            g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 14, 14);
+            g2.setColor(estado == VERMELHO ? new Color(254, 202, 202)
+                    : estado == VERDE ? new Color(187, 247, 208) : new Color(255, 255, 255, 70));
+            g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 14, 14);
+            g2.dispose();
+        }
+    }
+
+
+    // =====================================================================
+    // AVISOS NO CARTÃO (como no SysKitandaHotel): Caps Lock ligado e erro de
+    // acesso por baixo da senha, sem caixas de diálogo; o botão Entrar mostra
+    // que está a trabalhar enquanto o menu abre.
+    // =====================================================================
+    private final JLabel lbMensagem = new JLabel(" ");
+    private boolean erroVisivel = false;
+    /** Onde fica o painel dos produtos a expirar no layout web. */
+    private final JPanel zonaExpirar = util.ui.ComponentesWeb.transparente(new BorderLayout());
+
+    private void configurarAvisos() {
+        lbMensagem.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(12.5f));
+        lbMensagem.setPreferredSize(new java.awt.Dimension(10, 20));
+        DocumentListener aoEscrever = new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                limparErro();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                limparErro();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+            }
+        };
+        txtUserName.getDocument().addDocumentListener(aoEscrever);
+        pswSenha.getDocument().addDocumentListener(aoEscrever);
+        pswSenha.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                actualizarAvisoMaiusculas();
+            }
+        });
+        pswSenha.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent e) {
+                actualizarAvisoMaiusculas();
+            }
+
+            @Override
+            public void focusLost(java.awt.event.FocusEvent e) {
+                if (!erroVisivel) {
+                    lbMensagem.setText(" ");
+                }
+            }
+        });
+    }
+
+    private void limparErro() {
+        if (erroVisivel) {
+            erroVisivel = false;
+            lbMensagem.setText(" ");
+            actualizarAvisoMaiusculas();
+        }
+    }
+
+    private void actualizarAvisoMaiusculas() {
+        if (erroVisivel) {
+            return;
+        }
+        boolean ligado = false;
+        try {
+            ligado = pswSenha.isFocusOwner()
+                    && Toolkit.getDefaultToolkit().getLockingKeyState(KeyEvent.VK_CAPS_LOCK);
+        } catch (UnsupportedOperationException e) {
+            // sistema sem esta informação: fica sem aviso
+        }
+        lbMensagem.setForeground(util.ui.ComponentesWeb.LARANJA.darker());
+        lbMensagem.setText(ligado ? "As maiúsculas (Caps Lock) estão ligadas" : " ");
+    }
+
+    /** Erro de acesso no próprio cartão (antes era uma caixa de diálogo). */
+    private void mostrarErroAcesso(String texto) {
+        erroVisivel = false; // os próximos setText limpam com o aviso certo
+        pswSenha.setText("");
+        lbMensagem.setForeground(util.ui.ComponentesWeb.VERMELHO);
+        lbMensagem.setText(texto);
+        erroVisivel = true;
+        pswSenha.requestFocusInWindow();
+    }
+
+    /**
+     * O cursor começa sempre a piscar no campo do utilizador. Pedir o foco no
+     * construtor não chega: o ecrã de arranque (sempre por cima) ainda está à
+     * frente e, quando fecha, o Windows não devolve a activação ao login. Por
+     * isso o foco volta a ser pedido quando a janela abre e sempre que fica
+     * activa sem nenhum campo escolhido.
+     */
+    private void instalarFocoInicial() {
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowOpened(java.awt.event.WindowEvent e) {
+                focarUtilizador();
+            }
+
+            @Override
+            public void windowActivated(java.awt.event.WindowEvent e) {
+                java.awt.Component dono = getFocusOwner();
+                if (dono != txtUserName && dono != pswSenha) {
+                    focarCampoCerto();
+                }
+            }
+        });
+        focarCampoCerto();
+    }
+
+    /** Traz o login para a frente e põe o cursor no utilizador (ou na senha, se o nome já estiver escrito). */
+    public void focarUtilizador() {
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            toFront();
+            requestFocus();
+            focarCampoCerto();
+            // depois de maximizar e arrumar o layout o foco pode ter-se perdido: confirma-se uma vez
+            javax.swing.Timer confirmar = new javax.swing.Timer(250, e -> {
+                if (isShowing() && getFocusOwner() == null) {
+                    toFront();
+                    focarCampoCerto();
+                }
+            });
+            confirmar.setRepeats(false);
+            confirmar.start();
+        });
+    }
+
+    private void focarCampoCerto() {
+        javax.swing.JComponent alvo = txtUserName.getText().trim().isEmpty() ? txtUserName : pswSenha;
+        if (!alvo.requestFocusInWindow()) {
+            alvo.requestFocus();
+        }
+    }
+
+    /** O botão mostra logo que está a trabalhar: abrir o menu ocupa a interface. */
+    private void indicarAEntrar(boolean aEntrar) {
+        jButton1.setText(aEntrar ? "A entrar..." : "Entrar");
+        jButton1.setEnabled(!aEntrar);
+        BTnSair.setEnabled(!aEntrar);
+        setCursor(java.awt.Cursor.getPredefinedCursor(aEntrar ? java.awt.Cursor.WAIT_CURSOR : java.awt.Cursor.DEFAULT_CURSOR));
+        if (aEntrar) {
+            jButton1.paintImmediately(jButton1.getVisibleRect());
+            BTnSair.paintImmediately(BTnSair.getVisibleRect());
+        }
+    }
+
+    /** Valida o ano económico e entra, com o botão a indicar que está a trabalhar. */
+    private void tentarEntrar() {
+        indicarAEntrar(true);
+        try {
+            if (MetodosUtil.acesso_sistema()) {
+                entrar_sistema();
+            } else {
+                JOptionPane.showMessageDialog(null, "Impossível aceder ao sistema.\nDeves abrir um novo ano económico.\nContacte o seu fornecedor.", "AVISO", JOptionPane.WARNING_MESSAGE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (isDisplayable()) {
+                indicarAEntrar(false);
+            }
+        }
+    }
+
+    /**
+     * Sair: a cópia de segurança corre em segundo plano e a aplicação espera que
+     * termine (com aviso), em vez de a interface ficar parada no mysqldump.
+     */
+    private void sairDoSistema() {
+        setVisible(false);
+        BackupUsb.iniciarEmSegundoPlano();
+        BackupUsb.sairDaAplicacao();
+    }
+
+    /**
+     * Produtos a expirar: só nas farmácias e nos minimercados que vendem bens
+     * alimentares. Um minimercado está registado como "Comercial": o painel só
+     * aparece se houver lotes com validade e stock (produtos perecíveis).
+     */
+    private static boolean mostrarPainelExpirar(TbDadosInstituicao dados) {
+        if (dados == null || dados.getNegocio() == null) {
+            return false;
+        }
+        String negocio = dados.getNegocio().trim();
+        if (TemaNegocioUtil.ehFarmacia(negocio)) {
+            return true;
+        }
+        String n = java.text.Normalizer.normalize(negocio.toLowerCase(), java.text.Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "").replaceAll("[^a-z]", "");
+        if (!n.equals("comercial") && !n.contains("mercado")) {
+            return false;
+        }
+        try (PreparedStatement ps = BDConexao.getInstancia().getConnectionAtiva().prepareStatement(
+                "SELECT 1 FROM lote WHERE qtd > 0 AND data_validade IS NOT NULL AND estado IN ('ACTIVO','EXPIRADO') LIMIT 1");
+                ResultSet rs = ps.executeQuery()) {
+            return rs.next();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -200,6 +778,8 @@ public class LoginVisao extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
         setResizable(false);
+        // aspecto web do SysKitandaHotel (marca Kitanda), sobre o initComponents
+        util.ui.LayoutSeguro.aplicar(this, "Início de sessão", this::montarLayoutWeb);
         setVisible(true);
 
         conexao = BDConexao.getInstancia();
@@ -218,8 +798,8 @@ public class LoginVisao extends javax.swing.JFrame {
 
         prazo();
 
-// Mostrar o painel de produtos a expirar apenas para Farmácia
-        if (d != null && "Farmacia".equalsIgnoreCase(d.getNegocio())) {
+// Produtos a expirar: só farmácias e minimercados com bens alimentares
+        if (mostrarPainelExpirar(d)) {
             criarPainelExpirar();
         }
 
@@ -233,7 +813,7 @@ public class LoginVisao extends javax.swing.JFrame {
         } catch (Exception e) {
         }
 //        verificar_data_sistema();
-        txtUserName.requestFocus();
+        instalarFocoInicial();
         //Envio de Email
         try {
             verificarEnvioEmail();
@@ -532,23 +1112,7 @@ public class LoginVisao extends javax.swing.JFrame {
     }//GEN-LAST:event_txtUserNameActionPerformed
 
     private void pswSenhaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pswSenhaActionPerformed
-        // TODO add your handling code here:
-        try {
-            if (MetodosUtil.acesso_sistema()) {
-//                if ( licensaUtil.licenca_valida( new Date() ) )
-//                {
-                entrar_sistema();
-//                fazerBackupAgora();
-//                }
-
-            } else {
-                JOptionPane.showMessageDialog(null, "Impossível aceder ao sistema.\nDeves abrir um novo ano económico.\nContacte o seu fornecedor.", "AVISO", JOptionPane.WARNING_MESSAGE);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        tentarEntrar();
     }//GEN-LAST:event_pswSenhaActionPerformed
 
     private void cmbEmpresaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbEmpresaActionPerformed
@@ -556,33 +1120,12 @@ public class LoginVisao extends javax.swing.JFrame {
     }//GEN-LAST:event_cmbEmpresaActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        try {
-            if (MetodosUtil.acesso_sistema()) {
-//                if ( licensaUtil.licenca_valida( new Date() ) )
-//                {
-
-                entrar_sistema();
-//                fazerBackupAgora();
-//                }
-
-            } else {
-                JOptionPane.showMessageDialog(null, "Impossível aceder ao sistema.\nDeves abrir um novo ano económico.\nContacte o seu fornecedor.", "AVISO", JOptionPane.WARNING_MESSAGE);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        tentarEntrar();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void BTnSairActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BTnSairActionPerformed
     {//GEN-HEADEREND:event_BTnSairActionPerformed
-        try {
-            dispose();
-            BackupUsb.realizarBackup();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.exit(0);
+        sairDoSistema();
     }//GEN-LAST:event_BTnSairActionPerformed
 
 //    public static void alterar_status_botao() {
@@ -606,7 +1149,7 @@ public class LoginVisao extends javax.swing.JFrame {
         if (usuario == null) {
             LogActividadeUtil.registar(null, getUserName(), LogActividadeUtil.MODULO_SISTEMA, LogActividadeUtil.LOGIN_FALHADO,
                     "tb_usuario", null, "Tentativa de login falhada com o user name: " + getUserName(), null, null);
-            JOptionPane.showMessageDialog(null, "Erro Senha errada ou  User Name");
+            mostrarErroAcesso("Utilizador ou senha incorrectos.");
         } else {
             if (usuario.getDataUltimoAcesso() == null) {
                 alterarSenha();
@@ -663,7 +1206,13 @@ public class LoginVisao extends javax.swing.JFrame {
                     case 3:
 //                        dispose();
 //                        MetodosUtil.abrir_caixa_automatica( getCodico_Utilizador(), new UsuariosController( conexao ), new CaixasController( conexao ) );
-                        new VendaUsuarioVisao(getCodico_Utilizador(), BDConexao.getInstancia()).setVisible(true);
+                        if (comercial.mensalidade.Mensalidades.activo()) {
+                            // ginásio / centro infantil / prestação de serviço: a janela de venda configurada,
+                            // a única que cobra mensalidades e multas (meses, multa automática, registo)
+                            util.TelaVendaUtil.abrir(getCodico_Utilizador());
+                        } else {
+                            new VendaUsuarioVisao(getCodico_Utilizador(), BDConexao.getInstancia()).setVisible(true);
+                        }
                         limpar();
                         break;
                     //3 - VendaPO
@@ -730,10 +1279,22 @@ public class LoginVisao extends javax.swing.JFrame {
             System.exit(0);
         }
 
+        // o JPA e a base de dados preparam-se já, numa thread própria
+        final Thread arranque = prepararArranqueEmSegundoPlano();
+
+        // marca Kitanda em todas as janelas, botões Sair iguais e uma só entrada na
+        // barra de tarefas (os formulários ficam "filhos" do menu), como no SysKitandaHotel
+        util.ui.MenuWeb.instalarIconeAplicacao();
+        util.ui.BotoesSair.instalar();
+        util.ui.JanelasFilhas.instalar();
+        util.ui.RelatoriosWeb.instalar();
+
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
+                // marca Kitanda logo ao abrir (antes ficavam 5 a 6 segundos sem nada no ecrã)
+                util.ui.EcraArranque.mostrar(null); // sem o DVML: carregá-lo prepara o JPA e o ecrã ficaria à espera
                 try {
 
                     UIManager.setLookAndFeel(new SyntheticaBlackStarLookAndFeel());
@@ -766,34 +1327,78 @@ public class LoginVisao extends javax.swing.JFrame {
                             "Erro", JOptionPane.ERROR_MESSAGE);
                 }
 
-                // INICIAR PROCESSOS EM BACKGROUND
-                // if ( startBackGroundProcesses() )
-                if (true) {
-                    BDConexao conexao = BDConexao.getInstancia();
-                    StockAutoCheckService service = new StockAutoCheckService(conexao.getConnectionAtiva());
+                // a base de dados, o tema e os ícones já vêm da thread do arranque
+                abrirLoginQuandoPronto(arranque);
+            }
+        });
+    }
 
-//                    try
-//                    {
-//                        service.verificarOuSalvarStockDiario();
-//                    }
-//                    catch ( SQLException e )
-//                    {
-//                        e.printStackTrace();
-//                    }
+    /**
+     * Prepara o que o início de sessão precisa, fora da interface: o JPA
+     * (EclipseLink: 3 a 4 segundos na primeira vez), a ligação JDBC, as cores do
+     * negócio e os ícones. Corre em paralelo com o look and feel e o ecrã de arranque.
+     */
+    private static Thread prepararArranqueEmSegundoPlano() {
+        Thread t = new Thread(() -> {
+            long inicio = System.currentTimeMillis();
+            try {
+                util.ui.EcraArranque.estado("A ligar à base de dados…");
+                BDConexao.getInstancia().getConnectionAtiva();
+                // cores e símbolo do negócio (leitura JDBC, leve)
+                util.ui.Tema.aplicarDaInstituicao();
+                util.ui.EcraArranque.estado("A preparar o sistema…");
+                javax.persistence.EntityManager em = JPAEntityMannagerFactoryUtil.createEntityManager();
+                if (em != null) {
+                    try {
+                        em.find(TbDadosInstituicao.class, 1); // o EclipseLink prepara as entidades aqui
+                    } finally {
+                        em.close();
+                    }
+                }
+                util.ui.MenuWeb.iconesAplicacao(); // emblema Kitanda já reduzido para todos os tamanhos
+                // a imagem de fundo do Login (2,2 MB) descodificada já: o Toolkit guarda-a e o Login abre sem esperar
+                new javax.swing.ImageIcon(LoginVisao.class.getResource("/imagens/img30.png")).getImage();
+            } catch (Throwable e) {
+                e.printStackTrace(); // o Login trata a falha da base de dados como antes
+            }
+            System.out.println("[Arranque] base de dados e JPA prontos em " + (System.currentTimeMillis() - inicio) + " ms");
+        }, "kitanda-arranque");
+        t.setDaemon(true);
+        t.start();
+        return t;
+    }
+
+    /** Espera pela preparação fora da interface e abre o início de sessão. */
+    private static void abrirLoginQuandoPronto(final Thread arranque) {
+        new javax.swing.SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                arranque.join();
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                try {
                     if (true) { // <- aqui você pode colocar sua regra de licença
-                        new LoginVisao(BDConexao.getInstancia()).setVisible(true);
-
+                        login = new LoginVisao(BDConexao.getInstancia());
+                        login.setVisible(true);
                     } else {
                         JOptionPane.showMessageDialog(null,
                                 "A sua licença expirou.\nPor favor contacte a DVML-COMERCIAL, Lda\nContactos: 923409284 / 940537124",
                                 "AVISO", JOptionPane.WARNING_MESSAGE);
                     }
-                } else {
-                    JOptionPane.showMessageDialog(null, "NÃO FOI POSSÍVEL ACEDER A BASE DE DADOS",
-                            "ERRO NA BASE DE DADOS", JOptionPane.ERROR_MESSAGE);
+                } finally {
+                    util.ui.EcraArranque.fechar();
+                    // o ecrã de arranque estava por cima: agora o login fica activo, com o cursor no utilizador
+                    if (login != null) {
+                        login.focarUtilizador();
+                    }
                 }
             }
-        });
+
+            private LoginVisao login;
+        }.execute();
     }
 
     // =====================================================================
@@ -1018,7 +1623,14 @@ public class LoginVisao extends javax.swing.JFrame {
 
         painel.setBounds(EXP_X, EXP_Y, EXP_W, EXP_H);
 
-        getLayeredPane().add(painel, JLayeredPane.PALETTE_LAYER);
+        if (zonaExpirar.getParent() != null) {
+            // layout web: por baixo dos dados da empresa, sem tapar nada
+            painel.setPreferredSize(new Dimension(EXP_W, EXP_H));
+            zonaExpirar.add(painel, BorderLayout.WEST);
+            zonaExpirar.revalidate();
+        } else {
+            getLayeredPane().add(painel, JLayeredPane.PALETTE_LAYER);
+        }
 
         // Actualização dinâmica: setas do spinner, escrita manual e checkbox
         spDiasExpirar.addChangeListener(e -> agendarRefreshExpirar());

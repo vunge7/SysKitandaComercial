@@ -121,6 +121,9 @@ public class RootVisao extends javax.swing.JFrame {
 
     TemaMenuUtil.aplicarTemaMenu(this, ehFarmacia, fundo_principal, null);
         setWindowsListener();
+        // aspecto do menu principal do SysKitandaHotel (marca Kitanda), sobre o initComponents
+        util.ui.LayoutSeguro.aplicar(this, "ERP Kitanda", this::montarLayoutWeb);
+        comercial.caixa.MenuFechos.iniciarAgendadores();
     }
 
     public void busca_permissao() {
@@ -522,13 +525,9 @@ public class RootVisao extends javax.swing.JFrame {
 //        new CaixaVisao( this.idUser, BDConexao.getInstancia()).setVisible(true);
 //        btn_reabertura_dia.setEnabled(true);
 
-        if (dadosInstituicao.getTipoFechoCaixa().equals("Normal")) {
-            new CaixaFechoVisao(idUser, conexao, false).setVisible(true);
-        } else if (dadosInstituicao.getTipoFechoCaixa().equals("Simplificado")) {
-            new CaixaFechoGoldVisao(idUser, conexao, false).setVisible(true);
-        } else {
-            new CaixaFechoGoldDetalhadoVisao(idUser, conexao, false).setVisible(true);
-        }
+        // fecho de caixa do SysKitandaHotel: valor contado por forma de pagamento, talão com QR,
+        // PDF enviado por e-mail e WhatsApp em segundo plano (os fechos antigos tiravam o troco duas vezes)
+        comercial.caixa.FechoCaixaWeb.mostrar(this, idUser, "Administração", false);
 
 //        fazerBackupAgora();
     }//GEN-LAST:event_btn_feicho_dia_rootActionPerformed
@@ -904,6 +903,55 @@ public class RootVisao extends javax.swing.JFrame {
                 new CaixaFechoGoldVisao(idUser, conexao, false).setVisible(true);
         }
 
+    }
+
+    private void montarLayoutWeb() {
+        String nome = "", perfil = null;
+        try {
+            entity.TbUsuario u = usuarioDao.findTbUsuario(idUser);
+            nome = u.getNome();
+            perfil = u.getIdTipoUsuario() == null ? null : u.getIdTipoUsuario().getDescricao();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        util.ui.PaginaMenuWeb pagina = new util.ui.PaginaMenuWeb("ERP Kitanda",
+                "Seleccione um módulo para começar (F4 abre o menu do negócio).", new javax.swing.JLabel(nome), perfil);
+
+        pagina.grupo("Módulos");
+        pagina.item(btComercial, "Gestão Comercial");
+        pagina.item(btTesouraria, "Gestão Tesouraria");
+        pagina.item(btRh, "Gestão Recursos Humanos");
+
+        pagina.grupo("Caixa");
+        pagina.item(btn_abertura_dia_root, "Abertura de Caixa");
+        pagina.item(btn_feicho_dia_root, "Fecho de Caixa");
+
+        // fechos de caixa e envio de relatórios por e-mail / WhatsApp (como na gestão hoteleira)
+        comercial.caixa.MenuFechos.adicionarAPagina(pagina, this, idUser);
+        // indicadores do negócio (vendas, gráfico, mais vendidos): só administradores
+        if (util.ui.PainelNegocio.podeVer(idUser)) {
+            pagina.painel(new util.ui.PainelNegocio(false));
+        }
+
+        pagina.grupo("Sistema");
+        pagina.item(bdBackupJButton, "Backup");
+        pagina.item(jButton1, "Backup / Restauro (BK)");
+        pagina.item(btConfiguracaoSistema, "Configuração de Módulos");
+        pagina.item(btnGerarScriptActualizacao, "Gerar Script de Actualização");
+        pagina.item(btn_actualiza_hash, "Actualizar Hash");
+        pagina.item(bt_desencriptar, "Desencriptar");
+        pagina.item(btnEsvaziaBD, "Esvaziar BD");
+
+        pagina.cartao(btnComercial, util.ui.MenuWeb.Simbolo.CARTEIRA, "Gestão Comercial",
+                "Vendas, compras, stock e facturação");
+        pagina.cartao(btnTesouraria, util.ui.MenuWeb.Simbolo.GRAFICO, "Tesouraria",
+                "Caixa, pagamentos e recebimentos");
+        pagina.cartao(btnRH, util.ui.MenuWeb.Simbolo.PRANCHETA, "Recursos Humanos",
+                "Funcionários, processamento e salários");
+
+        pagina.sair(btSair, "Terminar a sessão e voltar ao início de sessão");
+        pagina.montar(this, "SysKitanda Comercial  ·  ERP Kitanda", 3);
+        util.ui.PaginaMenuWeb.dicasCaixa(btn_abertura_dia_root, btn_feicho_dia_root);
     }
 
     private void setWindowsListener() {

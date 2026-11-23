@@ -65,6 +65,12 @@ public class ConfiguracaoMesComeco implements Serializable
     @Basic( optional = false )
     @Column( name = "duracao" )
     private int duracao;
+    /** Ano do mês de começo (0 nos registos antigos, até a migração os acertar). */
+    @Column( name = "ano_inicio" )
+    private int anoInicio;
+    /** Dia do mês em que a mensalidade vence (1..31); 0 = último dia do mês. */
+    @Column( name = "dia_pagamento" )
+    private int diaPagamento;
 
     public ConfiguracaoMesComeco()
     {
@@ -134,6 +140,27 @@ public class ConfiguracaoMesComeco implements Serializable
         this.usuarioId = usuarioId;
     }
 
+    public int getDiaPagamento()
+    {
+        return diaPagamento;
+    }
+
+    public void setDiaPagamento( int diaPagamento )
+    {
+        this.diaPagamento = diaPagamento;
+    }
+
+    public int getAnoInicio()
+    {
+        return anoInicio;
+    }
+
+    public void setAnoInicio( int anoInicio )
+    {
+        this.anoInicio = anoInicio;
+    }
+
+    /** 0 = contínuo (sem data de fim). */
     public int getDuracao()
     {
         return duracao;

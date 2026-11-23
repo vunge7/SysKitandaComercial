@@ -44,8 +44,26 @@ public class BuscaProdutoVisao extends javax.swing.JDialog {
     private static DadosInstituicaoController dadosInstituicaoController;
     public static TbDadosInstituicao dadosInstituicao;
 
+    /** Quem abriu a pesquisa recebe o código do produto escolhido (em vez do despacho por janela). */
+    private java.util.function.IntConsumer aoEscolher;
+
     public BuscaProdutoVisao(java.awt.Frame parent, boolean modal, int cod_armazem, int cod_janela, BDConexao conexao) {
         super(parent, modal);
+        preparar(cod_armazem, cod_janela, conexao);
+    }
+
+    /**
+     * Pesquisa aberta a partir de um diálogo (ex.: pedidos do ginásio): modal
+     * sobre ele e o produto escolhido vai para {@code aoEscolher}.
+     */
+    public BuscaProdutoVisao(java.awt.Window parent, int cod_armazem, BDConexao conexao, java.util.function.IntConsumer aoEscolher) {
+        super(parent, java.awt.Dialog.ModalityType.APPLICATION_MODAL);
+        this.aoEscolher = aoEscolher;
+        preparar(cod_armazem, DVML.JANELA_VENDA, conexao);
+        setLocationRelativeTo(parent);
+    }
+
+    private void preparar(int cod_armazem, int cod_janela, BDConexao conexao) {
         initComponents();
         setLocationRelativeTo(null);
 
@@ -67,6 +85,22 @@ public class BuscaProdutoVisao extends javax.swing.JDialog {
 
         txtDesignacao.requestFocus();
         txtDesignacao.addKeyListener(new TratarEvento());
+        // a lista filtra pelo texto que está mesmo no campo (acentos, Shift, colar e apagar selecções incluídos)
+        txtDesignacao.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                filtrarPeloCampo();
+            }
+
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                filtrarPeloCampo();
+            }
+
+            @Override
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+            }
+        });
 
         setBackGroundLegenda();
 
@@ -516,6 +550,12 @@ public class BuscaProdutoVisao extends javax.swing.JDialog {
         DefaultTableModel modelo = (DefaultTableModel) tabela_busca.getModel();
         Integer codigo = Integer.parseInt(modelo.getValueAt(linha, 0).toString());
 
+        if (aoEscolher != null) {
+            dispose();
+            aoEscolher.accept(codigo);
+            return;
+        }
+
         if (DVML.JANELA_ENTRADA == cod_janela) {
 
             EntradaPratosCompostosVisao.accao_codigo_interno_enter_busca_exterior(codigo);
@@ -860,19 +900,9 @@ public class BuscaProdutoVisao extends javax.swing.JDialog {
                 return;
             }
 
-            // Teclas de busca
-            if (keyCode != KeyEvent.VK_BACK_SPACE && keyCode != KeyEvent.VK_ENTER) {
-                char key = evt.getKeyChar();
-                prefixo = txtDesignacao.getText().trim() + key;
-                adicionar(prefixo);
-            } else if (keyCode == KeyEvent.VK_BACK_SPACE) {
-                try {
-                    prefixo = prefixo.trim().substring(0, Math.max(0, prefixo.length() - 1));
-                    adicionar(prefixo);
-                } catch (Exception e) {
-                    // ignorar
-                }
-            }
+            // a pesquisa faz-se no DocumentListener do campo (filtrarPeloCampo):
+            // aqui a letra ainda não entrou no campo e as teclas mortas (~ ´),
+            // o Shift e o Caps Lock estragavam o texto pesquisado
         }
 
         @Override
@@ -884,14 +914,29 @@ public class BuscaProdutoVisao extends javax.swing.JDialog {
         }
     }
 
+    private void filtrarPeloCampo() {
+        javax.swing.SwingUtilities.invokeLater(() -> adicionar(txtDesignacao.getText().trim()));
+    }
+
+    /** Minúsculas e sem acentos: "musculacao" encontra "Musculação". */
+    private static String semAcentos(String s) {
+        return java.text.Normalizer.normalize(s == null ? "" : s, java.text.Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "").toLowerCase();
+    }
+
     private void adicionar(String designacao) {
         DefaultTableModel modelo = (DefaultTableModel) tabela_busca.getModel();
         modelo.setRowCount(0);
+        String procura = semAcentos(designacao);
 
         int contTotal = 0, contTotalStockVazio = 0, contTotalStockCritco = 0, contTotalStockNormal = 0, contTotalServico = 0;
 
         for (BuscaModeloProduto next : fonte_dados) {
-            if (next.getDesignacao().toLowerCase().contains(designacao.toLowerCase())) {
+            // pelo nome, pelo código interno ou pela categoria
+            if (procura.isEmpty()
+                    || semAcentos(next.getDesignacao()).contains(procura)
+                    || String.valueOf(next.getCodigo()).equals(procura)
+                    || semAcentos(next.getCategoria()).contains(procura)) {
                 contTotal++;
 
                 if (next.getQtd().equals("0")) {

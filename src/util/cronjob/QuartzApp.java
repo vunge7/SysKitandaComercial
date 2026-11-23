@@ -29,49 +29,46 @@ import util.BDConexao;
 public class QuartzApp
 {
     
+    /**
+     * Agenda o fecho automático + envio do e-mail (ValidadorJob). O trigger verifica
+     * a cada minuto; o job só corre à hora do fecho de hoje: hora_fecho_geral, ou a
+     * reagendada no aviso "Faltam x minutos para o fecho automático".
+     */
     public static void executarCronjob( Class classname, TbDadosInstituicao d )
     {
-        Date horaTerminoVenda = d.getHoraTerminoVenda();
-        int hora = horaTerminoVenda.getHours();
-        int minuto = horaTerminoVenda.getMinutes();
-        int segundo = horaTerminoVenda.getSeconds();
-
-        //O formato do Cron Expression se resume em: <segundo> <minuto> <hora> <dia-do-mes> <mes> <ano>.
+        ValidadorJob.horaTerminoVenda = d == null ? null : d.getHoraTerminoVenda(); // recurso se a BD falhar
         SchedulerFactory shedFact = new StdSchedulerFactory();
-        System.out.println( "HORA: " + hora );
-        System.out.println( "MINUTO: " + minuto );
-        System.out.println( "SEGUNDO: " + segundo );
         try
         {
             deleteJob( "validadorJOB" );
-            
+
             Scheduler scheduler = shedFact.getScheduler();
             scheduler.start();
-            
+
             JobDetail job = JobBuilder.newJob( classname )
                     .withIdentity( "validadorJOB", "grupo01" )
                     .build();
-            
+
+            //<segundo> <minuto> <hora> <dia-do-mes> <mes> <dia-da-semana>: no segundo 0 de cada minuto
             Trigger trigger = TriggerBuilder.newTrigger()
                     .withIdentity( "validadorTRIGGER", "grupo01" )
-                    .withSchedule( CronScheduleBuilder.cronSchedule( "0/" + segundo + " 0/" + minuto + " 0/" + hora + " * * ?" ) )
+                    .withSchedule( CronScheduleBuilder.cronSchedule( "0 * * * * ?" ) )
                     .build();
             scheduler.scheduleJob( job, trigger );
-            
+            System.out.println( "[Cronjob] fecho automático agendado (hora_fecho_geral)" );
         }
         catch ( SchedulerException e )
         {
-            // TODO Auto-generated catch block
-////            e.printStackTrace();
+            System.err.println( "[Cronjob] falha ao agendar: " + e );
         }
     }
-    
+
     private static void deleteJob( String nome )
     {
         try
         {
             Scheduler scheduler = new StdSchedulerFactory().getScheduler();
-            scheduler.deleteJob( new JobKey( nome ) );
+            scheduler.deleteJob( new JobKey( nome, "grupo01" ) );
             System.out.println( "ELIMINEI O CRONJOB " + nome );
             
         }

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Talão térmico (80 mm) da cozinha / bar. As linhas vêm do Java (comercial.restaurante.TicketCozinha):
+     tipo A área (COZINHA/BAR), E estado (NOVO PEDIDO, CANCELADO...), M mesa, L linha rótulo/valor,
+     I item (qtd + prato), O observação do item, R separador, N nota. 2026-11-17 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="talao_cozinha" pageWidth="204" pageHeight="842" columnWidth="192" leftMargin="6" rightMargin="6" topMargin="4" bottomMargin="24" isIgnorePagination="true" uuid="0e7c3a51-2b9d-4c1e-8f3a-7a1d2c3b4e51">
+	<parameter name="RODAPE" class="java.lang.String" isForPrompting="false"/>
+	<field name="tipo" class="java.lang.String"/>
+	<field name="esq" class="java.lang.String"/>
+	<field name="dir" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="28" splitType="Prevent">
+			<printWhenExpression><![CDATA["A".equals($F{tipo})]]></printWhenExpression>
+			<textField isStretchWithOverflow="true">
+				<reportElement mode="Opaque" x="0" y="2" width="192" height="24" forecolor="#FFFFFF" backcolor="#000000" uuid="3f1a0b6c-1d2e-4f30-9a41-0b1c2d3e4f01"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{esq}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="20" splitType="Prevent">
+			<printWhenExpression><![CDATA["E".equals($F{tipo})]]></printWhenExpression>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="2" width="192" height="16" uuid="3f1a0b6c-1d2e-4f30-9a41-0b1c2d3e4f02"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{esq}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="34" splitType="Prevent">
+			<printWhenExpression><![CDATA["M".equals($F{tipo})]]></printWhenExpression>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="2" width="192" height="30" uuid="3f1a0b6c-1d2e-4f30-9a41-0b1c2d3e4f03"/>
+				<box>
+					<pen lineWidth="1.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="20" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{esq}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="13" splitType="Prevent">
+			<printWhenExpression><![CDATA["L".equals($F{tipo})]]></printWhenExpression>
+			<textField>
+				<reportElement x="0" y="0" width="62" height="13" uuid="3f1a0b6c-1d2e-4f30-9a41-0b1c2d3e4f04"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{esq}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="62" y="0" width="130" height="13" uuid="3f1a0b6c-1d2e-4f30-9a41-0b1c2d3e4f05"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dir}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="20" splitType="Prevent">
+			<printWhenExpression><![CDATA["I".equals($F{tipo})]]></printWhenExpression>
+			<textField>
+				<reportElement x="0" y="2" width="38" height="18" uuid="3f1a0b6c-1d2e-4f30-9a41-0b1c2d3e4f06"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dir}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="38" y="2" width="154" height="18" uuid="3f1a0b6c-1d2e-4f30-9a41-0b1c2d3e4f07"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{esq}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="18" splitType="Prevent">
+			<printWhenExpression><![CDATA["O".equals($F{tipo})]]></printWhenExpression>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="38" y="1" width="154" height="16" uuid="3f1a0b6c-1d2e-4f30-9a41-0b1c2d3e4f08"/>
+				<box leftPadding="3" rightPadding="2">
+					<pen lineWidth="1.0" lineStyle="Dashed"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="11" isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["OBS: " + $F{esq}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="8" splitType="Prevent">
+			<printWhenExpression><![CDATA["R".equals($F{tipo})]]></printWhenExpression>
+			<line>
+				<reportElement x="0" y="4" width="192" height="1" uuid="3f1a0b6c-1d2e-4f30-9a41-0b1c2d3e4f09"/>
+				<graphicElement>
+					<pen lineWidth="1.0" lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+		</band>
+		<band height="12" splitType="Prevent">
+			<printWhenExpression><![CDATA["N".equals($F{tipo})]]></printWhenExpression>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="0" width="192" height="12" uuid="3f1a0b6c-1d2e-4f30-9a41-0b1c2d3e4f10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{esq}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="14" splitType="Prevent">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="2" width="192" height="12" uuid="3f1a0b6c-1d2e-4f30-9a41-0b1c2d3e4f11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{RODAPE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

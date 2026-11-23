@@ -66,6 +66,144 @@ public class JanelaFrontOfficeLavandariaVisao extends javax.swing.JFrame
         dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById( 1 );
 
         setWindowsListener();
+        // envios automáticos (fechos, e-mail e WhatsApp agendados) também a partir da lavandaria
+        comercial.caixa.MenuFechos.iniciarAgendadores();
+        // aspecto Kitanda (barra lateral + página com cartões); se falhar, abre o desenho antigo
+        util.ui.LayoutSeguro.aplicar( this, "Lavandaria", this::montarLayoutWeb );
+    }
+
+    // =====================================================================
+    // LAYOUT WEB: os botões do initComponents (com os eventos e o estado que o
+    // verificarCaixa lhes dá) passam a cartões; junta-se o grupo dos fechos e
+    // do envio de relatórios por e-mail e WhatsApp.
+    // =====================================================================
+    private void montarLayoutWeb()
+    {
+        String nome = "", perfil = null;
+        try
+        {
+            entity.TbUsuario u = usuarioDao.findTbUsuario( idUser );
+            nome = u.getNome();
+            perfil = u.getIdTipoUsuario() == null ? null : u.getIdTipoUsuario().getDescricao();
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
+        util.ui.PaginaMenuWeb pagina = new util.ui.PaginaMenuWeb( "Lavandaria",
+                "Recolha, entrega e caixa. Os fechos seguem por e-mail e WhatsApp.", new javax.swing.JLabel( nome ), perfil );
+        pagina.simboloMarca( util.ui.MenuWeb.Simbolo.LAVANDARIA );
+
+        // ---- cartões das operações (os próprios botões do formulário)
+        int L = 230, A = 150;
+        util.ui.MenuWeb.cartaoModulo( btnRecolha, util.ui.MenuWeb.Simbolo.LAVANDARIA, "Recolha",
+                "Receber as peças do cliente e cobrar", L, A );
+        util.ui.MenuWeb.cartaoModulo( jButton2, util.ui.MenuWeb.Simbolo.CAMISA, "Entrega",
+                "Entregar as peças prontas", L, A );
+        util.ui.MenuWeb.cartaoModulo( jButton3, util.ui.MenuWeb.Simbolo.FERRO, "Serviços",
+                "Lavar, engomar, limpar a seco: preços", L, A );
+        util.ui.MenuWeb.cartaoModulo( btnRelatorio, util.ui.MenuWeb.Simbolo.GRAFICO, "Relatório",
+                "Recolhas e entregas por período", L, A );
+        util.ui.MenuWeb.cartaoModulo( btn_feicho_dia_lav1, util.ui.MenuWeb.Simbolo.PRANCHETA, "Factura Proforma",
+                "Orçamento para o cliente", L, A );
+        util.ui.MenuWeb.cartaoModulo( btn_abertura_dia_lav, util.ui.MenuWeb.Simbolo.CAIXA_ABRIR, "Abertura de Caixa",
+                "Valor inicial do dia", L, A );
+        util.ui.MenuWeb.cartaoModulo( btn_feicho_dia_lav, util.ui.MenuWeb.Simbolo.CAIXA_FECHAR, "Fecho de Caixa",
+                "Contar, imprimir o talão e enviar", L, A );
+        util.ui.MenuWeb.cartaoModulo( btn_feicho_dia_lav2, util.ui.MenuWeb.Simbolo.CHAVE, "Alterar Senha",
+                "A sua palavra-passe", L, A );
+
+        // ---- fechos e envios (cartões novos)
+        javax.swing.JButton fechos = accao( "Gestão de Fechos", () -> new comercial.caixa.FechosCaixaVisao().setVisible( true ) );
+        javax.swing.JButton email = accao( "Envio por E-mail", () -> comercial.email.EnvioRelatoriosEmailVisao.abrir( this,
+                BDConexao.getInstancia(), idUser ) );
+        javax.swing.JButton whatsapp = accao( "Envio por WhatsApp", () -> comercial.whatsapp.EnvioRelatoriosWhatsAppVisao.abrir( this,
+                BDConexao.getInstancia(), idUser ) );
+        util.ui.MenuWeb.cartaoModulo( fechos, util.ui.MenuWeb.Simbolo.TALAO_FECHO, "Fechos de Caixa",
+                "Consultar, reimprimir e reenviar fechos", L, A );
+        util.ui.MenuWeb.cartaoModulo( email, util.ui.MenuWeb.Simbolo.SINO, "Envio por E-mail",
+                "Destinatários, horários e envio agora", L, A );
+        util.ui.MenuWeb.cartaoModulo( whatsapp, util.ui.MenuWeb.Simbolo.SINO, "Envio por WhatsApp",
+                "Números, horários e envio agora", L, A );
+
+        // ---- barra lateral: atalhos (cada um carrega no cartão; um botão só pode estar num sítio)
+        pagina.grupo( "Operações" );
+        pagina.item( atalho( btnRecolha, "Recolha" ), "Recolha" );
+        pagina.item( atalho( jButton2, "Entrega" ), "Entrega" );
+        pagina.item( atalho( jButton3, "Serviços" ), "Serviços" );
+        pagina.item( atalho( btnRelatorio, "Relatório" ), "Relatório" );
+        pagina.item( atalho( btn_feicho_dia_lav1, "Factura Proforma" ), "Factura Proforma" );
+        pagina.grupo( "Caixa" );
+        pagina.item( atalho( btn_abertura_dia_lav, "Abertura de Caixa" ), "Abertura de Caixa" );
+        pagina.item( atalho( btn_feicho_dia_lav, "Fecho de Caixa" ), "Fecho de Caixa" );
+        comercial.caixa.MenuFechos.adicionarAPagina( pagina, this, idUser );
+
+        java.awt.Component cartoesOperacao = util.ui.FormularioWeb.grelha( L, 4, btnRecolha, jButton2, jButton3, btnRelatorio, btn_feicho_dia_lav1 );
+        java.awt.Component cartoesCaixa = util.ui.FormularioWeb.grelha( L, 4, btn_abertura_dia_lav, btn_feicho_dia_lav, fechos, email, whatsapp,
+                btn_feicho_dia_lav2 );
+        // ---- painel do dia (números e peças por entregar; duplo clique abre a entrega)
+        painel = new comercial.lavandaria.PainelLavandaria( codFact ->
+        {
+            EntregaLavandariaVisao e = new EntregaLavandariaVisao( idUser, BDConexao.getInstancia() );
+            e.setVisible( true );
+            e.procurarRecolha( codFact );
+        } );
+        painel.actualizar( true );
+        // ao voltar de uma recolha / entrega, os números acompanham
+        addWindowListener( new java.awt.event.WindowAdapter()
+        {
+            @Override
+            public void windowActivated( java.awt.event.WindowEvent e )
+            {
+                painel.actualizar( false );
+            }
+        } );
+
+        javax.swing.JPanel conteudo = util.ui.FormularioWeb.pilha( 12,
+                util.ui.MenuWeb.rotuloGrupo( "Hoje na lavandaria", util.ui.MenuWeb.DOURADO.darker() ),
+                painel,
+                javax.swing.Box.createVerticalStrut( 4 ),
+                util.ui.MenuWeb.rotuloGrupo( "Operações", util.ui.MenuWeb.DOURADO.darker() ),
+                cartoesOperacao,
+                javax.swing.Box.createVerticalStrut( 4 ),
+                util.ui.MenuWeb.rotuloGrupo( "Caixa, fechos e envios", util.ui.MenuWeb.DOURADO.darker() ),
+                cartoesCaixa,
+                javax.swing.Box.createVerticalStrut( 4 ),
+                util.ui.MenuWeb.rotuloGrupo( "O circuito da roupa", util.ui.MenuWeb.DOURADO.darker() ),
+                util.ui.FormularioWeb.cartao( "Do balcão à entrega", util.ui.ComponentesWeb.CIANO, util.ui.FluxoWeb.lavandaria( 0 ) ) );
+        pagina.conteudo( conteudo );
+        pagina.sair( jButton4, "Fechar a lavandaria" );
+        pagina.montar( this, "Kitanda  ·  Lavandaria", 4 );
+    }
+
+    private comercial.lavandaria.PainelLavandaria painel;
+
+    private static javax.swing.JButton atalho( javax.swing.JButton cartao, String texto )
+    {
+        javax.swing.JButton b = new javax.swing.JButton( texto );
+        b.addActionListener( e -> cartao.doClick() );
+        // segue o estado do cartão (o verificarCaixa liga e desliga a abertura / o fecho)
+        cartao.addPropertyChangeListener( "enabled", e -> b.setEnabled( cartao.isEnabled() ) );
+        b.setEnabled( cartao.isEnabled() );
+        return b;
+    }
+
+    private javax.swing.JButton accao( String texto, Runnable r )
+    {
+        javax.swing.JButton b = new javax.swing.JButton( texto );
+        b.addActionListener( e ->
+        {
+            try
+            {
+                r.run();
+            }
+            catch ( RuntimeException ex )
+            {
+                ex.printStackTrace();
+                javax.swing.JOptionPane.showMessageDialog( this, "Não foi possível abrir " + texto + ":\n" + ex.getMessage() );
+            }
+        } );
+        return b;
     }
 
     /**
@@ -258,7 +396,8 @@ public class JanelaFrontOfficeLavandariaVisao extends javax.swing.JFrame
 
     private void btnRecolhaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnRecolhaActionPerformed
     {//GEN-HEADEREND:event_btnRecolhaActionPerformed
-//        new RecolhaPedidosVisao( getMesa(), getLugar(), idUser, DVML.ARMAZEM_LOJA, BDConexao.getInstancia()).setVisible(true);
+        // ecrã de recolha restaurado (tinha sido apagado na troca pela venda moderna, que não tem a data de entrega)
+        new RecolhaPedidosVisao( getMesa(), getLugar(), idUser, DVML.ARMAZEM_LOJA, BDConexao.getInstancia() ).setVisible( true );
     }//GEN-LAST:event_btnRecolhaActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton2ActionPerformed
@@ -296,23 +435,18 @@ public class JanelaFrontOfficeLavandariaVisao extends javax.swing.JFrame
     private void btn_feicho_dia_lavActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_feicho_dia_lavActionPerformed
     {//GEN-HEADEREND:event_btn_feicho_dia_lavActionPerformed
 
-        if ( dadosInstituicao.getTipoFechoCaixa().equals( "Normal" ) )
-        {
-            new CaixaFechoVisao( idUser, conexao, false ).setVisible( true );
-        }
-        else if ( dadosInstituicao.getTipoFechoCaixa().equals( "Simplificado" ) )
-        {
-            new CaixaFechoGoldVisao( idUser, conexao, false ).setVisible( true );
-        }
-        else
-        {
-            new CaixaFechoGoldDetalhadoVisao( idUser, conexao, false ).setVisible( true );
-        }
+        // fecho de caixa do SysKitandaHotel: valor contado por forma de pagamento, talão com QR,
+        // PDF enviado por e-mail e WhatsApp em segundo plano (os fechos antigos tiravam o troco duas vezes)
+        comercial.caixa.FechoCaixaWeb.mostrar(this, idUser, "Lavandaria", false);
     }//GEN-LAST:event_btn_feicho_dia_lavActionPerformed
 
     private void btn_abertura_dia_lavActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_abertura_dia_lavActionPerformed
     {//GEN-HEADEREND:event_btn_abertura_dia_lavActionPerformed
-        new CaixaAberturaVisao( idUser, conexao, false ).setVisible( true );
+        // abertura do SysKitandaHotel (web): mostra o último fecho e não abre duas caixas com dois cliques
+        if ( comercial.caixa.AberturaCaixaWeb.abrir( this, idUser, false ) && painel != null )
+        {
+            painel.actualizar( true );
+        }
     }//GEN-LAST:event_btn_abertura_dia_lavActionPerformed
 
     private void btn_feicho_dia_lav1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_feicho_dia_lav1ActionPerformed

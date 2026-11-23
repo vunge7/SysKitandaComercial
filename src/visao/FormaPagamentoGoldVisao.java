@@ -32,7 +32,76 @@ public class FormaPagamentoGoldVisao extends javax.swing.JDialog
         setLocationRelativeTo( null );
         formaPagamentoController = new FormaPagamentoController( conexao );
         caixasController = new CaixasController( conexao );
-//        lb_total_geral.setText( RecolhaPedidosVisao.txtTotalApagar.getText() );
+        lb_total_geral.setText( RecolhaPedidosVisao.txtTotalApagar.getText() );
+        // aspecto Kitanda; se falhar, abre o desenho antigo
+        util.ui.LayoutSeguro.aplicar( this, "Pagamento da recolha", this::montarLayoutWeb );
+    }
+
+    // =====================================================================
+    // LAYOUT WEB: total em destaque, as três formas de pagamento e o troco,
+    // que se actualiza enquanto se escreve (antes só com Enter).
+    // =====================================================================
+    private void montarLayoutWeb()
+    {
+        util.ui.FormularioWeb.campoTexto( txtDinheiro, txtCartao, txtTransferencia );
+        for ( javax.swing.JTextField t : new javax.swing.JTextField[]
+        {
+            txtDinheiro, txtCartao, txtTransferencia
+        } )
+        {
+            t.setHorizontalAlignment( javax.swing.JTextField.RIGHT );
+            t.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 18f ) );
+            t.setToolTipText( "Ex.: 15000, 15.000 ou 15.000,00 — Enter confirma" );
+            t.getDocument().addDocumentListener( new javax.swing.event.DocumentListener()
+            {
+                public void insertUpdate( javax.swing.event.DocumentEvent e )
+                {
+                    setTroco();
+                }
+
+                public void removeUpdate( javax.swing.event.DocumentEvent e )
+                {
+                    setTroco();
+                }
+
+                public void changedUpdate( javax.swing.event.DocumentEvent e )
+                {
+                }
+            } );
+        }
+        lb_total_geral.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 30f ) );
+        lb_total_geral.setForeground( util.ui.ComponentesWeb.VERDE.darker() );
+        lb_total_geral.setHorizontalAlignment( javax.swing.SwingConstants.RIGHT );
+        lb_troco.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 24f ) );
+        lb_troco.setForeground( util.ui.ComponentesWeb.AZUL );
+        lb_troco.setHorizontalAlignment( javax.swing.SwingConstants.RIGHT );
+        lb_troco.addPropertyChangeListener( "text", e -> lb_troco.setForeground(
+                CfMethods.parseMoedaFormatada( lb_troco.getText() ) < 0 ? util.ui.ComponentesWeb.VERMELHO : util.ui.ComponentesWeb.AZUL ) );
+
+        javax.swing.JPanel total = util.ui.FormularioWeb.cartao( "Total da factura", util.ui.ComponentesWeb.VERDE, lb_total_geral );
+        javax.swing.JPanel formas = util.ui.FormularioWeb.cartao( "Valor recebido", util.ui.ComponentesWeb.AZUL_VIVO,
+                util.ui.FormularioWeb.grelha( 160, 3,
+                        util.ui.ComponentesWeb.campo( "Dinheiro", txtDinheiro ),
+                        util.ui.ComponentesWeb.campo( "Cartão (TPA)", txtCartao ),
+                        util.ui.ComponentesWeb.campo( "Transferência", txtTransferencia ) ) );
+        javax.swing.JPanel troco = util.ui.FormularioWeb.cartao( "Troco", util.ui.ComponentesWeb.AZUL, lb_troco );
+        javax.swing.JPanel conteudo = util.ui.FormularioWeb.pilha( 10, total, formas, troco );
+
+        jButton3.setText( "Finalizar" );
+        jButton3.setIcon( null );
+        util.ui.ComponentesWeb.botao( jButton3, util.ui.ComponentesWeb.Variante.SUCESSO, null, "Emitir a factura-recibo" );
+        jButton6.setText( "Cancelar" );
+        util.ui.FormularioWeb.botaoSair( jButton6, "Voltar à recolha sem cobrar" );
+        getRootPane().setDefaultButton( jButton3 );
+
+        util.ui.FormularioWeb.montar( this,
+                util.ui.FormularioWeb.cabecalho( "Pagamento", "Indique quanto o cliente entregou em cada forma de pagamento", null ),
+                conteudo,
+                util.ui.FormularioWeb.barraAccoes( util.ui.FormularioWeb.dica( "Pode dividir entre dinheiro, cartão e transferência" ),
+                        jButton6, jButton3 ),
+                "Lavandaria  ·  Pagamento" );
+        util.ui.FormularioWeb.ajustar( this, 640, 600, 480, 460 );
+        javax.swing.SwingUtilities.invokeLater( txtDinheiro::requestFocusInWindow );
     }
 
     /**
@@ -465,7 +534,8 @@ public class FormaPagamentoGoldVisao extends javax.swing.JDialog
 
         try
         {
-            return Double.parseDouble( field.getText() );
+            // aceita 30400, 30.400, 30.400,00 e 30400,50 (como os operadores escrevem)
+            return kitanda.util.CfMethods.parseMoedaFormatadaNovo( field.getText() );
         }
         catch ( Exception e )
         {
@@ -578,7 +648,7 @@ public class FormaPagamentoGoldVisao extends javax.swing.JDialog
         {
 
             dispose();
-//            RecolhaPedidosVisao.procedimento_converter_factura();
+            RecolhaPedidosVisao.procedimento_converter_factura();
         }
         else
         {

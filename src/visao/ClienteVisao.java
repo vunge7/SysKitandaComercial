@@ -18,7 +18,33 @@ import entity.TbCliente;
 import entity.TbDadosInstituicao;
 import entity.TbProduto;
 import entity.TbTipoProduto;
+import comercial.controller.PrecosController;
+import comercial.mensalidade.Mensalidades;
+import comercial.mensalidade.PainelContratosCliente;
+import entity.TbPreco;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.sql.Connection;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.KeyStroke;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
+import javax.swing.table.TableColumnModel;
+import kitanda.util.CfMethods;
+import util.ui.ComponentesWeb;
+import util.ui.EstiloUI;
+import util.ui.FormularioWeb;
 import java.awt.Frame;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -112,7 +138,8 @@ public class ClienteVisao extends javax.swing.JDialog {
         btnAlterar.setEnabled(false);
         actualizar();
 
-        txtInicias.addKeyListener(new TratarEvento());
+        // pesquisa pelas iniciais: agora com DocumentListener (montarLayoutWeb)
+        montarLayoutWeb();
 
         boolean ehFarmacia = dadosInstituicao != null
                 && TemaNegocioUtil.ehFarmacia(dadosInstituicao.getNegocio());
@@ -1085,8 +1112,7 @@ public class ClienteVisao extends javax.swing.JDialog {
         txtContactos.setText("");
         txtNif.setText("");
         txtEmail.setText("");
-
-//        txtInicias.setText( "" );
+        txtDesconto.setText("0");
     }
 
     public boolean campos_invalidos() {
@@ -1198,9 +1224,10 @@ public class ClienteVisao extends javax.swing.JDialog {
 
     private void procedimento_salvar() {
 
-        BDConexao conexaoTransaction = BDConexao.getInstancia();
-        DocumentosController.start(conexaoTransaction);
-        clientesController = new ClientesController(conexaoTransaction);
+        // um só INSERT: não precisa de transacção. Antes abria-se uma transacção na
+        // ligação partilhada e no fim fechava-se essa ligação, o que deixava os
+        // outros controllers desta janela (mensalidades) com a ligação fechada.
+        clientesController = new ClientesController(conexao);
         try {
             if (validar()) {
 
@@ -1210,16 +1237,23 @@ public class ClienteVisao extends javax.swing.JDialog {
                         this.clienteGlobal = new TbCliente();
                         setDados();
                         try {
-                            clientesController.salvar(clienteGlobal);
-                            DocumentosController.commit(conexaoTransaction);
+                            if (!clientesController.salvar(clienteGlobal)) {
+                                throw new Exception("insert falhou");
+                            }
                             actualizar();
-                            limpar();
-                            scrolltable();
                             btnNovo.setEnabled(true);
+                            // fica aberto: pode-se logo configurar as mensalidades
+                            TbCliente gravado = clientesController.findByNome(clienteGlobal.getNome());
+                            if (gravado != null) {
+                                importarDados(gravado);
+                                seleccionarClienteNaLista(gravado.getCodigo());
+                                if (painelContratos != null) {
+                                    abas.setSelectedComponent(painelContratos); // passo seguinte: o contrato
+                                }
+                            } else {
+                                limpar();
+                            }
                             JOptionPane.showMessageDialog(null, "Cliente salvo com sucesso!...", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE);
-                            txtNomeCliente.requestFocus();
-                            btnSalvar.setEnabled(true);
-                            btnAlterar.setEnabled(false);
 
 //                            if (!Objects.isNull(NovaGestaoPedidosVisao.cmbCliente)) {
 //                                NovaGestaoPedidosVisao.cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVector()));
@@ -1254,7 +1288,7 @@ public class ClienteVisao extends javax.swing.JDialog {
                     } else {
                         JOptionPane.showMessageDialog(null, "Este NIF já existe.", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
                     }
-                } else {
+                } else if (!comercial.mensalidade.InscricoesVisao.ofereceReactivar(this, conexao, txtNomeCliente.getText())) {
                     JOptionPane.showMessageDialog(null, "Este Cliente já existe.", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
                 }
 
@@ -1263,8 +1297,18 @@ public class ClienteVisao extends javax.swing.JDialog {
             Logger.getLogger(ClienteVisao.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        conexaoTransaction.close();
+    }
 
+    private void seleccionarClienteNaLista(int cod) {
+        DefaultTableModel m = (DefaultTableModel) jTable1.getModel();
+        for (int r = 0; r < m.getRowCount(); r++) {
+            if (String.valueOf(m.getValueAt(r, 0)).trim().equals(String.valueOf(cod))) {
+                int v = jTable1.convertRowIndexToView(r);
+                jTable1.setRowSelectionInterval(v, v);
+                jTable1.scrollRectToVisible(jTable1.getCellRect(v, 0, true));
+                return;
+            }
+        }
     }
 
     public boolean validar() {
@@ -1336,7 +1380,10 @@ public class ClienteVisao extends javax.swing.JDialog {
             return;
         }
 
-        // Primeiro carregar o cliente
+        // Primeiro carregar o cliente (o aberto pela lista, pelo código ou pela pesquisa)
+        if (clienteGlobal != null && clienteGlobal.getCodigo() != null) {
+            this.codigo = clienteGlobal.getCodigo();
+        }
         clienteGlobal = clientesController.findByCodigo(this.codigo);
 
         if (clienteGlobal == null) {
@@ -1390,8 +1437,9 @@ public class ClienteVisao extends javax.swing.JDialog {
             // Actualizar
             if (clientesController.actualizar(clienteGlobal)) {
 
+                int cod = clienteGlobal.getCodigo();
                 actualizar();
-                limpar();
+                seleccionarClienteNaLista(cod);
 
                 JOptionPane.showMessageDialog(
                         null,
@@ -1483,11 +1531,17 @@ public class ClienteVisao extends javax.swing.JDialog {
 
     private void procedimento_eliminar() {
         int opcao = JOptionPane.showConfirmDialog(null,
-                "Tens a plena certeza que pretendes eliminar essa categria?");
+                "Tem a certeza que pretende eliminar este cliente?");
         if (opcao == JOptionPane.YES_OPTION) {
             try {
-                clientesController.eliminar(codigo);
-                limpar();
+                if (clienteGlobal != null && clienteGlobal.getCodigo() != null) {
+                    codigo = clienteGlobal.getCodigo();
+                }
+                if (!clientesController.eliminar(codigo)) {
+                    throw new Exception("eliminar falhou");
+                }
+                novo_cliente();
+                actualizar();
                 JOptionPane.showMessageDialog(null,
                         "Cliente eliminado com sucesso!...",
                         DVML.DVML_COMERCIAL,
@@ -1502,7 +1556,10 @@ public class ClienteVisao extends javax.swing.JDialog {
 
     private void novo_cliente() {
         habilitar_campos(true);
-        limpar();
+        jTable1.clearSelection();
+        limparDadosForm();
+        btnEliminar.setEnabled(false);
+        abas.setSelectedIndex(0);
         txtNomeCliente.requestFocus();
         btnNovo.setEnabled(false);
         txtNomeCliente.requestFocus();
@@ -1596,14 +1653,27 @@ public class ClienteVisao extends javax.swing.JDialog {
 
     }
 
+    // =====================================================================
+    // CARREGAR CLIENTE
+    // =====================================================================
     public static void importarDados(TbCliente cliente) {
         clienteGlobal = cliente;
+        if (cliente == null) {
+            limparDadosForm();
+            return;
+        }
         txtNomeCliente.setText(clienteGlobal.getNome());
         txtEndereco.setText(clienteGlobal.getMorada());
         txtNif.setText(clienteGlobal.getNif());
         txtContactos.setText(clienteGlobal.getTelefone());
         txtEmail.setText(clienteGlobal.getEmail());
         txtDesconto.setText(String.valueOf(clienteGlobal.getPercentagemDesconto()));
+        if (instancia != null) {
+            instancia.codigo = cliente.getCodigo();
+            instancia.btnSalvar.setEnabled(false);
+            instancia.btnAlterar.setEnabled(true);
+            instancia.btnEliminar.setEnabled(true);
+        }
         adicionarServicos();
     }
 
@@ -1613,111 +1683,189 @@ public class ClienteVisao extends javax.swing.JDialog {
         txtNif.setText("");
         txtContactos.setText("");
         txtEmail.setText("");
+        txtDesconto.setText("0");
         clienteGlobal = null;
+        if (instancia != null) {
+            instancia.codigo = 0;
+        }
+        adicionarServicos();
     }
 
-    private void procedimentoAdicionarServico() {
-        String servicoSelecionado = cmbProduto.getSelectedItem().toString().trim();
-
-        DefaultTableModel model = (DefaultTableModel) tabelaServicoMensalidade.getModel();
-
-        // Verifica se o serviço já foi adicionado
-        for (int i = 0; i < model.getRowCount(); i++) {
-            String servicoExistente = model.getValueAt(i, 1).toString().trim(); // coluna 1 = Serviço
-
-            if (servicoExistente.equalsIgnoreCase(servicoSelecionado)) {
-                JOptionPane.showMessageDialog(null,
-                        "Este serviço já foi adicionado!",
-                        "Aviso", JOptionPane.WARNING_MESSAGE);
-                return; // Cancela o procedimento
+    /** Clique (ou setas) na lista de clientes: abre a ficha e os contratos. */
+    private void carregarClienteSeleccionado() {
+        int linha = jTable1.getSelectedRow();
+        if (linha < 0) {
+            return;
+        }
+        Object cod = jTable1.getModel().getValueAt(jTable1.convertRowIndexToModel(linha), 0);
+        try {
+            TbCliente c = clientesController.findByCodigo(Integer.parseInt(String.valueOf(cod).trim()));
+            if (c != null) {
+                importarDados(c);
             }
+        } catch (NumberFormatException e) {
+            // linha sem código
         }
+    }
 
-        // Se não houver duplicação, continua normalmente
-        ConfiguracaoMesComeco cmc = new ConfiguracaoMesComeco();
-        cmc.setDataCadastro(new Date());
-        cmc.setMesId(cmbMesComeco.getSelectedIndex() + 1);
-        cmc.setProdutoId(getCodigoProduto());
-        cmc.setUsuarioId(0);
-        cmc.setDuracao(cmbDuracao.getSelectedIndex());
-        cmc.setClienteId(clienteGlobal.getCodigo());
-
-        if (configuracaoMesComecoController.salvar(cmc)) {
-            adicionarServicos();
-            JOptionPane.showMessageDialog(null, "Serviço configurado com sucesso!");
-        } else {
-            JOptionPane.showMessageDialog(null, "Erro ao configurar o serviço",
-                    "Falha", JOptionPane.ERROR_MESSAGE);
-        }
+    // =====================================================================
+    // MENSALIDADES: tudo no comercial.mensalidade.PainelContratosCliente.
+    // Estes métodos ficam porque os eventos do .form (botões e tabela antigos,
+    // já fora do ecrã) ainda os chamam.
+    // =====================================================================
+    private void procedimentoAdicionarServico() {
     }
 
     private void setDadosForm() {
-        DefaultTableModel modelo = (DefaultTableModel) tabelaServicoMensalidade.getModel();
-        int linhaSelecionada = tabelaServicoMensalidade.getSelectedRow();
-
-        String cod = modelo.getValueAt(linhaSelecionada, 0).toString();
-        String mes = modelo.getValueAt(linhaSelecionada, 2).toString();
-        String duracao = modelo.getValueAt(linhaSelecionada, 3).toString();
-        ConfiguracaoMesComeco item = configuracaoMesComecoController.buscarPorId(Integer.parseInt(cod));
-
-        TbProduto produto = produtosController.findByCod(item.getProdutoId());
-        int idSubFamilia = produto.getCodTipoProduto().getCodigo();
-        TbTipoProduto tipoProduto = (TbTipoProduto) tipoProdutoController.findById(idSubFamilia);
-        cmbSubFamilia.setSelectedItem(tipoProduto.getDesignacao());
-        cmbProduto.setSelectedItem(produto.getDesignacao());
-
-        cmbDuracao.setSelectedItem(duracao);
-        cmbMesComeco.setSelectedItem(mes);
-
-    }
-
-    private static void adicionarServicos() {
-
-        if (Objects.nonNull(clienteGlobal)) {
-            DefaultTableModel modelo = (DefaultTableModel) tabelaServicoMensalidade.getModel();
-            modelo.setRowCount(0);
-            List<ConfiguracaoMesComeco> listarTodos = configuracaoMesComecoController.listarTodos(clienteGlobal.getCodigo());
-
-            for (ConfiguracaoMesComeco item : listarTodos) {
-
-                String servico = produtosController.findByCod(item.getProdutoId()).getDesignacao();
-                String mesComeco = mesRhController.getDescricaoByIdMes(item.getMesId());
-
-                modelo.addRow(new Object[]{
-                    item.getId(),
-                    servico,
-                    mesComeco,
-                    MetodosUtil.getNumeroFormatado(item.getDuracao())
-                    + " " + getMesDesignacao(item.getDuracao())
-                });
-            }
-
-        }
-
-    }
-
-    private static String getMesDesignacao(int id) {
-        return (id > 1) ? "Meses" : "Mês";
-    }
-
-    public int getCodigoProduto() {
-        return produtosController.findByDesignacao(
-                cmbProduto.getSelectedItem().toString()).getCodigo();
     }
 
     private void removerServicoMensalidade() {
-        try {
-            DefaultTableModel modelo = (DefaultTableModel) tabelaServicoMensalidade.getModel();
-            int selectedRow = tabelaServicoMensalidade.getSelectedRow();
-            int id = Integer.parseInt(modelo.getValueAt(selectedRow, 0).toString());
-            boolean deletar = configuracaoMesComecoController.deletar(id);
-            if (deletar) {
-                MetodosUtil.remover_item_tabela(tabelaServicoMensalidade, selectedRow);
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Falha ao remover o serviço!");
-        }
-
     }
 
+    /** Mostra os contratos do cliente aberto (se o negócio usar mensalidades). */
+    private static void adicionarServicos() {
+        if (instancia != null) {
+            if (instancia.painelContratos != null) {
+                instancia.painelContratos.setCliente(clienteGlobal);
+            }
+            instancia.actualizarCabecalhoCliente();
+        }
+    }
+
+    // =====================================================================
+    // ASPECTO (o initComponents cria os componentes; isto só os arruma)
+    // =====================================================================
+    private static ClienteVisao instancia;
+    private final JLabel lbClienteActivo = new JLabel();
+    private final JTabbedPane abas = new JTabbedPane();
+    /** null quando o negócio não usa mensalidades. */
+    private PainelContratosCliente painelContratos;
+
+    private void montarLayoutWeb() {
+        instancia = this;
+        setTitle("Clientes");
+
+        // ---- lista de clientes
+        jTable1.setBorder(null);
+        EstiloUI.estilizarTabela(jTable1, true);
+        // na lista bastam código, nome, NIF e telefone (o resto vê-se na ficha)
+        TableColumnModel cm = jTable1.getColumnModel();
+        if (cm.getColumnCount() >= 7) {
+            jTable1.removeColumn(cm.getColumn(6));
+            jTable1.removeColumn(cm.getColumn(5));
+            jTable1.removeColumn(cm.getColumn(2));
+            cm.getColumn(0).setMaxWidth(70);
+        }
+        jTable1.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                carregarClienteSeleccionado();
+            }
+        });
+        FormularioWeb.campoTexto(txtInicias, txtProcNIF);
+        txtInicias.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filtrarClientes();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filtrarClientes();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+            }
+        });
+        jScrollPane2.setBorder(BorderFactory.createLineBorder(ComponentesWeb.LINHA));
+        jScrollPane2.setPreferredSize(new Dimension(320, 420));
+        JPanel corpoLista = ComponentesWeb.transparente(new BorderLayout(0, 8));
+        corpoLista.add(ComponentesWeb.campo("Pesquisar pelo nome", txtInicias), BorderLayout.NORTH);
+        corpoLista.add(jScrollPane2, BorderLayout.CENTER);
+        corpoLista.add(FormularioWeb.dica("Clique num cliente para abrir a ficha."), BorderLayout.SOUTH);
+        ComponentesWeb.Cartao cartaoLista = FormularioWeb.cartao("Clientes", ComponentesWeb.AZUL_VIVO, corpoLista);
+
+        // ---- ficha
+        FormularioWeb.campoTexto(txtNomeCliente, txtEndereco, txtNif, txtContactos, txtEmail, txtDesconto);
+        JPanel ficha = FormularioWeb.pilha(10,
+                ComponentesWeb.campo("Nome do cliente *", txtNomeCliente),
+                FormularioWeb.grelha(200, 2,
+                        ComponentesWeb.campo("NIF *", txtNif),
+                        ComponentesWeb.campo("Telefone", txtContactos)),
+                ComponentesWeb.campo("Endereço *", txtEndereco),
+                FormularioWeb.grelha(200, 2,
+                        ComponentesWeb.campo("Email", txtEmail),
+                        ComponentesWeb.campo("Desconto (%)", txtDesconto)),
+                FormularioWeb.dica("* campos obrigatórios"));
+        ComponentesWeb.Cartao cartaoFicha = FormularioWeb.cartao("Dados do cliente", ComponentesWeb.AZUL_VIVO, ficha);
+        JPanel abaFicha = ComponentesWeb.transparente(new BorderLayout());
+        abaFicha.add(cartaoFicha, BorderLayout.NORTH);
+
+        ComponentesWeb.abas(abas);
+        abas.addTab("Ficha do cliente", abaFicha);
+        // mensalidades: só Ginásio, Centro Infantil e Prestação de Serviço
+        if (Mensalidades.activo()) {
+            painelContratos = new PainelContratosCliente(conexao);
+            abas.addTab("Mensalidades", painelContratos);
+        }
+
+        lbClienteActivo.setFont(EstiloUI.FONTE_NEGRITO.deriveFont(15f));
+        lbClienteActivo.setForeground(ComponentesWeb.TEXTO);
+        lbClienteActivo.setBorder(BorderFactory.createEmptyBorder(2, 6, 6, 6));
+        JPanel direita = ComponentesWeb.transparente(new BorderLayout(0, 4));
+        direita.add(lbClienteActivo, BorderLayout.NORTH);
+        direita.add(abas, BorderLayout.CENTER);
+
+        JPanel colunas = ComponentesWeb.transparente(new ComponentesWeb.ColunasResponsivas(
+                new double[]{0.34, 0.66}, new int[]{300, 560}, 10));
+        colunas.add(cartaoLista);
+        colunas.add(direita);
+
+        // ---- cabeçalho: abrir pelo código
+        JLabel lbCod = new JLabel("Abrir pelo código");
+        txtProcNIF.setToolTipText("Escreva o código do cliente e carregue Enter");
+        JPanel pesquisa = FormularioWeb.campoCabecalho(lbCod,
+                FormularioWeb.comBotao(txtProcNIF, jButton4, "Pesquisar cliente"));
+        pesquisa.setPreferredSize(new Dimension(260, 56));
+        JPanel direitaCab = ComponentesWeb.transparente(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        direitaCab.add(pesquisa);
+        JPanel cabecalho = FormularioWeb.cabecalho("Clientes",
+                painelContratos != null ? "Ficha do cliente e contratos de mensalidade" : "Ficha do cliente", direitaCab);
+
+        // ---- acções
+        btnCancelar.setText("Sair");
+        FormularioWeb.botaoSalvar(btnSalvar, "Grava o cliente novo");
+        FormularioWeb.botaoAlterar(btnAlterar, "Grava as alterações da ficha");
+        FormularioWeb.botaoEliminar(btnEliminar, "Elimina o cliente (só se não tiver vendas)");
+        FormularioWeb.botaoSair(btnCancelar, "Fechar (Esc)");
+        ComponentesWeb.botao(btnNovo, ComponentesWeb.Variante.PRIMARIO, "/imagens/icons8_add_64px.png", "Limpa a ficha para um cliente novo");
+        JPanel accoes = FormularioWeb.barraAccoes(
+                FormularioWeb.dica(painelContratos != null
+                        ? "Escolha o cliente à esquerda; os contratos de mensalidade ficam no separador \"Mensalidades\"."
+                        : "Escolha o cliente à esquerda para ver ou alterar a ficha."),
+                btnNovo, btnSalvar, btnAlterar, btnEliminar, btnCancelar);
+
+        FormularioWeb.montar(this, cabecalho, colunas, accoes, "Clientes");
+        getRootPane().registerKeyboardAction(e -> dispose(),
+                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
+        FormularioWeb.ajustar(this, 1220, 760, 880, 560);
+
+        btnEliminar.setEnabled(false);
+        adicionarServicos();
+    }
+
+    private void filtrarClientes() {
+        String t = txtInicias.getText().trim();
+        if (t.isEmpty()) {
+            actualizar();
+        } else {
+            adicionar(clientesController.getClientesLikeNomePesq1(t));
+        }
+    }
+
+    private void actualizarCabecalhoCliente() {
+        lbClienteActivo.setText(clienteGlobal == null
+                ? "Novo cliente"
+                : clienteGlobal.getNome() + "   ·   Cód. " + clienteGlobal.getCodigo());
+    }
 }

@@ -51,6 +51,8 @@ public class FrontOfficeLavandariaVisao extends javax.swing.JFrame
         jLabel2.setVisible( false );
         painel_armazem.setVisible( false );
         adicionar_radio_button();
+        // aspecto dos menus do SysKitandaHotel, com os desenhos da lavandaria
+        util.ui.LayoutSeguro.aplicar( this, "Front Office Lavandaria", this::montarLayoutWeb );
     }
 
     /**
@@ -194,6 +196,51 @@ public class FrontOfficeLavandariaVisao extends javax.swing.JFrame
                 new FrontOfficeLavandariaVisao( 15, BDConexao.getInstancia() ).setVisible( true );
             }
         } );
+    }
+
+    // =====================================================================
+    // LAYOUT WEB (menus do SysKitandaHotel, com os desenhos da lavandaria)
+    // Barra lateral, saudação, o circuito da roupa e o cartão da gestão de
+    // lavandaria. Os botões e eventos são os do initComponents.
+    // =====================================================================
+    private void montarLayoutWeb()
+    {
+        String nome = "", perfil = null;
+        try
+        {
+            entity.TbUsuario u = new dao.UsuarioDao( util.JPAEntityMannagerFactoryUtil.em ).findTbUsuario( id_usuario );
+            nome = u.getNome();
+            perfil = u.getIdTipoUsuario() == null ? null : u.getIdTipoUsuario().getDescricao();
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
+        util.ui.PaginaMenuWeb pagina = new util.ui.PaginaMenuWeb( "Front Office · Lavandaria",
+                "Do balcão à entrega: tudo começa na gestão de lavandaria.", new javax.swing.JLabel( nome ), perfil );
+        pagina.simboloMarca( util.ui.MenuWeb.Simbolo.LAVANDARIA );
+
+        pagina.grupo( "Operações" );
+        javax.swing.JButton atalho = new javax.swing.JButton( "Gestão de Lavandaria" );
+        atalho.addActionListener( e -> jButton3.doClick() );
+        pagina.item( atalho, "Gestão de Lavandaria" );
+
+        util.ui.MenuWeb.cartaoModulo( jButton3, util.ui.MenuWeb.Simbolo.LAVANDARIA, "Gestão de Lavandaria",
+                "Recolha das peças, serviços, cobrança e entrega", 300, 180 );
+        javax.swing.JPanel cartoes = util.ui.FormularioWeb.grelha( 300, 3, jButton3 );
+
+        util.ui.ComponentesWeb.Cartao fluxo = util.ui.FormularioWeb.cartao( "O circuito da roupa", util.ui.ComponentesWeb.CIANO,
+                util.ui.FluxoWeb.lavandaria( 0 ) );
+
+        javax.swing.JPanel conteudo = util.ui.FormularioWeb.pilha( 12,
+                util.ui.MenuWeb.rotuloGrupo( "Como funciona", util.ui.MenuWeb.DOURADO.darker() ),
+                fluxo,
+                javax.swing.Box.createVerticalStrut( 6 ),
+                util.ui.MenuWeb.rotuloGrupo( "Operação", util.ui.MenuWeb.DOURADO.darker() ),
+                cartoes );
+        pagina.conteudo( conteudo );
+        pagina.sair( jButton4, "Terminar a sessão e voltar ao início de sessão" );
+        pagina.montar( this, "Kitanda  ·  Front Office · Lavandaria", 4 );
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

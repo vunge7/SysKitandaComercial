@@ -417,7 +417,7 @@ WHERE
 			</textField>
 			<image scaleImage="RealHeight">
 				<reportElement uuid="546525db-f6a6-49d3-b09e-c261de3f583c" x="469" y="0" width="64" height="67"/>
-				<imageExpression><![CDATA[$P{QR_IMAGE}]]></imageExpression>
+				<imageExpression><![CDATA[$P{QR_IMAGE} != null ? $P{QR_IMAGE} : util.QRFactura.imagem($P{CODIGO_VENDA})]]></imageExpression>
 			</image>
 		</band>
 	</pageHeader>

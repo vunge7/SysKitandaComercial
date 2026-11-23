@@ -33,9 +33,18 @@ public final class TemaNegocioUtil {
         return "Farmacia".equalsIgnoreCase(negocio);
     }
 
-    /** Devolve a cor conforme o negócio. */
+    /**
+     * Devolve a cor dos campos conforme o negócio. Com farmacia = false segue
+     * o negócio activo do tema (util.ui.Tema): ciano no comercial, lima no
+     * ginásio, lilás no centro infantil, rosa no restaurante...
+     */
     public static Color corDoNegocio(boolean farmacia) {
-        return farmacia ? VERDE_FARMACIA : CIANO_GENERICO;
+        return farmacia ? VERDE_FARMACIA : util.ui.Tema.corCampo();
+    }
+
+    /** Cor dos campos de um negócio pelo texto da tb_dados_instituicao.negocio. */
+    public static Color corDoNegocio(String negocio) {
+        return util.ui.Tema.corCampo(util.ui.Tema.deTexto(negocio));
     }
 
     /**

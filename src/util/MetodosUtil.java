@@ -5282,6 +5282,16 @@ public class MetodosUtil {
 //
 //    }
     public static void fechoAutomatico() {
+        fechoAutomatico(true);
+    }
+
+    /**
+     * Fecha as caixas deixadas abertas pelos utilizadores com vendas hoje.
+     *
+     * @param gerarRelatorios exporta também os PDF dos relatórios diários
+     * (lavandaria) que o e-mail "Relatório Diário" envia
+     */
+    public static void fechoAutomatico(boolean gerarRelatorios) {
         BDConexao conexaoTransaction = BDConexao.getInstancia();
         CaixasController caixa_controller = new CaixasController(conexaoTransaction);
         VendasController vendasController = new VendasController(conexaoTransaction);
@@ -5363,7 +5373,9 @@ public class MetodosUtil {
         if (sucesso) {
             try {
                 DocumentosController.commit(conexaoTransaction);
-                NLExporToPdfForSandEmailReport exporToPdf = new NLExporToPdfForSandEmailReport(conexaoTransaction);
+                if (gerarRelatorios) {
+                    NLExporToPdfForSandEmailReport exporToPdf = new NLExporToPdfForSandEmailReport(conexaoTransaction);
+                }
                 conexaoTransaction.close();
                 System.out.println("Fecho realizado com sucesso!...");
             } catch (Exception e) {

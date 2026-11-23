@@ -436,7 +436,7 @@ WHERE
 		<band splitType="Stretch"/>
 	</columnFooter>
 	<summary>
-		<band height="214">
+		<band height="277">
 			<staticText>
 				<reportElement uuid="563f860a-6ab5-4cc4-b325-480a133f3236" key="staticText-11" mode="Opaque" x="28" y="1" width="22" height="8" backcolor="#CCCCCC"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
@@ -541,14 +541,18 @@ WHERE
 				<text><![CDATA[Não aceitamos devolução ou troca!]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="dd2eb791-ef62-4535-beef-6f82a9b7e8da" key="staticText-9" x="0" y="200" width="130" height="12"/>
+				<reportElement uuid="dd2eb791-ef62-4535-beef-6f82a9b7e8da" key="staticText-9" x="0" y="263" width="130" height="12"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
 					<font fontName="Times New Roman" size="6" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
 				<text><![CDATA[Contacte-nos, Tel:921 73 41 26]]></text>
 			</staticText>
+			<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle" onErrorType="Blank">
+				<reportElement uuid="1a627ebb-31b6-4929-ae0d-7ca09e568b29" positionType="Float" x="38" y="185" width="55" height="55"/>
+				<imageExpression><![CDATA[util.QRFactura.imagem($P{CODIGO_VENDA})]]></imageExpression>
+			</image>
 			<textField>
-				<reportElement uuid="53309749-0389-463e-9bd7-77346adce864" x="0" y="181" width="131" height="18"/>
+				<reportElement uuid="53309749-0389-463e-9bd7-77346adce864" x="0" y="244" width="131" height="18"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="5"/>
 				</textElement>

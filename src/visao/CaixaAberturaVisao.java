@@ -493,7 +493,7 @@ public class CaixaAberturaVisao extends javax.swing.JFrame
                 DocumentosController.commit( conexaoTransaction );
                 conexaoTransaction.close();
 
-                BackupUsb.realizarBackup();
+                BackupUsb.iniciarEmSegundoPlano(); // cópia de segurança sem prender a interface
 
                 dispose();
             }

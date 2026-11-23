@@ -92,7 +92,275 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
         mostrarNumeroDeprodutosExpirados();
         jMenuItemGestaoCreditos.setVisible(false);
         activar_opcoes();
+        // aspecto do menu principal do SysKitandaHotel (marca Kitanda), sobre o initComponents
+        util.ui.LayoutSeguro.aplicar(this, "Menu principal", this::montarLayoutWeb);
+        comercial.caixa.MenuFechos.iniciarAgendadores();
     }
+
+    // =====================================================================
+    // LAYOUT WEB (igual ao menu principal do SysKitandaHotel): barra lateral
+    // azul com as operações por grupos, saudação e cartões dos módulos.
+    // Os itens de menu do initComponents continuam a existir com os seus
+    // eventos e permissões: os botões da página só os "carregam" e seguem o
+    // estado deles (activo/visível). Os atalhos de teclado mantêm-se.
+    // =====================================================================
+    private void montarLayoutWeb()
+    {
+        String nome = "", perfil = null;
+        try
+        {
+            TbUsuario u = usuarioDao.findTbUsuario( this.cod_utilizador );
+            nome = u.getNome();
+            perfil = u.getIdTipoUsuario() == null ? null : u.getIdTipoUsuario().getDescricao();
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
+        // nome, ícones e frase do negócio (Comercial, Ginásio, Centro Infantil, Prestação de Serviços...)
+        util.ui.Tema.Negocio negocio = util.ui.Tema.actual();
+        util.ui.MenuWeb.Simbolo[] simbolos = util.ui.Tema.simbolosModulos( negocio );
+        util.ui.PaginaMenuWeb pagina = new util.ui.PaginaMenuWeb( util.ui.Tema.area(),
+                util.ui.Tema.descricao( negocio ) + " · seleccione um módulo para começar.",
+                new javax.swing.JLabel( nome ), perfil );
+
+        // ---- relatórios novos (tabela no ecrã + iReport), no grupo "Relatórios e Mapas"
+        javax.swing.JMenuItem jmVendasPorClienteNovo = new javax.swing.JMenuItem( "Vendas por cliente (tabela e mapa)" );
+        jmVendasPorClienteNovo.addActionListener( e -> comercial.relatorios.VendasClientesVisao.abrir( this, BDConexao.getInstancia() ) );
+        jmenuRelatorios.insert( jmVendasPorClienteNovo, 0 );
+        if ( comercial.mensalidade.Mensalidades.activo() )
+        {
+            javax.swing.JMenuItem jmDevedores = new javax.swing.JMenuItem( "Controlo de devedores (mensalidades)" );
+            jmDevedores.addActionListener( e -> comercial.mensalidade.DevedoresVisao.abrir( this, BDConexao.getInstancia() ) );
+            jmenuRelatorios.insert( jmDevedores, 1 );
+            javax.swing.JMenuItem jmMultas = new javax.swing.JMenuItem( "Relatório de multas (mensalidades)" );
+            jmMultas.addActionListener( e -> comercial.mensalidade.MultasRelatorioVisao.abrir( this, BDConexao.getInstancia() ) );
+            jmenuRelatorios.insert( jmMultas, 2 );
+        }
+
+        // ---- barra lateral: um grupo por menu, com os itens (e submenus)
+        java.util.Map<javax.swing.JMenu, String> grupos = new java.util.LinkedHashMap<>();
+        grupos.put( jMenu1, "Operações" );
+        grupos.put( jMenu5, "Logística" );
+        grupos.put( jMenu3, "Sistema" );
+        grupos.put( jMenu7, "Tabelas" );
+        grupos.put( jmenuRelatorios, "Relatórios e Mapas" );
+        grupos.put( jMenu6, "Configurações" );
+        grupos.put( jMenu4, "Ajuda" );
+        for ( java.util.Map.Entry<javax.swing.JMenu, String> g : grupos.entrySet() )
+        {
+            pagina.grupo( g.getValue() );
+            adicionarItensLateral( pagina, g.getKey() );
+        }
+        // fechos de caixa e envio de relatórios por e-mail / WhatsApp (como na gestão hoteleira)
+        comercial.caixa.MenuFechos.adicionarAPagina( pagina, this, cod_utilizador );
+        // indicadores do negócio (vendas, gráfico, mais vendidos): só administradores
+        if (util.ui.PainelNegocio.podeVer(cod_utilizador)) {
+            pagina.painel(new util.ui.PainelNegocio(false));
+        }
+
+        // ---- cartões dos módulos principais
+        pagina.cartao( espelho( jmVenda ), simbolos[0], "Venda",
+                "Facturação e ponto de venda" );
+        pagina.cartao( espelho( jmFrontOffice ), util.ui.MenuWeb.Simbolo.TALHERES, "Front Office",
+                "Mesas, pedidos e vendas ao balcão" );
+        pagina.cartao( espelho( jmCompras ), util.ui.MenuWeb.Simbolo.PRANCHETA, "Compras",
+                "Compras a fornecedores" );
+        pagina.cartao( espelho( jMenuItemEntradasProdutos ), util.ui.MenuWeb.Simbolo.CHAVE, "Entrada de Produtos",
+                "Entradas em stock" );
+        pagina.cartao( espelho( jmSaidasProdutos ), util.ui.MenuWeb.Simbolo.PRANCHETA, "Saídas de Produtos",
+                "Saídas e consumos de stock" );
+        pagina.cartao( espelho( jmProduto ), simbolos[2], "Produtos",
+                "Cadastro de produtos e serviços" );
+        pagina.cartao( espelho( jmCadastroCliente ), simbolos[1], "Clientes",
+                "Cadastro de clientes" );
+        pagina.cartao( espelho( jmProcessarRecibo ), util.ui.MenuWeb.Simbolo.CARTEIRA, "Recibos",
+                "Processar recibos de factura" );
+        pagina.cartao( espelho( jMenuItem17 ), util.ui.MenuWeb.Simbolo.GRAFICO, "Inventário",
+                "Existências por armazém" );
+        pagina.cartao( espelho( jmTodasVendas ), simbolos[3], "Relatório de Vendas",
+                "Vendas por intervalo de datas" );
+
+        // ---- mensalidades (Ginásio, Centro Infantil, Prestação de Serviço): devedores e alertas de renovação
+        if ( comercial.mensalidade.Mensalidades.activo() )
+        {
+            javax.swing.JButton devedores = new javax.swing.JButton( "Controlo de devedores" );
+            devedores.addActionListener( e -> comercial.mensalidade.DevedoresVisao.abrir( this, BDConexao.getInstancia() ) );
+            pagina.cartao( devedores, util.ui.MenuWeb.Simbolo.CARTEIRA, "Devedores",
+                    "Mensalidades em atraso e a vencer" );
+            pagina.grupo( "Mensalidades" );
+            javax.swing.JButton itemDevedores = new javax.swing.JButton( "Controlo de devedores" );
+            itemDevedores.addActionListener( e -> comercial.mensalidade.DevedoresVisao.abrir( this, BDConexao.getInstancia() ) );
+            pagina.item( itemDevedores, "Controlo de devedores" );
+            javax.swing.JButton itemEstado = new javax.swing.JButton( "Estado dos clientes" );
+            itemEstado.addActionListener( e -> comercial.mensalidade.EstadoClientesDialog.abrir( this, BDConexao.getInstancia() ) );
+            pagina.item( itemEstado, "Estado dos clientes (cartões)" );
+            javax.swing.JButton itemInscricoes = new javax.swing.JButton( "Inscrições" );
+            itemInscricoes.addActionListener( e -> comercial.mensalidade.InscricoesVisao.abrir( this, BDConexao.getInstancia() ) );
+            pagina.item( itemInscricoes, "Desistências e reactivações" );
+            javax.swing.JButton itemMultas = new javax.swing.JButton( "Multas" );
+            itemMultas.addActionListener( e -> comercial.mensalidade.ConfigMultasVisao.abrir( this, BDConexao.getInstancia() ) );
+            pagina.item( itemMultas, "Regras das multas" );
+            javax.swing.JButton itemRelMultas = new javax.swing.JButton( "Relatório de multas" );
+            itemRelMultas.addActionListener( e -> comercial.mensalidade.MultasRelatorioVisao.abrir( this, BDConexao.getInstancia() ) );
+            pagina.item( itemRelMultas, "Relatório de multas" );
+            javax.swing.JButton itemAlertas = new javax.swing.JButton( "Alertas de renovação" );
+            itemAlertas.addActionListener( e -> comercial.mensalidade.AlertasMensalidade.verificarAgora( true ) );
+            pagina.item( itemAlertas, "Ver alertas de renovação" );
+            // alertas de hora a hora (configuráveis no controlo de devedores)
+            comercial.mensalidade.AlertasMensalidade.iniciar( this );
+        }
+
+        // ---- sair: o mesmo item "Sair" do menu Ficheiro
+        javax.swing.JButton sair = new javax.swing.JButton( jMenuItem3.getText() );
+        sair.addActionListener( e -> jMenuItem3.doClick() );
+        pagina.sair( sair, "Terminar a sessão e voltar ao início de sessão" );
+
+        // a barra de menus sai de vista: os atalhos (Ctrl+V, Shift+P, ...) continuam
+        javax.swing.JRootPane rp = getRootPane();
+        for ( javax.swing.JMenuItem item : itensDoMenu() )
+        {
+            final javax.swing.JMenuItem alvo = item;
+            if ( alvo.getAccelerator() != null )
+            {
+                rp.registerKeyboardAction( e ->
+                {
+                    if ( alvo.isEnabled() && alvo.isVisible() )
+                    {
+                        alvo.doClick();
+                    }
+                }, alvo.getAccelerator(), javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW );
+            }
+        }
+        setJMenuBar( null );
+        pagina.montar( this, "SysKitanda Comercial  ·  Gestão Comercial", 5 );
+    }
+
+    /** Todos os itens (também os dos submenus) da barra de menus original. */
+    private java.util.List<javax.swing.JMenuItem> itensDoMenu()
+    {
+        java.util.List<javax.swing.JMenuItem> itens = new java.util.ArrayList<>();
+        for ( int i = 0; i < jMenuBar1.getMenuCount(); i++ )
+        {
+            recolherItens( jMenuBar1.getMenu( i ), itens );
+        }
+        return itens;
+    }
+
+    private static void recolherItens( javax.swing.JMenu menu, java.util.List<javax.swing.JMenuItem> itens )
+    {
+        if ( menu == null )
+        {
+            return;
+        }
+        for ( java.awt.Component c : menu.getMenuComponents() )
+        {
+            if ( c instanceof javax.swing.JMenu )
+            {
+                recolherItens( ( javax.swing.JMenu ) c, itens );
+            }
+            else if ( c instanceof javax.swing.JMenuItem )
+            {
+                itens.add( ( javax.swing.JMenuItem ) c );
+            }
+        }
+    }
+
+    /** Itens de um menu na barra lateral; um submenu leva o nome dele à frente. */
+    private void adicionarItensLateral( util.ui.PaginaMenuWeb pagina, javax.swing.JMenu menu )
+    {
+        for ( java.awt.Component c : menu.getMenuComponents() )
+        {
+            if ( c == jMenuItem3 )
+            {
+                continue; // "Sair" fica no botão de baixo
+            }
+            if ( c instanceof javax.swing.JMenu )
+            {
+                javax.swing.JMenu sub = ( javax.swing.JMenu ) c;
+                for ( java.awt.Component s : sub.getMenuComponents() )
+                {
+                    if ( s instanceof javax.swing.JMenuItem && !( s instanceof javax.swing.JMenu ) )
+                    {
+                        javax.swing.JMenuItem item = ( javax.swing.JMenuItem ) s;
+                        javax.swing.JButton b = espelho( item );
+                        pagina.item( b, sub.getText() + " · " + item.getText() );
+                        seguirMenu( sub, b );
+                    }
+                }
+            }
+            else if ( c instanceof javax.swing.JMenuItem )
+            {
+                javax.swing.JMenuItem item = ( javax.swing.JMenuItem ) c;
+                pagina.item( espelho( item ), item.getText() );
+            }
+        }
+    }
+
+    /**
+     * Botão que carrega no item de menu e segue o estado dele: as permissões
+     * (setEnabled) e as regras de visibilidade (setVisible) continuam a ser
+     * aplicadas aos itens originais.
+     */
+    private static javax.swing.JButton espelho( final javax.swing.JMenuItem item )
+    {
+        final javax.swing.JButton b = new javax.swing.JButton( item.getText() );
+        b.setToolTipText( item.getText() );
+        b.addActionListener( e ->
+        {
+            if ( item.isEnabled() )
+            {
+                item.doClick();
+            }
+        } );
+        b.setEnabled( item.isEnabled() );
+        b.setVisible( item.isVisible() );
+        item.addPropertyChangeListener( "enabled", e -> b.setEnabled( item.isEnabled() ) );
+        item.addComponentListener( new java.awt.event.ComponentAdapter()
+        {
+            @Override
+            public void componentShown( java.awt.event.ComponentEvent e )
+            {
+                b.setVisible( true );
+            }
+
+            @Override
+            public void componentHidden( java.awt.event.ComponentEvent e )
+            {
+                b.setVisible( false );
+            }
+        } );
+        return b;
+    }
+
+    /** Um submenu escondido ou desactivado esconde/desactiva os seus itens na barra lateral. */
+    private static void seguirMenu( final javax.swing.JMenu sub, final javax.swing.JButton b )
+    {
+        if ( !sub.isVisible() )
+        {
+            b.setVisible( false );
+        }
+        if ( !sub.isEnabled() )
+        {
+            b.setEnabled( false );
+        }
+        sub.addComponentListener( new java.awt.event.ComponentAdapter()
+        {
+            @Override
+            public void componentHidden( java.awt.event.ComponentEvent e )
+            {
+                b.setVisible( false );
+            }
+        } );
+        sub.addPropertyChangeListener( "enabled", e ->
+        {
+            if ( !sub.isEnabled() )
+            {
+                b.setEnabled( false );
+            }
+        } );
+    }
+
 
     public void busca_permissao() {
 
@@ -2107,6 +2375,11 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
     {//GEN-HEADEREND:event_jMenuItem10ActionPerformed
 
 //        new ConfiguracaoMultasVisao( cod_utilizador,BDConexao.getInstancia() ).setVisible( true );
+        if (comercial.mensalidade.Mensalidades.activo()) {
+            // regras novas: % ou valor fixo, base de contagem, serviço da multa
+            comercial.mensalidade.ConfigMultasVisao.abrir(this, BDConexao.getInstancia());
+            return;
+        }
         new ConfiguracaoMultasVisao(cod_utilizador, WIDTH, id_armazem, BDConexao.getInstancia()).setVisible(true);
 
 

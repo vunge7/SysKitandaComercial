@@ -351,4 +351,32 @@ public class MultaServicoController
         return decimal;
     }
 
+    /**
+     * % de multa para quem paga com estes dias contados desde o dia 1 do mês
+     * da mensalidade. Usa a faixa que contém os dias; se passar da última
+     * faixa configurada para o serviço, usa a faixa mais alta. 0 se não houver
+     * configuração.
+     */
+    public BigDecimal getPercentagemMultaPorDias( int dias, int produtoId ) throws SQLException
+    {
+        BigDecimal naFaixa = getValorMultaByDay( dias, produtoId );
+        if ( naFaixa != null && naFaixa.signum() > 0 )
+        {
+            return naFaixa;
+        }
+        String sql = "SELECT valor, day_end FROM multa_servico WHERE produto_id = ? ORDER BY day_end DESC LIMIT 1";
+        try ( PreparedStatement ps = conexao.prepareStatement( sql ) )
+        {
+            ps.setInt( 1, produtoId );
+            try ( ResultSet rs = ps.executeQuery() )
+            {
+                if ( rs.next() && dias > rs.getInt( "day_end" ) && rs.getBigDecimal( "valor" ) != null )
+                {
+                    return rs.getBigDecimal( "valor" );
+                }
+            }
+        }
+        return BigDecimal.ZERO;
+    }
+
 }

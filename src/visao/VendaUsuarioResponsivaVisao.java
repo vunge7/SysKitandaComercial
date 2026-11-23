@@ -1491,11 +1491,11 @@ public class VendaUsuarioResponsivaVisao extends javax.swing.JFrame
         {
 
             configuracaoMesComecoController = new ConfiguracaoMesComecoController( conexao.getConnectionAtiva() );
-            boolean existeConfiguracaoDoCliente = configuracaoMesComecoController.existeConfiguracaoDoCliente( getIdCliente(), getCodigoProduto() );
+            boolean existeConfiguracaoDoCliente = comercial.mensalidade.Mensalidades.activo() && configuracaoMesComecoController.existeConfiguracaoDoCliente( getIdCliente(), getCodigoProduto() );
 
             if ( existeConfiguracaoDoCliente )
             {
-                new MesesPagoClienteVisao( this, rootPaneCheckingEnabled,
+                new comercial.mensalidade.MesesMensalidadeDialog( this, rootPaneCheckingEnabled,
                         getIdCliente(),
                         getCodigoProduto(), conexao ).setVisible( true );
             }
@@ -2570,14 +2570,14 @@ public class VendaUsuarioResponsivaVisao extends javax.swing.JFrame
             configuracaoMesComecoController = new ConfiguracaoMesComecoController( conexao.getConnectionAtiva() );
 
             System.out.println( "***** Chegue 0" );
-            boolean existeConfiguracaoDoCliente = configuracaoMesComecoController
+            boolean existeConfiguracaoDoCliente = comercial.mensalidade.Mensalidades.activo() && configuracaoMesComecoController
                     .existeConfiguracaoDoCliente(
                             getIdCliente(),
                             getCodigoProduto() );
 
             if ( existeConfiguracaoDoCliente )
             {
-                new MesesPagoClienteVisao( this,
+                new comercial.mensalidade.MesesMensalidadeDialog( this,
                         rootPaneCheckingEnabled,
                         getIdCliente(),
                         getCodigoProduto(), conexao ).setVisible( true );
@@ -2621,12 +2621,12 @@ public class VendaUsuarioResponsivaVisao extends javax.swing.JFrame
 
             configuracaoMesComecoController = new ConfiguracaoMesComecoController( conexao.getConnectionAtiva() );
 
-            boolean existeConfiguracaoDoCliente = configuracaoMesComecoController.existeConfiguracaoDoCliente(
+            boolean existeConfiguracaoDoCliente = comercial.mensalidade.Mensalidades.activo() && configuracaoMesComecoController.existeConfiguracaoDoCliente(
                     getIdCliente(), produtoLocal.getCodigo() );
             if ( existeConfiguracaoDoCliente )
             {
 
-                new MesesPagoClienteVisao( null,
+                new comercial.mensalidade.MesesMensalidadeDialog( null,
                         true,
                         getIdCliente(),
                         getCodigoProduto(), conexao ).setVisible( true );

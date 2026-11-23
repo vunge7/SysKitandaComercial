@@ -31,6 +31,12 @@ public class BuscaClienteVisao extends javax.swing.JDialog {
     private static DadosInstituicaoController dadosInstituicaoController;
     public static TbDadosInstituicao dadosInstituicao;
 
+    /** interno = true: o cliente escolhido vai para a ClienteInternoVisao (cadastro rápido da venda). */
+    public BuscaClienteVisao(java.awt.Frame parent, boolean modal, ClientesController clientesController, BDConexao conexao, boolean interno) {
+        this(parent, modal, clientesController, conexao);
+        this.clienteInterno = interno;
+    }
+
     public BuscaClienteVisao(java.awt.Frame parent, boolean modal, ClientesController clientesController, BDConexao conexao) {
         super(parent, modal);
         initComponents();

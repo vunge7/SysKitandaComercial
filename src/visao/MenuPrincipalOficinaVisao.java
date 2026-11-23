@@ -96,6 +96,31 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
         mostrarNumeroDeprodutosExpirados();
         jMenuItemGestaoCreditos.setVisible( false );
         //jmRelatorioDiario.setEnabled(false);
+        // aspecto do menu principal do SysKitandaHotel, com os desenhos do negócio
+        // fechos de caixa e envio de relatórios por e-mail / WhatsApp (como na gestão hoteleira)
+        comercial.caixa.MenuFechos.adicionarABarra( jMenuBar1, this, cod );
+        comercial.caixa.MenuFechos.iniciarAgendadores();
+        util.ui.LayoutSeguro.aplicar( this, "Menu Oficina", () -> util.ui.MenuNegocioWeb.montar( this, jMenuBar1,
+                "Oficina", util.ui.MenuWeb.Simbolo.FERRAMENTA, cod,
+                util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Log Out" ), null,
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Venda" ), util.ui.MenuWeb.Simbolo.FERRAMENTA,
+                        "Serviços e Peças", "Facturação de reparações e peças" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Despacho" ), util.ui.MenuWeb.Simbolo.CARRO,
+                        "Despacho", "Viaturas e serviços despachados" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Front Office" ), util.ui.MenuWeb.Simbolo.CARRINHO,
+                        "Front Office", "Atendimento ao balcão" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Cadastro de Cliente" ), util.ui.MenuWeb.Simbolo.PESSOAS,
+                        "Clientes", "Cadastro dos clientes e viaturas" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Processar Recibos de Factura" ), util.ui.MenuWeb.Simbolo.RECIBO,
+                        "Recibos", "Receber facturas em aberto" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Compras" ), util.ui.MenuWeb.Simbolo.CARRINHO,
+                        "Compras", "Peças e consumíveis" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Inventario" ), util.ui.MenuWeb.Simbolo.CAIXA,
+                        "Inventário", "Peças em stock por armazém" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Saidas Produtos" ), util.ui.MenuWeb.Simbolo.PRANCHETA,
+                        "Saídas de Produtos", "Consumos e saídas de stock" ),
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Converter Proformas em Facturas" ), util.ui.MenuWeb.Simbolo.RECIBO,
+                        "Orçamentos", "Converter proformas em facturas" ) ) );
     }
 
     public void busca_permissao()
@@ -687,7 +712,7 @@ public class MenuPrincipalOficinaVisao extends javax.swing.JFrame
 
         jLabel2.setFont(new java.awt.Font("Lucida Grande", 1, 24)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText("KITANDA v1.1");
+        jLabel2.setText("KITANDA v" + util.DVML.VERSION_SOFTWARE);
         getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 620, 180, -1));
 
         btnProdutosEspirados.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N

@@ -668,7 +668,7 @@ public class VendaPOSVisao extends javax.swing.JFrame {
     private void btn_feicho_diaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_feicho_diaActionPerformed
     {//GEN-HEADEREND:event_btn_feicho_diaActionPerformed
         // TODO add your handling code here:
-        new CaixaFechoVisao(id_usuario, conexao, true).setVisible(true);
+        comercial.caixa.FechoCaixaWeb.mostrar(this, id_usuario, "POS", true); // fecho do SysKitandaHotel
     }//GEN-LAST:event_btn_feicho_diaActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed

@@ -73,7 +73,49 @@ public class RelatorioLavandariaVisao extends javax.swing.JFrame
         dcDataFim.setDate( new Date() );
 //       cmbArmazem.setSelectedItem(DVML.select_armazem);
         adicionar_tipo_de_servicos();
+        // aspecto Kitanda; se falhar, abre o desenho antigo
+        util.ui.LayoutSeguro.aplicar( this, "Relatórios da Lavandaria", this::montarLayoutWeb );
+    }
 
+    // =====================================================================
+    // LAYOUT WEB: o período em cima e os relatórios em cartões (os mesmos
+    // botões e eventos), que se reorganizam com a largura da janela.
+    // =====================================================================
+    private void montarLayoutWeb()
+    {
+        util.ui.FormularioWeb.data( dcDataInicio );
+        util.ui.FormularioWeb.data( dcDataFim );
+        int L = 250, A = 140;
+        util.ui.MenuWeb.cartaoModulo( btnRelatorioRecolhas, util.ui.MenuWeb.Simbolo.LAVANDARIA, "Recolhas",
+                "Recolhas do período escolhido", L, A );
+        util.ui.MenuWeb.cartaoModulo( jButton1, util.ui.MenuWeb.Simbolo.CAMISA, "Entregas",
+                "Entregas do período escolhido", L, A );
+        util.ui.MenuWeb.cartaoModulo( jButton4, util.ui.MenuWeb.Simbolo.PESSOAS, "Entregas por cliente",
+                "Por cliente: o que foi entregue e o que falta", L, A );
+        util.ui.MenuWeb.cartaoModulo( jButton6, util.ui.MenuWeb.Simbolo.GRAFICO, "Vendas por período",
+                "Facturação entre duas datas", L, A );
+        util.ui.MenuWeb.cartaoModulo( jButton5, util.ui.MenuWeb.Simbolo.RECIBO, "Vendas por utilizador",
+                "Quem facturou o quê e quando", L, A );
+        util.ui.MenuWeb.cartaoModulo( jButton7, util.ui.MenuWeb.Simbolo.FERRO, "Serviços e preços",
+                "Tabela de preços dos serviços", L, A );
+        jButton2.setText( "Sair" );
+        util.ui.FormularioWeb.botaoSair( jButton2, "Fechar os relatórios" );
+
+        javax.swing.JPanel periodo = util.ui.FormularioWeb.cartao( "Período (recolhas e entregas)", util.ui.ComponentesWeb.AZUL_VIVO,
+                util.ui.FormularioWeb.grelha( 170, 2,
+                        util.ui.ComponentesWeb.campo( "De", dcDataInicio ),
+                        util.ui.ComponentesWeb.campo( "Até", dcDataFim ) ) );
+        javax.swing.JPanel conteudo = util.ui.FormularioWeb.pilha( 12,
+                periodo,
+                util.ui.MenuWeb.rotuloGrupo( "Relatórios", util.ui.MenuWeb.DOURADO.darker() ),
+                util.ui.FormularioWeb.grelha( L, 3, btnRelatorioRecolhas, jButton1, jButton4, jButton6, jButton5, jButton7 ) );
+        util.ui.FormularioWeb.montar( this,
+                util.ui.FormularioWeb.cabecalho( "Relatórios da Lavandaria", "Escolha o período e o relatório", null ),
+                conteudo,
+                util.ui.FormularioWeb.barraAccoes( util.ui.FormularioWeb.dica( "O período vale para as recolhas e as entregas" ), jButton2 ),
+                "Lavandaria  ·  Relatórios" );
+        setResizable( true );
+        util.ui.FormularioWeb.ajustar( this, 980, 680, 600, 480 );
     }
 
     /**

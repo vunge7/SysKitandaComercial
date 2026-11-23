@@ -58,6 +58,8 @@ public class ConfiguracoesVisao extends javax.swing.JDialog {
                 txtPrazoFT,
                 txtPrazoProforma,
                 txtProveniencia, txtChaveMestre, txtImpressoraCozinha, txtImpressoraSala, txtImpressoraCaixa);
+        // impressoras: escolher da lista das instaladas (talão da cozinha / bar / caixa)
+        util.ui.EscolhaImpressora.ligar(txtImpressoraCozinha, txtImpressoraSala, txtImpressoraCaixa);
     }
 
     /**
@@ -1368,6 +1370,37 @@ public class ConfiguracoesVisao extends javax.swing.JDialog {
     /**
      * Acrescenta, fora do código gerado, o campo "Tela de Venda" no rodapé.
      */
+    private final javax.swing.JSpinner spnHoraFechoGeral = new javax.swing.JSpinner(
+            new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MINUTE));
+
+    private void mostrarHoraFechoGeral() {
+        try (java.sql.Connection cn = BDConexao.novaLigacao()) {
+            comercial.caixa.FechoGeral.Config c = comercial.caixa.FechoGeral.config(cn);
+            java.util.Calendar k = java.util.Calendar.getInstance();
+            k.set(java.util.Calendar.HOUR_OF_DAY, c.hora);
+            k.set(java.util.Calendar.MINUTE, c.minuto);
+            k.set(java.util.Calendar.SECOND, 0);
+            k.set(java.util.Calendar.MILLISECOND, 0);
+            spnHoraFechoGeral.setValue(k.getTime());
+        } catch (Exception e) {
+            System.err.println("[Configurações] hora do fecho geral não lida: " + e);
+        }
+    }
+
+    private boolean gravarHoraFechoGeral() {
+        java.util.Calendar k = java.util.Calendar.getInstance();
+        k.setTime((java.util.Date) spnHoraFechoGeral.getValue());
+        try (java.sql.Connection cn = BDConexao.novaLigacao()) {
+            comercial.caixa.FechoGeral.gravarHora(cn, k.get(java.util.Calendar.HOUR_OF_DAY), k.get(java.util.Calendar.MINUTE));
+            // o fecho automático lê a hora a cada minuto: a nova hora vale logo, sem reiniciar
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Falha ao gravar a hora do fecho geral: " + e.getMessage(), "AVISO", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+    }
+
     private void montarSeletorTelaVenda() {
         java.awt.Container content = getContentPane();
         content.removeAll();
@@ -1380,6 +1413,15 @@ public class ConfiguracoesVisao extends javax.swing.JDialog {
         rodape.add(lb);
         rodape.add(cmbTelaVenda);
 
+        // hora do fecho geral automático (tb_dados_instituicao.hora_fecho_geral)
+        javax.swing.JLabel lbFecho = new javax.swing.JLabel("   Hora do Fecho Geral:");
+        lbFecho.setFont(new java.awt.Font("Lucida Grande", 1, 14));
+        spnHoraFechoGeral.setEditor(new javax.swing.JSpinner.DateEditor(spnHoraFechoGeral, "HH:mm"));
+        spnHoraFechoGeral.setToolTipText("A esta hora, todos os dias, o fecho geral é gerado, impresso e enviado por e-mail e WhatsApp"
+                + " (abrange desde a mesma hora do dia anterior)");
+        rodape.add(lbFecho);
+        rodape.add(spnHoraFechoGeral);
+
         content.add(jPanel7, java.awt.BorderLayout.NORTH);
         content.add(jPanel1, java.awt.BorderLayout.CENTER);
         content.add(rodape, java.awt.BorderLayout.SOUTH);
@@ -1388,6 +1430,7 @@ public class ConfiguracoesVisao extends javax.swing.JDialog {
 
     private void mostrar_dados() {
         cmbTelaVenda.setSelectedItem(util.TelaVenda.fromString(dadoIntituicao.getTelaVenda()).name());
+        mostrarHoraFechoGeral();
 //        dadoIntituicao = dadosInstituicaoController.findByCodigo(1);
         txtPrazoFT.setText(dadoIntituicao.getPrazoFt());
         txtPrazoProforma.setText(String.valueOf(dadoIntituicao.getPrazoProforma()));
@@ -1483,6 +1526,9 @@ public class ConfiguracoesVisao extends javax.swing.JDialog {
 
         try {
             dadosInstituicaoController.actualizar(dadoIntituicao);
+            if (!gravarHoraFechoGeral()) {
+                return;
+            }
             JOptionPane.showMessageDialog(null, "Dados configurados com sucesso!....");
         } catch (Exception e) {
             e.printStackTrace();

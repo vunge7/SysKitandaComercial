@@ -2656,10 +2656,8 @@ public class ProdutosModernoVisao extends javax.swing.JFrame {
 
             ck_produto.setSelected(true);
             ck_servico.setSelected(false);
-            lbTicket.setVisible(false);
-            rbNaoEnviarCozinha.setVisible(false);
-            rbEnviarCozinha.setVisible(false);
-            rbEnviarSala.setVisible(false);
+            // o comercial também tem gestão de mesas (Front Office): o talão da
+            // cozinha / sala escolhe-se aqui, por isso as opções ficam visíveis
             btnAssociar.setVisible(false);
             servico_produto();
         } else if (negocio.equalsIgnoreCase("Transportes")) {

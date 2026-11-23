@@ -16,7 +16,22 @@ import entity.ConfiguracaoMesComeco;
 import entity.TbCliente;
 import entity.TbProduto;
 import entity.TbTipoProduto;
+import comercial.mensalidade.Mensalidades;
+import comercial.mensalidade.PainelContratosCliente;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.KeyEvent;
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
+import util.ui.ComponentesWeb;
+import util.ui.EstiloUI;
+import util.ui.FormularioWeb;
 import java.awt.Frame;
 import java.sql.SQLException;
 import java.util.Date;
@@ -100,6 +115,7 @@ public class ClienteInternoVisao extends javax.swing.JDialog
         {
         }
 
+        montarLayoutWeb();
         txtNomeCliente.requestFocus();
 
     }
@@ -771,7 +787,7 @@ public class ClienteInternoVisao extends javax.swing.JDialog
 
         try
         {
-            new BuscaClienteVisao( parent, rootPaneCheckingEnabled, clientesController, conexao ).setVisible( true );
+            new BuscaClienteVisao( parent, rootPaneCheckingEnabled, clientesController, conexao, true ).setVisible( true );
         }
         catch ( Exception e )
         {
@@ -1030,96 +1046,65 @@ public class ClienteInternoVisao extends javax.swing.JDialog
 
     private void procedimento_salvar()
     {
-
-        BDConexao conexaoTransaction = BDConexao.getInstancia();
-        DocumentosController.start( conexaoTransaction );
-        clientesController = new ClientesController( conexaoTransaction );
+        // um só INSERT: sem transacção e sem fechar a ligação partilhada (antes
+        // fechava-a, e os controllers abertos ficavam com a ligação fechada)
+        clientesController = new ClientesController( conexao );
         try
         {
-            if ( validar() )
+            if ( !validar() )
             {
-
-                if ( !clientesController.existeClienteNome( txtNomeCliente.getText(), BDConexao.getConexao() ) )
+                return;
+            }
+            if ( clientesController.existeClienteNome( txtNomeCliente.getText(), BDConexao.getConexao() ) )
+            {
+                if ( comercial.mensalidade.InscricoesVisao.ofereceReactivar( this, conexao, txtNomeCliente.getText() ) )
                 {
-
-                    if ( !clientesController.existeClienteNIF( txtNif.getText(), BDConexao.getConexao() ) )
-                    {
-                        this.clienteGlobal = new TbCliente();
-                        setDados();
-                        try
-                        {
-                            clientesController.salvar( clienteGlobal );
-                            DocumentosController.commit( conexaoTransaction );
-                            limpar();
-                            scrolltable();
-                            btnNovo.setEnabled( true );
-                            JOptionPane.showMessageDialog( null, "Cliente salvo com sucesso!...", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
-                            txtNomeCliente.requestFocus();
-
-                            if ( !Objects.isNull( NovaGestaoPedidosVisao.cmbCliente ) )
-                            {
-                                NovaGestaoPedidosVisao.cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );
-                                NovaGestaoPedidosVisao.cmbCliente.setSelectedItem( clienteGlobal.getNome() );
-                                dispose();
-                            }
-                            if ( visao.venda.VendaModernaVisao.estaAberta() )
-                            {
-                                visao.venda.VendaModernaVisao.cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );
-                                visao.venda.VendaModernaVisao.cmbCliente.setSelectedItem( clienteGlobal.getNome() );
-                                dispose();
-                            }
-                            else if ( !Objects.isNull( FormVendaResponsivaVisaoTop.cmbCliente ) )
-                            {
-                                FormVendaResponsivaVisaoTop.cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );
-                                FormVendaResponsivaVisaoTop.cmbCliente.setSelectedItem( clienteGlobal.getNome() );
-                                dispose();
-                            }
-//                            if ( !Objects.isNull( RecolhaPedidosVisao.cmbCliente ) )
-//                            {
-//                                RecolhaPedidosVisao.cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );
-//                                RecolhaPedidosVisao.cmbCliente.setSelectedItem( clienteGlobal.getNome() );
-//                                dispose();
-//                            }
-                            if ( !Objects.isNull( VendaPOSVisao.cmbCliente ) )
-                            {
-                                VendaPOSVisao.cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );
-                                VendaPOSVisao.cmbCliente.setSelectedItem( clienteGlobal.getNome() );
-                                dispose();
-                            }
-                            if ( !Objects.isNull( VendasPraticasVisao.cmbCliente ) )
-                            {
-                                VendasPraticasVisao.cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );
-                                VendasPraticasVisao.cmbCliente.setSelectedItem( clienteGlobal.getNome() );
-                                dispose();
-                            }
-
-                        }
-                        catch ( Exception e )
-                        {
-                            e.printStackTrace();
-                            JOptionPane.showMessageDialog( null, "Erro ao salvar o cliente", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
-                        }
-
-                    }
-                    else
-                    {
-                        JOptionPane.showMessageDialog( null, "Este NIF já existe.", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
-                    }
+                    return;
                 }
-                else
-                {
-                    JOptionPane.showMessageDialog( null, "Este Cliente já existe.", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
-                }
+                JOptionPane.showMessageDialog( null, "Este Cliente já existe.", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+                return;
+            }
+            if ( clientesController.existeClienteNIF( txtNif.getText(), BDConexao.getConexao() ) )
+            {
+                JOptionPane.showMessageDialog( null, "Este NIF já existe.", DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE );
+                return;
+            }
+            clienteGlobal = new TbCliente();
+            setDados();
+            if ( !clientesController.salvar( clienteGlobal ) )
+            {
+                JOptionPane.showMessageDialog( null, "Erro ao salvar o cliente", DVML.DVML_COMERCIAL, JOptionPane.ERROR_MESSAGE );
+                return;
+            }
+            String nome = clienteGlobal.getNome();
+            btnNovo.setEnabled( true );
+            boolean passou = passarClienteParaVendas( nome );
 
+            TbCliente gravado = clientesController.findByNome( nome );
+            if ( painelContratos != null && gravado != null )
+            {
+                // negócio com mensalidades: fica aberto no separador das mensalidades
+                importarDados( gravado );
+                abas.setSelectedComponent( painelContratos );
+                JOptionPane.showMessageDialog( this,
+                        "Cliente salvo e escolhido na venda.\nConfigure agora as mensalidades (ou Sair).",
+                        DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
+                return;
+            }
+            JOptionPane.showMessageDialog( null, "Cliente salvo com sucesso!...", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
+            if ( passou )
+            {
+                dispose();
+            }
+            else
+            {
+                importarDados( gravado );
             }
         }
         catch ( SQLException ex )
         {
-            Logger.getLogger(ClienteInternoVisao.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger( ClienteInternoVisao.class.getName() ).log( Level.SEVERE, null, ex );
         }
-        
-        conexaoTransaction.close();
-
     }
 
     public boolean validar()
@@ -1171,12 +1156,18 @@ public class ClienteInternoVisao extends javax.swing.JDialog
         clienteGlobal.setNif( nif );
         this.clienteGlobal.setTelefone( txtContactos.getText() );
         this.clienteGlobal.setEmail( txtEmail.getText().trim() );
-        clienteGlobal.setPercentagemDesconto( Double.parseDouble(txtDesconto.getText() ));
+        String desc = txtDesconto.getText().trim().replace( ',', '.' );
+        clienteGlobal.setPercentagemDesconto( desc.isEmpty() ? 0d : Double.parseDouble( desc ) );
 
     }
 
     private void procedimento_alterar()
     {
+        if ( valido() && clienteGlobal == null )
+        {
+            JOptionPane.showMessageDialog( this, "Abra primeiro o cliente (pelo código ou pela pesquisa)." );
+            return;
+        }
         if ( valido() )
         {
 
@@ -1195,7 +1186,8 @@ public class ClienteInternoVisao extends javax.swing.JDialog
                     try
                     {
                         clientesController.actualizar( clienteGlobal );
-                        limpar();
+                        passarClienteParaVendas( clienteGlobal.getNome() );
+                        actualizarCabecalhoCliente();
                         JOptionPane.showMessageDialog( null, "Dados alterados com sucesso!...", DVML.DVML_COMERCIAL, JOptionPane.INFORMATION_MESSAGE );
                     }
                     catch ( Exception e )
@@ -1226,13 +1218,20 @@ public class ClienteInternoVisao extends javax.swing.JDialog
     private void procedimento_eliminar()
     {
         int opcao = JOptionPane.showConfirmDialog( null,
-                "Tens a plena certeza que pretendes eliminar essa categria?" );
+                "Tem a certeza que pretende eliminar este cliente?" );
         if ( opcao == JOptionPane.YES_OPTION )
         {
             try
             {
-                clientesController.eliminar( codigo );
-                limpar();
+                if ( clienteGlobal != null && clienteGlobal.getCodigo() != null )
+                {
+                    codigo = clienteGlobal.getCodigo();
+                }
+                if ( !clientesController.eliminar( codigo ) )
+                {
+                    throw new Exception( "eliminar falhou" );
+                }
+                limparDadosForm();
                 JOptionPane.showMessageDialog( null,
                         "Cliente eliminado com sucesso!...",
                         DVML.DVML_COMERCIAL,
@@ -1250,9 +1249,10 @@ public class ClienteInternoVisao extends javax.swing.JDialog
     private void novo_cliente()
     {
         habilitar_campos( true );
-        limpar();
+        limparDadosForm();
+        btnSalvar.setEnabled( true );
+        abas.setSelectedIndex( 0 );
         txtNomeCliente.requestFocus();
-        btnNovo.setEnabled( false );
     }
 
     private void proteger_campos_excepto_nif()
@@ -1362,13 +1362,25 @@ public class ClienteInternoVisao extends javax.swing.JDialog
 
     public static void importarDados( TbCliente cliente )
     {
+        if ( cliente == null )
+        {
+            limparDadosForm();
+            return;
+        }
         clienteGlobal = cliente;
         txtNomeCliente.setText( clienteGlobal.getNome() );
         txtEndereco.setText( clienteGlobal.getMorada() );
         txtNif.setText( clienteGlobal.getNif() );
         txtContactos.setText( clienteGlobal.getTelefone() );
         txtEmail.setText( clienteGlobal.getEmail() );
-        txtDesconto.setText( String.valueOf(clienteGlobal.getPercentagemDesconto()));
+        txtDesconto.setText( String.valueOf( clienteGlobal.getPercentagemDesconto() ) );
+        if ( instancia != null && cliente.getCodigo() != null )
+        {
+            instancia.codigo = cliente.getCodigo();
+            instancia.btnSalvar.setEnabled( false );
+            instancia.btnAlterar.setEnabled( true );
+            instancia.btnEliminar.setEnabled( true );
+        }
         adicionarServicos();
     }
 
@@ -1379,129 +1391,172 @@ public class ClienteInternoVisao extends javax.swing.JDialog
         txtNif.setText( "" );
         txtContactos.setText( "" );
         txtEmail.setText( "" );
+        txtDesconto.setText( "0" );
         clienteGlobal = null;
+        if ( instancia != null )
+        {
+            instancia.codigo = 0;
+            instancia.btnAlterar.setEnabled( false );
+            instancia.btnEliminar.setEnabled( false );
+        }
+        adicionarServicos();
     }
 
+    // =====================================================================
+    // MENSALIDADES: tudo no comercial.mensalidade.PainelContratosCliente.
+    // Estes métodos ficam porque os eventos do .form (botões e tabela antigos,
+    // já fora do ecrã) ainda os chamam.
+    // =====================================================================
     private void procedimentoAdicionarServico()
     {
-        String servicoSelecionado = cmbProduto.getSelectedItem().toString().trim();
-
-        DefaultTableModel model = ( DefaultTableModel ) tabelaServicoMensalidade.getModel();
-
-        // Verifica se o serviço já foi adicionado
-        for ( int i = 0; i < model.getRowCount(); i++ )
-        {
-            String servicoExistente = model.getValueAt( i, 1 ).toString().trim(); // coluna 1 = Serviço
-
-            if ( servicoExistente.equalsIgnoreCase( servicoSelecionado ) )
-            {
-                JOptionPane.showMessageDialog( null,
-                        "Este serviço já foi adicionado!",
-                        "Aviso", JOptionPane.WARNING_MESSAGE );
-                return; // Cancela o procedimento
-            }
-        }
-
-        // Se não houver duplicação, continua normalmente
-        ConfiguracaoMesComeco cmc = new ConfiguracaoMesComeco();
-        cmc.setDataCadastro( new Date() );
-        cmc.setMesId( cmbMesComeco.getSelectedIndex() + 1 );
-        cmc.setProdutoId( getCodigoProduto() );
-        cmc.setUsuarioId( 0 );
-        cmc.setDuracao( cmbDuracao.getSelectedIndex() );
-        cmc.setClienteId( clienteGlobal.getCodigo() );
-
-        if ( configuracaoMesComecoController.salvar( cmc ) )
-        {
-            adicionarServicos();
-            JOptionPane.showMessageDialog( null, "Serviço configurado com sucesso!" );
-        }
-        else
-        {
-            JOptionPane.showMessageDialog( null, "Erro ao configurar o serviço",
-                    "Falha", JOptionPane.ERROR_MESSAGE );
-        }
     }
 
     private void setDadosForm()
     {
-        DefaultTableModel modelo = ( DefaultTableModel ) tabelaServicoMensalidade.getModel();
-        int linhaSelecionada = tabelaServicoMensalidade.getSelectedRow();
-
-        String cod = modelo.getValueAt( linhaSelecionada, 0 ).toString();
-        String mes = modelo.getValueAt( linhaSelecionada, 2 ).toString();
-        String duracao = modelo.getValueAt( linhaSelecionada, 3 ).toString();
-        ConfiguracaoMesComeco item = configuracaoMesComecoController.buscarPorId( Integer.parseInt( cod ) );
-
-        TbProduto produto = produtosController.findByCod( item.getProdutoId() );
-        int idSubFamilia = produto.getCodTipoProduto().getCodigo();
-        TbTipoProduto tipoProduto = ( TbTipoProduto ) tipoProdutoController.findById( idSubFamilia );
-        cmbSubFamilia.setSelectedItem( tipoProduto.getDesignacao() );
-        cmbProduto.setSelectedItem( produto.getDesignacao() );
-
-        cmbDuracao.setSelectedItem( duracao );
-        cmbMesComeco.setSelectedItem( mes );
-
-    }
-
-    private static void adicionarServicos()
-    {
-
-        if ( Objects.nonNull( clienteGlobal ) )
-        {
-            DefaultTableModel modelo = ( DefaultTableModel ) tabelaServicoMensalidade.getModel();
-            modelo.setRowCount( 0 );
-            List<ConfiguracaoMesComeco> listarTodos = configuracaoMesComecoController.listarTodos( clienteGlobal.getCodigo() );
-
-            for ( ConfiguracaoMesComeco item : listarTodos )
-            {
-
-                String servico = produtosController.findByCod( item.getProdutoId() ).getDesignacao();
-                String mesComeco = mesRhController.getDescricaoByIdMes( item.getMesId() );
-
-                modelo.addRow( new Object[]
-                {
-                    item.getId(),
-                    servico,
-                    mesComeco,
-                    MetodosUtil.getNumeroFormatado( item.getDuracao() )
-                    + " " + getMesDesignacao( item.getDuracao() )
-                } );
-            }
-
-        }
-
-    }
-
-    private static String getMesDesignacao( int id )
-    {
-        return ( id > 1 ) ? "Meses" : "Mês";
-    }
-
-    public int getCodigoProduto()
-    {
-        return produtosController.findByDesignacao(
-                cmbProduto.getSelectedItem().toString() ).getCodigo();
     }
 
     private void removerServicoMensalidade()
     {
-        try
-        {
-            DefaultTableModel modelo = ( DefaultTableModel ) tabelaServicoMensalidade.getModel();
-            int selectedRow = tabelaServicoMensalidade.getSelectedRow();
-            int id = Integer.parseInt( modelo.getValueAt( selectedRow, 0 ).toString() );
-            boolean deletar = configuracaoMesComecoController.deletar( id );
-            if ( deletar )
-            {
-                MetodosUtil.remover_item_tabela( tabelaServicoMensalidade, selectedRow );
-            }
-        }
-        catch ( Exception e )
-        {
-            JOptionPane.showMessageDialog( null, "Falha ao remover o serviço!" );
-        }
-
     }
 
+    private static void adicionarServicos()
+    {
+        if ( instancia != null )
+        {
+            if ( instancia.painelContratos != null )
+            {
+                instancia.painelContratos.setCliente( clienteGlobal );
+            }
+            instancia.actualizarCabecalhoCliente();
+        }
+    }
+
+    /** Põe o cliente gravado como cliente das janelas de venda/pedidos abertas. Devolve true se havia alguma. */
+    private boolean passarClienteParaVendas( String nome )
+    {
+        boolean passou = false;
+        if ( !Objects.isNull( NovaGestaoPedidosVisao.cmbCliente ) )
+        {
+            NovaGestaoPedidosVisao.cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );
+            NovaGestaoPedidosVisao.cmbCliente.setSelectedItem( nome );
+            passou = true;
+        }
+        if ( visao.venda.VendaModernaVisao.estaAberta() )
+        {
+            visao.venda.VendaModernaVisao.cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );
+            visao.venda.VendaModernaVisao.cmbCliente.setSelectedItem( nome );
+            passou = true;
+        }
+        else if ( !Objects.isNull( FormVendaResponsivaVisaoTop.cmbCliente ) )
+        {
+            FormVendaResponsivaVisaoTop.cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );
+            FormVendaResponsivaVisaoTop.cmbCliente.setSelectedItem( nome );
+            passou = true;
+        }
+        if ( !Objects.isNull( RecolhaPedidosVisao.cmbCliente ) )
+        {
+            RecolhaPedidosVisao.cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );
+            RecolhaPedidosVisao.cmbCliente.setSelectedItem( nome );
+            passou = true;
+        }
+        if ( !Objects.isNull( VendaPOSVisao.cmbCliente ) )
+        {
+            VendaPOSVisao.cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );
+            VendaPOSVisao.cmbCliente.setSelectedItem( nome );
+            passou = true;
+        }
+        if ( !Objects.isNull( VendasPraticasVisao.cmbCliente ) )
+        {
+            VendasPraticasVisao.cmbCliente.setModel( new DefaultComboBoxModel( clientesController.getVector() ) );
+            VendasPraticasVisao.cmbCliente.setSelectedItem( nome );
+            passou = true;
+        }
+        return passou;
+    }
+
+    // =====================================================================
+    // ASPECTO (o initComponents cria os componentes; isto só os arruma)
+    // =====================================================================
+    private static ClienteInternoVisao instancia;
+    private final JLabel lbClienteActivo = new JLabel();
+    private final JTabbedPane abas = new JTabbedPane();
+    /** null quando o negócio não usa mensalidades. */
+    private PainelContratosCliente painelContratos;
+
+    private void montarLayoutWeb()
+    {
+        instancia = this;
+        setTitle( "Cliente" );
+
+        // ---- ficha
+        FormularioWeb.campoTexto( txtNomeCliente, txtEndereco, txtNif, txtContactos, txtEmail, txtDesconto, txtProcNIF );
+        JPanel ficha = FormularioWeb.pilha( 10,
+                ComponentesWeb.campo( "Nome do cliente *", txtNomeCliente ),
+                FormularioWeb.grelha( 200, 2,
+                        ComponentesWeb.campo( "NIF *", txtNif ),
+                        ComponentesWeb.campo( "Telefone", txtContactos ) ),
+                ComponentesWeb.campo( "Endereço *", txtEndereco ),
+                FormularioWeb.grelha( 200, 2,
+                        ComponentesWeb.campo( "Email", txtEmail ),
+                        ComponentesWeb.campo( "Desconto (%)", txtDesconto ) ),
+                FormularioWeb.dica( "* campos obrigatórios" ) );
+        ComponentesWeb.Cartao cartaoFicha = FormularioWeb.cartao( "Dados do cliente", ComponentesWeb.AZUL_VIVO, ficha );
+        JPanel abaFicha = ComponentesWeb.transparente( new BorderLayout() );
+        abaFicha.add( cartaoFicha, BorderLayout.NORTH );
+
+        ComponentesWeb.abas( abas );
+        abas.addTab( "Ficha do cliente", abaFicha );
+        // mensalidades: só Ginásio, Centro Infantil e Prestação de Serviço
+        if ( Mensalidades.activo() )
+        {
+            painelContratos = new PainelContratosCliente( conexao );
+            abas.addTab( "Mensalidades", painelContratos );
+        }
+
+        lbClienteActivo.setFont( EstiloUI.FONTE_NEGRITO.deriveFont( 15f ) );
+        lbClienteActivo.setForeground( ComponentesWeb.TEXTO );
+        lbClienteActivo.setBorder( BorderFactory.createEmptyBorder( 2, 6, 6, 6 ) );
+        JPanel conteudo = ComponentesWeb.transparente( new BorderLayout( 0, 4 ) );
+        conteudo.add( lbClienteActivo, BorderLayout.NORTH );
+        conteudo.add( abas, BorderLayout.CENTER );
+
+        // ---- cabeçalho: abrir pelo código
+        txtProcNIF.setToolTipText( "Escreva o código do cliente e carregue Enter" );
+        JPanel pesquisa = FormularioWeb.campoCabecalho( new JLabel( "Abrir pelo código" ),
+                FormularioWeb.comBotao( txtProcNIF, jButton4, "Pesquisar cliente" ) );
+        pesquisa.setPreferredSize( new Dimension( 260, 56 ) );
+        JPanel direitaCab = ComponentesWeb.transparente( new FlowLayout( FlowLayout.RIGHT, 0, 0 ) );
+        direitaCab.add( pesquisa );
+        JPanel cabecalho = FormularioWeb.cabecalho( "Cliente",
+                painelContratos != null ? "Cadastro rápido e mensalidades" : "Cadastro rápido", direitaCab );
+
+        // ---- acções
+        btnCancelar.setText( "Sair" );
+        FormularioWeb.botaoSalvar( btnSalvar, "Grava o cliente novo e passa-o para a venda" );
+        FormularioWeb.botaoAlterar( btnAlterar, "Grava as alterações da ficha" );
+        FormularioWeb.botaoEliminar( btnEliminar, "Elimina o cliente (só se não tiver vendas)" );
+        FormularioWeb.botaoSair( btnCancelar, "Fechar (Esc)" );
+        ComponentesWeb.botao( btnNovo, ComponentesWeb.Variante.PRIMARIO, "/imagens/icons8_add_64px.png", "Limpa a ficha para um cliente novo" );
+        JPanel accoes = FormularioWeb.barraAccoes(
+                FormularioWeb.dica( painelContratos != null
+                        ? "Depois de gravar, configure logo as mensalidades no separador \"Mensalidades\"."
+                        : "Ao gravar, o cliente passa para a venda." ),
+                btnNovo, btnSalvar, btnAlterar, btnEliminar, btnCancelar );
+
+        FormularioWeb.montar( this, cabecalho, conteudo, accoes, "Cliente" );
+        getRootPane().registerKeyboardAction( e -> dispose(),
+                KeyStroke.getKeyStroke( KeyEvent.VK_ESCAPE, 0 ), JComponent.WHEN_IN_FOCUSED_WINDOW );
+        FormularioWeb.ajustar( this, painelContratos != null ? 1000 : 760, painelContratos != null ? 720 : 520, 560, 420 );
+
+        btnAlterar.setEnabled( false );
+        btnEliminar.setEnabled( false );
+        adicionarServicos();
+    }
+
+    private void actualizarCabecalhoCliente()
+    {
+        lbClienteActivo.setText( clienteGlobal == null || clienteGlobal.getCodigo() == null
+                ? "Novo cliente"
+                : clienteGlobal.getNome() + "   ·   Cód. " + clienteGlobal.getCodigo() );
+    }
 }

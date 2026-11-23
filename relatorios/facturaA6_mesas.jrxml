@@ -203,35 +203,35 @@ GROUP BY
 	</background>
 	<title>
 		<band height="143">
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="82853475-19ec-484a-a036-949cdd5bd35b" x="1" y="58" width="187" height="10"/>
 				<textElement textAlignment="Center" markup="html">
 					<font fontName="Times New Roman" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA["<b>Email:</b> " +$F{tb_dados_instituicao_email}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="608569fd-08f1-46ad-bfab-b75a16a853ba" x="0" y="25" width="187" height="15"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
 					<font fontName="Times New Roman" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_nome}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="a9ba3e70-db19-420e-bdf3-27f09d6bcb77" x="1" y="50" width="187" height="10"/>
 				<textElement textAlignment="Center" markup="html">
 					<font fontName="Times New Roman" size="8" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["<b>Telefone:</b> " +$F{tb_dados_instituicao_telefone}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="442689d9-4840-4d31-92a9-c7d9dfb46603" x="1" y="35" width="187" height="10"/>
 				<textElement textAlignment="Center" markup="html">
 					<font fontName="Times New Roman" size="8" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["<b>Endereço:</b> " +$F{tb_dados_instituicao_enderecos}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="5be15091-64e8-4c95-a321-fa7fc79d18d4" x="1" y="42" width="187" height="10"/>
 				<textElement textAlignment="Center" markup="html">
 					<font fontName="Times New Roman" size="8" isBold="false"/>
@@ -248,14 +248,14 @@ GROUP BY
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
 			</rectangle>
-			<textField pattern="HH:mm">
+			<textField pattern="HH:mm" isBlankWhenNull="true">
 				<reportElement uuid="bcf9bb21-c662-4919-a36b-0154deb00625" key="element-95" x="130" y="83" width="41" height="13" forecolor="#000000"/>
 				<textElement verticalAlignment="Middle" markup="none">
 					<font fontName="Times New Roman" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_venda_hora}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="bba521bb-382c-4d32-a567-bedc62397a18" key="element-91" x="2" y="74" width="183" height="13" forecolor="#000000"/>
 				<textElement markup="html">
 					<font fontName="Times New Roman" size="9" isBold="false"/>
@@ -275,14 +275,14 @@ GROUP BY
 				</textElement>
 				<text><![CDATA[Data de Emissão:]]></text>
 			</staticText>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="ebeede27-892c-4f98-bb4f-1e9f4a070694" key="element-96" x="0" y="127" width="184" height="16" forecolor="#000000"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
 					<font fontName="Times New Roman" size="9" isBold="true" isItalic="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_mesas_designacao}]]></textFieldExpression>
 			</textField>
-			<textField pattern="dd-MM-yyyy">
+			<textField pattern="dd-MM-yyyy" isBlankWhenNull="true">
 				<reportElement uuid="3473c797-1a28-4b54-89bb-a32153832384" key="element-95" x="81" y="83" width="48" height="13" forecolor="#000000"/>
 				<textElement verticalAlignment="Middle" markup="none">
 					<font fontName="Times New Roman" isBold="false"/>
@@ -297,12 +297,12 @@ GROUP BY
 				</textElement>
 				<textFieldExpression><![CDATA["<b>Cliente:</b> " + "<i>" +$F{tb_venda_nome_cliente} +"</i>"]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="4f9e9141-8f88-441e-9e64-2d1659cb5e06" x="2" y="106" width="183" height="16"/>
 				<textElement markup="html">
 					<font fontName="Times New Roman" isItalic="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["<b>NIF:</b> "  +"<i>" +$F{tb_cliente_nif} +"</i>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["<b>NIF:</b> <i>" + ($F{tb_cliente_nif} != null && !$F{tb_cliente_nif}.trim().isEmpty() ? $F{tb_cliente_nif} : "Consumidor final") + "</i>"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="af565914-a0c5-4982-b6e1-8275416993e0" x="-1" y="114" width="186" height="12"/>
@@ -336,7 +336,7 @@ GROUP BY
 	</columnFooter>
 	<lastPageFooter>
 		<band height="35">
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="54bc27bf-7fa9-4128-87c1-3654af47d451" key="element-96" x="0" y="0" width="188" height="35" forecolor="#000000"/>
 				<box>
 					<pen lineStyle="Dotted"/>
@@ -353,8 +353,8 @@ GROUP BY
 		</band>
 	</lastPageFooter>
 	<summary>
-		<band height="195">
-			<textField>
+		<band height="279">
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="49d4eccd-b03b-48dd-9a0d-39c722687668" key="element-96" x="1" y="161" width="188" height="12" forecolor="#000000"/>
 				<textElement verticalAlignment="Bottom" markup="html">
 					<font fontName="Times New Roman" size="8" isBold="false"/>
@@ -425,7 +425,7 @@ GROUP BY
 				<textElement textAlignment="Right" verticalAlignment="Top" markup="html">
 					<font fontName="Times New Roman" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{MOTIVO_ISENCAO}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{MOTIVO_ISENCAO} == null || "null".equals($P{MOTIVO_ISENCAO}) ? "" : $P{MOTIVO_ISENCAO}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement uuid="596f9f5f-b381-4d53-ad31-267250ad5fc7" key="textField-16" x="1" y="13" width="37" height="10"/>
@@ -460,19 +460,19 @@ GROUP BY
 				</textElement>
 				<text><![CDATA[Incidência]]></text>
 			</staticText>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="60e46d22-3c94-4c52-a268-94db8e6f0d20" x="1" y="113" width="185" height="10"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font fontName="Times New Roman" size="7" isItalic="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_venda_total_por_extenso}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="b601d538-f3d0-4e9b-8d7a-2b51e66befc4" x="0" y="137" width="189" height="32"/>
 				<textElement textAlignment="Justified">
 					<font fontName="Times New Roman" size="7" isItalic="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["*Os bens ou serviços foram colocados à disposição do cliente no(a) "+$F{tb_armazem_designacao}+", aos "+$F{tb_venda_dataVenda}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["*Os bens ou serviços foram colocados à disposição do cliente no(a) "+$F{tb_armazem_designacao}+", aos "+($F{tb_venda_dataVenda} == null ? "" : new java.text.SimpleDateFormat("dd-MM-yyyy HH:mm").format($F{tb_venda_dataVenda})) + "."]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement uuid="3a1a83b7-e8f0-4477-96da-8db8a8398fd1" key="textField-20" x="132" y="34" width="54" height="9"/>
@@ -533,7 +533,7 @@ GROUP BY
 				</textElement>
 				<text><![CDATA[Total(AOA):]]></text>
 			</staticText>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="50dd4d1a-5502-45da-bc0e-ab3c59707bc5" x="98" y="52" width="34" height="9"/>
 				<box>
 					<pen lineWidth="0.25"/>
@@ -544,7 +544,7 @@ GROUP BY
 				</box>
 				<textElement/>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="ce87fc75-7e7a-4912-84ec-e9fb90323826" x="98" y="61" width="34" height="9"/>
 				<box>
 					<pen lineWidth="0.25"/>
@@ -613,7 +613,7 @@ GROUP BY
 				</textElement>
 				<text><![CDATA[Desc. Financeiro:]]></text>
 			</staticText>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="e0e2f6f9-decc-401c-9417-f0898dbf94cf" style="cliente_style_troco" x="98" y="104" width="34" height="9"/>
 				<box>
 					<pen lineWidth="0.25"/>
@@ -625,7 +625,7 @@ GROUP BY
 				<textElement/>
 				<textFieldExpression><![CDATA[]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="71b5d663-e93a-43c9-b262-1aa1fef04b26" x="98" y="34" width="34" height="9"/>
 				<box>
 					<pen lineWidth="0.25"/>
@@ -695,7 +695,7 @@ GROUP BY
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_venda_troco}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="99cb6a58-1591-4213-be52-81c6048ba65e" x="105" y="19" width="34" height="9"/>
 				<box>
 					<pen lineWidth="0.25"/>
@@ -707,7 +707,7 @@ GROUP BY
 				<textElement/>
 				<textFieldExpression><![CDATA[]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="31e224a1-0022-4f7e-b6c7-dfc494949e72" x="98" y="70" width="34" height="9"/>
 				<box>
 					<pen lineWidth="0.25"/>
@@ -730,14 +730,18 @@ GROUP BY
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_factura_forma_pagamento_A6.jasper"]]></subreportExpression>
 			</subreport>
-			<textField>
-				<reportElement uuid="c07228e5-69f6-4e7f-a909-3d0bfd57b8d6" x="0" y="169" width="189" height="26"/>
+			<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle" onErrorType="Blank">
+				<reportElement uuid="0b47e6a8-9369-4873-84a8-f06ebb1a7a6a" positionType="Float" x="58" y="177" width="72" height="72"/>
+				<imageExpression><![CDATA[util.QRFactura.imagem($P{CODIGO_VENDA})]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c07228e5-69f6-4e7f-a909-3d0bfd57b8d6" x="0" y="253" width="189" height="26"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_venda_assinatura} + "-Processado por programa validado nº " + "258/AGT/2020 "+$P{SOFTWARE_NAME} + "/dvml"]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00">
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement uuid="83b21678-a7b2-4334-a8e6-738a50391b0d" style="cliente_style_gorjeta" x="25" y="123" width="106" height="12"/>
 				<textElement textAlignment="Justified" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="7" isBold="true" isItalic="false"/>

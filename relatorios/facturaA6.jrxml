@@ -406,7 +406,7 @@ WHERE
 		<band splitType="Stretch"/>
 	</pageFooter>
 	<summary>
-		<band height="224" splitType="Stretch">
+		<band height="302" splitType="Stretch">
 			<!-- ===== Totais ===== -->
 			<staticText>
 				<reportElement uuid="a6f0c0de-0000-4000-8000-000000000040" x="70" y="3" width="64" height="9"/>
@@ -649,8 +649,12 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tb_dados_instituicao_slogan} == null || $F{tb_dados_instituicao_slogan}.trim().isEmpty() ? null : $F{tb_dados_instituicao_slogan}.trim()]]></textFieldExpression>
 			</textField>
+			<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle" onErrorType="Blank">
+				<reportElement uuid="a9f7119a-5aeb-4759-aaec-094a4600143c" positionType="Float" x="58" y="205" width="72" height="72"/>
+				<imageExpression><![CDATA[util.QRFactura.imagem($P{CODIGO_VENDA})]]></imageExpression>
+			</image>
 			<textField isStretchWithOverflow="true">
-				<reportElement uuid="a6f0c0de-0000-4000-8000-000000000074" positionType="Float" x="0" y="203" width="188" height="11"/>
+				<reportElement uuid="a6f0c0de-0000-4000-8000-000000000074" positionType="Float" x="0" y="281" width="188" height="11"/>
 				<box topPadding="2">
 					<topPen lineWidth="0.5"/>
 				</box>
@@ -660,7 +664,7 @@ WHERE
 				<textFieldExpression><![CDATA[$F{tb_venda_assinatura} + "-Processado por programa validado nº 258/AGT/2020 " + $P{SOFTWARE_NAME} + "/dvml"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="a6f0c0de-0000-4000-8000-000000000075" positionType="Float" x="0" y="215" width="188" height="8"/>
+				<reportElement uuid="a6f0c0de-0000-4000-8000-000000000075" positionType="Float" x="0" y="293" width="188" height="8"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="5"/>
 				</textElement>

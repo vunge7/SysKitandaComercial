@@ -29,6 +29,38 @@ public class ListaPedidos {
    private double totalPedidos;
   
  
+    /**
+     * Conta de um lugar (como no SysKitandaHotel): o mesmo talão do "Ver
+     * Conta", só com o consumo por facturar desse lugar.
+     */
+    public static boolean mostrarContaLugar(int pkPedido, int pkLugar, double totalLugar, int idUser) throws SQLException {
+        Connection connection = BDConexao.getConexao();
+        HashMap hashMap = new HashMap();
+        hashMap.put("ID_PEDIDO", pkPedido);
+        hashMap.put("ID_LUGAR", pkLugar);
+        hashMap.put("TotalPedido", totalLugar);
+        hashMap.put("IdUser", idUser);
+        File relatorio = new File("relatorios/pedido_A5_lugar.jasper").getAbsoluteFile();
+        String caminho = relatorio.getAbsolutePath();
+        // sub-relatório na mesma pasta (se lá estiver); senão fica o "../relatorios/" do .jrxml
+        File sub = new File(relatorio.getParentFile(), "sub_pedidos_A6.jasper");
+        if (sub.exists()) {
+            hashMap.put("SUBREPORT_DIR", relatorio.getParentFile().getAbsolutePath() + File.separator);
+        }
+        try {
+            JasperPrint jasperPrint = JasperFillManager.fillReport(caminho, hashMap, connection);
+            if (jasperPrint.getPages().size() >= 1) {
+                new JasperViewer(jasperPrint, false).setVisible(true);
+                return true;
+            }
+            JOptionPane.showMessageDialog(null, "Este lugar não tem consumo para mostrar.", "Conta do lugar", JOptionPane.WARNING_MESSAGE);
+        } catch (JRException jex) {
+            jex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Não foi possível mostrar a conta do lugar:\n" + jex.getMessage());
+        }
+        return false;
+    }
+
     public ListaPedidos(int pk_pedido) throws SQLException {
     
    

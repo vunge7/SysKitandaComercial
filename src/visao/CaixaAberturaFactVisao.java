@@ -224,7 +224,7 @@ public class CaixaAberturaFactVisao extends javax.swing.JFrame {
     {//GEN-HEADEREND:event_jButton1ActionPerformed
         // TODO add your handling code here:
         procedimento_abrir_caixa();
-        fazerBackupAgora();
+        fazerBackupEmSegundoPlano();
         dispose();
 //
 //        try
@@ -256,7 +256,7 @@ public class CaixaAberturaFactVisao extends javax.swing.JFrame {
     private void txtValorInicialActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtValorInicialActionPerformed
     {//GEN-HEADEREND:event_txtValorInicialActionPerformed
         procedimento_abrir_caixa();
-        fazerBackupAgora();
+        fazerBackupEmSegundoPlano();
         dispose();
 //        try
 //        {
@@ -531,6 +531,13 @@ public class CaixaAberturaFactVisao extends javax.swing.JFrame {
         } else {
             new MenuPrincipalVisao(this.idUser, this.idEmpresa, administrador, BDConexao.getInstancia()).setVisible(true);
         }
+    }
+
+    /** O mysqldump numa thread de baixa prioridade: a abertura da caixa não fica à espera. */
+    public static void fazerBackupEmSegundoPlano() {
+        Thread t = new Thread(CaixaAberturaFactVisao::fazerBackupAgora, "kitanda-backup-caixa");
+        t.setPriority(Thread.MIN_PRIORITY);
+        t.start();
     }
 
     public static void fazerBackupAgora() {

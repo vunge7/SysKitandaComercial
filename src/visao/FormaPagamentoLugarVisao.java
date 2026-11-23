@@ -67,6 +67,9 @@ public class FormaPagamentoLugarVisao extends javax.swing.JFrame
         this.formulario = formulario;
         this.totalFactura = totalFactura;
         inicializar_componentes();
+        // aspecto da Forma de Pagamento do SysKitandaHotel, sobre o initComponents
+        util.ui.LayoutSeguro.aplicar( this, "Forma de pagamento", () -> util.ui.FormaPagamentoWeb.montar( this, null,
+                lb_total_geral, lb_troco, tabela_forma_pagamento, jScrollPane2, jButton3, jButton6 ) );
     }
 
     /**

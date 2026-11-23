@@ -482,6 +482,7 @@ public class StoksController implements EntidadeFactory {
                 produto.setFkGrupo(new Grupo(result.getInt("fk_grupo")));
                 produto.setPhoto(result.getBytes("photo"));
                 produto.setStatusIva(result.getString("status_iva"));
+                produto.setCozinha(result.getString("cozinha")); // gestão de mesas: talão da cozinha
                 lista_stock.add(produto);
             }
 
@@ -1109,6 +1110,7 @@ public class StoksController implements EntidadeFactory {
                 produto.setFkGrupo(new Grupo(result.getInt("fk_grupo")));
                 produto.setPhoto(result.getBytes("photo"));
                 produto.setStatusIva(result.getString("status_iva"));
+                produto.setCozinha(result.getString("cozinha")); // gestão de mesas: talão da cozinha
                 lista_stock.add(produto);
             }
 
@@ -1156,6 +1158,7 @@ public class StoksController implements EntidadeFactory {
                 produto.setFkGrupo(new Grupo(result.getInt("fk_grupo")));
                 produto.setPhoto(result.getBytes("photo"));
                 produto.setStatusIva(result.getString("status_iva"));
+                produto.setCozinha(result.getString("cozinha")); // gestão de mesas: talão da cozinha
                 lista_stock.add(produto);
             }
 
