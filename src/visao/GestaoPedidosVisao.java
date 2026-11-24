@@ -932,7 +932,7 @@ public class GestaoPedidosVisao extends javax.swing.JFrame
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         dispose();
-        fazerBackupAgora();
+        util.BackupUsb.iniciarEmSegundoPlano(); // cópia de segurança sem prender a interface
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void BT_PedidosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BT_PedidosActionPerformed

@@ -1517,8 +1517,9 @@ public class MenuPrincipalLavandariaVisao extends javax.swing.JFrame
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         // TODO add your handling code here:
         MetodosUtil.actualizarEstadoLog( "OFF" );
-        fazerBackupAgora();
-        System.exit( 0 );
+        // a cópia corre em segundo plano; ao sair espera que termine (com aviso), como no login
+        util.BackupUsb.iniciarEmSegundoPlano();
+        util.BackupUsb.sairDaAplicacao();
 
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 

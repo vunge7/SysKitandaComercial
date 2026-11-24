@@ -226,25 +226,7 @@ public class CaixaAberturaFactVisao extends javax.swing.JFrame {
         procedimento_abrir_caixa();
         fazerBackupEmSegundoPlano();
         dispose();
-//
-//        try
-//        {
-//            if ( dadosInstituicao != null && dadosInstituicao.getNegocio() != null )
-//            {
-//                System.out.println( "Abrindo menu para negócio: " + dadosInstituicao.getNegocio() );
-//                getMenuPrincipalByNegocio( dadosInstituicao.getNegocio() );
-//            }
-//            else
-//            {
-//                System.err.println( "[Erro] Dados da instituição estão nulos. Abrindo menu padrão..." );
-//                getMenuPrincipalByNegocio( "Comercial" );
-//            }
-//        }
-//        catch ( Exception e )
-//        {
-//            e.printStackTrace();
-//        }
-//        fazerBackupAgora();
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton2ActionPerformed
@@ -258,24 +240,6 @@ public class CaixaAberturaFactVisao extends javax.swing.JFrame {
         procedimento_abrir_caixa();
         fazerBackupEmSegundoPlano();
         dispose();
-//        try
-//        {
-//            if ( dadosInstituicao != null && dadosInstituicao.getNegocio() != null )
-//            {
-//                System.out.println( "Abrindo menu para negócio: " + dadosInstituicao.getNegocio() );
-//                getMenuPrincipalByNegocio( dadosInstituicao.getNegocio() );
-//            }
-//            else
-//            {
-//                System.err.println( "[Erro] Dados da instituição estão nulos. Abrindo menu padrão..." );
-//                getMenuPrincipalByNegocio( "Comercial" );
-//            }
-//        }
-//        catch ( Exception e )
-//        {
-//            e.printStackTrace();
-//        }
-//        fazerBackupAgora();
 
     }//GEN-LAST:event_txtValorInicialActionPerformed
 
@@ -349,62 +313,6 @@ public class CaixaAberturaFactVisao extends javax.swing.JFrame {
     public static javax.swing.JTextField txtValorInicial;
     // End of variables declaration//GEN-END:variables
 
-//    TbUsuario usuario = ( TbUsuario ) usuariosController.findById( this.idUser );
-//        if ( usuario.getIdTipoUsuario().getIdTipoUsuario() == DVML.COD_TIPO_USUARIO_SUB_ADMINISTRADOR )
-//    private void procedimento_abrir_caixa()
-//    {
-//        conexaoTransaction = BDConexao.getInstancia();
-//        DocumentosController.startTransaction( conexaoTransaction );
-//        TbDadosInstituicao dadosInstituicao = ( TbDadosInstituicao ) dadosInstituicaoController.findById( 1 );
-//        if ( camposValidos() )
-//        {
-//            System.out.println( "Cheguei antes do existe caixa" );
-//            if ( !caixa_controller.existeCaixas() )
-//            {
-//                System.out.println( "Cheguei depois do existe caixa" );
-//                try
-//                {
-//                    abrir_caixa();
-//                }
-//                catch ( Exception e )
-//                {
-//                }
-//
-//            }
-//            else
-//            {
-//                Caixa caixa_actual = caixa_controller.findByCodigo( caixa_controller.getLastCaixa() );
-//                if ( !Objects.isNull( caixa_actual.getDataFecho() ) )
-//                {
-//
-//                    try
-//                    {
-//                        abrir_caixa();
-//                    }
-//                    catch ( Exception e )
-//                    {
-//                    }
-//                    dispose();
-////                    if ( ( dadosInstituicao.getMenuPrincipalByNegocio().equals( "Lavandaria" ) ) && ( usuario.getIdTipoUsuario().getIdTipoUsuario() == DVML.COD_TIPO_USUARIO_SUB_ADMINISTRADOR ) )
-//                    if ( ( dadosInstituicao.getNegocio().equals( "Lavandaria" ) ) )
-//                    {
-//                        JanelaFrontOfficeLavandariaVisao.alterar_status_botao();
-//                    }
-//                    else
-//                    {
-//                        RootVisao.alterar_status_botao();
-//                    }
-//                }
-//                else
-//                {
-//                    JOptionPane.showMessageDialog( null, "Caro usuário deve fechar o caixa actual (nº  " + caixa_actual.getPkCaixa() + ")", "Aviso", JOptionPane.WARNING_MESSAGE );
-//                }
-//
-//            }
-//
-//        }
-//
-//    }
     private void procedimento_abrir_caixa() {
 
         TbDadosInstituicao dadosInstituicao = (TbDadosInstituicao) dadosInstituicaoController.findById(1);
@@ -533,11 +441,13 @@ public class CaixaAberturaFactVisao extends javax.swing.JFrame {
         }
     }
 
-    /** O mysqldump numa thread de baixa prioridade: a abertura da caixa não fica à espera. */
+    /**
+     * A abertura da caixa não fica à espera da cópia. Usa o mesmo backup do login
+     * (encriptado, pendrives BK + pasta do sistema): não arranca um segundo se já
+     * houver um a correr, e ao fechar o sistema espera que termine.
+     */
     public static void fazerBackupEmSegundoPlano() {
-        Thread t = new Thread(CaixaAberturaFactVisao::fazerBackupAgora, "kitanda-backup-caixa");
-        t.setPriority(Thread.MIN_PRIORITY);
-        t.start();
+        BackupUsb.iniciarEmSegundoPlano();
     }
 
     public static void fazerBackupAgora() {
