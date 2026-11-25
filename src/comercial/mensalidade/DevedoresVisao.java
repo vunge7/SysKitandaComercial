@@ -944,19 +944,25 @@ public class DevedoresVisao extends JDialog {
         JSpinner spDuracao = new JSpinner(new SpinnerNumberModel(c.duracaoSegundos, 5, 3600, 10));
         JCheckBox chkSom = new JCheckBox("Tocar som", c.som);
         JCheckBox chkActivo = new JCheckBox("Alertas ligados", c.activos);
+        JCheckBox chkAlarme = new JCheckBox("Alarme: repetir o som até alguém o silenciar", c.alarmeContinuo);
+        JCheckBox chkDevedores = new JCheckBox("Avisar também os devedores (mensalidades em atraso)", c.alertarAtrasados);
         for (JSpinner s : new JSpinner[]{spDias, spIntervalo, spDuracao}) {
             FormularioWeb.spinner(s);
         }
         chkSom.setOpaque(false);
         chkActivo.setOpaque(false);
+        chkAlarme.setOpaque(false);
+        chkDevedores.setOpaque(false);
+        chkAlarme.setEnabled(chkSom.isSelected());
+        chkSom.addActionListener(e -> chkAlarme.setEnabled(chkSom.isSelected()));
         JPanel p = FormularioWeb.pilha(10,
-                FormularioWeb.dica("Laranja: faltam até N dias para a renovação.  Vermelho: vence hoje."),
+                FormularioWeb.dica("Laranja: faltam até N dias para a renovação.  Vermelho: vence hoje ou em atraso (devedores)."),
                 FormularioWeb.grelha(170, 3,
                         ComponentesWeb.campo("Avisar com (dias de antecedência)", spDias),
                         ComponentesWeb.campo("Repetir a cada (minutos)", spIntervalo),
                         ComponentesWeb.campo("Fica no ecrã (segundos)", spDuracao)),
-                chkSom, chkActivo);
-        p.setPreferredSize(new Dimension(620, 170));
+                chkSom, chkAlarme, chkDevedores, chkActivo);
+        p.setPreferredSize(new Dimension(620, 230));
         if (JOptionPane.showConfirmDialog(this, p, "Alertas de renovação das mensalidades",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) != JOptionPane.OK_OPTION) {
             return;
@@ -965,6 +971,8 @@ public class DevedoresVisao extends JDialog {
         c.intervaloMinutos = ((Number) spIntervalo.getValue()).intValue();
         c.duracaoSegundos = ((Number) spDuracao.getValue()).intValue();
         c.som = chkSom.isSelected();
+        c.alarmeContinuo = chkAlarme.isSelected();
+        c.alertarAtrasados = chkDevedores.isSelected();
         c.activos = chkActivo.isSelected();
         if (c.gravar()) {
             config = c;

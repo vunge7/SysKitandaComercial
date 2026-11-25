@@ -60,11 +60,14 @@ final class VendaLayout {
     private static final int ALTURA_MIN_TABELA = 320;
 
     private static final int MODO_ESTREITO = 0;
+    /** Espaço extra entre o tipo de documento e o total (o total fica um pouco mais abaixo). */
+    private static final int ESPACO_ANTES_TOTAL = 12;
 
     private final VendaModernaVisao j;
 
     private JPanel cliente;
     private JPanel documento;
+    private JPanel tipoDocumento;
     private JPanel produto;
     private JPanel itens;
     private JPanel total;
@@ -78,6 +81,7 @@ final class VendaLayout {
     void montar() {
         cliente = criarCartaoCliente();
         documento = criarCartaoDocumento();
+        tipoDocumento = criarCartaoTipoDocumento();
         produto = criarCartaoProduto();
         itens = criarCartaoItens();
         total = criarCartaoTotal();
@@ -142,7 +146,7 @@ final class VendaLayout {
         suporteCorpo.removeAll();
         suporteCorpo.add(new PainelResponsivo(new int[]{QUEBRA_MEDIA}, (p, modo) -> {
             if (modo == MODO_ESTREITO) {
-                p.add(pilha(cliente, documento, produto, itens, total, lotes),
+                p.add(pilha(cliente, documento, produto, itens, tipoDocumento, total, lotes),
                         gbc(0, 0, 1, 1, 1, 1, GridBagConstraints.BOTH, semMargem()));
             } else {
                 // A tabela é o centro da venda: a coluna principal fica com
@@ -150,7 +154,7 @@ final class VendaLayout {
                 // vai para uma coluna lateral com rolagem própria.
                 p.add(pilha(produto, itens),
                         gbc(0, 0, 1, 1, 1, 1, GridBagConstraints.BOTH, new Insets(0, 0, 0, Tema.ESPACO)));
-                p.add(lateral(pilha(total, cliente, documento, lotes)),
+                p.add(lateral(pilha(tipoDocumento, total, cliente, documento, lotes)),
                         gbc(1, 0, 1, 1, 0, 1, GridBagConstraints.BOTH, semMargem()));
             }
         }), BorderLayout.CENTER);
@@ -198,8 +202,9 @@ final class VendaLayout {
         for (int i = 0; i < lista.size(); i++) {
             boolean ultimo = i == lista.size() - 1;
             JPanel c = lista.get(i);
+            int abaixo = ultimo ? 0 : Tema.ESPACO + (c == tipoDocumento ? ESPACO_ANTES_TOTAL : 0);
             coluna.add(c, gbc(0, i, 1, 1, 1, c == estica ? 1 : 0, GridBagConstraints.BOTH,
-                    new Insets(0, 0, ultimo ? 0 : Tema.ESPACO, 0)));
+                    new Insets(0, 0, abaixo, 0)));
         }
         return coluna;
     }
@@ -231,8 +236,8 @@ final class VendaLayout {
         Cartao cartao = new Cartao("Documento", "tipo, datas e impressão", Tema.INFO);
         cartao.setLayout(new GridBagLayout());
 
-        adicionarLinha(cartao, 0, linha(celula(rotulo("Tipo de documento"), j.cmbTipoDocumento), 1));
-        adicionarLinha(cartao, 1, linha(
+        // o tipo de documento passou para um cartão próprio, antes do total
+        adicionarLinha(cartao, 0, linha(
                 celula(rotulo("Data"), j.dc_data_documento), 1,
                 celula(j.jLabel9, j.dc_data_vencimento), 1));
 
@@ -242,13 +247,22 @@ final class VendaLayout {
         seguirVisibilidade(j.spnCopia, vias);
         JPanel anoVias = linha(ano, 1, vias, 0);
         esconderSeVazia(anoVias, ano, vias);
-        adicionarLinha(cartao, 2, anoVias);
+        adicionarLinha(cartao, 1, anoVias);
 
         JPanel formatos = transparente(new GridLayout(2, 1, 0, 6));
         formatos.add(new ControloSegmentado(j.ck_A4, j.ck_Duplicada, j.ck_simplificada, j.ck_simplificada_A7));
         formatos.add(new ControloSegmentado(j.ck_ComVirgula, j.ck_S_A6, j.ck_simplificada_O, j.ck_simplificada_O_S));
-        adicionarLinha(cartao, 3, linha(celula(rotulo("Formato de impressão"), formatos), 1));
-        fechar(cartao, 4);
+        adicionarLinha(cartao, 2, linha(celula(rotulo("Formato de impressão"), formatos), 1));
+        fechar(cartao, 3);
+        return cartao;
+    }
+
+    /** Tipo de documento (FR, FT, PP, GT, Consulta Mesa), logo acima do total. */
+    private JPanel criarCartaoTipoDocumento() {
+        Cartao cartao = new Cartao(null, Tema.INFO);
+        cartao.setLayout(new GridBagLayout());
+        cartao.add(linha(celula(rotulo("Tipo de documento"), j.cmbTipoDocumento), 1),
+                gbc(0, 0, 1, 1, 1, 0, GridBagConstraints.HORIZONTAL, semMargem()));
         return cartao;
     }
 
@@ -364,15 +378,15 @@ final class VendaLayout {
                 j.txtIniciaisCliente, j.txtNomeConsumidorFinal, j.txtNifClientePesquisa,
                 j.txtCodClientePesquisa, j.jButton5, j.jButton3, j.cmbCliente,
                 // documento
-                j.cmbTipoDocumento, j.dc_data_documento, j.dc_data_vencimento, j.cmbAnoEconomico, j.spnCopia,
+                j.dc_data_documento, j.dc_data_vencimento, j.cmbAnoEconomico, j.spnCopia,
                 j.ck_A4, j.ck_Duplicada, j.ck_simplificada, j.ck_simplificada_A7,
                 j.ck_ComVirgula, j.ck_S_A6, j.ck_simplificada_O, j.ck_simplificada_O_S,
                 // produto
                 j.txtCodigoBarra, j.txtCodigoProduto, j.txtCodigoManual, j.txtBuscaRef, j.jButton4,
                 j.cmbSubFamilia, j.cmbProduto, j.cmbArmazem, j.txtQuatindade,
                 j.btn_adicionar, j.btn_remover, j.table,
-                // pagamento
-                j.sp_desconto_financeiro, j.btnFormaPagamento, j.btnProcessar, j.jButton1, j.jButton2,
+                // tipo de documento + pagamento
+                j.cmbTipoDocumento, j.sp_desconto_financeiro, j.btnFormaPagamento, j.btnProcessar, j.jButton1, j.jButton2,
                 // rodapé
                 j.btn_abertura_dia_venda, j.btn_fecho_dia_venda, j.jButton6, j.btnCancelar);
         // ao abrir, o foco vai para o código de barras (leitura imediata)

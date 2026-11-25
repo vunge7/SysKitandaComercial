@@ -15,7 +15,9 @@ import util.BDConexao;
  * <li>intervalo_alerta_min — de quanto em quanto tempo o alerta volta (60 min);</li>
  * <li>duracao_alerta_seg — quanto tempo fica no ecrã (120 s);</li>
  * <li>som_alerta — se toca o som (1);</li>
- * <li>alertas_activos — se os alertas estão ligados (1).</li>
+ * <li>alertas_activos — se os alertas estão ligados (1);</li>
+ * <li>alarme_continuo — o som repete-se até alguém silenciar/mexer no alerta (1);</li>
+ * <li>alertar_atrasados — o alerta inclui os devedores em atraso, não só os que vão vencer (1).</li>
  * </ul>
  */
 public final class ConfigMensalidade {
@@ -25,6 +27,10 @@ public final class ConfigMensalidade {
     public int duracaoSegundos = 120;
     public boolean som = true;
     public boolean activos = true;
+    /** Alarme: o som repete-se enquanto o alerta estiver no ecrã, até alguém o silenciar. */
+    public boolean alarmeContinuo = true;
+    /** O alerta inclui os devedores (mensalidades em atraso), não só as que vão vencer. */
+    public boolean alertarAtrasados = true;
     /** Serviço cobrado como taxa de reactivação (0 = nenhum). */
     public int produtoReactivacao = 0;
     /** Serviço das linhas de multa na factura (0 = cria-se "Multa por atraso" quando for preciso). */
@@ -63,6 +69,12 @@ public final class ConfigMensalidade {
         if (!Mensalidades.existeColuna(st.getConnection(), "mensalidade_config", "multa_base")) {
             st.executeUpdate("ALTER TABLE mensalidade_config ADD COLUMN multa_base VARCHAR(12) NOT NULL DEFAULT 'MES'");
         }
+        if (!Mensalidades.existeColuna(st.getConnection(), "mensalidade_config", "alarme_continuo")) {
+            st.executeUpdate("ALTER TABLE mensalidade_config ADD COLUMN alarme_continuo TINYINT(1) NOT NULL DEFAULT 1");
+        }
+        if (!Mensalidades.existeColuna(st.getConnection(), "mensalidade_config", "alertar_atrasados")) {
+            st.executeUpdate("ALTER TABLE mensalidade_config ADD COLUMN alertar_atrasados TINYINT(1) NOT NULL DEFAULT 1");
+        }
     }
 
     /** Lê a configuração (valores por omissão se a tabela ainda não existir). */
@@ -82,6 +94,8 @@ public final class ConfigMensalidade {
                     c.produtoReactivacao = rs.getInt("produto_reactivacao_id");
                     c.produtoMulta = rs.getInt("produto_multa_id");
                     c.multaBase = rs.getString("multa_base") == null ? RegrasMulta.BASE_MES : rs.getString("multa_base");
+                    c.alarmeContinuo = rs.getInt("alarme_continuo") != 0;
+                    c.alertarAtrasados = rs.getInt("alertar_atrasados") != 0;
                 } catch (SQLException semColuna) {
                     // colunas ainda por criar: valores por omissão
                 }
@@ -98,7 +112,7 @@ public final class ConfigMensalidade {
         Mensalidades.garantirEstrutura();
         String sql = "UPDATE mensalidade_config SET dias_alerta = ?, intervalo_alerta_min = ?,"
                 + " duracao_alerta_seg = ?, som_alerta = ?, alertas_activos = ?, produto_reactivacao_id = ?,"
-                + " produto_multa_id = ?, multa_base = ? WHERE id = 1";
+                + " produto_multa_id = ?, multa_base = ?, alarme_continuo = ?, alertar_atrasados = ? WHERE id = 1";
         try (Connection cn = BDConexao.novaLigacao(); PreparedStatement ps = cn.prepareStatement(sql)) {
             ps.setInt(1, Math.max(0, diasAlerta));
             ps.setInt(2, Math.max(1, intervaloMinutos));
@@ -108,6 +122,8 @@ public final class ConfigMensalidade {
             ps.setInt(6, Math.max(0, produtoReactivacao));
             ps.setInt(7, Math.max(0, produtoMulta));
             ps.setString(8, RegrasMulta.BASE_VENCIMENTO.equalsIgnoreCase(multaBase) ? RegrasMulta.BASE_VENCIMENTO : RegrasMulta.BASE_MES);
+            ps.setInt(9, alarmeContinuo ? 1 : 0);
+            ps.setInt(10, alertarAtrasados ? 1 : 0);
             boolean ok = ps.executeUpdate() > 0;
             cache = null;
             return ok;

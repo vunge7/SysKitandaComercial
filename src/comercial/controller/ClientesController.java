@@ -167,7 +167,7 @@ public class ClientesController implements EntidadeFactory {
                 + "from tb_venda v "
                 + "inner join tb_cliente c on c.codigo  = v.codigo_cliente  "
                 + "where v.fk_documento  = 13 "
-                + "and date(v.dataVenda ) between  '2026-10-01' and '2026-10-31'  and status_convertido_consulta = false "
+                + "and v.status_eliminado = 'false' and v.status_convertido_consulta = false "
                 + "group  by c.codigo";
 
         ResultSet result = conexao.executeQuery(query);

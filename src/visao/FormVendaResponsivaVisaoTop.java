@@ -424,6 +424,13 @@ TemaNegocioUtil.aplicarCorCampos(ehFarmacia,
         // F9: estado das mensalidades de todos os clientes (cartões verde/laranja/vermelho)
         if (comercial.mensalidade.Mensalidades.activo()) {
             comercial.mensalidade.BotaoMensalidades.instalarTecla(getRootPane());
+            // "Silenciar alarme" na linha do nome da empresa (que encolhe para lhe dar lugar)
+            painelEsq.remove(jlEmpresa);
+            painelEsq.add(jlEmpresa, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 270, 220, -1));
+            painelEsq.add(comercial.mensalidade.AlertasMensalidade.criarCaixaSilenciar(),
+                    new org.netbeans.lib.awtextra.AbsoluteConstraints(235, 266, 140, 22), 0);
+            painelEsq.revalidate();
+            painelEsq.repaint();
         }
 
         // F8: todas as mensalidades do cliente da venda numa só janela (meses vencidos já escolhidos).
@@ -523,18 +530,14 @@ TemaNegocioUtil.aplicarCorCampos(ehFarmacia,
     }
 
     private void abrirPedidosGinasio() {
-        // os pedidos são sempre de um cliente cadastrado: com o Consumidor Final não se abre
+        // com o Consumidor Final a janela abre sem cliente (só para ver/facturar pedidos);
+        // registar pedidos em nome do Consumidor Final é barrado dentro da própria janela
         Object seleccionado = cmbCliente.getSelectedItem();
-        if (comercial.ginasio.PedidosGinasio.ehConsumidorFinal(seleccionado == null ? null : seleccionado.toString())) {
-            java.awt.Toolkit.getDefaultToolkit().beep();
-            JOptionPane.showMessageDialog(this, "Seleccione um cliente personalizado.\n\n"
-                    + "Os pedidos ficam sempre em nome de um cliente cadastrado, nunca do Consumidor Final.",
-                    "Pedidos", JOptionPane.WARNING_MESSAGE);
-            cmbCliente.requestFocusInWindow();
-            return;
+        String nomeCliente = seleccionado == null ? "" : seleccionado.toString().trim();
+        int idCliente = 0;
+        if (!nomeCliente.isEmpty() && !comercial.ginasio.PedidosGinasio.ehConsumidorFinal(nomeCliente)) {
+            idCliente = getIdCliente();
         }
-        int idCliente = getIdCliente();
-        String nomeCliente = seleccionado.toString().trim();
         String operador = "";
         try {
             operador = ((TbUsuario) usuariosController.findById(cod_usuario)).getNome();
@@ -2428,7 +2431,7 @@ TemaNegocioUtil.aplicarCorCampos(ehFarmacia,
 
     private void btnProcessarActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_btnProcessarActionPerformed
     {//GEN-HEADEREND:event_btnProcessarActionPerformed
-        if (validar()) {
+        if (validar() && validarClienteDoDocumento()) {
 
             removerUltimaLinhaVazia();
             jScrollPane1.repaint();
@@ -3323,7 +3326,7 @@ TemaNegocioUtil.aplicarCorCampos(ehFarmacia,
             //actualizar precos antigos
 //            actualizarPrecosAntigos();
 
-            if (!consultaDoc.isEmpty()) {
+            if (!consultaDoc.isEmpty() && getIdDocumento() != DOC_FACTURA_CONSULTA_MESA) {
                 procedimentoActualizarStausConsulta();
             }
 
@@ -3340,7 +3343,9 @@ TemaNegocioUtil.aplicarCorCampos(ehFarmacia,
             txtCodigoBarra.requestFocus();
             JOptionPane.showMessageDialog(
                     null,
-                    "Factura efectuada com sucesso!"
+                    getIdDocumento() == DOC_FACTURA_CONSULTA_MESA
+                    ? "Consulta Mesa registada com sucesso!\nPara facturar, use o botão de Consultas Mesas."
+                    : "Factura efectuada com sucesso!"
             );
             txtNomeConsumidorFinal.setVisible(true);
 
@@ -3734,7 +3739,8 @@ TemaNegocioUtil.aplicarCorCampos(ehFarmacia,
         venda.setNDocMotorista("");
         // Contador do documento
         venda.setCont(0); // por exemplo
-        venda.setStatusConvertidoConsulta(true);
+        // Consulta Mesa fica pendente (false) até ser convertida em factura; os restantes documentos não são consultas
+        venda.setStatusConvertidoConsulta(getIdDocumento() != DOC_FACTURA_CONSULTA_MESA);
         return venda;
     }
 
@@ -3835,8 +3841,10 @@ TemaNegocioUtil.aplicarCorCampos(ehFarmacia,
                                 }
                             }
 
+                            // a CM já baixa o stock: ao convertê-la em factura (descontoStocavel = false) não volta a baixar
                             if (getIdDocumento() == DOC_FACTURA_RECIBO_FR
-                                    || getIdDocumento() == DOC_FACTURA_FT) {
+                                    || getIdDocumento() == DOC_FACTURA_FT
+                                    || getIdDocumento() == DOC_FACTURA_CONSULTA_MESA) {
 
                                 actualizar_quantidade(
                                         idProduto,
@@ -5280,7 +5288,11 @@ TemaNegocioUtil.aplicarCorCampos(ehFarmacia,
         txtQuatindade.setText("1");
         txtCodigoProduto.setText("");
         txtCodigoManual.setText("");
-        txtTotalPagar.setText("0");
+        // venda terminada: totais e valor por extenso voltam a zero
+        txtTotalPagar.setText(CfMethods.formatarComoMoeda(0.0));
+        txtTotalPagarGeral.setText(CfMethods.formatarComoMoeda(0.0));
+        txtTotalPagarRetencao.setText(CfMethods.formatarComoMoeda(0.0));
+        lbValorPorExtenco.setText("");
         txtCodigoBarra.setText("");
         txtNomeConsumidorFinal.setText("");
         dc_data_vencimento.setCalendar(null);
@@ -6080,17 +6092,30 @@ TemaNegocioUtil.aplicarCorCampos(ehFarmacia,
     }
 
     private void atualizarCliente1() {
-        boolean documentoIsFA = DVML.DOC_FACTURA_FT == getIdDocumento();
-        boolean documentoIsPP = DVML.DOC_FACTURA_PROFORMA_PP == getIdDocumento();
-        boolean documentoIsGT = DVML.DOC_GUIA_TRANSPORTE_GT == getIdDocumento();
+        // mudar de documento não mexe na lista nem no cliente escolhido:
+        // o Consumidor Final em FT/PP/GT/CM é barrado ao processar (validarClienteDoDocumento)
+    }
 
-        if (documentoIsFA || documentoIsPP || documentoIsGT) {
-            //EXCLUIR CONSUMIDOR FINAL
-            cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVectorExecptoConsumidorFinal()));
-        } else {
-            cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVector()));
-            cmbCliente.setSelectedItem(DVML._CLIENTE_CONSUMIDOR_FINAL);
+    /**
+     * FT, PP, GT e CM são sempre emitidos a um cliente cadastrado (a CM é
+     * agrupada por cliente na conversão). Avisa e devolve false se estiver
+     * escolhido o Consumidor Final.
+     */
+    private boolean validarClienteDoDocumento() {
+        int doc = getIdDocumento();
+        boolean exigeCliente = doc == DVML.DOC_FACTURA_FT || doc == DVML.DOC_FACTURA_PROFORMA_PP
+                || doc == DVML.DOC_GUIA_TRANSPORTE_GT || doc == DVML.DOC_FACTURA_CONSULTA_MESA;
+        Object cliente = cmbCliente.getSelectedItem();
+        if (exigeCliente && (cliente == null || getIdCliente() <= 1
+                || comercial.ginasio.PedidosGinasio.ehConsumidorFinal(cliente.toString()))) {
+            JOptionPane.showMessageDialog(this, "Para " + cmbTipoDocumento.getSelectedItem()
+                    + " seleccione um cliente (não pode ser Consumidor Final).",
+                    DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
+            txtIniciaisCliente.requestFocus();
+            txtIniciaisCliente.setBackground(Color.YELLOW);
+            return false;
         }
+        return true;
     }
 
     private void accao_codigo_manual_enter() {

@@ -423,6 +423,7 @@ repaint();
         if (comercial.mensalidade.Mensalidades.activo()) {
             comercial.mensalidade.BotaoMensalidades.instalarTecla(getRootPane());
             instalarBotaoMensalidades();
+            instalarSilenciarAlarme();
         }
 
         // F8: todas as mensalidades do cliente da venda numa só janela (meses vencidos já escolhidos).
@@ -457,6 +458,17 @@ repaint();
      * Botão "Mensalidades" no cabeçalho (ao lado do "Pedidos" no ginásio):
      * abre o estado dos clientes e mostra quantos estão em alerta.
      */
+    /** Checkbox "Silenciar alarme" no rodapé, ao lado da abertura/fecho do dia (volta a tocar no próximo login). */
+    private void instalarSilenciarAlarme() {
+        java.awt.Container rodape = btn_fecho_dia_venda.getParent();
+        if (rodape == null) {
+            return;
+        }
+        rodape.add(comercial.mensalidade.AlertasMensalidade.criarCaixaSilenciar());
+        rodape.revalidate();
+        rodape.repaint();
+    }
+
     private void instalarBotaoMensalidades() {
         java.awt.Container direita = lb_nome_usuario.getParent();
         java.awt.Container cabecalho = direita == null ? null : direita.getParent();
@@ -628,18 +640,14 @@ repaint();
     }
 
     private void abrirPedidosGinasio() {
-        // os pedidos são sempre de um cliente cadastrado: com o Consumidor Final não se abre
+        // com o Consumidor Final a janela abre sem cliente (só para ver/facturar pedidos);
+        // registar pedidos em nome do Consumidor Final é barrado dentro da própria janela
         Object seleccionado = cmbCliente.getSelectedItem();
-        if (comercial.ginasio.PedidosGinasio.ehConsumidorFinal(seleccionado == null ? null : seleccionado.toString())) {
-            java.awt.Toolkit.getDefaultToolkit().beep();
-            JOptionPane.showMessageDialog(this, "Seleccione um cliente personalizado.\n\n"
-                    + "Os pedidos ficam sempre em nome de um cliente cadastrado, nunca do Consumidor Final.",
-                    "Pedidos", JOptionPane.WARNING_MESSAGE);
-            (pesquisaClienteGinasio != null ? pesquisaClienteGinasio : cmbCliente).requestFocusInWindow();
-            return;
+        String nomeCliente = seleccionado == null ? "" : seleccionado.toString().trim();
+        int idCliente = 0;
+        if (!nomeCliente.isEmpty() && !comercial.ginasio.PedidosGinasio.ehConsumidorFinal(nomeCliente)) {
+            idCliente = getIdCliente();
         }
-        int idCliente = getIdCliente();
-        String nomeCliente = seleccionado.toString().trim();
         String operador = "";
         try {
             operador = ((TbUsuario) usuariosController.findById(cod_usuario)).getNome();
@@ -1700,7 +1708,7 @@ repaint();
 
     void btnProcessarActionPerformed(java.awt.event.ActionEvent evt)
     {
-        if (validar()) {
+        if (validar() && validarClienteDoDocumento()) {
 
             removerUltimaLinhaVazia();
             jScrollPane1.repaint();
@@ -2594,7 +2602,7 @@ repaint();
             //actualizar precos antigos
 //            actualizarPrecosAntigos();
 
-            if (!consultaDoc.isEmpty()) {
+            if (!consultaDoc.isEmpty() && getIdDocumento() != DOC_FACTURA_CONSULTA_MESA) {
                 procedimentoActualizarStausConsulta();
             }
 
@@ -2613,7 +2621,9 @@ repaint();
             txtCodigoBarra.requestFocus();
             JOptionPane.showMessageDialog(
                     null,
-                    "Factura efectuada com sucesso!"
+                    getIdDocumento() == DOC_FACTURA_CONSULTA_MESA
+                    ? "Consulta Mesa registada com sucesso!\nPara facturar, use o botão de Consultas Mesas."
+                    : "Factura efectuada com sucesso!"
             );
             txtNomeConsumidorFinal.setVisible(true);
 
@@ -2647,6 +2657,9 @@ repaint();
                         "Erro de impressão",
                         JOptionPane.ERROR_MESSAGE
                 );
+            } finally {
+                // venda terminada (mesmo que a impressão falhe): o ecrã fica pronto para a próxima
+                limparTotais();
             }
         }
 //        try {
@@ -3007,7 +3020,8 @@ repaint();
         venda.setNDocMotorista("");
         // Contador do documento
         venda.setCont(0); // por exemplo
-        venda.setStatusConvertidoConsulta(true);
+        // Consulta Mesa fica pendente (false) até ser convertida em factura; os restantes documentos não são consultas
+        venda.setStatusConvertidoConsulta(getIdDocumento() != DOC_FACTURA_CONSULTA_MESA);
         return venda;
     }
 
@@ -3108,8 +3122,10 @@ repaint();
                                 }
                             }
 
+                            // a CM já baixa o stock: ao convertê-la em factura (descontoStocavel = false) não volta a baixar
                             if (getIdDocumento() == DOC_FACTURA_RECIBO_FR
-                                    || getIdDocumento() == DOC_FACTURA_FT) {
+                                    || getIdDocumento() == DOC_FACTURA_FT
+                                    || getIdDocumento() == DOC_FACTURA_CONSULTA_MESA) {
 
                                 actualizar_quantidade(
                                         idProduto,
@@ -4548,7 +4564,7 @@ repaint();
         txtQuatindade.setText("1");
         txtCodigoProduto.setText("");
         txtCodigoManual.setText("");
-        txtTotalPagar.setText("0");
+        limparTotais();
         txtCodigoBarra.setText("");
         txtNomeConsumidorFinal.setText("");
         dc_data_vencimento.setDate(null);
@@ -4558,6 +4574,15 @@ repaint();
         reset_desconto_global();
         reset_valor_entregue();
 
+    }
+
+    /** Venda terminada: total a pagar, total geral, retenção e valor por extenso voltam a zero. */
+    public static void limparTotais() {
+        String zero = CfMethods.formatarComoMoeda(0.0);
+        txtTotalPagar.setText(zero);
+        txtTotalPagarGeral.setText(zero);
+        txtTotalPagarRetencao.setText(zero);
+        lbValorPorExtenco.setText("");
     }
 
     private static void reset_desconto_global() {
@@ -5348,17 +5373,30 @@ repaint();
     }
 
     private void atualizarCliente1() {
-        boolean documentoIsFA = DVML.DOC_FACTURA_FT == getIdDocumento();
-        boolean documentoIsPP = DVML.DOC_FACTURA_PROFORMA_PP == getIdDocumento();
-        boolean documentoIsGT = DVML.DOC_GUIA_TRANSPORTE_GT == getIdDocumento();
+        // mudar de documento não mexe na lista nem no cliente escolhido:
+        // o Consumidor Final em FT/PP/GT/CM é barrado ao processar (validarClienteDoDocumento)
+    }
 
-        if (documentoIsFA || documentoIsPP || documentoIsGT) {
-            //EXCLUIR CONSUMIDOR FINAL
-            cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVectorExecptoConsumidorFinal()));
-        } else {
-            cmbCliente.setModel(new DefaultComboBoxModel(clientesController.getVector()));
-            cmbCliente.setSelectedItem(DVML._CLIENTE_CONSUMIDOR_FINAL);
+    /**
+     * FT, PP, GT e CM são sempre emitidos a um cliente cadastrado (a CM é
+     * agrupada por cliente na conversão). Avisa e devolve false se estiver
+     * escolhido o Consumidor Final.
+     */
+    private boolean validarClienteDoDocumento() {
+        int doc = getIdDocumento();
+        boolean exigeCliente = doc == DVML.DOC_FACTURA_FT || doc == DVML.DOC_FACTURA_PROFORMA_PP
+                || doc == DVML.DOC_GUIA_TRANSPORTE_GT || doc == DVML.DOC_FACTURA_CONSULTA_MESA;
+        Object cliente = cmbCliente.getSelectedItem();
+        if (exigeCliente && (cliente == null || getIdCliente() <= 1
+                || comercial.ginasio.PedidosGinasio.ehConsumidorFinal(cliente.toString()))) {
+            JOptionPane.showMessageDialog(this, "Para " + cmbTipoDocumento.getSelectedItem()
+                    + " seleccione um cliente (não pode ser Consumidor Final).",
+                    DVML.DVML_COMERCIAL, JOptionPane.WARNING_MESSAGE);
+            txtIniciaisCliente.requestFocus();
+            Formularios.marcarErro(txtIniciaisCliente, true);
+            return false;
         }
+        return true;
     }
 
     private void accao_codigo_manual_enter() {

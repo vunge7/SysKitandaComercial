@@ -93,9 +93,21 @@ public class DocumentosController implements EntidadeFactory
         return lista_documento;
     }
 
+    /**
+     * Bases antigas não têm o documento 13 (Consulta Mesa / CM): cria-o se
+     * faltar, para aparecer no tipo de documento das vendas. Não mexe se já existir.
+     */
+    public void garantirConsultaMesa()
+    {
+        conexao.executeUpdate( "INSERT IGNORE INTO documento "
+                + "(pk_documento, designacao, abreviacao, cod_ultimo_doc, ultima_data) "
+                + "VALUES (13, 'Consulta Mesa', 'CM', 0, '2020-01-01 00:00:00')" );
+    }
+
     @Override
     public Vector<String> getVector()
     {
+        garantirConsultaMesa();
         String FIND_ALL = "SELECT designacao FROM documento WHERE pk_documento IN(1,2,3,7,13)";
         ResultSet result = conexao.executeQuery( FIND_ALL );
         Vector<String> lista = new Vector<>();

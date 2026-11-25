@@ -321,6 +321,12 @@ public class ModalConsultasMesas extends javax.swing.JFrame {
             List<TbItemVenda> list = itemVendasController.listarItemVendasByClientesAndData(getIdCliente(), dcDataInicio.getDate(), dcDataFim.getDate());
 //            List<TbItemVenda> list = itemVendasController.listarItemVendasByClientes( getIdCliente() );
             modelo.setRowCount(0);
+            // só as CM do cliente/período agora listados serão marcadas como convertidas
+            if (visao.venda.VendaModernaVisao.estaAberta()) {
+                visao.venda.VendaModernaVisao.consultaDoc.clear();
+            } else {
+                FormVendaResponsivaVisaoTop.consultaDoc.clear();
+            }
             for (int i = 0; i < list.size(); i++) {
                 TbItemVenda get = list.get(i);
                 int codigo_produto = get.getCodigoProduto().getCodigo();
@@ -334,10 +340,11 @@ public class ModalConsultasMesas extends javax.swing.JFrame {
 //                TbCliente cliente_local = (TbCliente) clientesController.findById( String.valueOf( jListPacientesComGastos.getSelectedValue().toString() ));
                 TbVenda venda_local = (TbVenda) vendasController.findById(codigo_venda);
 
-                if (visao.venda.VendaModernaVisao.estaAberta()) {
-                    visao.venda.VendaModernaVisao.consultaDoc.add(venda_local.getCodFact());
-                } else {
-                    FormVendaResponsivaVisaoTop.consultaDoc.add(venda_local.getCodFact());
+                java.util.Vector<String> docs = visao.venda.VendaModernaVisao.estaAberta()
+                        ? visao.venda.VendaModernaVisao.consultaDoc
+                        : FormVendaResponsivaVisaoTop.consultaDoc;
+                if (!docs.contains(venda_local.getCodFact())) {
+                    docs.add(venda_local.getCodFact());
                 }
                 int codigo_unidade = produto_local.getCodUnidade().getPkUnidade();
                 Unidade unidade_local = (Unidade) unidadesController.findById(codigo_unidade);

@@ -168,8 +168,8 @@ public class EstadoClientesDialog extends JDialog {
                 if (--restante <= 0) {
                     dispose();
                 } else {
-                    lbEstado.setText("Alerta de renovação · fecha em " + restante / 60 + ":" + String.format("%02d", restante % 60)
-                            + "  ·  mexa na janela para a manter aberta");
+                    lbEstado.setText("Alerta de devedores e renovações · fecha em " + restante / 60 + ":" + String.format("%02d", restante % 60)
+                            + "  ·  mexa na janela para silenciar o alarme e a manter aberta");
                 }
             });
             fecho.start();
@@ -192,6 +192,9 @@ public class EstadoClientesDialog extends JDialog {
     @Override
     public void dispose() {
         pisca.stop();
+        if (pornAlerta) {
+            AlertasMensalidade.pararAlarme();
+        }
         if (ouvinteInteraccao != null) {
             java.awt.Toolkit.getDefaultToolkit().removeAWTEventListener(ouvinteInteraccao);
         }
@@ -206,6 +209,10 @@ public class EstadoClientesDialog extends JDialog {
 
     /** O utilizador pegou na janela: deixa de fechar sozinha. */
     private void manterAberta() {
+        // alguém está a tratar do alerta: o alarme cala-se
+        if (pornAlerta) {
+            AlertasMensalidade.pararAlarme();
+        }
         if (fecho != null && fecho.isRunning()) {
             fecho.stop();
             lbEstado.setText("Clique num cartão em alerta para cobrar; num verde para ver os meses pagos.");
