@@ -683,14 +683,18 @@ public class LoginVisao extends javax.swing.JFrame {
     /** Traz o login para a frente e põe o cursor no utilizador (ou na senha, se o nome já estiver escrito). */
     public void focarUtilizador() {
         javax.swing.SwingUtilities.invokeLater(() -> {
-            toFront();
+            // o toFront() sozinho não chegava: o Java punha o cursor no campo mas o Windows deixava
+            // outra janela à frente e as teclas iam para lá (era preciso clicar no campo)
+            util.ui.PrimeiroPlano.trazer(this);
             requestFocus();
             focarCampoCerto();
             // depois de maximizar e arrumar o layout o foco pode ter-se perdido: confirma-se uma vez
             javax.swing.Timer confirmar = new javax.swing.Timer(250, e -> {
-                if (isShowing() && getFocusOwner() == null) {
-                    toFront();
-                    focarCampoCerto();
+                if (isShowing()) {
+                    util.ui.PrimeiroPlano.trazer(this);
+                    if (getFocusOwner() == null) {
+                        focarCampoCerto();
+                    }
                 }
             });
             confirmar.setRepeats(false);
