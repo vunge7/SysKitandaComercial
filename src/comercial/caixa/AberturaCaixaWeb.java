@@ -179,6 +179,8 @@ public final class AberturaCaixaWeb extends JDialog {
             JOptionPane.showMessageDialog(this, "Caixa Nº " + pk + " aberta com sucesso.\nFundo de caixa: "
                     + UiCaixa.moeda(fundo) + " Kz", "Abertura de caixa", JOptionPane.INFORMATION_MESSAGE, new IconeCaixa(IconeCaixa.Tipo.ABERTURA, 48));
             dispose();
+            // como na abertura antiga: cópia de segurança em segundo plano (não prende a interface)
+            util.BackupUsb.iniciarEmSegundoPlano();
         } catch (Exception e) {
             util.ui.ProgressoEmissao.cancelar();
             JOptionPane.showMessageDialog(this, e.getMessage(), "Abertura de caixa", JOptionPane.WARNING_MESSAGE);

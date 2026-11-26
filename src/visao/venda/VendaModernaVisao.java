@@ -1923,7 +1923,8 @@ repaint();
         // TODO add your handling code here:
         //        OperacaoSistemaUtil.procedimento_abrir_dia( this.idUser );
         //        procedimento_abrir_contagem( this.idUser );
-        new CaixaAberturaFactVisao(cod_usuario, conexao, false).setVisible(true);
+        // abertura do SysKitandaHotel (a mesma da lavandaria e do fecho): fundo de caixa, uma caixa por utilizador
+        comercial.caixa.AberturaCaixaWeb.abrir(this, cod_usuario, false);
 
     }
 

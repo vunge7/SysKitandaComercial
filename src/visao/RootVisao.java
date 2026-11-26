@@ -514,7 +514,8 @@ public class RootVisao extends javax.swing.JFrame {
         // TODO add your handling code here:
 //        OperacaoSistemaUtil.procedimento_abrir_dia( this.idUser );
 //        procedimento_abrir_contagem( this.idUser );
-        new CaixaAberturaVisao(idUser, conexao, false).setVisible(true);
+        // abertura do SysKitandaHotel (a mesma da lavandaria e do fecho): fundo de caixa, uma caixa por utilizador
+        comercial.caixa.AberturaCaixaWeb.abrir(this, idUser, false);
 
 
     }//GEN-LAST:event_btn_abertura_dia_rootActionPerformed
@@ -891,17 +892,8 @@ public class RootVisao extends javax.swing.JFrame {
     }
 
     public void getFechoCaixaByNegocio(String negocio) {
-        switch (negocio) {
-            case "Transportes":
-            case "Comercial":
-            case "Farmacia":
-            case "Layout":
-            case "Restaurante":
-                new CaixaFechoVisao(idUser, conexao, false).setVisible(true);
-                break;
-            default:
-                new CaixaFechoGoldVisao(idUser, conexao, false).setVisible(true);
-        }
+        // fecho do SysKitandaHotel para todos os negócios (os ecrãs antigos tiravam o troco duas vezes)
+        comercial.caixa.FechoCaixaWeb.mostrar(this, idUser, "Administração", false);
 
     }
 

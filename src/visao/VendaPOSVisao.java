@@ -662,7 +662,8 @@ public class VendaPOSVisao extends javax.swing.JFrame {
     private void btn_abertura_diaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_abertura_diaActionPerformed
     {//GEN-HEADEREND:event_btn_abertura_diaActionPerformed
         // TODO add your handling code here:
-        new CaixaAberturaVisao(id_usuario, conexao, true).setVisible(true);
+        // abertura do SysKitandaHotel (a mesma da lavandaria e do fecho): fundo de caixa, uma caixa por utilizador
+        comercial.caixa.AberturaCaixaWeb.abrir(this, id_usuario, true);
     }//GEN-LAST:event_btn_abertura_diaActionPerformed
 
     private void btn_feicho_diaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btn_feicho_diaActionPerformed
