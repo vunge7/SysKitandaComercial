@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_recolha_pagamento" pageWidth="188" pageHeight="200" columnWidth="188" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="6e2042e8-ad78-4a3e-99ca-df42021b8814">
+<parameter name="CODIGO_VENDA" class="java.lang.Integer"/>
+<queryString><![CDATA[SELECT forma_pagamento.`designacao` AS forma, forma_pagamento_item.`valor` AS valor,
+     forma_pagamento_item.`referencia` AS referencia
+FROM `forma_pagamento` forma_pagamento INNER JOIN `forma_pagamento_item` forma_pagamento_item
+     ON forma_pagamento.`pk_forma_pagamento` = forma_pagamento_item.`fk_forma_pagamento`
+WHERE forma_pagamento_item.`fk_venda` = $P{CODIGO_VENDA} AND forma_pagamento_item.`valor` > 0]]></queryString>
+<field name="forma" class="java.lang.String"/>
+<field name="valor" class="java.math.BigDecimal"/>
+<field name="referencia" class="java.lang.String"/>
+<background><band splitType="Stretch"/></background><detail><band height="13" splitType="Stretch"><textField isBlankWhenNull="true"><reportElement x="0" y="0" width="118" height="12" uuid="651433d9-ccae-4b94-8575-33ad175418a2"></reportElement><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="false" isItalic="false"/></textElement><textFieldExpression><![CDATA[$F{forma} + (!($F{referencia} == null || $F{referencia}.toString().trim().isEmpty()) && !"n/a".equalsIgnoreCase($F{referencia}.trim()) ? " (" + $F{referencia}.trim() + ")" : "")]]></textFieldExpression></textField><textField isBlankWhenNull="true" pattern="#,##0.00"><reportElement x="118" y="0" width="70" height="12" uuid="9478fd83-6a2c-44e1-9ccc-11a113ce999e"></reportElement><textElement textAlignment="Right" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="false" isItalic="false"/></textElement><textFieldExpression><![CDATA[$F{valor}]]></textFieldExpression></textField></band></detail></jasperReport>

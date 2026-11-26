@@ -188,14 +188,14 @@ public class PainelLavandaria extends JPanel {
     // =====================================================================
     // DADOS
     // =====================================================================
-    static final class Dados {
+    public static final class Dados {
 
-        int recolhasHoje, pecasHoje, porEntregar, recolhasAbertas, paraHoje, emAtraso, entregasHoje;
-        double facturadoHoje;
-        final List<Object[]> lista = new ArrayList<>();
+        public int recolhasHoje, pecasHoje, porEntregar, recolhasAbertas, paraHoje, emAtraso, entregasHoje;
+        public double facturadoHoje;
+        public final List<Object[]> lista = new ArrayList<>();
     }
 
-    static Dados ler(Connection cn) throws Exception {
+    public static Dados ler(Connection cn) throws Exception {
         Dados d = new Dados();
         String base = " FROM tb_item_venda i JOIN tb_venda v ON v.codigo = i.codigo_venda WHERE" + LAVANDARIA;
         try (Statement st = cn.createStatement()) {
@@ -250,7 +250,7 @@ public class PainelLavandaria extends JPanel {
         return dias == 0 ? "Hoje" : dias == 1 ? "Amanhã" : "Em " + dias + " dias";
     }
 
-    static String moeda(double v) {
+    public static String moeda(double v) {
         return new DecimalFormat("#,##0.00", DecimalFormatSymbols.getInstance(new Locale("pt", "PT"))).format(v);
     }
 

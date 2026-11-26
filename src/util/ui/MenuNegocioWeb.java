@@ -41,6 +41,12 @@ public final class MenuNegocioWeb {
         }
     }
 
+    /**
+     * Propriedade do item de menu com o nome a mostrar na barra lateral, quando
+     * o getText() não pode mudar (é com ele que as permissões são comparadas).
+     */
+    public static final String ROTULO = "menuNegocioWeb.rotulo";
+
     private MenuNegocioWeb() {
     }
 
@@ -167,7 +173,9 @@ public final class MenuNegocioWeb {
                     seguirMenu(menu, b);
                 }
                 itens.add(b);
-                rotulos.add(prefixo == null ? item.getText() : prefixo + " · " + item.getText());
+                Object proprio = item.getClientProperty(ROTULO);
+                String rotulo = proprio == null ? item.getText() : proprio.toString();
+                rotulos.add(prefixo == null ? rotulo : prefixo + " · " + rotulo);
             }
         }
     }

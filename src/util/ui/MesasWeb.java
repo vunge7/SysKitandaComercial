@@ -545,7 +545,11 @@ public final class MesasWeb {
         return paleta[Math.floorMod(h, paleta.length)];
     }
 
+    /** Propriedade do botão (MenuWeb.Simbolo) com o símbolo do canto da categoria; por omissão, talheres. */
+    public static final String SIMBOLO_CATEGORIA = "web.simboloCategoria";
+
     /** O texto do botão continua a ser a designação (é por ele que a categoria é procurada). */
+
     public static void botaoCategoria(JButton b) {
         b.setUI(new CategoriaUI(corCategoria(b.getText())));
         b.setOpaque(false);
@@ -590,8 +594,10 @@ public final class MesasWeb {
             g2.setColor(new Color(255, 255, 255, 16));
             g2.fillOval(x - 20, y + h - 26, 60, 60);
             g2.setClip(clip);
-            // talheres pequenos no canto
-            MenuWeb.desenharSimbolo(g2, MenuWeb.Simbolo.TALHERES, x + 10, y + 9, 16, new Color(255, 255, 255, 200));
+            // símbolo pequeno no canto: talheres, ou o que o ecrã pedir (ex.: cabide na lavandaria)
+            Object simbolo = b.getClientProperty(SIMBOLO_CATEGORIA);
+            MenuWeb.desenharSimbolo(g2, simbolo instanceof MenuWeb.Simbolo ? (MenuWeb.Simbolo) simbolo : MenuWeb.Simbolo.TALHERES,
+                    x + 10, y + 9, 16, new Color(255, 255, 255, 200));
             g2.setFont(EstiloUI.FONTE_NEGRITO.deriveFont(13.5f));
             textoDuasLinhas(g2, b.getText() == null ? "" : b.getText().toUpperCase(), x + w / 2, y + h / 2 - 12, w - 18, Color.WHITE);
             g2.dispose();

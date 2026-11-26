@@ -303,51 +303,50 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
     // =====================================================================
     // LAYOUT WEB (Kitanda): os mesmos componentes e eventos do initComponents,
-    // arrumados em cartões que se reorganizam com a largura da janela:
-    // serviços à esquerda; cliente, peça e peças da recolha à direita
-    // (em ecrãs estreitos fica tudo em coluna, com deslize).
+    // arrumados como o pedido das mesas (NovaGestaoPedidosVisao): catálogo à
+    // esquerda, peças da recolha (tabela, visor do total e cobrança) ao centro,
+    // cliente e peça, compactos, à direita (em janelas estreitas passam para baixo).
     // =====================================================================
     private void montarLayoutWeb() {
-        util.ui.ComponentesWeb.Variante SEC = util.ui.ComponentesWeb.Variante.SECUNDARIO;
+        final util.ui.ComponentesWeb.Variante SEC = util.ui.ComponentesWeb.Variante.SECUNDARIO;
+        final java.awt.Color claroCabecalho = util.ui.Tema.claro();
 
         // ---- campos
         util.ui.FormularioWeb.campoTexto(txtIniciaisCliente, txtTelefoneCliente, txtLargura, txtAltura, txtQtdItens,
                 txtTotalQTD, txtTotalGeral, txtDesconto);
         util.ui.FormularioWeb.combo(cmbCliente, cmbTipoDocumento);
+        // o .form pinta o texto destes combos de branco (desenho antigo, fundo escuro): no fundo branco não se via
+        cmbCliente.setForeground(util.ui.ComponentesWeb.TEXTO);
+        cmbTipoDocumento.setForeground(util.ui.ComponentesWeb.TEXTO);
         util.ui.FormularioWeb.data(dc_data_entrega);
         util.ui.FormularioWeb.data(dc_data_documento);
         txtIniciaisCliente.setToolTipText("Escreva parte do nome e carregue Enter");
         txtTelefoneCliente.setToolTipText("Telefone do cliente");
         for (javax.swing.JTextField t : new javax.swing.JTextField[]{txtTotalQTD, txtTotalGeral, txtDesconto}) {
             t.setEditable(false);
+            t.setFocusable(false);
             t.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-            t.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(15f));
+            t.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(13.5f));
         }
-        txtTotalApagar.setEditable(false);
-        txtTotalApagar.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtTotalApagar.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(28f));
-        txtTotalApagar.setForeground(util.ui.ComponentesWeb.VERDE.darker());
-        txtTotalApagar.setBackground(new java.awt.Color(236, 253, 243));
-        txtTotalApagar.setBorder(javax.swing.BorderFactory.createCompoundBorder(
-                javax.swing.BorderFactory.createLineBorder(new java.awt.Color(134, 239, 172)),
-                javax.swing.BorderFactory.createEmptyBorder(6, 10, 6, 12)));
         txtObs.setLineWrap(true);
         txtObs.setWrapStyleWord(true);
-        txtObs.setRows(3);
+        txtObs.setRows(2);
         jScrollPane1.setBorder(javax.swing.BorderFactory.createLineBorder(util.ui.ComponentesWeb.LINHA));
-        for (javax.swing.JLabel l : new javax.swing.JLabel[]{lbTelefoneCliente, lbEmailCliente, lbDesconto, lbValorPorExtenco}) {
-            l.setFont(util.ui.EstiloUI.FONTE.deriveFont(12.5f));
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(200, 34));
+        for (javax.swing.JLabel l : new javax.swing.JLabel[]{lbTelefoneCliente, lbEmailCliente, lbDesconto}) {
+            l.setFont(util.ui.EstiloUI.FONTE.deriveFont(12f));
             l.setForeground(util.ui.ComponentesWeb.TEXTO_SUAVE);
         }
-        lbServico.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(16f));
-        lbServico.setForeground(util.ui.ComponentesWeb.TEXTO);
+        lbServico.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(14f));
+        lbServico.setForeground(util.ui.ComponentesWeb.AZUL);
         lbServico.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        lbSomaLarguraAltura.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(15f));
-        lbTotalQtd.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(15f));
-        designacao_categoria.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(14f));
+        lbSomaLarguraAltura.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(13f));
+        lbTotalQtd.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(13f));
+        lbSomaLarguraAltura.setForeground(util.ui.ComponentesWeb.TEXTO);
+        lbTotalQtd.setForeground(util.ui.ComponentesWeb.TEXTO);
         // textos de exemplo do desenho antigo: o código preenche-os quando há dados
         if ("serviço".equals(lbServico.getText())) {
-            lbServico.setText("Escolha o serviço da peça na lista à esquerda");
+            lbServico.setText("Escolha a peça no catálogo");
         }
         if (lbSomaLarguraAltura.getText().trim().equals("X")) {
             lbSomaLarguraAltura.setText("—");
@@ -363,119 +362,657 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
             status_mensagem_primaria.setText(" ");
         }
 
-        // ---- serviços (categorias e artigos)
-        util.ui.ComponentesWeb.botao(btnLavar, SEC, null, "Serviços de lavagem");
-        util.ui.ComponentesWeb.botao(btnEngomar, SEC, null, "Serviços de engomagem");
-        util.ui.ComponentesWeb.botao(jButton4, SEC, null, "Pesquisar um serviço / artigo");
-        btn_voltar.setText("Voltar");
-        util.ui.ComponentesWeb.botao(btn_voltar, SEC, null, "Voltar às categorias");
-        jScrollPane3.setBorder(javax.swing.BorderFactory.createLineBorder(util.ui.ComponentesWeb.LINHA));
-        jScrollPane3.getViewport().setBackground(java.awt.Color.WHITE);
-        jScrollPane3.getVerticalScrollBar().setUnitIncrement(24);
-        jScrollPane3.setPreferredSize(new java.awt.Dimension(420, 420));
-        javax.swing.JPanel barraServicos = util.ui.ComponentesWeb.transparente(
-                new util.ui.EstiloUI.WrapLayout(java.awt.FlowLayout.LEFT, 8, 4));
-        for (java.awt.Component c : new java.awt.Component[]{btnLavar, btnEngomar, jButton4, btn_voltar, designacao_categoria}) {
-            barraServicos.add(c);
-        }
-        javax.swing.JPanel corpoServicos = util.ui.ComponentesWeb.transparente(new java.awt.BorderLayout(0, 8));
-        corpoServicos.add(barraServicos, java.awt.BorderLayout.NORTH);
-        corpoServicos.add(jScrollPane3, java.awt.BorderLayout.CENTER);
-        javax.swing.JPanel cartaoServicos = util.ui.FormularioWeb.cartao("Serviços", util.ui.ComponentesWeb.CIANO, corpoServicos);
+        // ================================================ cabeçalho
+        javax.swing.JComponent emblema = new javax.swing.JComponent() {
+            @Override
+            protected void paintComponent(java.awt.Graphics g) {
+                java.awt.Graphics2D g2 = util.ui.ComponentesWeb.suave(g);
+                int w = getWidth(), h = getHeight();
+                g2.setColor(new java.awt.Color(255, 255, 255, 40));
+                g2.fillRoundRect(0, 2, w, h - 2, 16, 16);
+                g2.setColor(java.awt.Color.WHITE);
+                g2.fillRoundRect(0, 0, w - 1, h - 3, 16, 16);
+                util.ui.MenuWeb.desenharSimbolo(g2, util.ui.MenuWeb.Simbolo.CABIDE, (w - 34) / 2.0, (h - 37) / 2.0, 34,
+                        util.ui.ComponentesWeb.AZUL);
+                g2.dispose();
+            }
+        };
+        emblema.setPreferredSize(new java.awt.Dimension(58, 56));
+        javax.swing.JLabel titulo = new javax.swing.JLabel("Recolha de Roupa");
+        titulo.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(23f));
+        titulo.setForeground(java.awt.Color.WHITE);
+        jlUsuario.setForeground(claroCabecalho);
+        jlUsuario.setFont(util.ui.EstiloUI.FONTE.deriveFont(13f));
+        jlUsuario.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        final javax.swing.JLabel subtitulo = new javax.swing.JLabel();
+        subtitulo.setFont(util.ui.EstiloUI.FONTE.deriveFont(13f));
+        subtitulo.setForeground(claroCabecalho);
+        final Runnable textoSubtitulo = () -> subtitulo.setText(
+                new java.text.SimpleDateFormat("dd/MM/yyyy").format(new Date())
+                + (jlUsuario.getText() == null || jlUsuario.getText().trim().isEmpty() ? "" : "   ·   " + jlUsuario.getText().trim()));
+        jlUsuario.addPropertyChangeListener("text", e -> textoSubtitulo.run());
+        textoSubtitulo.run();
+        javax.swing.JPanel titulos = util.ui.ComponentesWeb.transparente(new java.awt.GridLayout(2, 1));
+        titulos.add(titulo);
+        titulos.add(subtitulo);
+        javax.swing.JPanel marca = util.ui.ComponentesWeb.transparente(new java.awt.BorderLayout(12, 0));
+        marca.add(emblema, java.awt.BorderLayout.WEST);
+        marca.add(titulos, java.awt.BorderLayout.CENTER);
+        // fotografias de roupa à direita do título (as peças do catálogo; sem fotos, as imagens da lavandaria)
+        FaixaRoupa faixa = new FaixaRoupa(fotosDeRoupa(6));
+        javax.swing.JPanel esquerdaCab = util.ui.ComponentesWeb.transparente(new java.awt.BorderLayout(26, 0));
+        esquerdaCab.add(marca, java.awt.BorderLayout.WEST);
+        esquerdaCab.add(faixa, java.awt.BorderLayout.CENTER);
 
-        // ---- cliente e documento
-        util.ui.ComponentesWeb.botao(btCliente, SEC, null, "Cadastrar um cliente novo");
-        javax.swing.JPanel infoCliente = util.ui.ComponentesWeb.transparente(
-                new util.ui.EstiloUI.WrapLayout(java.awt.FlowLayout.LEFT, 14, 0));
-        infoCliente.add(lbTelefoneCliente);
-        infoCliente.add(lbEmailCliente);
-        infoCliente.add(lbDesconto);
-        javax.swing.JPanel cliente = util.ui.FormularioWeb.pilha(8,
-                util.ui.FormularioWeb.grelha(170, 2,
-                        util.ui.ComponentesWeb.campo("Pesquisar cliente (nome)", txtIniciaisCliente),
-                        util.ui.ComponentesWeb.campo("Telefone", txtTelefoneCliente)),
-                util.ui.ComponentesWeb.campo("Cliente", util.ui.FormularioWeb.comBotao(cmbCliente, btCliente, "Cliente novo")),
-                infoCliente,
-                util.ui.FormularioWeb.grelha(170, 2,
-                        util.ui.ComponentesWeb.campo("Documento", cmbTipoDocumento),
-                        util.ui.ComponentesWeb.campo("Data do documento", dc_data_documento)));
-        javax.swing.JPanel cartaoCliente = util.ui.FormularioWeb.cartao("Cliente", util.ui.ComponentesWeb.AZUL_VIVO, cliente);
-
-        // ---- peça: medidas, observação, data de entrega e taxa
-        util.ui.ComponentesWeb.botao(jButton1, SEC, null, "Aplicar esta data de entrega às peças da lista");
-        util.ui.ComponentesWeb.pilula(jRadioButton1, false);
-        util.ui.ComponentesWeb.pilula(rbTaxaUrgente50, false);
-        util.ui.ComponentesWeb.pilula(rbTaxaExpresso100, false);
-        jRadioButton1.setText("Normal");
-        rbTaxaUrgente50.setText("Urgente +50%");
-        rbTaxaExpresso100.setText("Expresso +100%");
-        javax.swing.JPanel medidas = util.ui.FormularioWeb.grelha(100, 5,
-                util.ui.ComponentesWeb.campo("Largura", txtLargura),
-                util.ui.ComponentesWeb.campo("Altura", txtAltura),
-                util.ui.ComponentesWeb.campo("Área", lbSomaLarguraAltura),
-                util.ui.ComponentesWeb.campo("Qtd. de itens", txtQtdItens),
-                util.ui.ComponentesWeb.campo("Total", lbTotalQtd));
-        javax.swing.JPanel peca = util.ui.FormularioWeb.pilha(8,
-                lbServico,
-                medidas,
-                util.ui.ComponentesWeb.campo("Observação da peça (cor, nódoas, defeitos...)", jScrollPane1),
-                util.ui.FormularioWeb.grelha(210, 2,
-                        util.ui.ComponentesWeb.campo("Data de entrega", util.ui.FormularioWeb.comBotao(dc_data_entrega, jButton1, null)),
-                        util.ui.ComponentesWeb.campo("Taxa", util.ui.FormularioWeb.pilulas(jRadioButton1, rbTaxaUrgente50, rbTaxaExpresso100))));
-        javax.swing.JPanel cartaoPeca = util.ui.FormularioWeb.cartao("Peça", util.ui.ComponentesWeb.ROXO, peca);
-
-        // ---- peças da recolha e totais
-        comercial.caixa.UiCaixa.tabela(table, new int[0], util.ui.ComponentesWeb.AZUL);
-        jScrollPane2.setBorder(javax.swing.BorderFactory.createLineBorder(util.ui.ComponentesWeb.LINHA));
-        jScrollPane2.getViewport().setBackground(java.awt.Color.WHITE);
-        jScrollPane2.setPreferredSize(new java.awt.Dimension(420, 200));
-        javax.swing.JPanel totais = util.ui.FormularioWeb.grelha(120, 3,
-                util.ui.ComponentesWeb.campo("Total de peças", txtTotalQTD),
-                util.ui.ComponentesWeb.campo("Total geral", txtTotalGeral),
-                util.ui.ComponentesWeb.campo("Desconto", txtDesconto));
-        javax.swing.JPanel pecas = util.ui.FormularioWeb.pilha(8,
-                jScrollPane2,
-                totais,
-                util.ui.ComponentesWeb.campo("Valor a pagar", txtTotalApagar),
-                lbValorPorExtenco);
-        javax.swing.JPanel cartaoPecas = util.ui.FormularioWeb.cartao("Peças da recolha", util.ui.ComponentesWeb.VERDE, pecas);
-
-        javax.swing.JPanel direita = util.ui.FormularioWeb.pilha(10, cartaoCliente, cartaoPeca, cartaoPecas);
-        javax.swing.JPanel colunas = util.ui.ComponentesWeb.transparente(
-                new util.ui.ComponentesWeb.ColunasResponsivas(new double[]{0.46, 0.54}, new int[]{380, 460}, 10));
-        colunas.add(cartaoServicos);
-        colunas.add(direita);
-
-        // ---- cabeçalho e acções
         lb_proximo_documento.setForeground(java.awt.Color.WHITE);
         lb_proximo_documento.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(13f));
-        jlUsuario.setForeground(new java.awt.Color(203, 213, 225));
-        jlUsuario.setFont(util.ui.EstiloUI.FONTE.deriveFont(12.5f));
-        lb_proximo_documento.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jlUsuario.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        javax.swing.JPanel direitaCab = util.ui.ComponentesWeb.transparente(new java.awt.GridLayout(2, 1, 0, 2));
-        direitaCab.add(lb_proximo_documento);
-        direitaCab.add(jlUsuario);
+        cmbTipoDocumento.setPreferredSize(new java.awt.Dimension(170, 30));
+        dc_data_documento.setPreferredSize(new java.awt.Dimension(130, 30));
+        dc_data_documento.setToolTipText("Data do documento");
+        jButton3.setText("Reimprimir");
+        pilulaCabecalho(jButton3, SEC, "Reimprimir um talão de recolha");
+        jButton2.setText("Sair");
+        util.ui.FormularioWeb.botaoSair(jButton2, "Fechar a recolha");
+        pilulaCabecalho(jButton2, null, null);
+        javax.swing.JPanel botoesCab = util.ui.ComponentesWeb.transparente(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 8, 0));
+        botoesCab.add(jButton3);
+        javax.swing.JPanel documento = util.ui.ComponentesWeb.transparente(new util.ui.EstiloUI.WrapLayout(java.awt.FlowLayout.RIGHT, 10, 0));
+        documento.add(lb_proximo_documento);
+        documento.add(util.ui.FormularioWeb.campoCabecalho(new javax.swing.JLabel("Documento"), cmbTipoDocumento));
+        documento.add(util.ui.FormularioWeb.campoCabecalho(new javax.swing.JLabel("Data"), dc_data_documento));
+        javax.swing.JPanel botoesBaixo = util.ui.ComponentesWeb.transparente(new java.awt.BorderLayout());
+        botoesBaixo.add(botoesCab, java.awt.BorderLayout.SOUTH);
+        documento.add(botoesBaixo);
 
+        javax.swing.JPanel cabecalho = new util.ui.ComponentesWeb.PainelGradiente(new java.awt.BorderLayout(16, 10),
+                util.ui.EstiloUI.AZUL_ESCURO, util.ui.Tema.gradienteFim());
+        cabecalho.setBorder(javax.swing.BorderFactory.createEmptyBorder(12, 20, 12, 20));
+        cabecalho.add(esquerdaCab, java.awt.BorderLayout.CENTER);
+        cabecalho.add(documento, java.awt.BorderLayout.EAST);
+        // janela estreita: o documento, a data e os botões descem para uma 2.ª linha (o título não é cortado)
+        final javax.swing.JPanel cab = cabecalho;
+        cabecalho.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                java.awt.Insets in = cab.getInsets();
+                boolean estreito = cab.getWidth() - in.left - in.right < marca.getPreferredSize().width + 16
+                        + documento.getPreferredSize().width + 12;
+                Object onde = ((java.awt.BorderLayout) cab.getLayout()).getConstraints(documento);
+                Object quer = estreito ? java.awt.BorderLayout.SOUTH : java.awt.BorderLayout.EAST;
+                if (!quer.equals(onde)) {
+                    cab.remove(documento);
+                    cab.add(documento, quer);
+                    ((java.awt.FlowLayout) documento.getLayout()).setAlignment(estreito ? java.awt.FlowLayout.LEFT : java.awt.FlowLayout.RIGHT);
+                    cab.revalidate();
+                    cab.repaint();
+                }
+            }
+        });
+
+        // ================================================ catálogo (categorias e peças)
+        // Lavagem / Engomagem: a lógica desactiva o botão do serviço escolhido; aqui esse fica "seleccionado"
+        ServicoUI.aplicar(btnLavar, "Lavagem", util.ui.MenuWeb.Simbolo.LAVANDARIA, "Serviços de lavagem");
+        ServicoUI.aplicar(btnEngomar, "Engomagem", util.ui.MenuWeb.Simbolo.FERRO, "Serviços de engomagem");
+        jButton4.setText("Pesquisar");
+        util.ui.ComponentesWeb.botao(jButton4, SEC, "/imagens/proucura.png", "Pesquisar um serviço / artigo");
+        jButton4.putClientProperty("web.pilula", Boolean.TRUE);
+        jButton4.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 12, 5, 14));
+        btn_voltar.setText("<<");
+        util.ui.ComponentesWeb.botao(btn_voltar, SEC, null, "Voltar às categorias");
+        btn_voltar.putClientProperty("web.pilula", Boolean.TRUE);
+        btn_voltar.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 12, 5, 14));
+        designacao_categoria.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(14f));
+        designacao_categoria.setForeground(util.ui.ComponentesWeb.TEXTO);
+        designacao_categoria.setBorder(null); // o .form tinha uma moldura (TitledBorder vazio)
+        final javax.swing.JLabel lbCategorias = new javax.swing.JLabel("Categorias");
+        lbCategorias.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(14f));
+        lbCategorias.setForeground(util.ui.ComponentesWeb.TEXTO);
+        lbCategorias.setVisible(!designacao_categoria.isVisible());
+        designacao_categoria.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentShown(java.awt.event.ComponentEvent e) {
+                lbCategorias.setVisible(false);
+            }
+
+            @Override
+            public void componentHidden(java.awt.event.ComponentEvent e) {
+                lbCategorias.setVisible(true);
+            }
+        });
+        javax.swing.JPanel caminho = util.ui.ComponentesWeb.transparente(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
+        caminho.add(btn_voltar);
+        caminho.add(lbCategorias);
+        caminho.add(designacao_categoria);
+        javax.swing.JPanel servicos = util.ui.ComponentesWeb.transparente(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 6, 0));
+        servicos.add(btnLavar);
+        servicos.add(btnEngomar);
+        javax.swing.JPanel linhaServicos = util.ui.ComponentesWeb.transparente(new java.awt.BorderLayout(8, 0));
+        linhaServicos.add(servicos, java.awt.BorderLayout.CENTER);
+        linhaServicos.add(jButton4, java.awt.BorderLayout.EAST);
+        javax.swing.JPanel barraCatalogo = util.ui.ComponentesWeb.transparente(new java.awt.BorderLayout(0, 8));
+        barraCatalogo.add(linhaServicos, java.awt.BorderLayout.NORTH);
+        barraCatalogo.add(caminho, java.awt.BorderLayout.CENTER);
+
+        // categorias coloridas, como no pedido das mesas (a lógica continua a pôr JButton simples)
+        painel_central.setOpaque(false);
+        painel_central.addContainerListener(new java.awt.event.ContainerAdapter() {
+            @Override
+            public void componentAdded(java.awt.event.ContainerEvent e) {
+                if (e.getChild() instanceof javax.swing.JButton) {
+                    botaoCategoriaRoupa((javax.swing.JButton) e.getChild());
+                }
+            }
+        });
+        for (java.awt.Component c : painel_central.getComponents()) {
+            if (c instanceof javax.swing.JButton) {
+                botaoCategoriaRoupa((javax.swing.JButton) c);
+            }
+        }
+        jScrollPane3.setBorder(null);
+        jScrollPane3.setOpaque(false);
+        jScrollPane3.getViewport().setOpaque(false);
+        jScrollPane3.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane3.getVerticalScrollBar().setUnitIncrement(24);
+        jScrollPane3.setPreferredSize(new java.awt.Dimension(380, 280));
+        jScrollPane3.setMinimumSize(new java.awt.Dimension(200, 160));
+        util.ui.ComponentesWeb.Cartao cartaoCatalogo = new util.ui.ComponentesWeb.Cartao("Catálogo",
+                util.ui.ComponentesWeb.CIANO, new java.awt.BorderLayout(0, 10));
+        cartaoCatalogo.getCorpo().add(barraCatalogo, java.awt.BorderLayout.NORTH);
+        cartaoCatalogo.getCorpo().add(jScrollPane3, java.awt.BorderLayout.CENTER);
+
+        // ================================================ peças da recolha (tabela grande, visor e cobrança)
+        comercial.caixa.UiCaixa.tabela(table, new int[0], util.ui.ComponentesWeb.AZUL);
+        // o .form limita as colunas (ID a 10 px, data e total a 100): cortava os valores
+        int[][] colunasTabela = {{36, 48}, {104, 120}, {220, Integer.MAX_VALUE}, {48, 60}, {112, 140}};
+        for (int i = 0; i < colunasTabela.length && i < table.getColumnCount(); i++) {
+            javax.swing.table.TableColumn col = table.getColumnModel().getColumn(i);
+            col.setMinWidth(i == 2 ? 120 : colunasTabela[i][0] - 10);
+            col.setMaxWidth(colunasTabela[i][1]);
+            col.setPreferredWidth(colunasTabela[i][0]);
+        }
+        jScrollPane2.setBorder(new javax.swing.border.LineBorder(util.ui.ComponentesWeb.LINHA, 1, true));
+        jScrollPane2.getViewport().setBackground(java.awt.Color.WHITE);
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(400, 200));
+        jScrollPane2.setMinimumSize(new java.awt.Dimension(260, 160));
+
+        javax.swing.JPanel totais = util.ui.FormularioWeb.grelha(90, 3,
+                util.ui.ComponentesWeb.campo("Peças", txtTotalQTD),
+                util.ui.ComponentesWeb.campo("Total geral", txtTotalGeral),
+                util.ui.ComponentesWeb.campo("Desconto", txtDesconto));
+
+        // visor do total (escuro, números grandes, como na conta da mesa)
+        javax.swing.JLabel lbVisor = new javax.swing.JLabel("TOTAL A PAGAR");
+        lbVisor.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(11.5f));
+        lbVisor.setForeground(new java.awt.Color(71, 85, 105));
+        txtTotalApagar.setEditable(false);
+        txtTotalApagar.setFont(util.ui.MesasWeb.fonteVisor(32));
+        txtTotalApagar.setForeground(new java.awt.Color(21, 128, 61)); // verde escuro: bem visível no visor claro
+        txtTotalApagar.setOpaque(false);
+        txtTotalApagar.setBorder(null);
+        txtTotalApagar.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        txtTotalApagar.setFocusable(false);
+        final javax.swing.JLabel lbPecasVisor = new javax.swing.JLabel(" ");
+        lbPecasVisor.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(11.5f));
+        lbPecasVisor.setForeground(new java.awt.Color(71, 85, 105));
+        final util.ui.ComponentesWeb.TextoQuebrado extenso = new util.ui.ComponentesWeb.TextoQuebrado();
+        extenso.setFont(util.ui.EstiloUI.FONTE.deriveFont(java.awt.Font.ITALIC, 11.5f));
+        extenso.setForeground(new java.awt.Color(220, 38, 38)); // vermelho: bem visível
+        extenso.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(java.awt.Font.BOLD | java.awt.Font.ITALIC, 13f));
+        extenso.setText(lbValorPorExtenco.getText());
+        lbValorPorExtenco.addPropertyChangeListener("text", e -> extenso.setText(lbValorPorExtenco.getText()));
+        txtTotalApagar.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            private void ver() {
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    double v = 0;
+                    try {
+                        v = CfMethods.parseMoedaFormatada(txtTotalApagar.getText());
+                    } catch (Exception ex) {
+                        // vazio
+                    }
+                    if (v <= 0.004) {
+                        extenso.setText("");
+                    } else {
+                        extenso.setText(MetodosUtil.valorPorExtenso(v, "Kwanza"));
+                    }
+                });
+            }
+
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                ver();
+            }
+
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                ver();
+            }
+
+            @Override
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+            }
+        });
+        javax.swing.JPanel topoVisor = util.ui.ComponentesWeb.transparente(new java.awt.BorderLayout());
+        topoVisor.add(lbVisor, java.awt.BorderLayout.WEST);
+        topoVisor.add(lbPecasVisor, java.awt.BorderLayout.EAST);
+        util.ui.ComponentesWeb.CaixaSuave visor = new util.ui.ComponentesWeb.CaixaSuave(new java.awt.BorderLayout(0, 2),
+                new java.awt.Color(240, 253, 244), new java.awt.Color(134, 239, 172)); // visor claro
+        visor.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 14, 10, 14));
+        visor.add(topoVisor, java.awt.BorderLayout.NORTH);
+        visor.add(txtTotalApagar, java.awt.BorderLayout.CENTER);
+        visor.add(extenso, java.awt.BorderLayout.SOUTH);
+
+        final util.ui.ComponentesWeb.Etiqueta etiquetaPecas = new util.ui.ComponentesWeb.Etiqueta("0 peças", util.ui.ComponentesWeb.VERDE);
+        final Runnable contarPecas = () -> {
+            int n = table.getRowCount();
+            String t = n + (n == 1 ? " peça" : " peças");
+            etiquetaPecas.setText(t);
+            lbPecasVisor.setText(t.toUpperCase());
+        };
+        final javax.swing.event.TableModelListener ouvintePecas = e -> contarPecas.run();
+        table.getModel().addTableModelListener(ouvintePecas);
+        table.addPropertyChangeListener("model", e -> {
+            if (e.getOldValue() instanceof javax.swing.table.TableModel) {
+                ((javax.swing.table.TableModel) e.getOldValue()).removeTableModelListener(ouvintePecas);
+            }
+            if (e.getNewValue() instanceof javax.swing.table.TableModel) {
+                ((javax.swing.table.TableModel) e.getNewValue()).addTableModelListener(ouvintePecas);
+            }
+            contarPecas.run();
+        });
+        contarPecas.run();
+
+        // um botão de cada vez, conforme o documento (FR = Cobrar, FT = a crédito, PP = Proforma)
         BT_Conversao.setText("Cobrar");
         util.ui.ComponentesWeb.botao(BT_Conversao, util.ui.ComponentesWeb.Variante.SUCESSO, null, "Emitir a factura-recibo e receber agora");
         btFT.setText("Processar (a crédito)");
         util.ui.ComponentesWeb.botao(btFT, util.ui.ComponentesWeb.Variante.PRIMARIO, null, "Emitir factura para pagar na entrega");
-        util.ui.ComponentesWeb.botao(BtnProforma, SEC, null, "Factura proforma (orçamento)");
-        jButton3.setText("Reimprimir");
-        util.ui.ComponentesWeb.botao(jButton3, SEC, null, "Reimprimir um talão de recolha");
-        jButton2.setText("Sair");
-        util.ui.FormularioWeb.botaoSair(jButton2, "Fechar a recolha");
+        BtnProforma.setText("Emitir Proforma");
+        util.ui.ComponentesWeb.botao(BtnProforma, util.ui.ComponentesWeb.Variante.PRIMARIO, null, "Factura proforma (orçamento)");
+        javax.swing.JPanel cobrar = util.ui.ComponentesWeb.transparente(new util.ui.ComponentesWeb.GrelhaResponsiva(160, 6, 3));
+        for (javax.swing.JButton b : new javax.swing.JButton[]{BtnProforma, btFT, BT_Conversao}) {
+            b.setIcon(null);
+            b.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(16f));
+            b.setBorder(javax.swing.BorderFactory.createEmptyBorder(12, 12, 12, 12));
+            b.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+            cobrar.add(b);
+        }
+        // avisos (ex.: "Abra o caixa para poder cobrar") por cima dos botões de cobrança
+        status_mensagem_primaria.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        javax.swing.JPanel rodapePecas = util.ui.FormularioWeb.pilha(8, totais, visor, status_mensagem_primaria, cobrar);
+
+        util.ui.ComponentesWeb.Cartao cartaoPecas = new util.ui.ComponentesWeb.Cartao("Peças da recolha",
+                util.ui.ComponentesWeb.VERDE, new java.awt.BorderLayout(0, 10));
+        cartaoPecas.adicionarAccao(etiquetaPecas);
+        cartaoPecas.getCorpo().add(jScrollPane2, java.awt.BorderLayout.CENTER);
+        cartaoPecas.getCorpo().add(rodapePecas, java.awt.BorderLayout.SOUTH);
+
+        // ================================================ cliente (compacto)
+        btCliente.setText("");
+        util.ui.ComponentesWeb.botao(btCliente, SEC, null, "Cadastrar um cliente novo");
+        // telefone e desconto do cliente na linha do título do cartão (não gastam altura:
+        // a 1366 x 768 a linha a mais empurrava o "Fecho Caixa" para fora); o e-mail fica na dica
+        javax.swing.JPanel infoCliente = util.ui.ComponentesWeb.transparente(
+                new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 10, 0));
+        infoCliente.add(lbTelefoneCliente);
+        infoCliente.add(lbDesconto);
+        lbEmailCliente.addPropertyChangeListener("text", e -> lbTelefoneCliente.setToolTipText(lbEmailCliente.getText()));
+        // o desconto da ficha do cliente vê-se (a laranja) e o campo "Desconto" diz de onde vem
+        final Runnable destacarDesconto = () -> {
+            double pct = 0;
+            try {
+                pct = getDescontoClientePercentagem();
+            } catch (Exception e) {
+                // sem cliente
+            }
+            boolean tem = pct > 0;
+            lbDesconto.setForeground(tem ? new java.awt.Color(194, 65, 12) : util.ui.ComponentesWeb.TEXTO_SUAVE);
+            lbDesconto.setFont(tem ? util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(12.5f) : util.ui.EstiloUI.FONTE.deriveFont(12f));
+            txtDesconto.setForeground(tem ? new java.awt.Color(194, 65, 12) : util.ui.ComponentesWeb.TEXTO);
+            txtDesconto.setToolTipText(tem ? "Desconto de " + new java.text.DecimalFormat("#,##0.##").format(pct)
+                    + "% da ficha do cliente" : "Sem desconto");
+            if (pct >= 100) {
+                status_mensagem_primaria.setText("Atenção: cliente com 100% de desconto na ficha");
+            } else if (status_mensagem_primaria.getText().startsWith("Atenção: cliente")) {
+                status_mensagem_primaria.setText(" ");
+            }
+        };
+        lbDesconto.addPropertyChangeListener("text", e -> destacarDesconto.run());
+        javax.swing.JPanel cliente = util.ui.FormularioWeb.pilha(6,
+                util.ui.FormularioWeb.grelha(110, 2,
+                        util.ui.ComponentesWeb.campo("Pesquisar (nome)", txtIniciaisCliente),
+                        util.ui.ComponentesWeb.campo("Telefone", txtTelefoneCliente)),
+                util.ui.ComponentesWeb.campo("Cliente", util.ui.FormularioWeb.comBotao(cmbCliente, btCliente, "Cliente novo")));
+        util.ui.ComponentesWeb.Cartao cartaoCliente = new util.ui.ComponentesWeb.Cartao("Cliente", util.ui.ComponentesWeb.AZUL_VIVO,
+                new java.awt.BorderLayout());
+        cartaoCliente.adicionarAccao(infoCliente);
+        cartaoCliente.getCorpo().add(cliente, java.awt.BorderLayout.CENTER);
+
+        // ================================================ peça (compacto)
+        util.ui.ComponentesWeb.botao(jButton1, SEC, null, "Aplicar esta data de entrega às peças da lista");
+        for (javax.swing.JRadioButton rb : new javax.swing.JRadioButton[]{jRadioButton1, rbTaxaUrgente50, rbTaxaExpresso100}) {
+            util.ui.ComponentesWeb.pilulaCompacta(rb);
+        }
+        jRadioButton1.setText("Normal");
+        rbTaxaUrgente50.setText("Urgente +50%");
+        rbTaxaExpresso100.setText("Expresso +100%");
+        javax.swing.JPanel resumoMedidas = util.ui.ComponentesWeb.transparente(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 6, 0));
+        javax.swing.JLabel lbArea = new javax.swing.JLabel("Área");
+        javax.swing.JLabel lbTotalMedidas = new javax.swing.JLabel("   Total");
+        for (javax.swing.JLabel l : new javax.swing.JLabel[]{lbArea, lbTotalMedidas}) {
+            l.setFont(util.ui.EstiloUI.FONTE.deriveFont(12f));
+            l.setForeground(util.ui.ComponentesWeb.TEXTO_SUAVE);
+        }
+        resumoMedidas.add(lbArea);
+        resumoMedidas.add(lbSomaLarguraAltura);
+        resumoMedidas.add(lbTotalMedidas);
+        resumoMedidas.add(lbTotalQtd);
+        javax.swing.JPanel taxas = util.ui.ComponentesWeb.transparente(new util.ui.EstiloUI.WrapLayout(java.awt.FlowLayout.LEFT, 4, 2));
+        taxas.add(jRadioButton1);
+        taxas.add(rbTaxaUrgente50);
+        taxas.add(rbTaxaExpresso100);
+        javax.swing.JPanel linhaServico = util.ui.ComponentesWeb.transparente(new java.awt.BorderLayout(8, 0));
+        linhaServico.add(lbServico, java.awt.BorderLayout.CENTER);
+        linhaServico.add(resumoMedidas, java.awt.BorderLayout.EAST);
+        javax.swing.JPanel peca = util.ui.FormularioWeb.pilha(5,
+                linhaServico,
+                util.ui.FormularioWeb.grelha(70, 3,
+                        util.ui.ComponentesWeb.campo("Largura", txtLargura),
+                        util.ui.ComponentesWeb.campo("Altura", txtAltura),
+                        util.ui.ComponentesWeb.campo("Qtd.", txtQtdItens)),
+                util.ui.ComponentesWeb.campo("Observação (cor, nódoas, defeitos...)", jScrollPane1),
+                util.ui.ComponentesWeb.campo("Data de entrega", util.ui.FormularioWeb.comBotao(dc_data_entrega, jButton1, null)),
+                util.ui.ComponentesWeb.campo("Taxa", taxas));
+        javax.swing.JPanel cartaoPeca = util.ui.FormularioWeb.cartao("Peça", util.ui.ComponentesWeb.ROXO, peca);
+
         status_mensagem_primaria.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(12.5f));
         status_mensagem_primaria.setForeground(util.ui.ComponentesWeb.VERMELHO);
+        // ================================================ balcão (canto inferior direito): painel do dia, entregas e caixa
+        String nomeUtilizador = "";
+        try {
+            nomeUtilizador = usuariosController.getUsuarioByCodigo(idUser).getNome();
+        } catch (Exception e) {
+            // sem nome: o balcão mostra só o Sair
+        }
+        final comercial.lavandaria.BalcaoLavandaria balcao = new comercial.lavandaria.BalcaoLavandaria(this, idUser, nomeUtilizador,
+                () -> new EntregaLavandariaVisao(idUser, BDConexao.getInstancia()).setVisible(true),
+                jButton2::doClick, // o mesmo Sair de sempre (fecha a recolha)
+                aberto -> {
+                    // como na venda: sem caixa aberto não se cobra (a FT a crédito e a proforma continuam)
+                    BT_Conversao.setEnabled(aberto);
+                    String aviso = "Abra o caixa para poder cobrar";
+                    if (!aberto) {
+                        status_mensagem_primaria.setText(aviso);
+                    } else if (aviso.equals(status_mensagem_primaria.getText())) {
+                        status_mensagem_primaria.setText(" ");
+                    }
+                });
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowActivated(java.awt.event.WindowEvent e) {
+                balcao.verificarCaixa();
+                balcao.actualizar(false);
+            }
+        });
+        // depois de cobrar / processar, os números do dia acompanham
+        for (javax.swing.JButton b : new javax.swing.JButton[]{BT_Conversao, btFT}) {
+            b.addActionListener(e -> javax.swing.SwingUtilities.invokeLater(() -> balcao.actualizar(true)));
+        }
+        balcao.verificarCaixa();
+        balcao.actualizar(true);
 
-        util.ui.FormularioWeb.montar(this,
-                util.ui.FormularioWeb.cabecalho("Recolha de Roupa", "Escolha o cliente, os serviços de cada peça e a data de entrega",
-                        direitaCab),
-                colunas,
-                util.ui.FormularioWeb.barraAccoes(status_mensagem_primaria, jButton3, BtnProforma, btFT, BT_Conversao, jButton2),
-                "Lavandaria  ·  Recolha");
-        util.ui.FormularioWeb.ajustar(this, 1440, 900, 760, 560);
+        // cliente e peça em cima, o balcão encostado ao fundo; se a janela for baixa, a coluna desliza
+        javax.swing.JPanel clientePeca = util.ui.FormularioWeb.pilha(10, cartaoCliente, cartaoPeca);
+        ColunaLateral lateralConteudo = new ColunaLateral(clientePeca, balcao);
+        javax.swing.JScrollPane lateral = new javax.swing.JScrollPane(lateralConteudo,
+                javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        lateral.setBorder(null);
+        lateral.setOpaque(false);
+        lateral.getViewport().setOpaque(false);
+        lateral.getVerticalScrollBar().setUnitIncrement(24);
+        lateral.setMinimumSize(new java.awt.Dimension(260, 200));
+
+        // ================================================ disposição responsiva
+        // catálogo | peças da recolha | cliente e peça (em janelas estreitas a 3.ª coluna passa para baixo)
+        javax.swing.JPanel colunas = util.ui.ComponentesWeb.transparente(
+                new util.ui.ComponentesWeb.ColunasResponsivas(new double[]{0.35, 0.38, 0.27}, new int[]{330, 370, 320}, 10));
+        colunas.add(cartaoCatalogo);
+        colunas.add(cartaoPecas);
+        colunas.add(lateral);
+
+        javax.swing.JPanel accoes = util.ui.ComponentesWeb.transparente(null); // os botões estão nos cartões e no cabeçalho
+        accoes.setPreferredSize(new java.awt.Dimension(0, 0));
+        util.ui.FormularioWeb.montar(this, cabecalho, colunas, accoes, "Lavandaria  ·  Recolha");
+        util.ui.EstiloUI.ajustarAoEcra(this, 1000, 650);
+    }
+
+    /**
+     * Coluna direita dentro de um JScrollPane: acompanha a largura e, quando há
+     * altura de sobra, estica (o balcão fica no fundo); quando falta, desliza.
+     */
+    private static final class ColunaLateral extends javax.swing.JPanel implements javax.swing.Scrollable {
+
+        private final java.awt.Component norte;
+        private final comercial.lavandaria.BalcaoLavandaria balcao;
+
+        ColunaLateral(java.awt.Component norte, comercial.lavandaria.BalcaoLavandaria balcao) {
+            // sem vgap: o BorderLayout contava-o duas vezes (norte e sul) e a coluna deslizava a 1366 x 768
+            super(new java.awt.BorderLayout());
+            this.norte = norte;
+            this.balcao = balcao;
+            setOpaque(false);
+            balcao.setBorder(javax.swing.BorderFactory.createEmptyBorder(8, 0, 0, 0));
+            add(norte, java.awt.BorderLayout.NORTH);
+            add(balcao, java.awt.BorderLayout.SOUTH);
+        }
+
+        /** Balcão completo se couber por baixo do cliente e da peça (ou se a coluna estiver empilhada, larga); senão, a faixa. */
+        @Override
+        public void doLayout() {
+            if (getParent() instanceof javax.swing.JViewport) {
+                int disponivel = getParent().getHeight();
+                int precisa = norte.getPreferredSize().height + 10 + balcao.alturaCompleta(getWidth());
+                boolean compacto = disponivel < precisa && getWidth() < 600;
+                if (compacto != balcao.isCompacto()) {
+                    balcao.setCompacto(compacto);
+                    javax.swing.SwingUtilities.invokeLater(this::revalidate);
+                }
+            }
+            super.doLayout();
+        }
+
+        @Override
+        public java.awt.Dimension getPreferredScrollableViewportSize() {
+            return getPreferredSize();
+        }
+
+        @Override
+        public int getScrollableUnitIncrement(java.awt.Rectangle r, int o, int d) {
+            return 24;
+        }
+
+        @Override
+        public int getScrollableBlockIncrement(java.awt.Rectangle r, int o, int d) {
+            return Math.max(24, r.height - 40);
+        }
+
+        @Override
+        public boolean getScrollableTracksViewportWidth() {
+            return true;
+        }
+
+        @Override
+        public boolean getScrollableTracksViewportHeight() {
+            return getParent() instanceof javax.swing.JViewport && getParent().getHeight() > getPreferredSize().height;
+        }
+    }
+
+    /**
+     * Botão de serviço (Lavagem / Engomagem) em pílula: a lógica antiga desactiva
+     * o serviço escolhido, por isso "desactivado" desenha-se como seleccionado
+     * (azul, com visto) e continua a não se poder carregar outra vez.
+     */
+    private static final class ServicoUI extends javax.swing.plaf.basic.BasicButtonUI {
+
+        private final String texto;
+        private final util.ui.MenuWeb.Simbolo simbolo;
+
+        private ServicoUI(String texto, util.ui.MenuWeb.Simbolo simbolo) {
+            this.texto = texto;
+            this.simbolo = simbolo;
+        }
+
+        static void aplicar(javax.swing.JButton b, String texto, util.ui.MenuWeb.Simbolo simbolo, String dica) {
+            b.setUI(new ServicoUI(texto, simbolo));
+            b.setText(texto);
+            b.setIcon(null);
+            b.setOpaque(false);
+            b.setContentAreaFilled(false);
+            b.setBorderPainted(false);
+            b.setFocusPainted(false);
+            b.setRolloverEnabled(true);
+            b.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(13f));
+            b.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.HAND_CURSOR));
+            b.setToolTipText(dica);
+        }
+
+        @Override
+        public java.awt.Dimension getPreferredSize(javax.swing.JComponent c) {
+            java.awt.FontMetrics f = c.getFontMetrics(c.getFont());
+            return new java.awt.Dimension(f.stringWidth(texto) + 64, 34);
+        }
+
+        @Override
+        public void paint(java.awt.Graphics g, javax.swing.JComponent c) {
+            javax.swing.AbstractButton b = (javax.swing.AbstractButton) c;
+            boolean escolhido = !b.isEnabled();
+            boolean rato = b.getModel().isRollover() && !escolhido;
+            java.awt.Graphics2D g2 = util.ui.ComponentesWeb.suave(g);
+            int w = c.getWidth(), h = c.getHeight();
+            java.awt.Color azul = util.ui.ComponentesWeb.AZUL;
+            g2.setColor(escolhido ? azul : rato ? new java.awt.Color(239, 246, 255) : java.awt.Color.WHITE);
+            g2.fillRoundRect(0, 0, w - 1, h - 1, h, h);
+            g2.setColor(escolhido ? azul.darker() : util.ui.ComponentesWeb.LINHA);
+            g2.drawRoundRect(0, 0, w - 1, h - 1, h, h);
+            java.awt.Color fg = escolhido ? java.awt.Color.WHITE : azul;
+            util.ui.MenuWeb.desenharSimbolo(g2, simbolo, 12, (h - 18) / 2.0, 18, fg);
+            g2.setFont(c.getFont());
+            java.awt.FontMetrics f = g2.getFontMetrics();
+            g2.setColor(fg);
+            g2.drawString(texto, 36, (h + f.getAscent() - f.getDescent()) / 2);
+            if (escolhido) { // visto
+                int x = w - 20, y = h / 2;
+                g2.setStroke(new java.awt.BasicStroke(2.2f, java.awt.BasicStroke.CAP_ROUND, java.awt.BasicStroke.JOIN_ROUND));
+                g2.drawLine(x, y, x + 3, y + 3);
+                g2.drawLine(x + 3, y + 3, x + 9, y - 4);
+            }
+            g2.dispose();
+        }
+    }
+
+    private static void botaoCategoriaRoupa(javax.swing.JButton b) {
+        b.putClientProperty(util.ui.MesasWeb.SIMBOLO_CATEGORIA, util.ui.MenuWeb.Simbolo.CABIDE);
+        util.ui.MesasWeb.botaoCategoria(b);
+    }
+
+    private static void pilulaCabecalho(javax.swing.JButton b, util.ui.ComponentesWeb.Variante v, String dica) {
+        if (v != null) {
+            util.ui.ComponentesWeb.botao(b, v, null, dica);
+        }
+        b.setIcon(null);
+        b.putClientProperty("web.pilula", Boolean.TRUE);
+        b.setBorder(javax.swing.BorderFactory.createEmptyBorder(6, 14, 6, 16));
+        b.setFont(util.ui.EstiloUI.FONTE_NEGRITO.deriveFont(12.5f));
+    }
+
+    /**
+     * Fotografias de peças do catálogo (ao acaso) para o cabeçalho; se a base de
+     * dados tiver poucas, completa com as imagens da lavandaria do projecto.
+     */
+    private static java.util.List<java.awt.Image> fotosDeRoupa(int quantas) {
+        java.util.List<java.awt.Image> fotos = new java.util.ArrayList<>();
+        try {
+            java.util.List<Integer> codigos = new java.util.ArrayList<>();
+            java.sql.ResultSet rs = conexao.executeQuery("SELECT codigo FROM tb_produto WHERE photo IS NOT NULL AND LENGTH(photo) > 0"
+                    + " ORDER BY RAND() LIMIT " + quantas);
+            while (rs != null && rs.next()) {
+                codigos.add(rs.getInt(1));
+            }
+            if (!codigos.isEmpty()) {
+                StringBuilder in = new StringBuilder();
+                for (Integer c : codigos) {
+                    in.append(in.length() == 0 ? "" : ",").append(c);
+                }
+                rs = conexao.executeQuery("SELECT photo FROM tb_produto WHERE codigo IN (" + in + ")");
+                while (rs != null && rs.next()) {
+                    java.awt.Image i = foto(rs.getBytes(1));
+                    if (i != null) {
+                        fotos.add(i);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // sem fotografias: ficam as imagens do projecto
+        }
+        for (String r : new String[]{"/imagem/lavandaria/roupa_01_01.png", "/imagem/maquina-de-lavar.png",
+            "/imagem/ferro.png", "/imagem/lavandaria/recolha_01_01.png"}) {
+            if (fotos.size() >= Math.min(quantas, 4)) {
+                break;
+            }
+            java.net.URL url = RecolhaPedidosVisao.class.getResource(r);
+            if (url != null) {
+                fotos.add(new ImageIcon(url).getImage());
+            }
+        }
+        return fotos;
+    }
+
+    /** Fotografias redondas, lado a lado, para o cabeçalho escuro (mostra as que couberem). */
+    private static final class FaixaRoupa extends javax.swing.JComponent {
+
+        private static final int D = 52, PASSO = 60;
+        private final java.util.List<java.awt.Image> fotos = new java.util.ArrayList<>();
+
+        FaixaRoupa(java.util.List<java.awt.Image> origem) {
+            for (java.awt.Image i : origem) {
+                fotos.add(redonda(i));
+            }
+            setPreferredSize(new java.awt.Dimension(PASSO * fotos.size(), D + 6));
+            setMinimumSize(new java.awt.Dimension(0, D + 6));
+            setToolTipText("Lavandaria");
+        }
+
+        private static java.awt.image.BufferedImage redonda(java.awt.Image img) {
+            int s = D * 2; // o dobro, para ficar nítida em ecrãs com escala
+            java.awt.image.BufferedImage b = new java.awt.image.BufferedImage(s, s, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+            java.awt.Graphics2D g = b.createGraphics();
+            g.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setRenderingHint(java.awt.RenderingHints.KEY_INTERPOLATION, java.awt.RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            g.setRenderingHint(java.awt.RenderingHints.KEY_RENDERING, java.awt.RenderingHints.VALUE_RENDER_QUALITY);
+            g.setColor(java.awt.Color.WHITE);
+            g.fillOval(0, 0, s, s);
+            g.setClip(new java.awt.geom.Ellipse2D.Double(0, 0, s, s));
+            int w = Math.max(1, img.getWidth(null)), h = Math.max(1, img.getHeight(null));
+            double esc = Math.min((double) s * 0.86 / w, (double) s * 0.86 / h); // a peça inteira, com margem
+            int fw = (int) (w * esc), fh = (int) (h * esc);
+            g.drawImage(img, (s - fw) / 2, (s - fh) / 2, fw, fh, null);
+            g.dispose();
+            return b;
+        }
+
+        @Override
+        protected void paintComponent(java.awt.Graphics g) {
+            java.awt.Graphics2D g2 = util.ui.ComponentesWeb.suave(g);
+            g2.setRenderingHint(java.awt.RenderingHints.KEY_INTERPOLATION, java.awt.RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            int y = (getHeight() - D) / 2;
+            int cabem = Math.min(fotos.size(), Math.max(0, (getWidth() - (D - PASSO)) / PASSO));
+            for (int i = 0; i < cabem; i++) {
+                int x = i * PASSO;
+                g2.setColor(new java.awt.Color(255, 255, 255, 60));
+                g2.fillOval(x - 3, y - 3, D + 6, D + 6);
+                g2.drawImage(fotos.get(i), x, y, D, D, null);
+            }
+            g2.dispose();
+        }
     }
 
 //        @Override
@@ -496,11 +1033,19 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         }
     }
 
+    private static String nomeUtilizador = "";
+
+    /** Nome do utilizador com sessão nesta recolha (o pagamento mostra-o no cabeçalho). */
+    public static String getNomeUtilizador() {
+        return nomeUtilizador == null ? "" : nomeUtilizador;
+    }
+
     private void boas_vinda() {
         TbUsuario usuario = usuariosController.getUsuarioByCodigo(this.idUser);
 
         System.err.println(" codigo local do Usuario: " + this.idUser);
         jlUsuario.setText("Usuario(a): " + usuario.getNome());
+        nomeUtilizador = usuario.getNome() == null ? "" : usuario.getNome().trim();
         System.err.println("nome usuario1: " + usuario.getNome());
 
 //        if (usuario.getCodigoSexo().getCodigo() == 1) {
@@ -1516,6 +2061,21 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     }
 
     private void procedimento_processar_facturacao() {
+
+        // desconto da ficha do cliente (ex.: 100%) que deixa a factura a zero: confirmar antes de cobrar
+        setTotalPagar();
+        double percentagem = getDescontoClientePercentagem();
+        if (table.getRowCount() > 0 && percentagem > 0
+                && CfMethods.parseMoedaFormatada(txtTotalApagar.getText()) <= 0.004) {
+            int r = JOptionPane.showConfirmDialog(this, "O cliente " + cmbCliente.getSelectedItem() + " tem "
+                    + new java.text.DecimalFormat("#,##0.##").format(percentagem) + "% de desconto na ficha:\n"
+                    + "o total a pagar fica 0,00.\n\nContinuar mesmo assim?\n"
+                    + "(Para cobrar o valor, corrija o desconto na ficha do cliente.)",
+                    "Desconto do cliente", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            if (r != JOptionPane.YES_OPTION) {
+                return;
+            }
+        }
 
         if (verifica_ano_documento_igual_economico()) {
             if (data_documento_superior_ou_igual_ao_ultimo_doc()) {
@@ -3040,6 +3600,15 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
     }
 
+    /** Percentagem de desconto da ficha do cliente seleccionado (0 se não tiver). */
+    public static double getPercentagemDescontoCliente() {
+        try {
+            return getDescontoClientePercentagem();
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
     private static double getDescontoClientePercentagem() {
         TbCliente clientes = clientesController.findByCodigo(getIdCliente());
 
@@ -3403,7 +3972,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 //        venda_local.setCodFact ( getCodDocActualizador() );
         //venda_local.setHashCod( MetodosUtil.criptografia_hash( venda_local, getGrossTotal(), conexao ) );
 //        venda_local.setHashCod( MetodosUtil.criptografia_hash( prox_doc ) );
-        venda_local.setTotalPorExtenso(iniciais_extenso() + lbValorPorExtenco.getText());
+        venda_local.setTotalPorExtenso(iniciais_extenso() + extensoTotalPagar());
 //        venda_local.setTotalPorExtenso( MetodosUtil.iniciais_extenso( DOC_FACTURA_RECIBO_FR, documentoDao ) + MetodosUtil.valorPorExtenso( venda_local.getTotalVenda().doubleValue(), "Kwanza" ) );
         System.out.println("STATUS:hash cod processado.");
         venda_local.setHashCod(MetodosUtil.criptografia_hash(venda_local, getGrossTotal(), conexao));
@@ -3562,7 +4131,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
 //        venda_local.setHashCod( MetodosUtil.criptografia_hash( venda_local, getGrossTotal( lugar ), conexaoTransaction ) );
         //venda_local.setHashCod(MetodosUtil.criptografia_hash(prox_doc));
-        venda_local.setTotalPorExtenso(iniciais_extenso() + lbValorPorExtenco.getText());
+        venda_local.setTotalPorExtenso(iniciais_extenso() + extensoTotalPagar());
 //        venda_local.setTotalPorExtenso( MetodosUtil.iniciais_extenso( DOC_FACTURA_RECIBO_FR, documentoDao ) + MetodosUtil.valorPorExtenso( venda_local.getTotalVenda().doubleValue(), "Kwanza" ) );
         System.out.println("STATUS:hash cod processado.");
         venda_local.setAssinatura(MetodosUtil.assinatura_doc(venda_local.getHashCod()));
@@ -3677,12 +4246,19 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
     private static void valor_por_extenco() {
 //        System.out.println( "Valor XXXXXXX: " + CfMethods.parseMoedaFormatada( txtTotalApagar.getText() ) );
 
-        if (!txtTotalApagar.getText().equals("") && !txtTotalApagar.getText().equals("0")) {
+        // antes só mudava com total diferente de zero e ficava o valor antigo (ex.: sem o desconto do cliente)
+        lbValorPorExtenco.setText(extensoTotalPagar());
+    }
 
-            System.out.println("VALOR: " + txtTotalApagar.getText());
-            lbValorPorExtenco.setText(MetodosUtil.valorPorExtenso(CfMethods.parseMoedaFormatada(txtTotalApagar.getText()), "Kwanza"));
-
+    /** Total a pagar (depois do desconto) por extenso; vazio se for zero. */
+    public static String extensoTotalPagar() {
+        double v = 0;
+        try {
+            v = CfMethods.parseMoedaFormatada(txtTotalApagar.getText());
+        } catch (Exception e) {
+            // vazio
         }
+        return v > 0.004 ? MetodosUtil.valorPorExtenso(v, "Kwanza") : "";
     }
 
 //    private static void valor_por_extenco( Moeda moeda )
@@ -3879,12 +4455,11 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
             if ((getIdDocumento() == DOC_FACTURA_RECIBO_FR)) {
                 registrar_forma_pagamento(venda.getCodigo());
             }
-            JOptionPane.showMessageDialog(null, "Factura efectuada com sucesso!..");
+            mensagemFacturaEfectuada(venda);
             limpar();
 //            setSalvarPedidos();
             txtObs.setText("");
-            txtTotalApagar.setText("");
-            txtTotalQTD.setText("");
+            limparTotais();
             TbPedido pedido = pedidoDao.findTbPedido(pedidoDao.getLastPedidoByDefignacaoMesaFALSE(mesa));
             System.out.println(" VARIAVEL PEDIDO: " + pedido);
             PedidoDao.eliminarPedido(pedido, conexaoTransaction); // Elimina o pedido
@@ -3919,6 +4494,38 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         System.out.println("Quantidade   : " + quantidade);
         conexao.executeUpdate(sql);
 
+    }
+
+    /**
+     * "Factura efectuada com sucesso!" com a imagem de OK (como no SysKitandaHotel):
+     * nº do documento, total, recebido e troco (na FR) e o total por extenso.
+     */
+    private static void mensagemFacturaEfectuada(TbVenda venda) {
+        try {
+            double total = CfMethods.parseMoedaFormatada(txtTotalApagar.getText());
+            java.util.List<String[]> linhas = new java.util.ArrayList<>();
+            linhas.add(new String[]{"Total", CfMethods.formatarComoMoeda(total)});
+            if (getIdDocumento() == DOC_FACTURA_RECIBO_FR) {
+                linhas.add(new String[]{"Recebido", CfMethods.formatarComoMoeda(getValor_entregue())});
+                linhas.add(new String[]{"Troco", CfMethods.formatarComoMoeda(getTroco())});
+            }
+            String extenso = total > 0.004 ? MetodosUtil.valorPorExtenso(total, "Kwanza") : null;
+            util.ui.MensagemSucesso.mostrar(table, "Factura efectuada com sucesso!",
+                    venda == null ? null : venda.getCodFact(), linhas.toArray(new String[0][]), extenso);
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Factura efectuada com sucesso!");
+        }
+    }
+
+    /** Depois da venda: os totais e o valor por extenso voltam a zero (a tabela fica vazia). */
+    public static void limparTotais() {
+        String zero = CfMethods.formatarComoMoeda(0);
+        txtTotalQTD.setText("0");
+        txtTotalGeral.setText(zero);
+        txtDesconto.setText(zero);
+        txtTotalApagar.setText(zero);
+        lbValorPorExtenco.setText("");
     }
 
     public static void limpar() {
@@ -4234,6 +4841,8 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
         txtTotalGeral.setText(CfMethods.formatarComoMoeda(totalGeral));
         txtDesconto.setText(CfMethods.formatarComoMoeda(desconto));
         txtTotalApagar.setText(CfMethods.formatarComoMoeda(total_pagar));
+        // o extenso acompanha sempre o total a pagar (também quando o desconto do cliente muda)
+        valor_por_extenco();
 
     }
 
@@ -4515,7 +5124,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
             gorjeta = 0;
 //          act actualizar_cod_doc ( venda_local.getDataVenda () );
             alterar_status_pedido_lugar(lugar);
-            JOptionPane.showMessageDialog(null, "Factura Convertida com sucesso!..");
+            util.ui.MensagemSucesso.mostrar(table, "Factura convertida com sucesso!");
             actualizar_lugar(lugar);
             procedimento_mesas_livre();
 
@@ -4687,6 +5296,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
         painel_central.setLayout(new java.awt.GridLayout(linhas, colunas));
         painel_central.removeAll();
+        celulas(150, 92); // categorias: mosaicos de texto
         jScrollPane3.setViewportView(painel_central);
 
         botoes_object.clear();
@@ -4702,6 +5312,39 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
         }
 
+    }
+
+    private void celulas(int largura, int altura) {
+        if (painel_central instanceof util.ui.GrelhaAdaptavel) {
+            ((util.ui.GrelhaAdaptavel) painel_central).setCelula(largura, altura);
+        }
+    }
+
+    /**
+     * Cartão do artigo com a fotografia da peça (ou as iniciais, se não tiver),
+     * o nome e o preço; o clique lança a peça na recolha. O ProdutoItemVisao
+     * antigo (desenho fixo de 230x225) ficava cortado na grelha adaptável.
+     */
+    private javax.swing.JComponent cartaoProduto(TbProduto produto, TbPreco preco) {
+        celulas(150, 176); // produtos: cartões altos, com a fotografia
+        final String designacao = produto.getDesignacao();
+        String textoPreco = (preco != null && preco.getPrecoVenda() != null)
+                ? CfMethods.formatarComoMoeda(preco.getPrecoVenda()) : "";
+        return new util.ui.MesasWeb.CartaoProduto(designacao, textoPreco, null, false, foto(produto.getPhoto()),
+                util.ui.MesasWeb.corCategoria(designacao_categoria.getText()),
+                () -> RecolhaPedidosVisao.adicionarImportar(designacao));
+    }
+
+    private static java.awt.Image foto(byte[] bytes) {
+        if (bytes == null || bytes.length == 0) {
+            return null;
+        }
+        try {
+            java.awt.Image i = new ImageIcon(bytes).getImage();
+            return i.getWidth(null) > 0 ? i : null;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private void adicionar_centro_botao(int idTipoProduto) {
@@ -4771,18 +5414,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
                 TbPreco precoObject = precosController.getLastIdPrecoByIdProdutos(produto.getCodigo());
                 double quantidadeProduto = stocksController.getQuantidadeProduto(produto.getCodigo(), id_armzem);
 
-                ProdutoItemVisao item = new ProdutoItemVisao(
-                        produto,
-                        produto.getStocavel(),
-                        produto.getDesignacao(),
-                        produto.getPhoto(),
-                        quantidadeProduto,
-                        precoObject,
-                        DVML.FORMULARIO_RECOLHA_LAVANDARIA,
-                        usuarioLocal.getIdTipoUsuario().getIdTipoUsuario()
-                );
-
-                painel_central.add(item);
+                painel_central.add(cartaoProduto(produto, precoObject));
             }
 
             painel_central.revalidate();
@@ -4838,7 +5470,7 @@ public class RecolhaPedidosVisao extends javax.swing.JFrame {
 
                     preco_object = precosController.getLastIdPrecoByIdProdutos(lista_prdutos.get(i).getCodigo());
                     double quantidadeProduto = stocksController.getQuantidadeProduto(get.getCodigo(), id_armzem);
-                    painel_central.add(new ProdutoItemVisao(get, get.getStocavel(), get.getDesignacao(), get.getPhoto(), quantidadeProduto, preco_object, DVML.FORMULARIO_RECOLHA_LAVANDARIA, usuarioLocal.getIdTipoUsuario().getIdTipoUsuario()));
+                    painel_central.add(cartaoProduto(get, preco_object));
 
                 }
 

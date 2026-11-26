@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="200" pageHeight="450" columnWidth="198" leftMargin="0" rightMargin="2" topMargin="0" bottomMargin="0" uuid="9fc5c7e7-6413-41ac-bcbc-bae395cf6f17">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ticket_recolha_unico" pageWidth="200" pageHeight="450" columnWidth="188" leftMargin="8" rightMargin="4" topMargin="0" bottomMargin="8" isIgnorePagination="true" uuid="b51215b7-124b-4e10-b939-e75890e49d78">
+
+
 	<property name="ireport.zoom" value="3.993000000000001"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -32,69 +34,4 @@
 	<field name="data_entrega" class="java.sql.Date"/>
 	<field name="obs" class="java.lang.String"/>
 	<field name="cod_venda" class="java.lang.Integer"/>
-	<background>
-		<band splitType="Stretch"/>
-	</background>
-	<detail>
-		<band height="47">
-			<textField pattern="dd/MM/yyyy">
-				<reportElement uuid="77bd874e-4794-4835-a2bb-35466805e84e" x="24" y="1" width="49" height="10"/>
-				<box leftPadding="0"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="8" isBold="true"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{data_entrega}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement uuid="75600447-7ea2-4642-98f2-72dc326fe47f" x="24" y="11" width="172" height="10"/>
-				<textElement>
-					<font fontName="Lucida Sans" size="8" isBold="true"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{designacao}]]></textFieldExpression>
-			</textField>
-			<line>
-				<reportElement uuid="ae25cff5-ae15-4bdf-8dfe-4f47c1dc2494" x="25" y="21" width="171" height="1"/>
-			</line>
-			<textField>
-				<reportElement uuid="3626a071-03b8-41f4-a8b2-b43cf3327706" x="24" y="21" width="153" height="9"/>
-				<textElement verticalAlignment="Middle" markup="html">
-					<font fontName="Lucida Sans" size="6" isBold="true"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{cod_fact} + "," +$F{posicao}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement uuid="4e7fd014-a810-49dc-b958-e160b63823a7" x="115" y="21" width="81" height="9"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Lucida Sans" size="7"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{usuario}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement uuid="eaac940c-ce52-410c-842a-009cbd2a37ca" stretchType="RelativeToTallestObject" x="25" y="29" width="173" height="18"/>
-				<box topPadding="0" leftPadding="2" bottomPadding="1">
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="1.5" lineStyle="Dashed"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement markup="html">
-					<font fontName="Arial" size="10" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{obs} + "<br/>"
-+ $F{nome_cliente} + " (" + $F{telefone_cliente} + ")"]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement uuid="f4023424-7c12-4cae-b038-8d4f28450949" x="73" y="1" width="123" height="10"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial" size="8" isBold="true" isItalic="true" isUnderline="false"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{designacao_pai}]]></textFieldExpression>
-			</textField>
-		</band>
-	</detail>
-</jasperReport>
+	<background><band splitType="Stretch"/></background><detail><band height="80" splitType="Stretch"><frame><reportElement mode="Opaque" backcolor="#000000" forecolor="#000000" x="0" y="0" width="188" height="16" uuid="2f1abe53-c9e4-4eff-bd70-fd0e11a3de15"></reportElement><textField isBlankWhenNull="true"><reportElement forecolor="#FFFFFF" x="5" y="0" width="102" height="16" uuid="10b8ed96-1533-44a9-a158-cefbc81c1b2d"></reportElement><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="true" isItalic="false"/></textElement><textFieldExpression><![CDATA[$F{cod_fact} + "  ·  Peça " + $F{posicao}]]></textFieldExpression></textField><textField isBlankWhenNull="true"><reportElement forecolor="#FFFFFF" x="108" y="0" width="75" height="16" uuid="77eba1b8-57ad-40cb-8c4a-a14dcbb2c3cd"></reportElement><textElement textAlignment="Right" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="true" isItalic="false"/></textElement><textFieldExpression><![CDATA[($F{data_entrega} == null ? "" : "Entrega " + new java.text.SimpleDateFormat("dd/MM").format($F{data_entrega}))]]></textFieldExpression></textField></frame><textField isBlankWhenNull="true"><reportElement isRemoveLineWhenBlank="true" forecolor="#555555" x="4" y="17" width="180" height="10" uuid="a885974b-cfed-4a83-b363-d0485b4bb92d"><printWhenExpression><![CDATA[!($F{designacao_pai} == null || $F{designacao_pai}.toString().trim().isEmpty())]]></printWhenExpression></reportElement><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="7" isBold="false" isItalic="false"/></textElement><textFieldExpression><![CDATA[$F{designacao_pai}]]></textFieldExpression></textField><textField isStretchWithOverflow="true" isBlankWhenNull="true"><reportElement positionType="Float" x="4" y="27" width="180" height="16" uuid="245b0e27-e0ea-49c4-b3cd-ff68cce8500f"></reportElement><box bottomPadding="1"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="11" isBold="true" isItalic="false"/></textElement><textFieldExpression><![CDATA[$F{designacao}]]></textFieldExpression></textField><textField isStretchWithOverflow="true" isBlankWhenNull="true"><reportElement positionType="Float" isRemoveLineWhenBlank="true" x="4" y="43" width="180" height="12" uuid="f0c5ad9e-fdd8-458d-b786-9fc8410ea14b"><printWhenExpression><![CDATA[!($F{obs} == null || $F{obs}.toString().trim().isEmpty())]]></printWhenExpression></reportElement><box bottomPadding="1"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="false" isItalic="true"/></textElement><textFieldExpression><![CDATA[$F{obs}]]></textFieldExpression></textField><textField isStretchWithOverflow="true" isBlankWhenNull="true"><reportElement positionType="Float" x="4" y="55" width="180" height="13" uuid="9153cf72-85a5-4cad-8f57-1d88135f2324"></reportElement><box bottomPadding="1"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="true" isItalic="false"/></textElement><textFieldExpression><![CDATA[$F{nome_cliente} + (!($F{telefone_cliente} == null || $F{telefone_cliente}.toString().trim().isEmpty()) ? "  ·  " + $F{telefone_cliente} : "")]]></textFieldExpression></textField><textField isBlankWhenNull="true"><reportElement positionType="Float" forecolor="#555555" x="4" y="68" width="180" height="9" uuid="77d0cc18-5e29-4ba8-b018-d619fd125efc"></reportElement><textElement textAlignment="Right" verticalAlignment="Middle"><font fontName="SansSerif" size="6" isBold="false" isItalic="false"/></textElement><textFieldExpression><![CDATA["Recebido por " + $F{usuario}]]></textFieldExpression></textField><line><reportElement positionType="Float" x="0" y="79" width="188" height="1" uuid="f180fc4f-0844-4307-9e9f-e8cd27ba0ddc"></reportElement><graphicElement><pen lineWidth="1.0" lineStyle="Dashed"/></graphicElement></line></band></detail></jasperReport>

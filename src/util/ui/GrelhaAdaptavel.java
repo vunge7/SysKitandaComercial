@@ -26,7 +26,8 @@ import javax.swing.Scrollable;
  */
 public class GrelhaAdaptavel extends JPanel implements Scrollable {
 
-    private final int larguraMinima, altura, espaco;
+    private final int espaco;
+    private int larguraMinima, altura;
 
     public GrelhaAdaptavel(int larguraMinima, int altura, int espaco) {
         this.larguraMinima = larguraMinima;
@@ -35,6 +36,20 @@ public class GrelhaAdaptavel extends JPanel implements Scrollable {
         super.setLayout(new Disposicao());
         setBackground(Color.WHITE);
         setBorder(BorderFactory.createEmptyBorder(espaco, espaco, espaco, espaco));
+    }
+
+    /**
+     * Muda o tamanho dos mosaicos, ex.: categorias baixas e cartões de produto
+     * (com fotografia) mais altos na mesma grelha.
+     */
+    public void setCelula(int larguraMinima, int altura) {
+        if (this.larguraMinima == larguraMinima && this.altura == altura) {
+            return;
+        }
+        this.larguraMinima = larguraMinima;
+        this.altura = altura;
+        revalidate();
+        repaint();
     }
 
     @Override

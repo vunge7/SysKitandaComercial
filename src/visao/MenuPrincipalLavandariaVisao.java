@@ -97,11 +97,13 @@ public class MenuPrincipalLavandariaVisao extends javax.swing.JFrame
         // fechos de caixa e envio de relatórios por e-mail / WhatsApp (como na gestão hoteleira)
         comercial.caixa.MenuFechos.adicionarABarra( jMenuBar1, this, cod );
         comercial.caixa.MenuFechos.iniciarAgendadores();
+        // a permissão continua a chamar-se "Front Office": só muda o nome que se vê
+        jmFrontOffice.putClientProperty( util.ui.MenuNegocioWeb.ROTULO, "Menu Lavandaria" );
         util.ui.LayoutSeguro.aplicar( this, "Menu Lavandaria", () -> util.ui.MenuNegocioWeb.montar( this, jMenuBar1,
                 "Lavandaria", util.ui.MenuWeb.Simbolo.LAVANDARIA, cod,
                 util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Log Out" ), null,
                 new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Front Office" ), util.ui.MenuWeb.Simbolo.LAVANDARIA,
-                        "Recolha e Entrega", "Receber a roupa, acompanhar e entregar" ),
+                        "Menu Lavandaria", "Recolha, entrega, serviços, relatórios e caixa" ),
                 new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Venda" ), util.ui.MenuWeb.Simbolo.CAMISA,
                         "Venda", "Facturação dos serviços de lavandaria" ),
                 new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Produto" ), util.ui.MenuWeb.Simbolo.FERRO,
@@ -2023,7 +2025,8 @@ public class MenuPrincipalLavandariaVisao extends javax.swing.JFrame
     private void jmFrontOfficeActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jmFrontOfficeActionPerformed
     {//GEN-HEADEREND:event_jmFrontOfficeActionPerformed
         // TODO add your handling code here:
-        new FrontOfficeLavandariaVisao( cod_utilizador, BDConexao.getInstancia()).setVisible(true);
+        // directo ao menu da lavandaria (recolha, entrega e o resto); se já estiver aberto, vem para a frente
+        JanelaFrontOfficeLavandariaVisao.abrir( cod_utilizador );
 //        new PosVisao("", cod_utilizador, this.conexao ).co( true );
     }//GEN-LAST:event_jmFrontOfficeActionPerformed
 
@@ -2447,20 +2450,11 @@ public class MenuPrincipalLavandariaVisao extends javax.swing.JFrame
 
     private void setArmazem( String armazem )
     {
-        if ( !armazem.equalsIgnoreCase( "Multi_armazem" ) )
-        {
-            jmTransferenciaArmazem.setVisible( false );
-            jmVenda.setVisible( true );
-            jmFrontOffice.setVisible( false );
-
-        }
-        else
-        {
-            jmTransferenciaArmazem.setVisible( false );
-            jmFrontOffice.setVisible( true );
-            jmVenda.setVisible( false );
-
-        }
+        // a recolha/entrega (Front Office) e a venda são da lavandaria com um ou vários armazéns:
+        // o tipo de armazém só decide a transferência entre armazéns
+        jmFrontOffice.setVisible( true );
+        jmVenda.setVisible( true );
+        jmTransferenciaArmazem.setVisible( "Multi_armazem".equalsIgnoreCase( armazem ) );
     }
 
     public static void fazerBackupAgora()

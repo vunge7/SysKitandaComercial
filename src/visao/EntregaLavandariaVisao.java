@@ -122,9 +122,41 @@ public class EntregaLavandariaVisao extends javax.swing.JFrame
 
         comercial.caixa.UiCaixa.tabela( jTable1, new int[]
         {
-            70, 50, 320, 60, 100, 100, 110
+            70, 44, 240, 44, 110, 110, 96
         }, util.ui.ComponentesWeb.AZUL );
         jTable1.setSelectionMode( javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION );
+        jTable1.getColumnModel().getColumn( 0 ).setHeaderValue( "Nº" );
+        jTable1.getColumnModel().getColumn( 1 ).setHeaderValue( "Pos." );
+        // valores em dinheiro (vinham como 3000.000000) e quantidade sem casas a mais
+        javax.swing.table.DefaultTableCellRenderer dinheiro = new javax.swing.table.DefaultTableCellRenderer()
+        {
+            @Override
+            protected void setValue( Object v )
+            {
+                setText( v instanceof Number ? kitanda.util.CfMethods.formatarComoMoeda( ( ( Number ) v ).doubleValue() ) : v == null ? "" : v.toString() );
+            }
+        };
+        dinheiro.setHorizontalAlignment( javax.swing.SwingConstants.RIGHT );
+        javax.swing.table.DefaultTableCellRenderer quantidade = new javax.swing.table.DefaultTableCellRenderer()
+        {
+            @Override
+            protected void setValue( Object v )
+            {
+                setText( v instanceof Number ? new java.text.DecimalFormat( "#,##0.##" ).format( ( ( Number ) v ).doubleValue() )
+                        : v == null ? "" : v.toString() );
+            }
+        };
+        quantidade.setHorizontalAlignment( javax.swing.SwingConstants.CENTER );
+        jTable1.getColumnModel().getColumn( 3 ).setCellRenderer( quantidade );
+        jTable1.getColumnModel().getColumn( 4 ).setCellRenderer( dinheiro );
+        jTable1.getColumnModel().getColumn( 5 ).setCellRenderer( dinheiro );
+        // em janelas estreitas encolhe a "Peça", não o nº da linha nem a data
+        jTable1.getColumnModel().getColumn( 0 ).setMinWidth( 58 );
+        jTable1.getColumnModel().getColumn( 1 ).setMaxWidth( 48 );
+        jTable1.getColumnModel().getColumn( 3 ).setMaxWidth( 56 );
+        jTable1.getColumnModel().getColumn( 4 ).setMinWidth( 92 );
+        jTable1.getColumnModel().getColumn( 5 ).setMinWidth( 92 );
+        jTable1.getColumnModel().getColumn( 6 ).setMinWidth( 88 );
         jScrollPane1.setBorder( javax.swing.BorderFactory.createLineBorder( util.ui.ComponentesWeb.LINHA ) );
         jScrollPane1.getViewport().setBackground( java.awt.Color.WHITE );
         jScrollPane1.setPreferredSize( new java.awt.Dimension( 420, 300 ) );
@@ -149,9 +181,32 @@ public class EntregaLavandariaVisao extends javax.swing.JFrame
             l.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 15f ) );
             l.setForeground( util.ui.ComponentesWeb.TEXTO );
         }
-        javax.swing.JPanel cliente = util.ui.FormularioWeb.pilha( 10, lbNomeCliente, lbTelefone, lbMorada,
-                util.ui.FormularioWeb.dica( "Seleccione uma ou mais peças (Ctrl+clique) para entregar só essas." ) );
+        util.ui.ComponentesWeb.TextoQuebrado dicaCliente = new util.ui.ComponentesWeb.TextoQuebrado();
+        dicaCliente.setFont( util.ui.EstiloUI.FONTE.deriveFont( 12f ) );
+        dicaCliente.setForeground( util.ui.ComponentesWeb.TEXTO_SUAVE );
+        dicaCliente.setText( "Seleccione uma ou mais peças (Ctrl+clique) para entregar só essas." );
+        javax.swing.JPanel cliente = util.ui.FormularioWeb.pilha( 8, lbNomeCliente, lbTelefone, lbMorada, dicaCliente );
         javax.swing.JPanel cartaoCliente = util.ui.FormularioWeb.cartao( "Cliente", util.ui.ComponentesWeb.AZUL_VIVO, cliente );
+
+        // ---- recolhas por entregar: um clique abre a recolha (o botão "Entregas" da recolha abre este ecrã vazio)
+        final comercial.lavandaria.ListaPorEntregar porEntregar = new comercial.lavandaria.ListaPorEntregar( this::procurarRecolha );
+        util.ui.ComponentesWeb.Cartao cartaoLista = new util.ui.ComponentesWeb.Cartao( "Por entregar", util.ui.ComponentesWeb.ROXO,
+                new java.awt.BorderLayout() );
+        cartaoLista.getCorpo().add( porEntregar, java.awt.BorderLayout.CENTER );
+        porEntregar.actualizar();
+        // depois de entregar, a lista acompanha
+        for ( javax.swing.JButton b : new javax.swing.JButton[]
+        {
+            jButton1, jButton2
+        } )
+        {
+            b.addActionListener( e -> javax.swing.SwingUtilities.invokeLater( porEntregar::actualizar ) );
+        }
+        javax.swing.JPanel direita = util.ui.ComponentesWeb.transparente( new java.awt.BorderLayout( 0, 10 ) );
+        // lado a lado a coluna pode ficar baixa: a lista encolhe e desliza por dentro (a página não)
+        direita.setMinimumSize( new java.awt.Dimension( 300, 220 ) );
+        direita.add( cartaoCliente, java.awt.BorderLayout.NORTH );
+        direita.add( cartaoLista, java.awt.BorderLayout.CENTER );
 
         javax.swing.JPanel colunas = util.ui.ComponentesWeb.transparente(
                 new util.ui.ComponentesWeb.ColunasResponsivas( new double[]
@@ -159,10 +214,10 @@ public class EntregaLavandariaVisao extends javax.swing.JFrame
                     0.66, 0.34
                 }, new int[]
                 {
-                    440, 280
+                    440, 300
                 }, 10 ) );
         colunas.add( cartaoPecas );
-        colunas.add( cartaoCliente );
+        colunas.add( direita );
 
         lbEntregaLavandaria.setForeground( java.awt.Color.WHITE );
         lbEntregaLavandaria.setFont( util.ui.EstiloUI.FONTE_NEGRITO.deriveFont( 15f ) );
@@ -550,7 +605,6 @@ public class EntregaLavandariaVisao extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jButton2ActionPerformed
         // TODO add your handling code here:
         todasPecas = false;
-        setIds();
         procedimentoEntergarPorPeca();
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -747,13 +801,15 @@ public class EntregaLavandariaVisao extends javax.swing.JFrame
                         double qtd = item.getQuantidade();
                         int posicao = item.getPosicao();
                         BigDecimal precoUnitario = preco.getPrecoVenda();
-                        BigDecimal total = preco.getPrecoVenda();
+                        BigDecimal total = preco.getPrecoVenda().multiply( BigDecimal.valueOf( qtd ) );
                         String dataEntrega = MetodosUtil.getDataBanco( item.getDataEntrega() );
                         peca += "-" + obs;
 
+                        // 1.ª coluna = nº da linha (tb_item_venda.codigo): é o que a entrega marca como entregue
+                        // (antes era o código do produto, e o UPDATE ... WHERE codigo = <produto> apanhava outra linha)
                         modelo.addRow( new Object[]
                         {
-                            produto.getCodigo(),
+                            id,
                             posicao,
                             peca,
                             qtd,
@@ -792,27 +848,33 @@ public class EntregaLavandariaVisao extends javax.swing.JFrame
 
     private void procedimentoEntergarPorPeca()
     {
-
-        if ( jTable1.getSelectedRow() < 0 )
+        int[] linhas = jTable1.getSelectedRows();
+        if ( venda == null || linhas.length == 0 )
         {
-            JOptionPane.showMessageDialog( null, "Selecione a linha." );
+            JOptionPane.showMessageDialog( this, "Seleccione na lista as peças a entregar (Ctrl+clique para várias)." );
             return;
         }
 
-        int opcao = JOptionPane.showConfirmDialog( null, "Tem a certeza que pretendes entregar a peça ao cliente?" );
+        int opcao = JOptionPane.showConfirmDialog( this, linhas.length == 1 ? "Entregar esta peça ao cliente?"
+                : "Entregar estas " + linhas.length + " peças ao cliente?", "Entrega", JOptionPane.YES_NO_OPTION );
         if ( opcao == JOptionPane.YES_OPTION )
         {
-            DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
-
-            int linhaSeleccionada = jTable1.getSelectedRow();
-            int cod = Integer.parseInt( jTable1.getValueAt( linhaSeleccionada, 0 ).toString() );
-
-            if ( itemVendasController.actualizarEntrega( cod ) )
+            listaID.clear();
+            for ( int linha : linhas )
             {
-                modelo.removeRow( linhaSeleccionada );
-
-                salvar_venda();
+                listaID.add( Integer.valueOf( jTable1.getValueAt( linha, 0 ).toString() ) );
             }
+            if ( salvar_venda() )
+            {
+                // só sai da lista o que foi entregue (de baixo para cima, para os índices não mudarem)
+                DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
+                java.util.Arrays.sort( linhas );
+                for ( int i = linhas.length - 1; i >= 0; i-- )
+                {
+                    modelo.removeRow( jTable1.convertRowIndexToModel( linhas[ i ] ) );
+                }
+            }
+            listaID.clear();
         }
 
     }
@@ -820,16 +882,22 @@ public class EntregaLavandariaVisao extends javax.swing.JFrame
     private void procedimentoEntergarTodas()
     {
 
-        int opcao = JOptionPane.showConfirmDialog( null, "Tem a certeza que pretendes entregar a peça ao cliente?" );
+        if ( venda == null || jTable1.getRowCount() == 0 )
+        {
+            JOptionPane.showMessageDialog( this, "Procure primeiro a recolha (nº do documento ou na lista \"Por entregar\")." );
+            return;
+        }
+        int opcao = JOptionPane.showConfirmDialog( this, "Entregar todas as peças desta recolha ao cliente?", "Entrega",
+                JOptionPane.YES_NO_OPTION );
         if ( opcao == JOptionPane.YES_OPTION )
         {
-            DefaultTableModel modelo = ( DefaultTableModel ) jTable1.getModel();
             salvar_venda();
         }
 
     }
 
-    public void salvar_venda()
+    /** Grava a nota de entrega (EL) e marca as peças como entregues; false se falhou. */
+    public boolean salvar_venda()
     {
 
         TbVenda nota_levantamento = new TbVenda();
@@ -918,12 +986,14 @@ public class EntregaLavandariaVisao extends javax.swing.JFrame
             imprimiRecibo( last_venda );
 
             System.out.println( "STATUS:itens adicionado na factura com sucesso." );
+            return true;
         }
         catch ( Exception e )
         {
             System.err.println( "STATUS: falha ao actualizar a factura" );
             e.printStackTrace();
             JOptionPane.showMessageDialog( null, "Falha ao Processar a Factura", "FALHA", JOptionPane.ERROR_MESSAGE );
+            return false;
         }
 
     }
@@ -1055,7 +1125,7 @@ public class EntregaLavandariaVisao extends javax.swing.JFrame
         }
         else
         {
-            setIds();
+            // listaID = nºs das linhas escolhidas (procedimentoEntergarPorPeca)
             if ( Objects.nonNull( listaID ) )
             {
 
@@ -1065,7 +1135,7 @@ public class EntregaLavandariaVisao extends javax.swing.JFrame
                     System.err.println( "CHEGUEI 001" );
                     System.err.println( "id produto : " + tbItemVenda.getCodigoProduto().getCodigo() );
 
-                    if ( existe( tbItemVenda.getCodigoProduto().getCodigo() ) )
+                    if ( existe( tbItemVenda.getCodigo() ) )
                     {
                         System.err.println( "CHEGUEI 002 - EXISTE" );
                         TbItemVenda linha_local = new TbItemVenda();

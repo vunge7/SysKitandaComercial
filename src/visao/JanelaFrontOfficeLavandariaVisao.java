@@ -51,6 +51,28 @@ public class JanelaFrontOfficeLavandariaVisao extends javax.swing.JFrame
     private int idUser;
     private BDConexao conexao;
 
+    private static JanelaFrontOfficeLavandariaVisao aberta;
+
+    /**
+     * Abre o menu da lavandaria a partir dos menus principais. Uma só janela
+     * (os botões da caixa são estáticos): se já estiver aberta, vem para a frente.
+     */
+    public static void abrir( int idUser )
+    {
+        if ( aberta != null && aberta.isShowing() && aberta.idUser == idUser )
+        {
+            aberta.toFront();
+            aberta.requestFocus();
+            return;
+        }
+        if ( aberta != null )
+        {
+            aberta.dispose();
+        }
+        aberta = new JanelaFrontOfficeLavandariaVisao( idUser, BDConexao.getInstancia() );
+        aberta.setVisible( true );
+    }
+
     public JanelaFrontOfficeLavandariaVisao( int idUser, BDConexao conexao )
     {
         initComponents();
@@ -104,6 +126,14 @@ public class JanelaFrontOfficeLavandariaVisao extends javax.swing.JFrame
                 "Lavar, engomar, limpar a seco: preços", L, A );
         util.ui.MenuWeb.cartaoModulo( btnRelatorio, util.ui.MenuWeb.Simbolo.GRAFICO, "Relatório",
                 "Recolhas e entregas por período", L, A );
+        btnRelatorioEntregas = accao( "Entregas por Cliente", () -> new RelatorioLavandariaEntregaVisao( idUser,
+                BDConexao.getInstancia() ).setVisible( true ) );
+        util.ui.MenuWeb.cartaoModulo( btnRelatorioEntregas, util.ui.MenuWeb.Simbolo.CABIDE, "Entregas por Cliente",
+                "Peças entregues e por entregar", L, A );
+        javax.swing.JButton reimprimir = accao( "Reimprimir Recolha", () -> new ReemprimirFacturasRecolhaVisao( this, true,
+                BDConexao.getInstancia() ).setVisible( true ) );
+        util.ui.MenuWeb.cartaoModulo( reimprimir, util.ui.MenuWeb.Simbolo.RECIBO, "Reimprimir Recolha",
+                "Segunda via da factura e do talão", L, A );
         util.ui.MenuWeb.cartaoModulo( btn_feicho_dia_lav1, util.ui.MenuWeb.Simbolo.PRANCHETA, "Factura Proforma",
                 "Orçamento para o cliente", L, A );
         util.ui.MenuWeb.cartaoModulo( btn_abertura_dia_lav, util.ui.MenuWeb.Simbolo.CAIXA_ABRIR, "Abertura de Caixa",
@@ -132,13 +162,16 @@ public class JanelaFrontOfficeLavandariaVisao extends javax.swing.JFrame
         pagina.item( atalho( jButton2, "Entrega" ), "Entrega" );
         pagina.item( atalho( jButton3, "Serviços" ), "Serviços" );
         pagina.item( atalho( btnRelatorio, "Relatório" ), "Relatório" );
+        pagina.item( atalho( btnRelatorioEntregas, "Entregas por Cliente" ), "Entregas por Cliente" );
+        pagina.item( atalho( reimprimir, "Reimprimir Recolha" ), "Reimprimir Recolha" );
         pagina.item( atalho( btn_feicho_dia_lav1, "Factura Proforma" ), "Factura Proforma" );
         pagina.grupo( "Caixa" );
         pagina.item( atalho( btn_abertura_dia_lav, "Abertura de Caixa" ), "Abertura de Caixa" );
         pagina.item( atalho( btn_feicho_dia_lav, "Fecho de Caixa" ), "Fecho de Caixa" );
         comercial.caixa.MenuFechos.adicionarAPagina( pagina, this, idUser );
 
-        java.awt.Component cartoesOperacao = util.ui.FormularioWeb.grelha( L, 4, btnRecolha, jButton2, jButton3, btnRelatorio, btn_feicho_dia_lav1 );
+        java.awt.Component cartoesOperacao = util.ui.FormularioWeb.grelha( L, 4, btnRecolha, jButton2, jButton3, reimprimir, btnRelatorio,
+                btnRelatorioEntregas, btn_feicho_dia_lav1 );
         java.awt.Component cartoesCaixa = util.ui.FormularioWeb.grelha( L, 4, btn_abertura_dia_lav, btn_feicho_dia_lav, fechos, email, whatsapp,
                 btn_feicho_dia_lav2 );
         // ---- painel do dia (números e peças por entregar; duplo clique abre a entrega)
@@ -177,6 +210,8 @@ public class JanelaFrontOfficeLavandariaVisao extends javax.swing.JFrame
     }
 
     private comercial.lavandaria.PainelLavandaria painel;
+    /** Como o btnRelatorio: só para administradores (ver setWindowsListener). */
+    private javax.swing.JButton btnRelatorioEntregas;
 
     private static javax.swing.JButton atalho( javax.swing.JButton cartao, String texto )
     {
@@ -185,6 +220,22 @@ public class JanelaFrontOfficeLavandariaVisao extends javax.swing.JFrame
         // segue o estado do cartão (o verificarCaixa liga e desliga a abertura / o fecho)
         cartao.addPropertyChangeListener( "enabled", e -> b.setEnabled( cartao.isEnabled() ) );
         b.setEnabled( cartao.isEnabled() );
+        // e a visibilidade (os relatórios são só dos administradores)
+        cartao.addComponentListener( new java.awt.event.ComponentAdapter()
+        {
+            @Override
+            public void componentShown( java.awt.event.ComponentEvent e )
+            {
+                b.setVisible( true );
+            }
+
+            @Override
+            public void componentHidden( java.awt.event.ComponentEvent e )
+            {
+                b.setVisible( false );
+            }
+        } );
+        b.setVisible( cartao.isVisible() );
         return b;
     }
 
@@ -564,6 +615,10 @@ public class JanelaFrontOfficeLavandariaVisao extends javax.swing.JFrame
                 else
                 {
                     btnRelatorio.setVisible( false );
+                }
+                if ( btnRelatorioEntregas != null )
+                {
+                    btnRelatorioEntregas.setVisible( btnRelatorio.isVisible() );
                 }
             }
 

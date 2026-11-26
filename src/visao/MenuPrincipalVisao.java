@@ -138,6 +138,14 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
             jmenuRelatorios.insert( jmMultas, 2 );
         }
 
+        // ---- lavandaria: o cartão "Gestão Comercial" abre este menu (e não o MenuPrincipalLavandariaVisao)
+        final boolean lavandaria = negocio == util.ui.Tema.Negocio.LAVANDARIA;
+        if ( lavandaria )
+        {
+            pagina.grupo( "Lavandaria" );
+            pagina.item( botaoMenuLavandaria(), "Menu Lavandaria" );
+        }
+
         // ---- barra lateral: um grupo por menu, com os itens (e submenus)
         java.util.Map<javax.swing.JMenu, String> grupos = new java.util.LinkedHashMap<>();
         grupos.put( jMenu1, "Operações" );
@@ -160,7 +168,12 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
         }
 
         // ---- cartões dos módulos principais
-        pagina.cartao( espelho( jmVenda ), simbolos[0], "Venda",
+        if ( lavandaria )
+        {
+            pagina.cartao( botaoMenuLavandaria(), util.ui.MenuWeb.Simbolo.LAVANDARIA, "Menu Lavandaria",
+                    "Recolha, entrega, serviços, relatórios e caixa" );
+        }
+        pagina.cartao( espelho( jmVenda ), lavandaria ? util.ui.MenuWeb.Simbolo.CARRINHO : simbolos[0], "Venda",
                 "Facturação e ponto de venda" );
         pagina.cartao( espelho( jmFrontOffice ), util.ui.MenuWeb.Simbolo.TALHERES, "Front Office",
                 "Mesas, pedidos e vendas ao balcão" );
@@ -234,6 +247,27 @@ public class MenuPrincipalVisao extends javax.swing.JFrame {
         }
         setJMenuBar( null );
         pagina.montar( this, "SysKitanda Comercial  ·  Gestão Comercial", 5 );
+    }
+
+    /** Abre o menu da lavandaria (recolha, entrega e o resto); segue a permissão "Front Office". */
+    private javax.swing.JButton botaoMenuLavandaria()
+    {
+        final javax.swing.JButton b = new javax.swing.JButton( "Menu Lavandaria" );
+        b.addActionListener( e ->
+        {
+            try
+            {
+                JanelaFrontOfficeLavandariaVisao.abrir( cod_utilizador );
+            }
+            catch ( RuntimeException ex )
+            {
+                ex.printStackTrace();
+                javax.swing.JOptionPane.showMessageDialog( this, "Não foi possível abrir o menu da lavandaria:\n" + ex.getMessage() );
+            }
+        } );
+        b.setEnabled( jmFrontOffice.isEnabled() );
+        jmFrontOffice.addPropertyChangeListener( "enabled", e -> b.setEnabled( jmFrontOffice.isEnabled() ) );
+        return b;
     }
 
     /** Todos os itens (também os dos submenus) da barra de menus original. */
