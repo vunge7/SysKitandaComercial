@@ -203,11 +203,12 @@ public final class FechosCaixaVisao extends JFrame {
         bd.add(reenviar);
         botoes.add(bd, BorderLayout.EAST);
 
+        // botões por cima da tabela: em baixo ficavam cortados e só se viam a deslizar o ecrã
         JPanel lista = ComponentesWeb.transparente(new BorderLayout(0, 8));
         JScrollPane spFechos = new JScrollPane(tbFechos);
-        spFechos.setPreferredSize(new java.awt.Dimension(800, 300));
+        spFechos.setPreferredSize(new java.awt.Dimension(800, 180));
+        lista.add(botoes, BorderLayout.NORTH);
         lista.add(spFechos, BorderLayout.CENTER);
-        lista.add(botoes, BorderLayout.SOUTH);
 
         JPanel p = ComponentesWeb.transparente(new BorderLayout(0, 10));
         p.setBorder(BorderFactory.createEmptyBorder(10, 6, 6, 6));
