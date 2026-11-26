@@ -30,6 +30,10 @@ import javax.swing.SwingUtilities;
  * <li>antes de a janela principal fechar (terminar sessão), os filhos são
  *     soltos, para o Windows não os destruir por arrasto.</li>
  * </ul>
+ * Os visualizadores de relatórios (facturas, talões, fechos...) ficam de fora:
+ * têm o seu próprio botão na barra de tarefas. Como filhos, ficavam escondidos
+ * atrás do ecrã de venda assim que o operador clicava nele, e sem botão não
+ * havia como voltar a eles: parecia que se tinham fechado.
  * Só no Windows e só com a JNA (lib/jna-5.13.0.jar); sem ela fica tudo como antes.
  */
 public final class JanelasFilhas {
@@ -40,6 +44,10 @@ public final class JanelasFilhas {
     /** filhos actuais (fracos: uma janela fechada desaparece sozinha). */
     private static final Map<Window, Boolean> FILHOS = new WeakHashMap<>();
     private static User32 user32;
+    /** filhos maximizados quando o sistema foi minimizado: o Windows devolve-os em tamanho normal. */
+    private static final Map<Window, Boolean> MAXIMIZADOS = new WeakHashMap<>();
+    /** até quando (ms) um filho que perca a maximização volta a ser maximizado. */
+    private static long restaurarAte;
 
     private JanelasFilhas() {
     }
@@ -92,6 +100,9 @@ public final class JanelasFilhas {
         if (!(w instanceof Frame)) {
             return; // os JDialog já têm dono pelo Java
         }
+        if (eRelatorio(w)) {
+            return; // visualizador de relatório: botão próprio na barra (ver acima)
+        }
         switch (e.getID()) {
             case WindowEvent.WINDOW_OPENED:
                 if (w == principal) {
@@ -107,6 +118,28 @@ public final class JanelasFilhas {
                 }
                 break;
             case WindowEvent.WINDOW_STATE_CHANGED:
+                if (w == principal) {
+                    if ((e.getNewState() & Frame.ICONIFIED) != 0) {
+                        // o sistema vai ser minimizado: lembrar os filhos maximizados
+                        MAXIMIZADOS.clear();
+                        for (Window f : FILHOS.keySet()) {
+                            if (f instanceof Frame && (((Frame) f).getExtendedState() & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH) {
+                                MAXIMIZADOS.put(f, Boolean.TRUE);
+                            }
+                        }
+                    } else if ((e.getOldState() & Frame.ICONIFIED) != 0) {
+                        restaurarAte = System.currentTimeMillis() + 2000;
+                    }
+                    break;
+                }
+                // o sistema voltou: o Windows devolve os filhos em tamanho normal; voltam maximizados
+                if (MAXIMIZADOS.containsKey(w) && System.currentTimeMillis() < restaurarAte
+                        && (e.getNewState() & (Frame.MAXIMIZED_BOTH | Frame.ICONIFIED)) == 0) {
+                    MAXIMIZADOS.remove(w);
+                    Frame f = (Frame) w;
+                    SwingUtilities.invokeLater(() -> f.setExtendedState(f.getExtendedState() | Frame.MAXIMIZED_BOTH));
+                    break;
+                }
                 // minimizar um formulário minimiza o sistema todo (um filho não tem botão na barra)
                 if (FILHOS.containsKey(w) && (((Frame) w).getExtendedState() & Frame.ICONIFIED) != 0) {
                     Frame f = (Frame) w;
@@ -142,6 +175,11 @@ public final class JanelasFilhas {
     private static boolean eEntrada(Window w) {
         String n = w.getClass().getName();
         return eLogin(w) || ENTRADAS.contains(n) || n.startsWith("visao.Menu") && n.indexOf('.', 6) == -1;
+    }
+
+    /** Visualizador do JasperReports (facturas, talões, fechos, relatórios). */
+    static boolean eRelatorio(Window w) {
+        return w != null && w.getClass().getName().startsWith("net.sf.jasperreports");
     }
 
     private static boolean eLogin(Window w) {
