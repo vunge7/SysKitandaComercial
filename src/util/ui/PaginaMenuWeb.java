@@ -497,7 +497,9 @@ public final class PaginaMenuWeb {
         textos.add(lbSessao);
         identidade.add(textos, BorderLayout.CENTER);
         utilizador.add(identidade, BorderLayout.NORTH);
-        utilizador.add(botaoSair, BorderLayout.CENTER);
+        if (botaoSair != null) { // sem item de sair a página monta na mesma
+            utilizador.add(botaoSair, BorderLayout.CENTER);
+        }
         return utilizador;
     }
 
@@ -509,7 +511,15 @@ public final class PaginaMenuWeb {
         lbSub.setFont(EstiloUI.FONTE.deriveFont(14f));
         lbSub.setForeground(MenuWeb.TEXTO_SUAVE);
 
-        JPanel cabecalho = ComponentesWeb.transparente(null);
+        // o cabeçalho (saudação + indicadores) não encolhe: se a página não couber,
+        // desliza em vez de cortar as últimas filas de cartões
+        JPanel cabecalho = new JPanel() {
+            @Override
+            public Dimension getMinimumSize() {
+                return new Dimension(super.getMinimumSize().width, getPreferredSize().height);
+            }
+        };
+        cabecalho.setOpaque(false);
         cabecalho.setLayout(new BoxLayout(cabecalho, BoxLayout.Y_AXIS));
         cabecalho.add(lbSaudacao);
         cabecalho.add(Box.createVerticalStrut(2));

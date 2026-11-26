@@ -126,7 +126,8 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame {
         comercial.caixa.MenuFechos.iniciarAgendadores();
         util.ui.LayoutSeguro.aplicar( this, "Menu Farmácia", () -> util.ui.MenuNegocioWeb.montar( this, jMenuBar1,
                 "Farmácia", util.ui.MenuWeb.Simbolo.FARMACIA, cod,
-                util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Log Out" ), null,
+                // na farmácia o item de terminar a sessão chama-se "Sair" (não "Log Out")
+                jMenuItem3, null,
                 new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Venda" ), util.ui.MenuWeb.Simbolo.FARMACIA,
                         "Venda ao Balcão", "Dispensa de medicamentos e produtos" ),
                 new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Produto" ), util.ui.MenuWeb.Simbolo.COMPRIMIDO,
@@ -139,14 +140,14 @@ public class MenuPrincipalFarmaciaVisao extends javax.swing.JFrame {
                         "Recibos", "Receber facturas em aberto" ),
                 new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Compras" ), util.ui.MenuWeb.Simbolo.CARRINHO,
                         "Compras", "Encomendas e entradas de stock" ),
-                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Inventario" ), util.ui.MenuWeb.Simbolo.CAIXA,
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Inventário" ), util.ui.MenuWeb.Simbolo.CAIXA,
                         "Inventário", "Existências e validades por armazém" ),
                 new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Saidas Produtos" ), util.ui.MenuWeb.Simbolo.PRANCHETA,
                         "Saídas de Produtos", "Consumos e saídas de stock" ),
                 new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Gestao de Turno" ), util.ui.MenuWeb.Simbolo.CALENDARIO,
                         "Turnos", "Abertura e fecho de turno" ),
-                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Converter Proformas em Facturas" ), util.ui.MenuWeb.Simbolo.RECIBO,
-                        "Proformas", "Converter proformas em facturas" ) ) );
+                new util.ui.MenuNegocioWeb.Cartao( util.ui.MenuNegocioWeb.procurar( jMenuBar1, "Validade de Produtos" ), util.ui.MenuWeb.Simbolo.COMPRIMIDO,
+                        "Validades", "Medicamentos a expirar e expirados" ) ) );
     }
 
     public void busca_permissao() {
